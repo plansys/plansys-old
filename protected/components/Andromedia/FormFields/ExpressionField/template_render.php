@@ -1,0 +1,65 @@
+<div expression-field <?= $this->expandAttributes($this->options) ?>>
+    <!-- data -->
+    <data name="value" class="hide"><?= $this->value ?></data>
+    <data name="field_name" class="hide"><?= $this->fieldname ?></data>
+    <data name="field_language" class="hide"><?= $this->language ?></data>
+    <data name="field_valid_action" class="hide"><?= $this->validAction ?></data>
+    <data name="model_class" class="hide"><?= @get_class($model) ?></data>
+    <!-- /data -->
+    <div class="properties-header" style="cursor:default;">
+        <div class="label label-default" style="font-size:10px;float:right;margin:-1px 3px -3px 0px;">
+            {{lang | uppercase}}
+        </div>
+        <div class="btn btn-xs"
+             ng-hide="lang == 'html' || value.trim() == '' || validating"
+             style="color:{{ valid ? 'green' : 'red' }}">
+            <i class="fa fa-{{valid ? 'check-circle' : 'warning' }}"></i>
+            {{ valid ? 'Valid' : 'Invalid Expression' }}
+        </div>
+        <div class="btn btn-xs" ng-hide="!validating" 
+             style="color:{{ valid ? 'orange' : 'red' }}">
+            <i class="fa fa-refresh fa-spin"></i> Validating...
+        </div>
+        <?= $this->label ?>
+    </div>
+
+    <div ng-show="lang == 'html' || isFocus || value.trim() != ''">
+        <table>
+            <tbody>
+                <tr valign="top">
+                    <td style="padding:0px;background:#333;color:white;border:0px;">
+                        <textarea spellcheck="false"
+                                  class="textarea-noresize"
+                                  ng-model="value"
+                                  ng-change="validate()"
+                                  ng-delay="500"
+                                  ng-focus="focus()"
+                                  ng-blur="blur()"
+                                  auto-grow
+                                  style='border:0px;background:#333;height:22px;'>
+                                      <?= $this->value ?>
+                        </textarea>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="field-box-desc" style="text-align:center;" 
+         ng-show="lang != 'html' && value.trim() == '' && !isFocus">
+        <div class="btn btn-xs btn-default" style="border-radius:0px;"
+             ng-click="forceFocus();">
+            Create Expression
+            <i class="fa fa-arrow-right"></i>
+        </div>
+    </div>
+
+    <?php if ($this->desc != ''): ?>
+        <div ng-show="value.trim() == '' && !isFocus" class="field-box-desc">
+            <?= $this->desc ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="clearfix"></div>
+</div>

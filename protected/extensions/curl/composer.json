@@ -1,0 +1,16 @@
+{
+    "name": "hackerone/curl",
+    "description": "Curl Wrapper for Yii framework",
+    "keywords": ["yii curl", "curl", "http request", "get", "post", "put"],
+    "type": "yii-extension",
+    "require" : {
+        "php": ">=5.3.0"
+        },
+    "authors": [
+        {
+            "name": "Ganesh",
+            "email": "hackerone@gmail.com",
+            "homepage": "http://www.codevu.com/"
+        }
+    ]
+}

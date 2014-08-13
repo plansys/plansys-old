@@ -1,0 +1,19 @@
+{
+    "name": "bluecloudy/yiidoctrine2",
+    "type": "library",
+    "description": "This is an extension for the Yii Framework that integrates Doctrine 2 ORM & ODM projects ",
+    "keywords": ["Extension", "Doctrine", "Yii", "ORM"],
+    "homepage": "https://github.com/bluecloudy/yiidoctrine2",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Giang Nguyen",
+            "email": "tn.hoanggiang@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2",
+        "doctrine/orm": "2.4.*",
+        "symfony/yaml": "2.*"
+    }
+}

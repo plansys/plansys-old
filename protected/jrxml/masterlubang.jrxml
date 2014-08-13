@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version last-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="masterlubang" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f4c42ef-9868-4279-a1dd-558b54dadc20">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="dsi"/>
+	<queryString>
+		<![CDATA[select 
+	a.*,
+	b.lokasi,
+	c.name as nama_wilayah,
+	d.name as nama_proyek,
+	e.name as nama_regu
+from lubang a
+left join pemboran b ON a.pemboran_id=b.id
+left join wilayah c ON b.wilayah_id=c.id
+left join proyek d ON b.proyek_id=d.id
+left join regu e ON a.regu_id=e.id]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="pemboran_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="lubang_rk" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="lubang_real" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="x_rk" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="x_real" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="y_rk" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="y_real" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="z_real" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tgl_mulai_bor" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tgl_selesai_bor" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="jam_mulai_bor" class="java.sql.Time">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="jam_selesai_bor" class="java.sql.Time">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="kabupaten" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nama_daerah" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="regu_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="jenis_pengeboran" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tebal_lapisan" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tebal_kong" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="jenis_kong" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tdh_taksasi" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tdh_real" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="gn_sn_real" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="jumlah_lapisan" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="metoda_sampling" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="juru_bor" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tukang_cuci" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="kondisi_cuaca" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="warna_kong" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="juru_ukur" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="koefisien_bor" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sifat_kong" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="pengawas_bor" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="jenis_alat_ukur" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="jenis_alat_bor" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="gr_mit_real" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="basis_alat_ukur" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="kadar_mit_real" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="butiran" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="mit" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="biaya_lubang" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ada_sample" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="metode_ukur" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="biaya_permeter" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="lokasi" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nama_wilayah" class="java.lang.String"/>
+	<field name="nama_proyek" class="java.lang.String"/>
+	<field name="nama_regu" class="java.lang.String"/>
+	<sortField name="id"/>
+	<group name="id">
+		<groupExpression><![CDATA[$F{id}]]></groupExpression>
+	</group>
+	<group name="pemboran_id">
+		<groupExpression><![CDATA[$F{pemboran_id}]]></groupExpression>
+	</group>
+	<group name="lubang_rk">
+		<groupExpression><![CDATA[$F{lubang_rk}]]></groupExpression>
+	</group>
+	<group name="lubang_real">
+		<groupExpression><![CDATA[$F{lubang_real}]]></groupExpression>
+	</group>
+	<group name="x_rk">
+		<groupExpression><![CDATA[$F{x_rk}]]></groupExpression>
+	</group>
+	<group name="x_real">
+		<groupExpression><![CDATA[$F{x_real}]]></groupExpression>
+	</group>
+	<group name="y_rk">
+		<groupExpression><![CDATA[$F{y_rk}]]></groupExpression>
+	</group>
+	<group name="y_real">
+		<groupExpression><![CDATA[$F{y_real}]]></groupExpression>
+	</group>
+	<group name="z_real">
+		<groupExpression><![CDATA[$F{z_real}]]></groupExpression>
+	</group>
+	<group name="tgl_mulai_bor">
+		<groupExpression><![CDATA[$F{tgl_mulai_bor}]]></groupExpression>
+	</group>
+	<group name="tgl_selesai_bor">
+		<groupExpression><![CDATA[$F{tgl_selesai_bor}]]></groupExpression>
+	</group>
+	<group name="jam_mulai_bor">
+		<groupExpression><![CDATA[$F{jam_mulai_bor}]]></groupExpression>
+	</group>
+	<group name="jam_selesai_bor">
+		<groupExpression><![CDATA[$F{jam_selesai_bor}]]></groupExpression>
+	</group>
+	<group name="kabupaten">
+		<groupExpression><![CDATA[$F{kabupaten}]]></groupExpression>
+	</group>
+	<group name="nama_daerah">
+		<groupExpression><![CDATA[$F{nama_daerah}]]></groupExpression>
+	</group>
+	<group name="regu_id">
+		<groupExpression><![CDATA[$F{regu_id}]]></groupExpression>
+	</group>
+	<group name="jenis_pengeboran">
+		<groupExpression><![CDATA[$F{jenis_pengeboran}]]></groupExpression>
+	</group>
+	<group name="tebal_lapisan">
+		<groupExpression><![CDATA[$F{tebal_lapisan}]]></groupExpression>
+	</group>
+	<group name="tebal_kong">
+		<groupExpression><![CDATA[$F{tebal_kong}]]></groupExpression>
+	</group>
+	<group name="jenis_kong">
+		<groupExpression><![CDATA[$F{jenis_kong}]]></groupExpression>
+	</group>
+	<group name="tdh_taksasi">
+		<groupExpression><![CDATA[$F{tdh_taksasi}]]></groupExpression>
+	</group>
+	<group name="tdh_real">
+		<groupExpression><![CDATA[$F{tdh_real}]]></groupExpression>
+	</group>
+	<group name="gn_sn_real">
+		<groupExpression><![CDATA[$F{gn_sn_real}]]></groupExpression>
+	</group>
+	<group name="jumlah_lapisan">
+		<groupExpression><![CDATA[$F{jumlah_lapisan}]]></groupExpression>
+	</group>
+	<group name="metoda_sampling">
+		<groupExpression><![CDATA[$F{metoda_sampling}]]></groupExpression>
+	</group>
+	<group name="juru_bor">
+		<groupExpression><![CDATA[$F{juru_bor}]]></groupExpression>
+	</group>
+	<group name="tukang_cuci">
+		<groupExpression><![CDATA[$F{tukang_cuci}]]></groupExpression>
+	</group>
+	<group name="kondisi_cuaca">
+		<groupExpression><![CDATA[$F{kondisi_cuaca}]]></groupExpression>
+	</group>
+	<group name="warna_kong">
+		<groupExpression><![CDATA[$F{warna_kong}]]></groupExpression>
+	</group>
+	<group name="juru_ukur">
+		<groupExpression><![CDATA[$F{juru_ukur}]]></groupExpression>
+	</group>
+	<group name="koefisien_bor">
+		<groupExpression><![CDATA[$F{koefisien_bor}]]></groupExpression>
+	</group>
+	<group name="sifat_kong">
+		<groupExpression><![CDATA[$F{sifat_kong}]]></groupExpression>
+	</group>
+	<group name="pengawas_bor">
+		<groupExpression><![CDATA[$F{pengawas_bor}]]></groupExpression>
+	</group>
+	<group name="jenis_alat_ukur">
+		<groupExpression><![CDATA[$F{jenis_alat_ukur}]]></groupExpression>
+	</group>
+	<group name="jenis_alat_bor">
+		<groupExpression><![CDATA[$F{jenis_alat_bor}]]></groupExpression>
+	</group>
+	<group name="gr_mit_real">
+		<groupExpression><![CDATA[$F{gr_mit_real}]]></groupExpression>
+	</group>
+	<group name="basis_alat_ukur">
+		<groupExpression><![CDATA[$F{basis_alat_ukur}]]></groupExpression>
+	</group>
+	<group name="kadar_mit_real">
+		<groupExpression><![CDATA[$F{kadar_mit_real}]]></groupExpression>
+	</group>
+	<group name="butiran">
+		<groupExpression><![CDATA[$F{butiran}]]></groupExpression>
+	</group>
+	<group name="mit">
+		<groupExpression><![CDATA[$F{mit}]]></groupExpression>
+	</group>
+	<group name="biaya_lubang">
+		<groupExpression><![CDATA[$F{biaya_lubang}]]></groupExpression>
+	</group>
+	<group name="ada_sample">
+		<groupExpression><![CDATA[$F{ada_sample}]]></groupExpression>
+	</group>
+	<group name="metode_ukur">
+		<groupExpression><![CDATA[$F{metode_ukur}]]></groupExpression>
+	</group>
+	<group name="biaya_permeter">
+		<groupExpression><![CDATA[$F{biaya_permeter}]]></groupExpression>
+	</group>
+	<group name="lokasi">
+		<groupExpression><![CDATA[$F{lokasi}]]></groupExpression>
+	</group>
+	<group name="nama_wilayah">
+		<groupExpression><![CDATA[$F{nama_wilayah}]]></groupExpression>
+	</group>
+	<group name="nama_proyek">
+		<groupExpression><![CDATA[$F{nama_proyek}]]></groupExpression>
+	</group>
+	<group name="nama_regu">
+		<groupExpression><![CDATA[$F{nama_regu}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="34" splitType="Stretch">
+			<textField>
+				<reportElement x="260" y="0" width="290" height="34" uuid="bf530900-942a-469f-b3e2-8f4932a48ce1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DATA LUBANG"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="27" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="26" splitType="Stretch"/>
+	</detail>
+</jasperReport>
