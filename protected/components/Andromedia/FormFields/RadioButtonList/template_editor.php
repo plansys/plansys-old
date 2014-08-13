@@ -7,11 +7,11 @@
         <div ng-if="field.itemLayout == 'ButtonGroup'">
             <div class="btn-group">
                 <label class="radio-btn btn btn-sm btn-default" id="{{field.name}}" 
-                       btn-radio="'<?= $value; ?>'" value="<?= $value; ?>" uncheckable 
+                       btn-radio="'<?= $value; ?>'" value="<?= $value; ?>" ng-model="value" uncheckable 
                        ng-repeat="(key, value) in field.list  track by $index">{{value}}</label>
             </div>
         </div>
-        <div ng-if="field.itemLayout 1 = 'ButtonGroup'">
+        <div ng-if="field.itemLayout != 'ButtonGroup'">
             <label class="input-group {{field.itemLayout == 'Horizontal' ? 'inline' : ''}}" style="margin-right:5px;"
                    ng-repeat="(key, value) in field.list  track by $index">
                 <input type="radio" name="{{field.name}}" id="{{field.name}}" value="{{key}}"> {{value}}

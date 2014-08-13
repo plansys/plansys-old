@@ -72,7 +72,7 @@ class FormBuilder extends CComponent {
             $class = @$f['type'];
             if ($class == null)
                 continue;
-
+            
             if ($class == "ColumnField") {
                 $columnField = new ColumnField;
                 $defaultTotalColumns = $columnField->totalColumns;
