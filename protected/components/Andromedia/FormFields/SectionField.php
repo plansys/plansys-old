@@ -2,6 +2,11 @@
 
 class SectionField extends FormField {
 
+    public function getFieldProperties() {
+        return array(
+        );
+    }
+
     public $content = array('<column-placeholder></column-placeholder>');
     public $renderContent = "";
     public $parseField = array(

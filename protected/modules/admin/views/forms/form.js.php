@@ -228,9 +228,11 @@
                     var depth = $(this).attr('depth');
                     if (depth > 0) {
                         var that = $(this);
-                        for (var i = 0; i < depth) {
-                            that = $(that).parentUntil('.form-field').find(".field-info");
-                            
+                        for (var i = 0; i < depth; i++) {
+                            var parent = $(that).parentsUntil('.form-field')
+                            if (typeof parent != "undefined") {
+                                that = parent.find(".field-info");
+                            }
                         }
                     }
                 });
