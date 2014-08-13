@@ -48,7 +48,7 @@ return array(
             'cachePath' => $basePath . '/runtime/doctrine_cache',
             'db' => array(
                 'driver' => 'pdo_mysql',
-                'dbname' => 'dsi',
+                'dbname' => 'plansys',
                 'user' => 'root',
                 'password' => 'okedeh'
             )

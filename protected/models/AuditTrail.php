@@ -76,7 +76,7 @@ class AuditTrail extends ActiveRecord {
         if (isset(Yii::app()->params['AuditTrail']) && isset(Yii::app()->params['AuditTrail']['table']))
             return Yii::app()->params['AuditTrail']['table'];
         else
-            return 'audit_trail';
+            return 'p_audit_trail';
     }
 
     /**
