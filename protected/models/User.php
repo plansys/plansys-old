@@ -39,7 +39,7 @@ class User extends ActiveRecord {
      * @return string the associated database table name
      */
     public function tableName() {
-        return 'user';
+        return 'p_user';
     }
 
     public function getRoles_text() {

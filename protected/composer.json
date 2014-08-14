@@ -5,5 +5,8 @@
     "require": {
         "bluecloudy/yiidoctrine2": "dev-master",
         "doctrine/orm": "2.4.*"
+    },
+	"require-dev": {
+        "phpdocumentor/phpdocumentor": "2.*"
     }
 }
