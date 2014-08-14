@@ -415,7 +415,7 @@ EOF;
 
         ## wrap form
         if ($wrapForm) {
-            $url = "";
+            $url = "#";
             $ngctrl = $renderWithAngular ? 'ng-controller="' . $modelClass . 'Controller"' : '';
             $html .= '<form ' . $ngctrl
                 . ' method="POST" action="' . $url . '" '

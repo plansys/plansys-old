@@ -16,15 +16,18 @@ class Controller extends CController {
         return Yii::app()->request->baseUrl . $path;
     }
 
-    public function renderForm($class, $action, $model) {
+    public function renderForm($class, $model, $options = array()) {
         $fb = FormBuilder::load($class);
         $this->pageTitle = $fb->form['formTitle'];
         $this->layout = '//layouts/form';
 
         $renderOptions = array(
             'wrapForm' => true,
-            'action' => $action
+            'action' => $this->action->id
         );
+        
+        $renderOptions = array_merge($renderOptions, $options);
+        
         $mainform = $fb->render($model, $renderOptions);
 
         $data = $fb->form['layout']['data'];
@@ -67,7 +70,7 @@ class Controller extends CController {
         } else {
             $module = Yii::app()->user->role;
             $menuModule = include(Yii::getPathOfAlias("application.modules.{$module}.menus.MainMenu") . ".php");
-            
+
             return array_merge($default, $menuModule);
         }
     }
