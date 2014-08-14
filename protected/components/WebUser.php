@@ -14,6 +14,7 @@ class WebUser extends CWebUser {
             // Not identified => no rights
             return false;
         }
+        
         if (Yii::app()->user->isGuest) {
             return false;
         }

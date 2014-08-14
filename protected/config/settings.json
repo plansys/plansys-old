@@ -1,0 +1,9 @@
+{
+    "db": {
+        "driver": "JON",
+        "server": "",
+        "username": "",
+        "password": "",
+        "dbname": ""
+    }
+}
