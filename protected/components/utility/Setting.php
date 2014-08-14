@@ -21,7 +21,10 @@ class Setting {
         Setting::$path = $bp . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
 
         if (!is_file(Setting::$path)) {
-            file_put_contents(Setting::$path, Setting::$default);
+            $json = json_decode(Setting::$default);
+            $json = json_encode($json, JSON_PRETTY_PRINT);
+            
+            file_put_contents(Setting::$path, $json);
         }
         Setting::$data = json_decode(file_get_contents(Setting::$path), true);
     }

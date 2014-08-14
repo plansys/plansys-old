@@ -1,7 +1,6 @@
 <?php
 
 
-
 ## Setting initialization
 Setting::init(__FILE__);
 $basePath = Setting::getBasePath();
