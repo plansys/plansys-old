@@ -707,6 +707,23 @@ EOF;
         );
         ## end..
 
+        ## start: temporary add files in FormFields Dir
+        $forms_dir = Yii::getPathOfAlias("application.forms") . DIRECTORY_SEPARATOR;
+        $items = glob($forms_dir . "*.php");
+        foreach ($items as $k => $f) {
+
+            $items[$k] = str_replace($forms_dir, "", $f);
+            $items[$k] = str_replace('.php', "", $items[$k]);
+            if (!is_null($func)) {
+                $items[$k] = $func($items[$k]);
+            }
+        }
+        $files[] = array(
+            'module' => 'Root Form',
+            'items' => $items
+        );
+        ## end..
+
         foreach ($modules as $m) {
             $module = ucfirst(str_replace($module_dir . DIRECTORY_SEPARATOR, '', $m));
             $item_dir = $m . DIRECTORY_SEPARATOR . str_replace('.', DIRECTORY_SEPARATOR, $dir);
