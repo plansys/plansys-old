@@ -691,7 +691,7 @@ EOF;
         $files = array();
 
         ## start: temporary add files in FormFields Dir
-        $forms_dir = Yii::getPathOfAlias("application.components.Andromedia.FormFields") . DIRECTORY_SEPARATOR;
+        $forms_dir = Yii::getPathOfAlias("application.components.ui.FormFields") . DIRECTORY_SEPARATOR;
         $items = glob($forms_dir . "*.php");
         foreach ($items as $k => $f) {
 

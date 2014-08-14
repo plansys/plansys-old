@@ -172,7 +172,7 @@ class FormField extends CComponent {
                 $class = get_class($this);
                 Yii::app()->clientScript->registerScriptFile(
                     Yii::app()->assetManager->publish(
-                        Yii::getPathOfAlias("application.components.Andromedia.FormFields.{$class}") . '/' . $js
+                        Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js
                     ), CClientScript::POS_END
                 );
             }
@@ -186,7 +186,7 @@ class FormField extends CComponent {
             foreach ($includeJS as $js) {
                 $class = get_class($this);
                 $html[] = Yii::app()->assetManager->publish(
-                    Yii::getPathOfAlias("application.components.Andromedia.FormFields.{$class}") . '/' . $js
+                    Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js
                 );
             }
         }
@@ -235,7 +235,7 @@ class FormField extends CComponent {
     }
 
     public static function all() {
-        $ffdir = Yii::getPathOfAlias('application.components.Andromedia.FormFields') . DIRECTORY_SEPARATOR;
+        $ffdir = Yii::getPathOfAlias('application.components.ui.FormFields') . DIRECTORY_SEPARATOR;
         $dir = glob($ffdir . "*.php");
         return array_map(function ($d) use ($ffdir) {
             $class = str_replace($ffdir, "", $d);
@@ -262,7 +262,7 @@ class FormField extends CComponent {
     }
 
     public static function settings($formType) {
-        $ffdir = Yii::getPathOfAlias('application.components.Andromedia.FormFields') . DIRECTORY_SEPARATOR;
+        $ffdir = Yii::getPathOfAlias('application.components.ui.FormFields') . DIRECTORY_SEPARATOR;
         $dir = glob($ffdir . "*.php");
         $result = array(
             'icon' => array(),

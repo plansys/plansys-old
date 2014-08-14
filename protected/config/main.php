@@ -1,10 +1,10 @@
 <?php
 
-## get base path
-$basePath = dirname(__FILE__);
-$basePath = explode(DIRECTORY_SEPARATOR, $basePath);
-array_pop($basePath);
-$basePath = implode(DIRECTORY_SEPARATOR, $basePath);
+
+
+## Setting initialization
+Setting::init(__FILE__);
+$basePath = Setting::getBasePath();
 
 return array(
     'basePath' => $basePath,
@@ -16,8 +16,10 @@ return array(
         'application.models.*',
         'application.forms.*',
         'application.components.*',
-        'application.components.Andromedia.*',
-        'application.components.Andromedia.FormFields.*',
+        'application.components.ui.*',
+        'application.components.utility.*',
+        'application.components.models.*',
+        'application.components.ui.FormFields.*',
         'application.behaviors.*',
         'ext.YiiJasper.*',
         'ext.ETwigViewRenderer'
@@ -46,12 +48,7 @@ return array(
                 $basePath . '/models'
             ),
             'cachePath' => $basePath . '/runtime/doctrine_cache',
-            'db' => array(
-                'driver' => 'pdo_mysql',
-                'dbname' => 'plansys',
-                'user' => 'root',
-                'password' => 'okedeh'
-            )
+            'db' => Setting::getDoctrineDB()
         ),
         'EJSUrlManager' => array(
             'class' => 'ext.JSUrlManager.EJSUrlManager'
@@ -65,13 +62,7 @@ return array(
             'allowAutoLogin' => true,
             'class' => 'WebUser',
         ),
-        'db' => array(
-            'connectionString' => 'mysql:host=localhost;dbname=dsi',
-            'emulatePrepare' => true,
-            'username' => 'root',
-            'password' => 'okedeh',
-            'charset' => 'utf8',
-        ),
+        'db' => Setting::getDB(),
         'errorHandler' => array(
             'errorAction' => 'site/error',
         ),

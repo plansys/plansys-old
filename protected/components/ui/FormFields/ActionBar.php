@@ -12,6 +12,11 @@
  * @author rizky
  */
 class ActionBar extends FormField {
+
+    public function getFieldProperties() {
+        return array();
+    }
+    
     public static $toolbarName = "Action Bar";
     public static $category = "Layout";
     public static $toolbarIcon = "fa fa-suitcase";

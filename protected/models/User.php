@@ -13,22 +13,6 @@
  */
 class User extends ActiveRecord {
 
-
-    public static function a() {
-        return [
-            [
-                'key1' => 'orang',
-                'key2' => 'sangat',
-                'key3' => 'bom'
-            ],
-            [
-                'key1' => 'jos',
-                'key2' => 'gandos',
-                'key3' => 'bumerang'
-            ],
-        ];
-    }
-    
     protected $nip;
     protected $username;
     protected $fullname;
@@ -46,43 +30,6 @@ class User extends ActiveRecord {
         return str_replace(array_keys(self::itemAlias('roles')), self::itemAlias('roles'), $this->roles);
     }
 
-    public static function itemAlias($type, $code = NULL) {
-        $_items = array(
-            'roles' => array(
-                'PDE' => 'PDE - Pengolahan Data Explorasi',
-                'LAB' => 'LAB - Laboratorium',
-                'UKR' => 'UKR - Ukur',
-                'OPX' => 'OPX - Operasi Explorasi',
-                'POP' => 'POP - Perencanaan Operasi Produksi',
-                'K3L' => 'K3LH - Keselamatan, Kesehatan, dan Lingkungan Hidup',
-                'GLG' => 'GLG - Geologi',
-                'GFK' => 'GFK - Geofisika',
-                'INV' => 'INV- Inventory',
-                'ADMIN' => 'ADMIN - Administrator/Manajemen'
-            )
-        );
-        if (isset($code))
-            return isset($_items[$type][$code]) ? $_items[$type][$code] : false;
-        else
-            return isset($_items[$type]) ? $_items[$type] : false;
-    }
-
-    /**
-     * @return array validation rules for model attributes.
-     */
-    public function rules() {
-        // NOTE: you should only define rules for those attributes that
-        // will receive user inputs.
-        return array(
-            array('nip, username, fullname, password, roles', 'required'),
-            array('nip, username, fullname, password', 'length', 'max' => 255),
-            array('roles', 'length', 'max' => 25),
-            // The following rule is used by search().
-            // @todo Please remove those attributes that should not be searched.
-            array('id, nip, username, fullname, password, roles', 'safe', 'on' => 'search'),
-        );
-    }
-    
     protected function beforeSave() {
         if (strlen($this->password) != 32) {
             $this->password = md5($this->password);
@@ -90,6 +37,7 @@ class User extends ActiveRecord {
         
         return parent::beforeSave();
     }    
+    
     /**
      * @return array of used behaviors
      */

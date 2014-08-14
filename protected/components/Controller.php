@@ -67,7 +67,7 @@ class Controller extends CController {
         } else {
             $module = Yii::app()->user->role;
             $menuModule = include(Yii::getPathOfAlias("application.modules.{$module}.menus.MainMenu") . ".php");
-
+            
             return array_merge($default, $menuModule);
         }
     }
