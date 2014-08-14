@@ -328,6 +328,25 @@ div[ui-content] {
 .form-builder-layout form {
     margin:0px 15px;
 }
+.section-header {
+    border:1px solid #ececeb;
+    border-left:0px;
+    border-right:0px;
+    background:#fafafa;
+    padding:4px 20px;
+    color:#777;
+    font-size:13px;
+    text-shadow:rgb(255, 255, 255) 0px 1px 0px;
+    font-weight: normal;
+    height: 28px;
+    line-height: 18px;
+}
+.form-builder > form > div > ol > li > .SectionHeader {
+    margin:0px -30px;
+    border-left:0px;
+    border-right:0px;
+}
+
 
 .duplicate {
     position:absolute;z-index:9;
@@ -546,7 +565,7 @@ li:hover > .item-btn {
     border:2px dashed #ececeb;
     width:100% !important;
 }
-.form-builder li .field {
+.form-builder li .form-field {
     border:1px dashed transparent;
     padding:5px;
     min-height:30px;
@@ -566,7 +585,7 @@ li:hover > .item-btn {
 }
 
 
-.form-builder li .field.active {
+.form-builder li > .form-field.active {
     background:#fafafa;
     border:1px solid blue;
 }
@@ -577,6 +596,7 @@ li:hover > .item-btn {
     position:absolute;
     right:0px;
     top:0px;
+    width:250px;
     z-index:99999;
 }
 
@@ -649,34 +669,41 @@ li:hover > .item-btn {
 /********************************* COLUMN FIELD ********************************/
 
 
-.ColumnField, .SectionField {
-    padding:0px !important;
+.form-builder li .ColumnField{
+    padding:0px ;
     border:0px !important;
     background:transparent;
     position:relative;
 }
 
-.ColumnField.active,.SectionField.active {
-    padding:0px !important;
+.form-builder li .ColumnField .ColumnField {
+    margin:-1px;
 }
 
-.ColumnField:hover, .ColumnField.active,
-.SectionField:hover, .SectionField.active {
+.ColumnField.active{
+    padding:0px;
+}
+
+.ColumnField:hover, .ColumnField.active {
     background:url('../img/bg-column.png') !important;
 }
 
 .form-builder-column {
-    border:1px dashed transparent ;
     padding:0px 0px 0px 0px;
+    border-left:1px dashed #ececeb;
     vertical-align: top;
 }
-
-.active .form-builder-column {
-    border:1px solid blue !important;
-}
-.form-builder:hover .form-builder-column {
+.ColumnField  .form-field-content  table {
     border:1px dashed #ececeb;
 }
+.ColumnField.active .form-field-content  table {
+    border:1px solid blue;
+}
+
+.ColumnField.active .form-field-content .form-builder-column {
+    border-left:1px solid blue;
+}
+
 
 .column-placeholder-handle{
     position:absolute !important;

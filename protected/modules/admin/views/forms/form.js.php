@@ -196,6 +196,9 @@
         }
         $scope.detectDuplicate = function() {
             $(".duplicate").addClass('ng-hide').each(function() {
+                if ($(this).attr('fname') == '')
+                    return;
+
                 var name = ".d-" + $scope.formatName($(this).attr('fname'));
                 var $name = $(name);
                 if (name.trim() != ".d-") {
@@ -214,29 +217,11 @@
                 }
             });
         };
-        var timeout = setTimeout(function() {
-            $scope.detectDuplicate();
-        }, 0);
         $scope.relayout = function(type) {
             if (type == "ColumnField") {
                 $scope.refreshColumnPlaceholder();
             }
-            clearTimeout(timeout);
-            timeout = setTimeout(function() {
-                $scope.detectDuplicate();
-                $(".field-info").each(function() {
-                    var depth = $(this).attr('depth');
-                    if (depth > 0) {
-                        var that = $(this);
-                        for (var i = 0; i < depth; i++) {
-                            var parent = $(that).parentsUntil('.form-field')
-                            if (typeof parent != "undefined") {
-                                that = parent.find(".field-info");
-                            }
-                        }
-                    }
-                });
-            }, 0);
+            $scope.detectDuplicate();
         }
         $scope.isCloning = false;
         $scope.isCloneDragging = false;
@@ -285,7 +270,12 @@
                     });
         };
 
-        $scope.select = function(item) {
+        $scope.select = function(item, event) {
+            $(".form-field.active").removeClass("active");
+            $(event.currentTarget).addClass("active");
+            event.stopPropagation();
+            console.log(event.currentTarget);
+
             $timeout(function() {
                 if ($scope.active == null || item.$modelValue.type != $scope.active.type) {
                     $("#toolbar-properties").hide();
@@ -294,6 +284,8 @@
                 $scope.activeTree = item;
                 $scope.active = item.$modelValue;
                 $scope.tabs.properties = true;
+
+
             }, 15);
         };
         $scope.selected = function() {
@@ -309,34 +301,29 @@
             });
         };
 
-        $('body').on('click', '.form-field', function(e) {
-            $(".form-field.active").removeClass("active");
-            if (this == e.target) {
-                if ($(this).hasClass('column-placeholder')) {
-                    $timeout(function() {
-                        $scope.unselect();
-                    }, 0);
-                    return false;
-                }
-
-                $(this).find(".form-field-content:eq(0)").addClass('active').click();
-
-            } else {
-                if ($(e.target).hasClass('form-builder-column')) {
-                    $timeout(function() {
-                        $scope.unselect();
-                    }, 0);
-                    return false;
-                }
-
-                $(this).addClass('active');
-                e.stopPropagation();
-            }
-        });
         $('body').on('click', 'div[ui-header]', function(e) {
             if (e.target == this) {
                 $scope.unselectViaJquery();
             }
+        });
+        $('body').on('mouseenter', '.form-field', function(e) {
+            var formfields = $(this).parentsUntil('div[ui-tree]', '.form-field');
+
+            function setpos(el, i) {
+                $(el).find('.field-info:eq(0)').css({
+                    'margin-top': (i * -1 * 20) + 'px',
+                });
+            }
+
+            if (formfields.length > 0) {
+                $(formfields).each(function(i) {
+                    setpos(this, i + 1);
+                });
+            } else {
+                setpos(this, 0);
+            }
+
+            e.stopPropagation();
         });
     });
 </script>
