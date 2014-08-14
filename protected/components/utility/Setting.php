@@ -69,7 +69,7 @@ class Setting {
     }
 
     public static function getDB() {
-        array(
+        return array(
             'connectionString' => 'mysql:host=localhost;dbname=plansys',
             'emulatePrepare' => true,
             'username' => 'root',

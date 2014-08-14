@@ -3,15 +3,10 @@
 class UserController extends Controller {
 
     public function actionTest() {
-        
-        $a = "wew <?= 'asdasd' ?>";
-        
-        
         $em = Yii::app()->doctrine->entityManager;
-
         $meta = $em->getMetadataFactory()->getAllMetadata();
-        $query = $em->createQuery("SELECT a FROM AuditTrail a JOIN a.user u WHERE u.roles = 'PDE'");
-        
+        $query = $em->createQuery("SELECT a FROM AuditTrail a");
+        var_dump($query->getResult());
     }
     
     public function actionCreate() {

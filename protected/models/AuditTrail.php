@@ -29,14 +29,6 @@ class AuditTrail extends ActiveRecord {
     protected $user;
     
 
-    /**
-     * Returns the static model of the specified AR class.
-     * @return AuditTrail the static model class
-     */
-    public static function model($className = __CLASS__) {
-        return parent::model($className);
-    }
-
     public function getAction_label() {
         $r = "";
         switch ($this->action) {

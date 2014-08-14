@@ -9,17 +9,14 @@ app.directive('dropDownList', function($timeout) {
 
             return function($scope, $el, attrs, ctrl) {
                 // when ng-model is changed from inside directive
-                $scope.update = function(value) {
+                $scope.update = function(value, f) {
                     $scope.updateInternal(value);
-                    if (typeof ctrl != 'undefined') {
-                        $timeout(function() {
-                            ctrl.$setViewValue($scope.value);
-
-                            if ($scope.showOther && !$scope.itemExist()) {
-                                $el.find('.dropdown-other-type').focus();
-                            }
-                        }, 0);
-                    }
+                    $timeout(function() {
+                        ctrl.$setViewValue($scope.value);
+                        if ($scope.showOther && !$scope.itemExist()) {
+                            $el.find('.dropdown-other-type').focus();
+                        }
+                    }, 0);
                 };
                 $scope.updateInternal = function(value) {
                     $scope.value = value;
@@ -31,6 +28,15 @@ app.directive('dropDownList', function($timeout) {
                     $scope.text = $el.find("li a[value='" + value + "']").html();
                     $scope.toggled(false);
                 };
+
+                $scope.updateOther = function(value) {
+                    $scope.showOther = false;
+                    $scope.updateInternal(value);
+                    $timeout(function() {
+                        ctrl.$setViewValue($scope.value);
+                        $scope.showOther = true;
+                    }, 0);
+                }
 
                 $scope.itemExist = function(value) {
                     if (typeof value == "undefined")
@@ -86,6 +92,7 @@ app.directive('dropDownList', function($timeout) {
                 });
 
                 // when ng-model, or ng-form-list is changed from outside directive
+
                 if (attrs.ngFormList) {
                     function changeFieldList() {
                         $timeout(function() {
@@ -113,6 +120,7 @@ app.directive('dropDownList', function($timeout) {
                 $scope.showOther = $el.find("data[name=show_other]").text().trim() == "Yes" ? true : false;
                 $scope.otherLabel = $el.find("data[name=other_label]").html();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
+                $scope.value = $el.find("data[name=value]").html().trim();
                 $scope.inEditor = typeof $scope.$parent.inEditor != "undefined";
                 $scope.search = "";
                 //if ngModel is present, use that instead of value from php

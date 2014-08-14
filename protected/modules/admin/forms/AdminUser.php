@@ -1,69 +1,40 @@
 <?php
 
 class AdminUser extends User {
-
     public function getFields() {
         return array (
             array (
-                'label' => 'Roles',
-                'name' => 'roles',
+                'label' => 'Text Field',
+                'name' => 'bug fix',
                 'type' => 'TextField',
             ),
             array (
-                'totalColumns' => '1',
-                'column1' => array (
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'column2' => array (
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'column3' => array (
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'column4' => array (
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'column5' => array (
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'type' => 'ColumnField',
-            ),
-            array (
-                'title' => 'Section Header',
-                'type' => 'SectionHeader',
-            ),
-            array (
-                'label' => 'Password',
-                'name' => 'password',
+                'label' => 'Text Field',
+                'name' => 'username',
                 'type' => 'TextField',
             ),
             array (
-                'column2' => array (
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'type' => 'ColumnField',
+                'label' => 'Text Field',
+                'name' => 'tew',
+                'type' => 'TextField',
             ),
             array (
-                'column1' => array (
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'column2' => array (
-                    '<column-placeholder></column-placeholder>',
-                    array (
-                        'label' => 'Username',
-                        'name' => 'id',
-                        'type' => 'TextField',
-                    ),
-                ),
-                'type' => 'ColumnField',
+                'label' => 'Text Field',
+                'name' => 'qwdq',
+                'type' => 'TextField',
             ),
             array (
-                'label' => 'Submit',
-                'type' => 'SubmitButton',
+                'label' => 'Text Field',
+                'name' => 'dqw',
+                'type' => 'TextField',
+            ),
+            array (
+                'label' => 'Text Fielddwq',
+                'name' => 'fe',
+                'type' => 'TextField',
             ),
         );
     }
-
     public function getForm() {
         return array (
             'formTitle' => 'User',
@@ -71,15 +42,9 @@ class AdminUser extends User {
                 'name' => 'full-width',
                 'data' => array (
                     'col1' => array (
-                        'size' => '100',
-                        'sizetype' => '',
                         'type' => 'mainform',
                     ),
                 ),
-            ),
-            'actions' => array (
-                '/admin/user/create',
-                '/admin/user/test',
             ),
         );
     }

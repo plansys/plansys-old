@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 abstract class ActiveRecord extends CActiveRecord {
 
     protected $id; // needed by Doctrine
+    private static $_models = array();   // class name => model
 
     /**
      * @return array of used behaviors
@@ -17,6 +18,24 @@ abstract class ActiveRecord extends CActiveRecord {
                 'class' => 'LoggableBehavior'
             ),
         );
+    }
+
+    /**
+     * Returns the static model of the specified AR class.
+     * @return the static model class
+     */
+    public static function model($className = null) {
+        if (is_null($className)) {
+            $className = get_called_class();
+        }
+        
+        if (isset(self::$_models[$className]))
+            return self::$_models[$className];
+        else {
+            $model = self::$_models[$className] = new $className(null);
+            $model->attachBehaviors($model->behaviors());
+            return $model;
+        }
     }
 
     /**
@@ -51,6 +70,7 @@ abstract class ActiveRecord extends CActiveRecord {
             try {
                 $return = parent::__get($name);
             } catch (Exception $e) {
+                throw $e;
                 $return = null;
             }
             return $return;
@@ -84,7 +104,7 @@ abstract class ActiveRecord extends CActiveRecord {
         ));
         return $array;
     }
-    
+
     public static function loadMetadata(ClassMetadata $metadata) {
         $builder = new ClassMetadataBuilder($metadata);
         if (!isset($metadata->fieldMappings['id'])) {

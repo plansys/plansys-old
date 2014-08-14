@@ -257,7 +257,23 @@
         };
         $scope.active = null;
         $scope.activeTree = null;
+        $scope.deleteField = function() {
+            $el = $($scope.activeTree.$parent.$element);    
+            $old = $scope.activeTree;
 
+            $timeout(function() {
+                if ($el.next().length > 0) {
+                    $el.next().find(".form-field:eq(0)").click();
+                } else if ($el.prev().length > 0) {
+                    $el.prev().find(".form-field:eq(0)").click();
+                } else {
+                    $scope.unselect();
+                }
+
+                $old.remove();
+                $scope.save();
+            }, 0);
+        }
         $scope.save = function() {
             $scope.saving = true;
             $http.post('<?= $this->createUrl("save", array('class' => $class)); ?>', {fields: $scope.fields})
@@ -274,7 +290,6 @@
             $(".form-field.active").removeClass("active");
             $(event.currentTarget).addClass("active");
             event.stopPropagation();
-            console.log(event.currentTarget);
 
             $timeout(function() {
                 if ($scope.active == null || item.$modelValue.type != $scope.active.type) {
@@ -284,8 +299,6 @@
                 $scope.activeTree = item;
                 $scope.active = item.$modelValue;
                 $scope.tabs.properties = true;
-
-
             }, 15);
         };
         $scope.selected = function() {

@@ -34,7 +34,7 @@
 
             /*********************** TOOLBAR ***********************/
             $scope.settings = $scope.$parent.toolbarSettings;
-            
+
             $scope.categorySettings = <?php echo json_encode(FormField::$categorySettings); ?>;
             $scope.toolbar = <?php echo json_encode($toolbarData); ?>;
             $scope.toolbarDefault = angular.copy($scope.toolbar);
@@ -47,10 +47,16 @@
                 },
                 dragStop: function(scope) {
                     $scope.$parent.save();
-                    
+
                     $timeout(function() {
                         $scope.toolbar = $scope.toolbarDefault;
                         $scope.toolbarDefault = angular.copy($scope.toolbar);
+                        $(scope.dest.nodesScope.$element).find(".form-field:eq(" + scope.dest.index + ")").click();
+                        var model = scope.dest.nodesScope.$modelValue[scope.dest.index];
+
+                        if (typeof model.name != "undefined") {
+                            model.name = model.name + " " + $(".form-builder ." + model.type).length;
+                        }
                     }, 0);
                 }
             };

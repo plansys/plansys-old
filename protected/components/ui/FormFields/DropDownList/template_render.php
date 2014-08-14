@@ -35,10 +35,10 @@
                     class="split-button <?= @$this->fieldOptions['class'] ?>">
                 <span class="caret"></span>
             </button>
-            <input ng-if="showOther && !itemExist()" type="text" 
-                   ng-model="value" ng-change="update(value)" ng-delay="500"
+            <input ng-if="showOther && !itemExist()" type="text"
+                   ng-model="value" ng-change="updateOther(value)" ng-delay="500"
                    class="form-control dropdown-other-type">
-
+            
             <!-- dropdown item -->
             <div class="dropdown-menu open">
                 <div class="search" ng-show="searchable">
@@ -64,7 +64,6 @@
                 </ul>
             </div>
         </div>
-
         <input type="text" class="invisible"
                ng-model="value" id="<?= $this->renderID ?>"
                name="<?= $this->name ?>" value='<?= $this->value ?>'/>

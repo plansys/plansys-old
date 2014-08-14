@@ -49,9 +49,7 @@
 
                         <div ng-if="active" class="properties-header">
                             <div class='btn btn-danger btn-xs pull-right' 
-                                 ng-click='activeTree.remove();
-                                             save();
-                                             unselect();'>
+                                 ng-click='deleteField()'>
                                 <i class='fa fa-times'></i>
                                 Delete
                             </div>
