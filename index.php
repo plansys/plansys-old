@@ -13,4 +13,9 @@ defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL', 3);
 
 require_once($setting);
 require_once($yii);
-Yii::createWebApplication($config)->run();
+if(!file_exists(dirname(__FILE__).'/assets') || !file_exists(dirname(__FILE__).'/protected/runtime')){
+    header("Location: installer/index.php");
+    die();
+}else{
+    Yii::createWebApplication($config)->run();
+}
