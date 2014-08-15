@@ -1,0 +1,10 @@
+{
+    "db": {
+        "driver": "mysql",
+        "server": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "dbname": ""
+    }
+}
