@@ -1,6 +1,6 @@
 {
     "db": {
-        "driver": "",
+        "driver": "mysql",
         "server": "",
         "port": "",
         "username": "",
