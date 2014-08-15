@@ -178,12 +178,6 @@ function checkServerVar()
 }
 function checkPermission(){
     if (is_writable(dirname(__FILE__))) {
-        if (!file_exists(dirname(__FILE__).'/../assets')) {
-        mkdir(dirname(__FILE__).'/../assets', 0777, true);
-        }
-        if (!file_exists(dirname(__FILE__).'/../protected/runtime')) {
-            mkdir(dirname(__FILE__).'/../protected/runtime', 0777, true);
-        }
         return '';
     } else {
         return t('yii','/assets and /protected/runtime should be writable');
@@ -303,10 +297,7 @@ foreach($requirements as $i=>$requirement)
 		$requirements[$i][4]='&nbsp;';
 }
 
-$lang=getPreferredLanguage();
-$viewFile=dirname(__FILE__)."/views/$lang/index.php";
-if(!is_file($viewFile))
-	$viewFile=dirname(__FILE__).'/views/index.php';
+$viewFile=dirname(__FILE__).'/views/index.php';
 
 renderFile($viewFile,array(
 	'requirements'=>$requirements,
