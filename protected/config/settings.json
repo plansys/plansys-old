@@ -1,9 +1,9 @@
 {
     "db": {
         "driver": "JON",
-        "server": "",
-        "username": "",
-        "password": "",
-        "dbname": ""
+        "server": "localhost",
+        "username": "root",
+        "password": "okedeh",
+        "dbname": "plansys"
     }
 }
