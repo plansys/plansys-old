@@ -1,10 +1,10 @@
 {
     "db": {
-        "driver": "mysql",
-        "server": "localhost",
-        "port": "3306",
-        "username": "root",
-        "password": "okedeh",
-        "dbname": "plansys"
+        "driver": "",
+        "server": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "dbname": ""
     }
 }
