@@ -3,6 +3,9 @@
 class InstallController extends Controller {
 
     public function actionIndex() {
+        if (!Yii::app()->user->isGuest) {
+            Yii::app()->user->logout();
+        }
         $model = new AdminSetup;
         $model->attributes = Setting::get('db');
         if (isset($_POST['AdminSetup'])) {
@@ -12,8 +15,13 @@ class InstallController extends Controller {
                 $sql_set_db = "USE `".Setting::get('db.dbname')."`;";
                 $sql_content = file_get_contents(Setting::getRootPath() . '/installer/database/plansys.sql');
                 $sql_content = $sql_set_db.' '.$sql_content;
-                $command = Yii::app()->db->createCommand($sql_content);
+                
+                $conn = Setting::getDB();
+                $db = new PDO($conn['connectionString'], $conn['username'], $conn['password']);
+                $command = $db->prepare($sql_content);
                 $command->execute();
+                
+                unlink(Setting::getRootPath() . '/installer/setup_db.lock');
                 $this->redirect(array('site/login'));
             } else {
                 $model->errors = array(
