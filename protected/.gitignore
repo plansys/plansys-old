@@ -1,4 +1,2 @@
 /runtime
-/config/setting.json
-
-.gitignore
+config/settings.json
