@@ -1,15 +1,9 @@
 {
     "db": {
         "driver": "mysql",
-<<<<<<< HEAD
         "server": "abc",
         "port": "3306",
         "username": "root",
-=======
-        "server": "",
-        "port": "",
-        "username": "",
->>>>>>> df23b018b4919fc1c7127f4c3bcfb9e01d01e485
         "password": "",
         "dbname": ""
     }
