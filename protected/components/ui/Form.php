@@ -2,6 +2,15 @@
 
 class Form extends CComponent {
 
+    private $_errors = array();
+    public function getErrors() {
+        return $this->_errors;
+    }
+    
+    public function setErrors($value) {
+        $this->_errors = $value;
+    }
+    
     public function getAttributes() {
         $reflect = new ReflectionClass($this);
         $props = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);

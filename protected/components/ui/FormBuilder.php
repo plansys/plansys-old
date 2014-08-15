@@ -72,7 +72,7 @@ class FormBuilder extends CComponent {
             $class = @$f['type'];
             if ($class == null)
                 continue;
-            
+
             if ($class == "ColumnField") {
                 $columnField = new ColumnField;
                 $defaultTotalColumns = $columnField->totalColumns;
@@ -368,10 +368,14 @@ EOF;
     public function renderAngularController($formdata = null) {
         $modelClass = get_class($this->model);
 
+
         ## define formdata
         if (is_array($formdata)) {
             $data['data'] = $formdata;
-        } else if (is_subclass_of($formdata, 'ActiveRecord')) {
+        } else if (
+                is_subclass_of($formdata, 'ActiveRecord') ||
+                is_subclass_of($formdata, 'Form')
+        ) {
             $data['data'] = $formdata->attributes;
             $data['errors'] = $formdata->errors;
         }
@@ -418,14 +422,17 @@ EOF;
             $url = "#";
             $ngctrl = $renderWithAngular ? 'ng-controller="' . $modelClass . 'Controller"' : '';
             $html .= '<form ' . $ngctrl
-                . ' method="POST" action="' . $url . '" '
-                . ' class="form-horizontal" role="form">';
+                    . ' method="POST" action="' . $url . '" '
+                    . ' class="form-horizontal" role="form">';
         }
 
         ## define formdata
         if (is_array($formdata)) {
             $data['data'] = $formdata;
-        } else if (is_subclass_of($formdata, 'ActiveRecord')) {
+        } else if (
+                is_subclass_of($formdata, 'ActiveRecord') ||
+                is_subclass_of($formdata, 'Form')
+        ) {
             $data['data'] = $formdata->attributes;
             $data['errors'] = $formdata->errors;
         }
@@ -706,7 +713,6 @@ EOF;
             'items' => $items
         );
         ## end..
-
         ## start: temporary add files in FormFields Dir
         $forms_dir = Yii::getPathOfAlias("application.forms") . DIRECTORY_SEPARATOR;
         $items = glob($forms_dir . "*.php");

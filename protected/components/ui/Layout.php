@@ -4,7 +4,6 @@ class Layout extends CComponent {
 
     public static function render($layout, $data = null, $model = null, $return = false) {
         $formpath = @$data['editor'] ? '//layouts/forms_editor/' : "//layouts/forms/";
-
         if (count($data) > 0) {
             foreach ($data as $k => $section) {
                 switch (@$section['type']) {
@@ -36,7 +35,7 @@ class Layout extends CComponent {
                 }
             }
         }
-
+        
         return Yii::app()->controller->renderPartial($formpath . $layout, $data, $return);
     }
 

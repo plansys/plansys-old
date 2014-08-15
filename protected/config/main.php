@@ -74,23 +74,7 @@ return array(
                 ),
             ),
         ),
-        'widgetFactory' => array(
-            'widgets' => array(
-                'CJuiDatePicker' => array(
-                    'theme' => 'flick',
-                    'themeUrl' => 'static/jui',
-                ),
-                'JTimePicker' => array(
-                    'theme' => 'flick',
-                    'themeUrl' => 'static/jui',
-                    'options' => array(
-                        'showPeriod' => false,
-                        'minutes' => array('interval' => 15),
-                    ),
-                    'htmlOptions' => array('size' => 5, 'maxlength' => 5),
-                ),
-            ),
-        ),
+        'widgetFactory' => array(),
         'cache' => array(
             'class' => 'system.caching.CFileCache'
         ),

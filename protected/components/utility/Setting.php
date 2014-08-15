@@ -4,16 +4,21 @@ class Setting {
 
     private static $data;
     public static $basePath;
+    public static $rootPath;
     public static $path = "";
     public static $default = '{"db":{"driver":"mysql","server":"","username":"","password":"","dbname":""}}';
 
     private static function setupBasePath($configfile) {
         $basePath = dirname($configfile);
         $basePath = explode(DIRECTORY_SEPARATOR, $basePath);
+        
         array_pop($basePath);
-        $basePath = implode(DIRECTORY_SEPARATOR, $basePath);
-        Setting::$basePath = $basePath;
-        return $basePath;
+        Setting::$basePath = implode(DIRECTORY_SEPARATOR, $basePath);
+        
+        array_pop($basePath);
+        Setting::$rootPath = implode(DIRECTORY_SEPARATOR, $basePath);
+        
+        return Setting::$basePath;
     }
 
     public static function init($configfile) {
@@ -23,7 +28,7 @@ class Setting {
         if (!is_file(Setting::$path)) {
             $json = json_decode(Setting::$default);
             $json = json_encode($json, JSON_PRETTY_PRINT);
-            
+
             file_put_contents(Setting::$path, $json);
         }
         Setting::$data = json_decode(file_get_contents(Setting::$path), true);
@@ -58,23 +63,53 @@ class Setting {
     public static function getBasePath() {
         return Setting::$basePath;
     }
+    
+    public static function getRootPath() {
+        return Setting::$rootPath;
+    }
 
     public static function getDoctrineDB() {
-        return array(
-            'driver' => 'pdo_mysql',
-            'dbname' => 'plansys',
-            'user' => 'root',
-            'password' => 'okedeh'
+        $connection = array(
+            'driver' => 'pdo_' . Setting::get('db.driver'),
+            'port' => Setting::get('db.port'),
+            'dbname' => Setting::get('db.dbname'),
+            'user' => Setting::get('db.username'),
+            'password' => Setting::get('db.password')
         );
+        return $connection;
     }
 
     public static function getDB() {
+        if (Setting::get('db.port') == null) {
+            $connection = array(
+                'connectionString' => Setting::get('db.driver') . ':host=' . Setting::get('db.server') . ';dbname=' . Setting::get('db.dbname'),
+                'emulatePrepare' => true,
+                'username' => Setting::get('db.username'),
+                'password' => Setting::get('db.password'),
+                'charset' => 'utf8',
+            );
+        } else {
+            $connection = array(
+                'connectionString' => Setting::get('db.driver') . ':host=' . Setting::get('db.server') . ';port=' . Setting::get('db.port') . ';dbname=' . Setting::get('db.dbname'),
+                'emulatePrepare' => true,
+                'username' => Setting::get('db.username'),
+                'password' => Setting::get('db.password'),
+                'charset' => 'utf8',
+            );
+        }
+        return $connection;
+    }
+
+    public static function getDBDriverList() {
         return array(
-            'connectionString' => 'mysql:host=localhost;dbname=plansys',
-            'emulatePrepare' => true,
-            'username' => 'root',
-            'password' => 'okedeh',
-            'charset' => 'utf8',
+            'mysql' => 'MySQL',
+                /*
+                  'pgsql' => 'PostgreSQL',
+                  'sqlsrv' => 'SQL Server',
+                  'sqlite' => 'SQLite',
+                  'oci' => 'Oracle'
+                 * 
+                 */
         );
     }
 
