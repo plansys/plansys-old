@@ -17,5 +17,6 @@ if(!file_exists(dirname(__FILE__).'/assets') || !file_exists(dirname(__FILE__).'
     header("Location: installer/index.php");
     die();
 }else{
+
     Yii::createWebApplication($config)->run();
 }
