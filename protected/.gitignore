@@ -1,2 +1,8 @@
 /runtime
+<<<<<<< HEAD
 config/settings.json
+=======
+/config/settings.json
+
+.gitignore
+>>>>>>> dc0d0415a9c964bc323c64f3122865705df7a279
