@@ -1,7 +1,9 @@
 <?php
 
 class KeyValueGrid extends FormField {
-
+	/**
+	 * @return array Fungsi ini akan me-return array property KeyValueGrid.
+	 */
     public function getFieldProperties() {
         return array (
             array (
@@ -118,22 +120,49 @@ class KeyValueGrid extends FormField {
         );
     }
 
+	/** @var string variable untuk menampung label */
     public $label = '';
+	
+	/** @var string variable untuk menampung name field */
     public $fieldname = '';
+	
+	/** @var string variable untuk menampung value */
     public $value = '';
+	
+	/** @var string variable untuk menampung kondisi field dengan default Hide */
     public $show = 'Hide';
+	
+	/** @var array variable untuk menampung array options */
     public $options = array();
+	
+	/** @var string variable untuk menampung kondisi EmptyKey dengan default No */
     public $allowEmptyKey = 'No';
+	
+	/** @var string variable untuk menampung kondisi SpaceOnKey dengan default No */
     public $allowSpaceOnKey = 'No';
+	
+	/** @var string variable untuk menampung kondisi DoubleQuote dengan default No */
     public $allowDoubleQuote = 'No';
+	
+	/** @var string variable untuk menampung toolbarName */
     public static $toolbarName = "KeyValue Grid";
+	
+	/** @var string variable untuk menampung category */
     public static $category = "Developer Fields";
+	
+	/** @var string variable untuk menampung toolbarIcon */
     public static $toolbarIcon = "fa fa-key";
-
+	
+	/**
+	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
+	*/
     public function includeJS() {
         return array('key-value-grid.js');
     }
 
+	/**
+	 * @return field Fungsi ini untuk me-render field dan atributnya.
+	 */
     public function render() {
         if ($this->fieldname != '') {
             $this->options['ng-model'] = 'active.' . $this->fieldname;

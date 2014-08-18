@@ -1,7 +1,9 @@
 <?php
 
 class HiddenField extends FormField {
-
+	/**
+	 * @return array Fungsi ini akan me-return array property HiddenField.
+	 */
     public function getFieldProperties() {
         return array (
             array (
@@ -27,12 +29,23 @@ class HiddenField extends FormField {
         );
     }
     
+	/** @var string variable untuk menampung name */
     public $name = '';
+	
+	/** @var string variable untuk menampung value */
     public $value = '';
+	
+	/** @var boolean variable untuk menampung kondisi field dengan default True atau hidden */
     public $isHidden = true;
-
+	
+	/** @var string variable untuk menampung toolbarName */
     public static $toolbarName = "Hidden Field";
+	
+	/** @var string variable untuk menampung category */
     public static $category = "User Interface";
+	
+	/** @var string variable untuk menampung toolbarIcon */
     public static $toolbarIcon = "fa fa-eye-slash";
+	
 
 }

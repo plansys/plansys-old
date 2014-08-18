@@ -12,13 +12,20 @@
  * @author rizky
  */
 class ActionBar extends FormField {
-
+	/**
+	 * @return array Fungsi ini akan me-return array property ActionBar.
+	 */
     public function getFieldProperties() {
         return array();
     }
-    
+	
+    /** @var string variable untuk menampung toolbarName */
     public static $toolbarName = "Action Bar";
-    public static $category = "Layout";
+	
+    /** @var string variable untuk menampung category */
+	public static $category = "Layout";
+	
+	/** @var string variable untuk menampung toolbarIcon */
     public static $toolbarIcon = "fa fa-suitcase";
 
 }
