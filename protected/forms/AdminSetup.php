@@ -7,6 +7,9 @@ class AdminSetup extends Form {
             array (
                 'label' => 'Driver',
                 'name' => 'driver',
+                'list' => array (
+                    'mysql' => 'MySQL',
+                ),
                 'listExpr' => 'Setting::getDBDriverList();',
                 'type' => 'DropDownList',
             ),
@@ -32,7 +35,7 @@ class AdminSetup extends Form {
                 'type' => 'TextField',
             ),
             array (
-                'label' => 'Dbname',
+                'label' => 'DB Name',
                 'name' => 'dbname',
                 'type' => 'TextField',
             ),
