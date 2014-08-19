@@ -27,7 +27,7 @@
             array (
                 'label' => 'Controller Manager',
                 'icon' => 'fa-paper-plane',
-                'url' => '#',
+                'url' => '/admin/controllerGenerator/index',
             ),
             array (
                 'label' => 'Model Generator',

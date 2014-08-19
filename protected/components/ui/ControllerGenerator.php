@@ -40,34 +40,18 @@ class ControllerGenerator extends CComponent{
                 Yii::import($class, true);
         $reflection = new ReflectionClass($class_name); 
         $methods = $reflection->getMethods();
-
         $action = array();
         foreach ($methods as $m){    
-            if($m->class == $class_name)
-                $action[] = $m->name;
+            if($m->class == $class_name){
+                $action[] = array(
+                    'name' => $m->name,
+                    'param' => $reflection->getMethod($m->name)->getParameters(),
+                );
+            }
         }
         return $action;
     }
-    
-    public static function getParameter($method,$class){
-        $found = null;
-        $param = null;
-        $class = Yii::getPathOfAlias($class).'.php';
-        $class_content = fopen($class, 'rb');
-        
-        while($line = fgets($class_content)){
-            if(strpos($line,'public function '.$method) || strpos($line,'public static function '.$method)){
-                $found = $line;
-            }
-        }
-        if($found != null){
-            $param = explode('(', $found);
-            $param = explode(')', $param[1]);
-            $param=$param[0];
-        }
-        return $param;
-    }
-    
+      
     public static function controllerName($class){
        $class_name = explode('.controllers.', $class);
        $class_name = $class_name[1];

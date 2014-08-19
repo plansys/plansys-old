@@ -27,10 +27,15 @@
                             <tbody>
                             <?php foreach ($method as $m):?>
                             <tr>
-                                <td><?php echo $m;?></td>
+                                <td><?php echo $m['name'];?></td>
                                 <td><?php 
-                                    $param = ControllerGenerator::getParameter($m,$class);
-                                    echo $param != ''?$param:'null';
+                                    if(!empty($m['param'])){
+                                        foreach($m['param'] as $param){
+                                            echo $param->name.'<br>';
+                                        }
+                                    }else{
+                                        echo 'null';
+                                    }
                                     ?>
                                 </td>
                                 <td></td>
