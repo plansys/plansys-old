@@ -1,3 +1,4 @@
+
 /*Table structure for table `p_audit_trail` */
 
 DROP TABLE IF EXISTS `p_audit_trail`;
@@ -17,6 +18,31 @@ CREATE TABLE `p_audit_trail` (
 
 /*Data for the table `p_audit_trail` */
 
+/*Table structure for table `p_group` */
+
+DROP TABLE IF EXISTS `p_group`;
+
+CREATE TABLE `p_group` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `organization_id` int(11) NOT NULL COMMENT 'Foreign Key Organization ID',
+  `group_name` varchar(255) CHARACTER SET utf8 NOT NULL COMMENT 'Group Name',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+/*Data for the table `p_group` */
+
+/*Table structure for table `p_organization` */
+
+DROP TABLE IF EXISTS `p_organization`;
+
+CREATE TABLE `p_organization` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `organization_name` varchar(255) NOT NULL COMMENT 'Organization Name',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+/*Data for the table `p_organization` */
+
 /*Table structure for table `p_role` */
 
 DROP TABLE IF EXISTS `p_role`;
@@ -26,7 +52,7 @@ CREATE TABLE `p_role` (
   `role_name` varchar(255) NOT NULL,
   `role_description` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 
 /*Data for the table `p_role` */
 
@@ -46,7 +72,7 @@ CREATE TABLE `p_user` (
   `username` varchar(255) NOT NULL COMMENT 'Username',
   `password` varchar(255) NOT NULL COMMENT 'Password',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='User Management';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='User Management';
 
 /*Data for the table `p_user` */
 
@@ -70,14 +96,16 @@ DROP TABLE IF EXISTS `p_user_role`;
 
 CREATE TABLE `p_user_role` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `user_id` int(11) DEFAULT NULL COMMENT 'User ID',
-  `role_id` int(11) DEFAULT NULL COMMENT 'ROle ID',
+  `user_id` int(11) NOT NULL COMMENT 'User ID',
+  `role_id` int(11) NOT NULL COMMENT 'ROle ID',
+  `default_role` char(1) DEFAULT '1' COMMENT 'Default Role',
+  `group_id` int(11) DEFAULT NULL COMMENT 'Group ID',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 /*Data for the table `p_user_role` */
 
-insert  into `p_user_role`(`id`,`user_id`,`role_id`) values (1,1,1);
+insert  into `p_user_role`(`id`,`user_id`,`role_id`,`default_role`,`group_id`) values (1,1,1,'1',0);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
