@@ -27,6 +27,7 @@ return array(
     'language' => 'id',
     'modules' => array(
         'admin',
+        'pde',
         'gii' => array(
             'class' => 'system.gii.GiiModule',
             'password' => '123',
