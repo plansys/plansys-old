@@ -27,10 +27,10 @@ class UserRole extends ActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_id, role_id', 'numerical', 'integerOnly'=>true),
+			array('user_id, role_id', 'default_role', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, user_id, role_id', 'safe', 'on'=>'search'),
+			array('id, user_id, role_id, default_role', 'safe', 'on'=>'search'),
         );
 	}
     
@@ -64,6 +64,7 @@ class UserRole extends ActiveRecord
 			'id' => 'ID',
 			'user_id' => 'User',
 			'role_id' => 'Role',
+            'default_role' => 'Default Role'
 		);
 	}
 
@@ -88,6 +89,7 @@ class UserRole extends ActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('user_id',$this->user_id);
 		$criteria->compare('role_id',$this->role_id);
+        $criteria->compare('default_role',$this->default_role);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
