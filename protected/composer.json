@@ -2,11 +2,7 @@
     "autoload": {
         "classmap": ["vendor/"]
     },
-    "require": {
-        "bluecloudy/yiidoctrine2": "dev-master",
-        "doctrine/orm": "2.4.*"
-    },
-	"require-dev": {
+    "require-dev": {
         "phpdocumentor/phpdocumentor": "2.*"
     }
 }

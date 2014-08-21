@@ -31,7 +31,7 @@
             ),
             array (
                 'label' => 'Model Generator',
-                'icon' => 'fa-hand-o-left',
+                'icon' => 'fa-cube',
                 'url' => '#',
             ),
         ),

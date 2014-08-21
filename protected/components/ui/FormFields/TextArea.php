@@ -169,6 +169,8 @@ class TextArea extends FormField {
         $this->fieldOptions['name'] = $this->name;
         $this->fieldOptions['rows'] = $this->fieldHeight;
         $this->addClass('form-control', 'fieldOptions');
+        
+        $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
 
         return $this->renderInternal('template_render.php');
     }

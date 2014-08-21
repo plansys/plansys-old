@@ -139,6 +139,26 @@ class FormField extends CComponent {
         return $result;
     }
 
+    public function setDefaultOption($key, $value, &$option) {
+
+        if (!isset($option[$key])) {
+            $option[$key] = $value;
+        }
+    }
+
+    public function getOriginalName() {
+        if (!property_exists($this, 'name')) {
+            return "";
+        }
+        if (strpos($this->name, "[") !== false) {
+            $name = explode("[", $this->name);
+            $name = str_replace(array(" ", "]"), "", $name[count($name) - 1]);
+            return $name;
+        } else {
+            return $this->name;
+        }
+    }
+
     public function getDefaultFields() {
         $fields = $this->attributes;
         $exclude = array(
@@ -186,7 +206,7 @@ class FormField extends CComponent {
             foreach ($includeJS as $js) {
                 $class = get_class($this);
                 $html[] = Yii::app()->assetManager->publish(
-                    Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js
+                    Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js, true
                 );
             }
         }

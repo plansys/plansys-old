@@ -13,7 +13,7 @@
                     <i ng-switch-when="ColumnField" class="fa fa-columns"></i>
                     <i ng-switch-default class="fa fa-hand-o-up"></i>
                 </span>
-                <span ng-switch on="field.type">
+                <span class="field-info-text" ng-switch on="field.type">
                     <span ng-switch-when="ColumnField"> 
                         Select Columns
                     </span>
@@ -25,7 +25,7 @@
 
             <div ui-tree-handle class='btn btn-default btn-sm'>
                 <i class='fa fa-arrows'></i>
-                Move 
+                <span class="field-info-text">Move</span> 
             </div>
             <div ui-tree-handle 
                  ng-mouseover='prepareCloneField(this)' 

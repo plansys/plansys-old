@@ -5,8 +5,19 @@ class Setting {
     private static $data;
     public static $basePath;
     public static $path = "";
-    public static $default = '{"db":{"driver":"mysql","server":"","username":"","password":"","dbname":""}}';
-
+    public static $default = array(
+        'app' => array(
+            'name' => 'Plansys'
+        ),
+        'db' => array(
+            'driver' => 'mysql',
+            'server' => '',
+            'username' => '',
+            'password' => '',
+            'dbname'
+        )
+    ); 
+    
     private static function setupBasePath($configfile) {
         $basePath = dirname($configfile);
         $basePath = explode(DIRECTORY_SEPARATOR, $basePath);
@@ -21,8 +32,7 @@ class Setting {
         Setting::$path = $bp . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
 
         if (!is_file(Setting::$path)) {
-            $json = json_decode(Setting::$default);
-            $json = json_encode($json, JSON_PRETTY_PRINT);
+            $json = json_encode(Setting::$default, JSON_PRETTY_PRINT);
             
             file_put_contents(Setting::$path, $json);
         }

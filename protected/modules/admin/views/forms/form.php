@@ -3,7 +3,7 @@
 
         <div size='69%' min-size="300px">
             <!-- form-builder-content -->
-            <div class="pull-right" style="font-size:12px;margin:4px 10px 0px 0px;color:rgb(8, 114, 164);font-weight:bold;">
+            <div class="form-builder-saving">
                 <span ng-show='saving'> 
                     <i class="fa fa-refresh fa-spin"></i>
                     Saving... 

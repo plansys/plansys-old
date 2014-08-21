@@ -6,8 +6,7 @@
 
         <div ng-if="field.itemLayout == 'ButtonGroup'">
             <div class="btn-group">
-                <label class="radio-btn btn btn-sm btn-default" id="{{field.name}}" 
-                       btn-radio="'<?= $value; ?>'" value="<?= $value; ?>" ng-model="value" uncheckable 
+                <label class="radio-btn btn btn-sm btn-default" id="{{field.name}}" ng-value="value" 
                        ng-repeat="(key, value) in field.list  track by $index">{{value}}</label>
             </div>
         </div>

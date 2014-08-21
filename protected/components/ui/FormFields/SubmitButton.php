@@ -91,7 +91,6 @@ class SubmitButton extends FormField {
     public $buttonSize = 'btn-lg';
     public $buttonPosition = 'center';
     public $options = array();
-    public $labelOptions = array();
     public static $toolbarName = "Submit";
     public static $category = "User Interface";
     public static $toolbarIcon = "fa fa-hand-o-up";

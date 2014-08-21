@@ -892,8 +892,15 @@
                 hiddenPlaceElm.addClass(config.hiddenClass);
               }
               pos = $uiTreeHelper.positionStarted(eventObj, scope.$element);
+              
+              var newClass = scope.$element.attr('class').replace('ng-scope angular-ui-tree-node');
+              if (typeof newClass != "undefined" && newClass.toString() != "undefined") {
+                placeElm.addClass(newClass);
+              }
+              
               placeElm.css('height', $uiTreeHelper.height(scope.$element) + 'px');
               placeElm.css('width', $uiTreeHelper.width(scope.$element) + 'px');
+              
               dragElm = angular.element($window.document.createElement(scope.$parentNodesScope.$element.prop('tagName')))
                         .addClass(scope.$parentNodesScope.$element.attr('class')).addClass(config.dragClass);
               dragElm.css('width', $uiTreeHelper.width(scope.$element) + 'px');

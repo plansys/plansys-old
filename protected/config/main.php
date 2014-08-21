@@ -7,7 +7,7 @@ $basePath = Setting::getBasePath();
 
 return array(
     'basePath' => $basePath,
-    'name' => 'DSI Explorasi & Penambangan',
+    'name' => Setting::get('app.name'),
     // preloading 'log' component
     'preload' => array('log', 'EJSUrlManager'),
     // autoloading model and component classes
@@ -16,9 +16,10 @@ return array(
         'application.forms.*',
         'application.components.*',
         'application.components.ui.*',
+        'application.components.ui.FormFields.*',
         'application.components.utility.*',
         'application.components.models.*',
-        'application.components.ui.FormFields.*',
+        'application.components.codegen.*',
         'application.behaviors.*',
         'ext.YiiJasper.*',
         'ext.ETwigViewRenderer'

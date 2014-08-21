@@ -5,6 +5,11 @@ class AdminSetup extends Form {
         return array (
             '<h2><center>{{ form.formTitle }}</center></h2><hr/>',
             array (
+                'label' => 'Password',
+                'name' => 'password',
+                'type' => 'TextField',
+            ),
+            array (
                 'label' => 'Server',
                 'name' => 'server',
                 'type' => 'TextField',
@@ -12,11 +17,6 @@ class AdminSetup extends Form {
             array (
                 'label' => 'Username',
                 'name' => 'username',
-                'type' => 'TextField',
-            ),
-            array (
-                'label' => 'Password',
-                'name' => 'password',
                 'type' => 'TextField',
             ),
             array (

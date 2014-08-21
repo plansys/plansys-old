@@ -1,31 +1,30 @@
 <?php
 
-class TextField extends FormField
-{
+class TextField extends FormField {
 
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'save()',
                     'ng-form-list' => 'modelFieldList',
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
-                'list' => array (),
+                'list' => array(),
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Field Type',
                 'name' => 'fieldType',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.fieldType',
                     'ng-change' => 'save();',
                 ),
-                'list' => array (
+                'list' => array(
                     'text' => 'Text Field',
                     'password' => 'Password Field',
                 ),
@@ -33,24 +32,24 @@ class TextField extends FormField
                 'otherLabel' => 'Other...',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                 ),
-                'list' => array (
+                'list' => array(
                     'Horizontal' => 'Horizontal',
                     'Vertical' => 'Vertical',
                 ),
@@ -58,15 +57,15 @@ class TextField extends FormField
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array (
-                'column1' => array (
-                    array (
+            array(
+                'column1' => array(
+                    array(
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
@@ -76,14 +75,14 @@ class TextField extends FormField
                     ),
                     '<column-placeholder></column-placeholder>',
                 ),
-                'column2' => array (
-                    array (
+                'column2' => array(
+                    array(
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => 12,
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
@@ -92,23 +91,23 @@ class TextField extends FormField
                     ),
                     '<column-placeholder></column-placeholder>',
                 ),
-                'column3' => array (
+                'column3' => array(
                     '<column-placeholder></column-placeholder>',
                 ),
-                'column4' => array (
+                'column4' => array(
                     '<column-placeholder></column-placeholder>',
                 ),
                 'type' => 'ColumnField',
             ),
             '<hr/>',
-            array (
-                'column1' => array (
-                    array (
+            array(
+                'column1' => array(
+                    array(
                         'name' => 'prefix',
                         'layout' => 'Vertical',
                         'fieldWidth' => '11',
                         'prefix' => 'Prefix',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.prefix',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
@@ -117,13 +116,13 @@ class TextField extends FormField
                     ),
                     '<column-placeholder></column-placeholder>',
                 ),
-                'column2' => array (
-                    array (
+                'column2' => array(
+                    array(
                         'name' => 'postfix',
                         'layout' => 'Vertical',
                         'fieldWidth' => '11',
                         'prefix' => 'Postfix',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.postfix',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
@@ -134,17 +133,17 @@ class TextField extends FormField
                 ),
                 'type' => 'ColumnField',
             ),
-            array (
+            array(
                 'label' => 'Options',
                 'fieldname' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Label Options',
                 'fieldname' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Field Options',
                 'fieldname' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
@@ -168,23 +167,19 @@ class TextField extends FormField
     public static $category = "User Interface";
     public static $toolbarIcon = "fa fa-text-height";
 
-    public function includeJS()
-    {
+    public function includeJS() {
         return array('text-field.js');
     }
 
-    public function getLayoutClass()
-    {
+    public function getLayoutClass() {
         return ($this->layout == 'Vertical' ? 'form-vertical' : '');
     }
 
-    public function getErrorClass()
-    {
+    public function getErrorClass() {
         return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
     }
 
-    public function getlabelClass()
-    {
+    public function getlabelClass() {
         if ($this->layout == 'Vertical') {
             $class = "control-label col-sm-12";
         } else {
@@ -195,13 +190,11 @@ class TextField extends FormField
         return $class;
     }
 
-    public function getFieldColClass()
-    {
+    public function getFieldColClass() {
         return "col-sm-" . $this->fieldWidth;
     }
 
-    public function render()
-    {
+    public function render() {
         $this->addClass('form-group form-group-sm', 'options');
         $this->addClass($this->layoutClass, 'options');
         $this->addClass($this->errorClass, 'options');
@@ -210,6 +203,9 @@ class TextField extends FormField
         $this->fieldOptions['name'] = $this->name;
         $this->addClass('form-control', 'fieldOptions');
 
+        $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+
         return $this->renderInternal('template_render.php');
     }
+
 }

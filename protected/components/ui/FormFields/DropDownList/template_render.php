@@ -26,14 +26,14 @@
             <!-- default button -->
             <button ng-if="!showOther || (showOther && itemExist())" type="button" 
                     <?= $this->expandAttributes($this->fieldOptions) ?>>
+                <span class="caret pull-right"></span>
                 <span class="dropdown-text" ng-bind-html="text"></span>
-                &nbsp;<span class="caret"></span>
             </button>
 
             <!-- typeable button -->
             <button ng-if="showOther && !itemExist()" type="button" 
                     class="split-button <?= @$this->fieldOptions['class'] ?>">
-                <span class="caret"></span>
+                <span style="margin-right:10px;" class="caret"></span>
             </button>
             <input ng-if="showOther && !itemExist()" type="text"
                    ng-model="value" ng-change="updateOther(value)" ng-delay="500"

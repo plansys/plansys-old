@@ -39,10 +39,11 @@ class ColumnField extends FormField {
                     'Yes' => 'Yes',
                     'No' => 'No',
                 ),
-                'listExpr' => 'array(\'Yes\',\'No\')',
+                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
+            '<hr/>',
         );
     }
 

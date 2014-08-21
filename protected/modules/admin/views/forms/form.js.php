@@ -106,6 +106,7 @@
         $scope.selectLayout = function(layout) {
             $scope.tabs.properties = true;
             $scope.active = null;
+            $(".form-field.active").removeClass("active");
             if ($scope.form.layout.data[layout] == null) {
                 $scope.form.layout.data[layout] = {
                     type: '',
@@ -258,13 +259,14 @@
         $scope.active = null;
         $scope.activeTree = null;
         $scope.deleteField = function() {
-            $el = $($scope.activeTree.$parent.$element);    
+            $el = $($scope.activeTree.$parent.$element);
             $old = $scope.activeTree;
 
             $timeout(function() {
-                if ($el.next().length > 0) {
+                console.log($el.next().length, $el.prev().length);
+                if ($el.next().length > 0 && !$el.next().hasClass('cpl')) {
                     $el.next().find(".form-field:eq(0)").click();
-                } else if ($el.prev().length > 0) {
+                } else if ($el.prev().length > 0 && !$el.prev().hasClass('cpl')) {
                     $el.prev().find(".form-field:eq(0)").click();
                 } else {
                     $scope.unselect();
@@ -286,20 +288,24 @@
                     });
         };
 
+        var selectTimeout = null;
         $scope.select = function(item, event) {
             $(".form-field.active").removeClass("active");
             $(event.currentTarget).addClass("active");
             event.stopPropagation();
 
-            $timeout(function() {
-                if ($scope.active == null || item.$modelValue.type != $scope.active.type) {
-                    $("#toolbar-properties").hide();
-                }
-                $scope.inEditor = true;
-                $scope.activeTree = item;
-                $scope.active = item.$modelValue;
-                $scope.tabs.properties = true;
-            }, 15);
+            clearTimeout(selectTimeout);
+            selectTimeout = setTimeout(function() {
+                $scope.$apply(function() {
+                    if ($scope.active == null || item.$modelValue.type != $scope.active.type) {
+                        $("#toolbar-properties").hide();
+                    }
+                    $scope.inEditor = true;
+                    $scope.activeTree = item;
+                    $scope.active = item.$modelValue;
+                    $scope.tabs.properties = true;
+                });
+            }, 10);
         };
         $scope.selected = function() {
             $("#toolbar-properties").show();
@@ -314,10 +320,41 @@
             });
         };
 
+        $timeout(function() {
+            $(document).trigger('formBuilderInit');
+        }, 100);
+        
         $('body').on('click', 'div[ui-header]', function(e) {
             if (e.target == this) {
                 $scope.unselectViaJquery();
             }
+        });
+
+        $('body').on('keydown', function(e) {
+            if ($scope.active != null) {
+                if ($(':focus').parents('.form-builder-properties').length > 0) {
+                    return
+                }
+
+                $el = $($scope.activeTree.$parent.$element);
+                switch (e.which) {
+                    case 46:
+                        $scope.deleteField();
+                        break;
+                    case 38:
+                        if ($el.prev().length > 0) {
+                            $el.prev().find(".form-field:eq(0)").click();
+                        }
+                        break;
+                    case 40:
+                        if ($el.next().length > 0) {
+                            $el.next().find(".form-field:eq(0)").click();
+                        }
+                        break;
+                }
+            }
+
+
         });
         $('body').on('mouseenter', '.form-field', function(e) {
             var formfields = $(this).parentsUntil('div[ui-tree]', '.form-field');

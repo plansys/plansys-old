@@ -261,6 +261,8 @@ class DropDownList extends FormField {
             $this->addClass('btn-default', 'fieldOptions');
         }
 
+        $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        
         $this->processExpr();
         return $this->renderInternal('template_render.php');
     }
