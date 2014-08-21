@@ -177,7 +177,7 @@ class CheckboxList extends FormField {
     public static $toolbarIcon = "fa fa-check-square";
 	
 	/**
-	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
+	 * @return array Fungsi ini akan me-return array javascript yang di-include.
 	*/
     public function includeJS() {
         return array('check-box-list.js');

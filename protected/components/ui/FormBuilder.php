@@ -20,7 +20,7 @@ class FormBuilder extends CComponent {
 	/**
 	 * @param array $class Parameter untuk manampung class.
 	 * @param array $attributes Parameter untuk menampung attribute FormBuilder dengan value null.
-	 * @return model Fungsi ini berfungsi untuk me-load FormBuilder.
+	 * @return model Fungsi ini berfungsi untuk me-load FormBuilder dan me-return sebuah model.
 	*/
     public static function load($class, $attributes = null) {
         if (!is_string($class))
@@ -319,7 +319,9 @@ class FormBuilder extends CComponent {
         $this->updateFunctionBody('getForm', $form);
     }
 
-	
+	/**
+	 * @return null Fungsi ini akan meng-generate function dan create action.
+	 */
     public function generateCreateAction() {
 
         $class = get_class($this->model);
@@ -345,6 +347,9 @@ EOF;
         $this->updateFunctionBody($this->form['createAction'], $functionBody, $this->form['controller']);
     }
 
+	/**
+	 * @return null Fungsi ini akan meng-generate function dan update action.
+	 */
     public function generateUpdateAction() {
         ## generate function
         $functionBody = <<<EOF
@@ -356,6 +361,11 @@ EOF;
         $this->updateFunctionBody($this->form['updateAction'], $functionBody, $this->form['controller']);
     }
 
+	/**
+	 * @param array $class Parameter untuk manampung class.
+	 * @param array $attributes Parameter untuk menampung attribute field.
+	 * @return field Fungsi ini berfungsi untuk menentukan ID render dan merender-nya.
+	*/
     public static function build($class, $attributes) {
         $field = new $class;
         $field->attributes = $attributes;
@@ -370,6 +380,9 @@ EOF;
         return $field->render();
     }
 
+	/**
+	 * @return array Fungsi ini akan me-register script.
+	 */
     public function registerScript() {
         $modelClass = get_class($this->model);
         $id = "NGCTRL_{$modelClass}_" . rand(0, 1000);
@@ -377,6 +390,11 @@ EOF;
         return $this->registerScriptInternal($this, $this->fields);
     }
 
+	/**
+	 * @param array $fb Parameter untuk manampung attribute form builder.
+	 * @param array $fields Parameter untuk manampung fields.
+	 * @return array Fungsi ini akan me-register internal script.
+	 */
     public function registerScriptInternal($fb, $fields) {
 
         foreach ($fields as $k => $f) {
@@ -395,10 +413,19 @@ EOF;
         }
     }
 
+	/**
+	 * @return array Fungsi ini akan me-render script.
+	 */
     public function renderScript() {
         return $this->renderScriptInternal($this, $this->fields);
     }
 
+	/**
+	 * @param array $fb Parameter untuk manampung attribute form builder.
+	 * @param array $fields Parameter untuk manampung fields.
+	 * @param array $html Parameter untuk manampung html.
+	 * @return array Fungsi ini digunakan untuk me-render internal script.
+	 */
     public function renderScriptInternal($fb, $fields, $html = array()) {
         foreach ($fields as $k => $f) {
             if (is_array($f)) {
@@ -418,9 +445,12 @@ EOF;
         return $html;
     }
 
+	/**
+	 * @param array $formdata Parameter untuk manampung data form.
+	 * @return array Fungsi ini digunakan untuk me-render Angular Controller .
+	 */
     public function renderAngularController($formdata = null) {
         $modelClass = get_class($this->model);
-
 
         ## define formdata
         if (is_array($formdata)) {
@@ -452,10 +482,22 @@ EOF;
         return $script;
     }
 
+	/**
+	 * @param array $formdata Parameter untuk manampung data form.
+	 * @param array $options Parameter untuk manampung options.
+	 * @return html Fungsi ini digunakan untuk me-render form builder.
+	 */
     public function render($formdata = null, $options = array()) {
         return $this->renderInternal($formdata, $options, $this, $this->fields);
     }
 
+	/**
+	 * @param array $formdata Parameter untuk manampung data form.
+	 * @param array $options Parameter untuk manampung options.
+	 * @param array $fb Parameter untuk manampung atribute form builder.
+	 * @param array $fields Parameter untuk manampung fields.
+	 * @return html Fungsi ini digunakan untuk me-render field dan atribut-nya dalam form builder.
+	 */
     private function renderInternal($formdata = null, $options = array(), $fb, $fields) {
         $html = "";
 
@@ -562,6 +604,11 @@ EOF;
         return $html;
     }
 
+	/**
+	 * @param array $fields Parameter untuk manampung fields.
+	 * @param array $indent Parameter untuk manampung indentasi.
+	 * @return html Fungsi ini digunakan untuk format code dan pengecekan code sesuai dengan pattern atau tidak.
+	 */
     public static function formatCode($fields, $indent = "        ") {
 
         ## get fields
@@ -604,8 +651,14 @@ EOF;
         return $fields;
     }
 
+	/**
+	 * @param string $functionName Parameter untuk manampung nama fungsi.
+	 * @param array $fields Parameter untuk manampung fields.
+	 * @param array $class Parameter untuk manampung class.
+	 * @param array $replaceString Parameter untuk manampung string pengganti. 
+	 * @return field Fungsi ini digunakan untuk update model.
+	 */
     public function updateFunctionBody($functionName, $fields, $class = "", $replaceString = null) {
-
         if ($class == "") {
             $using_another_class = false;
             $class = get_class($this->model);
@@ -686,7 +739,11 @@ EOF;
             $this->model = new $class;
         }
     }
-
+	/**
+	 * @param array $sourceFile Parameter untuk manampung source.
+	 * @param string $functionName Parameter untuk manampung nama fungsi.
+	 * @return array Fungsi ini digunakan untuk mendapatkan FunctionBody dari functionName yang sesuai dan akan me-return sebuah array .
+	 */
     public function getFunctionBody($sourceFile, $functionName) {
         $fd = fopen($sourceFile, "r");
         $ret = array();
@@ -716,6 +773,10 @@ EOF;
         return $ret;
     }
 
+	/**
+	 * @param string $module Parameter untuk manampung module.
+	 * @return array Fungsi ini akan me-return sebuah array list controller .
+	 */
     public static function listController($module) {
         $ctr_dir = Yii::getPathOfAlias("application.modules.{$module}.controllers") . DIRECTORY_SEPARATOR;
         $items = glob($ctr_dir . "*.php");
@@ -730,6 +791,10 @@ EOF;
         return $list;
     }
 
+	/**
+	 * @param string $module Parameter untuk manampung module.
+	 * @return array Fungsi ini akan me-return sebuah array list form .
+	 */
     public static function listForm($module) {
         $ctr_dir = Yii::getPathOfAlias("application.modules.{$module}.forms") . DIRECTORY_SEPARATOR;
         $items = glob($ctr_dir . "*.php");
@@ -745,6 +810,11 @@ EOF;
         return $list;
     }
 
+	/**
+	 * @param string $dir Parameter untuk manampung directory.
+	 * @param string $func Parameter untuk manampung fungsi.
+	 * @return array Fungsi ini akan me-return sebuah array $files yang berisi list file .
+	 */
     public static function listFile($dir, callable $func = null) {
         $module_dir = Yii::getPathOfAlias('application.modules');
         $modules = glob($module_dir . DIRECTORY_SEPARATOR . "*");
