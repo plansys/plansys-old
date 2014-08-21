@@ -3,7 +3,6 @@
 class ControllerGeneratorController extends Controller{
     public function actionIndex(){
         $controllers = ControllerGenerator::listAllFile();
-        
         $this->render('index', array(
             'controllers' => $controllers
         ));
