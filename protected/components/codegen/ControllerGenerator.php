@@ -33,17 +33,17 @@ class ControllerGenerator extends CodeGenerator {
         }
         return $items;
     }
-    
-    public static function listMethod($class,$class_name){
-       $declaredClasses = get_declared_classes();
-       
-       if (!in_array($class_name, $declaredClasses))
-                Yii::import($class, true);
-        $reflection = new ReflectionClass($class_name); 
+
+    public static function listMethod($class, $class_name) {
+        $declaredClasses = get_declared_classes();
+
+        if (!in_array($class_name, $declaredClasses))
+            Yii::import($class, true);
+        $reflection = new ReflectionClass($class_name);
         $methods = $reflection->getMethods();
         $action = array();
-        foreach ($methods as $m){    
-            if($m->class == $class_name && !$reflection->getMethod($m->name)->isProtected()){
+        foreach ($methods as $m) {
+            if ($m->class == $class_name && !$reflection->getMethod($m->name)->isProtected()) {
                 $action[] = array(
                     'name' => $m->name,
                     'param' => $reflection->getMethod($m->name)->getParameters(),
@@ -53,53 +53,85 @@ class ControllerGenerator extends CodeGenerator {
         }
         return $action;
     }
-    public static function isAction($method){
-        if(substr($method, 0, 6)=='action')
+
+    public static function isAction($method) {
+        if (substr($method, 0, 6) == 'action')
             return true;
         else
             return false;
     }
-    public static function checkUrl($class,$isStatic,$param, $method){
+
+    public static function checkUrl($class, $isStatic, $param, $method) {
         $module = explode('.modules.', $class);
-        $module = explode('.controllers.',$module[1]);
-        $module_name = $module[0];
-        $controller_name = $module[1];
-        $controller_name = lcfirst(substr($controller_name, 0,-10));
+        $module = explode('.controllers.', $module[1]);
+        $moduleName = $module[0];
+        $controllerName = $module[1];
+        $controllerName = lcfirst(substr($controllerName, 0, -10));
         $url = null;
-        if(!$isStatic && empty($param) && self::isAction($method)==true){
+        if (!$isStatic && empty($param) && self::isAction($method) == true) {
             $method = lcfirst(substr($method, 6));
-            $url = $module_name.'/'.$controller_name.'/'.$method;
+            $url = $moduleName . '/' . $controllerName . '/' . $method;
         }
         return $url;
     }
-      
-    public static function controllerName($class){
-       $class_name = explode('.controllers.', $class);
-       $class_name = $class_name[1];
-       return $class_name;
+
+    public static function controllerName($class) {
+        $className = explode('.controllers.', $class);
+        $className = $className[1];
+        return $className;
     }
-    
+
     //CodeGenerator
     protected $baseClass = "Controller";
     protected $basePath = "application.modules.{module}.Controllers";
 
-    public function generateClass($class = null) {
-        $this->updateFunction('actionIndex', 'return array();');
+    public function addActionIndex($modelClass) {
+        $body = '
+        $this->renderForm("' . $modelClass . '");';
+        $this->updateFunction('actionIndex', $body);
     }
 
-    public static function generate($module, $class) {
-        $cg = new ControllerGenerator();
-        $cg->basePath = str_replace('{module}', $module, $cg->basePath);
-        $cg->load($class);
-        $cg->updateFunction('actionIndex', 'return array();', array(
-            'visibility' => 'protected',
-            'params' => array(
-                '$class = null',
-            )
+    public function addActionCreate($modelClass) {
+        $body = '
+        $model = new ' . $modelClass . ';
+                
+        if (isset($_POST["' . $modelClass . '"])) {
+            $model->attributes = $_POST["' . $modelClass . '"];
+            if ($model->save()) {
+                $this->redirect(array("index"));
+            }
+        }
+        $this->renderForm("' . $modelClass . '",$model);';
+        $this->updateFunction('actionCreate', $body);
+    }
+    
+    public function addActionUpdate($modelClass){
+        $body = '
+        $model = $this->loadModel($id , "' . $modelClass . '");
+                
+        if (isset($_POST["' . $modelClass . '"])) {
+            $model->attributes = $_POST["' . $modelClass . '"];
+            if ($model->save()) {
+                $this->redirect(array("index"));
+            }
+        }
+        $this->renderForm("' . $modelClass . '",$model);';
+        $this->updateFunction('actionUpdate', $body, array(
+            'params' => array('$id')
         ));
-
-        
-        return $cg;
     }
-
+    
+    public function addActionDelete($modelClass){
+        $body = '
+        $this->loadModel($id , "' . $modelClass . '")->delete();';
+        $this->updateFunction('actionDelete', $body, array(
+            'params' => array('$id')
+        ));
+    }
+    
+    public function __construct($module, $class) {
+        $this->basePath = str_replace('{module}', $module, $this->basePath);
+        $this->load($class);
+    }
+    
 }
