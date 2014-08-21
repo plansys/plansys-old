@@ -10,7 +10,7 @@ class UserController extends Controller {
         var_dump($a);
         
     }
-
+    
     public function actionCreate() {
         $model = new AdminUser;
         $model->username = "OPX";
