@@ -5,13 +5,22 @@ class AdminSetup extends Form {
         return array (
             '<h2><center>{{ form.formTitle }}</center></h2><hr/>',
             array (
-                'label' => 'Password',
-                'name' => 'password',
-                'type' => 'TextField',
+                'label' => 'Driver',
+                'name' => 'driver',
+                'list' => array (
+                    'mysql' => 'MySQL',
+                ),
+                'listExpr' => 'Setting::getDBDriverList();',
+                'type' => 'DropDownList',
             ),
             array (
                 'label' => 'Server',
                 'name' => 'server',
+                'type' => 'TextField',
+            ),
+            array (
+                'label' => 'Port',
+                'name' => 'port',
                 'type' => 'TextField',
             ),
             array (
@@ -20,7 +29,13 @@ class AdminSetup extends Form {
                 'type' => 'TextField',
             ),
             array (
-                'label' => 'DB name',
+                'label' => 'Password',
+                'name' => 'password',
+                'fieldType' => 'password',
+                'type' => 'TextField',
+            ),
+            array (
+                'label' => 'DB Name',
                 'name' => 'dbname',
                 'type' => 'TextField',
             ),
@@ -32,7 +47,7 @@ class AdminSetup extends Form {
     }
     public function getForm() {
         return array (
-            'formTitle' => 'Setup',
+            'formTitle' => 'AdminSetup',
             'layout' => array (
                 'name' => 'full-width',
                 'data' => array (
@@ -43,8 +58,10 @@ class AdminSetup extends Form {
             ),
         );
     }
+    
     public $driver;
     public $server;
+    public $port;
     public $username;
     public $password;
     public $dbname;

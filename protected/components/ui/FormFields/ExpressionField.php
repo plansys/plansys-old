@@ -1,7 +1,9 @@
 <?php
 
 class ExpressionField extends FormField {
-
+	/**
+	 * @return array Fungsi ini akan me-return array property ExpressionField.
+	 */
     public function getFieldProperties() {
         return array (
             array (
@@ -80,22 +82,49 @@ class ExpressionField extends FormField {
         );
     }
 
+	/** @var string variable untuk menampung label */
     public $label = '';
+	
+	/** @var string variable untuk menampung fieldname */
     public $fieldname = '';
+	
+	/** @var string variable untuk menampung action */
     public $validAction = '';
+	
+	/** @var string variable untuk menampung type language */
     public $language = 'php';
+	
+	/** @var string variable untuk menampung value */
     public $value = '';
+	
+	/** @var array variable untuk menampung array options */
     public $options = array();
+	
+	/** @var string variable untuk menampung description */
     public $desc = '';
+	
+	/** @var array variable untuk menampung array option label */
     public $labelOptions = array();
+	
+	/** @var string variable untuk menampung toolbarName */
     public static $toolbarName = "Expression Field";
+	
+	/** @var string variable untuk menampung category */
     public static $category = "User Interface";
+	
+	/** @var string variable untuk menampung toolbarIcon */
     public static $toolbarIcon = "fa fa-terminal";
-
+	
+	/**
+	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
+	*/
     public function includeJS() {
         return array('expression-field.js');
     }
 
+	/**
+	 * @return null Fungsi ini akan memvalidasi action dengan menjalankan function evaluate.
+	*/
     public function actionValidate() {
         $postdata = file_get_contents("php://input");
         $post = json_decode($postdata);
@@ -104,6 +133,9 @@ class ExpressionField extends FormField {
         $this->evaluate(@$post['expr']);
     }
     
+	/**
+	 * @return string Fungsi ini akan mendapatkan icon dan me-return language type.
+	*/
     public function getIcon() {
         if ($this->language == "php") return "php";
         if ($this->language == "sql") return "php-database-alt2";
@@ -111,6 +143,9 @@ class ExpressionField extends FormField {
         if ($this->language == "html") return "shell";
     }
 
+	/**
+	 * @return field Fungsi ini untuk me-render field dan atributnya.
+	 */	
     public function render() {
         $this->addClass('field-box');
         if ($this->fieldname != '') {

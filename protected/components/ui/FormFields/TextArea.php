@@ -1,7 +1,9 @@
 <?php
 
 class TextArea extends FormField {
-
+	/**
+	 * @return array Fungsi ini akan me-return array property TextArea.
+	 */
     public function getFieldProperties() {
         return array (
             array (
@@ -114,35 +116,72 @@ class TextArea extends FormField {
         );
     }
 
+	/** @var string variable untuk menampung label */
     public $label = '';
+	
+	/** @var string variable untuk menampung name */
     public $name = '';
+	
+	/** @var string variable untuk menampung value */
     public $value = '';
+	
+	/** @var integer variable untuk menampung nilai width label */
     public $labelWidth = 4;
+	
+	/** @var integer variable untuk menampung nilai witdth field */
     public $fieldWidth = 8;
+	
+	/** @var string variable ntuk menampung kondisi layout dengan default Horizontal */
     public $layout = 'Horizontal';
+	
+	/** @var integer variable untuk menampung nilai height field */
     public $fieldHeight = 3;
+	
+	/** @var array variable untuk menampung array options */
     public $options = array();
+	
+	/** @var array variable untuk menampung array options label */
     public $labelOptions = array();
+	
+	/** @var array variable untuk menampung array options field */
     public $fieldOptions = array();
+	
+	/** @var string variable untuk menampung toolbarName */
     public static $toolbarName = "Text Area";
+	
+	/** @var string variable untuk menampung category */
     public static $category = "User Interface";
+	
+	/** @var string variable untuk menampung toolbarIcon */
     public static $toolbarIcon = "fa fa-sort-alpha-asc";
-
+	
+	/**
+	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
+	*/
     public function includeJS()
     {
         return array('text-area.js');
     }
 
+	/**
+	 * @return string Fungsi ini akan me-return string class layout yang digunakan. Fungsi ini akan mengecek nilai property $layout untuk menentukan nama Class Layout.
+	*/
     public function getLayoutClass()
     {
         return ($this->layout == 'Vertical' ? 'form-vertical' : '');
     }
 
+	/**
+	 * @return string Fungsi ini akan me-return string class error jika terdapat error pada satu atau banyak attribute.
+	*/
     public function getErrorClass()
     {
         return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
     }
 
+	/**
+	 * @return string Fungsi ini akan me-return string class label. Fungsi akan mengecek $layout untuk menentukan layout yang digunakan. Fungsi juga me-load option label dari property $labelOptions. 
+	 */
     public function getlabelClass()
     {
         if ($this->layout == 'Vertical') {
@@ -155,11 +194,17 @@ class TextArea extends FormField {
         return $class;
     }
 
+	/**
+	 * @return integer Fungsi ini akan me-return string class untuk menentukan width fields.
+	 */
     public function getFieldColClass()
     {
         return "col-sm-" . $this->fieldWidth;
     }
 
+	/**
+	 * @return field Fungsi ini untuk me-render field dan atributnya.
+	 */	
     public function render() {
         $this->addClass('form-group form-group-sm', 'options');
         $this->addClass($this->layoutClass, 'options');

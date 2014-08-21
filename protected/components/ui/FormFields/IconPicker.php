@@ -1,7 +1,9 @@
 <?php
 
 class IconPicker extends FormField {
-
+	/**
+	 * @return array Fungsi ini akan me-return array property IconPicker.
+	 */
     public function getFieldProperties() {
         return array (
             array (
@@ -125,26 +127,62 @@ class IconPicker extends FormField {
         );
     }
 
+	/** @var string variable untuk menampung label */
     public $label = '';
+	
+	/** @var string variable untuk menampung name */
     public $name = '';
+	
+	/** @var string variable untuk menampung value yang digunakan pada function getIcon */
     public $value = '';
+	
+	/** @var string variable untuk menampung list */
     public $list = '';
+	
+	/** @var string variable untuk menampung list expression */
     public $listExpr = '';
+	
+	/** @var string variable untuk menampung kondisi render dengan default No */
     public $renderEmpty = "No";
+	
+	/** @var string variable ntuk menampung kondisi layout dengan default Horizontal*/
     public $layout = 'Horizontal';
+	
+	/** @var string variable untuk menampung iconTemplate */
     public $iconTemplate = '<i class="fa fa-fw fa-lg {icon}"></i>';
+	
+	/** @var string variable untuk menampung width field dengan default 265 */
     public $fieldWidth = "265";
+	
+	/** @var integer variable untuk menampung nilai width label */
     public $labelWidth = 4;
+	
+	/** @var array variable untuk menampung array options */
     public $options = array();
+	
+	/** @var array variable untuk menampung array options label */
     public $labelOptions = array();
+	
+	/** @var string variable untuk menampung toolbarName */
     public static $toolbarName = "Icon Picker";
+	
+	/** @var string variable untuk menampung category */
     public static $category = "User Interface";
+	
+	/** @var string variable untuk menampung toolbarIcon */
     public static $toolbarIcon = "fa fa-smile-o";
-
+	
+	/**
+	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
+	*/
     public function includeJS() {
         return array('icon-picker.js');
     }
 
+	/**
+	 * @param string $value Parameter untuk melempar value kedalam function getIcon.
+	 * @return function Fungsi ini akan me-return function str_replace dengan 3 parameter. 
+	*/
     public function getIcon($value = null) {
         if (is_null($value)) {
             $value = $this->value;
@@ -159,6 +197,9 @@ class IconPicker extends FormField {
         }
     }
 
+	/**
+	 * @return array Fungsi ini akan memproses expression menjadi array lalu mereturn array tersebut.
+	*/
     public function processExpr() {
         if ($this->listExpr != "") {
             ## evaluate expression
@@ -184,6 +225,9 @@ class IconPicker extends FormField {
         );
     }
 
+	/**
+	 * @return string Fungsi ini akan me-return string class label. Fungsi akan mengecek $layout untuk menentukan layout yang digunakan. Fungsi juga me-load option label dari property $labelOptions. 
+	 */
     public function getlabelClass() {
         if ($this->layout == 'Vertical') {
             $class = "control-label col-sm-12";
@@ -195,18 +239,30 @@ class IconPicker extends FormField {
         return $class;
     }
 
+	/**
+	 * @return integer Fungsi ini akan me-return string class untuk menentukan width fields.
+	 */	
     public function getFieldColClass() {
         return "col-sm-" . ($this->layout == 'Vertical' ? 12 : 12 - $this->labelWidth);
     }
 
+	/**
+	 * @return string Fungsi ini akan me-return string class layout yang digunakan. Fungsi ini akan mengecek nilai property $layout untuk menentukan nama Class Layout.
+	*/
     public function getLayoutClass() {
         return ($this->layout == 'Vertical' ? 'form-vertical' : '');
     }
 
+	/**
+	 * @return string Fungsi ini akan me-return string class error jika terdapat error pada satu atau banyak attribute.
+	*/
     public function getErrorClass() {
         return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
     }
 
+	/**
+	 * @return field Fungsi ini untuk me-render field dan atributnya.
+	 */
     public function render() {
         $this->addClass('form-group form-group-sml', 'options');
         $this->addClass($this->layoutClass, 'options');

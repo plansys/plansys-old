@@ -80,7 +80,7 @@ td.passed
 
 td.warning
 {
-	background-color: #FFFFBF;
+	background-color: #FFFFBF !important;
 	border: 1px solid silver;
 	padding: 2px;
 }

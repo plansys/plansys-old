@@ -1219,3 +1219,11 @@ div[icon-picker] .popover-content {
     display:table-cell;
     vertical-align: middle;
 }
+
+.code{
+    font-family:monospace;
+}
+
+.action-list{
+    margin:8px;
+}

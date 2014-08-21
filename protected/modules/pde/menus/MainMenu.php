@@ -27,11 +27,11 @@
             array (
                 'label' => 'Controller Manager',
                 'icon' => 'fa-paper-plane',
-                'url' => '/admin/controllerGenerator/index',
+                'url' => '#',
             ),
             array (
                 'label' => 'Model Generator',
-                'icon' => 'fa-cube',
+                'icon' => 'fa-hand-o-left',
                 'url' => '#',
             ),
         ),

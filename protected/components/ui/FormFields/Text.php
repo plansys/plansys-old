@@ -1,7 +1,9 @@
 <?php
 
 class Text extends FormField {
-
+	/**
+	 * @return array Fungsi ini akan me-return array property Text.
+	 */
     public function getFieldProperties() {
         return array(
             array(
@@ -24,11 +26,21 @@ class Text extends FormField {
         );
     }
 
+	/** @var string variable untuk menampung value */
     public $value;
+	
+	/** @var string variable untuk menampung toolbarName */
     public static $toolbarName = "Text / HTML";
+	
+	/** @var string variable untuk menampung category */
     public static $category = "Layout";
+	
+	/** @var string variable untuk menampung toolbarIcon */
     public static $toolbarIcon = "fa fa-font";
 
+	/**
+	 * @return field Fungsi ini untuk me-render field dan atributnya.
+	 */	
     public function render() {
         $attributes = array(
             'field' => $this->attributes,

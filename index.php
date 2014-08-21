@@ -1,5 +1,6 @@
 <?php
 
+
 // change the following paths if necessary
 $yii = dirname(__FILE__) . '/framework/yii.php';
 $config = dirname(__FILE__) . '/protected/config/main.php';
@@ -17,5 +18,6 @@ if(!file_exists(dirname(__FILE__).'/assets') || !file_exists(dirname(__FILE__).'
     header("Location: installer/index.php");
     die();
 }else{
+
     Yii::createWebApplication($config)->run();
 }

@@ -25,9 +25,8 @@ class Controller extends CController {
             'wrapForm' => true,
             'action' => $this->action->id
         );
-        
+
         $renderOptions = array_merge($renderOptions, $options);
-        
         $mainform = $fb->render($model, $renderOptions);
 
         $data = $fb->form['layout']['data'];
@@ -39,7 +38,7 @@ class Controller extends CController {
         }
 
         $layout = Layout::render($fb->form['layout']['name'], $data, $model, true);
-        
+
         $this->renderText($layout, false);
     }
 

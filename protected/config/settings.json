@@ -1,7 +1,8 @@
 {
     "db": {
-        "driver": "JON",
+        "driver": "mysql",
         "server": "",
+        "port": "",
         "username": "",
         "password": "",
         "dbname": ""

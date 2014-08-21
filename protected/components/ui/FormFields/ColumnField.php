@@ -1,7 +1,9 @@
 <?php
 
 class ColumnField extends FormField {
-
+	/**
+	 * @return array Fungsi ini akan me-return array property ColumnField.
+	 */
     public function getFieldProperties() {
         return array (
             array (
@@ -46,9 +48,14 @@ class ColumnField extends FormField {
             '<hr/>',
         );
     }
-
+	
+	/** @var integer variable untuk menampung jumlah columns dengan default 2 */
     public $totalColumns = 2;
+	
+	/** @var string variable untuk menampung kondisi border dengan default No */
     public $showBorder = 'No';
+	
+	/** @var array variable untuk menampung parseField */
     public $parseField = array(
         'column1' => 'renderColumn1',
         'column2' => 'renderColumn2',
@@ -56,20 +63,49 @@ class ColumnField extends FormField {
         'column4' => 'renderColumn4',
         'column5' => 'renderColumn5',
     );
+	
+	/** @var array variable untuk menampung DIV column */
     public $column1 = array('<column-placeholder></column-placeholder>');
+	
+	/** @var array variable untuk menampung DIV column */
     public $column2 = array('<column-placeholder></column-placeholder>');
+	
+	/** @var array variable untuk menampung DIV column */
     public $column3 = array('<column-placeholder></column-placeholder>');
+	
+	/** @var array variable untuk menampung DIV column */
     public $column4 = array('<column-placeholder></column-placeholder>');
+	
+	/** @var array variable untuk menampung DIV column */
     public $column5 = array('<column-placeholder></column-placeholder>');
+	
+	/** @var string variable yang digunakan pada saat renderColumn */
     public $renderColumn1 = "";
+	
+	/** @var string variable yang digunakan pada saat renderColumn */
     public $renderColumn2 = "";
+	
+	/** @var string variable yang digunakan pada saat renderColumn */
     public $renderColumn3 = "";
+	
+	/** @var string variable yang digunakan pada saat renderColumn */
     public $renderColumn4 = "";
+	
+	/** @var string variable yang digunakan pada saat renderColumn */
     public $renderColumn5 = "";
+	
+	/** @var string variable untuk menampung toolbarName */
     public static $toolbarName = "Columns";
+	
+	/** @var string variable untuk menampung category */
     public static $category = "Layout";
+	
+	/** @var string variable untuk menampung toolbarIcon */
     public static $toolbarIcon = "fa fa-columns";
-
+	
+	/**
+	 * @return integer Fungsi ini akan me-return width dari column yang akan dirender.
+	*/
     public function getColumnWidth() {
         if (is_array($this->totalColumns)) {
             return 100 / count($this->totalColumns);
@@ -78,6 +114,10 @@ class ColumnField extends FormField {
         }
     }
 
+	/**
+	 * @param integer $i Parameter untuk melempar jumlah column yang di-render.
+	 * @return html Fungsi ini untuk me-render column.
+	*/
     public function renderColumn($i) {
         $column = 'renderColumn' . $i;
 
@@ -89,6 +129,9 @@ class ColumnField extends FormField {
         return $html;
     }
 
+	/**
+	 * @return fields Fungsi ini untuk me-render field dan atributnya.
+	*/
     public function render() {
         return $this->renderInternal('template_render.php');
     }

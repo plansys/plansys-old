@@ -1,30 +1,33 @@
 <?php
 
-class TextField extends FormField {
-
+class TextField extends FormField
+{
+	/**
+	 * @return array Fungsi ini akan me-return array property TextField.
+	 */
     public function getFieldProperties() {
-        return array(
-            array(
+        return array (
+            array (
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'save()',
                     'ng-form-list' => 'modelFieldList',
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
-                'list' => array(),
+                'list' => array (),
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Field Type',
                 'name' => 'fieldType',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.fieldType',
                     'ng-change' => 'save();',
                 ),
-                'list' => array(
+                'list' => array (
                     'text' => 'Text Field',
                     'password' => 'Password Field',
                 ),
@@ -32,24 +35,24 @@ class TextField extends FormField {
                 'otherLabel' => 'Other...',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                 ),
-                'list' => array(
+                'list' => array (
                     'Horizontal' => 'Horizontal',
                     'Vertical' => 'Vertical',
                 ),
@@ -57,15 +60,15 @@ class TextField extends FormField {
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array(
-                'column1' => array(
-                    array(
+            array (
+                'column1' => array (
+                    array (
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array(
+                        'options' => array (
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
@@ -75,14 +78,14 @@ class TextField extends FormField {
                     ),
                     '<column-placeholder></column-placeholder>',
                 ),
-                'column2' => array(
-                    array(
+                'column2' => array (
+                    array (
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => 12,
                         'fieldWidth' => '11',
-                        'options' => array(
+                        'options' => array (
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
@@ -91,23 +94,23 @@ class TextField extends FormField {
                     ),
                     '<column-placeholder></column-placeholder>',
                 ),
-                'column3' => array(
+                'column3' => array (
                     '<column-placeholder></column-placeholder>',
                 ),
-                'column4' => array(
+                'column4' => array (
                     '<column-placeholder></column-placeholder>',
                 ),
                 'type' => 'ColumnField',
             ),
             '<hr/>',
-            array(
-                'column1' => array(
-                    array(
+            array (
+                'column1' => array (
+                    array (
                         'name' => 'prefix',
                         'layout' => 'Vertical',
                         'fieldWidth' => '11',
                         'prefix' => 'Prefix',
-                        'options' => array(
+                        'options' => array (
                             'ng-model' => 'active.prefix',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
@@ -116,13 +119,13 @@ class TextField extends FormField {
                     ),
                     '<column-placeholder></column-placeholder>',
                 ),
-                'column2' => array(
-                    array(
+                'column2' => array (
+                    array (
                         'name' => 'postfix',
                         'layout' => 'Vertical',
                         'fieldWidth' => '11',
                         'prefix' => 'Postfix',
-                        'options' => array(
+                        'options' => array (
                             'ng-model' => 'active.postfix',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
@@ -133,17 +136,17 @@ class TextField extends FormField {
                 ),
                 'type' => 'ColumnField',
             ),
-            array(
+            array (
                 'label' => 'Options',
                 'fieldname' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array(
+            array (
                 'label' => 'Label Options',
                 'fieldname' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
-            array(
+            array (
                 'label' => 'Field Options',
                 'fieldname' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
@@ -151,35 +154,80 @@ class TextField extends FormField {
         );
     }
 
+	/** @var string variable untuk menampung label */
     public $label = '';
+	
+	/** @var string variable untuk menampung name */
     public $name = '';
+	
+	/** @var string variable untuk menampung tipe field dengan default text */
     public $fieldType = 'text';
+	
+	/** @var string variable untuk menampung value */
     public $value = '';
+	
+	/** @var string variable ntuk menampung kondisi layout dengan default Horizontal */
     public $layout = 'Horizontal';
+	
+	/** @var integer variable untuk menampung nilai width label */
     public $labelWidth = 4;
+	
+	/** @var integer variable untuk menampung nilai witdth field */
     public $fieldWidth = 8;
+	
+	/** @var string variable untuk menampung prefix */
     public $prefix = '';
+	
+	/** @var string variable untuk menampung postfix */
     public $postfix = '';
+	
+	/** @var array variable untuk menampung array options */
     public $options = array();
+	
+	/** @var array variable untuk menampung array options label */
     public $labelOptions = array();
+	
+	/** @var array variable untuk menampung array options field */
     public $fieldOptions = array();
+	
+	/** @var string variable untuk menampung toolbarName */
     public static $toolbarName = "Text Field";
+	
+	/** @var string variable untuk menampung category */
     public static $category = "User Interface";
+	
+	/** @var string variable untuk menampung toolbarIcon */
     public static $toolbarIcon = "fa fa-text-height";
-
-    public function includeJS() {
+	
+	/**
+	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
+	*/
+    public function includeJS()
+    {
         return array('text-field.js');
     }
 
-    public function getLayoutClass() {
+	/**
+	 * @return string Fungsi ini akan me-return string class layout yang digunakan. Fungsi ini akan mengecek nilai property $layout untuk menentukan nama Class Layout.
+	*/
+    public function getLayoutClass()
+    {
         return ($this->layout == 'Vertical' ? 'form-vertical' : '');
     }
 
-    public function getErrorClass() {
+	/**
+	 * @return string Fungsi ini akan me-return string class error jika terdapat error pada satu atau banyak attribute.
+	*/
+    public function getErrorClass()
+    {
         return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
     }
 
-    public function getlabelClass() {
+	/**
+	 * @return string Fungsi ini akan me-return string class label. Fungsi akan mengecek $layout untuk menentukan layout yang digunakan. Fungsi juga me-load option label dari property $labelOptions. 
+	 */
+    public function getlabelClass()
+    {
         if ($this->layout == 'Vertical') {
             $class = "control-label col-sm-12";
         } else {
@@ -190,11 +238,19 @@ class TextField extends FormField {
         return $class;
     }
 
-    public function getFieldColClass() {
+	/**
+	 * @return integer Fungsi ini akan me-return string class untuk menentukan width fields.
+	 */	
+    public function getFieldColClass()
+    {
         return "col-sm-" . $this->fieldWidth;
     }
 
-    public function render() {
+	/**
+	 * @return field Fungsi ini untuk me-render field dan atributnya.
+	 */	
+    public function render()
+    {
         $this->addClass('form-group form-group-sm', 'options');
         $this->addClass($this->layoutClass, 'options');
         $this->addClass($this->errorClass, 'options');
@@ -204,8 +260,6 @@ class TextField extends FormField {
         $this->addClass('form-control', 'fieldOptions');
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
-
         return $this->renderInternal('template_render.php');
     }
-
 }

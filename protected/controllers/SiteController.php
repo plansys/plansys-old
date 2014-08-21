@@ -10,11 +10,14 @@ class SiteController extends Controller
 	{
 		// renders the view file 'protected/views/site/index.php'
 		// using the default layout 'protected/views/layouts/main.php'
-		if (Yii::app()->user->isGuest) {
-            $this->redirect(array("login"));
+        if(!file_exists(Setting::getRootPath(). '/installer/setup_db.lock')){
+            if (Yii::app()->user->isGuest) {
+                $this->redirect(array("login"));
+            }
+            $this->redirect(array(lcfirst(strtolower(Yii::app()->user->roles)) . '/default/index'));
+        }else{
+            $this->redirect(array("install/index"));
         }
-        
-        $this->redirect(array(lcfirst(strtolower(Yii::app()->user->roles)) . '/default/index'));
 	}
 
 	/**
@@ -51,7 +54,10 @@ class SiteController extends Controller
 			$model->attributes=$_POST['LoginForm'];
 			// validate user input and redirect to the previous page if valid
 			if($model->validate() && $model->login())
+            {
+                
 				$this->redirect(Yii::app()->user->returnUrl);
+            }
 		}
 		// display the login form
 		$this->render('login',array('model'=>$model));
