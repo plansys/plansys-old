@@ -23,8 +23,7 @@ ob_start();
                 $("form[ng-controller=<?= $modelClass ?>Controller]").attr('action', url).submit();
             }
         };
-    }
-    );
+    });
 <?php $script = ob_get_clean(); ?>
 </script>
 <?php
