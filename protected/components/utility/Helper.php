@@ -9,10 +9,6 @@ class Helper {
         return stripos($haystack, $needle, 0) === 0;
     }
 
-    public static function angularEcho($e) {
-        return "{{" . $e . "}}";
-    }
-
     public static function is_assoc($arr) {
         return array_keys($arr) !== range(0, count($arr) - 1);
     }

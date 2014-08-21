@@ -1,10 +1,10 @@
 {
     "db": {
         "driver": "mysql",
-        "server": "",
-        "port": "",
-        "username": "",
-        "password": "",
-        "dbname": ""
+        "server": "localhost",
+        "port": "3306",
+        "username": "root",
+        "password": "okedeh",
+        "dbname": "dsi"
     }
 }

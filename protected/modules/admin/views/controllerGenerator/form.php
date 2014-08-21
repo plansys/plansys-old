@@ -39,8 +39,12 @@
                                     ?>
                                 </td>
                                 <td style="width:10%">
-                                    <a href="#" class="glyphicon glyphicon-eye-open"/>&nbsp;
-                                    <a href="#" class="glyphicon glyphicon-pencil"/>
+                                    <?php $url = ControllerGenerator::checkUrl($class, $m['isStatic'], $m['param'], $m['name'])?>
+                                    <a href="#" class="glyphicon glyphicon-pencil"></a>
+                                    &nbsp;
+                                    <?php if($url != null):?>
+                                    <a href="<?php echo Yii::app()->createUrl($url)?>" target="_blank" class="glyphicon glyphicon-eye-open"></a>
+                                    <?php endif;?>
                                 </td>
                             </tr>
                             <?php endforeach;?>

@@ -3,13 +3,13 @@
 class FormField extends CComponent {
 
 	/** 
-	* @var array variable untuk menampung error. 
+	* @var array error. 
 	* @access private	
 	*/
     private $_errors = array();
 	
 	/** 
-	* @var array variable untuk menampung property form. 
+	* @var array property form. 
 	* @access private	
 	*/
     private $_form_properties = array(
@@ -224,7 +224,35 @@ class FormField extends CComponent {
     }
 
 	/**
-	 * @return array Fungsi ini akan me-return array yang berisi default fields.
+	 * @param string $key Parameter untuk manampung key.
+	 * @param string $value Parameter untuk manampung value.
+	 * @param array $option Parameter untuk manampung option.
+	 * @return null Fungsi ini akan men-set defaultoption.
+	*/	
+	public function setDefaultOption($key, $value, &$option) {
+        if (!isset($option[$key])) {
+            $option[$key] = $value;
+        }
+    }
+
+	/**
+	 * @return array Fungsi ini akan me-return originalName dari model.
+	*/
+    public function getOriginalName() {
+        if (!property_exists($this, 'name')) {
+            return "";
+        }
+        if (strpos($this->name, "[") !== false) {
+            $name = explode("[", $this->name);
+            $name = str_replace(array(" ", "]"), "", $name[count($name) - 1]);
+            return $name;
+        } else {
+            return $this->name;
+        }
+    }
+	
+	/**
+	 * @return array Fungsi ini akan me-return array yang berisi default atribut field.
 	*/
     public function getDefaultFields() {
         $fields = $this->attributes;
@@ -283,7 +311,7 @@ class FormField extends CComponent {
             foreach ($includeJS as $js) {
                 $class = get_class($this);
                 $html[] = Yii::app()->assetManager->publish(
-                    Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js
+                    Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js, true
                 );
             }
         }
@@ -344,6 +372,9 @@ class FormField extends CComponent {
             }, array_keys($attributes)));
     }
 
+	/**
+	 * @return array Fungsi ini akan me-return semua atribut formfield.
+	*/
     public static function all() {
         $ffdir = Yii::getPathOfAlias('application.components.ui.FormFields') . DIRECTORY_SEPARATOR;
         $dir = glob($ffdir . "*.php");
@@ -361,6 +392,9 @@ class FormField extends CComponent {
         }, $dir);
     }
 
+	/**
+	 * @return array Fungsi ini akan me-return semua atribut formfield dengan urut berdasarkan kategori.
+	*/
     public static function allSorted() {
 
         $all = FormField::all();
@@ -371,6 +405,10 @@ class FormField extends CComponent {
         return $all;
     }
 
+	/**
+	 * @param string $formType Parameter untuk manampung tipe form.
+	 * @return array Fungsi ini digunakan untuk setting formfield yang sesuai dengan tipe form yang diterima pada parameter.
+	*/
     public static function settings($formType) {
         $ffdir = Yii::getPathOfAlias('application.components.ui.FormFields') . DIRECTORY_SEPARATOR;
         $dir = glob($ffdir . "*.php");

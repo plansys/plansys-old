@@ -127,49 +127,49 @@ class IconPicker extends FormField {
         );
     }
 
-	/** @var string variable untuk menampung label */
+	/** @var string $label */
     public $label = '';
 	
-	/** @var string variable untuk menampung name */
+	/** @var string $name */
     public $name = '';
 	
-	/** @var string variable untuk menampung value yang digunakan pada function getIcon */
+	/** @var string $value digunakan pada function getIcon */
     public $value = '';
 	
-	/** @var string variable untuk menampung list */
+	/** @var string $list */
     public $list = '';
 	
-	/** @var string variable untuk menampung list expression */
+	/** @var string $listExpr */
     public $listExpr = '';
 	
-	/** @var string variable untuk menampung kondisi render dengan default No */
+	/** @var string $renderEmpty */
     public $renderEmpty = "No";
 	
-	/** @var string variable ntuk menampung kondisi layout dengan default Horizontal*/
+	/** @var string $layout */
     public $layout = 'Horizontal';
 	
-	/** @var string variable untuk menampung iconTemplate */
+	/** @var string $iconTemplate */
     public $iconTemplate = '<i class="fa fa-fw fa-lg {icon}"></i>';
 	
-	/** @var string variable untuk menampung width field dengan default 265 */
+	/** @var string $fieldWidth */
     public $fieldWidth = "265";
 	
-	/** @var integer variable untuk menampung nilai width label */
+	/** @var integer $labelWidth */
     public $labelWidth = 4;
 	
-	/** @var array variable untuk menampung array options */
+	/** @var array $options */
     public $options = array();
 	
-	/** @var array variable untuk menampung array options label */
+	/** @var array $labelOptions */
     public $labelOptions = array();
 	
-	/** @var string variable untuk menampung toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName = "Icon Picker";
 	
-	/** @var string variable untuk menampung category */
+	/** @var string $category */
     public static $category = "User Interface";
 	
-	/** @var string variable untuk menampung toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-smile-o";
 	
 	/**
@@ -180,8 +180,8 @@ class IconPicker extends FormField {
     }
 
 	/**
-	 * @param string $value Parameter untuk melempar value kedalam function getIcon.
-	 * @return function Fungsi ini akan me-return function str_replace dengan 3 parameter. 
+	 * @param string $value
+	 * @return array|string Fungsi ini akan me-return array atau string yang merupakan hasil dari pemanggilan fungsi str_replace. . 
 	*/
     public function getIcon($value = null) {
         if (is_null($value)) {
@@ -268,6 +268,8 @@ class IconPicker extends FormField {
         $this->addClass($this->layoutClass, 'options');
         $this->addClass($this->errorClass, 'options');
 
+        $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        
         $this->processExpr();
         return $this->renderInternal('template_render.php');
     }

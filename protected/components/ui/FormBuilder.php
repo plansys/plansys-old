@@ -162,7 +162,7 @@ class FormBuilder extends CComponent {
                 $value = $f;
                 $processed[$k] = array(
                     'type' => 'Text',
-                    'value' => $value
+                    'value' => str_replace("\'", "'", $value)
                 );
             }
         }
@@ -236,9 +236,8 @@ class FormBuilder extends CComponent {
             if ($f['type'] == "Text") {
                 $hash = '---' . sha1($f['value']) . '---';
                 $fields[$k] = $hash;
-                $multiline[$hash] = $f['value'];
+                $multiline[$hash] = str_replace("'", "\'", $f['value']);
             } else {
-
                 ## tidying attributes, remove attribute that same as default attribute
                 $f = $this->tidyAttributes($f, $fieldlist, $multiline);
 
@@ -462,22 +461,8 @@ EOF;
             $data['data'] = $formdata->attributes;
             $data['errors'] = $formdata->errors;
         }
-
-        ob_start();
-        ?>
-        <script type="text/javascript">
-        <?php ob_start(); ?>
-            app.controller("<?= $modelClass ?>Controller", ["$scope", function($scope) {
-                    $scope.form = <?php echo json_encode($this->form); ?>;
-                    $scope.model = <?php echo @json_encode($data['data']); ?>;
-                    $scope.errors = <?php echo @json_encode($data['errors']); ?>;
-                    $scope.<?= $modelClass ?> = $scope;
-                }
-            ]);
-        <?php $script = ob_get_clean(); ?>
-        </script>
-        <?php
-        ob_get_clean();
+        
+        $script = include("FormBuilder.js.php");
 
         return $script;
     }
@@ -836,7 +821,6 @@ EOF;
             'items' => $items
         );
         ## end..
-        ## start: temporary add files in FormFields Dir
         $forms_dir = Yii::getPathOfAlias("application.forms") . DIRECTORY_SEPARATOR;
         $items = glob($forms_dir . "*.php");
         foreach ($items as $k => $f) {

@@ -2,16 +2,17 @@
 
 class UserController extends Controller {
 
+
     public function actionTest() {
         $em = Yii::app()->doctrine->entityManager;
-        $meta = $em->getMetadataFactory()->getAllMetadata();
-        $query = $em->createQuery("SELECT a FROM AuditTrail a");
-        var_dump($query->getResult());
+        $query = $em->createQuery("SELECT a, b FROM UserRole a join a.user b");
+        $a = $query->getSingleResult();
+        var_dump($a);
+        
     }
-    
+
     public function actionCreate() {
         $model = new AdminUser;
-        $model->roles = 'OPX';
         $model->username = "OPX";
         $model->nip = "ASDASDASDAS";
 
@@ -22,7 +23,7 @@ class UserController extends Controller {
             }
         }
 
-        $this->renderForm('AdminUser', 'create', $model);
+        $this->renderForm('AdminUser',  $model);
     }
 
 }

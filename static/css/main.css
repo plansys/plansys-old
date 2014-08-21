@@ -347,6 +347,16 @@ div[ui-content] {
     border-right:0px;
 }
 
+.form-builder-saving {
+    font-size:12px;
+    margin:4px 0px 0px 10px;
+    color:rgb(8, 114, 164);
+    font-weight:bold;
+    position:absolute;
+    left:0px;
+    top:0px;
+    z-index:9;
+}
 
 .duplicate {
     position:absolute;z-index:9;
@@ -380,6 +390,28 @@ div[ui-content] {
     display:inline-block;
 }
 
+.LinkButton {
+    display:inline-block;
+}
+
+.LinkButton .field-info {
+    width:72px !important;
+    right:auto !important;
+    left:0px !important;
+    top:-20px !important;
+}
+
+.LinkButton .field-info .btn {
+    float:left;
+}
+
+.LinkButton .field-info .fa-arrows {
+    margin:0px !important;
+}
+
+.LinkButton .field-info .field-info-text {
+    display:none;
+}
 /******************************** TREE  *********************************/
 
 .angular-ui-tree {
@@ -420,6 +452,17 @@ div[ui-content] {
     margin: 0;
     padding: 0;
 }
+
+.angular-ui-tree-node.inline, .angular-ui-tree-placeholder.inline {
+    display:inline-block;
+}
+.angular-ui-tree-node.inline > .form-field {
+    display:block;
+    padding:0px;
+    margin:0px;
+}
+
+
 
 .angular-ui-tree-node[collapsed=true] > .angular-ui-tree-nodes {
     display:none;
@@ -563,7 +606,6 @@ li:hover > .item-btn {
 }
 .form-builder .angular-ui-tree-placeholder, .menu-editor .angular-ui-tree-placeholder  {
     border:2px dashed #ececeb;
-    width:100% !important;
 }
 .form-builder li .form-field {
     border:1px dashed transparent;
@@ -803,6 +845,20 @@ li:hover > .item-btn {
 }
 
 /********************************** FORMS **************************************/
+
+.link-btn {
+    display:inline-block;
+    opacity:0;
+    margin:3px;
+}
+
+.btn-group .link-btn {
+    margin:3px 0px;
+}
+
+.link-btn.on-editor {
+    margin:2px;
+}
 
 .btn-default {
     background-color: rgb(247, 247, 247);

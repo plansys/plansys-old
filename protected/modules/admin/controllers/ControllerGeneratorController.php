@@ -12,9 +12,8 @@ class ControllerGeneratorController extends Controller{
         $this->layout = "//layouts/blank";
         $this->render('empty');
     }
-    public function actionUpdate(){
+    public function actionUpdate($class){
         $this->layout = "//layouts/blank";
-        $class = $_GET['class'];
         $class_name = ControllerGenerator::controllerName($class);
         $method = ControllerGenerator::listMethod($class,$class_name);
         

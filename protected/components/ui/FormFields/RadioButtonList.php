@@ -111,46 +111,46 @@ class RadioButtonList extends FormField {
         );
     }
 
-	/** @var string variable untuk menampung label */
+	/** @var string $label */
     public $label = '';
 	
-	/** @var string variable untuk menampung name */
+	/** @var string $name */
     public $name = '';
 	
-	/** @var string variable untuk menampung value yang digunakan pada function checked */
+	/** @var string $value digunakan pada function checked */
     public $value = '';
 	
-	/** @var string variable untuk menampung list */
+	/** @var string $list */
     public $list = '';
 	
-	/** @var string variable untuk menampung list expression yang digunakan pada function processExpr */
+	/** @var string $listExpr digunakan pada function processExpr */
     public $listExpr = '';
 	
-	/** @var string variable ntuk menampung layout */
+	/** @var string $layout */
     public $layout = 'Horizontal';
 	
-	/** @var string variable untuk menampung property layout */
+	/** @var string $itemLayout */
     public $itemLayout = 'Vertical';
 	
-	/** @var integer variable untuk menampung nilai width label */
+	/** @var integer $labelWidth */
     public $labelWidth = 4;
 	
-	/** @var array variable untuk menampung array options */
+	/** @var array $options */
     public $options = array();
 	
-	/** @var array variable untuk menampung array options label */
+	/** @var array $labelOptions */
     public $labelOptions = array();
 	
-	/** @var array variable untuk menampung array options field */
+	/** @var array $fieldOptions */
     public $fieldOptions = array();
 	
-	/** @var string variable untuk menampung toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName = "RadioButton List";
 	
-	/** @var string variable untuk menampung category */
+	/** @var string $category */
     public static $category = "User Interface";
 	
-	/** @var string variable untuk menampung toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-dot-circle-o";
 	
 	/**
@@ -217,7 +217,7 @@ class RadioButtonList extends FormField {
     }
 
 	/**
-	 * @param string $value Parameter untuk melempar value field.
+	 * @param string $value
 	 * @return boolean Fungsi ini untuk mengecek value dari field.
 	 */
     public function checked($value) {
@@ -244,6 +244,8 @@ class RadioButtonList extends FormField {
             $this->addClass('inline', 'fieldOptions');
         }
 
+        $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        
         $this->processExpr();
         return $this->renderInternal('template_render.php');
     }

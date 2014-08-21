@@ -41,20 +41,21 @@ class ColumnField extends FormField {
                     'Yes' => 'Yes',
                     'No' => 'No',
                 ),
-                'listExpr' => 'array(\'Yes\',\'No\')',
+                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
+            '<hr/>',
         );
     }
 	
-	/** @var integer variable untuk menampung jumlah columns dengan default 2 */
+	/** @var integer $totalColumns */
     public $totalColumns = 2;
 	
-	/** @var string variable untuk menampung kondisi border dengan default No */
+	/** @var string $showBorder */
     public $showBorder = 'No';
 	
-	/** @var array variable untuk menampung parseField */
+	/** @var array $parseField */
     public $parseField = array(
         'column1' => 'renderColumn1',
         'column2' => 'renderColumn2',
@@ -63,43 +64,43 @@ class ColumnField extends FormField {
         'column5' => 'renderColumn5',
     );
 	
-	/** @var array variable untuk menampung DIV column */
+	/** @var array $column1 */
     public $column1 = array('<column-placeholder></column-placeholder>');
 	
-	/** @var array variable untuk menampung DIV column */
+	/** @var array $column2 */
     public $column2 = array('<column-placeholder></column-placeholder>');
 	
-	/** @var array variable untuk menampung DIV column */
+	/** @var array $column3 */
     public $column3 = array('<column-placeholder></column-placeholder>');
 	
-	/** @var array variable untuk menampung DIV column */
+	/** @var array $column4 */
     public $column4 = array('<column-placeholder></column-placeholder>');
 	
-	/** @var array variable untuk menampung DIV column */
+	/** @var array $column5 */
     public $column5 = array('<column-placeholder></column-placeholder>');
 	
-	/** @var string variable yang digunakan pada saat renderColumn */
+	/** @var string $renderColumn1 */
     public $renderColumn1 = "";
 	
-	/** @var string variable yang digunakan pada saat renderColumn */
+	/** @var string $renderColumn2 */
     public $renderColumn2 = "";
 	
-	/** @var string variable yang digunakan pada saat renderColumn */
+	/** @var string $renderColumn3 */
     public $renderColumn3 = "";
 	
-	/** @var string variable yang digunakan pada saat renderColumn */
+	/** @var string $renderColumn4 */
     public $renderColumn4 = "";
 	
-	/** @var string variable yang digunakan pada saat renderColumn */
+	/** @var string $renderColumn5 */
     public $renderColumn5 = "";
 	
-	/** @var string variable untuk menampung toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName = "Columns";
 	
-	/** @var string variable untuk menampung category */
+	/** @var string $category */
     public static $category = "Layout";
 	
-	/** @var string variable untuk menampung toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-columns";
 	
 	/**
@@ -114,7 +115,7 @@ class ColumnField extends FormField {
     }
 
 	/**
-	 * @param integer $i Parameter untuk melempar jumlah column yang di-render.
+	 * @param integer $i Parameter untuk menerima column berapa yang di-render.
 	 * @return html Fungsi ini untuk me-render column.
 	*/
     public function renderColumn($i) {

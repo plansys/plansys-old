@@ -26,16 +26,16 @@ class Text extends FormField {
         );
     }
 
-	/** @var string variable untuk menampung value */
+	/** @var string $value */
     public $value;
 	
-	/** @var string variable untuk menampung toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName = "Text / HTML";
 	
-	/** @var string variable untuk menampung category */
+	/** @var string $category */
     public static $category = "Layout";
 	
-	/** @var string variable untuk menampung toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-font";
 
 	/**

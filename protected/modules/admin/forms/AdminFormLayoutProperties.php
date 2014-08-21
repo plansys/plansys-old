@@ -42,7 +42,7 @@ class AdminFormLayoutProperties extends Form {
                 ),
                 'type' => 'TextField',
             ),
-            '<div class=\"clearfix\"></div><hr ng-hide=\"form.layout.name == \'full-width\'\"/>',
+            '<div class="clearfix"></div><hr ng-hide="form.layout.name == \'full-width\'"/>',
             array (
                 'label' => 'Menu Tree',
                 'options' => array (
@@ -66,21 +66,7 @@ class AdminFormLayoutProperties extends Form {
                 ),
                 'type' => 'TextField',
             ),
-            '<hr ng-show=\"layout.type == \'menu\'\"/>',
-            array (
-                'label' => '<div class="label label-default pull-right" style="margin-right:15px;">(ng-click attribute)</div>Menu On-Click:',
-                'labelWidth' => '3',
-                'fieldWidth' => '12',
-                'layout' => 'Vertical',
-                'fieldHeight' => '5',
-                'options' => array (
-                    'ng-model' => 'layout.onclick',
-                    'ng-change' => 'changeLayoutProperties()',
-                    'ng-delay' => '500',
-                    'ng-show' => 'layout.type == \'menu\'',
-                ),
-                'type' => 'TextArea',
-            ),
+            '<hr ng-show="layout.type == \'menu\'"/>',
             array (
                 'label' => 'Sub Form',
                 'options' => array (
@@ -93,6 +79,20 @@ class AdminFormLayoutProperties extends Form {
                 ),
                 'listExpr' => 'FormBuilder::listForm($model->module)',
                 'type' => 'DropDownList',
+            ),
+            array (
+                'label' => '<div class=\\"label label-default pull-right\\" style=\\"margin-right:15px;\\">(ng-click attribute)</div>Menu On-Click:',
+                'labelWidth' => '3',
+                'fieldWidth' => '12',
+                'layout' => 'Vertical',
+                'fieldHeight' => '5',
+                'options' => array (
+                    'ng-model' => 'layout.onclick',
+                    'ng-change' => 'changeLayoutProperties()',
+                    'ng-delay' => '500',
+                    'ng-show' => 'layout.type == \'menu\'',
+                ),
+                'type' => 'TextArea',
             ),
         );
     }

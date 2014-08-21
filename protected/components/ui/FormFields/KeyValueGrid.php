@@ -120,37 +120,37 @@ class KeyValueGrid extends FormField {
         );
     }
 
-	/** @var string variable untuk menampung label */
+	/** @var string $label */
     public $label = '';
 	
-	/** @var string variable untuk menampung name field */
+	/** @var string $fieldname */
     public $fieldname = '';
 	
-	/** @var string variable untuk menampung value */
+	/** @var string $value */
     public $value = '';
 	
-	/** @var string variable untuk menampung kondisi field dengan default Hide */
+	/** @var string $show */
     public $show = 'Hide';
 	
-	/** @var array variable untuk menampung array options */
+	/** @var array $options */
     public $options = array();
 	
-	/** @var string variable untuk menampung kondisi EmptyKey dengan default No */
+	/** @var string $allowEmptyKey */
     public $allowEmptyKey = 'No';
 	
-	/** @var string variable untuk menampung kondisi SpaceOnKey dengan default No */
+	/** @var string $allowSpaceOnKey */
     public $allowSpaceOnKey = 'No';
 	
-	/** @var string variable untuk menampung kondisi DoubleQuote dengan default No */
+	/** @var string $allowDoubleQuote */
     public $allowDoubleQuote = 'No';
 	
-	/** @var string variable untuk menampung toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName = "KeyValue Grid";
 	
-	/** @var string variable untuk menampung category */
+	/** @var string $category */
     public static $category = "Developer Fields";
 	
-	/** @var string variable untuk menampung toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-key";
 	
 	/**

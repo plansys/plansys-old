@@ -19,13 +19,13 @@ class ActionBar extends FormField {
         return array();
     }
 	
-    /** @var string variable untuk menampung toolbarName */
+    /** @var string $toolbarName */
     public static $toolbarName = "Action Bar";
 	
-    /** @var string variable untuk menampung category */
+    /** @var string $category */
 	public static $category = "Layout";
 	
-	/** @var string variable untuk menampung toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-suitcase";
 
 }

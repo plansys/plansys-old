@@ -128,56 +128,56 @@ class CheckboxList extends FormField {
         );
     }
 	
-	/** @var string variable untuk menampung label */
+	/** @var string $label */
     public $label = '';
 	
-	/** @var string variable untuk menampung name */
+	/** @var string $name */
     public $name = '';
 	
-	/** @var string variable untuk menampung value yang digunakan pada function checked */
+	/** @var string $value digunakan pada function checked */
     public $value = '';
 	
-	/** @var string variable untuk menampung list */
+	/** @var string $list */
     public $list = '';
 	
-	/** @var string variable untuk menampung list expression */
+	/** @var string $listExpr */
     public $listExpr = '';
 	
-	/** @var string variable ntuk menampung kondisi layout dengan default Horizontal */
+	/** @var string $layout */
     public $layout = 'Horizontal';
 	
-	/** @var string variable untuk menampung kondisi property layout dengan default Vertical */
+	/** @var string $itemLayout */
     public $itemLayout = 'Vertical';
 	
-	/** @var integer variable untuk menampung nilai width label */
+	/** @var integer $labelWidth */
     public $labelWidth = 4;
 	
-	/** @var string variable untuk menampung kondisi dan dibandingkan pada function checked */
+	/** @var string $convertToString */
     public $convertToString = 'Yes';
 	
-	/** @var integer variable untuk menampung nilai witdth field */
+	/** @var integer $fieldWidth */
     public $fieldWidth = 8;
 	
-	/** @var array variable untuk menampung array options */
+	/** @var array $options */
     public $options = array();
 	
-	/** @var array variable untuk menampung array options label */
+	/** @var array $labelOptions */
     public $labelOptions = array();
 	
-	/** @var array variable untuk menampung array options field */
+	/** @var array $fieldOptions */
     public $fieldOptions = array();
 	
-	/** @var string variable untuk menampung toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName = "Checkbox List";
 	
-	/** @var string variable untuk menampung category */
+	/** @var string $category */
     public static $category = "User Interface";
 	
-	/** @var string variable untuk menampung toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-check-square";
 	
 	/**
-	 * @return array Fungsi ini akan me-return array javascript yang di-include.
+	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
 	*/
     public function includeJS() {
         return array('check-box-list.js');
@@ -212,21 +212,21 @@ class CheckboxList extends FormField {
     }
 
 	/**
-	 * @return string Fungsi ini akan me-return string class layout yang digunakan. Fungsi ini akan mengecek nilai property $layout untuk menentukan nama Class Layout.
+	 * @return string Fungsi ini akan me-return string Class layout yang digunakan. Fungsi ini akan mengecek nilai property $layout untuk menentukan nama Class Layout.
 	*/
     public function getLayoutClass() {
         return ($this->layout == 'Vertical' ? 'form-vertical' : '');
     }
 
 	/**
-	 * @return string Fungsi ini akan me-return string class error jika terdapat error pada satu atau banyak attribute.
+	 * @return string Fungsi ini akan me-return string Class error jika terdapat error pada satu atau banyak attribute.
 	*/
     public function getErrorClass() {
         return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
     }
 
 	/**
-	 * @return string Fungsi ini akan me-return string class label. Fungsi akan mengecek $layout untuk menentukan layout yang digunakan. Fungsi juga me-load option label dari property $labelOptions. 
+	 * @return string Fungsi ini akan me-return string Class label. Fungsi akan mengecek $layout untuk menentukan layout yang digunakan. Fungsi juga meload option label dari property $labelOptions.
 	 */
     public function getlabelClass() {
         if ($this->layout == 'Vertical') {
@@ -240,14 +240,14 @@ class CheckboxList extends FormField {
     }
 
 	/**
-	 * @return integer Fungsi ini akan me-return string class untuk menentukan width fields.
+	 * @return string Fungsi ini akan me-return string class untuk menetukan width field
 	 */	
     public function getFieldColClass() {
         return "col-sm-" . ($this->layout == 'Vertical' ? 12 : 12 - $this->labelWidth);
     }
 
 	/**
-	 * @param string $value Parameter untuk melempar value field.
+	 * @param string $value.
 	 * @return string Fungsi ini untuk mengecek value dari field.
 	 */
     public function checked($value) {
@@ -277,6 +277,8 @@ class CheckboxList extends FormField {
             $this->addClass('inline', 'fieldOptions');
         }
 
+        $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        
         $this->processExpr();
         return $this->renderInternal('template_render.php');
     }

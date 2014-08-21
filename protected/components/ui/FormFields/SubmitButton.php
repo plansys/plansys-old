@@ -88,33 +88,30 @@ class SubmitButton extends FormField {
         );
     }
 
-	/** @var string variable untuk menampung label */
+	/** @var string $label */
     public $label = '';
 	
-	/** @var string variable untuk menampung tipe button dengan default primary */
+	/** @var string $buttonType */
     public $buttonType = 'primary';
 	
-	/** @var string variable untuk menampung size button */
+	/** @var string $buttonSize */
     public $buttonSize = 'btn-lg';
 	
-	/** @var string variable untuk menampung posisi button dengan default center */
+	/** @var string $buttonPosition */
     public $buttonPosition = 'center';
 	
-	/** @var array variable untuk menampung array options */
+	/** @var array $options */
     public $options = array();
 	
-	/** @var array variable untuk menampung array options label */
-    public $labelOptions = array();
-	
-	/** @var string variable untuk menampung toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName = "Submit";
 	
-	/** @var string variable untuk menampung category */
+	/** @var string $category */
     public static $category = "User Interface";
 	
-	/** @var string variable untuk menampung toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-hand-o-up";
-
+	
 	/**
 	 * @return field Fungsi ini untuk me-render field dan atributnya.
 	 */	

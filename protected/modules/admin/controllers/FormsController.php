@@ -27,8 +27,8 @@ class FormsController extends Controller {
         FormField::$inEditor = true;
         $fbp = FormBuilder::load($field['type']);
         return $fbp->render($field, array(
-                    'wrapForm' => false,
-                    'FormFieldRenderID' => $this->countRenderID++
+                'wrapForm' => false,
+                'FormFieldRenderID' => $this->countRenderID++
         ));
     }
 
@@ -36,7 +36,7 @@ class FormsController extends Controller {
         if ($class == null) {
             return true;
         }
-        
+
         $a = new $class;
         $field = $a->attributes;
         $field['name'] = $class::$toolbarName;
@@ -71,7 +71,7 @@ class FormsController extends Controller {
 
         Layout::render($fb->form['layout']['name'], $data);
     }
-    
+
     public function actionRenderHiddenField() {
         $this->renderPartial('form_fields_hidden');
     }
@@ -85,19 +85,12 @@ class FormsController extends Controller {
             Yii::app()->cache->set('toolbarData', $toolbarData, 0);
         }
 
-        $toolbarScript = Yii::app()->cache->get('toolbarScript');
-        if (!$toolbarScript) {
-            $toolbarScript = array();
-            foreach ($toolbarData as $k => $f) {
-                $fbp = FormBuilder::load($f['type']);
-                $toolbarScript = array_merge($toolbarScript, $fbp->renderScript());
+        foreach ($toolbarData as $k => $f) {
+            $ff = new $f['type'];
+            $scripts = $ff->renderScript();
+            foreach ($scripts as $script) {
+                Yii::app()->clientScript->registerScriptFile($script, CClientScript::POS_END);
             }
-            $toolbarScript = array_unique($toolbarScript);
-            Yii::app()->cache->set('toolbarScript', $toolbarScript, 0);
-        }
-
-        foreach ($toolbarScript as $script) {
-            Yii::app()->clientScript->registerScriptFile($script, CClientScript::POS_END);
         }
 
         FormField::$inEditor = true;
@@ -109,11 +102,11 @@ class FormsController extends Controller {
 
     public function actionIndex() {
         $forms = FormBuilder::listFile('forms.*', function($m) {
-                    return array(
-                        'name' => str_replace(ucfirst($this->module->id), '', $m),
-                        'class' => $m
-                    );
-                });
+                return array(
+                    'name' => str_replace(ucfirst($this->module->id), '', $m),
+                    'class' => $m
+                );
+            });
 
         $this->render('index', array(
             'forms' => $forms
@@ -142,10 +135,9 @@ class FormsController extends Controller {
             $fb->fields = $post['fields'];
         }
         if (isset($post['form'])) {
-            
+
             //save posted form
             $fb->form = $post['form'];
-            
         }
     }
 
@@ -197,7 +189,7 @@ class FormsController extends Controller {
             'formType' => $formType,
             'toolbarData' => @$toolbar['data'],
             'fieldData' => $fieldData,
-          ));
+        ));
     }
 
 }

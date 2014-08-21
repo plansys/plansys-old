@@ -176,62 +176,62 @@ class ListView extends FormField {
         );
     }
 
-	/** @var string variable untuk menampung selected */
+	/** @var string $selected */
     public $selected = '';
 	
-	/** @var string variable untuk menampung list */
+	/** @var string $list */
     public $list = '';
 	
-	/** @var string variable untuk menampung list expression */
+	/** @var string $listExpr */
     public $listExpr = '';
 	
-	/** @var string variable untuk menampung kondisi selectable field dengan default No */
+	/** @var string $selectable */
     public $selectable = 'No';
 	
-	/** @var string variable untuk menampung kondisi draggable field dengan default No */
+	/** @var string $draggable */
     public $draggable = 'No';
 	
-	/** @var string variable untuk menampung layoutPath */
+	/** @var string $layoutPath */
     public $layoutPath = '';
 	
-	/** @var string variable untuk menampung layout */
+	/** @var string $layout */
     public $layout = '';
 	
-	/** @var string variable untuk menampung tipe layout dengan default File*/
+	/** @var string $layoutType */
     public $layoutType = 'File';
 	
-	/** @var array variable untuk menampung array options */
+	/** @var array $options */
     public $options = array();
 	
-	/** @var string variable untuk menampung isi header */
+	/** @var string $header */
     public $header = '';
 	
-	/** @var string variable untuk menampung tipe header dengan deafult Text */
+	/** @var string $headerType */
     public $headerType = 'Text';
 	
-	/** @var string variable untuk menampung path header */
+	/** @var string $headerPath */
     public $headerPath = '';
 	
-	/** @var string variable untuk menampung footer */
+	/** @var string $footer */
     public $footer = '';
 	
-	/** @var string variable untuk menampung tipe footer dengan default Text */
+	/** @var string $footerType */
     public $footerType = 'Text';
 	
-	/** @var string variable untuk menampung path footer */
+	/** @var string $footerPath */
     public $footerPath = '';
 	
-	/** @var string variable untuk menampung toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName = "ListView";
 	
-	/** @var string variable untuk menampung category */
+	/** @var string $category */
     public static $category = "User Interface";
 	
-	/** @var string variable untuk menampung toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-reorder";
 	
 	/** 
-	 * @var string variable untuk menampung html.
+	 * @var string $html
 	 * @access protected	
 	*/
     protected $html = '';
@@ -270,7 +270,7 @@ class ListView extends FormField {
     }
 
 	/**
-	 * @param string $layout Parameter untuk melempar layout field.
+	 * @param string $layout
 	 * @return null Fungsi ini akan me-load layout dan akan menjalankan beberapa function didalamnya jika type layout adalah 'File'.
 	 */
     private function loadLayout($layout) {

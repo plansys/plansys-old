@@ -19,16 +19,16 @@ class SectionHeader extends FormField {
         );
     }
 
-	/** @var string variable untuk menampung title field SectionHeader */
+	/** @var string $title */
     public $title = "Section";
 	
-	/** @var string variable untuk menampung toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName = "Section Header";
 	
-	/** @var string variable untuk menampung category */
+	/** @var string $category */
     public static $category = "Layout";
 	
-	/** @var string variable untuk menampung toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-archive";
 
 

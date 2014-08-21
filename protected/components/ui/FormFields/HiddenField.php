@@ -29,22 +29,22 @@ class HiddenField extends FormField {
         );
     }
     
-	/** @var string variable untuk menampung name */
+	/** @var string $name */
     public $name = '';
 	
-	/** @var string variable untuk menampung value */
+	/** @var string $value */
     public $value = '';
 	
-	/** @var boolean variable untuk menampung kondisi field dengan default True atau hidden */
+	/** @var boolean $isHidden */
     public $isHidden = true;
 	
-	/** @var string variable untuk menampung toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName = "Hidden Field";
 	
-	/** @var string variable untuk menampung category */
+	/** @var string $category */
     public static $category = "User Interface";
 	
-	/** @var string variable untuk menampung toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-eye-slash";
 	
 
