@@ -6,7 +6,6 @@ class AdminControllerEditor extends Form{
                 'label' => 'Action Name',
                 'name' => 'actionName',
                 'options' => array (
-                    'ng-change' => 'save()',
                     'ng-model' => 'active.name',
                 ),
                 'type' => 'TextField',
@@ -16,7 +15,6 @@ class AdminControllerEditor extends Form{
                 'name' => 'Template',
                 'options' => array (
                     'ng-model' => 'active.template',
-                    'ng-change' => 'save()',
                 ),
                 'list' => array (
                     'default' => 'Default Action',
@@ -32,7 +30,6 @@ class AdminControllerEditor extends Form{
                 'label' => 'Parameters',
                 'name' => 'params',
                 'options' => array (
-                    'ng-change' => 'save()',
                     'ng-model' => 'active.param',
                 ),
                 'fieldOptions' => array (
@@ -44,10 +41,13 @@ class AdminControllerEditor extends Form{
                 'label' => 'Form',
                 'name' => 'Form',
                 'options' => array (
-                    'ng-change' => 'save()',
                     'ng-model' => 'active.form',
                 ),
                 'type' => 'TextField',
+            ),
+            array (
+                'label' => 'Submit',
+                'type' => 'SubmitButton',
             ),
         );
     }
