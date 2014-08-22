@@ -43,11 +43,15 @@ class ControllerGenerator extends CodeGenerator {
         $methods = $reflection->getMethods();
         $action = array();
         foreach ($methods as $m) {
-            if ($m->class == $class_name && !$reflection->getMethod($m->name)->isProtected()) {
+            if ($m->class == $class_name 
+                && !$reflection->getMethod($m->name)->isProtected()
+                && !$reflection->getMethod($m->name)->isStatic()
+                && self::isAction($m->name)== true
+                ) {
                 $action[] = array(
                     'name' => $m->name,
                     'param' => $reflection->getMethod($m->name)->getParameters(),
-                    'isStatic' => $reflection->getMethod($m->name)->isStatic(),
+                    'form' => "",
                 );
             }
         }
@@ -61,18 +65,24 @@ class ControllerGenerator extends CodeGenerator {
             return false;
     }
 
-    public static function checkUrl($class, $isStatic, $param, $method) {
+    public static function checkUrl($class, $param, $method) {
         $module = explode('.modules.', $class);
         $module = explode('.controllers.', $module[1]);
         $moduleName = $module[0];
         $controllerName = $module[1];
         $controllerName = lcfirst(substr($controllerName, 0, -10));
         $url = null;
-        if (!$isStatic && empty($param) && self::isAction($method) == true) {
+        if (empty($param)) {
             $method = lcfirst(substr($method, 6));
             $url = $moduleName . '/' . $controllerName . '/' . $method;
         }
         return $url;
+    }
+    
+    public static function controllerPath($class){
+        $basePath = explode("protected",Yii::getPathOfAlias($class));
+        $controllerPath = 'protected'.$basePath[1].'.php';
+        return $controllerPath;
     }
 
     public static function controllerName($class) {
@@ -80,18 +90,33 @@ class ControllerGenerator extends CodeGenerator {
         $className = $className[1];
         return $className;
     }
+    public static function moduleControllerName($class){
+        $module = explode('.modules.', $class);
+        $module = explode('.controllers.',$module[1]);
+        $moduleName = $module[0];
+        $controllerName = self::controllerName($class);
+        return array(
+            'module' => $moduleName,
+            'controller' => $controllerName
+        );
+        
+    }
 
     //CodeGenerator
     protected $baseClass = "Controller";
     protected $basePath = "application.modules.{module}.Controllers";
-
-    public function addActionIndex($modelClass) {
+    
+    public function addActionDefault($actionName){
+        $body = '';
+        $this->updateFunction($actionName, $body);
+    }
+    public function addActionIndex($actionName,$modelClass=null) {
         $body = '
         $this->renderForm("' . $modelClass . '");';
-        $this->updateFunction('actionIndex', $body);
+        $this->updateFunction($actionName, $body);
     }
 
-    public function addActionCreate($modelClass) {
+    public function addActionCreate($actionName,$modelClass=null) {
         $body = '
         $model = new ' . $modelClass . ';
                 
@@ -102,10 +127,10 @@ class ControllerGenerator extends CodeGenerator {
             }
         }
         $this->renderForm("' . $modelClass . '",$model);';
-        $this->updateFunction('actionCreate', $body);
+        $this->updateFunction($actionName, $body);
     }
     
-    public function addActionUpdate($modelClass){
+    public function addActionUpdate($actionName,$modelClass=null){
         $body = '
         $model = $this->loadModel($id , "' . $modelClass . '");
                 
@@ -116,19 +141,30 @@ class ControllerGenerator extends CodeGenerator {
             }
         }
         $this->renderForm("' . $modelClass . '",$model);';
-        $this->updateFunction('actionUpdate', $body, array(
+        $this->updateFunction($actionName, $body, array(
             'params' => array('$id')
         ));
     }
     
-    public function addActionDelete($modelClass){
+    public function addActionDelete($actionName,$modelClass=null){
         $body = '
         $this->loadModel($id , "' . $modelClass . '")->delete();';
-        $this->updateFunction('actionDelete', $body, array(
+        $this->updateFunction($actionName, $body, array(
             'params' => array('$id')
         ));
     }
     
+    public static function getTemplate(){
+        return array(
+              'default' => 'Default Action',
+              'index' => 'actionIndex',
+              'create' => 'actionCreate',
+              'update' => 'actionUpdate',
+              'delete' => 'actionDelete',
+        );
+    }
+
+
     public function __construct($module, $class) {
         $this->basePath = str_replace('{module}', $module, $this->basePath);
         $this->load($class);
