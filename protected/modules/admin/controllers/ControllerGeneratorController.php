@@ -1,20 +1,5 @@
 <?php
 class ControllerGeneratorController extends Controller{
-    public function actionTe() {
-
-        $this->renderForm("AdminTes");
-    }
-
-    public function actionT() {
-
-        $this->renderForm("AdminTes");
-    }
-
-    public function actionNew() {
-
-        $this->renderForm("AdminTes");
-    }
-
     public function actionIndex(){
         $controllers = ControllerGenerator::listAllFile();
         $this->render('index', array(
@@ -56,7 +41,6 @@ class ControllerGeneratorController extends Controller{
                 }
             }
         }
-        var_dump($post['list']['name'],$module,$class);
     }
     
     public function actionUpdate($class){
