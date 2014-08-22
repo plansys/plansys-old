@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class SectionHeader
+ * @author rizky
+ */
 class SectionHeader extends FormField {
 	/**
 	 * @return array Fungsi ini akan me-return array property SectionHeader.

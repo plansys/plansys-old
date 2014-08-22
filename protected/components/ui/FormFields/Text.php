@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class Text
+ * @author rizky
+ */
 class Text extends FormField {
 	/**
 	 * @return array Fungsi ini akan me-return array property Text.

@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class RadioButtonList
+ * @author rizky
+ */
 class RadioButtonList extends FormField {
 	/**
 	 * @return array Fungsi ini akan me-return array property RadioButton.

@@ -1,29 +1,32 @@
 <?php
-
+/**
+ * Class Form
+ * @author rizky
+ */
 class Form extends CComponent {
 	/** 
-	 * @var array variable untuk menampung error.
+	 * @var array $_errors
 	 * @access private	
 	*/
     private $_errors = array();
 	
 	/**
-	 * @return array Fungsi ini berfungsi untuk memdapatkan error yang dialami dan kemudian men-return _errors.
+	 * @return array Fungsi ini digunakan untuk mendapatkan error yang dialami. fungsi ini akan me-return array $_errors yang didalamnya menampung error yang terjadi.
 	*/
     public function getErrors() {
         return $this->_errors;
     }
     
 	/**
-	 * @param string $value Parameter untuk melempar value error.
-	 * @return null Fungsi ini akan men-set error yang ditampung pada $value kedalam _errors. $value disini adalah parameter.
+	 * @param string $value
+	 * @return null Fungsi ini akan men-set error yang ditampung pada $value kedalam variable $_errors.
 	*/
     public function setErrors($value) {
         $this->_errors = $value;
     }
     
 	/**
-	 * @return array Fungsi ini berfungsi untuk memdapatkan attributes form.
+	 * @return array Fungsi ini digunakan untuk mendapatkan attributes field dan me-returnnya.
 	*/
     public function getAttributes() {
         $reflect = new ReflectionClass($this);
@@ -39,8 +42,8 @@ class Form extends CComponent {
     }
 
 	/**
-	 * @param array $values Parameter untuk melempar value attributes form.
-	 * @return null Fungsi ini berfungsi untuk men-set attributes form dengan parameter $values yang berupa array.
+	 * @param array $values
+	 * @return null Fungsi ini berfungsi untuk men-set attributes field dengan property-property pada parameter $values.
 	*/
     public function setAttributes($values) {
         foreach ($values as $k => $v) {
@@ -51,7 +54,7 @@ class Form extends CComponent {
     }
 
 	/**
-	 * @return array Fungsi ini akan me-return attributes form.
+	 * @return array Fungsi ini akan me-return attributes dari form.
 	*/
     public static function attributes() {
         $field = new static();

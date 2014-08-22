@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class ColumnField
+ * @author rizky
+ */
 class ColumnField extends FormField {
 	/**
 	 * @return array Fungsi ini akan me-return array property ColumnField.

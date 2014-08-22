@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class IconPicker
+ * @author rizky
+ */
 class IconPicker extends FormField {
 	/**
 	 * @return array Fungsi ini akan me-return array property IconPicker.

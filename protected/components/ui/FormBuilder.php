@@ -1,26 +1,29 @@
 <?php
-
+/**
+ * Class FormBuilder
+ * @author rizky
+ */
 class FormBuilder extends CComponent {
 
-	/** @var model variable untuk menampung model */
+	/** @var model $model */
     public $model = null;
 	
 	/** 
-	* @var array variable untuk menampung Render ID 
+	* @var array $_buildRenderID 
 	* @access private	
 	*/
     private static $_buildRenderID = array();
 	
 	/** 
-	 * @var integer variable untuk menampung jumlah ID Render.
+	 * @var integer $countRenderID
 	 * @access private	
 	*/
     private $countRenderID = 1;
 
 	/**
-	 * @param array $class Parameter untuk manampung class.
-	 * @param array $attributes Parameter untuk menampung attribute FormBuilder dengan value null.
-	 * @return model Fungsi ini berfungsi untuk me-load FormBuilder dan me-return sebuah model.
+	 * @param array $class
+	 * @param array $attributes
+	 * @return model Fungsi ini digunakan untuk me-load FormBuilder.
 	*/
     public static function load($class, $attributes = null) {
         if (!is_string($class))
@@ -47,15 +50,15 @@ class FormBuilder extends CComponent {
     }
 
 	/**
-	 * @return array Fungsi ini akan me-return sebuah array hasil dari pemanggilan function getFieldsInternal().
+	 * @return array Fungsi ini akan me-return array ...
 	*/
     public function getFields() {
         return $this->getFieldsInternal();
     }
 
 	/**
-	 * @param boolean $processExpr Parameter untuk menampung sebuah proses expression berupa boolean.
-	 * @return array Fungsi ini akan memproses value expression dengan memanggil fungsi processFieldExpr($fields) dan parse field dengan memanggil fungsi parseFields($fields). Kemudian fungsi ini me-return sebuah array yang ditampung dalam $processed.
+	 * @param boolean $processExpr
+	 * @return array Fungsi ini akan me-return sebuah array $processed.
 	*/
     public function getFieldsInternal($processExpr = true) {
 
@@ -86,8 +89,8 @@ class FormBuilder extends CComponent {
     }
 
 	/**
-	 * @param array $fields Parameter untuk manampung value fields.
-	 * @return array Fungsi ini berfungsi untuk memproses expression field dan fungsi ini me-return sebuah array yang ditampung dalam $fields.
+	 * @param array $fields
+	 * @return array Fungsi ini berfungsi untuk memproses expression field dan fungsi ini me-return array expression field.
 	*/
     public function processFieldExpr($fields) {
         foreach ($fields as $k => $f) {
@@ -129,7 +132,7 @@ class FormBuilder extends CComponent {
     }
 
 	/**
-	 * @param array $fields Parameter untuk manampung value fields.
+	 * @param array $fields
 	 * @return array Fungsi ini berfungsi untuk parse fields dan fungsi ini me-return sebuah array yang ditampung dalam $processed.
 	*/
     public function parseFields($fields) {
@@ -186,9 +189,9 @@ class FormBuilder extends CComponent {
     const NEWLINE_MARKER = "!@#$%^&*NEWLINE&^%$#@!";
 
 	/**
-	 * @param array $data Parameter untuk manampung value data.
-	 * @param array $fieldlist Parameter untuk manampung list field.
-	 * @param boolean $preserveMultiline Parameter untuk manampung kondisi preserveMultiline.
+	 * @param array $data
+	 * @param array $fieldlist
+	 * @param boolean $preserveMultiline
 	 * @return array Fungsi ini digunakan untuk merapikan attributes dan akan menghapus attributes yang sama dengan attributes default, kemudian pada fungsi akan me-return sebuah array yang ditampung dalam $data.
 	*/
     public function tidyAttributes($data, &$fieldlist, &$preserveMultiline = false) {
@@ -223,7 +226,7 @@ class FormBuilder extends CComponent {
     }
 
 	/**
-	 * @param array $fields Parameter untuk melempar value fields FormBuilder.
+	 * @param array $fields
 	 * @return null Fungsi ini berfungsi untuk men-set fields FormBuilder dengan parameter $fields yang berupa array.
 	*/
     public function setFields($fields) {
@@ -303,7 +306,7 @@ class FormBuilder extends CComponent {
     }
 
 	/**
-	 * @param array $form Parameter yang berisi property dari form yang akan di-set.
+	 * @param array $form
 	 * @return null Fungsi ini akan men-set property form sesuai dengan parameter $form.
 	 */
     public function setForm($form) {
@@ -361,8 +364,8 @@ EOF;
     }
 
 	/**
-	 * @param array $class Parameter untuk manampung class.
-	 * @param array $attributes Parameter untuk menampung attribute field.
+	 * @param array $class
+	 * @param array $attributes
 	 * @return field Fungsi ini berfungsi untuk menentukan ID render dan merender-nya.
 	*/
     public static function build($class, $attributes) {
@@ -390,8 +393,8 @@ EOF;
     }
 
 	/**
-	 * @param array $fb Parameter untuk manampung attribute form builder.
-	 * @param array $fields Parameter untuk manampung fields.
+	 * @param array $fb
+	 * @param array $fields
 	 * @return array Fungsi ini akan me-register internal script.
 	 */
     public function registerScriptInternal($fb, $fields) {
@@ -413,17 +416,17 @@ EOF;
     }
 
 	/**
-	 * @return array Fungsi ini akan me-render script.
+	 * @return array Fungsi ini akan me-render script dan me-return array .
 	 */
     public function renderScript() {
         return $this->renderScriptInternal($this, $this->fields);
     }
 
 	/**
-	 * @param array $fb Parameter untuk manampung attribute form builder.
-	 * @param array $fields Parameter untuk manampung fields.
-	 * @param array $html Parameter untuk manampung html.
-	 * @return array Fungsi ini digunakan untuk me-render internal script.
+	 * @param array $fb
+	 * @param array $fields
+	 * @param array $html
+	 * @return array Fungsi ini digunakan untuk me-render internal script dan me-return array $html.
 	 */
     public function renderScriptInternal($fb, $fields, $html = array()) {
         foreach ($fields as $k => $f) {
@@ -445,7 +448,7 @@ EOF;
     }
 
 	/**
-	 * @param array $formdata Parameter untuk manampung data form.
+	 * @param array $formdata
 	 * @return array Fungsi ini digunakan untuk me-render Angular Controller .
 	 */
     public function renderAngularController($formdata = null) {
@@ -468,8 +471,8 @@ EOF;
     }
 
 	/**
-	 * @param array $formdata Parameter untuk manampung data form.
-	 * @param array $options Parameter untuk manampung options.
+	 * @param array $formdata
+	 * @param array $options
 	 * @return html Fungsi ini digunakan untuk me-render form builder.
 	 */
     public function render($formdata = null, $options = array()) {
@@ -477,10 +480,10 @@ EOF;
     }
 
 	/**
-	 * @param array $formdata Parameter untuk manampung data form.
-	 * @param array $options Parameter untuk manampung options.
-	 * @param array $fb Parameter untuk manampung atribute form builder.
-	 * @param array $fields Parameter untuk manampung fields.
+	 * @param array $formdata
+	 * @param array $options
+	 * @param array $fb
+	 * @param array $fields
 	 * @return html Fungsi ini digunakan untuk me-render field dan atribut-nya dalam form builder.
 	 */
     private function renderInternal($formdata = null, $options = array(), $fb, $fields) {
@@ -590,8 +593,8 @@ EOF;
     }
 
 	/**
-	 * @param array $fields Parameter untuk manampung fields.
-	 * @param array $indent Parameter untuk manampung indentasi.
+	 * @param array $fields
+	 * @param array $indent
 	 * @return html Fungsi ini digunakan untuk format code dan pengecekan code sesuai dengan pattern atau tidak.
 	 */
     public static function formatCode($fields, $indent = "        ") {
@@ -637,10 +640,10 @@ EOF;
     }
 
 	/**
-	 * @param string $functionName Parameter untuk manampung nama fungsi.
-	 * @param array $fields Parameter untuk manampung fields.
-	 * @param array $class Parameter untuk manampung class.
-	 * @param array $replaceString Parameter untuk manampung string pengganti. 
+	 * @param string $functionName
+	 * @param array $fields Parameter
+	 * @param array $class Parameter
+	 * @param array $replaceString
 	 * @return field Fungsi ini digunakan untuk update model.
 	 */
     public function updateFunctionBody($functionName, $fields, $class = "", $replaceString = null) {
@@ -725,8 +728,8 @@ EOF;
         }
     }
 	/**
-	 * @param array $sourceFile Parameter untuk manampung source.
-	 * @param string $functionName Parameter untuk manampung nama fungsi.
+	 * @param array $sourceFile
+	 * @param string $functionName
 	 * @return array Fungsi ini digunakan untuk mendapatkan FunctionBody dari functionName yang sesuai dan akan me-return sebuah array .
 	 */
     public function getFunctionBody($sourceFile, $functionName) {
@@ -759,7 +762,7 @@ EOF;
     }
 
 	/**
-	 * @param string $module Parameter untuk manampung module.
+	 * @param string $module
 	 * @return array Fungsi ini akan me-return sebuah array list controller .
 	 */
     public static function listController($module) {
@@ -777,7 +780,7 @@ EOF;
     }
 
 	/**
-	 * @param string $module Parameter untuk manampung module.
+	 * @param string $module
 	 * @return array Fungsi ini akan me-return sebuah array list form .
 	 */
     public static function listForm($module) {
@@ -796,8 +799,8 @@ EOF;
     }
 
 	/**
-	 * @param string $dir Parameter untuk manampung directory.
-	 * @param string $func Parameter untuk manampung fungsi.
+	 * @param string $dir
+	 * @param string $func
 	 * @return array Fungsi ini akan me-return sebuah array $files yang berisi list file .
 	 */
     public static function listFile($dir, callable $func = null) {

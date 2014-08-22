@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class DropDownList
+ * @author rizky
+ */
 class DropDownList extends FormField {
 	/**
 	 * @return array Fungsi ini akan me-return array property DropDown.

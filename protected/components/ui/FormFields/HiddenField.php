@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class HiddenField
+ * @author rizky
+ */
 class HiddenField extends FormField {
 	/**
 	 * @return array Fungsi ini akan me-return array property HiddenField.

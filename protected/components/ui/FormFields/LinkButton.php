@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class LinkButton
+ * @author rizky
+ */
 class LinkButton extends FormField {
 
 	/** @var string $label */

@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class KeyValueGrid
+ * @author rizky
+ */
 class KeyValueGrid extends FormField {
 	/**
 	 * @return array Fungsi ini akan me-return array property KeyValueGrid.

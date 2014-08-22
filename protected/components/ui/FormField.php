@@ -1,15 +1,18 @@
 <?php
-
+/**
+ * Class FormField
+ * @author rizky
+ */
 class FormField extends CComponent {
 
 	/** 
-	* @var array error. 
+	* @var array $_errors 
 	* @access private	
 	*/
     private $_errors = array();
 	
 	/** 
-	* @var array property form. 
+	* @var array $_form_properties 
 	* @access private	
 	*/
     private $_form_properties = array(
@@ -25,33 +28,33 @@ class FormField extends CComponent {
     );
 	
 	/** 
-	* @var array variable untuk menampung builder. 
+	* @var array $_builder
 	* @access private	
 	*/
     private $_builder = null;
 	
-	/** @var array variable untuk menampung list form field yang akan di parsing */
+	/** @var array $parseField */
     public $parseField = array(); // list of form fields to be parsed array('from'=>'to')
 	
-	/** @var string variable untuk menampung ID render */
+	/** @var string $renderID */
     public $renderID = ""; //to distinguish one field to another, will be filled when rendering, -NOT- in editor
 	
-	/** @var boolean variable untuk menampung kondisi tampilan form field dengan kondisi default false atau not-hidden*/
+	/** @var boolean $isHidden */
     public $isHidden = false;
 	
-	/** @var string variable untuk menampung toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName;
 	
-	/** @var string variable untuk menampung category */
+	/** @var string $category */
     public static $category;
 	
-	/** @var string variable untuk menampung toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon;
 	
-	/** @var boolean variable untuk menampung kondisi dalam editor dengan default false */
+	/** @var boolean $inEditor */
     public static $inEditor = false;
 	
-	/** @var array variable untuk menampung setting category */
+	/** @var array $categorySettings */
     public static $categorySettings = array(
         'User Interface' => array(
             'icon' => 'fa-cubes',
@@ -72,7 +75,7 @@ class FormField extends CComponent {
     }
 
 	/**
-	 * @return string Fungsi ini akan me-return tipe class.
+	 * @return string Fungsi ini akan me-return string nama class sebuah object.
 	*/
     public function getType() {
         return get_class($this);
@@ -81,15 +84,15 @@ class FormField extends CComponent {
     ## builder
 
 	/**
-	 * @return array Fungsi ini akan me-return value builder.
+	 * @return array Fungsi ini akan me-return array $_builder.
 	*/
     public function getBuilder() {
         return $this->_builder;
     }
 
 	/**
-	 * @param array $builder Parameter untuk manampung value builder.
-	 * @return array Fungsi ini akan men-set value builder.
+	 * @param array $builder
+	 * @return null Fungsi ini akan men-set value dari parameter $builder kedalam array $_builder.  
 	*/
     public function setBuilder($builder) {
         $this->_builder = $builder;
@@ -111,15 +114,15 @@ class FormField extends CComponent {
     ## parent form properties
 
 	/**
-	 * @param array $value Parameter untuk manampung value property form.
-	 * @return array Fungsi ini akan men-set property form field.
+	 * @param array $value
+	 * @return null Fungsi ini akan men-set property form field dengan array $value.
 	*/
     public function setFormProperties($value) {
         $this->_form_properties = $value;
     }
 
 	/**
-	 * @return array Fungsi ini akan me-return array property form field.
+	 * @return array Fungsi ini akan me-return array yang berisi property form.
 	*/
     public function getFormProperties() {
         return $this->_form_properties;
@@ -128,23 +131,23 @@ class FormField extends CComponent {
     ## errors
 
 	/**
-	 * @return array Fungsi ini akan me-return error.
+	 * @return array Fungsi ini akan me-return array $_errors.
 	*/
     public function getErrors() {
         return $this->_errors;
     }
 
 	/**
-	 * @param array $error Parameter untuk manampung value error.
-	 * @return array Fungsi ini akan men-set error.
+	 * @param array $error
+	 * @return array Fungsi ini akan me-return array $_errors yang terlebih dahulu diisi dengan parameter $error.
 	*/
     public function setErrors($error) {
         return $this->_errors = $error;
     }
 
 	/**
-	 * @param array $expr Parameter untuk manampung expression.
-	 * @param array $return Parameter untuk manampung kondisi return dengan default false.
+	 * @param array $expr
+	 * @param boolean $return
 	 * @return array Fungsi ini digunakan untuk evaluate expression dan akan me-return hasil dalam bentuk pesan error.
 	*/
     public function evaluate($expr, $return = false) {
@@ -166,29 +169,29 @@ class FormField extends CComponent {
     ## field properties - editor form field
 
 	/**
-	 * @return array Fungsi ini akan me-return form beserta property field.
+	 * @return array Fungsi ini akan me-return array $_form_properties.
 	*/
     public function getForm() {
         return $this->_form_properties;
     }
 
 	/**
-	 * @return array Fungsi ini akan me-return template.
+	 * @return array Fungsi ini akan me-render template.
 	*/
     public static function template() {
         return self::renderTemplate('template_editor.php');
     }
 
 	/**
-	 * @return field Fungsi ini untuk me-render form field.
+	 * @return field Fungsi ini untuk me-render form field beserta atributnya.
 	 */
     public function render() {
         return $this->renderInternal('template_render.php');
     }
 	
 	/**
-	 * @param array $values Parameter untuk manampung value atribut.
-	 * @return array Fungsi ini akan men-set value atribut.
+	 * @param array $values
+	 * @return null Fungsi ini akan mengisi nilai atribut field dengan nilai dari parameter $values.
 	*/
     public function setAttributes($values) {
         foreach ($values as $k => $v) {
@@ -199,7 +202,7 @@ class FormField extends CComponent {
     }
 
 	/**
-	 * @return array Fungsi ini akan me-return atribut field.
+	 * @return array Fungsi ini akan me-return atribut form.
 	*/
     public static function attributes() {
         $field = new static();
@@ -207,7 +210,7 @@ class FormField extends CComponent {
     }
 
 	/**
-	 * @return array Fungsi ini akan me-return array yang berisi atribut-atribut field.
+	 * @return array Fungsi ini akan me-return array $result yang berisi atribut-atribut field.
 	*/
     public function getAttributes() {
         $reflect = new ReflectionClass($this);
@@ -224,10 +227,10 @@ class FormField extends CComponent {
     }
 
 	/**
-	 * @param string $key Parameter untuk manampung key.
-	 * @param string $value Parameter untuk manampung value.
-	 * @param array $option Parameter untuk manampung option.
-	 * @return null Fungsi ini akan men-set defaultoption.
+	 * @param string $key
+	 * @param string $value
+	 * @param array $option
+	 * @return null Fungsi ini akan mengisi array $option[$key] dengan string $value (default value), jika array $option[$key] = null.
 	*/	
 	public function setDefaultOption($key, $value, &$option) {
         if (!isset($option[$key])) {
@@ -236,7 +239,7 @@ class FormField extends CComponent {
     }
 
 	/**
-	 * @return array Fungsi ini akan me-return originalName dari model.
+	 * @return array Fungsi ini akan me-return originalName dari form field.
 	*/
     public function getOriginalName() {
         if (!property_exists($this, 'name')) {
@@ -275,7 +278,7 @@ class FormField extends CComponent {
     }
 
 	/**
-	 * @param string $file Parameter untuk manampung file tamplate.
+	 * @param string $file
 	 * @return field Fungsi ini untuk me-render template.
 	 */
     public static function renderTemplate($file) {
@@ -302,7 +305,7 @@ class FormField extends CComponent {
     }
 
 	/**
-	 * @return null Fungsi ini akan melakukan render script.
+	 * @return array Fungsi ini akan melakukan render script dan me-return array $html.
 	*/
     public function renderScript() {
         $includeJS = $this->includeJS();
@@ -319,7 +322,7 @@ class FormField extends CComponent {
     }
 
 	/**
-	 * @param array $file Parameter untuk manampung file.
+	 * @param array $file
 	 * @return field Fungsi ini untuk me-render form field dan atributnya.
 	*/
     public function renderInternal($file) {
@@ -344,8 +347,8 @@ class FormField extends CComponent {
     }
 
 	/**
-	 * @param array $class Parameter untuk manampung class.
-	 * @param string $fieldName Parameter untuk manampung nama field.
+	 * @param array $class
+	 * @param string $fieldName
 	 * @return null Fungsi ini untuk menambahkan class.
 	*/
     public function addClass($class, $fieldName = "options") {
@@ -358,8 +361,8 @@ class FormField extends CComponent {
     }
 
 	/**
-	 * @param array $attributes Parameter untuk manampung atribut-atribut.
-	 * @return  Fungsi ini untuk meng-expand atribut.
+	 * @param array $attributes
+	 * @return string Fungsi ini untuk meng-expand atribut dan me-returnnya.
 	*/
     public function expandAttributes($attributes) {
         if (count($attributes) == 0)
@@ -393,7 +396,7 @@ class FormField extends CComponent {
     }
 
 	/**
-	 * @return array Fungsi ini akan me-return semua atribut formfield dengan urut berdasarkan kategori.
+	 * @return array Fungsi ini akan me-return array atribut formfield yang telah diurutkan.
 	*/
     public static function allSorted() {
 
@@ -406,8 +409,8 @@ class FormField extends CComponent {
     }
 
 	/**
-	 * @param string $formType Parameter untuk manampung tipe form.
-	 * @return array Fungsi ini digunakan untuk setting formfield yang sesuai dengan tipe form yang diterima pada parameter.
+	 * @param string $formType
+	 * @return array Fungsi ini digunakan untuk setting formfield yang sesuai dengan tipe form yang diterima pada parameter dan fungsi ini akan me-return array atibut.
 	*/
     public static function settings($formType) {
         $ffdir = Yii::getPathOfAlias('application.components.ui.FormFields') . DIRECTORY_SEPARATOR;

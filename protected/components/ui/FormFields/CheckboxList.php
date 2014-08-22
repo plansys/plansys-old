@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class CheckboxList
+ * @author rizky
+ */
 class CheckboxList extends FormField {
 	/**
 	 * @return array Fungsi ini akan me-return array property Checkbox.

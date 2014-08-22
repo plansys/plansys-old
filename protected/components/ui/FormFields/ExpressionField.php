@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class ExpressionField
+ * @author rizky
+ */
 class ExpressionField extends FormField {
 	/**
 	 * @return array Fungsi ini akan me-return array property ExpressionField.

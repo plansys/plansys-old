@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class TextField
+ * @author rizky
+ */
 class TextField extends FormField
 {
 	/**

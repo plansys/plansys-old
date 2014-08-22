@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class SubmitButton
+ * @author rizky
+ */
 class SubmitButton extends FormField {
 	/**
 	 * @return array Fungsi ini akan me-return array property SubmitButton.

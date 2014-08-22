@@ -7,8 +7,7 @@
  */
 
 /**
- * Description of ActionBar
- *
+ * Class ActionBar
  * @author rizky
  */
 class ActionBar extends FormField {
