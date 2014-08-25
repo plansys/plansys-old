@@ -65,6 +65,9 @@ class AdminControllerEditor extends Form{
                 ),
             ),
             'includeJS' => array (),
+            'options' => array (
+                'ng-submit' => '$event.preventDefault(); create();',
+            ),
         );
     }
 }

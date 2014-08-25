@@ -197,6 +197,27 @@ class {$class} extends {$this->baseClass} {\n \n}
             return array();
         }
     }
+    
+    public function renameFunction($oldName, $newName){
+        if(isset($this->methods[$oldName])){
+            ## rename fungsinya
+            $line = $this->methods[$oldName]['line'];
+            $func = $this->file[$line]; // public function actionCreate($a) {
+            $pos = strpos($func, $oldName);
+            $len = strlen($oldName);
+            $new = substr_replace($func, $newName, $pos, $len);
+            $this->file[$line]=$new;
+            
+            ## rename oldname dalam daftar method
+            $newMethod = array();
+            foreach($this->methods as $k=>$m){
+                if($k==$oldName)$k=$newName;
+                $newMethod[$k]=$m;
+            }
+            $this->methods = $newMethod;
+            $this->save();
+        }
+    }
 
     protected function updateFunction($name, $body, $options = array()) {
         $isNewFunc = false;

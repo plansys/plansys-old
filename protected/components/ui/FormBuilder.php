@@ -187,6 +187,7 @@ class FormBuilder extends CComponent {
     }
 
     /** @const string Constanta NEWLINE_MARKER */
+
     const NEWLINE_MARKER = "!@#$%^&*NEWLINE&^%$#@!";
 
     /**
@@ -459,19 +460,19 @@ EOF;
         if (is_array($formdata)) {
             $data['data'] = $formdata;
         } else if (
-            is_subclass_of($formdata, 'ActiveRecord') ||
-            is_subclass_of($formdata, 'Form')
+                is_subclass_of($formdata, 'ActiveRecord') ||
+                is_subclass_of($formdata, 'Form')
         ) {
             $data['data'] = $formdata->attributes;
             $data['errors'] = $formdata->errors;
         }
-        
+
         $reflector = new ReflectionClass($this->model);
         $inlineJSPath = dirname($reflector->getFileName()) . DIRECTORY_SEPARATOR . @$this->form['inlineJS'];
         if (is_file($inlineJSPath)) {
             
         }
-        
+
         $script = include("FormBuilder.js.php");
 
         return $script;
@@ -513,17 +514,24 @@ EOF;
         if ($wrapForm) {
             $url = "#";
             $ngctrl = $renderWithAngular ? 'ng-controller="' . $modelClass . 'Controller"' : '';
-            $html .= '<form ' . $ngctrl
-                . ' method="POST" action="' . $url . '" '
-                . ' class="form-horizontal" role="form">';
+
+            if (isset($this->form) && isset($this->form['options'])) {
+                $htmlOptions = Helper::expandAttributes($this->form['options']);
+            } else {
+                $htmlOptions = "";
+            }
+            
+            $html .= '<form ' . $ngctrl . ' ' . $htmlOptions
+                    . ' method="POST" action="' . $url . '" '
+                    . ' class="form-horizontal" role="form">';
         }
 
         ## define formdata
         if (is_array($formdata)) {
             $data['data'] = $formdata;
         } else if (
-            is_subclass_of($formdata, 'ActiveRecord') ||
-            is_subclass_of($formdata, 'Form')
+                is_subclass_of($formdata, 'ActiveRecord') ||
+                is_subclass_of($formdata, 'Form')
         ) {
             $data['data'] = $formdata->attributes;
             $data['errors'] = $formdata->errors;
