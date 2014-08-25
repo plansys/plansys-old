@@ -58,7 +58,7 @@
         'items' => array (
             array (
                 'label' => 'Management Report',
-                'icon' => 'fa-bar-chart-o',
+                'icon' => 'fa-arrow-up',
                 'url' => '/admin/reports/index',
             ),
             array (

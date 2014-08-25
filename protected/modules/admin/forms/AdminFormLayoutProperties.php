@@ -65,7 +65,6 @@ class AdminFormLayoutProperties extends Form {
                 ),
                 'type' => 'TextField',
             ),
-            '<hr ng-show="layout.type == \'menu\'"/>',
             array (
                 'label' => 'Sub Form',
                 'options' => array (
@@ -79,6 +78,7 @@ class AdminFormLayoutProperties extends Form {
                 'listExpr' => 'FormBuilder::listForm($model->module)',
                 'type' => 'DropDownList',
             ),
+            '<hr ng-show="layout.type == \'menu\'"/>',
             array (
                 'label' => '<div class=\\"label label-default pull-right\\" style=\\"margin-right:15px;\\">(ng-click attribute)</div>Menu On-Click:',
                 'labelWidth' => '3',
