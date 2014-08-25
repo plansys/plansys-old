@@ -151,9 +151,15 @@ class ExpressionField extends FormField {
 	 */	
     public function render() {
         $this->addClass('field-box');
-        if ($this->fieldname != '') {
+        
+        $ngModelAvailable = isset($this->options['ng-model']) 
+            && is_string($this->options['ng-model']) 
+            && trim($this->options['ng-model']) != "";
+        
+        if ($this->fieldname != '' && !$ngModelAvailable) {
             $this->options['ng-model'] = 'active.' . $this->fieldname;
         }
+        
         return $this->renderInternal('template_render.php');
     }
 

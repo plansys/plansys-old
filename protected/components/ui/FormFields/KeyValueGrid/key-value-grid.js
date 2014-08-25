@@ -17,6 +17,7 @@ app.directive('keyValueGrid', function($timeout) {
                     if (typeof ctrl != 'undefined') {
                         $timeout(function() {
                             ctrl.$setViewValue(unformatJSON($scope.value));
+                            
                             if (typeof attrs.ngChange == "undefined") {
                                 $scope.$parent.save();
                             }
