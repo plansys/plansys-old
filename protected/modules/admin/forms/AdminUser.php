@@ -4,95 +4,103 @@ class AdminUser extends User {
     public function getFields() {
         return array (
             array (
-                'label' => 'few',
-                'group' => 'test',
-                'groupType' => 'DropDown',
-                'buttonType' => 'success',
-                'icon' => 'eye-slash',
-                'buttonSize' => 'btn-sm',
-                'type' => 'LinkButton',
+                'type' => 'ActionBar',
             ),
             array (
-                'label' => 'aduhhhhh',
-                'group' => 'test',
-                'groupType' => 'DropDown',
-                'buttonType' => 'success',
-                'icon' => 'eye-slash',
-                'buttonSize' => 'btn-sm',
-                'options' => array (
-                    'ng-click' => 'form.submit()',
+                'column1' => array (
+                    array (
+                        'label' => 'Date',
+                        'name' => 'date',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Username',
+                        'name' => 'username',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Email',
+                        'name' => 'email',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Phone',
+                        'name' => 'phone',
+                        'type' => 'TextField',
+                    ),
                 ),
-                'type' => 'LinkButton',
+                'column2' => array (
+                    array (
+                        'label' => 'Nip',
+                        'name' => 'nip',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Firstname',
+                        'name' => 'firstname',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Password',
+                        'name' => 'password',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'name' => 'id',
+                        'type' => 'HiddenField',
+                    ),
+                ),
+                'type' => 'ColumnField',
             ),
-            '<h2><center>{{ form.formTitle }}</center></h2><hr/>',
             array (
-                'name' => 'id',
-                'type' => 'HiddenField',
+                'title' => 'Section Header',
+                'type' => 'SectionHeader',
+            ),
+            array (
+                'label' => 'Text Area',
+                'name' => 'Text Area 1',
+                'type' => 'TextArea',
             ),
             array (
                 'label' => 'Lastname',
                 'name' => 'lastname',
-                'type' => 'TextField',
-            ),
-            '',
-            '',
-            array (
-                'label' => 'Firstname',
-                'name' => 'firstname',
-                'type' => 'TextField',
-            ),
-            array (
-                'label' => 'Nip',
-                'name' => 'nip',
                 'options' => array (
-                    'ng-model' => 'model.nip',
+                    'class' => 'col-sm-6',
                 ),
                 'type' => 'TextField',
             ),
             array (
-                'label' => 'Phone',
-                'name' => 'phone',
+                'label' => 'Lastname',
+                'name' => 'test',
+                'options' => array (
+                    'class' => 'col-sm-6',
+                ),
                 'type' => 'TextField',
             ),
-            '',
+            '<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>',
             array (
-                'label' => 'Email',
-                'name' => 'email',
-                'type' => 'TextField',
+                'title' => 'Mantab',
+                'type' => 'SectionHeader',
             ),
-            array (
-                'label' => 'Password',
-                'name' => 'password',
-                'type' => 'TextField',
-            ),
-            array (
-                'label' => 'Text Field',
-                'name' => 'Text Field 8',
-                'type' => 'TextField',
-            ),
-            array (
-                'label' => 'Date',
-                'name' => 'date',
-                'type' => 'TextField',
-            ),
-            array (
-                'label' => 'Submit',
-                'type' => 'SubmitButton',
-            ),
+            '<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>',
         );
     }
     public function getForm() {
         return array (
-            'formTitle' => 'User',
+            'title' => 'User',
             'layout' => array (
                 'name' => 'full-width',
                 'data' => array (
                     'col1' => array (
                         'type' => 'mainform',
+                        'size' => '100',
                     ),
                 ),
             ),
+            'options' => array (),
+            'includeJS' => array (
+                '',
+            ),
         );
     }
-    //put your code here
 }

@@ -7,9 +7,9 @@ class LinkButton extends FormField {
     public $urlparams = array();
     public $group = '';
     public $groupType = 'ButtonGroup';
-    public $buttonType = 'primary';
+    public $buttonType = 'success';
     public $icon = '';
-    public $buttonSize = '';
+    public $buttonSize = 'btn-sm';
     public $options = array();
     public $displayInline = true;
     public static $toolbarName = "Link Button";
@@ -94,19 +94,14 @@ class LinkButton extends FormField {
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
-                'list' => array (
-                    'primary' => 'Primary',
-                    'info' => 'Info',
-                    'success' => 'Success',
-                    'warning' => 'Warning',
-                    'danger' => 'Danger',
-                ),
                 'listExpr' => 'array(
      \'primary\' => \'Primary\',
      \'info\' => \'Info\',
      \'success\' => \'Success\',
      \'warning\' => \'Warning\',
-     \'danger\' => \'Danger\'
+     \'danger\' => \'Danger\',
+     \'default\' => \'Default\',
+     \'not-btn\' => \'Not Button\',
 );',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',

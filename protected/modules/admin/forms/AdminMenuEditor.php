@@ -3,7 +3,7 @@
 class AdminMenuEditor extends Form {
     public function getForm() {
         return array (
-            'formTitle' => 'MenuEditor',
+            'title' => 'MenuEditor',
             'layout' => array (
                 'name' => 'full-width',
                 'data' => array (

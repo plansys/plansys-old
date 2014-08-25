@@ -3,7 +3,7 @@
 class AdminSettings extends Form {
     public function getForm() {
         return array (
-            'formTitle' => 'Settings',
+            'title' => 'Settings',
             'layout' => array (
                 'name' => 'full-width',
                 'data' => array (

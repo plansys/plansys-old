@@ -21,13 +21,13 @@ class ActiveRecord extends CActiveRecord {
         if (is_null($className)) {
             $className = get_called_class();
         }
-        
+
         return parent::model($className);
     }
 
-    public function getDefaultFields() {
+    public function getModelFieldList() {
         $fields = array_keys($this->attributes);
-        $return = array();
+
         foreach ($fields as $k => $f) {
             if ($this->tableSchema->primaryKey == $f) {
                 $type = "HiddenField";
@@ -41,16 +41,25 @@ class ActiveRecord extends CActiveRecord {
                 'label' => $this->getAttributeLabel($f)
             );
         }
-
-        array_unshift($array, array(
-            'type' => 'Text',
-            'value' => '<h2><center>{{ form.formTitle }}</center></h2><hr/>'
-        ));
-        array_push($array, array(
-            'label' => 'Submit',
-            'type' => 'SubmitButton',
-        ));
         return $array;
+    }
+
+    public function getDefaultFields() {
+        $array = $this->modelFieldList;
+        $column2 = array(array_shift($array));
+        $column1 = $array;
+
+        $return = array(
+            array(
+                'type' => 'ActionBar',
+            ),
+            array(
+                'type' => 'ColumnField',
+                'column1' => $column1,
+                'column2' => $column2
+            )
+        );
+        return $return;
     }
 
 }

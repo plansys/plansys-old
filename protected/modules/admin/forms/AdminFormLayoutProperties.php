@@ -30,7 +30,6 @@ class AdminFormLayoutProperties extends Form {
                 'label' => 'Size',
                 'fieldWidth' => 5,
                 'options' => array (
-                    'style' => 'float:left;margin-left:30px;',
                     'ng-model' => 'layout.size',
                     'ng-change' => 'changeLayoutProperties()',
                     'ng-delay' => '500',
@@ -99,7 +98,7 @@ class AdminFormLayoutProperties extends Form {
 
     public function getForm() {
         return array(
-            'formTitle' => 'FormLayoutProperties',
+            'title' => 'FormLayoutProperties',
             'layout' => array(
                 'name' => 'full-width',
                 'data' => array(

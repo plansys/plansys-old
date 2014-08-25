@@ -1,22 +1,45 @@
+    
 <div list-view <?= $this->expandAttributes($this->options) ?>>
-    <div class="<?= $this->fieldColClass ?>" style="padding-top:5px;">
-        <!-- data -->
-        <data name="model_class" class="hide"><?= @get_class($model) ?></data>
-        <data name="selected" class="hide"><?= json_encode($this->selected); ?></data>
-        <data name="form_list" class="hide"><?= json_encode($this->list); ?></data>
-        <!-- /data -->
-        <!-- layout -->
-        <div class="list-view-layout" style="display:none;"><?= $this->layout ?></div>
-        <!-- layout -->
 
-        <div>
-            <?= $this->header ?>
-        </div> 
+    <!-- label -->
+    <?php if ($this->label != ""): ?>
+        <label <?= $this->expandAttributes($this->labelOptions) ?>
+            class="<?= $this->labelClass ?>" for="<?= $this->name; ?>">
+                <?= $this->label ?>
+        </label>
+    <?php endif; ?>
+    <!-- /label -->
+
+    <div class="<?= $this->fieldColClass ?>">
+        <!-- data -->
+        <data name="value" class="hide"><?= json_encode($this->value) ?></data>
+        <data name="model_class" class="hide"><?= @get_class($model) ?></data>
+        <!-- /data -->
+
         <!-- field -->
-        <div ng-repeat="item in formList" ng-include="'layout'"></div>
+        <?php if ($this->fieldTemplate == "default"): ?>
+            <div ng-repeat="item in value track by $index" class="list-view-item">
+                <input class="list-view-item-text form-control" 
+                       ng-change="update()"
+                       ng-delay="500"
+                       ng-model="value[$index]" type="text" />
+                <div ng-click="removeItem($index)" class="list-view-item-remove input-group-addon btn">
+                    <i class="fa fa-times"></i>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <div ng-click="addItem()" class="btn list-view-add btn-default btn-sm">
+            <i class="fa fa-nm fa-plus"></i> <b>Add</b>
+        </div>
         <!-- /field -->
-        <div>
-            <?= $this->footer ?>
-        </div> 
+
+        <!-- error -->
+        <?php if (count(@$errors) > 0): ?>
+            <div class="alert error alert-danger">
+                <?= $errors[0] ?>
+            </div>
+        <?php endif ?>
+        <!-- /error -->
     </div>
 </div>

@@ -52,7 +52,7 @@ class ColumnField extends FormField {
 	/** @var integer variable untuk menampung jumlah columns dengan default 2 */
     public $totalColumns = 2;
 	
-	/** @var string variable untuk menampung kondisi border dengan default No */
+	/** @var string kondisi border dengan default No */
     public $showBorder = 'No';
 	
 	/** @var array variable untuk menampung parseField */

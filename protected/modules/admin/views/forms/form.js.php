@@ -42,6 +42,8 @@
                 var name = $scope.layout.name;
                 $scope.form.layout.data[name] = $scope.layout;
             }
+            
+            console.log("SF", $scope.form);
 
             if ($scope.form.layout.name == 'full-width') {
                 $scope.form.layout.data.col1.size = "100";
@@ -263,7 +265,6 @@
             $old = $scope.activeTree;
 
             $timeout(function() {
-                console.log($el.next().length, $el.prev().length);
                 if ($el.next().length > 0 && !$el.next().hasClass('cpl')) {
                     $el.next().find(".form-field:eq(0)").click();
                 } else if ($el.prev().length > 0 && !$el.prev().hasClass('cpl')) {
@@ -320,10 +321,36 @@
             });
         };
 
+
+        $scope.moveToPrev = function(scope) {
+            var index = scope.$parent.index();
+            var clone = scope.$parent.$parentNodesScope.$modelValue[index];
+            var count = scope.$parent.$parentNodesScope.$modelValue.length;
+            
+            if (index - 1 >= 0 ) {
+                scope.$parent.$parentNodesScope.$modelValue[index] = scope.$parent.$parentNodesScope.$modelValue[index - 1];
+                scope.$parent.$parentNodesScope.$modelValue[index - 1] = clone;
+            }
+            $scope.save();
+        }
+
+
+        $scope.moveToNext = function(scope) {
+            var index = scope.$parent.index();
+            var clone = scope.$parent.$parentNodesScope.$modelValue[index];
+            var count = scope.$parent.$parentNodesScope.$modelValue.length;
+            
+            if (index + 1 <= count - 1) {
+                scope.$parent.$parentNodesScope.$modelValue[index] = scope.$parent.$parentNodesScope.$modelValue[index + 1];
+                scope.$parent.$parentNodesScope.$modelValue[index + 1] = clone;
+            }
+            $scope.save();
+        }
+        
         $timeout(function() {
             $(document).trigger('formBuilderInit');
         }, 100);
-        
+
         $('body').on('click', 'div[ui-header]', function(e) {
             if (e.target == this) {
                 $scope.unselectViaJquery();

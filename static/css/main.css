@@ -367,6 +367,7 @@ div[ui-content] {
     top:0px;
     right:0px;
     z-index:999;
+    opacity:.2;
     padding:3px 2px;
     cursor:pointer;
     display:none;
@@ -374,6 +375,9 @@ div[ui-content] {
     -moz-user-select: none;     /* Firefox all */
     -ms-user-select: none;      /* IE 10+ */
     -o-user-select: none;     
+}
+.layout-properties-btn:hover {
+    opacity:1;
 }
 
 .layout-properties-btn .btn {
@@ -395,14 +399,13 @@ div[ui-content] {
 }
 
 .LinkButton .field-info {
-    width:72px !important;
     right:auto !important;
     left:0px !important;
     top:-20px !important;
 }
 
-.LinkButton .field-info .btn {
-    float:left;
+.LinkButton .field-info .btn-group { 
+    float:left !important;
 }
 
 .LinkButton .field-info .fa-arrows {
@@ -606,6 +609,10 @@ li:hover > .item-btn {
 }
 .form-builder .angular-ui-tree-placeholder, .menu-editor .angular-ui-tree-placeholder  {
     border:2px dashed #ececeb;
+    width:100% !important;
+}
+.form-builder .angular-ui-tree-placeholder.inline, .menu-editor .angular-ui-tree-placeholder.inline  {
+    width:auto  !important;
 }
 .form-builder li .form-field {
     border:1px dashed transparent;
@@ -706,6 +713,120 @@ li:hover > .item-btn {
     display:none;
 }
 
+/********************************* LIST VIEW ***********************************/
+.list-view-item {
+    border:1px dashed #ececeb;padding:3px 3px 2px 3px;
+    display:table;
+    width:100%;
+    margin-left:-5px;
+    margin-bottom:-1px;
+}
+
+
+.list-view-item-remove {
+    opacity:.5;
+    
+    border:0px;
+    background:none;
+}
+
+.list-view-add {
+    color:#888;
+    margin:6px 0px;
+    font-size:13px;
+    padding:3px 10px;
+}
+
+/********************************* ACTION BAR **********************************/
+.field-move-left, .field-move-right {
+    display:none;
+}
+
+.ab-editor-link-bar .field-move {
+    display:none;
+}
+
+.ab-editor-link-bar .field-move-left,
+.ab-editor-link-bar .field-move-right {
+    display:block;
+}
+
+.ab-editor-link-bar {
+    padding:0px 20px 7px 0px;
+    float:right;    
+}
+.ab-editor-link-bar li {
+    display:inline-block;
+}
+
+.ab-editor-title-bar {
+    margin-top:3px;
+    line-height:30px;
+    height:30px;
+    float:left;
+    color:#444;
+    font-size:19px;
+    padding-left:20px;
+}
+
+.ab-editor-title-bar .title{
+    font-weight:bold;
+}
+
+.ab-editor-tab {
+    background: #f6f6f6;
+    padding:0px 26px;
+    box-shadow:rgba(0, 0, 0, 0.027451) 0px 2px 0px 0px;
+    border-bottom:1px solid #C4C4C4;
+    margin:0px -5px;
+}
+
+.ab-editor-tab a {
+    line-height:30px;
+    height:30px;
+    padding:0px 10px;
+    color:#111;
+    font-size:13px;
+    display:block;
+    float:left;
+    margin-bottom:-1px;
+    text-shadow: white 0px 1px 0px;
+}
+
+.ab-editor-tab a:hover {
+    border-bottom:1px solid #111;
+    text-decoration:none;
+}
+.ab-editor-tab a.active {
+    border-bottom:1px solid #555;
+    font-weight:bold;
+}
+
+.ActionBar {
+    margin:0px -26px;
+}
+
+.ActionBar > .field-info {
+    display:none !important;
+}
+
+
+
+/********************************* LINK BUTTON  ********************************/
+
+
+.LinkButton .btn-group {
+    margin:0px 4px;
+}
+
+.LinkButton .btn-group .link-btn {
+    margin:3px 0px;
+}
+
+
+.link-btn.on-editor {
+    margin:2px;
+}
 
 
 /********************************* COLUMN FIELD ********************************/
@@ -744,6 +865,10 @@ li:hover > .item-btn {
 
 .ColumnField.active .form-field-content .form-builder-column {
     border-left:1px solid blue;
+}
+
+.form-builder-properties .column-field td {
+    padding:0px;
 }
 
 
@@ -846,18 +971,87 @@ li:hover > .item-btn {
 
 /********************************** FORMS **************************************/
 
+.action-bar {
+    border:1px solid #666;
+    border-bottom:0px;
+    position:fixed;
+    left:4px;
+    right:4px;
+    z-index:1;
+}
+
+.action-bar .title-bar {
+    margin-top:3px;
+    line-height:30px;
+    height:30px;
+    float:left;
+    color:#444;
+    padding:7px 15px;
+    font-size:19px;
+}
+
+.action-bar .title-bar .title {
+    font-weight:bold;
+}
+
+.action-bar .title-bar .separator {
+    float: left;
+    padding: 0 3px;
+    color: #999;
+    font-size: 18px;
+}
+
+.action-bar .action-tab {
+    background: #f6f6f6;
+    padding:0px 15px;
+    box-shadow:rgba(0, 0, 0, 0.027451) 0px 2px 0px 0px;
+    border-bottom:1px solid #C4C4C4;
+}
+.action-bar .action-tab a {
+    line-height:30px;
+    height:30px;
+    padding:0px 10px;
+    color:#111;
+    font-size:13px;
+    display:block;
+    float:left;
+    margin-bottom:-1px;
+    text-shadow: white 0px 1px 0px;
+}
+.action-bar .action-tab a:hover {
+    border-bottom:1px solid #666;
+    text-decoration:none;
+}
+.action-bar .action-tab a.active {
+    border-bottom:1px solid #000;
+    font-weight:bold;
+    background:#ececeb;
+}
+
+.action-bar .link-bar  {
+    float:right;
+    text-align:right;
+    padding:7px 5px;
+}
+
+.action-bar .link-bar .btn {
+    padding:4px 10px;
+    font-weight:bold;
+    font-size:13px;
+}
+
+.action-bar .link-bar .btn-group {
+    margin:0px 4px;
+}
+.action-bar .link-bar .btn-group .btn {
+    margin:0px -1px 0px 0px;
+}
+
+
 .link-btn {
     display:inline-block;
     opacity:0;
-    margin:3px;
-}
-
-.btn-group .link-btn {
-    margin:3px 0px;
-}
-
-.link-btn.on-editor {
-    margin:2px;
+    margin:3px 4px;
 }
 
 .btn-default {
@@ -1150,7 +1344,10 @@ textarea.form-control {
     border-top:1px solid #a94442;
     border-radius:0px 0px 3px 3px;
 }
-
+.control-label {
+    font-weight:normal;
+    cursor:pointer;
+}
 .form-vertical .control-label {
     display:block;
     width:100%;
@@ -1226,4 +1423,8 @@ div[icon-picker] .popover-content {
 
 .action-list{
     margin:8px;
+}
+
+.column-field td {
+    padding:25px 50px 25px 25px;
 }

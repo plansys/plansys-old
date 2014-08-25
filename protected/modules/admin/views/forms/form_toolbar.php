@@ -46,17 +46,33 @@
                     scope.elements.placeholder.replaceWith(scope.elements.dragging.clone().find('li'));
                 },
                 dragStop: function(scope) {
-                    $scope.$parent.save();
 
                     $timeout(function() {
+                        // auto select dropped toolbar
                         $scope.toolbar = $scope.toolbarDefault;
                         $scope.toolbarDefault = angular.copy($scope.toolbar);
                         $(scope.dest.nodesScope.$element).find(".form-field:eq(" + scope.dest.index + ")").click();
                         var model = scope.dest.nodesScope.$modelValue[scope.dest.index];
 
+                        // generate model name
                         if (typeof model.name != "undefined") {
                             model.name = model.name + " " + $(".form-builder ." + model.type).length;
                         }
+
+                        // action bar should always be placed on first array
+                        if (model.type == 'ActionBar') {
+                            var clone = angular.copy(scope.dest.nodesScope.$modelValue[scope.dest.index]);
+                            $scope.$parent.fields.unshift(clone);
+                            $timeout(function() {
+                                $scope.$parent.deleteField();
+                                $timeout(function() {
+                                    $(".form-field:eq(0)").click();
+                                }, 100);
+                            }, 50);
+                        }
+
+                        // save it
+                        $scope.$parent.save();
                     }, 0);
                 }
             };

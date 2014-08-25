@@ -16,7 +16,6 @@ app.directive('expressionField', function($timeout, $http) {
 
                     execute_action = typeof execute_action != "undefined" ? execute_action : true;
 
-                    $scope.$parent.active[$scope.fieldName] = $scope.value;
                     if (typeof ctrl != 'undefined') {
                         $timeout(function() {
                             ctrl.$setViewValue($scope.value);

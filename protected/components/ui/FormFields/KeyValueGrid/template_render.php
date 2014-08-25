@@ -6,6 +6,7 @@
     <data name="allow_empty" class="hide"><?= $this->allowSpaceOnKey ?></data>
     <data name="allow_dquote" class="hide"><?= $this->allowDoubleQuote ?></data>
     <data name="model_class" class="hide"><?= @get_class($model) ?></data>
+    <data name="value" class="hide"><?= json_encode($this->value) ?></data>
     <!-- /data -->
 
     <div class="properties-header" >
@@ -17,7 +18,7 @@
         </div>
         <div style="width:96%" ng-click="show = !show">
             <div style="padding:2px 5px 2px 5px;">
-                <div  ng-show="mode == 'json'" class="label label-default" 
+                <div ng-show="mode == 'json'" class="label label-default" 
                       style="font-size:10px;float:right;margin:3px 6px -3px 0px;">
                     JSON
                 </div>

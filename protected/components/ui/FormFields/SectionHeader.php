@@ -9,6 +9,8 @@ class SectionHeader extends FormField {
             array (
                 'label' => 'Title',
                 'name' => 'title',
+                'layout' => 'Vertical',
+                'fieldWidth' => '12',
                 'options' => array (
                     'ng-model' => 'active.title',
                     'ng-change' => 'save()',
@@ -31,5 +33,11 @@ class SectionHeader extends FormField {
 	/** @var string variable untuk menampung toolbarIcon */
     public static $toolbarIcon = "fa fa-archive";
 
+    
+    public function includeJS() {
+        return array(
+            'section-header.js'
+        );
+    }
 
 }

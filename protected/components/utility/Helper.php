@@ -23,6 +23,23 @@ class Helper {
         return $list;
     }
 
+    public static function expandAttributes($attributes) {
+
+        if (!is_array($attributes))
+            return "";
+
+        if (count($attributes) == 0)
+            return "";
+
+
+        return join(' ', array_map(function ($key) use ($attributes) {
+                if (is_bool($attributes[$key])) {
+                    return $attributes[$key] ? $key : '';
+                }
+                return $key . '="' . $attributes[$key] . '"';
+            }, array_keys($attributes)));
+    }
+
     public static function minifyHtml($text) {
 
         $re = '%# Collapse whitespace everywhere but in blacklisted elements.

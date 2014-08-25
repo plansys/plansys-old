@@ -5,20 +5,20 @@ class Text extends FormField {
 	 * @return array Fungsi ini akan me-return array property Text.
 	 */
     public function getFieldProperties() {
-        return array(
-            array(
+        return array (
+            array (
                 'label' => 'Text / HTML / Angular :',
                 'name' => 'value',
                 'labelWidth' => '3',
                 'fieldWidth' => '12',
                 'layout' => 'Vertical',
                 'fieldHeight' => '20',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.value',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
-                'labelOptions' => array(
+                'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
                 'type' => 'TextArea',

@@ -4,7 +4,7 @@ class FormField extends CComponent {
 
     private $_errors = array();
     private $_form_properties = array(
-        'formTitle' => '',
+        'title' => '',
         'layout' => array(
             'name' => 'full-width',
             'data' => array(
@@ -243,15 +243,9 @@ class FormField extends CComponent {
         $this->$fieldName = $opt;
     }
 
+    
     public function expandAttributes($attributes) {
-        if (count($attributes) == 0)
-            return "";
-        return join(' ', array_map(function ($key) use ($attributes) {
-                if (is_bool($attributes[$key])) {
-                    return $attributes[$key] ? $key : '';
-                }
-                return $key . '="' . $attributes[$key] . '"';
-            }, array_keys($attributes)));
+        return Helper::expandAttributes($attributes);
     }
 
     public static function all() {
