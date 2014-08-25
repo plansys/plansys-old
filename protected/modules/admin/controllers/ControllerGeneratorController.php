@@ -1,6 +1,11 @@
 <?php
 class ControllerGeneratorController extends Controller{
 
+    public function actionNew() {
+
+        $this->renderForm("");
+    }
+
     public function actionIndex(){
         $controllers = ControllerGenerator::listAllFile();
         $this->render('index', array(

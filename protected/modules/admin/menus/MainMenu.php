@@ -32,7 +32,7 @@
             array (
                 'label' => 'Model Generator',
                 'icon' => 'fa-cube',
-                'url' => '#',
+                'url' => '/admin/modelGenerator/index',
             ),
         ),
         'state' => 'collapsed',
