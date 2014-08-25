@@ -63,6 +63,7 @@ class AdminControllerEditor extends Form{
                     ),
                 ),
             ),
+            'includeJS' => array (),
         );
     }
 }
