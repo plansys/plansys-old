@@ -24,7 +24,8 @@
         <!-- field -->
         <div class="<?= $this->fieldClass ?>" dropdown on-toggle="toggled(open)">
             <!-- default button -->
-            <button ng-if="!showOther || (showOther && itemExist())" type="button" 
+            <button ng-keypress="dropdownKeypress($event)" 
+                    ng-if="!showOther || (showOther && itemExist())" type="button" 
                     <?= $this->expandAttributes($this->fieldOptions) ?>>
                 <span class="caret pull-right"></span>
                 <span class="dropdown-text" ng-bind-html="text"></span>
@@ -39,7 +40,7 @@
             <input ng-if="showOther && !itemExist()" type="text"
                    ng-model="value" ng-change="updateOther(value)" ng-delay="500"
                    class="form-control dropdown-other-type">
-            
+
             <!-- dropdown item -->
             <div class="dropdown-menu open">
                 <div class="search" ng-show="searchable">
@@ -50,12 +51,14 @@
                            class="input-block-level search-dropdown form-control" autocomplete="off">
                 </div>
                 <ul class="dropdown-menu inner" role="menu">
-                    <li class="dropdown-item" ng-show="search == '' || (value + ' ' + text).toLowerCase().indexOf(search.toLowerCase()) > -1"
-                        ng-repeat="(value,text) in formList">
-                        <a dropdown-toggle href="#" ng-click="update(value);" value="{{value}}">
-                            {{ text }}
-                        </a>
-                    </li>
+                        <li ng-repeat-start="item in renderedFormList track by $index" 
+                            ng-if="item.value != '---'" class="dropdown-item" 
+                            ng-show="search == '' || (value + ' ' + text).toLowerCase().indexOf(search.toLowerCase()) > -1">
+                            <a dropdown-toggle href="#" ng-click="update(item.key);" value="{{item.key}}">
+                                {{ item.value}}
+                            </a>
+                        </li>
+                        <hr ng-repeat-end ng-if="item.value == '---'"/>
                     <hr ng-if="showOther != ''" />
                     <li class="dropdown-other" ng-if="showOther != ''">
                         <a dropdown-toggle href="#" ng-click="update(otherLabel);" value="{{itemExist() ? otherLabel : value}}">

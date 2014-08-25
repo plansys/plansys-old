@@ -9,6 +9,17 @@ app.directive('dropDownList', function($timeout) {
 
             return function($scope, $el, attrs, ctrl) {
                 // when ng-model is changed from inside directive
+                $scope.renderFormList = function() {
+                    $scope.renderedFormList = [];
+                    for (key in $scope.formList) {
+                        $scope.renderedFormList.push({key:key, value:$scope.formList[key]});
+                    }
+                }
+                
+                $scope.dropdownKeypress  = function($event) {
+                    console.log($event);
+                }
+                
                 $scope.update = function(value, f) {
                     $scope.updateInternal(value);
                     $timeout(function() {
@@ -92,11 +103,11 @@ app.directive('dropDownList', function($timeout) {
                 });
 
                 // when ng-model, or ng-form-list is changed from outside directive
-
                 if (attrs.ngFormList) {
                     function changeFieldList() {
                         $timeout(function() {
                             $scope.formList = $scope.$eval(attrs.ngFormList);
+                            $scope.renderFormList();
                             $scope.updateInternal($scope.value);
                         }, 0);
                     }
@@ -116,12 +127,16 @@ app.directive('dropDownList', function($timeout) {
 
                 // set default value
                 $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
+                $scope.renderedFormList = [];
+                $scope.renderFormList();
+                
                 $scope.searchable = $el.find("data[name=searchable]").text().trim() == "Yes" ? true : false;
                 $scope.showOther = $el.find("data[name=show_other]").text().trim() == "Yes" ? true : false;
                 $scope.otherLabel = $el.find("data[name=other_label]").html();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.value = $el.find("data[name=value]").html().trim();
                 $scope.inEditor = typeof $scope.$parent.inEditor != "undefined";
+                
                 $scope.search = "";
                 //if ngModel is present, use that instead of value from php
                 $timeout(function() {

@@ -101,6 +101,7 @@ class AdminUser extends User {
             'includeJS' => array (
                 '',
             ),
+            'inlineJS' => 'user/user.js',
         );
     }
 }

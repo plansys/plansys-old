@@ -23,6 +23,11 @@ class FormsController extends Controller {
         }
     }
 
+    public function actionNew() {
+
+        $this->renderForm("");
+    }
+
     public function renderPropertiesForm($field) {
         FormField::$inEditor = false;
         $fbp = FormBuilder::load($field['type']);
