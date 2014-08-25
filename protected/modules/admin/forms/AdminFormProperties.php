@@ -1,16 +1,26 @@
 <?php
 
 class AdminFormProperties extends Form {
+    public $title;
+    public $layoutName;
+    public $options = array();
+    public $includeJS = array();
+    public $includeCSS = array();
+    
     public function getForm() {
         return array (
-            'formTitle' => 'FormProperties',
+            'title' => 'FormProperties',
             'layout' => array (
                 'name' => 'full-width',
                 'data' => array (
                     'col1' => array (
                         'type' => 'mainform',
+                        'size' => '100',
                     ),
                 ),
+            ),
+            'includeJS' => array (
+                'dej',
             ),
         );
     }
@@ -18,9 +28,9 @@ class AdminFormProperties extends Form {
         return array (
             array (
                 'label' => 'Form Title',
-                'name' => 'formTitle',
+                'name' => 'title',
                 'options' => array (
-                    'ng-model' => 'form.formTitle',
+                    'ng-model' => '$parent.form.title',
                     'ng-change' => 'saveForm();',
                     'ng-delay' => '500',
                 ),
@@ -28,7 +38,7 @@ class AdminFormProperties extends Form {
             ),
             array (
                 'label' => 'Form Layout',
-                'name' => 'layout_name',
+                'name' => 'layoutName',
                 'list' => array (
                     'full-width' => 'full-width',
                     '2-cols' => '2-cols',
@@ -40,10 +50,29 @@ class AdminFormProperties extends Form {
                 'iconTemplate' => '<img src=\\"{base_url}/static/img/columns/{icon}.png\\" />',
                 'fieldWidth' => '150',
                 'options' => array (
-                    'ng-model' => 'form.layout.name',
+                    'ng-model' => '$parent.form.layout.name',
                     'ng-change' => 'changeLayoutType(form.layout.name)',
                 ),
                 'type' => 'IconPicker',
+            ),
+            array (
+                'label' => 'Include JS',
+                'name' => 'includeJS',
+                'options' => array (
+                    'ng-model' => '$parent.form.includeJS',
+                    'ng-change' => 'saveForm()',
+                ),
+                'type' => 'ListView',
+            ),
+            array (
+                'label' => 'Form Options',
+                'fieldname' => 'options',
+                'show' => 'Show',
+                'options' => array (
+                    'ng-model' => '$parent.form.options',
+                    'ng-change' => 'saveForm()',
+                ),
+                'type' => 'KeyValueGrid',
             ),
         );
     }

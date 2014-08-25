@@ -18,7 +18,7 @@ class Controller extends CController {
 
     public function renderForm($class, $model = null, $options = array()) {
         $fb = FormBuilder::load($class);
-        $this->pageTitle = $fb->form['formTitle'];
+        $this->pageTitle = $fb->form['title'];
         $this->layout = '//layouts/form';
 
         $renderOptions = array(

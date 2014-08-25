@@ -7,6 +7,9 @@ ob_start();
         $scope.form = <?php echo json_encode($this->form); ?>;
         $scope.model = <?php echo @json_encode($data['data']); ?>;
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
+<?php if (isset($data['validators'])): ?>
+            $scope.validators = <?php echo @json_encode($data['validators']); ?>;
+<?php endif; ?>
         $scope.<?= $modelClass ?> = $scope;
 
         $scope.form.submit = function(button) {
@@ -23,6 +26,14 @@ ob_start();
                 $("form[ng-controller=<?= $modelClass ?>Controller]").attr('action', url).submit();
             }
         };
+
+        $scope.form.canGoBack = function() {
+            return (document.referrer == "" || window.history.length > 1);
+        }
+        
+        $scope.form.goBack = function() {
+            window.history.back();
+        }
     });
 <?php $script = ob_get_clean(); ?>
 </script>

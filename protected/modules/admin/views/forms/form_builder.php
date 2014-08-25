@@ -1,5 +1,5 @@
 
-<div ui-content class="form-builder" style="top:0px;">
+<div ui-content class="form-builder" style="top:0px;padding-top:17px;">
     <form class="form-horizontal" role="form">
         <div ui-tree="fieldsOptions">
             <ol ui-tree-nodes ng-model="fields">

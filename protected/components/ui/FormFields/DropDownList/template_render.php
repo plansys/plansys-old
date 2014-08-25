@@ -32,8 +32,9 @@
 
             <!-- typeable button -->
             <button ng-if="showOther && !itemExist()" type="button" 
+                    style="padding:2px 0px 8px 0px;width:30px; text-align:center;"
                     class="split-button <?= @$this->fieldOptions['class'] ?>">
-                <span style="margin-right:10px;" class="caret"></span>
+                <span class="caret" style="float:none;"></span>
             </button>
             <input ng-if="showOther && !itemExist()" type="text"
                    ng-model="value" ng-change="updateOther(value)" ng-delay="500"

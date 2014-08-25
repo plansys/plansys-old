@@ -38,7 +38,7 @@ app.directive('textField', function($timeout) {
                 // if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {
                     $timeout(function() {
-                        var ngModelValue = $scope.$parent.$eval(attrs.ngModel);
+                        var ngModelValue = $scope.$eval(attrs.ngModel);
                         if (typeof ngModelValue != "undefined") {
                             $scope.value = ngModelValue;
                         }

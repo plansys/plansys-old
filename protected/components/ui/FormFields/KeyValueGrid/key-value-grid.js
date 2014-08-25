@@ -17,7 +17,9 @@ app.directive('keyValueGrid', function($timeout) {
                     if (typeof ctrl != 'undefined') {
                         $timeout(function() {
                             ctrl.$setViewValue(unformatJSON($scope.value));
-                            $scope.$parent.save();
+                            if (typeof attrs.ngChange == "undefined") {
+                                $scope.$parent.save();
+                            }
                         }, 0);
                     }
                 };
@@ -40,19 +42,6 @@ app.directive('keyValueGrid', function($timeout) {
                         }
                     }
                 };
-
-                // when ng-model is changed from outside directive
-                if (typeof ctrl != 'undefined') {
-                    ctrl.$render = function() {
-                        if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
-                            return;
-
-                        if (typeof ctrl.$viewValue != 'undefined') {
-                            $scope.value = formatJSON($scope.active[$scope.fieldName]);
-                            $scope.json = prettifyJSON(unformatJSON($scope.value));
-                        }
-                    };
-                }
 
                 // set default value, executed when one formfield is selected
                 function filterKeyValue(key, value) {
@@ -117,6 +106,21 @@ app.directive('keyValueGrid', function($timeout) {
                     return list;
                 }
 
+
+                // when ng-model is changed from outside directive
+                if (typeof ctrl != 'undefined') {
+                    ctrl.$render = function() {
+                        if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
+                            return;
+
+                        if (typeof ctrl.$viewValue != 'undefined') {
+                            $scope.value = formatJSON(ctrl.$viewValue);
+                            $scope.json = prettifyJSON(unformatJSON($scope.value));
+                        }
+                    };
+                }
+
+
                 $scope.fieldName = $el.find("data[name=field_name]").html().trim();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.show = $el.find("data[name=field_show]").html().trim() == 'Hide' ? false : true;
@@ -126,13 +130,18 @@ app.directive('keyValueGrid', function($timeout) {
                 $scope.mode = "grid";
                 $scope.inEditor = typeof $scope.$parent.inEditor != "undefined";
                 $scope.json_error = "";
+                $scope.value = formatJSON(JSON.parse($el.find("data[name='value']").text().trim()));
+                $scope.json = prettifyJSON(unformatJSON($scope.value));
 
-                if ($scope.active != null) {
-                    $scope.value = formatJSON($scope.active[$scope.fieldName]);
-                    $scope.json = prettifyJSON(unformatJSON($scope.value));
-                } else {
-                    $scope.value = "";
-                    $scope.json = {};
+                // if ngModel is present, use that instead of value from php
+                if (attrs.ngModel) {
+                    $timeout(function() {
+                        var ngModelValue = $scope.$eval(attrs.ngModel);
+                        if (typeof ngModelValue != "undefined") {
+                            $scope.value = formatJSON(ngModelValue);
+                            $scope.json = prettifyJSON(unformatJSON($scope.value));
+                        }
+                    }, 0);
                 }
             }
         }

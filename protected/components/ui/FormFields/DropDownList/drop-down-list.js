@@ -126,7 +126,7 @@ app.directive('dropDownList', function($timeout) {
                 //if ngModel is present, use that instead of value from php
                 $timeout(function() {
                     if (attrs.ngModel) {
-                        var ngModelValue = $scope.$parent.$eval(attrs.ngModel);
+                        var ngModelValue = $scope.$eval(attrs.ngModel);
                         if (typeof ngModelValue != "undefined") {
                             $scope.updateInternal(ngModelValue);
                         } else {

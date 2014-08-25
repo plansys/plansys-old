@@ -23,9 +23,15 @@
                 </span>
             </div>
 
-            <div ui-tree-handle class='btn btn-default btn-sm'>
+            <div ui-tree-handle class='field-move btn btn-default btn-sm'>
                 <i class='fa fa-arrows'></i>
                 <span class="field-info-text">Move</span> 
+            </div>
+            <div ng-click="moveToPrev(this)"  class='field-move-left btn btn-default btn-sm'>
+                <i class='fa fa-chevron-left'></i>
+            </div>
+            <div ng-click="moveToNext(this)" class='field-move-right btn btn-default btn-sm'>
+                <i class='fa fa-chevron-right'></i>
             </div>
             <div ui-tree-handle 
                  ng-mouseover='prepareCloneField(this)' 

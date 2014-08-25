@@ -24,7 +24,7 @@ class FormsController extends Controller {
     }
 
     public function renderPropertiesForm($field) {
-        FormField::$inEditor = true;
+        FormField::$inEditor = false;
         $fbp = FormBuilder::load($field['type']);
         return $fbp->render($field, array(
                 'wrapForm' => false,
@@ -140,23 +140,7 @@ class FormsController extends Controller {
             $fb->form = $post['form'];
         }
     }
-
-    public function actionCreateAct($class) {
-        $postdata = file_get_contents("php://input");
-        $post = CJSON::decode($postdata);
-        $fb = FormBuilder::load($class);
-        Yii::import('application.modules.' . $fb->module . '.controllers.*');
-        $fb->generateCreateAction();
-    }
-
-    public function actionUpdateAct($class) {
-        $postdata = file_get_contents("php://input");
-        $post = CJSON::decode($postdata);
-        $fb = FormBuilder::load($class);
-        Yii::import('application.modules.' . $fb->module . '.controllers.*');
-        $fb->generateUpdateAction();
-    }
-
+    
     public function actionUpdate($class) {
         FormField::$inEditor = true;
 
@@ -165,7 +149,7 @@ class FormsController extends Controller {
 
         if (is_subclass_of($fb->model, 'ActiveRecord')) {
             $formType = "ActiveRecord";
-            FormsController::setModelFieldList($class::model()->defaultFields, "AR");
+            FormsController::setModelFieldList($class::model()->modelFieldList, "AR");
         } else if (is_subclass_of($fb->model, 'FormField')) {
             $formType = "FormField";
             $mf = new $class;
@@ -175,10 +159,9 @@ class FormsController extends Controller {
             $mf = new $class;
             FormsController::setModelFieldList($mf->attributes, "FF");
         }
-
+        
         $fieldData = $fb->fields;
         FormsController::$modelField = $fieldData;
-
         $toolbar = $this->renderAllToolbar($formType);
 
         Yii::import('application.modules.' . $fb->module . '.controllers.*');
