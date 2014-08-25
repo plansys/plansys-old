@@ -604,7 +604,8 @@ EOF;
         ## wrap form
         if ($wrapForm) {
             $html .= '
-                </form>';
+                </form>
+            </div>';
 
             if ($renderInAjax) {
                 if ($renderWithAngular) {
