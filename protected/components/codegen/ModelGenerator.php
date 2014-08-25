@@ -1,11 +1,34 @@
 <?php
 
 class ModelGenerator extends CodeGenerator {
+    //Helper UI
+    public static function listAllFile() {
+        $dir = Yii::getPathOfAlias("application.models");
+        $items = glob($dir . DIRECTORY_SEPARATOR . "*");
+        foreach ($items as $k => $m) {
+            $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
+            $m = str_replace('.php', "", $m);
+
+            $items[$k] = array(
+                'name' => $m,
+                'class' => 'application.models.' . $m,
+                'class_path' => 'application.models'
+            );
+        }
+        return $items;
+    }
+
+    public static function getModelPath($class) {
+        $basePath = explode("protected",Yii::getPathOfAlias($class));
+        $modelPath = 'protected'.$basePath[1].'.php';
+        return $modelPath;
+    }
 
     protected $baseClass = "ActiveRecord";
     protected $basePath = "application.models";
-    protected $model;
-    protected $modelInfo;
+    protected $model; //model yang akan digenerate (e.g. User)
+    protected $modelCode; //class ModelCode dari Gii
+    public $modelInfo; //salah satu property dari ModelCode tentang ModelInfo
 
     protected function getTablePrefix($tableName) {
         $parts = explode("_", $tableName);
@@ -143,10 +166,10 @@ EOF;
     }
 
     public function generateClass($tableName) {
-        $this->model = $this->getTableModel($tableName);
+        $this->modelCode = $this->getTableModel($tableName);
 
-        if ($this->model->validate()) {
-            $tables = $this->model->prepare();
+        if ($this->modelCode->validate()) {
+            $tables = $this->modelCode->prepare();
             $this->modelInfo = $tables[0];
 
             ## add relation function
@@ -157,20 +180,46 @@ EOF;
 
             ## add tablename function
             $this->addTableName();
-            
+
             ## add columns function
             $this->addAttributeLabels();
+            
+            return true;
         } else {
-            var_dump($this->model->errors);
+            return false;
         }
     }
 
-    public static function generate($tableName, $class) {
-        $mg = new ModelGenerator();
-        $mg->load($class);
-        $mg->generateClass($tableName);
+    public function __construct($class) {
+        ## kode di bawah hanya dijalankan ketika model sudah ada
+        if (is_null($this->model) && class_exists($class)) {
+            $this->load($class);
+            $this->model = new $class;
+        } else {
+            $this->load($class);
+        }
 
-        return $mg;
+        ## jika class ini sudah ada, maka
+        if (!is_null($this->model) && method_exists($this->model, 'tableName')) {
+            $tableName = $this->model->tableName();
+
+            ## dapatkan model info untuk $class
+            $this->modelCode = $this->getTableModel($tableName);
+            if ($this->modelCode->validate()) {
+                $tables = $this->modelCode->prepare();
+                $this->modelInfo = $tables[0];
+            }
+        } else {
+            ## kalau belum ada, maka:
+            $tableName = Helper::camelToUnderscore($class);
+            $success = $this->generateClass($tableName);
+            
+            if (!$success) {
+                file_put_contents($this->filePath, "");
+                throw new Exception("Gagal meng-generate Class [{$this->classPath}] dengan nama tabel [{$tableName}].
+                    Pastikan table tersebut ada di database.");
+            }
+        }
     }
 
 }

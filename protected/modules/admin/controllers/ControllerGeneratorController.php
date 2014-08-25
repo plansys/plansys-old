@@ -1,6 +1,6 @@
 <?php
 class ControllerGeneratorController extends Controller{
-    public function actionIndex(){
+   public function actionIndex(){
         $controllers = ControllerGenerator::listAllFile();
         $this->render('index', array(
             'controllers' => $controllers
@@ -26,12 +26,14 @@ class ControllerGeneratorController extends Controller{
     public function actionSave($module ,$class){
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
+        var_dump($post);
         $gen = new ControllerGenerator($module, $class);
+        
         if (isset($post['list'])) {
             $content = $post['list'];
             if($content['name']!=''){
                 if($content['template']=='index' || $content['template']=='default'){
-                    $gen->addActionIndex($content['name'], $content['form']);
+                    $gen->addActionIndex($content['name'], $content['form'],$content['param']);
                 }elseif ($content['template']=='update') {
                     $gen->addActionUpdate($content['name'], $content['form']);
                 }elseif ($content['template']=='create') {

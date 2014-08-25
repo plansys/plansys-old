@@ -104,18 +104,13 @@ class ControllerGenerator extends CodeGenerator {
     protected $baseClass = "Controller";
     protected $basePath = "application.modules.{module}.Controllers";
 
-    public function addActionDefault($actionName) {
-        $body = '';
-        $this->updateFunction($actionName, $body);
-    }
-
-    public function addActionIndex($actionName, $modelClass = null) {
+    public function addActionIndex($actionName, $modelClass = null, $params) {
         $body = '
         $this->renderForm("' . $modelClass . '");';
-        $this->updateFunction($actionName, $body);
+        $this->updateFunction($actionName, $body, array('params' => $params));
     }
 
-    public function addActionCreate($actionName, $modelClass = null) {
+    public function addActionCreate($actionName, $modelClass = null, $params) {
         $body = '
         $model = new ' . $modelClass . ';
                 
@@ -126,10 +121,10 @@ class ControllerGenerator extends CodeGenerator {
             }
         }
         $this->renderForm("' . $modelClass . '",$model);';
-        $this->updateFunction($actionName, $body);
+        $this->updateFunction($actionName, $body, array('params' => $params));
     }
 
-    public function addActionUpdate($actionName, $modelClass = null) {
+    public function addActionUpdate($actionName, $modelClass = null, $params) {
         $body = '
         $model = $this->loadModel($id , "' . $modelClass . '");
                 
@@ -140,27 +135,23 @@ class ControllerGenerator extends CodeGenerator {
             }
         }
         $this->renderForm("' . $modelClass . '",$model);';
-        $this->updateFunction($actionName, $body, array(
-            'params' => array('$id')
-        ));
+        $this->updateFunction($actionName, $body, array('params' => $params));
     }
 
-    public function addActionDelete($actionName, $modelClass = null) {
+    public function addActionDelete($actionName, $modelClass = null, $params) {
         $body = '
         $this->loadModel($id , "' . $modelClass . '")->delete();';
-        $this->updateFunction($actionName, $body, array(
-            'params' => array('$id')
-        ));
+        $this->updateFunction($actionName, $body, array('params' => $params));
     }
 
     public static function getTemplate() {
         return array(
-            'Default Action',
+            'default' => 'Default Action',
             '---',
-            'actionIndex',
-            'actionCreate',
-            'actionUpdate',
-            'actionDelete',
+            'index' => 'actionIndex',
+            'create' => 'actionCreate',
+            'update' => 'actionUpdate',
+            'delete' => 'actionDelete',
         );
     }
 

@@ -17,11 +17,12 @@ class AdminControllerEditor extends Form{
                     'ng-model' => 'active.template',
                 ),
                 'list' => array (
-                    'default' => 'Default Action',
-                    'index' => 'actionIndex',
-                    'create' => 'actionCreate',
-                    'update' => 'actionUpdate',
-                    'delete' => 'actionDelete',
+                    'Default Action' => 'Default Action',
+                    '---' => '---',
+                    'actionIndex' => 'actionIndex',
+                    'actionCreate' => 'actionCreate',
+                    'actionUpdate' => 'actionUpdate',
+                    'z...' => '...',
                 ),
                 'listExpr' => 'ControllerGenerator::getTemplate();',
                 'type' => 'DropDownList',
@@ -64,6 +65,9 @@ class AdminControllerEditor extends Form{
                 ),
             ),
             'includeJS' => array (),
+            'options' => array (
+                'ng-submit' => '$event.preventDefault(); create();',
+            ),
         );
     }
 }
