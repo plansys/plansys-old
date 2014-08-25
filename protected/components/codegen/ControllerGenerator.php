@@ -147,7 +147,7 @@ class ControllerGenerator extends CodeGenerator {
     public static function getTemplate() {
         return array(
             'default' => 'Default Action',
-            '---',
+            '---' => '---',
             'index' => 'actionIndex',
             'create' => 'actionCreate',
             'update' => 'actionUpdate',

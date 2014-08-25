@@ -22,9 +22,9 @@
         <!-- /data -->
 
         <!-- field -->
-        <div class="<?= $this->fieldClass ?>" dropdown on-toggle="toggled(open)">
+        <div class="<?= $this->fieldClass ?>" ng-keyup="dropdownKeypress($event)" dropdown on-toggle="toggled(open)">
             <!-- default button -->
-            <button ng-keypress="dropdownKeypress($event)" 
+            <button 
                     ng-if="!showOther || (showOther && itemExist())" type="button" 
                     <?= $this->expandAttributes($this->fieldOptions) ?>>
                 <span class="caret pull-right"></span>
@@ -32,7 +32,7 @@
             </button>
 
             <!-- typeable button -->
-            <button ng-if="showOther && !itemExist()" type="button" 
+            <button ng-if="showOther && !itemExist()" tabindex="1" type="button" 
                     style="padding:2px 0px 8px 0px;width:30px; text-align:center;"
                     class="split-button <?= @$this->fieldOptions['class'] ?>">
                 <span class="caret" style="float:none;"></span>

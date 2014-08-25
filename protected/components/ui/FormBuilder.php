@@ -532,9 +532,18 @@ EOF;
         if ($wrapForm) {
             $url = "#";
             $ngctrl = $renderWithAngular ? 'ng-controller="' . $modelClass . 'Controller"' : '';
-            $html .= '<form ' . $ngctrl
-                . ' method="POST" action="' . $url . '" '
-                . ' class="form-horizontal" role="form">';
+            
+            $formDefaultAttr = array(
+                'action' => $url,
+                'method' => 'POST',
+                'class' => 'form-horizontal',
+                'role' => 'form',
+            );
+            $formOptions = (is_array(@$form['options']) ? @$form['options'] : array());
+            
+            $formAttr = array_merge($formOptions, $formDefaultAttr);
+            $formAttr = Helper::expandAttributes($formAttr);
+            $html .= "<div {$ngctrl}><form {$formAttr}>";
         }
 
         ## define formdata

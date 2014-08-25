@@ -12,12 +12,16 @@ app.directive('dropDownList', function($timeout) {
                 $scope.renderFormList = function() {
                     $scope.renderedFormList = [];
                     for (key in $scope.formList) {
+                        console.log(key);
                         $scope.renderedFormList.push({key:key, value:$scope.formList[key]});
                     }
                 }
                 
                 $scope.dropdownKeypress  = function($event) {
-                    console.log($event);
+                    $event.preventDefault();
+                    console.log($event.which);
+                    return false;
+                    
                 }
                 
                 $scope.update = function(value, f) {

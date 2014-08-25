@@ -31,8 +31,9 @@ class AdminUser extends User {
                 ),
                 'column2' => array (
                     array (
-                        'label' => 'Nip',
-                        'name' => 'nip',
+                        'label' => 'qwdqwd',
+                        'name' => 'Lainnya',
+                        'fieldType' => 'password',
                         'type' => 'TextField',
                     ),
                     array (
@@ -98,9 +99,7 @@ class AdminUser extends User {
                 ),
             ),
             'options' => array (),
-            'includeJS' => array (
-                'user/user.js',
-            ),
+            'includeJS' => array (),
             'inlineJS' => 'user/user.js',
         );
     }

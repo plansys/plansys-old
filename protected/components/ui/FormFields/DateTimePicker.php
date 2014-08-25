@@ -3,7 +3,7 @@
  * Class TextField
  * @author rizky
  */
-class TextField extends FormField
+class DateTimePicker extends FormField
 {
 	/**
 	 * @return array Fungsi ini akan me-return array property TextField.
