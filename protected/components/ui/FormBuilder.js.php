@@ -34,6 +34,9 @@ ob_start();
         $scope.form.goBack = function() {
             window.history.back();
         }
+        
+        <?= $inlineJS; ?>
+    
     });
 <?php $script = ob_get_clean(); ?>
 </script>

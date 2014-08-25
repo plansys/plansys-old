@@ -187,7 +187,6 @@ class FormBuilder extends CComponent {
     }
 
     /** @const string Constanta NEWLINE_MARKER */
-
     const NEWLINE_MARKER = "!@#$%^&*NEWLINE&^%$#@!";
 
     /**
@@ -460,8 +459,8 @@ EOF;
         if (is_array($formdata)) {
             $data['data'] = $formdata;
         } else if (
-                is_subclass_of($formdata, 'ActiveRecord') ||
-                is_subclass_of($formdata, 'Form')
+            is_subclass_of($formdata, 'ActiveRecord') ||
+            is_subclass_of($formdata, 'Form')
         ) {
             $data['data'] = $formdata->attributes;
             $data['errors'] = $formdata->errors;
@@ -469,13 +468,32 @@ EOF;
 
         $reflector = new ReflectionClass($this->model);
         $inlineJSPath = dirname($reflector->getFileName()) . DIRECTORY_SEPARATOR . @$this->form['inlineJS'];
-        if (is_file($inlineJSPath)) {
-            
-        }
+        $inlineJS = @file_get_contents($inlineJSPath);
 
         $script = include("FormBuilder.js.php");
 
         return $script;
+    }
+
+    public function renderAdditionalJS($isAjax = false) {
+        $reflector = new ReflectionClass($this->model);
+        $formDir = dirname($reflector->getFileName()) . DIRECTORY_SEPARATOR;
+
+        if (count(@$this->form['includeJS']) > 0):
+            foreach ($this->form['includeJS'] as $script):
+                $src = $formDir . $script;
+                if (is_file($src)) {
+                    $scriptUrl = Yii::app()->assetManager->publish($src);
+
+                    if ($isAjax) {
+                        echo '
+                    <script type="text/javascript" src="' . $scriptUrl . '"></script>';
+                    } else {
+                        Yii::app()->clientScript->registerScriptFile($scriptUrl, CClientScript::POS_END);
+                    }
+                }
+            endforeach;
+        endif;
     }
 
     /**
@@ -514,24 +532,17 @@ EOF;
         if ($wrapForm) {
             $url = "#";
             $ngctrl = $renderWithAngular ? 'ng-controller="' . $modelClass . 'Controller"' : '';
-
-            if (isset($this->form) && isset($this->form['options'])) {
-                $htmlOptions = Helper::expandAttributes($this->form['options']);
-            } else {
-                $htmlOptions = "";
-            }
-            
-            $html .= '<form ' . $ngctrl . ' ' . $htmlOptions
-                    . ' method="POST" action="' . $url . '" '
-                    . ' class="form-horizontal" role="form">';
+            $html .= '<form ' . $ngctrl
+                . ' method="POST" action="' . $url . '" '
+                . ' class="form-horizontal" role="form">';
         }
 
         ## define formdata
         if (is_array($formdata)) {
             $data['data'] = $formdata;
         } else if (
-                is_subclass_of($formdata, 'ActiveRecord') ||
-                is_subclass_of($formdata, 'Form')
+            is_subclass_of($formdata, 'ActiveRecord') ||
+            is_subclass_of($formdata, 'Form')
         ) {
             $data['data'] = $formdata->attributes;
             $data['errors'] = $formdata->errors;
@@ -574,7 +585,7 @@ EOF;
                 ## assign field render id
                 $field->renderID = $modelClass . '_' . $FFRenderID . $this->countRenderID++;
 
-                ## then render, (including registering script)
+                ## then render the field, (including registering script)
                 $html .= $field->render();
             } else {
                 $html .= $f;
@@ -595,6 +606,9 @@ EOF;
                         registerController('<?= $modelClass ?>Controller');
                     </script>
                     <?php
+                    $this->renderAdditionalJS(true);
+                    ?>
+                    <?php
                     $html .= ob_get_clean();
                 }
             } else {
@@ -602,6 +616,7 @@ EOF;
                     $id = "NGCTRL_{$modelClass}_" . rand(0, 1000);
                     $angular = $this->renderAngularController($formdata);
                     Yii::app()->clientScript->registerScript($id, $angular, CClientScript::POS_END);
+                    $this->renderAdditionalJS();
                 }
             }
         }

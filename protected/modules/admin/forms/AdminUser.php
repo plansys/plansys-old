@@ -99,7 +99,7 @@ class AdminUser extends User {
             ),
             'options' => array (),
             'includeJS' => array (
-                '',
+                'user/user.js',
             ),
             'inlineJS' => 'user/user.js',
         );

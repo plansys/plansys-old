@@ -42,8 +42,6 @@
                 var name = $scope.layout.name;
                 $scope.form.layout.data[name] = $scope.layout;
             }
-            
-            console.log("SF", $scope.form);
 
             if ($scope.form.layout.name == 'full-width') {
                 $scope.form.layout.data.col1.size = "100";
