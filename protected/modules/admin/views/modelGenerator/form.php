@@ -12,9 +12,21 @@
                     <tr>
                         <td><span class="code"><?php echo ModelGenerator::getModelPath($class);?></span></td>
                     </tr>
+                    <tr>
+                        <td><b>Table Name<b></td>
+                    </tr>
+                    <tr>
+                        <td><?php echo $modelDetail['tableName'];?></td>
+                    </tr>
                 </table>
                 <div ui-header>
-                    <?php echo $modelDetail['modelClass']; ?><br> 
+                    Attributes<br> 
+                </div>
+                <div ui-header>
+                    Rules<br> 
+                </div>
+                <div ui-header>
+                    Relation<br> 
                 </div>
                 <?php var_dump($modelDetail);?>
             </div>
