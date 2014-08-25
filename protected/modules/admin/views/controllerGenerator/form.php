@@ -34,29 +34,23 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($method as $m): ?>
-                                    <tr>
-                                        <td style="width:45%;"><?php echo $m['name']; ?></td>
-                                        <td style="width:45%;border-right-color:#ffffff;"><?php
-                                            if (!empty($m['param'])) {
-                                                foreach ($m['param'] as $param) {
-                                                    echo $param->name . '<br>';
-                                                }
-                                            } else {
-                                                echo 'null';
-                                            }
-                                            ?>
-                                        </td>
-                                        <td style="width:10%">
-                                            <?php $url = ControllerGenerator::checkUrl($class, $m['param'], $m['name']) ?>
-                                            <a href="#" class="glyphicon glyphicon-pencil"></a>
-                                            &nbsp;
-                                            <?php if ($url != null): ?>
-                                                <a href="<?php echo Yii::app()->createUrl($url) ?>" target="_blank" class="glyphicon glyphicon-eye-open"></a>
-                                            <?php endif; ?>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
+                                <tr ng-repeat="item in list">
+                                    <td style="width:50%;">{{ item.name }}</td>
+                                    <td style="width:50%;border-right-color:#ffffff;">
+                                        <div class="badge" ng-repeat="param in item.param">    
+                                            ${{param.name}}
+                                            <span ng-if="param.default"> = {{param.default}}</span>
+
+                                        </div>
+                                        <a href="#" target="_blank" class="pull-right btn btn-default btn-xs">
+                                            <i class="fa fa-globe"></i>
+                                        </a>
+
+                                        <a href="#" class="btn btn-default pull-right btn-xs" ng-click="update(item)" style="margin-right:5px;">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     <?php endif; ?>
@@ -78,43 +72,87 @@
 </div>
 </div>
 <script type="text/javascript">
-app.controller("PageController", ["$scope", "$http", "$timeout", function($scope, $http, $timeout) {
-        $scope.list = <?php echo CJSON::encode(array()); ?>;
-        $scope.isLoading = true;
-        $scope.activeTree = null;
-        $scope.active = null;
-        $scope.saving = false;
-        $scope.selecting = false;
-        $scope.select = function(item) {
-            if (item == null)
-                return;
+                         app.controller("PageController", ["$scope", "$http", "$timeout", function($scope, $http, $timeout) {
+                                 $scope.list = <?php echo CJSON::encode($method); ?>;
+                                 $scope.edit = true;
+                                 $scope.isLoading = true;
+                                 $scope.activeTree = null;
+                                 $scope.active = null;
+                                 $scope.paramText = "";
+                                 $scope.saving = false;
+                                 $scope.selecting = false;
+                                 $scope.select = function(item) {
+                                     if (item == null)
+                                         return;
+                                     $scope.selecting = true;
+                                     $scope.active = item;
+                                     console.log(item);
+                                 };
+                                 $scope.new = function() {
+                                     $scope.edit = true;
+                                     $scope.active = {
+                                         'name': 'actionNew',
+                                         'template': 'default',
+                                         'param': [],
+                                         'form': ''
+                                     };
+                                 };
+                                 $scope.update = function(item) {
+                                     $scope.edit = false;
+                                     $scope.active = {
+                                         'name': item.name,
+                                         'param': item.param
+                                     };
+                                     $scope.parseParams(item.param);
+                                 };
 
-            $scope.selecting = true;
-            $scope.active = item;
-            console.log(item);
-        };
-        $scope.new = function() {
-            $scope.active = {
-                'name': 'actionNew',
-                'template': 'default',
-                'param': [],
-                'form': ''
-            };
-        };
-        $scope.create = function() {
-            $http.post('<?php echo $this->createUrl("save", array('module' => $module, 'class' => $controller)); ?>',
-                    {
-                        list: $scope.active
-                    })
-                    .success(function(data, status) {
-                $scope.saving = false;
-                $scope.list.push($scope.active);
-                $scope.select($scope.active);
-            })
-                    .error(function(data, status) {
-                $scope.saving = false;
-            });
-        };
-    }
-]);
+                                 $scope.parseParams = function(param) {
+                                     var parsed = [];
+                                     for (i in param) {
+                                         parsed.push("$" + param[i].name + " = " + param[i].default);
+                                     }
+                                     $scope.paramText = parsed.join(" , ");
+                                     console.log($scope.paramText);
+                                 };
+
+                                 $scope.changeParam = function(paramText) {
+                                     var paramArr = paramText.split(",");
+                                     for (i in paramArr) {
+                                         if (typeof paramArr[i] != "string") continue;
+                                         
+                                         var p = paramArr[i].trim().split("=");
+                                         
+                                         paramArr[i] = {
+                                             name: p[0].trim().replace("$", '')
+                                         };
+
+                                         if (p.length > 0) {
+                                             paramArr[i].default = p[1].trim();
+                                         }
+                                     }
+
+                                     $scope.active.param = paramArr;
+
+                                 };
+
+                                 $scope.create = function() {
+                                     if ($scope.edit === false) {
+                                         var url = '<?php echo $this->createUrl("save", array('module' => $module, 'class' => $controller)); ?>';
+                                     } else {
+                                         var url = '<?php echo $this->createUrl("rename", array('module' => $module, 'class' => $controller)); ?>';
+                                     }
+                                     
+                                     $scope.active.param = $scope.changeParam($scope.paramText);
+                                     
+                                     $http.post(url, {list: $scope.active}).success(function(data, status) {
+                                         $scope.saving = false;
+                                         $scope.list.push($scope.active);
+                                         $scope.select($scope.active);
+                                         $scope.edit = true;
+                                     }).error(function(data, status) {
+                                         $scope.saving = false;
+                                     });
+                                 };
+                             }
+                         ]);
 </script>

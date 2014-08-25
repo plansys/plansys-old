@@ -23,10 +23,13 @@ class ControllerGeneratorController extends Controller{
         }
     }
     
+    public function actionRename($module ,$class){
+        
+    }
+    
     public function actionSave($module ,$class){
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
-        var_dump($post);
         $gen = new ControllerGenerator($module, $class);
         
         if (isset($post['list'])) {

@@ -3,6 +3,31 @@
 class UserController extends Controller {
 
 
+    public function actionNew4($fufu = "fifi") {
+
+        $this->renderForm("");
+    }
+
+    public function actionNew3($i = 0) {
+
+        $this->renderForm("");
+    }
+
+    public function actionNew2($abc = 0) {
+
+        $this->renderForm("");
+    }
+
+    public function dqwdqw($ap = "fasfsa") {
+
+        $this->renderForm("");
+    }
+
+    public function actionNew($tes = 45) {
+
+        $this->renderForm("AdminTes");
+    }
+
     public function actionTest() {
         $em = Yii::app()->doctrine->entityManager;
         $query = $em->createQuery("SELECT a, b FROM UserRole a join a.user b");
