@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class DropDownList
+ * @author rizky
+ */
 class DropDownList extends FormField {
 	/**
 	 * @return array Fungsi ini akan me-return array property DropDown.
@@ -171,55 +174,55 @@ class DropDownList extends FormField {
         );
     }
 
-	/** @var string variable untuk menampung label */
+	/** @var string $label */
     public $label = '';
 	
-	/** @var string variable untuk menampung name */
+	/** @var string $name */
     public $name = '';
 	
-	/** @var string variable untuk menampung value yang digunakan pada function checked */
+	/** @var string $value digunakan pada function checked */
     public $value = '';
 	
-	/** @var array variable untuk menampung array options */
+	/** @var array $options */
     public $options = array();
 	
-	/** @var array variable untuk menampung array options field */
+	/** @var array $fieldOptions */
     public $fieldOptions = array();
 	
-	/** @var array variable untuk menampung array options label */
+	/** @var array $labelOptions */
     public $labelOptions = array();
 	
-	/** @var string variable untuk menampung list */
+	/** @var string $list */
     public $list = '';
 	
-	/** @var string variable untuk menampung list expression yang digunakan pada function processExpr */
+	/** @var string $listExpr digunakan pada function processExpr */
     public $listExpr = '';
 	
-	/** @var string variable ntuk menampung layout */
+	/** @var string $layout */
     public $layout = 'Horizontal';
 	
-	/** @var integer variable untuk menampung nilai width label */
+	/** @var integer $labelWidth */
     public $labelWidth = 4;
 	
-	/** @var integer variable untuk menampung nilai witdth field */
+	/** @var integer $fieldWidth */
     public $fieldWidth = 8;
 	
-	/** @var string variable untuk menampung kondisi searchable dengan default No */
+	/** @var string $searchable */
     public $searchable = 'No';
 	
-	/** @var string variable untuk menampung kondisi showOther dengan default No */
+	/** @var string $showOther */
     public $showOther = 'No';
 	
-	/** @var string variable untuk menampung kondisi searchable */
+	/** @var string $otherLabel */
     public $otherLabel = 'Lainnya';
 	
-	/** @var string variable untuk menampung toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName = "Drop Down List";
 	
-	/** @var string variable untuk menampung category */
+	/** @var string $category */
     public static $category = "User Interface";
 	
-	/** @var string variable untuk menampung toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-caret-square-o-down";
 	
 	/**

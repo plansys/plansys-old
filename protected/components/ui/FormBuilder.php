@@ -1,27 +1,30 @@
 <?php
-
+/**
+ * Class FormBuilder
+ * @author rizky
+ */
 class FormBuilder extends CComponent {
 
-    /** @var model variable untuk menampung model */
+	/** @var model $model */
     public $model = null;
-
-    /**
-     * @var array variable untuk menampung Render ID 
-     * @access private	
-     */
+	
+	/** 
+	* @var array $_buildRenderID 
+	* @access private	
+	*/
     private static $_buildRenderID = array();
-
-    /**
-     * @var integer variable untuk menampung jumlah ID Render.
-     * @access private	
-     */
+	
+	/** 
+	 * @var integer $countRenderID
+	 * @access private	
+	*/
     private $countRenderID = 1;
 
-    /**
-     * @param array $class Parameter untuk manampung class.
-     * @param array $attributes Parameter untuk menampung attribute FormBuilder dengan value null.
-     * @return model Fungsi ini berfungsi untuk me-load FormBuilder.
-     */
+	/**
+	 * @param array $class
+	 * @param array $attributes
+	 * @return model Fungsi ini digunakan untuk me-load FormBuilder.
+	*/
     public static function load($class, $attributes = null) {
         if (!is_string($class))
             return null;
@@ -46,17 +49,17 @@ class FormBuilder extends CComponent {
         return $model;
     }
 
-    /**
-     * @return array Fungsi ini akan me-return sebuah array hasil dari pemanggilan function getFieldsInternal().
-     */
+	/**
+	 * @return array Fungsi ini akan me-return array ...
+	*/
     public function getFields() {
         return $this->getFieldsInternal();
     }
 
-    /**
-     * @param boolean $processExpr Parameter untuk menampung sebuah proses expression berupa boolean.
-     * @return array Fungsi ini akan memproses value expression dengan memanggil fungsi processFieldExpr($fields) dan parse field dengan memanggil fungsi parseFields($fields). Kemudian fungsi ini me-return sebuah array yang ditampung dalam $processed.
-     */
+	/**
+	 * @param boolean $processExpr
+	 * @return array Fungsi ini akan me-return sebuah array $processed.
+	*/
     public function getFieldsInternal($processExpr = true) {
 
         ## if form class does not have getFields method, then create it
@@ -85,10 +88,10 @@ class FormBuilder extends CComponent {
         return $processed;
     }
 
-    /**
-     * @param array $fields Parameter untuk manampung value fields.
-     * @return array Fungsi ini berfungsi untuk memproses expression field dan fungsi ini me-return sebuah array yang ditampung dalam $fields.
-     */
+	/**
+	 * @param array $fields
+	 * @return array Fungsi ini berfungsi untuk memproses expression field dan fungsi ini me-return array expression field.
+	*/
     public function processFieldExpr($fields) {
         foreach ($fields as $k => $f) {
 
@@ -128,10 +131,10 @@ class FormBuilder extends CComponent {
         return $fields;
     }
 
-    /**
-     * @param array $fields Parameter untuk manampung value fields.
-     * @return array Fungsi ini berfungsi untuk parse fields dan fungsi ini me-return sebuah array yang ditampung dalam $processed.
-     */
+	/**
+	 * @param array $fields
+	 * @return array Fungsi ini berfungsi untuk parse fields dan fungsi ini me-return sebuah array yang ditampung dalam $processed.
+	*/
     public function parseFields($fields) {
         $processed = array();
         if (!is_array($fields))
@@ -169,9 +172,9 @@ class FormBuilder extends CComponent {
         return $processed;
     }
 
-    /**
-     * @return array Fungsi ini digunakan untuk medapatkan module dari yii dan akan me-return sebuah array.
-     */
+	/**
+	 * @return array Fungsi ini digunakan untuk medapatkan module dari yii dan akan me-return sebuah array.
+	*/
     public function getModule() {
         $class = get_class($this->model);
         $reflector = new ReflectionClass($class);
@@ -182,15 +185,15 @@ class FormBuilder extends CComponent {
         return $f[0];
     }
 
-    /** @const string Constanta NEWLINE_MARKER */
+	/** @const string Constanta NEWLINE_MARKER */
     const NEWLINE_MARKER = "!@#$%^&*NEWLINE&^%$#@!";
 
-    /**
-     * @param array $data Parameter untuk manampung value data.
-     * @param array $fieldlist Parameter untuk manampung list field.
-     * @param boolean $preserveMultiline Parameter untuk manampung kondisi preserveMultiline.
-     * @return array Fungsi ini digunakan untuk merapikan attributes dan akan menghapus attributes yang sama dengan attributes default, kemudian pada fungsi akan me-return sebuah array yang ditampung dalam $data.
-     */
+	/**
+	 * @param array $data
+	 * @param array $fieldlist
+	 * @param boolean $preserveMultiline
+	 * @return array Fungsi ini digunakan untuk merapikan attributes dan akan menghapus attributes yang sama dengan attributes default, kemudian pada fungsi akan me-return sebuah array yang ditampung dalam $data.
+	*/
     public function tidyAttributes($data, &$fieldlist, &$preserveMultiline = false) {
         if (!isset($fieldlist[$data['type']])) {
             $fieldlist[$data['type']] = $data['type']::attributes();
@@ -222,10 +225,10 @@ class FormBuilder extends CComponent {
         return $data;
     }
 
-    /**
-     * @param array $fields Parameter untuk melempar value fields FormBuilder.
-     * @return null Fungsi ini berfungsi untuk men-set fields FormBuilder dengan parameter $fields yang berupa array.
-     */
+	/**
+	 * @param array $fields
+	 * @return null Fungsi ini berfungsi untuk men-set fields FormBuilder dengan parameter $fields yang berupa array.
+	*/
     public function setFields($fields) {
         $fieldlist = array();
         $multiline = array();
@@ -270,9 +273,9 @@ class FormBuilder extends CComponent {
         }
     }
 
-    /**
-     * @return array Fungsi ini akan me-return array property form.
-     */
+	/**
+	 * @return array Fungsi ini akan me-return array property form.
+	 */
     public function getForm() {
         ## if form class does not have getFields method, then create it
         $class = get_class($this->model);
@@ -281,7 +284,7 @@ class FormBuilder extends CComponent {
         if (!$reflector->hasMethod('getForm')) {
             $this->model = new $class;
             $defaultFields = array(
-                'title' => str_replace(ucfirst($this->module), '', $class),
+                'formTitle' => str_replace(ucfirst($this->module), '', $class),
                 'layout' => array(
                     'name' => 'full-width',
                     'data' => array(
@@ -302,10 +305,10 @@ class FormBuilder extends CComponent {
         return $this->model->form;
     }
 
-    /**
-     * @param array $form Parameter yang berisi property dari form yang akan di-set.
-     * @return null Fungsi ini akan men-set property form sesuai dengan parameter $form.
-     */
+	/**
+	 * @param array $form
+	 * @return null Fungsi ini akan men-set property form sesuai dengan parameter $form.
+	 */
     public function setForm($form) {
         if (count($form['layout']['data']) > 0) {
             foreach ($form['layout']['data'] as $k => $d) {
@@ -318,6 +321,9 @@ class FormBuilder extends CComponent {
         $this->updateFunctionBody('getForm', $form);
     }
 
+	/**
+	 * @return null Fungsi ini akan meng-generate function dan create action.
+	 */
     public function generateCreateAction() {
 
         $class = get_class($this->model);
@@ -343,6 +349,9 @@ EOF;
         $this->updateFunctionBody($this->form['createAction'], $functionBody, $this->form['controller']);
     }
 
+	/**
+	 * @return null Fungsi ini akan meng-generate function dan update action.
+	 */
     public function generateUpdateAction() {
         ## generate function
         $functionBody = <<<EOF
@@ -354,6 +363,11 @@ EOF;
         $this->updateFunctionBody($this->form['updateAction'], $functionBody, $this->form['controller']);
     }
 
+	/**
+	 * @param array $class
+	 * @param array $attributes
+	 * @return field Fungsi ini berfungsi untuk menentukan ID render dan merender-nya.
+	*/
     public static function build($class, $attributes) {
         $field = new $class;
         $field->attributes = $attributes;
@@ -368,6 +382,9 @@ EOF;
         return $field->render();
     }
 
+	/**
+	 * @return array Fungsi ini akan me-register script.
+	 */
     public function registerScript() {
         $modelClass = get_class($this->model);
         $id = "NGCTRL_{$modelClass}_" . rand(0, 1000);
@@ -375,6 +392,11 @@ EOF;
         return $this->registerScriptInternal($this, $this->fields);
     }
 
+	/**
+	 * @param array $fb
+	 * @param array $fields
+	 * @return array Fungsi ini akan me-register internal script.
+	 */
     public function registerScriptInternal($fb, $fields) {
 
         foreach ($fields as $k => $f) {
@@ -393,10 +415,19 @@ EOF;
         }
     }
 
+	/**
+	 * @return array Fungsi ini akan me-render script dan me-return array .
+	 */
     public function renderScript() {
         return $this->renderScriptInternal($this, $this->fields);
     }
 
+	/**
+	 * @param array $fb
+	 * @param array $fields
+	 * @param array $html
+	 * @return array Fungsi ini digunakan untuk me-render internal script dan me-return array $html.
+	 */
     public function renderScriptInternal($fb, $fields, $html = array()) {
         foreach ($fields as $k => $f) {
             if (is_array($f)) {
@@ -416,43 +447,45 @@ EOF;
         return $html;
     }
 
-    public function extractFormData($formdata) {
-        $data = array();
+	/**
+	 * @param array $formdata
+	 * @return array Fungsi ini digunakan untuk me-render Angular Controller .
+	 */
+    public function renderAngularController($formdata = null) {
+        $modelClass = get_class($this->model);
 
         ## define formdata
         if (is_array($formdata)) {
             $data['data'] = $formdata;
         } else if (
-            is_subclass_of($formdata, 'ActiveRecord') ||
-            is_subclass_of($formdata, 'Form')
+                is_subclass_of($formdata, 'ActiveRecord') ||
+                is_subclass_of($formdata, 'Form')
         ) {
             $data['data'] = $formdata->attributes;
             $data['errors'] = $formdata->errors;
-            $data['validators'] = array();
-
-            if (is_subclass_of($formdata, 'ActiveRecord')) {
-
-                foreach ($formdata->getValidators() as $validator) {
-                    $data['validators'][get_class($validator)] = $validator;
-                }
-            }
         }
-
-        return $data;
-    }
-
-    public function renderAngularController($formdata = null) {
-        $modelClass = get_class($this->model);
-        $data = $this->extractFormData($formdata);
+        
         $script = include("FormBuilder.js.php");
 
         return $script;
     }
 
+	/**
+	 * @param array $formdata
+	 * @param array $options
+	 * @return html Fungsi ini digunakan untuk me-render form builder.
+	 */
     public function render($formdata = null, $options = array()) {
         return $this->renderInternal($formdata, $options, $this, $this->fields);
     }
 
+	/**
+	 * @param array $formdata
+	 * @param array $options
+	 * @param array $fb
+	 * @param array $fields
+	 * @return html Fungsi ini digunakan untuk me-render field dan atribut-nya dalam form builder.
+	 */
     private function renderInternal($formdata = null, $options = array(), $fb, $fields) {
         $html = "";
 
@@ -469,26 +502,23 @@ EOF;
 
         ## wrap form
         if ($wrapForm) {
-            
             $url = "#";
             $ngctrl = $renderWithAngular ? 'ng-controller="' . $modelClass . 'Controller"' : '';
-            
-            
-            $formDefaultAttr = array(
-                'action' => $url,
-                'method' => 'POST',
-                'class' => 'form-horizontal',
-                'role' => 'form',
-            );
-            $formOptions = (is_array(@$form['options']) ? @$form['options'] : array());
-            
-            $formAttr = array_merge($formOptions, $formDefaultAttr);
-            $formAttr = Helper::expandAttributes($formAttr);
-            $html .= "<div {$ngctrl}><form {$formAttr}>";
+            $html .= '<form ' . $ngctrl
+                    . ' method="POST" action="' . $url . '" '
+                    . ' class="form-horizontal" role="form">';
         }
 
-        ## extract form data
-        $data = $this->extractFormData($formdata);
+        ## define formdata
+        if (is_array($formdata)) {
+            $data['data'] = $formdata;
+        } else if (
+                is_subclass_of($formdata, 'ActiveRecord') ||
+                is_subclass_of($formdata, 'Form')
+        ) {
+            $data['data'] = $formdata->attributes;
+            $data['errors'] = $formdata->errors;
+        }
 
         ## render semua html
         foreach ($fields as $k => $f) {
@@ -537,8 +567,7 @@ EOF;
         ## wrap form
         if ($wrapForm) {
             $html .= '
-                <input type="submit" class="invisible" />
-                </form></div>';
+                </form>';
 
             if ($renderInAjax) {
                 if ($renderWithAngular) {
@@ -563,6 +592,11 @@ EOF;
         return $html;
     }
 
+	/**
+	 * @param array $fields
+	 * @param array $indent
+	 * @return html Fungsi ini digunakan untuk format code dan pengecekan code sesuai dengan pattern atau tidak.
+	 */
     public static function formatCode($fields, $indent = "        ") {
 
         ## get fields
@@ -605,8 +639,14 @@ EOF;
         return $fields;
     }
 
+	/**
+	 * @param string $functionName
+	 * @param array $fields Parameter
+	 * @param array $class Parameter
+	 * @param array $replaceString
+	 * @return field Fungsi ini digunakan untuk update model.
+	 */
     public function updateFunctionBody($functionName, $fields, $class = "", $replaceString = null) {
-
         if ($class == "") {
             $using_another_class = false;
             $class = get_class($this->model);
@@ -687,7 +727,11 @@ EOF;
             $this->model = new $class;
         }
     }
-
+	/**
+	 * @param array $sourceFile
+	 * @param string $functionName
+	 * @return array Fungsi ini digunakan untuk mendapatkan FunctionBody dari functionName yang sesuai dan akan me-return sebuah array .
+	 */
     public function getFunctionBody($sourceFile, $functionName) {
         $fd = fopen($sourceFile, "r");
         $ret = array();
@@ -717,6 +761,10 @@ EOF;
         return $ret;
     }
 
+	/**
+	 * @param string $module
+	 * @return array Fungsi ini akan me-return sebuah array list controller .
+	 */
     public static function listController($module) {
         $ctr_dir = Yii::getPathOfAlias("application.modules.{$module}.controllers") . DIRECTORY_SEPARATOR;
         $items = glob($ctr_dir . "*.php");
@@ -731,6 +779,10 @@ EOF;
         return $list;
     }
 
+	/**
+	 * @param string $module
+	 * @return array Fungsi ini akan me-return sebuah array list form .
+	 */
     public static function listForm($module) {
         $ctr_dir = Yii::getPathOfAlias("application.modules.{$module}.forms") . DIRECTORY_SEPARATOR;
         $items = glob($ctr_dir . "*.php");
@@ -746,6 +798,11 @@ EOF;
         return $list;
     }
 
+	/**
+	 * @param string $dir
+	 * @param string $func
+	 * @return array Fungsi ini akan me-return sebuah array $files yang berisi list file .
+	 */
     public static function listFile($dir, callable $func = null) {
         $module_dir = Yii::getPathOfAlias('application.modules');
         $modules = glob($module_dir . DIRECTORY_SEPARATOR . "*");
@@ -767,7 +824,6 @@ EOF;
             'items' => $items
         );
         ## end..
-        
         $forms_dir = Yii::getPathOfAlias("application.forms") . DIRECTORY_SEPARATOR;
         $items = glob($forms_dir . "*.php");
         foreach ($items as $k => $f) {

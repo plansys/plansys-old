@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class TextArea
+ * @author rizky
+ */
 class TextArea extends FormField {
 	/**
 	 * @return array Fungsi ini akan me-return array property TextArea.
@@ -116,43 +119,43 @@ class TextArea extends FormField {
         );
     }
 
-	/** @var string variable untuk menampung label */
+	/** @var string $label */
     public $label = '';
 	
-	/** @var string variable untuk menampung name */
+	/** @var string $name */
     public $name = '';
 	
-	/** @var string variable untuk menampung value */
+	/** @var string $value */
     public $value = '';
 	
-	/** @var integer variable untuk menampung nilai width label */
+	/** @var integer $labelWidth */
     public $labelWidth = 4;
 	
-	/** @var integer variable untuk menampung nilai witdth field */
+	/** @var integer $fieldWidth */
     public $fieldWidth = 8;
 	
-	/** @var string variable ntuk menampung kondisi layout dengan default Horizontal */
+	/** @var string $layout */
     public $layout = 'Horizontal';
 	
-	/** @var integer variable untuk menampung nilai height field */
+	/** @var integer $fieldHeight */
     public $fieldHeight = 3;
 	
-	/** @var array variable untuk menampung array options */
+	/** @var array $options */
     public $options = array();
 	
-	/** @var array variable untuk menampung array options label */
+	/** @var array $labelOptions */
     public $labelOptions = array();
 	
-	/** @var array variable untuk menampung array options field */
+	/** @var array $fieldOptions */
     public $fieldOptions = array();
 	
-	/** @var string variable untuk menampung toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName = "Text Area";
 	
-	/** @var string variable untuk menampung category */
+	/** @var string $category */
     public static $category = "User Interface";
 	
-	/** @var string variable untuk menampung toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-sort-alpha-asc";
 	
 	/**

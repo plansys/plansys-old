@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class TextField
+ * @author rizky
+ */
 class TextField extends FormField
 {
 	/**
@@ -154,49 +157,49 @@ class TextField extends FormField
         );
     }
 
-	/** @var string variable untuk menampung label */
+	/** @var string $label */
     public $label = '';
 	
-	/** @var string variable untuk menampung name */
+	/** @var string $name */
     public $name = '';
 	
-	/** @var string variable untuk menampung tipe field dengan default text */
+	/** @var string $fieldType */
     public $fieldType = 'text';
 	
-	/** @var string variable untuk menampung value */
+	/** @var string $value */
     public $value = '';
 	
-	/** @var string variable ntuk menampung kondisi layout dengan default Horizontal */
+	/** @var string $layout */
     public $layout = 'Horizontal';
 	
-	/** @var integer variable untuk menampung nilai width label */
+	/** @var integer $labelWidth */
     public $labelWidth = 4;
 	
-	/** @var integer variable untuk menampung nilai witdth field */
+	/** @var integer $fieldWidth */
     public $fieldWidth = 8;
 	
-	/** @var string variable untuk menampung prefix */
+	/** @var string $prefix */
     public $prefix = '';
 	
-	/** @var string variable untuk menampung postfix */
+	/** @var string $postfix */
     public $postfix = '';
 	
-	/** @var array variable untuk menampung array options */
+	/** @var array $options */
     public $options = array();
 	
-	/** @var array variable untuk menampung array options label */
+	/** @var array $labelOptions */
     public $labelOptions = array();
 	
-	/** @var array variable untuk menampung array options field */
+	/** @var array $fieldOptions */
     public $fieldOptions = array();
 	
-	/** @var string variable untuk menampung toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName = "Text Field";
 	
-	/** @var string variable untuk menampung category */
+	/** @var string $category */
     public static $category = "User Interface";
 	
-	/** @var string variable untuk menampung toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-text-height";
 	
 	/**

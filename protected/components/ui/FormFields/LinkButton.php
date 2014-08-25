@@ -1,25 +1,60 @@
 <?php
-
+/**
+ * Class LinkButton
+ * @author rizky
+ */
 class LinkButton extends FormField {
 
+	/** @var string $label */
     public $label = '';
+	
+	/** @var string $url */
     public $url = '#';
+	
+	/** @var array $urlparams */
     public $urlparams = array();
+	
+	/** @var string $group */
     public $group = '';
+	
+	/** @var string $groupType */
     public $groupType = 'ButtonGroup';
-    public $buttonType = 'success';
+	
+	/** @var string $buttonType */
+    public $buttonType = 'primary';
+	
+	/** @var string $icon */
     public $icon = '';
-    public $buttonSize = 'btn-sm';
+	
+	/** @var string $buttonSize */
+    public $buttonSize = '';
+	
+	/** @var array $options */
     public $options = array();
+	
+	/** @var boolean $displayInline */
     public $displayInline = true;
+	
+	/** @var string $toolbarName */
     public static $toolbarName = "Link Button";
+	
+	/** @var string $category */
     public static $category = "User Interface";
+	
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-unlink";
-
+	
+	/**
+	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
+	*/
     public function includeJS() {
         return array('link-button.js');
     }
 
+	/**
+	 * @param string $url sebuah rute url.
+	 * @return string Fungsi ini akan me-return constructed URL.  
+	*/
     public function createUrl($url) {
         if ($url == "#") {
             return "#";
@@ -28,6 +63,9 @@ class LinkButton extends FormField {
         }
     }
 
+	/**
+	 * @return array Fungsi ini akan me-return array property LinkButton.
+	 */
     public function getFieldProperties() {
         return array (
             array (
@@ -94,14 +132,19 @@ class LinkButton extends FormField {
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
+                'list' => array (
+                    'primary' => 'Primary',
+                    'info' => 'Info',
+                    'success' => 'Success',
+                    'warning' => 'Warning',
+                    'danger' => 'Danger',
+                ),
                 'listExpr' => 'array(
      \'primary\' => \'Primary\',
      \'info\' => \'Info\',
      \'success\' => \'Success\',
      \'warning\' => \'Warning\',
-     \'danger\' => \'Danger\',
-     \'default\' => \'Default\',
-     \'not-btn\' => \'Not Button\',
+     \'danger\' => \'Danger\'
 );',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',

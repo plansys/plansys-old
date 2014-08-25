@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class Layout
+ * @author rizky
+ */
 class Layout extends CComponent {
 
     public static function render($layout, $data = null, $model = null, $return = false) {

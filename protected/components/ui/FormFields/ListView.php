@@ -1,247 +1,312 @@
 <?php
-
-class ListView extends FormField
-{
+/**
+ * Class ListView
+ * @author rizky
+ */
+class ListView extends FormField {
 	/**
-	 * @return array Fungsi ini akan me-return array property TextField.
+	 * @return array Fungsi ini akan me-return array property ListView.
 	 */
     public function getFieldProperties() {
-        return array (
-            array (
-                'label' => 'Field Name',
-                'name' => 'name',
-                'options' => array (
-                    'ng-model' => 'active.name',
+        return array(
+            array(
+                'label' => 'Header',
+                'name' => 'headerType',
+                'options' => array(
+                    'ng-model' => 'active.headerType',
                     'ng-change' => 'save()',
-                    'ng-form-list' => 'modelFieldList',
-                    'searchable' => 'size(modelFieldList) > 5',
                 ),
-                'list' => array (),
-                'showOther' => 'Yes',
+                'list' => array(
+                    'Text' => 'Text',
+                    'File' => 'File',
+                ),
+                'listExpr' => 'array(\\"Text\\",\\"File\\")',
+                'labelWidth' => '5',
+                'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array (
-                'label' => 'Field Template',
-                'name' => 'fieldTemplate',
-                'options' => array (
-                    'ng-model' => 'active.fieldTemplate',
-                    'ng-change' => 'save();',
-                ),
-                'list' => array (
-                    'default' => 'Default',
-                ),
-                'otherLabel' => 'Other...',
-                'type' => 'DropDownList',
-            ),
-            array (
-                'label' => 'Template Form',
-                'name' => 'templateForm',
-                'options' => array (
-                    'ng-model' => 'active.templateForm',
-                    'ng-show' => 'active.fieldTemplate == \'form\'',
-                    'ng-change' => 'save();',
-                ),
-                'list' => array (
-                    '' => '-- Empty --',
-                    'application.modules.admin.forms.AdminFormLayoutProperties' => 'FormLayoutProperties',
-                    'application.modules.admin.forms.AdminFormProperties' => 'FormProperties',
-                    'application.modules.admin.forms.AdminMenuEditor' => 'MenuEditor',
-                    'application.modules.admin.forms.AdminSettings' => 'Settings',
-                    'z...' => '...',
-                ),
-                'listExpr' => 'FormBuilder::listForm(\\"admin\\")',
-                'type' => 'DropDownList',
-            ),
-            array (
-                'label' => 'Label',
-                'name' => 'label',
-                'options' => array (
-                    'ng-model' => 'active.label',
+            array(
+                'label' => 'File Path (.php)',
+                'name' => 'headerPath',
+                'labelWidth' => '5',
+                'fieldWidth' => '7',
+                'options' => array(
+                    'ng-show' => 'active.headerType == \'File\'',
+                    'ng-model' => 'active.headerPath',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
-                'label' => 'Layout',
-                'name' => 'layout',
-                'options' => array (
-                    'ng-model' => 'active.layout',
-                    'ng-change' => 'save();',
+            array(
+                'label' => 'Header HTML',
+                'fieldname' => 'header',
+                'validAction' => 'save();',
+                'language' => 'html',
+                'options' => array(
+                    'ng-show' => 'active.headerType != \'File\'',
                 ),
-                'list' => array (
-                    'Horizontal' => 'Horizontal',
-                    'Vertical' => 'Vertical',
-                ),
-                'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
-                'fieldWidth' => '6',
-                'type' => 'DropDownList',
-            ),
-            array (
-                'column1' => array (
-                    array (
-                        'label' => 'Label Width',
-                        'name' => 'labelWidth',
-                        'layout' => 'Vertical',
-                        'labelWidth' => '12',
-                        'fieldWidth' => '11',
-                        'options' => array (
-                            'ng-model' => 'active.labelWidth',
-                            'ng-change' => 'save()',
-                            'ng-delay' => '500',
-                            'ng-disabled' => 'active.layout == \'Vertical\'',
-                        ),
-                        'type' => 'TextField',
-                    ),
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'column2' => array (
-                    array (
-                        'label' => 'Field Width',
-                        'name' => 'fieldWidth',
-                        'layout' => 'Vertical',
-                        'labelWidth' => 12,
-                        'fieldWidth' => '11',
-                        'options' => array (
-                            'ng-model' => 'active.fieldWidth',
-                            'ng-change' => 'save()',
-                            'ng-delay' => '500',
-                        ),
-                        'type' => 'TextField',
-                    ),
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'column3' => array (
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'column4' => array (
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'type' => 'ColumnField',
+                'type' => 'ExpressionField',
             ),
             '<hr/>',
-            array (
+            array(
+                'label' => 'Layout',
+                'name' => 'layoutType',
+                'options' => array(
+                    'ng-model' => 'active.layoutType',
+                    'ng-change' => 'save()',
+                ),
+                'list' => array(
+                    'Text' => 'Text',
+                    'File' => 'File',
+                ),
+                'listExpr' => 'array(\\"Text\\",\\"File\\")',
+                'labelWidth' => '5',
+                'fieldWidth' => '4',
+                'type' => 'DropDownList',
+            ),
+            array(
+                'label' => 'File Path (.php)',
+                'name' => 'layoutPath',
+                'labelWidth' => '5',
+                'fieldWidth' => '7',
+                'options' => array(
+                    'ng-show' => 'active.layoutType == \'File\'',
+                    'ng-model' => 'active.layoutPath',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                ),
+                'type' => 'TextField',
+            ),
+            array(
+                'label' => 'Layout',
+                'fieldname' => 'layout',
+                'validAction' => 'save();',
+                'language' => 'html',
+                'options' => array(
+                    'ng-show' => 'active.layoutType != \'File\'',
+                ),
+                'type' => 'ExpressionField',
+            ),
+            '<hr/>',
+            array(
+                'label' => 'Footer',
+                'name' => 'footerType',
+                'options' => array(
+                    'ng-model' => 'active.footerType',
+                    'ng-change' => 'save()',
+                ),
+                'list' => array(
+                    'Text' => 'Text',
+                    'File' => 'File',
+                ),
+                'listExpr' => 'array(\\"Text\\",\\"File\\")',
+                'labelWidth' => '5',
+                'fieldWidth' => '4',
+                'type' => 'DropDownList',
+            ),
+            array(
+                'label' => 'File Path (.php):',
+                'name' => 'footerPath',
+                'labelWidth' => '5',
+                'fieldWidth' => '7',
+                'options' => array(
+                    'ng-show' => 'active.footerType == \'File\'',
+                    'ng-model' => 'active.footerPath',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                ),
+                'type' => 'TextField',
+            ),
+            array(
+                'label' => 'Footer HTML',
+                'fieldname' => 'footer',
+                'validAction' => 'save();',
+                'language' => 'html',
+                'options' => array(
+                    'ng-show' => 'active.footerType != \'File\'',
+                ),
+                'type' => 'ExpressionField',
+            ),
+            '<hr/>',
+            array(
+                'label' => 'Draggable',
+                'name' => 'draggable',
+                'options' => array(
+                    'ng-model' => 'active.draggable',
+                    'ng-change' => 'save()',
+                ),
+                'list' => array(
+                    'Yes' => 'Yes',
+                    'No' => 'No',
+                ),
+                'listExpr' => 'array(\\"Yes\\",\\"No\\")',
+                'labelWidth' => '5',
+                'fieldWidth' => '4',
+                'type' => 'DropDownList',
+            ),
+            array(
+                'label' => 'Selectable',
+                'name' => 'selectable',
+                'options' => array(
+                    'ng-model' => 'active.selectable',
+                    'ng-change' => 'save()',
+                ),
+                'list' => array(
+                    'Yes' => 'Yes',
+                    'No' => 'No',
+                ),
+                'listExpr' => 'array(\\"Yes\\",\\"No\\")',
+                'labelWidth' => '5',
+                'fieldWidth' => '4',
+                'type' => 'DropDownList',
+            ),
+            '<hr/>',
+            array(
+                'label' => 'Data Source Expression',
+                'fieldname' => 'listExpr',
+                'validAction' => 'active.list = result;save();',
+                'options' => array(
+                    'ng-hide' => 'active.options[\'ng-form-list\'] != null',
+                ),
+                'type' => 'ExpressionField',
+            ),
+            array(
                 'label' => 'Options',
                 'fieldname' => 'options',
-                'type' => 'KeyValueGrid',
-            ),
-            array (
-                'label' => 'Label Options',
-                'fieldname' => 'labelOptions',
-                'type' => 'KeyValueGrid',
-            ),
-            array (
-                'label' => 'Field Options',
-                'fieldname' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
             ),
         );
     }
 
-	/** @var string variable untuk menampung label */
-    public $label = '';
+	/** @var string $selected */
+    public $selected = '';
 	
-	/** @var string variable untuk menampung name */
-    public $name = '';
+	/** @var string $list */
+    public $list = '';
 	
-	/** @var string variable untuk menampung tipe field dengan default text */
-    public $fieldTemplate = 'default';
+	/** @var string $listExpr */
+    public $listExpr = '';
 	
-    public $templateForm = '';
-    
-	/** @var string variable untuk menampung value */
-    public $value = array();
+	/** @var string $selectable */
+    public $selectable = 'No';
 	
-	/** @var string variable ntuk menampung kondisi layout dengan default Horizontal */
-    public $layout = 'Horizontal';
-    
-    public $layoutVertical = '';
+	/** @var string $draggable */
+    public $draggable = 'No';
 	
-	/** @var integer variable untuk menampung nilai width label */
-    public $labelWidth = 4;
+	/** @var string $layoutPath */
+    public $layoutPath = '';
 	
-	/** @var integer variable untuk menampung nilai witdth field */
-    public $fieldWidth = 8;
+	/** @var string $layout */
+    public $layout = '';
 	
-	/** @var array variable untuk menampung array options */
+	/** @var string $layoutType */
+    public $layoutType = 'File';
+	
+	/** @var array $options */
     public $options = array();
 	
-	/** @var array variable untuk menampung array options label */
-    public $labelOptions = array();
+	/** @var string $header */
+    public $header = '';
 	
-	/** @var array variable untuk menampung array options field */
-    public $fieldOptions = array();
+	/** @var string $headerType */
+    public $headerType = 'Text';
 	
-	/** @var string variable untuk menampung toolbarName */
-    public static $toolbarName = "List View";
+	/** @var string $headerPath */
+    public $headerPath = '';
 	
-	/** @var string variable untuk menampung category */
+	/** @var string $footer */
+    public $footer = '';
+	
+	/** @var string $footerType */
+    public $footerType = 'Text';
+	
+	/** @var string $footerPath */
+    public $footerPath = '';
+	
+	/** @var string $toolbarName */
+    public static $toolbarName = "ListView";
+	
+	/** @var string $category */
     public static $category = "User Interface";
 	
-	/** @var string variable untuk menampung toolbarIcon */
-    public static $toolbarIcon = "fa fa-bars";
-    
+	/** @var string $toolbarIcon */
+    public static $toolbarIcon = "fa fa-reorder";
+	
+	/** 
+	 * @var string $html
+	 * @access protected	
+	*/
+    protected $html = '';
+	
 	/**
 	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
 	*/
-    public function includeJS()
-    {
+    public function includeJS() {
         return array('list-view.js');
     }
 
 	/**
-	 * @return string Fungsi ini akan me-return string class layout yang digunakan. Fungsi ini akan mengecek nilai property $layout untuk menentukan nama Class Layout.
+	 * @return array Fungsi ini akan memproses expression menjadi array lalu mereturn array tersebut.
 	*/
-    public function getLayoutClass()
-    {
-        return ($this->layout == 'Vertical' ? 'form-vertical' : '');
-    }
-
-	/**
-	 * @return string Fungsi ini akan me-return string class error jika terdapat error pada satu atau banyak attribute.
-	*/
-    public function getErrorClass()
-    {
-        return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
-    }
-
-	/**
-	 * @return string Fungsi ini akan me-return string class label. Fungsi akan mengecek $layout untuk menentukan layout yang digunakan. Fungsi juga me-load option label dari property $labelOptions. 
-	 */
-    public function getlabelClass()
-    {
-        if ($this->layout == 'Vertical') {
-            $class = "control-label col-sm-12";
-        } else {
-            $class = "control-label col-sm-{$this->labelWidth}";
+    public function processExpr() {
+        if ($this->listExpr != "") {
+            ## evaluate expression
+            $this->list = $this->evaluate($this->listExpr, true);
         }
 
-        $class .= @$this->labelOptions['class'];
-        return $class;
+        $this->loadLayout('layout');
+        $this->loadLayout('header');
+        $this->loadLayout('footer');
+
+        return array(
+            'list' => $this->list,
+            'layout' => $this->layout
+        );
     }
 
 	/**
-	 * @return integer Fungsi ini akan me-return string class untuk menentukan width fields.
-	 */	
-    public function getFieldColClass()
-    {
-        return "col-sm-" . $this->fieldWidth;
+	 * @return integer Fungsi ini akan me-return string untuk menentukan width fields.
+	 */
+    public function getFieldColClass() {
+        return "col-sm-12";
+    }
+
+	/**
+	 * @param string $layout
+	 * @return null Fungsi ini akan me-load layout dan akan menjalankan beberapa function didalamnya jika type layout adalah 'File'.
+	 */
+    private function loadLayout($layout) {
+        $type = $layout . "Type";
+        $path = $layout . "Path";
+        if ($this->$type == 'File') {
+            if (strtolower(substr($this->$path, -4)) == ".php") {
+                $this->$path = substr($this->$path, 0, -4);
+            }
+
+            if (strpos($this->$path, ".") === false) {
+                $reflector = new ReflectionClass($this->model);
+                $filepath = dirname($reflector->getFileName()) . DIRECTORY_SEPARATOR . $this->$path . ".php";
+            } else {
+                $filepath = Yii::getPathOfAlias($this->$path) . ".php";
+            }
+            if (is_file($filepath)) {
+                $this->$layout = Yii::app()->controller->renderFile($filepath,array(
+                    'list' => $this,
+                    'builder' => $this->builder
+                ),true);
+            }
+        }
     }
 
 	/**
 	 * @return field Fungsi ini untuk me-render field dan atributnya.
-	 */	
-    public function render()
-    {
-        $this->addClass('form-group form-group-sm', 'options');
-        $this->addClass($this->layoutClass, 'options');
-        $this->addClass($this->errorClass, 'options');
+	 */
+    public function render() {
+        $this->addClass('form-group form-group-sm');
+        $this->processExpr();
 
-        $this->fieldOptions['id'] = $this->name;
-        $this->fieldOptions['name'] = $this->name;
-        $this->addClass('form-control', 'fieldOptions');
-
-        $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
         return $this->renderInternal('template_render.php');
     }
+
 }

@@ -16,7 +16,7 @@ class Controller extends CController {
         return Yii::app()->request->baseUrl . $path;
     }
 
-    public function renderForm($class, $model, $options = array()) {
+    public function renderForm($class, $model = null, $options = array()) {
         $fb = FormBuilder::load($class);
         $this->pageTitle = $fb->form['title'];
         $this->layout = '//layouts/form';
@@ -73,5 +73,14 @@ class Controller extends CController {
             return array_merge($default, $menuModule);
         }
     }
+    
+    public function loadModel($id,$form)
+	{
+        $model = $form::model()->findByPk($id);
+        
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
 
 }

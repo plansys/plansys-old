@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class ExpressionField
+ * @author rizky
+ */
 class ExpressionField extends FormField {
 	/**
 	 * @return array Fungsi ini akan me-return array property ExpressionField.
@@ -82,37 +85,37 @@ class ExpressionField extends FormField {
         );
     }
 
-	/** @var string variable untuk menampung label */
+	/** @var string $label */
     public $label = '';
 	
-	/** @var string variable untuk menampung fieldname */
+	/** @var string $fieldname */
     public $fieldname = '';
 	
-	/** @var string variable untuk menampung action */
+	/** @var string $validAction */
     public $validAction = '';
 	
-	/** @var string variable untuk menampung type language */
+	/** @var string $language */
     public $language = 'php';
 	
-	/** @var string variable untuk menampung value */
+	/** @var string $value */
     public $value = '';
 	
-	/** @var array variable untuk menampung array options */
+	/** @var array $options */
     public $options = array();
 	
-	/** @var string variable untuk menampung description */
+	/** @var string $desc */
     public $desc = '';
 	
-	/** @var array variable untuk menampung array option label */
+	/** @var array $labelOptions */
     public $labelOptions = array();
 	
-	/** @var string variable untuk menampung toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName = "Expression Field";
 	
-	/** @var string variable untuk menampung category */
+	/** @var string $category */
     public static $category = "User Interface";
 	
-	/** @var string variable untuk menampung toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-terminal";
 	
 	/**

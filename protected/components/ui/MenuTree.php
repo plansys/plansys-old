@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Class MenuTree
+ * @author rizky
+ */
 class MenuTree extends CComponent {
 
     public static function listAllFile() {

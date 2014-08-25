@@ -1,5 +1,4 @@
 <?php
-
 class ControllerGeneratorController extends Controller{
     public function actionIndex(){
         $controllers = ControllerGenerator::listAllFile();
@@ -11,16 +10,53 @@ class ControllerGeneratorController extends Controller{
         $this->layout = "//layouts/blank";
         $this->render('empty');
     }
+    
+    public function actionRenderProperties(){
+        $properties = FormBuilder::load('AdminControllerEditor');
+        
+        if ($this->beginCache('AdminControllerProperties', array(
+                    'dependency' => new CFileCacheDependency(
+                            Yii::getPathOfAlias('application.modules.admin.forms.AdminControllerEditor') . ".php"
+            )))) {
+            echo $properties->render();
+            $this->endCache();
+        }
+    }
+    
+    public function actionSave($module ,$class){
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+        $gen = new ControllerGenerator($module, $class);
+        if (isset($post['list'])) {
+            $content = $post['list'];
+            if($content['name']!=''){
+                if($content['template']=='index' || $content['template']=='default'){
+                    $gen->addActionIndex($content['name'], $content['form']);
+                }elseif ($content['template']=='update') {
+                    $gen->addActionUpdate($content['name'], $content['form']);
+                }elseif ($content['template']=='create') {
+                    $gen->addActionCreate($content['name'], $content['form']);
+                }elseif ($content['template']=='delete') {
+                    $gen->addActionDelete($content['name'], $content['form']);
+                }
+            }
+        }
+    }
+    
     public function actionUpdate($class){
         $this->layout = "//layouts/blank";
-        $class_name = ControllerGenerator::controllerName($class);
-        $method = ControllerGenerator::listMethod($class,$class_name);
+        $target = ControllerGenerator::moduleControllerName($class);
+        $method = ControllerGenerator::listMethod($class,$target['controller']);
+        
+        $properties = FormBuilder::load('AdminControllerEditor');
+        $properties->registerScript();
         
         $this->render('form',array(
             'method' => $method,
             'class' => $class,
-            'class_name' => $class_name,
+            'controller' => $target['controller'],
+            'module' =>$target['module'],
         ));
-    }
+    }    
 }
 ?>

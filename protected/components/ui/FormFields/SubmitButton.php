@@ -1,7 +1,12 @@
 <?php
-
+/**
+ * Class SubmitButton
+ * @author rizky
+ */
 class SubmitButton extends FormField {
-
+	/**
+	 * @return array Fungsi ini akan me-return array property SubmitButton.
+	 */
     public function getFieldProperties() {
         return array (
             array (
@@ -86,15 +91,33 @@ class SubmitButton extends FormField {
         );
     }
 
+	/** @var string $label */
     public $label = '';
+	
+	/** @var string $buttonType */
     public $buttonType = 'primary';
+	
+	/** @var string $buttonSize */
     public $buttonSize = 'btn-lg';
+	
+	/** @var string $buttonPosition */
     public $buttonPosition = 'center';
+	
+	/** @var array $options */
     public $options = array();
+	
+	/** @var string $toolbarName */
     public static $toolbarName = "Submit";
+	
+	/** @var string $category */
     public static $category = "User Interface";
+	
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-hand-o-up";
-
+	
+	/**
+	 * @return field Fungsi ini untuk me-render field dan atributnya.
+	 */	
     public function render() {
         $this->addClass('form-control');
         return $this->renderInternal('template_render.php');

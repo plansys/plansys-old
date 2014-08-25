@@ -12,7 +12,6 @@ class User extends ActiveRecord {
             'phone'=> 'Phone',
             'username'=> 'Username',
             'password'=> 'Password',
-            'date'=> 'Date',
         );
     }
 
@@ -22,15 +21,14 @@ class User extends ActiveRecord {
 
     public function rules() {
         return array(
-            array('nip, firstname, lastname, email, username, password, date', 'required'),
+            array('nip, firstname, lastname, email, username, password', 'required'),
             array('nip, firstname, lastname, email, phone, username, password', 'length', 'max'=>255),
         );
     }
 
     public function relations() {
         return array(
-            'userInfos' => array(self::HAS_MANY, 'UserInfo', 'user_id'),
-            'userRoles' => array(self::HAS_MANY, 'UserRole', 'user_id'),
+
         );
     }
 
