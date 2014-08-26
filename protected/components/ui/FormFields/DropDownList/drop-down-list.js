@@ -12,24 +12,67 @@ app.directive('dropDownList', function($timeout) {
                 $scope.renderFormList = function() {
                     $scope.renderedFormList = [];
                     for (key in $scope.formList) {
-                        console.log(key);
-                        $scope.renderedFormList.push({key:key, value:$scope.formList[key]});
+                        if (angular.isObject($scope.formList[key])) {
+                            var subItem = [];
+                            var rawSub = $scope.formList[key];
+                            for (subkey in rawSub) {
+                                subItem.push({key: subkey, value: rawSub[subkey]});
+                            }
+                            $scope.renderedFormList.push({key: key, value: subItem});
+                        } else {
+                            $scope.renderedFormList.push({key: key, value: $scope.formList[key]});
+                        }
                     }
                 }
-                
-                $scope.dropdownKeypress  = function($event) {
-                    $event.preventDefault();
-                    console.log($event.which);
-                    return false;
-                    
+
+                $scope.dropdownKeypress = function(e) {
+                    if (e.which === 13) {
+                        $timeout(function() {
+                            $el.find("li.hover a").click();
+                            $scope.isOpen = false;
+                        }, 0);
+
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                    if (e.which === 40) {
+                        $scope.isOpen = true;
+
+                        $a = $el.find("li.hover").next();
+                        while (!$a.is(":visible")) {
+                            $a = $a.next();
+                        }
+
+                        if ($a.length > 0 && $a.is("li")) {
+                            $el.find("li.hover").removeClass("hover")
+                            $a.addClass("hover");
+                        }
+                        e.preventDefault();
+                        e.stopPropagation();
+                    } else if (e.which === 38) {
+                        $scope.isOpen = true;
+
+                        $a = $el.find("li.hover").prev();
+                        while (!$a.is(":visible")) {
+                            $a = $a.prev();
+                        }
+                        if ($a.length > 0 && $a.is("li")) {
+                            $el.find("li.hover").removeClass("hover")
+                            $a.addClass("hover");
+                        }
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
                 }
-                
+
                 $scope.update = function(value, f) {
                     $scope.updateInternal(value);
                     $timeout(function() {
                         ctrl.$setViewValue($scope.value);
                         if ($scope.showOther && !$scope.itemExist()) {
                             $el.find('.dropdown-other-type').focus();
+                        } else {
+                            $el.focus();
                         }
                     }, 0);
                 };
@@ -63,19 +106,19 @@ app.directive('dropDownList', function($timeout) {
                 $scope.toggled = function(open) {
                     if (open) {
                         if ($el.find("li a[value='" + $scope.value + "']").length > 0) {
-                            $el.find("li a[value='" + $scope.value + "']").focus();
+                            $el.find("li.hover").removeClass("hover")
+                            $el.find("li a[value='" + $scope.value + "']").parent().addClass('hover');
 
                             if ($scope.searchable) {
                                 $timeout(function() {
                                     $el.find('.search-dropdown').focus();
-                                    $el.find("li.hover").removeClass("hover");
-                                    $el.find("li a[value='" + $scope.value + "']").parent().addClass("hover");
                                 }, 0);
                             }
                         } else {
                             $el.find("li a").blur();
                             $el.find(".dropdown-menu").scrollTop(0);
                         }
+                        $el.focus();
                     }
                 };
                 $scope.changeOther = function() {
@@ -87,24 +130,14 @@ app.directive('dropDownList', function($timeout) {
                         $el.find("li:not(.ng-hide):first").addClass("hover");
                     }, 0);
                 };
-                $el.find(".search-dropdown").keydown(function(e) {
-                    if (e.which === 13) {
-                        $el.find("li.hover a").click();
-                    }
-                    if (e.which === 40) {
-                        $a = $el.find("li.hover").next();
-                        if ($a.length > 0 && $a.is("li")) {
-                            $el.find("li.hover").removeClass("hover")
-                            $a.addClass("hover");
-                        }
-                    } else if (e.which === 38) {
-                        $a = $el.find("li.hover").prev();
-                        if ($a.length > 0) {
-                            $el.find("li.hover").removeClass("hover")
-                            $a.addClass("hover");
-                        }
-                    }
-                });
+
+                $scope.isObject = function(input) {
+                    return angular.isObject(input);
+                }
+
+                $scope.isFound = function(input) {
+                    return $scope.search == '' || input.toLowerCase().indexOf($scope.search.toLowerCase()) > -1;
+                }
 
                 // when ng-model, or ng-form-list is changed from outside directive
                 if (attrs.ngFormList) {
@@ -133,14 +166,15 @@ app.directive('dropDownList', function($timeout) {
                 $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
                 $scope.renderedFormList = [];
                 $scope.renderFormList();
-                
+
                 $scope.searchable = $el.find("data[name=searchable]").text().trim() == "Yes" ? true : false;
                 $scope.showOther = $el.find("data[name=show_other]").text().trim() == "Yes" ? true : false;
                 $scope.otherLabel = $el.find("data[name=other_label]").html();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.value = $el.find("data[name=value]").html().trim();
                 $scope.inEditor = typeof $scope.$parent.inEditor != "undefined";
-                
+                $scope.isOpen = false;
+
                 $scope.search = "";
                 //if ngModel is present, use that instead of value from php
                 $timeout(function() {

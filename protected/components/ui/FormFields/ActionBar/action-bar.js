@@ -4,7 +4,8 @@ $(function() {
         $(".action-bar").each(function() {
             var height = $(this).height();
             $(this).css('top', '32px');
-            $(this).parent().parent().parent().css({
+            
+            $(this).parents('.container-full').css({
                 'margin-top': height + 'px',
                 'border-top': '0px'
             });
@@ -31,13 +32,11 @@ $(function() {
 
             if (container.scrollTop() == 0) {
                 active = $(".action-bar:eq(0) .action-tab a:first-child");
-                console.log(container.scrollTop());
             } else if (container.scrollTop() == container[0].scrollHeight - container.height()) {
                 active = $(".action-bar:eq(0) .action-tab a").last();
             } else {
                 $(".action-bar:eq(0) .action-tab a").each(function() {
                     var top = container.scrollTop() + $($(this).attr('href')).position().top;
-                    console.log($(this).text(), container.scrollTop(), top);
                     if (container.scrollTop() >= top) {
                         active = $(this);
                     }

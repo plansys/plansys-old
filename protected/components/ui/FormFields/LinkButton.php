@@ -42,7 +42,7 @@ class LinkButton extends FormField {
     public static $category = "User Interface";
 	
 	/** @var string $toolbarIcon */
-    public static $toolbarIcon = "fa fa-unlink";
+    public static $toolbarIcon = "glyphicon glyphicon-link";
 	
 	/**
 	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
@@ -83,7 +83,7 @@ class LinkButton extends FormField {
                 'name' => 'group',
                 'options' => array (
                     'ng-model' => 'active.group',
-                    'ng-change' => 'save();console.log($event);',
+                    'ng-change' => 'save();',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',

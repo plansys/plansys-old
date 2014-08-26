@@ -151,7 +151,7 @@ class KeyValueGrid extends FormField {
     public static $toolbarName = "KeyValue Grid";
 	
 	/** @var string $category */
-    public static $category = "Developer Fields";
+    public static $category = "User Interface";
 	
 	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-key";

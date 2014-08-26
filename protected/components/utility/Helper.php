@@ -2,6 +2,18 @@
 
 class Helper {
 
+    public static function coba() {
+        return array(
+            'coba' => array(
+                'coba_dunk' => 'Coba Dunk',
+                'coba_1' => 'Testing',
+                '---' => '---',
+                'fukiii' => 'fukiii',
+            ),
+            'fuki' => 'test'
+        );
+    }
+    
     public static function startsWith($haystack, $needle, $case = false) {
         if ($case)
             return strpos($haystack, $needle, 0) === 0;

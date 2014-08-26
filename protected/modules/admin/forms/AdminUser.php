@@ -7,10 +7,15 @@ class AdminUser extends User {
                 'type' => 'ActionBar',
             ),
             array (
+                'name' => 'dataSource1',
+                'fieldType' => 'php',
+                'type' => 'DataSource',
+            ),
+            array (
                 'column1' => array (
                     array (
                         'label' => 'Date',
-                        'name' => 'date',
+                        'name' => 'password',
                         'type' => 'TextField',
                     ),
                     array (
@@ -24,6 +29,13 @@ class AdminUser extends User {
                         'type' => 'TextField',
                     ),
                     array (
+                        'label' => 'Date Time Picker',
+                        'name' => 'date',
+                        'fieldType' => 'datetime',
+                        'datepickerOptions' => array (),
+                        'type' => 'DateTimePicker',
+                    ),
+                    array (
                         'label' => 'Phone',
                         'name' => 'phone',
                         'type' => 'TextField',
@@ -31,20 +43,26 @@ class AdminUser extends User {
                 ),
                 'column2' => array (
                     array (
-                        'label' => 'qwdqwd',
-                        'name' => 'Lainnya',
+                        'label' => 'NIP',
+                        'name' => 'nip',
                         'fieldType' => 'password',
                         'type' => 'TextField',
                     ),
                     array (
                         'label' => 'Firstname',
                         'name' => 'firstname',
+                        'fieldType' => 'password',
                         'type' => 'TextField',
                     ),
                     array (
                         'label' => 'Password',
                         'name' => 'password',
                         'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Drop Down List',
+                        'name' => 'date',
+                        'type' => 'DropDownList',
                     ),
                     array (
                         'name' => 'id',
@@ -60,6 +78,10 @@ class AdminUser extends User {
             array (
                 'label' => 'Text Area',
                 'name' => 'Text Area 1',
+                'fieldHeight' => '0',
+                'options' => array (
+                    'class' => 'col-sm-6',
+                ),
                 'type' => 'TextArea',
             ),
             array (

@@ -56,7 +56,8 @@
 
                         // generate model name
                         if (typeof model.name != "undefined") {
-                            model.name = model.name + " " + $(".form-builder ." + model.type).length;
+                            model.name = model.name.charAt(0).toLowerCase() + model.name.slice(1); // letter first letter
+                            model.name = model.name.replace(/\s/,"") + "" + $(".form-builder ." + model.type).length;
                         }
 
                         // action bar should always be placed on first array

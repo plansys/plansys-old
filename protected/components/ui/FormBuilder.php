@@ -604,6 +604,7 @@ EOF;
         ## wrap form
         if ($wrapForm) {
             $html .= '
+                <input type="submit" style="display:none;"/>
                 </form>
             </div>';
 
