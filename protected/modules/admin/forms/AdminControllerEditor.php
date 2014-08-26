@@ -15,13 +15,14 @@ class AdminControllerEditor extends Form{
                 'name' => 'Template',
                 'options' => array (
                     'ng-model' => 'active.template',
+                    'ng-hide' => 'edit == false',
                 ),
                 'list' => array (
-                    'Default Action' => 'Default Action',
+                    'default' => 'Default Action',
                     '---' => '---',
-                    'actionIndex' => 'actionIndex',
-                    'actionCreate' => 'actionCreate',
-                    'actionUpdate' => 'actionUpdate',
+                    'index' => 'actionIndex',
+                    'create' => 'actionCreate',
+                    'update' => 'actionUpdate',
                     'z...' => '...',
                 ),
                 'listExpr' => 'ControllerGenerator::getTemplate();',
@@ -31,10 +32,7 @@ class AdminControllerEditor extends Form{
                 'label' => 'Parameters',
                 'name' => 'params',
                 'options' => array (
-                    'ng-model' => 'active.param',
-                ),
-                'fieldOptions' => array (
-                    'ng-list' => '',
+                    'ng-model' => 'paramText',
                 ),
                 'type' => 'TextField',
             ),
@@ -43,6 +41,7 @@ class AdminControllerEditor extends Form{
                 'name' => 'Form',
                 'options' => array (
                     'ng-model' => 'active.form',
+                    'ng-hide' => 'edit == false',
                 ),
                 'type' => 'TextField',
             ),

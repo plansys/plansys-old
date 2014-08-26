@@ -46,9 +46,24 @@ class ControllerGenerator extends CodeGenerator {
         foreach ($methods as $m) {
             if ($m->class == $class_name && !$reflection->getMethod($m->name)->isProtected() && !$reflection->getMethod($m->name)->isStatic() && self::isAction($m->name) == true
             ) {
+                $rawParams = $reflection->getMethod($m->name)->getParameters();
+                $params = array();
+                foreach ($rawParams as $p) {
+                    if ($p->isOptional()) {
+                        $params[] = array(
+                            'name' => $p->getName(),
+                            'default' => $p->getDefaultValue()
+                        );
+                    } else {
+                        $params[] = array(
+                            'name' => $p->getName()
+                        );
+                    }
+                }
+                
                 $action[] = array(
                     'name' => $m->name,
-                    'param' => $reflection->getMethod($m->name)->getParameters(),
+                    'param' => $params,
                     'form' => "",
                 );
             }
