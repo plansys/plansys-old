@@ -7,6 +7,11 @@ class AdminUser extends User {
                 'type' => 'ActionBar',
             ),
             array (
+                'name' => 'dataSource1',
+                'fieldType' => 'php',
+                'type' => 'DataSource',
+            ),
+            array (
                 'column1' => array (
                     array (
                         'label' => 'Date',

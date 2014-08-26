@@ -179,7 +179,7 @@ class ListView extends FormField
     public static $category = "User Interface";
 	
 	/** @var string variable untuk menampung toolbarIcon */
-    public static $toolbarIcon = "fa fa-bars";
+    public static $toolbarIcon = "glyphicon glyphicon-align-justify";
     
 	/**
 	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
