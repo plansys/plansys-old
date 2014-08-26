@@ -32,7 +32,7 @@ class AdminControllerEditor extends Form{
                 'label' => 'Parameters',
                 'name' => 'params',
                 'options' => array (
-                    'ng-model' => 'paramText',
+                    'ng-model' => 'active.param',
                 ),
                 'type' => 'TextField',
             ),

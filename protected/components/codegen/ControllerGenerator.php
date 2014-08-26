@@ -44,27 +44,32 @@ class ControllerGenerator extends CodeGenerator {
         $methods = $reflection->getMethods();
         $action = array();
         foreach ($methods as $m) {
-            if ($m->class == $class_name && !$reflection->getMethod($m->name)->isProtected() && !$reflection->getMethod($m->name)->isStatic() && self::isAction($m->name) == true
-            ) {
-                $rawParams = $reflection->getMethod($m->name)->getParameters();
+            if ($m->class == $class_name && !$reflection->getMethod($m->name)->isProtected() 
+                    && !$reflection->getMethod($m->name)->isStatic() 
+                    && self::isAction($m->name) == true) 
+            {
+                $rawParams = $reflection->getMethod($m->name)->getParameters();        
                 $params = array();
-                foreach ($rawParams as $p) {
-                    if ($p->isOptional()) {
-                        $params[] = array(
-                            'name' => $p->getName(),
-                            'default' => $p->getDefaultValue()
-                        );
-                    } else {
-                        $params[] = array(
-                            'name' => $p->getName()
-                        );
+                if(!empty($rawParams)){
+                    foreach ($rawParams as $p) {
+                        if ($p->isOptional()) {
+                            if(is_null($p->getDefaultValue())){
+                                $params[] = '$'.$p->getName().' = null';
+                            }else{
+                                $params[] = '$'.$p->getName().' = '.$p->getDefaultValue();
+                            }
+                        } else {
+                            $params[] = '$'.$p->getName();
+                        }
+
                     }
                 }
                 
+                if(!empty($params)) $strParams = implode(',',$params);
+                else $strParams = null;
                 $action[] = array(
                     'name' => $m->name,
-                    'param' => $params,
-                    'form' => "",
+                    'param' => $strParams
                 );
             }
         }

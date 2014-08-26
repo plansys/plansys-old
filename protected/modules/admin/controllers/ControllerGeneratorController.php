@@ -24,7 +24,20 @@ class ControllerGeneratorController extends Controller{
     }
     
     public function actionRename($module ,$class){
-        
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+        $gen = new ControllerGenerator($module, $class);
+        var_dump($post);
+        if (isset($post['list'])) {
+            $content = $post['list'];
+            if(!is_null($content['param'])){
+                $param = explode(',',$content['param']);
+                $gen->renameFunction($content['oldName'], $content['name'],$param);
+            }else{
+                $gen->renameFunction($content['oldName'], $content['name']);
+            }
+            
+        }     
     }
     
     public function actionSave($module ,$class){
@@ -35,14 +48,19 @@ class ControllerGeneratorController extends Controller{
         if (isset($post['list'])) {
             $content = $post['list'];
             if($content['name']!=''){
+                if(!is_null($content['param'])){
+                    $param = explode(',',$content['param']);
+                }else{
+                    $param = array();
+                }
                 if($content['template']=='index' || $content['template']=='default'){
-                    $gen->addActionIndex($content['name'], $content['form'],$content['param']);
+                    $gen->addActionIndex($content['name'], $content['form'],$param);
                 }elseif ($content['template']=='update') {
-                    $gen->addActionUpdate($content['name'], $content['form']);
+                    $gen->addActionUpdate($content['name'], $content['form'],$param);
                 }elseif ($content['template']=='create') {
-                    $gen->addActionCreate($content['name'], $content['form']);
+                    $gen->addActionCreate($content['name'], $content['form'],$param);
                 }elseif ($content['template']=='delete') {
-                    $gen->addActionDelete($content['name'], $content['form']);
+                    $gen->addActionDelete($content['name'], $content['form'],$param);
                 }
             }
         }

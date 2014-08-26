@@ -198,8 +198,17 @@ class {$class} extends {$this->baseClass} {\n \n}
         }
     }
     
-    public function renameFunction($oldName, $newName){
+    public function renameFunction($oldName, $newName, $param = null){
         if(isset($this->methods[$oldName])){
+            ## check param
+            if(!is_null($param)){
+                $body = $this->getFunctionBody($oldName);
+                array_pop($body);
+                array_shift($body);
+                $body = implode("\n",$body);
+                $this->updateFunction($oldName, $body, array('params' => $param));
+            }
+            
             ## rename fungsinya
             $line = $this->methods[$oldName]['line'];
             $func = $this->file[$line]; // public function actionCreate($a) {
