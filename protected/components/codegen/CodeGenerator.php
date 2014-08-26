@@ -221,7 +221,7 @@ class {$class} extends {$this->baseClass} {\n \n}
 
     protected function updateFunction($name, $body, $options = array()) {
         $isNewFunc = false;
-        ## get first line of the class
+        ## get first line of the class       
         if (!isset($this->methods[$name])) {
             $line = $this->prepareLineForMethod();
             $length = 0;
@@ -274,7 +274,7 @@ EOF;
 
         $this->methods[$name] = array(
             'line' => $line,
-            'length' => $length
+            'length' => $newlength
         );
 
         $this->save();

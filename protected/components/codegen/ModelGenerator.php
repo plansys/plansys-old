@@ -8,11 +8,12 @@ class ModelGenerator extends CodeGenerator {
         foreach ($items as $k => $m) {
             $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
             $m = str_replace('.php', "", $m);
-
+            
             $items[$k] = array(
                 'name' => $m,
                 'class' => 'application.models.' . $m,
-                'class_path' => 'application.models'
+                'class_path' => 'application.models',
+                'exist' => (class_exists($m))?'yes': 'no',
             );
         }
         return $items;
@@ -95,7 +96,7 @@ class ModelGenerator extends CodeGenerator {
         }
     }
 
-    protected function addRelations() {
+    public function addRelations() {
         $info = $this->modelInfo;
 
         ## add new relation property
@@ -156,12 +157,18 @@ EOF;
         $this->updateFunction('attributeLabels', $attributeLabelsFunc);
     }
 
-    protected function addTableName() {
+    protected function addTableName($tableName = null) {
         $model = $this->model;
-
-        $tableNameFunc = <<<EOF
+        if($model == null){
+            $tableNameFunc = <<<EOF
+        return '{$tableName}';
+EOF;
+        }else{
+            $tableNameFunc = <<<EOF
         return '{$model->tableName}';
 EOF;
+        }
+              
         $this->updateFunction('tableName', $tableNameFunc);
     }
 
@@ -177,9 +184,6 @@ EOF;
 
             ## add rules function
             $this->addRules();
-
-            ## add tablename function
-            $this->addTableName();
 
             ## add columns function
             $this->addAttributeLabels();
@@ -202,7 +206,7 @@ EOF;
         ## jika class ini sudah ada, maka
         if (!is_null($this->model) && method_exists($this->model, 'tableName')) {
             $tableName = $this->model->tableName();
-
+            
             ## dapatkan model info untuk $class
             $this->modelCode = $this->getTableModel($tableName);
             if ($this->modelCode->validate()) {
@@ -212,12 +216,19 @@ EOF;
         } else {
             ## kalau belum ada, maka:
             $tableName = Helper::camelToUnderscore($class);
+            $this->addTableName($tableName);
             $success = $this->generateClass($tableName);
             
             if (!$success) {
-                file_put_contents($this->filePath, "");
-                throw new Exception("Gagal meng-generate Class [{$this->classPath}] dengan nama tabel [{$tableName}].
-                    Pastikan table tersebut ada di database.");
+                $tryDefaultTable = 'p_'.$tableName;
+                $this->addTableName($tryDefaultTable);
+                $tryDefault = $this->generateClass($tryDefaultTable);
+                
+                if(!$tryDefault){
+                    file_put_contents($this->filePath, "");
+                    throw new Exception("Gagal meng-generate Class [{$this->classPath}] dengan nama tabel [{$tableName}].
+                        Pastikan table tersebut ada di database.");
+                }
             }
         }
     }
