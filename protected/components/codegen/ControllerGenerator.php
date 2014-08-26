@@ -22,20 +22,25 @@ class ControllerGenerator extends CodeGenerator {
         $dir = Yii::getPathOfAlias("application.modules.{$module}.controllers");
         $items = glob($dir . DIRECTORY_SEPARATOR . "*");
         foreach ($items as $k => $m) {
+            $exist = 'yes';
+            if (!is_file($m) || trim(file_get_contents($m)) == "") {
+                $exist = 'no';
+            }
             $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
             $m = str_replace('.php', "", $m);
-
+            
             $items[$k] = array(
                 'name' => $m,
                 'module' => $module,
                 'class' => 'application.modules.' . lcfirst($module) . '.controllers.' . $m,
-                'class_path' => 'application.modules.' . lcfirst($module) . '.controllers.'
+                'class_path' => 'application.modules.' . lcfirst($module) . '.controllers.',
+                'exist' => $exist,
             );
         }
         return $items;
     }
 
-    public static function listMethod($class, $class_name) {
+    public function listMethod($class, $class_name) {
         $declaredClasses = get_declared_classes();
 
         if (!in_array($class_name, $declaredClasses))

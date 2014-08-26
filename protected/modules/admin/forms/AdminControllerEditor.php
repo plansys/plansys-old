@@ -45,8 +45,10 @@ class AdminControllerEditor extends Form{
                 ),
                 'type' => 'TextField',
             ),
+            '<hr>',
             array (
                 'label' => 'Submit',
+                'buttonSize' => 'btn-sm',
                 'type' => 'SubmitButton',
             ),
         );

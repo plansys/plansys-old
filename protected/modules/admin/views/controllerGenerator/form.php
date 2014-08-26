@@ -20,37 +20,34 @@
                     </div>
                     Action List
                 </div>
-                <div class="action-list">   
-                    <?php if (empty($method)): ?>
-                        <div class="alert alert-warning">
-                            <span>Action Empty</span>
-                        </div>
-                    <?php else: ?>
-                        <table class="table-responsive table table-bordered">
-                            <thead>
-                                <tr colspan=2 style="background:#f6f6f6;">
-                                    <th>Action Name</th><th colspan="2">Parameter</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="item in list">
-                                    <td style="width:50%;">{{ item.name }}</td>
-                                    <td style="width:50%;border-right-color:#ffffff;">
-                                        <div class="badge">    
-                                            {{item.param}}
-                                        </div>
-                                        <a href="#" target="_blank" class="pull-right btn btn-default btn-xs">
-                                            <i class="fa fa-globe"></i>
-                                        </a>
+                <div class="action-list">    
+                    <table class="table-responsive table table-bordered">
+                        <thead>
+                            <tr colspan=2 style="background:#f6f6f6;">
+                                <th>Action Name</th><th colspan="2">Parameter</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in list">
+                                <td style="width:50%;">{{ item.name }}</td>
+                                <td style="width:50%;border-right-color:#ffffff;">
+                                    <div class="badge">    
+                                        {{item.param}}
+                                    </div>
+                                    <a href="#" target="_blank" class="pull-right btn btn-default btn-xs" ng-if="item.param == null">
+                                        <i class="fa fa-globe"></i>
+                                    </a>
 
-                                        <a href="#" class="btn btn-default pull-right btn-xs" ng-click="update(item)" style="margin-right:5px;">
-                                            <i class="fa fa-pencil"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    <?php endif; ?>
+                                    <a href="{{getUrl('<?php echo $module?>','<?php echo $controller?>',item.name)}}" class="btn btn-default pull-right btn-xs" ng-click="update(item)" style="margin-right:5px;">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="alert alert-warning" ng-if="list.length == 0">
+                        <span>Action Empty</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -114,6 +111,7 @@
                  if($scope.edit == true){
                     $scope.list.push($scope.active);
                     $scope.edit = false;
+                    $scope.active = null;
                  }else{
                      var key = 0;
                      $scope.list.forEach(function() {
@@ -130,6 +128,10 @@
              }).error(function(data, status) {
                  $scope.saving = false;
              });
+         };
+         $scope.getUrl = function(module,controller,action){
+                var url = module + ','+controller+','+action;
+                return url; 
          };
      }
  ]);
