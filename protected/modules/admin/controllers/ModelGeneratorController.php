@@ -13,16 +13,33 @@ class ModelGeneratorController extends Controller{
         ));
     }
     
+    public function actionSave($class,$tableName){
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+    }
+    
+    public function actionRenderProperties(){
+        $properties = FormBuilder::load('AdminModelEditor');
+        
+        if ($this->beginCache('AdminModelProperties', array(
+                    'dependency' => new CFileCacheDependency(
+                            Yii::getPathOfAlias('application.modules.admin.forms.AdminModelEditor') . ".php"
+            )))) {
+            echo $properties->render();
+            $this->endCache();
+        }
+    }
+    
+    public function actionCreate($class){
+        $gen = new ModelGenerator($class);
+    }
+    
     public function actionUpdate($class){
         $this->layout = "//layouts/blank";
-        //$target = ControllerGenerator::moduleControllerName($class);
-        //$method = ControllerGenerator::listMethod($class,$target['controller']);
         $className = array_pop(explode('.',$class));
         $model = new ModelGenerator($className);
         $modelDetail = $model->modelInfo;
         
-        //$properties = FormBuilder::load('AdminControllerEditor');
-        //$properties->registerScript();
         $this->render('form',array(
             'class' => $class,
             'modelDetail' => $modelDetail,
