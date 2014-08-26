@@ -67,7 +67,10 @@ app.directive('keyValueGrid', function($timeout) {
                 function formatJSON(raw_value) {
                     var filtered = [];
                     for (var key in raw_value) {
-                        if (!$scope.allowEmpty && key.trim() == "")
+                        if (!$scope.allowEmpty && raw_value[key].trim() == "")
+                            continue;
+                        
+                        if ($scope.allowEmpty &&  raw_value[key].trim() == "" && raw_value[value].trim() == "") 
                             continue;
 
                         var item = filterKeyValue(key, raw_value[key]);
@@ -84,7 +87,10 @@ app.directive('keyValueGrid', function($timeout) {
                 function cleanJSON(raw) {
                     var list = [];
                     for (i in raw) {
-                        if (!$scope.allowEmpty && raw[i].key == "")
+                        if (!$scope.allowEmpty && raw[i].key.trim() == "")
+                            continue;
+                        
+                        if ($scope.allowEmpty && raw[i].key.trim() == "" && raw[i].value.trim() == "") 
                             continue;
 
                         var item = filterKeyValue(raw[i].key, raw[i].value);
@@ -97,7 +103,10 @@ app.directive('keyValueGrid', function($timeout) {
                 function unformatJSON(raw) {
                     var list = {};
                     for (i in raw) {
-                        if (!$scope.allowEmpty && raw[i].key == "")
+                        if (!$scope.allowEmpty && raw[i].key.trim() == "")
+                            continue;
+                        
+                        if ($scope.allowEmpty && raw[i].key.trim() == "" && raw[i].value.trim() == "") 
                             continue;
 
                         var item = filterKeyValue(raw[i].key, raw[i].value);

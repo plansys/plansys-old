@@ -10,7 +10,7 @@ class AdminUser extends User {
                 'column1' => array (
                     array (
                         'label' => 'Date',
-                        'name' => 'date',
+                        'name' => 'password',
                         'type' => 'TextField',
                     ),
                     array (
@@ -24,6 +24,13 @@ class AdminUser extends User {
                         'type' => 'TextField',
                     ),
                     array (
+                        'label' => 'Date Time Picker',
+                        'name' => 'date',
+                        'fieldType' => 'time',
+                        'datepickerOptions' => array (),
+                        'type' => 'DateTimePicker',
+                    ),
+                    array (
                         'label' => 'Phone',
                         'name' => 'phone',
                         'type' => 'TextField',
@@ -31,20 +38,26 @@ class AdminUser extends User {
                 ),
                 'column2' => array (
                     array (
-                        'label' => 'qwdqwd',
-                        'name' => 'Lainnya',
+                        'label' => 'NIP',
+                        'name' => 'nip',
                         'fieldType' => 'password',
                         'type' => 'TextField',
                     ),
                     array (
                         'label' => 'Firstname',
                         'name' => 'firstname',
+                        'fieldType' => 'password',
                         'type' => 'TextField',
                     ),
                     array (
                         'label' => 'Password',
                         'name' => 'password',
                         'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Drop Down List',
+                        'name' => 'Drop Down List 1',
+                        'type' => 'DropDownList',
                     ),
                     array (
                         'name' => 'id',

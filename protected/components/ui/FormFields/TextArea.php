@@ -44,7 +44,7 @@ class TextArea extends FormField {
                     'Horizontal' => 'Horizontal',
                     'Vertical' => 'Vertical',
                 ),
-                'listExpr' => 'array(\'Horizontal\',\'Vertical\')',
+                'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),

@@ -1,12 +1,12 @@
 <?php
 /**
- * Class TextField
+ * Class DateTimePicker
  * @author rizky
  */
 class DateTimePicker extends FormField
 {
 	/**
-	 * @return array Fungsi ini akan me-return array property TextField.
+	 * @return array Fungsi ini akan me-return array property DateTimePicker.
 	 */
     public function getFieldProperties() {
         return array (
@@ -24,21 +24,6 @@ class DateTimePicker extends FormField
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'Field Type',
-                'name' => 'fieldType',
-                'options' => array (
-                    'ng-model' => 'active.fieldType',
-                    'ng-change' => 'save();',
-                ),
-                'list' => array (
-                    'text' => 'Text Field',
-                    'password' => 'Password Field',
-                ),
-                'showOther' => 'Yes',
-                'otherLabel' => 'Other...',
-                'type' => 'DropDownList',
-            ),
-            array (
                 'label' => 'Label',
                 'name' => 'label',
                 'options' => array (
@@ -47,6 +32,21 @@ class DateTimePicker extends FormField
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
+            ),
+            array (
+                'label' => 'Type',
+                'name' => 'fieldType',
+                'options' => array (
+                    'ng-model' => 'active.fieldType',
+                    'ng-change' => 'save();',
+                ),
+                'list' => array (
+                    'datetime' => 'Date Time',
+                    'date' => 'Date',
+                    'time' => 'Time',
+                ),
+                'fieldWidth' => '4',
+                'type' => 'DropDownList',
             ),
             array (
                 'label' => 'Layout',
@@ -64,81 +64,18 @@ class DateTimePicker extends FormField
                 'type' => 'DropDownList',
             ),
             array (
-                'column1' => array (
-                    array (
-                        'label' => 'Label Width',
-                        'name' => 'labelWidth',
-                        'layout' => 'Vertical',
-                        'labelWidth' => '12',
-                        'fieldWidth' => '11',
-                        'options' => array (
-                            'ng-model' => 'active.labelWidth',
-                            'ng-change' => 'save()',
-                            'ng-delay' => '500',
-                            'ng-disabled' => 'active.layout == \'Vertical\'',
-                        ),
-                        'type' => 'TextField',
-                    ),
-                    '<column-placeholder></column-placeholder>',
+                'label' => 'Label Width',
+                'name' => 'labelWidth',
+                'fieldWidth' => '3',
+                'options' => array (
+                    'ng-model' => 'active.labelWidth',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                    'ng-disabled' => 'active.layout == \'Vertical\'',
                 ),
-                'column2' => array (
-                    array (
-                        'label' => 'Field Width',
-                        'name' => 'fieldWidth',
-                        'layout' => 'Vertical',
-                        'labelWidth' => 12,
-                        'fieldWidth' => '11',
-                        'options' => array (
-                            'ng-model' => 'active.fieldWidth',
-                            'ng-change' => 'save()',
-                            'ng-delay' => '500',
-                        ),
-                        'type' => 'TextField',
-                    ),
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'column3' => array (
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'column4' => array (
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'type' => 'ColumnField',
+                'type' => 'TextField',
             ),
             '<hr/>',
-            array (
-                'column1' => array (
-                    array (
-                        'name' => 'prefix',
-                        'layout' => 'Vertical',
-                        'fieldWidth' => '11',
-                        'prefix' => 'Prefix',
-                        'options' => array (
-                            'ng-model' => 'active.prefix',
-                            'ng-change' => 'save()',
-                            'ng-delay' => '500',
-                        ),
-                        'type' => 'TextField',
-                    ),
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'column2' => array (
-                    array (
-                        'name' => 'postfix',
-                        'layout' => 'Vertical',
-                        'fieldWidth' => '11',
-                        'prefix' => 'Postfix',
-                        'options' => array (
-                            'ng-model' => 'active.postfix',
-                            'ng-change' => 'save()',
-                            'ng-delay' => '500',
-                        ),
-                        'type' => 'TextField',
-                    ),
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'type' => 'ColumnField',
-            ),
             array (
                 'label' => 'Options',
                 'fieldname' => 'options',
@@ -154,6 +91,11 @@ class DateTimePicker extends FormField
                 'fieldname' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
             ),
+            array (
+                'label' => 'DatePicker Options',
+                'fieldname' => 'datepickerOptions',
+                'type' => 'KeyValueGrid',
+            ),
         );
     }
 
@@ -162,9 +104,6 @@ class DateTimePicker extends FormField
 	
 	/** @var string $name */
     public $name = '';
-	
-	/** @var string $fieldType */
-    public $fieldType = 'text';
 	
 	/** @var string $value */
     public $value = '';
@@ -176,7 +115,7 @@ class DateTimePicker extends FormField
     public $labelWidth = 4;
 	
 	/** @var integer $fieldWidth */
-    public $fieldWidth = 8;
+    public $fieldWidth = 5;
 	
 	/** @var string $prefix */
     public $prefix = '';
@@ -189,25 +128,33 @@ class DateTimePicker extends FormField
 	
 	/** @var array $labelOptions */
     public $labelOptions = array();
+    
+    public $fieldType = "date";
 	
 	/** @var array $fieldOptions */
     public $fieldOptions = array();
+    
+	/** @var array $fieldOptions */
+    public $datepickerOptions = array(
+        'show-weeks' => 'false'
+    );
+	
 	
 	/** @var string $toolbarName */
-    public static $toolbarName = "Text Field";
+    public static $toolbarName = "Date Time Picker";
 	
 	/** @var string $category */
     public static $category = "User Interface";
 	
 	/** @var string $toolbarIcon */
-    public static $toolbarIcon = "fa fa-text-height";
+    public static $toolbarIcon = "glyphicon glyphicon-calendar";
 	
 	/**
 	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
 	*/
     public function includeJS()
     {
-        return array('text-field.js');
+        return array('date-time-picker.js');
     }
 
 	/**
@@ -246,7 +193,7 @@ class DateTimePicker extends FormField
 	 */	
     public function getFieldColClass()
     {
-        return "col-sm-" . $this->fieldWidth;
+        return "col-sm-" . (12 - $this->labelWidth);
     }
 
 	/**
@@ -258,10 +205,13 @@ class DateTimePicker extends FormField
         $this->addClass($this->layoutClass, 'options');
         $this->addClass($this->errorClass, 'options');
 
-        $this->fieldOptions['id'] = $this->name;
-        $this->fieldOptions['name'] = $this->name;
         $this->addClass('form-control', 'fieldOptions');
 
+        $this->setOption('datepicker-popup', 'dd/MM/yyyy', 'fieldOptions');
+        $this->setOption('datepicker-options', 'dateOptions', 'fieldOptions');
+        $this->setOption('datepicker-mode', 'day', 'fieldOptions');
+        $this->setOption('is-open', 'dateOpened', 'fieldOptions');
+        
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
         return $this->renderInternal('template_render.php');
     }

@@ -43,7 +43,8 @@
     </div>
     <div fname="{{field.name}}" ng-class="'d-' + formatName(field.name)"
          class="duplicate label label-warning ng-hide" 
-         style="position:absolute;"><i class="fa fa-warning"></i> Duplicate
+         style="position:absolute;"><i class="fa fa-warning"></i> Duplicate 
+        <span style="font-weight:normal">[{{field.name}}]</span>
     </div>
     <div class="form-field-content"
          ng-include="Yii.app.createUrl('admin/forms/renderTemplate', {class: field.type})"
