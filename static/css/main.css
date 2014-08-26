@@ -994,7 +994,7 @@ ul[datepicker-popup-wrap] table thead th {
 
 .date-field,.time-field {
     float:left;
-    margin-right: 10px;
+    margin-right: 5px;
 }
 .date-field {
     width:120px;
@@ -1307,6 +1307,8 @@ div[dropdown] > .dropdown-menu {
     min-width:100%;
 }
 
+
+
 div[dropdown] .dropdown-menu-header {
     padding:5px 0px 0px 20px;
     text-transform:uppercase;
@@ -1403,7 +1405,8 @@ div[dropdown] .split-button {
 }
 
 textarea.form-control {
-    height: auto !important;
+    min-width:100%;
+    max-width:100%;
     font-family: consolas, "Courier New", courier, monospace;
 }
 

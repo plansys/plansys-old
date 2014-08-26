@@ -11,9 +11,6 @@ app.directive('expressionField', function($timeout, $http) {
 
                 // when ng-model is changed from inside directive
                 $scope.applyValue = function(result, execute_action) {
-                    if (typeof $scope.$parent.active[$scope.fieldName] == "undefined")
-                        return;
-
                     execute_action = typeof execute_action != "undefined" ? execute_action : true;
 
                     if (typeof ctrl != 'undefined') {

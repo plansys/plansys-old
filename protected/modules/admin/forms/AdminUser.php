@@ -26,7 +26,7 @@ class AdminUser extends User {
                     array (
                         'label' => 'Date Time Picker',
                         'name' => 'date',
-                        'fieldType' => 'time',
+                        'fieldType' => 'datetime',
                         'datepickerOptions' => array (),
                         'type' => 'DateTimePicker',
                     ),
@@ -56,7 +56,7 @@ class AdminUser extends User {
                     ),
                     array (
                         'label' => 'Drop Down List',
-                        'name' => 'Drop Down List 1',
+                        'name' => 'date',
                         'type' => 'DropDownList',
                     ),
                     array (
@@ -73,6 +73,10 @@ class AdminUser extends User {
             array (
                 'label' => 'Text Area',
                 'name' => 'Text Area 1',
+                'fieldHeight' => '0',
+                'options' => array (
+                    'class' => 'col-sm-6',
+                ),
                 'type' => 'TextArea',
             ),
             array (
