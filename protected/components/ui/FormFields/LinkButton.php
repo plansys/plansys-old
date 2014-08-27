@@ -27,7 +27,7 @@ class LinkButton extends FormField {
     public $icon = '';
 	
 	/** @var string $buttonSize */
-    public $buttonSize = '';
+    public $buttonSize = 'btn-sm';
 	
 	/** @var array $options */
     public $options = array();

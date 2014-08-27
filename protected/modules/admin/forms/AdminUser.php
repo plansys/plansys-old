@@ -4,6 +4,25 @@ class AdminUser extends User {
     public function getFields() {
         return array (
             array (
+                'linkBar' => array (
+                    array (
+                        'label' => 'Save',
+                        'buttonType' => 'success',
+                        'options' => array (
+                            'ng-click' => 'form.submit(this)',
+                        ),
+                        'type' => 'LinkButton',
+                    ),
+                    array (
+                        'label' => 'Cancel',
+                        'buttonType' => 'default',
+                        'options' => array (
+                            'ng-show' => 'form.canGoBack()',
+                            'ng-click' => 'form.goBack()',
+                        ),
+                        'type' => 'LinkButton',
+                    ),
+                ),
                 'type' => 'ActionBar',
             ),
             array (
@@ -20,6 +39,11 @@ class AdminUser extends User {
                         'type' => 'DateTimePicker',
                     ),
                     array (
+                        'label' => 'Phone',
+                        'name' => 'phone',
+                        'type' => 'TextField',
+                    ),
+                    array (
                         'label' => 'Username',
                         'name' => 'username',
                         'type' => 'TextField',
@@ -29,33 +53,26 @@ class AdminUser extends User {
                         'name' => 'email',
                         'type' => 'TextField',
                     ),
-                    array (
-                        'label' => 'Phone',
-                        'name' => 'phone',
-                        'type' => 'TextField',
-                    ),
                 ),
                 'column2' => array (
                     array (
                         'label' => 'NIP',
                         'name' => 'nip',
-                        'fieldType' => 'password',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Password',
+                        'name' => 'password',
                         'type' => 'TextField',
                     ),
                     array (
                         'label' => 'Firstna',
-                        'name' => 'whoadahodqwhoi',
                         'fieldType' => 'password',
                         'options' => array (
                             'ps-sql' => 'name = :mantab',
                             'ps-sql-mantab' => 'model.username',
                             'ps-sql-okedeh' => '',
                         ),
-                        'type' => 'TextField',
-                    ),
-                    array (
-                        'label' => 'Password',
-                        'name' => 'password',
                         'type' => 'TextField',
                     ),
                     array (
@@ -67,36 +84,6 @@ class AdminUser extends User {
             ),
             array (
                 'title' => 'Section Header',
-                'type' => 'SectionHeader',
-            ),
-            array (
-                'label' => 'Text Area',
-                'name' => 'TextArea1',
-                'fieldHeight' => '0',
-                'options' => array (
-                    'class' => 'col-sm-6',
-                ),
-                'type' => 'TextArea',
-            ),
-            array (
-                'label' => 'Lastname',
-                'name' => 'lastname',
-                'options' => array (
-                    'class' => 'col-sm-6',
-                ),
-                'type' => 'TextField',
-            ),
-            array (
-                'label' => 'Lastname',
-                'name' => 'test',
-                'options' => array (
-                    'class' => 'col-sm-6',
-                ),
-                'type' => 'TextField',
-            ),
-            '<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>',
-            array (
-                'title' => 'Mantab',
                 'type' => 'SectionHeader',
             ),
             '<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>',

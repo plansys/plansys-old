@@ -6,7 +6,12 @@ app.directive('psDataSource', function($timeout) {
                 $scope.data = JSON.parse($el.find("data[name=data]").text());
                 $scope.name = $el.find("data[name=name]").text().trim();
                 
-                $scope.$parent[$scope.name] = $scope.data;
+                $scope.reload = function() {
+                    
+                }
+                
+                
+                $scope.$parent[$scope.name] = $scope;
             }
 
         }
