@@ -48,6 +48,10 @@ function setup(){
         file_put_contents($basedir . "index.php" , $template);
     }
     
+    if (!file_exists($basedir . '.gitignore')) {
+        file_put_contents($basedir . ".gitignore", $plansys);
+    }
+
     touch('setup_db.lock');
 }
 ?>
