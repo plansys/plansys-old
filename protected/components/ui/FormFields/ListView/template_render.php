@@ -4,7 +4,7 @@
     <!-- label -->
     <?php if ($this->label != ""): ?>
         <label <?= $this->expandAttributes($this->labelOptions) ?>
-            class="<?= $this->labelClass ?>" for="<?= $this->name; ?>">
+            class="<?= $this->labelClass ?>" for="<?= $this->renderName; ?>">
                 <?= $this->label ?>
         </label>
     <?php endif; ?>

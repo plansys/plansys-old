@@ -8,7 +8,7 @@
      class='form-field field {{ field.type}}'>
     <div class='field-info' >
         <div class="btn-group pull-right">
-            <div class='btn btn-default btn-sm'>
+            <div class='field-select btn btn-default btn-sm'>
                 <span ng-switch on="field.type">
                     <i ng-switch-when="ColumnField" class="fa fa-columns"></i>
                     <i ng-switch-default class="fa fa-hand-o-up"></i>

@@ -3,7 +3,7 @@
 class AdminSetup extends Form {
     public function getFields() {
         return array (
-            '<h2><center>{{ form.formTitle }}</center></h2><hr/>',
+            '<h2><center>{{ form.title }}</center></h2><hr/>',
             array (
                 'label' => 'Driver',
                 'name' => 'driver',
@@ -47,7 +47,7 @@ class AdminSetup extends Form {
     }
     public function getForm() {
         return array (
-            'formTitle' => 'AdminSetup',
+            'title' => 'AdminSetup',
             'layout' => array (
                 'name' => 'full-width',
                 'data' => array (

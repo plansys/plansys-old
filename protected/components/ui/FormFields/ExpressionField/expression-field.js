@@ -17,12 +17,13 @@ app.directive('expressionField', function($timeout, $http) {
                         $timeout(function() {
                             ctrl.$setViewValue($scope.value);
                             if (execute_action) {
-                                $scope.$parent.$eval($scope.validAction, {result: result});
+                                $scope.$parent.$eval(attrs.psValid, {result: result});
                             }
                         }, 0);
                     }
                 }
                 $scope.validate = function(execute_action) {
+
                     execute_action = typeof execute_action != "undefined" ? execute_action : true;
 
                     if ($scope.value == "") {
@@ -32,8 +33,8 @@ app.directive('expressionField', function($timeout, $http) {
                         return;
                     }
 
-                    if ($scope.lang == "php" || $scope.lang == "sql") {
-                        // validate php / sql
+                    if ($scope.lang == "php") {
+                        // validate php 
                         $http.post(Yii.app.createUrl('formfield/ExpressionField.validate'), {
                             expr: $scope.value,
                             lang: $scope.lang
@@ -52,10 +53,11 @@ app.directive('expressionField', function($timeout, $http) {
                     }
                 };
                 $scope.$watch('value', function(current, old) {
+                    
                     if (current == old || current == '') {
                         $scope.validating = false;
                         $scope.valid = true;
-                    } else if ($scope.lang == "php" || $scope.lang == "sql") {
+                    } else if ($scope.lang == "php") {
                         $scope.validating = true;
                     }
                 }, true);
@@ -90,7 +92,6 @@ app.directive('expressionField', function($timeout, $http) {
                 $scope.modelClass = $el.find("data[name='model_class']").text().trim();
                 $scope.fieldName = $el.find("data[name='field_name']").text().trim();
                 $scope.lang = $el.find("data[name='field_language']").text().trim();
-                $scope.validAction = $el.find("data[name='field_valid_action']").text().trim();
                 $scope.valid = true;
                 $scope.isFocus = false;
                 $scope.validating = false;

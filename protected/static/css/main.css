@@ -746,7 +746,7 @@ li:hover > .item-btn {
     display:none;
 }
 
-.ab-editor-link-bar .field-move {
+.ab-editor-link-bar .field-move,.ab-editor-link-bar .field-select {
     display:none;
 }
 
@@ -985,6 +985,14 @@ ul[datepicker-popup-wrap] table {
 }
 ul[datepicker-popup-wrap] table thead th {
     padding:0px 3px;
+}
+
+ul[datepicker-popup-wrap] li[ng-if=showButtonBar] {
+    display:none;
+}
+
+ul[datepicker-popup-wrap] .btn-info .text-info {
+    color:white;
 }
 
 .date-field .active .text-info,
@@ -1409,6 +1417,9 @@ textarea.form-control {
     max-width:100%;
     min-height:50px;
     font-family: consolas, "Courier New", courier, monospace;
+}
+textarea.force-rows {
+    height: auto !important;
 }
 
 .textarea-noresize {

@@ -7,6 +7,7 @@
            ></label>
     <div class="col-sm-{{field.fieldWidth}}">
         <textarea id='{{field.name}}' name='{{field.name}}' rows="{{field.fieldHeight}}"
-                  class="form-control" expand-attributes="field.options" >{{field.value}}</textarea>
+                  class="form-control {{field.fieldHeight > 0 ? 'force-rows' : ''}}"
+                  expand-attributes="field.options" >{{field.value}}</textarea>
     </div>
 </div>

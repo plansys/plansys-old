@@ -20,7 +20,7 @@
 
         <!-- field -->
         <!-- date field -->
-        <div ng-if="fieldType != 'time'" style="width:150px;" class="date-field input-group">
+        <div ng-if="fieldType != 'time'" class="date-field input-group">
             <!-- value -->
             <input type="text" <?= $this->expandAttributes($this->fieldOptions) ?>
                    ng-model="date" ng-change="changeDate(this)" value="<?= $this->value ?>"
@@ -39,8 +39,8 @@
             <timepicker ng-model="time" ng-change="changeTime(this)" 
                         hour-step="1" minute-step="15" show-meridian="false"></timepicker>
         </div>
-        
-        <input name="<?= $this->name ?>" type="hidden" ng-value="value"/>
+
+        <input id="<?= $this->renderID ?>" name="<?= $this->renderName ?>" type="hidden" ng-value="value"/>
         <!-- /field -->
 
         <!-- error -->

@@ -14,8 +14,8 @@ class DropDownList extends FormField {
                 'name' => 'name',
                 'options' => array (
                     'ng-model' => 'active.name',
-                    'ng-change' => 'save()',
-                    'ng-form-list' => 'modelFieldList',
+                    'ng-change' => 'changeActiveName()',
+                    'ps-list' => 'modelFieldList',
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
                 'list' => array (),
@@ -140,7 +140,7 @@ class DropDownList extends FormField {
                 'fieldname' => 'list',
                 'show' => 'Show',
                 'options' => array (
-                    'ng-hide' => 'active.listExpr != \'\' || active.options[\'ng-form-list\'] != null',
+                    'ng-hide' => 'active.listExpr != \'\' || active.options[\'ps-list\'] != null',
                 ),
                 'allowEmptyKey' => 'Yes',
                 'allowSpaceOnKey' => 'Yes',
@@ -149,9 +149,9 @@ class DropDownList extends FormField {
             array (
                 'label' => 'List Expression',
                 'fieldname' => 'listExpr',
-                'validAction' => 'active.list = result;save();',
                 'options' => array (
-                    'ng-hide' => 'active.options[\'ng-form-list\'] != null',
+                    'ng-hide' => 'active.options[\'ps-list\'] != null',
+                    'ps-list' => 'active.list = result;save();'
                 ),
                 'desc' => '<i class=\\"fa fa-warning\\"></i> WARNING: Using List Expression will replace <i>DropDown Item</i> with expression result',
                 'type' => 'ExpressionField',

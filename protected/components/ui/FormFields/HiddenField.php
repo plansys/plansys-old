@@ -14,8 +14,8 @@ class HiddenField extends FormField {
                 'name' => 'name',
                 'options' => array (
                     'ng-model' => 'active.name',
-                    'ng-change' => 'save()',
-                    'ng-form-list' => 'modelFieldList',
+                    'ng-change' => 'changeActiveName()',
+                    'ps-list' => 'modelFieldList',
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
                 'list' => array (

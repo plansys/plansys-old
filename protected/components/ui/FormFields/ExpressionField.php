@@ -4,9 +4,9 @@
  * @author rizky
  */
 class ExpressionField extends FormField {
-    /**
-     * @return array me-return array property ExpressionField.
-     */
+	/**
+	 * @return array Fungsi ini akan me-return array property ExpressionField.
+	 */
     public function getFieldProperties() {
         return array (
             array (
@@ -14,8 +14,8 @@ class ExpressionField extends FormField {
                 'name' => 'fieldname',
                 'options' => array (
                     'ng-model' => 'active.fieldname',
-                    'ng-change' => 'save()',
-                    'ng-form-list' => 'modelFieldList',
+                    'ng-change' => 'changeActiveName()',
+                    'ps-list' => 'modelFieldList',
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
                 'list' => array (),
@@ -57,14 +57,6 @@ class ExpressionField extends FormField {
             ),
             '<hr/>',
             array (
-                'label' => 'When expression change is valid, do this:',
-                'fieldname' => 'validAction',
-                'validAction' => 'save()',
-                'language' => 'js',
-                'desc' => 'Example: <br/><span style="font-family:monospace;">active.list = result; </span>',
-                'type' => 'ExpressionField',
-            ),
-            array (
                 'label' => 'Options',
                 'fieldname' => 'options',
                 'type' => 'KeyValueGrid',
@@ -85,50 +77,46 @@ class ExpressionField extends FormField {
         );
     }
 
-    /** @var string $label */
+	/** @var string $label */
     public $label = '';
 	
-    /** @var string $fieldname */
+	/** @var string $fieldname */
     public $fieldname = '';
 	
-    /** @var string $validAction */
-    public $validAction = '';
-	
-    /** @var string $language */
+	/** @var string $language */
     public $language = 'php';
 	
-    /** @var string $value */
+	/** @var string $value */
     public $value = '';
 	
-    /** @var array $options */
+	/** @var array $options */
     public $options = array();
 	
-    /** @var string $desc */
+	/** @var string $desc */
     public $desc = '';
 	
-    /** @var array $labelOptions */
+	/** @var array $labelOptions */
     public $labelOptions = array();
 	
-    /** @var string $toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName = "Expression Field";
 	
-    /** @var string $category */
-    public static $category = "User Interface";
+	/** @var string $category */
+    public static $category = "Data & Tables";
 	
-    /** @var string $toolbarIcon */
+	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-terminal";
 	
-    /**
-     * @return array me-return array javascript yang di-include
-     */
+	/**
+	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
+	*/
     public function includeJS() {
         return array('expression-field.js');
     }
 
-    /**
-     * actionValidate
-     * Fungsi ini akan memvalidasi action
-     */
+	/**
+	 * @return null Fungsi ini akan memvalidasi action dengan menjalankan function evaluate.
+	*/
     public function actionValidate() {
         $postdata = file_get_contents("php://input");
         $post = json_decode($postdata);
@@ -137,9 +125,9 @@ class ExpressionField extends FormField {
         $this->evaluate(@$post['expr']);
     }
     
-    /**
-     * @return string me-return string PHP type.
-     */
+	/**
+	 * @return string Fungsi ini akan mendapatkan icon dan me-return language type.
+	*/
     public function getIcon() {
         if ($this->language == "php") return "php";
         if ($this->language == "sql") return "php-database-alt2";
@@ -147,11 +135,9 @@ class ExpressionField extends FormField {
         if ($this->language == "html") return "shell";
     }
 
-    /**
-     * render
-     * Fungsi ini untuk me-render field dan atributnya
-     * @return mixed me-return sebuah field ExpressionField dari hasil render
-     */
+	/**
+	 * @return field Fungsi ini untuk me-render field dan atributnya.
+	 */	
     public function render() {
         $this->addClass('field-box');
         

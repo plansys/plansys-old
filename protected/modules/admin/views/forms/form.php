@@ -24,8 +24,6 @@
             <!-- /form-builder-content -->
         </div>
 
-
-
         <div min-size="250px">
             <!-- form-builder-toolbar -->
             <tabset class="toolbar">
@@ -59,11 +57,12 @@
                                     <i ng-class="toolbarSettings['icon'][active.type]"></i>&nbsp; {{active.type}}
                                     <span class="caret"></span>
                                 </button>
-                                <ul class="dropdown-menu" style="min-width:160px;" role="menu">
+                                <ul class="dropdown-menu" style="min-width:160px;max-height:200px;" role="menu">
+                                    
                                     <li ng-repeat="(name, icon) in toolbarSettings['icon']">
                                         <a href="#" dropdown-toggle value="{{name}}" 
                                            ng-click="active.type = name">
-                                            <i class="fa {{icon}}"></i> {{name}}
+                                            <i class="{{icon}}"></i> {{name}}
                                         </a>
                                     </li>
                                 </ul>

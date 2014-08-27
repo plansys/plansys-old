@@ -31,7 +31,7 @@
         <?php if ($this->convertToString == "Yes"): ?>
             <input type="text" class="invisible"
                    ng-model="selectedText" id="<?= $this->renderID ?>"
-                   name="<?= $this->name ?>" value='<?= $this->value ?>'/>
+                   name="<?= $this->renderName ?>" value='<?= $this->value ?>'/>
                <?php endif; ?>
         <!-- /field -->
 

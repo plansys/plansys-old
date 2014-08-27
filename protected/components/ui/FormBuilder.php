@@ -543,7 +543,7 @@ EOF;
         if ($wrapForm) {
             $url = "#";
             $ngctrl = $renderWithAngular ? 'ng-controller="' . $modelClass . 'Controller"' : '';
-            
+
             $formDefaultAttr = array(
                 'action' => $url,
                 'method' => 'POST',
@@ -551,10 +551,10 @@ EOF;
                 'role' => 'form',
             );
             $formOptions = (is_array(@$form['options']) ? @$form['options'] : array());
-            
+
             $formAttr = array_merge($formOptions, $formDefaultAttr);
             $formAttr = Helper::expandAttributes($formAttr);
-            $html .= "<div {$ngctrl}><form {$formAttr}>";
+            $html .= "<div style='opacity:0' {$ngctrl}><form {$formAttr}>";
         }
 
         ## define formdata
@@ -577,7 +577,8 @@ EOF;
                 $field->attributes = $f;
 
                 if (property_exists($field, 'name')) {
-                    $field->name = "{$modelClass}[{$field->name}]";
+                    $field->name = preg_replace("/[^0-9a-zA-Z_]/", "", $field->name);
+                    $field->name = preg_replace("/^\d+\.\s*/", "", $field->name);
 
                     if (property_exists($field, 'value') && isset($data['data'][$f['name']])) {
                         $field->value = $data['data'][$f['name']];

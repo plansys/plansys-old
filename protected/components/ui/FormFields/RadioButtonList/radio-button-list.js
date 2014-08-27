@@ -20,14 +20,14 @@ app.directive('radioButtonList', function($timeout) {
                 });
 
                 // when ng-model is changed from outside directive
-                if (attrs.ngFormList) {
+                if (attrs.psList) {
                     function changeFieldList() {
                         $timeout(function() {
-                            $scope.formList = $scope.$eval(attrs.ngFormList);
+                            $scope.formList = $scope.$eval(attrs.psList);
                             $scope.updateInternal($scope.value);
                         }, 0);
                     }
-                    $scope.$watch(attrs.ngFormList, changeFieldList);
+                    $scope.$watch(attrs.psList, changeFieldList);
                 }
 
                 if (typeof ctrl != 'undefined') {

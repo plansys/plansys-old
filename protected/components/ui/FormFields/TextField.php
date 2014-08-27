@@ -15,8 +15,8 @@ class TextField extends FormField
                 'name' => 'name',
                 'options' => array (
                     'ng-model' => 'active.name',
-                    'ng-change' => 'save()',
-                    'ng-form-list' => 'modelFieldList',
+                    'ng-change' => 'changeActiveName()',
+                    'ps-list' => 'modelFieldList',
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
                 'list' => array (),
@@ -267,8 +267,8 @@ class TextField extends FormField
         $this->addClass($this->layoutClass, 'options');
         $this->addClass($this->errorClass, 'options');
 
-        $this->fieldOptions['id'] = $this->name;
-        $this->fieldOptions['name'] = $this->name;
+        $this->fieldOptions['id'] = $this->renderID;
+        $this->fieldOptions['name'] = $this->renderName;
         $this->addClass('form-control', 'fieldOptions');
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);

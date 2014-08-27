@@ -12,14 +12,14 @@
     <div class="properties-header" >
         <div class="editjson"
              ng-class="mode" ng-click="show = true;
-                 mode = (mode == 'grid' ? 'json' : 'grid');
-                 json = json.trim() + ' '">
+                     mode = (mode == 'grid' ? 'json' : 'grid');
+                     json = json.trim() + ' '">
             <i class="fa fa-pencil"></i>
         </div>
         <div style="width:96%" ng-click="show = !show">
             <div style="padding:2px 5px 2px 5px;">
                 <div ng-show="mode == 'json'" class="label label-default" 
-                      style="font-size:10px;float:right;margin:3px 6px -3px 0px;">
+                     style="font-size:10px;float:right;margin:3px 6px -3px 0px;">
                     JSON
                 </div>
                 <div ng-show="mode == 'grid'" class="pull-right" style="margin-right:5px;">
@@ -56,7 +56,7 @@
         <table>
             <tbody>
             <td style="padding:0px;background:#333;color:white;border:0px;">
-                <textarea spellcheck="false" class="textarea-noresize"
+                <textarea spellcheck="false" name="<?= $this->renderName ?>" class="textarea-noresize"
                           ng-model="json" ng-change="changeJSON()" ng-delay="500"
                           style='border:0px;background:#333;height:22px;' auto-grow></textarea>
             </td>

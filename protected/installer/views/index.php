@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="content-language" content="en"/>
 <link rel="stylesheet" type="text/css" href="css/main.css" />
-<link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="../../static/css/bootstrap.css" />
 <title>Plansys Requirement Checker</title>
 </head>
 
@@ -27,11 +27,14 @@ if appropriate PHP extensions have been loaded, and if php.ini file settings are
 </p>
 <?php
 function setup(){
-    if (!file_exists(dirname(__FILE__).'/../../assets')) {
-    mkdir(dirname(__FILE__).'/../../assets', 0777, true);
+    if (!file_exists(dirname(__FILE__).'../../../../assets')) {
+        mkdir(dirname(__FILE__).'../../../../assets', 0777, true);
     }
-    if (!file_exists(dirname(__FILE__).'/../../protected/runtime')) {
-        mkdir(dirname(__FILE__).'/../../protected/runtime', 0777, true);
+    if (!file_exists(dirname(__FILE__).'../../../../protected/runtime')) {
+        mkdir(dirname(__FILE__).'../../../../protected/runtime', 0777, true);
+    }
+    if (!file_exists(dirname(__FILE__).'../../../../repo')) {
+        mkdir(dirname(__FILE__).'../../../../repo', 0777, true);
     }
     touch('setup_db.lock');
 }
@@ -45,7 +48,7 @@ function setup(){
         <td style="padding-left:15px;">Congratulations! Your server configuration satisfies all requirements by Plansys.</td>
     </tr>
     </table>
-    <br/><a href="../" class="btn btn-primary">Database Setup</a>
+    <br/><a href="../../" class="btn btn-primary">Database Setup</a>
     </div>
 <?php elseif($result<0): ?>
     <?php setup();?>
@@ -56,7 +59,7 @@ function setup(){
         <td style="padding-left:15px;">Your server configuration satisfies the minimum requirements by Plansys. Please pay attention to the warnings listed below if your application will use the corresponding features.</td>
     </tr>
     </table>
-    <br/><a href="../" class="btn btn-primary">Database Setup</a>
+    <br/><a href="../../" class="btn btn-primary">Database Setup</a>
     </div>
 <?php else: ?>
     <div class="alert alert-danger">

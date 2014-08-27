@@ -20,6 +20,7 @@ return array(
         'application.components.utility.*',
         'application.components.models.*',
         'application.components.codegen.*',
+        'application.components.repo.*',
         'application.behaviors.*',
         'ext.YiiJasper.*',
         'ext.ETwigViewRenderer'
@@ -83,7 +84,7 @@ return array(
         'clientScript' => array(
             'packages' => array(
                 'jquery' => array(
-                    'basePath' => "webroot.static.js.lib",
+                    'basePath' => "application.static.js.lib",
                     'js' => array('jquery.js'),
                     'coreScriptPosition' => CClientScript::POS_HEAD
                 )
