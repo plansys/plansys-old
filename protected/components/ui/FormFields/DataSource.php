@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class HiddenField
+ * Class DataSource
  * @author rizky
  */
 class DataSource extends FormField {
