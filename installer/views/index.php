@@ -28,10 +28,13 @@ if appropriate PHP extensions have been loaded, and if php.ini file settings are
 <?php
 function setup(){
     if (!file_exists(dirname(__FILE__).'/../../assets')) {
-    mkdir(dirname(__FILE__).'/../../assets', 0777, true);
+        mkdir(dirname(__FILE__).'/../../assets', 0777, true);
     }
     if (!file_exists(dirname(__FILE__).'/../../protected/runtime')) {
         mkdir(dirname(__FILE__).'/../../protected/runtime', 0777, true);
+    }
+    if (!file_exists(dirname(__FILE__).'/../../repo')) {
+        mkdir(dirname(__FILE__).'/../../repo', 0777, true);
     }
     touch('setup_db.lock');
 }
