@@ -4,6 +4,7 @@ class UserController extends Controller {
     public function actionTest() {
         $tes = new RepoManager();
         var_dump($tes->listAll());
+        die();
     }
     
     public function actionCreate() {

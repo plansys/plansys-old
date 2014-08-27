@@ -5,15 +5,10 @@ class RepoManager extends CComponent{
     
     public function listAll($dir = null){
         if(is_null($dir)){
-            if(Yii::app()->user->role == 'admin'){
-                $dir = $this->repoPath;
-            }else{
-                $module = Yii::app()->user->role;
-                $dir = $this->repoPath.'/'.$module;
-            }
-                
+            $dir = $this->repoPath;   
         }
-        $list = glob($dir.'\*');
+        
+        $list = glob($dir.DIRECTORY_SEPARATOR.'*');
         $count = count($list);
         
         $detail = array(
@@ -21,6 +16,10 @@ class RepoManager extends CComponent{
             'count' => $count,
         );
         return $detail;
+    }
+    
+    public function isDir($dir){
+        
     }
     
     public function makeDir($dirName){
@@ -34,12 +33,20 @@ class RepoManager extends CComponent{
     public function __construct() {
         if(is_null($this->repoPath)){
             if(Setting::get("repo.path") == ''){
-                $path = Setting::getRootPath().'\repo';
+                $path = Setting::getRootPath().DIRECTORY_SEPARATOR.'repo';
                 Setting::set("repo.path", $path);
                 $this->repoPath = Setting::get("repo.path");
             }else{
                 $this->repoPath = Setting::get("repo.path");
             }
         }
+        if(Yii::app()->user->role != 'pde'){
+            $module = Yii::app()->user->role;
+            if(strpos($module, '.')==true){
+                $module = explode('.', $module);
+                $module = implode(DIRECTORY_SEPARATOR,$module);
+            }
+            $this->repoPath = $this->repoPath.DIRECTORY_SEPARATOR.$module;
+        }  
     }
 }
