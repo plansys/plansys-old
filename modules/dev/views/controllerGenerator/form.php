@@ -10,7 +10,7 @@
                         <td><b>Source Code</b></td>
                     </tr>
                     <tr>
-                        <td><span class="code"><?php echo ControllerGenerator::controllerPath($class); ?></span></td>
+                        <td><span class="code" style="word-wrap:break-word;"><?php echo ControllerGenerator::controllerPath($class); ?></span></td>
                     </tr>
                 </table>
                 <div ui-header>

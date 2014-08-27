@@ -31,7 +31,7 @@
                                         <i class="fa {{subItem.name == 'MainMenu' ? 'fa-sitemap' : 'fa-book'}} fa-nm"></i>
                                         <div ng-if='subItem.exist == "no"' class="pull-right label label-success" style="margin-top:4px;">
                                             New
-                                        </div><span>{{subItem.name}}</span>
+                                        </div><span style="word-wrap:break-word;">{{subItem.name}}</span>
                                     </a>
                                     
                                 </li>

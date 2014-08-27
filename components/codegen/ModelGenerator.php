@@ -20,12 +20,11 @@ class ModelGenerator extends CodeGenerator {
     }
 
     public static function getModelPath($class) {
+        $classPath = Yii::getPathOfAlias($class);
         $basePath = Yii::getPathOfAlias('application');
-        $classPath = str_replace(Yii::getPathOfAlias($class), '', $basePath);
-        $appPath = array_pop(explode(DIRECTORY_SEPARATOR, $basePath));
-        
-        $modelPath = $appPath . $classPath .'.php';
-        return $modelPath;
+        $classPath = str_replace($basePath, '' , $classPath);
+        $classPath = $classPath .'.php';
+        return $classPath;
     }
 
     protected $baseClass = "ActiveRecord";
