@@ -103,8 +103,11 @@ class ControllerGenerator extends CodeGenerator {
     }
 
     public static function controllerPath($class) {
-        $basePath = explode("protected", Yii::getPathOfAlias($class));
-        $controllerPath = 'protected' . $basePath[1] . '.php';
+        $basePath = Yii::getPathOfAlias('application');
+        $classPath = str_replace(Yii::getPathOfAlias($class), '', $basePath);
+        $appPath = array_pop(explode(DIRECTORY_SEPARATOR, $basePath));
+        
+        $controllerPath = $appPath . $classPath .'.php';
         return $controllerPath;
     }
 

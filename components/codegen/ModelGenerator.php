@@ -20,8 +20,11 @@ class ModelGenerator extends CodeGenerator {
     }
 
     public static function getModelPath($class) {
-        $basePath = explode("protected",Yii::getPathOfAlias($class));
-        $modelPath = 'protected'.$basePath[1].'.php';
+        $basePath = Yii::getPathOfAlias('application');
+        $classPath = str_replace(Yii::getPathOfAlias($class), '', $basePath);
+        $appPath = array_pop(explode(DIRECTORY_SEPARATOR, $basePath));
+        
+        $modelPath = $appPath . $classPath .'.php';
         return $modelPath;
     }
 
