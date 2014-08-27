@@ -1,10 +1,13 @@
 <?php
-
+/**
+ * Class CheckboxList
+ * @author rizky
+ */
 class ListView extends FormField
 {
-	/**
-	 * @return array Fungsi ini akan me-return array property TextField.
-	 */
+    /**
+     * @return array me-return array property TextField.
+     */
     public function getFieldProperties() {
         return array (
             array (
@@ -138,76 +141,83 @@ class ListView extends FormField
         );
     }
 
-	/** @var string variable untuk menampung label */
+    /** @var string $label */
     public $label = '';
 	
-	/** @var string variable untuk menampung name */
+    /** @var string $name */
     public $name = '';
 	
-	/** @var string variable untuk menampung tipe field dengan default text */
+    /** @var string $fieldTemplate */
     public $fieldTemplate = 'default';
 	
+    /** @var string $templateForm */
     public $templateForm = '';
     
-	/** @var string variable untuk menampung value */
+    /** @var string $value */
     public $value = '';
 	
-	/** @var string variable ntuk menampung kondisi layout dengan default Horizontal */
+    /** @var string $layout */
     public $layout = 'Horizontal';
     
+    /** @var string $layoutVertical */
     public $layoutVertical = '';
 	
-	/** @var integer variable untuk menampung nilai width label */
+    /** @var integer $labelWidth */
     public $labelWidth = 4;
 	
-	/** @var integer variable untuk menampung nilai witdth field */
+    /** @var integer $fieldWidth */
     public $fieldWidth = 8;
 	
-	/** @var array variable untuk menampung array options */
+    /** @var array $options */
     public $options = array();
 	
-	/** @var array variable untuk menampung array options label */
+    /** @var array $labelOptions */
     public $labelOptions = array();
 	
-	/** @var array variable untuk menampung array options field */
+    /** @var array $fieldOptions */
     public $fieldOptions = array();
 	
-	/** @var string variable untuk menampung toolbarName */
+    /** @var string $toolbarName */
     public static $toolbarName = "List View";
 	
-	/** @var string variable untuk menampung category */
+    /** @var string $category */
     public static $category = "Data & Tables";
 	
-	/** @var string variable untuk menampung toolbarIcon */
+    /** @var string $toolbarIcon */
     public static $toolbarIcon = "glyphicon glyphicon-align-justify";
     
-	/**
-	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
-	*/
+    /**
+     * @return array me-return array javascript yang di-include
+     */
     public function includeJS()
     {
         return array('list-view.js');
     }
 
-	/**
-	 * @return string Fungsi ini akan me-return string class layout yang digunakan. Fungsi ini akan mengecek nilai property $layout untuk menentukan nama Class Layout.
-	*/
+    /**
+     * getLayoutClass
+     * Fungsi ini akan mengecek nilai property $layout untuk menentukan nama Class Layout
+     * @return string me-return string Class layout yang digunakan
+     */
     public function getLayoutClass()
     {
         return ($this->layout == 'Vertical' ? 'form-vertical' : '');
     }
 
-	/**
-	 * @return string Fungsi ini akan me-return string class error jika terdapat error pada satu atau banyak attribute.
-	*/
+    /**
+     * @return string me-return string Class error jika terdapat error pada satu atau banyak attribute.
+     */
     public function getErrorClass()
     {
         return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
     }
 
-	/**
-	 * @return string Fungsi ini akan me-return string class label. Fungsi akan mengecek $layout untuk menentukan layout yang digunakan. Fungsi juga me-load option label dari property $labelOptions. 
-	 */
+    /**
+     * getlabelClass
+     * Fungsi ini akan mengecek $layout untuk menentukan layout yang digunakan
+     * dan me-load option label dari property $labelOptions
+     * @return string me-return string Class label
+     */
     public function getlabelClass()
     {
         if ($this->layout == 'Vertical') {
@@ -220,17 +230,21 @@ class ListView extends FormField
         return $class;
     }
 
-	/**
-	 * @return integer Fungsi ini akan me-return string class untuk menentukan width fields.
-	 */	
+    /**
+     * getFieldColClass
+     * Fungsi ini untuk menetukan width field
+     * @return string me-return string class
+     */	
     public function getFieldColClass()
     {
         return "col-sm-" . $this->fieldWidth;
     }
 
-	/**
-	 * @return field Fungsi ini untuk me-render field dan atributnya.
-	 */	
+    /**
+     * render
+     * Fungsi ini untuk me-render field dan atributnya
+     * @return mixed me-return sebuah field dan atribut checkboxlist dari hasil render
+     */
     public function render()
     {
         $this->addClass('form-group form-group-sm', 'options');

@@ -7,7 +7,7 @@
 class DataSource extends FormField {
 
     /**
-     * @return array Fungsi ini akan me-return array property HiddenField.
+     * @return array Fungsi ini akan me-return array property DataSource.
      */
     public function getFieldProperties() {
         return array(
@@ -68,10 +68,20 @@ class DataSource extends FormField {
 
     /** @var string $name */
     public $name = '';
+    
+    /** @var string $fieldType */
     public $fieldType = 'sql';
+    
+    /** @var string $sql */
     public $sql = '';
+    
+    /** @var string $php */
     public $php = '';
+    
+    /** @var string $params */
     public $params = '';
+    
+    /** @var string $data */
     public $data;
 
     /** @var boolean $isHidden */
@@ -86,6 +96,10 @@ class DataSource extends FormField {
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "glyphicon glyphicon-book";
 
+    /**
+     * @param string $sql parameter query yang akan di-execute
+     * @return mixed me-return string dengan value kosong jika parameter$sql null, jika tidak maka akan me-return array data hasil execute SQL
+     */
     public function query($sql) {
         if (trim($sql) == "")
             return "";
@@ -102,6 +116,9 @@ class DataSource extends FormField {
         return $data;
     }
 
+    /**
+     * @return array me-return array hasil proses expression.
+     */
     public function processExpr() {
         if ($this->fieldType == 'sql') {
             $this->data = $this->query($this->sql);
@@ -114,10 +131,18 @@ class DataSource extends FormField {
         );
     }
 
+    /**
+     * @return array me-return array javascript yang di-include
+     */
     public function includeJS() {
         return array('data-source.js');
     }
 
+    /**
+     * render
+     * Fungsi ini untuk me-render field dan atributnya
+     * @return mixed me-return sebuah field dan atribut checkboxlist dari hasil render
+     */
     public function render() {
         $this->processExpr();
         return $this->renderInternal('template_render.php');

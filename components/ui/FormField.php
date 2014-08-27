@@ -69,14 +69,14 @@ class FormField extends CComponent {
     );
 
     /**
-     * @return array Fungsi ini akan me-return array javascript yang di-include.
+     * @return array me-return array javascript yang di-include.
      */
     public function includeJS() {
         return array();
     }
 
     /**
-     * @return string Fungsi ini akan me-return string nama class sebuah object.
+     * @return string me-return string nama class sebuah object.
      */
     public function getType() {
         return get_class($this);
@@ -85,7 +85,7 @@ class FormField extends CComponent {
     ## builder
 
     /**
-     * @return array Fungsi ini akan me-return array $_builder.
+     * @return array me-return array $_builder.
      */
     public function getBuilder() {
         return $this->_builder;
@@ -102,7 +102,7 @@ class FormField extends CComponent {
     ## model
 
     /**
-     * @return array Fungsi ini akan me-return array value model.
+     * @return array me-return array value model.
      */
     public function getModel() {
 
@@ -116,14 +116,13 @@ class FormField extends CComponent {
 
     /**
      * @param array $value
-     * @return null Fungsi ini akan men-set property form field dengan array $value.
      */
     public function setFormProperties($value) {
         $this->_form_properties = $value;
     }
 
     /**
-     * @return array Fungsi ini akan me-return array yang berisi property form.
+     * @return array me-return array yang berisi property form.
      */
     public function getFormProperties() {
         return $this->_form_properties;
@@ -184,15 +183,18 @@ class FormField extends CComponent {
     }
 
     /**
-     * @return field Fungsi ini untuk me-render form field beserta atributnya.
+     * render
+     * Fungsi ini untuk me-render form field beserta atributnya
+     * @return mixed me-return sebuah form field 
      */
     public function render() {
         return $this->renderInternal('template_render.php');
     }
 
     /**
+     * setAttribute
+     * Fungsi ini akan mengisi nilai atribut field dengan nilai dari parameter $values
      * @param array $values
-     * @return null Fungsi ini akan mengisi nilai atribut field dengan nilai dari parameter $values.
      */
     public function setAttributes($values) {
         foreach ($values as $k => $v) {
@@ -202,6 +204,9 @@ class FormField extends CComponent {
         }
     }
 
+    /**
+     * @return string me-return string nama class 
+     */
     public function getRenderName() {
         if (property_exists($this, 'name')) {
             return get_class($this->model) . "[" . $this->name . "]";
@@ -369,6 +374,13 @@ class FormField extends CComponent {
         $this->$fieldName = $opt;
     }
 
+    /**
+     * setOption
+     * Fungsi ini untuk menambahkan class
+     * @param array $key
+     * @param array $value
+     * @param string $fieldName
+     */
     public function setOption($key, $value, $fieldName = "options") {
         $keys = array_keys($this->$fieldName);
 
@@ -381,7 +393,7 @@ class FormField extends CComponent {
 
     /**
      * @param array $attributes
-     * @return string Fungsi ini untuk meng-expand atribut dan me-returnnya.
+     * @return string me-return string atribut hasil dari proses expand
      */
     public function expandAttributes($attributes) {
         if (count($attributes) == 0)
@@ -395,7 +407,7 @@ class FormField extends CComponent {
     }
 
     /**
-     * @return array Fungsi ini akan me-return semua atribut formfield.
+     * @return array me-return array semua atribut formfield.
      */
     public static function all() {
         $ffdir = Yii::getPathOfAlias('application.components.ui.FormFields') . DIRECTORY_SEPARATOR;
@@ -415,7 +427,7 @@ class FormField extends CComponent {
     }
 
     /**
-     * @return array Fungsi ini akan me-return array atribut formfield yang telah diurutkan.
+     * @return array me-return array atribut formfield yang telah diurutkan.
      */
     public static function allSorted() {
 
@@ -429,7 +441,7 @@ class FormField extends CComponent {
 
     /**
      * @param string $formType
-     * @return array Fungsi ini digunakan untuk setting formfield yang sesuai dengan tipe form yang diterima pada parameter dan fungsi ini akan me-return array atibut.
+     * @return array me-return array atribut formfield
      */
     public static function settings($formType) {
         $ffdir = Yii::getPathOfAlias('application.components.ui.FormFields') . DIRECTORY_SEPARATOR;

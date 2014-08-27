@@ -4,9 +4,9 @@
  * @author rizky
  */
 class KeyValueGrid extends FormField {
-	/**
-	 * @return array Fungsi ini akan me-return array property KeyValueGrid.
-	 */
+    /**
+     * @return array me-return array property KeyValueGrid.
+     */
     public function getFieldProperties() {
         return array (
             array (
@@ -123,49 +123,51 @@ class KeyValueGrid extends FormField {
         );
     }
 
-	/** @var string $label */
+    /** @var string $label */
     public $label = '';
 	
-	/** @var string $fieldname */
+    /** @var string $fieldname */
     public $fieldname = '';
 	
-	/** @var string $value */
+    /** @var string $value */
     public $value = '';
 	
-	/** @var string $show */
+    /** @var string $show */
     public $show = 'Hide';
 	
-	/** @var array $options */
+    /** @var array $options */
     public $options = array();
 	
-	/** @var string $allowEmptyKey */
+    /** @var string $allowEmptyKey */
     public $allowEmptyKey = 'No';
 	
-	/** @var string $allowSpaceOnKey */
+    /** @var string $allowSpaceOnKey */
     public $allowSpaceOnKey = 'No';
 	
-	/** @var string $allowDoubleQuote */
+    /** @var string $allowDoubleQuote */
     public $allowDoubleQuote = 'No';
 	
-	/** @var string $toolbarName */
+    /** @var string $toolbarName */
     public static $toolbarName = "KeyValue Grid";
 	
-	/** @var string $category */
+    /** @var string $category */
     public static $category = "Data & Tables";
 	
-	/** @var string $toolbarIcon */
+    /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-key";
 	
-	/**
-	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
-	*/
+    /**
+     * @return array me-return array javascript yang di-include
+     */
     public function includeJS() {
         return array('key-value-grid.js');
     }
 
-	/**
-	 * @return field Fungsi ini untuk me-render field dan atributnya.
-	 */
+    /**
+     * render
+     * Fungsi ini untuk me-render field dan atributnya
+     * @return mixed me-return sebuah field dan atribut KeyValueGrid dari hasil render
+     */
     public function render() {
         $ngModelAvailable = isset($this->options['ng-model']) 
             && is_string($this->options['ng-model']) 

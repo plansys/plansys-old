@@ -140,7 +140,6 @@ class DateTimePicker extends FormField
         'show-weeks' => 'false'
     );
 	
-	
     /** @var string $toolbarName */
     public static $toolbarName = "Date Time Picker";
 	

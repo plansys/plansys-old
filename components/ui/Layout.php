@@ -4,7 +4,15 @@
  * @author rizky
  */
 class Layout extends CComponent {
-
+    /**
+     * render
+     * Fungsi ini untuk me-render layout
+     * @param array $layout
+     * @param array $data
+     * @param array $model
+     * @param boolean $return
+     * @return mixed me-return sebuah layout
+     */
     public static function render($layout, $data = null, $model = null, $return = false) {
         $formpath = @$data['editor'] ? '//layouts/forms_editor/' : "//layouts/forms/";
         if (count($data) > 0) {
