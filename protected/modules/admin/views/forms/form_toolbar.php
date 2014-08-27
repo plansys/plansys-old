@@ -46,7 +46,6 @@
                     scope.elements.placeholder.replaceWith(scope.elements.dragging.clone().find('li'));
                 },
                 dragStop: function(scope) {
-
                     $timeout(function() {
                         // auto select dropped toolbar
                         $scope.toolbar = $scope.toolbarDefault;

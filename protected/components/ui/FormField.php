@@ -202,6 +202,14 @@ class FormField extends CComponent {
         }
     }
 
+    public function getRenderName() {
+        if (property_exists($this, 'name')) {
+            return get_class($this->model) . "[" . $this->name . "]";
+        } else {
+            return "";
+        }
+    }
+
     /**
      * @return array Fungsi ini akan me-return atribut form.
      */

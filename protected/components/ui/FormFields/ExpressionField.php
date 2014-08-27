@@ -14,8 +14,8 @@ class ExpressionField extends FormField {
                 'name' => 'fieldname',
                 'options' => array (
                     'ng-model' => 'active.fieldname',
-                    'ng-change' => 'save()',
-                    'ng-form-list' => 'modelFieldList',
+                    'ng-change' => 'changeActiveName()',
+                    'ps-list' => 'modelFieldList',
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
                 'list' => array (),
@@ -57,14 +57,6 @@ class ExpressionField extends FormField {
             ),
             '<hr/>',
             array (
-                'label' => 'When expression change is valid, do this:',
-                'fieldname' => 'validAction',
-                'validAction' => 'save()',
-                'language' => 'js',
-                'desc' => 'Example: <br/><span style="font-family:monospace;">active.list = result; </span>',
-                'type' => 'ExpressionField',
-            ),
-            array (
                 'label' => 'Options',
                 'fieldname' => 'options',
                 'type' => 'KeyValueGrid',
@@ -91,9 +83,6 @@ class ExpressionField extends FormField {
 	/** @var string $fieldname */
     public $fieldname = '';
 	
-	/** @var string $validAction */
-    public $validAction = '';
-	
 	/** @var string $language */
     public $language = 'php';
 	
@@ -113,7 +102,7 @@ class ExpressionField extends FormField {
     public static $toolbarName = "Expression Field";
 	
 	/** @var string $category */
-    public static $category = "User Interface";
+    public static $category = "Data & Tables";
 	
 	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-terminal";

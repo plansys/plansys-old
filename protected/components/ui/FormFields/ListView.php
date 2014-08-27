@@ -12,8 +12,8 @@ class ListView extends FormField
                 'name' => 'name',
                 'options' => array (
                     'ng-model' => 'active.name',
-                    'ng-change' => 'save()',
-                    'ng-form-list' => 'modelFieldList',
+                    'ng-change' => 'changeActiveName()',
+                    'ps-list' => 'modelFieldList',
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
                 'list' => array (),
@@ -176,7 +176,7 @@ class ListView extends FormField
     public static $toolbarName = "List View";
 	
 	/** @var string variable untuk menampung category */
-    public static $category = "User Interface";
+    public static $category = "Data & Tables";
 	
 	/** @var string variable untuk menampung toolbarIcon */
     public static $toolbarIcon = "glyphicon glyphicon-align-justify";

@@ -14,8 +14,8 @@ class IconPicker extends FormField {
                 'name' => 'name',
                 'options' => array (
                     'ng-model' => 'active.name',
-                    'ng-change' => 'save()',
-                    'ng-form-list' => 'modelFieldList',
+                    'ng-change' => 'changeActiveName()',
+                    'ps-list' => 'modelFieldList',
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
                 'list' => array (),
@@ -91,9 +91,11 @@ class IconPicker extends FormField {
             array (
                 'label' => 'Icon Template',
                 'fieldname' => 'iconTemplate',
-                'validAction' => 'save()',
                 'language' => 'html',
                 'type' => 'ExpressionField',
+                'options' => array(
+                    'ps-valid' => 'save()'
+                )
             ),
             array (
                 'label' => 'Icon List',
@@ -110,9 +112,9 @@ class IconPicker extends FormField {
             array (
                 'label' => 'List Expression',
                 'fieldname' => 'listExpr',
-                'validAction' => 'save();',
                 'options' => array (
-                    'ng-hide' => 'active.options[\'ng-form-list\'] != null',
+                    'ng-hide' => 'active.options[\'ps-list\'] != null',
+                    'ps-valid' => 'save()'
                 ),
                 'desc' => 'WARNING: Using List Expression will replace <i>Radio Button Item</i> with expression result',
                 'type' => 'ExpressionField',

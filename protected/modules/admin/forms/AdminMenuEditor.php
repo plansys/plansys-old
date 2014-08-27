@@ -99,8 +99,10 @@ class AdminMenuEditor extends Form {
             array (
                 'label' => 'Display Logic',
                 'fieldname' => 'visible',
-                'validAction' => 'active.visible = result;',
                 'type' => 'ExpressionField',
+                'options' => array(
+                    'ps-valid' => 'active.visible = result;'
+                )
             ),
         );
     }

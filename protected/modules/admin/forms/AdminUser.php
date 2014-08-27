@@ -8,7 +8,7 @@ class AdminUser extends User {
             ),
             array (
                 'name' => 'dataSource1',
-                'fieldType' => 'php',
+                'sql' => 'select * from p_user',
                 'type' => 'DataSource',
             ),
             array (
@@ -49,8 +49,8 @@ class AdminUser extends User {
                         'type' => 'TextField',
                     ),
                     array (
-                        'label' => 'Firstname',
-                        'name' => 'firstname',
+                        'label' => 'Firstna',
+                        'name' => 'Lainnyad qwd qw',
                         'fieldType' => 'password',
                         'type' => 'TextField',
                     ),
@@ -77,7 +77,7 @@ class AdminUser extends User {
             ),
             array (
                 'label' => 'Text Area',
-                'name' => 'Text Area 1',
+                'name' => 'TextArea1',
                 'fieldHeight' => '0',
                 'options' => array (
                     'class' => 'col-sm-6',

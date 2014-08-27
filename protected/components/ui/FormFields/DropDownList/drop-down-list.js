@@ -39,8 +39,10 @@ app.directive('dropDownList', function($timeout) {
                         $scope.isOpen = true;
 
                         $a = $el.find("li.hover").next();
-                        while (!$a.is(":visible")) {
+                        var i = 0;
+                        while (!$a.is(":visible") && i < 100) {
                             $a = $a.next();
+                            i++;
                         }
 
                         if ($a.length > 0 && $a.is("li")) {
@@ -53,8 +55,10 @@ app.directive('dropDownList', function($timeout) {
                         $scope.isOpen = true;
 
                         $a = $el.find("li.hover").prev();
-                        while (!$a.is(":visible")) {
+                        var i = 0;
+                        while (!$a.is(":visible") && i < 100) {
                             $a = $a.prev();
+                            i++;
                         }
                         if ($a.length > 0 && $a.is("li")) {
                             $el.find("li.hover").removeClass("hover")
@@ -139,16 +143,16 @@ app.directive('dropDownList', function($timeout) {
                     return $scope.search == '' || input.toLowerCase().indexOf($scope.search.toLowerCase()) > -1;
                 }
 
-                // when ng-model, or ng-form-list is changed from outside directive
-                if (attrs.ngFormList) {
+                // when ng-model, or ps-list is changed from outside directive
+                if (attrs.psList) {
                     function changeFieldList() {
                         $timeout(function() {
-                            $scope.formList = $scope.$eval(attrs.ngFormList);
+                            $scope.formList = $scope.$eval(attrs.psList);
                             $scope.renderFormList();
                             $scope.updateInternal($scope.value);
                         }, 0);
                     }
-                    $scope.$watch(attrs.ngFormList, changeFieldList);
+                    $scope.$watch(attrs.psList, changeFieldList);
                 }
 
                 if (typeof ctrl != 'undefined') {

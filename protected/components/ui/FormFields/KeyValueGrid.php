@@ -14,8 +14,8 @@ class KeyValueGrid extends FormField {
                 'name' => 'fieldname',
                 'options' => array (
                     'ng-model' => 'active.fieldname',
-                    'ng-change' => 'save()',
-                    'ng-form-list' => 'modelFieldList',
+                    'ng-change' => 'changeActiveName()',
+                    'ps-list' => 'modelFieldList',
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
                 'list' => array (),
@@ -70,7 +70,7 @@ class KeyValueGrid extends FormField {
                     'No' => 'No',
                     'Yes' => 'Yes',
                 ),
-                'listExpr' => 'array(\'No\',\'Yes\');',
+                'listExpr' => 'array(\\\'No\\\',\\\'Yes\\\');',
                 'labelWidth' => '5',
                 'fieldWidth' => '3',
                 'type' => 'DropDownList',
@@ -87,7 +87,7 @@ class KeyValueGrid extends FormField {
                     'No' => 'No',
                     'Yes' => 'Yes',
                 ),
-                'listExpr' => 'array(\'No\',\'Yes\');',
+                'listExpr' => 'array(\\\'No\\\',\\\'Yes\\\');',
                 'labelWidth' => '5',
                 'fieldWidth' => '3',
                 'type' => 'DropDownList',
@@ -104,7 +104,7 @@ class KeyValueGrid extends FormField {
                     'No' => 'No',
                     'Yes' => 'Yes',
                 ),
-                'listExpr' => 'array(\'No\',\'Yes\')',
+                'listExpr' => 'array(\\\'No\\\',\\\'Yes\\\')',
                 'labelWidth' => '5',
                 'fieldWidth' => '3',
                 'type' => 'DropDownList',
@@ -151,7 +151,7 @@ class KeyValueGrid extends FormField {
     public static $toolbarName = "KeyValue Grid";
 	
 	/** @var string $category */
-    public static $category = "User Interface";
+    public static $category = "Data & Tables";
 	
 	/** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-key";

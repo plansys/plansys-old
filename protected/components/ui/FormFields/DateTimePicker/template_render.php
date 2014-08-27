@@ -39,8 +39,8 @@
             <timepicker ng-model="time" ng-change="changeTime(this)" 
                         hour-step="1" minute-step="15" show-meridian="false"></timepicker>
         </div>
-        
-        <input name="<?= $this->name ?>" type="hidden" ng-value="value"/>
+
+        <input id="<?= $this->renderID ?>" name="<?= $this->renderName ?>" type="hidden" ng-value="value"/>
         <!-- /field -->
 
         <!-- error -->
