@@ -16,13 +16,13 @@
             <li>Pilih release yang paling baru</li>
             <li>Pilih file ekstensi .exe, sesuaikan dengan sistem operasi Anda</li>
             <li>Setelah selesai download, jalankan file tersebut seperti pada gambar berikut<br/>
-                <img src="<?php echo Yii::app()->getBaseUrl() . '/static/plansys/img/1.jpg';?>" alt="" width="314" height="228"/>
-                <img src="<?php echo Yii::app()->getBaseUrl() . '/static/plansys/img/2.jpg';?>" alt="" width="314" height="228"/>
-                <img src="<?php echo Yii::app()->getBaseUrl() . '/static/plansys/img/3.jpg';?>" alt="" width="314" height="228"/>
-                <img src="<?php echo Yii::app()->getBaseUrl() . '/static/plansys/img/4.jpg';?>" alt="" width="314" height="228"/>
-                <img src="<?php echo Yii::app()->getBaseUrl() . '/static/plansys/img/5.jpg';?>" alt="" width="314" height="228"/>
-                <img src="<?php echo Yii::app()->getBaseUrl() . '/static/plansys/img/6.jpg';?>" alt="" width="314" height="228"/>
-                <img src="<?php echo Yii::app()->getBaseUrl() . '/static/plansys/img/7.jpg';?>" alt="" width="314" height="228"/>
+                <img src="<?php echo Yii::app()->getBaseUrl() . '/protected/static/img/1.jpg';?>" alt="" width="314" height="228"/>
+                <img src="<?php echo Yii::app()->getBaseUrl() . '/protected/static/img/2.jpg';?>" alt="" width="314" height="228"/>
+                <img src="<?php echo Yii::app()->getBaseUrl() . '/protected/static/img/3.jpg';?>" alt="" width="314" height="228"/>
+                <img src="<?php echo Yii::app()->getBaseUrl() . '/protected/static/img/4.jpg';?>" alt="" width="314" height="228"/>
+                <img src="<?php echo Yii::app()->getBaseUrl() . '/protected/static/img/5.jpg';?>" alt="" width="314" height="228"/>
+                <img src="<?php echo Yii::app()->getBaseUrl() . '/protected/static/img/6.jpg';?>" alt="" width="314" height="228"/>
+                <img src="<?php echo Yii::app()->getBaseUrl() . '/protected/static/img/7.jpg';?>" alt="" width="314" height="228"/>
             </li>
         </ul>
     </span>
