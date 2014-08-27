@@ -18,16 +18,18 @@ class ControllerGenerator extends CodeGenerator {
         return $files;
     }
 
-    public static function listFile($module) {
-        $dir = Yii::getPathOfAlias("application.modules.{$module}.controllers");
+    public static function listFile($module) {     
+        Yii::import('application.modules.' . lcfirst($module) . '.controllers.*');
+        $dir = Yii::getPathOfAlias("application.modules.{$module}.controllers");  
         $items = glob($dir . DIRECTORY_SEPARATOR . "*");
+
         foreach ($items as $k => $m) {
             $exist = 'yes';
-            if (!is_file($m) || trim(file_get_contents($m)) == "") {
-                $exist = 'no';
-            }
             $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
             $m = str_replace('.php', "", $m);
+            if (!class_exists($m)) {
+                $exist = 'no';
+            }
             
             $items[$k] = array(
                 'name' => $m,
@@ -49,29 +51,27 @@ class ControllerGenerator extends CodeGenerator {
         $methods = $reflection->getMethods();
         $action = array();
         foreach ($methods as $m) {
-            if ($m->class == $class_name && !$reflection->getMethod($m->name)->isProtected() 
-                    && !$reflection->getMethod($m->name)->isStatic() 
-                    && self::isAction($m->name) == true) 
-            {
-                $rawParams = $reflection->getMethod($m->name)->getParameters();        
+            if ($m->class == $class_name && !$reflection->getMethod($m->name)->isProtected() && !$reflection->getMethod($m->name)->isStatic() && self::isAction($m->name) == true) {
+                $rawParams = $reflection->getMethod($m->name)->getParameters();
                 $params = array();
-                if(!empty($rawParams)){
+                if (!empty($rawParams)) {
                     foreach ($rawParams as $p) {
                         if ($p->isOptional()) {
-                            if(is_null($p->getDefaultValue())){
-                                $params[] = '$'.$p->getName().' = null';
-                            }else{
-                                $params[] = '$'.$p->getName().' = '.$p->getDefaultValue();
+                            if (is_null($p->getDefaultValue())) {
+                                $params[] = '$' . $p->getName() . ' = null';
+                            } else {
+                                $params[] = '$' . $p->getName() . ' = ' . $p->getDefaultValue();
                             }
                         } else {
-                            $params[] = '$'.$p->getName();
+                            $params[] = '$' . $p->getName();
                         }
-
                     }
                 }
-                
-                if(!empty($params)) $strParams = implode(',',$params);
-                else $strParams = null;
+
+                if (!empty($params))
+                    $strParams = implode(',', $params);
+                else
+                    $strParams = null;
                 $action[] = array(
                     'name' => $m->name,
                     'param' => $strParams

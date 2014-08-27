@@ -20,6 +20,7 @@ return array(
         'application.components.utility.*',
         'application.components.models.*',
         'application.components.codegen.*',
+        'application.components.repo.*',
         'application.behaviors.*',
         'ext.YiiJasper.*',
         'ext.ETwigViewRenderer'
