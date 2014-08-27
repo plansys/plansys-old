@@ -15,7 +15,7 @@
                                 <i class="fa {{item.name == 'MainMenu' ? 'fa-sitemap' : 'fa-book'}} fa-nm"></i>
                                 <div ng-if='item.exist == "no"' class="pull-right label label-success" style="margin-top:4px;">
                                     New
-                                </div><span>{{item.name}}</span>
+                                </div><span style="word-wrap:break-word;">{{item.name}}</span>
                             </a>
                         </li>
                     </ol>
