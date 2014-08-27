@@ -26,7 +26,7 @@ CREATE TABLE `p_role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `p_role` (`id`, `role_name`, `role_description`, `parent_id`) VALUES
-(1, 'admin',  'Administrator',  0);
+(1,	'dev',	'Developer',	0);
 
 DROP TABLE IF EXISTS `p_user`;
 CREATE TABLE `p_user` (
@@ -42,7 +42,7 @@ CREATE TABLE `p_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `p_user` (`id`, `nip`, `fullname`, `email`, `phone`, `username`, `password`, `date`) VALUES
-(1, '12345',  'Admin',  'admin@web.com',  '00000000', 'admin',  '827ccb0eea8a706c4c34a16891f84e7b', '0000-00-00');
+(1,	'12345',	'Admin',	'admin@web.com',	'00000000',	'admin',	'827ccb0eea8a706c4c34a16891f84e7b',	'0000-00-00');
 
 DROP TABLE IF EXISTS `p_user_info`;
 CREATE TABLE `p_user_info` (
@@ -68,6 +68,6 @@ CREATE TABLE `p_user_role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `p_user_role` (`id`, `user_id`, `role_id`, `default_role`) VALUES
-(1, 1,  1,  1);
+(1,	1,	1,	1);
 
--- 2014-08-27 08:52:07
+-- 2014-08-27 09:30:37

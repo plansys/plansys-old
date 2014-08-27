@@ -6,18 +6,32 @@ class Setting {
     public static $basePath;
     public static $rootPath;
     public static $path = "";
-    public static $default = '{"db":{"driver":"mysql","server":"","username":"","password":"","dbname":""}}';
+    public static $default = array(
+        'db' => array(
+            'driver' => 'mysql',
+            'server' => '',
+            'username' => '',
+            'password' => '',
+            'dbname' => ''
+        ),
+        'repo' => array(
+            'path' => ''
+        ),
+        'app' => array(
+            'dir' => 'app'
+        ),
+    );
 
     private static function setupBasePath($configfile) {
         $basePath = dirname($configfile);
         $basePath = explode(DIRECTORY_SEPARATOR, $basePath);
-        
+
         array_pop($basePath);
         Setting::$basePath = implode(DIRECTORY_SEPARATOR, $basePath);
-        
+
         array_pop($basePath);
         Setting::$rootPath = implode(DIRECTORY_SEPARATOR, $basePath);
-        
+
         return Setting::$basePath;
     }
 
@@ -26,12 +40,14 @@ class Setting {
         Setting::$path = $bp . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
 
         if (!is_file(Setting::$path)) {
-            $json = json_decode(Setting::$default);
+            $json = Setting::$default;
             $json = json_encode($json, JSON_PRETTY_PRINT);
 
             file_put_contents(Setting::$path, $json);
         }
         Setting::$data = json_decode(file_get_contents(Setting::$path), true);
+
+        Yii::setPathOfAlias('app', Setting::getAppPath());
     }
 
     public static function get($key) {
@@ -63,20 +79,39 @@ class Setting {
     public static function getBasePath() {
         return Setting::$basePath;
     }
-    
+
     public static function getRootPath() {
         return Setting::$rootPath;
     }
 
-    public static function getDoctrineDB() {
-        $connection = array(
-            'driver' => 'pdo_' . Setting::get('db.driver'),
-            'port' => Setting::get('db.port'),
-            'dbname' => Setting::get('db.dbname'),
-            'user' => Setting::get('db.username'),
-            'password' => Setting::get('db.password')
-        );
-        return $connection;
+    public static function getAppPath() {
+        return Setting::$rootPath . DIRECTORY_SEPARATOR . Setting::get('app.dir');
+    }
+
+    public static function getModulePath() {
+        if (file_exists(Yii::getPathOfAlias('app.modules'))) {
+            return Yii::getPathOfAlias('app.modules');
+        } else {
+            return Yii::getPathOfAlias('application.modules');
+        }
+    }
+
+    public static function getModules() {
+        $modules = glob(Setting::getBasePath() . DIRECTORY_SEPARATOR . "modules" . DIRECTORY_SEPARATOR . "*");
+        $appModules = glob(Setting::getAppPath() . DIRECTORY_SEPARATOR . "modules" . DIRECTORY_SEPARATOR . "*");
+
+        $return = array();
+        foreach ($modules as $key => $module) {
+            $m = array_pop(explode(DIRECTORY_SEPARATOR, $module));
+            $return[$m] = array(
+                'class' => 'application.modules.' . $m . '.' . ucfirst($m) . 'Module'
+            );
+        }
+
+        foreach ($appModules as $key => $module) {
+            $return[] = array_pop(explode(DIRECTORY_SEPARATOR, $module));
+        }
+        return $return;
     }
 
     public static function getDB() {
@@ -103,13 +138,13 @@ class Setting {
     public static function getDBDriverList() {
         return array(
             'mysql' => 'MySQL',
-                /*
-                  'pgsql' => 'PostgreSQL',
-                  'sqlsrv' => 'SQL Server',
-                  'sqlite' => 'SQLite',
-                  'oci' => 'Oracle'
-                 * 
-                 */
+            /*
+              'pgsql' => 'PostgreSQL',
+              'sqlsrv' => 'SQL Server',
+              'sqlite' => 'SQLite',
+              'oci' => 'Oracle'
+             * 
+             */
         );
     }
 

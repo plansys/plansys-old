@@ -1,9 +1,9 @@
 <?php
 
-
 ## Setting initialization
 Setting::init(__FILE__);
 $basePath = Setting::getBasePath();
+$modules = Setting::getModules();
 
 return array(
     'basePath' => $basePath,
@@ -23,18 +23,16 @@ return array(
         'application.components.repo.*',
         'application.behaviors.*',
         'ext.YiiJasper.*',
-        'ext.ETwigViewRenderer'
     ),
     'sourceLanguage' => 'en_us',
     'language' => 'id',
-    'modules' => array(
-        'admin',
-        'pde',
+    'modulePath' => Setting::getModulePath(),
+    'modules' => array_merge($modules, array(
         'gii' => array(
             'class' => 'system.gii.GiiModule',
             'password' => '123',
             'ipFilters' => array('127.0.0.1', '::1'),
-        ),
+        ))
     ),
     'aliases' => array(
         //Path to your Composer vendor dir plus vendor/bluecloudy path
@@ -42,16 +40,6 @@ return array(
     ),
     // application components
     'components' => array(
-        'doctrine' => array(
-            'class' => 'YiiDoctrine.components.YDComponent',
-            'basePath' => $basePath,
-            'proxyPath' => $basePath . '/runtime/doctrine_proxies',
-            'entityPath' => array(
-                $basePath . '/models'
-            ),
-            'cachePath' => $basePath . '/runtime/doctrine_cache',
-            'db' => Setting::getDoctrineDB()
-        ),
         'EJSUrlManager' => array(
             'class' => 'ext.JSUrlManager.EJSUrlManager'
         ),

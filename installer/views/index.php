@@ -38,10 +38,15 @@ function setup(){
     if (!file_exists($basedir . $plansys . DIRECTORY_SEPARATOR. 'runtime')) {
         mkdir($basedir .  $plansys . DIRECTORY_SEPARATOR. 'runtime', 0777, true);
     }
+    
     if (!file_exists($basedir . 'repo')) {
         mkdir($basedir . 'repo', 0777, true);
     }
-
+    
+    if (!file_exists($basedir . 'app')) {
+        mkdir($basedir . 'app', 0755, true);
+    }
+    
     if (!file_exists($basedir . 'index.php')) {
         $template = file_get_contents($basedir . $plansys . DIRECTORY_SEPARATOR . 'index.template.php');
         $template = str_replace("{root}", $plansys, $template);
@@ -51,6 +56,7 @@ function setup(){
     if (!file_exists($basedir . '.gitignore')) {
         file_put_contents($basedir . ".gitignore", $plansys);
     }
+    
 
     touch('setup_db.lock');
 }
