@@ -34,11 +34,12 @@
                                     <div class="badge">    
                                         {{item.param}}
                                     </div>
-                                    <a href="#" target="_blank" class="pull-right btn btn-default btn-xs" ng-if="item.param == null">
+                                    <?php $url = "{{getUrl('".$module."','".$controller."',item.name)}}";?>
+                                    <a href="<?php echo $this->createUrl("/" . $url);?>" target="_blank" class="pull-right btn btn-default btn-xs" ng-if="item.param == null">
                                         <i class="fa fa-globe"></i>
                                     </a>
 
-                                    <a href="{{getUrl('<?php echo $module?>','<?php echo $controller?>',item.name)}}" class="btn btn-default pull-right btn-xs" ng-click="update(item)" style="margin-right:5px;">
+                                    <a href="#" class="btn btn-default pull-right btn-xs" ng-click="update(item)" style="margin-right:5px;">
                                         <i class="fa fa-pencil"></i>
                                     </a>
                                 </td>
@@ -130,7 +131,8 @@
              });
          };
          $scope.getUrl = function(module,controller,action){
-                var url = module + ','+controller+','+action;
+                var action = action.match(/([A-Z])\w+/g);
+                var url = module + '/'+controller+'/'+action;
                 return url; 
          };
      }
