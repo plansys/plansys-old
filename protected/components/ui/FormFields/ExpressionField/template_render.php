@@ -3,7 +3,6 @@
     <data name="value" class="hide"><?= $this->value ?></data>
     <data name="field_name" class="hide"><?= $this->fieldname ?></data>
     <data name="field_language" class="hide"><?= $this->language ?></data>
-    <data name="field_valid_action" class="hide"><?= $this->validAction ?></data>
     <data name="model_class" class="hide"><?= @get_class($model) ?></data>
     <!-- /data -->
     <div class="properties-header" style="cursor:default;">
@@ -11,7 +10,7 @@
             {{lang | uppercase}}
         </div>
         <div class="btn btn-xs"
-             ng-hide="lang == 'html' || value.trim() == '' || validating"
+             ng-hide="lang == 'html' || lang == 'sql' || value.trim() == '' || validating"
              style="color:{{ valid ? 'green' : 'red' }}">
             <i class="fa fa-{{valid ? 'check-circle' : 'warning' }}"></i>
             {{ valid ? 'Valid' : 'Invalid Expression' }}
@@ -36,6 +35,8 @@
                                   ng-focus="focus()"
                                   ng-blur="blur()"
                                   auto-grow
+                                  id="<?= $this->renderID ?>"
+                                  name="<?= $this->renderName ?>"
                                   style='border:0px;background:#333;height:22px;'>
                                       <?= $this->value ?>
                         </textarea>

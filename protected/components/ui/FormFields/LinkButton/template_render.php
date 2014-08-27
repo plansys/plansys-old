@@ -1,6 +1,6 @@
 <span link-btn group="<?= $this->group ?>"
       url="<?= $this->createUrl($this->url); ?>"
-
+      id="<?= $this->renderID ?>"
       class="link-btn 
           <?php if ($this->buttonType != 'not-btn'): ?>btn btn-<?= $this->buttonType ?> <?= $this->buttonSize ?><?php endif; ?>" 
       <?= $this->expandAttributes($this->options) ?>>

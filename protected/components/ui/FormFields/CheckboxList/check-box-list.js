@@ -32,16 +32,16 @@ app.directive('checkBoxList', function($timeout) {
                     }
                 }
 
-                // when ng-model, or ng-form-list is changed from outside directive
-                if (attrs.ngFormList) {
-                    //ng-form-list, replace entire list using js instead of rendered from server
+                // when ng-model, or ps-list is changed from outside directive
+                if (attrs.psList) {
+                    //ps-list, replace entire list using js instead of rendered from server
                     function changeFieldList() {
                         $timeout(function() {
-                            $scope.formList = $scope.$eval(attrs.ngFormList);
+                            $scope.formList = $scope.$eval(attrs.psList);
                             $scope.updateItemInternal($scope.value);
                         }, 0);
                     }
-                    $scope.$watch(attrs.ngFormList, changeFieldList);
+                    $scope.$watch(attrs.psList, changeFieldList);
                 }
 
                 if (typeof ctrl != 'undefined') {

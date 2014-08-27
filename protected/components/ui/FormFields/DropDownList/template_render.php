@@ -98,7 +98,7 @@
         </div>
         <input type="text" class="invisible"
                ng-model="value" id="<?= $this->renderID ?>"
-               name="<?= $this->name ?>" value='<?= $this->value ?>'/>
+               name="<?= $this->renderName ?>" value='<?= $this->value ?>'/>
         <!-- /field -->
 
         <!-- error -->

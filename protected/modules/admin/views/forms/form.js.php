@@ -277,6 +277,7 @@
         }
         $scope.save = function() {
             $scope.saving = true;
+            
             $http.post('<?= $this->createUrl("save", array('class' => $class)); ?>', {fields: $scope.fields})
                     .success(function(data, status) {
                         $scope.saving = false;

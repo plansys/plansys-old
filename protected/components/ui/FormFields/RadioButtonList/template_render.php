@@ -32,7 +32,7 @@
                     <?php else: ?>
                         <label class="radio-btn input-group <?= $this->itemLayout == "Horizontal" ? 'inline' : '' ?>">
                             <input type="radio" id="<?= $this->renderID ?>_<?= $value ?>"
-                                   name="<?= $this->name ?>" value="<?= $value; ?>" <?= $this->checked($value); ?>
+                                   name="<?= $this->renderName ?>" value="<?= $value; ?>" <?= $this->checked($value); ?>
                                    /> <?= $text ?>
                         </label>
                     <?php endif; ?>
@@ -47,7 +47,7 @@
 
         <input type="text" class="invisible"
                ng-model="value" id="<?= $this->renderID ?>"
-               name="<?= $this->name ?>" value='<?= $this->value ?>'/>
+               name="<?= $this->renderName ?>" value='<?= $this->value ?>'/>
         <!-- /field -->
 
         <!-- error -->

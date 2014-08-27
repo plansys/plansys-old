@@ -1,4 +1,4 @@
 <input type="hidden"
-       id='<?= $this->name ?>'
-       name='<?= $this->name ?>'
+       id='<?= $this->renderID ?>'
+       name='<?= $this->renderName ?>'
        value="<?= $this->value ?>"/>
