@@ -94,10 +94,8 @@ app.directive('dropDownList', function($timeout) {
                 $scope.updateOther = function(value) {
                     $scope.showOther = false;
                     $scope.updateInternal(value);
-                    $timeout(function() {
-                        ctrl.$setViewValue($scope.value);
-                        $scope.showOther = true;
-                    }, 0);
+                    ctrl.$setViewValue($scope.value);
+                    $scope.showOther = true;
                 }
 
                 $scope.itemExist = function(value) {

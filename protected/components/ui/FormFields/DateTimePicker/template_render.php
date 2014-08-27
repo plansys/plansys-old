@@ -20,7 +20,7 @@
 
         <!-- field -->
         <!-- date field -->
-        <div ng-if="fieldType != 'time'" style="width:150px;" class="date-field input-group">
+        <div ng-if="fieldType != 'time'" class="date-field input-group">
             <!-- value -->
             <input type="text" <?= $this->expandAttributes($this->fieldOptions) ?>
                    ng-model="date" ng-change="changeDate(this)" value="<?= $this->value ?>"

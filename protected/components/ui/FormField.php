@@ -450,6 +450,7 @@ class FormField extends CComponent {
             $result['icon'][$class] = $class::$toolbarIcon;
             $result['category'][$class] = $class::$category;
         }
+        
         return $result;
     }
 

@@ -15,8 +15,9 @@ class AdminUser extends User {
                 'column1' => array (
                     array (
                         'label' => 'Date',
-                        'name' => 'password',
-                        'type' => 'TextField',
+                        'name' => 'date',
+                        'fieldWidth' => 8,
+                        'type' => 'DateTimePicker',
                     ),
                     array (
                         'label' => 'Username',
@@ -27,13 +28,6 @@ class AdminUser extends User {
                         'label' => 'Email',
                         'name' => 'email',
                         'type' => 'TextField',
-                    ),
-                    array (
-                        'label' => 'Date Time Picker',
-                        'name' => 'date',
-                        'fieldType' => 'datetime',
-                        'datepickerOptions' => array (),
-                        'type' => 'DateTimePicker',
                     ),
                     array (
                         'label' => 'Phone',
@@ -50,19 +44,19 @@ class AdminUser extends User {
                     ),
                     array (
                         'label' => 'Firstna',
-                        'name' => 'Lainnyad qwd qw',
+                        'name' => 'whoadahodqwhoi',
                         'fieldType' => 'password',
+                        'options' => array (
+                            'ps-sql' => 'name = :mantab',
+                            'ps-sql-mantab' => 'model.username',
+                            'ps-sql-okedeh' => '',
+                        ),
                         'type' => 'TextField',
                     ),
                     array (
                         'label' => 'Password',
                         'name' => 'password',
                         'type' => 'TextField',
-                    ),
-                    array (
-                        'label' => 'Drop Down List',
-                        'name' => 'date',
-                        'type' => 'DropDownList',
                     ),
                     array (
                         'name' => 'id',
