@@ -4,30 +4,31 @@
  * @author rizky
  */
 class Form extends CComponent {
-	/** 
-	 * @var array $_errors
-	 * @access private	
-	*/
+    /** 
+     * @var array $_errors
+     * @access private	
+     */
     private $_errors = array();
 	
-	/**
-	 * @return array Fungsi ini digunakan untuk mendapatkan error yang dialami. fungsi ini akan me-return array $_errors yang didalamnya menampung error yang terjadi.
-	*/
+    /**
+     * @return array me-return array $_errors yang didalamnya menampung error yang terjadi.
+     */
     public function getErrors() {
         return $this->_errors;
     }
     
-	/**
-	 * @param string $value
-	 * @return null Fungsi ini akan men-set error yang ditampung pada $value kedalam variable $_errors.
-	*/
+    /**
+     * @param string $value value error
+     */
     public function setErrors($value) {
         $this->_errors = $value;
     }
     
-	/**
-	 * @return array Fungsi ini digunakan untuk mendapatkan attributes field dan me-returnnya.
-	*/
+    /**
+     * getAttributes
+     * Fungsi ini digunakan untuk mendapatkan attributes field dan me-returnnya
+     * @return array me-return array atribut field
+     */
     public function getAttributes() {
         $reflect = new ReflectionClass($this);
         $props = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
@@ -41,10 +42,9 @@ class Form extends CComponent {
         return $result;
     }
 
-	/**
-	 * @param array $values
-	 * @return null Fungsi ini berfungsi untuk men-set attributes field dengan property-property pada parameter $values.
-	*/
+    /**
+     * @param array $values parameter sebuah array atribut field
+     */
     public function setAttributes($values) {
         foreach ($values as $k => $v) {
             if (property_exists($this, $k)) {
@@ -53,17 +53,17 @@ class Form extends CComponent {
         }
     }
 
-	/**
-	 * @return array Fungsi ini akan me-return attributes dari form.
-	*/
+    /**
+     * @return array me-return attributes dari form tersebut.
+     */
     public static function attributes() {
         $field = new static();
         return $field->attributes;
     }
 
-	/**
-	 * @return array Fungsi ini akan me-return array property DefaultFields.
-	 */
+    /**
+     * @return array me-return array property DefaultFields.
+     */
     public function getDefaultFields() {
         $fields = $this->attributes;
         $exclude = array();

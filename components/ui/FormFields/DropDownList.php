@@ -4,9 +4,9 @@
  * @author rizky
  */
 class DropDownList extends FormField {
-	/**
-	 * @return array Fungsi ini akan me-return array property DropDown.
-	 */
+    /**
+     * @return array me-return array property DropDown.
+     */
     public function getFieldProperties() {
         return array (
             array (
@@ -174,67 +174,67 @@ class DropDownList extends FormField {
         );
     }
 
-	/** @var string $label */
+    /** @var string $label */
     public $label = '';
 	
-	/** @var string $name */
+    /** @var string $name */
     public $name = '';
 	
-	/** @var string $value digunakan pada function checked */
+    /** @var string $value digunakan pada function checked */
     public $value = '';
 	
-	/** @var array $options */
+    /** @var array $options */
     public $options = array();
 	
-	/** @var array $fieldOptions */
+    /** @var array $fieldOptions */
     public $fieldOptions = array();
 	
-	/** @var array $labelOptions */
+    /** @var array $labelOptions */
     public $labelOptions = array();
 	
-	/** @var string $list */
+    /** @var string $list */
     public $list = '';
 	
-	/** @var string $listExpr digunakan pada function processExpr */
+    /** @var string $listExpr digunakan pada function processExpr */
     public $listExpr = '';
 	
-	/** @var string $layout */
+    /** @var string $layout */
     public $layout = 'Horizontal';
 	
-	/** @var integer $labelWidth */
+    /** @var integer $labelWidth */
     public $labelWidth = 4;
 	
-	/** @var integer $fieldWidth */
+    /** @var integer $fieldWidth */
     public $fieldWidth = 8;
 	
-	/** @var string $searchable */
+    /** @var string $searchable */
     public $searchable = 'No';
 	
-	/** @var string $showOther */
+    /** @var string $showOther */
     public $showOther = 'No';
 	
-	/** @var string $otherLabel */
+    /** @var string $otherLabel */
     public $otherLabel = 'Lainnya';
 	
-	/** @var string $toolbarName */
+    /** @var string $toolbarName */
     public static $toolbarName = "Drop Down List";
 	
-	/** @var string $category */
+    /** @var string $category */
     public static $category = "User Interface";
 	
-	/** @var string $toolbarIcon */
+    /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-caret-square-o-down";
 	
-	/**
-	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
-	*/
+    /**
+     * @return array me-return array javascript yang di-include
+     */
     public function includeJS() {
         return array('drop-down-list.js');
     }
 
-	/**
-	 * @return array Fungsi ini akan memproses expression menjadi array lalu mereturn array tersebut.
-	*/
+    /**
+     * @return array me-return array hasil proses expression.
+     */
     public function processExpr() {
         if ($this->listExpr != "") {
             ## evaluate expression
@@ -260,10 +260,12 @@ class DropDownList extends FormField {
         );
     }
 
-	/**
-	 * @param string $value Parameter untuk melempar value field.
-	 * @return boolean Fungsi ini untuk mengecek value dari field.
-	 */
+    /**
+     * checked
+     * Fungsi ini untuk mengecek value dari field
+     * @param string $value
+     * @return boolean me-return true atau false
+     */
     public function checked($value) {
         if ($this->value == $value)
             return true;
@@ -271,23 +273,28 @@ class DropDownList extends FormField {
             return false;
     }
 
-	/**
-	 * @return string Fungsi ini akan me-return string class layout yang digunakan. Fungsi ini akan mengecek nilai property $layout untuk menentukan nama Class Layout.
-	*/
+    /**
+     * getLayoutClass
+     * Fungsi ini akan mengecek nilai property $layout untuk menentukan nama Class Layout
+     * @return string me-return string Class layout yang digunakan
+     */
     public function getLayoutClass() {
         return ($this->layout == 'Vertical' ? 'form-vertical' : '');
     }
 
-	/**
-	 * @return string Fungsi ini akan me-return string class error jika terdapat error pada satu atau banyak attribute.
-	*/
+    /**
+     * @return string me-return string Class error jika terdapat error pada satu atau banyak attribute.
+     */
     public function getErrorClass() {
         return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
     }
 
-	/**
-	 * @return string Fungsi ini akan me-return string class label. Fungsi akan mengecek $layout untuk menentukan layout yang digunakan. Fungsi juga me-load option label dari property $labelOptions. 
-	 */
+    /**
+     * getlabelClass
+     * Fungsi ini akan mengecek $layout untuk menentukan layout yang digunakan
+     * dan meload option label dari property $labelOptions
+     * @return string me-return string Class label
+     */
     public function getlabelClass() {
         if ($this->layout == 'Vertical') {
             $class = "control-label col-sm-12";
@@ -299,23 +306,27 @@ class DropDownList extends FormField {
         return $class;
     }
 
-	/**
-	 * @return integer Fungsi ini akan me-return string class untuk menentukan width fields.
-	 */	
+    /**
+     * getFieldColClass
+     * Fungsi ini untuk menetukan width field
+     * @return string me-return string class
+     */	
     public function getFieldColClass() {
         return "col-sm-" . $this->fieldWidth;
     }
 
-	/**
-	 * @return string Fungsi ini akan me-return string class untuk button.
-	 */	
+    /**
+     * @return string me-return string class
+     */	
     public function getFieldClass() {
         return "btn-group btn-block";
     }
 
-	/**
-	 * @return field Fungsi ini untuk me-render field dan atributnya.
-	 */	
+    /**
+     * render
+     * Fungsi ini untuk me-render field dan atributnya
+     * @return mixed me-return sebuah field DropDownList dari hasil render
+     */
     public function render() {
         $this->addClass('form-group form-group-sm', 'options');
         $this->addClass($this->layoutClass, 'options');

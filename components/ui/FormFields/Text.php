@@ -4,9 +4,9 @@
  * @author rizky
  */
 class Text extends FormField {
-	/**
-	 * @return array Fungsi ini akan me-return array property Text.
-	 */
+    /**
+     * @return array me-return array property Text.
+     */
     public function getFieldProperties() {
         return array (
             array (
@@ -29,21 +29,21 @@ class Text extends FormField {
         );
     }
 
-	/** @var string $value */
+    /** @var string $value */
     public $value;
 	
-	/** @var string $toolbarName */
+    /** @var string $toolbarName */
     public static $toolbarName = "Text / HTML";
 	
-	/** @var string $category */
+    /** @var string $category */
     public static $category = "Layout";
 	
-	/** @var string $toolbarIcon */
+    /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-font";
 
-	/**
-	 * @return field Fungsi ini untuk me-render field dan atributnya.
-	 */	
+    /**
+     * @return string me-return string buffer contents
+     */
     public function render() {
         $attributes = array(
             'field' => $this->attributes,

@@ -4,9 +4,9 @@
  * @author rizky
  */
 class IconPicker extends FormField {
-	/**
-	 * @return array Fungsi ini akan me-return array property IconPicker.
-	 */
+    /**
+     * @return array me-return array property IconPicker.
+     */
     public function getFieldProperties() {
         return array (
             array (
@@ -132,62 +132,62 @@ class IconPicker extends FormField {
         );
     }
 
-	/** @var string $label */
+    /** @var string $label */
     public $label = '';
 	
-	/** @var string $name */
+    /** @var string $name */
     public $name = '';
 	
-	/** @var string $value digunakan pada function getIcon */
+    /** @var string $value digunakan pada function getIcon */
     public $value = '';
 	
-	/** @var string $list */
+    /** @var string $list */
     public $list = '';
 	
-	/** @var string $listExpr */
+    /** @var string $listExpr */
     public $listExpr = '';
 	
-	/** @var string $renderEmpty */
+    /** @var string $renderEmpty */
     public $renderEmpty = "No";
 	
-	/** @var string $layout */
+    /** @var string $layout */
     public $layout = 'Horizontal';
 	
-	/** @var string $iconTemplate */
+    /** @var string $iconTemplate */
     public $iconTemplate = '<i class="fa fa-fw fa-lg {icon}"></i>';
 	
-	/** @var string $fieldWidth */
+    /** @var string $fieldWidth */
     public $fieldWidth = "265";
 	
-	/** @var integer $labelWidth */
+    /** @var integer $labelWidth */
     public $labelWidth = 4;
 	
-	/** @var array $options */
+    /** @var array $options */
     public $options = array();
 	
-	/** @var array $labelOptions */
+    /** @var array $labelOptions */
     public $labelOptions = array();
 	
-	/** @var string $toolbarName */
+    /** @var string $toolbarName */
     public static $toolbarName = "Icon Picker";
 	
-	/** @var string $category */
+    /** @var string $category */
     public static $category = "User Interface";
 	
-	/** @var string $toolbarIcon */
+    /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-smile-o";
 	
-	/**
-	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
-	*/
+    /**
+     * @return array me-return array javascript yang di-include
+     */
     public function includeJS() {
         return array('icon-picker.js');
     }
 
-	/**
-	 * @param string $value
-	 * @return array|string Fungsi ini akan me-return array atau string yang merupakan hasil dari pemanggilan fungsi str_replace. . 
-	*/
+    /**
+     * @param string $value
+     * @return mixed me-return array atau string hasil dari str_replace
+     */
     public function getIcon($value = null) {
         if (is_null($value)) {
             $value = $this->value;
@@ -202,9 +202,9 @@ class IconPicker extends FormField {
         }
     }
 
-	/**
-	 * @return array Fungsi ini akan memproses expression menjadi array lalu mereturn array tersebut.
-	*/
+    /**
+     * @return array me-return array list hasil proses expression.
+     */
     public function processExpr() {
         if ($this->listExpr != "") {
             ## evaluate expression
@@ -230,9 +230,12 @@ class IconPicker extends FormField {
         );
     }
 
-	/**
-	 * @return string Fungsi ini akan me-return string class label. Fungsi akan mengecek $layout untuk menentukan layout yang digunakan. Fungsi juga me-load option label dari property $labelOptions. 
-	 */
+    /**
+     * getlabelClass
+     * Fungsi ini akan mengecek $layout untuk menentukan layout yang digunakan
+     * dan me-load option label dari property $labelOptions
+     * @return string me-return string Class label
+     */
     public function getlabelClass() {
         if ($this->layout == 'Vertical') {
             $class = "control-label col-sm-12";
@@ -244,30 +247,36 @@ class IconPicker extends FormField {
         return $class;
     }
 
-	/**
-	 * @return integer Fungsi ini akan me-return string class untuk menentukan width fields.
-	 */	
+    /**
+     * getFieldColClass
+     * Fungsi ini untuk menetukan width field
+     * @return string me-return string class
+     */	
     public function getFieldColClass() {
         return "col-sm-" . ($this->layout == 'Vertical' ? 12 : 12 - $this->labelWidth);
     }
 
-	/**
-	 * @return string Fungsi ini akan me-return string class layout yang digunakan. Fungsi ini akan mengecek nilai property $layout untuk menentukan nama Class Layout.
-	*/
+    /**
+     * getLayoutClass
+     * Fungsi ini akan mengecek nilai property $layout untuk menentukan nama Class Layout
+     * @return string me-return string Class layout yang digunakan
+     */
     public function getLayoutClass() {
         return ($this->layout == 'Vertical' ? 'form-vertical' : '');
     }
 
-	/**
-	 * @return string Fungsi ini akan me-return string class error jika terdapat error pada satu atau banyak attribute.
-	*/
+     /**
+      * @return string me-return string Class error jika terdapat error pada satu atau banyak attribute.
+      */
     public function getErrorClass() {
         return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
     }
 
-	/**
-	 * @return field Fungsi ini untuk me-render field dan atributnya.
-	 */
+    /**
+     * render
+     * Fungsi ini untuk me-render field dan atributnya
+     * @return mixed me-return sebuah field iconPicker dari hasil render
+     */
     public function render() {
         $this->addClass('form-group form-group-sml', 'options');
         $this->addClass($this->layoutClass, 'options');

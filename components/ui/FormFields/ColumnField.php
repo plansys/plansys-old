@@ -4,9 +4,9 @@
  * @author rizky
  */
 class ColumnField extends FormField {
-	/**
-	 * @return array Fungsi ini akan me-return array property ColumnField.
-	 */
+    /**
+     * @return array me-return array property ColumnField.
+     */
     public function getFieldProperties() {
         return array (
             array (
@@ -52,13 +52,13 @@ class ColumnField extends FormField {
         );
     }
 	
-	/** @var integer $totalColumns */
+    /** @var integer $totalColumns */
     public $totalColumns = 2;
 	
-	/** @var string $showBorder */
+    /** @var string $showBorder */
     public $showBorder = 'No';
 	
-	/** @var array $parseField */
+    /** @var array $parseField */
     public $parseField = array(
         'column1' => 'renderColumn1',
         'column2' => 'renderColumn2',
@@ -67,48 +67,48 @@ class ColumnField extends FormField {
         'column5' => 'renderColumn5',
     );
 	
-	/** @var array $column1 */
+    /** @var array $column1 */
     public $column1 = array('<column-placeholder></column-placeholder>');
 	
-	/** @var array $column2 */
+    /** @var array $column2 */
     public $column2 = array('<column-placeholder></column-placeholder>');
 	
-	/** @var array $column3 */
+    /** @var array $column3 */
     public $column3 = array('<column-placeholder></column-placeholder>');
 	
-	/** @var array $column4 */
+    /** @var array $column4 */
     public $column4 = array('<column-placeholder></column-placeholder>');
 	
-	/** @var array $column5 */
+    /** @var array $column5 */
     public $column5 = array('<column-placeholder></column-placeholder>');
 	
-	/** @var string $renderColumn1 */
+    /** @var string $renderColumn1 */
     public $renderColumn1 = "";
 	
-	/** @var string $renderColumn2 */
+    /** @var string $renderColumn2 */
     public $renderColumn2 = "";
 	
-	/** @var string $renderColumn3 */
+    /** @var string $renderColumn3 */
     public $renderColumn3 = "";
 	
-	/** @var string $renderColumn4 */
+    /** @var string $renderColumn4 */
     public $renderColumn4 = "";
 	
-	/** @var string $renderColumn5 */
+    /** @var string $renderColumn5 */
     public $renderColumn5 = "";
 	
-	/** @var string $toolbarName */
+    /** @var string $toolbarName */
     public static $toolbarName = "Columns";
 	
-	/** @var string $category */
+    /** @var string $category */
     public static $category = "Layout";
 	
-	/** @var string $toolbarIcon */
+    /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-columns";
 	
-	/**
-	 * @return integer Fungsi ini akan me-return width dari column yang akan dirender.
-	*/
+    /**
+     * @return integer me-return width dari column yang akan dirender.
+     */
     public function getColumnWidth() {
         if (is_array($this->totalColumns)) {
             return 100 / count($this->totalColumns);
@@ -117,10 +117,10 @@ class ColumnField extends FormField {
         }
     }
 
-	/**
-	 * @param integer $i Parameter untuk menerima column berapa yang di-render.
-	 * @return html Fungsi ini untuk me-render column.
-	*/
+    /**
+     * @param integer $i column berapa yang di-render
+     * @return string me-return string berisi tag html
+     */
     public function renderColumn($i) {
         $column = 'renderColumn' . $i;
 
@@ -132,9 +132,11 @@ class ColumnField extends FormField {
         return $html;
     }
 
-	/**
-	 * @return fields Fungsi ini untuk me-render field dan atributnya.
-	*/
+    /**
+     * render
+     * Fungsi ini untuk me-render field dan atributnya
+     * @return mixed me-return sebuah field ColumnField dari hasil render 
+     */
     public function render() {
         return $this->renderInternal('template_render.php');
     }

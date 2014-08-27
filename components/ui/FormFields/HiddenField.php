@@ -4,9 +4,9 @@
  * @author rizky
  */
 class HiddenField extends FormField {
-	/**
-	 * @return array Fungsi ini akan me-return array property HiddenField.
-	 */
+    /**
+     * @return array me-return array property HiddenField.
+     */
     public function getFieldProperties() {
         return array (
             array (
@@ -32,23 +32,22 @@ class HiddenField extends FormField {
         );
     }
     
-	/** @var string $name */
+    /** @var string $name */
     public $name = '';
 	
-	/** @var string $value */
+    /** @var string $value */
     public $value = '';
 	
-	/** @var boolean $isHidden */
+    /** @var boolean $isHidden */
     public $isHidden = true;
-	
-	/** @var string $toolbarName */
+
+    /** @var string $toolbarName */
     public static $toolbarName = "Hidden Field";
-	
-	/** @var string $category */
+
+    /** @var string $category */
     public static $category = "User Interface";
-	
-	/** @var string $toolbarIcon */
+
+    /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-eye-slash";
-	
 
 }
