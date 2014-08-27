@@ -29,7 +29,9 @@
                                        href="<?php echo $this->createUrl('update', array('class' => '')); ?>{{subItem.class}}"
                                        ui-tree-handle ng-click="select(this)" ng-class="is_selected(this)">
                                         <i class="fa {{subItem.name == 'MainMenu' ? 'fa-sitemap' : 'fa-book'}} fa-nm"></i>
-                                        <span>{{subItem.name}}</span>
+                                        <div ng-if='subItem.exist == "no"' class="pull-right label label-success" style="margin-top:4px;">
+                                            New
+                                        </div><span>{{subItem.name}}</span>
                                     </a>
                                     
                                 </li>

@@ -69,7 +69,8 @@ class ControllerGeneratorController extends Controller{
     public function actionUpdate($class){
         $this->layout = "//layouts/blank";
         $target = ControllerGenerator::moduleControllerName($class);
-        $method = ControllerGenerator::listMethod($class,$target['controller']);
+        $gen = new ControllerGenerator($target['module'], $target['controller']);
+        $method = $gen->listMethod($class,$target['controller']);
         
         $properties = FormBuilder::load('AdminControllerEditor');
         $properties->registerScript();
