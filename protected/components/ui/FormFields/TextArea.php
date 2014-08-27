@@ -7,7 +7,7 @@
 class TextArea extends FormField {
 
     /**
-     * @return array Fungsi ini akan me-return array property TextArea.
+     * @return array me-return array property TextArea.
      */
     public function getFieldProperties() {
         return array(
@@ -161,28 +161,33 @@ class TextArea extends FormField {
     public static $toolbarIcon = "fa fa-sort-alpha-asc";
 
     /**
-     * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
+     * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
         return array('text-area.js');
     }
 
     /**
-     * @return string Fungsi ini akan me-return string class layout yang digunakan. Fungsi ini akan mengecek nilai property $layout untuk menentukan nama Class Layout.
+     * getLayoutClass
+     * Fungsi ini akan mengecek nilai property $layout untuk menentukan nama Class Layout
+     * @return string me-return string Class layout yang digunakan
      */
     public function getLayoutClass() {
         return ($this->layout == 'Vertical' ? 'form-vertical' : '');
     }
 
     /**
-     * @return string Fungsi ini akan me-return string class error jika terdapat error pada satu atau banyak attribute.
+     * @return string me-return string Class error jika terdapat error pada satu atau banyak attribute.
      */
     public function getErrorClass() {
         return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
     }
 
     /**
-     * @return string Fungsi ini akan me-return string class label. Fungsi akan mengecek $layout untuk menentukan layout yang digunakan. Fungsi juga me-load option label dari property $labelOptions. 
+     * getlabelClass
+     * Fungsi ini akan mengecek $layout untuk menentukan layout yang digunakan
+     * dan me-load option label dari property $labelOptions
+     * @return string me-return string Class label
      */
     public function getlabelClass() {
         if ($this->layout == 'Vertical') {
@@ -196,14 +201,18 @@ class TextArea extends FormField {
     }
 
     /**
-     * @return integer Fungsi ini akan me-return string class untuk menentukan width fields.
-     */
+     * getFieldColClass
+     * Fungsi ini untuk menetukan width field
+     * @return string me-return string class
+     */	
     public function getFieldColClass() {
         return "col-sm-" . $this->fieldWidth;
     }
 
     /**
-     * @return field Fungsi ini untuk me-render field dan atributnya.
+     * render
+     * Fungsi ini untuk me-render field dan atributnya
+     * @return mixed me-return sebuah field dan atribut checkboxlist dari hasil render
      */
     public function render() {
         $this->addClass('form-group form-group-sm', 'options');

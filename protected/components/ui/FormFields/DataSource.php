@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Class HiddenField
+ * Class DataSource
  * @author rizky
  */
 class DataSource extends FormField {
 
     /**
-     * @return array Fungsi ini akan me-return array property HiddenField.
+     * @return array me-return array property DataSource.
      */
     public function getFieldProperties() {
         return array (
@@ -62,9 +62,17 @@ class DataSource extends FormField {
 
     /** @var string $name */
     public $name = '';
+    
+    /** @var string $fieldType */
     public $fieldType = 'sql';
+    
+    /** @var string $sql */
     public $sql = '';
+    
+    /** @var string $php */
     public $php = '';
+    
+    /** @var string $params */
     public $params = '';
 
     /** @var boolean $isHidden */
@@ -79,6 +87,9 @@ class DataSource extends FormField {
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "glyphicon glyphicon-book";
 
+    /**
+     * @return array me-return array javascript yang di-include
+     */
     public function includeJS() {
         return array('data-source.js');
     }

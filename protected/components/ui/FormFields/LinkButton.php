@@ -5,56 +5,56 @@
  */
 class LinkButton extends FormField {
 
-	/** @var string $label */
+    /** @var string $label */
     public $label = '';
 	
-	/** @var string $url */
+    /** @var string $url */
     public $url = '#';
 	
-	/** @var array $urlparams */
+    /** @var array $urlparams */
     public $urlparams = array();
 	
-	/** @var string $group */
+    /** @var string $group */
     public $group = '';
 	
-	/** @var string $groupType */
+    /** @var string $groupType */
     public $groupType = 'ButtonGroup';
 	
-	/** @var string $buttonType */
+    /** @var string $buttonType */
     public $buttonType = 'primary';
 	
-	/** @var string $icon */
+    /** @var string $icon */
     public $icon = '';
 	
-	/** @var string $buttonSize */
+    /** @var string $buttonSize */
     public $buttonSize = '';
 	
-	/** @var array $options */
+    /** @var array $options */
     public $options = array();
 	
-	/** @var boolean $displayInline */
+    /** @var boolean $displayInline */
     public $displayInline = true;
 	
-	/** @var string $toolbarName */
+    /** @var string $toolbarName */
     public static $toolbarName = "Link Button";
 	
-	/** @var string $category */
+    /** @var string $category */
     public static $category = "User Interface";
 	
-	/** @var string $toolbarIcon */
+    /** @var string $toolbarIcon */
     public static $toolbarIcon = "glyphicon glyphicon-link";
 	
-	/**
-	 * @return array Fungsi ini akan me-return array javascript yang di-include. Defaultnya akan meng-include.
-	*/
+    /**
+     * @return array me-return array javascript yang di-include
+    */
     public function includeJS() {
         return array('link-button.js');
     }
 
-	/**
-	 * @param string $url sebuah rute url.
-	 * @return string Fungsi ini akan me-return constructed URL.  
-	*/
+    /**
+     * @param string $url sebuah rute url.
+     * @return string me-return string constructed URL.  
+     */
     public function createUrl($url) {
         if ($url == "#") {
             return "#";
@@ -63,9 +63,9 @@ class LinkButton extends FormField {
         }
     }
 
-	/**
-	 * @return array Fungsi ini akan me-return array property LinkButton.
-	 */
+    /**
+     * @return array me-return array property LinkButton.
+     */
     public function getFieldProperties() {
         return array (
             array (

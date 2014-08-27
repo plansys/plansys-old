@@ -4,9 +4,9 @@
  * @author rizky
  */
 class SubmitButton extends FormField {
-	/**
-	 * @return array Fungsi ini akan me-return array property SubmitButton.
-	 */
+    /**
+     * @return array me-return array property SubmitButton.
+     */
     public function getFieldProperties() {
         return array (
             array (
@@ -91,33 +91,35 @@ class SubmitButton extends FormField {
         );
     }
 
-	/** @var string $label */
+    /** @var string $label */
     public $label = '';
 	
-	/** @var string $buttonType */
+    /** @var string $buttonType */
     public $buttonType = 'primary';
 	
-	/** @var string $buttonSize */
+    /** @var string $buttonSize */
     public $buttonSize = 'btn-lg';
 	
-	/** @var string $buttonPosition */
+    /** @var string $buttonPosition */
     public $buttonPosition = 'center';
 	
-	/** @var array $options */
+    /** @var array $options */
     public $options = array();
 	
-	/** @var string $toolbarName */
+    /** @var string $toolbarName */
     public static $toolbarName = "Submit";
 	
-	/** @var string $category */
+    /** @var string $category */
     public static $category = "User Interface";
 	
-	/** @var string $toolbarIcon */
+    /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-hand-o-up";
 	
-	/**
-	 * @return field Fungsi ini untuk me-render field dan atributnya.
-	 */	
+    /**
+     * render
+     * Fungsi ini untuk me-render field dan atributnya
+     * @return mixed me-return sebuah field dan atribut SubmitButton dari hasil render
+     */
     public function render() {
         $this->addClass('form-control');
         return $this->renderInternal('template_render.php');

@@ -4,9 +4,9 @@
  * @author rizky
  */
 class SectionHeader extends FormField {
-	/**
-	 * @return array Fungsi ini akan me-return array property SectionHeader.
-	 */
+    /**
+     * @return array me-return array property SectionHeader.
+     */
     public function getFieldProperties() {
         return array (
             array (
@@ -24,19 +24,21 @@ class SectionHeader extends FormField {
         );
     }
 
-	/** @var string $title */
+    /** @var string $title */
     public $title = "Section";
 	
-	/** @var string $toolbarName */
+    /** @var string $toolbarName */
     public static $toolbarName = "Section Header";
 	
-	/** @var string $category */
+    /** @var string $category */
     public static $category = "Layout";
 	
-	/** @var string $toolbarIcon */
+    /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-archive";
 
-    
+    /**
+     * @return array me-return array javascript yang di-include
+     */
     public function includeJS() {
         return array(
             'section-header.js'
