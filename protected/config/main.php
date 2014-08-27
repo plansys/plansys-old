@@ -84,7 +84,7 @@ return array(
         'clientScript' => array(
             'packages' => array(
                 'jquery' => array(
-                    'basePath' => "webroot.static.js.lib",
+                    'basePath' => "webroot.static.plansys.js.lib",
                     'js' => array('jquery.js'),
                     'coreScriptPosition' => CClientScript::POS_HEAD
                 )

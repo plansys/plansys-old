@@ -17,7 +17,6 @@
                 return false;
             if ($scope.active.type != scope.modelClass)
                 return false;
-
             return true;
         }
         /*********************** TOOLBAR TABS ***********************/
@@ -36,7 +35,6 @@
         };
         $scope.layoutChanging = false;
         $scope.cacheBuster = 1;
-
         $scope.saveForm = function(force_reload) {
             if ($scope.layout != null) {
                 var name = $scope.layout.name;
@@ -58,7 +56,6 @@
                         }
 
                         $scope.saving = false;
-
                         if ($scope.layoutChanging) {
                             $scope.cacheBuster++;
                             $scope.layoutChanging = false;
@@ -183,14 +180,23 @@
         $scope.form = <?php echo json_encode($fb->form); ?>;
         $scope.fields = <?php echo json_encode($fieldData); ?>;
         $scope.saving = false;
-
         $scope.isPlaceholder = function(field) {
             if ((field.type == 'Text' && field.value == '<column-placeholder></column-placeholder>') || field.type == null)
                 return true;
         };
+        $scope.changeActiveName = function() {
+            $el = $(":focus");
+            var newName = $scope.formatName($scope.active.name);
+            var caretPos = $el.getCaretPosition() - ($scope.active.name.length - newName.length);
+            $el.val(newName).setCaretPosition(caretPos);
+            $scope.active.name = newName;
+            
+            $scope.detectDuplicate();
+            $scope.save();
+        }
         $scope.formatName = function(name) {
             if (typeof name != "undefined") {
-                return name.replace(/[^a-z0-9\s]/gi, '');
+                return name.replace(/[^a-z0-9A-Z_]/gi, '');
             } else {
                 return "";
             }
@@ -199,7 +205,6 @@
             $(".duplicate").addClass('ng-hide').each(function() {
                 if ($(this).attr('fname') == '')
                     return;
-
                 var name = ".d-" + $scope.formatName($(this).attr('fname'));
                 var $name = $(name);
                 if (name.trim() != ".d-") {
@@ -261,7 +266,6 @@
         $scope.deleteField = function() {
             $el = $($scope.activeTree.$parent.$element);
             $old = $scope.activeTree;
-
             $timeout(function() {
                 if ($el.next().length > 0 && !$el.next().hasClass('cpl')) {
                     $el.next().find(".form-field:eq(0)").click();
@@ -277,7 +281,6 @@
         }
         $scope.save = function() {
             $scope.saving = true;
-            
             $http.post('<?= $this->createUrl("save", array('class' => $class)); ?>', {fields: $scope.fields})
                     .success(function(data, status) {
                         $scope.saving = false;
@@ -287,13 +290,11 @@
                         $scope.saving = false;
                     });
         };
-
         var selectTimeout = null;
         $scope.select = function(item, event) {
             $(".form-field.active").removeClass("active");
             $(event.currentTarget).addClass("active");
             event.stopPropagation();
-
             clearTimeout(selectTimeout);
             selectTimeout = setTimeout(function() {
                 $scope.$apply(function() {
@@ -319,14 +320,11 @@
                 $scope.layout = null;
             });
         };
-
-
         $scope.moveToPrev = function(scope) {
             var index = scope.$parent.index();
             var clone = scope.$parent.$parentNodesScope.$modelValue[index];
             var count = scope.$parent.$parentNodesScope.$modelValue.length;
-            
-            if (index - 1 >= 0 ) {
+            if (index - 1 >= 0) {
                 scope.$parent.$parentNodesScope.$modelValue[index] = scope.$parent.$parentNodesScope.$modelValue[index - 1];
                 scope.$parent.$parentNodesScope.$modelValue[index - 1] = clone;
             }
@@ -338,24 +336,21 @@
             var index = scope.$parent.index();
             var clone = scope.$parent.$parentNodesScope.$modelValue[index];
             var count = scope.$parent.$parentNodesScope.$modelValue.length;
-            
             if (index + 1 <= count - 1) {
                 scope.$parent.$parentNodesScope.$modelValue[index] = scope.$parent.$parentNodesScope.$modelValue[index + 1];
                 scope.$parent.$parentNodesScope.$modelValue[index + 1] = clone;
             }
             $scope.save();
         }
-        
+
         $timeout(function() {
             $(document).trigger('formBuilderInit');
         }, 100);
-
         $('body').on('click', 'div[ui-header]', function(e) {
             if (e.target == this) {
                 $scope.unselectViaJquery();
             }
         });
-
         $('body').on('keydown', function(e) {
             if ($scope.active != null) {
                 if ($(':focus').parents('.form-builder-properties').length > 0) {
@@ -384,7 +379,6 @@
         });
         $('body').on('mouseenter', '.form-field', function(e) {
             var formfields = $(this).parentsUntil('div[ui-tree]', '.form-field');
-
             function setpos(el, i) {
                 $(el).find('.field-info:eq(0)').css({
                     'margin-top': (i * -1 * 20) + 'px',

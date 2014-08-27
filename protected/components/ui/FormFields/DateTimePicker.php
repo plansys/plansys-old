@@ -212,6 +212,8 @@ class DateTimePicker extends FormField
         $this->setOption('datepicker-mode', 'day', 'fieldOptions');
         $this->setOption('is-open', 'dateOpened', 'fieldOptions');
         
+        $this->addClass('text-center', 'fieldOptions');
+        
         $this->setOption('showButtonBar', false, 'datepickerOptions');
         
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);

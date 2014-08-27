@@ -49,7 +49,7 @@ class AdminFormProperties extends Form {
                     'z...' => '...',
                 ),
                 'listExpr' => 'array(\\\'full-width\\\',\\\'2-cols\\\',\\\'3-cols\\\',\\\'2-rows\\\')',
-                'iconTemplate' => '<img src=\\"{base_url}/static/img/columns/{icon}.png\\" />',
+                'iconTemplate' => '<img src=\\"{base_url}/static/plansys/img/columns/{icon}.png\\" />',
                 'fieldWidth' => '150',
                 'options' => array (
                     'ng-model' => '$parent.form.layout.name',

@@ -56,7 +56,7 @@
             </div>
         </div>
         <input type="text" class="invisible"
-               ng-model="value" id="<?= $this->htmlID ?>"
+               ng-model="value" id="<?= $this->renderID ?>"
                name="<?= $this->renderName ?>" value='<?= $this->value ?>'/>
         <!-- /field -->
 
