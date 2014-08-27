@@ -34,7 +34,10 @@
                                     <div class="badge">    
                                         {{item.param}}
                                     </div>
-                                    <?php $url = "{{getUrl('".$module."','".$controller."',item.name)}}";?>
+                                    <?php 
+                                    $controllerName = lcfirst(substr($controller, 0, -10));
+                                    $url = "{{getUrl('".$module."','".$controllerName."',item.name)}}";
+                                    ?>
                                     <a href="<?php echo $this->createUrl("/" . $url);?>" target="_blank" class="pull-right btn btn-default btn-xs" ng-if="item.param == null">
                                         <i class="fa fa-globe"></i>
                                     </a>
