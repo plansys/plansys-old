@@ -12,9 +12,10 @@ class InstallController extends Controller {
             $model->attributes = $_POST['AdminSetup'];
             Setting::set('db', $model->attributes);
             if ($this->validateDB()) {
-                if(file_exists(Setting::getRootPath() . '/installer/setup_db.lock')){
+		$dbPath = Yii::getPathOfAlias("application.installer") . DIRECTORY_SEPARATOR;
+                if(file_exists($dbPath . "setup_db.lock")){
                     $sqlSetDb = "USE `".Setting::get('db.dbname')."`;";
-                    $sqlContent = file_get_contents(Setting::getRootPath() . '/installer/database/plansys.sql');
+                    $sqlContent = file_get_contents($dbPath . 'database'.DIRECTORY_SEPARATOR.'plansys.sql');
                     $sqlContent = $sqlSetDb.' '.$sqlContent;
 
                     $conn = Setting::getDB();
@@ -22,7 +23,7 @@ class InstallController extends Controller {
                     $command = $db->prepare($sqlContent);
                     $command->execute();
                     
-                    unlink(Setting::getRootPath() . '/installer/setup_db.lock');
+                    unlink($dbPath . "setup_db.lock");
                 }
                 $this->redirect(array('site/login'));
             } else {
