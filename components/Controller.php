@@ -15,6 +15,12 @@ class Controller extends CController {
     public function url($path) {
         return Yii::app()->request->baseUrl . $path;
     }
+    
+    public function staticUrl($path) {
+        $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
+        $static = "/" . array_pop($dir) . "/static";
+        return $this->url($static . $path);
+    }
 
     public function renderForm($class, $model = null, $options = array()) {
         $fb = FormBuilder::load($class);

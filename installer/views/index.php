@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="content-language" content="en"/>
 <link rel="stylesheet" type="text/css" href="css/main.css" />
-<link rel="stylesheet" type="text/css" href="../../static/css/bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css" />
 <title>Plansys Requirement Checker</title>
 </head>
 
@@ -27,15 +27,27 @@ if appropriate PHP extensions have been loaded, and if php.ini file settings are
 </p>
 <?php
 function setup(){
-    if (!file_exists(dirname(__FILE__).'../../../../assets')) {
-        mkdir(dirname(__FILE__).'../../../../assets', 0777, true);
+    $basedir = explode(DIRECTORY_SEPARATOR, dirname(__FILE__));
+    $basedir = array_slice($basedir, 0, count($basedir) -2);
+    $plansys = array_pop($basedir);
+    $basedir = implode(DIRECTORY_SEPARATOR, $basedir) . DIRECTORY_SEPARATOR;
+
+    if (!file_exists($basedir .'assets')) {
+        mkdir($basedir . 'assets', 0777, true);
     }
-    if (!file_exists(dirname(__FILE__).'../../../../protected/runtime')) {
-        mkdir(dirname(__FILE__).'../../../../protected/runtime', 0777, true);
+    if (!file_exists($basedir . $plansys . DIRECTORY_SEPARATOR. 'runtime')) {
+        mkdir($basedir .  $plansys . DIRECTORY_SEPARATOR. 'runtime', 0777, true);
     }
-    if (!file_exists(dirname(__FILE__).'../../../../repo')) {
-        mkdir(dirname(__FILE__).'../../../../repo', 0777, true);
+    if (!file_exists($basedir . 'repo')) {
+        mkdir($basedir . 'repo', 0777, true);
     }
+
+    if (!file_exists($basedir . 'index.php')) {
+        $template = file_get_contents($basedir . $plansys . DIRECTORY_SEPARATOR . 'index.template.php');
+        $template = str_replace("{root}", $plansys, $template);
+        file_put_contents($basedir . "index.php" , $template);
+    }
+    
     touch('setup_db.lock');
 }
 ?>
@@ -48,7 +60,7 @@ function setup(){
         <td style="padding-left:15px;">Congratulations! Your server configuration satisfies all requirements by Plansys.</td>
     </tr>
     </table>
-    <br/><a href="../../" class="btn btn-primary">Database Setup</a>
+    <br/><a href="../../" class="btn btn-primary">Plansys Setup</a>
     </div>
 <?php elseif($result<0): ?>
     <?php setup();?>
@@ -59,7 +71,7 @@ function setup(){
         <td style="padding-left:15px;">Your server configuration satisfies the minimum requirements by Plansys. Please pay attention to the warnings listed below if your application will use the corresponding features.</td>
     </tr>
     </table>
-    <br/><a href="../../" class="btn btn-primary">Database Setup</a>
+    <br/><a href="../../" class="btn btn-primary">Plansys Setup</a>
     </div>
 <?php else: ?>
     <div class="alert alert-danger">
