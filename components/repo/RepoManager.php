@@ -3,11 +3,10 @@
 class RepoManager extends CComponent{
     public $repoPath;
     
-    public function listAll($dir = null){
+    public function browse($dir = null){
         if(is_null($dir)){
             $dir = $this->repoPath;   
         }
-        
         
         $list = array();
         
@@ -23,7 +22,7 @@ class RepoManager extends CComponent{
             }else{
                 $list[] = array(
                     'name' => $itemName,
-                    'type' => $this->fileInfo($l),
+                    'type' => $this->fileType($l),
                     'path' => $l
                 );
             }
@@ -39,12 +38,16 @@ class RepoManager extends CComponent{
         return $detail;
     }
     
-    public function fileInfo($file){
+    public function fileType($file){
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $fileType = finfo_file($finfo, $file);
         finfo_close($finfo);
         
         return $fileType;
+    }
+    
+    public function fileInfo($file){
+        
     }
     
     protected static function sortItem($a, $b){
@@ -65,6 +68,35 @@ class RepoManager extends CComponent{
         }
     }
     
+    public function editMeta(){
+        
+    }
+    
+    public function rename($oldName, $newName){
+        
+    }
+    
+    public function move($file, $path){
+        
+    }
+    
+    public function copy($file, $path){
+        
+    }
+    
+    public function upload($fileName, $path){
+        
+    }
+    
+    public function download($path){
+        
+    }
+    
+    public function search(){
+        
+    }
+
+
     public function __construct() {
         if(Setting::get("repo.path") == ''){
             $path = Setting::getRootPath().DIRECTORY_SEPARATOR.'repo';

@@ -3,7 +3,7 @@
 class UserController extends Controller {
     public function actionTest() {
         $tes = new RepoManager();
-        var_dump($tes->listAll());
+        var_dump($tes->browse());
         die();
     }
     
