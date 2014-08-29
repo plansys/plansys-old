@@ -87,6 +87,10 @@ class Setting {
     public static function getAppPath() {
         return Setting::$rootPath . DIRECTORY_SEPARATOR . Setting::get('app.dir');
     }
+    
+    public static function getPlansysDirName() {
+        return array_pop(explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application')));
+    }
 
     public static function getModulePath() {
         if (file_exists(Yii::getPathOfAlias('app.modules'))) {

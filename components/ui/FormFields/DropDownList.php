@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Class DropDownList
  * @author rizky
  */
 class DropDownList extends FormField {
+
     /**
      * @return array me-return array property DropDown.
      */
@@ -38,10 +40,6 @@ class DropDownList extends FormField {
                 'options' => array (
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
-                ),
-                'list' => array (
-                    'Horizontal' => 'Horizontal',
-                    'Vertical' => 'Vertical',
                 ),
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
@@ -94,11 +92,6 @@ class DropDownList extends FormField {
                 'options' => array (
                     'ng-model' => 'active.searchable',
                     'ng-change' => 'save()',
-                    'ng-delay' => '500',
-                ),
-                'list' => array (
-                    'Yes' => 'Yes',
-                    'No' => 'No',
                 ),
                 'listExpr' => 'array(\\"Yes\\",\\"No\\")',
                 'labelWidth' => '6',
@@ -111,11 +104,6 @@ class DropDownList extends FormField {
                 'options' => array (
                     'ng-model' => 'active.showOther',
                     'ng-change' => 'save()',
-                    'ng-delay' => '500',
-                ),
-                'list' => array (
-                    'Yes' => 'Yes',
-                    'No' => 'No',
                 ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'labelWidth' => '6',
@@ -151,7 +139,7 @@ class DropDownList extends FormField {
                 'fieldname' => 'listExpr',
                 'options' => array (
                     'ng-hide' => 'active.options[\'ps-list\'] != null',
-                    'ps-list' => 'active.list = result;save();'
+                    'ps-valid' => 'active.list = result;save();',
                 ),
                 'desc' => '<i class=\\"fa fa-warning\\"></i> WARNING: Using List Expression will replace <i>DropDown Item</i> with expression result',
                 'type' => 'ExpressionField',
@@ -176,55 +164,55 @@ class DropDownList extends FormField {
 
     /** @var string $label */
     public $label = '';
-	
+
     /** @var string $name */
     public $name = '';
-	
+
     /** @var string $value digunakan pada function checked */
     public $value = '';
-	
+
     /** @var array $options */
     public $options = array();
-	
+
     /** @var array $fieldOptions */
     public $fieldOptions = array();
-	
+
     /** @var array $labelOptions */
     public $labelOptions = array();
-	
+
     /** @var string $list */
     public $list = '';
-	
+
     /** @var string $listExpr digunakan pada function processExpr */
     public $listExpr = '';
-	
+
     /** @var string $layout */
     public $layout = 'Horizontal';
-	
+
     /** @var integer $labelWidth */
     public $labelWidth = 4;
-	
+
     /** @var integer $fieldWidth */
     public $fieldWidth = 8;
-	
+
     /** @var string $searchable */
     public $searchable = 'No';
-	
+
     /** @var string $showOther */
     public $showOther = 'No';
-	
+    
     /** @var string $otherLabel */
     public $otherLabel = 'Lainnya';
-	
+
     /** @var string $toolbarName */
     public static $toolbarName = "Drop Down List";
-	
+
     /** @var string $category */
     public static $category = "User Interface";
-	
+
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-caret-square-o-down";
-	
+
     /**
      * @return array me-return array javascript yang di-include
      */
@@ -236,20 +224,19 @@ class DropDownList extends FormField {
      * @return array me-return array hasil proses expression.
      */
     public function processExpr() {
+
         if ($this->listExpr != "") {
+            if (FormField::$inEditor) {
+                $this->list = '';
+                return array('list' => '');
+            }
+
             ## evaluate expression
             $this->list = $this->evaluate($this->listExpr, true);
 
             ## change sequential array to associative array
             if (is_array($this->list) && !Helper::is_assoc($this->list)) {
                 $this->list = Helper::toAssoc($this->list);
-            }
-            
-            if (FormField::$inEditor) {
-                if (count($this->list) > 5) {
-                    $this->list = array_slice($this->list, 0, 5);
-                    $this->list['z...'] = "...";
-                }
             }
         } else if (is_array($this->list) && !Helper::is_assoc($this->list)) {
             $this->list = Helper::toAssoc($this->list);
@@ -310,14 +297,14 @@ class DropDownList extends FormField {
      * getFieldColClass
      * Fungsi ini untuk menetukan width field
      * @return string me-return string class
-     */	
+     */
     public function getFieldColClass() {
         return "col-sm-" . $this->fieldWidth;
     }
 
     /**
      * @return string me-return string class
-     */	
+     */
     public function getFieldClass() {
         return "btn-group btn-block";
     }
@@ -339,7 +326,7 @@ class DropDownList extends FormField {
         }
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
-        
+
         $this->processExpr();
         return $this->renderInternal('template_render.php');
     }

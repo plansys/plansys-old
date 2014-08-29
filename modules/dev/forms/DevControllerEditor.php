@@ -48,7 +48,7 @@ class DevControllerEditor extends Form{
             '<hr>',
             array (
                 'label' => 'Submit',
-                'buttonSize' => 'btn-sm',
+                'buttonSize' => '',
                 'type' => 'SubmitButton',
             ),
         );

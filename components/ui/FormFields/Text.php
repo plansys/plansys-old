@@ -26,8 +26,21 @@ class Text extends FormField {
                 ),
                 'type' => 'TextArea',
             ),
+            array (
+                'label' => 'Render In Editor',
+                'name' => 'renderInEditor',
+                'options' => array (
+                    'ng-model' => 'active.renderInEditor',
+                    'ng-change' => 'save()',
+                ),
+                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
+                'fieldWidth' => '3',
+                'type' => 'DropDownList',
+            ),
         );
     }
+	
+    public $renderInEditor = 'Yes';
 
     /** @var string $value */
     public $value;

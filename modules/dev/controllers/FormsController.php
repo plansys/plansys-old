@@ -106,12 +106,7 @@ class FormsController extends Controller {
     }
 
     public function actionIndex() {
-        $forms = FormBuilder::listFile('forms.*', function($m) {
-                return array(
-                    'name' => str_replace(ucfirst($this->module->id), '', $m),
-                    'class' => $m
-                );
-            });
+        $forms = FormBuilder::listFile();
 
         $this->render('index', array(
             'forms' => $forms
@@ -125,7 +120,7 @@ class FormsController extends Controller {
 
     public function actionSave($class) {
         FormField::$inEditor = true;
-
+        
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
         $fb = FormBuilder::load($class);
@@ -135,12 +130,10 @@ class FormsController extends Controller {
                 Yii::app()->cache->delete('toolbarData');
                 Yii::app()->cache->delete('toolbarHtml');
             }
-
             //save posted fields
             $fb->fields = $post['fields'];
         }
         if (isset($post['form'])) {
-
             //save posted form
             $fb->form = $post['form'];
         }

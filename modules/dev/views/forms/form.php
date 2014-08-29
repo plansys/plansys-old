@@ -61,7 +61,7 @@
                                     
                                     <li ng-repeat="(name, icon) in toolbarSettings['icon']">
                                         <a href="#" dropdown-toggle value="{{name}}" 
-                                           ng-click="active.type = name">
+                                           ng-click="active.type = name; save();">
                                             <i class="{{icon}}"></i> {{name}}
                                         </a>
                                     </li>

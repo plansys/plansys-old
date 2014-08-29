@@ -23,6 +23,17 @@ class ActionBar extends FormField {
                 'type' => 'TextField',
             ),
             array (
+                'label' => 'Show Section Tab',
+                'name' => 'showSectionTab',
+                'options' => array (
+                    'ng-model' => 'active.showSectionTab',
+                    'ng-change' => 'save()',
+                ),
+                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
+                'fieldWidth' => '4',
+                'type' => 'DropDownList',
+            ),
+            array (
                 'label' => 'Title Breacrumb Link',
                 'fieldname' => 'titleLink',
                 'show' => 'Show',
@@ -48,6 +59,7 @@ class ActionBar extends FormField {
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-suitcase";
 
+    
     /** @var array $parseField */
     public $parseField = array(
         'linkBar' => 'renderLinkBar',
@@ -92,5 +104,7 @@ class ActionBar extends FormField {
     
     /** @var string $bottomRight */
     public $bottomRight = "";
+    
+    public $showSectionTab = "Yes";
 
 }

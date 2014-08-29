@@ -75,15 +75,6 @@ class Form extends CComponent {
                 'label' => ucfirst($k)
             );
         }
-        
-        array_unshift($array, array(
-            'type' => 'Text',
-            'value' => '<h2><center>{{ form.title }}</center></h2><hr/>'
-        ));
-        array_push($array, array(
-            'label' => 'Submit',
-            'type' => 'SubmitButton',
-        ));
         return $array;
     }
 

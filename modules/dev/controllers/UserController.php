@@ -13,6 +13,7 @@ class UserController extends Controller {
         $model->nip = "ASDASDASDAS";
 
         if (isset($_POST['DevUser'])) {
+            
             $model->attributes = $_POST['DevUser'];
             if ($model->save()) {
                 $this->redirect(array('index'));

@@ -1,6 +1,21 @@
 <?php
 
 class DevUser extends User {
+    public function getForm() {
+        return array (
+            'formTitle' => 'User',
+            'layout' => array (
+                'name' => 'full-width',
+                'data' => array (
+                    'col1' => array (
+                        'type' => 'mainform',
+                        'size' => '100',
+                    ),
+                ),
+            ),
+            'title' => 'Dev User',
+        );
+    }
     public function getFields() {
         return array (
             array (
@@ -23,11 +38,99 @@ class DevUser extends User {
                         'type' => 'LinkButton',
                     ),
                 ),
+                'showSectionTab' => 'No',
                 'type' => 'ActionBar',
             ),
             array (
-                'name' => 'dataSource1',
+                'name' => 'manteb',
+                'datasource' => 'dataSoqwd',
+                'filters' => array (
+                    array (
+                        'name' => 'testing',
+                        'label' => 'Testing',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'okedeh',
+                        'label' => 'Mantab',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                ),
+                'type' => 'DataFilter',
+            ),
+            array (
+                'name' => 'dataSoqwd',
                 'sql' => 'select * from p_user',
+                'params' => array (
+                    'where' => 'nip',
+                ),
+                'data' => array (
+                    array (
+                        'id' => '1',
+                        'nip' => '12345',
+                        'fullname' => 'Admin',
+                        'email' => 'admin@web.com',
+                        'phone' => '00000000',
+                        'username' => 'admin',
+                        'password' => '827ccb0eea8a706c4c34a16891f84e7b',
+                        'date' => '0000-00-00',
+                    ),
+                ),
                 'type' => 'DataSource',
             ),
             array (
@@ -37,11 +140,6 @@ class DevUser extends User {
                         'name' => 'date',
                         'fieldWidth' => 8,
                         'type' => 'DateTimePicker',
-                    ),
-                    array (
-                        'label' => 'Phone',
-                        'name' => 'phone',
-                        'type' => 'TextField',
                     ),
                     array (
                         'label' => 'Username',
@@ -58,16 +156,25 @@ class DevUser extends User {
                     array (
                         'label' => 'NIP',
                         'name' => 'nip',
+                        'options' => array (
+                            'ps-ds-sql' => '\'\'',
+                        ),
                         'type' => 'TextField',
                     ),
                     array (
-                        'label' => 'Password',
-                        'name' => 'password',
-                        'type' => 'TextField',
+                        'label' => 'Drop Down List',
+                        'name' => 'dropDown List1',
+                        'listExpr' => 'Helper::coba()',
+                        'type' => 'DropDownList',
+                    ),
+                    array (
+                        'label' => 'List View',
+                        'name' => 'phone',
+                        'fieldTemplate' => 'form',
+                        'type' => 'ListView',
                     ),
                     array (
                         'label' => 'Firstna',
-                        'fieldType' => 'password',
                         'options' => array (
                             'ps-sql' => 'name = :mantab',
                             'ps-sql-mantab' => 'model.username',
@@ -89,21 +196,5 @@ class DevUser extends User {
             '<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>',
         );
     }
-    public function getForm() {
-        return array (
-            'title' => 'User',
-            'layout' => array (
-                'name' => 'full-width',
-                'data' => array (
-                    'col1' => array (
-                        'type' => 'mainform',
-                        'size' => '100',
-                    ),
-                ),
-            ),
-            'options' => array (),
-            'includeJS' => array (),
-            'inlineJS' => 'user/user.js',
-        );
-    }
+    
 }

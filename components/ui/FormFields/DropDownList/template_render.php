@@ -1,5 +1,3 @@
-
-
 <div drop-down-list <?= $this->expandAttributes($this->options) ?>>
 
     <!-- label -->
@@ -67,7 +65,10 @@
                             {{ item.value}}
                         </a>
                         <div ng-if="isObject(item.value)" class="dropdown-menu-submenu">
-                            <div class="dropdown-menu-header">{{item.key}}</div>
+                            <div class="dropdown-menu-header">
+                                <div class="dropdown-menu-header-line"></div>
+                                <div class="dropdown-menu-header-text">{{item.key}}</div>
+                            </div>
                             <ul class="dropdown-menu inner" role="menu" 
                                 style="display:block;border-radius:0px;">
                                 <li ng-repeat-start="subitem in item.value track by $index" 

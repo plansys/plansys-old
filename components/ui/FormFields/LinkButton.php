@@ -132,16 +132,10 @@ class LinkButton extends FormField {
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
-                'list' => array (
-                    'primary' => 'Primary',
-                    'info' => 'Info',
-                    'success' => 'Success',
-                    'warning' => 'Warning',
-                    'danger' => 'Danger',
-                ),
                 'listExpr' => 'array(
      \'primary\' => \'Primary\',
      \'info\' => \'Info\',
+     \'default\' => \'Default\',
      \'success\' => \'Success\',
      \'warning\' => \'Warning\',
      \'danger\' => \'Danger\'
@@ -156,12 +150,6 @@ class LinkButton extends FormField {
                     'ng-model' => 'active.buttonSize',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
-                'list' => array (
-                    'btn-xs' => 'Very Small',
-                    'btn-sm' => 'Small',
-                    '' => 'Default',
-                    'btn-lg' => 'Large',
                 ),
                 'listExpr' => 'array(
     \'btn-xs\' => \'Very Small\',

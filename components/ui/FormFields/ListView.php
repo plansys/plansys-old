@@ -1,10 +1,11 @@
 <?php
+
 /**
  * Class CheckboxList
  * @author rizky
  */
-class ListView extends FormField
-{
+class ListView extends FormField {
+
     /**
      * @return array me-return array property TextField.
      */
@@ -32,6 +33,7 @@ class ListView extends FormField
                 ),
                 'list' => array (
                     'default' => 'Default',
+                    'form' => 'Form',
                 ),
                 'otherLabel' => 'Other...',
                 'type' => 'DropDownList',
@@ -44,17 +46,15 @@ class ListView extends FormField
                     'ng-show' => 'active.fieldTemplate == \'form\'',
                     'ng-change' => 'save();',
                 ),
-                'list' => array (
-                    '' => '-- Empty --',
-                    'application.modules.admin.forms.AdminFormLayoutProperties' => 'FormLayoutProperties',
-                    'application.modules.admin.forms.AdminFormProperties' => 'FormProperties',
-                    'application.modules.admin.forms.AdminMenuEditor' => 'MenuEditor',
-                    'application.modules.admin.forms.AdminSettings' => 'Settings',
-                    'z...' => '...',
-                ),
-                'listExpr' => 'FormBuilder::listForm(\\"admin\\")',
+                'listExpr' => 'FormBuilder::listForm()',
+                'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
+            '<div ng-show="active.fieldTemplate == \'form\'" class="well well-sm">
+Use this code to access current item: <br/> 
+<code>ng-model = value[$index]</code><br/>
+    <code> ng-change = updateListView() </code> 
+</div>',
             array (
                 'label' => 'Label',
                 'name' => 'label',
@@ -71,10 +71,6 @@ class ListView extends FormField
                 'options' => array (
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
-                ),
-                'list' => array (
-                    'Horizontal' => 'Horizontal',
-                    'Vertical' => 'Vertical',
                 ),
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
@@ -143,54 +139,53 @@ class ListView extends FormField
 
     /** @var string $label */
     public $label = '';
-	
+
     /** @var string $name */
     public $name = '';
-	
+
     /** @var string $fieldTemplate */
     public $fieldTemplate = 'default';
-	
+
     /** @var string $templateForm */
     public $templateForm = '';
-    
+
     /** @var string $value */
     public $value = '';
-	
+
     /** @var string $layout */
     public $layout = 'Horizontal';
-    
+
     /** @var string $layoutVertical */
     public $layoutVertical = '';
-	
+
     /** @var integer $labelWidth */
     public $labelWidth = 4;
-	
+
     /** @var integer $fieldWidth */
     public $fieldWidth = 8;
-	
+
     /** @var array $options */
     public $options = array();
-	
+
     /** @var array $labelOptions */
     public $labelOptions = array();
-	
+
     /** @var array $fieldOptions */
     public $fieldOptions = array();
-	
+
     /** @var string $toolbarName */
     public static $toolbarName = "List View";
-	
+
     /** @var string $category */
     public static $category = "Data & Tables";
-	
+
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "glyphicon glyphicon-align-justify";
-    
+
     /**
      * @return array me-return array javascript yang di-include
      */
-    public function includeJS()
-    {
+    public function includeJS() {
         return array('list-view.js');
     }
 
@@ -199,16 +194,14 @@ class ListView extends FormField
      * Fungsi ini akan mengecek nilai property $layout untuk menentukan nama Class Layout
      * @return string me-return string Class layout yang digunakan
      */
-    public function getLayoutClass()
-    {
+    public function getLayoutClass() {
         return ($this->layout == 'Vertical' ? 'form-vertical' : '');
     }
 
     /**
      * @return string me-return string Class error jika terdapat error pada satu atau banyak attribute.
      */
-    public function getErrorClass()
-    {
+    public function getErrorClass() {
         return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
     }
 
@@ -218,8 +211,7 @@ class ListView extends FormField
      * dan me-load option label dari property $labelOptions
      * @return string me-return string Class label
      */
-    public function getlabelClass()
-    {
+    public function getlabelClass() {
         if ($this->layout == 'Vertical') {
             $class = "control-label col-sm-12";
         } else {
@@ -234,19 +226,20 @@ class ListView extends FormField
      * getFieldColClass
      * Fungsi ini untuk menetukan width field
      * @return string me-return string class
-     */	
-    public function getFieldColClass()
-    {
+     */
+    public function getFieldColClass() {
         return "col-sm-" . $this->fieldWidth;
     }
+
+    protected $renderTemplateForm;
+    protected $templateAttributes = array();
 
     /**
      * render
      * Fungsi ini untuk me-render field dan atributnya
      * @return mixed me-return sebuah field dan atribut checkboxlist dari hasil render
      */
-    public function render()
-    {
+    public function render() {
         $this->addClass('form-group form-group-sm', 'options');
         $this->addClass($this->layoutClass, 'options');
         $this->addClass($this->errorClass, 'options');
@@ -255,7 +248,19 @@ class ListView extends FormField
         $this->fieldOptions['name'] = $this->name;
         $this->addClass('form-control', 'fieldOptions');
 
+
+        Yii::import($this->templateForm);
+        $class = array_pop(explode(".", $this->templateForm));
+
+        if ($this->fieldTemplate == "form" && class_exists($class)) {
+            $fb = FormBuilder::load($class);
+            $model = new $class;
+            $this->templateAttributes = $model->attributes;
+            $this->renderTemplateForm = $fb->render($this->templateAttributes, array('wrapForm' => false));
+        }
+
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
         return $this->renderInternal('template_render.php');
     }
+
 }

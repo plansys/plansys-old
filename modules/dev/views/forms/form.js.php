@@ -95,7 +95,8 @@
         };
         $scope.openToolbarType = function(open) {
             if (open) {
-                $(".toolbar-type li a[value='" + $scope.active.type + "']").focus();
+                $(".toolbar-type li.hover").removeClass('hover');
+                $(".toolbar-type li a[value='" + $scope.active.type + "']").focus().parent().addClass('hover');
             }
         }
         /*********************** LAYOUT ********************************/
@@ -176,6 +177,7 @@
         };
         /*********************** FIELDS ********************************/
         $scope.modelFieldList = <?php echo json_encode(FormsController::$modelFieldList); ?>;
+        $scope.dataSourceList = {};
         $scope.toolbarSettings = <?php echo json_encode(FormField::settings($formType)); ?>;
         $scope.form = <?php echo json_encode($fb->form); ?>;
         $scope.fields = <?php echo json_encode($fieldData); ?>;
@@ -184,18 +186,31 @@
             if ((field.type == 'Text' && field.value == '<column-placeholder></column-placeholder>') || field.type == null)
                 return true;
         };
+        $scope.getDataSourceList = function() {
+            var dslist = {
+                '': '-- EMPTY --',
+                '---': '---'
+            };
+            for (i in $scope.fields) {
+                if ($scope.fields[i].type == 'DataSource') {
+                    length++;
+                    dslist[$scope.fields[i].name] = $scope.fields[i].name;
+                }
+            }
+            $scope.dataSourceList = dslist;
+        }
         $scope.changeActiveName = function() {
             $el = $(":focus");
             var newName = $scope.formatName($scope.active.name);
             var caretPos = $el.getCaretPosition() - ($scope.active.name.length - newName.length);
             $el.val(newName).setCaretPosition(caretPos);
             $scope.active.name = newName;
-            
+
             $scope.detectDuplicate();
             $scope.save();
         }
         $scope.formatName = function(name) {
-            if (typeof name != "undefined") {
+            if (typeof name != "undefined" && name != null) {
                 return name.replace(/[^a-z0-9A-Z_]/gi, '');
             } else {
                 return "";
@@ -292,9 +307,17 @@
         };
         var selectTimeout = null;
         $scope.select = function(item, event) {
+            event.stopPropagation();
+            event.preventDefault();
+            
+            if (item.$modelValue.type == 'DataFilter') {
+                $scope.getDataSourceList();
+            }
+            
             $(".form-field.active").removeClass("active");
             $(event.currentTarget).addClass("active");
-            event.stopPropagation();
+            $(".toolbar-type").removeClass('open');
+
             clearTimeout(selectTimeout);
             selectTimeout = setTimeout(function() {
                 $scope.$apply(function() {
@@ -356,9 +379,13 @@
                 if ($(':focus').parents('.form-builder-properties').length > 0) {
                     return
                 }
-
                 $el = $($scope.activeTree.$parent.$element);
                 switch (e.which) {
+                    case 9:
+                        $("#toolbar-properties input, #toolbar-properties button").eq(0).focus();
+                        e.preventDefault();
+                        e.stopPropagation();
+                        break;
                     case 46:
                         $scope.deleteField();
                         break;

@@ -27,10 +27,16 @@ app.directive('dropDownList', function($timeout) {
 
                 $scope.dropdownKeypress = function(e) {
                     if (e.which === 13) {
-                        $timeout(function() {
-                            $el.find("li.hover a").click();
-                            $scope.isOpen = false;
-                        }, 0);
+                        if ($scope.isOpen) {
+                            $timeout(function() {
+                                $el.find("li.hover a").click();
+                                $scope.isOpen = false;
+                            }, 0);
+                        } else {
+                            $timeout(function() {
+                                $scope.isOpen = true;
+                            }, 0);
+                        }
 
                         e.preventDefault();
                         e.stopPropagation();
@@ -47,7 +53,7 @@ app.directive('dropDownList', function($timeout) {
 
                         if ($a.length > 0 && $a.is("li")) {
                             $el.find("li.hover").removeClass("hover")
-                            $a.addClass("hover");
+                            $a.addClass("hover").find("a").focus();
                         }
                         e.preventDefault();
                         e.stopPropagation();
@@ -62,7 +68,7 @@ app.directive('dropDownList', function($timeout) {
                         }
                         if ($a.length > 0 && $a.is("li")) {
                             $el.find("li.hover").removeClass("hover")
-                            $a.addClass("hover");
+                            $a.addClass("hover").find("a").focus();
                         }
                         e.preventDefault();
                         e.stopPropagation();
@@ -73,11 +79,6 @@ app.directive('dropDownList', function($timeout) {
                     $scope.updateInternal(value);
                     $timeout(function() {
                         ctrl.$setViewValue($scope.value);
-                        if ($scope.showOther && !$scope.itemExist()) {
-                            $el.find('.dropdown-other-type').focus();
-                        } else {
-                            $el.focus();
-                        }
                     }, 0);
                 };
                 $scope.updateInternal = function(value) {
@@ -107,9 +108,10 @@ app.directive('dropDownList', function($timeout) {
 
                 $scope.toggled = function(open) {
                     if (open) {
+                        $scope.openedInField = true;
                         if ($el.find("li a[value='" + $scope.value + "']").length > 0) {
                             $el.find("li.hover").removeClass("hover")
-                            $el.find("li a[value='" + $scope.value + "']").parent().addClass('hover');
+                            $el.find("li a[value='" + $scope.value + "']").focus().parent().addClass('hover');
 
                             if ($scope.searchable) {
                                 $timeout(function() {
@@ -120,7 +122,9 @@ app.directive('dropDownList', function($timeout) {
                             $el.find("li a").blur();
                             $el.find(".dropdown-menu").scrollTop(0);
                         }
-                        $el.focus();
+                    } else if ($scope.openedInField) {
+                        $scope.openedInField = true;
+                        $el.find("[dropdown] button").focus();
                     }
                 };
                 $scope.changeOther = function() {
@@ -176,6 +180,7 @@ app.directive('dropDownList', function($timeout) {
                 $scope.value = $el.find("data[name=value]").html().trim();
                 $scope.inEditor = typeof $scope.$parent.inEditor != "undefined";
                 $scope.isOpen = false;
+                $scope.openedInField = false;
 
                 $scope.search = "";
                 //if ngModel is present, use that instead of value from php

@@ -41,15 +41,8 @@ class DevFormProperties extends Form {
             array (
                 'label' => 'Form Layout',
                 'name' => 'layoutName',
-                'list' => array (
-                    'full-width' => 'full-width',
-                    '2-cols' => '2-cols',
-                    '3-cols' => '3-cols',
-                    '2-rows' => '2-rows',
-                    'z...' => '...',
-                ),
                 'listExpr' => 'array(\\\'full-width\\\',\\\'2-cols\\\',\\\'3-cols\\\',\\\'2-rows\\\')',
-                'iconTemplate' => '<img src=\\"{base_url}/protected/static/img/columns/{icon}.png\\" />',
+                'iconTemplate' => '<img src=\\"{plansys_url}/static/img/columns/{icon}.png\\" />',
                 'fieldWidth' => '150',
                 'options' => array (
                     'ng-model' => '$parent.form.layout.name',
