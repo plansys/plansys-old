@@ -11,29 +11,115 @@ class UploadFile extends FormField{
                     'ps-list' => 'modelFieldList',
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
-                'list' => array (
-                    'name' => 'name',
-                    'value' => 'value',
-                    'isHidden' => 'isHidden',
-                    'parseField' => 'parseField',
-                    'renderID' => 'renderID',
-                ),
                 'listExpr' => 'FormsController::$modelFieldList',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
+            array (
+                'label' => 'Label',
+                'name' => 'label',
+                'options' => array (
+                    'ng-model' => 'active.label',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                ),
+                'type' => 'TextField',
+            ),
+            array (
+                'label' => 'File Type',
+                'name' => 'fileType',
+                'type' => 'TextField',
+            ),
+            array (
+                'label' => 'Upload Path',
+                'name' => 'uploadPath',
+                'type' => 'TextField',
+            ),
+            array (
+                'label' => 'Layout',
+                'name' => 'layout',
+                'options' => array (
+                    'ng-model' => 'active.layout',
+                    'ng-change' => 'save();',
+                ),
+                'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'column1' => array (
+                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'label' => 'Label Width',
+                        'name' => 'labelWidth',
+                        'layout' => 'Vertical',
+                        'labelWidth' => '12',
+                        'fieldWidth' => '11',
+                        'options' => array (
+                            'ng-model' => 'active.labelWidth',
+                            'ng-change' => 'save()',
+                            'ng-delay' => '500',
+                            'ng-disabled' => 'active.layout == \'Vertical\'',
+                        ),
+                        'type' => 'TextField',
+                    ),
+                ),
+                'column2' => array (
+                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'label' => 'Field Width',
+                        'name' => 'fieldWidth',
+                        'layout' => 'Vertical',
+                        'labelWidth' => '12',
+                        'fieldWidth' => '11',
+                        'options' => array (
+                            'ng-model' => 'active.fieldWidth',
+                            'ng-change' => 'save()',
+                            'ng-delay' => '500',
+                        ),
+                        'type' => 'TextField',
+                    ),
+                ),
+                'type' => 'ColumnField',
+            ),
+            array (
+                'label' => 'Options',
+                'fieldname' => 'options',
+                'type' => 'KeyValueGrid',
+            ),
+            array (
+                'label' => 'Label Options',
+                'fieldname' => 'labelOptions',
+                'type' => 'KeyValueGrid',
+            ),
+            array (
+                'label' => 'Field Options',
+                'fieldname' => 'fieldOptions',
+                'type' => 'KeyValueGrid',
+            ),
         );
     }
+
     
-    /** @var string $name */
+    public $label = '';
+	
     public $name = '';
 	
-    /** @var string $value */
-    public $value = '';
+    public $layout = 'Horizontal';
 	
-    /** @var boolean $isHidden */
-    public $isHidden = true;
-
+    public $labelWidth = 4;
+   
+    public $fieldWidth = 4;
+    
+    public $uploadPath = '';
+    
+    public $fileType = '';
+    
+    public $options = array();
+    
+    public $labelOptions = array();
+    
+    public $fieldOptions = array();
+    
     /** @var string $toolbarName */
     public static $toolbarName = "Upload File";
 
@@ -41,6 +127,52 @@ class UploadFile extends FormField{
     public static $category = "User Interface";
 
     /** @var string $toolbarIcon */
-    public static $toolbarIcon = "fa fa-eye-slash";
+    public static $toolbarIcon = "fa fa-upload";
+    
+    public function includeJS()
+    {
+        return array();
+    }
+    
+    public function getLayoutClass()
+    {
+        return ($this->layout == 'Vertical' ? 'form-vertical' : '');
+    }
+    
+    public function getErrorClass()
+    {
+        return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
+    }
+    
+    public function getlabelClass()
+    {
+        if ($this->layout == 'Vertical') {
+            $class = "control-label col-sm-12";
+        } else {
+            $class = "control-label col-sm-{$this->labelWidth}";
+        }
+
+        $class .= @$this->labelOptions['class'];
+        return $class;
+    }
+    
+    public function getFieldColClass()
+    {
+        return "col-sm-" . $this->fieldWidth;
+    }
+    
+    public function render()
+    {
+        $this->addClass('form-group form-group-sm', 'options');
+        $this->addClass($this->layoutClass, 'options');
+        $this->addClass($this->errorClass, 'options');
+
+        $this->fieldOptions['id'] = $this->renderID;
+        $this->fieldOptions['name'] = $this->renderName;
+        $this->addClass('form-control', 'fieldOptions');
+
+        $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        return $this->renderInternal('template_render.php');
+    }
 }
 ?>

@@ -29,6 +29,10 @@ class DevUser extends User {
                         'type' => 'LinkButton',
                     ),
                     array (
+                        'label' => 'Link Button',
+                        'type' => 'LinkButton',
+                    ),
+                    array (
                         'label' => 'Cancel',
                         'buttonType' => 'default',
                         'options' => array (
@@ -116,6 +120,7 @@ class DevUser extends User {
             array (
                 'name' => 'dataSoqwd',
                 'sql' => 'select * from p_user',
+                'php' => 'Helper::coba();',
                 'params' => array (
                     'where' => 'nip',
                 ),
@@ -134,6 +139,11 @@ class DevUser extends User {
                 'type' => 'DataSource',
             ),
             array (
+                'label' => 'Tes Upload',
+                'name' => 'uploadFile1',
+                'type' => 'UploadFile',
+            ),
+            array (
                 'column1' => array (
                     array (
                         'label' => 'Date',
@@ -144,6 +154,7 @@ class DevUser extends User {
                     array (
                         'label' => 'Username',
                         'name' => 'username',
+                        'fieldWidth' => '',
                         'type' => 'TextField',
                     ),
                     array (
