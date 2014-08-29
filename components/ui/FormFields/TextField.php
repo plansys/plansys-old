@@ -24,6 +24,16 @@ class TextField extends FormField
                 'type' => 'DropDownList',
             ),
             array (
+                'label' => 'Label',
+                'name' => 'label',
+                'options' => array (
+                    'ng-model' => 'active.label',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                ),
+                'type' => 'TextField',
+            ),
+            array (
                 'label' => 'Field Type',
                 'name' => 'fieldType',
                 'options' => array (
@@ -39,25 +49,11 @@ class TextField extends FormField
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'Label',
-                'name' => 'label',
-                'options' => array (
-                    'ng-model' => 'active.label',
-                    'ng-change' => 'save()',
-                    'ng-delay' => '500',
-                ),
-                'type' => 'TextField',
-            ),
-            array (
                 'label' => 'Layout',
                 'name' => 'layout',
                 'options' => array (
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
-                ),
-                'list' => array (
-                    'Horizontal' => 'Horizontal',
-                    'Vertical' => 'Vertical',
                 ),
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
@@ -192,7 +188,7 @@ class TextField extends FormField
 	
     /** @var array $fieldOptions */
     public $fieldOptions = array();
-	
+    
     /** @var string $toolbarName */
     public static $toolbarName = "Text Field";
 	

@@ -228,6 +228,7 @@ class TextArea extends FormField {
         $this->addClass('form-control', 'fieldOptions');
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        $this->setDefaultOption('spellcheck', "false", $this->fieldOptions);
 
         return $this->renderInternal('template_render.php');
     }

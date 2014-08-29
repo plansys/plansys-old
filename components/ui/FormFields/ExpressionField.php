@@ -10,7 +10,7 @@ class ExpressionField extends FormField {
     public function getFieldProperties() {
         return array (
             array (
-                'label' => 'Active FieldName:',
+                'label' => 'Field Name:',
                 'name' => 'fieldname',
                 'options' => array (
                     'ng-model' => 'active.fieldname',
@@ -19,8 +19,6 @@ class ExpressionField extends FormField {
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
                 'list' => array (),
-                'layout' => 'Vertical',
-                'fieldWidth' => '12',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
@@ -94,7 +92,7 @@ class ExpressionField extends FormField {
 	
     /** @var string $desc */
     public $desc = '';
-	
+    
     /** @var array $labelOptions */
     public $labelOptions = array();
 	

@@ -10,7 +10,7 @@ class KeyValueGrid extends FormField {
     public function getFieldProperties() {
         return array (
             array (
-                'label' => 'Active FieldName',
+                'label' => 'Field Name',
                 'name' => 'fieldname',
                 'options' => array (
                     'ng-model' => 'active.fieldname',
@@ -19,9 +19,6 @@ class KeyValueGrid extends FormField {
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
                 'list' => array (),
-                'layout' => 'Vertical',
-                'labelWidth' => '12',
-                'fieldWidth' => '12',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),

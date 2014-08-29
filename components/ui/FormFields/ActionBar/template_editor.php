@@ -11,7 +11,7 @@
         </ol>
     </div>
     <div class="clearfix"></div>
-    <div class="ab-editor-tab">
+    <div class="ab-editor-tab" ng-if="field.showSectionTab == 'Yes'">
         <a href="#" class="active">General</a>
         <div class="clearfix"></div>
     </div>

@@ -1,46 +1,48 @@
 <?php
+
 /**
  * Class RadioButtonList
  * @author rizky
  */
 class RadioButtonList extends FormField {
+
     /**
      * @return array me-return array property RadioButton.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
-                'list' => array (),
+                'list' => array(),
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                     'ng-delay' => '500',
                 ),
-                'list' => array (
+                'list' => array(
                     'Horizontal' => 'Horizontal',
                     'Vertical' => 'Vertical',
                 ),
@@ -48,15 +50,15 @@ class RadioButtonList extends FormField {
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Item Layout',
                 'name' => 'itemLayout',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.itemLayout',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
-                'list' => array (
+                'list' => array(
                     'Horizontal' => 'Horizontal',
                     'Vertical' => 'Vertical',
                     'ButtonGroup' => 'ButtonGroup',
@@ -65,11 +67,11 @@ class RadioButtonList extends FormField {
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Label Width',
                 'name' => 'labelWidth',
                 'fieldWidth' => '4',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.labelWidth',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -77,36 +79,36 @@ class RadioButtonList extends FormField {
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Radio Button Item',
                 'fieldname' => 'list',
-                'options' => array (
+                'options' => array(
                     'ng-hide' => 'active.listExpr != \'\' || active.options[\'ps-list\'] != null',
                 ),
                 'allowSpaceOnKey' => 'Yes',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'List Expression',
                 'fieldname' => 'listExpr',
-                'options' => array (
+                'options' => array(
                     'ng-hide' => 'active.options[\'ps-list\'] != null',
                     'ps-valid' => 'active.list = result;save();',
                 ),
                 'desc' => '<i class=\\"fa fa-warning\\"></i> WARNING: Using List Expression will replace <i>Radio Button Item</i> with expression result',
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'Options',
                 'fieldname' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Label Options',
                 'fieldname' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Field Options',
                 'fieldname' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
@@ -116,49 +118,49 @@ class RadioButtonList extends FormField {
 
     /** @var string $label */
     public $label = '';
-	
+
     /** @var string $name */
     public $name = '';
-	
+
     /** @var string $value digunakan pada function checked */
     public $value = '';
-	
+
     /** @var string $list */
     public $list = '';
-	
+
     /** @var string $listExpr digunakan pada function processExpr */
     public $listExpr = '';
-	
+
     /** @var string $layout */
     public $layout = 'Horizontal';
-	
+
     /** @var string $itemLayout */
     public $itemLayout = 'Vertical';
-	
+
     /** @var integer $labelWidth */
     public $labelWidth = 4;
-	
+
     /** @var array $options */
     public $options = array();
-	
+
     /** @var array $labelOptions */
     public $labelOptions = array();
-	
+
     /** @var array $fieldOptions */
     public $fieldOptions = array();
-	
+
     /** @var string $toolbarName */
     public static $toolbarName = "RadioButton List";
-	
+
     /** @var string $category */
     public static $category = "User Interface";
-	
+
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-dot-circle-o";
-	
+
     /**
      * @return array me-return array javascript yang di-include
-    */
+     */
     public function includeJS() {
         return array('radio-button-list.js');
     }
@@ -168,19 +170,17 @@ class RadioButtonList extends FormField {
      */
     public function processExpr() {
         if ($this->listExpr != "") {
+            if (FormField::$inEditor) {
+                $this->list = '';
+                return array('list' => '');
+            }
+
             ## evaluate expression
             $this->list = $this->evaluate($this->listExpr, true);
-            
+
             ## change sequential array to associative array
             if (is_array($this->list) && !Helper::is_assoc($this->list)) {
                 $this->list = Helper::toAssoc($this->list);
-            }
-
-            if (FormField::$inEditor) {
-                if (count($this->list) > 5) {
-                    $this->list = array_slice($this->list, 0, 5);
-                    $this->list['z...'] = "...";
-                }
             }
         } else if (is_array($this->list) && !Helper::is_assoc($this->list)) {
             $this->list = Helper::toAssoc($this->list);
@@ -234,11 +234,11 @@ class RadioButtonList extends FormField {
         return $value == $this->value ? 'checked="checked"' : '';
     }
 
-     /**
+    /**
      * getFieldColClass
      * Fungsi ini untuk menetukan width field
      * @return string me-return string class
-     */	
+     */
     public function getFieldColClass() {
         return "col-sm-" . ($this->layout == 'Vertical' ? 12 : 12 - $this->labelWidth);
     }
@@ -259,7 +259,7 @@ class RadioButtonList extends FormField {
         }
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
-        
+
         $this->processExpr();
         return $this->renderInternal('template_render.php');
     }

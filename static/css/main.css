@@ -719,19 +719,28 @@ li:hover > .item-btn {
 
 /********************************* LIST VIEW ***********************************/
 .list-view-item {
-    border:1px dashed #ececeb;padding:3px 3px 2px 3px;
-    display:table;
+    padding:3px 3px 2px 3px;
     width:100%;
-    margin-left:-5px;
-    margin-bottom:-1px;
+    margin-bottom:5px;
+    border:1px solid #ececeb;
+    padding:0px;
+    background:#fafafa;
+    border-radius:3px;
 }
-
 
 .list-view-item-remove {
     opacity:.5;
-    
     border:0px;
     background:none;
+    position:absolute;margin-left:-21px;z-index:1;margin-top:2px;
+}
+
+.list-view-item-container {
+    margin-right:22px;
+    padding:4px 4px 4px 4px;
+    border-right:1px solid #ececeb;
+    background:white;
+    min-height:25px;
 }
 
 .list-view-add {
@@ -971,6 +980,58 @@ li:hover > .item-btn {
 .keyvalue .json {
     background:#333;
     color:#fff;
+}
+
+/********************************** DATA FILTER **************************************/
+.data-filter {
+    margin:0px -15px 10px -15px;
+    border-top:1px solid #e2e2e2;
+    border-bottom:1px solid #e2e2e2;
+    background:#efefef;
+    -webkit-box-shadow: inset 0 2px 1px rgba(0,0,0,0.02);
+    -moz-box-shadow: inset 0 2px 1px rgba(0,0,0,0.02);
+    box-shadow: inset 0 2px 1px rgba(0,0,0,0.02);
+}
+
+.filter-criteria {
+    padding:8px;
+    font-size:13px;
+}
+
+.filter-td {
+    padding:10px 10px 5px 10px;
+}
+
+.filter-manage {
+    width:0px;
+    padding:10px 13px;
+    border-right:1px solid #ddd;
+    background:rgba(255,255,255,.3);
+}
+
+.filter-item-container {
+    padding-bottom:5px;
+    float:left;
+}
+
+.filter-manage label {
+    font-weight:normal;
+    padding:0px;
+    margin:0px;
+    cursor:pointer;
+}
+
+
+.filter-manage a {
+    padding:3px 20px 3px 10px !important;
+}
+
+.filter-manage .btn {
+    color:#aaa;
+}
+
+.filter-manage .btn .caret {
+    margin:-2px -2px 0px 4px;
 }
 
 /********************************** FORMS **************************************/
@@ -1302,24 +1363,37 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
 }
 
 div[dropdown] button:focus {
-  border-color: #66afe9;
-  outline: 0;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
-          box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+    border-color: #66afe9;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
 }
 
 div[dropdown] > .dropdown-menu {
     min-width:50px;
-    padding:0px;
+    padding:4px 0px;
     overflow-x:hidden;
     min-width:100%;
 }
 
-
-
 div[dropdown] .dropdown-menu-header {
-    padding:5px 0px 0px 20px;
+    padding:5px 0px 0px 10px;
+    font-weight:bold;
+    font-size:11px;
+    color:#999;
     text-transform:uppercase;
+}
+
+div[dropdown] .dropdown-menu-header-line {
+    border-bottom: 1px solid #ececeb;
+    margin-left:-10px;
+    margin-top:5px;
+}
+div[dropdown] .dropdown-menu-header-text {
+    float:left;
+    margin-top:-7px;
+    background:white;
+    padding:0px 5px;
 }
 
 div[dropdown] .dropdown-menu-submenu {
@@ -1438,6 +1512,7 @@ textarea.force-rows {
 .control-label {
     font-weight:normal;
     cursor:pointer;
+    font-size:13px;
 }
 .form-vertical .control-label {
     display:block;

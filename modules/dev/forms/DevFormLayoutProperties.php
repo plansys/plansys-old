@@ -49,9 +49,6 @@ class DevFormLayoutProperties extends Form {
                     'ng-change' => 'changeLayoutProperties()',
                     'ng-show' => 'layout.type == \'menu\'',
                 ),
-                'list' => array (
-                    '' => '-- Empty --',
-                ),
                 'listExpr' => 'MenuTree::listHtml($model->module)',
                 'type' => 'DropDownList',
             ),
@@ -71,9 +68,6 @@ class DevFormLayoutProperties extends Form {
                     'ng-model' => 'layout.class',
                     'ng-change' => 'changeLayoutProperties()',
                     'ng-show' => 'layout.type == \'form\'',
-                ),
-                'list' => array (
-                    '' => '-- Empty --',
                 ),
                 'listExpr' => 'FormBuilder::listForm($model->module)',
                 'type' => 'DropDownList',

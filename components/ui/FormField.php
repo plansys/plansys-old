@@ -63,8 +63,8 @@ class FormField extends CComponent {
         'Layout' => array(
             'icon' => 'fa-image',
         ),
-        'Developer Fields' => array(
-            'icon' => 'fa-warning',
+        'Data & Tables' => array(
+            'icon' => 'fa-th-large',
         ),
     );
 
@@ -412,18 +412,24 @@ class FormField extends CComponent {
     public static function all() {
         $ffdir = Yii::getPathOfAlias('application.components.ui.FormFields') . DIRECTORY_SEPARATOR;
         $dir = glob($ffdir . "*.php");
-        return array_map(function ($d) use ($ffdir) {
+
+        $return = array();
+        foreach ($dir as $k => $d) {
             $class = str_replace($ffdir, "", $d);
             $class = str_replace(".php", "", $class);
 
-            $a = new $class;
-            $array = $a->attributes;
-            $array['name'] = $class::$toolbarName;
-            if (isset($array['label'])) {
-                $array['label'] = $class::$toolbarName;
+            if (property_exists($class, 'toolbarName')) {
+                $a = new $class;
+                $array = $a->attributes;
+                $array['name'] = $class::$toolbarName;
+                if (isset($array['label'])) {
+                    $array['label'] = $class::$toolbarName;
+                }
+
+                $return [] = $array;
             }
-            return $array;
-        }, $dir);
+        }
+        return $return;
     }
 
     /**
@@ -454,13 +460,10 @@ class FormField extends CComponent {
             $class = str_replace($ffdir, "", $d);
             $class = str_replace(".php", "", $class);
 
-            if (($formType == 'ActiveRecord' || $formType == 'Form') &&
-                $class::$category == 'Developer Fields'
-            )
-                continue;
-
-            $result['icon'][$class] = $class::$toolbarIcon;
-            $result['category'][$class] = $class::$category;
+            if (property_exists($class, 'toolbarIcon') && property_exists($class, 'category')) {
+                $result['icon'][$class] = $class::$toolbarIcon;
+                $result['category'][$class] = $class::$category;
+            }
         }
         
         return $result;

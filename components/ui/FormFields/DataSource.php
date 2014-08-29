@@ -68,19 +68,19 @@ class DataSource extends FormField {
 
     /** @var string $name */
     public $name = '';
-    
+
     /** @var string $fieldType */
     public $fieldType = 'sql';
-    
+
     /** @var string $sql */
     public $sql = '';
-    
+
     /** @var string $php */
     public $php = '';
-    
+
     /** @var string $params */
     public $params = '';
-    
+
     /** @var string $data */
     public $data;
 
@@ -96,21 +96,40 @@ class DataSource extends FormField {
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "glyphicon glyphicon-book";
 
+    public function generateTemplate($sql) {
+        preg_match_all("/\[(.*?)\]/", $sql, $matches);
+        $params = $matches[1];
+
+        foreach ($params as $param) {
+            $field = $this->builder->findField(array('name' => $this->params[$param]));
+            if (isset($field['options']['ps-ds-sql'])) {
+                $psql = $this->evaluate($field['options']['ps-ds-sql'], true);
+                $sql = str_replace("[{$param}]", $psql, $sql);
+            }
+        }
+
+        return $sql;
+    }
+
+    public function generateParams($sql) {
+        return array();
+    }
+
     /**
      * @param string $sql parameter query yang akan di-execute
-     * @return mixed me-return string dengan value kosong jika parameter$sql null, jika tidak maka akan me-return array data hasil execute SQL
+     * @return mixed me-return arraykosong jika parameter $sql == "", jika tidak maka akan me-return array data hasil execute SQL
      */
     public function query($sql) {
         if (trim($sql) == "")
-            return "";
+            return array();
 
         $db = Yii::app()->db;
 
-        ## bind params
-        $params = array();
+        $generatedSQL = $this->generateTemplate($sql);
+        $generatedParams = $this->generateParams($generatedSQL);
 
         ## execute SQL
-        $data = $db->createCommand($sql)->queryAll(true, $params);
+        $data = $db->createCommand($generatedSQL)->queryAll(true, $generatedParams);
 
         ## return data
         return $data;
@@ -120,10 +139,12 @@ class DataSource extends FormField {
      * @return array me-return array hasil proses expression.
      */
     public function processExpr() {
-        if ($this->fieldType == 'sql') {
-            $this->data = $this->query($this->sql);
-        } else {
-            $this->data = $this->evaluate($this->php, true);
+        if (!FormField::$inEditor) {
+            if ($this->fieldType == 'sql') {
+                $this->data = $this->query($this->sql);
+            } else {
+                $this->data = $this->evaluate($this->php, true);
+            }
         }
 
         return array(

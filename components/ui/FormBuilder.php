@@ -91,6 +91,66 @@ class FormBuilder extends CComponent {
         return $processed;
     }
 
+    private $_findFieldCache = null;
+
+    public function findField($attributes, $recursive = null) {
+        if (is_null($this->_findFieldCache)) {
+            ## cache the fields
+            $class = get_class($this->model);
+            $reflector = new ReflectionClass($class);
+
+            $functionName = 'getFields';
+            if (is_subclass_of($this->model, 'FormField')) {
+                $functionName = 'getFieldProperties';
+            }
+
+            if (!$reflector->hasMethod($functionName)) {
+                $this->model = new $class;
+                $fields = $this->model->defaultFields;
+            } else {
+                $fields = $this->model->$functionName();
+            }
+
+            $this->_findFieldCache = $this->parseFields($fields);
+        }
+
+        if (is_null($recursive)) {
+            $fields = $this->_findFieldCache;
+        } else {
+            $fields = $recursive;
+        }
+
+        foreach ($fields as $k => $f) {
+            if (!is_array($f))
+                continue;
+
+            $valid = 0;
+            foreach ($f as $key => $value) {
+
+                if (isset($f['name']))
+                    foreach ($attributes as $attrKey => $attrVal) {
+                        if ($key == $attrKey && $value == $attrVal) {
+                            $valid++;
+                        }
+                    }
+            }
+            if ($valid == count($attributes)) {
+                return $f;
+            }
+
+            if (isset($f['parseField']) && count($f['parseField']) > 0) {
+                foreach ($f['parseField'] as $i => $j) {
+                    $result = $this->findField($attributes, $f[$i]);
+                    if ($result !== false) {
+                        return $result;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @param array $fields
      * @return array me-return array fields hasil dari proses expression field
@@ -135,6 +195,8 @@ class FormBuilder extends CComponent {
     }
 
     /**
+     * Fungsi ini akan mem-format, membenahi, dan mengevaluasi setiap field yang ada di dalam $fields
+     * 
      * @param mixed $fields parameter dapat berupa array atau jika bukan array maka akan diubah menjadi array pada prosesnya
      * @return array me-return sebuah array fields hasil parseFields
      */
@@ -146,7 +208,6 @@ class FormBuilder extends CComponent {
         foreach ($fields as $k => $f) {
             if (is_array($f)) {
                 $field = new $f['type'];
-
 
                 foreach ($f as $key => $value) {
                     if (is_string($value)) {
@@ -205,6 +266,7 @@ class FormBuilder extends CComponent {
         }
         $defaultAttributes = $fieldlist[$data['type']];
 
+
         foreach ($data as $i => $j) {
             if ($i == 'type' || $i == 'fields')
                 continue;
@@ -222,7 +284,7 @@ class FormBuilder extends CComponent {
                 }
             }
 
-            if (!isset($defaultAttributes[$i]) || $defaultAttributes[$i] == $j) {
+            if (!array_key_exists($i, $defaultAttributes) || $defaultAttributes[$i] == $j) {
                 unset($data[$i]);
             }
         }
@@ -240,7 +302,7 @@ class FormBuilder extends CComponent {
         ## prepare attributes
         foreach ($fields as $k => $f) {
             ## when the type is text, pass it as a string (not array attribute like the other)
-            if ($f['type'] == "Text") {
+            if ($f['type'] == "Text" && @$f['renderInEditor'] != 'No') {
                 $hash = '---' . sha1($f['value']) . '---';
                 $fields[$k] = $hash;
                 $multiline[$hash] = str_replace("'", "\'", $f['value']);
@@ -841,16 +903,15 @@ EOF;
      * @param string $module
      * @return array Fungsi ini akan me-return sebuah array list form .
      */
-    public static function listForm($module) {
-        $ctr_dir = Yii::getPathOfAlias("application.modules.{$module}.forms") . DIRECTORY_SEPARATOR;
-        $items = glob($ctr_dir . "*.php");
+    public static function listForm($module = null) {
         $list = array();
-        $list[''] = "-- Empty --";
-
-        foreach ($items as $k => $f) {
-            $f = str_replace($ctr_dir, "", $f);
-            $f = str_replace('.php', "", $f);
-            $list["application.modules.{$module}.forms.{$f}"] = substr($f, strlen($module));
+        $list[''] = '-- NONE --';
+        $modules = FormBuilder::listFile();
+        foreach ($modules as $module) {
+            $list[$module['module']] = array();
+            foreach ($module['items'] as $file) {
+                $list[$file['alias']] = $file['name'];
+            }
         }
 
         return $list;
@@ -861,12 +922,18 @@ EOF;
      * @param string $func
      * @return array me-return sebuah array list file .
      */
-    public static function listFile($dir, callable $func = null) {
-        $module_dir = Yii::getPathOfAlias('application.modules');
-        $modules = glob($module_dir . DIRECTORY_SEPARATOR . "*");
+    public static function listFile() {
         $files = array();
 
-        ## start: temporary add files in FormFields Dir
+        $func = function($m, $module = "", $aliaspath = "") {
+            return array(
+                'name' => str_replace(ucfirst($module), '', $m),
+                'class' => $m,
+                'alias' => $aliaspath . "." . $m
+            );
+        };
+
+        ## add files in FormFields Dir
         $forms_dir = Yii::getPathOfAlias("application.components.ui.FormFields") . DIRECTORY_SEPARATOR;
         $items = glob($forms_dir . "*.php");
         foreach ($items as $k => $f) {
@@ -874,14 +941,15 @@ EOF;
             $items[$k] = str_replace($forms_dir, "", $f);
             $items[$k] = str_replace('.php', "", $items[$k]);
             if (!is_null($func)) {
-                $items[$k] = $func($items[$k]);
+                $items[$k] = $func($items[$k], "", "application.components.ui.FormFields");
             }
         }
         $files[] = array(
-            'module' => 'FormFields',
+            'module' => 'Form Fields',
             'items' => $items
         );
         ## end..
+        ##  add files in Root Form dir
         $forms_dir = Yii::getPathOfAlias("application.forms") . DIRECTORY_SEPARATOR;
         $items = glob($forms_dir . "*.php");
         foreach ($items as $k => $f) {
@@ -889,7 +957,7 @@ EOF;
             $items[$k] = str_replace($forms_dir, "", $f);
             $items[$k] = str_replace('.php', "", $items[$k]);
             if (!is_null($func)) {
-                $items[$k] = $func($items[$k]);
+                $items[$k] = $func($items[$k], "", "application.forms");
             }
         }
         $files[] = array(
@@ -897,24 +965,52 @@ EOF;
             'items' => $items
         );
         ## end..
+        ## add files in Plansys Modules Dir
+        $module_dir = Yii::getPathOfAlias('application.modules');
+        if (file_exists($module_dir)) {
+            $modules = glob($module_dir . DIRECTORY_SEPARATOR . "*");
+            foreach ($modules as $m) {
+                $module = ucfirst(str_replace($module_dir . DIRECTORY_SEPARATOR, '', $m));
+                $item_dir = $m . DIRECTORY_SEPARATOR . "forms" . DIRECTORY_SEPARATOR;
+                $items = glob($item_dir . "*.php");
+                foreach ($items as $k => $i) {
+                    $items[$k] = str_replace($item_dir, "", $i);
+                    $items[$k] = str_replace('.php', "", $items[$k]);
 
-        foreach ($modules as $m) {
-            $module = ucfirst(str_replace($module_dir . DIRECTORY_SEPARATOR, '', $m));
-            $item_dir = $m . DIRECTORY_SEPARATOR . str_replace('.', DIRECTORY_SEPARATOR, $dir);
-            $items = glob($item_dir . ".php");
-            foreach ($items as $k => $i) {
-                $items[$k] = str_replace(str_replace("*", "", $item_dir), "", $i);
-                $items[$k] = str_replace('.php', "", $items[$k]);
-
-                if (!is_null($func)) {
-                    $items[$k] = $func($items[$k]);
+                    if (!is_null($func)) {
+                        $items[$k] = $func($items[$k], $module, 'application.modules.' . $module . ".form");
+                    }
                 }
-            }
 
-            $files[] = array(
-                'module' => $module,
-                'items' => $items
-            );
+                $files[] = array(
+                    'module' => $module,
+                    'items' => $items
+                );
+            }
+        }
+
+        ## add files in App Modules Dir
+        $module_dir = Yii::getPathOfAlias('app.modules');
+        if (file_exists($module_dir)) {
+            $modules = glob($module_dir . DIRECTORY_SEPARATOR . "*");
+            foreach ($modules as $m) {
+                $module = ucfirst(str_replace($module_dir . DIRECTORY_SEPARATOR, '', $m));
+                $item_dir = $m . DIRECTORY_SEPARATOR . "forms" . DIRECTORY_SEPARATOR;
+                $items = glob($item_dir . "*.php");
+                foreach ($items as $k => $i) {
+                    $items[$k] = str_replace($item_dir, "", $i);
+                    $items[$k] = str_replace('.php', "", $items[$k]);
+
+                    if (!is_null($func)) {
+                        $items[$k] = $func($items[$k], $module, 'app.modules.' . $module . ".form");
+                    }
+                }
+
+                $files[] = array(
+                    'module' => $module,
+                    'items' => $items
+                );
+            }
         }
 
         return $files;

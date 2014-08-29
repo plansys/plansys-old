@@ -1,46 +1,48 @@
 <?php
+
 /**
  * Class IconPicker
  * @author rizky
  */
 class IconPicker extends FormField {
+
     /**
      * @return array me-return array property IconPicker.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
-                'list' => array (),
+                'list' => array(),
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                     'ng-delay' => '500',
                 ),
-                'list' => array (
+                'list' => array(
                     'Horizontal' => 'Horizontal',
                     'Vertical' => 'Vertical',
                 ),
@@ -49,11 +51,11 @@ class IconPicker extends FormField {
                 'type' => 'DropDownList',
             ),
             '<hr/>',
-            array (
+            array(
                 'label' => 'Label Width',
                 'name' => 'labelWidth',
                 'fieldWidth' => '3',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.labelWidth',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -61,12 +63,12 @@ class IconPicker extends FormField {
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Box Width',
                 'name' => 'fieldWidth',
                 'fieldWidth' => '4',
                 'postfix' => 'px',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.fieldWidth',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -74,21 +76,21 @@ class IconPicker extends FormField {
                 'type' => 'TextField',
             ),
             '<hr/>',
-            array (
+            array(
                 'label' => 'Render Empty',
                 'name' => 'renderEmpty',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.renderEmpty',
                     'ng-change' => 'save();',
                 ),
-                'list' => array (
+                'list' => array(
                     'Yes' => 'Yes',
                     'No' => 'No',
                 ),
                 'fieldWidth' => '3',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Icon Template',
                 'fieldname' => 'iconTemplate',
                 'language' => 'html',
@@ -97,10 +99,10 @@ class IconPicker extends FormField {
                     'ps-valid' => 'save()'
                 )
             ),
-            array (
+            array(
                 'label' => 'Icon List',
                 'fieldname' => 'list',
-                'options' => array (
+                'options' => array(
                     'ng-show' => 'active.listExpr == \'\'',
                     'ng-model' => 'active.list',
                     'ng-change' => 'save()',
@@ -109,22 +111,22 @@ class IconPicker extends FormField {
                 'allowSpaceOnKey' => 'Yes',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'List Expression',
                 'fieldname' => 'listExpr',
-                'options' => array (
+                'options' => array(
                     'ng-hide' => 'active.options[\'ps-list\'] != null',
                     'ps-valid' => 'save()'
                 ),
                 'desc' => 'WARNING: Using List Expression will replace <i>Radio Button Item</i> with expression result',
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'Options',
                 'fieldname' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Label Options',
                 'fieldname' => 'labelOptions',
                 'type' => 'KeyValueGrid',
@@ -134,49 +136,49 @@ class IconPicker extends FormField {
 
     /** @var string $label */
     public $label = '';
-	
+
     /** @var string $name */
     public $name = '';
-	
+
     /** @var string $value digunakan pada function getIcon */
     public $value = '';
-	
+
     /** @var string $list */
     public $list = '';
-	
+
     /** @var string $listExpr */
     public $listExpr = '';
-	
+
     /** @var string $renderEmpty */
     public $renderEmpty = "No";
-	
+
     /** @var string $layout */
     public $layout = 'Horizontal';
-	
+
     /** @var string $iconTemplate */
     public $iconTemplate = '<i class="fa fa-fw fa-lg {icon}"></i>';
-	
+
     /** @var string $fieldWidth */
     public $fieldWidth = "265";
-	
+
     /** @var integer $labelWidth */
     public $labelWidth = 4;
-	
+
     /** @var array $options */
     public $options = array();
-	
+
     /** @var array $labelOptions */
     public $labelOptions = array();
-	
+
     /** @var string $toolbarName */
     public static $toolbarName = "Icon Picker";
-	
+
     /** @var string $category */
     public static $category = "User Interface";
-	
+
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-smile-o";
-	
+
     /**
      * @return array me-return array javascript yang di-include
      */
@@ -194,6 +196,8 @@ class IconPicker extends FormField {
         }
         $template = stripcslashes($this->iconTemplate);
         $template = str_replace("{base_url}", Yii::app()->baseUrl, $template);
+        $template = str_replace("{app_url}", Yii::app()->baseUrl . DIRECTORY_SEPARATOR . Setting::get('app.dir'), $template);
+        $template = str_replace("{plansys_url}", Yii::app()->baseUrl . DIRECTORY_SEPARATOR . Setting::getPlansysDirName(), $template);
 
         if ($this->renderEmpty == "Yes") {
             return str_replace("{icon}", $value, $template);
@@ -207,19 +211,17 @@ class IconPicker extends FormField {
      */
     public function processExpr() {
         if ($this->listExpr != "") {
+            if (FormField::$inEditor) {
+                $this->list = '';
+                return array('list' => '');
+            }
+
             ## evaluate expression
             $this->list = $this->evaluate($this->listExpr, true);
 
             ## change sequential array to associative array
             if (is_array($this->list) && !Helper::is_assoc($this->list)) {
                 $this->list = Helper::toAssoc($this->list);
-            }
-
-            if (FormField::$inEditor) {
-                if ($this->list > 5) {
-                    $this->list = array_slice($this->list, 0, 5);
-                    $this->list['z...'] = "...";
-                }
             }
         } else if (is_array($this->list) && !Helper::is_assoc($this->list)) {
             $this->list = Helper::toAssoc($this->list);
@@ -251,7 +253,7 @@ class IconPicker extends FormField {
      * getFieldColClass
      * Fungsi ini untuk menetukan width field
      * @return string me-return string class
-     */	
+     */
     public function getFieldColClass() {
         return "col-sm-" . ($this->layout == 'Vertical' ? 12 : 12 - $this->labelWidth);
     }
@@ -265,9 +267,9 @@ class IconPicker extends FormField {
         return ($this->layout == 'Vertical' ? 'form-vertical' : '');
     }
 
-     /**
-      * @return string me-return string Class error jika terdapat error pada satu atau banyak attribute.
-      */
+    /**
+     * @return string me-return string Class error jika terdapat error pada satu atau banyak attribute.
+     */
     public function getErrorClass() {
         return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
     }
@@ -283,7 +285,7 @@ class IconPicker extends FormField {
         $this->addClass($this->errorClass, 'options');
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
-        
+
         $this->processExpr();
         return $this->renderInternal('template_render.php');
     }
