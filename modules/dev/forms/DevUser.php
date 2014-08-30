@@ -139,13 +139,8 @@ class DevUser extends User {
                 'type' => 'DataSource',
             ),
             array (
-                'name' => 'fullname',
-                'uploadPath' => 'tes.dalem.sekali',
-                'type' => 'UploadFile',
-            ),
-            array (
                 'name' => 'nip',
-                'label' => 'File Upload 2',
+                'uploadPath' => 'tes.dalem.sekali',
                 'type' => 'UploadFile',
             ),
             array (

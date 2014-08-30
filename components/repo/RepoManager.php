@@ -89,6 +89,10 @@ class RepoManager extends CComponent{
         //echo "Stored in: " . $path .DIRECTORY_SEPARATOR. $file;
     }
     
+    public function replace ($file){
+        
+    }
+    
     public function download($path){
         
     }

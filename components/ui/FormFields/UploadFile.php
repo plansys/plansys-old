@@ -178,6 +178,28 @@ class UploadFile extends FormField{
         $repo->upload($file["tmp_name"] ,$file["name"], $path);
     }
     
+    public function actionCheckFile(){
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+        $file = Setting::get('repo.path').DIRECTORY_SEPARATOR.$post['file'];
+        if(file_exists($file)){
+            echo "exist";
+        }else
+            echo "not exist";
+        
+    }
+    
+    public function actionDownload($f, $n){
+        
+        Yii::app()->request->sendFile($n, file_get_contents(base64_decode($f)));
+    }
+    
+    public function actionRemove(){
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+        unlink($file);
+    }
+    
     public function getFieldColClass()
     {
         return "col-sm-" . $this->fieldWidth;
@@ -190,6 +212,7 @@ class UploadFile extends FormField{
         $this->addClass($this->errorClass, 'options');
 
         $this->addClass('form-control', 'fieldOptions');
+        $this->setDefaultOption('style', 'height:auto', $this->fieldOptions);
         
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
         return $this->renderInternal('template_render.php');
