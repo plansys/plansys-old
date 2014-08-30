@@ -84,8 +84,9 @@ class RepoManager extends CComponent{
         
     }
     
-    public function upload($fileName, $path){
-        
+    public function upload($temp ,$file, $path){
+        move_uploaded_file($temp , $path .DIRECTORY_SEPARATOR. $file);
+        //echo "Stored in: " . $path .DIRECTORY_SEPARATOR. $file;
     }
     
     public function download($path){

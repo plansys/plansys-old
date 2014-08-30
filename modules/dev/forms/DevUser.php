@@ -139,8 +139,13 @@ class DevUser extends User {
                 'type' => 'DataSource',
             ),
             array (
-                'label' => 'Tes Upload',
-                'name' => 'uploadFile1',
+                'name' => 'fullname',
+                'uploadPath' => 'tes.dalem.sekali',
+                'type' => 'UploadFile',
+            ),
+            array (
+                'name' => 'nip',
+                'label' => 'File Upload 2',
                 'type' => 'UploadFile',
             ),
             array (
@@ -164,14 +169,6 @@ class DevUser extends User {
                     ),
                 ),
                 'column2' => array (
-                    array (
-                        'label' => 'NIP',
-                        'name' => 'nip',
-                        'options' => array (
-                            'ps-ds-sql' => '\'\'',
-                        ),
-                        'type' => 'TextField',
-                    ),
                     array (
                         'label' => 'Drop Down List',
                         'name' => 'dropDown List1',

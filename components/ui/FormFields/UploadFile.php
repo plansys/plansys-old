@@ -33,6 +33,12 @@ class UploadFile extends FormField{
             array (
                 'label' => 'Upload Path',
                 'name' => 'uploadPath',
+                'prefix' => 'repo.',
+                'options' => array (
+                    'ng-model' => 'active.uploadPath',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                ),
                 'type' => 'TextField',
             ),
             array (
@@ -98,14 +104,15 @@ class UploadFile extends FormField{
             ),
         );
     }
-
     
-    public $label = '';
-	
-    public $name = '';
-	
+    public $name;
+    
+    public $label = "File Upload";
+    
     public $layout = 'Horizontal';
-	
+    
+    public $value;
+        
     public $labelWidth = 4;
    
     public $fieldWidth = 4;
@@ -129,9 +136,17 @@ class UploadFile extends FormField{
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-upload";
     
+    public function getUploadPath(){
+        $dir = Yii::getPathOfAlias('repo'.'.'.$this->uploadPath);
+        if(!file_exists($dir)){
+            mkdir($dir, '0777', true);
+        }
+        return $dir;
+    }
+    
     public function includeJS()
     {
-        return array();
+        return array('upload-file.js');
     }
     
     public function getLayoutClass()
@@ -156,6 +171,13 @@ class UploadFile extends FormField{
         return $class;
     }
     
+    public function actionUpload($path = null){
+        $file = $_FILES["file"];
+        //var_dump($this->getUploadPath());
+        $repo = new RepoManager;
+        $repo->upload($file["tmp_name"] ,$file["name"], $path);
+    }
+    
     public function getFieldColClass()
     {
         return "col-sm-" . $this->fieldWidth;
@@ -167,10 +189,8 @@ class UploadFile extends FormField{
         $this->addClass($this->layoutClass, 'options');
         $this->addClass($this->errorClass, 'options');
 
-        $this->fieldOptions['id'] = $this->renderID;
-        $this->fieldOptions['name'] = $this->renderName;
         $this->addClass('form-control', 'fieldOptions');
-
+        
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
         return $this->renderInternal('template_render.php');
     }
