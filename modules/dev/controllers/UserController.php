@@ -10,7 +10,7 @@ class UserController extends Controller {
     public function actionCreate() {
         $model = new DevUser;
         $model->username = "OPX";
-        $model->nip = "/tes/dalem/sekali/1551965.jpg";
+        $model->nip;
         
         if (isset($_POST['DevUser'])) {
             

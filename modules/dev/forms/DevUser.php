@@ -140,7 +140,7 @@ class DevUser extends User {
             ),
             array (
                 'name' => 'nip',
-                'uploadPath' => 'tes.dalem.sekali',
+                'uploadPath' => 'tes',
                 'type' => 'UploadFile',
             ),
             array (

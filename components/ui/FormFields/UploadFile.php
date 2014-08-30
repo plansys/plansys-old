@@ -171,17 +171,16 @@ class UploadFile extends FormField{
         return $class;
     }
     
-    public function actionUpload($path = null){
+    public function actionUpload($path = null){    
         $file = $_FILES["file"];
-        //var_dump($this->getUploadPath());
         $repo = new RepoManager;
-        $repo->upload($file["tmp_name"] ,$file["name"], $path);
+        $repo->upload($file["tmp_name"] ,$file["name"], base64_decode($path));
     }
     
     public function actionCheckFile(){
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
-        $file = Setting::get('repo.path').DIRECTORY_SEPARATOR.$post['file'];
+        $file = Setting::get('repo.path').DIRECTORY_SEPARATOR.base64_decode($post['file']);
         if(file_exists($file)){
             echo "exist";
         }else
@@ -190,14 +189,14 @@ class UploadFile extends FormField{
     }
     
     public function actionDownload($f, $n){
-        
         Yii::app()->request->sendFile($n, file_get_contents(base64_decode($f)));
     }
     
     public function actionRemove(){
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
-        unlink($file);
+        $file = $post['file'];
+        unlink(base64_decode($file));
     }
     
     public function getFieldColClass()

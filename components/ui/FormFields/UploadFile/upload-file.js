@@ -14,13 +14,13 @@ app.directive('uploadFile', function($timeout, $upload, $http) {
                 $scope.repoPath = $el.find("data[name=repo_path]").html().trim();
                 $scope.update = $el.find("data[name=file_update]").html().trim();
                 $scope.file = null;
+                $scope.loading = false;
+                $scope.progress = -1;
                 $scope.onFileSelect = function($files) {
                     for (var i = 0; i < $files.length; i++) {
                         var file = $files[i];
-                        console.log(file.name);
                         $scope.upload(file);
                     }
-                    console.log($scope.path);
                 };
 
                 $scope.encode = function(input) {
@@ -55,42 +55,40 @@ app.directive('uploadFile', function($timeout, $upload, $http) {
                 };
 
                 $scope.remove = function(file) {
+                    $scope.loading = true;
                     var request = $http({
                         method: "post",
                         url: Yii.app.createUrl('/formField/uploadFile.remove'),
-                        data: {file: $scope.update}
+                        data: {file: $scope.encode(file)}
                     });
                     request.success(
-                            function(html) {
-                                if (html == 'exist') {
-                                    var name = $scope.update.split('/');
-                                    name = name[name.length - 1];
-                                    var path = $scope.repoPath + $scope.update;
-                                    $scope.file = {
-                                        'name': name,
-                                        'path': path
-                                    };
-                                    $scope.icon($scope.file);
-                                }
-                            }
+                        function(html) {  
+                            $scope.file = null;
+                            $scope.loading = false;
+                        }
                     );
 
                 };
 
                 $scope.upload = function(file) {
+                    $scope.loading = true;
+                    $scope.progress = 0;
                     $upload.upload({
-                        url: Yii.app.createUrl('/formField/uploadFile.upload', {'path': $scope.path}),
+                        url: Yii.app.createUrl('/formField/uploadFile.upload', {'path': $scope.encode($scope.path)}),
                         data: {myObj: $scope.myModelObj},
                         file: file
                     }).progress(function(evt) {
-                        console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
-                    }).success(function(data, status, headers, config) {
+                        $scope.progress =  parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data) {
+                        $scope.progress = 101;
                         $scope.filePath = $scope.path.replace($scope.repoPath, '').replace(/\\/g, "/") + '/' + file.name;
                         $scope.file = {
                             'name': file.name,
                             'path': $scope.path + '/' + file.name
                         };
                         $scope.icon($scope.file);
+                        $scope.loading = false;
+                        $scope.progress = -1;
                     });
                 };
 
@@ -132,15 +130,15 @@ app.directive('uploadFile', function($timeout, $upload, $http) {
                         $scope.file.type = "file";
                     }
                 };
-                if ($scope.update != null) {
+                if ($scope.update !== "") {
                     var request = $http({
                         method: "post",
                         url: Yii.app.createUrl('/formField/uploadFile.checkFile'),
-                        data: {file: $scope.update}
+                        data: {file: $scope.encode($scope.update)}
                     });
                     request.success(
                             function(html) {
-                                if (html == 'exist') {
+                                if (html === 'exist') {
                                     var name = $scope.update.split('/');
                                     name = name[name.length - 1];
                                     var path = $scope.repoPath + $scope.update;
@@ -149,9 +147,13 @@ app.directive('uploadFile', function($timeout, $upload, $http) {
                                         'path': path
                                     };
                                     $scope.icon($scope.file);
+                                }else{
+                                    $scope.file = null;
                                 }
                             }
                     );
+                }else{
+                    $scope.file = null;
                 }
             };
         }
