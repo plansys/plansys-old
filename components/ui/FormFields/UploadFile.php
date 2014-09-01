@@ -28,6 +28,11 @@ class UploadFile extends FormField{
             array (
                 'label' => 'File Type',
                 'name' => 'fileType',
+                'options' => array (
+                    'ng-model' => 'active.fileType',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                ),
                 'type' => 'TextField',
             ),
             array (
@@ -104,7 +109,7 @@ class UploadFile extends FormField{
             ),
         );
     }
-    
+
     public $name;
     
     public $label = "File Upload";
@@ -144,6 +149,10 @@ class UploadFile extends FormField{
         return $dir;
     }
     
+    public function getFileType(){
+        return $this->fileType;
+    }
+    
     public function includeJS()
     {
         return array('upload-file.js');
@@ -170,7 +179,7 @@ class UploadFile extends FormField{
         $class .= @$this->labelOptions['class'];
         return $class;
     }
-    
+     
     public function actionUpload($path = null){    
         $file = $_FILES["file"];
         $repo = new RepoManager;

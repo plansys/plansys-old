@@ -2,6 +2,7 @@
 
     <!-- data -->
     <data name="path" class="hide"><?= $this->getUploadPath(); ?></data>
+    <data name="file_type" class="hide"><?= $this->getFileType(); ?></data>
     <data name="repo_path" class="hide"><?= Setting::get('repo.path'); ?></data>
     <data name="file_update" class="hide"><?= $this->value; ?></data>
     <!-- /data -->
@@ -59,12 +60,13 @@
             </div>
             <div class="clearfix"></div>
         </div>
+        
         <!-- error -->
-        <?php if (count(@$errors) > 0): ?>
-            <div class="alert error alert-danger">
-                <?= $errors[0] ?>
-            </div>
-        <?php endif ?>
+        <div class="alert error alert-danger" ng-show="errors.length > 0">
+            <li ng-repeat="error in errors">
+                {{error}}
+            </li>
+        </div>
         <!-- /error -->
     </div>
 </div>

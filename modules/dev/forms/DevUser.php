@@ -141,6 +141,7 @@ class DevUser extends User {
             array (
                 'name' => 'nip',
                 'uploadPath' => 'tes',
+                'fileType' => 'rar , zip',
                 'type' => 'UploadFile',
             ),
             array (

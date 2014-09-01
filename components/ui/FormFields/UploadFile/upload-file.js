@@ -13,13 +13,29 @@ app.directive('uploadFile', function($timeout, $upload, $http) {
                 $scope.path = $el.find("data[name=path]").html().trim();
                 $scope.repoPath = $el.find("data[name=repo_path]").html().trim();
                 $scope.update = $el.find("data[name=file_update]").html().trim();
+                $scope.fileType = $el.find("data[name=file_type]").html().trim();
                 $scope.file = null;
                 $scope.loading = false;
                 $scope.progress = -1;
+                $scope.errors = [];
                 $scope.onFileSelect = function($files) {
                     for (var i = 0; i < $files.length; i++) {
                         var file = $files[i];
-                        $scope.upload(file);
+                        var type = null;
+                        var ext = $scope.ext(file);
+                        if($scope.fileType === "" ||$scope.fileType === null){
+                            $scope.upload(file);
+                        }else{
+                            type = $scope.fileType.split(',');
+                            for(var i = 0; i < type.length; i++)
+                                type[i] = type[i].trim();
+                            
+                            if($.inArray(ext,type) > -1){
+                                $scope.upload(file);
+                            }else{
+                                $scope.errors.push("Tipe file tidak diijinkan, File yang diijinkan adalah "+$scope.fileType);
+                            }
+                        }
                     }
                 };
 
@@ -71,6 +87,7 @@ app.directive('uploadFile', function($timeout, $upload, $http) {
                 };
 
                 $scope.upload = function(file) {
+                    $scope.errors = [];
                     $scope.loading = true;
                     $scope.progress = 0;
                     $upload.upload({
@@ -91,9 +108,13 @@ app.directive('uploadFile', function($timeout, $upload, $http) {
                         $scope.progress = -1;
                     });
                 };
+                $scope.ext = function(file){
+                    var type = file.name.split('.');
+                    return type[type.length-1];
+                }
 
                 $scope.icon = function(file) {
-                    var type = file.name.split('.');
+                    var type = $scope.ext(file);
 
                     var code = ['php', 'js', 'html', 'json'];
                     var archive = ['zip'];
@@ -106,25 +127,25 @@ app.directive('uploadFile', function($timeout, $upload, $http) {
                     var ppt = ['ppt', 'pptx'];
                     var pdf = ['pdf'];
 
-                    if ($.inArray(type[1], image) > -1) {
+                    if ($.inArray(type, image) > -1) {
                         $scope.file.type = "image";
-                    } else if ($.inArray(type[1], code) > -1) {
+                    } else if ($.inArray(type, code) > -1) {
                         $scope.file.type = "code";
-                    } else if ($.inArray(type[1], archive) > -1) {
+                    } else if ($.inArray(type, archive) > -1) {
                         $scope.file.type = "archive";
-                    } else if ($.inArray(type[1], audio) > -1) {
+                    } else if ($.inArray(type, audio) > -1) {
                         $scope.file.type = "audio";
-                    } else if ($.inArray(type[1], video) > -1) {
+                    } else if ($.inArray(type, video) > -1) {
                         $scope.file.type = "movie";
-                    } else if ($.inArray(type[1], word) > -1) {
+                    } else if ($.inArray(type, word) > -1) {
                         $scope.file.type = "word";
-                    } else if ($.inArray(type[1], text) > -1) {
+                    } else if ($.inArray(type, text) > -1) {
                         $scope.file.type = "text";
-                    } else if ($.inArray(type[1], excel) > -1) {
+                    } else if ($.inArray(type, excel) > -1) {
                         $scope.file.type = "excel";
-                    } else if ($.inArray(type[1], ppt) > -1) {
+                    } else if ($.inArray(type, ppt) > -1) {
                         $scope.file.type = "powerpoint";
-                    } else if ($.inArray(type[1], pdf) > -1) {
+                    } else if ($.inArray(type, pdf) > -1) {
                         $scope.file.type = "pdf";
                     } else {
                         $scope.file.type = "file";
