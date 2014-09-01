@@ -8,9 +8,8 @@ class DevUser extends User {
                 'name' => 'full-width',
                 'data' => array (
                     'col1' => array (
-                        'size' => '100',
-                        'sizetype' => '',
                         'type' => 'mainform',
+                        'size' => '100',
                     ),
                 ),
             ),
@@ -22,6 +21,18 @@ class DevUser extends User {
             array (
                 'linkBar' => array (
                     array (
+                        'label' => 'Save',
+                        'buttonType' => 'success',
+                        'options' => array (
+                            'ng-click' => 'form.submit(this)',
+                        ),
+                        'type' => 'LinkButton',
+                    ),
+                    array (
+                        'label' => 'Link Button',
+                        'type' => 'LinkButton',
+                    ),
+                    array (
                         'label' => 'Cancel',
                         'buttonType' => 'default',
                         'options' => array (
@@ -30,47 +41,88 @@ class DevUser extends User {
                         ),
                         'type' => 'LinkButton',
                     ),
-                    array (
-                        'label' => 'Save',
-                        'buttonType' => 'success',
-                        'options' => array (
-                            'ng-click' => 'form.submit(this)',
-                        ),
-                        'type' => 'LinkButton',
-                    ),
                 ),
                 'showSectionTab' => 'No',
                 'type' => 'ActionBar',
             ),
             array (
-                'name' => 'filter',
-                'datasource' => 'ds',
+                'name' => 'manteb',
+                'datasource' => 'dataSoqwd',
                 'filters' => array (
                     array (
-                        'name' => 'date',
-                        'label' => 'Daqwd',
-                        'filterType' => 'list',
-                        'listExpr' => 'Helper::coba()',
-                        'list' => array (
-                            '-- ALL --',
-                            '---',
-                            'coba' => array (
-                                'coba_dunk' => 'Coba Dunk',
-                                'coba_1' => 'Testing',
-                                '---' => '---',
-                                'fukiii' => 'fukiii',
-                            ),
-                            'fuki' => 'test',
-                        ),
+                        'name' => 'testing',
+                        'label' => 'Testing',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'okedeh',
+                        'label' => 'Mantab',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
+                    ),
+                    array (
+                        'name' => 'qwrrwq',
+                        'label' => 'qwtt',
+                        'filterType' => 'string',
                     ),
                 ),
                 'type' => 'DataFilter',
             ),
             array (
-                'name' => 'ds',
-                'sql' => 'select * from p_user {where [where]}',
+                'name' => 'dataSoqwd',
+                'sql' => 'select * from p_user',
+                'php' => 'Helper::coba();',
                 'params' => array (
-                    'where' => 'filter',
+                    'where' => 'nip',
                 ),
                 'data' => array (
                     array (
@@ -89,9 +141,11 @@ class DevUser extends User {
             array (
                 'column1' => array (
                     array (
-                        'label' => 'Email',
-                        'name' => 'email',
-                        'type' => 'TextField',
+                        'name' => 'nip',
+                        'fieldWidth' => '8',
+                        'uploadPath' => 'tes',
+                        'fileType' => 'rar , zip',
+                        'type' => 'UploadFile',
                     ),
                     array (
                         'label' => 'Date',
@@ -102,29 +156,27 @@ class DevUser extends User {
                     array (
                         'label' => 'Username',
                         'name' => 'username',
+                        'fieldWidth' => '',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Email',
+                        'name' => 'email',
                         'type' => 'TextField',
                     ),
                 ),
                 'column2' => array (
                     array (
-                        'label' => 'Text Area',
-                        'name' => 'textArea1',
-                        'type' => 'TextArea',
-                    ),
-                    array (
-                        'label' => 'NIP',
-                        'name' => 'nip',
-                        'options' => array (
-                            'ps-ds-sql' => '\'\'',
-                        ),
-                        'type' => 'TextField',
-                    ),
-                    '',
-                    array (
                         'label' => 'Drop Down List',
                         'name' => 'dropDown List1',
                         'listExpr' => 'Helper::coba()',
                         'type' => 'DropDownList',
+                    ),
+                    array (
+                        'label' => 'List View',
+                        'name' => 'phone',
+                        'fieldTemplate' => 'form',
+                        'type' => 'ListView',
                     ),
                     array (
                         'label' => 'Firstna',

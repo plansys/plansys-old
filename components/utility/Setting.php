@@ -48,6 +48,7 @@ class Setting {
         Setting::$data = json_decode(file_get_contents(Setting::$path), true);
 
         Yii::setPathOfAlias('app', Setting::getAppPath());
+        Yii::setPathOfAlias('repo', Setting::get('repo.path'));
     }
 
     public static function get($key) {

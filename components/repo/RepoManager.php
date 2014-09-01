@@ -2,7 +2,6 @@
 
 class RepoManager extends CComponent{
     public $repoPath;
-    
     public function browse($dir = null){
         if(is_null($dir)){
             $dir = $this->repoPath;   
@@ -84,7 +83,14 @@ class RepoManager extends CComponent{
         
     }
     
-    public function upload($fileName, $path){
+    public function upload($temp ,$file, $path){
+        $name = pathinfo($file, PATHINFO_FILENAME);
+        $json = JsonModel::load($path.DIRECTORY_SEPARATOR.$name.'.json');
+        $json->default;
+        move_uploaded_file($temp , $path .DIRECTORY_SEPARATOR. $file);
+    }
+    
+    public function replace ($file){
         
     }
     
