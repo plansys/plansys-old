@@ -150,13 +150,13 @@ class FormField extends CComponent {
      * @param boolean $return
      * @return array Fungsi ini digunakan untuk evaluate expression dan akan me-return hasil dalam bentuk pesan error.
      */
-    public function evaluate($expr, $return = false) {
+    public function evaluate($expr, $return = false, $variables = array()) {
         $error_level = error_reporting();
 
 //        error_reporting(0);
-        $result = $this->evaluateExpression($expr, array(
+        $result = $this->evaluateExpression($expr, array_merge($variables, array(
             'model' => $this->builder->model,
-        ));
+        )));
         error_reporting($error_level);
 
         if ($return) {
@@ -465,7 +465,7 @@ class FormField extends CComponent {
                 $result['category'][$class] = $class::$category;
             }
         }
-        
+
         return $result;
     }
 

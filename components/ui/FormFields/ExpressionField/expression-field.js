@@ -77,8 +77,6 @@ app.directive('expressionField', function($timeout, $http) {
                 // when ng-model is changed from outside directive  
                 if (typeof ctrl != 'undefined') {
                     ctrl.$render = function() {
-                        if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
-                            return;
 
                         if (typeof ctrl.$viewValue != 'undefined') {
                             $scope.value = ctrl.$viewValue;

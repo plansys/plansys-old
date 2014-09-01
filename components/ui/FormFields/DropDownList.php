@@ -113,8 +113,8 @@ class DropDownList extends FormField {
             array (
                 'label' => '\\"Other\\" Item Label',
                 'name' => 'otherLabel',
-                'labelWidth' => '5',
-                'fieldWidth' => '7',
+                'labelWidth' => '6',
+                'fieldWidth' => '4',
                 'options' => array (
                     'ng-model' => 'active.otherLabel',
                     'ng-change' => 'save()',

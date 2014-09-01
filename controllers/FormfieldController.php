@@ -23,7 +23,6 @@ class FormfieldController extends Controller {
             if (class_exists($controller)) {
                 $formfield = new $controller;
                 if (method_exists($formfield, 'action' . ucfirst($actionID))) {
-
                     return new CInlineAction($formfield, $actionID);
                 }
             }

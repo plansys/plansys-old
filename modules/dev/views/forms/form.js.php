@@ -17,6 +17,7 @@
                 return false;
             if ($scope.active.type != scope.modelClass)
                 return false;
+            
             return true;
         }
         /*********************** TOOLBAR TABS ***********************/
@@ -110,6 +111,7 @@
                     type: '',
                 }
             }
+            
             if ($scope.form.layout.name == "full-width") {
                 return true;
             }

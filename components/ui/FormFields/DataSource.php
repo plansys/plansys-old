@@ -80,6 +80,7 @@ class DataSource extends FormField {
 
     /** @var string $params */
     public $params = '';
+    private $postedParams = '';
 
     /** @var string $data */
     public $data;
@@ -96,40 +97,98 @@ class DataSource extends FormField {
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "glyphicon glyphicon-book";
 
-    public function generateTemplate($sql) {
+    public function actionQuery() {
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+        $class = array_pop(explode(".", $post['class']));
+        Yii::import($post['class']);
+
+        if (class_exists($class)) {
+            $fb = FormBuilder::load($class);
+            $field = $fb->findField(array('name' => $post['name']));
+
+            $this->attributes = $field;
+            $this->builder = $fb;
+            $data = $this->query($post['params']);
+
+            echo json_encode($data);
+        }
+    }
+
+    protected function processSQLBracket($sql, $postedParams) {
         preg_match_all("/\[(.*?)\]/", $sql, $matches);
         $params = $matches[1];
+        $parsed = array();
 
         foreach ($params as $param) {
+            if (!isset($this->params[$param])) {
+                $sql = str_replace("[{$param}]", "", $sql);
+                $parsed[$param] = "";
+                continue;
+            }
+
             $field = $this->builder->findField(array('name' => $this->params[$param]));
             if (isset($field['options']['ps-ds-sql'])) {
-                $psql = $this->evaluate($field['options']['ps-ds-sql'], true);
-                $sql = str_replace("[{$param}]", $psql, $sql);
+                $template = $this->evaluate($field['options']['ps-ds-sql'], true, array(
+                    'paramName' => $param,
+                    'params' => @$postedParams[$param]
+                ));
+
+                $sql = str_replace("[{$param}]", $template['sql'], $sql);
+                if ($template['sql'] != '') {
+                    $parsed[$param] = $template['params'];
+                }
+            }
+        }
+        return array('sql' => $sql, 'params' => $parsed);
+    }
+
+    public function generateTemplate($sql, $postedParams = array()) {
+
+        preg_match_all("/\{(.*?)\}/", $sql, $blocks);
+        $returnParams = array();
+
+        foreach ($blocks[1] as $block) {
+            $bracket = $this->processSQLBracket($block, $postedParams);
+
+            $renderBracket = false;
+            foreach ($bracket['params'] as $bracketParam => $bracketValue) {
+                if (count($bracketValue) > 0) {
+                    $renderBracket = true;
+                    foreach ($bracketValue as $k => $p) {
+                        $returnParams[$k] = $p;
+                    }
+                }
+            }
+
+            if ($renderBracket) {
+                $sql = str_replace("{{$block}}", $bracket['sql'], $sql);
+            } else {
+                $sql = str_replace("{{$block}}", "", $sql);
             }
         }
 
-        return $sql;
-    }
 
-    public function generateParams($sql) {
-        return array();
+        return array(
+            'sql' => $sql,
+            'params' => $returnParams
+        );
     }
 
     /**
      * @param string $sql parameter query yang akan di-execute
      * @return mixed me-return arraykosong jika parameter $sql == "", jika tidak maka akan me-return array data hasil execute SQL
      */
-    public function query($sql) {
-        if (trim($sql) == "")
+    public function query($params = array()) {
+        if (trim($this->sql) == "")
             return array();
 
         $db = Yii::app()->db;
+        $template = $this->generateTemplate($this->sql, $params);
 
-        $generatedSQL = $this->generateTemplate($sql);
-        $generatedParams = $this->generateParams($generatedSQL);
 
         ## execute SQL
-        $data = $db->createCommand($generatedSQL)->queryAll(true, $generatedParams);
+        $data = $db->createCommand($template['sql'])->queryAll(true, $template['params']);
 
         ## return data
         return $data;
@@ -141,7 +200,7 @@ class DataSource extends FormField {
     public function processExpr() {
         if (!FormField::$inEditor) {
             if ($this->fieldType == 'sql') {
-                $this->data = $this->query($this->sql);
+                $this->data = $this->query();
             } else {
                 $this->data = $this->evaluate($this->php, true);
             }

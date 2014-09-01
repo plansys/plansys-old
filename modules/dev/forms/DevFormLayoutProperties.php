@@ -21,7 +21,6 @@ class DevFormLayoutProperties extends Form {
                     'ng-model' => 'layout.type',
                     'ng-change' => 'changeLayoutSectionType()',
                     'style' => 'text-align:center;margin-top:-6px;',
-                    'ng-hide' => 'form.layout.name == \'full-width\'',
                 ),
                 'type' => 'RadioButtonList',
             ),
@@ -29,11 +28,11 @@ class DevFormLayoutProperties extends Form {
             array (
                 'label' => 'Size',
                 'fieldWidth' => 5,
+                'postfix' => 'px',
                 'options' => array (
                     'ng-model' => 'layout.size',
                     'ng-change' => 'changeLayoutProperties()',
                     'ng-delay' => '500',
-                    'ng-hide' => 'form.layout.name == \'full-width\'',
                 ),
                 'fieldOptions' => array (
                     'placeholder' => '...',
@@ -41,7 +40,7 @@ class DevFormLayoutProperties extends Form {
                 ),
                 'type' => 'TextField',
             ),
-            '<div class="clearfix"></div><hr ng-hide="form.layout.name == \'full-width\'"/>',
+            '<div class="clearfix"></div><hr/>',
             array (
                 'label' => 'Menu Tree',
                 'options' => array (

@@ -1,8 +1,12 @@
 <div ps-data-filter class="data-filter">
     <data name="filters" class="hide"><?= json_encode($this->filters); ?></data>
     <data name="operators" class="hide"><?= json_encode($this->filterOperators); ?></data>
+    <data name="datasource" class="hide"><?= $this->datasource; ?></data>
+    <data name="name" class="hide"><?= $this->name; ?></data>
 
-    <script type="text/ng-template" id="filter_common"><?php include('filter_common.php'); ?></script>
+    <script type="text/ng-template" id="filter_text"><?php include('filter_text.php'); ?></script>
+    <script type="text/ng-template" id="filter_date"><?php include('filter_date.php'); ?></script>
+    <script type="text/ng-template" id="filter_dropdown"><?php include('filter_dropdown.php'); ?></script>
 
     <table style="width:100%">
         <tr>
