@@ -139,13 +139,14 @@ class DevUser extends User {
                 'type' => 'DataSource',
             ),
             array (
-                'name' => 'nip',
-                'uploadPath' => 'tes',
-                'fileType' => 'rar , zip',
-                'type' => 'UploadFile',
-            ),
-            array (
                 'column1' => array (
+                    array (
+                        'name' => 'nip',
+                        'fieldWidth' => '8',
+                        'uploadPath' => 'tes',
+                        'fileType' => 'rar , zip',
+                        'type' => 'UploadFile',
+                    ),
                     array (
                         'label' => 'Date',
                         'name' => 'date',

@@ -183,9 +183,30 @@ class UploadFile extends FormField{
     public function actionUpload($path = null){    
         $file = $_FILES["file"];
         $repo = new RepoManager;
-        $repo->upload($file["tmp_name"] ,$file["name"], base64_decode($path));
+        $name = $file['name'];
+        $filePath = base64_decode($path);
+        
+        $actualName = pathinfo($name, PATHINFO_FILENAME);
+        $originName = $actualName;
+        $extension = pathinfo($name, PATHINFO_EXTENSION);
+        $i = 1;
+        while(file_exists($filePath.DIRECTORY_SEPARATOR.$actualName.'.'.$extension)){
+            $actualName = (string)$originName.'_'.$i;
+            $name = $actualName.'.'.$extension;
+            $i++;
+        }
+        echo $name;
+        $repo->upload($file["tmp_name"] ,$name, $filePath);
     }
-    
+    public function actionDescription(){
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+        $name = pathinfo(base64_decode($post['name']), PATHINFO_FILENAME);
+        $path = base64_decode($post['path']);
+        $content = base64_decode($post['desc']);
+        $desc = JsonModel::load($path.DIRECTORY_SEPARATOR.$name.'.json');
+        $desc->set('desc', $content);
+    }
     public function actionCheckFile(){
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
@@ -204,8 +225,11 @@ class UploadFile extends FormField{
     public function actionRemove(){
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
-        $file = $post['file'];
-        unlink(base64_decode($file));
+        $file = base64_decode($post['file']);
+        $dir = pathinfo($file,PATHINFO_DIRNAME);
+        $jsonFile = pathinfo($file,PATHINFO_FILENAME);
+        unlink($file);
+        unlink($dir.DIRECTORY_SEPARATOR.$jsonFile.'.json');
     }
     
     public function getFieldColClass()

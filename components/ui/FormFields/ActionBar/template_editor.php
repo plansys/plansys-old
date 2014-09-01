@@ -7,7 +7,7 @@
         <ol ui-tree-nodes ng-model="field.linkBar">
             <li ng-repeat="field in field.linkBar" ui-tree-node ng-include="'FormTree'" ng-class="{
                         cpl: isPlaceholder(field), inline:field.displayInline
-                    }"></li>
+                     }"></li>
         </ol>
     </div>
     <div class="clearfix"></div>

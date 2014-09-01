@@ -18,22 +18,33 @@ app.directive('uploadFile', function($timeout, $upload, $http) {
                 $scope.loading = false;
                 $scope.progress = -1;
                 $scope.errors = [];
+                $scope.json;
+                $scope.saveDesc = function(desc){
+                    var request = $http({
+                        'method' : 'post',
+                        'url' : Yii.app.createUrl('/formField/uploadFile.description'),
+                        'data' : {'desc':$scope.encode(desc),
+                                  'name':$scope.encode($scope.file.name),
+                                  'path' :$scope.encode($scope.path)
+                                 }
+                    });
+                };
                 $scope.onFileSelect = function($files) {
                     for (var i = 0; i < $files.length; i++) {
                         var file = $files[i];
                         var type = null;
                         var ext = $scope.ext(file);
-                        if($scope.fileType === "" ||$scope.fileType === null){
+                        if ($scope.fileType === "" || $scope.fileType === null) {
                             $scope.upload(file);
-                        }else{
+                        } else {
                             type = $scope.fileType.split(',');
-                            for(var i = 0; i < type.length; i++)
+                            for (var i = 0; i < type.length; i++)
                                 type[i] = type[i].trim();
-                            
-                            if($.inArray(ext,type) > -1){
+
+                            if ($.inArray(ext, type) > -1) {
                                 $scope.upload(file);
-                            }else{
-                                $scope.errors.push("Tipe file tidak diijinkan, File yang diijinkan adalah "+$scope.fileType);
+                            } else {
+                                $scope.errors.push("Tipe file tidak diijinkan, File yang diijinkan adalah " + $scope.fileType);
                             }
                         }
                     }
@@ -72,20 +83,21 @@ app.directive('uploadFile', function($timeout, $upload, $http) {
 
                 $scope.remove = function(file) {
                     $scope.loading = true;
+                    $scope.errors = [];
                     var request = $http({
                         method: "post",
                         url: Yii.app.createUrl('/formField/uploadFile.remove'),
                         data: {file: $scope.encode(file)}
                     });
                     request.success(
-                        function(html) {  
-                            $scope.file = null;
-                            $scope.loading = false;
-                        }
+                            function(html) {
+                                $scope.file = null;
+                                $scope.loading = false;
+                            }
                     );
 
                 };
-
+                
                 $scope.upload = function(file) {
                     $scope.errors = [];
                     $scope.loading = true;
@@ -94,23 +106,29 @@ app.directive('uploadFile', function($timeout, $upload, $http) {
                         url: Yii.app.createUrl('/formField/uploadFile.upload', {'path': $scope.encode($scope.path)}),
                         data: {myObj: $scope.myModelObj},
                         file: file
-                    }).progress(function(evt) {
+                     }).progress(function(evt) {
                         $scope.progress =  parseInt(100.0 * evt.loaded / evt.total);
-                    }).success(function(data) {
+                     }).success(function(data,html) {
                         $scope.progress = 101;
-                        $scope.filePath = $scope.path.replace($scope.repoPath, '').replace(/\\/g, "/") + '/' + file.name;
                         $scope.file = {
-                            'name': file.name,
-                            'path': $scope.path + '/' + file.name
+                            'name': data,
+                            'path': $scope.path + '/' + data
                         };
+                        $scope.filePath = $scope.path.replace($scope.repoPath, '').replace(/\\/g, "/") + '/' + $scope.file.name;
+             
                         $scope.icon($scope.file);
                         $scope.loading = false;
                         $scope.progress = -1;
-                    });
+                        
+                     });
+                    
                 };
-                $scope.ext = function(file){
+                $scope.ext = function(file) {
                     var type = file.name.split('.');
-                    return type[type.length-1];
+                    if (type.length === 1 || (type[0] === "" && type.length === 2)) {
+                        return "";
+                    }
+                    return type.pop();
                 }
 
                 $scope.icon = function(file) {
@@ -168,12 +186,12 @@ app.directive('uploadFile', function($timeout, $upload, $http) {
                                         'path': path
                                     };
                                     $scope.icon($scope.file);
-                                }else{
+                                } else {
                                     $scope.file = null;
                                 }
                             }
                     );
-                }else{
+                } else {
                     $scope.file = null;
                 }
             };
