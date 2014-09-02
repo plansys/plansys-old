@@ -6,6 +6,11 @@ class RepoManager extends CComponent{
         if(is_null($dir)){
             $dir = $this->repoPath;   
         }
+        if($dir == $this->repoPath){
+            $parent = null;
+        }else{
+            $parent = dirname($dir);
+        }
         
         $list = array();
         
@@ -16,13 +21,13 @@ class RepoManager extends CComponent{
                 $list[] = array(
                     'name' => $itemName,
                     'type' => 'dir',
-                    'path' => $l
+                    'path' => base64_encode($l)
                 );
             }else{
                 $list[] = array(
                     'name' => $itemName,
                     'type' => $this->fileType($l),
-                    'path' => $l
+                    'path' => base64_encode($l)
                 );
             }
         }
@@ -30,7 +35,8 @@ class RepoManager extends CComponent{
         $count = count($list);
         
         $detail = array(
-            'parent' => $dir,
+            'parent' => base64_encode($parent),
+            'path' => base64_encode($dir),
             'item' => $list,
             'count' => $count,
         );
@@ -84,8 +90,7 @@ class RepoManager extends CComponent{
     }
     
     public function upload($temp ,$file, $path){
-        $name = pathinfo($file, PATHINFO_FILENAME);
-        $json = JsonModel::load($path.DIRECTORY_SEPARATOR.$name.'.json');
+        $json = JsonModel::load($path.DIRECTORY_SEPARATOR.$file.'.json');
         $json->default;
         move_uploaded_file($temp , $path .DIRECTORY_SEPARATOR. $file);
     }

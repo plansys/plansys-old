@@ -16,6 +16,10 @@ class SiteController extends Controller {
             }
             $this->redirect(array(lcfirst(strtolower(Yii::app()->user->roles)) . '/default/index'));
         } else {
+            if(Setting::get("repo.path") == ''){
+                $path = Setting::getRootPath().DIRECTORY_SEPARATOR.'repo';
+                Setting::set("repo.path", $path);
+            }
             $this->redirect(array("install/index"));
         }
     }

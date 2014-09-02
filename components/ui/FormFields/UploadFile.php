@@ -201,7 +201,7 @@ class UploadFile extends FormField{
     public function actionDescription(){
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
-        $name = pathinfo(base64_decode($post['name']), PATHINFO_FILENAME);
+        $name = base64_decode($post['name']);
         $path = base64_decode($post['path']);
         $content = base64_decode($post['desc']);
         $desc = JsonModel::load($path.DIRECTORY_SEPARATOR.$name.'.json');
@@ -226,10 +226,8 @@ class UploadFile extends FormField{
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
         $file = base64_decode($post['file']);
-        $dir = pathinfo($file,PATHINFO_DIRNAME);
-        $jsonFile = pathinfo($file,PATHINFO_FILENAME);
         unlink($file);
-        unlink($dir.DIRECTORY_SEPARATOR.$jsonFile.'.json');
+        unlink($file.'.json');
     }
     
     public function getFieldColClass()
