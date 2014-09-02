@@ -13,7 +13,7 @@ class Helper {
             'fuki' => 'test'
         );
     }
-    
+
     public static function startsWith($haystack, $needle, $case = false) {
         if ($case)
             return strpos($haystack, $needle, 0) === 0;
@@ -33,6 +33,16 @@ class Helper {
             }
         }
         return $list;
+    }
+
+    public static function classAlias($class) {
+
+        $reflector = new ReflectionClass($class);
+
+        $fn = $reflector->getFileName();
+        $webroot = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('webroot'));
+        $alias = str_replace(DIRECTORY_SEPARATOR, ".", str_replace(".php", "", str_replace($webroot, "webroot", $fn)));
+        return $alias;
     }
 
     public static function expandAttributes($attributes) {
@@ -87,7 +97,7 @@ class Helper {
         }
         return implode('-', $ret);
     }
-    
+
     public static function camelToUnderscore($input) {
         preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
         $ret = $matches[0];
@@ -96,7 +106,6 @@ class Helper {
         }
         return implode('_', $ret);
     }
-    
 
     public static function secondsToTime($s) {
         $h = floor($s / 3600);

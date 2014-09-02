@@ -42,9 +42,7 @@
                     <tab-heading>
                         <i class="fa fa-cogs"></i> Properties
                     </tab-heading>
-                    <div class="properties-body form-builder-properties">
-
-
+                    <div style="{{ (active ? 'top:50px;' : '')}}" class="properties-body form-builder-properties">
                         <div ng-if="active" class="properties-header">
                             <div class='btn btn-danger btn-xs pull-right' 
                                  ng-click='deleteField()'>
@@ -58,7 +56,7 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu" style="min-width:160px;max-height:200px;" role="menu">
-                                    
+
                                     <li ng-repeat="(name, icon) in toolbarSettings['icon']">
                                         <a href="#" dropdown-toggle value="{{name}}" 
                                            ng-click="active.type = name; save();">
@@ -67,7 +65,6 @@
                                     </li>
                                 </ul>
                             </div>
-
                         </div>
 
                         <form class="form-horizontal" role="form" 
@@ -96,7 +93,7 @@
 
                         <div ui-content style="padding:6px 5px 0px 10px;margin-top:3px;"
                              ng-if="active != null">
-                            <form id="toolbar-properties" class="form-horizontal" role="form"
+                            <form id="toolbar-properties" style="padding-bottom:250px;overflow-x:hidden;" class="form-horizontal" role="form"
                                   ng-if="!typeChanging && active != null"
                                   ng-include="Yii.app.createUrl('dev/forms/renderProperties', {
                                                   class: active.type

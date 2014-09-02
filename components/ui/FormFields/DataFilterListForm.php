@@ -4,26 +4,31 @@ class DataFilterListForm extends Form {
     public function getFields() {
         return array (
             array (
-                'column1' => array (
-                    '<column-placeholder></column-placeholder>',
-                    array (
-                        'label' => 'Type',
-                        'name' => 'filterType',
-                        'options' => array (
-                            'ng-model' => 'value[$index].filterType',
-                            'ng-change' => 'updateListView()',
-                        ),
-                        'list' => array (
-                            'string' => 'String',
-                            'number' => 'Number',
-                            'date' => 'Date',
-                        ),
-                        'type' => 'DropDownList',
-                    ),
+                'label' => 'Type',
+                'name' => 'filterType',
+                'options' => array (
+                    'ng-model' => 'value[$index].filterType',
+                    'ng-change' => 'updateListView()',
                 ),
-                'type' => 'ColumnField',
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
+                ),
+                'list' => array (
+                    'string' => 'String',
+                    'number' => 'Number',
+                    'list' => 'List',
+                    'checkbox' => 'Checkbox',
+                    'date' => 'Date',
+                ),
+                'labelWidth' => '2',
+                'fieldWidth' => '6',
+                'type' => 'DropDownList',
             ),
-            '<hr style="margin:-5px -4px 6px -4px" />',
+            array (
+                'renderInEditor' => 'No',
+                'value' => '<hr style=\\"margin:0px -4px 6px -4px\\" />',
+                'type' => 'Text',
+            ),
             array (
                 'column1' => array (
                     array (
@@ -33,6 +38,9 @@ class DataFilterListForm extends Form {
                             'ng-model' => 'value[$index].name',
                             'ng-change' => 'updateListView()',
                             'ng-delay' => '500',
+                        ),
+                        'labelOptions' => array (
+                            'style' => 'text-align:left;',
                         ),
                         'type' => 'TextField',
                     ),
@@ -53,7 +61,28 @@ class DataFilterListForm extends Form {
                 ),
                 'type' => 'ColumnField',
             ),
-            '<div style="margin-bottom:-8px;"></div>',
+            array (
+                'renderInEditor' => 'No',
+                'value' => '<hr ng-if=\\"value[$index].filterType == \\\'list\\\' || value[$index].filterType == \\\'checkbox\\\'\\" style=\\"margin:-4px -4px 5px -4px\\" />',
+                'type' => 'Text',
+            ),
+            array (
+                'label' => 'List Expression',
+                'fieldname' => 'listExpr',
+                'options' => array (
+                    'ng-model' => 'value[$index].listExpr',
+                    'ng-change' => 'updateListView()',
+                    'ng-delay' => '500',
+                    'ng-if' => 'value[$index].filterType ==                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                \'list\' || value[$index].filterType ==                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 \'checkbox\'',
+                    'style' => 'margin-bottom:8px;',
+                ),
+                'type' => 'ExpressionField',
+            ),
+            array (
+                'renderInEditor' => 'No',
+                'value' => '<div style=\\"margin-bottom:-8px;\\"></div>',
+                'type' => 'Text',
+            ),
         );
     }
     public function getForm() {
@@ -71,5 +100,6 @@ class DataFilterListForm extends Form {
     }
     public $name = '';
     public $label = '';
+    public $listExpr = '';
     public $filterType = 'string';
 }

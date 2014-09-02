@@ -143,7 +143,8 @@ class UploadFile extends FormField{
     
     public function getUploadPath(){
         $dir = Yii::getPathOfAlias('repo'.'.'.$this->uploadPath);
-        if(!file_exists($dir)){
+        
+        if($dir != "" && !file_exists($dir)){
             mkdir($dir, '0777', true);
         }
         return $dir;
