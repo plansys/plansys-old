@@ -4,7 +4,7 @@
     <data name="path" class="hide"><?= $this->getUploadPath(); ?></data>
     <data name="file_type" class="hide"><?= $this->getFileType(); ?></data>
     <data name="repo_path" class="hide"><?= Setting::get('repo.path'); ?></data>
-    <data name="file_update" class="hide"><?= $this->value; ?></data>
+    <data name="file_check" class="hide"><?= $this->value; ?></data>
     <data name="file_desc" class="hide"></data>
     <!-- /data -->
 
@@ -18,7 +18,6 @@
     <!-- /label -->
 
     <div class="<?= $this->fieldColClass ?>">
-
         <input type="file" <?= $this->expandAttributes($this->fieldOptions) ?> 
                ng-file-select="onFileSelect($files)" onclick="this.value = null"/>
         <input type="hidden"
