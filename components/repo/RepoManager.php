@@ -17,18 +17,20 @@ class RepoManager extends CComponent{
         foreach(glob($dir.DIRECTORY_SEPARATOR.'*') as $l){
             $itemName = explode(DIRECTORY_SEPARATOR, $l);
             $itemName = array_pop($itemName);
-            if(is_dir($l)){
-                $list[] = array(
-                    'name' => $itemName,
-                    'type' => 'dir',
-                    'path' => base64_encode($l)
-                );
-            }else{
-                $list[] = array(
-                    'name' => $itemName,
-                    'type' => $this->fileType($l),
-                    'path' => base64_encode($l)
-                );
+            if(substr($itemName, -5) != '.json'){
+                if(is_dir($l)){
+                    $list[] = array(
+                        'name' => $itemName,
+                        'type' => 'dir',
+                        'path' => base64_encode($l)
+                    );
+                }else{
+                    $list[] = array(
+                        'name' => $itemName,
+                        'type' => $this->fileType($l),
+                        'path' => base64_encode($l)
+                    );
+                }
             }
         }
         usort($list,array('RepoManager','sortItem'));

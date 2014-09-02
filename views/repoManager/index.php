@@ -23,7 +23,6 @@
                     </ol>
                 </div>
             </div>
-             <?php //var_dump($item);?>
         </div>
         <div style="padding:0px 0px 0px 5px;overflow:hidden;border:0px;">
             <div ui-header>Properties</div>
