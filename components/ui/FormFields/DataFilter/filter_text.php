@@ -1,4 +1,4 @@
-<div class="btn-group" style="margin-right:10px;">
+<div class="btn-group" style="margin-right:7px;">
     <button type="button" ng-click="toggleFilterCriteria($event)" 
             class="btn btn-default btn-sm dropdown-toggle filter-criteria-button" style="color:#666;">
 
@@ -14,8 +14,7 @@
         <span class="caret" style="margin-left:5px;"></span>
     </button>
     <button type="button" ng-click="resetFilter(filter)" ng-show="filter.valueText != 'All'"
-            class="btn btn-default btn-sm dropdown-toggle" 
-            style="color:#666;padding:2px 3px 1px 3px; margin-top:4px;">
+            class="btn btn-inverse btn-sm filter-reset" >
         <i class="fa fa-times fa-nm" ></i>
     </button>
 

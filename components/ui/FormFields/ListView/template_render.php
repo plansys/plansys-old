@@ -20,33 +20,49 @@
 
         <!-- field -->
         <?php if ($this->fieldTemplate == "default"): ?>
-            <div ng-repeat="item in value track by $index" class="list-view-item" style='margin-bottom:-1px;'>
-                <div style="float:right;margin-top:7px;">
-                    <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
-                        <i class="fa fa-times"></i>
-                    </div>
-                </div>
-                <div class='list-view-item-container'>
-                    <input class="list-view-item-text form-control" 
-                           ng-change="updateListView()"
-                           ng-delay="500"
-                           ng-model="value[$index]" type="text" />
-                </div>
+            <div ui-tree="uiTreeOptions">
+                <ol ui-tree-nodes ng-model="value">
+                    <li ui-tree-node ng-repeat="item in value track by $index" class="list-view-item">
+                        <div style="float:right;margin-top:7px;">
+                            <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
+                                <i class="fa fa-times"></i>
+                            </div>
+                        </div>
+                        <div ui-tree-handle class="list-view-item-move " style="float:left;padding-top:7px;">
+                            <i class="fa fa-arrows"></i>
+                        </div>
+                        <div class='list-view-item-container'>
+                            <input class="list-view-item-text form-control" 
+                                   ng-change="updateListView()"
+                                   ng-delay="500"
+                                   ng-model="value[$index]" type="text" />
+                        </div>
+                    </li>
+                </ol>
             </div>
         <?php elseif ($this->fieldTemplate == "form"): ?>
-            <div ng-repeat="item in value track by $index" class="list-view-item">
-                <div style="float:right;">
-                    <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
-                        <i class="fa fa-times"></i>
-                    </div>
-                </div>
-                <div class='list-view-item-container'>
-                    <?= $this->renderTemplateForm; ?>
-                </div>
+            <div ui-tree="uiTreeOptions">
+                <ol ui-tree-nodes ng-model="value">
+                    <li ui-tree-node ng-repeat="item in value track by $index" class="list-view-item">
+                        <div style="float:right;">
+                            <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
+                                <i class="fa fa-times"></i>
+                            </div>
+                        </div>
+                        <div ui-tree-handle class="list-view-item-move " style="float:left;">
+                            <i class="fa fa-arrows"></i>
+                        </div>
+                        <div class='list-view-item-container'>
+                            <?= $this->renderTemplateForm; ?>
+                        </div>
+                    </li>
+                </ol>
             </div>
         <?php endif; ?>
 
-        <button type="button" ng-click="addItem($event)" class="btn list-view-add btn-default btn-sm">
+        <button type="button" ng-click="addItem($event)" 
+                style="margin:0px;"
+                class="btn list-view-add btn-default btn-sm">
             <i class="fa fa-nm fa-plus"></i> <b>Add</b>
         </button>
         <!-- /field -->

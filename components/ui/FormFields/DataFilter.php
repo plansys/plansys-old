@@ -55,7 +55,7 @@ class DataFilter extends FormField {
         'list' => array(
             ''
         ),
-        'checkbox' => array(
+        'check' => array(
             ''
         )
     );
@@ -112,7 +112,7 @@ class DataFilter extends FormField {
                 'templateForm' => 'application.components.ui.FormFields.DataFilterListForm',
                 'fieldWidth' => '12',
                 'options' => array(
-                    'style' => 'margin-top:-13px;padding-left:7px;',
+                    'style' => 'margin-top:-13px;padding-left:0px;',
                     'ng-model' => 'active.filters',
                     'ng-change' => 'save()',
                 ),
@@ -222,6 +222,23 @@ class DataFilter extends FormField {
                         break;
                 }
                 break;
+            case "list":
+                if ($filter['value'] != '') {
+                    $sql = "{$column} LIKE :{$paramName}_{$column}";
+                    $param = @$filter['value'];
+                }
+                break;
+            case "check":
+                if ($filter['value'] != '') {
+                    $param = array();
+                    $psql = array();
+                    foreach ($filter['value'] as $k => $p) {
+                        $param[":{$paramName}_{$column}_{$k}"] = "{$p}";
+                        $psql[] = ":{$paramName}_{$column}_{$k}";
+                    }
+                    $sql = "{$column} IN (" . implode(", ", $psql) . ")";
+                }
+                break;
         }
         return array('sql' => $sql, 'param' => $param);
     }
@@ -258,15 +275,15 @@ class DataFilter extends FormField {
      * @return array me-return array hasil proses expression.
      */
     public function processExpr() {
+        if (count($this->filters) == 0)
+            return array();
 
         foreach ($this->filters as $k => $filter) {
-            if ($filter['filterType'] == "list" || $filter['filterType'] == "checkbox") {
+            if ($filter['filterType'] == "list" || $filter['filterType'] == "check") {
                 $listExpr = @$filter['listExpr'];
-                if ($listExpr != "") {
-                    if (FormField::$inEditor) {
-                        $list = '';
-                    }
+                $list = array();
 
+                if ($listExpr != "") {
                     ## evaluate expression
                     $list = $this->evaluate($listExpr, true);
 
@@ -278,9 +295,6 @@ class DataFilter extends FormField {
                     $list = Helper::toAssoc($this->list);
                 }
 
-                array_unshift($list, '---');
-                array_unshift($list, '-- ALL --');
-
                 $this->filters[$k]['list'] = $list;
             }
         }
@@ -289,11 +303,11 @@ class DataFilter extends FormField {
             'filters' => $this->filters
         );
     }
-
+    
     /**
      * render
      * Fungsi ini untuk me-render field dan atributnya
-     * @return mixed me-return sebuah field dan atribut checkboxlist dari hasil render
+     * @return mixed me-return sebuah field dan atribut datafilter dari hasil render
      */
     public function render() {
         $this->processExpr();

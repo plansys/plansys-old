@@ -17,7 +17,7 @@
                 return false;
             if ($scope.active.type != scope.modelClass)
                 return false;
-            
+
             return true;
         }
         /*********************** TOOLBAR TABS ***********************/
@@ -111,7 +111,7 @@
                     type: '',
                 }
             }
-            
+
             if ($scope.form.layout.name == "full-width") {
                 return true;
             }
@@ -184,6 +184,39 @@
         $scope.form = <?php echo json_encode($fb->form); ?>;
         $scope.fields = <?php echo json_encode($fieldData); ?>;
         $scope.saving = false;
+
+        $scope.generateFilters = function() {
+            var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]").text());
+            if (confirm("Your current filters will be lost. Are you sure?")) {
+                $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
+                    name: $scope.active.datasource,
+                    class: '<?= Helper::classAlias($class) ?>'
+                }).success(function(data) {
+                    $scope.active.filters = [];
+                    if (typeof data == 'object') {
+                        if (data.length > 0 && typeof data[0] == "object") {
+                            for (i in data[0]) {
+                                var filter = angular.extend({}, templateAttr);
+                                filter.name = i;
+                                filter.label = i;
+                                
+                                if (i == 'id') {
+                                    filter.filterType = 'number';
+                                }
+                                
+                                if (data[0][i].match(/\d\d\d\d-(\d)?\d-(\d)?\d(.*)/g)) {
+                                    filter.filterType = 'date';
+                                }
+                                
+                                $scope.active.filters.push(filter);
+                            }
+                        }
+                    }
+
+                });
+            }
+        }
+
         $scope.isPlaceholder = function(field) {
             if ((field.type == 'Text' && field.value == '<column-placeholder></column-placeholder>') || field.type == null)
                 return true;
@@ -311,11 +344,11 @@
         $scope.select = function(item, event) {
             event.stopPropagation();
             event.preventDefault();
-            
+
             if (item.$modelValue.type == 'DataFilter') {
                 $scope.getDataSourceList();
             }
-            
+
             $(".form-field.active").removeClass("active");
             $(event.currentTarget).addClass("active");
             $(".toolbar-type").removeClass('open');

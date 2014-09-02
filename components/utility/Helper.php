@@ -10,7 +10,7 @@ class Helper {
                 '---' => '---',
                 'fukiii' => 'fukiii',
             ),
-            'fuki' => 'test'
+            'admin' => 'test'
         );
     }
 

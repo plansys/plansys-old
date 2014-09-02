@@ -10,7 +10,6 @@ app.directive('psDataSource', function($timeout, $http) {
                 $scope.sqlParams = {};
 
                 $scope.query = function(f) {
-
                     $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
                         name: $scope.name,
                         class: $scope.class,

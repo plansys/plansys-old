@@ -109,7 +109,7 @@ class DataSource extends FormField {
 
             $this->attributes = $field;
             $this->builder = $fb;
-            $data = $this->query($post['params']);
+            $data = $this->query(@$post['params']);
 
             echo json_encode($data);
         }

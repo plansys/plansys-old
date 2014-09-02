@@ -25,19 +25,26 @@ app.directive('listView', function($timeout) {
                 $scope.addItem = function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    
+
                     if ($scope.value == null) {
                         $scope.value = [];
                     }
                     if ($scope.fieldTemplate == "default") {
                         $scope.value.push('');
                     } else if ($scope.fieldTemplate == "form") {
-                        $scope.value.push($scope.templateAttr);
+                        $scope.value.push(angular.extend({}, $scope.templateAttr));
                     }
                     $timeout(function() {
                         $el.find('.list-view-item-text').last().focus();
                     }, 0);
                 }
+
+
+                $scope.uiTreeOptions = {
+                    dragStop: function(scope) {
+                        $scope.updateListView();
+                    }
+                };
 
                 // when ng-model is changed from outside directive
                 if (typeof ctrl != 'undefined') {

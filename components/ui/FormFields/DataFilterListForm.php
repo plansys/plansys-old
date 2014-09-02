@@ -4,6 +4,29 @@ class DataFilterListForm extends Form {
     public function getFields() {
         return array (
             array (
+                'renderInEditor' => 'No',
+                'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
+<div class=\"pull-right\"> {{value[$index].name}}</div>
+<div style=\"width:60px;float:left;\">
+<div class=\"badge\">{{value[$index].filterType}}</div>
+</div>
+
+Label: {{value[$index].label}} 
+</div>',
+                'type' => 'Text',
+            ),
+            array (
+                'renderInEditor' => 'No',
+                'value' => '<hr ng-show=\"value[$index].show\"
+style=\"margin:4px -4px 6px -4px\" />',
+                'type' => 'Text',
+            ),
+            array (
+                'renderInEditor' => 'No',
+                'value' => '<div ng-show=\\"value[$index].show\\">',
+                'type' => 'Text',
+            ),
+            array (
                 'label' => 'Type',
                 'name' => 'filterType',
                 'options' => array (
@@ -16,55 +39,43 @@ class DataFilterListForm extends Form {
                 'list' => array (
                     'string' => 'String',
                     'number' => 'Number',
-                    'list' => 'List',
-                    'checkbox' => 'Checkbox',
                     'date' => 'Date',
+                    'list' => 'List',
+                    'check' => 'Checkbox',
                 ),
                 'labelWidth' => '2',
-                'fieldWidth' => '6',
+                'fieldWidth' => '10',
                 'type' => 'DropDownList',
             ),
             array (
-                'renderInEditor' => 'No',
-                'value' => '<hr style=\\"margin:0px -4px 6px -4px\\" />',
-                'type' => 'Text',
+                'label' => 'Name',
+                'name' => 'name',
+                'labelWidth' => '2',
+                'fieldWidth' => '10',
+                'options' => array (
+                    'ng-model' => 'value[$index].name',
+                    'ng-change' => 'updateListView()',
+                    'ng-delay' => '500',
+                ),
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
+                ),
+                'type' => 'TextField',
             ),
             array (
-                'column1' => array (
-                    array (
-                        'label' => 'Name',
-                        'name' => 'name',
-                        'options' => array (
-                            'ng-model' => 'value[$index].name',
-                            'ng-change' => 'updateListView()',
-                            'ng-delay' => '500',
-                        ),
-                        'labelOptions' => array (
-                            'style' => 'text-align:left;',
-                        ),
-                        'type' => 'TextField',
-                    ),
-                    '<column-placeholder></column-placeholder>',
+                'label' => 'Label',
+                'name' => 'label',
+                'labelWidth' => '2',
+                'fieldWidth' => '10',
+                'options' => array (
+                    'ng-model' => 'value[$index].label',
+                    'ng-change' => 'updateListView()',
+                    'ng-delay' => '500',
                 ),
-                'column2' => array (
-                    '<column-placeholder></column-placeholder>',
-                    array (
-                        'label' => 'Label',
-                        'name' => 'label',
-                        'options' => array (
-                            'ng-model' => 'value[$index].label',
-                            'ng-change' => 'updateListView()',
-                            'ng-delay' => '500',
-                        ),
-                        'type' => 'TextField',
-                    ),
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
                 ),
-                'type' => 'ColumnField',
-            ),
-            array (
-                'renderInEditor' => 'No',
-                'value' => '<hr ng-if=\\"value[$index].filterType == \\\'list\\\' || value[$index].filterType == \\\'checkbox\\\'\\" style=\\"margin:-4px -4px 5px -4px\\" />',
-                'type' => 'Text',
+                'type' => 'TextField',
             ),
             array (
                 'label' => 'List Expression',
@@ -73,18 +84,24 @@ class DataFilterListForm extends Form {
                     'ng-model' => 'value[$index].listExpr',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                    'ng-if' => 'value[$index].filterType ==                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                \'list\' || value[$index].filterType ==                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 \'checkbox\'',
+                    'ng-if' => 'value[$index].filterType ==\'list\' || value[$index].filterType == \'check\'',
                     'style' => 'margin-bottom:8px;',
                 ),
                 'type' => 'ExpressionField',
             ),
             array (
                 'renderInEditor' => 'No',
-                'value' => '<div style=\\"margin-bottom:-8px;\\"></div>',
+                'value' => '<div style=\\"margin-bottom:-3px;\\"></div>',
+                'type' => 'Text',
+            ),
+            array (
+                'renderInEditor' => 'No',
+                'value' => '</div>',
                 'type' => 'Text',
             ),
         );
     }
+    
     public function getForm() {
         return array (
             'formTitle' => 'DataFilterListForm',

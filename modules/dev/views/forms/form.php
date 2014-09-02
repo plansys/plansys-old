@@ -91,9 +91,10 @@
                                   ?>
                         </form>
 
-                        <div ui-content style="padding:6px 5px 0px 10px;margin-top:3px;"
+                        <div ui-content style="margin-top:3px;"
                              ng-if="active != null">
-                            <form id="toolbar-properties" style="padding-bottom:250px;overflow-x:hidden;" class="form-horizontal" role="form"
+                            <form id="toolbar-properties" 
+                                  class="form-horizontal" role="form"
                                   ng-if="!typeChanging && active != null"
                                   ng-include="Yii.app.createUrl('dev/forms/renderProperties', {
                                                   class: active.type

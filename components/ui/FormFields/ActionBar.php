@@ -11,26 +11,33 @@ class ActionBar extends FormField {
     public function getFieldProperties() {
         return array (
             array (
+                'label' => 'Title',
                 'name' => 'title',
-                'labelWidth' => '0',
-                'fieldWidth' => '12',
-                'prefix' => 'Title',
+                'labelWidth' => '3',
+                'fieldWidth' => '9',
                 'options' => array (
                     'ng-model' => 'active.title',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
+                'labelOptions' => array (
+                    'style' => 'text-align:left',
+                ),
                 'type' => 'TextField',
             ),
             array (
-                'label' => 'Show Section Tab',
+                'label' => 'Show Tab',
                 'name' => 'showSectionTab',
                 'options' => array (
                     'ng-model' => 'active.showSectionTab',
                     'ng-change' => 'save()',
                 ),
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
+                ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
-                'fieldWidth' => '4',
+                'labelWidth' => '3',
+                'fieldWidth' => '3',
                 'type' => 'DropDownList',
             ),
             array (
