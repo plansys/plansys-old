@@ -1,12 +1,7 @@
 <?php
 
 class UserController extends Controller {
-    public function actionTest() {
-        $tes = new RepoManager();
-        var_dump($tes->browse());
-        die();
-    }
-    
+ 
     public function actionCreate() {
         $model = new DevUser;
         $model->username = "OPX";

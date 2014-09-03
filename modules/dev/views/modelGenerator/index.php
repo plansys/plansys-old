@@ -8,15 +8,35 @@
             <div ui-content>
                 <div ui-tree data-drag-enabled="false">
                     <ol ui-tree-nodes="" ng-model="list">
-                        <li ng-repeat="item in list" ui-tree-node class='menu-list-item'>
-                            <a target="iframe"  ng-click="select(this);"  ng-class="is_selected(this)"
-                               href="<?php echo $this->createUrl('update', array('class' => '')); ?>{{item.class}}"
-                               ui-tree-handle ng-click="select(this)" ng-class="is_selected(this)">
-                                <i class="fa {{item.name == 'MainMenu' ? 'fa-sitemap' : 'fa-book'}} fa-nm"></i>
-                                <div ng-if='item.exist == "no"' class="pull-right label label-success" style="margin-top:4px;">
-                                    New
-                                </div><span style="word-wrap:break-word;">{{item.name}}</span>
-                            </a>
+                        <li ng-repeat="item in list" ui-tree-node>
+                            <div ui-tree-handle ng-click="select(this);"  ng-class="is_selected(this)">
+
+                                <div class="ui-tree-handle-info">
+                                    {{item.items.length}} controller{{item.items.length > 1 ? 's' : ''}}
+                                </div>
+
+                                <span ng-click="toggle(this);" >
+                                    <i ng-show="this.collapsed" class="fa fa-caret-right"></i>
+                                    <i ng-show="!this.collapsed" class="fa fa-caret-down"></i>
+                                </span>
+                                {{item.name}}
+
+                            </div>
+                            <ol ui-tree-nodes="" ng-model="item.items">
+                                <li ng-repeat="subItem in item.items" ui-tree-node class='menu-list-item'>
+                                    <a target="iframe" 
+                                       href="{{Yii.app.createUrl('/dev/modelGenerator/update',{
+                                                'class': subItem.class,
+                                                'type' : subItem.type
+                                            })}}"
+                                       ui-tree-handle ng-click="select(this)" ng-class="is_selected(this)">
+                                        <i class="fa {{subItem.name == 'MainMenu' ? 'fa-sitemap' : 'fa-book'}} fa-nm"></i>
+                                        <div ng-if='subItem.exist == "no"' class="pull-right label label-success" style="margin-top:4px;">
+                                            New
+                                        </div><span style="word-wrap:break-word;">{{subItem.name}}</span>
+                                    </a>
+                                </li>
+                            </ol>
                         </li>
                     </ol>
                 </div>

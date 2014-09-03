@@ -10,7 +10,7 @@
                         <td><b>Source Code</b></td>
                     </tr>
                     <tr>
-                        <td><span class="code" style="word-wrap:break-word;"><?php echo ControllerGenerator::controllerPath($class); ?></span></td>
+                        <td><span class="code" style="word-wrap:break-word;"><?php echo ControllerGenerator::controllerPath($class,$type); ?></span></td>
                     </tr>
                 </table>
                 <div ui-header>
@@ -104,10 +104,10 @@
          };
          $scope.create = function() {
              if($scope.edit == true){
-                var url = '<?php echo $this->createUrl("save", array('module' => $module, 'class' => $controller)); ?>';
+                var url = '<?php echo $this->createUrl("save", array('module' => $module, 'class' => $controller, 'type' => $type)); ?>';
                 
             }else{
-                var url = '<?php echo $this->createUrl("rename", array('module' => $module, 'class' => $controller)); ?>';
+                var url = '<?php echo $this->createUrl("rename", array('module' => $module, 'class' => $controller, 'type' => $type)); ?>';
                 
              }        
              $http.post(url, {list: $scope.active}).success(function(data, status) {

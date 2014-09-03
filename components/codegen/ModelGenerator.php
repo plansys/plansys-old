@@ -4,24 +4,54 @@ class ModelGenerator extends CodeGenerator {
     //Helper UI
     public static function listAllFile() {
         $dir = Yii::getPathOfAlias("application.models");
-        $items = glob($dir . DIRECTORY_SEPARATOR . "*");
-        foreach ($items as $k => $m) {
+        $appDir = Yii::getPathOfAlias("app.models");
+        
+        $devItems = glob($dir . DIRECTORY_SEPARATOR . "*");
+        $appItems = glob($appDir . DIRECTORY_SEPARATOR . "*");
+        
+        $items = array();
+        foreach ($devItems as $k => $m) {
             $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
             $m = str_replace('.php', "", $m);
             
-            $items[$k] = array(
+            $devItems[$k] = array(
                 'name' => $m,
                 'class' => 'application.models.' . $m,
                 'class_path' => 'application.models',
                 'exist' => (class_exists($m))?'yes': 'no',
+                'type' => 'dev'
             );
         }
-        return $items;
+        
+        foreach ($appItems as $k => $m) {
+            $m = str_replace($appDir . DIRECTORY_SEPARATOR, "", $m);
+            $m = str_replace('.php', "", $m);
+            
+            $appItems[$k] = array(
+                'name' => $m,
+                'class' => 'app.models.' . $m,
+                'class_path' => 'app.models',
+                'exist' => (class_exists($m))?'yes': 'no',
+                'type' => 'app'
+            );
+        }
+        $models = array(
+            'dev' => array(
+                'name' => 'Plansys',
+                'items' => $devItems,
+            ),
+            'app' => array(
+                'name' => 'Application',
+                'items' => $appItems,
+            )
+        );
+        return $models;
     }
 
-    public static function getModelPath($class) {
+    public static function getModelPath($class,$type) {
         $classPath = Yii::getPathOfAlias($class);
-        $basePath = Yii::getPathOfAlias('application');
+        if($type == 'dev') $basePath = Yii::getPathOfAlias('application');
+        else $basePath = Yii::getPathOfAlias('app');
         $classPath = str_replace($basePath, '' , $classPath);
         $classPath = $classPath .'.php';
         return $classPath;
@@ -196,8 +226,12 @@ EOF;
         }
     }
 
-    public function __construct($class) {
+    public function __construct($class , $type) {
         ## kode di bawah hanya dijalankan ketika model sudah ada
+        if($type != 'dev'){
+           $this->basePath = "app.models";
+        }
+        
         if (is_null($this->model) && class_exists($class)) {
             $this->load($class);
             $this->model = new $class;
