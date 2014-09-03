@@ -27,7 +27,7 @@
                             <ol ui-tree-nodes="" ng-model="item.items">
                                 <li ng-repeat="subItem in item.items" ui-tree-node>
                                     <a target="iframe" 
-                                       href="<?php echo $this->createUrl('update', array('class' => '')); ?>{{subItem.class}}"
+                                       href="<?php echo $this->createUrl('update', array('class' => '')); ?>{{subItem.alias}}"
                                        ui-tree-handle ng-click="select(this)" ng-class="is_selected(this)">
                                         <i ng-show="!this.collapsed" class="fa fa-file-text-o fa-nm"></i>
                                         {{subItem.name}}

@@ -14,7 +14,7 @@ class DataGrid extends FormField {
 
     /** @var string $filters */
     public $columns;
-    public $options = array();
+    public $gridOptions = array();
 
     /** @var string $toolbarName */
     public static $toolbarName = "Data Grid";
@@ -73,8 +73,8 @@ class DataGrid extends FormField {
                 'type' => 'Text',
             ),
             array (
-                'label' => 'Options',
-                'fieldname' => 'options',
+                'label' => 'Grid Options',
+                'fieldname' => 'gridOptions',
                 'show' => 'Show',
                 'type' => 'KeyValueGrid',
             ),
