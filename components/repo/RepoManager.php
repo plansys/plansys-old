@@ -39,6 +39,7 @@ class RepoManager extends CComponent{
         $detail = array(
             'parent' => base64_encode($parent),
             'path' => base64_encode($dir),
+            'type' => 'dir',
             'item' => $list,
             'count' => $count,
         );

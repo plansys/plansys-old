@@ -26,6 +26,15 @@ class RepoManagerController extends Controller{
             $this->endCache();
         }
     }
+    public function actionDownload(){
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+        Yii::app()->request->xSendFile(base64_decode($post['path']), array('saveName'=>$post['name']));
+        //Yii::app()->request->sendFile($post['name'], file_get_contents(base64_decode($post['path'])));
+    }
+    public function actionRemove(){
+        
+    }
     public function actionBrowse(){
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
