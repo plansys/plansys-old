@@ -23,6 +23,11 @@ abstract class CodeGenerator extends CComponent {
             file_put_contents($this->filePath, "<?php\n
 class {$class} extends {$this->baseClass} {\n \n}
 ");
+
+            Yii::import($this->classPath);
+            if (!class_exists($this->class)) {
+                eval("class {$class} extends {$this->baseClass} {\n \n}");
+            }
         }
 
         $this->file = file($this->filePath, FILE_IGNORE_NEW_LINES);
@@ -129,20 +134,18 @@ class {$class} extends {$this->baseClass} {\n \n}
             $nextLineIsEmpty = trim($this->file[$line + 2]) == '';
             $nextTwoLineIsEmpty = trim($this->file[$line + 3]) == '';
             $nextTwoLineIsProperty = (preg_match('/\s*(private|protected|public|var)\s+\$/x', $this->file[$line + 3]));
-            
+
             if ($nextLineIsEmpty && $nextTwoLineIsProperty) {
                 unset($this->file[$line + 2]);
                 $lineAdded--;
                 $this->file = array_values($this->file);
             }
-            
+
             if ($topcomment != "" && $nextTwoLineIsEmpty) {
                 unset($this->file[$line + 3]);
                 $lineAdded--;
                 $this->file = array_values($this->file);
             }
-            
-            var_dump($property . " " . $lineAdded);
         }
 
         ## adjust methods line and number
@@ -166,7 +169,7 @@ class {$class} extends {$this->baseClass} {\n \n}
 
                 ## remove comment
                 if (substr(trim($this->file[$line - 1]), 0, 2) == "/*" ||
-                    substr(trim($this->file[$line - 1]), 0, 2) == "##") {
+                        substr(trim($this->file[$line - 1]), 0, 2) == "##") {
                     unset($this->file[$line - 1]);
                     $this->file = array_values($this->file);
                     $removedLine++;
@@ -197,31 +200,32 @@ class {$class} extends {$this->baseClass} {\n \n}
             return array();
         }
     }
-    
-    public function renameFunction($oldName, $newName, $param = null){
-        if(isset($this->methods[$oldName])){
+
+    public function renameFunction($oldName, $newName, $param = null) {
+        if (isset($this->methods[$oldName])) {
             ## check param
-            if(!is_null($param)){
+            if (!is_null($param)) {
                 $body = $this->getFunctionBody($oldName);
                 array_pop($body);
                 array_shift($body);
-                $body = implode("\n",$body);
+                $body = implode("\n", $body);
                 $this->updateFunction($oldName, $body, array('params' => $param));
             }
-            
+
             ## rename fungsinya
             $line = $this->methods[$oldName]['line'];
             $func = $this->file[$line]; // public function actionCreate($a) {
             $pos = strpos($func, $oldName);
             $len = strlen($oldName);
             $new = substr_replace($func, $newName, $pos, $len);
-            $this->file[$line]=$new;
-            
+            $this->file[$line] = $new;
+
             ## rename oldname dalam daftar method
             $newMethod = array();
-            foreach($this->methods as $k=>$m){
-                if($k==$oldName)$k=$newName;
-                $newMethod[$k]=$m;
+            foreach ($this->methods as $k => $m) {
+                if ($k == $oldName)
+                    $k = $newName;
+                $newMethod[$k] = $m;
             }
             $this->methods = $newMethod;
             $this->save();

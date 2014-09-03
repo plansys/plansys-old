@@ -4,23 +4,44 @@ class ControllerGenerator extends CodeGenerator {
 
     //Helper UI
     public static function listAllFile() {
-        $dir = Yii::getPathOfAlias('application.modules');
+        $dir= Yii::getPathOfAlias('application.modules');
+        $appDir = Yii::getPathofAlias('app.modules');
         $modules = glob($dir . DIRECTORY_SEPARATOR . "*");
+        $appModules = glob($appDir . DIRECTORY_SEPARATOR . "*");
+        
         $files = array();
         foreach ($modules as $m) {
             $module = ucfirst(str_replace($dir . DIRECTORY_SEPARATOR, '', $m));
-            $items = ControllerGenerator::listFile($module);
+            $items = ControllerGenerator::listFile($module, 'dev');
             $files[] = array(
                 'module' => $module,
-                'items' => $items
+                'items' => $items,
+                'type' => 'dev'
+            );
+        }
+        foreach ($appModules as $m) {
+            $module = ucfirst(str_replace($appDir . DIRECTORY_SEPARATOR, '', $m));
+            $items = ControllerGenerator::listFile($module, 'app');
+            $files[] = array(
+                'module' => $module,
+                'items' => $items,
+                'type' => 'app'
             );
         }
         return $files;
     }
-
-    public static function listFile($module) {     
-        Yii::import('application.modules.' . lcfirst($module) . '.controllers.*');
-        $dir = Yii::getPathOfAlias("application.modules.{$module}.controllers");  
+    
+    public static function listFile($module, $type) {     
+        if($type == 'dev'){
+            Yii::import('application.modules.' . lcfirst($module) . '.controllers.*');
+            $dir = Yii::getPathOfAlias("application.modules.{$module}.controllers");
+            $path = 'application.modules.';
+        }else{
+            Yii::import('app.modules.' . lcfirst($module) . '.controllers.*');
+            $dir = Yii::getPathOfAlias("app.modules.{$module}.controllers");
+            $path = 'app.modules.';
+        }
+        
         $items = glob($dir . DIRECTORY_SEPARATOR . "*");
 
         foreach ($items as $k => $m) {
@@ -34,8 +55,8 @@ class ControllerGenerator extends CodeGenerator {
             $items[$k] = array(
                 'name' => $m,
                 'module' => $module,
-                'class' => 'application.modules.' . lcfirst($module) . '.controllers.' . $m,
-                'class_path' => 'application.modules.' . lcfirst($module) . '.controllers.',
+                'class' =>  $path. lcfirst($module) . '.controllers.' . $m,
+                'class_path' => $path . lcfirst($module) . '.controllers.',
                 'exist' => $exist,
             );
         }
@@ -102,9 +123,10 @@ class ControllerGenerator extends CodeGenerator {
         return $url;
     }
 
-    public static function controllerPath($class) {
+    public static function controllerPath($class, $type) {
         $classPath = Yii::getPathOfAlias($class);
-        $basePath = Yii::getPathOfAlias('application');
+        if($type == 'dev') $basePath = Yii::getPathOfAlias('application');
+        else $basePath = Yii::getPathOfAlias('app');
         $classPath = str_replace($basePath, '' , $classPath);
         $classPath = $classPath .'.php';
         return $classPath;
@@ -182,7 +204,10 @@ class ControllerGenerator extends CodeGenerator {
         );
     }
 
-    public function __construct($module, $class) {
+    public function __construct($module, $class, $type = null) {
+        if($type != 'dev'){
+            $this->basePath = "app.modules.{module}.Controllers"; 
+        }
         $this->basePath = str_replace('{module}', $module, $this->basePath);
         $this->load($class);
     }

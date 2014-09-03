@@ -131,7 +131,6 @@
                 $scope.browse($scope.active.path);
             }else{
                 $scope.file = $scope.active;
-                console.log($scope.file);
                 $scope.isDir = false;
             }
         };
@@ -164,7 +163,6 @@
  ]);
 </script>
 <?php
-//var_dump($item);
 
 /* 
  * To change this license header, choose License Headers in Project Properties.

@@ -23,11 +23,10 @@ class ControllerGeneratorController extends Controller{
         }
     }
     
-    public function actionRename($module ,$class){
+    public function actionRename($module ,$class ,$type){
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
-        $gen = new ControllerGenerator($module, $class);
-        var_dump($post);
+        $gen = new ControllerGenerator($module, $class ,$type);
         if (isset($post['list'])) {
             $content = $post['list'];
             if(!is_null($content['param'])){
@@ -40,10 +39,10 @@ class ControllerGeneratorController extends Controller{
         }     
     }
     
-    public function actionSave($module ,$class){
+    public function actionSave($module ,$class ,$type){
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
-        $gen = new ControllerGenerator($module, $class);
+        $gen = new ControllerGenerator($module, $class ,$type);
         
         if (isset($post['list'])) {
             $content = $post['list'];
@@ -68,8 +67,12 @@ class ControllerGeneratorController extends Controller{
     
     public function actionUpdate($class){
         $this->layout = "//layouts/blank";
-        $target = ControllerGenerator::moduleControllerName($class);
-        $gen = new ControllerGenerator($target['module'], $target['controller']);
+        $project = explode('.', $class);
+        $type = $project[0];
+        if($type == 'application')$type = 'dev';
+        
+        $target = ControllerGenerator::moduleControllerName($class, $type);
+        $gen = new ControllerGenerator($target['module'], $target['controller'],$type);
         $method = $gen->listMethod($class,$target['controller']);
         
         $properties = FormBuilder::load('DevControllerEditor');
@@ -78,6 +81,7 @@ class ControllerGeneratorController extends Controller{
         $this->render('form',array(
             'method' => $method,
             'class' => $class,
+            'type' => $type,
             'controller' => $target['controller'],
             'module' =>$target['module'],
         ));

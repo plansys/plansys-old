@@ -14,11 +14,11 @@ class UserIdentity extends CUserIdentity {
         
         if ($record === null)
             $this->errorCode = self::ERROR_USERNAME_INVALID;
-        else if ($record->password !== md5($this->password))
+        else if (trim($record->password) !== md5($this->password))
             $this->errorCode = self::ERROR_PASSWORD_INVALID;
         else {
             $this->id = $record->id;
-            $role = UserRole::model()->findByAttributes(array('user_id'=> $this->id, 'default_role' => '1'));
+            $role = UserRole::model()->findByAttributes(array('user_id' => $this->id, 'default_role' => '1'));
             $roles = $role->role->role_name;
             $this->setState('roles', $roles);
             $this->errorCode = self::ERROR_NONE;

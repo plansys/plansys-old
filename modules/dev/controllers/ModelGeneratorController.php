@@ -9,13 +9,8 @@ class ModelGeneratorController extends Controller{
     public function actionIndex(){
         $models = ModelGenerator::listAllFile();
         $this->render('index', array(
-            'models' => $models
+            'models' => $models,
         ));
-    }
-    
-    public function actionSave($class,$tableName){
-        $postdata = file_get_contents("php://input");
-        $post = CJSON::decode($postdata);
     }
     
     public function actionRenderProperties(){
@@ -30,18 +25,15 @@ class ModelGeneratorController extends Controller{
         }
     }
     
-    public function actionCreate($class){
-        $gen = new ModelGenerator($class);
-    }
-    
-    public function actionUpdate($class){
+    public function actionUpdate($class, $type){
         $this->layout = "//layouts/blank";
         $className = array_pop(explode('.',$class));
-        $model = new ModelGenerator($className);
+        $model = new ModelGenerator($className,$type);
         $modelDetail = $model->modelInfo;
         
         $this->render('form',array(
             'class' => $class,
+            'type' => $type,
             'modelDetail' => $modelDetail,
         ));
     } 

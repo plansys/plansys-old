@@ -10,7 +10,7 @@
                         <td><b>Source Code</b></td>
                     </tr>
                     <tr>
-                        <td><span class="code"><?php echo ModelGenerator::getModelPath($class);?></span></td>
+                        <td><span class="code"><?php echo ModelGenerator::getModelPath($class,$type);?></span></td>
                     </tr>
                     <tr>
                         <td><b>Table Name<b></td>

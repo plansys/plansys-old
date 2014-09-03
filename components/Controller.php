@@ -15,7 +15,7 @@ class Controller extends CController {
     public function url($path) {
         return Yii::app()->request->baseUrl . $path;
     }
-    
+
     public function staticUrl($path) {
         $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
         $static = "/" . array_pop($dir) . "/static";
@@ -74,19 +74,23 @@ class Controller extends CController {
             return $default;
         } else {
             $module = Yii::app()->user->role;
-            $menuModule = include(Yii::getPathOfAlias("application.modules.{$module}.menus.MainMenu") . ".php");
 
+            $path = Yii::getPathOfAlias("application.modules.{$module}.menus.MainMenu") . ".php";
+            if (!is_file($path)) {
+                $path = Yii::getPathOfAlias("app.modules.{$module}.menus.MainMenu") . ".php";
+            }
+            
+            $menuModule = include($path);
             return array_merge($default, $menuModule);
         }
     }
-    
-    public function loadModel($id,$form)
-	{
+
+    public function loadModel($id, $form) {
         $model = $form::model()->findByPk($id);
-        
-		if($model===null)
-			throw new CHttpException(404,'The requested page does not exist.');
-		return $model;
-	}
+
+        if ($model === null)
+            throw new CHttpException(404, 'The requested page does not exist.');
+        return $model;
+    }
 
 }

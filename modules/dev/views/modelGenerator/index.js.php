@@ -3,6 +3,7 @@
             $scope.list = <?php echo CJSON::encode($models); ?>;
             $scope.active = null;
             $scope.saving = false;
+            $scope.activeTree = null;
             $scope.select = function(item){
                 $scope.activeTree = item;
                 $scope.active = item.$modelValue;
