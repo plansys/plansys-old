@@ -27,13 +27,6 @@ class SubmitButton extends FormField {
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
-                'list' => array (
-                    'primary' => 'Primary',
-                    'info' => 'Info',
-                    'success' => 'Success',
-                    'warning' => 'Warning',
-                    'danger' => 'Danger',
-                ),
                 'listExpr' => 'array(
      \'primary\' => \'Primary\',
      \'info\' => \'Info\',
@@ -52,12 +45,6 @@ class SubmitButton extends FormField {
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
-                'list' => array (
-                    'btn-xs' => 'Very Small',
-                    'btn-sm' => 'Small',
-                    '' => 'Default',
-                    'btn-lg' => 'Large',
-                ),
                 'listExpr' => 'array(
     \'btn-xs\' => \'Very Small\',
     \'btn-sm\' => \'Small\',
@@ -75,11 +62,6 @@ class SubmitButton extends FormField {
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
-                'list' => array (
-                    'left' => 'Left',
-                    'center' => 'Center',
-                    'right' => 'Right',
-                ),
                 'listExpr' => 'array(
    \'left\' => \'Left\',
    \'center\' => \'Center\',
@@ -87,6 +69,11 @@ class SubmitButton extends FormField {
 );',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Options',
+                'fieldname' => 'options',
+                'type' => 'KeyValueGrid',
             ),
         );
     }

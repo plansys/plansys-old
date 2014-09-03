@@ -4,7 +4,8 @@ class MenusController extends Controller {
 
     public function actionIndex() {
         $menus = MenuTree::listAllFile();
-        
+        var_dump($menus[0]);
+        die();
         $this->render('index', array(
             'menus' => $menus
         ));

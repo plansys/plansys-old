@@ -120,7 +120,7 @@ class FormsController extends Controller {
 
     public function actionSave($class) {
         FormField::$inEditor = true;
-        
+
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
         $fb = FormBuilder::load($class);
@@ -138,13 +138,14 @@ class FormsController extends Controller {
             $fb->form = $post['form'];
         }
     }
-    
+
     public function actionUpdate($class) {
         FormField::$inEditor = true;
 
         $this->layout = "//layouts/blank";
         $fb = FormBuilder::load($class);
-
+        $class = array_pop(explode(".", $class));
+        
         if (is_subclass_of($fb->model, 'ActiveRecord')) {
             $formType = "ActiveRecord";
             FormsController::setModelFieldList($class::model()->modelFieldList, "AR");
@@ -157,7 +158,7 @@ class FormsController extends Controller {
             $mf = new $class;
             FormsController::setModelFieldList($mf->attributes, "FF");
         }
-        
+
         $fieldData = $fb->fields;
         FormsController::$modelField = $fieldData;
         $toolbar = $this->renderAllToolbar($formType);

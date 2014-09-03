@@ -47,7 +47,7 @@ class MenuTree extends CComponent {
         foreach ($items as $k => $m) {
             $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
             $m = str_replace('.php', "", $m);
-
+            
             $items[$k] = array(
                 'name' => $m,
                 'module' => $module,

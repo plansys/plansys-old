@@ -36,7 +36,7 @@ class FormBuilder extends CComponent {
             $classfile = $class;
             $class = array_pop(explode(".", $classfile));
             Yii::import($classfile);
-
+            
             if (!class_exists($class)) {
                 return null;
             }
@@ -946,9 +946,9 @@ EOF;
         }
         $files[] = array(
             'module' => 'Form Fields',
-            'items' => $items
+            'items' => $items,
         );
-        ## end..
+
         ##  add files in Root Form dir
         $forms_dir = Yii::getPathOfAlias("application.forms") . DIRECTORY_SEPARATOR;
         $items = glob($forms_dir . "*.php");
@@ -964,7 +964,7 @@ EOF;
             'module' => 'Root Form',
             'items' => $items
         );
-        ## end..
+
         ## add files in Plansys Modules Dir
         $module_dir = Yii::getPathOfAlias('application.modules');
         if (file_exists($module_dir)) {
@@ -978,7 +978,7 @@ EOF;
                     $items[$k] = str_replace('.php', "", $items[$k]);
 
                     if (!is_null($func)) {
-                        $items[$k] = $func($items[$k], $module, 'application.modules.' . $module . ".form");
+                        $items[$k] = $func($items[$k], $module, 'application.modules.' . lcfirst($module) . ".forms");
                     }
                 }
 
@@ -1002,7 +1002,7 @@ EOF;
                     $items[$k] = str_replace('.php', "", $items[$k]);
 
                     if (!is_null($func)) {
-                        $items[$k] = $func($items[$k], $module, 'app.modules.' . $module . ".form");
+                        $items[$k] = $func($items[$k], $module, 'app.modules.' . lcfirst($module) . ".forms");
                     }
                 }
 

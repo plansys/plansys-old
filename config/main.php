@@ -12,6 +12,7 @@ return array(
     'preload' => array('log', 'EJSUrlManager'),
     // autoloading model and component classes
     'import' => array(
+        'app.models.*',
         'application.models.*',
         'application.forms.*',
         'application.components.*',
