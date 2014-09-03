@@ -9,10 +9,6 @@ class RepoProperties extends Form{
                 'options' => array (
                     'ng-model' => 'active.path',
                 ),
-                'fieldOptions' => array (
-                    'ng-change' => 'browse(encode(active.path))',
-                    'ng-model' => 'active.path',
-                ),
                 'type' => 'UploadFile',
             ),
         );

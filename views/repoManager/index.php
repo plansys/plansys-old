@@ -27,8 +27,11 @@
         <div style="padding:0px 0px 0px 5px;overflow:hidden;border:0px;">
             <div ui-header>Properties</div>
             <div ui-content style="padding:3px 20px;">
-                <div 
-                     ng-include="Yii.app.createUrl('repoManager/renderProperties')"></div>
+                <div ng-include="Yii.app.createUrl('repoManager/renderProperties')" ng-hide="!isDir"></div>
+                <div ng-show="!isDir">
+                    <div class="btn btn-success btn-sm" ng-click="download()">Download</div>
+                    <div class="btn btn-danger btn-sm">Remove</div>
+                </div>
             </div>
         </div>
        
@@ -107,13 +110,32 @@
         
         $scope.active = $scope.list;
         $scope.saving = false;
+        $scope.isDir = true;
+        $scope.file = null;
+        $scope.download = function(){
+            var request = $http({
+                'method':'post',
+                'url':Yii.app.createUrl('/repoManager/download'),
+                'data':{
+                        'name' : $scope.file.name,
+                        'path' : $scope.file.path
+                       }
+            });
+        };
         $scope.select = function(item){
+            $scope.file = null;
             $scope.activeTree = item;
             $scope.active = item.$modelValue;
             if($scope.active.type === 'dir'){
+                $scope.isDir = true;
                 $scope.browse($scope.active.path);
+            }else{
+                $scope.file = $scope.active;
+                console.log($scope.file);
+                $scope.isDir = false;
             }
         };
+        
   
         $scope.browse = function(item){
             var request = $http({
@@ -125,6 +147,7 @@
             }).success(function(data){
                 $scope.list = data;
                 $scope.active = data;
+                $scope.isDir = true;
             });
         };
         
