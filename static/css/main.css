@@ -735,6 +735,18 @@ li:hover > .item-btn {
     border-radius:3px;
 }
 
+.list-view-loading {
+    padding:10px;
+    text-align:center;
+    color:#999;
+    font-size:13px;
+    width:100%;
+    margin-bottom:5px;
+    border:1px solid #ececeb;
+    background:#fafafa;
+    border-radius:3px;
+}
+
 div[list-view] .angular-ui-tree-empty {
     display:none;
 }

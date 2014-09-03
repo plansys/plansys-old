@@ -9,7 +9,7 @@
             <div ui-content>
                 <div ui-tree data-drag-enabled="false">
                     <ol ui-tree-nodes="" ng-model="list">
-                        <li ng-repeat="item in list" ui-tree-node>
+                        <li ng-repeat="item in list" ui-tree-node collapsed="true">
                             <div ui-tree-handle ng-click="toggle(this);
                                             select(this);" 
                                  ng-class="is_selected(this)">

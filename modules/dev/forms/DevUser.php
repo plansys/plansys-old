@@ -26,10 +26,38 @@ class DevUser extends User {
                 'datasource' => 'dataSource1',
                 'filters' => array (
                     array (
+                        'name' => 'nip',
+                        'label' => 'nip',
+                        'listExpr' => '',
+                        'filterType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'fullname',
+                        'label' => 'fullname',
+                        'listExpr' => '',
+                        'filterType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'email',
+                        'label' => 'email',
+                        'listExpr' => '',
+                        'filterType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
                         'name' => 'id',
                         'label' => 'id',
                         'listExpr' => '',
                         'filterType' => 'number',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'phone',
+                        'label' => 'phone',
+                        'listExpr' => '',
+                        'filterType' => 'string',
                         'show' => false,
                     ),
                     array (
@@ -39,6 +67,20 @@ class DevUser extends User {
                         'filterType' => 'string',
                         'show' => false,
                     ),
+                    array (
+                        'name' => 'password',
+                        'label' => 'password',
+                        'listExpr' => '',
+                        'filterType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'date',
+                        'label' => 'date',
+                        'listExpr' => '',
+                        'filterType' => 'date',
+                        'show' => false,
+                    ),
                 ),
                 'options' => array (
                     'ps-ds-sql' => 'DataFilter::generateParams($paramName, $params)',
@@ -46,17 +88,27 @@ class DevUser extends User {
                 'type' => 'DataFilter',
             ),
             array (
+                'name' => 'dataGrid1',
+                'datasource' => 'dataSource1',
+                'columns' => array (
+                    array (
+                        'name' => 'id',
+                        'label' => 'id',
+                        'sort' => 'Yes',
+                        'options' => array (),
+                        'columnType' => 'string',
+                        'show' => false,
+                    ),
+                ),
+                'type' => 'DataGrid',
+            ),
+            array (
                 'name' => 'dataSource1',
-                'sql' => 'select id,username from p_user {where [where]}',
+                'sql' => 'select * from p_user {where [where]}',
                 'params' => array (
                     'where' => 'dataFilter1',
                 ),
                 'type' => 'DataSource',
-            ),
-            array (
-                'name' => 'dataGrid1',
-                'datasource' => 'dataSource1',
-                'type' => 'DataGrid',
             ),
             array (
                 'column1' => array (

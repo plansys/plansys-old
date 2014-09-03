@@ -188,31 +188,58 @@
         $scope.generateFilters = function() {
             var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]").text());
             if (confirm("Your current filters will be lost. Are you sure?")) {
+                $scope.active.filters = [];
                 $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
                     name: $scope.active.datasource,
                     class: '<?= Helper::classAlias($class) ?>'
                 }).success(function(data) {
-                    $scope.active.filters = [];
                     if (typeof data == 'object') {
                         if (data.length > 0 && typeof data[0] == "object") {
                             for (i in data[0]) {
                                 var filter = angular.extend({}, templateAttr);
                                 filter.name = i;
                                 filter.label = i;
-                                
+
                                 if (i == 'id') {
                                     filter.filterType = 'number';
                                 }
-                                
+
                                 if (data[0][i].match(/\d\d\d\d-(\d)?\d-(\d)?\d(.*)/g)) {
                                     filter.filterType = 'date';
                                 }
-                                
+
                                 $scope.active.filters.push(filter);
                             }
                         }
                     }
 
+                });
+            }
+        }
+
+        $scope.generateColumns = function() {
+            var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]").text());
+            if (confirm("Your current filters will be lost. Are you sure?")) {
+                $scope.active.columns = [];
+                $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
+                    name: $scope.active.datasource,
+                    class: '<?= Helper::classAlias($class) ?>'
+                }).success(function(data) {
+                    if (typeof data == 'object') {
+                        if (data.length > 0 && typeof data[0] == "object") {
+                            for (i in data[0]) {
+                                var filter = angular.extend({}, templateAttr);
+                                filter.name = i;
+                                filter.label = i;
+
+                                if ($scope.active.columns == null) {
+                                    $scope.active.columns = [];
+                                }
+
+                                $scope.active.columns.push(filter);
+                            }
+                        }
+                    }
                 });
             }
         }
@@ -345,7 +372,8 @@
             event.stopPropagation();
             event.preventDefault();
 
-            if (item.$modelValue.type == 'DataFilter') {
+            if (item.$modelValue.type == 'DataFilter' ||
+                    item.$modelValue.type == 'DataGrid') {
                 $scope.getDataSourceList();
             }
 

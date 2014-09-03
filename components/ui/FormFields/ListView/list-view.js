@@ -53,10 +53,19 @@ app.directive('listView', function($timeout) {
                             return;
 
                         if (typeof ctrl.$viewValue != "undefined") {
+                            $scope.loading = true;
                             $scope.value = ctrl.$viewValue;
-                            $scope.updateListView();
+                            $timeout(function() {
+                                $scope.loading = false;
+                            }, 0);
                         }
                     };
+                }
+
+                $scope.showListForm = function() {
+                    $timeout(function() {
+                        $el.find('.list-view-form li').show();
+                    }, 0);
                 }
 
                 // set default value

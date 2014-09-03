@@ -41,7 +41,7 @@
                 </ol>
             </div>
         <?php elseif ($this->fieldTemplate == "form"): ?>
-            <div ui-tree="uiTreeOptions">
+            <div ng-show="!loading" class="list-view-form" ui-tree="uiTreeOptions">
                 <ol ui-tree-nodes ng-model="value">
                     <li ui-tree-node ng-repeat="item in value track by $index" class="list-view-item">
                         <div style="float:right;">
