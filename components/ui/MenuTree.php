@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class MenuTree
  * @author rizky
@@ -6,9 +7,22 @@
 class MenuTree extends CComponent {
 
     public static function listAllFile() {
+        ## dev
         $dir = Yii::getPathOfAlias('application.modules');
         $modules = glob($dir . DIRECTORY_SEPARATOR . "*");
         $files = array();
+        foreach ($modules as $m) {
+            $module = ucfirst(str_replace($dir . DIRECTORY_SEPARATOR, '', $m));
+            $items = MenuTree::listFile($module);
+            $files[] = array(
+                'module' => $module,
+                'items' => $items
+            );
+        }
+
+        ## app
+        $dir = Yii::getPathOfAlias('app.modules');
+        $modules = glob($dir . DIRECTORY_SEPARATOR . "*");
         foreach ($modules as $m) {
             $module = ucfirst(str_replace($dir . DIRECTORY_SEPARATOR, '', $m));
             $items = MenuTree::listFile($module);
@@ -21,7 +35,14 @@ class MenuTree extends CComponent {
     }
 
     public static function listFile($module) {
-        $dir = Yii::getPathOfAlias("application.modules.{$module}.menus");
+        $path = "application.modules." . lcfirst($module) . ".menus";
+        $dir = Yii::getPathOfAlias($path);
+
+        if (!is_dir($dir)) {
+            $path = "app.modules." . lcfirst($module) . ".menus";
+            $dir = Yii::getPathOfAlias($path);
+        }
+
         $items = glob($dir . DIRECTORY_SEPARATOR . "*");
         foreach ($items as $k => $m) {
             $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
@@ -30,8 +51,8 @@ class MenuTree extends CComponent {
             $items[$k] = array(
                 'name' => $m,
                 'module' => $module,
-                'class' => 'application.modules.' . lcfirst($module) . '.menus.' . $m,
-                'class_path' => 'application.modules.' . lcfirst($module) . '.menus.'
+                'class' => $path . '.' . $m,
+                'class_path' => $path
             );
         }
         return $items;
@@ -52,6 +73,10 @@ class MenuTree extends CComponent {
     }
 
     public static function fillMenuItems(&$list) {
+        if (!is_array($list)) {
+            $list = array();
+        }
+
         foreach ($list as $k => $v) {
             if (!isset($v['items'])) {
                 $list[$k]['items'] = array();
@@ -132,7 +157,7 @@ class MenuTree extends CComponent {
             'list' => $this->list,
             'class' => $this->class,
             'onclick' => $this->onclick,
-                ), true);
+            ), true);
 
         return str_replace(array("<script>", "</script>"), "", $script);
     }
@@ -149,12 +174,12 @@ class MenuTree extends CComponent {
         }
 
         return $ctrl->renderPartial("//layouts/menu", array(
-                    'class' => $this->class,
-                    'classpath' => $this->classpath,
-                    'title' => $this->title,
-                    'onclick' => $this->onclick,
-                    'script' => $script,
-                        ), true);
+                'class' => $this->class,
+                'classpath' => $this->classpath,
+                'title' => $this->title,
+                'onclick' => $this->onclick,
+                'script' => $script,
+                ), true);
     }
 
 }
