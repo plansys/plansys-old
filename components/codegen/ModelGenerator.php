@@ -1,46 +1,47 @@
 <?php
 
 class ModelGenerator extends CodeGenerator {
+
     //Helper UI
     public static function listAllFile() {
         $dir = Yii::getPathOfAlias("application.models");
         $appDir = Yii::getPathOfAlias("app.models");
-        
+
         $devItems = glob($dir . DIRECTORY_SEPARATOR . "*");
         $appItems = glob($appDir . DIRECTORY_SEPARATOR . "*");
-        
+
         $items = array();
         foreach ($devItems as $k => $m) {
             $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
             $m = str_replace('.php', "", $m);
-            
+
             $devItems[$k] = array(
                 'name' => $m,
                 'class' => 'application.models.' . $m,
                 'class_path' => 'application.models',
-                'exist' => (class_exists($m))?'yes': 'no',
+                'exist' => (class_exists($m)) ? 'yes' : 'no',
                 'type' => 'dev'
             );
         }
-        
+
         foreach ($appItems as $k => $m) {
             $m = str_replace($appDir . DIRECTORY_SEPARATOR, "", $m);
             $m = str_replace('.php', "", $m);
-            
+
             $appItems[$k] = array(
                 'name' => $m,
                 'class' => 'app.models.' . $m,
                 'class_path' => 'app.models',
-                'exist' => (class_exists($m))?'yes': 'no',
+                'exist' => (class_exists($m)) ? 'yes' : 'no',
                 'type' => 'app'
             );
         }
         $models = array(
-            'dev' => array(
+            array(
                 'name' => 'Plansys',
                 'items' => $devItems,
             ),
-            'app' => array(
+            array(
                 'name' => 'Application',
                 'items' => $appItems,
             )
@@ -48,12 +49,14 @@ class ModelGenerator extends CodeGenerator {
         return $models;
     }
 
-    public static function getModelPath($class,$type) {
+    public static function getModelPath($class, $type) {
         $classPath = Yii::getPathOfAlias($class);
-        if($type == 'dev') $basePath = Yii::getPathOfAlias('application');
-        else $basePath = Yii::getPathOfAlias('app');
-        $classPath = str_replace($basePath, '' , $classPath);
-        $classPath = $classPath .'.php';
+        if ($type == 'dev')
+            $basePath = Yii::getPathOfAlias('application');
+        else
+            $basePath = Yii::getPathOfAlias('app');
+        $classPath = str_replace($basePath, '', $classPath);
+        $classPath = $classPath . '.php';
         return $classPath;
     }
 
@@ -191,16 +194,16 @@ EOF;
 
     protected function addTableName($tableName = null) {
         $model = $this->model;
-        if($model == null){
+        if ($model == null) {
             $tableNameFunc = <<<EOF
         return '{$tableName}';
 EOF;
-        }else{
+        } else {
             $tableNameFunc = <<<EOF
         return '{$model->tableName}';
 EOF;
         }
-              
+
         $this->updateFunction('tableName', $tableNameFunc);
     }
 
@@ -219,19 +222,19 @@ EOF;
 
             ## add columns function
             $this->addAttributeLabels();
-            
+
             return true;
         } else {
             return false;
         }
     }
 
-    public function __construct($class , $type) {
+    public function __construct($class, $type) {
         ## kode di bawah hanya dijalankan ketika model sudah ada
-        if($type != 'dev'){
-           $this->basePath = "app.models";
+        if ($type != 'dev') {
+            $this->basePath = "app.models";
         }
-        
+
         if (is_null($this->model) && class_exists($class)) {
             $this->load($class);
             $this->model = new $class;
@@ -242,7 +245,7 @@ EOF;
         ## jika class ini sudah ada, maka
         if (!is_null($this->model) && method_exists($this->model, 'tableName')) {
             $tableName = $this->model->tableName();
-            
+
             ## dapatkan model info untuk $class
             $this->modelCode = $this->getTableModel($tableName);
             if ($this->modelCode->validate()) {
@@ -254,13 +257,13 @@ EOF;
             $tableName = Helper::camelToUnderscore($class);
             $this->addTableName($tableName);
             $success = $this->generateClass($tableName);
-            
+
             if (!$success) {
-                $tryDefaultTable = 'p_'.$tableName;
+                $tryDefaultTable = 'p_' . $tableName;
                 $this->addTableName($tryDefaultTable);
                 $tryDefault = $this->generateClass($tryDefaultTable);
-                
-                if(!$tryDefault){
+
+                if (!$tryDefault) {
                     file_put_contents($this->filePath, "");
                     throw new Exception("Gagal meng-generate Class [{$this->classPath}] dengan nama tabel [{$tableName}].
                         Pastikan table tersebut ada di database.");

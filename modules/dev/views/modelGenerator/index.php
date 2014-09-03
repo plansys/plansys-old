@@ -8,14 +8,14 @@
             <div ui-content>
                 <div ui-tree data-drag-enabled="false">
                     <ol ui-tree-nodes="" ng-model="list">
-                        <li ng-repeat="item in list" ui-tree-node>
+                        <li ng-repeat="item in list track by $index" ui-tree-node>
                             <div ui-tree-handle ng-click="toggle(this);select(this);"  ng-class="is_selected(this)">
 
                                 <div class="ui-tree-handle-info">
                                     {{item.items.length}} model{{item.items.length > 1 ? 's' : ''}}
                                 </div>
 
-                                <span ng-click="toggle(this);" >
+                                <span>
                                     <i ng-show="this.collapsed" class="fa fa-caret-right"></i>
                                     <i ng-show="!this.collapsed" class="fa fa-caret-down"></i>
                                 </span>

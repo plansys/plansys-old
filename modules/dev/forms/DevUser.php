@@ -26,15 +26,15 @@ class DevUser extends User {
                 'datasource' => 'dataSource1',
                 'filters' => array (
                     array (
-                        'name' => 'nip',
-                        'label' => 'nip',
+                        'name' => 'id',
+                        'label' => 'id',
                         'listExpr' => '',
-                        'filterType' => 'string',
+                        'filterType' => 'number',
                         'show' => false,
                     ),
                     array (
-                        'name' => 'fullname',
-                        'label' => 'fullname',
+                        'name' => 'nip',
+                        'label' => 'nip',
                         'listExpr' => '',
                         'filterType' => 'string',
                         'show' => false,
@@ -47,10 +47,10 @@ class DevUser extends User {
                         'show' => false,
                     ),
                     array (
-                        'name' => 'id',
-                        'label' => 'id',
+                        'name' => 'fullname',
+                        'label' => 'fullname',
                         'listExpr' => '',
-                        'filterType' => 'number',
+                        'filterType' => 'string',
                         'show' => false,
                     ),
                     array (
