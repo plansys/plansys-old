@@ -128,8 +128,15 @@ class DataSource extends FormField {
             }
 
             $field = $this->builder->findField(array('name' => $this->params[$param]));
-            if (isset($field['options']['ps-ds-sql'])) {
-                $template = $this->evaluate($field['options']['ps-ds-sql'], true, array(
+
+            if ($field['type'] == "DataFilter") {
+                $fieldSql = 'DataFilter::generateParams($paramName, $params)';
+            } else {
+                $fieldSql = @$field['options']['ps-ds-sql'];
+            }
+            
+            if (isset($fieldSql)) {
+                $template = $this->evaluate($fieldSql, true, array(
                     'paramName' => $param,
                     'params' => @$postedParams[$param]
                 ));

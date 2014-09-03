@@ -33,6 +33,9 @@ class Text extends FormField {
                     'ng-model' => 'active.renderInEditor',
                     'ng-change' => 'save()',
                 ),
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
+                ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'fieldWidth' => '3',
                 'type' => 'DropDownList',

@@ -56,19 +56,14 @@
                         // generate model name
                         if (typeof model.name != "undefined") {
                             model.name = model.name.charAt(0).toLowerCase() + model.name.slice(1); // letter first letter
-                            model.name = model.name.replace(/\s/,"") + "" + $(".form-builder ." + model.type).length;
+                            model.name = model.name.replace(/\s/, "") + "" + $(".form-builder ." + model.type).length;
                         }
 
                         // action bar should always be placed on first array
                         if (model.type == 'ActionBar') {
                             var clone = angular.copy(scope.dest.nodesScope.$modelValue[scope.dest.index]);
+                            scope.dest.nodesScope.$modelValue.splice(scope.dest.index, 1);
                             $scope.$parent.fields.unshift(clone);
-                            $timeout(function() {
-                                $scope.$parent.deleteField();
-                                $timeout(function() {
-                                    $(".form-field:eq(0)").click();
-                                }, 100);
-                            }, 50);
                         }
 
                         // save it

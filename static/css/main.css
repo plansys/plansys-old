@@ -1022,6 +1022,26 @@ div[list-view] .angular-ui-tree-empty {
     box-shadow: inset 0 2px 1px rgba(0,0,0,0.02);
 }
 
+.data-filter-type {
+    width:84px;
+    float:left;
+    border-right:1px dotted #ececeb;
+    margin:-4px 6px 0px 0px;
+    padding:4px;
+    text-align:center;
+}
+
+.data-filter-name {
+    border:1px solid #ccc;
+    font-size:11px;
+    font-weight:normal;
+    color:#666;
+}
+
+.data-filter-type .badge {
+    width:100%;
+}
+
 .filter-reset {
     color:#666;
     border-radius:0px 3px 3px 0px !important; 

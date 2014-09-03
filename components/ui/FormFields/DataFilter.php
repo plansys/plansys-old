@@ -14,9 +14,7 @@ class DataFilter extends FormField {
 
     /** @var string $filters */
     public $filters;
-    public $options = array(
-        'ps-ds-sql' => 'DataFilter::generateParams($paramName, $params)'
-    );
+    public $options = array();
 
     /** @var string $toolbarName */
     public static $toolbarName = "Data Filter";
@@ -94,6 +92,7 @@ class DataFilter extends FormField {
                 'label' => 'Generate Filters',
                 'buttonType' => 'success',
                 'icon' => 'magic',
+                'buttonSize' => 'btn-xs',
                 'options' => array(
                     'style' => 'float:right;margin:0px 0px 5px 0px',
                     'ng-show' => 'active.datasource != \'\'',
@@ -107,12 +106,17 @@ class DataFilter extends FormField {
                 'type' => 'SectionHeader',
             ),
             array(
+                'renderInEditor' => 'No',
+                'value' => '<div style=\\"margin-top:-13px;\\"></div>',
+                'type' => 'Text',
+            ),
+            array(
                 'name' => 'filters',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.DataFilterListForm',
+                'labelWidth' => '0',
                 'fieldWidth' => '12',
                 'options' => array(
-                    'style' => 'margin-top:-13px;padding-left:0px;',
                     'ng-model' => 'active.filters',
                     'ng-change' => 'save()',
                 ),
@@ -133,92 +137,104 @@ class DataFilter extends FormField {
         $param = "";
         switch ($filter['type']) {
             case "string":
-                switch ($filter['operator']) {
-                    case "Contains":
-                        $sql = "{$column} LIKE :{$paramName}_{$column}";
-                        $param = "%{$filter['value']}%";
-                        break;
-                    case "Does Not Contain":
-                        $sql = "{$column} NOT LIKE :{$paramName}_{$column}";
-                        $param = "%{$filter['value']}%";
-                        break;
-                    case "Is Equal To":
-                        $sql = "{$column} LIKE :{$paramName}_{$column}";
-                        $param = "{$filter['value']}";
-                        break;
-                    case "Starts With":
-                        $sql = "{$column} LIKE :{$paramName}_{$column}";
-                        $param = "{$filter['value']}%";
-                        break;
-                    case "Ends With":
-                        $sql = "{$column} LIKE :{$paramName}_{$column}";
-                        $param = "%{$filter['value']}";
-                        break;
-                    case "Is Any Of":
-                        $param_raw = preg_split('/\s+/', trim($filter['value']));
-                        $param = array();
-                        $psql = array();
-                        foreach ($param_raw as $k => $p) {
-                            $param[":{$paramName}_{$column}_{$k}"] = "%{$p}%";
-                            $psql[] = "{$column} LIKE :{$paramName}_{$column}_{$k}";
-                        }
-                        $sql = "(" . implode(" OR ", $psql) . ")";
-                        break;
-                    case "Is Not Any Of":
-                        $param_raw = preg_split('/\s+/', trim($filter['value']));
-                        $param = array();
-                        $psql = array();
-                        foreach ($param_raw as $k => $p) {
-                            $param[":{$paramName}_{$column}_{$k}"] = "%{$p}%";
-                            $psql[] = "{$column} NOT LIKE :{$paramName}_{$column}_{$k}";
-                        }
-                        $sql = "(" . implode(" AND ", $psql) . ")";
-                        break;
-                    case "Is Empty":
-                        $sql = "({$column} LIKE '' OR {$column} IS NULL)";
-                        break;
+                if ($filter['value'] != ""  || $filter['operator'] == 'Is Empty') {
+                    switch ($filter['operator']) {
+                        case "Contains":
+                            $sql = "{$column} LIKE :{$paramName}_{$column}";
+                            $param = "%{$filter['value']}%";
+                            break;
+                        case "Does Not Contain":
+                            $sql = "{$column} NOT LIKE :{$paramName}_{$column}";
+                            $param = "%{$filter['value']}%";
+                            break;
+                        case "Is Equal To":
+                            $sql = "{$column} LIKE :{$paramName}_{$column}";
+                            $param = "{$filter['value']}";
+                            break;
+                        case "Starts With":
+                            $sql = "{$column} LIKE :{$paramName}_{$column}";
+                            $param = "{$filter['value']}%";
+                            break;
+                        case "Ends With":
+                            $sql = "{$column} LIKE :{$paramName}_{$column}";
+                            $param = "%{$filter['value']}";
+                            break;
+                        case "Is Any Of":
+                            $param_raw = preg_split('/\s+/', trim($filter['value']));
+                            $param = array();
+                            $psql = array();
+                            foreach ($param_raw as $k => $p) {
+                                $param[":{$paramName}_{$column}_{$k}"] = "%{$p}%";
+                                $psql[] = "{$column} LIKE :{$paramName}_{$column}_{$k}";
+                            }
+                            $sql = "(" . implode(" OR ", $psql) . ")";
+                            break;
+                        case "Is Not Any Of":
+                            $param_raw = preg_split('/\s+/', trim($filter['value']));
+                            $param = array();
+                            $psql = array();
+                            foreach ($param_raw as $k => $p) {
+                                $param[":{$paramName}_{$column}_{$k}"] = "%{$p}%";
+                                $psql[] = "{$column} NOT LIKE :{$paramName}_{$column}_{$k}";
+                            }
+                            $sql = "(" . implode(" AND ", $psql) . ")";
+                            break;
+                        case "Is Empty":
+                            $sql = "({$column} LIKE '' OR {$column} IS NULL)";
+                            break;
+                    }
                 }
                 break;
             case "number":
-                switch ($filter['operator']) {
-                    case "=":
-                    case "<>":
-                    case ">":
-                    case '>':
-                    case '>=':
-                    case '<=':
-                    case '<':
-                        $sql = "{$column} {$filter['operator']} :{$paramName}_{$column}";
-                        $param = "{$filter['value']}";
-                        break;
-                    case "Is Empty":
-                        $sql = "({$column} IS NULL)";
-                        break;
+                if ($filter['value'] != "" || $filter['operator'] == 'Is Empty') {
+                    switch ($filter['operator']) {
+                        case "=":
+                        case "<>":
+                        case ">":
+                        case '>':
+                        case '>=':
+                        case '<=':
+                        case '<':
+                            $sql = "{$column} {$filter['operator']} :{$paramName}_{$column}";
+                            $param = "{$filter['value']}";
+                            break;
+                        case "Is Empty":
+                            $sql = "({$column} IS NULL)";
+                            break;
+                    }
                 }
                 break;
             case "date":
                 switch ($filter['operator']) {
                     case "Between":
-                        $sql = "({$column} BETWEEN :{$paramName}_{$column}_from AND :{$paramName}_{$column}_to)";
-                        $param = array(
-                            ":{$paramName}_{$column}_from" => @$filter['value']['from'],
-                            ":{$paramName}_{$column}_to" => @$filter['value']['to'],
-                        );
+                        if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
+                            $sql = "({$column} BETWEEN :{$paramName}_{$column}_from AND :{$paramName}_{$column}_to)";
+                            $param = array(
+                                ":{$paramName}_{$column}_from" => @$filter['value']['from'],
+                                ":{$paramName}_{$column}_to" => @$filter['value']['to'],
+                            );
+                        }
                         break;
                     case "Not Between":
-                        $sql = "({$column} NOT BETWEEN :{$paramName}_{$column}_from AND :{$paramName}_{$column}_to)";
-                        $param = array(
-                            ":{$paramName}_{$column}_from" => @$filter['value']['from'],
-                            ":{$paramName}_{$column}_to" => @$filter['value']['to'],
-                        );
+                        if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
+                            $sql = "({$column} NOT BETWEEN :{$paramName}_{$column}_from AND :{$paramName}_{$column}_to)";
+                            $param = array(
+                                ":{$paramName}_{$column}_from" => @$filter['value']['from'],
+                                ":{$paramName}_{$column}_to" => @$filter['value']['to'],
+                            );
+                        }
                         break;
                     case "More Than":
-                        $sql = "{$column} > :{$paramName}_{$column}";
-                        $param = @$filter['value']['from'];
+                        if (@$filter['value']['from'] != '') {
+                            $sql = "{$column} > :{$paramName}_{$column}";
+                            $param = @$filter['value']['from'];
+                        }
                         break;
                     case "Less Than":
-                        $sql = "{$column} < :{$paramName}_{$column}";
-                        $param = @$filter['value']['to'];
+                        if (@$filter['value']['to'] != '') {
+                            $sql = "{$column} < :{$paramName}_{$column}";
+                            $param = @$filter['value']['to'];
+                        }
                         break;
                 }
                 break;
@@ -303,7 +319,7 @@ class DataFilter extends FormField {
             'filters' => $this->filters
         );
     }
-    
+
     /**
      * render
      * Fungsi ini untuk me-render field dan atributnya

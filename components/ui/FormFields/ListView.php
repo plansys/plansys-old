@@ -255,10 +255,15 @@ Use this code to access current item: <br/>
         if ($this->fieldTemplate == "form" && class_exists($class)) {
             $fb = FormBuilder::load($class);
             $model = new $class;
+            
+            if ($this->value == "") {
+                $this->value = array();
+            }
+            
             $this->templateAttributes = $model->attributes;
             $this->renderTemplateForm = $fb->render($this->templateAttributes, array('wrapForm' => false));
         }
-
+        
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
         return $this->renderInternal('template_render.php');
     }

@@ -19,41 +19,25 @@ class DevUser extends User {
     public function getFields() {
         return array (
             array (
-                'linkBar' => array (
-                    array (
-                        'label' => 'Save',
-                        'buttonType' => 'success',
-                        'options' => array (
-                            'ng-click' => 'form.submit(this)',
-                        ),
-                        'type' => 'LinkButton',
-                    ),
-                    array (
-                        'label' => 'Link Button',
-                        'type' => 'LinkButton',
-                    ),
-                    array (
-                        'label' => 'Cancel',
-                        'buttonType' => 'default',
-                        'options' => array (
-                            'ng-show' => 'form.canGoBack()',
-                            'ng-click' => 'form.goBack()',
-                        ),
-                        'type' => 'LinkButton',
-                    ),
-                ),
                 'type' => 'ActionBar',
             ),
             array (
-                'name' => 'manteb',
-                'datasource' => 'dataSoqwd',
+                'name' => 'dataFilter1',
+                'datasource' => 'dataSource1',
                 'filters' => array (
+                    array (
+                        'name' => 'id',
+                        'label' => 'id',
+                        'listExpr' => '',
+                        'filterType' => 'number',
+                        'show' => false,
+                    ),
                     array (
                         'name' => 'nip',
                         'label' => 'nip',
                         'listExpr' => '',
                         'filterType' => 'string',
-                        'show' => true,
+                        'show' => false,
                     ),
                     array (
                         'name' => 'fullname',
@@ -63,22 +47,15 @@ class DevUser extends User {
                         'show' => false,
                     ),
                     array (
-                        'name' => 'phone',
-                        'label' => 'phone',
+                        'name' => 'email',
+                        'label' => 'email',
                         'listExpr' => '',
                         'filterType' => 'string',
                         'show' => false,
                     ),
                     array (
-                        'name' => 'id',
-                        'label' => 'id',
-                        'listExpr' => '',
-                        'filterType' => 'number',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'email',
-                        'label' => 'email',
+                        'name' => 'phone',
+                        'label' => 'phone',
                         'listExpr' => '',
                         'filterType' => 'string',
                         'show' => false,
@@ -105,28 +82,23 @@ class DevUser extends User {
                         'show' => false,
                     ),
                 ),
+                'options' => array (
+                    'ps-ds-sql' => 'DataFilter::generateParams($paramName, $params)',
+                ),
                 'type' => 'DataFilter',
             ),
             array (
-                'name' => 'dataSoqwd',
+                'name' => 'dataSource1',
                 'sql' => 'select * from p_user {where [where]}',
-                'php' => 'Helper::coba();',
                 'params' => array (
-                    'where' => 'manteb',
-                ),
-                'data' => array (
-                    array (
-                        'id' => '1',
-                        'nip' => '12345',
-                        'fullname' => 'Admin',
-                        'email' => 'admin@web.com',
-                        'phone' => '00000000',
-                        'username' => 'admin',
-                        'password' => '827ccb0eea8a706c4c34a16891f84e7b',
-                        'date' => '0000-00-00',
-                    ),
+                    'where' => '',
                 ),
                 'type' => 'DataSource',
+            ),
+            array (
+                'name' => 'dataGrid1',
+                'datasource' => 'dataSource1',
+                'type' => 'DataGrid',
             ),
             array (
                 'column1' => array (
@@ -136,12 +108,6 @@ class DevUser extends User {
                         'uploadPath' => 'tes',
                         'fileType' => 'rar , zip',
                         'type' => 'UploadFile',
-                    ),
-                    array (
-                        'label' => 'Date',
-                        'name' => 'date',
-                        'fieldWidth' => 8,
-                        'type' => 'DateTimePicker',
                     ),
                     array (
                         'label' => 'Username',
@@ -181,10 +147,6 @@ class DevUser extends User {
                     ),
                 ),
                 'type' => 'ColumnField',
-            ),
-            array (
-                'title' => 'Section Header',
-                'type' => 'SectionHeader',
             ),
             '<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>',
         );
