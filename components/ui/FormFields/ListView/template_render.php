@@ -58,6 +58,10 @@
                     </li>
                 </ol>
             </div>
+            <div ng-show="loading" class="list-view-loading">
+                <i class="fa fa-link"></i>
+                Loading <?= @get_class($model) ?>...
+            </div>
         <?php endif; ?>
 
         <button type="button" ng-click="addItem($event)" 

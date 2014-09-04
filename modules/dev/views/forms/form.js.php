@@ -49,9 +49,7 @@
             $scope.saving = true;
             $http.post('<?php echo $this->createUrl("save", array('class' => $class)); ?>', {form: $scope.form})
                     .success(function(data, status) {
-
                         if (force_reload === true) {
-
                             $window.location.reload();
                             return true;
                         }
@@ -210,6 +208,7 @@
 
                                 $scope.active.filters.push(filter);
                             }
+                            $scope.save();
                         }
                     }
 
@@ -232,12 +231,9 @@
                                 filter.name = i;
                                 filter.label = i;
 
-                                if ($scope.active.columns == null) {
-                                    $scope.active.columns = [];
-                                }
-
                                 $scope.active.columns.push(filter);
                             }
+                            $scope.save();
                         }
                     }
                 });

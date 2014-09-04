@@ -106,7 +106,7 @@ function registerController(controllerName) {
 })(jQuery);
 
 var controllerProvider = null;
-var app = angular.module("main", ['ui.layout', 'ui.tree', 'ui.bootstrap', 'angularFileUpload']);
+var app = angular.module("main", ['ui.layout', 'ui.tree', 'ui.bootstrap', 'ngGrid', 'angularFileUpload']);
 app.config(function($sceProvider, $controllerProvider) {
     controllerProvider = $controllerProvider;
     $sceProvider.enabled(false);

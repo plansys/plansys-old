@@ -13,7 +13,7 @@ class DataGrid extends FormField {
     public $datasource;
 
     /** @var string $filters */
-    public $columns;
+    public $columns = array();
     public $gridOptions = array();
 
     /** @var string $toolbarName */
@@ -106,7 +106,7 @@ class DataGrid extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('data-grid.js');
+        return array('ng-grid-plugins.js','data-grid.js');
     }
     
     public function processExpr() {

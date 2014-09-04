@@ -1023,6 +1023,13 @@ div[list-view] .angular-ui-tree-empty {
     color:#fff;
 }
 
+/********************************** DATA GRID **************************************/
+
+.data-grid-table {
+    width:100%;
+    margin-bottom:10px;
+}
+
 /********************************** DATA FILTER **************************************/
 .data-filter {
     margin:0px -15px 10px -15px;

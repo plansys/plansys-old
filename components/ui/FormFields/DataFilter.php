@@ -13,7 +13,7 @@ class DataFilter extends FormField {
     public $datasource;
 
     /** @var string $filters */
-    public $filters;
+    public $filters = array();
     public $options = array();
 
     /** @var string $toolbarName */
