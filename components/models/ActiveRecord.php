@@ -46,19 +46,40 @@ class ActiveRecord extends CActiveRecord {
 
     public function getDefaultFields() {
         $array = $this->modelFieldList;
-        $column2 = array(array_shift($array));
-        $column1 = $array;
+        $length = count($array);
+        $column1 = array();
+        $column2 = array();
+        $array_id = null;
 
-        $return = array(
-            array(
-                'type' => 'ActionBar',
-            ),
-            array(
-                'type' => 'ColumnField',
-                'column1' => $column1,
-                'column2' => $column2
-            )
+        foreach ($array as $k => $i) {
+            if ($array[$k]['name'] == 'id') {
+                $array_id = $array[$k];
+                continue;
+            }
+
+            if ($k < $length / 2) {
+                $column1[] = $array[$k];
+            } else {
+                $column2[] = $array[$k];
+            }
+        }
+
+
+        $return = array();
+        $return[] = array(
+            'type' => 'ActionBar',
         );
+
+        if (!is_null($array_id)) {
+            $return[] = $array_id;
+        }
+
+        $return[] = array(
+            'type' => 'ColumnField',
+            'column1' => $column1,
+            'column2' => $column2
+            )
+        ;
         return $return;
     }
 
