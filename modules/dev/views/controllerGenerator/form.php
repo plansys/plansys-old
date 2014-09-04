@@ -10,7 +10,7 @@
                         <td><b>Source Code</b></td>
                     </tr>
                     <tr>
-                        <td><span class="code" style="word-wrap:break-word;"><?php echo ControllerGenerator::controllerPath($class,$type); ?></span></td>
+                        <td><span class="code" style="word-wrap:break-word;"><?php echo ControllerGenerator::controllerPath($class, $type); ?></span></td>
                     </tr>
                 </table>
                 <div ui-header>
@@ -29,20 +29,22 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="item in list">
-                                <td style="width:50%;">{{ item.name }}</td>
+                                <td style="width:50%;">{{ item.name}}</td>
                                 <td style="width:50%;border-right-color:#ffffff;">
                                     <div class="badge">    
                                         {{item.param}}
                                     </div>
-                                    <?php 
+                                    <?php
                                     $controllerName = lcfirst(substr($controller, 0, -10));
-                                    $url = "{{getUrl('".$module."','".$controllerName."',item.name)}}";
+                                    $url = "{{getUrl('" . $module . "','" . $controllerName . "',item.name)}}";
                                     ?>
-                                    <a href="<?php echo $this->createUrl("/" . $url);?>" target="_blank" class="pull-right btn btn-default btn-xs" ng-if="item.param == null">
+                                    <a href="<?php echo $this->createUrl("/" . $url); ?>" 
+                                       target="_blank" class="pull-right btn btn-default btn-xs" 
+                                       style="margin-left:5px;{{item.param == null ? 'opacity:0' :''}}">
                                         <i class="fa fa-globe"></i>
                                     </a>
 
-                                    <a href="#" class="btn btn-default pull-right btn-xs" ng-click="update(item)" style="margin-right:5px;">
+                                    <a href="#" class="btn btn-default pull-right btn-xs" ng-click="update(item)">
                                         <i class="fa fa-pencil"></i>
                                     </a>
                                 </td>
@@ -73,74 +75,75 @@
 </div>
 
 <script type="text/javascript">
- app.controller("PageController", ["$scope", "$http", "$timeout", function($scope, $http, $timeout) {
-         $scope.list = <?php echo CJSON::encode($method); ?>;
-         $scope.edit = false;
-         $scope.isLoading = true;
-         $scope.activeTree = null;
-         $scope.active = null;
-         $scope.saving = false;
-         $scope.selecting = false;
-         $scope.select = function(item) {
-             if (item == null)
-                 return;
-             $scope.selecting = true;
-             $scope.active = item;
-         };
-         $scope.new = function() {
-             $scope.edit = true;
-             $scope.active = {
-                 'name': 'actionNew',
-                 'template': 'default',
-                 'param': '',
-                 'form': ''
-             };
-         };
-         $scope.oldValue = null;
-         $scope.update = function(item){
-             $scope.oldValue = {
-                 'name' : item.name,
-                 'param' : item.param
-             };
-             $scope.active = angular.copy($scope.oldValue);
-             $scope.active.oldName = $scope.oldValue.name;
-         };
-         $scope.create = function() {
-             if($scope.edit == true){
-                var url = '<?php echo $this->createUrl("save", array('module' => $module, 'class' => $controller, 'type' => $type)); ?>';
-                
-            }else{
-                var url = '<?php echo $this->createUrl("rename", array('module' => $module, 'class' => $controller, 'type' => $type)); ?>';
-                
-             }        
-             $http.post(url, {list: $scope.active}).success(function(data, status) {
-                 $scope.saving = false;
-                 if($scope.edit == true){
-                    $scope.list.push($scope.active);
-                    $scope.edit = false;
-                    $scope.active = null;
-                 }else{
-                     var key = 0;
-                     $scope.list.forEach(function() {
-                        if($scope.list[key].name == $scope.oldValue.name){
-                            $scope.list[key].name = $scope.active.name;
-                            $scope.list[key].param = $scope.active.param;
-                        }
-                        key++;
-                     });
-                     $scope.oldValue = null;
-                     $scope.active = null;
-                 }
-                 $scope.select($scope.active); 
-             }).error(function(data, status) {
-                 $scope.saving = false;
-             });
-         };
-         $scope.getUrl = function(module,controller,action){
+    app.controller("PageController", ["$scope", "$http", "$timeout", function($scope, $http, $timeout) {
+            $scope.list = <?php echo CJSON::encode($method); ?>;
+            $scope.edit = false;
+            $scope.isLoading = true;
+            $scope.activeTree = null;
+            $scope.active = null;
+            $scope.saving = false;
+            $scope.selecting = false;
+            $scope.select = function(item) {
+                if (item == null)
+                    return;
+                $scope.selecting = true;
+                $scope.active = item;
+            };
+            $scope.new = function() {
+                $scope.edit = true;
+                $scope.active = {
+                    'name': 'actionNew',
+                    'template': 'default',
+                    'param': '',
+                    'form': ''
+                };
+            };
+            $scope.oldValue = null;
+            $scope.update = function(item) {
+                $scope.edit = false;
+                $scope.oldValue = {
+                    'name': item.name,
+                    'param': item.param
+                };
+                $scope.active = angular.copy($scope.oldValue);
+                $scope.active.oldName = $scope.oldValue.name;
+            };
+            $scope.create = function() {
+                if ($scope.edit == true) {
+                    var url = '<?php echo $this->createUrl("save", array('module' => $module, 'class' => $controller, 'type' => $type)); ?>';
+
+                } else {
+                    var url = '<?php echo $this->createUrl("rename", array('module' => $module, 'class' => $controller, 'type' => $type)); ?>';
+
+                }
+                $http.post(url, {list: $scope.active}).success(function(data, status) {
+                    $scope.saving = false;
+                    if ($scope.edit == true) {
+                        $scope.list.push($scope.active);
+                        $scope.edit = false;
+                        $scope.active = null;
+                    } else {
+                        var key = 0;
+                        $scope.list.forEach(function() {
+                            if ($scope.list[key].name == $scope.oldValue.name) {
+                                $scope.list[key].name = $scope.active.name;
+                                $scope.list[key].param = $scope.active.param;
+                            }
+                            key++;
+                        });
+                        $scope.oldValue = null;
+                        $scope.active = null;
+                    }
+                    $scope.select($scope.active);
+                }).error(function(data, status) {
+                    $scope.saving = false;
+                });
+            };
+            $scope.getUrl = function(module, controller, action) {
                 var action = action.match(/([A-Z])\w+/g);
-                var url = module + '/'+controller+'/'+action;
-                return url; 
-         };
-     }
- ]);
+                var url = module + '/' + controller + '/' + action;
+                return url;
+            };
+        }
+    ]);
 </script>
