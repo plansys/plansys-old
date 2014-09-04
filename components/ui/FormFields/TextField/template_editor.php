@@ -4,7 +4,7 @@
     <div class="col-sm-{{field.fieldWidth}}">
         <div ng-if="field.prefix != '' || field.postfix != ''" class="input-group">
             <!-- prefix -->
-            <span ng-if="field.prefix != ''" class="input-group-addon">
+            <span ng-if="field.prefix != '' && field.prefix" class="input-group-addon">
                 {{ field.prefix}}
             </span>
 
@@ -13,7 +13,7 @@
                    expand-attributes="field.fieldOptions" value="{{field.value}}">
 
             <!-- postfix -->
-            <span ng-if="field.postfix != ''" class="input-group-addon">
+            <span ng-if="field.postfix != '' && field.postfix" class="input-group-addon">
                 {{ field.postfix}}
             </span>
         </div>

@@ -1,5 +1,7 @@
 <?php
 class DevControllerEditor extends Form{
+    public $module;
+    
     public function getFields() {
         return array (
             array (
@@ -16,14 +18,6 @@ class DevControllerEditor extends Form{
                 'options' => array (
                     'ng-model' => 'active.template',
                     'ng-hide' => 'edit == false',
-                ),
-                'list' => array (
-                    'default' => 'Default Action',
-                    '---' => '---',
-                    'index' => 'actionIndex',
-                    'create' => 'actionCreate',
-                    'update' => 'actionUpdate',
-                    'z...' => '...',
                 ),
                 'listExpr' => 'ControllerGenerator::getTemplate();',
                 'type' => 'DropDownList',
@@ -43,7 +37,8 @@ class DevControllerEditor extends Form{
                     'ng-model' => 'active.form',
                     'ng-hide' => 'edit == false',
                 ),
-                'type' => 'TextField',
+                'listExpr' => 'FormBuilder::listForm($model->module);',
+                'type' => 'DropDownList',
             ),
             '<hr>',
             array (

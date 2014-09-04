@@ -63,12 +63,15 @@
                 </div> 
                 <div ng-show="active != null" 
                      onload="isLoading = false"
-                     ng-include="Yii.app.createUrl('dev/controllerGenerator/renderProperties')"></div>
+                     ng-include="Yii.app.createUrl('dev/controllerGenerator/renderProperties', {
+                         module: '<?= $module; ?>'
+                     })"></div>
             </div>
         </div>
     </div>
 </div>
 </div>
+
 <script type="text/javascript">
  app.controller("PageController", ["$scope", "$http", "$timeout", function($scope, $http, $timeout) {
          $scope.list = <?php echo CJSON::encode($method); ?>;

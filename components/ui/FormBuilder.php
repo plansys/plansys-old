@@ -36,7 +36,7 @@ class FormBuilder extends CComponent {
             $classfile = $class;
             $class = array_pop(explode(".", $classfile));
             Yii::import($classfile);
-            
+
             if (!class_exists($class)) {
                 return null;
             }
@@ -349,7 +349,7 @@ class FormBuilder extends CComponent {
 
         if (!$reflector->hasMethod('getForm')) {
             $this->model = new $class;
-            
+
             $defaultFields = array(
                 'title' => str_replace(ucfirst($this->module), '', $class),
                 'layout' => array(
@@ -908,9 +908,12 @@ EOF;
         $list = array();
         $list[''] = '-- NONE --';
         $modules = FormBuilder::listFile();
-        foreach ($modules as $module) {
-            $list[$module['module']] = array();
-            foreach ($module['items'] as $file) {
+        foreach ($modules as $m) {
+            if (!is_null($module) && strtolower($m['module']) != strtolower($module))
+                continue;
+
+            $list[$m['module']] = array();
+            foreach ($m['items'] as $file) {
                 $list[$file['alias']] = $file['name'];
             }
         }
