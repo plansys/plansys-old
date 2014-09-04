@@ -47,7 +47,7 @@
             }
 
             $scope.saving = true;
-            $http.post('<?php echo $this->createUrl("save", array('class' => $class)); ?>', {form: $scope.form})
+            $http.post('<?php echo $this->createUrl("save", array('class' => $classPath)); ?>', {form: $scope.form})
                     .success(function(data, status) {
                         if (force_reload === true) {
                             $window.location.reload();
