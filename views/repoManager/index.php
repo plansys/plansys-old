@@ -29,8 +29,11 @@
             <div ui-content style="padding:3px 20px;">
                 <div ng-include="Yii.app.createUrl('repoManager/renderProperties')" ng-hide="!isDir"></div>
                 <div ng-show="!isDir">
-                    <div class="btn btn-success btn-sm" ng-click="download()">Download</div>
-                    <div class="btn btn-danger btn-sm">Remove</div>
+                    <a href="{{Yii.app.createUrl('/repoManager/download',{
+                                    'n' : file.name,
+                                    'f' : file.path
+                             })}}" class="btn btn-success btn-sm" >Download</a>
+                    <div class="btn btn-danger btn-sm" ng-click="remove(file.path)">Remove</div>
                 </div>
             </div>
         </div>
@@ -112,15 +115,17 @@
         $scope.saving = false;
         $scope.isDir = true;
         $scope.file = null;
-        $scope.download = function(){
+        $scope.remove = function(file){
             var request = $http({
-                'method':'post',
-                'url':Yii.app.createUrl('/repoManager/download'),
-                'data':{
-                        'name' : $scope.file.name,
-                        'path' : $scope.file.path
-                       }
-            });
+                method: "post",
+                url: Yii.app.createUrl('/repoManager/remove'),
+                data: {file: file}
+            }).success(
+                function(html) {
+                    $scope.file = null;
+                    $scope.browse($scope.list.path);
+                }
+            );
         };
         $scope.select = function(item){
             $scope.file = null;
