@@ -59,8 +59,8 @@ class FormsController extends Controller {
         echo $class::template();
     }
 
-    public function actionRenderBuilder($class, $layout) {
-
+    public function actionRenderBuilder($class, $layout) {      
+        
         $fb = FormBuilder::load($class);
         $builder = $this->renderPartial('form_builder', array(), true);
         $mainFormSection = Layout::getMainFormSection($fb->form['layout']['data']);
@@ -144,6 +144,7 @@ class FormsController extends Controller {
 
         $this->layout = "//layouts/blank";
         $fb = FormBuilder::load($class);
+        $classPath = $class;
         $class = array_pop(explode(".", $class));
         
         if (is_subclass_of($fb->model, 'ActiveRecord')) {
@@ -164,10 +165,11 @@ class FormsController extends Controller {
         $toolbar = $this->renderAllToolbar($formType);
 
         Yii::import('application.modules.' . $fb->module . '.controllers.*');
-
+        
         $this->render('form', array(
             'fb' => $fb,
             'class' => $class,
+            'classPath' => $classPath,
             'formType' => $formType,
             'toolbarData' => @$toolbar['data'],
             'fieldData' => $fieldData,

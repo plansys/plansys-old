@@ -349,8 +349,9 @@ class FormBuilder extends CComponent {
 
         if (!$reflector->hasMethod('getForm')) {
             $this->model = new $class;
+            
             $defaultFields = array(
-                'formTitle' => str_replace(ucfirst($this->module), '', $class),
+                'title' => str_replace(ucfirst($this->module), '', $class),
                 'layout' => array(
                     'name' => 'full-width',
                     'data' => array(
