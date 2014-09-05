@@ -113,9 +113,13 @@ class DevUser extends User {
                                 'url' => '/dev/user/create?id={id}',
                                 'icon' => 'fa fa-pencil',
                             ),
+                            array (
+                                '',
+                                'label' => '',
+                            ),
                         ),
                         'columnType' => 'buttons',
-                        'show' => true,
+                        'show' => false,
                     ),
                 ),
                 'gridOptions' => array (

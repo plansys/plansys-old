@@ -36,13 +36,10 @@
         <table>
             <tbody>
                 <tr valign="top" ng-repeat="v in value track by $index">
-                    <td style='width:40%'>
-                        <input style='border:0px;'
-                               type="text"
-                               spellcheck="false"
-                               ng-model="v.key"
-                               ng-change="change()"
-                               ng-delay="500"/>
+                    <td style='width:45%'>
+                        <textarea auto-grow spellcheck="false" class="textarea-noresize"
+                                  style='border:0px;height:22px;' ng-model="v.key" ng-change="change()"
+                                  ng-delay="500"></textarea>
                     </td>
                     <td>
                         <textarea auto-grow spellcheck="false" class="textarea-noresize"

@@ -32,6 +32,12 @@ class DataGridListFormButton extends Form {
                 ),
                 'type' => 'TextField',
             ),
+            array (
+                'label' => 'Button Options',
+                'fieldname' => 'options',
+                'show' => 'Show',
+                'type' => 'KeyValueGrid',
+            ),
         );
     }
     
@@ -50,4 +56,5 @@ class DataGridListFormButton extends Form {
     }
     public $url = '';
     public $icon = '';
+    public $options = array();
 }
