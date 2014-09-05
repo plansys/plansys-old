@@ -371,7 +371,7 @@ div[ui-content] {
 .layout-properties-btn {
     position:absolute;
     top:0px;
-    right:0px;
+    left:0px;
     z-index:999;
     opacity:.2;
     padding:3px 2px;

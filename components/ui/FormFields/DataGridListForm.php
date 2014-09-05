@@ -6,11 +6,8 @@ class DataGridListForm extends Form {
             array (
                 'renderInEditor' => 'No',
                 'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
-<div ng-if=\"value[$index].columnType != \'buttons\'\" class=\"label data-filter-name pull-right\">  {{value[$index].name}}</div>
-<div class=\"data-filter-type\">
-<div class=\"badge\">{{value[$index].columnType}}</div>
-</div>
-{{value[$index].label}} 
+<div ng-if=\"value[$index].columnType != \'buttons\'\" class=\"label data-filter-name pull-right\">  {{value[$index].columnType}}</div>
+{{value[$index].name}} 
 </div>',
                 'type' => 'Text',
             ),

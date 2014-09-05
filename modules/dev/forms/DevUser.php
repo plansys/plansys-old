@@ -102,25 +102,6 @@ class DevUser extends User {
                         'columnType' => 'string',
                         'show' => false,
                     ),
-                    array (
-                        'name' => '',
-                        'label' => '',
-                        'options' => array (),
-                        'buttons' => array (
-                            array (
-                                'label' => '',
-                                'url' => '',
-                                'icon' => '',
-                            ),
-                            array (
-                                'label' => '',
-                                'url' => '',
-                                'icon' => 'fa-icon',
-                            ),
-                        ),
-                        'columnType' => 'buttons',
-                        'show' => true,
-                    ),
                 ),
                 'gridOptions' => array (
                     'enableCellSelection' => 'true',
@@ -193,6 +174,7 @@ class DevUser extends User {
                 ),
             ),
             'inlineJS' => 'user/user.js',
+            'includeJS' => array (),
         );
     }
 }

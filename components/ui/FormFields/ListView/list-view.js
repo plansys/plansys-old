@@ -26,17 +26,15 @@ app.directive('listView', function($timeout) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    if ($scope.value == null) {
+                    if ($scope.value == null || typeof $scope.value == "undefined" || $scope.value == "") {
                         $scope.value = [];
                     }
-
 
                     if ($scope.fieldTemplate == "default") {
                         var value = '';
                     } else if ($scope.fieldTemplate == "form") {
                         var value = angular.extend({}, $scope.templateAttr);
                     }
-
 
                     //before add
                     var beforeAdd = $scope.options['ps-before-add'] || '';
