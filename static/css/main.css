@@ -1027,8 +1027,88 @@ div[list-view] .angular-ui-tree-empty {
 
 .data-grid-table {
     width:100%;
-    margin-bottom:10px;
 }
+
+.data-grid-table .ngTopPanel {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    background:#fff;
+    box-shadow:0px 0px 0px 1px #ddd;
+}
+.data-grid-table .ngHeaderContainer {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.data-grid-table .ngHeaderCell {
+    background-color: #eee;
+    background-color: #f2f2f2;
+    background-image: -moz-linear-gradient(top,#f5f5f5,#eeeeee);
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#f5f5f5),to(#eeeeee));
+    background-image: -webkit-linear-gradient(top,#f5f5f5,#eeeeee);
+    background-image: -o-linear-gradient(top,#f5f5f5,#eeeeee);
+    background-image: linear-gradient(to bottom,#f5f5f5,#eeeeee);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff5f5f5', endColorstr='#ffeeeeee', GradientType=0);
+    white-space: nowrap;
+}
+
+.data-grid-table .ngHeaderCell .ngHeaderText {
+    text-transform: uppercase;
+    color:#5E5E5E;
+    font-size:11px;
+    padding:4px 10px;
+    line-height:20px;
+    font-weight:bold;
+}
+
+
+.data-grid-table .ngViewport {
+    box-shadow:0px 0px 0px 1px #ddd;
+    overflow:hidden;
+}
+
+.data-grid-table .ngViewport .ngRow {
+    background:#fff;
+}
+.data-grid-table .ngViewport .ngRow.even {
+    background:#fafafa;
+}
+
+.data-grid-table .ngViewport .ngRow:hover {
+    background:#f5f5f5;
+}
+.data-grid-table .ngViewport .ngRow.selected {
+    background:#ffffcc;
+}
+
+.data-grid-table .ngViewport .ngCellText {
+    padding:4px 10px;
+    font-size:13px;
+    border-bottom:1px solid #ddd;
+    line-height:20px;
+}
+
+.data-grid-table .ngViewport .ngRow:last-child .ngCellText {
+    border-bottom:0px;
+}
+
+.data-grid-table .ngSortButtonDown,
+.data-grid-table .ngSortButtonUp {
+    right:5px;
+    top:50%;
+    left:auto;
+    margin:-2px 0px 0px 0px;
+}
+
+.data-grid-table .ngSortButtonDown {
+    border-width:0 4px 4px 4px;
+}
+
+.data-grid-table .ngSortButtonUp {
+    border-width:4px 4px 0 4px;
+}
+
 
 /********************************** DATA FILTER **************************************/
 .data-filter {
@@ -1080,7 +1160,7 @@ div[list-view] .angular-ui-tree-empty {
 
 .filter-manage {
     width:0px;
-    padding:10px 13px;
+    padding:10px 13px 10px 16px;
     border-right:1px solid #ddd;
     background:rgba(255,255,255,.3);
 }

@@ -75,17 +75,6 @@ class ActionBar extends FormField {
     /** @var array $linkBar */
     public $linkBar = array(
         array(
-            'label' => 'Cancel',
-            'buttonType' => 'default',
-            'buttonSize' => 'btn-sm',
-            'type' => 'LinkButton',
-            'displayInline' => true,
-            'options' => array(
-                'ng-show' => 'form.canGoBack()',
-                'ng-click' => 'form.goBack()'
-            )
-        ),
-        array(
             'label' => 'Save',
             'buttonType' => 'success',
             'buttonSize' => 'btn-sm',

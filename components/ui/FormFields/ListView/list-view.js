@@ -29,13 +29,34 @@ app.directive('listView', function($timeout) {
                     if ($scope.value == null) {
                         $scope.value = [];
                     }
+
+
                     if ($scope.fieldTemplate == "default") {
-                        $scope.value.push('');
+                        var value = '';
                     } else if ($scope.fieldTemplate == "form") {
-                        $scope.value.push(angular.extend({}, $scope.templateAttr));
+                        var value = angular.extend({}, $scope.templateAttr);
                     }
+
+
+                    //before add
+                    var beforeAdd = $scope.options['ps-before-add'] || '';
+                    if (beforeAdd != '' && typeof value != 'undefined') {
+                        eval(beforeAdd);
+                    }
+                    $scope.value.push(value);
+
+                    var valueID = $scope.value.length - 1;
                     $timeout(function() {
-                        $el.find('.list-view-item-text').last().focus();
+                        //after add
+                        var afterAdd = $scope.options['ps-after-add'] || '';
+                        value = $scope.value[valueID];
+                        if (afterAdd != '' && typeof value != 'undefined') {
+                            eval(afterAdd);
+                        }
+                        
+                        $timeout(function() {
+                            $el.find('.list-view-item-text').last().focus();
+                        }, 0);
                     }, 0);
                 }
 
@@ -74,6 +95,7 @@ app.directive('listView', function($timeout) {
                 $scope.fieldTemplate = $el.find("data[name=field_template]").html().trim();
                 $scope.inEditor = typeof $scope.$parent.inEditor != "undefined";
                 $scope.templateAttr = JSON.parse($el.find("data[name=template_attr]").html().trim());
+                $scope.options = JSON.parse($el.find("data[name=options]").html().trim());
 
                 // if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {

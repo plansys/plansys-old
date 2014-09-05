@@ -96,6 +96,7 @@ class DataGrid extends FormField {
                 'options' => array (
                     'ng-model' => 'active.columns',
                     'ng-change' => 'save()',
+                    'ps-after-add' => 'value.show = true;',
                 ),
                 'type' => 'ListView',
             ),
@@ -106,13 +107,14 @@ class DataGrid extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('ng-grid-plugins.js','data-grid.js');
+        return array('ng-grid-plugins.js', 'data-grid.js');
     }
-    
+
     public function processExpr() {
+
         return array();
     }
-    
+
     /**
      * render
      * Fungsi ini untuk me-render field dan atributnya

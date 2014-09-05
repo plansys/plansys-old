@@ -5,12 +5,11 @@ class DataGridListForm extends Form {
         return array (
             array (
                 'renderInEditor' => 'No',
-                'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
-<div class=\"label data-filter-name pull-right\">  {{value[$index].name}}</div>
+                'value' => '<div ng-init=\"value[$index].show = value[$index].show || false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
+<div ng-if=\"value[$index].columnType != \'buttons\'\" class=\"label data-filter-name pull-right\">  {{value[$index].name}}</div>
 <div class=\"data-filter-type\">
 <div class=\"badge\">{{value[$index].columnType}}</div>
 </div>
-
 {{value[$index].label}} 
 </div>',
                 'type' => 'Text',
@@ -38,28 +37,14 @@ style=\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 ),
                 'list' => array (
                     'string' => 'String',
+                    'buttons' => 'Buttons',
                 ),
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'Name',
-                'name' => 'name',
-                'labelWidth' => '3',
-                'fieldWidth' => '9',
-                'options' => array (
-                    'ng-model' => 'value[$index].name',
-                    'ng-change' => 'updateListView()',
-                    'ng-delay' => '500',
-                ),
-                'labelOptions' => array (
-                    'style' => 'text-align:left;',
-                ),
-                'type' => 'TextField',
-            ),
-            array (
-                'label' => 'Label',
+                'label' => 'Header',
                 'name' => 'label',
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
@@ -71,26 +56,31 @@ style=\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
+                'fieldOptions' => array (
+                    'class' => 'list-view-item-text',
+                ),
                 'type' => 'TextField',
             ),
             array (
-                'label' => 'Sortable',
-                'name' => 'sort',
+                'label' => 'Name',
+                'name' => 'name',
+                'labelWidth' => '3',
+                'fieldWidth' => '9',
                 'options' => array (
-                    'ng-model' => 'value[$index].sort',
+                    'ng-model' => 'value[$index].name',
                     'ng-change' => 'updateListView()',
+                    'ng-delay' => '500',
+                    'ng-if' => 'value[$index].columnType != \'buttons\'',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
-                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
-                'labelWidth' => '3',
-                'fieldWidth' => '4',
-                'type' => 'DropDownList',
+                'type' => 'TextField',
             ),
             array (
                 'label' => 'Options',
                 'fieldname' => 'options',
+                'show' => 'Show',
                 'options' => array (
                     'ng-model' => 'value[$index].options',
                     'ng-change' => 'updateListView()',
@@ -125,7 +115,6 @@ style=\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
     }
     public $name = '';
     public $label = '';
-    public $sort = 'Yes';
     public $options = array();
     public $columnType = 'string';
 }

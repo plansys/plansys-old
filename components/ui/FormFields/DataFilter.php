@@ -62,23 +62,23 @@ class DataFilter extends FormField {
      * @return array me-return array property DataFilter.
      */
     public function getFieldProperties() {
-        return array(
-            array(
+        return array (
+            array (
                 'label' => 'Data Filter Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Data Source Name',
                 'name' => 'datasource',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.datasource',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -88,12 +88,12 @@ class DataFilter extends FormField {
                 'fieldWidth' => '7',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Generate Filters',
                 'buttonType' => 'success',
                 'icon' => 'magic',
                 'buttonSize' => 'btn-xs',
-                'options' => array(
+                'options' => array (
                     'style' => 'float:right;margin:0px 0px 5px 0px',
                     'ng-show' => 'active.datasource != \'\'',
                     'ng-click' => 'generateFilters()',
@@ -101,24 +101,25 @@ class DataFilter extends FormField {
                 'type' => 'LinkButton',
             ),
             '<div class="clearfix"></div>',
-            array(
+            array (
                 'title' => 'Filters',
                 'type' => 'SectionHeader',
             ),
-            array(
+            array (
                 'renderInEditor' => 'No',
                 'value' => '<div style=\\"margin-top:-13px;\\"></div>',
                 'type' => 'Text',
             ),
-            array(
+            array (
                 'name' => 'filters',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.DataFilterListForm',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.filters',
                     'ng-change' => 'save()',
+                    'ps-before-add' => 'value.show = true;',
                 ),
                 'type' => 'ListView',
             ),
