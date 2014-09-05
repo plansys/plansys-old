@@ -17,7 +17,6 @@ class Role extends ActiveRecord
 	{
 		return 'p_role';
 	}
-
     
 	/**
 	 * @return array validation rules for model attributes.

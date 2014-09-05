@@ -9,6 +9,7 @@ class DevUser extends User {
             array (
                 'name' => 'dataSource1',
                 'sql' => 'select * from test',
+                'php' => 'Helper::coba()',
                 'type' => 'DataSource',
             ),
             array (
@@ -61,17 +62,21 @@ class DevUser extends User {
                         'name' => 'id',
                         'label' => 'id',
                         'sort' => 'No',
-                        'options' => array (),
+                        'options' => array (
+                            'categoryDisplayName' => 'testing',
+                        ),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                     ),
                     array (
                         'name' => 'name',
                         'label' => 'name',
                         'sort' => 'Yes',
-                        'options' => array (),
+                        'options' => array (
+                            'categoryDisplayName' => 'testing',
+                        ),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                     ),
                     array (
                         'name' => 'title',
@@ -79,7 +84,7 @@ class DevUser extends User {
                         'sort' => 'Yes',
                         'options' => array (),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                     ),
                     array (
                         'name' => 'description',
@@ -87,7 +92,7 @@ class DevUser extends User {
                         'sort' => 'Yes',
                         'options' => array (),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                     ),
                     array (
                         'name' => 'value',
@@ -95,12 +100,24 @@ class DevUser extends User {
                         'sort' => 'Yes',
                         'options' => array (),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                     ),
                     array (
-                        'name' => 'this',
-                        'label' => 'ok',
+                        'name' => '',
+                        'label' => '',
                         'options' => array (),
+                        'buttons' => array (
+                            array (
+                                'label' => '',
+                                'url' => '',
+                                'icon' => '',
+                            ),
+                            array (
+                                'label' => '',
+                                'url' => '',
+                                'icon' => 'fa-icon',
+                            ),
+                        ),
                         'columnType' => 'buttons',
                         'show' => true,
                     ),
@@ -171,9 +188,11 @@ class DevUser extends User {
                 'data' => array (
                     'col1' => array (
                         'type' => 'mainform',
+                        'size' => '100',
                     ),
                 ),
             ),
+            'inlineJS' => 'user/user.js',
         );
     }
 }

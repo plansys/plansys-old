@@ -65,8 +65,7 @@ app.directive('psDataFilter', function($timeout, dateFilter) {
 
                     if (dsParamName != "") {
                         ds.resetParam(filter.name, dsParamName);
-                        ds.query(function() {
-                        });
+                        ds.query(function() {});
                     }
                 }
 

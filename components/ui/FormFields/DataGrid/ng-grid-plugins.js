@@ -145,7 +145,6 @@ app.directive('categoryHeader', function() {
                     width: totalWidth,
                     left: left
                 });
-                console.log(scope.categories);
             }
         };
     }

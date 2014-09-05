@@ -39,6 +39,7 @@
                     <td style='width:40%'>
                         <input style='border:0px;'
                                type="text"
+                               spellcheck="false"
                                ng-model="v.key"
                                ng-change="change()"
                                ng-delay="500"/>

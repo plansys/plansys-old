@@ -134,7 +134,7 @@ class DataSource extends FormField {
             } else {
                 $fieldSql = @$field['options']['ps-ds-sql'];
             }
-            
+
             if (isset($fieldSql)) {
                 $template = $this->evaluate($fieldSql, true, array(
                     'paramName' => $param,
@@ -210,6 +210,9 @@ class DataSource extends FormField {
                 $this->data = $this->query();
             } else {
                 $this->data = $this->evaluate($this->php, true);
+
+                var_dump($this->data);
+                die();
             }
         }
 

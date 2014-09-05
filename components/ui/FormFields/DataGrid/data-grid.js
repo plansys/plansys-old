@@ -39,7 +39,6 @@ app.directive('psDataGrid', function($timeout, dateFilter) {
                                     displayName: c.label,
                                 });
                             }
-                            console.log(col);
                             columns.push(col);
                         }
 
@@ -54,6 +53,10 @@ app.directive('psDataGrid', function($timeout, dateFilter) {
                         $scope.gridOptions.headerRowHeight = 28;
                         $scope.gridOptions.rowHeight = 28;
 
+                        if (typeof $scope.onGridLoaded == 'function') {
+                            $scope.onGridLoaded($scope.gridOptions);
+                        }
+
                         $scope.loaded = true;
                     }, 0);
                 }
@@ -62,7 +65,10 @@ app.directive('psDataGrid', function($timeout, dateFilter) {
                 $scope.gridOptions = JSON.parse($el.find("data[name=grid_options]").text());
                 $scope.columns = JSON.parse($el.find("data[name=columns]").text());
                 $scope.loaded = false;
+                $scope.onGridLoaded = '';
                 $scope.fillColumns();
+                
+                $scope.$parent[$scope.name] = $scope;
             }
         }
     };

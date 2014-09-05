@@ -751,6 +751,10 @@ div[list-view] .angular-ui-tree-empty {
     display:none;
 }
 
+div[list-view] .angular-ui-tree-nodes div[list-view]  .angular-ui-tree-nodes {
+    padding-left:0px !important;
+}
+
 .list-view-item-remove {
     opacity:.5;
     border:0px;
@@ -1755,4 +1759,8 @@ div[icon-picker] .popover-content {
 
 .column-field td {
     padding:25px 50px 25px 25px;
+}
+
+.input-group-addon {
+    font-size:12px;
 }

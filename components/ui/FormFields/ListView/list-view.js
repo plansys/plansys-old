@@ -76,6 +76,7 @@ app.directive('listView', function($timeout) {
                         if (typeof ctrl.$viewValue != "undefined") {
                             $scope.loading = true;
                             $scope.value = ctrl.$viewValue;
+                            
                             $timeout(function() {
                                 $scope.loading = false;
                             }, 0);

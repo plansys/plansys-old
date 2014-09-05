@@ -47,26 +47,28 @@
                 'label' => 'User Management',
                 'icon' => 'fa-user',
                 'url' => '/dev/users/index',
+                'items' => array (
+                    array (
+                        'label' => 'Reports',
+                        'icon' => '',
+                        'url' => '#',
+                        'items' => array (
+                            array (
+                                'label' => 'Management Report',
+                                'icon' => 'fa-arrow-up',
+                                'url' => '/dev/reports/index',
+                            ),
+                            array (
+                                'label' => 'Report Upload',
+                                'icon' => 'fa-cloud-upload',
+                                'url' => '/dev/reportupload/index',
+                            ),
+                        ),
+                    ),
+                ),
             ),
         ),
         'state' => 'collapsed',
-    ),
-    array (
-        'label' => 'Reports',
-        'icon' => '',
-        'url' => '#',
-        'items' => array (
-            array (
-                'label' => 'Management Report',
-                'icon' => 'fa-arrow-up',
-                'url' => '/dev/reports/index',
-            ),
-            array (
-                'label' => 'Report Upload',
-                'icon' => 'fa-cloud-upload',
-                'url' => '/dev/reportupload/index',
-            ),
-        ),
     ),
     array (
         'label' => 'Settings',

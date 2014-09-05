@@ -5,7 +5,7 @@ class DataGridListForm extends Form {
         return array (
             array (
                 'renderInEditor' => 'No',
-                'value' => '<div ng-init=\"value[$index].show = value[$index].show || false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
+                'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
 <div ng-if=\"value[$index].columnType != \'buttons\'\" class=\"label data-filter-name pull-right\">  {{value[$index].name}}</div>
 <div class=\"data-filter-type\">
 <div class=\"badge\">{{value[$index].columnType}}</div>
@@ -78,6 +78,38 @@ style=\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'TextField',
             ),
             array (
+                'renderInEditor' => 'No',
+                'value' => '<div ng-if=\\"value[$index].columnType == \\\'buttons\\\'\\">',
+                'type' => 'Text',
+            ),
+            array (
+                'renderInEditor' => 'No',
+                'value' => '<hr style=\\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\\" />',
+                'type' => 'Text',
+            ),
+            array (
+                'name' => 'buttons',
+                'fieldTemplate' => 'form',
+                'templateForm' => 'application.components.ui.FormFields.DataGridListFormButton',
+                'labelWidth' => '0',
+                'fieldWidth' => '12',
+                'options' => array (
+                    'ng-model' => 'value[$index].buttons',
+                    'ng-change' => 'save()',
+                ),
+                'type' => 'ListView',
+            ),
+            array (
+                'renderInEditor' => 'No',
+                'value' => '<hr style=\\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\\" /><div class=\\"clearfix\\"></div>',
+                'type' => 'Text',
+            ),
+            array (
+                'renderInEditor' => 'No',
+                'value' => '</div>',
+                'type' => 'Text',
+            ),
+            array (
                 'label' => 'Options',
                 'fieldname' => 'options',
                 'show' => 'Show',
@@ -116,5 +148,11 @@ style=\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
     public $name = '';
     public $label = '';
     public $options = array();
+    public $buttons = array(
+        array(
+            'label'=>'',
+            ''
+        )
+    );
     public $columnType = 'string';
 }

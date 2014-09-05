@@ -41,8 +41,7 @@
         <?php else: ?>
             <!-- value -->
             <input type="<?= $this->fieldType ?>" <?= $this->expandAttributes($this->fieldOptions) ?>
-                   ng-model="value" ng-change="update()" value="<?= $this->value ?>"
-                   />
+                   ng-model="value" ng-change="update()" value="<?= $this->value ?>"/>
 
         <?php endif; ?>
         <!-- /field -->
