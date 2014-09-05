@@ -6,18 +6,17 @@ class DataGridListForm extends Form {
             array (
                 'renderInEditor' => 'No',
                 'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
-<div ng-if=\"value[$index].columnType != \'buttons\'\" class=\"label data-filter-name pull-right\">  {{value[$index].name}}</div>
-<div class=\"data-filter-type\">
-<div class=\"badge\">{{value[$index].columnType}}</div>
-</div>
-{{value[$index].label}} 
+<div class=\"label data-filter-name pull-right\">  {{value[$index].columnType}}</div>
+{{value[$index].name}} 
+
+<div class=\"clearfix\"></div>
 </div>',
                 'type' => 'Text',
             ),
             array (
                 'renderInEditor' => 'No',
                 'value' => '<hr ng-show=\"value[$index].show\"
-style=\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
+style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'Text',
             ),
             array (
@@ -44,14 +43,15 @@ style=\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'Header',
-                'name' => 'label',
+                'label' => 'Name',
+                'name' => 'name',
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
                 'options' => array (
-                    'ng-model' => 'value[$index].label',
+                    'ng-model' => 'value[$index].name',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
+                    'ng-if' => 'value[$index].columnType != \'buttons\'',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
@@ -62,15 +62,14 @@ style=\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'TextField',
             ),
             array (
-                'label' => 'Name',
-                'name' => 'name',
+                'label' => 'Header',
+                'name' => 'label',
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
                 'options' => array (
-                    'ng-model' => 'value[$index].name',
+                    'ng-model' => 'value[$index].label',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                    'ng-if' => 'value[$index].columnType != \'buttons\'',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',

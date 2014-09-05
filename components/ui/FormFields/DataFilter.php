@@ -119,7 +119,7 @@ class DataFilter extends FormField {
                 'options' => array (
                     'ng-model' => 'active.filters',
                     'ng-change' => 'save()',
-                    'ps-before-add' => 'value.show = true;',
+                    'ps-after-add' => 'value.show = true;',
                 ),
                 'type' => 'ListView',
             ),

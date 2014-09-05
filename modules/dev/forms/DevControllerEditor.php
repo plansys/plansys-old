@@ -37,7 +37,7 @@ class DevControllerEditor extends Form{
                     'ng-model' => 'active.form',
                     'ng-hide' => 'edit == false',
                 ),
-                'listExpr' => 'FormBuilder::listForm($model->module);',
+                'listExpr' => 'FormBuilder::listForm($model->module, false);',
                 'type' => 'DropDownList',
             ),
             '<hr>',
