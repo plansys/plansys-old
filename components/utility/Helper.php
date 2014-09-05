@@ -55,11 +55,11 @@ class Helper {
 
 
         return join(' ', array_map(function ($key) use ($attributes) {
-                if (is_bool($attributes[$key])) {
-                    return $attributes[$key] ? $key : '';
-                }
-                return $key . '="' . $attributes[$key] . '"';
-            }, array_keys($attributes)));
+                    if (is_bool($attributes[$key])) {
+                        return $attributes[$key] ? $key : '';
+                    }
+                    return $key . '="' . $attributes[$key] . '"';
+                }, array_keys($attributes)));
     }
 
     public static function minifyHtml($text) {
@@ -563,6 +563,13 @@ class Helper {
             $icon[$k] = '<i class="fa ' . $k . '"></i> ' . $v;
         }
         return $icon;
+    }
+
+    public static function returnAlias($items, $type, $code = null) {
+        if (isset($code))
+            return isset($items[$type][$code]) ? $items[$type][$code] : false;
+        else
+            return isset($items[$type]) ? $items[$type] : false;
     }
 
 }
