@@ -16,6 +16,21 @@ app.directive('psDataGrid', function($timeout, dateFilter) {
                     }
                 }
 
+                $scope.generateButtons = function(buttons) {
+                    var html = '<div class="ngCellButton colt{{$index}}">';
+                    for (i in buttons) {
+                        var b = buttons[i];
+                        if (b.url.match(/http*/ig)) {
+                            var url = "{{'" + b.url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'") + "'}}";
+                        } else {
+                            var url = "{{Yii.app.createUrl('" + b.url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'") + "')}}";
+                        }
+                        html += '<a href="' + url + '" class="btn btn-xs btn-default"><i class="' + b.icon + '"></i></a>';
+                    }
+                    html += '</div>';
+                    return html;
+                }
+
                 $scope.fillColumns = function() {
                     $timeout(function() {
                         var columns = [];
@@ -30,7 +45,8 @@ app.directive('psDataGrid', function($timeout, dateFilter) {
                                 var col = angular.extend(c.options, {
                                     field: 'button_' + buttonID,
                                     displayName: c.label,
-                                    enableCellEdit: false
+                                    enableCellEdit: false,
+                                    cellTemplate: $scope.generateButtons(c.buttons)
                                 });
                                 buttonID++;
                             } else {
@@ -49,7 +65,7 @@ app.directive('psDataGrid', function($timeout, dateFilter) {
 
                         $scope.gridOptions.data = 'data';
                         $scope.gridOptions.columnDefs = columns;
-                        $scope.gridOptions.plugins = [new ngGridFlexibleHeightPlugin(),new anchorLastColumn()];
+                        $scope.gridOptions.plugins = [new ngGridFlexibleHeightPlugin(), new anchorLastColumn()];
                         $scope.gridOptions.headerRowHeight = 28;
                         $scope.gridOptions.rowHeight = 28;
 
@@ -67,7 +83,7 @@ app.directive('psDataGrid', function($timeout, dateFilter) {
                 $scope.loaded = false;
                 $scope.onGridLoaded = '';
                 $scope.fillColumns();
-                
+
                 $scope.$parent[$scope.name] = $scope;
             }
         }

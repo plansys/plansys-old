@@ -17,15 +17,15 @@ class DevUser extends User {
                 'datasource' => 'dataSource1',
                 'filters' => array (
                     array (
-                        'name' => 'id',
-                        'label' => 'id',
+                        'name' => 'name',
+                        'label' => 'name',
                         'listExpr' => '',
-                        'filterType' => 'number',
+                        'filterType' => 'string',
                         'show' => false,
                     ),
                     array (
-                        'name' => 'name',
-                        'label' => 'name',
+                        'name' => 'description',
+                        'label' => 'description',
                         'listExpr' => '',
                         'filterType' => 'string',
                         'show' => false,
@@ -38,10 +38,10 @@ class DevUser extends User {
                         'show' => false,
                     ),
                     array (
-                        'name' => 'description',
-                        'label' => 'description',
+                        'name' => 'id',
+                        'label' => 'id',
                         'listExpr' => '',
-                        'filterType' => 'string',
+                        'filterType' => 'number',
                         'show' => false,
                     ),
                     array (
@@ -69,6 +69,14 @@ class DevUser extends User {
                         'show' => false,
                     ),
                     array (
+                        'name' => 'description',
+                        'label' => 'description',
+                        'sort' => 'Yes',
+                        'options' => array (),
+                        'columnType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
                         'name' => 'name',
                         'label' => 'name',
                         'sort' => 'Yes',
@@ -87,20 +95,27 @@ class DevUser extends User {
                         'show' => false,
                     ),
                     array (
-                        'name' => 'description',
-                        'label' => 'description',
-                        'sort' => 'Yes',
-                        'options' => array (),
-                        'columnType' => 'string',
-                        'show' => false,
-                    ),
-                    array (
                         'name' => 'value',
                         'label' => 'value',
                         'sort' => 'Yes',
                         'options' => array (),
                         'columnType' => 'string',
                         'show' => false,
+                    ),
+                    array (
+                        'name' => '',
+                        'label' => '',
+                        'options' => array (),
+                        'buttons' => array (
+                            array (
+                                '',
+                                'label' => '',
+                                'url' => '/dev/user/create?id={id}',
+                                'icon' => 'fa fa-pencil',
+                            ),
+                        ),
+                        'columnType' => 'buttons',
+                        'show' => true,
                     ),
                 ),
                 'gridOptions' => array (

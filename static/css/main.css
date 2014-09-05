@@ -1092,6 +1092,12 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .angular-ui-tree-nodes {
     border-bottom:1px solid #ddd;
     line-height:20px;
 }
+.data-grid-table .ngViewport .ngCellButton {
+    padding:2px 10px;
+    font-size:13px;
+    border-bottom:1px solid #ddd;
+    line-height:20px;
+}
 
 .data-grid-table .ngViewport .ngRow:last-child .ngCellText {
     border-bottom:0px;
@@ -1650,6 +1656,11 @@ div[dropdown] .split-button {
 .container {
     border:0px !important;
     padding-top:10px;
+}
+
+textarea {
+    word-wrap: break-word;
+    white-space:pre;
 }
 
 textarea.form-control {

@@ -904,7 +904,7 @@ EOF;
      * @param string $module
      * @return array Fungsi ini akan me-return sebuah array list form .
      */
-    public static function listForm($module = null) {
+    public static function listForm($module = null, $useAlias = true) {
         $list = array();
         $list[''] = '-- NONE --';
         $modules = FormBuilder::listFile();
@@ -914,7 +914,11 @@ EOF;
 
             $list[$m['module']] = array();
             foreach ($m['items'] as $file) {
-                $list[$file['alias']] = $file['name'];
+                if ($useAlias) {
+                    $list[$file['alias']] = $file['name'];
+                } else {
+                    $list[$file['class']] = $file['name'];
+                }
             }
         }
 

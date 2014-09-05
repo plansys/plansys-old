@@ -9,13 +9,14 @@ class DataFilterListForm extends Form {
 <div class=\"label data-filter-name pull-right\"> {{value[$index].filterType}}</div>
 
 {{value[$index].name}} 
+<div class=\"clearfix\"></div>
 </div>',
                 'type' => 'Text',
             ),
             array (
                 'renderInEditor' => 'No',
                 'value' => '<hr ng-show=\"value[$index].show\"
-style=\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
+style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'Text',
             ),
             array (
