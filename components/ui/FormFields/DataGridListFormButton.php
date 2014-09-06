@@ -36,6 +36,11 @@ class DataGridListFormButton extends Form {
                 'label' => 'Button Options',
                 'fieldname' => 'options',
                 'show' => 'Show',
+                'options' => array (
+                    'ng-model' => 'value[$index].options',
+                    'ng-change' => 'updateListView()',
+                    'ng-delay' => '500',
+                ),
                 'type' => 'KeyValueGrid',
             ),
         );

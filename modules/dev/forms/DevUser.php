@@ -8,8 +8,13 @@ class DevUser extends User {
             ),
             array (
                 'name' => 'dataSource1',
-                'sql' => 'select * from test',
+                'sql' => 'select * from test {where [where]} {order by [order]}',
                 'php' => 'Helper::coba()',
+                'params' => array (
+                    'where' => 'phone',
+                    'order' => 'phone',
+                ),
+                'debugSql' => 'Yes',
                 'type' => 'DataSource',
             ),
             array (
@@ -17,15 +22,15 @@ class DevUser extends User {
                 'datasource' => 'dataSource1',
                 'filters' => array (
                     array (
-                        'name' => 'name',
-                        'label' => 'name',
+                        'name' => 'id',
+                        'label' => 'id',
                         'listExpr' => '',
-                        'filterType' => 'string',
+                        'filterType' => 'number',
                         'show' => false,
                     ),
                     array (
-                        'name' => 'description',
-                        'label' => 'description',
+                        'name' => 'name',
+                        'label' => 'name',
                         'listExpr' => '',
                         'filterType' => 'string',
                         'show' => false,
@@ -38,10 +43,10 @@ class DevUser extends User {
                         'show' => false,
                     ),
                     array (
-                        'name' => 'id',
-                        'label' => 'id',
+                        'name' => 'description',
+                        'label' => 'description',
                         'listExpr' => '',
-                        'filterType' => 'number',
+                        'filterType' => 'string',
                         'show' => false,
                     ),
                     array (
@@ -112,14 +117,17 @@ class DevUser extends User {
                                 'label' => '',
                                 'url' => '/dev/user/create?id={id}',
                                 'icon' => 'fa fa-pencil',
+                                'options' => array (),
                             ),
                             array (
-                                '',
-                                'label' => '',
+                                'url' => '/dev',
+                                'icon' => 'fa fa-pencil',
+                                'options' => array (),
                             ),
                         ),
                         'columnType' => 'buttons',
                         'show' => false,
+                        'buttonCollapsed' => 'Yes',
                     ),
                 ),
                 'gridOptions' => array (
@@ -158,6 +166,11 @@ class DevUser extends User {
                     array (
                         'label' => 'Phone',
                         'name' => 'phone',
+                        'options' => array (
+                            'ps-ds-sql' => 'Helper::test($paramName, $params)',
+                            'ng-change' => 'changePhone(model.phone)',
+                            'ng-delay' => '500',
+                        ),
                         'type' => 'TextField',
                     ),
                     array (

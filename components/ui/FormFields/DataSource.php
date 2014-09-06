@@ -39,6 +39,18 @@ class DataSource extends FormField {
                 'type' => 'DropDownList',
             ),
             array(
+                'label' => 'Debug SQL ?',
+                'name' => 'debugSql',
+                'options' => array(
+                    'ng-model' => 'active.debugSql',
+                    'ng-change' => 'save()',
+                ),
+                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
+                'labelWidth' => '5',
+                'fieldWidth' => '4',
+                'type' => 'DropDownList',
+            ),
+            array(
                 'label' => 'SQL',
                 'fieldname' => 'sql',
                 'language' => 'sql',
@@ -84,6 +96,7 @@ class DataSource extends FormField {
 
     /** @var string $data */
     public $data;
+    public $debugSql = 'No';
 
     /** @var boolean $isHidden */
     public $isHidden = true;
@@ -111,7 +124,10 @@ class DataSource extends FormField {
             $this->builder = $fb;
             $data = $this->query(@$post['params']);
 
-            echo json_encode($data);
+            echo json_encode(array(
+                'data' => $data['data'],
+                'debug' => ($this->debugSql == 'Yes' ? $data['debug'] : array())
+            ));
         }
     }
 
@@ -136,6 +152,7 @@ class DataSource extends FormField {
             }
 
             if (isset($fieldSql)) {
+
                 $template = $this->evaluate($fieldSql, true, array(
                     'paramName' => $param,
                     'params' => @$postedParams[$param]
@@ -193,12 +210,14 @@ class DataSource extends FormField {
         $db = Yii::app()->db;
         $template = $this->generateTemplate($this->sql, $params);
 
-
         ## execute SQL
         $data = $db->createCommand($template['sql'])->queryAll(true, $template['params']);
 
         ## return data
-        return $data;
+        return array(
+            'data' => $data,
+            'debug' => $template
+        );
     }
 
     /**
@@ -209,10 +228,10 @@ class DataSource extends FormField {
             if ($this->fieldType == 'sql') {
                 $this->data = $this->query();
             } else {
-                $this->data = $this->evaluate($this->php, true);
-
-                var_dump($this->data);
-                die();
+                $this->data = array(
+                    'data' => $this->evaluate($this->php, true),
+                    'debug' => ''
+                );
             }
         }
 

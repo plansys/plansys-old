@@ -14,6 +14,40 @@ class Helper {
         );
     }
 
+    public static function test($paramName, $params) {
+
+        if ($paramName == 'where') {
+            if (is_null($params['id'])) {
+                return array(
+                    'sql' => '',
+                    'params' => array()
+                );
+            } else {
+                return array(
+                    'sql' => "id = :id",
+                    'params' => array(
+                        'id' => $params['id']
+                    )
+                );
+            }
+        } else if ($paramName == 'order') {
+            if (is_null($params['order_by'])) {
+                return array(
+                    'sql' => '',
+                    'params' => array()
+                );
+            } else {
+                return array(
+                    'sql' => ":order_by",
+                    'params' => array(
+                        'order_by' => $params['order_by']
+                    )
+                );
+            }
+            
+        }
+    }
+
     public static function startsWith($haystack, $needle, $case = false) {
         if ($case)
             return strpos($haystack, $needle, 0) === 0;
@@ -55,11 +89,11 @@ class Helper {
 
 
         return join(' ', array_map(function ($key) use ($attributes) {
-                    if (is_bool($attributes[$key])) {
-                        return $attributes[$key] ? $key : '';
-                    }
-                    return $key . '="' . $attributes[$key] . '"';
-                }, array_keys($attributes)));
+                if (is_bool($attributes[$key])) {
+                    return $attributes[$key] ? $key : '';
+                }
+                return $key . '="' . $attributes[$key] . '"';
+            }, array_keys($attributes)));
     }
 
     public static function minifyHtml($text) {

@@ -6,9 +6,9 @@ class DataGridListForm extends Form {
             array (
                 'renderInEditor' => 'No',
                 'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
-<div class=\"label data-filter-name pull-right\">  {{value[$index].columnType}}</div>
+<div class=\"label data-filter-name pull-right\"> 
+{{value[$index].columnType}}</div>
 {{value[$index].name}} 
-
 <div class=\"clearfix\"></div>
 </div>',
                 'type' => 'Text',
@@ -82,6 +82,21 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'Text',
             ),
             array (
+                'label' => 'Collapsed',
+                'name' => 'buttonCollapsed',
+                'options' => array (
+                    'ng-model' => 'value[$index].buttonCollapsed',
+                    'ng-change' => 'updateListView()',
+                ),
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
+                ),
+                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
+                'labelWidth' => '3',
+                'fieldWidth' => '4',
+                'type' => 'DropDownList',
+            ),
+            array (
                 'renderInEditor' => 'No',
                 'value' => '<hr style=\\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\\" />',
                 'type' => 'Text',
@@ -147,6 +162,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
     public $name = '';
     public $label = '';
     public $options = array();
+    public $buttonCollapsed = 'Yes';
     public $buttons = array(
         array(
             'label'=>'',

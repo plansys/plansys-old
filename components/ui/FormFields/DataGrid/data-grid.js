@@ -16,17 +16,36 @@ app.directive('psDataGrid', function($timeout, dateFilter) {
                     }
                 }
 
-                $scope.generateButtons = function(buttons) {
+                $scope.generateButtons = function(column) {
+                    var buttons = column.buttons;
                     var html = '<div class="ngCellButton colt{{$index}}">';
+
+                    if (column.buttonCollapsed == 'Yes') {
+                        html += '<div class="ngCellButtonCollapsed">';
+                        html += '<div class="ngCellButtonCollapsedDetail">';
+                    }
+
                     for (i in buttons) {
                         var b = buttons[i];
+                        var opt = b.options;
                         if (b.url.match(/http*/ig)) {
                             var url = "{{'" + b.url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'") + "'}}";
                         } else {
                             var url = "{{Yii.app.createUrl('" + b.url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'") + "')}}";
                         }
-                        html += '<a href="' + url + '" class="btn btn-xs btn-default"><i class="' + b.icon + '"></i></a>';
+
+                        if (typeof opt['ajax'] != 'undefined') {
+                            html = '<span>ASDASDAS - AKAX</span>';
+                        } else {
+                            html += '<a href="' + url + '" class="btn btn-xs btn-default"><i class="' + b.icon + '"></i></a>';
+                        }
                     }
+
+                    if (column.buttonCollapsed == 'Yes') {
+                        html += '</div>';
+                        html += '<span>...</span></div>';
+                    }
+
                     html += '</div>';
                     return html;
                 }
@@ -46,8 +65,12 @@ app.directive('psDataGrid', function($timeout, dateFilter) {
                                     field: 'button_' + buttonID,
                                     displayName: c.label,
                                     enableCellEdit: false,
-                                    cellTemplate: $scope.generateButtons(c.buttons)
+                                    cellTemplate: $scope.generateButtons(c)
                                 });
+
+                                if (c.buttonCollapsed == 'Yes') {
+                                    col.width = 50;
+                                }
                                 buttonID++;
                             } else {
                                 var col = angular.extend(c.options, {
@@ -76,6 +99,12 @@ app.directive('psDataGrid', function($timeout, dateFilter) {
                         $scope.loaded = true;
                     }, 0);
                 }
+
+                $scope.$watch('datasource.data', function() {
+                    if ($scope.datasource != null) {
+                        $scope.data = $scope.datasource.data;
+                    }
+                });
 
                 $scope.name = $el.find("data[name=name]").text();
                 $scope.gridOptions = JSON.parse($el.find("data[name=grid_options]").text());
