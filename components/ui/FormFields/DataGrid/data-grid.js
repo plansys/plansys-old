@@ -137,6 +137,10 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                     return html;
                 }
 
+                $scope.initGrid = function() {
+                    $scope.grid = this;
+                }
+
                 $scope.fillColumns = function() {
                     $timeout(function() {
                         var columns = [];
@@ -187,9 +191,20 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                             $scope.gridOptions.pagingOptions = {
                                 pageSizes: [25, 50, 100],
                                 pageSize: 25,
-                                totalServerItems: 0,
+                                totalServerItems: $scope.datasource.totalItems,
                                 currentPage: 1
                             };
+                            $scope.$watch('gridOptions.pagingOptions', function(paging, oldpaging) {
+                                if (paging != oldpaging) {
+                                    var ds = $scope.datasource;
+                                    if (typeof ds != "undefined") {
+                                        ds.updateParam('currentPage', paging.currentPage, 'paging');
+                                        ds.updateParam('pageSize', paging.pageSize, 'paging');
+                                        ds.updateParam('totalServerItems', paging.totalServerItems, 'paging');
+                                        ds.query();
+                                    }
+                                }
+                            }, true);
                         }
 
                         // sortOptions
@@ -231,6 +246,7 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                     }
                 });
 
+                $scope.grid = null;
                 $scope.name = $el.find("data[name=name]").text();
                 $scope.gridOptions = JSON.parse($el.find("data[name=grid_options]").text());
                 $scope.columns = JSON.parse($el.find("data[name=columns]").text());

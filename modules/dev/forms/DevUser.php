@@ -7,19 +7,6 @@ class DevUser extends User {
                 'type' => 'ActionBar',
             ),
             array (
-                'name' => 'dataSource1',
-                'sql' => 'select * from test {where [where]} {[order]} {[limit]}',
-                'php' => 'Helper::coba()',
-                'postData' => 'Yes',
-                'params' => array (
-                    'where' => 'dataFilter1',
-                    'order' => 'dataGrid1',
-                    'paging' => 'dataGrid1',
-                ),
-                'debugSql' => 'Yes',
-                'type' => 'DataSource',
-            ),
-            array (
                 'name' => 'dataFilter1',
                 'datasource' => 'dataSource1',
                 'filters' => array (
@@ -60,6 +47,24 @@ class DevUser extends User {
                     ),
                 ),
                 'type' => 'DataFilter',
+            ),
+            array (
+                'name' => 'dataSource1',
+                'sql' => 'select * from test 
+{where [where]} {[order]} {[paging]}',
+                'php' => 'Helper::coba()',
+                'postData' => 'Yes',
+                'params' => array (
+                    'where' => 'dataFilter1',
+                    'order' => 'dataGrid1',
+                    'paging' => 'dataGrid1',
+                ),
+                'debugSql' => 'Yes',
+                'enablePaging' => 'Yes',
+                'pagingSQL' => 'select count(1) from 
+test
+{where [where]}',
+                'type' => 'DataSource',
             ),
             array (
                 'name' => 'dataGrid1',
@@ -157,7 +162,6 @@ class DevUser extends User {
                     'enableColumnReordering' => 'true',
                     'maintainColumnRatios' => 'true',
                     'enablePaging' => 'true',
-                    'showFooter' => 'true',
                     'useExternalSorting' => 'true',
                 ),
                 'type' => 'DataGrid',

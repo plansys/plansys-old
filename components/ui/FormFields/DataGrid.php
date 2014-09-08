@@ -130,10 +130,29 @@ class DataGrid extends FormField {
     }
 
     public static function generatePagingParams($params) {
-        return array(
-            'sql' => '',
-            'params' => array()
-        );
+        if (!isset($params['currentPage']) || count($params['currentPage']) == 0) {
+            $defaultPageSize = "25";
+
+            $template = array(
+                'sql' => "limit {$defaultPageSize}",
+                'params' => array(),
+                'render' => true
+            );
+        } else {
+            $currentPage = $params['currentPage'];
+            $pageSize = $params['pageSize'];
+            $totalItems = $params['totalServerItems'];
+
+            $from = ($currentPage - 1) * $pageSize;
+            $to = $currentPage * $pageSize;
+
+            $template = array(
+                'sql' => "limit {$from},{$to}",
+                'params' => array(),
+                'render' => true
+            );
+        }
+        return $template;
     }
 
     public static function generateParams($paramName, $params) {

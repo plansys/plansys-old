@@ -7,7 +7,15 @@
 
     <div ng-if="loaded">
         <script type="text/ng-template" id="category_header"><?php include('category_header.php'); ?></script>
+        
+        <div class="data-grid-paging">
+            <div class="data-grid-pagination">
+                Page:
+                <div class="btn btn-default btn-xs"></div>
+            </div>
+        </div>
+        
         <div class="data-grid-table" category-header="gridOptions"></div>
-        <div class="data-grid-table" ng-grid="gridOptions"></div>
+        <div class="data-grid-table" ng-init="initGrid()" ng-grid="gridOptions"></div>
     </div>
 </div>

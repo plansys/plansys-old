@@ -5,13 +5,32 @@ app.directive('psDataSource', function($timeout, $http) {
             return function($scope, $el, attrs, ctrl) {
                 $scope.data = JSON.parse($el.find("data[name=data]").text());
 
+                $scope.setDebug = function(debug) {
+                    $scope.debug = debug;
+                    if ($scope.debug.sql) {
+                        $scope.debug.sql = $scope.debug.sql.replace(/\r/g, '').replace(/\n/g, '');
+                    }
+                    if ($scope.debug.countSQL) {
+                        $scope.debug.countSQL = $scope.debug.countSQL.replace(/\r/g, '').replace(/\n/g, '');
+                    }
+                    if ($scope.debug.function) {
+                        $scope.debug.function = $scope.debug.function.replace(/\r/g, '').replace(/\n/g, '');
+                    }
+                    if ($scope.debug.countFunction) {
+                        $scope.debug.countFunction = $scope.debug.countFunction.replace(/\r/g, '').replace(/\n/g, '');
+                    }
+                    $scope.debugHTML = JSON.stringify($scope.debug, undefined, 2);
+                };
+
                 if ($el.find("data[name=debug]").length > 0) {
-                    $scope.debug = JSON.parse($el.find("data[name=debug]").text());
+                    $scope.setDebug(JSON.parse($el.find("data[name=debug]").text()));
                 } else {
-                    $scope.debug = {};
+                    $scope.setDebug({});
                 }
-                
+
+
                 $scope.params = JSON.parse($el.find("data[name=params]").text());
+                $scope.totalItems = $el.find("data[name=total_item]").text();
                 $scope.name = $el.find("data[name=name]").text().trim();
                 $scope.class = $el.find("data[name=class_alias]").text().trim();
                 $scope.sqlParams = {};
@@ -24,7 +43,7 @@ app.directive('psDataSource', function($timeout, $http) {
                     }).success(function(data) {
                         $timeout(function() {
                             $scope.data = data.data;
-                            $scope.debug = data.debug;
+                            $scope.setDebug(data.debug);
                             if (typeof f == "function") {
                                 f(true, data);
                             }
