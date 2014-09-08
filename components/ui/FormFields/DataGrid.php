@@ -144,6 +144,8 @@ class DataGrid extends FormField {
             $totalItems = $params['totalServerItems'];
 
             $from = ($currentPage - 1) * $pageSize;
+            $from = $from < 0 ? 0 : $from;
+            
             $to = $currentPage * $pageSize;
 
             $template = array(
