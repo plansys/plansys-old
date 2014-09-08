@@ -11,6 +11,6 @@
 
     <?php if ($this->debugSql == 'Yes'): ?>
         <data name="debug" class="hide"><?= json_encode($this->data['debug']); ?></data>
-        <pre>{{debug | json}}</pre>
+        <pre>{{ debug | json}}</pre>
     <?php endif; ?>
 </div>

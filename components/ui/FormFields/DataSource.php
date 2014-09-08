@@ -235,7 +235,9 @@ class DataSource extends FormField {
 
         ## execute SQL
         $data = $db->createCommand($template['sql'])->queryAll(true, $template['params']);
-
+        
+        $template['timestamp'] = date('Y-m-d H:i:s');
+        
         ## return data
         return array(
             'data' => $data,
