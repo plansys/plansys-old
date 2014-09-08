@@ -28,18 +28,19 @@ app.directive('psDataSource', function($timeout, $http) {
                     $scope.setDebug({});
                 }
 
-
                 $scope.params = JSON.parse($el.find("data[name=params]").text());
+                $scope.paramsGet = JSON.parse($el.find("data[name=params_get]").text());
                 $scope.totalItems = $el.find("data[name=total_item]").text();
                 $scope.name = $el.find("data[name=name]").text().trim();
                 $scope.class = $el.find("data[name=class_alias]").text().trim();
                 $scope.sqlParams = {};
 
                 $scope.query = function(f) {
-                    $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
+                    
+                    $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
                         name: $scope.name,
                         class: $scope.class,
-                        params: $scope.sqlParams
+                        params: angular.extend($scope.params, $scope.sqlParams)
                     }).success(function(data) {
                         $timeout(function() {
                             $scope.data = data.data;
@@ -53,7 +54,6 @@ app.directive('psDataSource', function($timeout, $http) {
                             f(false, data);
                         }
                     });
-
                 }
 
                 $scope.updateParam = function(key, value, name) {

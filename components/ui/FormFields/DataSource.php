@@ -173,6 +173,7 @@ class DataSource extends FormField {
 
             if ($this->fieldType == 'sql') {
                 $data = $this->query($params);
+                
             } else {
                 $data = $this->execute($params);
             }
@@ -258,7 +259,9 @@ class DataSource extends FormField {
         ## find all params
         preg_match_all("/\:[\w\d_]+/", $sql, $params);
         foreach ($params[0] as $p) {
-            $returnParams[$p] = $this->evaluate($postedParams[$p], true);
+            if (isset($postedParams[$p])) {
+                $returnParams[$p] = $this->evaluate($postedParams[$p], true);
+            }
         }
 
         return array(
@@ -299,7 +302,7 @@ class DataSource extends FormField {
 
         $db = Yii::app()->db;
         $template = $this->generateTemplate($this->sql, $params);
-
+        
         ## execute SQL
         $data = $db->createCommand($template['sql'])->queryAll(true, $template['params']);
 

@@ -214,8 +214,10 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                                 fields: [],
                                 directions: []
                             };
+                            
                             $scope.$watch('gridOptions.sortInfo', function(sort, oldsort) {
                                 if (sort != oldsort) {
+                                    
                                     var ds = $scope.datasource;
                                     if (typeof ds != "undefined") {
                                         var order_by = [];
@@ -226,7 +228,8 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                                             });
                                         }
                                         ds.updateParam('order_by', order_by, 'order');
-                                        ds.query()
+                                        ds.query();
+                                        
                                     }
                                 }
                             }, true);
