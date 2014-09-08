@@ -1,4 +1,4 @@
-app.directive('psDataGrid', function($timeout, dateFilter) {
+app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
     return {
         scope: true,
         compile: function(element, attrs, transclude) {
@@ -16,29 +16,116 @@ app.directive('psDataGrid', function($timeout, dateFilter) {
                     }
                 }
 
+                $('body').on({
+                    mouseover: function() {
+                        var $container = $(this);
+                        $('.ngRow > .ngCellButtonCollapsedDetail').each(function() {
+                            var $container = $(this).parent().find('.' + $(this).attr('colt')).find('.ngCellButtonCollapsed');
+                            $(this).hide().remove().appendTo($container);
+                        });
+
+                        var $detail = $(this).find('.ngCellButtonCollapsedDetail').remove();
+                        var offset = {
+                            right: $(this).parents('.ngCanvas').width() -
+                                    ($(this).parents('.ngCell').css('left').replace('px', '') * 1 +
+                                            $(this).parents('.ngCell').width())
+                        };
+                        $detail.attr('colt', $(this).parents('.ngCell').attr('class').split(' ').pop())
+                                .css(offset)
+                                .show();
+
+                        $detail.appendTo($(this).parents('.ngRow'));
+                        $compile($detail)(angular.element($container).scope());
+
+                        $detail.on({
+                            mouseout: function() {
+                                $(this).hide().remove().appendTo($container);
+                            }
+                        });
+
+                    },
+                }, '.ngCellButtonCollapsed');
+
+                $scope.removeRow = function(row) {
+                    if (typeof row == "undefined" || typeof row.rowIndex != 'number') {
+                        return;
+                    }
+
+                    var index = row.rowIndex;
+                    $scope.gridOptions.selectItem(index, false);
+                    $scope.data.splice(index, 1);
+                };
+
+                $scope.buttonClick = function(row, e) {
+                    $btn = $(e.target);
+
+                    if (!$btn.is('a')) {
+                        $btn = $btn.parents('a');
+                    }
+
+                    if ($btn.attr('confirm')) {
+                        if (!confirm($btn.attr('confirm'))) {
+                            return false;
+                        }
+                    }
+
+                    if ($btn.attr('ajax') == 'true') {
+                        if ($btn.attr('ajax-success')) {
+
+                            $http.get($btn.attr('href'))
+                                    .success(function(data) {
+                                        $scope.$eval($btn.attr('ajax-success'), {row: row, data: data});
+                                    })
+                                    .error(function(data) {
+                                        $scope.$eval($btn.attr('ajax-failed'), {row: row, data: data});
+                                    });
+
+                        }
+
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        return false;
+                    }
+                }
+
                 $scope.generateButtons = function(column) {
                     var buttons = column.buttons;
                     var html = '<div class="ngCellButton colt{{$index}}">';
+                    var btnSize = 'btn-xs';
 
                     if (column.buttonCollapsed == 'Yes') {
+                        btnSize = 'btn-sm';
                         html += '<div class="ngCellButtonCollapsed">';
                         html += '<div class="ngCellButtonCollapsedDetail">';
                     }
 
                     for (i in buttons) {
                         var b = buttons[i];
-                        var opt = b.options;
+                        var opt = b.options || {};
+                        var attr = [];
+
+                        // create url
+                        var url = '';
                         if (b.url.match(/http*/ig)) {
-                            var url = "{{'" + b.url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'") + "'}}";
+                            url = "{{'" + b.url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'") + "'}}";
+                        } else if (b.url.trim() == '#') {
+                            url = '#';
                         } else {
-                            var url = "{{Yii.app.createUrl('" + b.url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'") + "')}}";
+                            url = "{{Yii.app.createUrl('" + b.url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'") + "')}}";
                         }
 
-                        if (typeof opt['ajax'] != 'undefined') {
-                            html = '<span>ASDASDAS - AKAX</span>';
-                        } else {
-                            html += '<a href="' + url + '" class="btn btn-xs btn-default"><i class="' + b.icon + '"></i></a>';
+                        // generate attribute
+                        opt['ng-click'] = 'buttonClick(row, $event)';
+                        opt.class = (opt.class || '') + ' btn ' + btnSize + ' btn-default';
+                        opt.href = url;
+                        for (i in opt) {
+                            attr.push(i + '="' + opt[i] + '"');
                         }
+
+                        // create html
+                        html += '<a ' + attr.join(' ') + '><i class="' + b.icon + '"></i></a>';
+
                     }
 
                     if (column.buttonCollapsed == 'Yes') {
@@ -69,7 +156,9 @@ app.directive('psDataGrid', function($timeout, dateFilter) {
                                 });
 
                                 if (c.buttonCollapsed == 'Yes') {
-                                    col.width = 50;
+                                    col.width = 30;
+                                } else {
+                                    col.width = (c.buttons.length * 24) + ((c.buttons.length - 1) * 5) + 20;
                                 }
                                 buttonID++;
                             } else {
@@ -91,6 +180,17 @@ app.directive('psDataGrid', function($timeout, dateFilter) {
                         $scope.gridOptions.plugins = [new ngGridFlexibleHeightPlugin(), new anchorLastColumn()];
                         $scope.gridOptions.headerRowHeight = 28;
                         $scope.gridOptions.rowHeight = 28;
+
+                        $scope.gridOptions.pagingOptions = {
+                            // pageSizes: list of available page sizes.
+                            pageSizes: [25, 50, 100],
+                            //pageSize: currently selected page size. 
+                            pageSize: 25,
+                            //totalServerItems: Total items are on the server. 
+                            totalServerItems: 30,
+                            //currentPage: the uhm... current page.
+                            currentPage: 1
+                        };
 
                         if (typeof $scope.onGridLoaded == 'function') {
                             $scope.onGridLoaded($scope.gridOptions);

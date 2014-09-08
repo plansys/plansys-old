@@ -11,7 +11,7 @@ class DevUser extends User {
                 'sql' => 'select * from test {where [where]} {order by [order]}',
                 'php' => 'Helper::coba()',
                 'params' => array (
-                    'where' => 'phone',
+                    'where' => 'dataFilter1',
                     'order' => 'phone',
                 ),
                 'debugSql' => 'Yes',
@@ -113,21 +113,38 @@ class DevUser extends User {
                         'options' => array (),
                         'buttons' => array (
                             array (
-                                '',
-                                'label' => '',
-                                'url' => '/dev/user/create?id={id}',
+                                'url' => '#',
                                 'icon' => 'fa fa-pencil',
-                                'options' => array (),
-                            ),
-                            array (
-                                'url' => '/dev',
-                                'icon' => 'fa fa-pencil',
-                                'options' => array (),
+                                'options' => array (
+                                    'ajax' => 'true',
+                                    'ajax-success' => 'removeRow(row);',
+                                    'confirm' => 'Are you sure ?',
+                                ),
                             ),
                         ),
                         'columnType' => 'buttons',
                         'show' => false,
                         'buttonCollapsed' => 'Yes',
+                    ),
+                    array (
+                        'name' => '',
+                        'label' => 'oke',
+                        'options' => array (),
+                        'buttonCollapsed' => 'No',
+                        'buttons' => array (
+                            array (
+                                '',
+                                'label' => '',
+                                'url' => '#',
+                                'icon' => 'fa fa-globe',
+                                'options' => array (
+                                    'ajax' => 'true',
+                                    'ajax-success' => 'removeRow(row)',
+                                ),
+                            ),
+                        ),
+                        'columnType' => 'buttons',
+                        'show' => false,
                     ),
                 ),
                 'gridOptions' => array (
@@ -137,6 +154,8 @@ class DevUser extends User {
                     'enableColumnResize' => 'true',
                     'enableColumnReordering' => 'true',
                     'maintainColumnRatios' => 'true',
+                    'enablePaging' => 'true',
+                    'showFooter' => 'true',
                 ),
                 'type' => 'DataGrid',
             ),

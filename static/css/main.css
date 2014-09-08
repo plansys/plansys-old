@@ -755,6 +755,15 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .angular-ui-tree-nodes {
     padding-left:0px !important;
 }
 
+div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-move {
+    display:none;
+}
+
+div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container {
+    margin-left:0px;
+    border-left:0px;
+}
+
 .list-view-item-remove {
     opacity:.5;
     border:0px;
@@ -1093,16 +1102,22 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .angular-ui-tree-nodes {
     line-height:20px;
 }
 .data-grid-table .ngViewport .ngCellButton {
-    padding:4px 10px;
+    padding:2px 10px;
     font-size:13px;
     border-bottom:1px solid #ddd;
     line-height:20px;
 }
+.data-grid-table .ngRow:last-child .ngCellButton {
+    border-bottom:0px;
+}
 
 .data-grid-table .ngViewport .ngCellButtonCollapsed {
     text-align:center;
-    margin:-4px -10px;
+    margin:-2px -10px;
     padding:4px 0px 3px 0px;
+}
+.data-grid-table .ngViewport .ngCellButtonCollapsed > span {
+    padding:2px 0px;
 }
 
 .data-grid-table .ngViewport .ngCellButtonCollapsedDetail {
@@ -1111,7 +1126,25 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .angular-ui-tree-nodes {
     padding:3px 5px 4px 5px;
     border-radius:4px;
     background:white;
-    margin-top:-4px;
+    position:absolute;
+    z-index:999;
+    margin-top:-5px;
+    margin-right:-1px;
+}
+
+.data-grid-table .ngRow:first-child .ngCellButtonCollapsedDetail {
+    margin-top:0px
+}
+.data-grid-table .ngRow:last-child .ngCellButtonCollapsedDetail {
+    margin-top:-10px;
+}
+
+.data-grid-table .ngViewport .ngCellButtonCollapsedDetail .btn {
+    margin-right:5px;
+}
+
+.data-grid-table .ngViewport .ngCellButtonCollapsedDetail .btn:last-child {
+    margin-right:0px;
 }
 
 

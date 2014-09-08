@@ -119,10 +119,19 @@ class DataSource extends FormField {
         if (class_exists($class)) {
             $fb = FormBuilder::load($class);
             $field = $fb->findField(array('name' => $post['name']));
+            $params = @$post['params'];
 
             $this->attributes = $field;
             $this->builder = $fb;
-            $data = $this->query(@$post['params']);
+
+            if ($this->fieldType == 'sql') {
+                $data = $this->query($params);
+            } else {
+                $data = array(
+                    'data' => $this->evaluate($this->php, true, array('params' => $params)),
+                    'debug' => ''
+                );
+            }
 
             echo json_encode(array(
                 'data' => $data['data'],

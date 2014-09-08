@@ -4,13 +4,13 @@ class Helper {
 
     public static function coba() {
         return array(
-            'coba' => array(
+            array(
                 'coba_dunk' => 'Coba Dunk',
                 'coba_1' => 'Testing',
                 '---' => '---',
                 'fukiii' => 'fukiii',
-            ),
-            'admin' => 'test'
+                'admin' => 'test'
+            )
         );
     }
 
@@ -44,7 +44,6 @@ class Helper {
                     )
                 );
             }
-            
         }
     }
 

@@ -8,7 +8,7 @@ class DataFilterListForm extends Form {
                 'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
 <div class=\"label data-filter-name pull-right\"> {{value[$index].filterType}}</div>
 
-{{value[$index].name}} 
+{{value[$index].label}} 
 <div class=\"clearfix\"></div>
 </div>',
                 'type' => 'Text',

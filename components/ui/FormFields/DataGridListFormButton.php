@@ -8,7 +8,7 @@ class DataGridListFormButton extends Form {
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
                 'options' => array (
-                    'ng-model' => 'value[$index].url',
+                    'ng-model' => 'item.url',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
                 ),

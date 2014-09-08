@@ -8,7 +8,7 @@ class DataGridListForm extends Form {
                 'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
 <div class=\"label data-filter-name pull-right\"> 
 {{value[$index].columnType}}</div>
-{{value[$index].name}} 
+{{value[$index].label}} 
 <div class=\"clearfix\"></div>
 </div>',
                 'type' => 'Text',
@@ -29,7 +29,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'name' => 'columnType',
                 'options' => array (
                     'ng-model' => 'value[$index].columnType',
-                    'ng-change' => 'updateListView()',
+                    'ng-change' => '$parent.changeButtonType(value[$index]);updateListView()',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',

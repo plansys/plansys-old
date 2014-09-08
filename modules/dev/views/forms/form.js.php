@@ -192,6 +192,12 @@
                     class: '<?= Helper::classAlias($class) ?>'
                 }).success(function(data) {
                     if (typeof data == 'object') {
+                        if (typeof data.data == 'object') {
+                            data = data.data;
+                        } else {
+                            return;
+                        }
+
                         if (data.length > 0 && typeof data[0] == "object") {
                             for (i in data[0]) {
                                 var filter = angular.extend({}, templateAttr);
@@ -225,6 +231,12 @@
                     class: '<?= Helper::classAlias($class) ?>'
                 }).success(function(data) {
                     if (typeof data == 'object') {
+                        if (typeof data.data == 'object') {
+                            data = data.data;
+                        } else {
+                            return;
+                        }
+
                         if (data.length > 0 && typeof data[0] == "object") {
                             for (i in data[0]) {
                                 var filter = angular.extend({}, templateAttr);
