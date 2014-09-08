@@ -10,27 +10,27 @@ class DataSource extends FormField {
      * @return array Fungsi ini akan me-return array property DataSource.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Data Source Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Source Type',
                 'name' => 'fieldType',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.fieldType',
                     'ng-change' => 'save()',
                 ),
-                'list' => array (
+                'list' => array(
                     'sql' => 'SQL',
                     'php' => 'PHP Function',
                 ),
@@ -38,10 +38,10 @@ class DataSource extends FormField {
                 'fieldWidth' => '7',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Post Data ?',
                 'name' => 'postData',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.postData',
                     'ng-change' => 'save()',
                 ),
@@ -50,10 +50,10 @@ class DataSource extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Debug SQL ?',
                 'name' => 'debugSql',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.debugSql',
                     'ng-change' => 'save()',
                 ),
@@ -62,26 +62,26 @@ class DataSource extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'SQL',
                 'fieldname' => 'sql',
                 'language' => 'sql',
-                'options' => array (
+                'options' => array(
                     'ng-show' => 'active.fieldType == \'sql\'',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'PHP Function',
                 'fieldname' => 'php',
-                'options' => array (
+                'options' => array(
                     'ng-show' => 'active.fieldType == \'php\'',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'Parameters',
                 'fieldname' => 'params',
                 'show' => 'Show',
@@ -101,7 +101,6 @@ class DataSource extends FormField {
 
     /** @var string $php */
     public $php = '';
-    
     public $postData = 'No';
 
     /** @var string $params */
@@ -170,12 +169,13 @@ class DataSource extends FormField {
 
             if ($field['type'] == "DataFilter") {
                 $fieldSql = 'DataFilter::generateParams($paramName, $params)';
+            } else if ($field['type'] == "DataGrid") {
+                $fieldSql = 'DataGrid::generateParams($paramName, $params)';
             } else {
                 $fieldSql = @$field['options']['ps-ds-sql'];
             }
 
             if (isset($fieldSql)) {
-
                 $template = $this->evaluate($fieldSql, true, array(
                     'paramName' => $param,
                     'params' => @$postedParams[$param]
@@ -185,8 +185,13 @@ class DataSource extends FormField {
                 if ($template['sql'] != '') {
                     $parsed[$param] = $template['params'];
                 }
+
+                if (isset($template['render'])) {
+                    return array('sql' => $sql, 'params' => $parsed, 'render' => $template['render']);
+                }
             }
         }
+
         return array('sql' => $sql, 'params' => $parsed);
     }
 
@@ -199,8 +204,12 @@ class DataSource extends FormField {
             $bracket = $this->processSQLBracket($block, $postedParams);
 
             $renderBracket = false;
+            if (isset($bracket['render'])) {
+                $renderBracket = $bracket['render'];
+            }
+            
             foreach ($bracket['params'] as $bracketParam => $bracketValue) {
-                if (count($bracketValue) > 0) {
+                if (is_array($bracketValue) && count($bracketValue) > 0) {
                     $renderBracket = true;
                     foreach ($bracketValue as $k => $p) {
                         $returnParams[$k] = $p;
@@ -215,9 +224,8 @@ class DataSource extends FormField {
             }
         }
 
-
         return array(
-            'sql' => $sql,
+            'sql' => trim($sql),
             'params' => $returnParams
         );
     }
@@ -235,9 +243,9 @@ class DataSource extends FormField {
 
         ## execute SQL
         $data = $db->createCommand($template['sql'])->queryAll(true, $template['params']);
-        
+
         $template['timestamp'] = date('Y-m-d H:i:s');
-        
+
         ## return data
         return array(
             'data' => $data,

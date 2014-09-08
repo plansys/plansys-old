@@ -145,13 +145,14 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                         for (i in $scope.columns) {
                             var c = $scope.columns[i];
 
+                            // prepare columns
                             evalArray(c.options);
-
                             if (c.columnType == 'buttons') {
                                 var col = angular.extend(c.options, {
                                     field: 'button_' + buttonID,
                                     displayName: c.label,
                                     enableCellEdit: false,
+                                    sortable: false,
                                     cellTemplate: $scope.generateButtons(c)
                                 });
 
@@ -173,20 +174,48 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                         $scope.datasource = $scope.$parent[$el.find("data[name=datasource]").text()];
                         $scope.data = $scope.datasource.data;
 
+                        // prepare gridOptions
                         evalArray($scope.gridOptions);
-
                         $scope.gridOptions.data = 'data';
                         $scope.gridOptions.columnDefs = columns;
                         $scope.gridOptions.plugins = [new ngGridFlexibleHeightPlugin(), new anchorLastColumn()];
                         $scope.gridOptions.headerRowHeight = 28;
                         $scope.gridOptions.rowHeight = 28;
 
-                        $scope.gridOptions.pagingOptions = {
-                            pageSizes: [25, 50, 100],
-                            pageSize: 25,
-                            totalServerItems: 0,
-                            currentPage: 1
-                        };
+                        // pagingOptions
+                        if ($scope.gridOptions['enablePaging']) {
+                            $scope.gridOptions.pagingOptions = {
+                                pageSizes: [25, 50, 100],
+                                pageSize: 25,
+                                totalServerItems: 0,
+                                currentPage: 1
+                            };
+                        }
+
+                        // sortOptions
+                        if ($scope.gridOptions['useExternalSorting']) {
+                            $scope.gridOptions.sortInfo = {
+                                columns: [],
+                                fields: [],
+                                directions: []
+                            };
+                            $scope.$watch('gridOptions.sortInfo', function(sort, oldsort) {
+                                if (sort != oldsort) {
+                                    var ds = $scope.datasource;
+                                    if (typeof ds != "undefined") {
+                                        var order_by = [];
+                                        for (i in sort.fields) {
+                                            order_by.push({
+                                                field: sort.fields[i],
+                                                direction: sort.directions[i]
+                                            });
+                                        }
+                                        ds.updateParam('order_by', order_by, 'order');
+                                        ds.query()
+                                    }
+                                }
+                            }, true);
+                        }
 
                         if (typeof $scope.onGridLoaded == 'function') {
                             $scope.onGridLoaded($scope.gridOptions);
