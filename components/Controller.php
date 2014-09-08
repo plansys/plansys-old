@@ -29,10 +29,10 @@ class Controller extends CController {
 
         $renderOptions = array(
             'wrapForm' => true,
-            'action' => $this->action->id
+            'action' => $this->action->id,
         );
 
-        $renderOptions = array_merge($renderOptions, $options);
+        $renderOptions = array_merge($renderOptions, $options);        
         $mainform = $fb->render($model, $renderOptions);
 
         $data = $fb->form['layout']['data'];

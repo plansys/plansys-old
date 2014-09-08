@@ -43,6 +43,13 @@ class ActiveRecord extends CActiveRecord {
         }
         return $array;
     }
+    
+    public static function batchInsert($model, $data){
+        $table = $model::model()->tableSchema->name;
+        $builder=Yii::app()->db->schema->commandBuilder;
+        $command=$builder->createMultipleInsertCommand($table, $data);
+        $command->execute();
+    }
 
     public function getDefaultFields() {
         $array = $this->modelFieldList;

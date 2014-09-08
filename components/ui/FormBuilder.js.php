@@ -7,6 +7,7 @@ ob_start();
         $scope.form = <?php echo json_encode($this->form); ?>;
         $scope.model = <?php echo @json_encode($data['data']); ?>;
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
+        $scope.params = <?php echo @json_encode($renderParams); ?>;
 <?php if (isset($data['validators'])): ?>
             $scope.validators = <?php echo @json_encode($data['validators']); ?>;
 <?php endif; ?>

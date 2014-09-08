@@ -521,15 +521,15 @@ EOF;
      * @param array $formdata
      * @return string me-return string script yang di-include
      */
-    public function renderAngularController($formdata = null) {
+    public function renderAngularController($formdata = null, $renderParams = array()) {
         $modelClass = get_class($this->model);
 
         ## define formdata
         if (is_array($formdata)) {
             $data['data'] = $formdata;
         } else if (
-            is_subclass_of($formdata, 'ActiveRecord') ||
-            is_subclass_of($formdata, 'Form')
+                is_subclass_of($formdata, 'ActiveRecord') ||
+                is_subclass_of($formdata, 'Form')
         ) {
             $data['data'] = $formdata->attributes;
             $data['errors'] = $formdata->errors;
@@ -601,6 +601,7 @@ EOF;
         $renderWithAngular = isset($options['renderWithAngular']) ? $options['renderWithAngular'] : true;
         $renderInAjax = isset($options['renderInAjax']) ? $options['renderInAjax'] : false;
         $FFRenderID = isset($options['FormFieldRenderID']) ? $options['FormFieldRenderID'] . '_' : '';
+        $renderParams = isset($options['params']) ? $options['params'] : array();
 
         ## wrap form
         if ($wrapForm) {
@@ -624,8 +625,8 @@ EOF;
         if (is_array($formdata)) {
             $data['data'] = $formdata;
         } else if (
-            is_subclass_of($formdata, 'ActiveRecord') ||
-            is_subclass_of($formdata, 'Form')
+                is_subclass_of($formdata, 'ActiveRecord') ||
+                is_subclass_of($formdata, 'Form')
         ) {
             $data['data'] = $formdata->attributes;
             $data['errors'] = $formdata->errors;
@@ -688,7 +689,7 @@ EOF;
                     ob_start();
                     ?>
                     <script type="text/javascript">
-                    <?php echo $this->renderAngularController($formdata); ?>
+                    <?php echo $this->renderAngularController($formdata, $renderParams); ?>
                         registerController('<?= $modelClass ?>Controller');
                     </script>
                     <?php
@@ -700,7 +701,7 @@ EOF;
             } else {
                 if ($renderWithAngular) {
                     $id = "NGCTRL_{$modelClass}_" . rand(0, 1000);
-                    $angular = $this->renderAngularController($formdata);
+                    $angular = $this->renderAngularController($formdata, $renderParams);
                     Yii::app()->clientScript->registerScript($id, $angular, CClientScript::POS_END);
                     $this->renderAdditionalJS();
                 }
