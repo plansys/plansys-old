@@ -1168,6 +1168,25 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     border-width:4px 4px 0 4px;
 }
 
+.data-grid-paging {
+    padding-bottom:7px;
+}
+
+.data-grid-page-selector {
+    display:inline-block;
+    width:80px;
+}
+
+.data-grid-page-selector .input-group .btn,
+.data-grid-page-selector .input-group .form-control {
+    padding:0px 7px;
+    line-height:20px;
+}
+
+.data-grid-page-selector .input-group .form-control {
+    padding:0px;
+}
+
 
 /********************************** DATA FILTER **************************************/
 .data-filter {
