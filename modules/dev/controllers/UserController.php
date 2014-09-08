@@ -10,7 +10,7 @@ class UserController extends Controller {
         if (isset($_POST['DevUser'])) {
             
             $model->attributes = $_POST['DevUser'];
-            var_dump($model->attributes);
+            var_dump($model->attributes, $_POST);
             die();
             
             if ($model->save()) {

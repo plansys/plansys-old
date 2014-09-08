@@ -10,6 +10,7 @@ class DevUser extends User {
                 'name' => 'dataSource1',
                 'sql' => 'select * from test {where [where]} {order by [order]}',
                 'php' => 'Helper::coba()',
+                'postData' => 'Yes',
                 'params' => array (
                     'where' => 'dataFilter1',
                     'order' => 'phone',

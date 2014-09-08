@@ -182,13 +182,9 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                         $scope.gridOptions.rowHeight = 28;
 
                         $scope.gridOptions.pagingOptions = {
-                            // pageSizes: list of available page sizes.
                             pageSizes: [25, 50, 100],
-                            //pageSize: currently selected page size. 
                             pageSize: 25,
-                            //totalServerItems: Total items are on the server. 
-                            totalServerItems: 30,
-                            //currentPage: the uhm... current page.
+                            totalServerItems: 0,
                             currentPage: 1
                         };
 

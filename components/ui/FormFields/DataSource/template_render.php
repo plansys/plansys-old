@@ -5,8 +5,12 @@
     <data name="name" class="hide"><?= $this->name; ?></data>
     <data name="class_alias" class="hide"><?= Helper::classAlias($model) ?></data>
 
+    <?php if ($this->postData == 'Yes'): ?>
+        <input name="<?= $this->name; ?>" type="hidden" value="{{ dataSource1.data | json }}" />
+    <?php endif; ?>
+
     <?php if ($this->debugSql == 'Yes'): ?>
-        <data name="debug" class="hide"><?= json_encode($this->data['debug']);  ?></data>
+        <data name="debug" class="hide"><?= json_encode($this->data['debug']); ?></data>
         <pre>{{debug | json}}</pre>
     <?php endif; ?>
 </div>
