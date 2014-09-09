@@ -1170,17 +1170,21 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 .data-grid-paging {
     padding-bottom:7px;
+    font-size:13px;
 }
 
 .data-grid-page-selector {
     display:inline-block;
     width:80px;
+    padding:1px 3px 0px 3px;
 }
 
-.data-grid-page-selector .input-group .btn,
-.data-grid-page-selector .input-group .form-control {
-    padding:0px 7px;
-    line-height:20px;
+.data-grid-paging .btn,
+.data-grid-paging .form-control {
+    padding:0px 7px !important;
+    height:25px !important;
+    font-size:12px !important;
+    font-weight:bold !important;
 }
 
 .data-grid-page-selector .input-group .form-control {

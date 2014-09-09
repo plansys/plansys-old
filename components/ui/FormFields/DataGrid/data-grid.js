@@ -266,7 +266,11 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                         $scope.data = $scope.datasource.data;
                     }
                 });
-
+                
+                $scope.reset = function() {
+                    location.reload();
+                }
+                
                 $scope.Math = window.Math;
                 $scope.grid = null;
                 $scope.name = $el.find("data[name=name]").text();

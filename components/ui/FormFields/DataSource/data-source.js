@@ -36,7 +36,7 @@ app.directive('psDataSource', function($timeout, $http) {
                 $scope.sqlParams = {};
 
                 $scope.query = function(f) {
-                    
+
                     $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
                         name: $scope.name,
                         class: $scope.class,
@@ -65,7 +65,13 @@ app.directive('psDataSource', function($timeout, $http) {
                 }
 
                 $scope.resetParam = function(key, name) {
-                    delete $scope.sqlParams[name][key];
+                    if (typeof key == "undefined") {
+                        for (i in $scope.sqlParams) {
+                            delete $scope.sqlParams[i];
+                        }
+                    } else {
+                        delete $scope.sqlParams[name][key];
+                    }
                 }
 
                 $scope.$parent[$scope.name] = $scope;

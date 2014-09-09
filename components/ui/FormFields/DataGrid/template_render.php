@@ -10,8 +10,42 @@
 
         <?php if ($this->gridOptions['enablePaging'] == 'true'): ?>
             <div class="data-grid-paging">
+                <div class="data-grid-pageinfo pull-right">
+                    <div class="btn-group pull-right" style="padding-top:2px;margin-left:5px;" >
+                        <button ng-click="datasource.query()"
+                                type="button" class="btn btn-default">
+                            <i class="fa fa-refresh"></i> Refresh
+                        </button>
+                        <button ng-click="reset()"
+                            type="button" class="btn btn-default">
+                            <i class="fa fa-repeat"></i> Reset
+                        </button>
+                    </div>
+
+                    <div class="btn-group pull-right" style="padding-top:2px;" dropdown>
+                        <button type="button" class="btn btn-default dropdown-toggle">
+
+                            <span class="caret pull-right" 
+                                  style="margin:7px 0px 0px 5px;"></span>
+                            {{gridOptions.pagingOptions.pageSize}}
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="dropdown-toggle"
+                                ng-click="gridOptions.pagingOptions.pageSize = page"
+                                ng-repeat="page in gridOptions.pagingOptions.pageSizes">
+                                <a href="#">{{page}}</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="pull-right" style="margin:5px;">
+                        View Per Page:
+                    </div>
+
+                </div>
+
                 <div class="data-grid-pagination">
-                    <div class="pull-left" style="margin:5px">Page:</div>
+                    <div class="pull-left" style="margin:5px;">Page:</div>
 
                     <div class="pull-left">
                         <div class="data-grid-page-selector">
@@ -33,15 +67,15 @@
                         </div>
                     </div>
                     <div class="pull-left" style="margin:5px">
-                        Of {{ Math.ceil(datasource.totalItems / gridOptions.pagingOptions.pageSize) }} 
+                        of {{ Math.ceil(datasource.totalItems / gridOptions.pagingOptions.pageSize)}} 
                     </div>
                     <div class="pull-left" 
                          style="border-left:1px solid #ccc;margin:2px 5px;padding:3px 8px;">
-                        Total of {{ datasource.totalItems }} Record{{ datasource.totalItems >1 ? 's' :'' }}
+                        Total of {{ datasource.totalItems}} Record{{ datasource.totalItems >1 ? 's' :'' }}
                     </div>
-                    
-                    <div class="clearfix"></div>
                 </div>
+
+                <div class="clearfix"></div>
             </div>
         <?php endif; ?>
 
