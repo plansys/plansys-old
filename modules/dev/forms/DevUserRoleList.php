@@ -1,10 +1,15 @@
 <?php
 
-class DevUserRoleList extends Role  {
+class DevUserRoleList extends UserRole  {
     public function getFields() {
         return array (
             array (
-                'name' => 'id',
+                'name' => '0',
+                'options' => array (
+                    'ng-model' => 'value[$index].role_id',
+                    'ng-change' => 'updateListView()',
+                    'style' => 'margin:-5px -20px;',
+                ),
                 'listExpr' => 'Role::listRole()',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',

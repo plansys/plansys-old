@@ -530,7 +530,6 @@ EOF;
         $reflector = new ReflectionClass($this->model);
         $inlineJSPath = dirname($reflector->getFileName()) . DIRECTORY_SEPARATOR . @$this->form['inlineJS'];
         $inlineJS = @file_get_contents($inlineJSPath);
-
         $script = include("FormBuilder.js.php");
 
         return $script;
@@ -579,7 +578,9 @@ EOF;
             $data['data'] = $formdata->attributes;
             $data['errors'] = $formdata->errors;
         } else if (is_subclass_of($formdata, 'ActiveRecord')) {
-            $data['data'] = $formdata->attributes;
+            $this->model = $formdata;
+
+            $data['data'] = $formdata->attributesRelated;
             $data['errors'] = $formdata->errors;
             $data['isNewRecord'] = $formdata->isNewRecord;
         }
@@ -609,7 +610,8 @@ EOF;
         $renderInAjax = isset($options['renderInAjax']) ? $options['renderInAjax'] : false;
         $FFRenderID = isset($options['FormFieldRenderID']) ? $options['FormFieldRenderID'] . '_' : '';
         $renderParams = isset($options['params']) ? $options['params'] : array();
-
+        $renderParams = array_merge($_GET, $renderParams);
+        
         ## wrap form
         if ($wrapForm) {
             $url = "#";

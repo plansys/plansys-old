@@ -3,7 +3,7 @@
 /**
  * This is the model class for table "audit_trail".
  */
-class AuditTrail extends ActiveRecord {
+class AuditTrail extends CActiveRecord {
     /**
      * The followings are the available columns in table 'tbl_audit_trail':
      * @var integer $id
@@ -16,18 +16,6 @@ class AuditTrail extends ActiveRecord {
      * @var integer $user_id
      * @var string $model_id
      */
-    
-    protected $new_value;
-    protected $old_value;
-    protected $action;
-    protected $model;
-    protected $field;
-    protected $stamp;
-    protected $user_id;
-    protected $model_id;
-    
-    protected $user;
-    
 
     public function getAction_label() {
         $r = "";
@@ -44,23 +32,7 @@ class AuditTrail extends ActiveRecord {
         }
         return $r;
     }
-
-    /**
-     * @return array of used behaviors
-     */
-    public function behaviors() {
-        $behaviors = array(
-            'RelatedSearchBehavior' => array(
-                'class' => 'RelatedSearchBehavior',
-                'relations' => array(
-                    'user_search' => 'user.fullname',
-                    'role_search' => 'user.roles',
-                )
-            ),
-        );
-        return $behaviors + parent::behaviors();
-    }
-
+    
     /**
      * @return string the associated database table name
      */

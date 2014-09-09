@@ -210,7 +210,8 @@ class DataSource extends FormField {
             if (isset($fieldSql)) {
                 $template = $this->evaluate($fieldSql, true, array(
                     'paramName' => $param,
-                    'params' => @$postedParams[$param]
+                    'params' => @$postedParams[$param],
+                    'sql' => $sql
                 ));
 
                 $sql = str_replace("[{$param}]", $template['sql'], $sql);

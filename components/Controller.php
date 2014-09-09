@@ -32,7 +32,7 @@ class Controller extends CController {
             'action' => $this->action->id,
         );
 
-        $renderOptions = array_merge($renderOptions, $options);        
+        $renderOptions = array_merge($renderOptions, $options);
         $mainform = $fb->render($model, $renderOptions);
 
         $data = $fb->form['layout']['data'];
@@ -79,7 +79,7 @@ class Controller extends CController {
             if (!is_file($path)) {
                 $path = Yii::getPathOfAlias("app.modules.{$module}.menus.MainMenu") . ".php";
             }
-            
+
             $menuModule = include($path);
             return array_merge($default, $menuModule);
         }
@@ -87,6 +87,7 @@ class Controller extends CController {
 
     public function loadModel($id, $form) {
         $model = $form::model()->findByPk($id);
+        $model->loadRelations();
 
         if ($model === null)
             throw new CHttpException(404, 'The requested page does not exist.');

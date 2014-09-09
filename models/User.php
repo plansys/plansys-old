@@ -1,8 +1,7 @@
 <?php
 
 class User extends ActiveRecord {
-
-
+    
     public function rules() {
         return array(
             array('nip, fullname, email, phone, username, password', 'required'),
@@ -15,6 +14,7 @@ class User extends ActiveRecord {
         return array(
             'userInfos' => array(self::HAS_MANY, 'UserInfo', 'user_id'),
             'userRoles' => array(self::HAS_MANY, 'UserRole', 'user_id'),
+            'roles' => array(self::HAS_MANY, 'Role', array('role_id' => 'id'), 'through' => 'userRoles')
         );
     }
 

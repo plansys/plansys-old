@@ -82,11 +82,12 @@ class DevUserIndex extends Form {
             array (
                 'name' => 'dataSource1',
                 'sql' => 'select u.*,r.role_name as role from p_user u
- inner join 
-   p_user_role p on u.id = p.user_id
- inner join 
+ left outer join 
+   p_user_role p on u.id = p.user_id 
+   and p.is_default_role = \'Yes\' 
+ left outer join 
    p_role r on r.id = p.role_id 
-{[where]} {[order]} {[paging]}',
+ {where [where]} {[order]} {[paging]}',
                 'params' => array (
                     'where' => 'dataFilter1',
                     'order' => 'dataGrid1',
@@ -94,11 +95,12 @@ class DevUserIndex extends Form {
                 ),
                 'enablePaging' => 'Yes',
                 'pagingSQL' => 'select count(1) from p_user u
- inner join 
+ left outer join 
    p_user_role p on u.id = p.user_id
  inner join 
    p_role r on r.id = p.role_id 
-{[where]}',
+ where p.is_default_role = \'Yes\' 
+    { AND [where]}',
                 'type' => 'DataSource',
             ),
             array (

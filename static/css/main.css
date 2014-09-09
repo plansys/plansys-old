@@ -1673,8 +1673,7 @@ div[dropdown] .search input {
     font-family:Arial, FontAwesome;
 }
 
-div[dropdown] .dropdown-menu.inner {
-    max-height:180px;
+div[dropdown]  .dropdown-menu.inner {
     overflow-y: auto;
     width:100%;
     position: static;
@@ -1687,6 +1686,9 @@ div[dropdown] .dropdown-menu.inner {
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
+}
+div[dropdown] > .dropdown-menu > .dropdown-menu.inner {
+    max-height:180px;
 }
 div[dropdown] .dropdown-other {
     padding-bottom:5px;

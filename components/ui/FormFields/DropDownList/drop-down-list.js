@@ -178,7 +178,6 @@ app.directive('dropDownList', function($timeout) {
                 $scope.otherLabel = $el.find("data[name=other_label]").html();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.value = $el.find("data[name=value]").html().trim();
-                $scope.inEditor = typeof $scope.$parent.inEditor != "undefined";
                 $scope.isOpen = false;
                 $scope.openedInField = false;
 

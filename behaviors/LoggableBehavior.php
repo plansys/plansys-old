@@ -50,6 +50,7 @@ class LoggableBehavior extends CActiveRecordBehavior {
                     unset($oldattributes[$f]);
             }
         }
+        
 
         // If no difference then WHY?
         // There is some kind of problem here that means "0" and 1 do not diff for array_diff so beware: stackoverflow.com/questions/12004231/php-array-diff-weirdness :S
@@ -65,7 +66,6 @@ class LoggableBehavior extends CActiveRecordBehavior {
 
         // Reset old attributes to handle the case with the same model instance updated multiple times
         $this->setOldAttributes($this->getOwner()->getAttributes());
-
         return parent::afterSave($event);
     }
 

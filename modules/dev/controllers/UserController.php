@@ -7,12 +7,11 @@ class UserController extends Controller {
     }
 
     public function actionUpdate($id) {
-
         $model = $this->loadModel($id, "DevUserForm");
-        var_dump($model->userRoles);
-
+        
         if (isset($_POST["DevUserForm"])) {
             $model->attributes = $_POST["DevUserForm"];
+            
             if ($model->save()) {
                 $this->redirect(array("index"));
             }

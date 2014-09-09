@@ -9,11 +9,7 @@ class FormsController extends Controller {
     public static function setModelFieldList($data, $type = "AR") {
         if (count(FormsController::$modelFieldList) == 0) {
             if ($type == "AR") {
-                foreach ($data as $name => $field) {
-                    if (is_array($field) && isset($field['name'])) {
-                        FormsController::$modelFieldList[$field['name']] = $field['name'];
-                    }
-                }
+                FormsController::$modelFieldList = $data;
             } else {
                 foreach ($data as $name => $field) {
                     FormsController::$modelFieldList[$name] = $name;
@@ -59,8 +55,8 @@ class FormsController extends Controller {
         echo $class::template();
     }
 
-    public function actionRenderBuilder($class, $layout) {      
-        
+    public function actionRenderBuilder($class, $layout) {
+
         $fb = FormBuilder::load($class);
         $builder = $this->renderPartial('form_builder', array(), true);
         $mainFormSection = Layout::getMainFormSection($fb->form['layout']['data']);
@@ -146,10 +142,10 @@ class FormsController extends Controller {
         $fb = FormBuilder::load($class);
         $classPath = $class;
         $class = array_pop(explode(".", $class));
-        
+
         if (is_subclass_of($fb->model, 'ActiveRecord')) {
             $formType = "ActiveRecord";
-            FormsController::setModelFieldList($class::model()->modelFieldList, "AR");
+            FormsController::setModelFieldList($class::model()->attributesList, "AR");
         } else if (is_subclass_of($fb->model, 'FormField')) {
             $formType = "FormField";
             $mf = new $class;
@@ -165,7 +161,7 @@ class FormsController extends Controller {
         $toolbar = $this->renderAllToolbar($formType);
 
         Yii::import('application.modules.' . $fb->module . '.controllers.*');
-        
+
         $this->render('form', array(
             'fb' => $fb,
             'class' => $class,

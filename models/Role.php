@@ -17,7 +17,8 @@ class Role extends ActiveRecord {
     }
 
     public static function listRole() {
-        return CHtml::listData(Role::model()->findAll(), 'role_id', 'role_description');
+        $list = CHtml::listData(Role::model()->findAll(), 'id', 'role_description');
+        return $list;
     }
     
     public function tableName() {

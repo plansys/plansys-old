@@ -29,13 +29,13 @@ class DevUserForm extends User {
             array (
                 'column1' => array (
                     array (
-                        'label' => 'Username',
-                        'name' => 'username',
+                        'label' => 'Fullname',
+                        'name' => 'fullname',
                         'type' => 'TextField',
                     ),
                     array (
-                        'label' => 'Fullname',
-                        'name' => 'fullname',
+                        'label' => 'Username',
+                        'name' => 'username',
                         'type' => 'TextField',
                     ),
                     array (
@@ -80,9 +80,11 @@ class DevUserForm extends User {
                 'data' => array (
                     'col1' => array (
                         'type' => 'mainform',
+                        'size' => '100',
                     ),
                 ),
             ),
+            'inlineJS' => 'user/index.js',
         );
     }
 }

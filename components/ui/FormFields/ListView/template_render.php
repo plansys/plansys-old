@@ -18,7 +18,6 @@
         <data name="model_class" class="hide"><?= @get_class($model) ?></data>
         <data name="options" class="hide"><?= json_encode($this->options) ?></data>
         <!-- /data -->
-
         <!-- field -->
         <?php if ($this->fieldTemplate == "default"): ?>
             <div ng-if="value != null" ui-tree="uiTreeOptions">
@@ -45,6 +44,7 @@
             <div ng-if="!loading && value != null" class="list-view-form" ui-tree="uiTreeOptions">
                 <ol ui-tree-nodes ng-model="value">
                     <li ui-tree-node ng-repeat="item in value track by $index" class="list-view-item">
+                        
                         <div style="float:right;">
                             <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
                                 <i class="fa fa-times"></i>
@@ -64,7 +64,14 @@
                 Loading <?= @get_class($model) ?>...
             </div>
         <?php endif; ?>
-
+        
+        <div ng-repeat="(key,val) in value track by $index">
+            <div ng-repeat="(k,v) in val track by $index">
+                <input name="<?= $this->renderName ?>[{{key}}][{{k}}]" type="hidden" value='{{v}}' />
+            </div>
+        </div>
+        <input ng-if="value.length == 0" name="<?= $this->renderName ?>" type="hidden" value='' />
+        
         <button type="button" ng-click="addItem($event)" 
                 style="margin:0px;"
                 class="btn list-view-add btn-default btn-sm">
