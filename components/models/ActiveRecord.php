@@ -43,24 +43,30 @@ class ActiveRecord extends CActiveRecord {
         }
         return $array;
     }
+    
     public static function batchUpdate($model,$data){
         $table = $model::model()->tableSchema->name;
-        $update = "";
+        $field = $model::model()->tableSchema->columns;
+        unset($field['id']);
+        
+        $columnCount = count($field);
+        $columnName = array_keys($field);
+        $update="";
         foreach ($data as $d){
-            $d['id'] = $cond;
+            $cond = $d['id'];
             unset($d['id']);
-            $field = array_keys($d);
-            $columns = count($field);
-            $update .= "UPDATE ".$table." SET ";
-            for($i = 0; $i < $columns; $i++){
-                $update .= $columns[$i]."= '".$d[$columns[$i]]."' ";
-                if ($i !== ($columns-1))
+            $update .= "UPDATE {$table} SET ";
+            for($i = 0; $i < $columnCount; $i++){
+                $update .= $columnName[$i]." = '{$d[$columnName[$i]]}'";
+                if ($i !== ($columnCount-1))
                     $update .= ' , ';
             }
+            $update .= " WHERE id='{$cond}';";
         }
-        var_dump($update);
-        die();
+        $command = Yii::app()->db->createCommand($update);
+        $command->execute();
     }
+    
     public static function batchInsert($model, $data){
         $table = $model::model()->tableSchema->name;
         $builder=Yii::app()->db->schema->commandBuilder;

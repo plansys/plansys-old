@@ -8,7 +8,7 @@
     <div ng-if="loaded">
         <script type="text/ng-template" id="category_header"><?php include('category_header.php'); ?></script>
 
-        <?php if ($this->gridOptions['enablePaging'] == 'true'): ?>
+        <?php if (@$this->gridOptions['enablePaging'] == 'true'): ?>
             <div class="data-grid-paging">
                 <div class="data-grid-pageinfo pull-right">
                     <div class="btn-group pull-right" style="padding-top:2px;margin-left:5px;" >
