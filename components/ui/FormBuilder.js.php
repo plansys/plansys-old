@@ -20,7 +20,7 @@ ob_start();
                 }
 
                 var parseParams = $parse(button.urlparams);
-                var urlParams = parseParams($scope);
+                var urlParams = angular.extend($scope.params,parseParams($scope));
 
                 var url = Yii.app.createUrl(baseurl, urlParams);
                 $("div[ng-controller=<?= $modelClass ?>Controller] form").attr('action', url).submit();

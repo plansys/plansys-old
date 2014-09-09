@@ -43,7 +43,24 @@ class ActiveRecord extends CActiveRecord {
         }
         return $array;
     }
-    
+    public static function batchUpdate($model,$data){
+        $table = $model::model()->tableSchema->name;
+        $update = "";
+        foreach ($data as $d){
+            $d['id'] = $cond;
+            unset($d['id']);
+            $field = array_keys($d);
+            $columns = count($field);
+            $update .= "UPDATE ".$table." SET ";
+            for($i = 0; $i < $columns; $i++){
+                $update .= $columns[$i]."= '".$d[$columns[$i]]."' ";
+                if ($i !== ($columns-1))
+                    $update .= ' , ';
+            }
+        }
+        var_dump($update);
+        die();
+    }
     public static function batchInsert($model, $data){
         $table = $model::model()->tableSchema->name;
         $builder=Yii::app()->db->schema->commandBuilder;
