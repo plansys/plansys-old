@@ -220,9 +220,6 @@ EOF;
             ## add rules function
             $this->addRules();
 
-            ## add columns function
-            $this->addAttributeLabels();
-
             return true;
         } else {
             return false;

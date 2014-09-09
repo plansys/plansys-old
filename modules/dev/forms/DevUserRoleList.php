@@ -1,8 +1,16 @@
 <?php
 
-class DevUserRoleList extends Form {
+class DevUserRoleList extends Role  {
     public function getFields() {
         return array (
+            array (
+                'name' => 'id',
+                'listExpr' => 'Role::listRole()',
+                'labelWidth' => '0',
+                'fieldWidth' => '12',
+                'searchable' => 'Yes',
+                'type' => 'DropDownList',
+            ),
         );
     }
     public function getForm() {

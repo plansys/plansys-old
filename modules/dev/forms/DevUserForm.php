@@ -42,6 +42,7 @@ class DevUserForm extends User {
                         'label' => 'User Role',
                         'name' => 'roles',
                         'fieldTemplate' => 'form',
+                        'templateForm' => 'application.modules.dev.forms.DevUserRoleList',
                         'type' => 'ListView',
                     ),
                     '<column-placeholder></column-placeholder>',

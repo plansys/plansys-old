@@ -2,18 +2,6 @@
 
 class User extends ActiveRecord {
 
-    public function attributeLabels() {
-        return array(
-            'id' => 'ID',
-            'nip' => 'Nip',
-            'fullname' => 'Fullname',
-            'email' => 'Email',
-            'phone' => 'Phone',
-            'username' => 'Username',
-            'password' => 'Password',
-            'last_login' => 'Last Login',
-        );
-    }
 
     public function rules() {
         return array(

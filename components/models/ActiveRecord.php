@@ -43,6 +43,7 @@ class ActiveRecord extends CActiveRecord {
         }
         return $array;
     }
+    
     public static function batchUpdate($model,$data){
         $table = $model::model()->tableSchema->name;
         $update = "";
