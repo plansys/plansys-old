@@ -2,23 +2,40 @@
 
 class UserController extends Controller {
  
-    public function actionCreate() {
-        $model = new DevUser;
-        $model->username = "OPX";
-        $model->nip;
-        
-        if (isset($_POST['DevUser'])) {
-            
-            $model->attributes = $_POST['DevUser'];
-            var_dump($model->attributes, $_POST);
-            die();
-            
+    public function actionDelete($id) {
+        $this->loadModel($id , "DevUserForm")->delete();
+    }
+
+    public function actionUpdate($id) {
+
+        $model = $this->loadModel($id , "DevUserForm");
+                
+        if (isset($_POST["DevUserForm"])) {
+            $model->attributes = $_POST["DevUserForm"];
             if ($model->save()) {
-                $this->redirect(array('index'));
+                $this->redirect(array("index"));
             }
         }
-
-        $this->renderForm('DevUser',  $model);
+        $this->renderForm("DevUserForm",$model);
     }
+
+    public function actionNew() {
+
+        $model = new DevUserForm;
+                
+        if (isset($_POST["DevUserForm"])) {
+            $model->attributes = $_POST["DevUserForm"];
+            if ($model->save()) {
+                $this->redirect(array("index"));
+            }
+        }
+        $this->renderForm("DevUserForm",$model);
+    }
+
+    public function actionIndex() {
+        $this->renderForm("DevUserIndex");
+    }
+
+
 
 }

@@ -94,6 +94,8 @@ class ActiveRecord extends CActiveRecord {
             }
         }
 
+        $column1[] = '<column-placeholder></column-placeholder>';
+        $column2[] = '<column-placeholder></column-placeholder>';
 
         $return = array();
         $return[] = array(

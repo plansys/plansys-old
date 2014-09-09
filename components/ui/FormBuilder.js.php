@@ -11,6 +11,9 @@ ob_start();
 <?php if (isset($data['validators'])): ?>
             $scope.validators = <?php echo @json_encode($data['validators']); ?>;
 <?php endif; ?>
+<?php if (is_subclass_of($this->model, 'ActiveRecord')): ?>
+            $scope.isNewRecord = <?php echo $data['isNewRecord'] ? "true" : "false" ?>;
+<?php endif; ?>
 
         $scope.form.submit = function(button) {
             if (typeof button != "undefined") {
@@ -20,7 +23,7 @@ ob_start();
                 }
 
                 var parseParams = $parse(button.urlparams);
-                var urlParams = angular.extend($scope.params,parseParams($scope));
+                var urlParams = angular.extend($scope.params, parseParams($scope));
 
                 var url = Yii.app.createUrl(baseurl, urlParams);
                 $("div[ng-controller=<?= $modelClass ?>Controller] form").attr('action', url).submit();
@@ -34,11 +37,11 @@ ob_start();
         $scope.form.goBack = function() {
             window.history.back();
         }
-        
+
         // execute inline JS
         $timeout(function() {
             $("div[ng-controller=<?= $modelClass ?>Controller]").css('opacity', 1);
-            
+
 <?= $inlineJS; ?>
         }, 0);
     });

@@ -21,7 +21,7 @@ class LinkButton extends FormField {
     public $groupType = 'ButtonGroup';
 	
     /** @var string $buttonType */
-    public $buttonType = 'primary';
+    public $buttonType = 'default';
 	
     /** @var string $icon */
     public $icon = '';
@@ -103,6 +103,11 @@ class LinkButton extends FormField {
             array (
                 'label' => 'Url',
                 'name' => 'url',
+                'options' => array (
+                    'ng-model' => 'active.url',
+                    'ng-change' => 'save();',
+                    'ng-delay' => '500',
+                ),
                 'type' => 'TextField',
             ),
             array (

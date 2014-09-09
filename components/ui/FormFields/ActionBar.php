@@ -23,7 +23,7 @@ class ActionBar extends FormField {
                 'labelOptions' => array (
                     'style' => 'text-align:left',
                 ),
-                'type' => 'TextField',
+                'type' => 'TextArea',
             ),
             array (
                 'label' => 'Show Tab',

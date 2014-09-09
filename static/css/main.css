@@ -337,11 +337,10 @@ div[ui-content] {
     color:#777;
     font-size:13px;
     text-shadow:rgb(255, 255, 255) 0px 1px 0px;
-    font-weight: normal;
+    font-weight: bold;
     height: 28px;
     line-height: 18px;
 }
-
 
 .form-builder > form > div > ol > li > .SectionHeader {
     margin:0px -30px;
@@ -1327,8 +1326,6 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
     text-align:center;
 }
 
-
-
 .action-bar {
     border:1px solid #666;
     border-bottom:0px;
@@ -1336,6 +1333,7 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
     left:4px;
     right:4px;
     z-index:1;
+    box-shadow:0px 0px 10px #ddd;
 }
 
 .action-bar .title-bar {
