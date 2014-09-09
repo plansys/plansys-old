@@ -198,7 +198,7 @@
                             return;
                         }
 
-                        if (data.length > 0 && typeof data[0] == "object") {
+                        if (data != null && data.length > 0 && typeof data[0] == "object") {
                             for (i in data[0]) {
                                 var filter = angular.extend({}, templateAttr);
                                 filter.name = i;
@@ -237,7 +237,7 @@
                             return;
                         }
 
-                        if (data.length > 0 && typeof data[0] == "object") {
+                        if (data != null && data.length > 0 && typeof data[0] == "object") {
                             for (i in data[0]) {
                                 var filter = angular.extend({}, templateAttr);
                                 filter.name = i;
