@@ -299,6 +299,15 @@
                 }
             });
         }
+        $scope.detectEmptyPlaceholder = function() {
+
+            $timeout(function() {
+                $('.field-tree .angular-ui-tree-empty').remove();
+                if ($scope.fields.length == 0) {
+                    $('<div class="angular-ui-tree-empty"></div>').appendTo('.field-tree');
+                }
+            }, 10);
+        }
         $scope.refreshColumnPlaceholder = function() {
             $(".cpl").each(function() {
                 if ($(this).parent().find("li").length == 1) {
@@ -365,6 +374,7 @@
             }, 0);
         }
         $scope.save = function() {
+            $scope.detectEmptyPlaceholder();
             $scope.saving = true;
             $http.post('<?= $this->createUrl("save", array('class' => $classPath)); ?>', {fields: $scope.fields})
                     .success(function(data, status) {
@@ -439,7 +449,9 @@
 
         $timeout(function() {
             $(document).trigger('formBuilderInit');
+            $scope.detectEmptyPlaceholder();
         }, 100);
+
         $('body').on('click', 'div[ui-header]', function(e) {
             if (e.target == this) {
                 $scope.unselectViaJquery();

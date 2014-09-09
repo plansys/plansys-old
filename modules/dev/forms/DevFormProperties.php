@@ -36,7 +36,7 @@ class DevFormProperties extends Form {
                     'ng-change' => 'saveForm();',
                     'ng-delay' => '500',
                 ),
-                'type' => 'TextField',
+                'type' => 'TextArea',
             ),
             array (
                 'label' => 'Form Layout',

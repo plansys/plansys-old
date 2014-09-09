@@ -1,24 +1,25 @@
 <?php
 
 class User extends ActiveRecord {
- 
+
     public function attributeLabels() {
         return array(
-            'id'=> 'ID',
-            'nip'=> 'Nip',
-            'fullname'=> 'Fullname',
-            'email'=> 'Email',
-            'phone'=> 'Phone',
-            'username'=> 'Username',
-            'password'=> 'Password',
-            'date'=> 'Date',
+            'id' => 'ID',
+            'nip' => 'Nip',
+            'fullname' => 'Fullname',
+            'email' => 'Email',
+            'phone' => 'Phone',
+            'username' => 'Username',
+            'password' => 'Password',
+            'last_login' => 'Last Login',
         );
     }
 
     public function rules() {
         return array(
-            array('nip, fullname, email, username, password, date', 'required'),
-            array('nip, fullname, email, phone, username, password', 'length', 'max'=>255),
+            array('nip, fullname, email, phone, username, password', 'required'),
+            array('nip, fullname, email, username, password', 'length', 'max' => 255),
+            array('last_login', 'safe')
         );
     }
 

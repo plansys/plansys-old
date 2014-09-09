@@ -525,15 +525,7 @@ EOF;
         $modelClass = get_class($this->model);
 
         ## define formdata
-        if (is_array($formdata)) {
-            $data['data'] = $formdata;
-        } else if (
-                is_subclass_of($formdata, 'ActiveRecord') ||
-                is_subclass_of($formdata, 'Form')
-        ) {
-            $data['data'] = $formdata->attributes;
-            $data['errors'] = $formdata->errors;
-        }
+        $data = $this->defineFormData($formdata);
 
         $reflector = new ReflectionClass($this->model);
         $inlineJSPath = dirname($reflector->getFileName()) . DIRECTORY_SEPARATOR . @$this->form['inlineJS'];
@@ -579,6 +571,21 @@ EOF;
         return $this->renderInternal($formdata, $options, $this, $this->fields);
     }
 
+    private function defineFormData($formdata) {
+        $data = array();
+        if (is_array($formdata)) {
+            $data['data'] = $formdata;
+        } else if (is_subclass_of($formdata, 'Form')) {
+            $data['data'] = $formdata->attributes;
+            $data['errors'] = $formdata->errors;
+        } else if (is_subclass_of($formdata, 'ActiveRecord')) {
+            $data['data'] = $formdata->attributes;
+            $data['errors'] = $formdata->errors;
+            $data['isNewRecord'] = $formdata->isNewRecord;
+        }
+        return $data;
+    }
+
     /**
      * renderInternal
      * me-render field dan atribut-nya dalam form builder
@@ -622,15 +629,7 @@ EOF;
         }
 
         ## define formdata
-        if (is_array($formdata)) {
-            $data['data'] = $formdata;
-        } else if (
-                is_subclass_of($formdata, 'ActiveRecord') ||
-                is_subclass_of($formdata, 'Form')
-        ) {
-            $data['data'] = $formdata->attributes;
-            $data['errors'] = $formdata->errors;
-        }
+        $data = $this->defineFormData($formdata);
 
         ## render semua html
         foreach ($fields as $k => $f) {

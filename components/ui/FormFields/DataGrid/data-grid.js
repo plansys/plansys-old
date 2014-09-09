@@ -7,11 +7,22 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                 function evalArray(array) {
                     for (i in array) {
                         if (typeof array[i] == "string") {
-                            if (array[i].match(/true/i)) {
-                                array[i] = true;
-                            } else if (array[i].match(/false/i)) {
-                                array[i] = false;
+                            if (array[i].trim().substr(0, 3) == "js:") {
+                                eval('array[i] = ' + array[i].trim().substr(3));
+                            } else if (array[i].trim().substr(0, 4) == "url:") {
+                                var url = array[i].trim().substr(4);
+                                array[i] = function(row) {
+                                    location.href = eval($scope.generateUrl(url, 'function'));
+                                }
+                            } else {
+
+                                if (array[i].match(/true/i)) {
+                                    array[i] = true;
+                                } else if (array[i].match(/false/i)) {
+                                    array[i] = false;
+                                }
                             }
+
                         }
                     }
                 }
@@ -97,6 +108,28 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                     }
                 }
 
+                $scope.generateUrl = function(url, type) {
+                    var output = '';
+                    if (typeof url == "string") {
+                        if (url.match(/http*/ig)) {
+                            output = url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'");
+                        } else if (url.trim() == '#') {
+                            output = '#';
+                        } else {
+                            url = url.replace(/\?/ig, '&');
+                            output = "Yii.app.createUrl('" + url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'") + "')";
+                        }
+
+                        if (type == 'html') {
+                            if (output != '#') {
+                                output = '{{' + output + '}}';
+                            }
+                        }
+
+                    }
+                    return output;
+                }
+
                 $scope.generateButtons = function(column) {
                     var buttons = column.buttons;
                     var html = '<div class="ngCellButton colt{{$index}}">';
@@ -114,14 +147,7 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                         var attr = [];
 
                         // create url
-                        var url = '';
-                        if (b.url.match(/http*/ig)) {
-                            url = "{{'" + b.url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'") + "'}}";
-                        } else if (b.url.trim() == '#') {
-                            url = '#';
-                        } else {
-                            url = "{{Yii.app.createUrl('" + b.url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'") + "')}}";
-                        }
+                        var url = $scope.generateUrl(b.url, 'html');
 
                         // generate attribute
                         opt['ng-click'] = 'buttonClick(row, $event)';
@@ -193,6 +219,7 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                         $scope.gridOptions.plugins = [new ngGridFlexibleHeightPlugin(), new anchorLastColumn()];
                         $scope.gridOptions.headerRowHeight = 28;
                         $scope.gridOptions.rowHeight = 28;
+                        $scope.gridOptions.multiSelect = $scope.gridOptions.multiSelect || false;
 
                         // pagingOptions
                         if ($scope.gridOptions['enablePaging']) {
@@ -206,11 +233,11 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                                 if (paging != oldpaging) {
                                     var ds = $scope.datasource;
                                     var maxPage = Math.ceil($scope.datasource.totalItems / $scope.gridOptions.pagingOptions.pageSize);
-                                    
+
                                     if (isNaN($scope.gridOptions.pagingOptions.currentPage) || $scope.gridOptions.pagingOptions.currentPage == '') {
                                         $scope.gridOptions.pagingOptions.currentPage = 1;
                                     }
-                                    
+
                                     if ($scope.gridOptions.pagingOptions.currentPage > maxPage) {
                                         $scope.gridOptions.pagingOptions.currentPage = maxPage;
                                     }
@@ -266,11 +293,11 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                         $scope.data = $scope.datasource.data;
                     }
                 });
-                
+
                 $scope.reset = function() {
                     location.reload();
                 }
-                
+
                 $scope.Math = window.Math;
                 $scope.grid = null;
                 $scope.name = $el.find("data[name=name]").text();

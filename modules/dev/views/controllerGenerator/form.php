@@ -40,7 +40,7 @@
                                     ?>
                                     <a href="<?php echo $this->createUrl("/" . $url); ?>" 
                                        target="_blank" class="pull-right btn btn-default btn-xs" 
-                                       style="margin-left:5px;{{item.param == null ? 'opacity:0' :''}}">
+                                       style="margin-left:5px;{{item.param != null ? 'opacity:0' :''}}">
                                         <i class="fa fa-globe"></i>
                                     </a>
 
