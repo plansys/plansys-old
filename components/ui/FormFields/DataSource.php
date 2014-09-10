@@ -10,23 +10,23 @@ class DataSource extends FormField {
      * @return array Fungsi ini akan me-return array property DataSource.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Data Source Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Post Data ?',
                 'name' => 'postData',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.postData',
                     'ng-change' => 'save()',
                 ),
@@ -35,10 +35,10 @@ class DataSource extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Debug SQL ?',
                 'name' => 'debugSql',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.debugSql',
                     'ng-change' => 'save()',
                 ),
@@ -47,14 +47,14 @@ class DataSource extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Source Type',
                 'name' => 'fieldType',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.fieldType',
                     'ng-change' => 'save()',
                 ),
-                'list' => array (
+                'list' => array(
                     'sql' => 'SQL',
                     'php' => 'PHP Function',
                 ),
@@ -62,10 +62,10 @@ class DataSource extends FormField {
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Paging',
                 'name' => 'enablePaging',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.enablePaging',
                     'ng-change' => 'save()',
                 ),
@@ -74,45 +74,45 @@ class DataSource extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'SQL',
                 'fieldname' => 'sql',
                 'language' => 'sql',
-                'options' => array (
+                'options' => array(
                     'ng-show' => 'active.fieldType == \'sql\'',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'PHP Function',
                 'fieldname' => 'php',
-                'options' => array (
+                'options' => array(
                     'ng-show' => 'active.fieldType == \'php\'',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'Total Item - PHP Function',
                 'fieldname' => 'pagingPHP',
-                'options' => array (
+                'options' => array(
                     'ng-show' => 'active.fieldType == \'php\' && active.enablePaging == \'Yes\'',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'Total Item - SQL',
                 'fieldname' => 'pagingSQL',
                 'language' => 'sql',
-                'options' => array (
+                'options' => array(
                     'ng-show' => 'active.fieldType == \'sql\' && active.enablePaging == \'Yes\'',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'Parameters',
                 'fieldname' => 'params',
                 'show' => 'Show',
@@ -173,13 +173,14 @@ class DataSource extends FormField {
 
             if ($this->fieldType == 'sql') {
                 $data = $this->query($params);
-                
             } else {
                 $data = $this->execute($params);
             }
 
             echo json_encode(array(
                 'data' => $data['data'],
+                'count' => $data['debug']['count'],
+                'params' => $data['debug']['params'],
                 'debug' => ($this->debugSql == 'Yes' ? $data['debug'] : array())
             ));
         }
@@ -259,6 +260,7 @@ class DataSource extends FormField {
 
         ## find all params
         preg_match_all("/\:[\w\d_]+/", $sql, $params);
+        $model = $this->model;
         foreach ($params[0] as $p) {
             if (isset($postedParams[$p])) {
                 $returnParams[$p] = $this->evaluate($postedParams[$p], true);
@@ -303,15 +305,19 @@ class DataSource extends FormField {
 
         $db = Yii::app()->db;
         $template = $this->generateTemplate($this->sql, $params);
-        
+
         ## execute SQL
         $data = $db->createCommand($template['sql'])->queryAll(true, $template['params']);
 
         if ($this->enablePaging == 'Yes') {
             $tc = $this->generateTemplate($this->pagingSQL, $params);
             $count = $db->createCommand($tc['sql'])->queryAll(true, $tc['params']);
-            $count = array_values($count[0]);
-            $count = $count[0];
+            if (count($count) > 0) {
+                $count = array_values($count[0]);
+                $count = $count[0];
+            } else {
+                $count = 0;
+            }
             $template['countSQL'] = $tc['sql'];
         } else {
             $count = count($data);
@@ -328,20 +334,18 @@ class DataSource extends FormField {
         );
     }
 
-    /**
-     * @return array me-return array hasil proses expression.
-     */
-    public function processExpr() {
-        if (!FormField::$inEditor) {
-            if ($this->fieldType == 'sql') {
-                $this->data = $this->query($this->params);
-            } else {
-                $this->data = $this->execute($this->params);
-            }
+    public function processQuery() {
+        if ($this->fieldType == 'sql') {
+            $data = $this->query($this->params);
+        } else {
+            $data = $this->execute($this->params);
         }
 
-        return array(
-            'data' => $this->data
+        $this->data = array(
+            'data' => $data['data'],
+            'count' => $data['debug']['count'],
+            'params' => $data['debug']['params'],
+            'debug' => ($this->debugSql == 'Yes' ? $data['debug'] : array())
         );
     }
 
@@ -358,7 +362,7 @@ class DataSource extends FormField {
      * @return mixed me-return sebuah field dan atribut checkboxlist dari hasil render
      */
     public function render() {
-        $this->processExpr();
+        $this->processQuery();
         return $this->renderInternal('template_render.php');
     }
 

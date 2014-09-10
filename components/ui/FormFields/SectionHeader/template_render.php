@@ -1,4 +1,4 @@
-<div section-header class="section-header" scrollTo="<?= CHtml::getIdByName($this->title) ?>" style="margin:0px -15px;">
+<div id="<?= $this->renderID ?>" ></div>
+<div section-header class="section-header" scrollTo="<?= $this->renderID ?>" style="margin:0px -15px;">
     <?= $this->title ?>
 </div>
-<div id="<?= CHtml::getIdByName($this->title) ?>" ><br/></div>

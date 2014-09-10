@@ -46,7 +46,7 @@ app.directive('radioButtonList', function($timeout) {
                 $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
                 $scope.value = $el.find('data[name=value]').text().trim();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
-                $scope.inEditor = typeof $scope.$parent.inEditor != "undefined";
+               
 
                 //if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {

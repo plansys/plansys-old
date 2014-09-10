@@ -69,7 +69,6 @@ app.directive('checkBoxList', function($timeout) {
                     });
                 }
                 $scope.selectedText = $scope.selected.join(',');
-                $scope.inEditor = typeof $scope.$parent.inEditor != "undefined";
 
                 //if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {

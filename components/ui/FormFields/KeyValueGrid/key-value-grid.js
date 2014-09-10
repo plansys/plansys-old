@@ -138,7 +138,7 @@ app.directive('keyValueGrid', function($timeout) {
                 $scope.allowSpace = $el.find("data[name=allow_space]").html().trim() == 'No' ? false : true;
                 $scope.allowDoubleQuote = $el.find("data[name=allow_dquote]").html().trim() == 'No' ? false : true;
                 $scope.mode = "grid";
-                $scope.inEditor = typeof $scope.$parent.inEditor != "undefined";
+               
                 $scope.json_error = "";
                 $scope.value = formatJSON(JSON.parse($el.find("data[name='value']").text().trim()));
                 $scope.json = prettifyJSON(unformatJSON($scope.value));

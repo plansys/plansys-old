@@ -62,7 +62,7 @@ app.directive('psDataFilter', function($timeout, dateFilter) {
                             dsParamName = i;
                         }
                     }
-
+                    
                     if (dsParamName != "") {
                         ds.resetParam(filter.name, dsParamName);
                         ds.query(function() {});
@@ -122,6 +122,7 @@ app.directive('psDataFilter', function($timeout, dateFilter) {
                         }
                     }
 
+                    console.log(ds.params, $scope.name);
                     if (dsParamName != "") {
                         ds.updateParam(filter.name, {
                             value: filter.value,
@@ -178,6 +179,7 @@ app.directive('psDataFilter', function($timeout, dateFilter) {
                 }
 
                 $scope.dropdownChecked = function(filter, item) {
+                    console.log(filter.checked.indexOf(item.key));
                     if (filter.valueText == 'All') {
                         return true;
                     } else if (filter.checked.indexOf(item.key) >= 0) {

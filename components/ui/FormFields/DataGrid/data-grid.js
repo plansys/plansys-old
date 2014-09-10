@@ -179,6 +179,16 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                     $timeout(function() {
                         var columns = [];
 
+                        // prepare gridOptions
+                        evalArray($scope.gridOptions);
+                        $scope.gridOptions.data = 'data';
+                        $scope.gridOptions.plugins = [new ngGridFlexibleHeightPlugin(), new anchorLastColumn()];
+                        $scope.gridOptions.headerRowHeight = 28;
+                        $scope.gridOptions.rowHeight = 28;
+                        $scope.gridOptions.multiSelect = $scope.gridOptions.multiSelect || false;
+
+
+                        // prepare ng-grid columnDefs
                         var buttonID = 1;
                         for (i in $scope.columns) {
                             var c = $scope.columns[i];
@@ -206,20 +216,15 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                                     displayName: c.label,
                                 });
                             }
+
+
                             columns.push(col);
                         }
 
+                        $scope.gridOptions.columnDefs = columns;
                         $scope.datasource = $scope.$parent[$el.find("data[name=datasource]").text()];
                         $scope.data = $scope.datasource.data;
 
-                        // prepare gridOptions
-                        evalArray($scope.gridOptions);
-                        $scope.gridOptions.data = 'data';
-                        $scope.gridOptions.columnDefs = columns;
-                        $scope.gridOptions.plugins = [new ngGridFlexibleHeightPlugin(), new anchorLastColumn()];
-                        $scope.gridOptions.headerRowHeight = 28;
-                        $scope.gridOptions.rowHeight = 28;
-                        $scope.gridOptions.multiSelect = $scope.gridOptions.multiSelect || false;
 
                         // pagingOptions
                         if ($scope.gridOptions['enablePaging']) {

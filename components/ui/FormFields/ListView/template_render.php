@@ -12,6 +12,7 @@
 
     <div class="<?= $this->fieldColClass ?>">
         <!-- data -->
+        <data name="name" class="hide"><?= $this->name; ?></data>
         <data name="value" class="hide"><?= json_encode($this->value) ?></data>
         <data name="field_template" class="hide"><?= $this->fieldTemplate ?></data>
         <data name="template_attr" class="hide"><?= json_encode($this->templateAttributes) ?></data>
@@ -22,7 +23,7 @@
         <?php if ($this->fieldTemplate == "default"): ?>
             <div ng-if="value != null" ui-tree="uiTreeOptions">
                 <ol ui-tree-nodes ng-model="value">
-                    <li ui-tree-node ng-repeat="item in value track by $index" class="list-view-item">
+                    <li ui-tree-node ng-repeat="item in value" class="list-view-item">
                         <div style="float:right;margin-top:7px;">
                             <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
                                 <i class="fa fa-times"></i>
@@ -43,8 +44,7 @@
         <?php elseif ($this->fieldTemplate == "form"): ?>
             <div ng-if="!loading && value != null" class="list-view-form" ui-tree="uiTreeOptions">
                 <ol ui-tree-nodes ng-model="value">
-                    <li ui-tree-node ng-repeat="item in value track by $index" class="list-view-item">
-                        
+                    <li ui-tree-node ng-repeat="item in value" class="list-view-item">
                         <div style="float:right;">
                             <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
                                 <i class="fa fa-times"></i>
@@ -59,14 +59,15 @@
                     </li>
                 </ol>
             </div>
+            
             <div ng-show="loading" class="list-view-loading">
                 <i class="fa fa-link"></i>
                 Loading <?= @get_class($model) ?>...
             </div>
         <?php endif; ?>
         
-        <div ng-repeat="(key,val) in value track by $index">
-            <div ng-repeat="(k,v) in val track by $index">
+        <div ng-repeat="(key,val) in value">
+            <div ng-repeat="(k,v) in val">
                 <input name="<?= $this->renderName ?>[{{key}}][{{k}}]" type="hidden" value='{{v}}' />
             </div>
         </div>

@@ -611,7 +611,7 @@ EOF;
         $FFRenderID = isset($options['FormFieldRenderID']) ? $options['FormFieldRenderID'] . '_' : '';
         $renderParams = isset($options['params']) ? $options['params'] : array();
         $renderParams = array_merge($_GET, $renderParams);
-        
+
         ## wrap form
         if ($wrapForm) {
             $url = "#";
@@ -628,6 +628,7 @@ EOF;
             $formAttr = array_merge($formOptions, $formDefaultAttr);
             $formAttr = Helper::expandAttributes($formAttr);
             $html .= "<div style='opacity:0' {$ngctrl}><form {$formAttr}>";
+            $html .= "<div ng-if='errors.length > 0' class='alert alert-danger' style='margin:0px'><ul><li ng-repeat='(k,e) in errors'>{{ e[0] }}</li></ul></div>";
         }
 
         ## define formdata

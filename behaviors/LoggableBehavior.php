@@ -18,6 +18,10 @@ class LoggableBehavior extends CActiveRecordBehavior {
 
         $newattributes = $this->getOwner()->getAttributes();
         $oldattributes = $this->getOldAttributes();
+        
+        // ignore properties attributes
+        $propertiesAttributes = $this->getOwner()->getAttributeProperties();
+        $ignoredFields = array_merge($ignoredFields, array_keys($propertiesAttributes));
 
         // Lets check if the whole class should be ignored
         if (sizeof($ignoredClasses) > 0) {
@@ -54,7 +58,7 @@ class LoggableBehavior extends CActiveRecordBehavior {
 
         // If no difference then WHY?
         // There is some kind of problem here that means "0" and 1 do not diff for array_diff so beware: stackoverflow.com/questions/12004231/php-array-diff-weirdness :S
-        if (count(array_diff_assoc($newattributes, $oldattributes)) <= 0)
+        if (count(Helper::arrayDiffAssocRecursive($newattributes, $oldattributes)) <= 0)
             return;
 
         // If this is a new record lets add a CREATE notification
@@ -106,8 +110,8 @@ class LoggableBehavior extends CActiveRecordBehavior {
 
     public function leaveTrail($action, $name = null, $value = null, $old_value = null) {
         $log = new AuditTrail();
-        $log->old_value = $old_value;
-        $log->new_value = $value;
+        $log->old_value = is_string($old_value) ? $old_value : json_encode($old_value);;
+        $log->new_value = is_string($value) ? $value : json_encode($value);
         $log->action = $action;
         $log->model = get_class($this->getOwner()); // Gets a plain text version of the model name
         $log->model_id = $this->getNormalizedPk();

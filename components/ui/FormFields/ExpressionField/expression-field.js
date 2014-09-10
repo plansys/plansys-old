@@ -93,7 +93,7 @@ app.directive('expressionField', function($timeout, $http) {
                 $scope.valid = true;
                 $scope.isFocus = false;
                 $scope.validating = false;
-                $scope.inEditor = typeof $scope.$parent.inEditor != "undefined";
+               
                 $scope.modelClass = $el.find("data[name=model_class]").html();
             }
         }

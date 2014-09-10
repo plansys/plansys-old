@@ -138,7 +138,7 @@ app.directive('dateTimePicker', function($timeout, dateFilter) {
                 $scope.splitDateTime();
 
                 $scope.modelClass = $el.find("data[name=model_class]").html();
-                $scope.inEditor = typeof $scope.$parent.inEditor != "undefined";
+               
                 $scope.fieldType = $el.find("data[name=field_type]").text();
                 $scope.dateOptions = JSON.parse($el.find("data[name=date_options]").text());
 

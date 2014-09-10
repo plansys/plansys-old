@@ -208,7 +208,7 @@
                                     filter.filterType = 'number';
                                 }
 
-                                if (data[0][i].match(/\d\d\d\d-(\d)?\d-(\d)?\d(.*)/g)) {
+                                if (typeof data[0][i] == "string" && data[0][i].match(/\d\d\d\d-(\d)?\d-(\d)?\d(.*)/g)) {
                                     filter.filterType = 'date';
                                 }
 

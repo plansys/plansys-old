@@ -18,16 +18,15 @@ class HiddenField extends FormField {
                     'ps-list' => 'modelFieldList',
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
-                'list' => array (
-                    'name' => 'name',
-                    'value' => 'value',
-                    'isHidden' => 'isHidden',
-                    'parseField' => 'parseField',
-                    'renderID' => 'renderID',
-                ),
                 'listExpr' => 'FormsController::$modelFieldList',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Options',
+                'fieldname' => 'options',
+                'show' => 'Show',
+                'type' => 'KeyValueGrid',
             ),
         );
     }
@@ -38,6 +37,8 @@ class HiddenField extends FormField {
     /** @var string $value */
     public $value = '';
 	
+    public $options = array();
+    
     /** @var boolean $isHidden */
     public $isHidden = true;
 

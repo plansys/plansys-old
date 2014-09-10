@@ -14,37 +14,39 @@ class Helper {
         );
     }
 
-    public static function test($paramName, $params) {
+    public static function uniqueArray($array, $key) {
+        if (!is_array($array))
+            return $array;
 
-        if ($paramName == 'where') {
-            if (is_null($params['id'])) {
-                return array(
-                    'sql' => '',
-                    'params' => array()
-                );
+        $temp = array();
+        return array_filter($array, function ($v) use (&$temp, $key) {
+            if (in_array($v[$key], $temp)) {
+                return false;
             } else {
-                return array(
-                    'sql' => "id = :id",
-                    'params' => array(
-                        'id' => $params['id']
-                    )
-                );
+                array_push($temp, $v[$key]);
+                return true;
             }
-        } else if ($paramName == 'order') {
-            if (is_null($params['order_by'])) {
-                return array(
-                    'sql' => '',
-                    'params' => array()
-                );
-            } else {
-                return array(
-                    'sql' => ":order_by",
-                    'params' => array(
-                        'order_by' => $params['order_by']
-                    )
-                );
+        });
+    }
+
+    public static function arrayDiffAssocRecursive($array1, $array2) {
+        foreach ($array1 as $key => $value) {
+            if (is_array($value)) {
+                if (!isset($array2[$key])) {
+                    $difference[$key] = $value;
+                } elseif (!is_array($array2[$key])) {
+                    $difference[$key] = $value;
+                } else {
+                    $new_diff = Helper::arrayDiffAssocRecursive($value, $array2[$key]);
+                    if ($new_diff != FALSE) {
+                        $difference[$key] = $new_diff;
+                    }
+                }
+            } elseif (!isset($array2[$key]) || $array2[$key] != $value) {
+                $difference[$key] = $value;
             }
         }
+        return !isset($difference) ? 0 : $difference;
     }
 
     public static function startsWith($haystack, $needle, $case = false) {

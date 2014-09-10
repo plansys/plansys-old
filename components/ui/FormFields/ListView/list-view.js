@@ -51,7 +51,7 @@ app.directive('listView', function($timeout) {
                         if (afterAdd != '' && typeof value != 'undefined') {
                             eval(afterAdd);
                         }
-                        
+
                         $timeout(function() {
                             $el.find('.list-view-item-text').last().focus();
                         }, 0);
@@ -74,7 +74,7 @@ app.directive('listView', function($timeout) {
                         if (typeof ctrl.$viewValue != "undefined") {
                             $scope.loading = true;
                             $scope.value = ctrl.$viewValue;
-                            
+
                             $timeout(function() {
                                 $scope.loading = false;
                             }, 0);
@@ -92,7 +92,7 @@ app.directive('listView', function($timeout) {
                 $scope.value = JSON.parse($el.find("data[name=value]").html().trim());
                 $scope.modelClass = $el.find("data[name=model_class]").html().trim();
                 $scope.fieldTemplate = $el.find("data[name=field_template]").html().trim();
-                $scope.inEditor = typeof $scope.$parent.inEditor != "undefined";
+                $scope.name = $el.find("data[name=name]").text().trim();
                 $scope.templateAttr = JSON.parse($el.find("data[name=template_attr]").html().trim());
                 $scope.options = JSON.parse($el.find("data[name=options]").html().trim());
 
@@ -102,6 +102,9 @@ app.directive('listView', function($timeout) {
                         var ngModelValue = $scope.$eval(attrs.ngModel);
                         if (typeof ngModelValue != "undefined") {
                             $scope.value = ngModelValue;
+                        }
+                        if (!$scope.inEditor) {
+                            $scope.$parent[$scope.name] = $scope;
                         }
                     }, 0);
                 }

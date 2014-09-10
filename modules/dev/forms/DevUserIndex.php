@@ -64,10 +64,10 @@ class DevUserIndex extends Form {
                     ),
                     array (
                         'name' => 'last_login',
-                        'label' => 'last_login',
+                        'label' => 'last login',
                         'listExpr' => '',
                         'filterType' => 'date',
-                        'show' => false,
+                        'show' => true,
                     ),
                     array (
                         'name' => 'role',
@@ -81,7 +81,7 @@ class DevUserIndex extends Form {
             ),
             array (
                 'name' => 'dataSource1',
-                'sql' => 'select u.*,r.role_name as role from p_user u
+                'sql' => 'select u.*,r.role_description as role from p_user u
  left outer join 
    p_user_role p on u.id = p.user_id 
    and p.is_default_role = \'Yes\' 
@@ -94,13 +94,13 @@ class DevUserIndex extends Form {
                     'paging' => 'dataGrid1',
                 ),
                 'enablePaging' => 'Yes',
-                'pagingSQL' => 'select count(1) from p_user u
+                'pagingSQL' => 'select count(1) as role from p_user u
  left outer join 
-   p_user_role p on u.id = p.user_id
- inner join 
+   p_user_role p on u.id = p.user_id 
+   and p.is_default_role = \'Yes\' 
+ left outer join 
    p_role r on r.id = p.role_id 
- where p.is_default_role = \'Yes\' 
-    { AND [where]}',
+    {where [where]}',
                 'type' => 'DataSource',
             ),
             array (

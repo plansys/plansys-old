@@ -69,7 +69,7 @@ app.directive('iconPicker', function($timeout) {
                 // set default value
                 $scope.value = $el.find("data[name=value]").html();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
-                $scope.inEditor = typeof $scope.$parent.inEditor != "undefined";
+               
 
                 //if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {
