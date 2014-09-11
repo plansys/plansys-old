@@ -375,15 +375,21 @@
         }
         $scope.save = function() {
             $scope.detectEmptyPlaceholder();
-            $scope.saving = true;
-            $http.post('<?= $this->createUrl("save", array('class' => $classPath)); ?>', {fields: $scope.fields})
-                    .success(function(data, status) {
-                        $scope.saving = false;
-                        $scope.detectDuplicate();
-                    })
-                    .error(function(data, status) {
-                        $scope.saving = false;
-                    });
+            if (!$scope.saving) {
+                $scope.saving = true;
+                $http.post('<?= $this->createUrl("save", array('class' => $classPath)); ?>', {fields: $scope.fields})
+                        .success(function(data, status) {
+                            $scope.saving = false;
+                            $scope.detectDuplicate();
+                        })
+                        .error(function(data, status) {
+                            $scope.saving = false;
+                        });
+            } else {
+                $timeout(function() {
+                    $scope.save();
+                }, 1000);
+            }
         };
         var selectTimeout = null;
         $scope.select = function(item, event) {
