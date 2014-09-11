@@ -17,6 +17,14 @@ class ActiveRecord extends CActiveRecord {
     private $__oldRelations = array();
     private $__isRelationLoaded = false;
 
+    public static function toArray($models = array()) {
+        $result = array();
+        foreach ($models as $k => $m) {
+            $result[$k] = $m->attributes;
+        }
+        return $result;
+    }
+
     public function loadRelations() {
         foreach ($this->getMetaData()->relations as $k => $rel) {
             if (!isset($this->__relations[$k])) {
@@ -37,7 +45,7 @@ class ActiveRecord extends CActiveRecord {
                                     }
                                 }
                             }
-                            
+
                             //with through
                             //todo..
                             break;
@@ -213,7 +221,7 @@ class ActiveRecord extends CActiveRecord {
             $is_updated = false;
 
             foreach ($new as $i => $j) {
-                if ($j['id'] == $v['id']) {
+                if (@$j['id'] == @$v['id']) {
                     $is_deleted = false;
                     if (count(array_diff_assoc($j, $v)) > 0) {
                         $is_updated = true;
@@ -229,7 +237,7 @@ class ActiveRecord extends CActiveRecord {
 
         $insert = array();
         foreach ($new as $i => $j) {
-            if ($j['id'] == '') {
+            if (@$j['id'] == '' || is_null(@$j['id'])) {
                 $insert[] = $j;
             } else if (count($old) == 0) {
                 $update[] = $j;
@@ -278,17 +286,22 @@ class ActiveRecord extends CActiveRecord {
         foreach ($data as $d) {
             $cond = $d['id'];
             unset($d['id']);
-            $update .= "UPDATE {$table} SET ";
+            $updatearr = array();
             for ($i = 0; $i < $columnCount; $i++) {
-                $update .= $columnName [$i] . " = '{$d[
-                    $columnName[$i]]}'";
-                if ($i !== ($columnCount - 1))
-                    $update .= ' , ';
+                if (isset($columName[$i])) {
+                    $updatearr[] = $columnName[$i] . " = '{$d[$columnName[$i]]}'";
+                }
             }
-            $update .= " WHERE id='{$cond}';";
+
+            $updatesql = implode(",", $updatearr);
+            if ($updatesql != '') {
+                $update .= "UPDATE {$table} SET {$updatesql} WHERE id='{$cond}';";
+            }
         }
-        $command = Yii::app()->db->createCommand($update);
-        $command->execute();
+        if ($update != '') {
+            $command = Yii::app()->db->createCommand($update);
+            $command->execute();
+        }
     }
 
     public static function batchInsert($model, $data) {
@@ -337,7 +350,7 @@ class ActiveRecord extends CActiveRecord {
             'type' => 'ColumnField',
             'column1' => $column1,
             'column2' => $column2
-            )
+                )
         ;
         return $return;
     }
