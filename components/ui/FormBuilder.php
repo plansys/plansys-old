@@ -720,10 +720,10 @@ class FormBuilder extends CComponent {
 
     private function getLineOfClass($class, $functionName) {
         $reflector = new ReflectionClass($class);
+        $sourceFile = $reflector->getFileName();
+        $file = file($sourceFile);
         if (!$reflector->hasMethod($functionName)) {
-            $sourceFile = $reflector->getFileName();
             $line = $reflector->getStartLine();
-            $file = file($sourceFile);
             $length = 0;
 
             ## when last line is like "{}" then separate it to new line
@@ -733,13 +733,11 @@ class FormBuilder extends CComponent {
                 $file[$line - 1] = $lastline;
                 $file[] = "\n";
                 $file[] = "}";
-                $line = $line + 1;
             }
+            $isNewFunc = true;
         } else {
             $reflector = new ReflectionMethod($class, $functionName);
-            $sourceFile = $reflector->getFileName();
             $line = $reflector->getStartLine() - 1;
-            $file = file($sourceFile);
             $length = $reflector->getEndLine() - $line;
 
             ## when last line is like "}}" then separate it to new line
@@ -750,12 +748,14 @@ class FormBuilder extends CComponent {
                 $file[] = "\n";
                 $file[] = "}";
             }
+            $isNewFunc = false;
         }
         return array(
             'file' => $file,
             'length' => $length,
             'line' => $line,
-            'sourceFile' => $sourceFile
+            'sourceFile' => $sourceFile,
+            'isNewFunc' => $isNewFunc
         );
     }
 
@@ -783,7 +783,6 @@ class FormBuilder extends CComponent {
         }
         extract($_SESSION[$class][$functionName]);
 
-
         if (is_array($fields)) {
             $fields = FormBuilder::formatCode($fields);
 
@@ -797,7 +796,6 @@ class FormBuilder extends CComponent {
     public function {$functionName}() {
         return {$fields};
     }
-
 EOF;
         } else {
             $func = $fields;
@@ -810,8 +808,17 @@ EOF;
         });
         array_splice($file, $line, $length, $funcArray);
 
-        $_SESSION[$class]['file'] = $file;
-        $_SESSION[$class]['length'] = count($funcArray);
+        ## adjust other methods line and length
+        $newlength = count($funcArray);
+        foreach ($_SESSION[$class] as $k => $m) {
+            if ($m['line'] >= $line) {
+                if (!$isNewFunc) {
+                    $_SESSION[$class][$k]['line'] -= $length;
+                }
+
+                $_SESSION[$class][$k]['line'] += $newlength;
+            }
+        }
 
         $fp = fopen($sourceFile, 'r+');
         ## write new function to sourceFile
