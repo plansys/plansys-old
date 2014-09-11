@@ -267,7 +267,6 @@ class {$class} extends {$this->baseClass} {\n \n}
     }
 EOF;
 
-
         array_splice($this->file, $line, $length, explode("\n", $func));
 
 

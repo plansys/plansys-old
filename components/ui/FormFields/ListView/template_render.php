@@ -62,7 +62,7 @@
             
             <div ng-show="loading" class="list-view-loading">
                 <i class="fa fa-link"></i>
-                Loading <?= @get_class($model) ?>...
+                Loading ListView...
             </div>
         <?php endif; ?>
         

@@ -33,11 +33,13 @@ return array(
             'class' => 'system.gii.GiiModule',
             'password' => '123',
             'ipFilters' => array('127.0.0.1', '::1'),
-        ))
-    ),
+        ),
+        'nfy' => array(
+            'class' => 'application.modules.nfy.NfyModule'
+        )
+    )),
     'aliases' => array(
-        //Path to your Composer vendor dir plus vendor/bluecloudy path
-        'YiiDoctrine' => realpath(__DIR__ . '/../vendor/bluecloudy/yiidoctrine2/bluecloudy/yiidoctrine2'),
+        'nfy' => realpath(__DIR__ . '/../modules/nfy'),
     ),
     // application components
     'components' => array(

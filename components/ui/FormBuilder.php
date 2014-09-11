@@ -388,50 +388,6 @@ class FormBuilder extends CComponent {
     }
 
     /**
-     * generateCreateAction
-     * Fungsi ini akan meng-generate function dan create action.
-     */
-    public function generateCreateAction() {
-
-        $class = get_class($this->model);
-
-        ## generate function
-        $functionBody = <<<EOF
-    public function {$this->form['createAction']}() {
-        \$model = new {$class};
-        
-        if (isset(\$_POST['{$class}'])) {
-            \$model->attributes = \$_POST['{$class}'];
-            
-            if (\$model->save()) {
-                \$this->redirect(array('index'));
-            }
-        }
-        
-        \$this->renderForm('{$class}', 'create', \$model);
-    }
-
-EOF;
-
-        $this->updateFunctionBody($this->form['createAction'], $functionBody, $this->form['controller']);
-    }
-
-    /**
-     * generateUpdateAction
-     * Fungsi ini akan meng-generate function dan update action.
-     */
-    public function generateUpdateAction() {
-        ## generate function
-        $functionBody = <<<EOF
-    public function {$this->form['updateAction']}() {
-        echo "F";
-    }
-
-EOF;
-        $this->updateFunctionBody($this->form['updateAction'], $functionBody, $this->form['controller']);
-    }
-
-    /**
      * build
      * Fungsi ini berfungsi untuk menentukan ID render dan merender-nya
      * @param array $class
@@ -762,22 +718,7 @@ EOF;
         return $fields;
     }
 
-    /**
-     * @param string $functionName
-     * @param array $fields Parameter
-     * @param array $class Parameter
-     * @param array $replaceString
-     * @return field Fungsi ini digunakan untuk update model.
-     */
-    public function updateFunctionBody($functionName, $fields, $class = "", $replaceString = null) {
-        if ($class == "") {
-            $using_another_class = false;
-            $class = get_class($this->model);
-        } else {
-            $using_another_class = true;
-        }
-
-        ## get first line of the class
+    private function getLineOfClass($class, $functionName) {
         $reflector = new ReflectionClass($class);
         if (!$reflector->hasMethod($functionName)) {
             $sourceFile = $reflector->getFileName();
@@ -810,6 +751,38 @@ EOF;
                 $file[] = "}";
             }
         }
+        return array(
+            'file' => $file,
+            'length' => $length,
+            'line' => $line,
+            'sourceFile' => $sourceFile
+        );
+    }
+
+    /**
+     * @param string $functionName
+     * @param array $fields Parameter
+     * @param array $class Parameter
+     * @param array $replaceString
+     * @return field Fungsi ini digunakan untuk update model.
+     */
+    public function updateFunctionBody($functionName, $fields, $class = "", $replaceString = null) {
+        if ($class == "") {
+            $using_another_class = false;
+            $class = get_class($this->model);
+        } else {
+            $using_another_class = true;
+        }
+
+        ## get class data
+        if (!isset($_SESSION[$class])) {
+            $_SESSION[$class] = array();
+        }
+        if (!isset($_SESSION[$class][$functionName])) {
+            $_SESSION[$class][$functionName] = $this->getLineOfClass($class, $functionName);
+        }
+        extract($_SESSION[$class][$functionName]);
+
 
         if (is_array($fields)) {
             $fields = FormBuilder::formatCode($fields);
@@ -831,7 +804,14 @@ EOF;
         }
 
         ## put function to class 
-        array_splice($file, $line, $length, array($func));
+        $funcArray = explode("\n", $func);
+        array_walk($funcArray, function(&$value, $key) {
+            $value .= "\n";
+        });
+        array_splice($file, $line, $length, $funcArray);
+
+        $_SESSION[$class]['file'] = $file;
+        $_SESSION[$class]['length'] = count($funcArray);
 
         $fp = fopen($sourceFile, 'r+');
         ## write new function to sourceFile

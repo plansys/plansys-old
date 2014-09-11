@@ -5,9 +5,13 @@
     <data name="columns" class="hide"><?= json_encode($this->columns); ?></data>
     <data name="grid_options" class="hide"><?= json_encode($this->gridOptions); ?></data>
 
+    <div ng-if="!loaded" class="list-view-loading">
+        <i class="fa fa-link"></i>
+        Loading DataGrid...
+    </div>
     <div ng-if="loaded">
-        <script type="text/ng-template" id="category_header"><?php include('category_header.php'); ?></script>
 
+        <script type="text/ng-template" id="category_header"><?php include('category_header.php'); ?></script>
         <?php if (@$this->gridOptions['enablePaging'] == 'true'): ?>
             <div class="data-grid-paging">
                 <div class="data-grid-pageinfo pull-right">
@@ -17,7 +21,7 @@
                             <i class="fa fa-refresh"></i> Refresh
                         </button>
                         <button ng-click="reset()"
-                            type="button" class="btn btn-default">
+                                type="button" class="btn btn-default">
                             <i class="fa fa-repeat"></i> Reset
                         </button>
                     </div>
@@ -46,7 +50,6 @@
 
                 <div class="data-grid-pagination">
                     <div class="pull-left" style="margin:5px;">Page:</div>
-
                     <div class="pull-left">
                         <div class="data-grid-page-selector">
                             <div class="input-group input-group-sm">
