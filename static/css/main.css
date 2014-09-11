@@ -27,7 +27,10 @@ hr {
 
 .fa-nm {
     font-size:14px;
+}
 
+.well-small {
+    font-size:13px;color:#666;
 }
 
 .login.form {

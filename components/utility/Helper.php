@@ -14,6 +14,30 @@ class Helper {
         );
     }
 
+    public static function arrayValuesRecursive($arr) {
+        $arr = array_values($arr);
+        foreach ($arr as $key => $val) {
+            if (is_array($val)) {
+                if (array_values($val) === $val) {
+                    $arr[$key] = Helper::arrayValuesRecursive($val);
+                } else if (count(@$arr[$key]['items']) > 0) {
+                    $flatten = array_values($val['items']);
+                    $arr[$key]['items'] = Helper::arrayValuesRecursive($flatten);
+                }
+            }
+        }
+        return $arr;
+    }
+
+    // Does not support flag GLOB_BRACE  
+    public static function globRecursive($pattern, $flags = 0) {
+        $files = glob($pattern, $flags);
+        foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR | GLOB_NOSORT) as $dir) {
+            $files = array_merge($files, Helper::globRecursive($dir . '/' . basename($pattern), $flags));
+        }
+        return $files;
+    }
+
     public static function uniqueArray($array, $key) {
         if (!is_array($array))
             return $array;

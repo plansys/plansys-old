@@ -7,33 +7,11 @@
                 Models
             </div>
             <div ui-content>
+                <script type="text/ng-template" id="FormTree"><?php include('form_dir.php'); ?></script>
                 <div ui-tree data-drag-enabled="false">
                     <ol ui-tree-nodes="" ng-model="list">
-                        <li ng-repeat="item in list" ui-tree-node collapsed="true">
-                            <div ui-tree-handle ng-click="toggle(this);
-                                            select(this);" 
-                                 ng-class="is_selected(this)">
-
-                                <div class="ui-tree-handle-info">
-                                    {{item.items.length}} form{{item.items.length > 1 ? 's' : ''}}
-                                </div>
-
-                                <i ng-show="this.collapsed" class="fa fa-caret-right"></i>
-                                <i ng-show="!this.collapsed" class="fa fa-caret-down"></i>
-
-                                {{item.module}}
-
-                            </div>
-                            <ol ui-tree-nodes="" ng-model="item.items">
-                                <li ng-repeat="subItem in item.items" ui-tree-node>
-                                    <a target="iframe" 
-                                       href="<?php echo $this->createUrl('update', array('class' => '')); ?>{{subItem.alias}}"
-                                       ui-tree-handle ng-click="select(this)" ng-class="is_selected(this)">
-                                        <i ng-show="!this.collapsed" class="fa fa-file-text-o fa-nm"></i>
-                                        {{subItem.name}}
-                                    </a>
-                                </li>
-                            </ol>
+                        <li ng-repeat="item in list" ui-tree-node collapsed="true" ng-include="'FormTree'">
+                            
                         </li>
                     </ol>
                 </div>
@@ -64,6 +42,7 @@
                 if ($scope.active.name != null) {
                     $("iframe").addClass('invisible');
                     $(".loading").removeClass('invisible');
+                    $('.loading').removeAttr('style');
                 }
             };
             $scope.is_selected = function(item) {

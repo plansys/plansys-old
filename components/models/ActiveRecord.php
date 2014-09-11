@@ -126,7 +126,6 @@ class ActiveRecord extends CActiveRecord {
             $props[$k] = $k;
         }
 
-
         $attributes = array(
             'DB Fields' => $fields,
             'Properties' => $props,

@@ -242,6 +242,7 @@ class DevUserIndex extends Form {
                     ),
                 ),
             ),
+            'inlineJS' => 'js/index.js',
         );
     }
     

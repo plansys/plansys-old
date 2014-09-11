@@ -35,10 +35,22 @@ class FormBuilder extends CComponent {
         if (!is_string($class))
             return null;
 
+        $originalClass = $class;
         if (strpos($class, ".") !== false) {
-            $classfile = $class;
-            $class = array_pop(explode(".", $classfile));
-            Yii::import($classfile);
+            $classFile = $class;
+            $class = array_pop(explode(".", $classFile));
+
+            try {
+                Yii::import($classFile);
+            } catch (Exception $e) {
+                if (isset(Yii::app()->controller) && isset(Yii::app()->controller->module)) {
+                    $basePath = Yii::app()->controller->module->basePath;
+                }
+
+                $classFile = str_replace(".", DIRECTORY_SEPARATOR, $classFile) . ".php";
+                $classFile = $basePath . DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR . $classFile;
+                require_once($classFile);
+            }
 
             if (!class_exists($class)) {
                 return null;
@@ -53,7 +65,7 @@ class FormBuilder extends CComponent {
         }
 
         ## get method line and length
-        if (is_null(Yii::app()->session['FormBuilder_' . $class])) {
+        if (is_null(Yii::app()->session['FormBuilder_' . $originalClass])) {
             $reflector = new ReflectionClass($class);
             $model->sourceFile = $reflector->getFileName();
             $model->file = file($model->sourceFile, FILE_IGNORE_NEW_LINES);
@@ -73,7 +85,6 @@ class FormBuilder extends CComponent {
                 'file' => $model->file,
                 'methods' => $model->methods
             );
-            
         } else {
             $s = Yii::app()->session['FormBuilder_' . $class];
             $model->sourceFile = $s['sourceFile'];
@@ -109,6 +120,7 @@ class FormBuilder extends CComponent {
         if (!$reflector->hasMethod($functionName)) {
             $this->model = new $class;
             $fields = $this->model->defaultFields;
+            $this->fields = $fields;
         } else {
             $fields = $this->model->$functionName();
         }
@@ -328,6 +340,7 @@ class FormBuilder extends CComponent {
      * @param array $fields
      */
     public function setFields($fields) {
+
         $fieldlist = array();
         $multiline = array();
 
@@ -396,6 +409,11 @@ class FormBuilder extends CComponent {
 
             if (empty($this->getFunctionBody($reflector->getFileName(), 'getForm'))) {
                 $this->form = $defaultFields;
+            }
+
+            $functionName = 'getFields';
+            if (is_subclass_of($this->model, 'FormField')) {
+                $functionName = 'getFieldProperties';
             }
 
             return $defaultFields;
@@ -961,13 +979,17 @@ EOF;
     public static function listForm($module = null, $useAlias = true) {
         $list = array();
         $list[''] = '-- NONE --';
-        $modules = FormBuilder::listFile();
+        $modules = FormBuilder::listFile(false);
         foreach ($modules as $m) {
             if (!is_null($module) && strtolower($m['module']) != strtolower($module))
                 continue;
 
             $list[$m['module']] = array();
             foreach ($m['items'] as $file) {
+                $f = &$file;
+                while (!isset($f['alias'])) {
+                    $f = array_pop($f);
+                }
                 if ($useAlias) {
                     $list[$file['alias']] = $file['name'];
                 } else {
@@ -979,19 +1001,65 @@ EOF;
         return $list;
     }
 
+    private static function formatGlob($items, $item_dir, $module, $func, $alias, $format = true, $return = array()) {
+        $subdir_val = array();
+        $id = 0;
+        foreach ($items as $k => $i) {
+            $item = array();
+            $i = realpath($i);
+            $file_dir = dirname($i) . DIRECTORY_SEPARATOR;
+            $subdir = trim(str_replace(DIRECTORY_SEPARATOR, '.', str_replace($item_dir, '', $file_dir)), '.');
+
+            $item = str_replace($file_dir, "", $i);
+            $item = str_replace('.php', "", $item);
+            $newAlias = trim(trim($alias, '.') . '.' . $subdir, '.');
+            $item = $func($item, $module, $newAlias);
+            $item['id'] = $id++;
+
+
+            if ($subdir == '' || !$format) {
+                $return[$k] = $item;
+            } else {
+                $subarr = explode(".", $subdir);
+
+                $curpath = &$return;
+                foreach ($subarr as $s) {
+                    $id++;
+                    if (!isset($curpath[$s])) {
+                        $curpath[$s] = array(
+                            'items' => array(),
+                            'name' => ucfirst($s),
+                            'id' => $id++
+                        );
+                    }
+                    $curpath = &$curpath[$s]['items'];
+                }
+
+                if (!isset($subdir_val[$subdir]))
+                    $subdir_val[$subdir] = array();
+
+                $subdir_val[$subdir][] = $item;
+                $curpath = $subdir_val[$subdir];
+            }
+        }
+        $return = Helper::arrayValuesRecursive($return);
+        return $return;
+    }
+
     /**
      * @param string $dir
      * @param string $func
      * @return array me-return sebuah array list file .
      */
-    public static function listFile() {
+    public static function listFile($formatRecursive = true) {
         $files = array();
 
         $func = function($m, $module = "", $aliaspath = "") {
             return array(
                 'name' => str_replace(ucfirst($module), '', $m),
                 'class' => $m,
-                'alias' => $aliaspath . "." . $m
+                'alias' => $aliaspath . "." . $m,
+                'items' => array()
             );
         };
 
@@ -999,13 +1067,13 @@ EOF;
         $forms_dir = Yii::getPathOfAlias("application.components.ui.FormFields") . DIRECTORY_SEPARATOR;
         $items = glob($forms_dir . "*.php");
         foreach ($items as $k => $f) {
-
             $items[$k] = str_replace($forms_dir, "", $f);
             $items[$k] = str_replace('.php', "", $items[$k]);
             if (!is_null($func)) {
                 $items[$k] = $func($items[$k], "", "application.components.ui.FormFields");
             }
         }
+
         $files[] = array(
             'module' => 'Form Fields',
             'items' => $items,
@@ -1013,15 +1081,19 @@ EOF;
 
         ##  add files in Root Form dir
         $forms_dir = Yii::getPathOfAlias("application.forms") . DIRECTORY_SEPARATOR;
-        $items = glob($forms_dir . "*.php");
+        $items = Helper::globRecursive($forms_dir . "*.php");
         foreach ($items as $k => $f) {
-
-            $items[$k] = str_replace($forms_dir, "", $f);
+            $f = realpath($f);
+            $file_dir = dirname($f) . DIRECTORY_SEPARATOR;
+            $items[$k] = str_replace($file_dir, "", $f);
             $items[$k] = str_replace('.php', "", $items[$k]);
             if (!is_null($func)) {
-                $items[$k] = $func($items[$k], "", "application.forms");
+                $alias = trim(str_replace($forms_dir, '', $file_dir), DIRECTORY_SEPARATOR);
+                $alias = trim('application.forms.' . $alias, '.');
+                $items[$k] = $func($items[$k], "", $alias);
             }
         }
+
         $files[] = array(
             'module' => 'Root Form',
             'items' => $items
@@ -1033,16 +1105,10 @@ EOF;
             $modules = glob($module_dir . DIRECTORY_SEPARATOR . "*");
             foreach ($modules as $m) {
                 $module = ucfirst(str_replace($module_dir . DIRECTORY_SEPARATOR, '', $m));
+                $alias = "application.modules.{$module}.forms.";
                 $item_dir = $m . DIRECTORY_SEPARATOR . "forms" . DIRECTORY_SEPARATOR;
-                $items = glob($item_dir . "*.php");
-                foreach ($items as $k => $i) {
-                    $items[$k] = str_replace($item_dir, "", $i);
-                    $items[$k] = str_replace('.php', "", $items[$k]);
-
-                    if (!is_null($func)) {
-                        $items[$k] = $func($items[$k], $module, 'application.modules.' . lcfirst($module) . ".forms");
-                    }
-                }
+                $items = Helper::globRecursive($item_dir . "*.php");
+                $items = FormBuilder::formatGlob($items, $item_dir, $module, $func, $alias, $formatRecursive);
 
                 $files[] = array(
                     'module' => $module,
@@ -1057,16 +1123,10 @@ EOF;
             $modules = glob($module_dir . DIRECTORY_SEPARATOR . "*");
             foreach ($modules as $m) {
                 $module = ucfirst(str_replace($module_dir . DIRECTORY_SEPARATOR, '', $m));
+                $alias = "app.modules.{$module}.forms.";
                 $item_dir = $m . DIRECTORY_SEPARATOR . "forms" . DIRECTORY_SEPARATOR;
-                $items = glob($item_dir . "*.php");
-                foreach ($items as $k => $i) {
-                    $items[$k] = str_replace($item_dir, "", $i);
-                    $items[$k] = str_replace('.php', "", $items[$k]);
-
-                    if (!is_null($func)) {
-                        $items[$k] = $func($items[$k], $module, 'app.modules.' . lcfirst($module) . ".forms");
-                    }
-                }
+                $items = Helper::globRecursive($item_dir . "*.php");
+                $items = FormBuilder::formatGlob($items, $item_dir, $module, $func, $alias, $formatRecursive);
 
                 $files[] = array(
                     'module' => $module,

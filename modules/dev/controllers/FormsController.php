@@ -69,7 +69,6 @@ class FormsController extends Controller {
 
         $data['editor'] = true;
         $data[$mainFormSection]['content'] = $builder;
-
         Layout::render($fb->form['layout']['name'], $data);
     }
 
@@ -103,7 +102,6 @@ class FormsController extends Controller {
 
     public function actionIndex() {
         $forms = FormBuilder::listFile();
-        
         $this->render('index', array(
             'forms' => $forms
         ));
