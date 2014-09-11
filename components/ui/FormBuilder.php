@@ -20,6 +20,9 @@ class FormBuilder extends CComponent {
      * @access private	
      */
     private $countRenderID = 1;
+    private $methods = array();
+    private $file = array();
+    private $sourceFile = '';
 
     /**
      * load
@@ -47,6 +50,35 @@ class FormBuilder extends CComponent {
 
         if (!is_null($attributes)) {
             $model->model->attributes = $attributes;
+        }
+
+        ## get method line and length
+        if (is_null(Yii::app()->session['FormBuilder_' . $class])) {
+            $reflector = new ReflectionClass($class);
+            $model->sourceFile = $reflector->getFileName();
+            $model->file = file($model->sourceFile, FILE_IGNORE_NEW_LINES);
+            $methods = $reflector->getMethods();
+            foreach ($methods as $m) {
+                if ($m->class == $class) {
+                    $line = $m->getStartLine() - 1;
+                    $length = $m->getEndLine() - $line;
+                    $model->methods[$m->name] = array(
+                        'line' => $line,
+                        'length' => $length
+                    );
+                }
+            }
+            Yii::app()->session['FormBuilder_' . $class] = array(
+                'sourceFile' => $model->sourceFile,
+                'file' => $model->file,
+                'methods' => $model->methods
+            );
+            
+        } else {
+            $s = Yii::app()->session['FormBuilder_' . $class];
+            $model->sourceFile = $s['sourceFile'];
+            $model->file = $s['file'];
+            $model->methods = $s['methods'];
         }
 
         return $model;
@@ -718,43 +750,82 @@ class FormBuilder extends CComponent {
         return $fields;
     }
 
-    private function getLineOfClass($class, $functionName) {
-        $reflector = new ReflectionClass($class);
-        $sourceFile = $reflector->getFileName();
-        $file = file($sourceFile);
-        if (!$reflector->hasMethod($functionName)) {
-            $line = $reflector->getStartLine();
-            $length = 0;
+    protected function prepareLineForProperty() {
+        ## get first line of the class
+        $reflector = new ReflectionClass($this->model);
+        $line = $reflector->getStartLine();
 
-            ## when last line is like "{}" then separate it to new line
-            $lastline = trim($file[$line - 1]);
-            if (substr($lastline, 0, 5) == "class" && substr($lastline, -1) == "}") {
-                $lastline[strlen($lastline) - 1] = " ";
-                $file[$line - 1] = $lastline;
-                $file[] = "\n";
-                $file[] = "}";
+        ## when last line is like "{}" then separate it to new line
+        $lastline = trim($this->file[count($this->file) - 1]);
+
+        if (substr($lastline, 0, 5) == "class" && substr($lastline, -1) == "}") {
+            $lastline[strlen($lastline) - 1] = " ";
+            $this->file[$line - 1] = $lastline;
+            $this->file[] = "";
+            $this->file[] = "}";
+        }
+
+        if (substr($lastline, -1) == "}" && substr(trim($this->file[count($this->file) - 2]), -1) == "{") {
+            array_splice($this->file, count($this->file) - 1, 0, '');
+
+            foreach ($this->methods as $k => $m) {
+                if ($m['line'] >= count($this->file) - 1) {
+                    $this->methods[$k]['line'] += 1;
+                }
             }
+        }
+        return $line;
+    }
+
+    protected function prepareLineForMethod() {
+        $first_line = $this->prepareLineForProperty();
+
+        foreach ($this->file as $line => $content) {
+            if (preg_match('/\s*(private|protected|public)\s+function\s+.*/x', $content)) {
+                break;
+            }
+        }
+
+        ## prepare the line
+        array_splice($this->file, $line, 0, "");
+
+        ## adjust methods line and number
+        foreach ($this->methods as $k => $m) {
+            if ($m['line'] >= $line) {
+                $this->methods[$k]['line'] += 1;
+            }
+        }
+
+        return $line;
+    }
+
+    private function getLineOfClass($class, $name) {
+        $isNewFunc = false;
+        ## get first line of the class       
+        if (!isset($this->methods[$name])) {
+            $line = $this->prepareLineForMethod();
+            $length = 0;
             $isNewFunc = true;
         } else {
-            $reflector = new ReflectionMethod($class, $functionName);
-            $line = $reflector->getStartLine() - 1;
-            $length = $reflector->getEndLine() - $line;
+            $line = $this->methods[$name]['line'];
+            $length = $this->methods[$name]['length'];
+            $endline = $line + $length;
 
             ## when last line is like "}}" then separate it to new line
-            $lastline = trim($file[$reflector->getEndLine() - 1]);
+            $lastline = trim($this->file[$endline - 1]);
             if (substr($lastline, -2) == "}}") {
                 $lastline[strlen($lastline) - 1] = " ";
-                $file[$reflector->getEndLine() - 1] = $lastline;
-                $file[] = "\n";
-                $file[] = "}";
+                $this->file[$endline - 1] = $lastline;
+                $this->file[] = "\n";
+                $this->file[] = "}";
             }
-            $isNewFunc = false;
         }
+
         return array(
-            'file' => $file,
+            'file' => $this->file,
             'length' => $length,
             'line' => $line,
-            'sourceFile' => $sourceFile,
+            'sourceFile' => $this->sourceFile,
             'isNewFunc' => $isNewFunc
         );
     }
@@ -775,13 +846,7 @@ class FormBuilder extends CComponent {
         }
 
         ## get class data
-        if (!isset($_SESSION[$class])) {
-            $_SESSION[$class] = array();
-        }
-        if (!isset($_SESSION[$class][$functionName])) {
-            $_SESSION[$class][$functionName] = $this->getLineOfClass($class, $functionName);
-        }
-        extract($_SESSION[$class][$functionName]);
+        extract($this->getLineOfClass($class, $functionName));
 
         if (is_array($fields)) {
             $fields = FormBuilder::formatCode($fields);
@@ -802,29 +867,28 @@ EOF;
         }
 
         ## put function to class 
-        $funcArray = explode("\n", $func);
-        array_walk($funcArray, function(&$value, $key) {
-            $value .= "\n";
-        });
-        array_splice($file, $line, $length, $funcArray);
+        array_splice($file, $line, $length, explode("\n", $func));
 
         ## adjust other methods line and length
-        $newlength = count($funcArray);
-        foreach ($_SESSION[$class] as $k => $m) {
+        $newlength = count(explode("\n", $func));
+
+        foreach ($this->methods as $k => $m) {
             if ($m['line'] >= $line) {
                 if (!$isNewFunc) {
-                    $_SESSION[$class][$k]['line'] -= $length;
+                    $this->methods[$k]['line'] -= $length;
                 }
 
-                $_SESSION[$class][$k]['line'] += $newlength;
+                $this->methods[$k]['line'] += $newlength;
             }
         }
+
+        $this->file = $file;
 
         $fp = fopen($sourceFile, 'r+');
         ## write new function to sourceFile
         if (flock($fp, LOCK_EX)) { // acquire an exclusive lock
             ftruncate($fp, 0); // truncate file
-            fwrite($fp, implode("", $file));
+            fwrite($fp, implode("\n", $file));
             fflush($fp); // flush output before releasing the lock
             flock($fp, LOCK_UN); // release the lock
         } else {

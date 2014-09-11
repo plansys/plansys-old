@@ -103,7 +103,7 @@ class FormsController extends Controller {
 
     public function actionIndex() {
         $forms = FormBuilder::listFile();
-
+        
         $this->render('index', array(
             'forms' => $forms
         ));
@@ -137,6 +137,7 @@ class FormsController extends Controller {
 
     public function actionUpdate($class) {
         FormField::$inEditor = true;
+        Yii::app()->session['FormBuilder_' . $class] = null;
 
         $this->layout = "//layouts/blank";
         $fb = FormBuilder::load($class);
