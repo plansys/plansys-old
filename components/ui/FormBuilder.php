@@ -80,18 +80,17 @@ class FormBuilder extends CComponent {
                     );
                 }
             }
-            Yii::app()->session['FormBuilder_' . $class] = array(
+            Yii::app()->session['FormBuilder_' . $originalClass] = array(
                 'sourceFile' => $model->sourceFile,
                 'file' => $model->file,
                 'methods' => $model->methods
             );
         } else {
-            $s = Yii::app()->session['FormBuilder_' . $class];
+            $s = Yii::app()->session['FormBuilder_' . $originalClass];
             $model->sourceFile = $s['sourceFile'];
             $model->file = $s['file'];
             $model->methods = $s['methods'];
         }
-
         return $model;
     }
 
@@ -341,7 +340,6 @@ class FormBuilder extends CComponent {
      * @param array $fields
      */
     public function setFields($fields) {
-
         $fieldlist = array();
         $multiline = array();
 
@@ -355,7 +353,7 @@ class FormBuilder extends CComponent {
             } else {
                 ## tidying attributes, remove attribute that same as default attribute
                 $f = $this->tidyAttributes($f, $fieldlist, $multiline);
-
+                
                 if (isset($fieldlist[$f['type']]['parseField']) && count($fieldlist[$f['type']]['parseField']) > 0) {
                     foreach ($fieldlist[$f['type']]['parseField'] as $i => $j) {
                         if (!isset($f[$i]))
@@ -434,7 +432,6 @@ class FormBuilder extends CComponent {
                 }
             }
         }
-
         $this->updateFunctionBody('getForm', $form);
     }
 
@@ -798,7 +795,7 @@ class FormBuilder extends CComponent {
 
     protected function prepareLineForMethod() {
         $first_line = $this->prepareLineForProperty();
-
+        
         foreach ($this->file as $line => $content) {
             if (preg_match('/\s*(private|protected|public)\s+function\s+.*/x', $content)) {
                 break;
@@ -1060,8 +1057,7 @@ EOF;
                 'name' => str_replace(ucfirst($module), '', $m),
                 'class' => $m,
                 'alias' => $aliaspath . "." . $m,
-                'items' => array(),
-                'mtime' => filemtime($path)
+                'items' => array()
             );
         };
 

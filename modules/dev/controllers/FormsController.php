@@ -2,17 +2,6 @@
 
 class FormsController extends Controller {
 
-    public function filters() {
-        return array(
-            array(
-                'COutputCache - index',
-                'duration' => 86400,
-                'requestTypes' => array('GET'),
-                'varyByParam' => array_keys($_GET),
-            ),
-        );
-    }
-
     public $countRenderID = 1;
     public static $modelField = array();
     public static $modelFieldList = array(); // list of all fields in current model
@@ -38,8 +27,8 @@ class FormsController extends Controller {
         FormField::$inEditor = false;
         $fbp = FormBuilder::load($field['type']);
         return $fbp->render($field, array(
-                'wrapForm' => false,
-                'FormFieldRenderID' => $this->countRenderID++
+                    'wrapForm' => false,
+                    'FormFieldRenderID' => $this->countRenderID++
         ));
     }
 
@@ -66,20 +55,26 @@ class FormsController extends Controller {
     }
 
     public function actionRenderBuilder($class, $layout) {
-
-        $fb = FormBuilder::load($class);
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+        if (isset($post['form'])) {
+            $form = $post['form'];
+        } else {
+            $fb = FormBuilder::load($class);
+            $form = $fb->form;
+        }
+        
         $builder = $this->renderPartial('form_builder', array(), true);
-        $mainFormSection = Layout::getMainFormSection($fb->form['layout']['data']);
-
-        $data = $fb->form['layout']['data'];
-        if ($layout != $fb->form['layout']['name']) {
+        $mainFormSection = Layout::getMainFormSection($form['layout']['data']);
+        $data = $form['layout']['data'];
+        if ($layout != $form['layout']['name']) {
             unset($data[$mainFormSection]);
             $mainFormSection = Layout::defaultSection($layout);
         }
 
         $data['editor'] = true;
         $data[$mainFormSection]['content'] = $builder;
-        Layout::render($fb->form['layout']['name'], $data);
+        Layout::render($layout, $data);
     }
 
     public function actionRenderHiddenField() {
@@ -146,7 +141,6 @@ class FormsController extends Controller {
     public function actionUpdate($class) {
         FormField::$inEditor = true;
         Yii::app()->session['FormBuilder_' . $class] = null;
-
         $this->layout = "//layouts/blank";
         $fb = FormBuilder::load($class);
         $classPath = $class;

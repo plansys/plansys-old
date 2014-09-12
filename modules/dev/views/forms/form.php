@@ -17,11 +17,7 @@
                 </span>
             </div>
             <script type="text/ng-template" id="FormTree"><?php include('form_fields.php'); ?></script>
-            <div ng-include="Yii.app.createUrl('dev/forms/renderBuilder', {
-                        class: '<?= $classPath ?>',
-                        layout: form.layout.name,
-                        cb: cacheBuster
-                    })" onload='layoutChanging = false'> 
+            <div id="render-builder"> 
             </div>
             <!-- /form-builder-content -->
         </div>
