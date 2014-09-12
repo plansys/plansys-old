@@ -1,6 +1,6 @@
 <?php
 
-class DevSettingsApplication extends Form {
+class DevSettingsDatabase extends Form {
 
 
     public function getFields() {

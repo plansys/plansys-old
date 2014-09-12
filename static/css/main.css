@@ -1039,7 +1039,10 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 }
 
 /********************************** DATA GRID **************************************/
-
+.data-grid {
+    
+    padding-top:12px;
+}
 .data-grid-table {
     width:100%;
 }
@@ -1211,7 +1214,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 /********************************** DATA FILTER **************************************/
 .data-filter {
-    margin:0px -15px 10px -15px;
+    margin:0px -15px 0px -15px;
     border-top:1px solid #e2e2e2;
     border-bottom:1px solid #e2e2e2;
     background:#efefef;

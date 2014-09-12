@@ -24,7 +24,7 @@ class Layout extends CComponent {
                         }
                         $options = array(
                             'title' => @$section['title'],
-                            'onclick' => @$section['onclick']
+                            'options' => @$section['menuOptions']
                         );
                         $mt = MenuTree::load($section['file'], $options);
                         if ($mt != null) {

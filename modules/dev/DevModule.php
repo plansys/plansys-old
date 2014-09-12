@@ -8,7 +8,8 @@ class DevModule extends CWebModule {
             'application.models.*',
             'application.modules.dev.controllers.*',
             'application.modules.dev.forms.*',
-            'application.modules.dev.forms.user.*',
+            'application.modules.dev.forms.users.user.*',
+            'application.modules.dev.forms.users.role.*',
             'application.modules.dev.components.*',
         ));
     }

@@ -14,5 +14,4 @@
     </div>
     <?php endif; ?> 
 </div>
-<div id="general" ></div>
-<br/>
+<div id="general"></div>

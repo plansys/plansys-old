@@ -47,7 +47,7 @@ class MenuTree extends CComponent {
         foreach ($items as $k => $m) {
             $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
             $m = str_replace('.php', "", $m);
-            
+
             $items[$k] = array(
                 'name' => $m,
                 'module' => $module,
@@ -78,6 +78,10 @@ class MenuTree extends CComponent {
         }
 
         foreach ($list as $k => $v) {
+            if (is_string($v['url'])) {
+                $list[$k]['url'] = str_replace('?', '&', $v['url']);
+            }
+            
             if (!isset($v['items'])) {
                 $list[$k]['items'] = array();
             } else {
@@ -101,7 +105,7 @@ class MenuTree extends CComponent {
             } else {
                 if (!is_array($v['url'])) {
                     if (substr($v['url'], 0, 4) != 'http') {
-                        $list[$k]['url'] = array($v['url']);
+                        $list[$k]['url'] = array(str_replace('?', '&', $v['url']));
                     }
                 }
             }
@@ -137,18 +141,17 @@ class MenuTree extends CComponent {
     public $list = "";
     public $class = "";
     public $classpath = "";
-    public $onclick = "";
+    public $options = "";
 
     public static function load($classpath, $options = null) {
         $mt = new MenuTree;
 
         $mt->title = @$options['title'];
-        $mt->onclick = @$options['onclick'];
+        $mt->options = @$options['options'];
         $mt->classpath = $classpath;
         $mt->class = array_pop(explode(".", $classpath));
         $mt->list = include(Yii::getPathOfAlias($classpath) . ".php");
         MenuTree::fillMenuItems($mt->list);
-
         return $mt;
     }
 
@@ -156,8 +159,8 @@ class MenuTree extends CComponent {
         $script = Yii::app()->controller->renderPartial('//layouts/menu_js', array(
             'list' => $this->list,
             'class' => $this->class,
-            'onclick' => $this->onclick,
-            ), true);
+            'options' => $this->options,
+                ), true);
 
         return str_replace(array("<script>", "</script>"), "", $script);
     }
@@ -174,12 +177,12 @@ class MenuTree extends CComponent {
         }
 
         return $ctrl->renderPartial("//layouts/menu", array(
-                'class' => $this->class,
-                'classpath' => $this->classpath,
-                'title' => $this->title,
-                'onclick' => $this->onclick,
-                'script' => $script,
-                ), true);
+                    'class' => $this->class,
+                    'classpath' => $this->classpath,
+                    'title' => $this->title,
+                    'options' => $this->options,
+                    'script' => $script,
+                        ), true);
     }
 
 }

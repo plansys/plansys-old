@@ -71,6 +71,6 @@
     array (
         'label' => 'Settings',
         'icon' => '',
-        'url' => '/dev/settings/index',
+        'url' => '/dev/settings/index?p=application',
     ),
 );

@@ -3,6 +3,9 @@
 class DevFormLayoutProperties extends Form {
 
     public $module;
+    public $menuOptions = array(
+        'ng-click' => 'toggle(this);select(this);'
+    );
     
     public function getFields() {
         return array (
@@ -73,18 +76,14 @@ class DevFormLayoutProperties extends Form {
             ),
             '<hr ng-show="layout.type == \'menu\'"/>',
             array (
-                'label' => '<div class=\\"label label-default pull-right\\" style=\\"margin-right:15px;\\">(ng-click attribute)</div>Menu On-Click:',
-                'labelWidth' => '3',
-                'fieldWidth' => '12',
-                'layout' => 'Vertical',
-                'fieldHeight' => '5',
+                'label' => 'Menu Options',
+                'show' => 'Show',
                 'options' => array (
-                    'ng-model' => 'layout.onclick',
+                    'ng-model' => 'layout.menuOptions',
                     'ng-change' => 'changeLayoutProperties()',
-                    'ng-delay' => '500',
                     'ng-show' => 'layout.type == \'menu\'',
                 ),
-                'type' => 'TextArea',
+                'type' => 'KeyValueGrid',
             ),
         );
     }

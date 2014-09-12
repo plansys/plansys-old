@@ -15,7 +15,7 @@ class UserController extends Controller {
                 $this->redirect(array("index"));
             }
         }
-        $this->renderForm("user.DevUserForm", $model);
+        $this->renderForm("users.user.DevUserForm", $model);
     }
 
     public function actionNew() {
@@ -27,11 +27,11 @@ class UserController extends Controller {
                 $this->redirect(array("index"));
             }
         }
-        $this->renderForm("user.DevUserForm", $model);
+        $this->renderForm("users.user.DevUserForm", $model);
     }
 
     public function actionIndex() {
-        $this->renderForm("user.DevUserIndex");
+        $this->renderForm("users.user.DevUserIndex");
     }
 
 }

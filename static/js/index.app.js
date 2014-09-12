@@ -416,3 +416,21 @@ app.directive('ngDelay', ['$timeout',
         };
     }
 ]);
+app.directive("formSubmit", ['$timeout', function($timeout) {
+        return {
+            scope: {
+                formSubmit: "="
+            },
+            link: function(scope, element, attributes) {
+                element.bind("submit", function(loadEvent) {
+                    scope.formSubmit(loadEvent);
+
+                    element.unbind("submit");
+                    $timeout(function() {
+                        element.submit();
+                    }, 0);
+                    return false;
+                });
+            }
+        }
+    }]);

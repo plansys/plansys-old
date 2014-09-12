@@ -1,5 +1,4 @@
-<div ng-click="toggle(this);
-    select(this);" ui-tree-handle ng-class="isSelected(this)">
+<div ng-click="click(this)" ui-tree-handle ng-class="isSelected(this)">
 
     <div ng-show="item.items.length > 0" class="pull-left" 
          style="width:20px;text-align:center;cursor:pointer;">
