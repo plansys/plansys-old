@@ -189,7 +189,8 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                         $scope.gridOptions.rowHeight = 28;
                         $scope.gridOptions.multiSelect = $scope.gridOptions.multiSelect || false;
 
-                        if ($scope.data.length > 0 && $scope.columns.length == 0) {
+                        if ($scope.data!== null && $scope.columns !== null && 
+                                $scope.data.length > 0 && $scope.columns.length == 0) {
                             for (i in $scope.data[0]) {
                                 $scope.columns.push({
                                     label: i,
