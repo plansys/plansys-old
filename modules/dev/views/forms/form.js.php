@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    app.controller("PageController", function($scope, $http, $timeout, $window) {
+    app.controller("PageController", function($scope, $http, $timeout, $window, $compile) {
         $scope.getNumber = function(num) {
             a = [];
             for (i = 1; i <= num; i++) {
@@ -34,8 +34,18 @@
             action = action.charAt(0).toLowerCase() + action.slice(1);
             return Yii.app.createUrl(module + '/' + controller + '/' + action);
         };
-        $scope.layoutChanging = false;
-        $scope.cacheBuster = 1;
+        $scope.updateRenderBuilder = function() {
+            var renderBuilderUrl = Yii.app.createUrl('dev/forms/renderBuilder', {
+                class: '<?= $classPath ?>',
+                layout: $scope.form.layout.name
+            });
+
+            $http.post(renderBuilderUrl, {form: $scope.form}).then(function(response) {
+                $("#render-builder").html(response.data);
+                $compile($("#render-builder").contents())($scope);
+            });
+        };
+
         $scope.saveForm = function(force_reload) {
             if ($scope.layout != null) {
                 var name = $scope.layout.name;
@@ -49,16 +59,8 @@
             $scope.saving = true;
             $http.post('<?php echo $this->createUrl("save", array('class' => $classPath)); ?>', {form: $scope.form})
                     .success(function(data, status) {
-                        if (force_reload === true) {
-                            $window.location.reload();
-                            return true;
-                        }
-
                         $scope.saving = false;
-                        if ($scope.layoutChanging) {
-                            $scope.cacheBuster++;
-                            $scope.layoutChanging = false;
-                        }
+                        $scope.updateRenderBuilder();
                     })
                     .error(function(data, status) {
                         $scope.saving = false;
@@ -160,7 +162,6 @@
             $scope.saveForm(true);
         };
         $scope.changeLayoutProperties = function() {
-            $scope.layoutChanging = true;
             $scope.saveForm();
         };
         $scope.changeLayoutSectionType = function() {
@@ -172,7 +173,6 @@
                 }
             }
 
-            $scope.layoutChanging = true;
             $scope.saveForm();
         };
         /*********************** FIELDS ********************************/
@@ -450,6 +450,7 @@
         $timeout(function() {
             $(document).trigger('formBuilderInit');
             $scope.detectEmptyPlaceholder();
+            $scope.updateRenderBuilder();
         }, 100);
 
         $('body').on('click', 'div[ui-header]', function(e) {

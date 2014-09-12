@@ -86,12 +86,11 @@ class FormBuilder extends CComponent {
                 'methods' => $model->methods
             );
         } else {
-            $s = Yii::app()->session['FormBuilder_' . $class];
+            $s = Yii::app()->session['FormBuilder_' . $originalClass];
             $model->sourceFile = $s['sourceFile'];
             $model->file = $s['file'];
             $model->methods = $s['methods'];
         }
-
         return $model;
     }
 
@@ -433,7 +432,6 @@ class FormBuilder extends CComponent {
                 }
             }
         }
-
         $this->updateFunctionBody('getForm', $form);
     }
 
@@ -797,7 +795,7 @@ class FormBuilder extends CComponent {
 
     protected function prepareLineForMethod() {
         $first_line = $this->prepareLineForProperty();
-
+        
         foreach ($this->file as $line => $content) {
             if (preg_match('/\s*(private|protected|public)\s+function\s+.*/x', $content)) {
                 break;
@@ -1059,8 +1057,7 @@ EOF;
                 'name' => str_replace(ucfirst($module), '', $m),
                 'class' => $m,
                 'alias' => $aliaspath . "." . $m,
-                'items' => array(),
-                'mtime' => filemtime($path)
+                'items' => array()
             );
         };
 
