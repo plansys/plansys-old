@@ -419,11 +419,12 @@ app.directive('ngDelay', ['$timeout',
 app.directive("formSubmit", ['$timeout', function($timeout) {
         return {
             scope: {
-                formSubmit: "="
+                formSubmit: "@"
             },
             link: function(scope, element, attributes) {
                 element.bind("submit", function(loadEvent) {
-                    scope.formSubmit(loadEvent);
+                    
+                    scope.$parent.$eval(scope.formSubmit);
 
                     element.unbind("submit");
                     $timeout(function() {
