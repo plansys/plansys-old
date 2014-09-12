@@ -178,6 +178,8 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                 $scope.fillColumns = function() {
                     $timeout(function() {
                         var columns = [];
+                        $scope.datasource = $scope.$parent[$el.find("data[name=datasource]").text()];
+                        $scope.data = $scope.datasource.data;
 
                         // prepare gridOptions
                         evalArray($scope.gridOptions);
@@ -187,6 +189,18 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                         $scope.gridOptions.rowHeight = 28;
                         $scope.gridOptions.multiSelect = $scope.gridOptions.multiSelect || false;
 
+                        if ($scope.data.length > 0 && $scope.columns.length == 0) {
+                            for (i in $scope.data[0]) {
+                                $scope.columns.push({
+                                    label: i,
+                                    name: i,
+                                    options: {}
+                                });
+                            }
+                        }
+                        if (typeof $scope.onBeforeLoaded == 'function') {
+                            $scope.onBeforeLoaded($scope);
+                        }
 
                         // prepare ng-grid columnDefs
                         var buttonID = 1;
@@ -222,8 +236,6 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                         if (columns.length > 0) {
                             $scope.gridOptions.columnDefs = columns;
                         }
-                        $scope.datasource = $scope.$parent[$el.find("data[name=datasource]").text()];
-                        $scope.data = $scope.datasource.data;
 
 
                         // pagingOptions
