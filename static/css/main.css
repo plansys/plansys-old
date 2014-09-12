@@ -1045,14 +1045,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 }
 
 .data-grid-table .ngTopPanel {
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
     background:#fff;
-    box-shadow:0px 0px 0px 1px #ddd;
-}
-.data-grid-table .ngHeaderContainer {
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
 }
 
 .data-grid-table .ngHeaderCell {
@@ -1066,7 +1059,21 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     background-repeat: repeat-x;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff5f5f5', endColorstr='#ffeeeeee', GradientType=0);
     white-space: nowrap;
+    border:1px solid #ddd;
+    border-right:0px;
+    border-left:0px;
 }
+
+.data-grid-table .ngHeaderCell:first-child {
+    border-left:1px solid #ddd;
+    border-top-left-radius: 4px;
+}
+
+.data-grid-table .ngHeaderCell:last-child {
+    border-right:1px solid #ddd;
+    border-top-right-radius: 4px;
+}
+
 
 .data-grid-table .ngHeaderCell .ngHeaderText {
     text-transform: uppercase;
@@ -1076,13 +1083,22 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     line-height:20px;
     font-weight:bold;
 }
-
-
 .data-grid-table .ngViewport {
-    box-shadow:0px 0px 0px 1px #ddd;
-    overflow:hidden;
+    overflow-y:hidden;
+    overflow-x:auto;
+    padding-bottom:20px;
 }
 
+.data-grid-table .ngViewport .ngCell:first-child {
+    border-left:1px solid #ddd;
+}
+.data-grid-table .ngViewport .ngCell:last-child {
+    border-right:1px solid #ddd;
+}
+
+.data-grid-table .ngCell {
+    border-bottom:1px solid #ddd;
+}
 .data-grid-table .ngViewport .ngRow {
     background:#fff;
 }
@@ -1100,7 +1116,6 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 .data-grid-table .ngViewport .ngCellText {
     padding:4px 10px;
     font-size:13px;
-    border-bottom:1px solid #ddd;
     line-height:20px;
 }
 .data-grid-table .ngViewport .ngCellButton {

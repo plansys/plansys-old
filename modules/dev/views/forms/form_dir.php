@@ -13,7 +13,7 @@
 
 </div>
 <a ng-if='item.class' target="iframe" 
-   href="<?php echo $this->createUrl('update', array('class' => '')); ?>{{item.alias}}"
+   href="<?php echo $this->createUrl('update', array('class' => '')); ?>{{item.alias}}&m={{item.mtime}}"
    ui-tree-handle ng-click="select(this)" ng-class="is_selected(this)">
     <i ng-show="!this.collapsed" class="fa fa-file-text-o fa-nm"></i>
     {{item.name}}

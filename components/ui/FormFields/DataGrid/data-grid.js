@@ -267,7 +267,6 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
 
                             $scope.$watch('gridOptions.sortInfo', function(sort, oldsort) {
                                 if (sort != oldsort) {
-
                                     var ds = $scope.datasource;
                                     if (typeof ds != "undefined") {
                                         var order_by = [];

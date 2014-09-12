@@ -67,7 +67,7 @@ class DevUserIndex extends Form {
                         'label' => 'last login',
                         'listExpr' => '',
                         'filterType' => 'date',
-                        'show' => true,
+                        'show' => false,
                     ),
                     array (
                         'name' => 'role',
@@ -224,6 +224,7 @@ class DevUserIndex extends Form {
                     'useExternalSorting' => 'true',
                     'enablePaging' => 'true',
                     'afterSelectionChange' => 'url:/dev/user/update?id={id}',
+                    'enableColumnResize' => 'true',
                 ),
                 'type' => 'DataGrid',
             ),

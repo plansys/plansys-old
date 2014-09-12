@@ -204,6 +204,7 @@ class FormBuilder extends CComponent {
 
             if (is_string($f)) {
                 $fields[$k] = stripslashes($f);
+                continue;
             }
 
             $class = @$f['type'];
@@ -1013,7 +1014,7 @@ EOF;
             $item = str_replace($file_dir, "", $i);
             $item = str_replace('.php', "", $item);
             $newAlias = trim(trim($alias, '.') . '.' . $subdir, '.');
-            $item = $func($item, $module, $newAlias);
+            $item = $func($item, $module, $newAlias, $i);
             $item['id'] = $id++;
 
 
@@ -1054,12 +1055,13 @@ EOF;
     public static function listFile($formatRecursive = true) {
         $files = array();
 
-        $func = function($m, $module = "", $aliaspath = "") {
+        $func = function($m, $module = "", $aliaspath = "", $path) {
             return array(
                 'name' => str_replace(ucfirst($module), '', $m),
                 'class' => $m,
                 'alias' => $aliaspath . "." . $m,
-                'items' => array()
+                'items' => array(),
+                'mtime' => filemtime($path)
             );
         };
 
@@ -1070,7 +1072,7 @@ EOF;
             $items[$k] = str_replace($forms_dir, "", $f);
             $items[$k] = str_replace('.php', "", $items[$k]);
             if (!is_null($func)) {
-                $items[$k] = $func($items[$k], "", "application.components.ui.FormFields");
+                $items[$k] = $func($items[$k], "", "application.components.ui.FormFields", $f);
             }
         }
 
@@ -1090,7 +1092,7 @@ EOF;
             if (!is_null($func)) {
                 $alias = trim(str_replace($forms_dir, '', $file_dir), DIRECTORY_SEPARATOR);
                 $alias = trim('application.forms.' . $alias, '.');
-                $items[$k] = $func($items[$k], "", $alias);
+                $items[$k] = $func($items[$k], "", $alias, $f);
             }
         }
 

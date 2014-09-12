@@ -48,32 +48,7 @@ class DevMenuEditor extends Form {
                 'type' => 'TextField',
             ),
             array (
-                'totalColumns' => '3',
                 'column1' => array (
-                    array (
-                        'label' => 'Icon',
-                        'name' => 'icon',
-                        'list' => array (
-                            '' => '<i class="fa "></i> - NONE -',
-                            'fa-adjust' => '<i class="fa fa-adjust"></i> Adjust',
-                            'fa-adn' => '<i class="fa fa-adn"></i> Adn',
-                            'fa-align-center' => '<i class="fa fa-align-center"></i> Align center',
-                            'fa-align-justify' => '<i class="fa fa-align-justify"></i> Align justify',
-                            'z...' => '...',
-                        ),
-                        'listExpr' => 'Helper::iconList()',
-                        'renderEmpty' => 'Yes',
-                        'iconTemplate' => '<i class=\\"fa fa-fw fa-lg {icon}\\"></i>',
-                        'fieldWidth' => '400',
-                        'options' => array (
-                            'ng-model' => 'active.icon',
-                            'ng-change' => 'save()',
-                        ),
-                        'type' => 'IconPicker',
-                    ),
-                    '<column-placeholder></column-placeholder>',
-                ),
-                'column2' => array (
                     array (
                         'label' => 'State',
                         'name' => 'Drop Down List',
@@ -82,16 +57,29 @@ class DevMenuEditor extends Form {
                             'ng-change' => 'save()',
                             'ng-show' => 'active.items.length>0',
                         ),
-                        'list' => array (
-                            '' => 'Expanded',
-                            'collapsed' => 'Collapsed',
-                        ),
                         'listExpr' => 'array(
   \'\'=>\'Expanded\', 
   \'collapsed\'=>\'Collapsed\'
 )',
                         'type' => 'DropDownList',
                     ),
+                    array (
+                        'label' => 'Icon',
+                        'name' => 'icon',
+                        'listExpr' => 'Helper::iconList()',
+                        'renderEmpty' => 'Yes',
+                        'iconTemplate' => '<i class=\\"fa fa-fw fa-lg {icon}\\"></i>',
+                        'fieldWidth' => '400',
+                        'options' => array (
+                            'ng-model' => 'active.icon',
+                            'ng-change' => 'save()',
+                            'ng-show' => 'active.items.length==0',
+                        ),
+                        'type' => 'IconPicker',
+                    ),
+                    '<column-placeholder></column-placeholder>',
+                ),
+                'column2' => array (
                     '<column-placeholder></column-placeholder>',
                 ),
                 'type' => 'ColumnField',
@@ -99,10 +87,10 @@ class DevMenuEditor extends Form {
             array (
                 'label' => 'Display Logic',
                 'fieldname' => 'visible',
+                'options' => array (
+                    'ps-valid' => 'active.visible = result;',
+                ),
                 'type' => 'ExpressionField',
-                'options' => array(
-                    'ps-valid' => 'active.visible = result;'
-                )
             ),
         );
     }

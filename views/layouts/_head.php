@@ -10,7 +10,7 @@
     <?php
     Yii::app()->clientScript->registerCoreScript('jquery');
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/lib/afu/angular-file-upload-shim.min.js'));
-    Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/lib/angular.js'));
+    Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/lib/angular.min.js'));
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/lib/angular.ui.layout.js'));
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/lib/angular.ui.tree.js'));
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/lib/angular.ui.bootstrap.js'));
