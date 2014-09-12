@@ -2,17 +2,6 @@
 
 class FormsController extends Controller {
 
-    public function filters() {
-        return array(
-            array(
-                'COutputCache - index',
-                'duration' => 86400,
-                'requestTypes' => array('GET'),
-                'varyByParam' => array_keys($_GET),
-            ),
-        );
-    }
-
     public $countRenderID = 1;
     public static $modelField = array();
     public static $modelFieldList = array(); // list of all fields in current model
@@ -146,7 +135,6 @@ class FormsController extends Controller {
     public function actionUpdate($class) {
         FormField::$inEditor = true;
         Yii::app()->session['FormBuilder_' . $class] = null;
-
         $this->layout = "//layouts/blank";
         $fb = FormBuilder::load($class);
         $classPath = $class;

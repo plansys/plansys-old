@@ -80,7 +80,7 @@ class FormBuilder extends CComponent {
                     );
                 }
             }
-            Yii::app()->session['FormBuilder_' . $class] = array(
+            Yii::app()->session['FormBuilder_' . $originalClass] = array(
                 'sourceFile' => $model->sourceFile,
                 'file' => $model->file,
                 'methods' => $model->methods
@@ -341,7 +341,6 @@ class FormBuilder extends CComponent {
      * @param array $fields
      */
     public function setFields($fields) {
-
         $fieldlist = array();
         $multiline = array();
 
@@ -355,7 +354,7 @@ class FormBuilder extends CComponent {
             } else {
                 ## tidying attributes, remove attribute that same as default attribute
                 $f = $this->tidyAttributes($f, $fieldlist, $multiline);
-
+                
                 if (isset($fieldlist[$f['type']]['parseField']) && count($fieldlist[$f['type']]['parseField']) > 0) {
                     foreach ($fieldlist[$f['type']]['parseField'] as $i => $j) {
                         if (!isset($f[$i]))
