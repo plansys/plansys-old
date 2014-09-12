@@ -78,7 +78,7 @@ class MenuTree extends CComponent {
         }
 
         foreach ($list as $k => $v) {
-            if (is_string($v['url'])) {
+            if (isset($v['url']) && is_string($v['url'])) {
                 $list[$k]['url'] = str_replace('?', '&', $v['url']);
             }
             
