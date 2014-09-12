@@ -1,5 +1,5 @@
 
-<div class="action-bar">
+<div class="action-bar" >
     <div class="title-bar">
         <span class="title"><?= $this->title ?></span>
     </div>
@@ -15,3 +15,4 @@
     <?php endif; ?> 
 </div>
 <div id="general" ></div>
+<br/>

@@ -217,11 +217,11 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                                 });
                             }
 
-
                             columns.push(col);
                         }
-
-                        $scope.gridOptions.columnDefs = columns;
+                        if (columns.length > 0) {
+                            $scope.gridOptions.columnDefs = columns;
+                        }
                         $scope.datasource = $scope.$parent[$el.find("data[name=datasource]").text()];
                         $scope.data = $scope.datasource.data;
 
