@@ -16,6 +16,21 @@ class Controller extends CController {
         return Yii::app()->request->baseUrl . $path;
     }
 
+    public function init() {
+        $this->updateCache();
+    }
+
+    private function updateCache() {
+        if (Yii::app()->request->getParam('cache', 'true') === 'false' || Yii::app()->session['nocache']) {
+            Yii::app()->setComponent('cache', new CDummyCache());
+            Yii::app()->session['nocache'] = true;
+        }
+        
+        if (Yii::app()->request->getParam('cache', 'true') === 'true') {
+            Yii::app()->session['nocache'] = false;
+        }
+    }
+
     public function staticUrl($path) {
         $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
         $static = "/" . array_pop($dir) . "/static";

@@ -43,7 +43,7 @@ class Text extends FormField {
         );
     }
 	
-    public $renderInEditor = 'Yes';
+    public $renderInEditor = 'No';
 
     /** @var string $value */
     public $value;
