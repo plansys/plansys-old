@@ -279,20 +279,20 @@ class ActiveRecord extends CActiveRecord {
         $table = $model::model()->tableSchema->name;
         $field = $model::model()->tableSchema->columns;
         unset($field['id']);
-
+        
         $columnCount = count($field);
-        $columnName = array_keys($field);
+        $columnName = array_keys($field);   
         $update = "";
         foreach ($data as $d) {
             $cond = $d['id'];
             unset($d['id']);
             $updatearr = array();
             for ($i = 0; $i < $columnCount; $i++) {
-                if (isset($columName[$i])) {
+                if (isset($columnName[$i])) {
                     $updatearr[] = $columnName[$i] . " = '{$d[$columnName[$i]]}'";
-                }
+                } 
             }
-
+            
             $updatesql = implode(",", $updatearr);
             if ($updatesql != '') {
                 $update .= "UPDATE {$table} SET {$updatesql} WHERE id='{$cond}';";
