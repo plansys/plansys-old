@@ -34,6 +34,7 @@ class DevRoleForm extends Role {
                         'type' => 'LinkButton',
                     ),
                 ),
+                'title' => '{{!isNewRecord ? \\\'Role Detail: \\\' + model.role_name : \\\'New Role\\\'}}',
                 'type' => 'ActionBar',
             ),
             array (
@@ -58,7 +59,7 @@ class DevRoleForm extends Role {
                     array (
                         'label' => 'Parent Role',
                         'name' => 'parent_id',
-                        'condition' => 'where parent_id = 0 and id != $model->id {AND [where]}',
+                        'condition' => 'where parent_id = 0 {and id != $model->id} {AND [where]}',
                         'includeEmpty' => 'Yes',
                         'emptyValue' => '0',
                         'searchable' => 'Yes',
@@ -72,20 +73,172 @@ class DevRoleForm extends Role {
                 'type' => 'ColumnField',
             ),
             array (
+                'value' => '<div ng-if=\\"!isNewRecord\\">',
+                'type' => 'Text',
+            ),
+            array (
                 'title' => 'User List',
                 'type' => 'SectionHeader',
             ),
             array (
                 'name' => 'dataFilter1',
+                'datasource' => 'dataSource1',
+                'filters' => array (
+                    array (
+                        'name' => 'nip',
+                        'label' => 'nip',
+                        'listExpr' => '',
+                        'filterType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'fullname',
+                        'label' => 'fullname',
+                        'listExpr' => '',
+                        'filterType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'email',
+                        'label' => 'email',
+                        'listExpr' => '',
+                        'filterType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'phone',
+                        'label' => 'phone',
+                        'listExpr' => '',
+                        'filterType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'username',
+                        'label' => 'username',
+                        'listExpr' => '',
+                        'filterType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'last_login',
+                        'label' => 'last login',
+                        'listExpr' => '',
+                        'filterType' => 'date',
+                        'show' => false,
+                    ),
+                ),
                 'type' => 'DataFilter',
             ),
             array (
                 'name' => 'dataSource1',
+                'sql' => 'select * from p_user u inner join p_user_role p on u.id = p.user_id    and p.role_id = :id {[where]} {[order]} {[paging]}',
+                'params' => array (
+                    ':id' => '$model->id',
+                    'where' => 'dataFilter1',
+                    'order' => 'dataGrid1',
+                    'paging' => 'dataGrid1',
+                ),
                 'type' => 'DataSource',
             ),
             array (
                 'name' => 'dataGrid1',
+                'datasource' => 'dataSource1',
+                'columns' => array (
+                    array (
+                        'name' => 'nip',
+                        'label' => 'nip',
+                        'options' => array (),
+                        'buttonCollapsed' => 'Yes',
+                        'buttons' => array (
+                            array (
+                                '',
+                                'label' => '',
+                            ),
+                        ),
+                        'columnType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'fullname',
+                        'label' => 'fullname',
+                        'options' => array (),
+                        'buttonCollapsed' => 'Yes',
+                        'buttons' => array (
+                            array (
+                                '',
+                                'label' => '',
+                            ),
+                        ),
+                        'columnType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'email',
+                        'label' => 'email',
+                        'options' => array (),
+                        'buttonCollapsed' => 'Yes',
+                        'buttons' => array (
+                            array (
+                                '',
+                                'label' => '',
+                            ),
+                        ),
+                        'columnType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'phone',
+                        'label' => 'phone',
+                        'options' => array (),
+                        'buttonCollapsed' => 'Yes',
+                        'buttons' => array (
+                            array (
+                                '',
+                                'label' => '',
+                            ),
+                        ),
+                        'columnType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'username',
+                        'label' => 'username',
+                        'options' => array (),
+                        'buttonCollapsed' => 'Yes',
+                        'buttons' => array (
+                            array (
+                                '',
+                                'label' => '',
+                            ),
+                        ),
+                        'columnType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'last_login',
+                        'label' => 'last login',
+                        'options' => array (),
+                        'buttonCollapsed' => 'Yes',
+                        'buttons' => array (
+                            array (
+                                '',
+                                'label' => '',
+                            ),
+                        ),
+                        'columnType' => 'string',
+                        'show' => true,
+                    ),
+                ),
+                'gridOptions' => array (
+                    'enablePaging' => 'true',
+                    'enableExternalSorting' => 'true',
+                    'afterSelectionChange' => 'url:/dev/user/update?id={id}',
+                ),
                 'type' => 'DataGrid',
+            ),
+            array (
+                'value' => '</div>',
+                'type' => 'Text',
             ),
         );
     }

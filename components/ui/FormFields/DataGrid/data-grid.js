@@ -1,9 +1,9 @@
-app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
+app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
     return {
         scope: true,
-        compile: function(element, attrs, transclude) {
+        compile: function (element, attrs, transclude) {
 
-            return function($scope, $el, attrs, ctrl) {
+            return function ($scope, $el, attrs, ctrl) {
                 function evalArray(array) {
                     for (i in array) {
                         if (typeof array[i] == "string") {
@@ -11,7 +11,7 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                                 eval('array[i] = ' + array[i].trim().substr(3));
                             } else if (array[i].trim().substr(0, 4) == "url:") {
                                 var url = array[i].trim().substr(4);
-                                array[i] = function(row) {
+                                array[i] = function (row) {
                                     location.href = eval($scope.generateUrl(url, 'function'));
                                 }
                             } else {
@@ -28,9 +28,9 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                 }
 
                 $('body').on({
-                    mouseover: function() {
+                    mouseover: function () {
                         var $container = $(this);
-                        $('.ngRow > .ngCellButtonCollapsedDetail').each(function() {
+                        $('.ngRow > .ngCellButtonCollapsedDetail').each(function () {
                             var $container = $(this).parent().find('.' + $(this).attr('colt')).find('.ngCellButtonCollapsed');
                             $(this).hide().remove().appendTo($container);
                         });
@@ -49,7 +49,7 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                         $compile($detail)(angular.element($container).scope());
 
                         $detail.on({
-                            mouseout: function() {
+                            mouseout: function () {
                                 $(this).hide().remove().appendTo($container);
                             }
                         });
@@ -57,7 +57,7 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                     },
                 }, '.ngCellButtonCollapsed');
 
-                $scope.pagingKeypress = function(e) {
+                $scope.pagingKeypress = function (e) {
                     if (e.which == 13) {
                         e.preventDefault();
                         e.stopPropagation();
@@ -65,7 +65,7 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                     }
                 }
 
-                $scope.removeRow = function(row) {
+                $scope.removeRow = function (row) {
                     if (typeof row == "undefined" || typeof row.rowIndex != 'number') {
                         return;
                     }
@@ -75,7 +75,7 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                     $scope.data.splice(index, 1);
                 };
 
-                $scope.buttonClick = function(row, e) {
+                $scope.buttonClick = function (row, e) {
                     $btn = $(e.target);
 
                     if (!$btn.is('a')) {
@@ -92,10 +92,10 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                         if ($btn.attr('ajax-success')) {
 
                             $http.get($btn.attr('href'))
-                                    .success(function(data) {
+                                    .success(function (data) {
                                         $scope.$eval($btn.attr('ajax-success'), {row: row, data: data});
                                     })
-                                    .error(function(data) {
+                                    .error(function (data) {
                                         $scope.$eval($btn.attr('ajax-failed'), {row: row, data: data});
                                     });
 
@@ -108,7 +108,7 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                     }
                 }
 
-                $scope.generateUrl = function(url, type) {
+                $scope.generateUrl = function (url, type) {
                     var output = '';
                     if (typeof url == "string") {
                         if (url.match(/http*/ig)) {
@@ -130,7 +130,7 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                     return output;
                 }
 
-                $scope.generateButtons = function(column) {
+                $scope.generateButtons = function (column) {
                     var buttons = column.buttons;
                     var html = '<div class="ngCellButton colt{{$index}}">';
                     var btnSize = 'btn-xs';
@@ -171,15 +171,20 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                     return html;
                 }
 
-                $scope.initGrid = function() {
+                $scope.initGrid = function () {
                     $scope.grid = this;
                 }
 
-                $scope.fillColumns = function() {
-                    $timeout(function() {
+                $scope.fillColumns = function () {
+                    $timeout(function () {
                         var columns = [];
                         $scope.datasource = $scope.$parent[$el.find("data[name=datasource]").text()];
-                        $scope.data = $scope.datasource.data;
+
+                        if (typeof $scope.datasource != "undefined") {
+                            $scope.data = $scope.datasource.data;
+                        } else {
+                            $scope.data = [];
+                        }
 
                         // prepare gridOptions
                         evalArray($scope.gridOptions);
@@ -189,7 +194,7 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                         $scope.gridOptions.rowHeight = 28;
                         $scope.gridOptions.multiSelect = $scope.gridOptions.multiSelect || false;
 
-                        if ($scope.data!== null && $scope.columns !== null && 
+                        if ($scope.data !== null && $scope.columns !== null &&
                                 $scope.data.length > 0 && $scope.columns.length == 0) {
                             for (i in $scope.data[0]) {
                                 $scope.columns.push({
@@ -247,7 +252,7 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                                 totalServerItems: $scope.datasource.totalItems,
                                 currentPage: 1
                             };
-                            $scope.$watch('gridOptions.pagingOptions', function(paging, oldpaging) {
+                            $scope.$watch('gridOptions.pagingOptions', function (paging, oldpaging) {
                                 if (paging != oldpaging) {
                                     var ds = $scope.datasource;
                                     var maxPage = Math.ceil($scope.datasource.totalItems / $scope.gridOptions.pagingOptions.pageSize);
@@ -278,7 +283,7 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                                 directions: []
                             };
 
-                            $scope.$watch('gridOptions.sortInfo', function(sort, oldsort) {
+                            $scope.$watch('gridOptions.sortInfo', function (sort, oldsort) {
                                 if (sort != oldsort) {
                                     var ds = $scope.datasource;
                                     if (typeof ds != "undefined") {
@@ -305,13 +310,13 @@ app.directive('psDataGrid', function($timeout, $http, $compile, dateFilter) {
                     }, 0);
                 }
 
-                $scope.$watch('datasource.data', function() {
+                $scope.$watch('datasource.data', function () {
                     if ($scope.datasource != null) {
                         $scope.data = $scope.datasource.data;
                     }
                 });
 
-                $scope.reset = function() {
+                $scope.reset = function () {
                     location.reload();
                 }
 

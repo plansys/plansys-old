@@ -1708,6 +1708,7 @@ div[dropdown] a {
     outline:0px;
 }
 div[dropdown] .search {
+    margin-bottom:5px;
     padding:6px 8px;
     border-bottom:1px solid #ececeb;
 }

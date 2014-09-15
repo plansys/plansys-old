@@ -221,7 +221,7 @@ class DataSource extends FormField {
                 } else {
                     $sql = $template['sql'];
                 }
-                
+
                 if ($template['sql'] != '') {
                     $parsed[$param] = $template['params'];
                 }
@@ -231,6 +231,7 @@ class DataSource extends FormField {
                 }
             }
         }
+
 
         return array('sql' => $sql, 'params' => $parsed);
     }
@@ -348,10 +349,10 @@ class DataSource extends FormField {
         }
 
         $this->data = array(
-            'data' => $data['data'],
-            'count' => $data['debug']['count'],
-            'params' => $data['debug']['params'],
-            'debug' => ($this->debugSql == 'Yes' ? $data['debug'] : array())
+            'data' => @$data['data'],
+            'count' => @$data['debug']['count'],
+            'params' => @$data['debug']['params'],
+            'debug' => ($this->debugSql == 'Yes' ? @$data['debug'] : array())
         );
     }
 

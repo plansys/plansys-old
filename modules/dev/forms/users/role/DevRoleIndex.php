@@ -5,18 +5,26 @@ class DevRoleIndex extends Form {
     public function getFields() {
         return array (
             array (
+                'linkBar' => array (
+                    array (
+                        'label' => 'New Role',
+                        'url' => '/dev/user/newRole',
+                        'buttonType' => 'success',
+                        'icon' => 'plus',
+                        'type' => 'LinkButton',
+                    ),
+                ),
                 'showSectionTab' => 'No',
                 'type' => 'ActionBar',
             ),
             array (
                 'name' => 'dataSource1',
-                'sql' => 'select p.role_name as parent_role,r.id as id, r.role_name, r.role_description from p_role r left outer join p_role p on r.parent_id = p.id {where [where]} {order by parent_role asc [order]} {[paging]}',
+                'sql' => 'select p.role_name as parent_role,r.id as id, r.role_name, r.role_description from p_role r left outer join p_role p on r.parent_id = p.id {where [where]} {order by parent_role asc, id asc [order]} {[paging]}',
                 'params' => array (
                     'where' => 'dataFilter1',
                     'order' => 'dataGrid1',
                     'paging' => 'dataGrid1',
                 ),
-                'debugSql' => 'Yes',
                 'enablePaging' => 'Yes',
                 'pagingSQL' => 'select count(1) from p_role r left outer join p_role p on r.parent_id = p.id {where [where]}',
                 'type' => 'DataSource',
@@ -54,20 +62,6 @@ class DevRoleIndex extends Form {
                 'datasource' => 'dataSource1',
                 'columns' => array (
                     array (
-                        'name' => 'parent_role',
-                        'label' => 'Parent Role',
-                        'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
-                        'columnType' => 'string',
-                        'show' => true,
-                    ),
-                    array (
                         'name' => 'role_name',
                         'label' => 'Role',
                         'options' => array (),
@@ -93,7 +87,21 @@ class DevRoleIndex extends Form {
                             ),
                         ),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'parent_role',
+                        'label' => 'Parent Role',
+                        'options' => array (),
+                        'buttonCollapsed' => 'Yes',
+                        'buttons' => array (
+                            array (
+                                '',
+                                'label' => '',
+                            ),
+                        ),
+                        'columnType' => 'string',
+                        'show' => false,
                     ),
                 ),
                 'gridOptions' => array (

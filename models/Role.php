@@ -4,7 +4,7 @@ class Role extends ActiveRecord {
  
     public function rules() {
         return array(
-            array('role_name, role_description, parent_id', 'required'),
+            array('role_name, role_description', 'required'),
             array('parent_id', 'numerical', 'integerOnly'=>true),
             array('role_name, role_description', 'length', 'max'=>255),
         );

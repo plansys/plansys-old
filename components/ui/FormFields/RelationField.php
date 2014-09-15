@@ -292,8 +292,9 @@ class RelationField extends FormField {
         $sql = $this->evaluate("\"{$this->condition}\"", true);
 
         preg_match_all("/\{(.*?)\}/", $sql, $blocks);
+        preg_match_all("/\{(.*?)\}/", $this->condition, $conditionBlock);
         preg_match_all("/\{(.*?)\}/", $this->labelField, $fields);
-        foreach ($blocks[1] as $block) {
+        foreach ($blocks[1] as $k => $block) {
             if (strpos($block, '[where]') !== false) {
                 $cond = '';
                 if ($search != '') {
@@ -304,8 +305,18 @@ class RelationField extends FormField {
                     }
                     $cond = str_replace("[where]", $sqlcond, $block);
                 }
-                $sql = str_replace("{{$block}}", $cond, $sql);
+            } else if (strpos($conditionBlock[1][$k], '$model') !== false) {
+                preg_match("/\\\$model->[\w_]+/", $conditionBlock[1][$k], $modelVar);
+                foreach ($modelVar as $v) {
+                    $val = $this->evaluate("\"{$v}\"", true);
+                    if ($val == '') {
+                        $cond = '';
+                    } else {
+                        $cond = $block;
+                    }
+                }
             }
+            $sql = str_replace("{{$block}}", $cond, $sql);
         }
         return $sql;
     }
@@ -320,6 +331,7 @@ class RelationField extends FormField {
         $limit = ($search == '' ? 'limit 30' : 'limit 100');
         $sql = "select * from {$table} {$condition} {$limit}";
         $rawlist = Yii::app()->db->createCommand($sql)->queryAll();
+
 
         foreach ($rawlist as $k => $i) {
             $included = true;
@@ -368,8 +380,7 @@ class RelationField extends FormField {
             return false;
             die();
         }
-        
-        
+
         Yii::import($class);
         $class = array_pop(explode(".", $class));
         $model = new $class;

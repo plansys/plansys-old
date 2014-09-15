@@ -3,6 +3,19 @@
 class UserController extends Controller {
 
     
+    public function actionNewRole() {
+
+        $model = new DevRoleForm;
+                
+        if (isset($_POST["DevRoleForm"])) {
+            $model->attributes = $_POST["DevRoleForm"];
+            if ($model->save()) {
+                $this->redirect(array("roles"));
+            }
+        }
+        $this->renderForm("DevRoleForm",$model);
+    }
+
     public function actionRole($id) {
 
         $model = $this->loadModel($id , "DevRoleForm");

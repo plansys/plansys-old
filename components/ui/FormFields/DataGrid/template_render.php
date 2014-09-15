@@ -9,6 +9,10 @@
         <i class="fa fa-link"></i>
         Loading DataGrid...
     </div>
+    <div ng-if="!datasource" class="list-view-loading">
+        <i class="fa fa-warning"></i>
+        {{name}}: Please choose Data Source in Form Builder
+    </div>
     <div ng-if="loaded">
 
         <script type="text/ng-template" id="category_header"><?php include('category_header.php'); ?></script>
@@ -25,7 +29,7 @@
                             <i class="fa fa-repeat"></i> Reset
                         </button>
                     </div>
-
+                    
                     <div class="btn-group pull-right" style="padding-top:2px;" dropdown>
                         <button type="button" class="btn btn-default dropdown-toggle">
 
