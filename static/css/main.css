@@ -42,7 +42,7 @@ hr {
     margin-left:-150px;
     box-shadow:0px 0px 30px #aaa;
     padding:0px 20px 20px 20px;
-    border-radius:4px;
+    border-radius:8px;
 }
 .login-container .error-container {
     display:none;

@@ -73,9 +73,4 @@
             ),
         ),
     ),
-    array (
-        'label' => 'Settings',
-        'icon' => '',
-        'url' => '/dev/settings/index&p=application',
-    ),
 );

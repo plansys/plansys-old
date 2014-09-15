@@ -137,20 +137,27 @@ class ActiveRecord extends CActiveRecord {
         $attributes = array('DB Fields' => $fields);
 
         if (count($props) > 0) {
-            $attributes = $attributes + array('Properties' => $props) ;
+            $attributes = $attributes + array('Properties' => $props);
         }
 
         if (count($relations) > 0) {
-            $attributes =  $attributes + array('Relations' => $relations) ;
+            $attributes = $attributes + array('Relations' => $relations);
         }
 
         return $attributes;
     }
 
     public function save($runValidation = true, $attributes = null) {
-        $validate = parent::save($runValidation, $attributes);
-
-        if ($validate) {
+        $isNew = $this->isNewRecord;
+        if ($this->primaryKey == '') {
+            $table=$this->getMetaData()->tableSchema;
+            $primaryKey=$table->primaryKey;
+            $this->$primaryKey = null;
+        }
+        
+        $saved = parent::save($runValidation, $attributes);
+        
+        if ($saved) {
             foreach ($this->__relations as $k => $new) {
                 $new = $new == '' ? array() : $new;
                 $old = $this->__oldRelations[$k];
@@ -169,9 +176,11 @@ class ActiveRecord extends CActiveRecord {
                         case 'CHasManyRelation':
                             //without through
                             if (is_string($rel->foreignKey)) {
+
                                 foreach ($new as $i => $j) {
                                     $new[$i][$rel->foreignKey] = $this->id;
                                 }
+
                                 ActiveRecord::batch($rel->className, $new, $old);
                             }
 
@@ -184,7 +193,7 @@ class ActiveRecord extends CActiveRecord {
             }
         }
 
-        return $validate;
+        return $saved;
     }
 
     /**
