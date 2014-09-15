@@ -35,17 +35,33 @@ hr {
 
 .login.form {
     width:300px;
-    height:200px;
     position:absolute;
     left:50%;
-    top:50%;
+    top:43%;
     margin-top:-130px;
     margin-left:-150px;
-    box-shadow:0px 0px 15px #999;
-    padding:0px 20px;
+    box-shadow:0px 0px 30px #aaa;
+    padding:0px 20px 20px 20px;
+    border-radius:4px;
 }
-.login.form hr {
-    margin:10px -20px;
+.login-container .error-container {
+    display:none;
+}
+
+.login-container .btn-success {
+    margin-top:10px;
+}
+
+.login-container .error {
+    margin-bottom:0px;
+}
+
+.login.form h1 {
+    font-size:22px;
+    text-align:center;
+    margin:0px -20px 10px -20px;
+    padding:10px 20px;
+    border-bottom:1px solid #ececeb;
 }
 
 i {
@@ -1784,6 +1800,13 @@ textarea.force-rows {
     border-top:1px solid #a94442;
     border-radius:0px 0px 3px 3px;
 }
+
+.error-container {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
+
 .control-label {
     font-weight:normal;
     cursor:pointer;

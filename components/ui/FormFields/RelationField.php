@@ -290,7 +290,7 @@ class RelationField extends FormField {
 
     public function generateCondition($search = '') {
         $sql = $this->evaluate("\"{$this->condition}\"", true);
-                
+
         preg_match_all("/\{(.*?)\}/", $sql, $blocks);
         preg_match_all("/\{(.*?)\}/", $this->labelField, $fields);
         foreach ($blocks[1] as $block) {
@@ -317,9 +317,10 @@ class RelationField extends FormField {
         $table = $model->tableName();
         $list = array();
         $condition = $this->generateCondition($search);
-        $sql = "select * from {$table} {$condition}";
+        $limit = ($search == '' ? 'limit 30' : 'limit 100');
+        $sql = "select * from {$table} {$condition} {$limit}";
         $rawlist = Yii::app()->db->createCommand($sql)->queryAll();
-        
+
         foreach ($rawlist as $k => $i) {
             $included = true;
             if ($included) {
@@ -345,10 +346,12 @@ class RelationField extends FormField {
         }
 
         if ($this->includeEmpty == 'Yes') {
-            array_unshift($list, array(
-                'value' => '---',
-                'label' => '---'
-            ));
+            if (count($list) > 0) {
+                array_unshift($list, array(
+                    'value' => '---',
+                    'label' => '---'
+                ));
+            }
             array_unshift($list, array(
                 'value' => $this->emptyValue,
                 'label' => $this->emptyLabel

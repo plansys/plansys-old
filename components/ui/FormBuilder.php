@@ -632,18 +632,18 @@ class FormBuilder extends CComponent {
             $url = "#";
             $ngctrl = $renderWithAngular ? 'ng-controller="' . $modelClass . 'Controller"' : '';
 
+            $formOptions = (is_array(@$form['options']) ? @$form['options'] : array());
             $formDefaultAttr = array(
                 'action' => $url,
                 'method' => 'POST',
-                'class' => 'form-horizontal',
+                'class' => 'form-horizontal ' . @$formOptions['class'],
                 'role' => 'form',
             );
-            $formOptions = (is_array(@$form['options']) ? @$form['options'] : array());
-
+            
             $formAttr = array_merge($formOptions, $formDefaultAttr);
             $formAttr = Helper::expandAttributes($formAttr);
             $html .= "<div style='opacity:0' {$ngctrl}><form {$formAttr}>";
-            $html .= "<div ng-if='errors' class='alert alert-danger' style='margin:0px'><ul><li ng-repeat='(k,e) in errors'>{{ e[0] }}</li></ul></div>";
+            $html .= "<div ng-if='errors' class='error-container alert alert-danger' style='margin:0px'><ul><li ng-repeat='(k,e) in errors'>{{ e[0] }}</li></ul></div>";
         }
 
         ## define formdata

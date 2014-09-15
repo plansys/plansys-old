@@ -10,14 +10,14 @@ class SiteController extends Controller {
         // renders the view file 'protected/views/site/index.php'
         // using the default layout 'protected/views/layouts/main.php'
         $dblockPath = Yii::getPathOfAlias("application.installer.setup_db");
-        if (!file_exists($dblockPath.'.lock')) {
+        if (!file_exists($dblockPath . '.lock')) {
             if (Yii::app()->user->isGuest) {
                 $this->redirect(array("login"));
             }
             $this->redirect(array(lcfirst(strtolower(Yii::app()->user->roles)) . '/default/index'));
         } else {
-            if(Setting::get("repo.path") == ''){
-                $path = Setting::getRootPath().DIRECTORY_SEPARATOR.'repo';
+            if (Setting::get("repo.path") == '') {
+                $path = Setting::getRootPath() . DIRECTORY_SEPARATOR . 'repo';
                 Setting::set("repo.path", $path);
             }
             $this->redirect(array("install/index"));
@@ -53,12 +53,12 @@ class SiteController extends Controller {
             $model->attributes = $_POST['LoginForm'];
             // validate user input and redirect to the previous page if valid
             if ($model->validate() && $model->login()) {
-
                 $this->redirect(Yii::app()->user->returnUrl);
             }
         }
+
         // display the login form
-        $this->render('login', array('model' => $model));
+        $this->renderForm('LoginForm', $model);
     }
 
     /**

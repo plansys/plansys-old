@@ -3,26 +3,7 @@
  * Class Form
  * @author rizky
  */
-class Form extends CComponent {
-    /** 
-     * @var array $_errors
-     * @access private	
-     */
-    private $_errors = array();
-	
-    /**
-     * @return array me-return array $_errors yang didalamnya menampung error yang terjadi.
-     */
-    public function getErrors() {
-        return $this->_errors;
-    }
-    
-    /**
-     * @param string $value value error
-     */
-    public function setErrors($value) {
-        $this->_errors = $value;
-    }
+class Form extends CFormModel {
     
     /**
      * getAttributes
