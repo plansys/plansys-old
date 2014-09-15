@@ -758,11 +758,11 @@
             };
           }
 
-          scope.$watch(attrs.maxDepth, function(val) {
-            if((typeof val) == "number") {
-              scope.maxDepth = val;
-            }
-          });
+            scope.$watch(attrs.maxDepth, function(val) {
+              if((typeof val) == "number") {
+                scope.maxDepth = val;
+              }
+            });
 
           attrs.$observe('nodrop', function(val) {
             scope.nodrop = ((typeof val) != "undefined");

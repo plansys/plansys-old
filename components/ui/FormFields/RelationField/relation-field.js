@@ -1,40 +1,48 @@
 
-app.directive('relationField', function($timeout) {
+app.directive('relationField', function ($timeout, $http) {
     return {
         require: '?ngModel',
         scope: true,
-        compile: function(element, attrs, transclude) {
+        compile: function (element, attrs, transclude) {
             if (attrs.ngModel && !attrs.ngDelay) {
                 attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
             }
 
-            return function($scope, $el, attrs, ctrl) {
+            return function ($scope, $el, attrs, ctrl) {
                 // when ng-model is changed from inside directive
-                $scope.renderFormList = function() {
+                $scope.renderFormList = function () {
                     $scope.renderedFormList = [];
                     for (key in $scope.formList) {
                         if (angular.isObject($scope.formList[key])) {
                             var subItem = [];
                             var rawSub = $scope.formList[key];
-                            for (subkey in rawSub) {
-                                subItem.push({key: subkey, value: rawSub[subkey]});
+
+                            if (rawSub.label) {
+                                $scope.renderedFormList.push({
+                                    key: rawSub.value,
+                                    value: rawSub.label
+                                });
+                            } else {
+                                for (subkey in rawSub) {
+                                    subItem.push({key: subkey, value: rawSub[subkey]});
+                                }
+                                $scope.renderedFormList.push({key: key, value: subItem});
                             }
-                            $scope.renderedFormList.push({key: key, value: subItem});
                         } else {
                             $scope.renderedFormList.push({key: key, value: $scope.formList[key]});
                         }
                     }
                 }
 
-                $scope.dropdownKeypress = function(e) {
+                $scope.dropdownKeypress = function (e) {
                     if (e.which === 13) {
                         if ($scope.isOpen) {
-                            $timeout(function() {
+                            $timeout(function () {
                                 $el.find("li.hover a").click();
                                 $scope.isOpen = false;
                             }, 0);
                         } else {
-                            $timeout(function() {
+                            $timeout(function () {
                                 $scope.isOpen = true;
                             }, 0);
                         }
@@ -76,13 +84,13 @@ app.directive('relationField', function($timeout) {
                     }
                 }
 
-                $scope.update = function(value, f) {
+                $scope.update = function (value, f) {
                     $scope.updateInternal(value);
-                    $timeout(function() {
+                    $timeout(function () {
                         ctrl.$setViewValue($scope.value);
                     }, 0);
                 };
-                $scope.updateInternal = function(value) {
+                $scope.updateInternal = function (value) {
                     $scope.value = value;
                     if ($scope.showOther && !$scope.itemExist()) {
                         $scope.value = $el.find("li a").attr('value');
@@ -93,21 +101,21 @@ app.directive('relationField', function($timeout) {
                     $scope.toggled(false);
                 };
 
-                $scope.updateOther = function(value) {
+                $scope.updateOther = function (value) {
                     $scope.showOther = false;
                     $scope.updateInternal(value);
                     ctrl.$setViewValue($scope.value);
                     $scope.showOther = true;
                 }
 
-                $scope.itemExist = function(value) {
+                $scope.itemExist = function (value) {
                     if (typeof value == "undefined")
                         value = $scope.value;
 
                     return $el.find("li.dropdown-item a[value='" + value + "']").length != 0;
                 }
 
-                $scope.toggled = function(open) {
+                $scope.toggled = function (open) {
                     if (open) {
                         $scope.openedInField = true;
                         if ($el.find("li a[value='" + $scope.value + "']").length > 0) {
@@ -115,7 +123,7 @@ app.directive('relationField', function($timeout) {
                             $el.find("li a[value='" + $scope.value + "']").focus().parent().addClass('hover');
 
                             if ($scope.searchable) {
-                                $timeout(function() {
+                                $timeout(function () {
                                     $el.find('.search-dropdown').focus();
                                 }, 0);
                             }
@@ -128,28 +136,31 @@ app.directive('relationField', function($timeout) {
                         $el.find("[dropdown] button").focus();
                     }
                 };
-                $scope.changeOther = function() {
+                $scope.changeOther = function () {
                     $scope.value = $scope.otherLabel;
                 };
-                $scope.doSearch = function() {
-                    $timeout(function() {
-                        $el.find("li.hover").removeClass("hover");
-                        $el.find("li:not(.ng-hide):first").addClass("hover");
-                    }, 0);
+                $scope.doSearch = function () {
+                    $scope.loading = true;
+                    $http.post(Yii.app.createUrl('formfield/RelationField.search'), {
+                        's': $scope.search,
+                        'm': $scope.modelClass,
+                        'f': $scope.name,
+                        'mf': $scope.modelField
+                    }).success(function (data) {
+                        $scope.formList = data;
+                        $scope.renderFormList();
+                        $scope.loading = false;
+                    });
                 };
 
-                $scope.isObject = function(input) {
+                $scope.isObject = function (input) {
                     return angular.isObject(input);
-                }
-
-                $scope.isFound = function(input) {
-                    return $scope.search == '' || input.toLowerCase().indexOf($scope.search.toLowerCase()) > -1;
                 }
 
                 // when ng-model, or ps-list is changed from outside directive
                 if (attrs.psList) {
                     function changeFieldList() {
-                        $timeout(function() {
+                        $timeout(function () {
                             $scope.formList = $scope.$eval(attrs.psList);
                             $scope.renderFormList();
                             $scope.updateInternal($scope.value);
@@ -159,7 +170,7 @@ app.directive('relationField', function($timeout) {
                 }
 
                 if (typeof ctrl != 'undefined') {
-                    ctrl.$render = function() {
+                    ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;
 
@@ -173,19 +184,21 @@ app.directive('relationField', function($timeout) {
                 $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
                 $scope.renderedFormList = [];
                 $scope.renderFormList();
-
+                $scope.loading  = false;
                 $scope.searchable = $el.find("data[name=searchable]").text().trim() == "Yes" ? true : false;
                 $scope.showOther = $el.find("data[name=show_other]").text().trim() == "Yes" ? true : false;
                 $scope.otherLabel = $el.find("data[name=other_label]").html();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.value = $el.find("data[name=value]").html().trim();
-               
+                $scope.name = $el.find("data[name=name]").html().trim();
+                $scope.modelField = JSON.parse($el.find("data[name=model_field]").text());
+
                 $scope.isOpen = false;
                 $scope.openedInField = false;
 
                 $scope.search = "";
                 //if ngModel is present, use that instead of value from php
-                $timeout(function() {
+                $timeout(function () {
                     if (attrs.ngModel) {
                         var ngModelValue = $scope.$eval(attrs.ngModel);
                         if (typeof ngModelValue != "undefined") {

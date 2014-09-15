@@ -18,7 +18,7 @@
         <data name="model_class" class="hide"><?= @get_class($model) ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
         <!-- /data -->
-
+        
         <!-- field -->
         <div class="<?= $this->fieldClass ?>" 
              ng-keydown="dropdownKeypress($event)"

@@ -5,6 +5,10 @@ class DevSettingsApplication extends Form {
 
     public function getFields() {
         return array (
+            array (
+                'name' => 'modalDialog1',
+                'type' => 'Modal',
+            ),
         );
     }
 

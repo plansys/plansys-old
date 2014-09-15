@@ -39,7 +39,7 @@
             $scope.active = null;
             $scope.select = function(item) {
                 $scope.active = item.$modelValue;
-                if ($scope.active.name != null) {
+                if ($scope.active.alias != null) {
                     $("iframe").addClass('invisible');
                     $(".loading").removeClass('invisible');
                     $('.loading').removeAttr('style');

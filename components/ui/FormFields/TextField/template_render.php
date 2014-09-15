@@ -11,6 +11,7 @@
     <!-- /label -->
 
     <div class="<?= $this->fieldColClass ?>">
+        
         <!-- data -->
         <data name="value" class="hide"><?= $this->value ?></data>
         <data name="model_class" class="hide"><?= @get_class($model) ?></data>

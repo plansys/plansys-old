@@ -44,9 +44,14 @@
         'url' => '#',
         'items' => array (
             array (
-                'label' => 'User Management',
+                'label' => 'User List',
                 'icon' => 'fa-user',
                 'url' => '/dev/user/index',
+            ),
+            array (
+                'label' => 'Role Manager',
+                'icon' => 'fa-graduation-cap',
+                'url' => '/dev/user/roles',
             ),
         ),
         'state' => 'collapsed',

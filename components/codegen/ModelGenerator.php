@@ -2,6 +2,8 @@
 
 class ModelGenerator extends CodeGenerator {
 
+    
+    
     //Helper UI
     public static function listAllFile() {
         $dir = Yii::getPathOfAlias("application.models");

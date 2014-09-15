@@ -11,11 +11,13 @@
 
     <div class="<?= $this->fieldColClass ?>">
         <!-- data -->
+        <data name="name" class="hide"><?= $this->name; ?></data>
         <data name="value" class="hide" ><?= $this->value ?></data>
         <data name="searchable" class="hide" ><?= $this->searchable ?></data>
         <data name="show_other" class="hide" ><?= $this->showOther ?></data>
         <data name="other_label" class="hide" ><?= $this->otherLabel ?></data>
-        <data name="model_class" class="hide"><?= @get_class($model) ?></data>
+        <data name="model_class" class="hide"><?= Helper::getAlias($model) ?></data>
+        <data name="model_field" class="hide"><?= json_encode($model->attributes) ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
         <!-- /data -->
 
@@ -46,8 +48,12 @@
             <!-- dropdown item -->
             <div class="dropdown-menu open">
                 <div class="search" ng-show="searchable">
+                    
+                    <i ng-show="loading" class="fa fa-spin fa-refresh" 
+                       style="position:absolute;right:20px;top:18px;"></i>
                     <input type="text"
                            ng-model="search"
+                           ng-delay="500"
                            ng-change="doSearch()"
                            placeholder="Search ..."
                            class="input-block-level search-dropdown form-control" autocomplete="off">
@@ -55,8 +61,7 @@
                 <ul class="dropdown-menu inner" role="menu">
                     <li ng-repeat-start="item in renderedFormList track by $index" 
                         ng-if="item.value != '---'" class="dropdown-item" 
-                        ng-class="{'dropdown-header': isObject(item.value)}"
-                        ng-show="isFound(item.value + ' ' + item.key)">
+                        ng-class="{'dropdown-header': isObject(item.value)}">
 
                         <a ng-if="!isObject(item.value)"
                            dropdown-toggle href="#" 

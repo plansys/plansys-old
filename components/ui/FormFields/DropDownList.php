@@ -10,34 +10,34 @@ class DropDownList extends FormField {
      * @return array me-return array property DropDown.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
                     'searchable' => 'size(modelFieldList) > 5',
                 ),
-                'list' => array (),
+                'list' => array(),
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => 500,
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                 ),
@@ -45,19 +45,19 @@ class DropDownList extends FormField {
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'totalColumns' => '4',
-                'column1' => array (
+                'column1' => array(
                     '<column-placeholder></column-placeholder>',
                 ),
-                'column2' => array (
-                    array (
+                'column2' => array(
+                    array(
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => 500,
@@ -67,14 +67,14 @@ class DropDownList extends FormField {
                     ),
                     '<column-placeholder></column-placeholder>',
                 ),
-                'column3' => array (
-                    array (
+                'column3' => array(
+                    array(
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => 500,
@@ -86,10 +86,10 @@ class DropDownList extends FormField {
                 'type' => 'ColumnField',
             ),
             '<hr/>',
-            array (
+            array(
                 'label' => 'Searchable',
                 'name' => 'searchable',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.searchable',
                     'ng-change' => 'save()',
                 ),
@@ -98,10 +98,10 @@ class DropDownList extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Show \\"Other\\" Item',
                 'name' => 'showOther',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.showOther',
                     'ng-change' => 'save()',
                 ),
@@ -110,12 +110,12 @@ class DropDownList extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => '\\"Other\\" Item Label',
                 'name' => 'otherLabel',
                 'labelWidth' => '6',
                 'fieldWidth' => '4',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.otherLabel',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -123,38 +123,38 @@ class DropDownList extends FormField {
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'DropDown Item',
                 'fieldname' => 'list',
                 'show' => 'Show',
-                'options' => array (
+                'options' => array(
                     'ng-hide' => 'active.listExpr != \'\' || active.options[\'ps-list\'] != null',
                 ),
                 'allowEmptyKey' => 'Yes',
                 'allowSpaceOnKey' => 'Yes',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'List Expression',
                 'fieldname' => 'listExpr',
-                'options' => array (
+                'options' => array(
                     'ng-hide' => 'active.options[\'ps-list\'] != null',
                     'ps-valid' => 'active.list = result;save();',
                 ),
                 'desc' => '<i class=\\"fa fa-warning\\"></i> WARNING: Using List Expression will replace <i>DropDown Item</i> with expression result',
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'Options',
                 'fieldname' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Label Options',
                 'fieldname' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Field Options',
                 'fieldname' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
@@ -200,7 +200,7 @@ class DropDownList extends FormField {
 
     /** @var string $showOther */
     public $showOther = 'No';
-    
+
     /** @var string $otherLabel */
     public $otherLabel = 'Lainnya';
 
@@ -234,9 +234,10 @@ class DropDownList extends FormField {
             ## evaluate expression
             $this->list = $this->evaluate($this->listExpr, true);
 
-            ## change sequential array to associative array
             if (is_array($this->list) && !Helper::is_assoc($this->list)) {
-                $this->list = Helper::toAssoc($this->list);
+                if (!is_array($this->list[0])) {
+                    $this->list = Helper::toAssoc($this->list);
+                }
             }
         } else if (is_array($this->list) && !Helper::is_assoc($this->list)) {
             $this->list = Helper::toAssoc($this->list);

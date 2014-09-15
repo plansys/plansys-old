@@ -14,6 +14,22 @@ class Helper {
         );
     }
 
+    public static function getAlias($object) {
+        $r = new ReflectionClass($object);
+        $f = $r->getFileName();
+
+        $path = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
+        $filepath = str_replace($path . DIRECTORY_SEPARATOR, '', $f);
+        $alias = 'app';
+        if (strlen($f) == strlen($filepath)) {
+            $path = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
+            $filepath = str_replace($path . DIRECTORY_SEPARATOR, '', $f);
+            $alias = 'application';
+        }
+
+        return $alias . '.' . str_replace(DIRECTORY_SEPARATOR, '.', str_replace(".php", "", $filepath));
+    }
+
     public static function arrayValuesRecursive($arr) {
         $arr = array_values($arr);
         foreach ($arr as $key => $val) {

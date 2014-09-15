@@ -47,6 +47,11 @@ hr {
 .login.form hr {
     margin:10px -20px;
 }
+
+i {
+    -webkit-font-smoothing: antialiased !important;
+     text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
+}
 /************************************ NAVBAR ***************************************/
 
 .navbar-main {
@@ -1352,6 +1357,7 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
     border-bottom:0px;
     position:fixed;
     left:4px;
+    background:white;
     right:4px;
     z-index:1;
     box-shadow:0px 0px 10px #ddd;

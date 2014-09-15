@@ -1,6 +1,6 @@
 <script type="text/javascript">
-    app.controller("PageController", function($scope, $http, $timeout, $window, $compile) {
-        $scope.getNumber = function(num) {
+    app.controller("PageController", function ($scope, $http, $timeout, $window, $compile) {
+        $scope.getNumber = function (num) {
             a = [];
             for (i = 1; i <= num; i++) {
                 a.push(i);
@@ -8,7 +8,7 @@
             return a;
         };
         $scope.inEditor = true;
-        $scope.fieldMatch = function(scope) {
+        $scope.fieldMatch = function (scope) {
             if (scope == null)
                 return false;
             if ($scope.active == null)
@@ -26,7 +26,7 @@
             properties: true
         };
         /*********************** FORM PROPERTIES ***********************/
-        $scope.createUrl = function(action) {
+        $scope.createUrl = function (action) {
             var module = '<?php echo $fb->module; ?>';
             var controller = $scope.form.controller.replace('Controller', '');
             controller = controller.charAt(0).toLowerCase() + controller.slice(1);
@@ -34,19 +34,19 @@
             action = action.charAt(0).toLowerCase() + action.slice(1);
             return Yii.app.createUrl(module + '/' + controller + '/' + action);
         };
-        $scope.updateRenderBuilder = function() {
+        $scope.updateRenderBuilder = function () {
             var renderBuilderUrl = Yii.app.createUrl('dev/forms/renderBuilder', {
                 class: '<?= $classPath ?>',
                 layout: $scope.form.layout.name
             });
 
-            $http.post(renderBuilderUrl, {form: $scope.form}).then(function(response) {
+            $http.post(renderBuilderUrl, {form: $scope.form}).then(function (response) {
                 $("#render-builder").html(response.data);
                 $compile($("#render-builder").contents())($scope);
             });
         };
 
-        $scope.saveForm = function(force_reload) {
+        $scope.saveForm = function (force_reload) {
             if ($scope.layout != null) {
                 var name = $scope.layout.name;
                 $scope.form.layout.data[name] = $scope.layout;
@@ -58,43 +58,43 @@
 
             $scope.saving = true;
             $http.post('<?php echo $this->createUrl("save", array('class' => $classPath)); ?>', {form: $scope.form})
-                    .success(function(data, status) {
+                    .success(function (data, status) {
                         $scope.saving = false;
                         $scope.updateRenderBuilder();
                     })
-                    .error(function(data, status) {
+                    .error(function (data, status) {
                         $scope.saving = false;
                     });
         };
-        $scope.actionUrl = function(item) {
+        $scope.actionUrl = function (item) {
             if (typeof item != "undefined") {
                 return Yii.app.createUrl(item);
             }
             return "";
         }
-        $scope.generateCreateAction = function() {
+        $scope.generateCreateAction = function () {
             $scope.saving = true;
             $scope.createAction = true;
             $http.post('<?php echo $this->createUrl("createAct", array('class' => $class)); ?>', {form: $scope.form})
-                    .success(function(data, status) {
+                    .success(function (data, status) {
                         $scope.saving = false;
                     })
-                    .error(function(data, status) {
+                    .error(function (data, status) {
                         $scope.saving = false;
                     });
         };
-        $scope.generateUpdateAction = function() {
+        $scope.generateUpdateAction = function () {
             $scope.saving = true;
             $scope.updateAction = true;
             $http.post('<?php echo $this->createUrl("updateAct", array('class' => $class)); ?>', {form: $scope.form})
-                    .success(function(data, status) {
+                    .success(function (data, status) {
                         $scope.saving = false;
                     })
-                    .error(function(data, status) {
+                    .error(function (data, status) {
                         $scope.saving = false;
                     });
         };
-        $scope.openToolbarType = function(open) {
+        $scope.openToolbarType = function (open) {
             if (open) {
                 $(".toolbar-type li.hover").removeClass('hover');
                 $(".toolbar-type li a[value='" + $scope.active.type + "']").focus().parent().addClass('hover');
@@ -102,7 +102,7 @@
         }
         /*********************** LAYOUT ********************************/
         $scope.layout = null;
-        $scope.selectLayout = function(layout) {
+        $scope.selectLayout = function (layout) {
             $scope.tabs.properties = true;
             $scope.active = null;
             $(".form-field.active").removeClass("active");
@@ -118,7 +118,7 @@
 
             $scope.typeChanging = true;
             $scope.layout = null;
-            $timeout(function() {
+            $timeout(function () {
                 $scope.typeChanging = false;
                 $scope.layout = angular.extend({}, $scope.form.layout.data[layout]);
                 $scope.layout.name = layout;
@@ -127,11 +127,11 @@
                 }
             }, 0);
         }
-        $scope.unselectLayout = function() {
+        $scope.unselectLayout = function () {
             $scope.active = null;
             $scope.layout = null;
         };
-        $scope.changeLayoutType = function() {
+        $scope.changeLayoutType = function () {
             $scope.form.layout.data = {};
             function setsize(size, sizetype, type) {
                 var val = {};
@@ -161,10 +161,10 @@
 
             $scope.saveForm(true);
         };
-        $scope.changeLayoutProperties = function() {
+        $scope.changeLayoutProperties = function () {
             $scope.saveForm();
         };
-        $scope.changeLayoutSectionType = function() {
+        $scope.changeLayoutSectionType = function () {
             if ($scope.layout.type == "mainform") {
                 for (v in $scope.form.layout.data) {
                     if ($scope.layout.name != v && $scope.form.layout.data[v].type == "mainform") {
@@ -183,14 +183,26 @@
         $scope.fields = <?php echo json_encode($fieldData); ?>;
         $scope.saving = false;
 
-        $scope.generateFilters = function() {
+        /************************ RELATION FIELD  ****************************/
+        $scope.relationFieldList = {};
+        $scope.generateRelationField = function () {
+            $http.get(Yii.app.createUrl('/formfield/RelationField.listField', {
+                class: $scope.active.modelClass
+            })).success(function (data) {
+                $scope.relationFieldList = data;
+            });
+        }
+
+
+        /************************ DATA FILTERS ****************************/
+        $scope.generateFilters = function () {
             var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]").text());
             if (confirm("Your current filters will be lost. Are you sure?")) {
                 $scope.active.filters = [];
                 $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
                     name: $scope.active.datasource,
                     class: '<?= Helper::classAlias($class) ?>'
-                }).success(function(data) {
+                }).success(function (data) {
                     if (typeof data == 'object') {
                         if (typeof data.data == 'object') {
                             data = data.data;
@@ -222,14 +234,15 @@
             }
         }
 
-        $scope.generateColumns = function() {
+        /************************ DATA COLUMNS ****************************/
+        $scope.generateColumns = function () {
             var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]").text());
             if (confirm("Your current filters will be lost. Are you sure?")) {
                 $scope.active.columns = [];
                 $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
                     name: $scope.active.datasource,
                     class: '<?= Helper::classAlias($class) ?>'
-                }).success(function(data) {
+                }).success(function (data) {
                     if (typeof data == 'object') {
                         if (typeof data.data == 'object') {
                             data = data.data;
@@ -252,11 +265,11 @@
             }
         }
 
-        $scope.isPlaceholder = function(field) {
+        $scope.isPlaceholder = function (field) {
             if ((field.type == 'Text' && field.value == '<column-placeholder></column-placeholder>') || field.type == null)
                 return true;
         };
-        $scope.getDataSourceList = function() {
+        $scope.getDataSourceList = function () {
             var dslist = {
                 '': '-- EMPTY --',
                 '---': '---'
@@ -269,7 +282,7 @@
             }
             $scope.dataSourceList = dslist;
         }
-        $scope.changeActiveName = function() {
+        $scope.changeActiveName = function () {
             $el = $(":focus");
             var newName = $scope.formatName($scope.active.name);
             var caretPos = $el.getCaretPosition() - ($scope.active.name.length - newName.length);
@@ -279,15 +292,15 @@
             $scope.detectDuplicate();
             $scope.save();
         }
-        $scope.formatName = function(name) {
+        $scope.formatName = function (name) {
             if (typeof name != "undefined" && name != null) {
                 return name.replace(/[^a-z0-9A-Z_]/gi, '');
             } else {
                 return "";
             }
         }
-        $scope.detectDuplicate = function() {
-            $(".duplicate").addClass('ng-hide').each(function() {
+        $scope.detectDuplicate = function () {
+            $(".duplicate").addClass('ng-hide').each(function () {
                 if ($(this).attr('fname') == '')
                     return;
                 var name = ".d-" + $scope.formatName($(this).attr('fname'));
@@ -299,17 +312,17 @@
                 }
             });
         }
-        $scope.detectEmptyPlaceholder = function() {
+        $scope.detectEmptyPlaceholder = function () {
 
-            $timeout(function() {
+            $timeout(function () {
                 $('.field-tree .angular-ui-tree-empty').remove();
                 if ($scope.fields.length == 0) {
                     $('<div class="angular-ui-tree-empty"></div>').appendTo('.field-tree');
                 }
             }, 10);
         }
-        $scope.refreshColumnPlaceholder = function() {
-            $(".cpl").each(function() {
+        $scope.refreshColumnPlaceholder = function () {
+            $(".cpl").each(function () {
                 if ($(this).parent().find("li").length == 1) {
                     $(this).show();
                 } else {
@@ -317,7 +330,7 @@
                 }
             });
         };
-        $scope.relayout = function(type) {
+        $scope.relayout = function (type) {
             if (type == "ColumnField") {
                 $scope.refreshColumnPlaceholder();
             }
@@ -325,24 +338,24 @@
         }
         $scope.isCloning = false;
         $scope.isCloneDragging = false;
-        $scope.prepareCloneField = function(scope) {
+        $scope.prepareCloneField = function (scope) {
             $scope.isCloning = true;
         }
-        $scope.cancelCloneField = function() {
-            $timeout(function() {
+        $scope.cancelCloneField = function () {
+            $timeout(function () {
                 if (!$scope.isCloneDragging) {
                     $scope.isCloning = false;
                 }
             }, 10);
         }
         $scope.fieldsOptions = {
-            dragStart: function(scope) {
+            dragStart: function (scope) {
                 if ($scope.isCloning) {
                     $scope.isCloneDragging = true;
                     scope.elements.placeholder.replaceWith(scope.elements.dragging.clone().find('li:eq(0)'));
                 }
             },
-            dragStop: function(scope) {
+            dragStop: function (scope) {
                 if ($scope.isCloning) {
                     $scope.isCloning = false;
                     $scope.isCloneDragging = false;
@@ -350,17 +363,17 @@
                     scope.source.nodesScope.$modelValue.splice(scope.source.index, 0, field);
                 }
                 $scope.save();
-                $timeout(function() {
+                $timeout(function () {
                     $scope.refreshColumnPlaceholder();
                 }, 10);
             }
         };
         $scope.active = null;
         $scope.activeTree = null;
-        $scope.deleteField = function() {
+        $scope.deleteField = function () {
             $el = $($scope.activeTree.$parent.$element);
             $old = $scope.activeTree;
-            $timeout(function() {
+            $timeout(function () {
                 if ($el.next().length > 0 && !$el.next().hasClass('cpl')) {
                     $el.next().find(".form-field:eq(0)").click();
                 } else if ($el.prev().length > 0 && !$el.prev().hasClass('cpl')) {
@@ -373,35 +386,30 @@
                 $scope.save();
             }, 0);
         }
-        $scope.save = function() {
+        $scope.save = function () {
             $scope.detectEmptyPlaceholder();
             $scope.saving = true;
             $http.post('<?= $this->createUrl("save", array('class' => $classPath)); ?>', {fields: $scope.fields})
-                    .success(function(data, status) {
+                    .success(function (data, status) {
                         $scope.saving = false;
                         $scope.detectDuplicate();
                     })
-                    .error(function(data, status) {
+                    .error(function (data, status) {
                         $scope.saving = false;
                     });
         };
         var selectTimeout = null;
-        $scope.select = function(item, event) {
+        $scope.select = function (item, event) {
             event.stopPropagation();
             event.preventDefault();
-
-            if (item.$modelValue.type == 'DataFilter' ||
-                    item.$modelValue.type == 'DataGrid') {
-                $scope.getDataSourceList();
-            }
 
             $(".form-field.active").removeClass("active");
             $(event.currentTarget).addClass("active");
             $(".toolbar-type").removeClass('open');
 
             clearTimeout(selectTimeout);
-            selectTimeout = setTimeout(function() {
-                $scope.$apply(function() {
+            selectTimeout = setTimeout(function () {
+                $scope.$apply(function () {
                     if ($scope.active == null || item.$modelValue.type != $scope.active.type) {
                         $("#toolbar-properties").hide();
                     }
@@ -409,22 +417,35 @@
                     $scope.activeTree = item;
                     $scope.active = item.$modelValue;
                     $scope.tabs.properties = true;
+
+                    switch (item.$modelValue.type) {
+                        case 'DataFilter':
+                            $scope.getDataSourceList();
+                            break;
+                        case 'DataGrid':
+                            $scope.getDataSourceList();
+                            break;
+                        case 'RelationField':
+                            $scope.generateRelationField();
+                            break;
+                    }
+
                 });
             }, 10);
         };
-        $scope.selected = function() {
+        $scope.selected = function () {
             $("#toolbar-properties").show();
         }
-        $scope.unselect = function() {
+        $scope.unselect = function () {
             $scope.active = null;
         };
-        $scope.unselectViaJquery = function() {
-            $scope.$apply(function() {
+        $scope.unselectViaJquery = function () {
+            $scope.$apply(function () {
                 $scope.active = null;
                 $scope.layout = null;
             });
         };
-        $scope.moveToPrev = function(scope) {
+        $scope.moveToPrev = function (scope) {
             var index = scope.$parent.index();
             var clone = scope.$parent.$parentNodesScope.$modelValue[index];
             var count = scope.$parent.$parentNodesScope.$modelValue.length;
@@ -435,8 +456,7 @@
             $scope.save();
         }
 
-
-        $scope.moveToNext = function(scope) {
+        $scope.moveToNext = function (scope) {
             var index = scope.$parent.index();
             var clone = scope.$parent.$parentNodesScope.$modelValue[index];
             var count = scope.$parent.$parentNodesScope.$modelValue.length;
@@ -447,18 +467,18 @@
             $scope.save();
         }
 
-        $timeout(function() {
+        $timeout(function () {
             $(document).trigger('formBuilderInit');
             $scope.detectEmptyPlaceholder();
             $scope.updateRenderBuilder();
         }, 100);
 
-        $('body').on('click', 'div[ui-header]', function(e) {
+        $('body').on('click', 'div[ui-header]', function (e) {
             if (e.target == this) {
                 $scope.unselectViaJquery();
             }
         });
-        $('body').on('keydown', function(e) {
+        $('body').on('keydown', function (e) {
             if ($scope.active != null) {
                 if ($(':focus').parents('.form-builder-properties').length > 0) {
                     return
@@ -488,7 +508,7 @@
 
 
         });
-        $('body').on('mouseenter', '.form-field', function(e) {
+        $('body').on('mouseenter', '.form-field', function (e) {
             var formfields = $(this).parentsUntil('div[ui-tree]', '.form-field');
             function setpos(el, i) {
                 $(el).find('.field-info:eq(0)').css({
@@ -497,7 +517,7 @@
             }
 
             if (formfields.length > 0) {
-                $(formfields).each(function(i) {
+                $(formfields).each(function (i) {
                     setpos(this, i + 1);
                 });
             } else {

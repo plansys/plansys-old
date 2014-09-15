@@ -192,6 +192,7 @@ class DataSource extends FormField {
         $parsed = array();
 
         foreach ($params as $param) {
+            $template = $sql;
             if (!isset($this->params[$param])) {
                 $sql = str_replace("[{$param}]", "", $sql);
                 $parsed[$param] = "";
@@ -201,9 +202,9 @@ class DataSource extends FormField {
             $field = $this->builder->findField(array('name' => $this->params[$param]));
 
             if ($field['type'] == "DataFilter") {
-                $fieldSql = 'DataFilter::generateParams($paramName, $params)';
+                $fieldSql = 'DataFilter::generateParams($paramName, $params, $template)';
             } else if ($field['type'] == "DataGrid") {
-                $fieldSql = 'DataGrid::generateParams($paramName, $params)';
+                $fieldSql = 'DataGrid::generateParams($paramName, $params, $template)';
             } else {
                 $fieldSql = @$field['options']['ps-ds-sql'];
             }
@@ -212,10 +213,15 @@ class DataSource extends FormField {
                 $template = $this->evaluate($fieldSql, true, array(
                     'paramName' => $param,
                     'params' => @$postedParams[$param],
-                    'sql' => $sql
+                    'template' => $template
                 ));
 
-                $sql = str_replace("[{$param}]", $template['sql'], $sql);
+                if (!isset($template['generateTemplate'])) {
+                    $sql = str_replace("[{$param}]", $template['sql'], $sql);
+                } else {
+                    $sql = $template['sql'];
+                }
+                
                 if ($template['sql'] != '') {
                     $parsed[$param] = $template['params'];
                 }

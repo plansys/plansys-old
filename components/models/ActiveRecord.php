@@ -57,9 +57,8 @@ class ActiveRecord extends CActiveRecord {
         $this->__oldRelations = $this->__relations;
     }
 
-    public function setAttributes($values, $safeOnly = true) {
+    public function setAttributes($values, $safeOnly = false) {
         parent::setAttributes($values, $safeOnly);
-
         if (!$this->__isRelationLoaded) {
             $this->loadRelations();
         }
@@ -134,11 +133,17 @@ class ActiveRecord extends CActiveRecord {
             $props[$k] = $k;
         }
 
-        $attributes = array(
-            'DB Fields' => $fields,
-            'Properties' => $props,
-            'Relations' => $relations
-        );
+
+        $attributes = array('DB Fields' => $fields);
+
+        if (count($props) > 0) {
+            $attributes = $attributes + array('Properties' => $props) ;
+        }
+
+        if (count($relations) > 0) {
+            $attributes =  $attributes + array('Relations' => $relations) ;
+        }
+
         return $attributes;
     }
 
@@ -279,9 +284,9 @@ class ActiveRecord extends CActiveRecord {
         $table = $model::model()->tableSchema->name;
         $field = $model::model()->tableSchema->columns;
         unset($field['id']);
-        
+
         $columnCount = count($field);
-        $columnName = array_keys($field);   
+        $columnName = array_keys($field);
         $update = "";
         foreach ($data as $d) {
             $cond = $d['id'];
@@ -290,9 +295,9 @@ class ActiveRecord extends CActiveRecord {
             for ($i = 0; $i < $columnCount; $i++) {
                 if (isset($columnName[$i])) {
                     $updatearr[] = $columnName[$i] . " = '{$d[$columnName[$i]]}'";
-                } 
+                }
             }
-            
+
             $updatesql = implode(",", $updatearr);
             if ($updatesql != '') {
                 $update .= "UPDATE {$table} SET {$updatesql} WHERE id='{$cond}';";
@@ -350,7 +355,7 @@ class ActiveRecord extends CActiveRecord {
             'type' => 'ColumnField',
             'column1' => $column1,
             'column2' => $column2
-                )
+            )
         ;
         return $return;
     }

@@ -64,6 +64,15 @@ class FormBuilder extends CComponent {
             $model->model->attributes = $attributes;
         }
 
+        if (!is_null(Yii::app()->session['FormBuilder_' . $originalClass])) {
+            $file = file(Yii::app()->session['FormBuilder_' . $originalClass]['sourceFile']);
+            $md5 = md5(implode("", $model->file));
+            if (!isset(Yii::app()->session['FormBuilder_' . $originalClass]['md5']) ||
+                Yii::app()->session['FormBuilder_' . $originalClass]['md5'] != $md5) {
+                Yii::app()->session['FormBuilder_' . $originalClass] = null;
+            }
+        }
+
         ## get method line and length
         if (is_null(Yii::app()->session['FormBuilder_' . $originalClass])) {
             $reflector = new ReflectionClass($class);
@@ -80,9 +89,11 @@ class FormBuilder extends CComponent {
                     );
                 }
             }
+
             Yii::app()->session['FormBuilder_' . $originalClass] = array(
                 'sourceFile' => $model->sourceFile,
                 'file' => $model->file,
+                'md5' => md5(implode("", $model->file)),
                 'methods' => $model->methods
             );
         } else {
@@ -353,7 +364,7 @@ class FormBuilder extends CComponent {
             } else {
                 ## tidying attributes, remove attribute that same as default attribute
                 $f = $this->tidyAttributes($f, $fieldlist, $multiline);
-                
+
                 if (isset($fieldlist[$f['type']]['parseField']) && count($fieldlist[$f['type']]['parseField']) > 0) {
                     foreach ($fieldlist[$f['type']]['parseField'] as $i => $j) {
                         if (!isset($f[$i]))
@@ -795,7 +806,7 @@ class FormBuilder extends CComponent {
 
     protected function prepareLineForMethod() {
         $first_line = $this->prepareLineForProperty();
-        
+
         foreach ($this->file as $line => $content) {
             if (preg_match('/\s*(private|protected|public)\s+function\s+.*/x', $content)) {
                 break;

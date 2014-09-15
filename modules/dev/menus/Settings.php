@@ -8,7 +8,7 @@
     ),
     array (
         'label' => 'Database',
-        'icon' => 'fa-database',
+        'icon' => 'fa-sliders',
         'url' => '/dev/settings/index&p=database',
     ),
     array (

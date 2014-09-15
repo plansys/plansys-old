@@ -2,6 +2,25 @@
 
 class UserController extends Controller {
 
+    
+    public function actionRole($id) {
+
+        $model = $this->loadModel($id , "DevRoleForm");
+                
+        if (isset($_POST["DevRoleForm"])) {
+            $model->attributes = $_POST["DevRoleForm"];
+            if ($model->save()) {
+                $this->redirect(array("roles"));
+            }
+        }
+        $this->renderForm("users.role.DevRoleForm",$model);
+    }
+
+    public function actionRoles() {
+
+        $this->renderForm("users.role.DevRoleIndex");
+    }
+
     public function actionDelete($id) {
         $this->loadModel($id, "DevUserForm")->delete();
     }

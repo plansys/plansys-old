@@ -233,7 +233,7 @@ class DevUserIndex extends Form {
     
     public function getForm() {
         return array (
-            'title' => 'User Management',
+            'title' => 'User List',
             'layout' => array (
                 'name' => 'full-width',
                 'data' => array (

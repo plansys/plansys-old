@@ -29,23 +29,23 @@ class DataGrid extends FormField {
      * @return array me-return array property DataGrid.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Data Filter Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Data Source Name',
                 'name' => 'datasource',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.datasource',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -55,41 +55,41 @@ class DataGrid extends FormField {
                 'fieldWidth' => '7',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Generate Columns',
                 'buttonType' => 'success',
                 'icon' => 'magic',
                 'buttonSize' => 'btn-xs',
-                'options' => array (
+                'options' => array(
                     'style' => 'float:right;margin:0px 0px 5px 0px',
                     'ng-show' => 'active.datasource != \'\'',
                     'ng-click' => 'generateColumns()',
                 ),
                 'type' => 'LinkButton',
             ),
-            array (
+            array(
                 'renderInEditor' => 'No',
                 'value' => '<div class=\\"clearfix\\"></div>',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'label' => 'Grid Options',
                 'fieldname' => 'gridOptions',
                 'show' => 'Show',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'title' => 'Columns',
                 'type' => 'SectionHeader',
             ),
             '<div style="margin-top:5px"></div>',
-            array (
+            array(
                 'name' => 'columns',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.DataGridListForm',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.columns',
                     'ng-change' => 'save()',
                     'ps-after-add' => 'value.show = true;',
@@ -99,30 +99,69 @@ class DataGrid extends FormField {
         );
     }
 
-    private static function generateOrderParams($params) {
-        if (!isset($params['order_by']) || count($params['order_by']) == 0) {
-            $template = array(
-                'sql' => 'order by id asc',
-                'params' => array(),
-                'render' => true
-            );
-        } else {
-            $sqlparams = array();
-            $sql = array();
+    private static function generateOrderParams($params, $template) {
+        $sqlparams = array();
+        $sql = array();
+
+        if (!is_array($params)) {
+            $params = array('order_by' => array());
+        }
+
+        $tmpl = preg_replace("/order\s+by/i", "", $template);
+        $rawOrder = explode(",", trim(str_replace("[order]", "", $tmpl)));
+        foreach ($rawOrder as $o) {
+            $o = trim(preg_replace('!\s+!', ' ', $o));
+            $o = explode(" ", $o);
+            if (count($o) == 2) {
+                $index = -1;
+                foreach ($params['order_by'] as $k => $p) {
+                    if (@$p['fields'] == $o[0]) {
+                        $index = $k;
+                    }
+                }
+
+                if ($index < 0) {
+                    array_unshift($params['order_by'], array(
+                        'field' => $o[0],
+                        'direction' => $o[1]
+                    ));
+                } else {
+                    $params['order_by'][$index] = array(
+                        'field' => $o[0],
+                        'direction' => $o[1]
+                    );
+                }
+            }
+        }
+
+        if (isset($params['order_by']) && count($params['order_by']) > 0) {
             foreach ($params['order_by'] as $k => $o) {
                 $direction = $o['direction'] == 'asc' ? 'asc' : 'desc';
                 $field = preg_replace("[^a-zA-Z0-9]", "", $o['field']);
 
                 $sql[] = "{$field} {$direction}";
             }
-
-            $template = array(
-                'sql' => count($sql) > 0 ? 'order by ' . implode(", ", $sql) : '',
-                'params' => array(),
-                'render' => true,
-            );
         }
-        return $template;
+
+        $query = '';
+        if (count($sql) > 0) {
+            if ($template == '' || trim($template) == '[order]') {
+                $query = "order by " . implode(" , ", $sql);
+            } else {
+                if (stripos("order by", $template) !== false) {
+                    $query = str_replace("[order]", implode(" , ", $sql), $template);
+                } else {
+                    $query = "order by " . implode(" , ", $sql);
+                }
+            }
+        }
+
+        return array(
+            'sql' => $query,
+            'params' => array(),
+            'render' => true,
+            'generateTemplate' => true
+        );
     }
 
     public static function generatePagingParams($params) {
@@ -141,7 +180,7 @@ class DataGrid extends FormField {
 
             $from = ($currentPage - 1) * $pageSize;
             $from = $from < 0 ? 0 : $from;
-            
+
             $to = $currentPage * $pageSize;
 
             $template = array(
@@ -153,12 +192,12 @@ class DataGrid extends FormField {
         return $template;
     }
 
-    public static function generateParams($paramName, $params) {
+    public static function generateParams($paramName, $params, $template) {
         switch ($paramName) {
             case "order":
-                return DataGrid::generateOrderParams($params);
+                return DataGrid::generateOrderParams($params, $template);
             case "paging":
-                return DataGrid::generatePagingParams($params);
+                return DataGrid::generatePagingParams($params, $template);
         }
     }
 

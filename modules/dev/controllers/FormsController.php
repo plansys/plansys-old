@@ -140,7 +140,6 @@ class FormsController extends Controller {
 
     public function actionUpdate($class) {
         FormField::$inEditor = true;
-        Yii::app()->session['FormBuilder_' . $class] = null;
         $this->layout = "//layouts/blank";
         $fb = FormBuilder::load($class);
         $classPath = $class;
