@@ -88,9 +88,12 @@ app.directive('dropDownList', function ($timeout) {
                         $scope.value = $el.find("li a").attr('value');
                         $scope.value = value;
                     }
-
-                    $scope.text = $el.find("li a[value='" + value + "']").html();
                     $scope.toggled(false);
+
+                    var text = $el.find("li a[value='" + value + "']").html();
+                    if (text != $scope.text) {
+                        $scope.text = $el.find("li a[value='" + value + "']").html();
+                    }
                 };
 
                 $scope.updateOther = function (value) {
@@ -153,11 +156,9 @@ app.directive('dropDownList', function ($timeout) {
                 // when ng-model, or ps-list is changed from outside directive
                 if (attrs.psList) {
                     function changeFieldList() {
-                        $timeout(function () {
-                            $scope.formList = $scope.$eval(attrs.psList);
-                            $scope.renderFormList();
-                            $scope.updateInternal($scope.value);
-                        }, 0);
+                        $scope.formList = $scope.$eval(attrs.psList);
+                        $scope.renderFormList();
+                        $scope.updateInternal($scope.value);
                     }
                     $scope.$watch(attrs.psList, changeFieldList);
                 }

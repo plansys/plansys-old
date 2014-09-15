@@ -95,9 +95,10 @@
                         </div>
                     </li>
                     <hr ng-repeat-end ng-if="item.value == '---'"/>
-                    <hr ng-if="showOther != ''" />
-                    <li class="dropdown-other" ng-if="showOther != ''">
-                        <a dropdown-toggle href="#" ng-click="update(otherLabel);" value="{{itemExist() ? otherLabel : value}}">
+                    <hr ng-if="showOther != '' && value != ''"/>
+                    <li class="dropdown-other" ng-if="showOther != '' && value != ''">
+                        <a dropdown-toggle href="#" ng-click="update(otherLabel);" 
+                           value="{{itemExist() ? otherLabel : value}}">
                             {{ itemExist() ? otherLabel : value}}
                         </a>                        
                     </li>
