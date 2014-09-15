@@ -114,14 +114,14 @@ app.directive('dropDownList', function ($timeout) {
                             $el.find("li.hover").removeClass("hover")
                             $el.find("li a[value='" + $scope.value + "']").focus().parent().addClass('hover');
 
-                            if ($scope.searchable) {
-                                $timeout(function () {
-                                    $el.find('.search-dropdown').focus();
-                                }, 0);
-                            }
                         } else {
                             $el.find("li a").blur();
                             $el.find(".dropdown-menu").scrollTop(0);
+                        }
+                        if ($scope.searchable) {
+                            $timeout(function () {
+                                $el.find('.search-dropdown').focus();
+                            }, 0);
                         }
                     } else if ($scope.openedInField) {
                         $scope.openedInField = true;
@@ -201,7 +201,6 @@ app.directive('dropDownList', function ($timeout) {
                         $scope.updateInternal($el.find("data[name=value]").html());
                     }
 
-                    console.log($scope.text);
                     if (attrs.searchable) {
                         $scope.searchable = $scope.$parent.$eval(attrs.searchable);
                     }

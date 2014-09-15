@@ -18,7 +18,7 @@
         <data name="model_class" class="hide"><?= @get_class($model) ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
         <!-- /data -->
-        
+
         <!-- field -->
         <div class="<?= $this->fieldClass ?>" 
              ng-keydown="dropdownKeypress($event)"
@@ -50,13 +50,20 @@
                            ng-model="search"
                            ng-change="doSearch()"
                            placeholder="Search ..."
-                           class="input-block-level search-dropdown form-control" autocomplete="off">
+                           ng-click="$event.stopPropagation();
+                               $event.preventDefault();"
+                           class="input-block-level search-dropdown form-control" 
+                           autocomplete="off">
                 </div>
-                <ul class="dropdown-menu inner" role="menu">
+                <div ng-if="renderedFormList.length == 0" 
+                     style="text-align:center;padding:15px;font-size:12px;color:#999;">
+                    &mdash; EMPTY &mdash;
+                </div>
+                <ul ng-if="renderedFormList" class="dropdown-menu inner" role="menu">
                     <li ng-repeat-start="item in renderedFormList track by $index" 
                         ng-if="item.value != '---'" class="dropdown-item" 
                         ng-class="{'dropdown-header': isObject(item.value)}"
-                        ng-show="isFound(item.value + ' ' + item.key)">
+                        ng-show="isFound(item.value + ' ' + item.key) || isObject(item.value)">
 
                         <a ng-if="!isObject(item.value)"
                            dropdown-toggle href="#" 

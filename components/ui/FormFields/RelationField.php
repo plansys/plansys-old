@@ -363,6 +363,13 @@ class RelationField extends FormField {
     }
 
     public function actionListField($class) {
+        if ($class == '') {
+            echo json_encode(array());
+            return false;
+            die();
+        }
+        
+        
         Yii::import($class);
         $class = array_pop(explode(".", $class));
         $model = new $class;

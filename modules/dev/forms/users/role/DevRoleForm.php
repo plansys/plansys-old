@@ -71,6 +71,22 @@ class DevRoleForm extends Role {
                 ),
                 'type' => 'ColumnField',
             ),
+            array (
+                'title' => 'User List',
+                'type' => 'SectionHeader',
+            ),
+            array (
+                'name' => 'dataFilter1',
+                'type' => 'DataFilter',
+            ),
+            array (
+                'name' => 'dataSource1',
+                'type' => 'DataSource',
+            ),
+            array (
+                'name' => 'dataGrid1',
+                'type' => 'DataGrid',
+            ),
         );
     }
 

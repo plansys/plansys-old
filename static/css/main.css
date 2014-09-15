@@ -1701,7 +1701,7 @@ div[dropdown] li a:hover {
     background:#f5f5f5;
 }
 
-div[dropdown] li.hover a {
+div[dropdown] li.hover > a {
     background:#f5f5f5;
 }
 div[dropdown] a {
