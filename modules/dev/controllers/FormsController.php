@@ -27,8 +27,8 @@ class FormsController extends Controller {
         FormField::$inEditor = false;
         $fbp = FormBuilder::load($field['type']);
         return $fbp->render($field, array(
-                    'wrapForm' => false,
-                    'FormFieldRenderID' => $this->countRenderID++
+                'wrapForm' => false,
+                'FormFieldRenderID' => $this->countRenderID++
         ));
     }
 
@@ -63,7 +63,7 @@ class FormsController extends Controller {
             $fb = FormBuilder::load($class);
             $form = $fb->form;
         }
-        
+
         $builder = $this->renderPartial('form_builder', array(), true);
         $mainFormSection = Layout::getMainFormSection($form['layout']['data']);
         $data = $form['layout']['data'];
@@ -120,26 +120,36 @@ class FormsController extends Controller {
     public function actionSave($class) {
         FormField::$inEditor = true;
 
-        $postdata = file_get_contents("php://input");
-        $post = CJSON::decode($postdata);
-        $fb = FormBuilder::load($class);
+        $session = Yii::app()->session['FormBuilder_' . $class];
+        $file = Yii::getPathOfAlias($class) . ".php";
+        $md5 = md5(implode("", file($file, FILE_IGNORE_NEW_LINES)));
 
-        if (isset($post['fields'])) {
-            if (is_subclass_of($fb->model, 'FormField')) {
-                Yii::app()->cache->delete('toolbarData');
-                Yii::app()->cache->delete('toolbarHtml');
+        if ($md5 == $session['md5']) {
+            $postdata = file_get_contents("php://input");
+            $post = CJSON::decode($postdata);
+            $fb = FormBuilder::load($class);
+
+            if (isset($post['fields'])) {
+                if (is_subclass_of($fb->model, 'FormField')) {
+                    Yii::app()->cache->delete('toolbarData');
+                    Yii::app()->cache->delete('toolbarHtml');
+                }
+                //save posted fields
+                $fb->fields = $post['fields'];
             }
-            //save posted fields
-            $fb->fields = $post['fields'];
-        }
-        if (isset($post['form'])) {
-            //save posted form
-            $fb->form = $post['form'];
+            if (isset($post['form'])) {
+                //save posted form
+                $fb->form = $post['form'];
+            }
+        } else {
+            echo "FAILED";
         }
     }
 
     public function actionUpdate($class) {
         FormField::$inEditor = true;
+        Yii::app()->session['FormBuilder_' . $class] = null;
+
         $this->layout = "//layouts/blank";
         $fb = FormBuilder::load($class);
         $classPath = $class;

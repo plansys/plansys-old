@@ -15,6 +15,7 @@
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/lib/angular.ui.tree.js'));
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/lib/angular.ui.bootstrap.js'));
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/lib/ng-grid.debug.js'));
+    Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/lib/ngStorage.js'));
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/lib/afu/angular-file-upload.min.js'));
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/index.app.js'));
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/index.ctrl.js'));

@@ -45,7 +45,7 @@
                 $compile($("#render-builder").contents())($scope);
             });
         };
-
+        $scope.mustReload = false;
         $scope.saveForm = function (force_reload) {
             if ($scope.layout != null) {
                 var name = $scope.layout.name;
@@ -61,6 +61,10 @@
                     .success(function (data, status) {
                         $scope.saving = false;
                         $scope.updateRenderBuilder();
+                        
+                        if (data == 'FAILED') {
+                            $scope.mustReload = true;
+                        }
                     })
                     .error(function (data, status) {
                         $scope.saving = false;
@@ -393,6 +397,10 @@
                     .success(function (data, status) {
                         $scope.saving = false;
                         $scope.detectDuplicate();
+                        
+                        if (data == 'FAILED') {
+                            $scope.mustReload = true;
+                        }
                     })
                     .error(function (data, status) {
                         $scope.saving = false;

@@ -64,15 +64,6 @@ class FormBuilder extends CComponent {
             $model->model->attributes = $attributes;
         }
 
-        if (!is_null(Yii::app()->session['FormBuilder_' . $originalClass])) {
-            $file = file(Yii::app()->session['FormBuilder_' . $originalClass]['sourceFile']);
-            $md5 = md5(implode("", $model->file));
-            if (!isset(Yii::app()->session['FormBuilder_' . $originalClass]['md5']) ||
-                Yii::app()->session['FormBuilder_' . $originalClass]['md5'] != $md5) {
-                Yii::app()->session['FormBuilder_' . $originalClass] = null;
-            }
-        }
-
         ## get method line and length
         if (is_null(Yii::app()->session['FormBuilder_' . $originalClass])) {
             $reflector = new ReflectionClass($class);

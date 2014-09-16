@@ -21,8 +21,137 @@ hr {
     top:0px;
     left:0px;
     bottom:0px;
-    right:0px;
+    right:45px;
     background:white;
+}
+
+#widget-container {
+    top:28px;
+    right:0px;
+    bottom:0px;
+    width:300px;
+    position:fixed;
+    cursor:default;
+    background:#fff;
+    -webkit-user-select: none;
+    user-select:none;
+    -moz-user-select:none;
+    overflow:hidden;
+    z-index:1;
+}
+
+#widget-container.minimized {
+    width:45px;
+}
+
+#widget-contents {
+    right:45px;
+    bottom:0px;
+    top:0px;
+    overflow:hidden;
+    width:255px;
+    position:absolute;
+    border-left:1px solid #aaa;
+}
+
+#widget-contents .properties-header {
+    margin:0px -20px !important;
+    padding:5px 25px !important;
+}
+
+#widget-contents .properties-header .btn {
+    margin:-1px -1px 0px 0px;
+    font-size:10px;
+    font-weight:bold;
+    opacity:.9;
+    border-radius:0px;
+}
+
+#widget-icons {
+    width:45px;
+    box-shadow:inset 5px 0px 10px -5px rgba(0,0,0,.1);
+    top:0px;
+    right:0px;
+    bottom:0px;
+    position:absolute;
+    border-left:1px solid #aaa;
+}
+
+
+
+.widget-icon {
+    text-align:center;
+    padding:8px 0px;
+    border-bottom:1px solid #c8c8c8;
+    cursor:pointer;
+    box-shadow:inset 1px 1px 0px 0px white;
+    background:#fafafa;
+}
+
+.widget-icon:hover, .widget-icon.active {
+    background:#fff;
+}
+
+.widget-icon .badge {
+    background:#d11818;
+    color:white;
+    text-shadow:0px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.widget-icon .badge-container {
+    margin:-3px auto 0px auto;
+    text-align:center;
+}
+
+.widget-icon i {
+    color:#666;
+    text-shadow: 0px 1px 0px white;
+}
+
+
+
+@-webkit-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0.2;
+    }
+    100% {
+        opacity:1;
+    }
+}
+@-moz-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0.2;
+    }
+    100% {
+        opacity:1;
+    }
+}
+.blink {
+    -webkit-transition: all .5s ease-in-out;
+    -moz-transition: all .5s ease-in-out;
+    -o-transition: all .5s ease-in-out;
+    -ms-transition: all .5s ease-in-out;
+    transition: all .5s ease-in-out;
+
+    -webkit-animation-direction: normal;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-name: blink;
+    -webkit-animation-timing-function: ease-in-out;
+
+    -moz-animation-direction: normal;
+    -moz-animation-duration: 1s;
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-name: blink;
+    -moz-animation-timing-function: ease-in-out;    
 }
 
 .fa-nm {
@@ -42,7 +171,7 @@ hr {
     margin-left:-150px;
     box-shadow:0px 0px 30px #aaa;
     padding:0px 20px 20px 20px;
-    border-radius:8px;
+    border-radius:6px;
 }
 .login-container .error-container {
     display:none;
@@ -66,7 +195,7 @@ hr {
 
 i {
     -webkit-font-smoothing: antialiased !important;
-     text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
 }
 /************************************ NAVBAR ***************************************/
 
@@ -1061,7 +1190,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 /********************************** DATA GRID **************************************/
 .data-grid {
-    
+
     padding-top:12px;
 }
 .data-grid-table {
@@ -1318,6 +1447,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     margin:-2px -2px 0px 4px;
 }
 
+
 /********************************** FORMS **************************************/
 
 ul[datepicker-popup-wrap] td {
@@ -1372,11 +1502,12 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
     border:1px solid #666;
     border-bottom:0px;
     position:fixed;
-    left:4px;
+    width:inherit;
     background:white;
-    right:4px;
     z-index:1;
-    box-shadow:0px 0px 10px #ddd;
+    -webkit-box-shadow: 0 8px 6px -6px #ececeb;
+    -moz-box-shadow: 0 8px 6px -6px #ececeb;
+    box-shadow: 0 8px 6px -6px #ececeb;
 }
 
 .action-bar .title-bar {
@@ -1405,6 +1536,7 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
     padding:0px 15px;
     box-shadow:rgba(0, 0, 0, 0.027451) 0px 2px 0px 0px;
     border-bottom:1px solid #C4C4C4;
+
 }
 .action-bar .action-tab a {
     line-height:30px;

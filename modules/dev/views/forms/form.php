@@ -1,6 +1,13 @@
 
 
 <div ng-controller="PageController" ng-cloak>
+    
+    <div ng-if="mustReload"
+        style="z-index:9999;position:absolute;top:0px;left:0px;
+         right:0px;bottom:0px;background:rgba(255,255,255,.9);text-align:center;padding:200px;">
+        <h3>Source file has changed</h3>
+        <div class="btn btn-success" onclick="location.reload()"><i class="fa fa-refresh"></i> Refresh Form</div>
+    </div>
     <div ui-layout class="sub" options="{ flow : 'column' }">
 
         <div size='69%' min-size="300px">

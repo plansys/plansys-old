@@ -1,25 +1,31 @@
-$(function() {
+$(function () {
     if ($(".action-bar").length > 0) {
 
-        $(".action-bar").each(function() {
-            var height = $(this).height();
-            $(this).css('top', '32px');
-            
-            $(this).parents('.container-full').css({
-                'margin-top': height + 'px',
-                'border-top': '0px'
+        $(window).resize(function () {
+            $(".action-bar").each(function () {
+                var height = $(this).height();
+                $(this).css({
+                    top: 32,
+                    left: 4,
+                    width: $(this).parents('.container-full').width() +2
+                });
+
+                $(this).parents('.container-full').css({
+                    'margin-top': height + 'px',
+                    'border-top': '0px'
+                });
             });
-        });
+        }).resize();
 
         // add action tab link
-        $(".section-header").each(function() {
+        $(".section-header").each(function () {
             $('<a href="#' + $(this).attr('scrollTo') + '">' + $(this).text() + '</a>')
                     .insertBefore(".action-bar:eq(0) .action-tab .clearfix");
         })
 
         // on action tab click
         var container = $(".action-bar:eq(0)").parents(".container-full");
-        $(".action-bar:eq(0) .action-tab a").click(function(e) {
+        $(".action-bar:eq(0) .action-tab a").click(function (e) {
             var top = container.scrollTop() + $($(this).attr('href')).position().top;
             container.scrollTop(top);
 
@@ -35,7 +41,7 @@ $(function() {
             } else if (container.scrollTop() == container[0].scrollHeight - container.height()) {
                 active = $(".action-bar:eq(0) .action-tab a").last();
             } else {
-                $(".action-bar:eq(0) .action-tab a").each(function() {
+                $(".action-bar:eq(0) .action-tab a").each(function () {
                     var top = container.scrollTop() + $($(this).attr('href')).position().top;
                     if (container.scrollTop() >= top) {
                         active = $(this);
@@ -51,13 +57,13 @@ $(function() {
 
         // if there is #hash link, then go to hash sroll
         if (container.scrollTop() > 0) {
-            $timeout(function() {
+            $timeout(function () {
                 changeActive();
             }, 100);
         }
 
         // on scroll
-        angular.element(container).bind("scroll", function() {
+        angular.element(container).bind("scroll", function () {
             changeActive();
         });
 
