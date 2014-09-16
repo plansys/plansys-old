@@ -16,7 +16,9 @@ class NfyWidget extends Widget {
     }
 
     public function actionNotify() {
-        Yii::app()->nfy->send('test');
+        Yii::app()->nfy->send('test', array(
+            'role_dev'
+        ));
     }
 
     public function actionRead() {

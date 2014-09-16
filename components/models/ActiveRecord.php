@@ -104,7 +104,7 @@ class ActiveRecord extends CActiveRecord {
         $props = array();
         $class = new ReflectionClass($this);
         $properties = Helper::getClassProperties($this);
-        
+
         foreach ($properties as $p) {
             $props[$p->name] = $this->{$p->name};
         }
@@ -146,53 +146,52 @@ class ActiveRecord extends CActiveRecord {
         return $attributes;
     }
 
-    public function save($runValidation = true, $attributes = null) {
-        $isNew = $this->isNewRecord;
+    public function beforeSave() {
         if ($this->primaryKey == '') {
-            $table=$this->getMetaData()->tableSchema;
-            $primaryKey=$table->primaryKey;
+            $table = $this->getMetaData()->tableSchema;
+            $primaryKey = $table->primaryKey;
             $this->$primaryKey = null;
         }
         
-        $saved = parent::save($runValidation, $attributes);
-        
-        if ($saved) {
-            foreach ($this->__relations as $k => $new) {
-                $new = $new == '' ? array() : $new;
-                $old = $this->__oldRelations[$k];
+        return true;
+    }
 
-                if (count($old) > 0 || count($new) > 0) {
-                    $rel = $this->getMetaData()->relations[$k];
+    public function afterSave() {
+        foreach ($this->__relations as $k => $new) {
+            $new = $new == '' ? array() : $new;
+            $old = $this->__oldRelations[$k];
 
-                    switch (get_class($rel)) {
-                        case 'CHasOneRelation':
-                        case 'CBelongsToRelation':
-                            if (count(array_diff_assoc($new, $old)) > 0) {
-                                //todo..
-                            }
-                            break;
-                        case 'CManyManyRelation':
-                        case 'CHasManyRelation':
-                            //without through
-                            if (is_string($rel->foreignKey)) {
+            if (count($old) > 0 || count($new) > 0) {
+                $rel = $this->getMetaData()->relations[$k];
 
-                                foreach ($new as $i => $j) {
-                                    $new[$i][$rel->foreignKey] = $this->id;
-                                }
-
-                                ActiveRecord::batch($rel->className, $new, $old);
-                            }
-
-                            //with through
+                switch (get_class($rel)) {
+                    case 'CHasOneRelation':
+                    case 'CBelongsToRelation':
+                        if (count(array_diff_assoc($new, $old)) > 0) {
                             //todo..
-                            break;
-                    }
-                }
-                $this->__relations[$k] = $new;
-            }
-        }
+                        }
+                        break;
+                    case 'CManyManyRelation':
+                    case 'CHasManyRelation':
+                        //without through
+                        if (is_string($rel->foreignKey)) {
 
-        return $saved;
+                            foreach ($new as $i => $j) {
+                                $new[$i][$rel->foreignKey] = $this->id;
+                            }
+
+                            ActiveRecord::batch($rel->className, $new, $old);
+                        }
+
+                        //with through
+                        //todo..
+                        break;
+                }
+            }
+            $this->__relations[$k] = $new;
+        }
+        
+        return true;
     }
 
     /**
@@ -363,7 +362,7 @@ class ActiveRecord extends CActiveRecord {
             'type' => 'ColumnField',
             'column1' => $column1,
             'column2' => $column2
-            )
+                )
         ;
         return $return;
     }

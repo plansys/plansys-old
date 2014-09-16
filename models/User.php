@@ -5,24 +5,40 @@ class User extends ActiveRecord {
     public $subscribed = true;
 
     public function afterFind() {
-        $this->subscribed = Yii::app()->nfy->isSubscribed($this->id);
-        return true;
-    }
-    
-    public function afterSave() {
-        Yii::app()->nfy->unsubscribe($this->id, null, true);
-        if ($this->subscribed === "on" ) {
-            $roles = array();
-            
-            foreach ($this->roles as $r) {
-                $roles[] = "role_" . $r->role_name;
-            }
-            $category = array_merge(array(
-                'uid_' . $this->id,
-            ), $roles);
-            
-            Yii::app()->nfy->subscribe($this->id, $this->username, $category);
+        $result = parent::afterFind();
+        if ($result) {
+            $this->subscribed = Yii::app()->nfy->isSubscribed($this->id);
         }
+        return $result;
+    }
+
+    public function afterSave() {
+        $result = parent::afterSave();
+
+        if ($result) {
+            Yii::app()->nfy->unsubscribe($this->id, null, true);
+            if ($this->subscribed === "on") {
+                $roles = array();
+
+                foreach ($this->roles as $r) {
+                    $roles[] = "role_" . $r->role_name;
+                }
+                $category = array_merge(array(
+                    'uid_' . $this->id,
+                        ), $roles);
+
+                Yii::app()->nfy->subscribe($this->id, $this->username, $category);
+            }
+        }
+        return $result;
+    }
+
+    public function afterDelete() {
+        $result = parent::afterDelete();
+        if ($result) {
+            Yii::app()->nfy->unsubscribe($this->id, null, true);
+        }
+        return $result;
     }
 
     public function rules() {
