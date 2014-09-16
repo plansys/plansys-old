@@ -14,6 +14,39 @@ class Helper {
         );
     }
 
+    /**
+     * Recursive function to get an associative array of class properties by property name => ReflectionProperty() object 
+     * including inherited ones from extended classes 
+     * @param string $className Class name 
+     * @param string $types Any combination of <b>public, private, protected, static</b> 
+     * @return array 
+     */
+    public static function getClassProperties($className, $types = 'public') {
+        $ref = new ReflectionClass($className);
+        $props = $ref->getProperties();
+        $props_arr = array();
+        foreach ($props as $prop) {
+            $f = $prop->getName();
+
+            if ($prop->isPublic() and ( stripos($types, 'public') === FALSE))
+                continue;
+            if ($prop->isPrivate() and ( stripos($types, 'private') === FALSE))
+                continue;
+            if ($prop->isProtected() and ( stripos($types, 'protected') === FALSE))
+                continue;
+            if ($prop->isStatic() and ( stripos($types, 'static') === FALSE))
+                continue;
+
+            $props_arr[$f] = $prop;
+        }
+        if ($parentClass = $ref->getParentClass()) {
+            $parent_props_arr = Helper::getClassProperties($parentClass->getName()); //RECURSION 
+            if (count($parent_props_arr) > 0)
+                $props_arr = array_merge($parent_props_arr, $props_arr);
+        }
+        return $props_arr;
+    }
+
     public static function getAlias($object) {
         $r = new ReflectionClass($object);
         $f = $r->getFileName();
@@ -130,11 +163,11 @@ class Helper {
 
 
         return join(' ', array_map(function ($key) use ($attributes) {
-                if (is_bool($attributes[$key])) {
-                    return $attributes[$key] ? $key : '';
-                }
-                return $key . '="' . $attributes[$key] . '"';
-            }, array_keys($attributes)));
+                    if (is_bool($attributes[$key])) {
+                        return $attributes[$key] ? $key : '';
+                    }
+                    return $key . '="' . $attributes[$key] . '"';
+                }, array_keys($attributes)));
     }
 
     public static function minifyHtml($text) {

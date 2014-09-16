@@ -59,7 +59,8 @@
                      style="text-align:center;padding:15px;font-size:12px;color:#999;">
                     &mdash; EMPTY &mdash;
                 </div>
-                <ul ng-if="renderedFormList" class="dropdown-menu inner" role="menu">
+                <ul ng-if="renderedFormList" style="overflow-x:hidden"
+                    class="dropdown-menu inner" role="menu">
                     <li ng-repeat-start="item in renderedFormList track by $index" 
                         ng-if="item.value != '---'" class="dropdown-item" 
                         ng-class="{'dropdown-header': isObject(item.value)}"

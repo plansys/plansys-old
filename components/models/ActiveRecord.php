@@ -103,9 +103,8 @@ class ActiveRecord extends CActiveRecord {
     public function getAttributeProperties() {
         $props = array();
         $class = new ReflectionClass($this);
-        $properties = array_filter($class->getProperties(), function($prop) use($class) {
-            return $prop->getDeclaringClass()->getName() == $class->getName();
-        });
+        $properties = Helper::getClassProperties($this);
+        
         foreach ($properties as $p) {
             $props[$p->name] = $this->{$p->name};
         }

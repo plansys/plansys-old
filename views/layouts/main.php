@@ -29,28 +29,28 @@
             </div><!-- /.container-full -->
         </nav>
         <?php if (!Yii::app()->user->isGuest): ?>
-            <div id="widget-container" ng-class="{minimized:!$storage.widget.active}">
+
+            <div id="widget-data" class="hide"><?= json_encode(Widget::listActiveWidget()); ?></div>
+            <div id="widget-container" ng-class="{maximized:$storage.widget.active}">
                 <div id="widget-icons">
-                    <div ng-class="{active:widget.isActive('notification')}" class="widget-icon"
+                    <div ng-repeat="w in $storage.widget.list" ng-class="{active:widget.isActive('notification')}" class="widget-icon"
                          ng-click="widget.toggle('notification')">
-                        <i class="fa fa-newspaper-o fa-2x"></i>
-                        <!--                        <div class="badge-container">
-                                                    <div class="badge blink">21</div>
-                                                </div>-->
+                        <i class="{{w.widget.icon}}"></i>
+                        
+                        <div ng-if="w.widget.badge != ''" class="badge-container">
+                            <div class="badge blink">{{ w.widget.badge }}</div>
+                        </div>
                     </div>
                 </div>
                 <div id="widget-contents">
                     <div class="widget-notification" class="widget-content">
 
                         <div class = "properties-header">
-                            <div class="btn btn-xs btn-success pull-right">
-                                Read All
+                            <div class="btn btn-xs btn-default pull-right">
+                                <i class="fa fa-check-square-o fa-lg"></i>
                             </div>
-                            
                             <i class = "fa fa-nm fa-newspaper-o"></i>&nbsp;
-                            
                             Notifications
-                            
                         </div>
                     </div>
                 </div>

@@ -75,6 +75,10 @@ class FormField extends CComponent {
         return array();
     }
 
+    public function includeCSS() {
+        return array();
+    }
+
     /**
      * @return string me-return string nama class sebuah object.
      */
@@ -316,6 +320,16 @@ class FormField extends CComponent {
                 );
             }
         }
+
+        $includeCSS = $this->includeCSS();
+        foreach ($includeCSS as $css) {
+            $class = get_class($this);
+            Yii::app()->clientScript->registerCSSFile(
+                Yii::app()->assetManager->publish(
+                    Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css
+                ), CClientScript::POS_HEAD
+            );
+        }
     }
 
     /**
@@ -329,6 +343,16 @@ class FormField extends CComponent {
                 $class = get_class($this);
                 $html[] = Yii::app()->assetManager->publish(
                     Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js, true
+                );
+            }
+        }
+        
+        $includeCSS = $this->includeCSS();
+        if (count($includeCSS) > 0) {
+            foreach ($includeCSS as $css) {
+                $class = get_class($this);
+                $html[] = Yii::app()->assetManager->publish(
+                    Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css, true
                 );
             }
         }

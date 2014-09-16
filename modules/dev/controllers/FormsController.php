@@ -89,12 +89,16 @@ class FormsController extends Controller {
             $toolbarData = FormField::allSorted();
             Yii::app()->cache->set('toolbarData', $toolbarData, 0);
         }
-
         foreach ($toolbarData as $k => $f) {
             $ff = new $f['type'];
             $scripts = $ff->renderScript();
             foreach ($scripts as $script) {
-                Yii::app()->clientScript->registerScriptFile($script, CClientScript::POS_END);
+                $ext = array_pop(explode(".", $script));
+                if ($ext == "js") {
+                    Yii::app()->clientScript->registerScriptFile($script, CClientScript::POS_END);
+                } else {
+                    Yii::app()->clientScript->registerCSSFile($script, CClientScript::POS_BEGIN);
+                }
             }
         }
 
@@ -124,11 +128,11 @@ class FormsController extends Controller {
         $file = file(Yii::getPathOfAlias($class) . ".php", FILE_IGNORE_NEW_LINES);
 
         $changed = false;
-        foreach ($file as $k=>$f) {
-            if(trim($file[$k]) != trim(@$session['file'][$k])) {
+        foreach ($file as $k => $f) {
+            if (trim($file[$k]) != trim(@$session['file'][$k])) {
                 $changed = true;
             }
-        } 
+        }
 
         if (!$changed) {
             $postdata = file_get_contents("php://input");

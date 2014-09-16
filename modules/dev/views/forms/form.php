@@ -57,7 +57,9 @@
 
                             <div class="toolbar-type btn-group" dropdown on-toggle="openToolbarType(open)">
                                 <button type="button" class="btn btn-xs btn-default dropdown-toggle change-type">
-                                    <i ng-class="toolbarSettings['icon'][active.type]"></i>&nbsp; {{active.type}}
+                                    <i style="margin-top:1px;float:left;"
+                                        class="fa-nm" ng-class="toolbarSettings['icon'][active.type]"></i>
+                                    &nbsp; {{active.type}}
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu" style="min-width:160px;max-height:200px;" role="menu">

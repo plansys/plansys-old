@@ -18,6 +18,7 @@ return array(
         'application.components.*',
         'application.components.ui.*',
         'application.components.ui.FormFields.*',
+        'application.components.ui.Widgets.*',
         'application.components.utility.*',
         'application.components.models.*',
         'application.components.codegen.*',
@@ -35,7 +36,7 @@ return array(
             'ipFilters' => array('127.0.0.1', '::1'),
         ),
         'nfy' => array(
-            'class' => 'application.modules.nfy.NfyModule'
+            'class' => 'nfy.NfyModule'
         )
     )),
     'aliases' => array(
@@ -43,6 +44,11 @@ return array(
     ),
     // application components
     'components' => array(
+        'nfy' => array(
+            'class' => 'nfy.components.NfyDbQueue',
+            'id' => 'Notifications',
+            'timeout' => 30,
+        ),
         'EJSUrlManager' => array(
             'class' => 'ext.JSUrlManager.EJSUrlManager'
         ),

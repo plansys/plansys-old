@@ -17,7 +17,7 @@
                 </div>
             </div>
         </div>
-        <div style="padding:0px 0px 0px 5px;overflow:hidden;border:0px;">
+        <div style="padding:0px 0px 0px 1px;overflow:hidden;border:0px;">
             <div class="loading invisible">
                 <span>
                     <b> 
@@ -28,7 +28,6 @@
             <iframe src="<?php echo $this->createUrl('empty'); ?>" scrolling="no"
                     seamless="seamless" name="iframe" frameborder="0" class="invisible"
                     style="width:100%;height:100%;overflow:hidden;display:block;">
-
             </iframe>
         </div>
     </div>

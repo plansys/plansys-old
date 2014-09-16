@@ -2,12 +2,12 @@ $(function () {
     if ($(".action-bar").length > 0) {
 
         $(window).resize(function () {
-            $(".action-bar").each(function () {
+            $(".action-bar-container").each(function () {
                 var height = $(this).height();
                 $(this).css({
-                    top: 32,
-                    left: 4,
-                    width: $(this).parents('.container-full').width() +2
+                    top: $("body > .navbar").height(),
+                    left: $(this).parents('.container-full').offset().left,
+                    width: $(this).parents('.container-full').width() 
                 });
 
                 $(this).parents('.container-full').css({
