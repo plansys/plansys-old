@@ -87,7 +87,6 @@ class FormBuilder extends CComponent {
             Yii::app()->session['FormBuilder_' . $originalClass] = array(
                 'sourceFile' => $model->sourceFile,
                 'file' => $model->file,
-                'md5' => md5(implode("", $model->file)),
                 'methods' => $model->methods
             );
         } else {
@@ -912,12 +911,9 @@ EOF;
             fwrite($fp, implode("\n", $file));
             fflush($fp); // flush output before releasing the lock
             flock($fp, LOCK_UN); // release the lock
-            
-            $file = file($sourceFile, FILE_IGNORE_NEW_LINES);
             Yii::app()->session['FormBuilder_' . $this->originalClass] = array(
                 'sourceFile' => $this->sourceFile,
                 'file' => $file,
-                'md5' => md5(implode("", $file)),
                 'methods' => $this->methods
             );
         } else {

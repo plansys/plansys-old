@@ -121,11 +121,16 @@ class FormsController extends Controller {
         FormField::$inEditor = true;
 
         $session = Yii::app()->session['FormBuilder_' . $class];
-        $file = Yii::getPathOfAlias($class) . ".php";
-        $md5 = md5(implode("", file($file, FILE_IGNORE_NEW_LINES)));
+        $file = file(Yii::getPathOfAlias($class) . ".php", FILE_IGNORE_NEW_LINES);
 
-        
-        if ($md5 == $session['md5']) {
+        $changed = false;
+        foreach ($file as $k=>$f) {
+            if(trim($file[$k]) != trim(@$session['file'][$k])) {
+                $changed = true;
+            }
+        } 
+
+        if (!$changed) {
             $postdata = file_get_contents("php://input");
             $post = CJSON::decode($postdata);
             $fb = FormBuilder::load($class);
