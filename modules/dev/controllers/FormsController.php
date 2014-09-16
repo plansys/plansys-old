@@ -124,6 +124,7 @@ class FormsController extends Controller {
         $file = Yii::getPathOfAlias($class) . ".php";
         $md5 = md5(implode("", file($file, FILE_IGNORE_NEW_LINES)));
 
+        
         if ($md5 == $session['md5']) {
             $postdata = file_get_contents("php://input");
             $post = CJSON::decode($postdata);
