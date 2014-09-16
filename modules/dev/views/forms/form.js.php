@@ -64,6 +64,7 @@
                         
                         if (data == 'FAILED') {
                             $scope.mustReload = true;
+                            location.reload();
                         }
                     })
                     .error(function (data, status) {
@@ -400,6 +401,7 @@
                         
                         if (data == 'FAILED') {
                             $scope.mustReload = true;
+                            location.reload();
                         }
                     })
                     .error(function (data, status) {

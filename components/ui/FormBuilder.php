@@ -826,6 +826,7 @@ class FormBuilder extends CComponent {
             $line = $this->prepareLineForMethod();
             $length = 0;
             $isNewFunc = true;
+            echo"NEW";
         } else {
             $line = $this->methods[$name]['line'];
             $length = $this->methods[$name]['length'];
@@ -839,8 +840,8 @@ class FormBuilder extends CComponent {
                 $this->file[] = "\n";
                 $this->file[] = "}";
             }
+            echo"OLD";
         }
-
         return array(
             'file' => $this->file,
             'length' => $length,
@@ -891,9 +892,14 @@ EOF;
 
         ## adjust other methods line and length
         $newlength = count(explode("\n", $func));
-
+        print_r(array(
+            'newfunc' => $isNewFunc,
+            'line' => $line,
+            'funcname' => $functionName
+        ));
+        print_r($this->methods);
         foreach ($this->methods as $k => $m) {
-            if ($m['line'] >= $line) {
+            if ($m['line'] >= $line && $k != $functionName) {
                 if (!$isNewFunc) {
                     $this->methods[$k]['line'] -= $length;
                 }
@@ -901,6 +907,8 @@ EOF;
                 $this->methods[$k]['line'] += $newlength;
             }
         }
+        $this->methods[$functionName]['length'] = $newlength;
+        print_r($this->methods);
 
         $this->file = $file;
 
@@ -911,11 +919,15 @@ EOF;
             fwrite($fp, implode("\n", $file));
             fflush($fp); // flush output before releasing the lock
             flock($fp, LOCK_UN); // release the lock
+            //print_r(Yii::app()->session['FormBuilder_' . $this->originalClass]['methods']);
+
             Yii::app()->session['FormBuilder_' . $this->originalClass] = array(
                 'sourceFile' => $this->sourceFile,
                 'file' => $file,
                 'methods' => $this->methods
             );
+
+            //print_r(Yii::app()->session['FormBuilder_' . $this->originalClass]['methods']);
         } else {
             echo "ERROR: Couldn't lock source file '{$sourceFile}'!";
             die();
