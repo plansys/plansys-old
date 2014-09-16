@@ -7,26 +7,35 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
 
     $storage = $localStorage;
     $scope.$storage = $storage;
-    
+
     if (!$storage.widget) {
         $storage.widget = {};
     }
-    
+
+    $scope.$watch('$storage.widget.active', function () {
+        $timeout(function () {
+            $(window).resize();
+        }, 0);
+    });
+
+    if ($("#widget-data").text() != "") {
+        $storage.widget.list = JSON.parse($("#widget-data").text());
+    }
 
     $scope.widget = {
-        toggle: function (widget) {
+        toggle: function (name) {
             if ($storage.widget.active == null) {
-                $storage.widget.active = widget;
+                $storage.widget.active = name;
             } else {
                 $storage.widget.active = null;
             }
-            
+
             $timeout(function () {
                 $(window).resize();
             }, 0);
         },
-        isActive: function(widget) {
-            return ($storage.widget.active == widget);
+        isActive: function (name) {
+            return ($storage.widget.active == name);
         }
     };
 

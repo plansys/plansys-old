@@ -1,5 +1,5 @@
 body {
-    background: #0a95d1;
+    background: #fff;
 }
 
 hr {
@@ -29,7 +29,7 @@ hr {
     top:28px;
     right:0px;
     bottom:0px;
-    width:300px;
+    width:45px;
     position:fixed;
     cursor:default;
     background:#fff;
@@ -40,8 +40,8 @@ hr {
     z-index:1;
 }
 
-#widget-container.minimized {
-    width:45px;
+#widget-container.maximized {
+    width:300px;
 }
 
 #widget-contents {
@@ -58,13 +58,16 @@ hr {
     margin:0px -20px !important;
     padding:5px 25px !important;
 }
+#widget-contents .properties-header > i {
+    float:left;
+    margin:2px -2px -2px 3px;
+}
 
 #widget-contents .properties-header .btn {
     margin:-1px -1px 0px 0px;
     font-size:10px;
     font-weight:bold;
-    opacity:.9;
-    border-radius:0px;
+    color:#000  ;
 }
 
 #widget-icons {
@@ -306,8 +309,8 @@ i {
 /******************************** SPLIT PANE *********************************/
 
 div[ui-layout] {
-    border:4px solid #0a95d1;
-    border-top:32px solid #0a95d1;
+    border:0px;
+    border-top:28px solid #0a95d1;
     width:100%;
     overflow:hidden;
     height:100%;
@@ -334,21 +337,15 @@ div[ui-layout] > div.active > .overlay {
 }
 
 .ui-layout-column > div {
-    border-top:1px solid #666;
-    border-bottom:1px solid #666;
 }
 
 .ui-layout-column > div:first-child {
-    border-left:1px solid #666;
 }
 
 .ui-layout-column > div:last-child {
-    border-right:1px solid #666;
 }
 
 .ui-layout-row > div {
-    border-left:1px solid #666;
-    border-right:1px solid #666;
     margin-top:5px;
 }
 .ui-layout-row > div.ui-splitbar {
@@ -356,12 +353,10 @@ div[ui-layout] > div.active > .overlay {
 }
 
 .ui-layout-row  > div:first-child {
-    border-top:1px solid #666;
     margin-top:0px;
 }
 
 .ui-layout-row > div:last-child {
-    border-bottom:1px solid #666;
 }
 
 .ui-layout-noborder div[ui-layout] > div {
@@ -369,15 +364,21 @@ div[ui-layout] > div.active > .overlay {
 }
 
 div[ui-header] {
-    font-weight:bold;
-    color:rgb(8, 114, 164);
-    font-size:11px;
-    font-family:Verdana, Arial, Helvetica, sans-serif;
     padding-left:16px;
-    background:url('../img/bgcolhead.png');
-    border-bottom:1px solid rgb(197, 197, 197);
     height:28px;
     line-height:28px;
+    font-size:12px;
+    font-weight:bold;
+    background: #ffffff; /* Old browsers */
+    background: -moz-linear-gradient(top,  #ffffff 0%, #fafafa 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#fafafa)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ffffff 0%,#fafafa 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ffffff 0%,#fafafa 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ffffff 0%,#fafafa 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #ffffff 0%,#fafafa 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#fafafa',GradientType=0 ); /* IE6-9 */
+
+    border-bottom:1px solid #ccc;
 }
 div[ui-header] .pull-right {
     margin:-1px 3px 0px 0px;
@@ -445,28 +446,24 @@ div[ui-content] {
 
 .ui-splitbar{
     display: block;
-    background-color: #0a95d1;
+    background-color: #ccc;
     right: auto;
     position: absolute;
     z-index: 4;
+    border:0px;
 }
 
 .ui-layout-row > .ui-splitbar{
-    height: 8px; width: 100%;
+    height: 1px !important; 
+    width: 100%;
     cursor: row-resize;
-    border-top:1px solid #666;
-    border-bottom:1px solid #666;
-    border-left:0px;
-    border-right:0px;
 }
 .ui-layout-column > .ui-splitbar{
-    width: 8px; height: 100%;
+    width: 1px !important; 
+    height: 100%;
     cursor: col-resize;
-    border-left:1px solid #666;
-    border-right:1px solid #666;
-    border-top:0px;
-    border-bottom:0px;
 }
+
 
 .form-builder-layout > .ui-splitbar {
     background-color: #ececeb !important;
@@ -812,7 +809,7 @@ li:hover > .item-btn {
 }
 
 .form-builder-layout {
-    border:2px solid #ececeb !important;
+    border:0px !important;
 }
 
 .angular-ui-tree-drag .field-info {
@@ -826,7 +823,7 @@ li:hover > .item-btn {
 }
 
 .properties-body {
-    padding:5px 3px 5px 10px;
+    padding:5px 3px 5px 3px;
     font-size:13px;
     overflow-x:hidden;
     height:100%;
@@ -843,7 +840,7 @@ li:hover > .item-btn {
 .properties-header {
     margin:-5px -5px 10px -4px;
     font-size:12px;
-    padding:5px;
+    padding:5px 8px;
     font-weight:bold;
     background: #ffffff; /* Old browsers */
     background: -moz-linear-gradient(top,  #ffffff 0%, #fafafa 100%); /* FF3.6+ */
@@ -872,8 +869,12 @@ li:hover > .item-btn {
 }
 
 #toolbar-properties {
-    padding:6px 5px 250px 10px;
+    padding:6px 5px 250px 5px;
     overflow-x:hidden;
+}
+
+#toolbar-properties hr {
+    margin:5px -5px;
 }
 
 /********************************* LIST VIEW ***********************************/
@@ -1195,6 +1196,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 }
 .data-grid-table {
     width:100%;
+    background:#fff;
 }
 
 .data-grid-table .ngTopPanel {
@@ -1447,8 +1449,57 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     margin:-2px -2px 0px 4px;
 }
 
-
 /********************************** FORMS **************************************/
+
+.switchery {
+  background-color: #fff;
+  border: 1px solid #dfdfdf;
+  border-radius: 20px;
+  cursor: pointer;
+  display: inline-block;
+  height: 30px;
+  position: relative;
+  vertical-align: middle;
+  width: 50px;
+  
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
+.switchery > small {
+  background: #fff;
+  border-radius: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  height: 30px;
+  position: absolute;
+  top: 0;
+  width: 30px;
+}
+
+.switchery {
+    margin-top:2px;
+   height: 25px;
+   width: 35px;
+}
+
+.switchery > small {
+   height: 25px;
+   width: 25px;
+}
+
+.switchery-label {
+    border-radius:10px;
+    margin:6px 10px;
+    padding:3px 7px;
+    float:left;
+}
 
 ul[datepicker-popup-wrap] td {
     padding:2px;
@@ -1498,13 +1549,18 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
     text-align:center;
 }
 
-.action-bar {
-    border:1px solid #666;
-    border-bottom:0px;
+.action-bar-container {
     position:fixed;
     width:inherit;
-    background:white;
     z-index:1;
+    overflow-x:hidden;
+    padding-bottom:20px;
+}
+
+.action-bar {
+    background:white;
+    padding:0px 50px;
+    margin:0px -50px;
     -webkit-box-shadow: 0 8px 6px -6px #ececeb;
     -moz-box-shadow: 0 8px 6px -6px #ececeb;
     box-shadow: 0 8px 6px -6px #ececeb;

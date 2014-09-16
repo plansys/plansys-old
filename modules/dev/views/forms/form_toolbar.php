@@ -3,10 +3,12 @@
     <ol ui-tree-nodes data-nodrop ng-model="toolbar" class="toolbar-item">
         <span ng-repeat="item in toolbar" >
             {{category(settings.category[item.type])}}
-            <li ng-if="isCategory && settings.category[item.type]" class="properties-header" 
-                style="width:100%;margin:5px -20px 5px -5px;padding-left:5px;color:#aaa;" >
-                <i class="fa {{categorySettings[settings.category[item.type]].icon}}"></i>
-                &nbsp;{{settings.category[item.type]}}
+            <li ng-if="isCategory && settings.category[item.type]"
+                style="width:100%;color:#aaa;display:block;margin:10px -5px 0px -5px" >
+                <div class="properties-header" >
+                    <i class="fa fa-nm {{categorySettings[settings.category[item.type]].icon}}"></i>
+                    &nbsp;{{settings.category[item.type]}}
+                </div>
             </li>
             <li ui-tree-node ng-if="settings.category[item.type]">
                 <div ui-tree-handle data-nodrop class="btn btn-default btn-sm">
@@ -19,11 +21,11 @@
 </div>
 
 <script type="text/javascript">
-    app.controller("ToolbarController", ["$scope", "$http", "$timeout", function($scope, $http, $timeout) {
+    app.controller("ToolbarController", ["$scope", "$http", "$timeout", function ($scope, $http, $timeout) {
 
             var prev = "";
             $scope.isCategory = false;
-            $scope.category = function(category) {
+            $scope.category = function (category) {
                 if (prev != category) {
                     prev = category;
                     $scope.isCategory = true;
@@ -39,14 +41,14 @@
             $scope.toolbar = <?php echo json_encode($toolbarData); ?>;
             $scope.toolbarDefault = angular.copy($scope.toolbar);
             $scope.toolbarOptions = {
-                accept: function(sourceNodeScope, destNodesScope, destIndex) {
+                accept: function (sourceNodeScope, destNodesScope, destIndex) {
                     return false;
                 },
-                dragStart: function(scope) {
+                dragStart: function (scope) {
                     scope.elements.placeholder.replaceWith(scope.elements.dragging.clone().find('li'));
                 },
-                dragStop: function(scope) {
-                    $timeout(function() {
+                dragStop: function (scope) {
+                    $timeout(function () {
                         // auto select dropped toolbar
                         $scope.toolbar = $scope.toolbarDefault;
                         $scope.toolbarDefault = angular.copy($scope.toolbar);

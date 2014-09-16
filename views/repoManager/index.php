@@ -24,7 +24,7 @@
                 </div>
             </div>
         </div>
-        <div style="padding:0px 0px 0px 5px;overflow:hidden;border:0px;">
+        <div style="overflow:hidden;border:0px;">
             <div ui-header>Properties</div>
             <div ui-content style="padding:3px 20px;">
                 <div ng-include="Yii.app.createUrl('repoManager/renderProperties')" ng-hide="!isDir"></div>

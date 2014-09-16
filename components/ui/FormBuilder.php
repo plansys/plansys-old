@@ -811,7 +811,7 @@ class FormBuilder extends CComponent {
 
         ## adjust methods line and number
         foreach ($this->methods as $k => $m) {
-            if ($m['line'] >= $line) {
+            if (@$m['line'] >= $line) {
                 $this->methods[$k]['line'] += 1;
             }
         }
@@ -892,14 +892,8 @@ EOF;
 
         ## adjust other methods line and length
         $newlength = count(explode("\n", $func));
-        print_r(array(
-            'newfunc' => $isNewFunc,
-            'line' => $line,
-            'funcname' => $functionName
-        ));
-        print_r($this->methods);
         foreach ($this->methods as $k => $m) {
-            if ($m['line'] >= $line && $k != $functionName) {
+            if (@$m['line'] >= $line && $k != $functionName) {
                 if (!$isNewFunc) {
                     $this->methods[$k]['line'] -= $length;
                 }
@@ -908,8 +902,6 @@ EOF;
             }
         }
         $this->methods[$functionName]['length'] = $newlength;
-        print_r($this->methods);
-
         $this->file = $file;
 
         $fp = fopen($sourceFile, 'r+');
