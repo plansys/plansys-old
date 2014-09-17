@@ -300,7 +300,7 @@ class ActiveRecord extends CActiveRecord {
             unset($d['id']);
             $updatearr = array();
             for ($i = 0; $i < $columnCount; $i++) {
-                if (isset($columnName[$i])) {
+                if (isset($columnName[$i]) && isset($d[$columnName[$i]])) {
                     $updatearr[] = $columnName[$i] . " = '{$d[$columnName[$i]]}'";
                 }
             }
