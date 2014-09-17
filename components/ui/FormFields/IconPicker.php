@@ -194,10 +194,11 @@ class IconPicker extends FormField {
         if (is_null($value)) {
             $value = $this->value;
         }
+        
         $template = stripcslashes($this->iconTemplate);
         $template = str_replace("{base_url}", Yii::app()->baseUrl, $template);
-        $template = str_replace("{app_url}", Yii::app()->baseUrl . DIRECTORY_SEPARATOR . Setting::get('app.dir'), $template);
-        $template = str_replace("{plansys_url}", Yii::app()->baseUrl . DIRECTORY_SEPARATOR . Setting::getPlansysDirName(), $template);
+        $template = str_replace("{app_url}", Yii::app()->baseUrl . '/' . Setting::get('app.dir'), $template);
+        $template = str_replace("{plansys_url}", Yii::app()->baseUrl . '/' . Setting::getPlansysDirName(), $template);
 
         if ($this->renderEmpty == "Yes") {
             return str_replace("{icon}", $value, $template);

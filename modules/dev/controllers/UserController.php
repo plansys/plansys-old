@@ -7,6 +7,10 @@ class UserController extends Controller {
 
         $model = new DevRoleForm;
                 
+        Yii::app()->nfy->send('HALOOOO', array('id' => 'rizky05@gmail.com'));
+        
+        
+        
         if (isset($_POST["DevRoleForm"])) {
             $model->attributes = $_POST["DevRoleForm"];
             if ($model->save()) {
@@ -17,9 +21,7 @@ class UserController extends Controller {
     }
 
     public function actionRole($id) {
-
         $model = $this->loadModel($id , "DevRoleForm");
-                
         if (isset($_POST["DevRoleForm"])) {
             $model->attributes = $_POST["DevRoleForm"];
             if ($model->save()) {

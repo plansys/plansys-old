@@ -31,10 +31,10 @@
         <?php if (!Yii::app()->user->isGuest): ?>
 
             <div id="widget-data" class="hide"><?= json_encode(Widget::listActiveWidget()); ?></div>
-            <div id="widget-container" ng-class="{maximized:$storage.widget.active}">
+            <div id="widget-container" ng-cloak ng-class="{maximized:$storage.widget.active}">
                 <div id="widget-icons">
-                    <div ng-repeat="w in $storage.widget.list" ng-class="{active:widget.isActive('notification')}" class="widget-icon"
-                         ng-click="widget.toggle('notification')">
+                    <div ng-repeat="w in $storage.widget.list" ng-class="{active:widget.isActive(w.class)}" class="widget-icon"
+                         ng-click="widget.toggle(w.class)">
                         <i class="{{w.widget.icon}}"></i>
                         
                         <div ng-if="w.widget.badge != ''" class="badge-container">
@@ -43,16 +43,11 @@
                     </div>
                 </div>
                 <div id="widget-contents">
-                    <div class="widget-notification" class="widget-content">
-
-                        <div class = "properties-header">
-                            <div class="btn btn-xs btn-default pull-right">
-                                <i class="fa fa-check-square-o fa-lg"></i>
-                            </div>
-                            <i class = "fa fa-nm fa-newspaper-o"></i>&nbsp;
-                            Notifications
-                        </div>
+                    <?php foreach (Widget::listActiveWidget() as $w): ?>
+                    <div class="widget-<?= $w['class']; ?>" class="widget-content">
+                        <?= $w['widget']->render(); ?>
                     </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
         <?php endif; ?>

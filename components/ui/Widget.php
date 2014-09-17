@@ -4,14 +4,28 @@ class Widget extends CComponent {
 
     public $icon = "";
     public $badge = "";
-    
     private static $activeWidgets = array();
+
+    public function render() {
+        return $this->renderInternal('template_render.php');
+    }
+
+    public function renderInternal($file) {
+        $reflector = new ReflectionClass($this);
+        $path = str_replace(".php", DIRECTORY_SEPARATOR . $file, $reflector->getFileName());
+
+        $this->registerScript();
+        
+        ob_start();
+        include($path);
+        return Helper::minifyHtml(ob_get_clean());
+    }
 
     public static function listActiveWidget() {
         if (count(Widget::$activeWidgets) == 0) {
             $path = "application.components.ui.Widgets";
             $dir = Yii::getPathOfAlias($path);
-            
+
             $items = glob($dir . DIRECTORY_SEPARATOR . "*.php");
             foreach ($items as $k => $m) {
                 $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
@@ -28,13 +42,7 @@ class Widget extends CComponent {
         }
         return Widget::$activeWidgets;
     }
-    
-    public static function registerAllScript() {
-        foreach (Widget::listActiveWidget() as $w) {
-            $w['widget']->registerScript();
-        }
-    }
-    
+
     /**
      * @return null Fungsi ini akan melakukan register script sebanyak array java script yang di-include.
      */

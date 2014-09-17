@@ -6,7 +6,9 @@ class NfyWidget extends Widget {
     public $badge = '';
 
     public function includeJS() {
-        return array('nfy.js');
+        return array(
+            'nfy-widget.js'
+        );
     }
 
     public function actionSubscribe() {
@@ -28,5 +30,22 @@ class NfyWidget extends Widget {
     public function actionPeek() {
         var_dump(Yii::app()->nfy->peek(Yii::app()->user->id, 5));
     }
-    
+
+    public function actionStream() {
+        ob_end_clean();
+        header("Content-Type: text/event-stream\n\n");
+
+        $counter = rand(1, 10);
+        set_time_limit(3);
+        
+        while (1) {
+            $list = Yii::app()->nfy->peek(Yii::app()->user->id, 5);
+            echo 'data: ' . json_encode($list) . "\n\n";
+
+            ob_flush();
+            flush();
+            sleep(1);
+        }
+    }
+
 }

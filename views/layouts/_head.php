@@ -20,7 +20,6 @@
     Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/font-awesome.min.css'));
     Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/ng-grid.css'));
     Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/main.css'));
-    Widget::registerAllScript();
     
     ?> 
 </head>

@@ -52,7 +52,7 @@ class ActiveRecord extends CActiveRecord {
                         case 'CHasManyRelation':
                             //without through
                             if (is_string($rel->foreignKey)) {
-                                $this->__relations[$k] = $this->$k;
+                                $this->__relations[$k] = $this->getRelated($k);
                                 if (is_array($this->__relations[$k])) {
                                     foreach ($this->__relations[$k] as $i => $j) {
                                         $this->__relations[$k][$i] = $j->attributes;
@@ -71,7 +71,7 @@ class ActiveRecord extends CActiveRecord {
         $this->__oldRelations = $this->__relations;
     }
 
-    public function setAttributes($values, $safeOnly = false) {
+    public function setAttributes($values, $safeOnly = false, $withRelation = true) {
         parent::setAttributes($values, $safeOnly);
         if (!$this->__isRelationLoaded) {
             $this->loadRelations();
@@ -79,7 +79,49 @@ class ActiveRecord extends CActiveRecord {
 
         foreach ($this->__relations as $k => $r) {
             if (isset($values[$k])) {
+                $rel = $this->getMetaData()->relations[$k];
                 $this->__relations[$k] = $values[$k];
+                $relArr = $this->$k;
+
+                if (is_null($relArr)) {
+                    continue;
+                }
+
+                if (is_string($values[$k])) {
+                    $attr = json_decode($values[$k], true);
+
+                    foreach ($attr as $i => $j) {
+                        if (is_array($j)) {
+                            unset($attr[$i]);
+                        }
+                    }
+                    $relArr->setAttributes($attr, false, false);
+                } elseif (is_array($values[$k])) {
+                    if (Helper::is_assoc($values[$k])) {
+                        $attr = $values[$k];
+
+                        foreach ($attr as $i => $j) {
+                            if (is_array($j)) {
+                                unset($attr[$i]);
+                            }
+                        }
+                        $relArr->setAttributes($attr, false, false);
+                    } else {
+                        foreach ($relArr as $i => $j) {
+                            foreach ($values[$k] as $v) {
+                                if ($j->id == $v['id']) {
+                                    $relArr[$i]->setAttributes($v, false, false);
+
+                                    foreach ($v as $o => $p) {
+                                        if (is_array($p)) {
+                                            unset($relArr[$i][$o]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -148,7 +190,6 @@ class ActiveRecord extends CActiveRecord {
             $props[$k] = $k;
         }
 
-
         $attributes = array('DB Fields' => $fields);
 
         if (count($props) > 0) {
@@ -198,14 +239,24 @@ class ActiveRecord extends CActiveRecord {
                     case 'CHasManyRelation':
                         //without through
                         if (is_string($rel->foreignKey)) {
-
                             foreach ($new as $i => $j) {
                                 $new[$i][$rel->foreignKey] = $this->id;
+                                foreach ($new[$i] as $m => $n) {
+                                    if (is_array($n)) {
+                                        $new[$i][$m] = json_encode($j);
+                                    }
+                                }
+                            }
+                            foreach ($old as $i => $j) {
+                                foreach ($old[$i] as $m => $n) {
+                                    if (is_array($n)) {
+                                        $old[$i][$m] = json_encode($j);
+                                    }
+                                }
                             }
 
                             ActiveRecord::batch($rel->className, $new, $old);
                         }
-
                         //with through
                         //todo..
                         break;
@@ -247,9 +298,9 @@ class ActiveRecord extends CActiveRecord {
         return $array;
     }
 
-    public static function batch($model, $new, $old = array()) {
-        $delete = array();
-        $update = array();
+    public static function batch($model, $new, $old = array(), $delete = false) {
+        $deleteArr = array();
+        $updateArr = array();
 
         foreach ($old as $k => $v) {
             $is_deleted = true;
@@ -260,35 +311,35 @@ class ActiveRecord extends CActiveRecord {
                     $is_deleted = false;
                     if (count(array_diff_assoc($j, $v)) > 0) {
                         $is_updated = true;
-                        $update[] = $j;
+                        $updateArr[] = $j;
                     }
                 }
             }
 
             if ($is_deleted) {
-                $delete[] = $v;
+                $deleteArr[] = $v;
             }
         }
 
-        $insert = array();
+        $insertArr = array();
         foreach ($new as $i => $j) {
             if (@$j['id'] == '' || is_null(@$j['id'])) {
-                $insert[] = $j;
+                $insertArr[] = $j;
             } else if (count($old) == 0) {
-                $update[] = $j;
+                $updateArr[] = $j;
             }
         }
 
-        if (count($insert) > 0) {
-            ActiveRecord::batchInsert($model, $insert);
+        if (count($insertArr) > 0) {
+            ActiveRecord::batchInsert($model, $insertArr);
         }
 
-        if (count($update) > 0) {
-            ActiveRecord::batchUpdate($model, $update);
+        if (count($updateArr) > 0) {
+            ActiveRecord::batchUpdate($model, $updateArr);
         }
 
-        if (count($delete) > 0) {
-            ActiveRecord::batchDelete($model, $delete);
+        if ($delete && count($deleteArr) > 0) {
+            ActiveRecord::batchDelete($model, $deleteArr);
         }
     }
 
@@ -385,7 +436,7 @@ class ActiveRecord extends CActiveRecord {
             'type' => 'ColumnField',
             'column1' => $column1,
             'column2' => $column2
-                )
+            )
         ;
         return $return;
     }

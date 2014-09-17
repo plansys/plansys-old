@@ -2,7 +2,7 @@
 
 class User extends ActiveRecord {
 
-    public $subscribed = true;
+    public $subscribed = "";
 
     public function afterFind() {
         $result = parent::afterFind();
@@ -17,7 +17,7 @@ class User extends ActiveRecord {
 
         if ($result) {
             Yii::app()->nfy->unsubscribe($this->id, null, true);
-            if ($this->subscribed === "on") {
+            if ($this->subscribed === "on" || $this->isNewRecord) {
                 $roles = array();
 
                 foreach ($this->roles as $r) {
