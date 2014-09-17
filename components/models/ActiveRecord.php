@@ -33,6 +33,20 @@ class ActiveRecord extends CActiveRecord {
                         case 'CHasOneRelation':
                         case 'CBelongsToRelation':
                             //todo..
+                            if (is_string($rel->foreignKey)) {
+                                $class = $rel->className;
+                                $table = $class::tableName();
+                                $foreignKey = $rel->foreignKey;
+
+                                if (!is_null($this->$foreignKey)) {
+                                    $sql = "select * from {$table} where id = {$this->$foreignKey}";
+
+                                    $query = Yii::app()->db->createCommand($sql)->queryRow();
+                                    $this->__relations[$k] = $query;
+                                } else {
+                                    $this->__relations[$k] = array();
+                                }
+                            }
                             break;
                         case 'CManyManyRelation':
                         case 'CHasManyRelation':
@@ -76,14 +90,16 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    public function getAttributes($names = true) {
-        if (!$this->__isRelationLoaded) {
+    public function getAttributes($names = true, $withRelation = true) {
+        if ($withRelation && !$this->__isRelationLoaded) {
             $this->loadRelations();
         }
         $attributes = parent::getAttributes($names);
         $attributes = array_merge($this->attributeProperties, $attributes);
-        foreach ($this->__relations as $k => $r) {
-            $attributes[$k] = $this->__relations[$k];
+        if ($withRelation) {
+            foreach ($this->__relations as $k => $r) {
+                $attributes[$k] = $this->__relations[$k];
+            }
         }
 
         return $attributes;
@@ -152,7 +168,7 @@ class ActiveRecord extends CActiveRecord {
             $primaryKey = $table->primaryKey;
             $this->$primaryKey = null;
         }
-        
+
         return true;
     }
 
@@ -169,6 +185,13 @@ class ActiveRecord extends CActiveRecord {
                     case 'CBelongsToRelation':
                         if (count(array_diff_assoc($new, $old)) > 0) {
                             //todo..
+                            $class = $rel->class;
+                            $model = $class::model()->findByPk($this->{$rel->foreignKey});
+                            if (is_null($model)) {
+                                $model = new $class;
+                            }
+                            $model->attributes = $new;
+                            $model->save();
                         }
                         break;
                     case 'CManyManyRelation':
@@ -190,7 +213,7 @@ class ActiveRecord extends CActiveRecord {
             }
             $this->__relations[$k] = $new;
         }
-        
+
         return true;
     }
 
