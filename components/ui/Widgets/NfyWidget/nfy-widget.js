@@ -16,22 +16,29 @@ app.controller("NfyWidgetController", function ($scope, $http, $timeout, $localS
         return d;
     }
 
+    var http = location.protocol;
+    var slashes = http.concat("//");
+    var host = slashes.concat(window.location.hostname);
+    var url = host + ":8981";
 
-    var sse = new EventSource(Yii.app.createUrl('/widget/NfyWidget.stream'));
-    sse.addEventListener('message', function (e) {
-        $scope.$apply(function () {
+    var sse = new EventSource(url);
+//    sse.addEventListener('message', function (e) {
+//        $scope.$apply(function () {
+//
+//            items = JSON.parse(e.data);
+////            for (var i in items) {
+////                if (!$storage.nfy || !$storage.nfy.items) {
+////                    $storage.nfy = {items: []};
+////                }
+////
+////                $storage.nfy.items.push(items[i]);
+////            }
+//            console.log(e);
+//        });
+//    }, false);
 
-            items = JSON.parse(e.data);
-            for (var i in items) {
-                if (!$storage.nfy || !$storage.nfy.items) {
-                    $storage.nfy = {items: []};
-                }
-
-                $storage.nfy.items.push(items[i]);
-            }
-            console.log(items);
-        });
-    }, false);
-
+    sse.onmessage = function (event) {
+        console.log(event.data);
+    };
 
 });
