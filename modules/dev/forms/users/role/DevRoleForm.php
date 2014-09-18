@@ -49,7 +49,7 @@ class DevRoleForm extends Role {
                         'type' => 'TextField',
                     ),
                     array (
-                        'label' => 'Role Namedd',
+                        'label' => 'Role Name',
                         'name' => 'role_name',
                         'type' => 'TextField',
                     ),
@@ -130,7 +130,7 @@ class DevRoleForm extends Role {
             ),
             array (
                 'name' => 'dataSource1',
-                'sql' => 'select * from p_user u inner join p_user_role p on u.id = p.user_id                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                and p.role_id = :id {[where]} {[order]} {[paging]}',
+                'sql' => 'select * from p_user u inner join p_user_role p on u.id = p.user_id                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                and p.role_id = :id {[where]} {[order]} {[paging]}',
                 'params' => array (
                     ':id' => '$model->id',
                     'where' => 'dataFilter1',

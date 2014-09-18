@@ -83,19 +83,23 @@ class ActiveRecord extends CActiveRecord {
                 $this->__relations[$k] = $values[$k];
                 $relArr = $this->$k;
 
-                if (is_null($relArr)) {
+                if (!is_object($relArr)) {
                     continue;
                 }
 
                 if (is_string($values[$k])) {
                     $attr = json_decode($values[$k], true);
 
+					if (!is_array($attr)) {
+						$attr= array();
+					}
                     foreach ($attr as $i => $j) {
                         if (is_array($j)) {
                             unset($attr[$i]);
                         }
                     }
                     $relArr->setAttributes($attr, false, false);
+
                 } elseif (is_array($values[$k])) {
                     if (Helper::is_assoc($values[$k])) {
                         $attr = $values[$k];
@@ -218,7 +222,7 @@ class ActiveRecord extends CActiveRecord {
             $new = $new == '' ? array() : $new;
             $old = $this->__oldRelations[$k];
 
-            if (count($old) > 0 || count($new) > 0) {
+            if (is_array($new) && is_array($old) && (count($old) > 0 || count($new) > 0)) {
                 $rel = $this->getMetaData()->relations[$k];
 
                 switch (get_class($rel)) {
@@ -280,7 +284,7 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function getModelFieldList() {
-        $fields = array_keys($this->attributes);
+        $fields = array_keys(parent::getAttributes());
 
         foreach ($fields as $k => $f) {
             if ($this->tableSchema->primaryKey == $f) {

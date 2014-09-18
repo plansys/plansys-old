@@ -11,7 +11,7 @@ ob_start();
 <?php if (isset($data['validators'])): ?>
             $scope.validators = <?php echo @json_encode($data['validators']); ?>;
 <?php endif; ?>
-<?php if (is_subclass_of($this->model, 'ActiveRecord')): ?>
+<?php if (is_subclass_of($this->model, 'ActiveRecord') && isset($data['isNewRecord'])): ?>
             $scope.isNewRecord = <?php echo $data['isNewRecord'] ? "true" : "false" ?>;
 <?php endif; ?>
 
