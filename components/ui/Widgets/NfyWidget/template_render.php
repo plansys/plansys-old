@@ -8,13 +8,13 @@
     </div>
     
     <div  class="nfy-container" >
-<!--        <div ng-repeat="item in $storage.nfy.items" class="nfy-item">
+        <div ng-repeat="item in $storage.nfy.items" class="nfy-item">
             <div class="nfy-message" ng-bind-html="item.message"></div>
-            <div class="nfy-date">{{ parseDate(item.date) | timeago }}</div>
+            <div class="nfy-date">{{ parseDate(item.created_on) | timeago }}</div>
             <div class="nfy-sender">
                 <div class="nfy-name"></div>
                 <div class="nfy-role"></div>
             </div>
-        </div>-->
+        </div>
     </div>
 </div>
