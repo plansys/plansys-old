@@ -23,31 +23,28 @@
  * @property NfyDbSubscription $subscription
  * @property Users $sender
  */
-class NfyDbMessage extends CActiveRecord
-{
+class NfyDbMessage extends CActiveRecord {
+
     /**
      * Returns the static model of the specified AR class.
      * @param string $className active record class name.
      * @return NfyDbMessage the static model class
      */
-    public static function model($className = __CLASS__)
-    {
+    public static function model($className = __CLASS__) {
         return parent::model($className);
     }
 
     /**
      * @return string the associated database table name
      */
-    public function tableName()
-    {
+    public function tableName() {
         return 'p_nfy_messages';
     }
 
     /**
      * @return array validation rules for model attributes.
      */
-    public function rules()
-    {
+    public function rules() {
         return array(
             array('queue_id, sender_id, body', 'required', 'except' => 'search'),
             array('sender_id, subscription_id, timeout', 'numerical', 'integerOnly' => true),
@@ -60,8 +57,7 @@ class NfyDbMessage extends CActiveRecord
     /**
      * @return array relational rules.
      */
-    public function relations()
-    {
+    public function relations() {
         return array(
             'mainMessage' => array(self::BELONGS_TO, 'NfyDbMessage', 'message_id'),
             'sender' => array(self::BELONGS_TO, Yii::app()->getModule('nfy')->userClass, 'sender_id'),
@@ -73,8 +69,7 @@ class NfyDbMessage extends CActiveRecord
     /**
      * @return array customized attribute labels (name=>label)
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return array(
             'id' => 'ID',
             'queue_id' => 'Queue ID',
@@ -95,8 +90,7 @@ class NfyDbMessage extends CActiveRecord
      * Retrieves a list of models based on the current search/filter conditions.
      * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
      */
-    public function search()
-    {
+    public function search() {
         $criteria = new CDbCriteria;
         $criteria->compare('queue_id', $this->queue_id, true);
         $criteria->compare('sender_id', $this->sender_id);
@@ -112,8 +106,7 @@ class NfyDbMessage extends CActiveRecord
         ));
     }
 
-    public function beforeSave()
-    {
+    public function beforeSave() {
         if ($this->isNewRecord && $this->created_on === null) {
             $now = new DateTime('now', new DateTimezone('UTC'));
             $this->created_on = $now->format('Y-m-d H:i:s');
@@ -121,33 +114,36 @@ class NfyDbMessage extends CActiveRecord
         return true;
     }
 
-    public function __clone()
-    {
+    public function __clone() {
         $this->primaryKey = null;
         $this->subscription_id = null;
         $this->isNewRecord = true;
     }
 
-    public function scopes()
-    {
+    public function scopes() {
         $t = $this->getTableAlias(true);
         return array(
             'deleted' => array('condition' => "$t.status=" . NfyMessage::DELETED),
         );
     }
 
-    public function available($timeout = null)
-    {
+    public function read($timeout = null) {
+        return $this->withStatus(NfyMessage::READ, $timeout);
+    }
+
+    public function sent($timeout = null) {
+        return $this->withStatus(NfyMessage::SENT, $timeout);
+    }
+
+    public function available($timeout = null) {
         return $this->withStatus(NfyMessage::AVAILABLE, $timeout);
     }
 
-    public function reserved($timeout = null)
-    {
+    public function reserved($timeout = null) {
         return $this->withStatus(NfyMessage::RESERVED, $timeout);
     }
 
-    public function timedout($timeout = null)
-    {
+    public function timedout($timeout = null) {
         if ($timeout === null) {
             $this->getDbCriteria()->mergeWith(array('condition' => '1=0'));
             return $this;
@@ -162,8 +158,7 @@ class NfyDbMessage extends CActiveRecord
         return $this;
     }
 
-    public function withStatus($statuses, $timeout = null)
-    {
+    public function withStatus($statuses, $timeout = null) {
         if (!is_array($statuses))
             $statuses = array($statuses);
 
@@ -204,8 +199,7 @@ class NfyDbMessage extends CActiveRecord
         return $this;
     }
 
-    public function withQueue($queue_id)
-    {
+    public function withQueue($queue_id) {
         $t = $this->getTableAlias(true);
         $pk = $this->tableSchema->primaryKey;
         $this->getDbCriteria()->mergeWith(array(
@@ -216,8 +210,7 @@ class NfyDbMessage extends CActiveRecord
         return $this;
     }
 
-    public function withSubscriber($subscriber_id = null)
-    {
+    public function withSubscriber($subscriber_id = null) {
         if ($subscriber_id === null) {
             $t = $this->getTableAlias(true);
             $criteria = array('condition' => "$t.subscription_id IS NULL");
@@ -226,21 +219,21 @@ class NfyDbMessage extends CActiveRecord
             $criteria = array(
                 'together' => true,
                 'with' => array('subscription' => array(
-                    'condition' => $schema->quoteSimpleTableName('subscription') . '.subscriber_id=:subscriber_id',
-                    'params' => array(':subscriber_id' => $subscriber_id),
-                )),
+                        'condition' => $schema->quoteSimpleTableName('subscription') . '.subscriber_id=:subscriber_id',
+                        'params' => array(':subscriber_id' => $subscriber_id),
+                    )),
             );
         }
         $this->getDbCriteria()->mergeWith($criteria);
         return $this;
     }
 
-    public static function createMessages($dbMessages)
-    {
+    public static function createMessages($dbMessages) {
         if (!is_array($dbMessages)) {
             $dbMessages = array($dbMessages);
         }
         $result = array();
+        $subscriber_ids = array();
         foreach ($dbMessages as $dbMessage) {
             $attributes = $dbMessage->getAttributes();
             $attributes['subscriber_id'] = $dbMessage->subscription_id === null ? null : $dbMessage->subscription->subscriber_id;
@@ -250,7 +243,34 @@ class NfyDbMessage extends CActiveRecord
             $message = new NfyMessage;
             $message->setAttributes($attributes);
             $result[] = $message;
+            $subscriber_ids[] = $message->subscriber_id;
         }
+
+        if (count($subscriber_ids) > 0) {
+            $sql = "SELECT u.id,fullname,role_name from p_user u
+ left outer join 
+   p_user_role p on u.id = p.user_id 
+   and p.is_default_role = 'Yes' 
+ left outer join 
+   p_role r on r.id = p.role_id 
+ where u.id IN (" . implode(",", $subscriber_ids) . ");";
+
+
+            $user = Yii::app()->db->createCommand($sql)->queryAll();
+            $subscriber = array();
+            foreach ($user as $u) {
+                $subscriber[$u['id']] = array(
+                    'name' => $u['fullname'],
+                    'role' => $u['role_name']
+                );
+            }
+            foreach ($result as $k => $r) {
+                $result[$k]->subscriber_name = $subscriber[$r->subscriber_id]['name'];
+                $result[$k]->subscriber_role = $subscriber[$r->subscriber_id]['role'];
+            }
+        }
+
         return $result;
     }
+
 }

@@ -87,7 +87,7 @@ class DevUserIndex extends Form {
    and p.is_default_role = \'Yes\' 
  left outer join 
    p_role r on r.id = p.role_id 
- {where [where]} {[order]} {[paging]}',
+ {where [where]} group by u.id {[order]} {[paging]}',
                 'params' => array (
                     'where' => 'dataFilter1',
                     'order' => 'dataGrid1',

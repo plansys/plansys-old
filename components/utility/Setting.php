@@ -36,6 +36,7 @@ class Setting {
     }
 
     public static function init($configfile) {
+        date_default_timezone_set("Asia/Jakarta");
         $bp = Setting::setupBasePath($configfile);
         Setting::$path = $bp . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
 

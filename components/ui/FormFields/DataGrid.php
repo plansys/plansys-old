@@ -151,7 +151,7 @@ class DataGrid extends FormField {
                 if (stripos("order by", $template) !== false) {
                     $query = str_replace("[order]", implode(" , ", $sql), $template);
                 } else {
-                    $query = "order by " . implode(" , ", $sql);
+                    $query = "order by " . array_pop($sql);
                 }
             }
         }

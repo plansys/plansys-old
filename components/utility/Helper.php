@@ -143,6 +143,15 @@ class Helper {
         return $list;
     }
 
+    public static function execCommandInBackground($cmd) {
+        if (substr(php_uname(), 0, 7) == "Windows") {
+            pclose(popen("start /B " . $cmd, "r"));
+            //exec("start /B ". $cmd);
+        } else {
+            exec($cmd . " > /dev/null &");
+        }
+    }
+
     public static function classAlias($class) {
 
         $reflector = new ReflectionClass($class);
@@ -163,11 +172,11 @@ class Helper {
 
 
         return join(' ', array_map(function ($key) use ($attributes) {
-                    if (is_bool($attributes[$key])) {
-                        return $attributes[$key] ? $key : '';
-                    }
-                    return $key . '="' . $attributes[$key] . '"';
-                }, array_keys($attributes)));
+                if (is_bool($attributes[$key])) {
+                    return $attributes[$key] ? $key : '';
+                }
+                return $key . '="' . $attributes[$key] . '"';
+            }, array_keys($attributes)));
     }
 
     public static function minifyHtml($text) {

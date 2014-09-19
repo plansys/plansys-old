@@ -63,6 +63,10 @@ hr {
     margin:2px -2px -2px 3px;
 }
 
+.widget-content {
+    height:100%;
+}
+
 #widget-contents .properties-header .btn {
     margin:-1px -1px 0px 0px;
     font-size:10px;
@@ -96,15 +100,27 @@ hr {
 }
 
 .widget-icon .badge {
-    background:#d11818;
+    background-color: #4fae0d;
+    background-color: #71c018;
+    background-image: -moz-linear-gradient(top,#82ce20,#57ac0b);
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#82ce20),to(#57ac0b));
+    background-image: -webkit-linear-gradient(top,#82ce20,#57ac0b);
+    background-image: -o-linear-gradient(top,#82ce20,#57ac0b);
+    background-image: linear-gradient(to bottom,#82ce20,#57ac0b);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff82ce20', endColorstr='#ff57ac0b', GradientType=0);
+    border-color: #49982b #3b8d1c #267507;
+    color: #fff;
+    text-shadow: 0 1px 0 #3b8d1c;
     color:white;
     text-shadow:0px;
-    font-size:11px;
+    font-size:12px;
+    border-radius:3px;
     font-weight:bold;
 }
 
 .widget-icon .badge-container {
-    margin:-3px auto 0px auto;
+    margin:0px auto 0px auto;
     text-align:center;
 }
 
@@ -1449,49 +1465,74 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     margin:-2px -2px 0px 4px;
 }
 
+/********************************** NOTIFICATION **************************************/
+.nfy-item {
+    font-size:13px;
+    border-bottom:1px solid #ececeb;
+}
+.nfy-container {
+    position:absolute;
+    top:28px;
+    bottom:0px;
+    left:0px;
+    right:0px;
+    overflow-y: auto;
+}
+.nfy-info {
+    
+}
+
+.nfy-name {
+    float:left;
+}
+
+.nfy-role {
+    float:right;
+}
+
 /********************************** FORMS **************************************/
 
 .switchery {
-  background-color: #fff;
-  border: 1px solid #dfdfdf;
-  border-radius: 20px;
-  cursor: pointer;
-  display: inline-block;
-  height: 30px;
-  position: relative;
-  vertical-align: middle;
-  width: 50px;
-  
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+    background-color: #fff;
+    border: 1px solid #dfdfdf;
+    border-radius: 20px;
+    cursor: pointer;
+    display: inline-block;
+    height: 30px;
+    position: relative;
+    vertical-align: middle;
+    width: 50px;
 
-  -webkit-box-sizing: content-box;
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
 }
 
 .switchery > small {
-  background: #fff;
-  border-radius: 100%;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-  height: 30px;
-  position: absolute;
-  top: 0;
-  width: 30px;
+    background: #fff;
+    border-radius: 100%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    height: 30px;
+    position: absolute;
+    top: 0;
+    width: 30px;
 }
 
 .switchery {
     margin-top:2px;
-   height: 25px;
-   width: 35px;
+    height: 25px;
+    width: 35px;
 }
 
 .switchery > small {
-   height: 25px;
-   width: 25px;
+    height: 25px;
+    width: 25px;
 }
 
 .switchery-label {

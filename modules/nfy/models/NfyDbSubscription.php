@@ -153,7 +153,7 @@ class NfyDbSubscription extends CActiveRecord
 
         $i = 0;
         foreach($categories as $category) {
-			$criteria->addCondition("($r.is_exception = :false AND :category$i LIKE $r.category) OR ($r.is_exception = :true AND :category$i NOT LIKE $r.category)");
+			$criteria->addCondition("($r.is_exception = :false AND $r.category LIKE :category$i ) OR ($r.is_exception = :true AND $r.category NOT LIKE :category$i)");
 			$criteria->params[':false'] = 0;
 			$criteria->params[':true'] = true;
 			$criteria->params[':category'.$i++] = $category;

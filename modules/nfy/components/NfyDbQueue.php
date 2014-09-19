@@ -31,8 +31,9 @@ class NfyDbQueue extends NfyQueue {
             'timeout' => $this->timeout,
             'sender_id' => Yii::app()->hasComponent('user') ? Yii::app()->user->getId() : null,
             'status' => NfyMessage::AVAILABLE,
+            'created_on' => date('Y-m-d H:i:s'),
             'body' => $body,
-                ), false);
+            ), false);
         return $this->formatMessage($message);
     }
 
@@ -58,6 +59,15 @@ class NfyDbQueue extends NfyQueue {
 
         $success = true;
 
+        if (Helper::is_assoc($category)) {
+            $sc = array();
+            foreach ($category as $k => $v) {
+                $cat = $k . '_' . $v;
+                $sc[] = $cat;
+            }
+            $category = $sc;
+        }
+
         $subscriptions = NfyDbSubscription::model()->current()->withQueue($this->id)->matchingCategory($category)->findAll();
 
         $trx = $queueMessage->getDbConnection()->getCurrentTransaction() !== null ? null : $queueMessage->getDbConnection()->beginTransaction();
@@ -78,10 +88,10 @@ class NfyDbQueue extends NfyQueue {
 
             if (!$subscriptionMessage->save()) {
                 Yii::log(Yii::t('NfyModule.app', "Failed to save message '{msg}' in queue {queue_label} for the subscription {subscription_id}.", array(
-                            '{msg}' => $queueMessage->body,
-                            '{queue_label}' => $this->label,
-                            '{subscription_id}' => $subscription->id,
-                        )), CLogger::LEVEL_ERROR, 'nfy');
+                        '{msg}' => $queueMessage->body,
+                        '{queue_label}' => $this->label,
+                        '{subscription_id}' => $subscription->id,
+                    )), CLogger::LEVEL_ERROR, 'nfy');
                 $success = false;
             }
 
@@ -105,17 +115,17 @@ class NfyDbQueue extends NfyQueue {
     public function peek($subscriber_id = null, $limit = -1, $status = null) {
         $pk = NfyDbMessage::model()->tableSchema->primaryKey;
 
-        if ($status == null) {
+        if ($status === null) {
             $messages = NfyDbMessage::model()
-                    ->withQueue($this->id)
-                    ->withSubscriber($subscriber_id)
-                    ->findAll(array('index' => $pk, 'limit' => $limit, 'order' => 't.id desc'));
+                ->withQueue($this->id)
+                ->withSubscriber($subscriber_id)
+                ->findAll(array('index' => $pk, 'limit' => $limit, 'order' => 't.id desc'));
         } else {
             $messages = NfyDbMessage::model()
-                    ->withQueue($this->id)
-                    ->withSubscriber($subscriber_id)
-                    ->withStatus($status, $this->timeout)
-                    ->findAll(array('index' => $pk, 'limit' => $limit, 'order' => 't.id desc'));
+                ->withQueue($this->id)
+                ->withSubscriber($subscriber_id)
+                ->withStatus($status, $this->timeout)
+                ->findAll(array('index' => $pk, 'limit' => $limit, 'order' => 't.id desc'));
         }
         return NfyDbMessage::createMessages($messages);
     }
@@ -131,7 +141,7 @@ class NfyDbQueue extends NfyQueue {
      * @inheritdoc
      */
     public function receive($subscriber_id = null, $limit = -1) {
-        return $this->receiveInternal($subscriber_id, $limit, self::GET_DELETE);
+        return $this->receiveInternal($subscriber_id, $limit, self::GET_SENT);
     }
 
     /**
@@ -140,21 +150,45 @@ class NfyDbQueue extends NfyQueue {
     protected function receiveInternal($subscriber_id = null, $limit = -1, $mode = self::GET_RESERVE) {
         $pk = NfyDbMessage::model()->tableSchema->primaryKey;
         $trx = NfyDbMessage::model()
-                        ->getDbConnection()
-                        ->getCurrentTransaction() !== null ? null : NfyDbMessage::model()->getDbConnection()->beginTransaction();
+                ->getDbConnection()
+                ->getCurrentTransaction() !== null ? null : NfyDbMessage::model()->getDbConnection()->beginTransaction();
 
-        $messages = NfyDbMessage::model()
-                ->withQueue($this->id)
-                ->withSubscriber($subscriber_id)
-                ->available($this->timeout)
-                ->findAll(array('index' => $pk, 'limit' => $limit, 'order' => 't.id desc'));
+
+        $message = NfyDbMessage::model()->withQueue($this->id)->withSubscriber($subscriber_id);
+
+        switch ($mode) {
+            case self::GET_SENT:
+                $message->available($this->timeout);
+                break;
+            case self::GET_READ:
+                $message->sent($this->timeout);
+                break;
+            case self::GET_RESERVE:
+                $message->available($this->timeout);
+                break;
+            case self::GET_DELETE:
+                $message->available($this->timeout);
+                break;
+        }
+
+        $messages = $message->findAll(array('index' => $pk, 'limit' => $limit, 'order' => 't.id desc'));
 
         if (!empty($messages)) {
             $now = new DateTime('now', new DateTimezone('UTC'));
-            if ($mode === self::GET_DELETE) {
-                $attributes = array('status' => NfyMessage::DELETED, 'deleted_on' => $now->format('Y-m-d H:i:s'));
-            } elseif ($mode === self::GET_RESERVE) {
-                $attributes = array('status' => NfyMessage::RESERVED, 'reserved_on' => $now->format('Y-m-d H:i:s'));
+
+            switch ($mode) {
+                case self::GET_SENT:
+                    $attributes = array('status' => NfyMessage::SENT, 'sent_on' => $now->format('Y-m-d H:i:s'));
+                    break;
+                case self::GET_READ:
+                    $attributes = array('status' => NfyMessage::READ, 'read_on' => $now->format('Y-m-d H:i:s'));
+                    break;
+                case self::GET_RESERVE:
+                    $attributes = array('status' => NfyMessage::RESERVED, 'reserved_on' => $now->format('Y-m-d H:i:s'));
+                    break;
+                case self::GET_DELETE:
+                    $attributes = array('status' => NfyMessage::DELETED, 'deleted_on' => $now->format('Y-m-d H:i:s'));
+                    break;
             }
             NfyDbMessage::model()->updateByPk(array_keys($messages), $attributes);
         }

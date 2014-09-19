@@ -364,6 +364,9 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                 ),
             ),
             'inlineJS' => 'js/form.js',
+            'options' => array (
+                'autocomplete' => 'off',
+            ),
         );
     }
 

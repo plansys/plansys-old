@@ -19,14 +19,15 @@ class DevRoleIndex extends Form {
             ),
             array (
                 'name' => 'dataSource1',
-                'sql' => 'select p.role_name as parent_role,r.id as id, r.role_name, r.role_description from p_role r left outer join p_role p on r.parent_id = p.id {where [where]} {order by parent_role asc, id asc [order]} {[paging]}',
+                'sql' => 'select * from p_role {[where]}    {order by role_name asc, [order]} {[paging]}',
                 'params' => array (
                     'where' => 'dataFilter1',
                     'order' => 'dataGrid1',
                     'paging' => 'dataGrid1',
                 ),
+                'debugSql' => 'Yes',
                 'enablePaging' => 'Yes',
-                'pagingSQL' => 'select count(1) from p_role r left outer join p_role p on r.parent_id = p.id {where [where]}',
+                'pagingSQL' => 'select count(1) from p_role {where [where]}',
                 'type' => 'DataSource',
             ),
             array (
@@ -43,13 +44,6 @@ class DevRoleIndex extends Form {
                     array (
                         'name' => 'role_description',
                         'label' => 'Description',
-                        'listExpr' => '',
-                        'filterType' => 'string',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'parent_role',
-                        'label' => 'Parent Role',
                         'listExpr' => '',
                         'filterType' => 'string',
                         'show' => false,
@@ -78,20 +72,6 @@ class DevRoleIndex extends Form {
                     array (
                         'name' => 'role_description',
                         'label' => 'Description',
-                        'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
-                        'columnType' => 'string',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'parent_role',
-                        'label' => 'Parent Role',
                         'options' => array (),
                         'buttonCollapsed' => 'Yes',
                         'buttons' => array (

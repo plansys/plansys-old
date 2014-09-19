@@ -302,7 +302,7 @@ class ActiveRecord extends CActiveRecord {
         return $array;
     }
 
-    public static function batch($model, $new, $old = array(), $delete = false) {
+    public static function batch($model, $new, $old = array(), $delete = true) {
         $deleteArr = array();
         $updateArr = array();
 

@@ -4,13 +4,8 @@ class UserController extends Controller {
 
     
     public function actionNewRole() {
-
         $model = new DevRoleForm;
                 
-        Yii::app()->nfy->send('HALOOOO', array('id' => 'rizky05@gmail.com'));
-        
-        
-        
         if (isset($_POST["DevRoleForm"])) {
             $model->attributes = $_POST["DevRoleForm"];
             if ($model->save()) {
@@ -32,7 +27,6 @@ class UserController extends Controller {
     }
 
     public function actionRoles() {
-
         $this->renderForm("users.role.DevRoleIndex");
     }
 
@@ -44,7 +38,6 @@ class UserController extends Controller {
         $model = $this->loadModel($id, "DevUserForm");
 
         if (isset($_POST["DevUserForm"])) {
-            
             $model->attributes = $_POST["DevUserForm"];
             if ($model->save()) {
                 $this->redirect(array("index"));

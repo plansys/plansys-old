@@ -44,29 +44,18 @@ class DevRoleForm extends Role {
             array (
                 'column1' => array (
                     array (
-                        'label' => 'Role Description',
-                        'name' => 'role_description',
+                        'label' => 'Role Name',
+                        'name' => 'role_name',
                         'type' => 'TextField',
                     ),
                     array (
-                        'label' => 'Role Name',
-                        'name' => 'role_name',
+                        'label' => 'Role Description',
+                        'name' => 'role_description',
                         'type' => 'TextField',
                     ),
                     '<column-placeholder></column-placeholder>',
                 ),
                 'column2' => array (
-                    array (
-                        'label' => 'Parent Role',
-                        'name' => 'parent_id',
-                        'includeEmpty' => 'Yes',
-                        'emptyValue' => '0',
-                        'searchable' => 'Yes',
-                        'modelClass' => 'application.models.Role',
-                        'idField' => 'id',
-                        'labelField' => '{role_description} [{role_name}]',
-                        'type' => 'RelationField',
-                    ),
                     '<column-placeholder></column-placeholder>',
                 ),
                 'type' => 'ColumnField',
@@ -130,7 +119,7 @@ class DevRoleForm extends Role {
             ),
             array (
                 'name' => 'dataSource1',
-                'sql' => 'select * from p_user u inner join p_user_role p on u.id = p.user_id                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                and p.role_id = :id {[where]} {[order]} {[paging]}',
+                'sql' => 'select u.* from p_user u inner join p_user_role p on u.id = p.user_id                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                and p.role_id = :id {[where]} {[order]} {[paging]}',
                 'params' => array (
                     ':id' => '$model->id',
                     'where' => 'dataFilter1',
@@ -225,7 +214,7 @@ class DevRoleForm extends Role {
                             ),
                         ),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                     ),
                 ),
                 'gridOptions' => array (

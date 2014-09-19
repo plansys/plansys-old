@@ -27,18 +27,18 @@ class Widget extends CComponent {
             $dir = Yii::getPathOfAlias($path);
 
             $items = glob($dir . DIRECTORY_SEPARATOR . "*.php");
+            $result = array();
             foreach ($items as $k => $m) {
                 $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
                 $m = str_replace('.php', "", $m);
                 $widget = new $m;
-
-                $items[$k] = array(
+                $result[$m] = array(
                     'class' => $m,
                     'widget' => $widget,
                     'class_path' => $path . '.' . $m,
                 );
             }
-            Widget::$activeWidgets = $items;
+            Widget::$activeWidgets = $result;
         }
         return Widget::$activeWidgets;
     }

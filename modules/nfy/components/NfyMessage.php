@@ -6,8 +6,10 @@
 class NfyMessage {
 
     const AVAILABLE = 0;
-    const RESERVED = 1;
-    const DELETED = 2;
+    const SENT = 1;
+    const READ = 2;
+    const RESERVED = 3;
+    const DELETED = 4;
 
     /**
      * @var string $id Unique identifier of the message
@@ -59,6 +61,9 @@ class NfyMessage {
      * @var string $body Message body
      */
     public $body;
+    
+    public $subscriber_name = "";
+    public $subscriber_role = "";
 
     public function __sleep() {
         $attributes = array('id', 'created_on', 'sender_id', 'timeout', 'body');
@@ -69,15 +74,6 @@ class NfyMessage {
         return $attributes;
     }
 
-    private $_subscriber_name = "";
-    public function getSubscriber_name() {
-        if ($this->_subscriber_name == "") {
-            $model = User::model()->findByPk($this->subscriber_id);
-            if (!is_null($model)) {
-                $this->_subscriber_name = $model->name;
-            }
-        }
-    }
 
     /**
      * Sets the properties values in a massive way.

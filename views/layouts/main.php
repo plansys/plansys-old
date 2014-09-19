@@ -38,13 +38,13 @@
                         <i class="{{w.widget.icon}}"></i>
                         
                         <div ng-if="w.widget.badge != ''" class="badge-container">
-                            <div class="badge blink">{{ w.widget.badge }}</div>
+                            <div class="badge">{{ w.widget.badge }}</div>
                         </div>
                     </div>
                 </div>
                 <div id="widget-contents">
                     <?php foreach (Widget::listActiveWidget() as $w): ?>
-                    <div class="widget-<?= $w['class']; ?>" class="widget-content">
+                    <div class="widget-content widget-<?= $w['class']; ?>" class="widget-content">
                         <?= $w['widget']->render(); ?>
                     </div>
                     <?php endforeach; ?>

@@ -11,16 +11,16 @@ class NfyWidget extends Widget {
         );
     }
 
-    public function actionSubscribe() {
-        $uid = Yii::app()->user->id;
-        $role = Yii::app()->user->role;
-        Yii::app()->nfy->subscribe($uid, $uid, array('uid_' . $uid, 'role' => $role));
-    }
-
     public function actionNotify() {
-        Yii::app()->nfy->send('test', array(
-            'role_dev'
+        $var = json_encode(array(
+            'url' => Yii::app()->controller->createUrl('/dev/user/update/', array('id' => Yii::app()->user->id)),
+            'message' => 'Pergi ke halaman update user ' . Yii::app()->user->model->fullname
         ));
+        Yii::app()->nfy->send($var, array(
+            'role' => 'admin'
+        ));
+
+        echo $var;
     }
 
     public function actionPeek() {
@@ -28,6 +28,7 @@ class NfyWidget extends Widget {
     }
 
     public function actionStream() {
+        
     }
 
 }

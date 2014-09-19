@@ -24,7 +24,7 @@ class User extends ActiveRecord {
 			$roles = array();
 
 			foreach ($this->roles as $r) {
-				$roles[] = "role_" . $r->role_name;
+				$roles[] = "role_" . $r->role_name . ".";
 			}
 			$category = array_merge(array(
 				'uid_' . $this->id,

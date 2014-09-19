@@ -2,9 +2,11 @@
 
 interface NfyQueueInterface
 {
-	const GET_PEEK = 0;
-	const GET_RESERVE = 1;
-	const GET_DELETE = 2;
+    const GET_PEEK = 0;
+    const GET_SENT = 1;
+    const GET_READ = 2;
+    const GET_RESERVED = 3;
+    const GET_DELETE = 4;
 
 	/**
 	 * Determines if message can be sent.

@@ -73,10 +73,11 @@ app.directive('psDataFilter', function($timeout, dateFilter) {
                     for (i in filters) {
                         var f = filters[i];
                         f.value = '';
-                        f.show = true;
+                        f.show = (i > 5 ? false:  true);
                         f.valueText = 'All';
                         f.operatorDropdownOpen = false;
                         f.operator = $scope.operators[f.filterType][0];
+
 
                         if (f.filterType == 'list' || f.filterType == 'check') {
                             f.list = $scope.renderFormList(f.list);
