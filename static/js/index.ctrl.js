@@ -21,7 +21,6 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
     if ($("#widget-data").text() != "") {
         $storage.widget.list = JSON.parse($("#widget-data").text());
     }
-
     $scope.widget = {
         toggle: function (name) {
             if ($storage.widget.active == null) {
@@ -40,7 +39,9 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
     };
 
     $(window).resize(function () {
-        $("#content").width($(window).width() - $("#widget-container").width());
+        var width = $("#widget-container").hasClass('ng-hide') ? 0 : $("#widget-container").width();
+        $("#content").width($(window).width() - width);
+
     });
     $timeout(function () {
         $(window).resize();

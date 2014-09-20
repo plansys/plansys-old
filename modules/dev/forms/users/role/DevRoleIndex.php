@@ -19,13 +19,12 @@ class DevRoleIndex extends Form {
             ),
             array (
                 'name' => 'dataSource1',
-                'sql' => 'select * from p_role {[where]}    {order by role_name asc, [order]} {[paging]}',
+                'sql' => 'select * from p_role {[where]}        {order by role_name asc, [order]} {[paging]}',
                 'params' => array (
                     'where' => 'dataFilter1',
                     'order' => 'dataGrid1',
                     'paging' => 'dataGrid1',
                 ),
-                'debugSql' => 'Yes',
                 'enablePaging' => 'Yes',
                 'pagingSQL' => 'select count(1) from p_role {where [where]}',
                 'type' => 'DataSource',

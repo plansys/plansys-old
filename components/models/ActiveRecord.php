@@ -77,29 +77,30 @@ class ActiveRecord extends CActiveRecord {
             $this->loadRelations();
         }
 
+
+
         foreach ($this->__relations as $k => $r) {
+
             if (isset($values[$k])) {
                 $rel = $this->getMetaData()->relations[$k];
                 $this->__relations[$k] = $values[$k];
                 $relArr = $this->$k;
 
-                if (!is_object($relArr)) {
-                    continue;
-                }
-
                 if (is_string($values[$k])) {
                     $attr = json_decode($values[$k], true);
 
-					if (!is_array($attr)) {
-						$attr= array();
-					}
+                    if (!is_array($attr)) {
+                        $attr = array();
+                    }
                     foreach ($attr as $i => $j) {
                         if (is_array($j)) {
                             unset($attr[$i]);
                         }
                     }
-                    $relArr->setAttributes($attr, false, false);
-
+                    if (is_object($relArr)) {
+                        $relArr->setAttributes($attr, false, false);
+                    }
+                    $this->__relations[$k] = $attr;
                 } elseif (is_array($values[$k])) {
                     if (Helper::is_assoc($values[$k])) {
                         $attr = $values[$k];
@@ -109,18 +110,28 @@ class ActiveRecord extends CActiveRecord {
                                 unset($attr[$i]);
                             }
                         }
-                        $relArr->setAttributes($attr, false, false);
+
+                        if (is_object($relArr)) {
+                            $relArr->setAttributes($attr, false, false);
+                        }
+                        $this->__relations[$k] = $attr;
                     } else {
                         foreach ($relArr as $i => $j) {
                             foreach ($values[$k] as $v) {
                                 if ($j->id == $v['id']) {
-                                    $relArr[$i]->setAttributes($v, false, false);
-
-                                    foreach ($v as $o => $p) {
-                                        if (is_array($p)) {
-                                            unset($relArr[$i][$o]);
+                                    $attr = $j->attributes;
+                                    foreach ($attr as $x => $y) {
+                                        if (is_array($y) && is_string($v[$x])) {
+                                            $attr[$x] = json_decode($v[$x], true);
+                                        } else {
+                                            $attr[$x] = $v[$x];
                                         }
                                     }
+                                    
+                                    if (is_object($relArr[$i])) {
+                                        $relArr[$i]->setAttributes($attr, false, false);
+                                    }
+                                    $this->__relations[$k][$i] = $attr;
                                 }
                             }
                         }
@@ -243,23 +254,27 @@ class ActiveRecord extends CActiveRecord {
                     case 'CHasManyRelation':
                         //without through
                         if (is_string($rel->foreignKey)) {
+                            $originalNew = $new;
                             foreach ($new as $i => $j) {
                                 $new[$i][$rel->foreignKey] = $this->id;
+                                $originalNew[$i][$rel->foreignKey] = $this->id;
                                 foreach ($new[$i] as $m => $n) {
                                     if (is_array($n)) {
-                                        $new[$i][$m] = json_encode($j);
+                                        $originalNew[$i][$m] = $n;
+                                        $new[$i][$m] = json_encode($n);
                                     }
                                 }
                             }
                             foreach ($old as $i => $j) {
                                 foreach ($old[$i] as $m => $n) {
                                     if (is_array($n)) {
-                                        $old[$i][$m] = json_encode($j);
+                                        $old[$i][$m] = json_encode($n);
                                     }
                                 }
                             }
 
                             ActiveRecord::batch($rel->className, $new, $old);
+                            $new = $originalNew;
                         }
                         //with through
                         //todo..

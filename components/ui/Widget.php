@@ -15,7 +15,7 @@ class Widget extends CComponent {
         $path = str_replace(".php", DIRECTORY_SEPARATOR . $file, $reflector->getFileName());
 
         $this->registerScript();
-        
+
         ob_start();
         include($path);
         return Helper::minifyHtml(ob_get_clean());
@@ -32,11 +32,21 @@ class Widget extends CComponent {
                 $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
                 $m = str_replace('.php', "", $m);
                 $widget = new $m;
-                $result[$m] = array(
-                    'class' => $m,
-                    'widget' => $widget,
-                    'class_path' => $path . '.' . $m,
-                );
+
+                $include = true;
+                switch ($m) {
+                    case 'NfyWidget':
+                        $include = Yii::app()->user->model->subscribed;
+                        break;
+                }
+
+                if ($include) {
+                    $result[$m] = array(
+                        'class' => $m,
+                        'widget' => $widget,
+                        'class_path' => $path . '.' . $m,
+                    );
+                }
             }
             Widget::$activeWidgets = $result;
         }

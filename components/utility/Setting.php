@@ -115,7 +115,10 @@ class Setting {
         }
 
         foreach ($appModules as $key => $module) {
-            $return[] = array_pop(explode(DIRECTORY_SEPARATOR, $module));
+            $m = array_pop(explode(DIRECTORY_SEPARATOR, $module));
+            $return[$m] = array(
+                'class' => 'app.modules.' . $m . '.' . ucfirst($m) . 'Module'
+            );
         }
         return $return;
     }

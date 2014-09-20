@@ -84,8 +84,6 @@ hr {
     border-left:1px solid #aaa;
 }
 
-
-
 .widget-icon {
     text-align:center;
     padding:8px 0px;
@@ -1468,7 +1466,14 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 /********************************** NOTIFICATION **************************************/
 .nfy-item {
     font-size:13px;
-    border-bottom:1px solid #ececeb;
+    border-bottom:1px solid #ccc;
+    display:block;
+    text-decoration: none !important;
+    color:#333 !important;
+}
+.nfy-item:hover {
+    background:#f8fbfd;
+    box-shadow:inset 0px 0px 4px 0px #e3ecf4;
 }
 .nfy-container {
     position:absolute;
@@ -1478,16 +1483,60 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     right:0px;
     overflow-y: auto;
 }
-.nfy-info {
-    
+.nfy-message {
+    padding:5px;
+    display:block;
 }
 
-.nfy-name {
-    float:left;
+.nfy-notes {
+    border-top:1px solid #ececeb;
+    padding:5px;
+    color:#999;
+}
+
+.nfy-message:hover {
+    text-decoration:none;
+}
+
+.nfy-info {
+    font-size:12px;
+    padding:5px;
+    color:#777;
+    border-top:1px solid #ececeb;
+}
+
+
+.nfy-date {
+    font-size:11px;
+    padding-top:2px;
+}
+
+.nfy-sender { 
+    color:#666;
+}
+
+.nfy-sender:hover {
+    text-decoration:none;
+    border-bottom:1px solid #428BCA;
+}
+
+.nfy-item:hover .nfy-sender {
+    color:#428BCA;
 }
 
 .nfy-role {
-    float:right;
+    padding:0px 2px;
+    text-transform: uppercase;
+    font-size:11px;
+    border:1px solid #666;
+    color:#666;
+    border-radius:5px;
+    font-weight:bold
+}
+
+.nfy-item:hover .nfy-role {
+    border:1px solid #428BCA;
+    color:#428BCA;
 }
 
 /********************************** FORMS **************************************/

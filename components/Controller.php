@@ -60,6 +60,13 @@ class Controller extends CController {
                 'url' => '#',
                 'items' => array(
                     array(
+                        'label' => 'Edit Profile',
+                        'url' => array('/sys/profile/index'),
+                    ),
+                    array(
+                        'label' => '---',
+                    ),
+                    array(
                         'label' => 'Logout',
                         'url' => array('/site/logout'),
                     )

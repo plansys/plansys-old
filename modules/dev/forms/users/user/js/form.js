@@ -26,6 +26,10 @@ $scope.updateRole = function() {
     }
 }
 
+
+
 $timeout(function() {
+    $("[name='DevUserForm[changePassword]']").val('a');
+    $("[name='DevUserForm[changePassword]']").val('');
     $scope.updateRole();
 }, 0);

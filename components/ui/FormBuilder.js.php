@@ -3,11 +3,15 @@ ob_start();
 ?>
 <script type="text/javascript">
 <?php ob_start(); ?>
-    app.controller("<?= $modelClass ?>Controller", function($scope, $parse, $timeout, $http) {
+    app.controller("<?= $modelClass ?>Controller", function ($scope, $parse, $timeout, $http) {
         $scope.form = <?php echo json_encode($this->form); ?>;
         $scope.model = <?php echo @json_encode($data['data']); ?>;
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
         $scope.params = <?php echo @json_encode($renderParams); ?>;
+        $scope.module = '<?= Yii::app()->controller->module->id ?>';
+<?php if (Yii::app()->user->hasFlash('info')): ?>
+            $scope.flash = '<?= Yii::app()->user->getFlash('info'); ?>';
+<?php endif; ?>
 <?php if (isset($data['validators'])): ?>
             $scope.validators = <?php echo @json_encode($data['validators']); ?>;
 <?php endif; ?>
@@ -15,7 +19,7 @@ ob_start();
             $scope.isNewRecord = <?php echo $data['isNewRecord'] ? "true" : "false" ?>;
 <?php endif; ?>
 
-        $scope.form.submit = function(button) {
+        $scope.form.submit = function (button) {
             if (typeof button != "undefined") {
                 var baseurl = button.url;
                 if (typeof button.url != 'string' || button.url.trim() == '' || button.url.trim() == '#') {
@@ -30,16 +34,16 @@ ob_start();
             }
         };
 
-        $scope.form.canGoBack = function() {
+        $scope.form.canGoBack = function () {
             return (document.referrer == "" || window.history.length > 1);
         }
 
-        $scope.form.goBack = function() {
+        $scope.form.goBack = function () {
             window.history.back();
         }
 
         // execute inline JS
-        $timeout(function() {
+        $timeout(function () {
             $("div[ng-controller=<?= $modelClass ?>Controller]").css('opacity', 1);
 
 <?= $inlineJS; ?>

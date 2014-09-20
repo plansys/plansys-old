@@ -13,15 +13,27 @@
 
     <div class="nfy-container" ng-if="!error">
         <div class="nfy-items">
-            <a href="{{ item.body.url }}" ng-repeat="item in $storage.nfy.items" class="nfy-item">
-                <div class="nfy-name">{{ item.subscriber_name}}</div>
-                <div class="nfy-message" ng-bind-html="item.body.message"></div>
-                <div class="nfy-info">
-                    <div class="nfy-date">{{ parseDate(item.created_on) | timeago}} </div>
-                    <div class="nfy-role label label-default">{{ item.subscriber_role}}</div>
-                    <div class="clearfix"></div>
+            <div ng-repeat="item in $storage.nfy.items" class="nfy-item">
+                <div class="nfy-item-sub">
+                    <div class="nfy-item-left"></div>
+                    <a href="{{ item.url}}" class="nfy-message" ng-bind-html="item.body.message"></a>
+                    <div ng-if="item.body.notes" class="nfy-notes" > 
+                        <i class="fa fa-quote-left pull-left" style="margin-top:3px;"></i>
+                        <div style="margin-left:20px;" ng-bind-html="item.body.notes"></div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="nfy-info">
+                        Pengirim:
+                        <a href="#" class="nfy-sender">
+                            <span class="nfy-name">{{ item.sender_name}}</span>
+                            <span class="nfy-role">{{ item.sender_role}}</span>                            
+                        </a>
+                    
+                        <div class="nfy-date">{{ parseDate(item.created_on) | timeago}} </div>
+                        <div class="clearfix"></div>
+                    </div>
                 </div>
-            </a>
+            </div>
         </div>
     </div>
 </div>

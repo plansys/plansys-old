@@ -309,11 +309,14 @@ class FormBuilder extends CComponent {
      * @return array me-return array atribut
      */
     public function tidyAttributes($data, &$fieldlist, &$preserveMultiline = false) {
-        if (!isset($fieldlist[$data['type']])) {
-            $fieldlist[$data['type']] = $data['type']::attributes();
+        if (isset($data['type'])) {
+            if (!isset($fieldlist[$data['type']])) {
+                $fieldlist[$data['type']] = $data['type']::attributes();
+            }
+            $defaultAttributes = $fieldlist[$data['type']];
+        } else {
+            $defaultAttributes = array();
         }
-        $defaultAttributes = $fieldlist[$data['type']];
-
 
         foreach ($data as $i => $j) {
             if ($i == 'type' || $i == 'fields')
@@ -332,12 +335,31 @@ class FormBuilder extends CComponent {
                 }
             }
 
-            if (!array_key_exists($i, $defaultAttributes) || $defaultAttributes[$i] == $j) {
-                unset($data[$i]);
+            if (count($defaultAttributes) > 0) {
+                if (!array_key_exists($i, $defaultAttributes) || $defaultAttributes[$i] == $j) {
+                    unset($data[$i]);
+                }
             }
         }
 
         return $data;
+    }
+
+    public function tidyRecursive(&$fields, &$multiline) {
+
+        ## traverse attributes
+        foreach ($fields as $k => $f) {
+            if (is_array($f)) {
+                $this->tidyRecursive($f, $multiline);
+
+                ## tidying attributes, remove attribute that same as default attribute
+                $f = $this->tidyAttributes($f, $fieldlist, $multiline);
+            }
+
+
+            ## okay, assign new attributes to field
+            $fields[$k] = $f;
+        }
     }
 
     /**
@@ -347,38 +369,7 @@ class FormBuilder extends CComponent {
         $fieldlist = array();
         $multiline = array();
 
-        ## prepare attributes
-        foreach ($fields as $k => $f) {
-            ## when the type is text, pass it as a string (not array attribute like the other)
-            if ($f['type'] == "Text" && @$f['renderInEditor'] != 'No') {
-                $hash = '---' . sha1($f['value']) . '---';
-                $fields[$k] = $hash;
-                $multiline[$hash] = str_replace("'", "\'", $f['value']);
-            } else {
-                ## tidying attributes, remove attribute that same as default attribute
-                $f = $this->tidyAttributes($f, $fieldlist, $multiline);
-
-                if (isset($fieldlist[$f['type']]['parseField']) && count($fieldlist[$f['type']]['parseField']) > 0) {
-                    foreach ($fieldlist[$f['type']]['parseField'] as $i => $j) {
-                        if (!isset($f[$i]))
-                            continue;
-
-                        foreach ($f[$i] as $m => $o) {
-                            if (is_string($f[$i][$m]))
-                                continue;
-
-                            if ($f[$i][$m]['type'] == "Text") {
-                                $f[$i][$m] = $o['value'];
-                            } else {
-                                $f[$i][$m] = $this->tidyAttributes($o, $fieldlist, $multiline);
-                            }
-                        }
-                    }
-                }
-                ## okay, assign new attributes to field
-                $fields[$k] = $f;
-            }
-        }
+        $this->tidyRecursive($fields, $multiline);
 
         if (is_subclass_of($this->model, 'FormField')) {
             $this->updateFunctionBody('getFieldProperties', $fields, "", $multiline);
@@ -636,6 +627,7 @@ class FormBuilder extends CComponent {
             $formAttr = array_merge($formOptions, $formDefaultAttr);
             $formAttr = Helper::expandAttributes($formAttr);
             $html .= "<div style='opacity:0' {$ngctrl}><form {$formAttr}>";
+            $html .= "<div ng-if='flash' class='error-container alert alert-info' style='margin:0px'>{{flash}}</div>";
             $html .= "<div ng-if='errors' class='error-container alert alert-danger' style='margin:0px'><ul><li ng-repeat='(k,e) in errors'>{{ e[0] }}</li></ul></div>";
         }
 
@@ -1121,10 +1113,12 @@ EOF;
                 $items = Helper::globRecursive($item_dir . "*.php");
                 $items = FormBuilder::formatGlob($items, $item_dir, $module, $func, $alias, $formatRecursive);
 
-                $files[] = array(
-                    'module' => $module,
-                    'items' => $items
-                );
+                if (count($items) > 0) {
+                    $files[] = array(
+                        'module' => $module,
+                        'items' => $items
+                    );
+                }
             }
         }
 
@@ -1139,10 +1133,12 @@ EOF;
                 $items = Helper::globRecursive($item_dir . "*.php");
                 $items = FormBuilder::formatGlob($items, $item_dir, $module, $func, $alias, $formatRecursive);
 
-                $files[] = array(
-                    'module' => $module,
-                    'items' => $items
-                );
+                if (count($items) > 0) {
+                    $files[] = array(
+                        'module' => $module,
+                        'items' => $items
+                    );
+                }
             }
         }
 

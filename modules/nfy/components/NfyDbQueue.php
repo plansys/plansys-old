@@ -50,6 +50,9 @@ class NfyDbQueue extends NfyQueue {
      * @inheritdoc
      */
     public function send($message, $category = null) {
+        if (!is_string($message)) {
+            $message = json_encode($message);
+        }
         $queueMessage = $this->createMessage($message);
 
         if ($this->beforeSend($queueMessage) !== true) {
@@ -62,6 +65,10 @@ class NfyDbQueue extends NfyQueue {
         if (Helper::is_assoc($category)) {
             $sc = array();
             foreach ($category as $k => $v) {
+                if ($k == 'userid' || $k == 'user_id' || $k == 'id') {
+                    $k = 'uid';
+                }
+                
                 $cat = $k . '_' . $v;
                 $sc[] = $cat;
             }
@@ -114,7 +121,7 @@ class NfyDbQueue extends NfyQueue {
      */
     public function peek($subscriber_id = null, $limit = -1, $status = null) {
         $pk = NfyDbMessage::model()->tableSchema->primaryKey;
-
+        
         if ($status === null) {
             $messages = NfyDbMessage::model()
                 ->withQueue($this->id)
@@ -130,6 +137,16 @@ class NfyDbQueue extends NfyQueue {
         return NfyDbMessage::createMessages($messages);
     }
 
+    public function read($nid, $returnNfy = false) {
+        $message = NfyDbMessage::model()->findByPk($nid);
+        if ($returnNfy) {
+            return $message;
+        }
+        
+        $process = NfyDbMessage::createMessages(array($message));
+        return $process[0];
+    }
+    
     /**
      * @inheritdoc
      */
@@ -174,7 +191,7 @@ class NfyDbQueue extends NfyQueue {
         $messages = $message->findAll(array('index' => $pk, 'limit' => $limit, 'order' => 't.id desc'));
 
         if (!empty($messages)) {
-            $now = new DateTime('now', new DateTimezone('UTC'));
+            $now = new DateTime('now');
 
             switch ($mode) {
                 case self::GET_SENT:

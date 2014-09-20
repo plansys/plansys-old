@@ -12,11 +12,17 @@ app.controller("NfyWidgetController", function ($scope, $http, $timeout, $localS
     $scope.error = false;
     $storage.nfy = $storage.nfy || {};
     $storage.nfy.items = JSON.parse($("#nfy-data").text().trim());
-    for (i in $storage.nfy.items) {
-        $storage.nfy.items[i].body = JSON.parse($storage.nfy.items[i].body);
+    $scope.processNfy = function (item) {
+        item.url = Yii.app.createUrl('/widget/NfyWidget.read', {
+            nid: item.id
+        });
+        return item;
     }
-    
-    
+
+    for (i in $storage.nfy.items) {
+        $storage.nfy.items[i] = $scope.processNfy($storage.nfy.items[i]);
+    }
+
     $scope.parseDate = function (date) {
         var t = date.split(/[- :]/);
         var d = new Date(t[0], t[1] - 1, t[2], t[3], t[4], t[5] || 0);
@@ -25,8 +31,7 @@ app.controller("NfyWidgetController", function ($scope, $http, $timeout, $localS
     var source = new EventSource(url);
     source.addEventListener('message', function (msg) {
         $scope.$apply(function () {
-            var data = JSON.parse(msg.data);
-            data.body = JSON.parse(data.body);
+            var data = $scope.processNfy(JSON.parse(msg.data));
             $storage.nfy.items.unshift(data);
             widget.badge = $storage.nfy.items.length;
         });

@@ -171,6 +171,13 @@ class NfyDbMessage extends CActiveRecord {
 
         foreach ($statuses as $status) {
             switch ($status) {
+                case NfyMessage::SENT:
+                    $conditions[] = "$t.status=" . $status;
+                    if ($timeout !== null) {
+                        $conditions[] = "($t.status=" . NfyMessage::SENT. " AND $t.sent_on <= :timeout)";
+                        $criteria->params = array(':timeout' => $now->format('Y-m-d H:i:s'));
+                    }
+                    break;
                 case NfyMessage::AVAILABLE:
                     $conditions[] = "$t.status=" . $status;
                     if ($timeout !== null) {
@@ -233,40 +240,48 @@ class NfyDbMessage extends CActiveRecord {
             $dbMessages = array($dbMessages);
         }
         $result = array();
-        $subscriber_ids = array();
+        $userIds = array();
         foreach ($dbMessages as $dbMessage) {
             $attributes = $dbMessage->getAttributes();
             $attributes['subscriber_id'] = $dbMessage->subscription_id === null ? null : $dbMessage->subscription->subscriber_id;
             unset($attributes['queue_id']);
             unset($attributes['subscription_id']);
             unset($attributes['mimetype']);
+            $attributes['body'] = json_decode($attributes['body'], true);
+            
             $message = new NfyMessage;
             $message->setAttributes($attributes);
             $result[] = $message;
-            $subscriber_ids[] = $message->subscriber_id;
+            $userIds[] = $message->subscriber_id;
+            $userIds[] = $message->sender_id;
         }
 
-        if (count($subscriber_ids) > 0) {
+        $userIds = array_unique($userIds);
+        
+        if (count($userIds) > 0) {
             $sql = "SELECT u.id,fullname,role_name from p_user u
  left outer join 
    p_user_role p on u.id = p.user_id 
    and p.is_default_role = 'Yes' 
  left outer join 
    p_role r on r.id = p.role_id 
- where u.id IN (" . implode(",", $subscriber_ids) . ");";
+ where u.id IN (" . implode(",", $userIds) . ");";
 
 
-            $user = Yii::app()->db->createCommand($sql)->queryAll();
-            $subscriber = array();
-            foreach ($user as $u) {
-                $subscriber[$u['id']] = array(
+            $userResult = Yii::app()->db->createCommand($sql)->queryAll();
+            $users = array();
+            foreach ($userResult as $u) {
+                $users[$u['id']] = array(
                     'name' => $u['fullname'],
                     'role' => $u['role_name']
                 );
             }
             foreach ($result as $k => $r) {
-                $result[$k]->subscriber_name = $subscriber[$r->subscriber_id]['name'];
-                $result[$k]->subscriber_role = $subscriber[$r->subscriber_id]['role'];
+                $result[$k]->subscriber_name = $users[$r->subscriber_id]['name'];
+                $result[$k]->subscriber_role = $users[$r->subscriber_id]['role'];
+                
+                $result[$k]->sender_name = $users[$r->sender_id]['name'];
+                $result[$k]->sender_role = $users[$r->sender_id]['role'];
             }
         }
 

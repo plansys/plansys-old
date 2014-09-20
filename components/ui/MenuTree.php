@@ -14,10 +14,12 @@ class MenuTree extends CComponent {
         foreach ($modules as $m) {
             $module = ucfirst(str_replace($dir . DIRECTORY_SEPARATOR, '', $m));
             $items = MenuTree::listFile($module);
-            $files[] = array(
-                'module' => $module,
-                'items' => $items
-            );
+            if (count($items) > 0) {
+                $files[] = array(
+                    'module' => $module,
+                    'items' => $items
+                );
+            }
         }
 
         ## app
@@ -26,10 +28,12 @@ class MenuTree extends CComponent {
         foreach ($modules as $m) {
             $module = ucfirst(str_replace($dir . DIRECTORY_SEPARATOR, '', $m));
             $items = MenuTree::listFile($module);
-            $files[] = array(
-                'module' => $module,
-                'items' => $items
-            );
+            if (count($items) > 0) {
+                $files[] = array(
+                    'module' => $module,
+                    'items' => $items
+                );
+            }
         }
         return $files;
     }
@@ -81,7 +85,7 @@ class MenuTree extends CComponent {
             if (isset($v['url']) && is_string($v['url'])) {
                 $list[$k]['url'] = str_replace('?', '&', $v['url']);
             }
-            
+
             if (!isset($v['items'])) {
                 $list[$k]['items'] = array();
             } else {
@@ -160,7 +164,7 @@ class MenuTree extends CComponent {
             'list' => $this->list,
             'class' => $this->class,
             'options' => $this->options,
-                ), true);
+            ), true);
 
         return str_replace(array("<script>", "</script>"), "", $script);
     }
@@ -177,12 +181,12 @@ class MenuTree extends CComponent {
         }
 
         return $ctrl->renderPartial("//layouts/menu", array(
-                    'class' => $this->class,
-                    'classpath' => $this->classpath,
-                    'title' => $this->title,
-                    'options' => $this->options,
-                    'script' => $script,
-                        ), true);
+                'class' => $this->class,
+                'classpath' => $this->classpath,
+                'title' => $this->title,
+                'options' => $this->options,
+                'script' => $script,
+                ), true);
     }
 
 }

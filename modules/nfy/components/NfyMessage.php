@@ -64,6 +64,8 @@ class NfyMessage {
     
     public $subscriber_name = "";
     public $subscriber_role = "";
+    public $sender_name = "";
+    public $sender_role = "";
 
     public function __sleep() {
         $attributes = array('id', 'created_on', 'sender_id', 'timeout', 'body');

@@ -31,7 +31,7 @@
         <?php if (!Yii::app()->user->isGuest): ?>
 
             <div id="widget-data" class="hide"><?= json_encode(Widget::listActiveWidget()); ?></div>
-            <div id="widget-container" ng-cloak ng-class="{maximized:$storage.widget.active}">
+            <div id="widget-container" ng-show="$storage.widget.list" ng-cloak ng-class="{maximized:$storage.widget.active}">
                 <div id="widget-icons">
                     <div ng-repeat="w in $storage.widget.list" ng-class="{active:widget.isActive(w.class)}" class="widget-icon"
                          ng-click="widget.toggle(w.class)">
