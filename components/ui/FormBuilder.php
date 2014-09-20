@@ -242,6 +242,19 @@ class FormBuilder extends CComponent {
         return $fields;
     }
 
+    private function stripSlashesRecursive($array) {
+
+        foreach ($array as $key => $value) {
+            if (is_string($value)) {
+                $array[$key] = stripslashes($value);
+            }
+            if (is_array($value)) {
+                $array[$key] = $this->stripSlashesRecursive($value);
+            }
+        }
+        return $array;
+    }
+
     /**
      * Fungsi ini akan mem-format, membenahi, dan mengevaluasi setiap field yang ada di dalam $fields
      * 
@@ -257,12 +270,7 @@ class FormBuilder extends CComponent {
             if (is_array($f)) {
                 $field = new $f['type'];
 
-                foreach ($f as $key => $value) {
-                    if (is_string($value)) {
-                        $f[$key] = stripslashes($value);
-                    }
-                }
-
+                $f = $this->stripSlashesRecursive($f);
                 $processed[$k] = array_merge($field->attributes, $f);
 
                 if (count($field->parseField) > 0) {

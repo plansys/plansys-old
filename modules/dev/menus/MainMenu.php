@@ -36,11 +36,11 @@
             ),
         ),
         'state' => 'collapsed',
-        'icon' => '',
+        'icon' => 'fa-gavel',
     ),
     array (
         'label' => 'Users',
-        'icon' => '',
+        'icon' => 'fa-user',
         'url' => '#',
         'items' => array (
             array (
@@ -55,22 +55,5 @@
             ),
         ),
         'state' => 'collapsed',
-    ),
-    array (
-        'label' => 'Reports',
-        'icon' => '',
-        'url' => '#',
-        'items' => array (
-            array (
-                'label' => 'Management Report',
-                'icon' => 'fa-arrow-up',
-                'url' => '/dev/reports/index',
-            ),
-            array (
-                'label' => 'Report Upload',
-                'icon' => 'fa-cloud-upload',
-                'url' => '/dev/reportupload/index',
-            ),
-        ),
     ),
 );

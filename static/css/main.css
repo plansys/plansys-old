@@ -1062,6 +1062,31 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     margin:2px;
 }
 
+/********************************* TEXT / HTML ********************************/
+
+.text-editor-container {
+    max-height:85px;
+    overflow-y:hidden;
+    position:relative;
+    padding-bottom:10px;
+}
+.text-editor-preview {
+    white-space:pre-wrap;
+    font-family:'Courier', Monaco, monospace;
+    color:#999;
+    font-size:12px;
+    word-wrap: break-word;
+    max-height:55px;
+    margin-bottom:0px;
+    overflow-y:hidden;
+}
+
+.text-editor-more {
+    position:absolute;
+    top:50px;
+    bottom:0px;
+    color:#ccc;
+}
 
 /********************************* COLUMN FIELD ********************************/
 
@@ -2069,6 +2094,15 @@ textarea.force-rows {
 .textarea-noresize {
     resize:none;
     overflow:hidden;
+}
+
+.info { 
+    color:#999;font-size:12px;
+    padding-left:20px;
+}
+
+.info i {
+    margin-left:-20px;
 }
 
 .error {

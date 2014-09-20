@@ -11,6 +11,9 @@ class DevUserForm extends User {
                     array (
                         'label' => 'Cancel',
                         'url' => '/dev/user/index',
+                        'options' => array (
+                            'ng-show' => 'module == \\\'dev\\\'',
+                        ),
                         'type' => 'LinkButton',
                     ),
                     array (
@@ -22,7 +25,7 @@ class DevUserForm extends User {
                         'type' => 'LinkButton',
                     ),
                 ),
-                'title' => '{{!isNewRecord ? \\\'User Detail: \\\' + model.username : \\\'New User\\\'}}',
+                'title' => '{{ form.title}}',
                 'type' => 'ActionBar',
             ),
             array (
@@ -37,13 +40,13 @@ class DevUserForm extends User {
                         'type' => 'TextField',
                     ),
                     array (
+                        'value' => '<div ng-show=\\"module == \\\'dev\\\'\\">',
+                        'type' => 'Text',
+                    ),
+                    array (
                         'label' => 'Username',
                         'name' => 'username',
                         'type' => 'TextField',
-                    ),
-                    array (
-                        'value' => '<div ng-show=\\"module == \\\'dev\\\'\\">',
-                        'type' => 'Text',
                     ),
                     array (
                         'label' => 'User Role',
@@ -57,16 +60,34 @@ class DevUserForm extends User {
                         'type' => 'ListView',
                     ),
                     array (
-                        'value' => '<div style=\\"float:right;margin-top:-25px;text-align:right;color:#999;font-size:12px;\\"><i class=\\"fa fa-info-circle\\"></i> Geser role ke atas untuk menjadikan default</div>',
+                        'value' => '<div class=\"col-sm-6\" 
+     style=\"float:right;margin:-25px 0px 0px 0px;padding:0px;text-align:right;color:#999;font-size:12px;\">
+      <i class=\"fa fa-info-circle\"></i> 
+     Geser role ke atas 
+         untuk menjadikan default
+</div>',
                         'type' => 'Text',
                     ),
                     array (
-                        'value' => '</div>',
+                        'value' => '</div>
+<div ng-if=\"module != \'dev\'\">',
                         'type' => 'Text',
                     ),
                     array (
-                        'value' => '<div class=\"form-group form-group-sm\"
-     ng-if=\"module != \'dev\'\">
+                        'value' => '<div class=\"form-group form-group-sm\">
+    <label 
+    class=\"col-sm-4 control-label\">
+    Username 
+    </label>
+    <div class=\"col-sm-6\" 
+       style=\"padding-top:5px;\">
+       {{ model.username }}
+    </div>
+</div>',
+                        'type' => 'Text',
+                    ),
+                    array (
+                        'value' => '<div class=\"form-group form-group-sm\">
     <label 
     class=\"col-sm-4 control-label\">
     Roles 
@@ -79,6 +100,14 @@ class DevUserForm extends User {
        {{ ur.role.role_description }}
        </span>
     </div>
+</div>',
+                        'type' => 'Text',
+                    ),
+                    array (
+                        'value' => '<div style=\"margin:-50px -20px 0px 0px;\" class=\"hide col-sm-5 pull-right info\">
+<i class=\"fa fa-info-circle fa-nm fa-fw\"></i> 
+Harap hubungi administrator untuk mengubah username ataupun role.
+</div>
 </div>',
                         'type' => 'Text',
                     ),
@@ -107,10 +136,18 @@ class DevUserForm extends User {
                         'type' => 'TextField',
                     ),
                     array (
+                        'value' => '<div ng-if=\\"module == \\\'dev\\\'\\">',
+                        'type' => 'Text',
+                    ),
+                    array (
                         'label' => 'Notification',
                         'name' => 'subscribed',
                         'labelWidth' => '2',
                         'type' => 'ToggleSwitch',
+                    ),
+                    array (
+                        'value' => '</div>',
+                        'type' => 'Text',
                     ),
                     array (
                         'value' => '<column-placeholder></column-placeholder>',
@@ -120,7 +157,7 @@ class DevUserForm extends User {
                 'type' => 'ColumnField',
             ),
             array (
-                'title' => '{{ isNewRecord ? \\"\\" : \\"Change\\"}} Password',
+                'title' => '{{ isNewRecord ? \\"\\" : \\"Ubah \\"}} Password',
                 'type' => 'SectionHeader',
             ),
             array (
@@ -154,7 +191,10 @@ class DevUserForm extends User {
                         'type' => 'Text',
                     ),
                     array (
-                        'value' => '<div class=\\"well well-small\\" ng-if=\\"!isNewRecord\\"><i class=\\"fa fa-lg fa-info-circle\\"></i>&nbsp; Isi field disamping untuk mengubah password.</div>',
+                        'value' => '<div class=\"info\" ng-if=\"!isNewRecord\"><i class=\"fa fa-info-circle fa-nm fa-fw\"></i>&nbsp; 
+Isi field disamping untuk mengubah password. 
+<br/>Jika tidak ingin dirubah, kosongkan saja.
+</div>',
                         'type' => 'Text',
                     ),
                 ),
@@ -249,7 +289,7 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                     'where' => 'dataFilter1',
                 ),
                 'enablePaging' => 'Yes',
-                'pagingSQL' => 'select count(*) from (select count(1) from p_audit_trail where user_id = :id {AND [where]}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                group by action, model, user_id, model_id, stamp) a',
+                'pagingSQL' => 'select count(*) from (select count(1) from p_audit_trail where user_id = :id {AND [where]} group by action, model, user_id, model_id, stamp) a',
                 'type' => 'DataSource',
             ),
             array (

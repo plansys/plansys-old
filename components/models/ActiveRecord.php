@@ -38,7 +38,7 @@ class ActiveRecord extends CActiveRecord {
                                 $table = $class::tableName();
                                 $foreignKey = $rel->foreignKey;
 
-                                if (!is_null($this->$foreignKey)) {
+                                if (!is_null($this->$foreignKey) && $this->$foreignKey != '') {
                                     $sql = "select * from {$table} where id = {$this->$foreignKey}";
 
                                     $query = Yii::app()->db->createCommand($sql)->queryRow();

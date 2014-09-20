@@ -1,4 +1,4 @@
-$scope.updateRole = function() {
+$scope.updateRole = function () {
     if ($scope.userRoles && $scope.userRoles.value.length > 0) {
         var roles = [];
         for (i in $scope.userRoles.value) {
@@ -26,9 +26,20 @@ $scope.updateRole = function() {
     }
 }
 
+switch ($scope.module) {
+    case 'dev':
+        if (!$scope.isNewRecord) {
+            $scope.form.title = 'User Detail: ' + $scope.model.username;
+        } else {
+            $scope.form.title = 'New User';
+        }
+        break;
+    default:
+        $scope.form.title = "Edit Profile";
+        break;
+}
 
-
-$timeout(function() {
+$timeout(function () {
     $("[name='DevUserForm[changePassword]']").val('a');
     $("[name='DevUserForm[changePassword]']").val('');
     $scope.updateRole();

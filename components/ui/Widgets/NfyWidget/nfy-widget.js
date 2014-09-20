@@ -29,12 +29,16 @@ app.controller("NfyWidgetController", function ($scope, $http, $timeout, $localS
         return d;
     }
     var source = new EventSource(url);
-    source.addEventListener('message', function (msg) {
+    source.addEventListener('message', function (event) {
         $scope.$apply(function () {
-            var data = $scope.processNfy(JSON.parse(msg.data));
+            var data = $scope.processNfy(JSON.parse(event.data));
             $storage.nfy.items.unshift(data);
             widget.badge = $storage.nfy.items.length;
         });
+    }, false);
+    
+    source.addEventListener('error', function (event) {
+         event.target.close();console.clear();
     }, false);
 
     widget.badge = $storage.nfy.items.length;

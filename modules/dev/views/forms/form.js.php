@@ -17,7 +17,6 @@
                 return false;
             if ($scope.active.type != scope.modelClass)
                 return false;
-
             return true;
         }
         /*********************** TOOLBAR TABS ***********************/
@@ -39,7 +38,6 @@
                 class: '<?= $classPath ?>',
                 layout: $scope.form.layout.name
             });
-
             $http.post(renderBuilderUrl, {form: $scope.form}).then(function (response) {
                 $("#render-builder").html(response.data);
                 $compile($("#render-builder").contents())($scope);
@@ -61,7 +59,6 @@
                     .success(function (data, status) {
                         $scope.saving = false;
                         $scope.updateRenderBuilder();
-                        
                         if (data == 'FAILED') {
                             $scope.mustReload = true;
                             location.reload();
@@ -105,6 +102,15 @@
                 $(".toolbar-type li a[value='" + $scope.active.type + "']").focus().parent().addClass('hover');
             }
         }
+
+        /*********************** TEXT ********************************/
+
+        $scope.aceLoaded = function (_editor) {
+            $(window).resize();
+        };
+        $(window).resize(function() {
+            $("#text-editor").height($(".form-builder-properties [ui-content]").height() - 45);
+        });
         /*********************** LAYOUT ********************************/
         $scope.layout = null;
         $scope.selectLayout = function (layout) {
@@ -187,7 +193,6 @@
         $scope.form = <?php echo json_encode($fb->form); ?>;
         $scope.fields = <?php echo json_encode($fieldData); ?>;
         $scope.saving = false;
-
         /************************ RELATION FIELD  ****************************/
         $scope.relationFieldList = {};
         $scope.generateRelationField = function () {
@@ -220,7 +225,6 @@
                                 var filter = angular.extend({}, templateAttr);
                                 filter.name = i;
                                 filter.label = i;
-
                                 if (i == 'id') {
                                     filter.filterType = 'number';
                                 }
@@ -260,7 +264,6 @@
                                 var filter = angular.extend({}, templateAttr);
                                 filter.name = i;
                                 filter.label = i;
-
                                 $scope.active.columns.push(filter);
                             }
                             $scope.save();
@@ -293,7 +296,6 @@
             var caretPos = $el.getCaretPosition() - ($scope.active.name.length - newName.length);
             $el.val(newName).setCaretPosition(caretPos);
             $scope.active.name = newName;
-
             $scope.detectDuplicate();
             $scope.save();
         }
@@ -398,7 +400,6 @@
                     .success(function (data, status) {
                         $scope.saving = false;
                         $scope.detectDuplicate();
-                        
                         if (data == 'FAILED') {
                             $scope.mustReload = true;
                             location.reload();
@@ -412,11 +413,9 @@
         $scope.select = function (item, event) {
             event.stopPropagation();
             event.preventDefault();
-
             $(".form-field.active").removeClass("active");
             $(event.currentTarget).addClass("active");
             $(".toolbar-type").removeClass('open');
-
             clearTimeout(selectTimeout);
             selectTimeout = setTimeout(function () {
                 $scope.$apply(function () {
@@ -427,7 +426,6 @@
                     $scope.activeTree = item;
                     $scope.active = item.$modelValue;
                     $scope.tabs.properties = true;
-
                     switch (item.$modelValue.type) {
                         case 'DataFilter':
                             $scope.getDataSourceList();
@@ -482,7 +480,6 @@
             $scope.detectEmptyPlaceholder();
             $scope.updateRenderBuilder();
         }, 100);
-
         $('body').on('click', 'div[ui-header]', function (e) {
             if (e.target == this) {
                 $scope.unselectViaJquery();

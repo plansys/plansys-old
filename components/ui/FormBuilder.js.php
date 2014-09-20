@@ -8,7 +8,9 @@ ob_start();
         $scope.model = <?php echo @json_encode($data['data']); ?>;
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
         $scope.params = <?php echo @json_encode($renderParams); ?>;
-        $scope.module = '<?= Yii::app()->controller->module->id ?>';
+<?php if (is_object(Yii::app()->controller) && is_object(Yii::app()->controller->module)): ?>
+            $scope.module = '<?= Yii::app()->controller->module->id ?>';
+<?php endif; ?>
 <?php if (Yii::app()->user->hasFlash('info')): ?>
             $scope.flash = '<?= Yii::app()->user->getFlash('info'); ?>';
 <?php endif; ?>
@@ -18,6 +20,12 @@ ob_start();
 <?php if (is_subclass_of($this->model, 'ActiveRecord') && isset($data['isNewRecord'])): ?>
             $scope.isNewRecord = <?php echo $data['isNewRecord'] ? "true" : "false" ?>;
 <?php endif; ?>
+
+        document.title = $scope.form.title;
+        $scope.$watch('form.title', function () {
+            document.title = $scope.form.title;
+
+        });
 
         $scope.form.submit = function (button) {
             if (typeof button != "undefined") {

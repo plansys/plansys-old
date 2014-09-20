@@ -55,7 +55,7 @@ class DevMenuEditor extends Form {
                         'options' => array (
                             'ng-model' => 'active.state',
                             'ng-change' => 'save()',
-                            'ng-show' => 'active.items.length>0',
+                            'ng-show' => 'active.items.length > 0',
                         ),
                         'listExpr' => 'array(
   \'\'=>\'Expanded\', 
@@ -73,14 +73,19 @@ class DevMenuEditor extends Form {
                         'options' => array (
                             'ng-model' => 'active.icon',
                             'ng-change' => 'save()',
-                            'ng-show' => 'active.items.length==0',
                         ),
                         'type' => 'IconPicker',
                     ),
-                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
                 ),
                 'column2' => array (
-                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
                 ),
                 'type' => 'ColumnField',
             ),
