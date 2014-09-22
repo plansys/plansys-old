@@ -37,10 +37,9 @@ class ActiveRecord extends CActiveRecord {
                                 $class = $rel->className;
                                 $table = $class::tableName();
                                 $foreignKey = $rel->foreignKey;
-
                                 if (!is_null($this->$foreignKey) && $this->$foreignKey != '') {
                                     $sql = "select * from {$table} where id = {$this->$foreignKey}";
-
+									
                                     $query = Yii::app()->db->createCommand($sql)->queryRow();
                                     $this->__relations[$k] = $query;
                                 } else {
@@ -118,9 +117,11 @@ class ActiveRecord extends CActiveRecord {
                     } else {
                         foreach ($relArr as $i => $j) {
                             foreach ($values[$k] as $v) {
-                                if ($j->id == $v['id']) {
+                                if (isset($v['id']) && $j->id == $v['id']) {
                                     $attr = $j->attributes;
                                     foreach ($attr as $x => $y) {
+										if (!isset($v[$x])) continue;
+									
                                         if (is_array($y) && is_string($v[$x])) {
                                             $attr[$x] = json_decode($v[$x], true);
                                         } else {
