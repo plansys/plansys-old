@@ -13,6 +13,7 @@ class DevUserForm extends User {
                         'url' => '/dev/user/index',
                         'options' => array (
                             'ng-show' => 'module == \\\'dev\\\'',
+                            'href' => 'url:/dev/user/index',
                         ),
                         'type' => 'LinkButton',
                     ),

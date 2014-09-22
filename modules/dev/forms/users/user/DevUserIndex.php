@@ -10,6 +10,9 @@ class DevUserIndex extends Form {
                         'url' => '/dev/user/new',
                         'buttonType' => 'success',
                         'icon' => 'plus',
+                        'options' => array (
+                            'href' => 'url:/dev/user/new',
+                        ),
                         'type' => 'LinkButton',
                     ),
                 ),
