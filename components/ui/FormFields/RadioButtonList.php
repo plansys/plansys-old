@@ -10,105 +10,96 @@ class RadioButtonList extends FormField {
      * @return array me-return array property RadioButton.
      */
     public function getFieldProperties() {
-        return array(
-            array(
+        return array (
+            array (
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                    'searchable' => 'size(modelFieldList) > 5',
                 ),
-                'list' => array(),
+                'list' => array (),
+                'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                     'ng-delay' => '500',
-                ),
-                'list' => array(
-                    'Horizontal' => 'Horizontal',
-                    'Vertical' => 'Vertical',
                 ),
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Item Layout',
                 'name' => 'itemLayout',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.itemLayout',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
-                'list' => array(
-                    'Horizontal' => 'Horizontal',
-                    'Vertical' => 'Vertical',
-                    'ButtonGroup' => 'ButtonGroup',
                 ),
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\',\\\'ButtonGroup\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Label Width',
                 'name' => 'labelWidth',
                 'fieldWidth' => '4',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.labelWidth',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                    'ng-disabled' => 'active.layout == \'Vertical\';',
+                    'ng-disabled' => 'active.layout == \\\'Vertical\\\';',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Radio Button Item',
                 'fieldname' => 'list',
-                'options' => array(
-                    'ng-hide' => 'active.listExpr != \'\' || active.options[\'ps-list\'] != null',
+                'options' => array (
+                    'ng-hide' => 'active.listExpr != \\\'\\\' || active.options[\\\'ps-list\\\'] != null',
                 ),
                 'allowSpaceOnKey' => 'Yes',
                 'type' => 'KeyValueGrid',
             ),
-            array(
+            array (
                 'label' => 'List Expression',
                 'fieldname' => 'listExpr',
-                'options' => array(
-                    'ng-hide' => 'active.options[\'ps-list\'] != null',
+                'options' => array (
+                    'ng-hide' => 'active.options[\\\'ps-list\\\'] != null',
                     'ps-valid' => 'active.list = result;save();',
                 ),
                 'desc' => '<i class=\\"fa fa-warning\\"></i> WARNING: Using List Expression will replace <i>Radio Button Item</i> with expression result',
                 'type' => 'ExpressionField',
             ),
-            array(
+            array (
                 'label' => 'Options',
                 'fieldname' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array(
+            array (
                 'label' => 'Label Options',
                 'fieldname' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
-            array(
+            array (
                 'label' => 'Field Options',
                 'fieldname' => 'fieldOptions',
                 'type' => 'KeyValueGrid',

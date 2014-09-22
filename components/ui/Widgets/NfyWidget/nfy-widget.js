@@ -38,7 +38,8 @@ app.controller("NfyWidgetController", function ($scope, $http, $timeout, $localS
     }, false);
     
     source.addEventListener('error', function (event) {
-         event.target.close();console.clear();
+         event.target.close();
+         console.log("Plansys failed to fetch notification, stopping stream...");
     }, false);
 
     widget.badge = $storage.nfy.items.length;

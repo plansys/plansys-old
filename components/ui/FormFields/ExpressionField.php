@@ -16,13 +16,16 @@ class ExpressionField extends FormField {
                     'ng-model' => 'active.fieldname',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                    'searchable' => 'size(modelFieldList) > 5',
                 ),
                 'list' => array (),
+                'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            '<hr/>',
+            array (
+                'type' => 'Text',
+                'value' => '<hr/>',
+            ),
             array (
                 'label' => 'Label',
                 'name' => 'label',
@@ -53,7 +56,10 @@ class ExpressionField extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            '<hr/>',
+            array (
+                'type' => 'Text',
+                'value' => '<hr/>',
+            ),
             array (
                 'label' => 'Options',
                 'fieldname' => 'options',

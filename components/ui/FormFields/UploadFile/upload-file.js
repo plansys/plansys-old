@@ -1,116 +1,26 @@
 
-app.directive('uploadFile', function($timeout, $upload, $http) {
+app.directive('uploadFile', function ($timeout, $upload, $http) {
     return {
         require: '?ngModel',
         scope: true,
-        compile: function(element, attrs, transclude) {
+        compile: function (element, attrs, transclude) {
             if (attrs.ngModel && !attrs.ngDelay) {
                 attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
             }
 
-            return function($scope, $el, attrs, ctrl) {
+            return function ($scope, $el, attrs, ctrl) {
                 $scope.filePath = null;
                 $scope.file = null;
                 $scope.loading = false;
                 $scope.progress = -1;
                 $scope.errors = [];
                 $scope.json;
-                
-                // when ng-model is changed from outside directive
-                if (typeof ctrl != 'undefined') {
-                    ctrl.$render = function() {
-                        if (typeof ctrl.$viewValue != "undefined") {
-                            if(ctrl.$viewValue !=null){
-                                $scope.path = ctrl.$viewValue;
-                                $scope.path = $scope.decode($scope.path);
-                            }
-                        }
-                    };
-                }
-                
-                //Saving file description to JSON
-                $scope.saveDesc = function(desc){
-                    var request = $http({
-                        'method' : 'post',
-                        'url' : Yii.app.createUrl('/formField/uploadFile.description'),
-                        'data' : {'desc':$scope.encode(desc),
-                                  'name':$scope.encode($scope.file.name),
-                                  'path' :$scope.encode($scope.path)
-                                 }
-                    });
-                };
-                
-                //Upload Funcs start
-                $scope.onFileSelect = function($files) {
-                    for (var i = 0; i < $files.length; i++) {
-                        var file = $files[i];
-                        var type = null;
-                        var ext = $scope.ext(file);
-                        if ($scope.fileType === "" || $scope.fileType === null) {
-                            $scope.upload(file);
-                        } else {
-                            type = $scope.fileType.split(',');
-                            for (var i = 0; i < type.length; i++)
-                                type[i] = type[i].trim();
 
-                            if ($.inArray(ext, type) > -1) {
-                                $scope.upload(file);
-                            } else {
-                                $scope.errors.push("Tipe file tidak diijinkan, File yang diijinkan adalah " + $scope.fileType);
-                            }
-                        }
-                    }
-                };
-                            
-                $scope.upload = function(file) {
-                    $scope.errors = [];
-                    $scope.loading = true;
-                    $scope.progress = 0;
-                    $upload.upload({
-                        url: Yii.app.createUrl('/formField/uploadFile.upload', {'path': $scope.encode($scope.path)}),
-                        data: {myObj: $scope.myModelObj},
-                        file: file
-                     }).progress(function(evt) {
-                        $scope.progress =  parseInt(100.0 * evt.loaded / evt.total);
-                     }).success(function(data,html) {
-                        $scope.progress = 101;
-                        $scope.file = {
-                            'name': data,
-                            'path': $scope.path + '/' + data
-                        };
-                        $scope.filePath = $scope.path.replace($scope.repoPath, '').replace(/\\/g, "/") + '/' + $scope.file.name;
-             
-                        $scope.icon($scope.file);
-                        $scope.loading = false;
-                        $scope.progress = -1;
-                        
-                     });
-                    
-                };
-                //Upload Funcs end
-                
-                //Remove Func
-                $scope.remove = function(file) {
-                    $scope.loading = true;
-                    $scope.errors = [];
-                    var request = $http({
-                        method: "post",
-                        url: Yii.app.createUrl('/formField/uploadFile.remove'),
-                        data: {file: $scope.encode(file)}
-                    });
-                    request.success(
-                            function(html) {
-                                $scope.file = null;
-                                $scope.loading = false;
-                            }
-                    );
 
-                };
-                
-                //Decode Encode to Base64 start
+                //Decode Encode start
                 $scope._keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
-                $scope.encode = function(input) {
+                $scope.encode = function (input) {
                     var output = "";
                     var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
                     var i = 0;
@@ -139,7 +49,7 @@ app.directive('uploadFile', function($timeout, $upload, $http) {
 
                     return output;
                 };
-                
+
                 $scope.decode = function (input) {
                     var output = "";
                     var chr1, chr2, chr3;
@@ -172,20 +82,136 @@ app.directive('uploadFile', function($timeout, $upload, $http) {
 
                     return output;
 
-                },
+                };
                 //Decode Encode end
 
+                //default value
+                $scope.name = $el.find("data[name=name]").html().trim();
+                $scope.value = $el.find("data[name=value]").html().trim();
+                $scope.mode = $el.find("data[name=mode]").html().trim();
+                $scope.fileType = $el.find("data[name=file_type]").html().trim();
+                $scope.fileDir = $scope.decode($el.find("data[name=file_dir]").html().trim());
+                $scope.repoPath = $scope.decode($el.find("data[name=repo_path]").html().trim());
+
+                // when ng-model is changed from outside directive
+                if (typeof ctrl != 'undefined') {
+                    ctrl.$render = function () {
+                        if (typeof ctrl.$viewValue != "undefined") {
+                            if (ctrl.$viewValue != null && ctrl.$viewValue != '') {
+
+                                var data = ctrl.$viewValue;
+                                var fileName = data.split('/').pop();
+                                $scope.file = {
+                                    'name': fileName,
+                                    'path': $scope.fileDir + '/' + fileName
+                                };
+                                $scope.filePath = $scope.fileDir.replace($scope.repoPath, '').replace(/\\/g, "/") + '/' + $scope.file.name;
+                            }
+                        }
+                    };
+                }
+
+                //Saving file description to JSON
+                $scope.saveDesc = function (desc) {
+                    $scope.fileDescLoadText = 'Saving...';
+                    $http({
+                        'method': 'post',
+                        'url': Yii.app.createUrl('/formField/uploadFile.description'),
+                        'data': {
+                            'desc': $scope.encode(desc),
+                            'name': $scope.encode($scope.file.name),
+                            'path': $scope.encode($scope.fileDir)
+                        }
+                    }).success(function () {
+                        $scope.fileDescLoadText = 'Saved';
+                    });
+                };
+
+                //Upload Funcs start
+                $scope.onFileSelect = function ($files) {
+                    for (var i = 0; i < $files.length; i++) {
+                        var file = $files[i];
+                        var type = null;
+                        var ext = $scope.ext(file);
+                        if ($scope.fileType === "" || $scope.fileType === null) {
+                            $scope.upload(file);
+                        } else {
+                            type = $scope.fileType.split(',');
+                            for (var i = 0; i < type.length; i++)
+                                type[i] = type[i].trim();
+
+                            if ($.inArray(ext, type) > -1) {
+                                $scope.upload(file);
+                            } else {
+                                $scope.errors.push("Tipe file tidak diijinkan, File yang diijinkan adalah " + $scope.fileType);
+                            }
+                        }
+                    }
+                };
+                $scope.upload = function (file) {
+                    $scope.errors = [];
+                    $scope.loading = true;
+                    $scope.progress = 0;
+                    $scope.$parent.uploading.push($scope.name);
+                    console.log($scope.fileDir);
+
+                    $upload.upload({
+                        url: Yii.app.createUrl('/formField/uploadFile.upload', {
+                            'path': $scope.encode($scope.fileDir)
+                        }),
+                        file: file
+                    }).progress(function (evt) {
+                        $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function (data, html) {
+                        $scope.progress = 101;
+                        $scope.file = {
+                            'name': data,
+                            'path': $scope.fileDir + '/' + data
+                        };
+                        $scope.filePath = $scope.fileDir.replace($scope.repoPath, '').replace(/\\/g, "/") + '/' + $scope.file.name;
+
+                        $scope.icon($scope.file);
+                        $scope.loading = false;
+                        $scope.progress = -1;
+
+                        var index = $scope.$parent.uploading.indexOf($scope.name);
+                        if (index > -1) {
+                            $scope.$parent.uploading.splice(index, 1);
+                        }
+                    });
+                };
+                //Upload Funcs end
+
+                //Remove Func
+                $scope.remove = function (file) {
+                    $scope.loading = true;
+                    $scope.errors = [];
+                    var request = $http({
+                        method: "post",
+                        url: Yii.app.createUrl('/formField/uploadFile.remove'),
+                        data: {file: $scope.encode(file)}
+                    });
+                    request.success(
+                            function (html) {
+                                $scope.file = null;
+                                $scope.loading = false;
+                            }
+                    );
+
+                };
+
+
                 //Get the file extension
-                $scope.ext = function(file) {
+                $scope.ext = function (file) {
                     var type = file.name.split('.');
                     if (type.length === 1 || (type[0] === "" && type.length === 2)) {
                         return "";
                     }
                     return type.pop();
                 }
-                
+
                 //Create icon based on extension 
-                $scope.icon = function(file) {
+                $scope.icon = function (file) {
                     var type = $scope.ext(file);
 
                     var code = ['php', 'js', 'html', 'json'];
@@ -223,35 +249,32 @@ app.directive('uploadFile', function($timeout, $upload, $http) {
                         $scope.file.type = "file";
                     }
                 };
-                
-                //default value
-                $scope.path = $el.find("data[name=path]").html().trim();
-                $scope.repoPath = $el.find("data[name=repo_path]").html().trim();
-                $scope.checkFile = $el.find("data[name=file_check]").html().trim();
-                $scope.fileType = $el.find("data[name=file_type]").html().trim();  
-                
+
                 //check if file is defined from outside
-                if ($scope.checkFile !== "") {
+                if ($scope.value != "") {
                     var request = $http({
                         method: "post",
                         url: Yii.app.createUrl('/formField/uploadFile.checkFile'),
-                        data: {file: $scope.encode($scope.checkFile)}
+                        data: {
+                            file: $scope.encode($scope.value)
+                        }
                     });
-                    request.success(
-                            function(html) {
-                                if (html === 'exist') {
-                                    var name = $scope.checkFile.split('/');
-                                    name = name[name.length - 1];
-                                    var path = $scope.repoPath + $scope.checkFile;
-                                    $scope.file = {
-                                        'name': name,
-                                        'path': path
-                                    };
-                                    $scope.icon($scope.file);
-                                } else {
-                                    $scope.file = null;
-                                }
-                            }
+                    request.success(function (result) {
+
+                        if (result.status === 'exist') {
+                            var name = $scope.value.split('/');
+                            name = name[name.length - 1];
+                            var path = $scope.repoPath + $scope.value;
+                            $scope.file = {
+                                'name': name,
+                                'path': path
+                            };
+                            $scope.json = result.desc;
+                            $scope.icon($scope.file);
+                        } else {
+                            $scope.file = null;
+                        }
+                    }
                     );
                 } else {
                     $scope.file = null;

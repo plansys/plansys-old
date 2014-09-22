@@ -10,100 +10,102 @@ class IconPicker extends FormField {
      * @return array me-return array property IconPicker.
      */
     public function getFieldProperties() {
-        return array(
-            array(
+        return array (
+            array (
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                    'searchable' => 'size(modelFieldList) > 5',
                 ),
-                'list' => array(),
+                'list' => array (),
+                'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                     'ng-delay' => '500',
-                ),
-                'list' => array(
-                    'Horizontal' => 'Horizontal',
-                    'Vertical' => 'Vertical',
                 ),
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            '<hr/>',
-            array(
+            array (
+                'type' => 'Text',
+                'value' => '<hr/>',
+            ),
+            array (
                 'label' => 'Label Width',
                 'name' => 'labelWidth',
                 'fieldWidth' => '3',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.labelWidth',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                    'ng-disabled' => 'active.layout == \'Vertical\';',
+                    'ng-disabled' => 'active.layout == \\\'Vertical\\\';',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Box Width',
                 'name' => 'fieldWidth',
                 'fieldWidth' => '4',
                 'postfix' => 'px',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.fieldWidth',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            '<hr/>',
-            array(
+            array (
+                'type' => 'Text',
+                'value' => '<hr/>',
+            ),
+            array (
                 'label' => 'Render Empty',
                 'name' => 'renderEmpty',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.renderEmpty',
                     'ng-change' => 'save();',
                 ),
-                'list' => array(
+                'list' => array (
                     'Yes' => 'Yes',
                     'No' => 'No',
                 ),
                 'fieldWidth' => '3',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Icon Template',
                 'fieldname' => 'iconTemplate',
                 'language' => 'html',
+                'options' => array (
+                    'ps-valid' => 'save()',
+                ),
                 'type' => 'ExpressionField',
-                'options' => array(
-                    'ps-valid' => 'save()'
-                )
             ),
-            array(
+            array (
                 'label' => 'Icon List',
                 'fieldname' => 'list',
-                'options' => array(
-                    'ng-show' => 'active.listExpr == \'\'',
+                'options' => array (
+                    'ng-show' => 'active.listExpr == \\\'\\\'',
                     'ng-model' => 'active.list',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -111,22 +113,22 @@ class IconPicker extends FormField {
                 'allowSpaceOnKey' => 'Yes',
                 'type' => 'KeyValueGrid',
             ),
-            array(
+            array (
                 'label' => 'List Expression',
                 'fieldname' => 'listExpr',
-                'options' => array(
-                    'ng-hide' => 'active.options[\'ps-list\'] != null',
-                    'ps-valid' => 'save()'
+                'options' => array (
+                    'ng-hide' => 'active.options[\\\'ps-list\\\'] != null',
+                    'ps-valid' => 'save()',
                 ),
                 'desc' => 'WARNING: Using List Expression will replace <i>Radio Button Item</i> with expression result',
                 'type' => 'ExpressionField',
             ),
-            array(
+            array (
                 'label' => 'Options',
                 'fieldname' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array(
+            array (
                 'label' => 'Label Options',
                 'fieldname' => 'labelOptions',
                 'type' => 'KeyValueGrid',

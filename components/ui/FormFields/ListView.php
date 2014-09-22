@@ -18,9 +18,9 @@ class ListView extends FormField {
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                    'searchable' => 'size(modelFieldList) > 5',
                 ),
                 'list' => array (),
+                'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
@@ -43,18 +43,21 @@ class ListView extends FormField {
                 'name' => 'templateForm',
                 'options' => array (
                     'ng-model' => 'active.templateForm',
-                    'ng-show' => 'active.fieldTemplate == \'form\'',
+                    'ng-show' => 'active.fieldTemplate == \\\'form\\\'',
                     'ng-change' => 'save();',
                 ),
                 'listExpr' => 'FormBuilder::listForm()',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            '<div ng-show="active.fieldTemplate == \'form\'" class="well well-sm">
+            array (
+                'type' => 'Text',
+                'value' => '<div ng-show=\"active.fieldTemplate == \'form\'\" class=\"well well-sm\">
 Use this code to access current item: <br/> 
 <code>ng-model = value[$index]</code><br/>
     <code> ng-change = updateListView() </code> 
 </div>',
+            ),
             array (
                 'label' => 'Label',
                 'name' => 'label',
@@ -88,11 +91,14 @@ Use this code to access current item: <br/>
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                            'ng-disabled' => 'active.layout == \'Vertical\'',
+                            'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
                         ),
                         'type' => 'TextField',
                     ),
-                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
                 ),
                 'column2' => array (
                     array (
@@ -108,17 +114,29 @@ Use this code to access current item: <br/>
                         ),
                         'type' => 'TextField',
                     ),
-                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
                 ),
                 'column3' => array (
-                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
                 ),
                 'column4' => array (
-                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
                 ),
                 'type' => 'ColumnField',
             ),
-            '<hr/>',
+            array (
+                'type' => 'Text',
+                'value' => '<hr/>',
+            ),
             array (
                 'label' => 'Options',
                 'fieldname' => 'options',

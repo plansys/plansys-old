@@ -109,7 +109,7 @@
             $(window).resize();
         };
         $(window).resize(function() {
-            $("#text-editor").height($(".form-builder-properties [ui-content]").height() - 45);
+            $(".text-editor").height($(".form-builder-properties [ui-content]").height() - 45);
         });
         /*********************** LAYOUT ********************************/
         $scope.layout = null;

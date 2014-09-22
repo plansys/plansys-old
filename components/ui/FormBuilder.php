@@ -826,7 +826,6 @@ class FormBuilder extends CComponent {
             $line = $this->prepareLineForMethod();
             $length = 0;
             $isNewFunc = true;
-            echo"NEW";
         } else {
             $line = $this->methods[$name]['line'];
             $length = $this->methods[$name]['length'];
@@ -840,7 +839,6 @@ class FormBuilder extends CComponent {
                 $this->file[] = "\n";
                 $this->file[] = "}";
             }
-            echo"OLD";
         }
         return array(
             'file' => $this->file,
@@ -902,6 +900,8 @@ EOF;
             }
         }
         $this->methods[$functionName]['length'] = $newlength;
+        $this->methods[$functionName]['line'] = $line;
+        
         $this->file = $file;
 
         $fp = fopen($sourceFile, 'r+');

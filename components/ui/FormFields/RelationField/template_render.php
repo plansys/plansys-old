@@ -19,6 +19,7 @@
         <data name="model_class" class="hide"><?= Helper::getAlias($model) ?></data>
         <data name="model_field" class="hide"><?= json_encode($model->attributes) ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
+        <data name="watch_params" class="hide"><?= json_encode($this->watchParams) ?></data>
         <!-- /data -->
 
         <!-- field -->
@@ -31,26 +32,16 @@
             <button 
                 ng-if="!showOther || (showOther && itemExist())" type="button" 
                 <?= $this->expandAttributes($this->fieldOptions) ?> >
+                    <i ng-show='loading' class="fa fa-spin fa-refresh" 
+                       style="position:absolute;right:25px;top:8px;"></i>
                 <span class="caret pull-right"></span>
                 <span class="dropdown-text" ng-bind-html="text"></span>
             </button>
 
-            <!-- typeable button -->
-            <button ng-if="showOther && !itemExist()" tabindex="1" type="button" 
-                    style="padding:2px 0px 8px 0px;width:30px; text-align:center;"
-                    class="split-button <?= @$this->fieldOptions['class'] ?>">
-                <span class="caret" style="float:none;"></span>
-            </button>
-            <input ng-if="showOther && !itemExist()" type="text"
-                   ng-model="value" ng-change="updateOther(value)" ng-delay="500"
-                   class="form-control dropdown-other-type">
 
             <!-- dropdown item -->
             <div class="dropdown-menu open">
                 <div class="search" ng-show="searchable">
-                    
-                    <i ng-show="loading" class="fa fa-spin fa-refresh" 
-                       style="position:absolute;right:20px;top:18px;"></i>
                     <input type="text"
                            ng-model="search"
                            ng-delay="500"
@@ -58,7 +49,11 @@
                            placeholder="Search ..."
                            class="input-block-level search-dropdown form-control" autocomplete="off">
                 </div>
-                <ul class="dropdown-menu inner" role="menu">
+                <div ng-if="loading" 
+                     style="text-align:center;padding:15px;font-size:12px;color:#999;">
+                    &mdash; SEARCHING &mdash;
+                </div>
+                <ul ng-show="!loading" class="dropdown-menu inner" role="menu">
                     <li ng-repeat-start="item in renderedFormList track by $index" 
                         ng-if="item.value != '---'" class="dropdown-item" 
                         ng-class="{'dropdown-header': isObject(item.value)}">

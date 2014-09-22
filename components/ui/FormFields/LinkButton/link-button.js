@@ -1,9 +1,32 @@
-app.directive('linkBtn', function($timeout, $parse) {
+app.directive('linkBtn', function ($timeout, $parse, $compile) {
     return {
         scope: true,
-        compile: function(element, attrs, transclude) {
-            return function($scope, $el, attrs, ctrl) {
+        compile: function (element, attrs, transclude) {
 
+            var generateUrl = function (url, type) {
+                var output = '';
+                if (typeof url == "string") {
+                    if (url.match(/http*/ig)) {
+                        output = url.replace(/\{/g, "'+ $scope.").replace(/\}/g, " + '");
+                    } else if (url.trim() == '#') {
+                        output = '#';
+                    } else {
+                        url = url.replace(/\?/ig, '&');
+                        output = "Yii.app.createUrl('" + url.replace(/\{/g, "'+ $scope.").replace(/\}/g, " + '") + "')";
+                    }
+
+                    if (type == 'html') {
+                        if (output != '#') {
+                            output = '{{' + output + '}}';
+                        }
+                    }
+
+                }
+                return output;
+            }
+
+
+            return function ($scope, $el, attrs, ctrl) {
                 if ($el.attr('group') != '' && $(".link-btn[group=" + $el.attr('group') + "]").length > 1) {
                     $firstBtn = $(".link-btn[group=" + $el.attr('group') + "]").eq(0);
                     if (!$firstBtn.parent().hasClass('btn-group')) {
@@ -15,14 +38,42 @@ app.directive('linkBtn', function($timeout, $parse) {
                     $el.css('opacity', '1');
                 }
 
-                $scope.url = $el.attr('url');
-                $scope.urlparams = $el.find("data[name=urlparams]").html();
-                
-                $el.on('click', function() {
-                    if (!$el.hasClass('on-editor') && typeof $el.attr('ng-click') == "undefined") {
-                        location.href = $el.attr('url');
+
+                if (attrs.href) {
+                    var href = attrs.href;
+                    if (href.trim().substr(0, 4) == "url:") {
+                        var url = href.trim().substr(4);
+                        href = eval(generateUrl(url, 'function'));
                     }
-                });
+
+                    $el.attr('href', href);
+                    $scope.url = href;
+                }
+
+                if (attrs.confirm) {
+                    $el.click(function (e) {
+
+                        e.stopPropagation();
+                        if (!confirm(attrs.confirm)) {
+                            return false;
+                        }
+                    });
+                }
+
+                if (attrs.submit) {
+                    var href = attrs.submit;
+                    if (href.trim().substr(0, 4) == "url:") {
+                        var url = href.trim().substr(4);
+                        href = eval(generateUrl(url, 'function'));
+                    }
+
+                    $scope.url = href;
+
+                    if (!attrs.ngClick) {
+                        $el.attr('ng-click', 'form.submit(this)');
+                        $el.replaceWith($compile($el[0])($scope));
+                    }
+                }
             }
         }
     };

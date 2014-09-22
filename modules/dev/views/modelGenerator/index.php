@@ -9,7 +9,8 @@
                 <div ui-tree data-drag-enabled="false">
                     <ol ui-tree-nodes="" ng-model="list">
                         <li ng-repeat="item in list track by $index" ui-tree-node>
-                            <div ui-tree-handle ng-click="toggle(this);select(this);"  ng-class="is_selected(this)">
+                            <div ui-tree-handle ng-click="toggle(this);
+                                            select(this);"  ng-class="is_selected(this)">
 
                                 <div class="ui-tree-handle-info">
                                     {{item.items.length}} model{{item.items.length > 1 ? 's' : ''}}
@@ -25,15 +26,22 @@
                             <ol ui-tree-nodes="" ng-model="item.items">
                                 <li ng-repeat="subItem in item.items" ui-tree-node class='menu-list-item'>
                                     <a target="iframe" 
-                                       href="{{Yii.app.createUrl('/dev/modelGenerator/update',{
-                                                'class': subItem.class,
-                                                'type' : subItem.type
-                                            })}}"
+                                       href="{{Yii.app.createUrl('/dev/modelGenerator/update', {
+                                                               'class': subItem.class,
+                                                               'type': subItem.type
+                                                           })}}"
                                        ui-tree-handle ng-click="select(this)" ng-class="is_selected(this)">
-                                        <i class="fa {{subItem.name == 'MainMenu' ? 'fa-sitemap' : 'fa-book'}} fa-nm"></i>
-                                        <div ng-if='subItem.exist == "no"' class="pull-right label label-success" style="margin-top:4px;">
+
+                                        <div ng-if='subItem.exist == "no"' 
+                                             class="label label-success" 
+                                             style="margin-top:4px;position:absolute;right:0px;">
                                             New
-                                        </div><span style="word-wrap:break-word;">{{subItem.name}}</span>
+                                        </div>
+                                        <span style="word-wrap:break-word;padding-left:20px;">
+                                            <i style='float:left;margin:3px -20px 0px 0px;'
+                                                class="fa {{subItem.name == 'MainMenu' ? 'fa-sitemap' : 'fa-book'}} fa-nm"></i> 
+                                            {{subItem.name}}
+                                        </span>
                                     </a>
                                 </li>
                             </ol>

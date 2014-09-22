@@ -8,7 +8,8 @@ class ProfileController extends Controller {
         
         if (isset($_POST["DevUserForm"])) {
             $model->attributes = $_POST["DevUserForm"];
-
+            $model->subscribed = "on";
+            
             if ($model->save()) {
                 Yii::app()->user->setFlash('info', 'Profil Anda Tersimpan.');
             }

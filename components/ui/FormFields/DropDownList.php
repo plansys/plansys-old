@@ -18,7 +18,7 @@ class DropDownList extends FormField {
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                    'searchable' => 'size(modelFieldList) > 5',
+                    
                 ),
                 'list' => array(),
                 'showOther' => 'Yes',

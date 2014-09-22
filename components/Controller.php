@@ -22,7 +22,7 @@ class Controller extends CController {
         return $this->url($static . $path);
     }
 
-    public function renderForm($class, $model = null, $options = array()) {
+    public function renderForm($class, $model = null, $params = array(), $options = array()) {
         $fb = FormBuilder::load($class);
         $this->pageTitle = $fb->form['title'];
         $this->layout = '//layouts/form';
@@ -32,9 +32,11 @@ class Controller extends CController {
             'action' => $this->action->id,
         );
 
+        $options['params'] = $params;
+        
         $renderOptions = array_merge($renderOptions, $options);
         $mainform = $fb->render($model, $renderOptions);
-
+        
         $data = $fb->form['layout']['data'];
 
         foreach ($data as $k => $d) {

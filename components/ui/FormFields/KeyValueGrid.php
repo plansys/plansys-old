@@ -16,13 +16,16 @@ class KeyValueGrid extends FormField {
                     'ng-model' => 'active.fieldname',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                    'searchable' => 'size(modelFieldList) > 5',
                 ),
                 'list' => array (),
+                'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            '<hr/>',
+            array (
+                'type' => 'Text',
+                'value' => '<hr/>',
+            ),
             array (
                 'label' => 'Label',
                 'name' => 'label',
@@ -43,10 +46,6 @@ class KeyValueGrid extends FormField {
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
-                'list' => array (
-                    'Show' => 'Show',
-                    'Hide' => 'Hide',
-                ),
                 'listExpr' => 'array(
    \'Show\',
    \'Hide\',
@@ -63,10 +62,6 @@ class KeyValueGrid extends FormField {
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
-                'list' => array (
-                    'No' => 'No',
-                    'Yes' => 'Yes',
-                ),
                 'listExpr' => 'array(\\\'No\\\',\\\'Yes\\\');',
                 'labelWidth' => '5',
                 'fieldWidth' => '3',
@@ -80,10 +75,6 @@ class KeyValueGrid extends FormField {
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
-                'list' => array (
-                    'No' => 'No',
-                    'Yes' => 'Yes',
-                ),
                 'listExpr' => 'array(\\\'No\\\',\\\'Yes\\\');',
                 'labelWidth' => '5',
                 'fieldWidth' => '3',
@@ -96,10 +87,6 @@ class KeyValueGrid extends FormField {
                     'ng-model' => 'active.allowDoubleQuote',
                     'ng-change' => 'save()',
                     'ng-delay' => 500,
-                ),
-                'list' => array (
-                    'No' => 'No',
-                    'Yes' => 'Yes',
                 ),
                 'listExpr' => 'array(\\\'No\\\',\\\'Yes\\\')',
                 'labelWidth' => '5',

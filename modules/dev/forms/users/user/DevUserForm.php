@@ -105,7 +105,8 @@ class DevUserForm extends User {
                     ),
                     array (
                         'value' => '<div style=\"margin:-50px -20px 0px 0px;\" class=\"hide col-sm-5 pull-right info\">
-<i class=\"fa fa-info-circle fa-nm fa-fw\"></i> 
+<i 
+class=\"fa fa-info-circle fa-nm fa-fw\"></i> 
 Harap hubungi administrator untuk mengubah username ataupun role.
 </div>
 </div>',

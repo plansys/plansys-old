@@ -30,7 +30,7 @@ class Modal extends FormField {
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                    'searchable' => 'size(modelFieldList) > 5',
+                    
                 ),
                 'type' => 'DropDownList',
             ),

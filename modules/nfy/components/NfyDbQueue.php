@@ -49,7 +49,14 @@ class NfyDbQueue extends NfyQueue {
     /**
      * @inheritdoc
      */
-    public function send($message, $category = null) {
+    public function send($message, $category = array()) {
+
+        if (!isset($message['to'])) {
+            throw new Exception('Untuk mengirim notifikasi harus ada item "to" pada array');
+        } else {
+            $category = $message['to'];
+        }
+
         if (!is_string($message)) {
             $message = json_encode($message);
         }
@@ -68,8 +75,13 @@ class NfyDbQueue extends NfyQueue {
                 if ($k == 'userid' || $k == 'user_id' || $k == 'id') {
                     $k = 'uid';
                 }
-                
+
                 $cat = $k . '_' . $v;
+
+                if ($k == 'role') {
+                    $cat = $cat . '.%';
+                }
+
                 $sc[] = $cat;
             }
             $category = $sc;
@@ -121,7 +133,7 @@ class NfyDbQueue extends NfyQueue {
      */
     public function peek($subscriber_id = null, $limit = -1, $status = null) {
         $pk = NfyDbMessage::model()->tableSchema->primaryKey;
-        
+
         if ($status === null) {
             $messages = NfyDbMessage::model()
                 ->withQueue($this->id)
@@ -142,11 +154,11 @@ class NfyDbQueue extends NfyQueue {
         if ($returnNfy) {
             return $message;
         }
-        
+
         $process = NfyDbMessage::createMessages(array($message));
         return $process[0];
     }
-    
+
     /**
      * @inheritdoc
      */

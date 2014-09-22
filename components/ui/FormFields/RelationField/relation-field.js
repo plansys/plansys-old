@@ -145,7 +145,7 @@ app.directive('relationField', function ($timeout, $http) {
                         's': $scope.search,
                         'm': $scope.modelClass,
                         'f': $scope.name,
-                        'mf': $scope.modelField
+                        'mf': $scope.$parent.model
                     }).success(function (data) {
                         $scope.formList = data;
                         $scope.renderFormList();
@@ -182,9 +182,10 @@ app.directive('relationField', function ($timeout, $http) {
 
                 // set default value
                 $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
+                $scope.watchParams = JSON.parse($el.find("data[name=watch_params]").text());
                 $scope.renderedFormList = [];
                 $scope.renderFormList();
-                $scope.loading  = false;
+                $scope.loading = false;
                 $scope.searchable = $el.find("data[name=searchable]").text().trim() == "Yes" ? true : false;
                 $scope.showOther = $el.find("data[name=show_other]").text().trim() == "Yes" ? true : false;
                 $scope.otherLabel = $el.find("data[name=other_label]").html();
@@ -195,6 +196,14 @@ app.directive('relationField', function ($timeout, $http) {
 
                 $scope.isOpen = false;
                 $scope.openedInField = false;
+
+                for (i in $scope.watchParams) {
+                    var param = $scope.watchParams[i];
+                    console.log(param);
+                    $scope.$watch(param, function (newparam, oldparam) {
+                        $scope.doSearch();
+                    }, true);
+                }
 
                 $scope.search = "";
                 //if ngModel is present, use that instead of value from php

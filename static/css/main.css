@@ -1003,6 +1003,12 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     padding-left:20px;
 }
 
+
+.ab-editor-link-bar .field.Text .field-info{
+    margin-top:-16px;
+
+}
+
 .ab-editor-title-bar .title{
     font-weight:bold;
 }
@@ -1064,11 +1070,16 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 /********************************* TEXT / HTML ********************************/
 
+.text-editor-builder {
+    margin:0px -4px;
+    border-top:1px solid #ccc;
+}
+
 .text-editor-container {
-    max-height:85px;
+    max-height:75px;
     overflow-y:hidden;
     position:relative;
-    padding-bottom:10px;
+    padding-bottom:12px;
 }
 .text-editor-preview {
     white-space:pre-wrap;
@@ -1525,9 +1536,8 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 .nfy-info {
     font-size:12px;
-    padding:5px;
+    padding:0px 5px 5px 5px;
     color:#777;
-    border-top:1px solid #ececeb;
 }
 
 
@@ -1565,7 +1575,11 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 }
 
 /********************************** FORMS **************************************/
-
+.label-field-value {
+    font-size:13px;
+    margin-top:6px;
+    margin-bottom:4px;
+}
 .switchery {
     background-color: #fff;
     border: 1px solid #dfdfdf;
@@ -1734,6 +1748,15 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
     float:right;
     text-align:right;
     padding:7px 5px;
+}
+
+.action-bar .link-bar .separator,
+.action-bar-editor .ab-editor-link-bar .separator {
+    display:inline-block;
+    border-left: 1px solid #ececeb;
+    padding: 7px 0px 0px 0px;
+    height: 34px;
+    margin: 0px 2px -13px 2px;
 }
 
 .action-bar .link-bar .btn {
@@ -2086,9 +2109,6 @@ textarea.form-control {
     max-width:100%;
     min-height:50px;
     font-family: consolas, "Courier New", courier, monospace;
-}
-textarea.force-rows {
-    height: auto !important;
 }
 
 .textarea-noresize {

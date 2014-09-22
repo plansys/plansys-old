@@ -24,23 +24,33 @@ ob_start();
         document.title = $scope.form.title;
         $scope.$watch('form.title', function () {
             document.title = $scope.form.title;
-
         });
 
         $scope.form.submit = function (button) {
-            if (typeof button != "undefined") {
-                var baseurl = button.url;
-                if (typeof button.url != 'string' || button.url.trim() == '' || button.url.trim() == '#') {
-                    baseurl = '<?= Yii::app()->urlManager->parseUrl(Yii::app()->request) ?>';
+            $timeout(function () {
+                if (typeof button != "undefined") {
+                    var baseurl = button.url;
+                    if (typeof button.url != 'string' || button.url.trim() == '' || button.url.trim() == '#') {
+                        baseurl = '<?= Yii::app()->urlManager->parseUrl(Yii::app()->request) ?>';
+                    }
+
+                    var parseParams = $parse(button.urlparams);
+                    var urlParams = angular.extend($scope.params, parseParams($scope));
+
+                    var url = Yii.app.createUrl(baseurl, urlParams);
+                    $("div[ng-controller=<?= $modelClass ?>Controller] form").attr('action', url).submit();
                 }
-
-                var parseParams = $parse(button.urlparams);
-                var urlParams = angular.extend($scope.params, parseParams($scope));
-
-                var url = Yii.app.createUrl(baseurl, urlParams);
-                $("div[ng-controller=<?= $modelClass ?>Controller] form").attr('action', url).submit();
-            }
+            }, 0);
         };
+
+        $("div[ng-controller=<?= $modelClass ?>Controller] form").submit(function (e) {
+            if ($scope.uploading.length > 0) {
+                alert("Mohon tunggu sampai proses file upload selesai.");
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        });
 
         $scope.form.canGoBack = function () {
             return (document.referrer == "" || window.history.length > 1);
@@ -49,6 +59,8 @@ ob_start();
         $scope.form.goBack = function () {
             window.history.back();
         }
+
+        $scope.uploading = [];
 
         // execute inline JS
         $timeout(function () {

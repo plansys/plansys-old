@@ -18,9 +18,9 @@ class ToggleSwitch extends FormField {
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                    'searchable' => 'size(modelFieldList) > 5',
                 ),
                 'list' => array (),
+                'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
@@ -57,11 +57,14 @@ class ToggleSwitch extends FormField {
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                            'ng-disabled' => 'active.layout == \'Vertical\'',
+                            'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
                         ),
                         'type' => 'TextField',
                     ),
-                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
                 ),
                 'column2' => array (
                     array (
@@ -77,17 +80,29 @@ class ToggleSwitch extends FormField {
                         ),
                         'type' => 'TextField',
                     ),
-                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
                 ),
                 'column3' => array (
-                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
                 ),
                 'column4' => array (
-                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
                 ),
                 'type' => 'ColumnField',
             ),
-            '<hr/>',
+            array (
+                'type' => 'Text',
+                'value' => '<hr/>',
+            ),
             array (
                 'label' => 'Options',
                 'fieldname' => 'options',
@@ -141,7 +156,7 @@ class ToggleSwitch extends FormField {
     public static $category = "User Interface";
 
     /** @var string $toolbarIcon */
-    public static $toolbarIcon = "fa fa-check-circle-o";
+    public static $toolbarIcon = "fa fa-toggle-on";
 
     /**
      * @return array me-return array javascript yang di-include

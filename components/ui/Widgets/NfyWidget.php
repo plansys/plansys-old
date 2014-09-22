@@ -14,10 +14,14 @@ class NfyWidget extends Widget {
     public function actionRead($nid) {
         $nfy = Yii::app()->nfy->read($nid, true);
         $now = new DateTime('now');
-        $nfy->status = NfyMessage::READ;
-        $nfy->read_on = $now->format('Y-m-d H:i:s');
-        $nfy->save();
         $body = json_decode($nfy->body, true);
+        if (!@$body['persist']) {
+            $nfy->status = NfyMessage::READ;
+            $nfy->read_on = $now->format('Y-m-d H:i:s');
+            $nfy->save();
+        } else {
+            $body['url'] .= '&nfyid=' . $nfy->id;
+        }
         Yii::app()->controller->redirect($body['url']);
     }
 

@@ -26,19 +26,23 @@ class Text extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
-                'value' => '<div style=\"margin:0px -5px;\">
-    <div id=\"text-editor\" ui-ace=\"{
+                'value' => '<div class=\"text-editor-builder\">
+  <div class=\"text-editor\" ui-ace=\"{
   useWrapMode : true,
-  showGutter: false,
-  theme:\'monokai\',
+  showGutter: true,
+  theme: \'monokai\',
   mode: \'html\',
   onLoad: aceLoaded,
+  require: [\'ace/ext/emmet\'],
+  advanced: {
+      enableEmmet: true,
+  }
 }\" 
 ng-change=\"save()\" ng-delay=\"500\"
 style=\"width:100%;height:300px;margin-bottom:-250px;font-size:13px;position: relative !important;\" ng-model=\"active.value\">
-    
     </div>
-</div>',
+</div>
+',
                 'type' => 'Text',
             ),
         );

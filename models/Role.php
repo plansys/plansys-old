@@ -15,6 +15,19 @@ class Role extends ActiveRecord {
         );
     }
     
+    public function getName() {
+        return $this->role_name;
+    }
+    
+    public static function getAll() {
+        $all = Role::model()->findAll();
+        $result = array();
+        foreach ($all as $k=>$v) {
+            $result[$v->id] = $v->role_description;
+        }
+        return $result;
+    }
+    
     private $oldName = "";
     public function afterFind() {
         $this->oldName = $this->role_name;

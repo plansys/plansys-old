@@ -10,24 +10,24 @@ class RelationField extends FormField {
      * @return array me-return array property DropDown.
      */
     public function getFieldProperties() {
-        return array(
-            array(
+        return array (
+            array (
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                    'searchable' => 'size(modelFieldList) > 5',
                 ),
-                'list' => array(),
+                'list' => array (),
+                'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Model Class',
                 'name' => 'modelClass',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.modelClass',
                     'ng-change' => 'generateRelationField();
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         save();',
@@ -36,52 +36,56 @@ class RelationField extends FormField {
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array(
-                'label' => 'Condition',
-                'name' => 'condition',
-                'options' => array(
-                    'ng-model' => 'active.condition',
-                    'ng-change' => 'save()',
-                    'ng-delay' => '500',
-                ),
-                'type' => 'TextArea',
-            ),
-            array(
+            array (
                 'label' => 'ID Field',
                 'name' => 'idField',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.idField',
                     'ng-change' => 'save();',
                     'ps-list' => 'relationFieldList',
                 ),
-                'list' => array(),
+                'list' => array (),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Label Field',
                 'name' => 'labelField',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.labelField',
                     'ng-change' => 'save();',
                     'ps-list' => 'relationFieldList',
                 ),
-                'list' => array(),
+                'list' => array (),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
+                'label' => 'SQL Condition',
+                'fieldname' => 'condition',
+                'language' => 'sql',
+                'options' => array (
+                    'ng-model' => 'active.condition',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                ),
+                'desc' => 'SQL Template: select * from table [condition]<br/>
+
+Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [model.satker_id]} {where [search]}',
+                'type' => 'ExpressionField',
+            ),
+            array (
                 'value' => '<hr/>',
                 'type' => 'Text',
             ),
-            array(
+            array (
                 'label' => 'Include Empty',
                 'name' => 'includeEmpty',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.includeEmpty',
                     'ng-change' => 'save();',
                 ),
@@ -89,46 +93,46 @@ class RelationField extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Empty Value',
                 'name' => 'emptyValue',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.emptyValue',
                     'ng-change' => 'save()',
-                    'ng-show' => 'active.includeEmpty == \'Yes\'',
+                    'ng-show' => 'active.includeEmpty == \\\'Yes\\\'',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Empty Label',
                 'name' => 'emptyLabel',
-                'options' => array(
-                    'ng-model' => 'active.noneLabel',
+                'options' => array (
+                    'ng-model' => 'active.emptyLabel',
                     'ng-change' => 'save()',
-                    'ng-show' => 'active.includeEmpty == \'Yes\'',
+                    'ng-show' => 'active.includeEmpty == \\\'Yes\\\'',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'value' => '<hr/>',
                 'type' => 'Text',
             ),
-            array(
+            array (
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => 500,
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                 ),
@@ -136,10 +140,10 @@ class RelationField extends FormField {
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Searchable',
                 'name' => 'searchable',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.searchable',
                     'ng-change' => 'save()',
                 ),
@@ -147,61 +151,70 @@ class RelationField extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'value' => '<hr/>',
                 'type' => 'Text',
             ),
-            array(
+            array (
                 'totalColumns' => '4',
-                'column1' => array(
-                    '<column-placeholder></column-placeholder>',
+                'column1' => array (
+                    array (
+                        'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
+                    ),
                 ),
-                'column2' => array(
-                    array(
+                'column2' => array (
+                    array (
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array(
+                        'options' => array (
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => 500,
-                            'ng-disabled' => 'active.layout == \'Vertical\'',
+                            'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
                         ),
                         'type' => 'TextField',
                     ),
-                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
+                    ),
                 ),
-                'column3' => array(
-                    array(
+                'column3' => array (
+                    array (
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array(
+                        'options' => array (
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => 500,
                         ),
                         'type' => 'TextField',
                     ),
-                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
+                    ),
                 ),
                 'type' => 'ColumnField',
             ),
-            array(
+            array (
                 'label' => 'Options',
                 'fieldname' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array(
+            array (
                 'label' => 'Label Options',
                 'fieldname' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
-            array(
+            array (
                 'label' => 'Field Options',
                 'fieldname' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
@@ -257,6 +270,8 @@ class RelationField extends FormField {
     public $modelClass = '';
     public $idField = '';
     public $labelField = '';
+    
+    public $watchParams = array();
 
     /** @var string $toolbarName */
     public static $toolbarName = "Relation Field";
@@ -283,56 +298,108 @@ class RelationField extends FormField {
         $field = $fb->findField(array('name' => $f));
         $this->attributes = $field;
         $this->builder = $fb;
-        $this->model->attributes = $mf;
 
-        echo json_encode($this->query($s));
+        if (isset($mf['id']) > 0) {
+            $this->model->findByPk($mf['id']);
+        }
+
+        $params = array();
+        foreach ($mf as $k => $v) {
+            $params['model.' . $k] = $v;
+        }
+
+        echo json_encode($this->query($s, $params));
     }
 
-    public function generateCondition($search = '') {
-        $sql = $this->evaluate("\"{$this->condition}\"", true);
-
-        preg_match_all("/\{(.*?)\}/", $sql, $blocks);
-        preg_match_all("/\{(.*?)\}/", $this->condition, $conditionBlock);
+    public function generateCondition($search = '', &$jsparams = array()) {
+        preg_match_all("/\[(.*?)\]/", $this->condition, $blocks);
         preg_match_all("/\{(.*?)\}/", $this->labelField, $fields);
+        $sql = $this->condition;
+
+        ## generate parameters
+        $params = array();
         foreach ($blocks[1] as $k => $block) {
-            if (strpos($block, '[where]') !== false) {
-                $cond = '';
+            $cond = '';
+
+            ## usage: "where [search]", [search] = search term
+            if (strpos($block, 'search') !== false) {
                 if ($search != '') {
                     if (strpos($this->labelField, '{') !== false) {
-                        $sqlcond = "CONCAT(" . implode(",", $fields[1]) . ")" . ' like "%' . $search . '%"';
+                        $sqlcond = "CONCAT(" . implode(",", $fields[1]) . ")" . ' like ' . "[{$block}]";
                     } else {
-                        $sqlcond = $this->labelField . ' like "%' . $search . '%"';
+                        $sqlcond = $this->labelField . ' like ' . "[{$block}]";
                     }
-                    $cond = str_replace("[where]", $sqlcond, $block);
+                    $sql = str_replace("[search]", $sqlcond, $sql);
+                    $params[$block] = "%{$search}%";
+                } else {
+                    $params[$block] = null;
                 }
-            } else if (strpos($conditionBlock[1][$k], '$model') !== false) {
-                preg_match("/\\\$model->[\w_]+/", $conditionBlock[1][$k], $modelVar);
+            }
+
+            ## usage: "where user_id = {$model->id}",  $model = current form activerecord
+            else if (strpos($block, '$model') !== false) {
+                preg_match("/\\\$model->[\w_]+/", $block, $modelVar);
                 foreach ($modelVar as $v) {
                     $val = $this->evaluate("\"{$v}\"", true);
                     if ($val == '') {
                         $cond = '';
                     } else {
-                        $cond = $block;
+                        $cond = $val;
+                    }
+                }
+                $params[$block] = $cond;
+            }
+
+            ## usage: "where user_id = {model.id}", model = current angularjs model value
+            else if (strpos($block, '.') !== false) {
+                $cond = @$jsparams[$block];
+                $this->watchParams[] = $block;
+                $params[$block] = $cond;
+            }
+        }
+
+        ## remove empty-valued conditional curly braces
+        preg_match_all("/\{(.*?)\}/", $sql, $curlies);
+        foreach ($curlies[0] as $c => $curly) {
+            foreach ($params as $k => $p) {
+                if (strpos($curly, '[' . $k . ']') !== false) {
+                    if (!$p) {
+                        $sql = str_replace($curly, '', $sql);
+                        unset($params[$k]);
+                    } else {
+                        $sql = str_replace($curly, $curlies[1][$c], $sql);
                     }
                 }
             }
-            $sql = str_replace("{{$block}}", $cond, $sql);
         }
-        return $sql;
-    }
 
-    public function query($search = '') {
+        ## assemble parameters
+        $i = 0;
+        $returnParams = array();
+        foreach ($params as $k => $p) {
+            $returnParams[':param_' . $i] = $p;
+            $sql = str_replace('[' . $k . ']', ':param_' . $i, $sql);
+            $i++;
+        }
+
+        return array(
+            'sql' => $sql,
+            'params' => $returnParams
+        );
+    }
+    
+    public function query($search = '', $params = array()) {
         Yii::import($this->modelClass);
         $class = array_pop(explode(".", $this->modelClass));
         $model = new $class;
         $table = $model->tableName();
         $list = array();
-        $condition = $this->generateCondition($search);
+        
+        $condition = $this->generateCondition($search, $params);
         $limit = ($search == '' ? 'limit 30' : 'limit 100');
-        $sql = "select * from {$table} {$condition} {$limit}";
-        $rawlist = Yii::app()->db->createCommand($sql)->queryAll();
-
-
+        $sql = "select t.* from {$table} t {$condition['sql']} {$limit}";
+        $rawlist = Yii::app()->db->createCommand($sql)->queryAll(true, $condition['params']);
+        
         foreach ($rawlist as $k => $i) {
             $included = true;
             if ($included) {

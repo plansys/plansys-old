@@ -23,7 +23,7 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="nfy-info">
-                        Pengirim:
+                        By: 
                         <a href="#" class="nfy-sender">
                             <span class="nfy-name">{{ item.sender_name}}</span>
                             <span class="nfy-role">{{ item.sender_role}}</span>                            

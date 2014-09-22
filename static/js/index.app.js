@@ -125,6 +125,31 @@ app.filter('capitalize', function () {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
 });
+
+app.filter('elipsisMiddle', function () {
+    return function (fullStr, strLen, separator) {
+        if (fullStr.length <= strLen)
+            return fullStr;
+
+        separator = separator || '...';
+
+        var sepLen = separator.length,
+                charsToShow = strLen - sepLen,
+                frontChars = Math.ceil(charsToShow / 2),
+                backChars = Math.floor(charsToShow / 2);
+
+        return fullStr.substr(0, frontChars) +
+                separator +
+                fullStr.substr(fullStr.length - backChars);
+    };
+});
+app.filter('countLine', function () {
+    return function (input) {
+        // do some bounds checking here to ensure it has that index
+        var len = input.split(/\r\n|\r|\n/).length;
+        return len + " line" + (len - 3 > 1 ? 's' : '');
+    }
+});
 app.filter("timeago", function () {
     //time: the time
     //local: compared to what time? default: now
