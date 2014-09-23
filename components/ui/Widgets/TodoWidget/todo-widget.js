@@ -37,6 +37,13 @@ app.controller("TodoWidgetController", function ($scope, $http, $timeout, $local
         return $storage.todo.view == "active" ? 0 : 1;
     }
 
+    $scope.countText = function () {
+        var c = $scope.count();
+        var a = $storage.todo.view.charAt(0).toUpperCase() + $storage.todo.view.substring(1);
+
+        return c + " " + a + " item" + (c > 1 ? "s" : "");
+    }
+
     $scope.toggleStatus = function (item) {
         item.status = (item.status == 0 ? 1 : 0);
         $scope.updateTodo(item);
@@ -58,7 +65,7 @@ app.controller("TodoWidgetController", function ($scope, $http, $timeout, $local
 
         for (i in $storage.todo.items) {
 
-            if ($storage.todo.items[i] != null) {
+            if ($storage.todo.items[i] != null && $storage.todo.items[i].note != '') {
                 if ($storage.todo.view == 'completed' && $storage.todo.items[i].status == 1) {
                     count++;
                 } else if ($storage.todo.view == 'active' && $storage.todo.items[i].status == 0) {

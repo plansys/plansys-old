@@ -4,11 +4,43 @@ class TodoWidget extends Widget {
 
     public $icon = "fa fa-check-square-o fa-2x ";
     public $badge = '';
+    public $ext = ['permintaan_data'];
+
+    public function renderCheck($ext, $file = 'template_check.php') {
+
+        $reflector = new ReflectionClass($this);
+        $file = 'ext' . DIRECTORY_SEPARATOR . $ext . DIRECTORY_SEPARATOR . $file;
+        $path = str_replace(".php", DIRECTORY_SEPARATOR . $file, $reflector->getFileName());
+        ob_start();
+        include($path);
+        return ob_get_clean();
+    }
+
+    public function renderNote($ext, $file = 'template_render.php') {
+        $reflector = new ReflectionClass($this);
+        $file = 'ext' . DIRECTORY_SEPARATOR . $ext . DIRECTORY_SEPARATOR . $file;
+        $path = str_replace(".php", DIRECTORY_SEPARATOR . $file, $reflector->getFileName());
+        ob_start();
+        include($path);
+        return ob_get_clean();
+    }
 
     public function includeJS() {
-        return array(
+        $reflector = new ReflectionClass($this);
+        $filename = $reflector->getFileName();
+        $files = [];
+        foreach ($this->ext as $ext) {
+            $file = 'ext' . DIRECTORY_SEPARATOR . $ext . DIRECTORY_SEPARATOR;
+            $path = str_replace(".php", DIRECTORY_SEPARATOR . $file, $filename);
+            $glob = glob($path . "*.js");
+            foreach ($glob as $f) {
+                $files[] = $file . str_replace($path, '', $f);
+            }
+        }
+
+        return array_merge(array(
             'todo-widget.js'
-        );
+        ), $files);
     }
 
     public function getList() {
@@ -22,9 +54,11 @@ class TodoWidget extends Widget {
                 }
             }
         }
+
+
         return $array;
     }
-    
+
     public function add($array) {
         $todo = new Todo();
         $todo->attributes = $array;
