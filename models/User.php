@@ -13,11 +13,6 @@ class User extends ActiveRecord {
     public function afterSave() {
         parent::afterSave();
 
-        ## last insert id hack
-        if ($this->isNewRecord) {
-            $this->id = Yii::app()->db->getLastInsertID();
-        }
-
         Yii::app()->nfy->unsubscribe($this->id, null, true);
         if ($this->subscribed === "on" || $this->isNewRecord) {
             $roles = array();

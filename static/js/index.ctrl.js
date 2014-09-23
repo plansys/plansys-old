@@ -26,7 +26,11 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
             if ($storage.widget.active == null) {
                 $storage.widget.active = name;
             } else {
-                $storage.widget.active = null;
+                if ($storage.widget.active == name) {
+                    $storage.widget.active = '';
+                } else {
+                    $storage.widget.active = name;
+                }
             }
 
             $timeout(function () {

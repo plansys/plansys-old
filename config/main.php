@@ -49,6 +49,9 @@ return array(
             'id' => 'Notifications',
             'timeout' => 30,
         ),
+        'todo' => array(
+            'class' => 'application.components.ui.Widgets.TodoWidget',
+        ),
         'EJSUrlManager' => array(
             'class' => 'ext.JSUrlManager.EJSUrlManager'
         ),

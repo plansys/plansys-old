@@ -26,6 +26,13 @@ class NfyDbQueue extends NfyQueue {
      */
     protected function createMessage($body) {
         $message = new NfyDbMessage;
+        $bodyObj = json_decode($body, true);
+        if (isset($bodyObj['identifier'])) {
+            $identifier = $bodyObj['identifier'];
+        } else {
+            $identifier = '';
+        }
+
         $message->setAttributes(array(
             'queue_id' => $this->id,
             'timeout' => $this->timeout,
@@ -33,7 +40,10 @@ class NfyDbQueue extends NfyQueue {
             'status' => NfyMessage::AVAILABLE,
             'created_on' => date('Y-m-d H:i:s'),
             'body' => $body,
+            'identifier' => $identifier
             ), false);
+        
+        
         return $this->formatMessage($message);
     }
 
@@ -50,7 +60,6 @@ class NfyDbQueue extends NfyQueue {
      * @inheritdoc
      */
     public function send($message, $category = array()) {
-
         if (!isset($message['to'])) {
             throw new Exception('Untuk mengirim notifikasi harus ada item "to" pada array');
         } else {
@@ -128,6 +137,23 @@ class NfyDbQueue extends NfyQueue {
         return $success;
     }
 
+    public function mark($status, $id) {
+
+        if (is_numeric($id)) {
+            $identifier = array('id' => $id);
+        } else {
+            $identifier = array('identifier' => $id);
+        }
+        $messages = NfyDbMessage::model()->findAllByAttributes($identifier);
+        foreach ($messages as $message) {
+            if ($status == NfyMessage::READ) {
+                $message->status = NfyMessage::READ;
+                $message->read_on = date('Y-m-d H:i:s');
+            }
+            $message->save();
+        }
+    }
+
     /**
      * @inheritdoc
      */
@@ -149,8 +175,12 @@ class NfyDbQueue extends NfyQueue {
         return NfyDbMessage::createMessages($messages);
     }
 
+    public function load($nid) {
+        return NfyDbMessage::model()->findByPk($nid);
+    }
+
     public function read($nid, $returnNfy = false) {
-        $message = NfyDbMessage::model()->findByPk($nid);
+        $message = $this->load($nid);
         if ($returnNfy) {
             return $message;
         }

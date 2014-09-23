@@ -127,7 +127,7 @@ class ActiveRecord extends CActiveRecord {
                                             $attr[$x] = $v[$x];
                                         }
                                     }
-                                    
+
                                     if (is_object($relArr[$i])) {
                                         $relArr[$i]->setAttributes($attr, false, false);
                                     }
@@ -229,6 +229,9 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function afterSave() {
+        if ($this->isNewRecord) {
+            $this->id = Yii::app()->db->getLastInsertID(); // this is hack
+        }
         foreach ($this->__relations as $k => $new) {
             $new = $new == '' ? array() : $new;
             $old = $this->__oldRelations[$k];
@@ -247,6 +250,7 @@ class ActiveRecord extends CActiveRecord {
                                 $model = new $class;
                             }
                             $model->attributes = $new;
+                            $model->{$rel->foreignKey} = $this->id;
                             $model->save();
                         }
                         break;
@@ -272,7 +276,6 @@ class ActiveRecord extends CActiveRecord {
                                     }
                                 }
                             }
-
                             ActiveRecord::batch($rel->className, $new, $old);
                             $new = $originalNew;
                         }

@@ -39,6 +39,7 @@ class UserController extends Controller {
 
         if (isset($_POST["DevUserForm"])) {
             $model->attributes = $_POST["DevUserForm"];
+            
             if ($model->save()) {
                 $this->redirect(array("index"));
             }

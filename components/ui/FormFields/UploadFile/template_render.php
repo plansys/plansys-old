@@ -21,7 +21,6 @@
 
 
     <div class="<?= $this->fieldColClass ?>">
-
         <div  ng-if="mode == 'Upload + Download'" >
             <input type="file" <?= $this->expandAttributes($this->fieldOptions) ?> 
                    ng-file-select="onFileSelect($files)" onclick="this.value = null"/>
@@ -51,7 +50,6 @@
                     </div>
                 </div>
                 <div style="margin:0px -5px;">
-
                     <div class="file-desc-loading label label-success"
                          ng-if="fileDescLoadText"
                          style="position:absolute; 

@@ -44,7 +44,8 @@
                 </div>
                 <div id="widget-contents">
                     <?php foreach (Widget::listActiveWidget() as $w): ?>
-                    <div class="widget-content widget-<?= $w['class']; ?>" class="widget-content">
+                    <div ng-show="widget.isActive('<?= $w['class']; ?>')" 
+                         class="widget-content widget-<?= $w['class']; ?>" class="widget-content">
                         <?= $w['widget']->render(); ?>
                     </div>
                     <?php endforeach; ?>

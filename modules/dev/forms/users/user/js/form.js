@@ -40,7 +40,9 @@ switch ($scope.module) {
 }
 
 $timeout(function () {
-    $("[name='DevUserForm[changePassword]']").val('a');
-    $("[name='DevUserForm[changePassword]']").val('');
+    if (!$scope.isNewRecord) {
+        $("[name='DevUserForm[changePassword]']").val('a');
+        $("[name='DevUserForm[changePassword]']").val('');
+    }
     $scope.updateRole();
 }, 0);

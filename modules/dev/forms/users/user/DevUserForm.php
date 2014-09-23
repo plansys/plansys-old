@@ -138,7 +138,7 @@ Harap hubungi administrator untuk mengubah username ataupun role.
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<div ng-if=\\"module == \\\'dev\\\'\\">',
+                        'value' => '<div ng-if=\\"module == \\\'dev\\\' && !isNewRecord\\">',
                         'type' => 'Text',
                     ),
                     array (

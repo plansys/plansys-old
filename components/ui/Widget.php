@@ -1,6 +1,6 @@
 <?php
 
-class Widget extends CComponent {
+class Widget extends CApplicationComponent {
 
     public $icon = "";
     public $badge = "";

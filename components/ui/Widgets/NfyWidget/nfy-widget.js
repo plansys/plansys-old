@@ -12,6 +12,9 @@ app.controller("NfyWidgetController", function ($scope, $http, $timeout, $localS
     $scope.error = false;
     $storage.nfy = $storage.nfy || {};
     $storage.nfy.items = JSON.parse($("#nfy-data").text().trim());
+    widget.badge = $storage.nfy.items.length;
+    
+    
     $scope.processNfy = function (item) {
         item.url = Yii.app.createUrl('/widget/NfyWidget.read', {
             nid: item.id
@@ -42,6 +45,5 @@ app.controller("NfyWidgetController", function ($scope, $http, $timeout, $localS
          console.log("Plansys failed to fetch notification, stopping stream...");
     }, false);
 
-    widget.badge = $storage.nfy.items.length;
 
 });

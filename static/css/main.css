@@ -40,6 +40,16 @@ hr {
     z-index:1;
 }
 
+
+.widget-item-container {
+    position:absolute;
+    top:28px;
+    bottom:0px;
+    left:0px;
+    right:0px;
+    overflow-y: auto;
+}
+
 #widget-container.maximized {
     width:300px;
 }
@@ -71,8 +81,11 @@ hr {
     margin:-1px -1px 0px 0px;
     font-size:10px;
     font-weight:bold;
-    color:#000  ;
 }
+#widget-contents .properties-header .btn-default {
+    color:#000;
+}
+
 
 #widget-icons {
     width:45px;
@@ -90,7 +103,7 @@ hr {
     border-bottom:1px solid #c8c8c8;
     cursor:pointer;
     box-shadow:inset 1px 1px 0px 0px white;
-    background:#fafafa;
+    background:#f6f6f4;
 }
 
 .widget-icon:hover, .widget-icon.active {
@@ -1499,6 +1512,175 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     margin:-2px -2px 0px 4px;
 }
 
+/********************************** TODO WIDGET  **************************************/
+.todo-status-container {
+    height:24px;
+    line-height:17px;
+    font-size:13px;
+    border-bottom:1px solid #ccc;
+    text-shadow:0px 1px 0px #fff;
+    position:absolute;
+    width:100%;
+    z-index:1;
+}
+
+.todo-status-item {
+    width:33.333%;
+    border-right:1px solid #ccc;
+    float:left;
+    padding:3px;
+    text-align:center;
+    background:#f0f0f0;
+    cursor:pointer;
+    box-shadow:inset 0px 3px 3px -1px #dedede;
+}
+
+.todo-status-item.active {
+    background:#fff;
+    box-shadow:inset 0px 3px 3px -1px #ffffc7;
+}
+
+.todo-status-item:last-child {
+    border-right:0px;
+}
+
+.todo-container {
+    top:51px !important;
+}
+
+.todo-new {
+    width:100%;
+    max-width:100%;
+    resize:none;
+    background:#fff;
+    border-radius:4px;
+    border:1px solid #d0d0d0;
+    border-top:1px solid #bbbaba;
+    box-shadow:inset 0px 3px 6px -6px #000;
+    min-height:60px;
+    color:#000;
+    font-size:13px;
+    text-shadow:0px 1px 0px #fff;
+    padding:5px 8px;
+    outline:0px !important;
+}
+.todo-new-container {
+    padding:5px;
+    position:absolute;
+    font-size:13px;
+    background:#fafafa;
+    border-top:1px solid #ccc;
+    bottom:0px;
+    right:0px;
+    left:0px;
+}
+
+.todo-container {
+    margin-left:40px;
+    position:absolute;
+    right:0px;
+    left:0px;
+    bottom:0px;
+    overflow-x:visible;
+    border-left:3px double #f4cccc;
+    padding:0px;
+}
+
+.todo-container .widget-item-container {
+    top:0px;
+    margin-left:-43px;
+}
+
+.todo-item {
+    position:relative;
+    font-size:13px;
+}
+
+.todo-item-note {
+    border-bottom:1px solid #f5f4e1;
+    padding:10px;
+    outline:0px !important;
+    margin-left:43px;
+}
+
+.todo-permintaan-data {
+    font-size:11px;
+    margin-top:3px;
+}
+
+.todo-permintaan-data .nfy-role {
+    font-size:10px !important;
+}
+
+.todo-item-note textarea {
+    width:100%;
+    height:20px;
+    background:transparent !important;
+    outline:0px !important;
+    resize:none !important;
+    display:block;
+    padding:10px;
+    margin:-10px;
+    border:0px;
+    word-break: normal;
+    white-space:normal;
+}
+.todo-item-note.note {
+    cursor:text !important;
+}
+
+.todo-item-check {
+    width:40px;
+    cursor:pointer;
+    border-bottom:1px solid #f5f4e1;
+    position:absolute;
+    height: 100%;
+}
+
+.todo-item-check .todo-checked {
+    display:none;
+}
+
+.todo-item-check .todo-unchecked {
+    display:block;
+}
+
+.checked  .todo-item-check .todo-unchecked {
+    display:none;
+}
+
+.checked  .todo-item-check .todo-checked {
+    display:block;
+}
+
+.checked .todo-item-note {
+    text-decoration:line-through;
+    color:#999;
+    background:#ffffe9;
+}
+
+.checked .todo-item-check {
+    background:#ffffe9;
+}
+
+.todo-item-check:hover .todo-unchecked {
+    display:none;
+}
+
+.todo-item-check:hover .todo-checked {
+    display:block;
+    opacity: .6;
+}
+
+.todo-item-check:active div {
+    opacity:.3;
+}
+
+.todo-item-check div {
+    padding:12px 10px;
+    text-align:center;
+}
+
 /********************************** NOTIFICATION **************************************/
 .nfy-item {
     font-size:13px;
@@ -1510,14 +1692,6 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 .nfy-item:hover {
     background:#f8fbfd;
     box-shadow:inset 0px 0px 4px 0px #e3ecf4;
-}
-.nfy-container {
-    position:absolute;
-    top:28px;
-    bottom:0px;
-    left:0px;
-    right:0px;
-    overflow-y: auto;
 }
 .nfy-message {
     padding:5px;

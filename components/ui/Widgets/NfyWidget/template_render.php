@@ -7,11 +7,9 @@
         Notifications
     </div>
     <div class="hide" id="nfy-uid"><?= Yii::app()->user->id ?></div>
-    <div class="hide" id="nfy-data"><?=
-        json_encode(Yii::app()->nfy->peek(Yii::app()->user->id, 25, NfyMessage::SENT));
-        ?></div>
+    <div class="hide" id="nfy-data"><?= json_encode(Yii::app()->nfy->peek(Yii::app()->user->id, 25, NfyMessage::SENT)); ?></div>
 
-    <div class="nfy-container" ng-if="!error">
+    <div class="nfy-container widget-item-container" ng-if="!error">
         <div class="nfy-items">
             <div ng-repeat="item in $storage.nfy.items" class="nfy-item">
                 <div class="nfy-item-sub">

@@ -83,6 +83,7 @@ class NfyDbMessage extends CActiveRecord {
             'deleted_on' => 'Deleted On',
             'mimetype' => 'MIME Type',
             'body' => 'Message Body',
+            'identifier' => 'Identfier'
         );
     }
 
