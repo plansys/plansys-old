@@ -58,7 +58,7 @@ $(function () {
 
         // if there is #hash link, then go to hash sroll
         if (container.scrollTop() > 0) {
-            $timeout(function () {
+            setTimeout(function () {
                 changeActive();
             }, 100);
         }
