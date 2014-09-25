@@ -61,10 +61,14 @@ class Widget extends CApplicationComponent {
         if (count($includeJS) > 0) {
             foreach ($includeJS as $js) {
                 $class = get_class($this);
+                
+                $file = Yii::getPathOfAlias("application.components.ui.Widgets.{$class}") . '/' . $js;
+                if (!is_file($file)){ 
+                    $file = Yii::getPathOfAlias("app.components.ui.Widgets.{$class}") . '/' . $js;
+                }
+                
                 Yii::app()->clientScript->registerScriptFile(
-                    Yii::app()->assetManager->publish(
-                        Yii::getPathOfAlias("application.components.ui.Widgets.{$class}") . '/' . $js
-                    ), CClientScript::POS_END
+                    Yii::app()->assetManager->publish($file), CClientScript::POS_END
                 );
             }
         }

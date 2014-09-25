@@ -10,23 +10,23 @@ class DataSource extends FormField {
      * @return array Fungsi ini akan me-return array property DataSource.
      */
     public function getFieldProperties() {
-        return array(
-            array(
+        return array (
+            array (
                 'label' => 'Data Source Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Post Data ?',
                 'name' => 'postData',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.postData',
                     'ng-change' => 'save()',
                 ),
@@ -35,10 +35,10 @@ class DataSource extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Debug SQL ?',
                 'name' => 'debugSql',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.debugSql',
                     'ng-change' => 'save()',
                 ),
@@ -47,14 +47,14 @@ class DataSource extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Source Type',
                 'name' => 'fieldType',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.fieldType',
                     'ng-change' => 'save()',
                 ),
-                'list' => array(
+                'list' => array (
                     'sql' => 'SQL',
                     'php' => 'PHP Function',
                 ),
@@ -62,10 +62,10 @@ class DataSource extends FormField {
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Paging',
                 'name' => 'enablePaging',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.enablePaging',
                     'ng-change' => 'save()',
                 ),
@@ -74,45 +74,45 @@ class DataSource extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'SQL',
                 'fieldname' => 'sql',
                 'language' => 'sql',
-                'options' => array(
-                    'ng-show' => 'active.fieldType == \'sql\'',
+                'options' => array (
+                    'ng-show' => 'active.fieldType == \\\'sql\\\'',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array(
+            array (
                 'label' => 'PHP Function',
                 'fieldname' => 'php',
-                'options' => array(
-                    'ng-show' => 'active.fieldType == \'php\'',
+                'options' => array (
+                    'ng-show' => 'active.fieldType == \\\'php\\\'',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array(
+            array (
                 'label' => 'Total Item - PHP Function',
                 'fieldname' => 'pagingPHP',
-                'options' => array(
-                    'ng-show' => 'active.fieldType == \'php\' && active.enablePaging == \'Yes\'',
+                'options' => array (
+                    'ng-show' => 'active.fieldType == \\\'php\\\' && active.enablePaging == \\\'Yes\\\'',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array(
+            array (
                 'label' => 'Total Item - SQL',
                 'fieldname' => 'pagingSQL',
                 'language' => 'sql',
-                'options' => array(
-                    'ng-show' => 'active.fieldType == \'sql\' && active.enablePaging == \'Yes\'',
+                'options' => array (
+                    'ng-show' => 'active.fieldType == \\\'sql\\\' && active.enablePaging == \\\'Yes\\\'',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array(
+            array (
                 'label' => 'Parameters',
                 'fieldname' => 'params',
                 'show' => 'Show',

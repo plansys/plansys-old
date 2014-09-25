@@ -4,8 +4,9 @@ $(function () {
         $(window).resize(function () {
             $(".action-bar-container").each(function () {
                 var height = $(this).height();
+                
                 $(this).css({
-                    top: $("body > .navbar").height(),
+                    top: $("#content").offset().top,
                     left: $(this).parents('.container-full').offset().left,
                     width: $(this).parents('.container-full').width() 
                 });

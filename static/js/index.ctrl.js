@@ -4,6 +4,7 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
     $scope.size = Object.size;
     $scope.console = console;
     $scope.Yii = Yii;
+    $scope.title = $("title").text();
 
     $storage = $localStorage;
     $scope.$storage = $storage;
@@ -32,7 +33,6 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
                     $storage.widget.active = name;
                 }
             }
-
             $timeout(function () {
                 $(window).resize();
             }, 0);

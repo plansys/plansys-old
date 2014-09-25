@@ -4,47 +4,53 @@ class TodoWidget extends Widget {
 
     public $icon = "fa fa-check-square-o fa-2x ";
     public $badge = '';
-    public $ext = ['permintaan_data'];
+
+    public function getExt() {
+        $ext = glob($this->extDir . DIRECTORY_SEPARATOR . "*", GLOB_ONLYDIR);
+        foreach ($ext as $k => $e) {
+            $ext[$k] = str_replace($this->extDir . DIRECTORY_SEPARATOR, '', $e);
+        }
+        return $ext;
+    }
+
+    public function getExtDir() {
+        return Yii::getPathOfAlias('app.components.ui.Widgets.TodoWidget.ext');
+    }
 
     public function renderCheck($ext, $file = 'template_check.php') {
-
-        $reflector = new ReflectionClass($this);
-        $file = 'ext' . DIRECTORY_SEPARATOR . $ext . DIRECTORY_SEPARATOR . $file;
-        $path = str_replace(".php", DIRECTORY_SEPARATOR . $file, $reflector->getFileName());
+        $path = $this->extDir . DIRECTORY_SEPARATOR . $ext . DIRECTORY_SEPARATOR . $file;
         ob_start();
         include($path);
         return ob_get_clean();
     }
 
     public function renderNote($ext, $file = 'template_render.php') {
-        $reflector = new ReflectionClass($this);
-        $file = 'ext' . DIRECTORY_SEPARATOR . $ext . DIRECTORY_SEPARATOR . $file;
-        $path = str_replace(".php", DIRECTORY_SEPARATOR . $file, $reflector->getFileName());
+        $path = $this->extDir . DIRECTORY_SEPARATOR . $ext . DIRECTORY_SEPARATOR . $file;
         ob_start();
         include($path);
         return ob_get_clean();
     }
 
     public function includeJS() {
-        $reflector = new ReflectionClass($this);
-        $filename = $reflector->getFileName();
         $files = [];
         foreach ($this->ext as $ext) {
-            $file = 'ext' . DIRECTORY_SEPARATOR . $ext . DIRECTORY_SEPARATOR;
-            $path = str_replace(".php", DIRECTORY_SEPARATOR . $file, $filename);
+            $path = $this->extDir . DIRECTORY_SEPARATOR . $ext . DIRECTORY_SEPARATOR;
             $glob = glob($path . "*.js");
             foreach ($glob as $f) {
-                $files[] = $file . str_replace($path, '', $f);
+                $files[] = str_replace($this->extDir, 'ext', $f);
             }
         }
 
         return array_merge(array(
             'todo-widget.js'
-        ), $files);
+            ), $files);
     }
 
     public function getList() {
-        $models = Todo::model()->findAllByAttributes(array('user_id' => Yii::app()->user->id));
+        $models = Todo::model()->findAllByAttributes(
+            array('user_id' => Yii::app()->user->id), array(
+            'order' => 'id desc'
+        ));
 
         $array = ActiveRecord::toArray($models);
         foreach ($array as $k => $a) {

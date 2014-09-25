@@ -1,8 +1,12 @@
 <div class="todo-widget" ng-controller="TodoWidgetController">
     <div class = "properties-header">
         <div ng-click="clear()" ng-if="$storage.todo.view == 'completed' && count() > 0" 
-             class="btn btn-xs btn-warning pull-right">
+             class="btn btn-xs btn-default pull-right">
             Clear
+        </div>
+        <div ng-click="newNote()" ng-if="$storage.todo.view != 'completed' && !showNew" 
+             class="btn btn-xs btn-default pull-right">
+            <i class="fa fa-plus"></i> New
         </div>
         <i class = "fa fa-nm fa-check-square-o"></i>&nbsp;
         Todo List: {{ countText() }}
@@ -27,7 +31,9 @@
                  ng-repeat="item in $storage.todo.items track by $index">
 
                 <div class="todo-item-check" >
-                    <div ng-if="item.type == 'note' && item.note != ''" ng-click="toggleStatus(item)">
+                    <div ng-if="item.type == 'note' && item.note != ''" 
+                         class="todo-item-check-detail"
+                         ng-click="toggleStatus(item)">
                         <i class="fa todo-unchecked fa-square-o fa-nm"></i>
                         <i class="fa todo-checked fa-check-square-o fa-nm"></i>
                     </div>
@@ -38,7 +44,9 @@
 
                 <div class="todo-item-note {{item.type}}" ng-if="item.type == 'note'" >
                     <textarea ng-model="item.note" placeholder="Tulis disini..." auto-grow
-                              ng-change="updateTodo(item)" ng-delay="500" ng-keyup="typeTodo(item, $event)"
+                              ng-change="updateTodo(item)"
+                              ng-blur="prepareTodos()"
+                              ng-keyup="typeTodo(item, $event, $index)"
                               spellcheck="false"></textarea>
                 </div>
                 <?php foreach ($this->ext as $ext): ?>
@@ -47,5 +55,4 @@
             </div>
         </div>
     </div>
-
 </div>

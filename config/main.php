@@ -42,8 +42,12 @@ return array(
     'aliases' => array(
         'nfy' => realpath(__DIR__ . '/../modules/nfy'),
     ),
+    'theme' => 'default',
     // application components
     'components' => array(
+        'themeManager' => array(
+            'basePath' => 'app/themes'
+        ),
         'nfy' => array(
             'class' => 'nfy.components.NfyDbQueue',
             'id' => 'Notifications',
@@ -60,7 +64,7 @@ return array(
             'options' => array(CURLOPT_HEADER => true),
         ),
         'user' => array(
-            // enable cookie-based authentication
+// enable cookie-based authentication
             'allowAutoLogin' => true,
             'class' => 'WebUser',
         ),
@@ -92,9 +96,9 @@ return array(
         )
     ),
     // application-level parameters that can be accessed
-    // using Yii::app()->params['paramName']
+// using Yii::app()->params['paramName']
     'params' => array(
-        // this is used in contact page
+// this is used in contact page
         'adminEmail' => 'webmaster@example.com',
     ),
 );

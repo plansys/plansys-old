@@ -22,6 +22,12 @@ class Controller extends CController {
         return $this->url($static . $path);
     }
 
+    public function staticAppUrl($path) {
+        $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
+        $static = "/" . array_pop($dir) . "/static";
+        return $this->url($static . $path);
+    }
+
     public function renderForm($class, $model = null, $params = array(), $options = array()) {
         $fb = FormBuilder::load($class);
         $this->pageTitle = $fb->form['title'];
@@ -33,10 +39,10 @@ class Controller extends CController {
         );
 
         $options['params'] = $params;
-        
+
         $renderOptions = array_merge($renderOptions, $options);
         $mainform = $fb->render($model, $renderOptions);
-        
+
         $data = $fb->form['layout']['data'];
 
         foreach ($data as $k => $d) {

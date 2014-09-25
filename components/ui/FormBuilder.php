@@ -635,7 +635,7 @@ class FormBuilder extends CComponent {
             $formAttr = array_merge($formOptions, $formDefaultAttr);
             $formAttr = Helper::expandAttributes($formAttr);
             $html .= "<div style='opacity:0' {$ngctrl}><form {$formAttr}>";
-            $html .= "<div ng-if='flash' class='error-container alert alert-info' style='margin:0px'>{{flash}}</div>";
+            $html .= "<div ng-if='flash' class='error-container alert alert-info text-center' style='margin:0px'>{{flash}}</div>";
             $html .= "<div ng-if='errors' class='error-container alert alert-danger' style='margin:0px'><ul><li ng-repeat='(k,e) in errors'>{{ e[0] }}</li></ul></div>";
         }
 
