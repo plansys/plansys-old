@@ -1,9 +1,9 @@
 
 app.controller("TodoWidgetController", function ($scope, $http, $timeout, $localStorage) {
-    widget = $storage.widget.list.TodoWidget.widget;
+    todoWidget = $storage.widget.list.TodoWidget.widget;
     $storage = $localStorage;
     $scope.$storage = $storage;
-    $scope.widget = widget;
+    $scope.widget = todoWidget;
     $scope.jsonItems = JSON.parse($("#todo-data").text().trim());
     $storage.todo = $storage.todo || {view: 'active', ext: {}};
     $storage.todo.items = [];
@@ -25,7 +25,7 @@ app.controller("TodoWidgetController", function ($scope, $http, $timeout, $local
             }
         }
 
-        widget.badge = count;
+        todoWidget.badge = count;
     }
 
     $scope.getStatus = function () {

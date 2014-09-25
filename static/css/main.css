@@ -115,16 +115,17 @@ hr {
 
 .widget-icon .badge {
     
-    background-color: #f35e3c;
-    background-color: #e74b2c;
-    background-image: -moz-linear-gradient(top,#f35e3c,#d42f13);
-    background-image: -webkit-gradient(linear,0 0,0 100%,from(#f35e3c),to(#d42f13));
-    background-image: -webkit-linear-gradient(top,#f35e3c,#d42f13);
-    background-image: -o-linear-gradient(top,#f35e3c,#d42f13);
-    background-image: linear-gradient(to bottom,#f35e3c,#d42f13);
+    background-color: #4fae0d;
+    background-color: #71c018;
+    background-image: -moz-linear-gradient(top,#82ce20,#57ac0b);
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#82ce20),to(#57ac0b));
+    background-image: -webkit-linear-gradient(top,#82ce20,#57ac0b);
+    background-image: -o-linear-gradient(top,#82ce20,#57ac0b);
+    background-image: linear-gradient(to bottom,#82ce20,#57ac0b);
     background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff35e3c', endColorstr='#ffd42f13', GradientType=0);
-    border-color: #c2270d #c2270d #c2270d;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff82ce20', endColorstr='#ff57ac0b', GradientType=0);
+    border-color: #49982b #3b8d1c #267507;
+    
     color: #fff;
     text-shadow: 0 1px 0 #3b8d1c;
     color:white;

@@ -46,14 +46,15 @@
                            ng-model="search"
                            ng-delay="500"
                            ng-change="doSearch()"
+                           ng-mouseup="searchFocus($event)"
                            placeholder="Search ..."
                            class="input-block-level search-dropdown form-control" autocomplete="off">
                 </div>
-                <div ng-if="loading" 
+                <div ng-if="renderedFormList.length == 0" 
                      style="text-align:center;padding:15px;font-size:12px;color:#999;">
-                    &mdash; SEARCHING &mdash;
+                    &mdash; NOT FOUND &mdash;
                 </div>
-                <ul ng-show="!loading" class="dropdown-menu inner" role="menu">
+                <ul class="dropdown-menu inner" role="menu">
                     <li ng-repeat-start="item in renderedFormList track by $index" 
                         ng-if="item.value != '---'" class="dropdown-item" 
                         ng-class="{'dropdown-header': isObject(item.value)}">

@@ -50,8 +50,7 @@
                            ng-model="search"
                            ng-change="doSearch()"
                            placeholder="Search ..."
-                           ng-click="$event.stopPropagation();
-                               $event.preventDefault();"
+                           ng-mouseup="searchFocus($event)"
                            class="input-block-level search-dropdown form-control" 
                            autocomplete="off">
                 </div>

@@ -108,6 +108,15 @@ app.directive('dropDownList', function ($timeout) {
                     return $el.find("li.dropdown-item a[value='" + value + "']").length != 0;
                 }
 
+                $scope.searchFocus = function (e) {
+                    e.stopPropagation();
+                    var watch = $scope.$watch('isOpen', function (n) {
+                        if (n === false) {
+                            $scope.isOpen = true;
+                            watch();
+                        }
+                    }, true);
+                }
                 $scope.toggled = function (open) {
                     if (open) {
                         $scope.openedInField = true;

@@ -6,13 +6,14 @@ app.controller("NfyWidgetController", function ($scope, $http, $timeout, $localS
     var host = slashes.concat(window.location.hostname);
     var url = host + ":8981/" + $("#nfy-uid").text().trim();
 
-    widget = $storage.widget.list.NfyWidget.widget;
+    nfyWidget = $storage.widget.list.NfyWidget.widget;
     $storage = $localStorage;
     $scope.$storage = $storage;
     $scope.error = false;
+    
     $storage.nfy = $storage.nfy || {};
     $storage.nfy.items = JSON.parse($("#nfy-data").text().trim());
-    widget.badge = $storage.nfy.items.length;
+    nfyWidget.badge = $storage.nfy.items.length;
     
     
     $scope.processNfy = function (item) {
@@ -36,7 +37,7 @@ app.controller("NfyWidgetController", function ($scope, $http, $timeout, $localS
         $scope.$apply(function () {
             var data = $scope.processNfy(JSON.parse(event.data));
             $storage.nfy.items.unshift(data);
-            widget.badge = $storage.nfy.items.length;
+            nfyWidget.badge = $storage.nfy.items.length;
         });
     }, false);
     
