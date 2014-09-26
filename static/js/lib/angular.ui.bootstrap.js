@@ -2492,6 +2492,15 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
             // By default, the tooltip is not open.
             // TODO add ability to start tooltip opened
             scope.tt_isOpen = false;
+            if (angular.isDefined(attrs.tooltipStartOpened)) {
+                $timeout(function() {
+                    show();
+                },100);
+                $timeout(function() {
+                    hide();
+                },15000);
+            }
+            
 
             function toggleTooltipBind () {
               if ( ! scope.tt_isOpen ) {
