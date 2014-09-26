@@ -88,13 +88,17 @@ app.directive('dropDownList', function ($timeout) {
                         $scope.value = $el.find("li a").attr('value');
                         $scope.value = value;
                     }
+                    $el.find("li").each(function() {
+                        if ($(this).find("a").attr('value').trim() == value.trim()) {
+                            $scope.text  = value.trim();
+                        }
+                    });
                     $scope.toggled(false);
-
-                    var text = $el.find("li a[value='" + value + "']").html();
-                    if (text != $scope.text) {
-                        $scope.text = $el.find("li a[value='" + value + "']").html();
-                    }
                 };
+
+                $scope.trimText = function(text) {
+                    return text.trim();
+                }
 
                 $scope.updateOther = function (value) {
                     $scope.updateInternal(value);

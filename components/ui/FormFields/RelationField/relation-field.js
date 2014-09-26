@@ -97,7 +97,11 @@ app.directive('relationField', function ($timeout, $http) {
                         $scope.value = value;
                     }
 
-                    $scope.text = $el.find("li a[value='" + value + "']").html();
+                    $el.find("li").each(function() {
+                        if ($(this).find("a").attr('value').trim() == value.trim()) {
+                            $scope.text  = value.trim();
+                        }
+                    });
                     $scope.toggled(false);
                 };
 
