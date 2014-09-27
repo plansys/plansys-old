@@ -56,4 +56,9 @@
         ),
         'state' => 'collapsed',
     ),
+    array (
+        'label' => 'DB Migration',
+        'icon' => 'fa-database',
+        'url' => '/migration',
+    ),
 );

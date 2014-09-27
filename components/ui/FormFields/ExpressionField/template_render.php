@@ -46,7 +46,6 @@
             </tbody>
         </table>
     </div>
-
     <div class="field-box-desc" style="text-align:center;" 
          ng-show="lang != 'html' && value.trim() == '' && !isFocus">
         <div class="btn btn-xs btn-default" style="border-radius:0px;"

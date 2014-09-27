@@ -1917,6 +1917,7 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
     float:right;
     text-align:right;
     padding:7px 5px;
+    height:49px;
 }
 
 .action-bar .link-bar .separator,
