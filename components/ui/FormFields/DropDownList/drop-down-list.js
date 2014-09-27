@@ -88,15 +88,17 @@ app.directive('dropDownList', function ($timeout) {
                         $scope.value = $el.find("li a").attr('value');
                         $scope.value = value;
                     }
-                    $el.find("li").each(function() {
-                        if ($(this).find("a").attr('value').trim() == value.trim()) {
-                            $scope.text  = value.trim();
+                    $el.find("li").each(function () {
+                        if (typeof $(this).find("a").attr('value') == "string" && typeof value == "string") {
+                            if ($(this).find("a").attr('value').trim() == value.trim()) {
+                                $scope.text = $(this).find("a").text();
+                            }
                         }
                     });
                     $scope.toggled(false);
                 };
 
-                $scope.trimText = function(text) {
+                $scope.trimText = function (text) {
                     return text.trim();
                 }
 
