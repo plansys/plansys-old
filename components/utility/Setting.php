@@ -52,12 +52,16 @@ class Setting {
         Yii::setPathOfAlias('repo', Setting::get('repo.path'));
     }
 
-    public static function get($key) {
+    public static function get($key, $default = null) {
         $keys = explode('.', $key);
 
         $arr = Setting::$data;
         while ($k = array_shift($keys)) {
             $arr = &$arr[$k];
+        }
+        
+        if ($arr == null) {
+            $arr = $default;
         }
 
         return $arr;

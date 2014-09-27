@@ -36,7 +36,7 @@
                                   ng-blur="blur()"
                                   auto-grow
                                   id="<?= $this->renderID ?>"
-                                  name="<?= $this->renderName ?>"
+                                  name="<?= (isset($this->options['name']) ? $this->options['name'] : $this->renderName) ?>"
                                   style='border:0px;background:#333;height:22px;'>
                                       <?= $this->value ?>
                         </textarea>

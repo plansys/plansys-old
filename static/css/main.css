@@ -1517,6 +1517,40 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     margin:-2px -2px 0px 4px;
 }
 
+/********************************** MIGRATION **************************************/
+.migration-item {
+    margin-bottom:5px;
+}
+
+.migration-item-head {
+    padding:5px 10px;
+    cursor:pointer; 
+    -webkit-user-select: none;
+    -moz-user-select:none; 
+    -ms-user-select: none; 
+    user-select:none;
+}
+
+.migration-item .panel-heading {
+    font-size:12px;
+    font-weight:bold;
+}
+
+.migration-item > .panel-heading > .btn,
+.migration-file > .panel-heading > .btn {
+    display:none;
+    margin:-3px -6px;
+}
+
+.migration-item:hover  > .panel-heading > .btn,
+.migration-file:hover > .panel-heading > .btn {
+    display:block;
+}
+
+.migration-file {
+    margin:5px;
+}
+
 /********************************** TODO WIDGET  **************************************/
 .todo-status-container {
     height:24px;
