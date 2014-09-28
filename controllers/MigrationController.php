@@ -4,6 +4,9 @@ class MigrationController extends Controller {
 
     public function actionIndex() {
         $model = new MigrationForm;
+        if (count($model->migrations) == 0) {
+            $model->isNew = true;
+        }
 
         if (isset($_POST['name'])) {
             if (trim($_POST['name']) == '') {
@@ -11,7 +14,6 @@ class MigrationController extends Controller {
                 $model->isNew = true;
             } else {
                 if (!$model->newMigration($_POST)) {
-                    Yii::app()->user->setFlash('info', 'SQL Anda Salah !!');
                     $model->isNew = true;
                     $model->newsql = $_POST['newsql'];
                 } else {
@@ -19,12 +21,16 @@ class MigrationController extends Controller {
                 }
             }
         }
-
         $this->renderForm('migrationForm', $model);
     }
 
-    public function actionRun($idx, $file) {
-        sleep(1);
+    public function actionRun($id, $file, $store) {
+        $model = new MigrationForm;
+        $model->runFile($id, $file);
+        
+        if ($store == "1") {
+            Setting::set("db.migration_idx", $id);
+        }
     }
 
 }

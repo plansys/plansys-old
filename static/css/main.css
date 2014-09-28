@@ -1522,6 +1522,12 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     margin-bottom:5px;
 }
 
+.migration-all-container {
+    float:right;
+    margin:-5px;
+}
+
+
 .migration-item-head {
     padding:5px 10px;
     cursor:pointer; 

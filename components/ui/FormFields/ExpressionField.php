@@ -23,8 +23,8 @@ class ExpressionField extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
-                'type' => 'Text',
                 'value' => '<hr/>',
+                'type' => 'Text',
             ),
             array (
                 'label' => 'Label',
@@ -57,8 +57,8 @@ class ExpressionField extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
-                'type' => 'Text',
                 'value' => '<hr/>',
+                'type' => 'Text',
             ),
             array (
                 'label' => 'Options',
@@ -71,10 +71,14 @@ class ExpressionField extends FormField {
                 'labelWidth' => '5',
                 'fieldWidth' => '12',
                 'layout' => 'Vertical',
+                'fieldHeight' => '0',
                 'options' => array (
                     'ng-model' => 'active.desc',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
+                ),
+                'fieldOptions' => array (
+                    'auto-grow' => '',
                 ),
                 'type' => 'TextArea',
             ),

@@ -7,36 +7,57 @@ class MigrationForm extends form {
     public $newsql = '';
     public $isNew = false;
     public $migrations = array();
+    public $errors = array();
 
     public function newMigration($post) {
         Setting::set('db.migration_name', $post['name']);
 
         $sql = $post['newsql'];
         $valid = $this->run($sql);
-        if ($valid) {
-            $dir = Yii::getPathOfAlias('app.migrations');
-            $migDir = glob($dir . DIRECTORY_SEPARATOR . "*", GLOB_ONLYDIR);
 
-            $newDir = $dir . DIRECTORY_SEPARATOR . (count($migDir) + 1);
-            if (!is_dir($newDir)) {
-                mkdir($newDir);
+        if ($valid) {
+            $valid = $this->run($sql);
+
+            if ($valid) {
+                $dir = Yii::getPathOfAlias('app.migrations');
+                $migDir = glob($dir . DIRECTORY_SEPARATOR . "*", GLOB_ONLYDIR);
+
+                $newDir = $dir . DIRECTORY_SEPARATOR . (count($migDir) + 1);
+                if (!is_dir($newDir)) {
+                    mkdir($newDir);
+                }
+                $newFile = $newDir . DIRECTORY_SEPARATOR . $post['name'] . '.sql';
+                file_put_contents($newFile, $sql);
+
+                Setting::set("db.migration_idx", (count($migDir) + 1));
             }
-            $newFile = $newDir . DIRECTORY_SEPARATOR . $post['name'] . '.sql';
-            file_put_contents($newFile, $sql);
         }
-        
         return $valid;
     }
 
+    public function runFile($id, $file) {
+        $path = Yii::getPathOfAlias('app.migrations.' . $id) . DIRECTORY_SEPARATOR . $file;
+        $sql = file_get_contents($path);
+
+        return $this->run($sql);
+    }
+
     public function run($sql) {
-        $sql = "SET FOREIGN_KEY_CHECKS = 0;\n" . $sql;
         $success = true;
+        if (trim($sql) == "")
+            return false;
+
+        $transaction = Yii::app()->db->beginTransaction();
         try {
-            Yii::app()->db->pdoInstance->exec("SET FOREIGN_KEY_CHECKS = 0;" . $sql);
-        } catch (PDOException $e) {
+            Yii::app()->db->createCommand($sql)->execute();
+            $transaction->commit();
+        } catch (Exception $e) {
+            $transaction->rollback();
             $success = false;
+            $message = str_replace("CDbCommand gagal menjalankan statement", "CDbCommand gagal menjalankan statement\n", $e->getMessage());
+            $this->errors['newsql'][] = $message;
         }
-        
+
         return $success;
     }
 
@@ -95,34 +116,34 @@ class MigrationForm extends form {
     }
 
     public function getFields() {
-        return array(
-            array(
-                'linkBar' => array(
-                    array(
+        return array (
+            array (
+                'linkBar' => array (
+                    array (
                         'label' => 'Cancel',
                         'buttonType' => 'danger',
-                        'options' => array(
+                        'options' => array (
                             'ng-click' => 'toggleMigration()',
                             'ng-if' => 'migration && !loading',
                         ),
                         'type' => 'LinkButton',
                     ),
-                    array(
+                    array (
                         'label' => 'Submit',
                         'buttonType' => 'success',
-                        'options' => array(
+                        'options' => array (
                             'ng-click' => 'form.submit(this)',
                             'ng-if' => 'migration && !loading',
                         ),
                         'type' => 'LinkButton',
                     ),
-                    array(
+                    array (
                         'label' => 'New Migration',
                         'buttonType' => 'success',
                         'icon' => 'plus',
-                        'options' => array(
+                        'options' => array (
                             'ng-click' => 'toggleMigration()',
-                            'ng-if' => '!migration && !loading',
+                            'ng-if' => '!migration && !loading && model.idx == model.migrations.length',
                         ),
                         'type' => 'LinkButton',
                     ),
@@ -130,77 +151,78 @@ class MigrationForm extends form {
                 'showSectionTab' => 'No',
                 'type' => 'ActionBar',
             ),
-            array(
+            array (
                 'value' => '<div style=\\"width:700px;margin:0px auto;padding-top:20px;\\">',
                 'type' => 'Text',
             ),
-            array(
-                'value' => '<div class=\"panel panel-primary\" style=\"margin-bottom:5px;\">
+            array (
+                'value' => '<div class=\"panel panel-default\" style=\"margin-bottom:5px;\">
     <div class=\"panel-heading\" 
     style=\"padding:10px;font-size:13px;border:0px;\">
-        <div ng-if=\"!migration && !loading\" style=\"margin:-6px -6px;\" 
-            class=\"btn btn-sm btn-success pull-right\">
-            Run All
-        </div>
+        <div class=\"migration-all-container\">
+        <div ng-click=\"migrateAll($event)\" ng-if=\"!migration && !loading && model.idx != model.migrations.length\" class=\"btn btn-sm btn-success migration-all\">
+            Migrate All
+        </div></div>
     
-        <b>{{ status }}</b>
+        <b ng-bind-html=\"status\"></b>
     </div>
 </div>',
                 'type' => 'Text',
             ),
-            array(
+            array (
                 'value' => '<div ng-if=\\"migration\\" class=\\"panel panel-default\\">',
                 'type' => 'Text',
             ),
-            array(
+            array (
                 'value' => '
     <div class=\"panel-heading\" style=\"padding:5px;\">',
                 'type' => 'Text',
             ),
-            array(
-                'value' => '                                                                                                <input id=\\"name\\" name=\\"name\\" placeholder=\\"Your Name\\" type=\\"text\\" class=\\"form-control\\" value=\\"{{model.name}}\\">',
+            array (
+                'value' => '                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <input id=\\"name\\" name=\\"name\\" placeholder=\\"Your Name\\" type=\\"text\\" class=\\"form-control\\" value=\\"{{model.name}}\\">',
                 'type' => 'Text',
             ),
-            array(
-                'value' => '                                                                                                                                </div>',
+            array (
+                'value' => '                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>',
                 'type' => 'Text',
             ),
-            array(
-                'value' => '                                                                <div class=\\"panel-body\\" style=\\"padding:5px 5px 0px 5px\\">',
+            array (
+                'value' => '                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class=\\"panel-body\\" style=\\"padding:5px 5px 0px 5px\\">',
                 'type' => 'Text',
             ),
-            array(
+            array (
                 'label' => 'New Migration',
                 'fieldname' => 'newsql',
                 'language' => 'sql',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'model.newsql',
                     'name' => 'newsql',
                 ),
-                'desc' => 'SQL ini akan dijalankan 2x untuk memastikan tidak ada error.',
+                'desc' => 'Pastikan SQL Anda dapat dijalankan berkali-kali. <br/>
+SQL ini akan dijalankan 2x untuk memastikan tidak ada error.',
                 'type' => 'ExpressionField',
             ),
-            array(
+            array (
                 'value' => '    </div>
 </div>',
                 'type' => 'Text',
             ),
-            array(
+            array (
                 'value' => '<div 
     ng-if=\"!migration\" 
-    class=\"migration-item panel panel-{{ model.idx <= m.id ? \'success\' : \'default\' }}\" 
+    class=\"migration-item panel panel-{{ panelClass(m) }}\" 
     ng-repeat=\"m in model.migrations\">
         
         <div class=\"panel-heading migration-item-head\"  ng-click=\"m.show = !m.show\">
         <div ng-if=\"!loading\" 
         class=\"btn btn-xs pull-right btn-success\" 
-        ng-click=\"run($event,m.id,null)\">Run #{{m.id}}</div>
+        ng-click=\"migrateId($event,m.id)\">Run #{{m.id}}</div>
        
         Migration #{{m.id}}
     </div>
     <div ng-if=\"m.show === true\" class=\"panel-body\" style=\"padding:0px;\">
         <div ng-repeat=\"(file, sql) in m.items\" 
-             class=\"migration-file panel panel-info\">
+             class=\"{{fileClass(m,file)}}\">
             
             <div class=\"panel-heading\" style=\"padding:5px 10px;\">
                 <div 
@@ -211,15 +233,13 @@ class MigrationForm extends form {
                 {{file}}
             </div>
             
-            <div class=\"panel-body\" style=\"padding:5px 10px;\">
-                {{sql}}
-            </div>
+            <div class=\"panel-body\" style=\"padding:5px 10px;white-space:pre;font-size:12px;\">{{sql}}</div>
         </div>
     </div>
 </div>',
                 'type' => 'Text',
             ),
-            array(
+            array (
                 'value' => '</div>',
                 'type' => 'Text',
             ),
