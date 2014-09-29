@@ -43,7 +43,7 @@
                 </div>
 
                 <div class="todo-item-note {{item.type}}" ng-if="item.type == 'note'" >
-                    <textarea ng-model="item.note" placeholder="Tulis disini..." auto-grow
+                    <textarea ng-model="item.note" placeholder="New Todo..." auto-grow
                               ng-change="updateTodo(item)"
                               ng-blur="prepareTodos()"
                               ng-keyup="typeTodo(item, $event, $index)"

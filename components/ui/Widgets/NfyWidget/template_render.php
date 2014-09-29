@@ -1,8 +1,5 @@
 <div ng-controller="NfyWidgetController">
     <div class = "properties-header">
-        <div class="btn btn-xs btn-default pull-right">
-            <i class="fa fa-check-square-o fa-lg"></i>
-        </div>
         <i class = "fa fa-nm fa-newspaper-o"></i>&nbsp;
         Notifications
     </div>

@@ -1762,7 +1762,6 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 .nfy-sender:hover {
     text-decoration:none;
-    border-bottom:1px solid #428BCA;
 }
 
 .nfy-item:hover .nfy-sender {

@@ -2498,7 +2498,7 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
                 },100);
                 $timeout(function() {
                     hide();
-                },15000);
+                },25000);
             }
             
 

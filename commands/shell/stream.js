@@ -47,7 +47,7 @@ function constructSSE(res, id) {
             var dt = JSON.parse(data);
             var j = 1;
             for (i in dt) {
-                var msg = "id: " + (new Date().getTime()) + "_" + i + "\ndata: " + JSON.stringify(dt[i]) + "\n\n";
+                var msg = "id: " + (new Date().getTime()) + "_" + i + "\r\ndata: " + JSON.stringify(dt[i]) + "\r\n\r\n";
                 console.log(msg);
                 res.write(msg);
             }

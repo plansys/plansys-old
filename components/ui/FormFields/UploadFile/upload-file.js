@@ -113,7 +113,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
 
                 //Saving file description to JSON
                 $scope.saveDesc = function (desc) {
-                    $scope.fileDescLoadText = 'Saving...';
+                    $scope.fileDescLoadText = '...';
                     $http({
                         'method': 'post',
                         'url': Yii.app.createUrl('/formField/uploadFile.description'),
@@ -123,7 +123,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                             'path': $scope.encode($scope.fileDir)
                         }
                     }).success(function () {
-                        $scope.fileDescLoadText = 'Saved';
+                        $scope.fileDescLoadText = '';
                     });
                 };
 
@@ -153,7 +153,6 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     $scope.loading = true;
                     $scope.progress = 0;
                     $scope.$parent.uploading.push($scope.name);
-                    console.log($scope.fileDir);
 
                     $upload.upload({
                         url: Yii.app.createUrl('/formField/uploadFile.upload', {

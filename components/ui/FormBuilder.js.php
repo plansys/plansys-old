@@ -3,7 +3,7 @@ ob_start();
 ?>
 <script type="text/javascript">
 <?php ob_start(); ?>
-    app.controller("<?= $modelClass ?>Controller", function ($scope, $parse, $timeout, $http) {
+    app.controller("<?= $modelClass ?>Controller", function ($scope, $parse, $timeout, $http, $localStorage) {
         $scope.form = <?php echo json_encode($this->form); ?>;
         $scope.model = <?php echo @json_encode($data['data']); ?>;
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
@@ -21,11 +21,14 @@ ob_start();
             $scope.isNewRecord = <?php echo $data['isNewRecord'] ? "true" : "false" ?>;
 <?php endif; ?>
 
+        $storage = $localStorage;
+        $scope.$storage = $storage;
+
         document.title = $scope.form.title;
         $scope.$watch('form.title', function () {
             document.title = $scope.form.title;
         });
-
+        $scope.formSubmitting = false;
         $scope.form.submit = function (button) {
             $timeout(function () {
                 if (typeof button != "undefined") {
@@ -38,6 +41,7 @@ ob_start();
                     var urlParams = angular.extend($scope.params, parseParams($scope));
 
                     var url = Yii.app.createUrl(baseurl, urlParams);
+
                     $("div[ng-controller=<?= $modelClass ?>Controller] form").attr('action', url).submit();
                 }
             }, 0);
@@ -50,6 +54,8 @@ ob_start();
                 e.stopPropagation();
                 return false;
             }
+
+            $scope.formSubmitting = true;
         });
 
         $scope.form.canGoBack = function () {

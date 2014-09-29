@@ -214,7 +214,6 @@ app.directive('relationField', function ($timeout, $http) {
 
                 for (i in $scope.watchParams) {
                     var param = $scope.watchParams[i];
-                    console.log(param);
                     $scope.$watch(param, function (newparam, oldparam) {
                         $scope.doSearch();
                     }, true);

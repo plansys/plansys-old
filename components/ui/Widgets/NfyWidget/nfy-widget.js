@@ -32,6 +32,7 @@ app.controller("NfyWidgetController", function ($scope, $http, $timeout, $localS
         var d = new Date(t[0], t[1] - 1, t[2], t[3], t[4], t[5] || 0);
         return d;
     }
+    
     var source = new EventSource(url);
     source.addEventListener('message', function (event) {
         $scope.$apply(function () {
@@ -39,12 +40,13 @@ app.controller("NfyWidgetController", function ($scope, $http, $timeout, $localS
             $storage.nfy.items.unshift(data);
             nfyWidget.badge = $storage.nfy.items.length;
         });
+        console.log(event);
     }, false);
     
+    
     source.addEventListener('error', function (event) {
-         event.target.close();
-         console.log("Plansys failed to fetch notification, stopping stream...");
+//         event.target.close();
+//         console.log("Plansys failed to fetch notification, stopping stream...");
     }, false);
-
 
 });
