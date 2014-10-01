@@ -6,7 +6,7 @@ class User extends ActiveRecord {
 
     public function afterFind() {
         parent::afterFind();
-        $this->subscribed = Yii::app()->nfy->isSubscribed($this->id);
+        $this->subscribed = (Yii::app()->nfy->isSubscribed($this->id) ? "on" : "");
         return true;
     }
 

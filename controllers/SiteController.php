@@ -43,7 +43,6 @@ class SiteController extends Controller {
         if (!Yii::app()->user->isGuest) {
             $this->redirect(Yii::app()->user->returnUrl);
         }
-
         $model = new LoginForm;
 
         // if it is ajax validation request
@@ -59,6 +58,7 @@ class SiteController extends Controller {
             // validate user input and redirect to the previous page if valid
             if ($model->validate() && $model->login()) {
                 $model = Yii::app()->user->model;
+                
                 $model->last_login = date("Y-m-d H:i:s");
                 $model->update();
                 
