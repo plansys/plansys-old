@@ -54,15 +54,19 @@ app.directive('relationField', function ($timeout, $http) {
                         $scope.isOpen = true;
 
                         $a = $el.find("li.hover").next();
-                        var i = 0;
-                        while (!$a.is(":visible") && i < 100) {
-                            $a = $a.next();
-                            i++;
-                        }
+                        if ($a.length == 0 && $scope.renderedFormList.length > 0) {
+                            $scope.updateInternal($scope.renderedFormList[0].key);
+                        } else {
+                            var i = 0;
+                            while ((!$a.is("li") || !$a.is(":visible")) && i < 100) {
+                                $a = $a.next();
+                                i++;
+                            }
 
-                        if ($a.length > 0 && $a.is("li")) {
-                            $el.find("li.hover").removeClass("hover")
-                            $a.addClass("hover").find("a").focus();
+                            if ($a.length > 0 && $a.is("li")) {
+                                $el.find("li.hover").removeClass("hover")
+                                $a.addClass("hover").find("a");
+                            }
                         }
                         e.preventDefault();
                         e.stopPropagation();
@@ -71,13 +75,13 @@ app.directive('relationField', function ($timeout, $http) {
 
                         $a = $el.find("li.hover").prev();
                         var i = 0;
-                        while (!$a.is(":visible") && i < 100) {
+                        while ((!$a.is("li") || !$a.is(":visible")) && i < 100) {
                             $a = $a.prev();
                             i++;
                         }
                         if ($a.length > 0 && $a.is("li")) {
                             $el.find("li.hover").removeClass("hover")
-                            $a.addClass("hover").find("a").focus();
+                            $a.addClass("hover").find("a");
                         }
                         e.preventDefault();
                         e.stopPropagation();

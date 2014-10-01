@@ -233,7 +233,7 @@ SQL ini akan dijalankan 2x untuk memastikan tidak ada error.',
     ng-if=\"!migration\" 
     class=\"migration-item panel panel-{{ panelClass(m) }}\" 
     ng-repeat=\"m in model.migrations\">
-        
+    
         <div class=\"panel-heading migration-item-head\"  ng-click=\"m.show = !m.show\">
         <div ng-if=\"!loading\" 
         class=\"btn btn-xs pull-right btn-success\" 

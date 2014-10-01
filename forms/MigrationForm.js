@@ -85,7 +85,6 @@ $scope.panelClass = function (m) {
     }
 
     return (doneAll ? "success" : "default");
-
 }
 
 $scope.fileClass = function (m, file) {
@@ -131,10 +130,8 @@ $scope.migrateId = function (e, id) {
         var migration = $scope.model.migrations[i];
         if (migration.id === id) {
             for (k in migration.items) {
-                if ($scope.model.done.indexOf(migration.id + "_" + k) < 0) {
-                    var m = migration[k];
-                    $scope.migAll.unshift(migration.id + "|" + k);
-                }
+                var m = migration[k];
+                $scope.migAll.unshift(migration.id + "|" + k);
             }
         }
     }

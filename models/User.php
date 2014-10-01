@@ -13,9 +13,16 @@ class User extends ActiveRecord {
     public function afterSave() {
         parent::afterSave();
 
-        Yii::app()->nfy->unsubscribe($this->id, null, true);
+        if (!$this->isNewRecord) {
+            Yii::app()->nfy->unsubscribe($this->id, null, true);
+        }
         if ($this->subscribed === "on" || $this->isNewRecord) {
             $roles = array();
+
+            if ($this->isNewRecord) {
+                $a = $this->findByPk($this->id);
+                $this->roles = $a->roles;
+            }
 
             foreach ($this->roles as $r) {
                 $roles[] = "role_" . $r->role_name . ".";
@@ -54,11 +61,11 @@ class User extends ActiveRecord {
             'userInfos' => array(self::HAS_MANY, 'UserInfo', 'user_id'),
             'userRoles' => array(self::HAS_MANY, 'UserRole', 'user_id', 'order' => 'is_default_role ASC'),
             'roles' => array(self::HAS_MANY, 'Role', array('role_id' => 'id'), 'through' => 'userRoles'),
-            'role' => array(self::HAS_ONE, 'Role', array('role_id' => 'id'),'through' => 'userRoles',
-                'condition'=> 'is_default_role = "Yes"')
+            'role' => array(self::HAS_ONE, 'Role', array('role_id' => 'id'), 'through' => 'userRoles',
+                'condition' => 'is_default_role = "Yes"')
         );
     }
-    
+
     public function tableName() {
         return 'p_user';
     }
