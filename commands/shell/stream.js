@@ -1,29 +1,25 @@
 
 var timeout = 5000; // WAIT 5 SECOND AND THE RE-QUERY NFY
-var http = require('http');
 var sys = require('sys');
 var fs = require('fs');
 var path = require('path');
 var util = require("util");
 var exec = require('child_process').exec;
-
+var serverEvent = require('server-event');
+var express; 
+var app = require('express')();
 
 sys.puts("\
 Welcome to Plansys Nfy Server\n\
 ==============================\n\
 \nListening to port 8981:\n");
 
-http.createServer(function (req, res) {
-    res.writeHead(200, {
-        'Content-Type': 'text/event-stream',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive'
-    });
 
+app.listen(8981);
+serverEvent = serverEvent({ express : app }); 
+
+app.get('/:id', serverEvent, function (req, res) {
     var id = req.url.substr(1);
-
     if (id != '') {
         setInterval(function () {
             constructSSE(res, id);
@@ -31,8 +27,7 @@ http.createServer(function (req, res) {
 
         constructSSE(res, id);
     }
-}).listen(8981);
-
+});
 function constructSSE(res, id) {
     var isWin = /^win/.test(process.platform);
     var command = 'php ' + process.cwd() + path.sep + 'plansys' + path.sep + 'yiic.php nfy receive --id=' + id;
@@ -47,11 +42,10 @@ function constructSSE(res, id) {
             var dt = JSON.parse(data);
             var j = 1;
             for (i in dt) {
-                var msg = "id: " + (new Date().getTime()) + "_" + i + "\r\ndata: " + JSON.stringify(dt[i]) + "\r\n\r\n";
+                var msg = JSON.stringify(dt[i]) ;
+                res.sse(msg);
                 console.log(msg);
-                res.write(msg);
             }
-
         }
     });
 }
