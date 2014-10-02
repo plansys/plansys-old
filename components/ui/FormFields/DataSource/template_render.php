@@ -8,7 +8,7 @@
     <data name="params_get" class="hide"><?= json_encode($_GET); ?></data>
     <data name="params_default" class="hide"><?= @json_encode($this->data['params']); ?></data>
     <?php if ($this->postData == 'Yes'): ?>
-        <input name="<?= $this->name; ?>" type="hidden" value="{{ dataSource1.data | json }}" />
+        <input name="<?= $this->name; ?>" type="hidden" value="{{ data | json }}" />
     <?php endif; ?>
 
     <?php if ($this->debugSql == 'Yes'): ?>
