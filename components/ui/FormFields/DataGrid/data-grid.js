@@ -65,15 +65,45 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     }
                 }
 
+                $scope.checkEmpty = function (data) {
+
+                }
+
+                $scope.excelModeSelectedRow = null;
+                $scope.excelModeSelChange = function (row, evt) {
+                    $scope.excelModeSelectedRow = row;
+                }
+
                 $scope.removeRow = function (row) {
                     if (typeof row == "undefined" || typeof row.rowIndex != 'number') {
                         return;
                     }
 
                     var index = row.rowIndex;
-                    $scope.gridOptions.selectItem(index, false);
                     $scope.data.splice(index, 1);
+                    $timeout(function () {
+                        if ($scope.data.length <= index) {
+                            $scope.grid.selectedItems.length = 0;
+                        }
+                    }, 0);
                 };
+
+                $scope.addRow = function (row) {
+
+                    var data = {};
+                    for (i in $scope.columns) {
+                        data[$scope.columns[i].name] = '';
+                    }
+
+                    if (typeof row != "undefined" && row != null && typeof row.rowIndex == 'number') {
+                        $scope.data.splice(row.rowIndex + 1, 0, data);
+                        $timeout(function () {
+                            $scope.grid.gridOptions.selectItem(index, true);
+                        }, 0);
+                    } else {
+                        $scope.data.push(data);
+                    }
+                }
 
                 $scope.buttonClick = function (row, e) {
                     $btn = $(e.target);
@@ -301,6 +331,47 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 }
                             }, true);
                         }
+
+                        // fixedHeader
+                        if (!$scope.gridOptions['fixedHeader']) {
+                            $timeout(function () {
+                                var $container = $el.parents('.container-full');
+                                var $pager = $el.find(".data-grid-paging");
+                                var formTop = $el.parents("form").offset().top;
+                                var pagerTop = $pager.offset().top;
+                                var top = pagerTop - formTop;
+                                function fixHead() {
+                                    if ($container.scrollTop() > top) {
+                                        if (!$pager.hasClass('fixed')) {
+                                            $pager.addClass('fixed');
+                                        }
+                                        $pager.width($container.find('form').width());
+                                        $pager.css('top', formTop);
+                                        $el.find(".data-grid-paging-shadow").show();
+                                    } else {
+                                        if ($pager.hasClass('fixed')) {
+                                            $pager.removeClass('fixed');
+                                        }
+                                        $pager.attr('style', '');
+                                        $el.find(".data-grid-paging-shadow").hide();
+
+                                    }
+                                }
+
+                                $(window).resize(fixHead);
+                                $container.scroll(fixHead);
+                                fixHead();
+                            }, 0);
+                        }
+
+
+                        // excelMode
+                        if ($scope.gridOptions['enableExcelMode']) {
+                            $scope.gridOptions['enableCellEdit'] = true;
+                            $scope.gridOptions['enableCellSelection'] = true;
+                            $scope.gridOptions['afterSelectionChange'] = $scope.excelModeSelChange;
+                        }
+
 
                         if (typeof $scope.onGridLoaded == 'function') {
                             $scope.onGridLoaded($scope.gridOptions);

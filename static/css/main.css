@@ -1413,6 +1413,18 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     font-size:13px;
 }
 
+.data-grid-paging.fixed {
+    margin-left:-15px;
+    margin-right:-15px;
+    z-index:999;
+    padding:5px 15px;
+    position:fixed;
+    background:white;
+    border-top:1px solid #ccc;
+    border-bottom:1px solid #ccc;
+    margin-top:-1px;
+}
+
 .data-grid-page-selector {
     display:inline-block;
     width:80px;
