@@ -1,12 +1,8 @@
 $scope.loading = false;
 
-if ($scope.model.idx > 0) {
-    $scope.status = "Last Migration #" + $scope.model.idx;
-} else {
-    $scope.status = "No Migration";
-}
+$scope.status = "Ready";
 
-if ($scope.model.idx != $scope.model.migrations.length) {
+if ($scope.model.done.length != $scope.model.migrations.length) {
     $scope.status += "<br/> Please migrate all first before making new migration.";
 }
 
@@ -34,6 +30,10 @@ $scope.runInternal = function (id, file, store, f) {
         if (data == "") {
             if (file != null) {
                 $scope.status = "Migration: #" + id + " - " + file + " Successfully executed!";
+
+                if ($scope.model.done.indexOf(id + "_" + file) < 0) {
+                    $scope.model.done.push(id + "_" + file);
+                }
             } else {
                 $scope.status = "Migration: #" + id + " Successfully executed!";
             }
@@ -55,22 +55,36 @@ $scope.errorIdx = {
     id: -1,
     file: ''
 };
+
+$scope.isMigrated = function () {
+    var length = 0;
+    for (k in $scope.model.migrations) {
+        for (i in $scope.model.migrations[k].items) {
+            if (i != "$$hashKey") {
+                length++;
+            }
+        }
+    }
+    return length == $scope.model.done.length;
+}
+
 $scope.panelClass = function (m) {
     if ($scope.errorIdx.id == m.id) {
         return 'danger';
     }
 
-
     if (typeof $scope.migrated[m.id] != "undefined") {
         return 'success';
     }
 
-    if ($scope.model.idx < m.id) {
-        return 'default';
+    var doneAll = true;
+    for (i in m.items) {
+        if ($scope.model.done.indexOf(m.id + "_" + i) < 0) {
+            doneAll = false;
+        }
     }
-    else {
-        return 'success';
-    }
+
+    return (doneAll ? "success" : "default");
 }
 
 $scope.fileClass = function (m, file) {
@@ -78,10 +92,10 @@ $scope.fileClass = function (m, file) {
         return 'migration-file panel panel-danger';
     }
 
-    if (typeof $scope.migrated[m.id] !== "undefined" && typeof $scope.migrated[m.id][file] !== "undefined") {
+    if ($scope.model.done.indexOf(m.id + "_" + file) >= 0) {
         return 'migration-file panel panel-success';
     } else {
-        return 'migration-file panel panel-info';
+        return 'migration-file panel panel-default';
     }
 }
 
@@ -95,8 +109,10 @@ $scope.migrateAll = function (e) {
 
         if (migration.id > $scope.model.idx) {
             for (k in migration.items) {
-                var m = migration[k];
-                $scope.migAll.unshift(migration.id + "|" + k);
+                if ($scope.model.done.indexOf(migration.id + "_" + k) < 0) {
+                    var m = migration[k];
+                    $scope.migAll.unshift(migration.id + "|" + k);
+                }
             }
         }
     }
@@ -125,13 +141,8 @@ $scope.migrateId = function (e, id) {
 
 $scope.runMigration = function (id, file) {
     if (typeof id != "undefined") {
-
         $scope.migrated[id] = $scope.migrated[id] || {};
         $scope.migrated[id][file] = $scope.migrated[id][file] || {};
-
-        if (!$scope.migratingId) {
-            $scope.model.idx = id;
-        }
     }
 
     if ($scope.migAll.length > 0) {

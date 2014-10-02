@@ -1,6 +1,6 @@
 <?php
 
-class MigrationForm extends form {
+class MigrationForm extends Form {
 
     public $idx;
     public $name;
@@ -8,13 +8,34 @@ class MigrationForm extends form {
     public $isNew = false;
     public $migrations = array();
     public $errors = array();
+    public $done;
+    
 
+    public function getList() {
+        $list = Setting::get('db.migration_list');
+        $list = (is_null($list) ? array() : $list);
+        return $list;
+    }
+    
+    public function setList($v) {
+        Setting::set("db.migration_list", $v);
+    }
+    
+    public function addList($v) {
+        $list = $this->list;
+        if (array_search($v, $list) === false) {
+            $list[] = $v;
+        }
+        $this->list = $list;
+    }
+    
+    
     public function newMigration($post) {
         Setting::set('db.migration_name', $post['name']);
 
         $sql = $post['newsql'];
         $valid = $this->run($sql);
-
+        
         if ($valid) {
             $valid = $this->run($sql);
 
@@ -29,7 +50,7 @@ class MigrationForm extends form {
                 $newFile = $newDir . DIRECTORY_SEPARATOR . $post['name'] . '.sql';
                 file_put_contents($newFile, $sql);
 
-                Setting::set("db.migration_idx", (count($migDir) + 1));
+                $this->addList((count($migDir) + 1) . "_" . $post['name'] . ".sql");
             }
         }
         return $valid;
@@ -38,7 +59,7 @@ class MigrationForm extends form {
     public function runFile($id, $file) {
         $path = Yii::getPathOfAlias('app.migrations.' . $id) . DIRECTORY_SEPARATOR . $file;
         $sql = file_get_contents($path);
-
+        $this->addList("{$id}_{$file}");
         return $this->run($sql);
     }
 
@@ -95,7 +116,7 @@ class MigrationForm extends form {
 
         $this->migrations = $migrations;
         $this->name = Setting::get('db.migration_name', '');
-        $this->idx = Setting::get('db.migration_idx', 0);
+        $this->done = $this->list;
     }
 
     public function getForm() {
@@ -143,7 +164,7 @@ class MigrationForm extends form {
                         'icon' => 'plus',
                         'options' => array (
                             'ng-click' => 'toggleMigration()',
-                            'ng-if' => '!migration && !loading && model.idx == model.migrations.length',
+                            'ng-if' => '!migration && !loading && isMigrated()',
                         ),
                         'type' => 'LinkButton',
                     ),
@@ -160,7 +181,7 @@ class MigrationForm extends form {
     <div class=\"panel-heading\" 
     style=\"padding:10px;font-size:13px;border:0px;\">
         <div class=\"migration-all-container\">
-        <div ng-click=\"migrateAll($event)\" ng-if=\"!migration && !loading && model.idx != model.migrations.length\" class=\"btn btn-sm btn-success migration-all\">
+        <div ng-click=\"migrateAll($event)\" ng-if=\"!migration && !loading && !isMigrated()\" class=\"btn btn-sm btn-success migration-all\">
             Migrate All
         </div></div>
     
@@ -179,15 +200,15 @@ class MigrationForm extends form {
                 'type' => 'Text',
             ),
             array (
-                'value' => '                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <input id=\\"name\\" name=\\"name\\" placeholder=\\"Your Name\\" type=\\"text\\" class=\\"form-control\\" value=\\"{{model.name}}\\">',
+                'value' => '<input id=\\"name\\" name=\\"name\\" placeholder=\\"Your Name\\" type=\\"text\\" class=\\"form-control\\" value=\\"{{model.name}}\\">',
                 'type' => 'Text',
             ),
             array (
-                'value' => '                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>',
+                'value' => '</div>',
                 'type' => 'Text',
             ),
             array (
-                'value' => '                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class=\\"panel-body\\" style=\\"padding:5px 5px 0px 5px\\">',
+                'value' => '<div class=\\"panel-body\\" style=\\"padding:5px 5px 0px 5px\\">',
                 'type' => 'Text',
             ),
             array (
@@ -212,28 +233,27 @@ SQL ini akan dijalankan 2x untuk memastikan tidak ada error.',
     ng-if=\"!migration\" 
     class=\"migration-item panel panel-{{ panelClass(m) }}\" 
     ng-repeat=\"m in model.migrations\">
-        
+    
         <div class=\"panel-heading migration-item-head\"  ng-click=\"m.show = !m.show\">
         <div ng-if=\"!loading\" 
         class=\"btn btn-xs pull-right btn-success\" 
         ng-click=\"migrateId($event,m.id)\">Run #{{m.id}}</div>
-       
         Migration #{{m.id}}
     </div>
     <div ng-if=\"m.show === true\" class=\"panel-body\" style=\"padding:0px;\">
         <div ng-repeat=\"(file, sql) in m.items\" 
              class=\"{{fileClass(m,file)}}\">
-            
-            <div class=\"panel-heading\" style=\"padding:5px 10px;\">
+            <div ng-click=\"m[\'show\' + file] = !m[\'show\' + file]\" 
+                 class=\"panel-heading\" style=\"padding:5px 10px;\">
                 <div 
                     ng-if=\"!loading\" 
                     class=\"btn btn-xs pull-right btn-info\" 
                     ng-click=\"run($event,m.id,file)\">Run</div>
-                    
                 {{file}}
             </div>
             
-            <div class=\"panel-body\" style=\"padding:5px 10px;white-space:pre;font-size:12px;\">{{sql}}</div>
+            <div ng-if=\"m[\'show\' + file] === true\" class=\"panel-body\" 
+                 style=\"padding:5px 10px;white-space:pre-wrap;font-size:12px;\">{{sql}}</div>
         </div>
     </div>
 </div>',

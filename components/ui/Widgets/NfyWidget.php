@@ -7,6 +7,7 @@ class NfyWidget extends Widget {
 
     public function includeJS() {
         return array(
+            'sse-client.js',
             'nfy-widget.js'
         );
     }
@@ -29,10 +30,10 @@ class NfyWidget extends Widget {
         Yii::app()->nfy->send(array(
             'url' => Yii::app()->controller->createUrl('/dev/user/update/', array('id' => Yii::app()->user->id)),
             'message' => 'Pembuatan Rencana Kerja (6 Lubang) daerah bangka ',
-            'notes' => 'tolong sekalian tambahin kerjaan nya ya...'
-            ), array(
-            'id' => '1'
-        ));
+            'notes' => 'tolong sekalian tambahin kerjaan nya ya...',
+            'to' => array(
+                'id' => '1'
+        )));
     }
 
     public function actionPeek() {

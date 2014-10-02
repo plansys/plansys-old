@@ -2,7 +2,7 @@
 
 class MigrationController extends Controller {
 
-    public function actionIndex() {
+    public function actionIndex() {;
         $model = new MigrationForm;
         if (count($model->migrations) == 0) {
             $model->isNew = true;
@@ -28,9 +28,6 @@ class MigrationController extends Controller {
         $model = new MigrationForm;
         $model->runFile($id, $file);
         
-        if ($store == "1") {
-            Setting::set("db.migration_idx", $id);
-        }
     }
 
 }
