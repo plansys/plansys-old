@@ -91,7 +91,8 @@ class MigrationForm extends Form {
         }
 
         $migDir = glob($dir . DIRECTORY_SEPARATOR . "*", GLOB_ONLYDIR);
-
+        natsort($migDir);
+        
         $mig = array();
         $migrations = array();
         foreach ($migDir as $d) {
@@ -113,7 +114,8 @@ class MigrationForm extends Form {
                 'items' => $m
             );
         }
-
+        
+        
         $this->migrations = $migrations;
         $this->name = Setting::get('db.migration_name', '');
         $this->done = $this->list;

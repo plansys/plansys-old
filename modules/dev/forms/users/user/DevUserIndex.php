@@ -226,7 +226,7 @@ class DevUserIndex extends Form {
                 'gridOptions' => array (
                     'useExternalSorting' => 'true',
                     'enablePaging' => 'true',
-                    'enableExcelMode' => 'true',
+                    'afterSelectionChange' => 'url:/dev/user/update?id={id}',
                     'enableColumnResize' => 'true',
                 ),
                 'type' => 'DataGrid',
