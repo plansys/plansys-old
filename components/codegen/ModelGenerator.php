@@ -211,7 +211,7 @@ EOF;
 
     public function generateClass($tableName) {
         $this->modelCode = $this->getTableModel($tableName);
-
+		
         if ($this->modelCode->validate()) {
             $tables = $this->modelCode->prepare();
             $this->modelInfo = $tables[0];
@@ -258,15 +258,27 @@ EOF;
             $success = $this->generateClass($tableName);
 
             if (!$success) {
-                $tryDefaultTable = 'p_' . $tableName;
-                $this->addTableName($tryDefaultTable);
-                $tryDefault = $this->generateClass($tryDefaultTable);
-
-                if (!$tryDefault) {
+				if (count($this->modelCode->errors) > 0) {
                     file_put_contents($this->filePath, "");
-                    throw new Exception("Gagal meng-generate Class [{$this->classPath}] dengan nama tabel [{$tableName}].
-                        Pastikan table tersebut ada di database.");
-                }
+					$errors = $this->modelCode->errors;
+					$error = reset($errors);
+					
+					throw new Exception("Gagal meng-generate Class [{$this->classPath}] dengan nama tabel [{$tableName}].
+						{$error[0]}
+					");
+				} else {
+					## note: will never run...
+					
+					$tryDefaultTable = 'p_' . $tableName;
+					$this->addTableName($tryDefaultTable);
+					$tryDefault = $this->generateClass($tryDefaultTable);
+					
+					if (!$tryDefault) {
+						file_put_contents($this->filePath, "");
+						throw new Exception("Gagal meng-generate Class [{$this->classPath}] dengan nama tabel [{$tableName}].
+							Pastikan table tersebut ada di database.");
+					}
+				}
             }
         }
     }
