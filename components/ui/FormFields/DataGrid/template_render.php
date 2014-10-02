@@ -13,10 +13,11 @@
         <i class="fa fa-warning"></i>
         {{name}}: Please choose Data Source in Form Builder
     </div>
-    <div ng-if="loaded">
+    <div class="data-grid-container" ng-if="loaded">
 
         <script type="text/ng-template" id="category_header"><?php include('category_header.php'); ?></script>
         <?php if (@$this->gridOptions['enablePaging'] == 'true'): ?>
+            <div class="data-grid-paging-shadow" style="height:50px;display:none;"></div>
             <div class="data-grid-paging">
                 <div class="data-grid-pageinfo pull-right">
                     <div class="btn-group pull-right" style="padding-top:2px;margin-left:5px;" >
@@ -29,7 +30,7 @@
                             <i class="fa fa-repeat"></i> Reset
                         </button>
                     </div>
-                    
+
                     <div class="btn-group pull-right" style="padding-top:2px;" dropdown>
                         <button type="button" class="btn btn-default dropdown-toggle">
 
@@ -49,7 +50,24 @@
                     <div class="pull-right" style="margin:5px;">
                         View Per Page:
                     </div>
+                </div>
+                <div ng-if="gridOptions.enableExcelMode"
+                     style="border-right:1px solid #ccc;padding-right:10px;margin-right:5px;"
+                     class="data-grid-pageinfo pull-right">
+                    <div class="btn-group pull-right" style="padding-top:2px;margin-left:5px;" >
+                        <button ng-click="addRow(excelModeSelectedRow)" type="button" class="btn btn-default">
+                            <i class="fa fa-plus"></i> Add
+                        </button>
+                        <button ng-click="removeRow(excelModeSelectedRow)"
+                                ng-if="grid.selectedItems.length > 0"
+                                type="button" class="btn btn-default">
+                            <i class="fa fa-times"></i> Remove
+                        </button>
+                    </div>
 
+                    <div class="pull-right" style="margin:5px;">
+                        Row:
+                    </div>
                 </div>
 
                 <div class="data-grid-pagination">
@@ -85,8 +103,7 @@
                 <div class="clearfix"></div>
             </div>
         <?php endif; ?>
-
-        <div class="data-grid-table" category-header="gridOptions"></div>
+        <div class="data-grid-category" category-header="gridOptions"></div>
         <div class="data-grid-table" ng-init="initGrid()" ng-grid="gridOptions"></div>
     </div>
 </div>
