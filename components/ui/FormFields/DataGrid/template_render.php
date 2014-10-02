@@ -13,7 +13,7 @@
         <i class="fa fa-warning"></i>
         {{name}}: Please choose Data Source in Form Builder
     </div>
-    <div ng-if="loaded">
+    <div class="data-grid-container" ng-if="loaded">
 
         <script type="text/ng-template" id="category_header"><?php include('category_header.php'); ?></script>
         <?php if (@$this->gridOptions['enablePaging'] == 'true'): ?>
@@ -103,8 +103,7 @@
                 <div class="clearfix"></div>
             </div>
         <?php endif; ?>
-
-        <div class="data-grid-table" category-header="gridOptions"></div>
+        <div class="data-grid-category" category-header="gridOptions"></div>
         <div class="data-grid-table" ng-init="initGrid()" ng-grid="gridOptions"></div>
     </div>
 </div>

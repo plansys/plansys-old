@@ -335,24 +335,41 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         // fixedHeader
                         if (!$scope.gridOptions['fixedHeader']) {
                             $timeout(function () {
+
                                 var $container = $el.parents('.container-full');
+                                var $dgcontainer = $el.find(".data-grid-container");
                                 var $pager = $el.find(".data-grid-paging");
+                                var $cat = $el.find('.data-grid-category');
+                                var $topp = $el.find('.data-grid-table .ngTopPanel');
+                                var $container = $el.parents('.container-full');
                                 var formTop = $el.parents("form").offset().top;
                                 var pagerTop = $pager.offset().top;
                                 var top = pagerTop - formTop;
                                 function fixHead() {
+
+                                    var width = $container.find('form').width();
+
                                     if ($container.scrollTop() > top) {
-                                        if (!$pager.hasClass('fixed')) {
-                                            $pager.addClass('fixed');
+                                        if (!$dgcontainer.hasClass('fixed')) {
+                                            $dgcontainer.addClass('fixed');
                                         }
-                                        $pager.width($container.find('form').width());
+                                        $pager.width(width);
                                         $pager.css('top', formTop);
+
+                                        $cat.width(width);
+                                        $cat.css('top', formTop + $pager.height() + 10);
+
+                                        $topp.width(width);
+                                        $topp.css('top', formTop + $pager.height() + $cat.height() + 10);
+
                                         $el.find(".data-grid-paging-shadow").show();
                                     } else {
-                                        if ($pager.hasClass('fixed')) {
-                                            $pager.removeClass('fixed');
+                                        if ($dgcontainer.hasClass('fixed')) {
+                                            $dgcontainer.removeClass('fixed');
                                         }
                                         $pager.attr('style', '');
+                                        $cat.attr("style", '');
+                                        $topp.attr("style", '');
                                         $el.find(".data-grid-paging-shadow").hide();
 
                                     }
