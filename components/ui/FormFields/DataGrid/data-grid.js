@@ -403,7 +403,9 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 var cols = [];
 
                                 for (i in $scope.columns) {
-                                    cols.push($scope.columns[i].name);
+                                    if (typeof $scope.columns[i].visible == "undefined" || $scope.columns[i].visible) {
+                                        cols.push($scope.columns[i].name);
+                                    }
                                 }
 
                                 for (i in data) {
@@ -411,6 +413,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                         except.push(i);
                                     }
                                 }
+
                                 return except;
                             };
 
@@ -432,7 +435,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                         }
                                         idx++;
                                     }
-                                    
+
                                     $scope.$apply(function () {
                                         $scope.datasource.data = newData;
                                     });
@@ -456,11 +459,18 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     }
                                 }
                             });
-                            
-                            if ($scope.data.length == 0) {
-                                $scope.addRow();
-                            }
-                        } 
+                            $timeout(function () {
+                                if ($scope.data.length == 0) {
+                                    $scope.addRow();
+                                } else {
+                                    var except = excludeColumns($scope.data[0]);
+                                    if ($scope.isNotEmpty($scope.data[$scope.data.length - 1], except)) {
+
+                                        $scope.addRow();
+                                    }
+                                }
+                            }, 0);
+                        }
 
 
                         if (typeof $scope.onGridLoaded == 'function') {
