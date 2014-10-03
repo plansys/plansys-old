@@ -277,7 +277,10 @@ class ActiveRecord extends CActiveRecord {
                                     }
                                 }
                             }
-                            ActiveRecord::batch($rel->className, $new, $old);
+                            $new = ActiveRecord::batch($rel->className, $new, $old);
+                            foreach ($new as $k=>$n) {
+                                $originalNew[$k]['id'] = $n['id'];
+                            }
                             $new = $originalNew;
                         }
                         //with through
@@ -345,9 +348,11 @@ class ActiveRecord extends CActiveRecord {
         }
 
         $insertArr = array();
+        $insertIds = array();
         foreach ($new as $i => $j) {
             if (@$j['id'] == '' || is_null(@$j['id'])) {
                 $insertArr[] = $j;
+                $insertIds[] = $i;
             } else if (count($old) == 0) {
                 $updateArr[] = $j;
             }
@@ -360,10 +365,12 @@ class ActiveRecord extends CActiveRecord {
         if (count($updateArr) > 0) {
             ActiveRecord::batchUpdate($model, $updateArr);
         }
-
+        
         if ($delete && count($deleteArr) > 0) {
             ActiveRecord::batchDelete($model, $deleteArr);
         }
+        
+        return array_merge($insertArr, $updateArr);
     }
 
     public static function batchDelete($model, $data) {
@@ -413,7 +420,7 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    public static function batchInsert($model, $data) {
+    public static function batchInsert($model, &$data) {
         if (!is_array($data) || count($data) == 0)
             return;
 
@@ -421,6 +428,12 @@ class ActiveRecord extends CActiveRecord {
         $builder = Yii::app()->db->schema->commandBuilder;
         $command = $builder->createMultipleInsertCommand($table, $data);
         $command->execute();
+        
+        $id = Yii::app()->db->getLastInsertID();
+        foreach($data as &$d){
+            $d['id'] = $id;
+            $id++;
+        }
     }
 
     public function getDefaultFields() {

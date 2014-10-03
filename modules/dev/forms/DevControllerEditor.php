@@ -38,9 +38,13 @@ class DevControllerEditor extends Form{
                     'ng-hide' => 'edit == false',
                 ),
                 'listExpr' => 'FormBuilder::listForm($model->module, false);',
+                'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            '<hr>',
+            array (
+                'type' => 'Text',
+                'value' => '<hr>',
+            ),
             array (
                 'label' => 'Submit',
                 'buttonSize' => '',

@@ -84,6 +84,8 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     $timeout(function () {
                         if ($scope.data.length <= index) {
                             $scope.grid.selectedItems.length = 0;
+                        } else {
+                            $scope.grid.gridOptions.selectItem(index, true);
                         }
                     }, 0);
                 };
