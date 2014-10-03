@@ -456,7 +456,11 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     }
                                 }
                             });
-                        }
+                            
+                            if ($scope.data.length == 0) {
+                                $scope.addRow();
+                            }
+                        } 
 
 
                         if (typeof $scope.onGridLoaded == 'function') {
