@@ -396,20 +396,9 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             $scope.gridOptions['enableCellSelection'] = true;
                             $scope.gridOptions['afterSelectionChange'] = $scope.excelModeSelChange;
                             $scope.lastFocus = null;
-                            
-                            $(window).on('focus', function () {
-                                if ($scope.lastFocus != null) {
-                                    $scope.lastFocus.focus();
-                                }
-                            });
-                            
-                            $el.on('focus', '[ng-cell] div', function() {
-                                $scope.lastFocus = $(this);
-                            });
-                            
-                            $scope.$on('ngGridEventEndCellEdit', function (evt) {
-                                var row = evt.targetScope.row;
-                                var data = row.entity;
+
+
+                            var excludeColumns = function (data) {
                                 var except = [];
                                 var cols = [];
 
@@ -422,6 +411,42 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                         except.push(i);
                                     }
                                 }
+                                return except;
+                            };
+
+                            $(window).on('focus', function () {
+                                if ($scope.lastFocus != null) {
+                                    $scope.lastFocus.focus();
+                                }
+                            });
+
+                            $el.parents('form').submit(function (e) {
+                                if ($scope.data.length > 0 || !$el.attr('gridReadyToSubmit')) {
+                                    var except = excludeColumns($scope.data[0]);
+                                    var newData = [];
+                                    var idx = 0;
+                                    for (i in $scope.data) {
+                                        var row = $scope.data[i];
+                                        if ($scope.isNotEmpty(row, except)) {
+                                            newData.push(row);
+                                        }
+                                        idx++;
+                                    }
+                                    
+                                    $scope.$apply(function () {
+                                        $scope.datasource.data = newData;
+                                    });
+                                }
+                            });
+
+                            $el.on('focus', '[ng-cell] div', function () {
+                                $scope.lastFocus = $(this);
+                            });
+
+                            $scope.$on('ngGridEventEndCellEdit', function (evt) {
+                                var row = evt.targetScope.row;
+                                var data = row.entity;
+                                var except = excludeColumns(data);
 
                                 if ($scope.isNotEmpty(data, except)) {
                                     if ($scope.data.length - 1 == row.rowIndex) {
