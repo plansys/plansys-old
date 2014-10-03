@@ -97,9 +97,6 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
                     if (typeof row != "undefined" && row != null && typeof row.rowIndex == 'number') {
                         $scope.data.splice(row.rowIndex + 1, 0, data);
-                        $timeout(function () {
-                            $scope.grid.gridOptions.selectItem(index, true);
-                        }, 0);
                     } else {
                         $scope.data.push(data);
                     }
@@ -333,7 +330,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         }
 
                         // fixedHeader
-                        if (!$scope.gridOptions['fixedHeader']) {
+                        if ($scope.gridOptions['fixedHeader'] !== false) {
                             $timeout(function () {
 
                                 var $container = $el.parents('.container-full');
