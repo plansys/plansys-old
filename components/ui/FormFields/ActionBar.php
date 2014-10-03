@@ -44,6 +44,21 @@ class ActionBar extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
+                'label' => 'First Tab',
+                'name' => 'firstTabName',
+                'labelWidth' => '3',
+                'options' => array (
+                    'ng-model' => 'active.firstTabName',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                    'ng-if' => 'active.showSectionTab == \\\'Yes\\\'',
+                ),
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
+                ),
+                'type' => 'TextField',
+            ),
+            array (
                 'label' => 'Title Breacrumb Link',
                 'fieldname' => 'titleLink',
                 'show' => 'Show',
@@ -94,6 +109,8 @@ class ActionBar extends FormField {
     
     /** @var string $title */
     public $title = "{{form.title}}";
+    
+    public $firstTabName = 'General';
     
     /** @var array $titleLink */
     public $titleLink = array();

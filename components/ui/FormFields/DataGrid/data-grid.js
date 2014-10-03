@@ -209,6 +209,17 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     return html;
                 }
 
+                $scope.showDropDown = function (col, e) {
+                    var offset = $(e.target).offset();
+                    var width = $(e.target).width() +3;
+                    offset.top += $(e.target).height() + 6;
+                    var dd = '<div id="data-grid-dropdown" class="data-grid-dropdown-container" style="width:' + width + 'px;top:' + offset.top + 'px;left:' + offset.left + 'px"></div>';
+                    $(dd).appendTo('body');
+                }
+                $scope.generateDropdown = function (col) {
+                    return '<input onblur="$(\'#data-grid-dropdown\').remove();" ng-focus="showDropDown(col, $event)" type="text" ng-class="\'colt\' + col.index" ng-input="COL_FIELD" ng-model="COL_FIELD" />';
+                }
+
                 $scope.initGrid = function () {
                     $scope.grid = this;
                 }
@@ -253,28 +264,38 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
                             // prepare columns
                             evalArray(c.options);
-                            if (c.columnType == 'buttons') {
-                                var col = angular.extend(c.options, {
-                                    field: 'button_' + buttonID,
-                                    displayName: c.label,
-                                    enableCellEdit: false,
-                                    sortable: false,
-                                    cellTemplate: $scope.generateButtons(c)
-                                });
 
-                                if (c.buttonCollapsed == 'Yes') {
-                                    col.width = 30;
-                                } else {
-                                    col.width = (c.buttons.length * 24) + ((c.buttons.length - 1) * 5) + 20;
-                                }
-                                buttonID++;
-                            } else {
-                                var col = angular.extend(c.options, {
-                                    field: c.name,
-                                    displayName: c.label,
-                                });
+                            switch (c.columnType) {
+                                case "buttons":
+                                    var col = angular.extend(c.options, {
+                                        field: 'button_' + buttonID,
+                                        displayName: c.label,
+                                        enableCellEdit: false,
+                                        sortable: false,
+                                        cellTemplate: $scope.generateButtons(c)
+                                    });
+
+                                    if (c.buttonCollapsed == 'Yes') {
+                                        col.width = 30;
+                                    } else {
+                                        col.width = (c.buttons.length * 24) + ((c.buttons.length - 1) * 5) + 20;
+                                    }
+                                    buttonID++;
+                                    break;
+                                case "dropdown":
+                                    var col = angular.extend(c.options, {
+                                        field: c.name,
+                                        displayName: c.label,
+                                        editableCellTemplate: $scope.generateDropdown(c)
+                                    });
+                                    break;
+                                default:
+                                    var col = angular.extend(c.options, {
+                                        field: c.name,
+                                        displayName: c.label,
+                                    });
+                                    break;
                             }
-
                             columns.push(col);
                         }
                         if (columns.length > 0) {
@@ -465,7 +486,6 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 } else {
                                     var except = excludeColumns($scope.data[0]);
                                     if ($scope.isNotEmpty($scope.data[$scope.data.length - 1], except)) {
-
                                         $scope.addRow();
                                     }
                                 }

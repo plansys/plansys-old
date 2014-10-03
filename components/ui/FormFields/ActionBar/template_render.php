@@ -16,7 +16,7 @@
         <div class="clearfix"></div>
         <?php if ($this->showSectionTab == "Yes"): ?>
             <div class="action-tab" >
-                <a href="#general" top="0" class="active">General</a>
+                <a href="#<?= strtolower($this->firstTabName)?>" top="0" class="active"><?= $this->firstTabName ?></a>
                 <div class="clearfix"></div>
             </div>
         <?php endif; ?>

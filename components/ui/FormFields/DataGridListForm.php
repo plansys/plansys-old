@@ -4,7 +4,6 @@ class DataGridListForm extends Form {
     public function getFields() {
         return array (
             array (
-                'renderInEditor' => 'No',
                 'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
 <div class=\"label data-filter-name pull-right\"> 
 {{value[$index].columnType}}</div>
@@ -14,13 +13,11 @@ class DataGridListForm extends Form {
                 'type' => 'Text',
             ),
             array (
-                'renderInEditor' => 'No',
                 'value' => '<hr ng-show=\"value[$index].show\"
 style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'Text',
             ),
             array (
-                'renderInEditor' => 'No',
                 'value' => '<div ng-show=\\"value[$index].show\\">',
                 'type' => 'Text',
             ),
@@ -37,6 +34,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'list' => array (
                     'string' => 'String',
                     'buttons' => 'Buttons',
+                    'dropdown' => 'Dropdown',
                 ),
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
@@ -51,7 +49,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'ng-model' => 'value[$index].name',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                    'ng-if' => 'value[$index].columnType != \'buttons\'',
+                    'ng-if' => 'value[$index].columnType != \\\'buttons\\\'',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
@@ -77,7 +75,6 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'TextField',
             ),
             array (
-                'renderInEditor' => 'No',
                 'value' => '<div ng-if=\\"value[$index].columnType == \\\'buttons\\\'\\">',
                 'type' => 'Text',
             ),
@@ -97,7 +94,6 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'DropDownList',
             ),
             array (
-                'renderInEditor' => 'No',
                 'value' => '<hr style=\\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\\" />',
                 'type' => 'Text',
             ),
@@ -114,12 +110,10 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'ListView',
             ),
             array (
-                'renderInEditor' => 'No',
                 'value' => '<hr style=\\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\\" /><div class=\\"clearfix\\"></div>',
                 'type' => 'Text',
             ),
             array (
-                'renderInEditor' => 'No',
                 'value' => '</div>',
                 'type' => 'Text',
             ),
@@ -134,12 +128,10 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'KeyValueGrid',
             ),
             array (
-                'renderInEditor' => 'No',
                 'value' => '<div style=\\"margin-bottom:-3px;\\"></div>',
                 'type' => 'Text',
             ),
             array (
-                'renderInEditor' => 'No',
                 'value' => '</div>',
                 'type' => 'Text',
             ),

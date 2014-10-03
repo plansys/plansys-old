@@ -1491,6 +1491,17 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     z-index:20;
 }
 
+.data-grid-dropdown-container {
+    position:absolute;
+    min-height:30px;
+    z-index:99;
+    background:white;
+    
+    -webkit-box-shadow: 0 2px 4px 0px rgba(0,0,0,0.3);
+    -moz-box-shadow: 0 2px 4px 0px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 4px 0px rgba(0,0,0,0.3);
+}
+
 /********************************** DATA FILTER **************************************/
 .data-filter {
     margin:0px -15px 0px -15px;
