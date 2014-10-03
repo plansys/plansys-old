@@ -144,6 +144,8 @@ class DataSource extends FormField {
     public $enablePaging = 'No';
     public $pagingSQL = '';
     public $pagingPHP = '';
+    
+    private $command;
 
     /** @var boolean $isHidden */
     public $isHidden = true;
@@ -176,7 +178,7 @@ class DataSource extends FormField {
             } else {
                 $data = $this->execute($params);
             }
-
+            
             echo json_encode(array(
                 'data' => $data['data'],
                 'count' => $data['debug']['count'],
@@ -302,6 +304,7 @@ class DataSource extends FormField {
         );
     }
 
+    
     /**
      * @param string $sql parameter query yang akan di-execute
      * @return mixed me-return arraykosong jika parameter $sql == "", jika tidak maka akan me-return array data hasil execute SQL
@@ -314,7 +317,9 @@ class DataSource extends FormField {
         $template = $this->generateTemplate($this->sql, $params);
 
         ## execute SQL
-        $data = $db->createCommand($template['sql'])->queryAll(true, $template['params']);
+        $this->command = $db->createCommand($template['sql']);
+        
+        $data = $this->command->queryAll(true, $template['params']);
 
         if ($this->enablePaging == 'Yes') {
             $tc = $this->generateTemplate($this->pagingSQL, $params);

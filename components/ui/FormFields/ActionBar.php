@@ -23,6 +23,9 @@ class ActionBar extends FormField {
                 'labelOptions' => array (
                     'style' => 'text-align:left',
                 ),
+                'fieldOptions' => array (
+                    'auto-grow' => '',
+                ),
                 'type' => 'TextArea',
             ),
             array (
@@ -37,7 +40,7 @@ class ActionBar extends FormField {
                 ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'labelWidth' => '3',
-                'fieldWidth' => '3',
+                'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
             array (
