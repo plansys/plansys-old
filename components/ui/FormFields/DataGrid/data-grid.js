@@ -15,14 +15,12 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     location.href = eval($scope.generateUrl(url, 'function'));
                                 }
                             } else {
-
                                 if (array[i].match(/true/i)) {
                                     array[i] = true;
                                 } else if (array[i].match(/false/i)) {
                                     array[i] = false;
                                 }
                             }
-
                         }
                     }
                 }
@@ -65,12 +63,8 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     }
                 }
 
-                $scope.checkEmpty = function (data) {
-
-                }
-
                 $scope.excelModeSelectedRow = null;
-                $scope.excelModeSelChange = function (row, evt) {
+                $scope.excelModeSelChange = function (row, event) {
                     $scope.excelModeSelectedRow = row;
                 }
 
@@ -89,6 +83,21 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         }
                     }, 0);
                 };
+
+                $scope.isNotEmpty = function (data, except) {
+                    var except = except || [];
+                    var valid = false;
+                    for (i in data) {
+                        if (except.indexOf(i) >= 0) {
+                            continue;
+                        }
+
+                        if (data[i] != "") {
+                            valid = true;
+                        }
+                    }
+                    return valid;
+                }
 
                 $scope.addRow = function (row) {
 
@@ -341,12 +350,12 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 var $cat = $el.find('.data-grid-category');
                                 var $topp = $el.find('.data-grid-table .ngTopPanel');
                                 var $container = $el.parents('.container-full');
+                                var $wc = $el.parent();
                                 var formTop = $el.parents("form").offset().top;
                                 var pagerTop = $pager.offset().top;
                                 var top = pagerTop - formTop;
                                 function fixHead() {
-
-                                    var width = $container.find('form').width();
+                                    var width = $wc.width();
 
                                     if ($container.scrollTop() > top) {
                                         if (!$dgcontainer.hasClass('fixed')) {
@@ -386,6 +395,42 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             $scope.gridOptions['enableCellEdit'] = true;
                             $scope.gridOptions['enableCellSelection'] = true;
                             $scope.gridOptions['afterSelectionChange'] = $scope.excelModeSelChange;
+                            $scope.lastFocus = null;
+                            
+                            $(window).on('focus', function () {
+                                if ($scope.lastFocus != null) {
+                                    $scope.lastFocus.focus();
+                                }
+                            });
+                            
+                            $el.on('focus', '[ng-cell] div', function() {
+                                $scope.lastFocus = $(this);
+                            });
+                            
+                            $scope.$on('ngGridEventEndCellEdit', function (evt) {
+                                var row = evt.targetScope.row;
+                                var data = row.entity;
+                                var except = [];
+                                var cols = [];
+
+                                for (i in $scope.columns) {
+                                    cols.push($scope.columns[i].name);
+                                }
+
+                                for (i in data) {
+                                    if (cols.indexOf(i) < 0) {
+                                        except.push(i);
+                                    }
+                                }
+
+                                if ($scope.isNotEmpty(data, except)) {
+                                    if ($scope.data.length - 1 == row.rowIndex) {
+                                        $timeout(function () {
+                                            $scope.addRow(row);
+                                        }, 0);
+                                    }
+                                }
+                            });
                         }
 
 
