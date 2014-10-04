@@ -29,12 +29,13 @@ app.directive('dgAutocomplete', function ($timeout, $compile, $http, $compile) {
             };
 
             return function ($scope, $el, attrs, ctrl) {
+
+                $scope.list = [];
                 try {
                     $scope.list = JSON.parse($('#' + attrs.dgaId).text());
                 } catch (e) {
                     $scope.list = [];
                 }
-
 
                 $scope.idx = 0;
 
@@ -65,8 +66,14 @@ app.directive('dgAutocomplete', function ($timeout, $compile, $http, $compile) {
                     if ($('.data-grid-dropdown li.hover').length == 0) {
                         $(".data-grid-dropdown").remove();
                         $(document).off(".dataGridAutocomplete");
+
+                        if (attrs.dgaMustChoose === "Yes") {
+                            $scope.select('');
+                        }
                     } else {
-                        $('.data-grid-dropdown li.hover').click();
+                        $timeout(function () {
+                            $('.data-grid-dropdown li.hover').click();
+                        }, 0);
                     }
                 }
                 $el.keydown(function (e) {
@@ -100,7 +107,6 @@ app.directive('dgAutocomplete', function ($timeout, $compile, $http, $compile) {
                     }
                 });
 
-
                 $el.focus(function (e) {
                     var offset = $(e.target).offset();
                     var width = $(e.target).width() + 2;
@@ -121,7 +127,10 @@ app.directive('dgAutocomplete', function ($timeout, $compile, $http, $compile) {
                         $(document).on("click.dataGridAutocomplete", function () {
                             $scope.close();
                         });
-
+                        $('.data-grid-dropdown').on('mouseover', 'li', function () {
+                            $('.data-grid-dropdown li.hover').removeClass('hover');
+                            $(this).addClass('hover');
+                        });
                         $('.data-grid-dropdown').on('click', 'li', function () {
                             $scope.select($(this).attr('val'));
                             $(".data-grid-dropdown").remove();

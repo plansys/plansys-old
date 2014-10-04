@@ -4,6 +4,7 @@ class DataGridListFormDropdown extends Form {
     
     public $listType = 'php';
     public $listExpr = '';
+    public $listMustChoose = 'No';
     
     public function getForm() {
         return array (
@@ -35,8 +36,23 @@ class DataGridListFormDropdown extends Form {
                     'php' => 'PHP Function',
                     'js' => 'JS Function',
                 ),
-                'labelWidth' => '3',
+                'labelWidth' => '6',
                 'fieldWidth' => '6',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Must Choose',
+                'name' => 'listMustChoose',
+                'options' => array (
+                    'ng-model' => 'value[$index].listMustChoose',
+                    'ng-change' => 'updateListView()',
+                ),
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
+                ),
+                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\');',
+                'labelWidth' => '8',
+                'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
             array (

@@ -211,10 +211,15 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
                 $scope.generateDropdown = function (col) {
                     var id = $scope.name + '-' + col.name + '-dropdownlist';
-                    console.log(col.options);
-                    $('<div id="' + id + '">' + col.options.listItem + '</div>').appendTo('body');
+
+                    if (col.listType == 'js') {
+                        col.listItem = JSON.stringify($scope.$parent.$eval(col.listExpr));
+                    }
+                    $('<div id="' + id + '">' + col.listItem + '</div>').appendTo('body');
+
+
                     var html = '<input';
-                    html += ' dg-autocomplete dga-id="' + id + '"';
+                    html += ' dg-autocomplete dga-id="' + id + '" dga-must-choose="' + col.listMustChoose + '"';
                     html += ' type="text" ng-class="\'colt\' + col.index"';
                     html += ' ng-input="COL_FIELD" ng-model="COL_FIELD" />';
 

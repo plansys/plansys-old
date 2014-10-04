@@ -222,11 +222,9 @@ class DataGrid extends FormField {
                     $list = $this->evaluate(@$c['listExpr'], true);
                     $list = json_encode($list);
                 }
-                $this->columns[$k]['options']['listType'] = $c['listType'];
-                $this->columns[$k]['options']['listItem'] = $list;
+                $this->columns[$k]['listItem'] = $list;
             }
         }
-
 
         return $this->renderInternal('template_render.php');
     }
