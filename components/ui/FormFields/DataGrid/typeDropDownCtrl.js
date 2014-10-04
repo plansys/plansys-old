@@ -1,0 +1,1 @@
+console.log('DDC', $scope.$parent.value, $scope.$index);

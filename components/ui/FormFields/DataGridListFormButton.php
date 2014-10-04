@@ -1,54 +1,11 @@
 <?php
 
 class DataGridListFormButton extends Form {
-    public function getFields() {
-        return array (
-            array (
-                'name' => 'url',
-                'labelWidth' => '0',
-                'fieldWidth' => '12',
-                'options' => array (
-                    'ng-model' => 'item.url',
-                    'ng-change' => 'updateListView()',
-                    'ng-delay' => '500',
-                ),
-                'fieldOptions' => array (
-                    'placeholder' => 'Url',
-                ),
-                'type' => 'TextArea',
-            ),
-            array (
-                'name' => 'icon',
-                'labelWidth' => '0',
-                'fieldWidth' => '12',
-                'postfix' => 'Icon',
-                'options' => array (
-                    'ng-model' => 'value[$index].icon',
-                    'ng-change' => 'updateListView()',
-                    'ng-delay' => '500',
-                ),
-                'fieldOptions' => array (
-                    'placeholder' => 'Icon',
-                ),
-                'type' => 'TextField',
-            ),
-            array (
-                'label' => 'Button Options',
-                'fieldname' => 'options',
-                'show' => 'Show',
-                'options' => array (
-                    'ng-model' => 'value[$index].options',
-                    'ng-change' => 'updateListView()',
-                    'ng-delay' => '500',
-                ),
-                'type' => 'KeyValueGrid',
-            ),
-        );
-    }
-    
+
+
     public function getForm() {
         return array (
-            'formTitle' => 'DataFilterListFormButton',
+            'title' => 'DataGridListFormButton',
             'layout' => array (
                 'name' => 'full-width',
                 'data' => array (
@@ -59,7 +16,45 @@ class DataGridListFormButton extends Form {
             ),
         );
     }
-    public $url = '';
-    public $icon = '';
-    public $options = array();
+
+    public function getFields() {
+        return array(
+            array(
+                'label' => 'Collapsed',
+                'name' => 'buttonCollapsed',
+                'options' => array(
+                    'ng-model' => 'value[$index].buttonCollapsed',
+                    'ng-change' => 'updateListView()',
+                ),
+                'labelOptions' => array(
+                    'style' => 'text-align:left;',
+                ),
+                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
+                'labelWidth' => '3',
+                'fieldWidth' => '4',
+                'type' => 'DropDownList',
+            ),
+            array(
+                'value' => '<hr style=\\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\\" />',
+                'type' => 'Text',
+            ),
+            array(
+                'name' => 'buttons',
+                'fieldTemplate' => 'form',
+                'templateForm' => 'application.components.ui.FormFields.DataGridListFormButtonItem',
+                'labelWidth' => '0',
+                'fieldWidth' => '12',
+                'options' => array(
+                    'ng-model' => 'value[$index].buttons',
+                    'ng-change' => 'save()',
+                ),
+                'type' => 'ListView',
+            ),
+            array(
+                'value' => '<hr style=\\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\\" /><div class=\\"clearfix\\"></div>',
+                'type' => 'Text',
+            ),
+        );
+    }
+
 }

@@ -209,15 +209,16 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     return html;
                 }
 
-                $scope.showDropDown = function (col, e) {
-                    var offset = $(e.target).offset();
-                    var width = $(e.target).width() +3;
-                    offset.top += $(e.target).height() + 6;
-                    var dd = '<div id="data-grid-dropdown" class="data-grid-dropdown-container" style="width:' + width + 'px;top:' + offset.top + 'px;left:' + offset.left + 'px"></div>';
-                    $(dd).appendTo('body');
-                }
                 $scope.generateDropdown = function (col) {
-                    return '<input onblur="$(\'#data-grid-dropdown\').remove();" ng-focus="showDropDown(col, $event)" type="text" ng-class="\'colt\' + col.index" ng-input="COL_FIELD" ng-model="COL_FIELD" />';
+                    var id = $scope.name + '-' + col.name + '-dropdownlist';
+                    console.log(col.options);
+                    $('<div id="' + id + '">' + col.options.listItem + '</div>').appendTo('body');
+                    var html = '<input';
+                    html += ' dg-autocomplete dga-id="' + id + '"';
+                    html += ' type="text" ng-class="\'colt\' + col.index"';
+                    html += ' ng-input="COL_FIELD" ng-model="COL_FIELD" />';
+
+                    return html;
                 }
 
                 $scope.initGrid = function () {
@@ -242,6 +243,8 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         $scope.gridOptions.headerRowHeight = 28;
                         $scope.gridOptions.rowHeight = 28;
                         $scope.gridOptions.multiSelect = $scope.gridOptions.multiSelect || false;
+                        $scope.gridOptions.enableColumnResize = $scope.gridOptions.enableColumnResize === false ? false : true;
+
 
                         if ($scope.data !== null && $scope.columns !== null &&
                                 $scope.data.length > 0 && $scope.columns.length == 0) {

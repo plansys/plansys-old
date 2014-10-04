@@ -901,7 +901,7 @@ EOF;
         }
         $this->methods[$functionName]['length'] = $newlength;
         $this->methods[$functionName]['line'] = $line;
-        
+
         $this->file = $file;
 
         $fp = fopen($sourceFile, 'r+');
@@ -987,13 +987,19 @@ EOF;
      * @param string $module
      * @return array Fungsi ini akan me-return sebuah array list form .
      */
-    public static function listForm($module = null, $useAlias = true) {
-        $list = array();
+    public static function listForm($module = null, $useAlias = true, $excludeModule = true) {
+         $list = array();
         $list[''] = '-- NONE --';
         $modules = FormBuilder::listFile(false);
         foreach ($modules as $m) {
             if (!is_null($module) && strtolower($m['module']) != strtolower($module))
                 continue;
+
+
+            if ($excludeModule !== true) {
+                if (in_array($m['module'], $excludeModule))
+                    continue;
+            }
 
             $list[$m['module']] = array();
             foreach ($m['items'] as $file) {
@@ -1001,6 +1007,7 @@ EOF;
                 while (!isset($f['alias'])) {
                     $f = array_pop($f);
                 }
+
                 if ($useAlias) {
                     $list[$file['alias']] = $file['name'];
                 } else {

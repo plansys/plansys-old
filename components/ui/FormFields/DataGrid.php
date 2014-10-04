@@ -205,12 +205,7 @@ class DataGrid extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('ng-grid-plugins.js', 'data-grid.js');
-    }
-
-    public function processExpr() {
-
-        return array();
+        return array('dg-autocomplete.js', 'ng-grid-plugins.js', 'data-grid.js');
     }
 
     /**
@@ -219,7 +214,20 @@ class DataGrid extends FormField {
      * @return mixed me-return sebuah field dan atribut datafilter dari hasil render
      */
     public function render() {
-        $this->processExpr();
+
+        foreach ($this->columns as $k => $c) {
+            if ($c['columnType'] == 'dropdown') {
+                $list = '[]';
+                if (@$c['listType'] == 'php') {
+                    $list = $this->evaluate(@$c['listExpr'], true);
+                    $list = json_encode($list);
+                }
+                $this->columns[$k]['options']['listType'] = $c['listType'];
+                $this->columns[$k]['options']['listItem'] = $list;
+            }
+        }
+
+
         return $this->renderInternal('template_render.php');
     }
 

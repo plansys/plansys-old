@@ -13,7 +13,7 @@ class Modal extends FormField {
     
     public static $toolbarName = "Modal Dialog";
     public static $category = "Layout";
-    public static $toolbarIcon = "fa fa-square-o";
+    public static $toolbarIcon = "fa fa-square";
     
     public function includeJS() {
         return array(
@@ -30,7 +30,6 @@ class Modal extends FormField {
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                    
                 ),
                 'type' => 'DropDownList',
             ),
@@ -41,7 +40,7 @@ class Modal extends FormField {
                     'ng-model' => 'active.subForm',
                     'ng-change' => 'save()',
                 ),
-                'listExpr' => 'FormBuilder::listForm()',
+                'listExpr' => 'FormBuilder::listForm(null, true, array(\\\'Form Fields\\\'))',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),

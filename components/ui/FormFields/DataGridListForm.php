@@ -1,9 +1,10 @@
 <?php
 
 class DataGridListForm extends Form {
+
     public function getFields() {
-        return array (
-            array (
+        return array(
+            array(
                 'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
 <div class=\"label data-filter-name pull-right\"> 
 {{value[$index].columnType}}</div>
@@ -12,26 +13,26 @@ class DataGridListForm extends Form {
 </div>',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'value' => '<hr ng-show=\"value[$index].show\"
 style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'value' => '<div ng-show=\\"value[$index].show\\">',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'label' => 'Type',
                 'name' => 'columnType',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'value[$index].columnType',
                     'ng-change' => '$parent.changeButtonType(value[$index]);updateListView()',
                 ),
-                'labelOptions' => array (
+                'labelOptions' => array(
                     'style' => 'text-align:left;',
                 ),
-                'list' => array (
+                'list' => array(
                     'string' => 'String',
                     'buttons' => 'Buttons',
                     'dropdown' => 'Dropdown',
@@ -40,126 +41,108 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'fieldWidth' => '9',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Name',
                 'name' => 'name',
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'value[$index].name',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
                     'ng-if' => 'value[$index].columnType != \\\'buttons\\\'',
                 ),
-                'labelOptions' => array (
+                'labelOptions' => array(
                     'style' => 'text-align:left;',
                 ),
-                'fieldOptions' => array (
+                'fieldOptions' => array(
                     'class' => 'list-view-item-text',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Header',
                 'name' => 'label',
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'value[$index].label',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
                 ),
-                'labelOptions' => array (
+                'labelOptions' => array(
                     'style' => 'text-align:left;',
                 ),
                 'type' => 'TextField',
             ),
-            array (
-                'value' => '<div ng-if=\\"value[$index].columnType == \\\'buttons\\\'\\">',
-                'type' => 'Text',
-            ),
-            array (
-                'label' => 'Collapsed',
-                'name' => 'buttonCollapsed',
-                'options' => array (
-                    'ng-model' => 'value[$index].buttonCollapsed',
-                    'ng-change' => 'updateListView()',
+            array(
+                'name' => 'TypeDropDown',
+                'subForm' => 'application.components.ui.FormFields.DataGridListFormDropdown',
+                'options' => array(
+                    'ng-if' => 'value[$index].columnType == \\\'dropdown\\\'',
                 ),
-                'labelOptions' => array (
-                    'style' => 'text-align:left;',
+                'inlineJS' => 'DataGrid/typeDropDownCtrl.js',
+                'type' => 'SubForm',
+            ),
+            array(
+                'name' => 'TypeButton',
+                'subForm' => 'application.components.ui.FormFields.DataGridListFormButton',
+                'options' => array(
+                    'ng-if' => 'value[$index].columnType == \\\'buttons\\\'',
                 ),
-                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
-                'labelWidth' => '3',
-                'fieldWidth' => '4',
-                'type' => 'DropDownList',
+                'type' => 'SubForm',
             ),
-            array (
-                'value' => '<hr style=\\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\\" />',
-                'type' => 'Text',
-            ),
-            array (
-                'name' => 'buttons',
-                'fieldTemplate' => 'form',
-                'templateForm' => 'application.components.ui.FormFields.DataGridListFormButton',
-                'labelWidth' => '0',
-                'fieldWidth' => '12',
-                'options' => array (
-                    'ng-model' => 'value[$index].buttons',
-                    'ng-change' => 'save()',
-                ),
-                'type' => 'ListView',
-            ),
-            array (
-                'value' => '<hr style=\\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\\" /><div class=\\"clearfix\\"></div>',
-                'type' => 'Text',
-            ),
-            array (
-                'value' => '</div>',
-                'type' => 'Text',
-            ),
-            array (
+            array(
                 'label' => 'Options',
                 'fieldname' => 'options',
                 'show' => 'Show',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'value[$index].options',
                     'ng-change' => 'updateListView()',
                 ),
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'value' => '<div style=\\"margin-bottom:-3px;\\"></div>',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'value' => '</div>',
                 'type' => 'Text',
             ),
         );
     }
-    
+
     public function getForm() {
-        return array (
+        return array(
             'formTitle' => 'DataFilterListForm',
-            'layout' => array (
+            'layout' => array(
                 'name' => 'full-width',
-                'data' => array (
-                    'col1' => array (
+                'data' => array(
+                    'col1' => array(
                         'type' => 'mainform',
                     ),
                 ),
             ),
         );
     }
+
     public $name = '';
     public $label = '';
     public $options = array();
+
+    ### dropdown Options
+    public $listType = 'php';
+    public $listExpr = '';
+
+    ### button Options
     public $buttonCollapsed = 'Yes';
     public $buttons = array(
         array(
-            'label'=>'',
+            'label' => '',
             ''
         )
     );
     public $columnType = 'string';
+
 }
