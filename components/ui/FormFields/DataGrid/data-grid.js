@@ -225,8 +225,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
                     return html;
                 }
-                $scope.generateEditRelation = function (col) {;
-
+                $scope.generateEditRelation = function (col) {
                     var html = '<input';
                     html += ' dg-relation';
                     html += ' type="text" ng-class="\'colt\' + col.index"';
@@ -234,15 +233,14 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
                     return html;
                 }
-                $scope.generateCellRelation = function (col) {
-                    var id = $scope.name + '-' + col.name + '-dropdownlist';
-                    
-                    var html = '<div class="ngCellText" ng-class="col.colIndex()"><span ng-cell-text>{{row.getProperty(col.field + "_label")}}</span></div>';
 
+                $scope.generateCellRelation = function (col) {
+                    var html = '<div class="ngCellText dgr" ng-class="col.colIndex()"';
+                    html += 'dgr-id="{{row.getProperty(col.field)}}" dgr-model="' + col.relModelClass + '" dgr-id="' + col.name + '">';
+                    html += '<span ng-cell-text>{{row.getProperty(col.field + "_label")}}';
+                    html += '</span></div>';
                     return html;
                 }
-                
-                
 
                 $scope.initGrid = function () {
                     $scope.grid = this;
@@ -443,7 +441,6 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             }, 0);
                         }
 
-
                         // excelMode
                         if ($scope.gridOptions['enableExcelMode']) {
                             $scope.gridOptions['enableCellEdit'] = true;
@@ -522,6 +519,17 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                         $scope.addRow();
                                     }
                                 }
+                                
+                                var dgr = {};
+                                $(".dgr").each(function() {
+                                    var model = $(this).attr('dgr-model');
+                                    var id = $(this).attr('dgr-id');
+                                    dgr[model] = dgr[model] || [];
+                                    
+                                    if (dgr[model].indexOf(id) < 0) {
+                                        dgr[model].push(id);
+                                    }
+                                });
                             }, 0);
                         }
 

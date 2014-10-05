@@ -10,10 +10,6 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                 $scope.select = function (val, text) {
                     eval('$scope.$parent.' + attrs.ngModel.replace("_label", '') + ' = val');
                     eval('$scope.$parent.' + attrs.ngModel + ' = text');
-                    
-                    
-                    var parentScope = angular.element($("#" + $scope.name)[0]).scope();
-                    console.log(parentScope.data);
                 }
                 $scope.match = [];
 
