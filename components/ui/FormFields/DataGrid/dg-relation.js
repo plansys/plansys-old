@@ -7,27 +7,32 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                 $scope.loading = false;
                 $scope.idx = 0;
 
-                $scope.select = function (val) {
-                    eval('$scope.$parent.' + attrs.ngModel + ' = val');
+                $scope.select = function (val, text) {
+                    eval('$scope.$parent.' + attrs.ngModel.replace("_label", '') + ' = val');
+                    eval('$scope.$parent.' + attrs.ngModel + ' = text');
+                    
+                    
+                    var parentScope = angular.element($("#" + $scope.name)[0]).scope();
+                    console.log(parentScope.data);
                 }
                 $scope.match = [];
 
                 $scope.doSearch = function () {
-
+                    var search = Object.getProperty($scope.$parent, attrs.ngModel);
+                    search = search || "";
                     var parentScope = angular.element($("#" + $scope.name)[0]).scope().$parent;
                     if (!$scope.loading) {
-                        $timeout(function () {
-                            $scope.loading = true;
-                            var search = Object.getProperty($scope.$parent, attrs.ngModel);
-                            $http.post(Yii.app.createUrl('formfield/RelationField.dgrSearch'), {
-                                's': search,
-                                'm': $scope.modelClass,
-                                'c': $scope.col.field,
-                                'f': $scope.name,
-                                'mf': parentScope.model,
-                                'rf': $scope.row.entity
-                            }).success(function (data) {
-                                $scope.match = [];
+                        $scope.loading = true;
+                        $http.post(Yii.app.createUrl('formfield/RelationField.dgrSearch'), {
+                            's': search,
+                            'm': $scope.modelClass,
+                            'c': $scope.col.field,
+                            'f': $scope.name,
+                            'mf': parentScope.model,
+                            'rf': $scope.row.entity
+                        }).success(function (data) {
+                            $timeout(function () {
+                                var list = [];
                                 for (i in data) {
                                     var item = {
                                         val: data[i].value,
@@ -36,14 +41,18 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                                     if (search.trim() == item.text.trim()) {
                                         $scope.idx = i;
                                     }
-                                    $scope.match.push(item);
+                                    list.push(item);
                                 }
 
+                                $scope.match = list;
+
                                 $scope.loading = false;
-                            }).error(function () {
+                            }, 0);
+                        }).error(function () {
+                            $timeout(function () {
                                 $scope.loading = false;
-                            });
-                        }, 0);
+                            }, 0);
+                        });
                     }
                 }
 
@@ -57,7 +66,7 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                     if ($('.data-grid-dropdown li.hover').length == 0) {
                         $(".data-grid-dropdown").remove();
                         $(document).off(".dataGridAutocomplete");
-                        $scope.select('');
+                        $scope.select('', '');
                         $scope.refocus();
                     } else {
                         $timeout(function () {
@@ -110,7 +119,6 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                     $(dd).appendTo('body');
 
                     $timeout(function () {
-
                         $scope.doSearch();
                         $compile($(".data-grid-dropdown"))($scope);
 
@@ -122,7 +130,7 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                             $(this).addClass('hover');
                         });
                         $('.data-grid-dropdown').on('click', 'li', function () {
-                            $scope.select($(this).attr('val'));
+                            $scope.select($(this).attr('val'),$(this).attr('text'));
                             $(".data-grid-dropdown").remove();
                             $(document).off(".dataGridAutocomplete");
                         });

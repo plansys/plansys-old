@@ -236,11 +236,8 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                 }
                 $scope.generateCellRelation = function (col) {
                     var id = $scope.name + '-' + col.name + '-dropdownlist';
-
-                    var html = '<input';
-                    html += ' dg-relation';
-                    html += ' type="text" ng-class="\'colt\' + col.index"';
-                    html += ' ng-input="COL_FIELD_label" ng-model="COL_FIELD_label" />';
+                    
+                    var html = '<div class="ngCellText" ng-class="col.colIndex()"><span ng-cell-text>{{row.getProperty(col.field + "_label")}}</span></div>';
 
                     return html;
                 }

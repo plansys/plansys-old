@@ -291,8 +291,10 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
         extract($post);
+        
         $fb = FormBuilder::load($m);
         $field = $fb->findField(array('name' => $f));
+        
         foreach($field['columns'] as $column) {
             if ($c == $column['name']) {
                 $this->modelClass = $column['relModelClass'];
@@ -311,7 +313,8 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
             $params['model.' . $k] = $v;
         }
         
-        echo json_encode($this->query($s, $params));
+        
+        echo json_encode($this->query(@$s, $params));
     }
     
     public function actionSearch() {
