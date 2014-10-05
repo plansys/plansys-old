@@ -225,6 +225,27 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
                     return html;
                 }
+                $scope.generateEditRelation = function (col) {;
+
+                    var html = '<input';
+                    html += ' dg-relation';
+                    html += ' type="text" ng-class="\'colt\' + col.index"';
+                    html += ' ng-input="COL_FIELD_label" ng-model="COL_FIELD_label" />';
+
+                    return html;
+                }
+                $scope.generateCellRelation = function (col) {
+                    var id = $scope.name + '-' + col.name + '-dropdownlist';
+
+                    var html = '<input';
+                    html += ' dg-relation';
+                    html += ' type="text" ng-class="\'colt\' + col.index"';
+                    html += ' ng-input="COL_FIELD_label" ng-model="COL_FIELD_label" />';
+
+                    return html;
+                }
+                
+                
 
                 $scope.initGrid = function () {
                     $scope.grid = this;
@@ -249,7 +270,6 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         $scope.gridOptions.rowHeight = 28;
                         $scope.gridOptions.multiSelect = $scope.gridOptions.multiSelect || false;
                         $scope.gridOptions.enableColumnResize = $scope.gridOptions.enableColumnResize === false ? false : true;
-
 
                         if ($scope.data !== null && $scope.columns !== null &&
                                 $scope.data.length > 0 && $scope.columns.length == 0) {
@@ -295,6 +315,14 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                         field: c.name,
                                         displayName: c.label,
                                         editableCellTemplate: $scope.generateDropdown(c)
+                                    });
+                                    break;
+                                case "relation":
+                                    var col = angular.extend(c.options, {
+                                        field: c.name,
+                                        displayName: c.label,
+                                        cellTemplate: $scope.generateCellRelation(c),
+                                        editableCellTemplate: $scope.generateEditRelation(c)
                                     });
                                     break;
                                 default:
@@ -522,6 +550,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                 $scope.Math = window.Math;
                 $scope.grid = null;
                 $scope.name = $el.find("data[name=name]").text();
+                $scope.modelClass = $el.find("data[name=model_class]").text();
                 $scope.gridOptions = JSON.parse($el.find("data[name=grid_options]").text());
                 $scope.columns = JSON.parse($el.find("data[name=columns]").text());
                 $scope.loaded = false;

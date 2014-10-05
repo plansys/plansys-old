@@ -100,8 +100,8 @@ class LinkButton extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
-                'type' => 'Text',
                 'value' => '<Hr/>',
+                'type' => 'Text',
             ),
             array (
                 'label' => 'Icon',
@@ -148,7 +148,7 @@ class LinkButton extends FormField {
     \'\' => \'Default\',
     \'btn-lg\' => \'Large\',
 )',
-                'fieldWidth' => '4',
+                'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
             array (

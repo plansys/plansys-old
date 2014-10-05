@@ -108,7 +108,7 @@
         $scope.aceLoaded = function (_editor) {
             $(window).resize();
         };
-        $(window).resize(function() {
+        $(window).resize(function () {
             $(".text-editor").height($(".form-builder-properties [ui-content]").height() - 45);
         });
         /*********************** LAYOUT ********************************/
@@ -197,7 +197,7 @@
         $scope.relationFieldList = {};
         $scope.generateRelationField = function (modelClass) {
             modelClass = modelClass || $scope.active.modelClass;
-            
+
             $http.get(Yii.app.createUrl('/formfield/RelationField.listField', {
                 class: modelClass
             })).success(function (data) {

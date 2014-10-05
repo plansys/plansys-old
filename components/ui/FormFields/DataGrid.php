@@ -205,7 +205,7 @@ class DataGrid extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('dg-autocomplete.js', 'ng-grid-plugins.js', 'data-grid.js');
+        return array('dg-autocomplete.js','dg-relation.js', 'ng-grid-plugins.js', 'data-grid.js');
     }
 
     /**

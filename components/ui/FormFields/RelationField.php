@@ -29,8 +29,7 @@ class RelationField extends FormField {
                 'name' => 'modelClass',
                 'options' => array (
                     'ng-model' => 'active.modelClass',
-                    'ng-change' => 'generateRelationField();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        save();',
+                    'ng-change' => 'generateRelationField();save();',
                 ),
                 'listExpr' => 'RelationField::listModel()',
                 'searchable' => 'Yes',
@@ -288,6 +287,33 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
         return array('relation-field.js');
     }
 
+    public function actionDgrSearch() {
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+        extract($post);
+        $fb = FormBuilder::load($m);
+        $field = $fb->findField(array('name' => $f));
+        foreach($field['columns'] as $column) {
+            if ($c == $column['name']) {
+                $this->modelClass = $column['relModelClass'];
+                $this->idField = $column['relIdField'];
+                $this->labelField = $column['relLabelField'];
+                $this->condition = @$column['relCondition'];
+            }
+        }
+        $this->builder = $fb;
+
+        $params = array();
+        foreach ($rf as $k => $v) {
+            $params['row.' . $k] = $v;
+        }
+        foreach ($mf as $k => $v) {
+            $params['model.' . $k] = $v;
+        }
+        
+        echo json_encode($this->query($s, $params));
+    }
+    
     public function actionSearch() {
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);

@@ -1,42 +1,10 @@
-app.directive('dgAutocomplete', function ($timeout, $compile, $http, $compile) {
+app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
     return {
         scope: true,
         compile: function (element, attrs, transclude) {
-            var fuzzyMatch = {
-                pattern: '',
-                prep: function (s) {
-                    this.pattern = new RegExp('(' + s.split('').join(').*?(') + ').*?', 'i');
-                    return this;
-                },
-                match: function (s) {
-                    return s.match(this.pattern) != null;
-                },
-                hi: function (s) {
-                    return s.replace(
-                            this.pattern,
-                            this._hi
-                            );
-                },
-                _hi: function () {
-                    var match = arguments[0];
-                    var max = arguments.length - 2;
-                    for (; max > 0; max--) {
-                        var r = new RegExp('(^|[^÷])(' + arguments[max] + ')');
-                        match = match.replace(r, '$1÷$2þ');
-                    }
-                    return match.replace(/þ/g, '</u>').replace(/÷/g, '<u>');
-                }
-            };
-
             return function ($scope, $el, attrs, ctrl) {
-
                 $scope.list = [];
-                try {
-                    $scope.list = JSON.parse($('#' + attrs.dgaId).text());
-                } catch (e) {
-                    $scope.list = [];
-                }
-
+                $scope.loading = false;
                 $scope.idx = 0;
 
                 $scope.select = function (val) {
@@ -45,20 +13,38 @@ app.directive('dgAutocomplete', function ($timeout, $compile, $http, $compile) {
                 $scope.match = [];
 
                 $scope.doSearch = function () {
-                    var search = Object.getProperty($scope.$parent, attrs.ngModel);
-                    fuzzyMatch.prep(search);
-                    $scope.match = [];
-                    $scope.list.filter(function (item) {
-                        if (fuzzyMatch.match(item)) {
-                            if (typeof item == "string") {
-                                $scope.match.push({
-                                    val: item,
-                                    text: item,
-                                    html: fuzzyMatch.hi(item)
-                                });
-                            }
-                        }
-                    });
+
+                    var parentScope = angular.element($("#" + $scope.name)[0]).scope().$parent;
+                    if (!$scope.loading) {
+                        $timeout(function () {
+                            $scope.loading = true;
+                            var search = Object.getProperty($scope.$parent, attrs.ngModel);
+                            $http.post(Yii.app.createUrl('formfield/RelationField.dgrSearch'), {
+                                's': search,
+                                'm': $scope.modelClass,
+                                'c': $scope.col.field,
+                                'f': $scope.name,
+                                'mf': parentScope.model,
+                                'rf': $scope.row.entity
+                            }).success(function (data) {
+                                $scope.match = [];
+                                for (i in data) {
+                                    var item = {
+                                        val: data[i].value,
+                                        text: data[i].label
+                                    };
+                                    if (search.trim() == item.text.trim()) {
+                                        $scope.idx = i;
+                                    }
+                                    $scope.match.push(item);
+                                }
+
+                                $scope.loading = false;
+                            }).error(function () {
+                                $scope.loading = false;
+                            });
+                        }, 0);
+                    }
                 }
 
                 $scope.refocus = function () {
@@ -71,10 +57,7 @@ app.directive('dgAutocomplete', function ($timeout, $compile, $http, $compile) {
                     if ($('.data-grid-dropdown li.hover').length == 0) {
                         $(".data-grid-dropdown").remove();
                         $(document).off(".dataGridAutocomplete");
-
-                        if (attrs.dgaMustChoose === "Yes") {
-                            $scope.select('');
-                        }
+                        $scope.select('');
                         $scope.refocus();
                     } else {
                         $timeout(function () {
@@ -119,9 +102,9 @@ app.directive('dgAutocomplete', function ($timeout, $compile, $http, $compile) {
                     var width = $(e.target).width() + 2;
                     offset.top += $(e.target).height() + 9;
                     var dd = '<ul ng-model="search" class="data-grid-dropdown dropdown-menu" style="width:' + width + 'px;top:' + offset.top + 'px;left:' + offset.left + 'px">';
-                    dd += '<li ng-if="match.length > 0 " ng-repeat="item in match" class="dropdown-item" val="{{item.val}}" ng-class="{hover:$index==idx}">';
-                    dd += '<a href="#" ng-bind-html="item.html"></a></li>';
-                    dd += '<div ng-if="match.length == 0"><center style="color:#999;font-size:12px;">&mdash; Not Found &mdash;</center></div>';
+                    dd += '<li ng-if="match.length > 0 " ng-repeat="item in match" class="dropdown-item" text="{{item.text}}" val="{{item.val}}" ng-class="{hover:$index==idx}">';
+                    dd += '<a href="#">{{item.text}}</a></li>';
+                    dd += '<div ng-if="match.length == 0"><center style="color:#999;font-size:12px;">&mdash; {{ loading ? "Loading" : "Not Found" }} &mdash;</center></div>';
                     dd += '</ul>';
 
                     $(dd).appendTo('body');

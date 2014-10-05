@@ -180,7 +180,9 @@ app.directive('dropDownList', function ($timeout) {
                     function changeFieldList() {
                         $scope.formList = $scope.$eval(attrs.psList);
                         $scope.renderFormList();
-                        $scope.updateInternal($scope.value);
+                        $timeout(function () {
+                            $scope.updateInternal($scope.value);
+                        }, 0);
                     }
                     $scope.$watch(attrs.psList, changeFieldList);
                 }
