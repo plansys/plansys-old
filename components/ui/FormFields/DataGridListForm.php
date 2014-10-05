@@ -36,6 +36,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'string' => 'String',
                     'buttons' => 'Buttons',
                     'dropdown' => 'Dropdown',
+                    'relation' => 'Relation',
                 ),
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
@@ -92,6 +93,14 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'SubForm',
             ),
             array (
+                'name' => 'TypeRelation',
+                'subForm' => 'application.components.ui.FormFields.DataGridListFormRelation',
+                'options' => array (
+                    'ng-if' => 'value[$index].columnType == \\\'relation\\\'',
+                ),
+                'type' => 'SubForm',
+            ),
+            array (
                 'label' => 'Options',
                 'fieldname' => 'options',
                 'show' => 'Show',
@@ -130,11 +139,6 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
     public $label = '';
     public $options = array();
 
-    ### dropdown Options
-    public $listType = 'php';
-    public $listExpr = '';
-    public $listMustChoose = 'No';
-
     ### button Options
     public $buttonCollapsed = 'Yes';
     public $buttons = array(
@@ -143,6 +147,18 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
             ''
         )
     );
+    
+    ### dropdown Options
+    public $listType = 'php';
+    public $listExpr = '';
+    public $listMustChoose = 'No';
+    
+    ### relation Options
+    public $relCondition = '';
+    public $relModelClass = '';
+    public $relIdField = '';
+    public $relLabelField = '';
+    
     public $columnType = 'string';
 
 }
