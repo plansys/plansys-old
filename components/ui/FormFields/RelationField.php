@@ -395,6 +395,8 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
                     } else {
                         $sqlcond = $this->labelField . ' like ' . "[{$block}]";
                     }
+
+                    $search = preg_replace('!\s+!', '%', trim($search));
                     $sql = str_replace("[search]", $sqlcond, $sql);
                     $params[$block] = "%{$search}%";
                 } else {

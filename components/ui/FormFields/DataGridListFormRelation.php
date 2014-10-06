@@ -93,7 +93,10 @@ class DataGridListFormRelation extends Form {
                     'ng-change' => 'updateListView();',
                 ),
                 'fieldOptions' => array (
-                    'placeholder' => 'SQL Condition',
+                    'placeholder' => 'SQL Condition:
+
+Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [model.role_id]} {where [search]}',
+                    'style' => 'min-height:100px;',
                 ),
                 'type' => 'TextArea',
             ),
