@@ -408,7 +408,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 var $container = $el.parents('.container-full');
                                 var $wc = $el.parent();
                                 var formTop = $el.parents("form").offset().top;
-                                var pagerTop = $pager.length > 0 ? $pager.offset.top : 0;
+                                var pagerTop = $pager.length > 0 ? $pager.offset().top : 0;
                                 var pagerHeight = $pager.length > 0 ? $pager.height() : 0;
                                 var top = pagerTop - formTop;
                                 function fixHead() {
