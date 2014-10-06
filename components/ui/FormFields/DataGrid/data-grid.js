@@ -217,7 +217,6 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     }
                     $('<div id="' + id + '">' + col.listItem + '</div>').appendTo('body');
 
-
                     var html = '<input';
                     html += ' dg-autocomplete dga-id="' + id + '" dga-must-choose="' + col.listMustChoose + '"';
                     html += ' type="text" ng-class="\'colt\' + col.index"';
@@ -225,6 +224,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
                     return html;
                 }
+
                 $scope.generateEditRelation = function (col) {
                     var html = '<input';
                     html += ' dg-relation';
@@ -235,10 +235,14 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                 }
 
                 $scope.generateCellRelation = function (col) {
+
                     var html = '<div class="ngCellText dgr" ng-class="col.colIndex()"';
-                    html += 'dgr-id="{{row.getProperty(col.field)}}" dgr-model="' + col.relModelClass + '" dgr-id="' + col.name + '">';
+                    html += 'dgr-id="{{row.getProperty(col.field)}}" dgr-model="' + col.relModelClass + '" ';
+                    html += 'dgr-name="' + col.name + '" dgr-labelField="' + col.relLabelField + '" ';
+                    html += 'dgr-idField="' + col.relIdField + '">';
                     html += '<span ng-cell-text>{{row.getProperty(col.field + "_label")}}';
                     html += '</span></div>';
+
                     return html;
                 }
 
@@ -404,7 +408,8 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 var $container = $el.parents('.container-full');
                                 var $wc = $el.parent();
                                 var formTop = $el.parents("form").offset().top;
-                                var pagerTop = $pager.offset().top;
+                                var pagerTop = $pager.length > 0 ? $pager.offset.top : 0;
+                                var pagerHeight = $pager.length > 0 ? $pager.height() : 0;
                                 var top = pagerTop - formTop;
                                 function fixHead() {
                                     var width = $wc.width();
@@ -417,10 +422,10 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                         $pager.css('top', formTop);
 
                                         $cat.width(width);
-                                        $cat.css('top', formTop + $pager.height() + 10);
+                                        $cat.css('top', formTop + pagerHeight + 10);
 
                                         $topp.width(width);
-                                        $topp.css('top', formTop + $pager.height() + $cat.height() + 10);
+                                        $topp.css('top', formTop + pagerHeight + $cat.height() + 10);
 
                                         $el.find(".data-grid-paging-shadow").show();
                                     } else {
@@ -510,6 +515,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     }
                                 }
                             });
+
                             $timeout(function () {
                                 if ($scope.data.length == 0) {
                                     $scope.addRow();
@@ -519,26 +525,67 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                         $scope.addRow();
                                     }
                                 }
-                                
-                                var dgr = {};
-                                $(".dgr").each(function() {
-                                    var model = $(this).attr('dgr-model');
-                                    var id = $(this).attr('dgr-id');
-                                    dgr[model] = dgr[model] || [];
-                                    
-                                    if (dgr[model].indexOf(id) < 0) {
-                                        dgr[model].push(id);
-                                    }
-                                });
                             }, 0);
                         }
 
+                            //load relation
+                        var dgr = {};
+                        var dgrCols = [];
+                        $timeout(function() {
+                            $(".dgr").each(function() {
+                                var model = $(this).attr('dgr-model');
+                                var id = $(this).attr('dgr-id');
+                                var name = $(this).attr('dgr-name');
+                                var labelField = $(this).attr('dgr-labelField');
+                                var idField = $(this).attr('dgr-idField');
+                                
+                                if (dgrCols.indexOf(name) < 0) {
+                                    dgrCols.push({
+                                        name: name,
+                                        model: model,
+                                        labelField: labelField,
+                                        idField: idField
+                                    });
+                                }
 
-                        if (typeof $scope.onGridLoaded == 'function') {
-                            $scope.onGridLoaded($scope.gridOptions);
+                                dgr[model] = dgr[model] || {};
+                                dgr[model][idField] = dgr[model][idField] || [];
+
+                                if (id != "" && dgr[model][idField].indexOf(id) < 0) {
+                                    dgr[model][idField].push(id);
+                                }
+                            });
+
+
+                            var url = Yii.app.createUrl('/FormField/RelationField.dgrInit');
+                            $http.post(url, dgr).success(function(data) {
+                                for (rowIdx in $scope.data) {
+                                    var row = $scope.data[rowIdx];
+
+                                    for (colIdx in dgrCols) {
+                                        var col = dgrCols[colIdx];
+                                        var model = data[col.model][col.idField][row[col.name]];
+                                        if (typeof model != "undefined") {
+                                            row[col.name + "_label"] = model[col.labelField]; 
+                                        }
+                                    }
+
+                                    if (typeof $scope.onGridLoaded == 'function') {
+                                        $scope.onGridLoaded($scope.gridOptions);
+                                    }
+                                    $scope.loaded = true;
+
+                                }
+                            });
+                        }, 100);
+                        
+                        if (dgrCols.length == 0) {
+                            if (typeof $scope.onGridLoaded == 'function') {
+                                $scope.onGridLoaded($scope.gridOptions);
+                            }
+                            $scope.loaded = true;
                         }
 
-                        $scope.loaded = true;
                     }, 0);
                 }
 

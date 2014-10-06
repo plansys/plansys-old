@@ -195,13 +195,15 @@
         $scope.saving = false;
         /************************ RELATION FIELD  ****************************/
         $scope.relationFieldList = {};
-        $scope.generateRelationField = function (modelClass) {
+        $scope.generateRelationField = function (modelClass, parentScope) {
             modelClass = modelClass || $scope.active.modelClass;
 
             $http.get(Yii.app.createUrl('/formfield/RelationField.listField', {
                 class: modelClass
             })).success(function (data) {
                 $scope.relationFieldList = data;
+                
+                parentScope.updateListView();
             });
         }
 

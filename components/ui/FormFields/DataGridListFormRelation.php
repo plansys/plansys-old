@@ -25,17 +25,23 @@ class DataGridListFormRelation extends Form {
     public function getFields() {
         return array (
             array (
-                'label' => 'Model Class',
+                'value' => '<Hr/>',
+                'type' => 'Text',
+            ),
+            array (
+                'label' => 'Model',
                 'name' => 'relModelClass',
                 'options' => array (
-                    'ng-model' => 'value[$index].relModelClass',
-                    'ng-change' => 'generateRelationField(value);save();',
+                    'ng-model' => '$parent.value[$parent.$index].relModelClass',
+                    'ng-change' => 'generateRelationField(value, $parent.value[$index]);updateListView();',
                     'ng-init' => 'generateRelationField(value[$index].relModelClass);',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
                 'listExpr' => 'RelationField::listModel()',
+                'labelWidth' => '3',
+                'fieldWidth' => '9',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
@@ -43,31 +49,35 @@ class DataGridListFormRelation extends Form {
                 'label' => 'ID Field',
                 'name' => 'relIdField',
                 'options' => array (
-                    'ng-model' => 'value[$index].relIdField',
-                    'ng-change' => 'save();',
+                    'ng-model' => 'item.relIdField',
+                    'ng-change' => 'updateListView();',
                     'ps-list' => 'relationFieldList',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
                 'list' => array (),
+                'labelWidth' => '3',
+                'fieldWidth' => '9',
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'Label Field',
+                'label' => 'Label',
                 'name' => 'relLabelField',
                 'options' => array (
-                    'ng-model' => 'value[$index].relLabelField',
-                    'ng-change' => 'save();',
+                    'ng-model' => 'item.relLabelField',
+                    'ng-change' => 'updateListView();',
                     'ps-list' => 'relationFieldList',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
                 'list' => array (),
+                'labelWidth' => '3',
+                'fieldWidth' => '9',
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
@@ -80,7 +90,7 @@ class DataGridListFormRelation extends Form {
                 'fieldHeight' => '0',
                 'options' => array (
                     'ng-model' => 'value[$index].relCondition',
-                    'ng-change' => 'save();',
+                    'ng-change' => 'updateListView();',
                 ),
                 'fieldOptions' => array (
                     'placeholder' => 'SQL Condition',

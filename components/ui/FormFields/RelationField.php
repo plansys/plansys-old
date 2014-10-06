@@ -287,6 +287,33 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
         return array('relation-field.js');
     }
 
+    public function actionDgrInit() {
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+        extract($post);
+
+        $return = array();
+        foreach ($post as $alias=>$fields) {
+            $return[$alias] = array();
+            foreach ($fields as $column=>$field) {
+                Yii::import($alias);
+                $class = array_pop(explode(".", $alias));
+                $table = $class::model()->tableName();
+
+                $ids = implode(", ", $field);
+                $sql = "select * from {$table} where {$column} IN ({$ids})";
+
+                $return[$alias][$column] = array();
+
+                $result = Yii::app()->db->createCommand($sql)->queryAll();
+                foreach ($result as $i=>$r) {
+                    $return[$alias][$column][$result[$i][$column]] = $result[$i];
+                }
+            }
+        }
+        echo json_encode($return);
+    }
+
     public function actionDgrSearch() {
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
@@ -481,12 +508,13 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
         return $list;
     }
 
-    public function actionListField($class) {
-        if ($class == '') {
+    public function actionListField() {
+        if (!@$_GET['class']) {
             echo json_encode(array());
-            return false;
             die();
         }
+
+        $class = $_GET['class'];
 
         Yii::import($class);
         $class = array_pop(explode(".", $class));
