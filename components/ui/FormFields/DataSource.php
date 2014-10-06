@@ -247,7 +247,6 @@ class DataSource extends FormField {
             }
         }
 
-
         return array('sql' => $sql, 'params' => $parsed);
     }
 
@@ -293,10 +292,14 @@ class DataSource extends FormField {
         $model = $this->model;
         foreach ($params[0] as $p) {
             if (isset($postedParams[$p])) {
-                $returnParams[$p] = $this->evaluate($postedParams[$p], true);
+                if (strpos($postedParams[$p], 'js:') !== false) {
+                    $returnParams[$p] = 'null';
+                } else {
+                    $returnParams[$p] = $this->evaluate($postedParams[$p], true);
+                }
             }
         }
-
+        
         return array(
             'sql' => trim($sql),
             'params' => $returnParams
