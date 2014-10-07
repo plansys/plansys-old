@@ -131,6 +131,9 @@ app.directive('relationField', function ($timeout, $http) {
                         if (n === false) {
                             $scope.isOpen = true;
                             watch();
+                            $timeout(function () {
+                                $el.find('.search-dropdown').focus();
+                            }, 0);
                         }
                     }, true);
                 }
@@ -139,13 +142,7 @@ app.directive('relationField', function ($timeout, $http) {
                         $scope.openedInField = true;
                         if ($el.find("li a[value='" + $scope.value + "']").length > 0) {
                             $el.find("li.hover").removeClass("hover")
-                            $el.find("li a[value='" + $scope.value + "']").focus().parent().addClass('hover');
-
-                            if ($scope.searchable) {
-                                $timeout(function () {
-                                    $el.find('.search-dropdown').focus();
-                                }, 0);
-                            }
+                            $el.find("li a[value='" + $scope.value + "']").parent().addClass('hover');
                         } else {
                             $el.find("li a").blur();
                             $el.find(".dropdown-menu").scrollTop(0);

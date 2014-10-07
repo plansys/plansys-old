@@ -1307,7 +1307,6 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 .data-grid-table .ngViewport {
     overflow-y:hidden;
     overflow-x:auto;
-    padding-bottom:20px;
 }
 
 .data-grid-table .ngViewport .ngCell:first-child {

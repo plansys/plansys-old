@@ -2790,7 +2790,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
         // up/down key navigation in multi-selections
         var charCode = evt.which || evt.keyCode;
         var isUpDownKeyPress = (charCode === 40 || charCode === 38);
-
+        
         if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.enableRowSelection) {
             if (self.lastClickedRow) {
                 var rowsArr;

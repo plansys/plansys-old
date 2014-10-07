@@ -57,10 +57,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                     var ds = $scope.$parent[$scope.datasource];
                     var dsParamName = "";
-                    for (i in ds.params) {
-                        if (ds.params[i] == $scope.name) {
-                            dsParamName = i;
-                        }
+                    if (filter.isCustom === "Yes") {
+                        dsParamName = filter.name;
+                    } else {
+                        dsParamName = 'where';
                     }
 
                     if (dsParamName != "") {
@@ -130,8 +130,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                             type: filter.filterType
                         }, dsParamName);
 
-                        ds.query(function () {
-                        })
+                        ds.query(function () {});
                     }
                 }
 

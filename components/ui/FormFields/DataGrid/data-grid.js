@@ -264,7 +264,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         // prepare gridOptions
                         evalArray($scope.gridOptions);
                         $scope.gridOptions.data = 'data';
-                        $scope.gridOptions.plugins = [new ngGridFlexibleHeightPlugin(), new anchorLastColumn()];
+                        $scope.gridOptions.plugins = [new ngGridFlexibleHeightPlugin()];
                         $scope.gridOptions.headerRowHeight = 28;
                         $scope.gridOptions.rowHeight = 28;
                         $scope.gridOptions.multiSelect = $scope.gridOptions.multiSelect || false;
@@ -581,13 +581,14 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
                                                 try {
                                                     var model = data[col.model][col.idField][row[col.name]];
-                                                } catch(e) {}
+                                                } catch (e) {
+                                                }
 
                                                 if (typeof model != "undefined") {
                                                     row[col.name + "_label"] = model[col.labelField];
                                                 }
                                             }
-                                            
+
                                             if (typeof callback == "function") {
                                                 callback();
                                             }
@@ -602,8 +603,16 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     $scope.loaded = true;
                                 });
 
-                                $scope.$on('ngGridEventSorted', function (evt) {
-                                    loadRelation();
+
+                                var timeout = null;
+                                $scope.$watch('data', function () {
+                                    if (timeout !== null) {
+                                        clearTimeout(timeout);
+                                    }
+
+                                    timeout = setTimeout(function () {
+                                        loadRelation();
+                                    }, 100);
                                 });
                             }
                         }, 100);

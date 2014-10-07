@@ -470,7 +470,13 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
 
         $condition = $this->generateCondition($search, $params);
         $limit = ($search == '' ? 'limit 30' : 'limit 100');
+
         $sql = "select t.* from {$table} t {$condition['sql']} {$limit}";
+
+        if ($this->value != '') {
+            $sql = '(select t.* from ' . $table . ' t WHERE t.' . $this->idField. ' = :rl_current_value) UNION (' . $sql . ')  ';
+            $condition['params'][':rl_current_value'] = $this->value;
+        }
 
         $rawlist = Yii::app()->db->createCommand($sql)->queryAll(true, $condition['params']);
 

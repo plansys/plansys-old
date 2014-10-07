@@ -16,10 +16,10 @@
         <div class="clearfix"></div>
         <?php if ($this->showSectionTab == "Yes"): ?>
             <div class="action-tab" >
-                <a href="#<?= strtolower($this->firstTabName)?>" top="0" class="active"><?= $this->firstTabName ?></a>
+                <a href="#<?= strtolower(preg_replace('/[^\da-z]/i', '_', $this->firstTabName))?>" top="0" class="active"><?= $this->firstTabName ?></a>
                 <div class="clearfix"></div>
             </div>
         <?php endif; ?>
     </div>
 </div>
-<div id="general"></div>
+<div id="<?= strtolower(preg_replace('/[^\da-z]/i', '_', $this->firstTabName))?>"></div>

@@ -97,7 +97,7 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                     if ($('.data-grid-dropdown li.hover').length == 0 || $scope.escaped) {
                         $(".data-grid-dropdown").remove();
                         $(document).off(".dataGridAutocomplete");
-
+                        
                         $timeout(function () {
                             $scope.select($scope.original.id, $scope.original.label);
                             $scope.refocus();
@@ -151,7 +151,7 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                     var dd = '<ul ng-model="search" class="data-grid-dropdown dropdown-menu" style="width:' + width + 'px;top:' + offset.top + 'px;left:' + offset.left + 'px">';
                     dd += '<li ng-if="match.length > 0 " ng-repeat="item in match" class="dropdown-item" text="{{item.text}}" val="{{item.val}}" ng-class="{hover:$index==idx}">';
                     dd += '<a href="#" ng-bind-html="item.html"></a></li>';
-                    dd += '<div ng-if="match.length == 0"><center style="color:#999;font-size:12px;">&mdash; {{ loading ? "Loading" : "Not Found" }} &mdash;</center></div>';
+                    dd += '<div ng-if="match.length == 0"><center style="color:#999;font-size:12px;" ng-cloak>&mdash; {{ loading ? "Loading" : "Not Found" }} &mdash;</center></div>';
                     dd += '</ul>';
 
                     $(dd).appendTo('body');
@@ -165,6 +165,7 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                         });
                         $('.data-grid-dropdown').on('mouseover', 'li', function () {
                             $('.data-grid-dropdown li.hover').removeClass('hover');
+                            $scope.escaped = false;
                             $(this).addClass('hover');
                         });
                         $('.data-grid-dropdown').on('click', 'li', function () {
