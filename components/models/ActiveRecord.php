@@ -39,7 +39,7 @@ class ActiveRecord extends CActiveRecord {
                                 $foreignKey = $rel->foreignKey;
                                 if (!is_null($this->$foreignKey) && $this->$foreignKey != '') {
                                     $sql = "select * from {$table} where id = {$this->$foreignKey}";
-									
+
                                     $query = Yii::app()->db->createCommand($sql)->queryRow();
                                     $this->__relations[$k] = $query;
                                 } else {
@@ -98,15 +98,14 @@ class ActiveRecord extends CActiveRecord {
                                 if (is_array($j)) {
                                     unset($attr[$i]);
                                 }
-                            }                        
-                        break;
+                            }
+                            break;
                     }
 
                     if (is_object($relArr)) {
                         $relArr->setAttributes($attr, false, false);
                     }
                     $this->__relations[$k] = $attr;
-
                 } elseif (is_array($values[$k])) {
                     if (Helper::is_assoc($values[$k])) {
                         $attr = $values[$k];
@@ -119,7 +118,7 @@ class ActiveRecord extends CActiveRecord {
                                         unset($attr[$i]);
                                     }
                                 }
-                            break;
+                                break;
                         }
 
                         if (is_object($relArr)) {
@@ -132,8 +131,9 @@ class ActiveRecord extends CActiveRecord {
                                 if (isset($v['id']) && $j->id == $v['id']) {
                                     $attr = $j->attributes;
                                     foreach ($attr as $x => $y) {
-										if (!isset($v[$x])) continue;
-									
+                                        if (!isset($v[$x]))
+                                            continue;
+
                                         if (is_array($y) && is_string($v[$x])) {
                                             $attr[$x] = json_decode($v[$x], true);
                                         } else {
@@ -290,8 +290,10 @@ class ActiveRecord extends CActiveRecord {
                                 }
                             }
                             $new = ActiveRecord::batch($rel->className, $new, $old);
-                            foreach ($new as $k=>$n) {
-                                $originalNew[$k]['id'] = $n['id'];
+
+
+                            foreach ($new as $key => $n) {
+                                $originalNew[$key]['id'] = $n['id'];
                             }
                             $new = $originalNew;
                         }
@@ -377,11 +379,11 @@ class ActiveRecord extends CActiveRecord {
         if (count($updateArr) > 0) {
             ActiveRecord::batchUpdate($model, $updateArr);
         }
-        
+
         if ($delete && count($deleteArr) > 0) {
             ActiveRecord::batchDelete($model, $deleteArr);
         }
-        
+
         return array_merge($insertArr, $updateArr);
     }
 
@@ -431,10 +433,10 @@ class ActiveRecord extends CActiveRecord {
             $command->execute();
         }
     }
-    
+
     public static function listData($idField, $valueField, $condition = '') {
         $class = get_called_class();
-        return CHtml::listData($class::model()->findAll(), $idField,$valueField);
+        return CHtml::listData($class::model()->findAll(), $idField, $valueField);
     }
 
     public static function batchInsert($model, &$data) {
@@ -445,9 +447,9 @@ class ActiveRecord extends CActiveRecord {
         $builder = Yii::app()->db->schema->commandBuilder;
         $command = $builder->createMultipleInsertCommand($table, $data);
         $command->execute();
-        
+
         $id = Yii::app()->db->getLastInsertID();
-        foreach($data as &$d){
+        foreach ($data as &$d) {
             $d['id'] = $id;
             $id++;
         }
@@ -489,7 +491,7 @@ class ActiveRecord extends CActiveRecord {
             'type' => 'ColumnField',
             'column1' => $column1,
             'column2' => $column2
-            )
+                )
         ;
         return $return;
     }
