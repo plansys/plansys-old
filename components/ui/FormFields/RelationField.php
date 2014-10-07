@@ -301,6 +301,10 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
                 $table = $class::model()->tableName();
 
                 if (count($field) > 0) {
+                    foreach ($field as $k => $i) {
+                        $field[$k] = (is_string($i) ? '"' . $i . '"' : $i);
+                    }
+
                     $ids = implode(", ", $field);
                     $sql = "select * from {$table} where {$column} IN ({$ids})";
 
@@ -341,7 +345,6 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
         foreach ($mf as $k => $v) {
             $params['model.' . $k] = $v;
         }
-
 
         echo json_encode($this->query(@$s, $params));
     }

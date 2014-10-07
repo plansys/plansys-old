@@ -419,6 +419,11 @@ class ActiveRecord extends CActiveRecord {
             $command->execute();
         }
     }
+    
+    public static function listData($idField, $valueField, $condition = '') {
+        $class = get_called_class();
+        return CHtml::listData($class::model()->findAll(), $idField,$valueField);
+    }
 
     public static function batchInsert($model, &$data) {
         if (!is_array($data) || count($data) == 0)

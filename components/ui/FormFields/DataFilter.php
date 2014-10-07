@@ -262,14 +262,17 @@ class DataFilter extends FormField {
     }
 
     public static function generateParams($paramName, $params, $template = '') {
-
+        
         $sql = array();
         $flatParams = array();
 
+        $paramName = preg_replace('/[^\da-z]/i', '_', $paramName);
+        
         if (is_array($params) && count($params) > 0) {
-
             foreach ($params as $column => $filter) {
+                
                 $param = DataFilter::buildSingleParam($paramName, $column, $filter);
+                
                 $sql[] = $param['sql'];
                 if (is_array($param['param'])) {
                     foreach ($param['param'] as $key => $value) {
@@ -293,13 +296,11 @@ class DataFilter extends FormField {
                 $query = "where " . $query;
             }
         }
-        
 
         $template = array(
             'sql' => $query,
             'params' => $flatParams
         );
-
 
         return $template;
     }
