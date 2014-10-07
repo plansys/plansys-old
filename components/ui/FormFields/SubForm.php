@@ -86,8 +86,10 @@ class SubForm extends FormField {
         $this->name = $name;
         $this->subForm = $class;
         $this->inlineJS = $js;
-
+        
+        
         ## render
+        Yii::import($class);
         $fb = FormBuilder::load($this->subFormClass);
 
         $html = '<div ng-controller="' . $this->ctrlName . 'Controller">';
@@ -119,7 +121,9 @@ class SubForm extends FormField {
         if ($this->subFormClass == get_class($this)) {
             return '<center><i class="fa fa-warning"></i> Error Rendering SubForm: Subform can not be the same as its parent</center>';
         } else {
-            $html = '<div ' . $this->expandAttributes($this->options) . ' ng-include="\'' . $this->renderUrl . '\'"></div>';
+            $attrs = is_array($this->options) ? $this->expandAttributes($this->options) : '';
+            
+            $html = '<div ' . $attrs . ' ng-include="\'' . $this->renderUrl . '\'"></div>';
             return $html;
         }
     }

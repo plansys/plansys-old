@@ -77,7 +77,6 @@ class ActiveRecord extends CActiveRecord {
         }
 
 
-
         foreach ($this->__relations as $k => $r) {
 
             if (isset($values[$k])) {
@@ -91,23 +90,36 @@ class ActiveRecord extends CActiveRecord {
                     if (!is_array($attr)) {
                         $attr = array();
                     }
-                    foreach ($attr as $i => $j) {
-                        if (is_array($j)) {
-                            unset($attr[$i]);
-                        }
+
+                    switch (get_class($rel)) {
+                        case 'CHasOneRelation':
+                        case 'CBelongsToRelation':
+                            foreach ($attr as $i => $j) {
+                                if (is_array($j)) {
+                                    unset($attr[$i]);
+                                }
+                            }                        
+                        break;
                     }
+
                     if (is_object($relArr)) {
                         $relArr->setAttributes($attr, false, false);
                     }
                     $this->__relations[$k] = $attr;
+
                 } elseif (is_array($values[$k])) {
                     if (Helper::is_assoc($values[$k])) {
                         $attr = $values[$k];
 
-                        foreach ($attr as $i => $j) {
-                            if (is_array($j)) {
-                                unset($attr[$i]);
-                            }
+                        switch (get_class($rel)) {
+                            case 'CHasOneRelation':
+                            case 'CBelongsToRelation':
+                                foreach ($attr as $i => $j) {
+                                    if (is_array($j)) {
+                                        unset($attr[$i]);
+                                    }
+                                }
+                            break;
                         }
 
                         if (is_object($relArr)) {

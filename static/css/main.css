@@ -1967,6 +1967,7 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
 }
 
 .action-bar-container {
+    z-index: 3;
     position:fixed;
     width:inherit;
     overflow-x:hidden;
