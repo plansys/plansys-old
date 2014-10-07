@@ -1497,6 +1497,8 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     min-height:30px;
     z-index:99;
     background:white;
+    max-height:75px;
+    overflow-y:auto;
     margin:0px;
     border:0px;
     border-radius:0px;

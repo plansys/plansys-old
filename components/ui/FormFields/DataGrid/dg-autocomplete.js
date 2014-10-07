@@ -36,7 +36,14 @@ app.directive('dgAutocomplete', function ($timeout, $compile, $http, $compile) {
                 } catch (e) {
                     $scope.list = [];
                 }
-
+                
+                if (typeof $scope.list == "object") {
+                    $scope.list = $.map($scope.list, function (value, index) {
+                        return [value];
+                    });
+                }
+                
+                
                 $scope.idx = 0;
 
                 $scope.select = function (val) {
@@ -48,6 +55,7 @@ app.directive('dgAutocomplete', function ($timeout, $compile, $http, $compile) {
                     var search = Object.getProperty($scope.$parent, attrs.ngModel);
                     fuzzyMatch.prep(search);
                     $scope.match = [];
+
                     $scope.list.filter(function (item) {
                         if (fuzzyMatch.match(item)) {
                             if (typeof item == "string") {
