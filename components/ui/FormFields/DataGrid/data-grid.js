@@ -338,6 +338,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         }
 
 
+
                         // pagingOptions
                         if ($scope.gridOptions['enablePaging']) {
                             $scope.gridOptions.pagingOptions = {
@@ -453,6 +454,11 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             $scope.gridOptions['afterSelectionChange'] = $scope.excelModeSelChange;
                             $scope.lastFocus = null;
 
+                            var emec = [];
+                            if ($scope.gridOptions['excelModeExcludeColumns']) {
+                                emec = $scope.$eval($scope.gridOptions['excelModeExcludeColumns']);
+                            }
+
 
                             var excludeColumns = function (data) {
                                 var except = [];
@@ -468,6 +474,10 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     if (cols.indexOf(i) < 0) {
                                         except.push(i);
                                     }
+                                }
+
+                                for (i in emec) {
+                                    except.push(emec[i]);
                                 }
 
                                 return except;
@@ -486,6 +496,8 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     var idx = 0;
                                     for (i in $scope.data) {
                                         var row = $scope.data[i];
+
+                                        console.log($scope.isNotEmpty(row, except), row, except);
                                         if ($scope.isNotEmpty(row, except)) {
                                             newData.push(row);
                                         }
@@ -566,7 +578,11 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
                                             for (colIdx in dgrCols) {
                                                 var col = dgrCols[colIdx];
-                                                var model = data[col.model][col.idField][row[col.name]];
+
+                                                try {
+                                                    var model = data[col.model][col.idField][row[col.name]];
+                                                } catch(e) {}
+
                                                 if (typeof model != "undefined") {
                                                     row[col.name + "_label"] = model[col.labelField];
                                                 }

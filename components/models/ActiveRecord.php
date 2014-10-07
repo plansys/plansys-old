@@ -77,7 +77,6 @@ class ActiveRecord extends CActiveRecord {
         }
 
 
-
         foreach ($this->__relations as $k => $r) {
 
             if (isset($values[$k])) {
@@ -91,23 +90,36 @@ class ActiveRecord extends CActiveRecord {
                     if (!is_array($attr)) {
                         $attr = array();
                     }
-                    foreach ($attr as $i => $j) {
-                        if (is_array($j)) {
-                            unset($attr[$i]);
-                        }
+
+                    switch (get_class($rel)) {
+                        case 'CHasOneRelation':
+                        case 'CBelongsToRelation':
+                            foreach ($attr as $i => $j) {
+                                if (is_array($j)) {
+                                    unset($attr[$i]);
+                                }
+                            }                        
+                        break;
                     }
+
                     if (is_object($relArr)) {
                         $relArr->setAttributes($attr, false, false);
                     }
                     $this->__relations[$k] = $attr;
+
                 } elseif (is_array($values[$k])) {
                     if (Helper::is_assoc($values[$k])) {
                         $attr = $values[$k];
 
-                        foreach ($attr as $i => $j) {
-                            if (is_array($j)) {
-                                unset($attr[$i]);
-                            }
+                        switch (get_class($rel)) {
+                            case 'CHasOneRelation':
+                            case 'CBelongsToRelation':
+                                foreach ($attr as $i => $j) {
+                                    if (is_array($j)) {
+                                        unset($attr[$i]);
+                                    }
+                                }
+                            break;
                         }
 
                         if (is_object($relArr)) {
@@ -418,6 +430,11 @@ class ActiveRecord extends CActiveRecord {
             $command = Yii::app()->db->createCommand($update);
             $command->execute();
         }
+    }
+    
+    public static function listData($idField, $valueField, $condition = '') {
+        $class = get_called_class();
+        return CHtml::listData($class::model()->findAll(), $idField,$valueField);
     }
 
     public static function batchInsert($model, &$data) {
