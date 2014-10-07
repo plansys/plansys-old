@@ -528,17 +528,17 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             }, 0);
                         }
 
-                            //load relation
+                        //load relation
                         var dgr = {};
                         var dgrCols = [];
-                        $timeout(function() {
-                            $(".dgr").each(function() {
+                        $timeout(function () {
+                            $(".dgr").each(function () {
                                 var model = $(this).attr('dgr-model');
                                 var id = $(this).attr('dgr-id');
                                 var name = $(this).attr('dgr-name');
                                 var labelField = $(this).attr('dgr-labelField');
                                 var idField = $(this).attr('dgr-idField');
-                                
+
                                 if (dgrCols.indexOf(name) < 0) {
                                     dgrCols.push({
                                         name: name,
@@ -556,29 +556,42 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 }
                             });
 
+                            if (dgrCols.length > 0) {
+                                var url = Yii.app.createUrl('/FormField/RelationField.dgrInit');
 
-                            var url = Yii.app.createUrl('/FormField/RelationField.dgrInit');
-                            $http.post(url, dgr).success(function(data) {
-                                for (rowIdx in $scope.data) {
-                                    var row = $scope.data[rowIdx];
+                                function loadRelation(callback) {
+                                    $http.post(url, dgr).success(function (data) {
+                                        for (rowIdx in $scope.data) {
+                                            var row = $scope.data[rowIdx];
 
-                                    for (colIdx in dgrCols) {
-                                        var col = dgrCols[colIdx];
-                                        var model = data[col.model][col.idField][row[col.name]];
-                                        if (typeof model != "undefined") {
-                                            row[col.name + "_label"] = model[col.labelField]; 
+                                            for (colIdx in dgrCols) {
+                                                var col = dgrCols[colIdx];
+                                                var model = data[col.model][col.idField][row[col.name]];
+                                                if (typeof model != "undefined") {
+                                                    row[col.name + "_label"] = model[col.labelField];
+                                                }
+                                            }
+                                            
+                                            if (typeof callback == "function") {
+                                                callback();
+                                            }
                                         }
-                                    }
+                                    });
+                                }
 
+                                loadRelation(function () {
                                     if (typeof $scope.onGridLoaded == 'function') {
                                         $scope.onGridLoaded($scope.gridOptions);
                                     }
                                     $scope.loaded = true;
+                                });
 
-                                }
-                            });
+                                $scope.$on('ngGridEventSorted', function (evt) {
+                                    loadRelation();
+                                });
+                            }
                         }, 100);
-                        
+
                         if (dgrCols.length == 0) {
                             if (typeof $scope.onGridLoaded == 'function') {
                                 $scope.onGridLoaded($scope.gridOptions);

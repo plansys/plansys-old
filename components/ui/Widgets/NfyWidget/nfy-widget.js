@@ -33,15 +33,15 @@ app.controller("NfyWidgetController", function ($scope, $http, $timeout, $localS
         return d;
     }
     
-    var sse = new ServerSentEvent(url);
-
-    sse.on('message', function (data) {
-        $scope.$apply(function () {
-            var data = $scope.processNfy(JSON.parse(event.data));
-            $storage.nfy.items.unshift(data);
-            nfyWidget.badge = $storage.nfy.items.length;
-        });
-        console.log(event);
-    });
+//    var sse = new ServerSentEvent(url);
+//
+//    sse.on('message', function (data) {
+//        $scope.$apply(function () {
+//            var data = $scope.processNfy(JSON.parse(event.data));
+//            $storage.nfy.items.unshift(data);
+//            nfyWidget.badge = $storage.nfy.items.length;
+//        });
+//        console.log(event);
+//    });
 
 });

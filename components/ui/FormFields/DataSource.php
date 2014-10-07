@@ -206,6 +206,7 @@ class DataSource extends FormField {
         $params = $matches[1];
         $parsed = array();
 
+
         foreach ($params as $param) {
             $template = $sql;
             if (!isset($this->params[$param])) {
@@ -263,6 +264,7 @@ class DataSource extends FormField {
 
         ## find all blocks
         preg_match_all("/\{(.*?)\}/", $sql, $blocks);
+
         foreach ($blocks[1] as $block) {
             $bracket = $this->processSQLBracket($block, $postedParams);
 
@@ -299,7 +301,8 @@ class DataSource extends FormField {
                 }
             }
         }
-        
+
+
         return array(
             'sql' => trim($sql),
             'params' => $returnParams

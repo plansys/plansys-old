@@ -79,7 +79,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                         f.operatorDropdownOpen = false;
                         f.operator = $scope.operators[f.filterType][0];
 
-
                         if (f.filterType == 'list' || f.filterType == 'check') {
                             f.list = $scope.renderFormList(f.list);
                             f.searchable = false;
@@ -118,10 +117,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     var ds = $scope.$parent[$scope.datasource];
                     var dsParamName = "";
 
-                    for (i in ds.params) {
-                        if (ds.params[i] == $scope.name) {
-                            dsParamName = i;
-                        }
+                    if (filter.isCustom === "Yes") {
+                        dsParamName = filter.name;
+                    } else {
+                        dsParamName = 'where';
                     }
 
                     if (dsParamName != "") {
@@ -299,7 +298,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     filter[from + "Open"] = true;
                 }
 
-
                 $scope.operators = JSON.parse($el.find("data[name=operators]").text());
                 $scope.filters = $scope.initFilters(JSON.parse($el.find("data[name=filters]").text()));
                 $scope.datasource = $el.find("data[name=datasource]").text();
@@ -314,6 +312,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     check: 'filter_dropdown',
                     date: 'filter_date'
                 }
+                $scope.$parent[$scope.name] = $scope;
             }
         }
     };

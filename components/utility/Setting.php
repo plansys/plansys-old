@@ -15,7 +15,7 @@ class Setting {
             'dbname' => ''
         ),
         'repo' => array(
-            'path' => 'D:\\xampp\\htdocs\\Plansys\\repo'
+            'path' => 'repo'
         ),
         'app' => array(
             'dir' => 'app'

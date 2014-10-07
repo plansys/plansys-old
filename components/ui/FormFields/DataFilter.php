@@ -293,6 +293,7 @@ class DataFilter extends FormField {
                 $query = "where " . $query;
             }
         }
+        
 
         $template = array(
             'sql' => $query,

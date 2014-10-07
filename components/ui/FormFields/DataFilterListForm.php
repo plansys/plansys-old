@@ -4,7 +4,6 @@ class DataFilterListForm extends Form {
     public function getFields() {
         return array (
             array (
-                'renderInEditor' => 'No',
                 'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
 <div class=\"label data-filter-name pull-right\"> {{value[$index].filterType}}</div>
 
@@ -14,13 +13,11 @@ class DataFilterListForm extends Form {
                 'type' => 'Text',
             ),
             array (
-                'renderInEditor' => 'No',
                 'value' => '<hr ng-show=\"value[$index].show\"
 style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'Text',
             ),
             array (
-                'renderInEditor' => 'No',
                 'value' => '<div ng-show=\\"value[$index].show\\">',
                 'type' => 'Text',
             ),
@@ -79,24 +76,37 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'TextField',
             ),
             array (
+                'label' => 'Custom ?',
+                'name' => 'isCustom',
+                'options' => array (
+                    'ng-model' => 'value[$index].isCustom',
+                    'ng-change' => 'updateListView()',
+                ),
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
+                ),
+                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\');',
+                'labelWidth' => '6',
+                'fieldWidth' => '6',
+                'type' => 'DropDownList',
+            ),
+            array (
                 'label' => 'List Expression',
                 'fieldname' => 'listExpr',
                 'options' => array (
                     'ng-model' => 'value[$index].listExpr',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                    'ng-if' => 'value[$index].filterType ==\'list\' || value[$index].filterType == \'check\'',
+                    'ng-if' => 'value[$index].filterType ==\\\'list\\\' || value[$index].filterType == \\\'check\\\'',
                     'style' => 'margin-bottom:8px;',
                 ),
                 'type' => 'ExpressionField',
             ),
             array (
-                'renderInEditor' => 'No',
                 'value' => '<div style=\\"margin-bottom:-3px;\\"></div>',
                 'type' => 'Text',
             ),
             array (
-                'renderInEditor' => 'No',
                 'value' => '</div>',
                 'type' => 'Text',
             ),
@@ -120,4 +130,5 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
     public $label = '';
     public $listExpr = '';
     public $filterType = 'string';
+    public $isCustom = 'No';
 }
