@@ -36,14 +36,14 @@ app.directive('dgAutocomplete', function ($timeout, $compile, $http, $compile) {
                 } catch (e) {
                     $scope.list = [];
                 }
-                
+
                 if (typeof $scope.list == "object") {
                     $scope.list = $.map($scope.list, function (value, index) {
                         return [value];
                     });
                 }
-                
-                
+
+
                 $scope.idx = 0;
 
                 $scope.select = function (val) {
@@ -92,10 +92,20 @@ app.directive('dgAutocomplete', function ($timeout, $compile, $http, $compile) {
                     }
                 }
                 $el.keydown(function (e) {
+
+                    function scroll() {
+                        $timeout(function () {
+                            var elHeight = $('.data-grid-dropdown li.hover').height();
+                            $('.data-grid-dropdown').scrollTop($scope.idx * elHeight);
+                        }, 0);
+                    }
+
                     $scope.$apply(function () {
                         switch (e.which) {
                             case 40:
                                 $scope.idx++;
+
+                                scroll();
                                 e.preventDefault();
                                 return false;
 
@@ -103,6 +113,7 @@ app.directive('dgAutocomplete', function ($timeout, $compile, $http, $compile) {
                             case 38:
                                 $scope.idx--;
 
+                                scroll();
                                 e.preventDefault();
                                 return false;
 
