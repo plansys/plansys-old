@@ -46,6 +46,8 @@ class DataSource extends FormField {
                 ),
                 'labelWidth' => '5',
                 'fieldWidth' => '6',
+                'showOther' => 'Yes',
+                'otherLabel' => '-- NONE --',
                 'type' => 'DropDownList',
             ),
             array(
@@ -54,6 +56,7 @@ class DataSource extends FormField {
                 'options' => array(
                     'ng-model' => 'active.debugSql',
                     'ng-change' => 'save()',
+                    'ng-if' => 'active.relationTo == \\\'\\\' || active.relationTo == \\\'-- NONE --\\\'',
                 ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'labelWidth' => '5',
@@ -66,6 +69,7 @@ class DataSource extends FormField {
                 'options' => array(
                     'ng-model' => 'active.fieldType',
                     'ng-change' => 'save()',
+                    'ng-if' => 'active.relationTo == \\\'\\\' || active.relationTo == \\\'-- NONE --\\\'',
                 ),
                 'list' => array(
                     'sql' => 'SQL',
@@ -81,6 +85,7 @@ class DataSource extends FormField {
                 'options' => array(
                     'ng-model' => 'active.enablePaging',
                     'ng-change' => 'save()',
+                    'ng-if' => 'active.relationTo == \\\'\\\' || active.relationTo == \\\'-- NONE --\\\'',
                 ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'labelWidth' => '5',
@@ -92,7 +97,7 @@ class DataSource extends FormField {
                 'fieldname' => 'sql',
                 'language' => 'sql',
                 'options' => array(
-                    'ng-show' => 'active.fieldType == \\\'sql\\\'',
+                    'ng-show' => 'active.fieldType == \\\'sql\\\' && (active.relationTo == \\\'\\\' || active.relationTo == \\\'-- NONE --\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
@@ -101,7 +106,7 @@ class DataSource extends FormField {
                 'label' => 'PHP Function',
                 'fieldname' => 'php',
                 'options' => array(
-                    'ng-show' => 'active.fieldType == \\\'php\\\'',
+                    'ng-show' => 'active.fieldType == \\\'php\\\' && (active.relationTo == \\\'\\\' || active.relationTo == \\\'-- NONE --\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
@@ -110,7 +115,7 @@ class DataSource extends FormField {
                 'label' => 'Total Item - PHP Function',
                 'fieldname' => 'pagingPHP',
                 'options' => array(
-                    'ng-show' => 'active.fieldType == \\\'php\\\' && active.enablePaging == \\\'Yes\\\'',
+                    'ng-show' => 'active.fieldType == \\\'php\\\' && active.enablePaging == \\\'Yes\\\' && (active.relationTo == \\\'\\\' || active.relationTo == \\\'-- NONE --\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
@@ -120,7 +125,7 @@ class DataSource extends FormField {
                 'fieldname' => 'pagingSQL',
                 'language' => 'sql',
                 'options' => array(
-                    'ng-show' => 'active.fieldType == \\\'sql\\\' && active.enablePaging == \\\'Yes\\\'',
+                    'ng-show' => 'active.fieldType == \\\'sql\\\' && active.enablePaging == \\\'Yes\\\' && (active.relationTo == \\\'\\\' || active.relationTo == \\\'-- NONE --\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
@@ -129,6 +134,9 @@ class DataSource extends FormField {
                 'label' => 'Parameters',
                 'fieldname' => 'params',
                 'show' => 'Show',
+                'options' => array(
+                    'ng-if' => 'active.relationTo == \\\'\\\' || active.relationTo == \\\'-- NONE --\\\'',
+                ),
                 'type' => 'KeyValueGrid',
             ),
         );
@@ -180,17 +188,28 @@ class DataSource extends FormField {
 
         if (class_exists($class)) {
             $fb = FormBuilder::load($class);
+            $fb->model = $class::model()->findByPk($post['model_id']);
+
             $field = $fb->findField(array('name' => $post['name']));
             $params = @$post['params'];
 
             $this->attributes = $field;
             $this->builder = $fb;
 
-            if ($this->fieldType == 'sql') {
-                $data = $this->query($params);
+            if ($this->relationTo == '' || $this->relationTo == '-- NONE --') {
+                ## without relatedTo
+
+                if ($this->fieldType == 'sql') {
+                    $data = $this->query($this->params);
+                } else {
+                    $data = $this->execute($this->params);
+                }
             } else {
-                $data = $this->execute($params);
+                ## with relatedTo
+
+                $data = $this->getRelated($this->params);
             }
+
 
             echo json_encode(array(
                 'data' => $data['data'],
@@ -344,7 +363,6 @@ class DataSource extends FormField {
 
         ## execute SQL
         $this->command = $db->createCommand($template['sql']);
-
         $data = $this->command->queryAll(true, $template['params']);
 
         if ($this->enablePaging == 'Yes') {
@@ -372,11 +390,39 @@ class DataSource extends FormField {
         );
     }
 
+    public function getRelated($params = array()) {
+
+        $rawData = ActiveRecord::toArray($this->model->{$this->relationTo});
+        $count = count($rawData);
+
+        $data = array(
+            'data' => $rawData,
+            'debug' => array(
+                'count' => $count,
+                'params' => array(
+                    'paging',
+                    'where',
+                    'order'
+                ),
+                'debug' => ''
+            )
+        );
+        return $data;
+    }
+
     public function processQuery() {
-        if ($this->fieldType == 'sql') {
-            $data = $this->query($this->params);
+        if ($this->relationTo == '' || $this->relationTo == '-- NONE --') {
+            ## without relatedTo
+            
+            if ($this->fieldType == 'sql') {
+                $data = $this->query($this->params);
+            } else {
+                $data = $this->execute($this->params);
+            }
         } else {
-            $data = $this->execute($this->params);
+            ## with relatedTo
+            
+            $data = $this->getRelated();
         }
 
         $this->data = array(

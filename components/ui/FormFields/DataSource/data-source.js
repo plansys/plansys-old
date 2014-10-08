@@ -48,6 +48,7 @@ app.directive('psDataSource', function ($timeout, $http) {
 
                 $scope.query = function (f) {
                     $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
+                        model_id: $scope.model.id,
                         name: $scope.name,
                         class: $scope.class,
                         params: $.extend(angular.copy($scope.params), $scope.sqlParams)
