@@ -16,6 +16,42 @@ class ActiveRecord extends CActiveRecord {
     private $__relations = array();
     private $__oldRelations = array();
     private $__isRelationLoaded = false;
+    private $defaultPageSize = 25;
+    private $pageSize = array();
+    
+    public function __set($name, $value) {
+        $checkStr = Helper::isLastString($name, 'PageSize');
+        if ($checkStr == true) {
+            $this->pageSize[$name] = $value;
+        }else{
+            parent::__set($name, $value);
+        }
+    }
+    
+    public function __get($name){
+        if(Helper::isLastString($name, 'PageSize') == false){
+            if(Helper::isLastString($name, 'Count') == false){
+                if(isset($this->getMetaData()->relations[$name])){
+                    $pageSize = $name.'PageSize';
+                    if(isset($this->pageSize[$pageSize])){
+                        $param = array('limit' => $this->pageSize[$pageSize]);
+                    }else{
+                        $param = array('limit' => $this->defaultPageSize); 
+                    }
+                    return $this->getRelated($name, false, $param);
+                }
+                else
+                    return parent::__get($name);
+            }
+            else{
+                $rel = substr_replace($name, '', -5);
+                if (!$this->__isRelationLoaded) {
+                    $this->loadRelations();
+                }
+                return count($this->__relations[$rel]);
+            }
+        }
+    }
 
     public static function toArray($models = array()) {
         $result = array();
