@@ -14,42 +14,89 @@ class ActiveRecord extends CActiveRecord {
     }
 
     private $__relations = array();
+    private $__relationsObj = array();
     private $__oldRelations = array();
     private $__isRelationLoaded = false;
-    private $defaultPageSize = 25;
-    private $pageSize = array();
-    
-    public function __set($name, $value) {
-        $checkStr = Helper::isLastString($name, 'PageSize');
-        if ($checkStr == true) {
-            $this->pageSize[$name] = $value;
-        }else{
-            parent::__set($name, $value);
+    private $__defaultPageSize = 25;
+    private $__pageSize = array();
+    private $__page = array();
+
+    private function initRelation() {
+        $static = !(isset($this) && get_class($this) == __CLASS__);
+        if (!$static && !$this->__isRelationLoaded) {
+            $this->loadRelations();
         }
     }
-    
-    public function __get($name){
-        if(Helper::isLastString($name, 'PageSize') == false){
-            if(Helper::isLastString($name, 'Count') == false){
-                if(isset($this->getMetaData()->relations[$name])){
-                    $pageSize = $name.'PageSize';
-                    if(isset($this->pageSize[$pageSize])){
-                        $param = array('limit' => $this->pageSize[$pageSize]);
-                    }else{
-                        $param = array('limit' => $this->defaultPageSize); 
+
+    public function __call($name, $args) {
+        $this->initRelation();
+
+        if (isset($this->__relationsObj[$name])) {
+            $this->__page[$name] = $args[0];
+            if (count($args) == 2) {
+                $this->__pageSize[$name] = $args[1];
+                var_dump($args[1], $name);
+            }
+            $this->loadRelations($name);
+            return $this->__relationsObj[$name];
+        } else {
+            return parent::__call($name, $args);
+        }
+    }
+
+    public function __set($name, $value) {
+        $this->initRelation();
+
+        switch (true) {
+            case $checkStr = Helper::isLastString($name, 'PageSize'):
+                $name = substr_replace($name, '', -8);
+                $this->__pageSize[$name] = $value;
+                $this->loadRelations($name);
+                break;
+            default:
+                parent::__set($name, $value);
+                break;
+        }
+    }
+
+    public function __get($name) {
+        $this->initRelation();
+
+        switch (true) {
+            case Helper::isLastString($name, 'Count'):
+                $name = substr_replace($name, '', -5);
+                if (isset($this->__relations[$name])) {
+                    $rel = $this->__relations[$name];
+                    if (count($rel) == 0) {
+                        return 0;
+                    } else if (Helper::is_assoc($rel)) {
+                        return 1;
+                    } else {
+                        $c = $this->getRelated($name, true, array(
+                            'select' => 'count(1) as id',
+                        ));
+                        return $c[0]->id;
                     }
-                    return $this->getRelated($name, false, $param);
                 }
-                else
-                    return parent::__get($name);
-            }
-            else{
-                $rel = substr_replace($name, '', -5);
-                if (!$this->__isRelationLoaded) {
-                    $this->loadRelations();
+                break;
+            case Helper::isLastString($name, 'PageSize'):
+                $name = substr_replace($name, '', -8);
+                if (isset($this->__pageSize[$name])) {
+                    return $this->__pageSize[$name];
+                } else {
+                    return $this->__defaultPageSize;
                 }
-                return count($this->__relations[$rel]);
-            }
+                break;
+            case Helper::isLastString($name, 'CurrentPage'):
+                $name = substr_replace($name, '', -11);
+                return @$this->__page[$name] ? $this->__page[$name] : 1;
+                break;
+            case isset($this->__relationsObj[$name]):
+                return $this->__relationsObj[$name];
+                break;
+            default:
+                return parent::__get($name);
+                break;
         }
     }
 
@@ -61,9 +108,14 @@ class ActiveRecord extends CActiveRecord {
         return $result;
     }
 
-    public function loadRelations() {
+    public function loadRelations($name = null) {
+
         foreach ($this->getMetaData()->relations as $k => $rel) {
-            if (!isset($this->__relations[$k])) {
+            if (!is_null($name) && $k != $name) {
+                continue;
+            }
+
+            if (!isset($this->__relations[$k]) || !is_null($name)) {
                 if (@class_exists($rel->className)) {
                     switch (get_class($rel)) {
                         case 'CHasOneRelation':
@@ -73,23 +125,25 @@ class ActiveRecord extends CActiveRecord {
                                 $class = $rel->className;
                                 $table = $class::tableName();
                                 $foreignKey = $rel->foreignKey;
-                                if (!is_null($this->$foreignKey) && $this->$foreignKey != '') {
-                                    $sql = "select * from {$table} where id = {$this->$foreignKey}";
 
-                                    $query = Yii::app()->db->createCommand($sql)->queryRow();
-                                    $this->__relations[$k] = $query;
-                                } else {
-                                    $this->__relations[$k] = array();
-                                }
+
+                                $this->__relationsObj[$k] = $this->getRelated($k, true);
+                                $this->__relations[$k] = $this->__relationsObj[$k]->attributes;
                             }
                             break;
                         case 'CManyManyRelation':
                         case 'CHasManyRelation':
                             //without through
                             if (is_string($rel->foreignKey)) {
-                                $this->__relations[$k] = $this->getRelated($k);
-                                if (is_array($this->__relations[$k])) {
-                                    foreach ($this->__relations[$k] as $i => $j) {
+                                $page = @$this->__page[$k] ? $this->__page[$k] : 1;
+                                $pageSize = $this->{$k . 'PageSize'};
+                                $start = ($page - 1) * $pageSize;
+                                $this->__relationsObj[$k] = $this->getRelated($k, true, array(
+                                    'limit' => "{$pageSize} $start"
+                                ));
+
+                                if (is_array($this->__relationsObj[$k])) {
+                                    foreach ($this->__relationsObj[$k] as $i => $j) {
                                         $this->__relations[$k][$i] = $j->attributes;
                                     }
                                 }
@@ -197,9 +251,6 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function getAttributes($names = true, $withRelation = true) {
-        if ($withRelation && !$this->__isRelationLoaded) {
-            $this->loadRelations();
-        }
         $attributes = parent::getAttributes($names);
         $attributes = array_merge($this->attributeProperties, $attributes);
         if ($withRelation) {
@@ -212,9 +263,6 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function getAttributesRelated($names = true) {
-        if (!$this->__isRelationLoaded) {
-            $this->loadRelations();
-        }
         $attributes = parent::getAttributes($names);
         $attributes = array_merge($attributes, $this->__relations);
         $attributes = array_merge($this->attributeProperties, $attributes);
@@ -234,9 +282,6 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function getAttributesList($names = true) {
-        if (!$this->__isRelationLoaded) {
-            $this->loadRelations();
-        }
         $fields = array();
         $props = array();
         $relations = array();
@@ -527,7 +572,7 @@ class ActiveRecord extends CActiveRecord {
             'type' => 'ColumnField',
             'column1' => $column1,
             'column2' => $column2
-                )
+            )
         ;
         return $return;
     }
