@@ -20,9 +20,13 @@ class ActiveRecord extends CActiveRecord {
     private $__defaultPageSize = 25;
     private $__pageSize = array();
     private $__page = array();
+    private $__relInsert = array();
+    private $__relUpdate = array();
+    private $__relDelete = array();
 
     private function initRelation() {
-        $static = !(isset($this) && get_class($this) == __CLASS__);
+        $static = !(isset($this) && get_class($this) == get_called_class());
+
         if (!$static && !$this->__isRelationLoaded) {
             $this->loadRelations();
         }
@@ -35,23 +39,36 @@ class ActiveRecord extends CActiveRecord {
             $this->__page[$name] = $args[0];
             if (count($args) == 2) {
                 $this->__pageSize[$name] = $args[1];
-                var_dump($args[1], $name);
             }
-            $this->loadRelations($name);
-            return $this->__relationsObj[$name];
+            return $this->$name;
         } else {
             return parent::__call($name, $args);
         }
     }
 
     public function __set($name, $value) {
-        $this->initRelation();
-
         switch (true) {
-            case $checkStr = Helper::isLastString($name, 'PageSize'):
+            case Helper::isLastString($name, 'PageSize'):
                 $name = substr_replace($name, '', -8);
                 $this->__pageSize[$name] = $value;
-                $this->loadRelations($name);
+                break;
+            case Helper::isLastString($name, 'Insert'):
+                $name = substr_replace($name, '', -6);
+                if (isset($this->__relations[$name])) {
+                    $this->__relInsert[$name] = $value;
+                }
+                break;
+            case Helper::isLastString($name, 'Update'):
+                $name = substr_replace($name, '', -6);
+                if (isset($this->__relations[$name])) {
+                    $this->__relUpdate[$name] = $value;
+                }
+                break;
+            case Helper::isLastString($name, 'Delete'):
+                $name = substr_replace($name, '', -6);
+                if (isset($this->__relations[$name])) {
+                    $this->__relDelete[$name] = $value;
+                }
                 break;
             default:
                 parent::__set($name, $value);
@@ -60,11 +77,10 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function __get($name) {
-        $this->initRelation();
-
         switch (true) {
             case Helper::isLastString($name, 'Count'):
                 $name = substr_replace($name, '', -5);
+                $this->initRelation();
                 if (isset($this->__relations[$name])) {
                     $rel = $this->__relations[$name];
                     if (count($rel) == 0) {
@@ -91,8 +107,21 @@ class ActiveRecord extends CActiveRecord {
                 $name = substr_replace($name, '', -11);
                 return @$this->__page[$name] ? $this->__page[$name] : 1;
                 break;
-            case isset($this->__relationsObj[$name]):
-                return $this->__relationsObj[$name];
+            case Helper::isLastString($name, 'Insert'):
+                $name = substr_replace($name, '', -6);
+                return @$this->__relInsert[$name];
+                break;
+            case Helper::isLastString($name, 'Update'):
+                $name = substr_replace($name, '', -6);
+                return @$this->__relUpdate[$name];
+                break;
+            case Helper::isLastString($name, 'Delete'):
+                $name = substr_replace($name, '', -6);
+                return @$this->__relDelete[$name];
+                break;
+            case isset($this->getMetaData()->relations[$name]):
+                $this->loadRelations($name);
+                return @$this->__relationsObj[$name];
                 break;
             default:
                 return parent::__get($name);
@@ -109,7 +138,6 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function loadRelations($name = null) {
-
         foreach ($this->getMetaData()->relations as $k => $rel) {
             if (!is_null($name) && $k != $name) {
                 continue;
@@ -126,9 +154,10 @@ class ActiveRecord extends CActiveRecord {
                                 $table = $class::tableName();
                                 $foreignKey = $rel->foreignKey;
 
-
                                 $this->__relationsObj[$k] = $this->getRelated($k, true);
-                                $this->__relations[$k] = $this->__relationsObj[$k]->attributes;
+                                if (isset($this->__relationsObj[$k])) {
+                                    $this->__relations[$k] = $this->__relationsObj[$k]->attributes;
+                                }
                             }
                             break;
                         case 'CManyManyRelation':
@@ -138,8 +167,10 @@ class ActiveRecord extends CActiveRecord {
                                 $page = @$this->__page[$k] ? $this->__page[$k] : 1;
                                 $pageSize = $this->{$k . 'PageSize'};
                                 $start = ($page - 1) * $pageSize;
+
                                 $this->__relationsObj[$k] = $this->getRelated($k, true, array(
-                                    'limit' => "{$pageSize} $start"
+                                    'limit' => $pageSize,
+                                    'offset' => $start
                                 ));
 
                                 if (is_array($this->__relationsObj[$k])) {
