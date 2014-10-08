@@ -129,12 +129,14 @@ class DevRoleForm extends Role {
             array (
                 'name' => 'dataSource1',
                 'sql' => 'select u.* from p_user u inner join p_user_role p on u.id = p.user_id and p.role_id = :id {[where]} {[order]} {[paging]}',
+                'postData' => 'Yes',
                 'params' => array (
                     ':id' => '$model->id',
                     'where' => 'dataFilter1',
                     'order' => 'dataGrid1',
                     'paging' => 'dataGrid1',
                 ),
+                'relationTo' => 'userRoles',
                 'type' => 'DataSource',
             ),
             array (

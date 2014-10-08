@@ -12,11 +12,11 @@ class ActiveRecord extends CActiveRecord {
             ),
         );
     }
-
+    
     private $__relations = array();
     private $__oldRelations = array();
     private $__isRelationLoaded = false;
-
+    
     public static function toArray($models = array()) {
         $result = array();
         foreach ($models as $k => $m) {

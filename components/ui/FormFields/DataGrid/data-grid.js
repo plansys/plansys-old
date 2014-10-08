@@ -347,6 +347,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 totalServerItems: $scope.datasource.totalItems,
                                 currentPage: 1
                             };
+                            var timeout = null;
                             $scope.$watch('gridOptions.pagingOptions', function (paging, oldpaging) {
                                 if (paging != oldpaging) {
                                     var ds = $scope.datasource;
@@ -361,10 +362,16 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     }
 
                                     if (typeof ds != "undefined") {
-                                        ds.updateParam('currentPage', paging.currentPage, 'paging');
-                                        ds.updateParam('pageSize', paging.pageSize, 'paging');
-                                        ds.updateParam('totalServerItems', paging.totalServerItems, 'paging');
-                                        ds.query();
+
+                                        if (timeout != null) {
+                                            clearTimeout(timeout);
+                                        }
+                                        timeout = setTimeout(function () {
+                                            ds.updateParam('currentPage', paging.currentPage, 'paging');
+                                            ds.updateParam('pageSize', paging.pageSize, 'paging');
+                                            ds.updateParam('totalServerItems', paging.totalServerItems, 'paging');
+                                            ds.query();
+                                        }, 100);
                                     }
                                 }
                             }, true);
