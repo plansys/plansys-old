@@ -62,8 +62,8 @@ class ActiveRecord extends CActiveRecord {
                 break;
             case Helper::isLastString($name, 'Update'):
                 $this->initRelation();
-
                 $name = substr_replace($name, '', -6);
+
                 if (isset($this->__relations[$name])) {
                     $this->__relUpdate[$name] = $value;
                 }
@@ -180,6 +180,8 @@ class ActiveRecord extends CActiveRecord {
                                 ));
 
                                 if (is_array($this->__relationsObj[$k])) {
+                                    $this->__relations[$k] = array();
+
                                     foreach ($this->__relationsObj[$k] as $i => $j) {
                                         $this->__relations[$k][$i] = $j->attributes;
                                     }
@@ -202,50 +204,56 @@ class ActiveRecord extends CActiveRecord {
         $this->initRelation();
 
         foreach ($this->__relations as $k => $r) {
-            switch (true) {
-                case (isset($values[$k])):
-                    $rel = $this->getMetaData()->relations[$k];
-                    $this->__relations[$k] = $values[$k];
-                    $relArr = $this->$k;
+            if (isset($values[$k])) {
+                $rel = $this->getMetaData()->relations[$k];
+                $this->__relations[$k] = $values[$k];
 
-                    if (is_string($values[$k]) || (is_array($values[$k]))) {
-                        if (is_string($values[$k])) {
-                            $attr = json_decode($values[$k], true);
-                            if (!is_array($attr)) {
-                                $attr = array();
-                            }
-                        } else {
-                            $attr = $values[$k];
+                if (is_string($values[$k]) || (is_array($values[$k]))) {
+                    if (is_string($values[$k])) {
+                        $attr = json_decode($values[$k], true);
+                        if (!is_array($attr)) {
+                            $attr = array();
                         }
+                    } else {
+                        $attr = $values[$k];
+                    }
 
-                        if (Helper::is_assoc($values[$k])) {
-                            switch (get_class($rel)) {
-                                case 'CHasOneRelation':
-                                case 'CBelongsToRelation':
-                                    foreach ($attr as $i => $j) {
-                                        if (is_array($j)) {
-                                            unset($attr[$i]);
-                                        }
+                    if (Helper::is_assoc($values[$k])) {
+                        switch (get_class($rel)) {
+                            case 'CHasOneRelation':
+                            case 'CBelongsToRelation':
+                                foreach ($attr as $i => $j) {
+                                    if (is_array($j)) {
+                                        unset($attr[$i]);
                                     }
+                                }
 
-                                    if (is_object($relArr)) {
-                                        $relArr->setAttributes($attr, false, false);
-                                    }
-                                    $this->__relations[$k] = $attr;
-                                    break;
-                            }
+                                $relArr = $this->$k;
+                                if (is_object($relArr)) {
+                                    $relArr->setAttributes($attr, false, false);
+                                }
+                                $this->__relations[$k] = $attr;
+                                break;
                         }
                     }
-                    break;
-                case (isset($values[$k . 'Insert'])):
-                    $this->{$k . 'Insert'} = $values[$k . 'Insert'];
-                    break;
-                case (isset($values[$k . 'Update'])):
-                    $this->{$k . 'Update'} = $values[$k . 'Update'];
-                    break;
-                case (isset($values[$k . 'Delete'])):
-                    $this->{$k . 'Delete'} = $values[$k . 'Delete'];
-                    break;
+                }
+            }
+
+            if (isset($values[$k . 'Insert'])) {
+                $value = $values[$k . 'Insert'];
+                $value = is_string($value) ? json_decode($value, true) : $value;
+                $this->__relInsert[$k] = $value;
+            }
+
+            if (isset($values[$k . 'Update'])) {
+                $value = $values[$k . 'Update'];
+                $value = is_string($value) ? json_decode($value, true) : $value;
+                $this->__relUpdate[$k] = $value;
+            }
+            if (isset($values[$k . 'Delete'])) {
+                $value = $values[$k . 'Delete'];
+                $value = is_string($value) ? json_decode($value, true) : $value;
+                $this->__relDelete[$k] = $value;
             }
         }
 
@@ -332,11 +340,12 @@ class ActiveRecord extends CActiveRecord {
         if ($this->isNewRecord) {
             $this->id = Yii::app()->db->getLastInsertID(); // this is hack
         }
+
+
         foreach ($this->__relations as $k => $new) {
             $new = $new == '' ? array() : $new;
             $old = $this->__oldRelations[$k];
-
-            if (is_array($new) && is_array($old) && (count($old) > 0 || count($new) > 0)) {
+            if (is_array($new) && is_array($old)) {
                 $rel = $this->getMetaData()->relations[$k];
 
                 switch (get_class($rel)) {
@@ -344,7 +353,7 @@ class ActiveRecord extends CActiveRecord {
                     case 'CBelongsToRelation':
                         if (count(array_diff_assoc($new, $old)) > 0) {
                             //todo..
-                            $class = $rel->class;
+                            $class = $rel->className;
                             $model = $class::model()->findByPk($this->{$rel->foreignKey});
                             if (is_null($model)) {
                                 $model = new $class;
@@ -358,17 +367,28 @@ class ActiveRecord extends CActiveRecord {
                     case 'CHasManyRelation':
                         //without through
                         if (is_string($rel->foreignKey)) {
-                            if (isset($this->{$k . 'Insert'})) {
-                                ActiveRecord::batchInsert($class, $this->{$k . 'Insert'});
+
+                            $class = $rel->className;
+                            if (isset($this->__relInsert[$k])) {
+                                foreach ($this->__relInsert[$k] as $n => $m) {
+                                    $this->__relInsert[$k][$n][$rel->foreignKey] = $this->id;
+                                }
+
+                                ActiveRecord::batchInsert($class, $this->__relInsert[$k]);
                             }
 
-                            if (isset($this->{$k . 'Update'})) {
-                                ActiveRecord::batchDelete($class, $this->{$k . 'Update'});
+                            if (isset($this->__relUpdate[$k])) {
+                                foreach ($this->__relInsert[$k] as $n => $m) {
+                                    $this->__relInsert[$k][$n][$rel->foreignKey] = $this->id;
+                                }
+                                
+                                ActiveRecord::batchUpdate($class, $this->__relUpdate[$k]);
                             }
 
-                            if (isset($this->{$k . 'Delete'})) {
-                                ActiveRecord::batchDelete($class, $this->{$k . 'Delete'});
+                            if (isset($this->__relDelete[$k])) {
+                                ActiveRecord::batchDelete($class, $this->__relDelete[$k]);
                             }
+
                             $this->loadRelations($k);
                         }
                         //with through
@@ -467,10 +487,15 @@ class ActiveRecord extends CActiveRecord {
 
         $table = $model::model()->tableSchema->name;
 
-        $ids = array();
-        foreach ($data as $i => $j) {
-            $ids[] = $j['id'];
+        if (is_array($data[0])) {
+            $ids = array();
+            foreach ($data as $i => $j) {
+                $ids[] = $j['id'];
+            }
+        } else {
+            $ids = $data;
         }
+
         $delete = "DELETE FROM {$table} WHERE id IN (" . implode(",", $ids) . ");";
 
         $command = Yii::app()->db->createCommand($delete);

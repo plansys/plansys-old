@@ -272,11 +272,16 @@ class DataSource extends FormField {
         return array('sql' => $sql, 'params' => $parsed);
     }
 
-    public function getPostName() {
+    public function getPostName($mode = '') {
         if ($this->relationTo == '') {
             return $this->name;
         } else {
-            return str_replace($this->name, $this->relationTo, $this->renderName);
+            $name = str_replace($this->name, $this->relationTo, $this->renderName);
+
+            if ($mode != '') {
+                $name = substr_replace($name, $mode . ']', -1);
+            }
+            return $name;
         }
     }
 

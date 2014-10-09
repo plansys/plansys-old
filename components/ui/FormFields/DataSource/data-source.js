@@ -129,12 +129,13 @@ app.directive('psDataSource', function ($timeout, $http) {
                                 for (k in $scope.original) {
                                     var oldv = $scope.original[k];
                                     if (oldv['id'] == newv['id']) {
-                                        var found = true;
+                                        found = true;
                                         if (!angular.equals(oldv, newv)) {
                                             $scope.updateData.push(newv);
                                         }
                                     }
                                 }
+
                                 if (!found) {
                                     var isEmpty = true;
                                     for (x in newv) {
@@ -148,22 +149,20 @@ app.directive('psDataSource', function ($timeout, $http) {
                                 }
                             }
 
-
                             // find deleted data
                             for (i in $scope.original) {
+                                var del = $scope.original[i];
                                 var found = false;
-                                for (k in probablyDeleted) {
-                                    if (angular.equals($scope.original[i], probablyDeleted[k])) {
+                                for (k in newval) {
+                                    if (del['id'] == newval[k]['id']) {
                                         found = true;
                                     }
                                 }
 
                                 if (!found) {
-                                    $scope.deleteData.push($scope.original[i]);
+                                    $scope.deleteData.push(del['id']);
                                 }
                             }
-
-//                            console.log($scope.insertData, $scope.updateData, $scope.deleteData);
                         }
                     }, true);
                 }
