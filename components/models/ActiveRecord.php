@@ -224,8 +224,41 @@ class ActiveRecord extends CActiveRecord {
                 }
             }
         }
+
+        if (!is_null($name)) {
+            $this->applyRelChange($name);
+        }
+
         $this->__isRelationLoaded = true;
         $this->__oldRelations = $this->__relations;
+    }
+
+    private function applyRelChange($name) {
+        if (count(@$this->__relInsert[$name]) > 0) {
+            foreach ($this->__relInsert[$name] as $i) {
+                $this->__relations[$name][] = $i;
+            }
+        }
+
+        if (count(@$this->__relUpdate[$name]) > 0) {
+            foreach ($this->__relUpdate[$name] as $i) {
+                foreach ($this->__relations[$name] as $q => $r) {
+                    if (isset($i['id']) && isset($r['id']) && $r['id'] == $i['id']) {
+                        $this->__relations[$name][$q] = $i;
+                    }
+                }
+            }
+        }
+
+        if (count(@$this->__relDelete[$name]) > 0) {
+            foreach ($this->__relDelete[$name] as $i) {
+                foreach ($this->__relations[$name] as $q => $r) {
+                    if (@$r['id'] == $i['id']) {
+                        array_splice($this->__relations[$name], $q, 1);
+                    }
+                }
+            }
+        }
     }
 
     public function setAttributes($values, $safeOnly = false, $withRelation = true) {
@@ -273,13 +306,6 @@ class ActiveRecord extends CActiveRecord {
                 $value = $values[$k . 'Insert'];
                 $value = is_string($value) ? json_decode($value, true) : $value;
                 $this->__relInsert[$k] = $value;
-
-                $rel = $this->getMetaData()->relations[$k];
-                $class = $rel->className;
-
-                foreach ($this->__relInsert[$k] as $i) {
-                    $this->__relations[$k][] = $i;
-                }
             }
 
             if (isset($values[$k . 'Update'])) {
@@ -287,33 +313,15 @@ class ActiveRecord extends CActiveRecord {
                 $value = $values[$k . 'Update'];
                 $value = is_string($value) ? json_decode($value, true) : $value;
                 $this->__relUpdate[$k] = $value;
-
-                if (count($this->__relUpdate[$k]) > 0) {
-                    foreach ($this->__relUpdate[$k] as $i) {
-                        foreach ($this->__relations[$k] as $q => $r) {
-                            if (isset($i['id']) && isset($r['id']) && $r['id'] == $i['id']) {
-                                $this->__relations[$k][$q] = $i;
-                            }
-                        }
-                    }
-                }
             }
 
             if (isset($values[$k . 'Delete'])) {
                 $value = $values[$k . 'Delete'];
                 $value = is_string($value) ? json_decode($value, true) : $value;
                 $this->__relDelete[$k] = $value;
-
-                if (count($this->__relDelete[$k]) > 0) {
-                    foreach ($this->__relDelete[$k] as $i) {
-                        foreach ($this->__relations[$k] as $q => $r) {
-                            if (@$r['id'] == $i['id']) {
-                                array_splice($this->__relations[$k], $q, 1);
-                            }
-                        }
-                    }
-                }
             }
+
+            $this->applyRelChange($name);
         }
 
         foreach ($this->attributeProperties as $k => $r) {

@@ -72,13 +72,13 @@ app.directive('psDataSource', function ($timeout, $http) {
                         params: $.extend(angular.copy($scope.params), $scope.sqlParams)
                     }).success(function (data) {
                         $timeout(function () {
+                            $scope.isDataReloaded = true;
                             $scope.data = data.data;
                             $scope.totalItems = data.count * 1;
                             $scope.setDebug(data.debug);
                             if (typeof f == "function") {
                                 f(true, data);
                             }
-
                         }, 0);
                     }).error(function (data) {
                         if (typeof f == "function") {
@@ -86,7 +86,6 @@ app.directive('psDataSource', function ($timeout, $http) {
                         }
                     });
                 }
-
 
                 var jsParamExist = false;
                 for (i in $scope.params) {
@@ -112,69 +111,100 @@ app.directive('psDataSource', function ($timeout, $http) {
                     $scope.data = JSON.parse($el.find("data[name=data]").text());
                 }
 
+                $scope.isDataReloaded = false;
+                $scope.trackChanges = true;
                 if ($scope.relationTo != '-- NONE --' && $scope.relationTo != '') {
                     $scope.original = angular.copy($scope.data);
                     $scope.$watch('data', function (newval, oldval) {
-                        if (newval !== oldval) {
+                        if (newval !== oldval && $scope.trackChanges) {
+                            console.log($scope.isDataReloaded, $scope.deleteData);
+                            if ($scope.isDataReloaded) {
+                                $scope.trackChanges = false;
 
-                            $scope.insertData = [];
-                            $scope.updateData = [];
-                            $scope.deleteData = [];
+                                for (i in $scope.insertData) {
+                                    $scope.data.push($scope.insertData[i]);
+                                }
 
-                            var probablyDeleted = [];
+                                for (i in $scope.updateData) {
+                                    for (j in $scope.data) {
+                                        if ($scope.data[j].id == $scope.updateData[i].id) {
+                                            $scope.data[j] = $scope.updateData[i];
+                                        }
+                                    }
+                                }
 
-                            // find newly inserted data or updated data
-                            for (i in newval) {
-                                var newv = newval[i];
-                                var found = false;
-                                for (k in $scope.original) {
-                                    var oldv = $scope.original[k];
-                                    if (newv['id'] != null && oldv['id'] == newv['id']) {
-                                        found = true;
+                                for (var i = $scope.data.length - 1; i >= 0; i--) {
+                                    if (typeof $scope.data[i].id == "undefined")
+                                        continue;
 
-                                        var isEqual = true;
-                                        for (m in oldv) {
-                                            for (n in newv) {
-                                                if (oldv[m] !== newv[m]) {
-                                                    isEqual = false;
+                                    if ($scope.deleteData.indexOf($scope.data[i].id) >= 0) {
+                                        $scope.data.splice(i, 1);
+                                    }
+                                }
+                                
+                                $timeout(function () {
+                                    $scope.trackChanges = true;
+                                    $scope.isDataReloaded = false;
+                                }, 0);
+                            } else {
+                                $scope.insertData = [];
+                                $scope.updateData = [];
+                                $scope.deleteData = [];
+
+                                var probablyDeleted = [];
+
+                                // find newly inserted data or updated data
+                                for (i in newval) {
+                                    var newv = newval[i];
+                                    var found = false;
+                                    for (k in $scope.original) {
+                                        var oldv = $scope.original[k];
+                                        if (newv['id'] != null && oldv['id'] == newv['id']) {
+                                            found = true;
+
+                                            var isEqual = true;
+                                            for (m in oldv) {
+                                                for (n in newv) {
+                                                    if (oldv[m] !== newv[m]) {
+                                                        isEqual = false;
+                                                    }
                                                 }
                                             }
+
+                                            if (!isEqual) {
+                                                $scope.updateData.push(newv);
+                                            }
+                                        }
+                                    }
+
+                                    if (!found) {
+                                        var isEmpty = true;
+                                        for (x in newv) {
+                                            if (newv[x] != '')
+                                                isEmpty = false;
                                         }
 
-                                        if (!isEqual) {
-                                            $scope.updateData.push(newv);
+                                        if (!isEmpty) {
+                                            $scope.insertData.push(newv);
                                         }
                                     }
                                 }
 
-                                if (!found) {
-                                    var isEmpty = true;
-                                    for (x in newv) {
-                                        if (newv[x] != '')
-                                            isEmpty = false;
+                                // find deleted data
+                                for (i in $scope.original) {
+                                    var del = $scope.original[i];
+                                    var found = false;
+                                    for (k in newval) {
+                                        if (del['id'] == newval[k]['id']) {
+                                            found = true;
+                                        }
                                     }
 
-                                    if (!isEmpty) {
-                                        $scope.insertData.push(newv);
+                                    if (!found) {
+                                        $scope.deleteData.push(del['id']);
                                     }
                                 }
                             }
-
-                            // find deleted data
-                            for (i in $scope.original) {
-                                var del = $scope.original[i];
-                                var found = false;
-                                for (k in newval) {
-                                    if (del['id'] == newval[k]['id']) {
-                                        found = true;
-                                    }
-                                }
-
-                                if (!found) {
-                                    $scope.deleteData.push(del['id']);
-                                }
-                            }
-                            
                         }
                     }, true);
                 }
