@@ -18,8 +18,8 @@ class UserIdentity extends CUserIdentity {
             $this->errorCode = self::ERROR_PASSWORD_INVALID;
         else {
             $this->id = $record->id;
-            $role = UserRole::model()->findByAttributes(array('user_id' => $this->id, 'is_default_role' => 'Yes'));
-            $roles = $role->role->role_name;
+            $role = UserRole::model()->findByAttributes(array('user_id' => $this->id, 'is_default_role' => 'Yes'));;
+            $roles = $role->role['role_name'];
             $this->setState('roles', $roles);
             
             $this->errorCode = self::ERROR_NONE;
