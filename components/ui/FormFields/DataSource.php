@@ -398,18 +398,36 @@ class DataSource extends FormField {
     }
 
     public function getRelated($params = array()) {
-        $rawData = $this->model->{$this->relationTo};
+        $postedParams = $this->queryParams;
+        $criteria = array();
+        
+        if (is_array(@$postedParams['paging'])) {
+            $criteria['page'] = $postedParams['paging']['currentPage'];
+            $criteria['pageSize'] = $postedParams['paging']['pageSize'];
+        }
+        
+        if (is_array(@$postedParams['order']) && count(@$postedParams['where']) > 0) {
+            $sql = '[order]';
+            $bracket = $this->processSQLBracket($sql, $postedParams);
+            $criteria['order'] = str_replace("order by", "", $bracket['sql']);
+        }
+        
+        if (is_array(@$postedParams['where']) && count(@$postedParams['where']) > 0) {
+            $sql = '[where]';
+            $bracket = $this->processSQLBracket($sql, $postedParams);
+            $criteria['condition'] = substr($bracket['sql'], 5);
+            $criteria['params'] = $bracket['params']['where'];
+        }
+        
+        
+        $rawData = $this->model->{$this->relationTo}($criteria);
         $count = count($rawData);
 
         $data = array(
             'data' => $rawData,
             'debug' => array(
                 'count' => $count,
-                'params' => array(
-                    'paging',
-                    'where',
-                    'order'
-                ),
+                'params' => $postedParams,
                 'debug' => ''
             )
         );

@@ -14,6 +14,16 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.updateData = [];
                 $scope.deleteData = [];
 
+                $scope.resetParam = function (key, name) {
+                    if (typeof key == "undefined") {
+                        for (i in $scope.sqlParams) {
+                            delete $scope.sqlParams[i];
+                        }
+                    } else {
+                        delete $scope.sqlParams[name][key];
+                    }
+                }
+
                 $scope.updateParam = function (key, value, name) {
                     if (typeof name === "undefined") {
                         $scope.sqlParams[key] = value;
@@ -77,15 +87,6 @@ app.directive('psDataSource', function ($timeout, $http) {
                     });
                 }
 
-                $scope.resetParam = function (key, name) {
-                    if (typeof key == "undefined") {
-                        for (i in $scope.sqlParams) {
-                            delete $scope.sqlParams[i];
-                        }
-                    } else {
-                        delete $scope.sqlParams[name][key];
-                    }
-                }
 
                 var jsParamExist = false;
                 for (i in $scope.params) {

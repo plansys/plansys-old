@@ -124,13 +124,19 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     }
 
                     if (dsParamName != "") {
-                        ds.updateParam(filter.name, {
-                            value: filter.value,
-                            operator: filter.operator,
-                            type: filter.filterType
-                        }, dsParamName);
 
-                        ds.query(function () {});
+                        if (filter.value != "") {
+                            ds.updateParam(filter.name, {
+                                value: filter.value,
+                                operator: filter.operator,
+                                type: filter.filterType
+                            }, dsParamName);
+                        } else {
+                            ds.resetParam(filter.name, dsParamName);
+                        }
+
+                        ds.query(function () {
+                        });
                     }
                 }
 

@@ -32,14 +32,45 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
+    private function relPagingCriteria($name) {
+        $page = @$this->__page[$name] ? $this->__page[$name] : 1;
+        $pageSize = $this->{$name . 'PageSize'};
+        $start = ($page - 1) * $pageSize;
+
+        return array(
+            'limit' => $pageSize,
+            'offset' => $start
+        );
+    }
+
     public function __call($name, $args) {
         $this->initRelation();
 
-        if (isset($this->__relationsObj[$name])) {
-            $this->__page[$name] = $args[0];
-            if (count($args) == 2) {
-                $this->__pageSize[$name] = $args[1];
+        if (isset($this->__relations[$name])) {
+            if (is_numeric($args[0])) {
+                $this->__page[$name] = $args[0];
+                if (count($args) == 2 && is_numeric($args[1])) {
+                    $this->__pageSize[$name] = $args[1];
+                }
+                $criteria = $this->relPagingCriteria($name);
+            } else if (is_array($args[0])) {
+                $opt = $args[0];
+
+                if (isset($opt['page'])) {
+                    $this->__page[$name] = $opt['page'];
+                    unset($opt['page']);
+                }
+
+                if (isset($opt['pageSize'])) {
+                    $this->__pageSize[$name] = $opt['pageSize'];
+                    unset($opt['pageSize']);
+                }
+
+                $criteria = $this->relPagingCriteria($name);
+                $criteria = array_merge($criteria, $opt);
             }
+
+            $this->loadRelations($name, $criteria);
             return $this->$name;
         } else {
             return parent::__call($name, $args);
@@ -143,7 +174,7 @@ class ActiveRecord extends CActiveRecord {
         return $result;
     }
 
-    public function loadRelations($name = null) {
+    public function loadRelations($name = null, $criteria = array()) {
         foreach ($this->getMetaData()->relations as $k => $rel) {
             if (!is_null($name) && $k != $name) {
                 continue;
@@ -158,7 +189,7 @@ class ActiveRecord extends CActiveRecord {
                                 $class = $rel->className;
                                 $table = $class::tableName();
 
-                                $this->__relationsObj[$k] = $this->getRelated($k, false);
+                                $this->__relationsObj[$k] = $this->getRelated($k, false, $criteria);
 
                                 if (isset($this->__relationsObj[$k])) {
                                     $this->__relations[$k] = $this->__relationsObj[$k]->attributes;
@@ -175,14 +206,7 @@ class ActiveRecord extends CActiveRecord {
                         case 'CHasManyRelation':
                             //without through
                             if (is_string($rel->foreignKey)) {
-                                $page = @$this->__page[$k] ? $this->__page[$k] : 1;
-                                $pageSize = $this->{$k . 'PageSize'};
-                                $start = ($page - 1) * $pageSize;
-
-                                $this->__relationsObj[$k] = $this->getRelated($k, true, array(
-                                    'limit' => $pageSize,
-                                    'offset' => $start
-                                ));
+                                $this->__relationsObj[$k] = $this->getRelated($k, true, $criteria);
 
                                 if (is_array($this->__relationsObj[$k])) {
                                     $this->__relations[$k] = array();
@@ -259,11 +283,11 @@ class ActiveRecord extends CActiveRecord {
             }
 
             if (isset($values[$k . 'Update'])) {
-                
+
                 $value = $values[$k . 'Update'];
                 $value = is_string($value) ? json_decode($value, true) : $value;
                 $this->__relUpdate[$k] = $value;
-                
+
                 if (count($this->__relUpdate[$k]) > 0) {
                     foreach ($this->__relUpdate[$k] as $i) {
                         foreach ($this->__relations[$k] as $q => $r) {
