@@ -100,6 +100,9 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                 }
 
                 $scope.addRow = function (row) {
+                    if (typeof $scope.data == "undefined") {
+                        $scope.data = [];
+                    }
 
                     var data = {};
                     for (i in $scope.columns) {
@@ -532,7 +535,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             });
 
                             $timeout(function () {
-                                if ($scope.data.length == 0) {
+                                if (typeof $scope.data == "undefined" || $scope.data.length == 0) {
                                     $scope.addRow();
                                 } else {
                                     var except = excludeColumns($scope.data[0]);

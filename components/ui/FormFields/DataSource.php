@@ -190,6 +190,9 @@ class DataSource extends FormField {
         if (class_exists($class)) {
             $fb = FormBuilder::load($class);
             $fb->model = $class::model()->findByPk($post['model_id']);
+            if (is_null($fb->model)) {
+                $fb->model = new $class;
+            }
 
             $field = $fb->findField(array('name' => $post['name']));
             $this->queryParams = @$post['params'];

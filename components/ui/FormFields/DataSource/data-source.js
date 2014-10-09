@@ -28,6 +28,10 @@ app.directive('psDataSource', function ($timeout, $http) {
                 }
 
                 $scope.setDebug = function (debug) {
+                    if (typeof debug == "undefined") {
+                        $scope.debugHTML = "";
+                        return true;
+                    }
                     $scope.debug = debug;
                     if ($scope.debug.sql) {
                         $scope.debug.sql = $scope.debug.sql.replace(/\r/g, '').replace(/\n/g, '');
