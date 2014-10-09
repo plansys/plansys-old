@@ -128,9 +128,19 @@ app.directive('psDataSource', function ($timeout, $http) {
                                 var found = false;
                                 for (k in $scope.original) {
                                     var oldv = $scope.original[k];
-                                    if (oldv['id'] == newv['id']) {
+                                    if (newv['id'] != null && oldv['id'] == newv['id']) {
                                         found = true;
-                                        if (!angular.equals(oldv, newv)) {
+
+                                        var isEqual = true;
+                                        for (m in oldv) {
+                                            for (n in newv) {
+                                                if (oldv[m] !== newv[m]) {
+                                                    isEqual = false;
+                                                }
+                                            }
+                                        }
+
+                                        if (!isEqual) {
                                             $scope.updateData.push(newv);
                                         }
                                     }
@@ -163,6 +173,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                                     $scope.deleteData.push(del['id']);
                                 }
                             }
+                            
                         }
                     }, true);
                 }

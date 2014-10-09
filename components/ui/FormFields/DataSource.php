@@ -398,7 +398,7 @@ class DataSource extends FormField {
     }
 
     public function getRelated($params = array()) {
-        $rawData = ActiveRecord::toArray($this->model->{$this->relationTo});
+        $rawData = $this->model->{$this->relationTo};
         $count = count($rawData);
 
         $data = array(
