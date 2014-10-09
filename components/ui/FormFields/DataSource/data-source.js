@@ -9,11 +9,15 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.totalItems = $el.find("data[name=total_item]").text();
                 $scope.name = $el.find("data[name=name]").text().trim();
                 $scope.class = $el.find("data[name=class_alias]").text().trim();
-
+                $scope.relationTo = $el.find("data[name=name]").text().trim();
+                $scope.insertData = [];
+                $scope.updateData = [];
+                $scope.deleteData = [];
 
                 $scope.updateParam = function (key, value, name) {
                     if (typeof name === "undefined") {
                         $scope.sqlParams[key] = value;
+                        return true;
                     }
 
                     if (typeof $scope.sqlParams[name] == "undefined") {
@@ -101,6 +105,63 @@ app.directive('psDataSource', function ($timeout, $http) {
                     $scope.data = [];
                 } else {
                     $scope.data = JSON.parse($el.find("data[name=data]").text());
+                }
+
+                if ($scope.relationTo != '-- NONE --' && $scope.relationTo != '') {
+                    $scope.original = angular.copy($scope.data);
+                    $scope.$watch('data', function (newval, oldval) {
+                        if (newval !== oldval) {
+
+                            $scope.insertData = [];
+                            $scope.updateData = [];
+                            $scope.deleteData = [];
+
+                            var probablyDeleted = [];
+
+                            // find newly inserted data or updated data
+                            for (i in newval) {
+                                var newv = newval[i];
+                                var found = false;
+                                for (k in $scope.original) {
+                                    var oldv = $scope.original[k];
+                                    if (oldv['id'] == newv['id']) {
+                                        var found = true;
+                                        if (!angular.equals(oldv, newv)) {
+                                            $scope.updateData.push(newv);
+                                        }
+                                    }
+                                }
+                                if (!found) {
+                                    var isEmpty = true;
+                                    for (x in newv) {
+                                        if (newv[x] != '')
+                                            isEmpty = false;
+                                    }
+
+                                    if (!isEmpty) {
+                                        $scope.insertData.push(newv);
+                                    }
+                                }
+                            }
+
+
+                            // find deleted data
+                            for (i in $scope.original) {
+                                var found = false;
+                                for (k in probablyDeleted) {
+                                    if (angular.equals($scope.original[i], probablyDeleted[k])) {
+                                        found = true;
+                                    }
+                                }
+
+                                if (!found) {
+                                    $scope.deleteData.push($scope.original[i]);
+                                }
+                            }
+
+//                            console.log($scope.insertData, $scope.updateData, $scope.deleteData);
+                        }
+                    }, true);
                 }
 
                 $scope.$parent[$scope.name] = $scope;

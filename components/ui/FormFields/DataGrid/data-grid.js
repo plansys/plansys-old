@@ -333,11 +333,10 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             }
                             columns.push(col);
                         }
+
                         if (columns.length > 0) {
                             $scope.gridOptions.columnDefs = columns;
                         }
-
-
 
                         // pagingOptions
                         if ($scope.gridOptions['enablePaging']) {
@@ -466,7 +465,6 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 emec = $scope.$eval($scope.gridOptions['excelModeExcludeColumns']);
                             }
 
-
                             var excludeColumns = function (data) {
                                 var except = [];
                                 var cols = [];
@@ -503,8 +501,6 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     var idx = 0;
                                     for (i in $scope.data) {
                                         var row = $scope.data[i];
-
-                                        console.log($scope.isNotEmpty(row, except), row, except);
                                         if ($scope.isNotEmpty(row, except)) {
                                             newData.push(row);
                                         }

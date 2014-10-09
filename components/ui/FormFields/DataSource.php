@@ -179,6 +179,7 @@ class DataSource extends FormField {
 
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "glyphicon glyphicon-book";
+    private $queryParams = array();
 
     public function actionQuery() {
         $postdata = file_get_contents("php://input");
@@ -191,8 +192,7 @@ class DataSource extends FormField {
             $fb->model = $class::model()->findByPk($post['model_id']);
 
             $field = $fb->findField(array('name' => $post['name']));
-            $params = @$post['params'];
-
+            $this->queryParams = @$post['params'];
             $this->attributes = $field;
             $this->builder = $fb;
 
@@ -206,7 +206,6 @@ class DataSource extends FormField {
                 }
             } else {
                 ## with relatedTo
-
                 $data = $this->getRelated($this->params);
             }
 
@@ -314,13 +313,12 @@ class DataSource extends FormField {
         foreach ($params[0] as $p) {
             if (isset($postedParams[$p])) {
                 if (strpos($postedParams[$p], 'js:') !== false) {
-                    $returnParams[$p] = 'null';
+                    $returnParams[$p] = @$this->queryParams[$p];
                 } else {
                     $returnParams[$p] = $this->evaluate($postedParams[$p], true);
                 }
             }
         }
-
 
         return array(
             'sql' => trim($sql),
@@ -352,11 +350,12 @@ class DataSource extends FormField {
 
     /**
      * @param string $sql parameter query yang akan di-execute
-     * @return mixed me-return arraykosong jika parameter $sql == "", jika tidak maka akan me-return array data hasil execute SQL
+     * @return mixed me-return array kosong jika parameter $sql == "", jika tidak maka akan me-return array data hasil execute SQL
      */
     public function query($params = array()) {
         if (trim($this->sql) == "")
             return array();
+
 
         $db = Yii::app()->db;
         $template = $this->generateTemplate($this->sql, $params);
@@ -391,7 +390,6 @@ class DataSource extends FormField {
     }
 
     public function getRelated($params = array()) {
-
         $rawData = ActiveRecord::toArray($this->model->{$this->relationTo});
         $count = count($rawData);
 
@@ -413,7 +411,7 @@ class DataSource extends FormField {
     public function processQuery() {
         if ($this->relationTo == '' || $this->relationTo == '-- NONE --') {
             ## without relatedTo
-            
+
             if ($this->fieldType == 'sql') {
                 $data = $this->query($this->params);
             } else {
@@ -421,7 +419,7 @@ class DataSource extends FormField {
             }
         } else {
             ## with relatedTo
-            
+
             $data = $this->getRelated();
         }
 
