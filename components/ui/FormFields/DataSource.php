@@ -186,11 +186,12 @@ class DataSource extends FormField {
         $post = CJSON::decode($postdata);
         $class = array_pop(explode(".", $post['class']));
         Yii::import($post['class']);
-
+        
         if (class_exists($class)) {
             $fb = FormBuilder::load($class);
-            $fb->model = $class::model()->findByPk($post['model_id']);
-            if (is_null($fb->model)) {
+            if(isset($post['model_id'])){
+                $fb->model = $class::model()->findByPk($post['model_id']);
+            }else{
                 $fb->model = new $class;
             }
 
