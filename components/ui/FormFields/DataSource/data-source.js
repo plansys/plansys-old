@@ -12,7 +12,8 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.relationTo = $el.find("data[name=name]").text().trim();
                 $scope.insertData = [];
                 $scope.updateData = [];
-                $scope.deleteData = [];
+                $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text());
+                $scope.untrackColumns = [];
 
                 $scope.resetParam = function (key, name) {
                     if (typeof key == "undefined") {
@@ -67,7 +68,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.query = function (f) {
                     var model = $scope.model || {};
                     var model_id = model.id || null;
-                    
+
                     $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
                         model_id: model_id,
                         name: $scope.name,
@@ -120,7 +121,6 @@ app.directive('psDataSource', function ($timeout, $http) {
                     $scope.original = angular.copy($scope.data);
                     $scope.$watch('data', function (newval, oldval) {
                         if (newval !== oldval && $scope.trackChanges) {
-                            console.log($scope.isDataReloaded, $scope.deleteData);
                             if ($scope.isDataReloaded) {
                                 $scope.trackChanges = false;
 
@@ -144,7 +144,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                                         $scope.data.splice(i, 1);
                                     }
                                 }
-                                
+
                                 $timeout(function () {
                                     $scope.trackChanges = true;
                                     $scope.isDataReloaded = false;
@@ -152,7 +152,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                             } else {
                                 $scope.insertData = [];
                                 $scope.updateData = [];
-                                $scope.deleteData = [];
+                                $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text());
 
                                 // find newly inserted data or updated data
                                 for (i in newval) {
@@ -165,7 +165,13 @@ app.directive('psDataSource', function ($timeout, $http) {
 
                                             var isEqual = true;
                                             for (m in oldv) {
+                                                if ($scope.untrackColumns.indexOf(m) >= 0)
+                                                    continue;
+
                                                 for (n in newv) {
+                                                    if ($scope.untrackColumns.indexOf(n) >= 0)
+                                                        continue;
+
                                                     if (oldv[m] !== newv[m]) {
                                                         isEqual = false;
                                                     }
@@ -181,10 +187,13 @@ app.directive('psDataSource', function ($timeout, $http) {
                                     if (!found) {
                                         var isEmpty = true;
                                         for (x in newv) {
+                                            if ($scope.untrackColumns.indexOf(x) >= 0)
+                                                continue;
+
                                             if (newv[x] != '')
                                                 isEmpty = false;
                                         }
-
+                                        
                                         if (!isEmpty) {
                                             $scope.insertData.push(newv);
                                         }
@@ -205,6 +214,8 @@ app.directive('psDataSource', function ($timeout, $http) {
                                         $scope.deleteData.push(del['id']);
                                     }
                                 }
+
+                                console.log($scope.insertData, $scope.updateData, $scope.deleteData);
                             }
                         }
                     }, true);

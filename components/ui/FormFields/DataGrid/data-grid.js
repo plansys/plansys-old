@@ -467,6 +467,9 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             if ($scope.gridOptions['excelModeExcludeColumns']) {
                                 emec = $scope.$eval($scope.gridOptions['excelModeExcludeColumns']);
                             }
+                            for (i in emec) {
+                                $scope.datasource.untrackColumns.push(emec[i]);
+                            }
 
                             var excludeColumns = function (data) {
                                 var except = [];

@@ -218,7 +218,8 @@
                 $scope.active.filters = [];
                 $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
                     name: $scope.active.datasource,
-                    class: '<?= Helper::classAlias($class) ?>'
+                    class: '<?= Helper::classAlias($class) ?>',
+                    generate: 1
                 }).success(function (data) {
                     if (typeof data == 'object') {
                         if (typeof data.data == 'object') {
@@ -257,7 +258,8 @@
                 $scope.active.columns = [];
                 $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
                     name: $scope.active.datasource,
-                    class: '<?= Helper::classAlias($class) ?>'
+                    class: '<?= Helper::classAlias($class) ?>',
+                    generate: 1
                 }).success(function (data) {
                     if (typeof data == 'object') {
                         if (typeof data.data == 'object') {

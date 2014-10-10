@@ -198,6 +198,8 @@ class DataSource extends FormField {
             $this->attributes = $field;
             $this->builder = $fb;
 
+            $isGenerate = isset($post['generate']);
+
             if ($this->relationTo == '' || $this->relationTo == '-- NONE --') {
                 ## without relatedTo
 
@@ -208,7 +210,7 @@ class DataSource extends FormField {
                 }
             } else {
                 ## with relatedTo
-                $data = $this->getRelated($this->params);
+                $data = $this->getRelated($this->params, $isGenerate);
             }
 
 
@@ -396,7 +398,7 @@ class DataSource extends FormField {
         );
     }
 
-    public function getRelated($params = array()) {
+    public function getRelated($params = array(), $isGenerate = false) {
         $postedParams = $this->queryParams;
         $criteria = array();
 
@@ -418,10 +420,19 @@ class DataSource extends FormField {
             $criteria['params'] = $bracket['params']['where'];
         }
 
+        $relChanges = $this->model->getRelChanges($this->relationTo);
+
         if ($this->relationTo != 'currentModel') {
             $rawData = $this->model->{$this->relationTo}($criteria);
             $count = $this->model->{$this->relationTo . "Count"};
+
+            if (count($rawData) == 0 && $isGenerate) {
+                $rels = $this->model->relations();
+                $relClass = $rels[$this->relationTo][1];
+                $rawData = array($relClass::model()->getAttributes(true, false));
+            }
         } else {
+
             if (isset($criteria['page'])) {
                 $criteria['offset'] = ($criteria['page'] - 1) * $criteria['pageSize'];
                 $criteria['limit'] = $criteria['pageSize'];
@@ -431,16 +442,19 @@ class DataSource extends FormField {
             }
 
             $tableSchema = $this->model->tableSchema;
-            $command = $this->model->commandBuilder->createFindCommand($tableSchema, new CDbCriteria($criteria));
-            $rawData = $command->select('*')->queryAll();
+            $builder =  $this->model->commandBuilder;
             
-            $countCommand = $this->model->commandBuilder->createCountCommand($tableSchema, new CDbCriteria($criteria));
+            ## find
+            $command = $builder->createFindCommand($tableSchema, new CDbCriteria($criteria));
+            $rawData = $command->select('*')->queryAll();
+
+            ## count
+            $countCommand = $builder->createCountCommand($tableSchema, new CDbCriteria($criteria));
             $count = $countCommand->queryScalar();
-        }
-        
-        
-        if (count($rawData) == 0) {
-            $rawData = array($this->model->attributes);
+
+            if (count($rawData) == 0 && $isGenerate) {
+                $rawData = array($this->model->getAttributes(true, false));
+            }
         }
 
         $data = array(
@@ -448,7 +462,12 @@ class DataSource extends FormField {
             'debug' => array(
                 'count' => $count,
                 'params' => $postedParams,
-                'debug' => ''
+                'debug' => '',
+            ),
+            'rel' => array(
+                'insert_data' => $relChanges['insert'],
+                'update_data' => $relChanges['update'],
+                'delete_data' => $relChanges['delete'],
             )
         );
         return $data;
@@ -465,7 +484,6 @@ class DataSource extends FormField {
             }
         } else {
             ## with relatedTo
-
             $data = $this->getRelated();
         }
 
@@ -473,7 +491,8 @@ class DataSource extends FormField {
             'data' => @$data['data'],
             'count' => @$data['debug']['count'],
             'params' => @$data['debug']['params'],
-            'debug' => ($this->debugSql == 'Yes' ? @$data['debug'] : array())
+            'debug' => ($this->debugSql == 'Yes' ? @$data['debug'] : array()),
+            'rel' => @$data['rel']
         );
     }
 
