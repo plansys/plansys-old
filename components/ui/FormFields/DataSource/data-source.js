@@ -65,8 +65,11 @@ app.directive('psDataSource', function ($timeout, $http) {
                 }
 
                 $scope.query = function (f) {
+                    var model = $scope.model || {};
+                    var model_id = model.id || null;
+                    
                     $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
-                        model_id: $scope.model.id,
+                        model_id: model_id,
                         name: $scope.name,
                         class: $scope.class,
                         params: $.extend(angular.copy($scope.params), $scope.sqlParams)
@@ -150,8 +153,6 @@ app.directive('psDataSource', function ($timeout, $http) {
                                 $scope.insertData = [];
                                 $scope.updateData = [];
                                 $scope.deleteData = [];
-
-                                var probablyDeleted = [];
 
                                 // find newly inserted data or updated data
                                 for (i in newval) {

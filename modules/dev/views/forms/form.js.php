@@ -188,6 +188,7 @@
         };
         /*********************** FIELDS ********************************/
         $scope.modelFieldList = <?php echo json_encode(FormsController::$modelFieldList); ?>;
+        $scope.relFieldList = <?php echo json_encode(FormsController::$relFieldList); ?>;
         $scope.dataSourceList = {};
         $scope.toolbarSettings = <?php echo json_encode(FormField::settings($formType)); ?>;
         $scope.form = <?php echo json_encode($fb->form); ?>;
@@ -202,8 +203,10 @@
                 class: modelClass
             })).success(function (data) {
                 $scope.relationFieldList = data;
-                
-                parentScope.updateListView();
+
+                if (parentScope != null) {
+                    parentScope.updateListView();
+                }
             });
         }
 

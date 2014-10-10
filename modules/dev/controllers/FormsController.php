@@ -5,11 +5,18 @@ class FormsController extends Controller {
     public $countRenderID = 1;
     public static $modelField = array();
     public static $modelFieldList = array(); // list of all fields in current model
+    public static $relFieldList = array();
 
-    public static function setModelFieldList($data, $type = "AR") {
+    public static function setModelFieldList($data, $type = "AR", $class = "") {
         if (count(FormsController::$modelFieldList) == 0) {
             if ($type == "AR") {
                 FormsController::$modelFieldList = $data;
+                FormsController::$relFieldList = array_merge(array(
+                    '' => '-- None --',
+                    '---' => '---',
+                    'currentModel' => 'Current Model',
+                    '--' => '---',
+                    ), $data['Relations']);
             } else {
                 foreach ($data as $name => $field) {
                     FormsController::$modelFieldList[$name] = $name;
@@ -167,7 +174,7 @@ class FormsController extends Controller {
 
         if (is_subclass_of($fb->model, 'ActiveRecord')) {
             $formType = "ActiveRecord";
-            FormsController::setModelFieldList($class::model()->attributesList, "AR");
+            FormsController::setModelFieldList($class::model()->attributesList, "AR", $class);
         } else if (is_subclass_of($fb->model, 'FormField')) {
             $formType = "FormField";
             $mf = new $class;

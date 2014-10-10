@@ -591,6 +591,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                                 }
 
                                                 if (typeof model != "undefined") {
+                                                    $scope.datasource.isDataReloaded = true;
                                                     row[col.name + "_label"] = model[col.labelField];
                                                 }
                                             }

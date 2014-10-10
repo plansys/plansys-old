@@ -41,12 +41,11 @@ class DataSource extends FormField {
                 'options' => array(
                     'ng-model' => 'active.relationTo',
                     'ng-change' => 'save()',
-                    'ps-list' => 'modelFieldList',
+                    'ps-list' => 'relFieldList',
                     'ng-if' => 'active.postData == \\\'Yes\\\'',
                 ),
                 'labelWidth' => '5',
-                'fieldWidth' => '6',
-                'showOther' => 'Yes',
+                'fieldWidth' => '7',
                 'otherLabel' => '-- NONE --',
                 'type' => 'DropDownList',
             ),
@@ -56,7 +55,7 @@ class DataSource extends FormField {
                 'options' => array(
                     'ng-model' => 'active.debugSql',
                     'ng-change' => 'save()',
-                    'ng-if' => 'active.relationTo == \\\'\\\' || active.relationTo == \\\'-- NONE --\\\'',
+                    'ng-if' => 'active.relationTo == \\\'\\\' || active.postData == \\\'No\\\'',
                 ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'labelWidth' => '5',
@@ -69,7 +68,7 @@ class DataSource extends FormField {
                 'options' => array(
                     'ng-model' => 'active.fieldType',
                     'ng-change' => 'save()',
-                    'ng-if' => 'active.relationTo == \\\'\\\' || active.relationTo == \\\'-- NONE --\\\'',
+                    'ng-if' => 'active.relationTo == \\\'\\\' || active.postData == \\\'No\\\'',
                 ),
                 'list' => array(
                     'sql' => 'SQL',
@@ -85,7 +84,7 @@ class DataSource extends FormField {
                 'options' => array(
                     'ng-model' => 'active.enablePaging',
                     'ng-change' => 'save()',
-                    'ng-if' => 'active.relationTo == \\\'\\\' || active.relationTo == \\\'-- NONE --\\\'',
+                    'ng-if' => 'active.relationTo == \\\'\\\' || active.postData == \\\'No\\\'',
                 ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'labelWidth' => '5',
@@ -97,7 +96,7 @@ class DataSource extends FormField {
                 'fieldname' => 'sql',
                 'language' => 'sql',
                 'options' => array(
-                    'ng-show' => 'active.fieldType == \\\'sql\\\' && (active.relationTo == \\\'\\\' || active.relationTo == \\\'-- NONE --\\\')',
+                    'ng-show' => 'active.fieldType == \\\'sql\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
@@ -106,7 +105,7 @@ class DataSource extends FormField {
                 'label' => 'PHP Function',
                 'fieldname' => 'php',
                 'options' => array(
-                    'ng-show' => 'active.fieldType == \\\'php\\\' && (active.relationTo == \\\'\\\' || active.relationTo == \\\'-- NONE --\\\')',
+                    'ng-show' => 'active.fieldType == \\\'php\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
@@ -115,7 +114,7 @@ class DataSource extends FormField {
                 'label' => 'Total Item - PHP Function',
                 'fieldname' => 'pagingPHP',
                 'options' => array(
-                    'ng-show' => 'active.fieldType == \\\'php\\\' && active.enablePaging == \\\'Yes\\\' && (active.relationTo == \\\'\\\' || active.relationTo == \\\'-- NONE --\\\')',
+                    'ng-show' => 'active.fieldType == \\\'php\\\' && active.enablePaging == \\\'Yes\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
@@ -125,7 +124,7 @@ class DataSource extends FormField {
                 'fieldname' => 'pagingSQL',
                 'language' => 'sql',
                 'options' => array(
-                    'ng-show' => 'active.fieldType == \\\'sql\\\' && active.enablePaging == \\\'Yes\\\' && (active.relationTo == \\\'\\\' || active.relationTo == \\\'-- NONE --\\\')',
+                    'ng-show' => 'active.fieldType == \\\'sql\\\' && active.enablePaging == \\\'Yes\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
@@ -135,7 +134,7 @@ class DataSource extends FormField {
                 'fieldname' => 'params',
                 'show' => 'Show',
                 'options' => array(
-                    'ng-if' => 'active.relationTo == \\\'\\\' || active.relationTo == \\\'-- NONE --\\\'',
+                    'ng-if' => 'active.relationTo == \\\'\\\' || active.postData == \\\'No\\\'',
                 ),
                 'type' => 'KeyValueGrid',
             ),
@@ -189,7 +188,7 @@ class DataSource extends FormField {
 
         if (class_exists($class)) {
             $fb = FormBuilder::load($class);
-            $fb->model = $class::model()->findByPk($post['model_id']);
+            $fb->model = $class::model()->findByPk(@$post['model_id']);
             if (is_null($fb->model)) {
                 $fb->model = new $class;
             }
@@ -400,28 +399,49 @@ class DataSource extends FormField {
     public function getRelated($params = array()) {
         $postedParams = $this->queryParams;
         $criteria = array();
-        
+
         if (is_array(@$postedParams['paging'])) {
             $criteria['page'] = $postedParams['paging']['currentPage'];
             $criteria['pageSize'] = $postedParams['paging']['pageSize'];
         }
-        
+
         if (is_array(@$postedParams['order']) && count(@$postedParams['where']) > 0) {
             $sql = '[order]';
             $bracket = $this->processSQLBracket($sql, $postedParams);
             $criteria['order'] = str_replace("order by", "", $bracket['sql']);
         }
-        
+
         if (is_array(@$postedParams['where']) && count(@$postedParams['where']) > 0) {
             $sql = '[where]';
             $bracket = $this->processSQLBracket($sql, $postedParams);
             $criteria['condition'] = substr($bracket['sql'], 5);
             $criteria['params'] = $bracket['params']['where'];
         }
+
+        if ($this->relationTo != 'currentModel') {
+            $rawData = $this->model->{$this->relationTo}($criteria);
+            $count = $this->model->{$this->relationTo . "Count"};
+        } else {
+            if (isset($criteria['page'])) {
+                $criteria['offset'] = ($criteria['page'] - 1) * $criteria['pageSize'];
+                $criteria['limit'] = $criteria['pageSize'];
+                unset($criteria['page'], $criteria['pageSize']);
+            } else {
+                $criteria['limit'] = 25;
+            }
+
+            $tableSchema = $this->model->tableSchema;
+            $command = $this->model->commandBuilder->createFindCommand($tableSchema, new CDbCriteria($criteria));
+            $rawData = $command->select('*')->queryAll();
+            
+            $countCommand = $this->model->commandBuilder->createCountCommand($tableSchema, new CDbCriteria($criteria));
+            $count = $countCommand->queryScalar();
+        }
         
         
-        $rawData = $this->model->{$this->relationTo}($criteria);
-        $count = count($rawData);
+        if (count($rawData) == 0) {
+            $rawData = array($this->model->attributes);
+        }
 
         $data = array(
             'data' => $rawData,
@@ -435,7 +455,7 @@ class DataSource extends FormField {
     }
 
     public function processQuery() {
-        if ($this->relationTo == '' || $this->relationTo == '-- NONE --') {
+        if ($this->relationTo == '' || $this->postData == 'No') {
             ## without relatedTo
 
             if ($this->fieldType == 'sql') {
