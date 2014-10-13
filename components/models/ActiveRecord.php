@@ -553,6 +553,22 @@ class ActiveRecord extends CActiveRecord {
         return $array;
     }
 
+    public static function batchPost($model, $post, $name) {
+        
+        if (count($post[$name . 'Insert']) > 0) {
+            ActiveRecord::batchInsert($model, $post[$name . 'Insert']);
+        }
+        
+        if (count($post[$name . 'Update']) > 0) {
+            ActiveRecord::batchUpdate($model, $post[$name . 'Update']);
+        }
+        
+        if (count($post[$name . 'Delete']) > 0) {
+            ActiveRecord::batchDelete($model, $post[$name . 'Delete']);
+        }
+
+    }
+    
     public static function batch($model, $new, $old = array(), $delete = true) {
         $deleteArr = array();
         $updateArr = array();
