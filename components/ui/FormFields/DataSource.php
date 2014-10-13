@@ -91,6 +91,7 @@ class DataSource extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
+            /*
             array (
                 'name' => 'relationCriteria',
                 'label' => 'Relation Query',
@@ -102,6 +103,8 @@ class DataSource extends FormField {
                 'modelClassJS' => 'DataSource/relation-criteria.js',
                 'type' => 'SqlCriteria',
             ),
+             * 
+             */
             array (
                 'label' => 'SQL',
                 'fieldname' => 'sql',
