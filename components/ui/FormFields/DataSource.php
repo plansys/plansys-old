@@ -304,7 +304,7 @@ class DataSource extends FormField {
 
     public function getPostName($mode = '') {
         if ($this->relationTo == '') {
-            return $this->name;
+            return $this->name . $mode;
         } else {
             $name = str_replace($this->name, $this->relationTo, $this->renderName);
 
