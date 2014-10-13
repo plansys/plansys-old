@@ -557,7 +557,7 @@ class ActiveRecord extends CActiveRecord {
 
         ## insert
         if (isset($post[$name . 'Insert']) && is_string($post[$name . 'Insert'])) {
-            $post[$name . 'Insert'] = json_decode($post[$name . 'Insert']);
+            $post[$name . 'Insert'] = json_decode($post[$name . 'Insert'],true);
         }
         if (count(@$post[$name . 'Insert']) > 0) {
             ActiveRecord::batchInsert($model, $post[$name . 'Insert']);
@@ -565,7 +565,7 @@ class ActiveRecord extends CActiveRecord {
 
         ## update
         if (isset($post[$name . 'Update']) && is_string($post[$name . 'Update'])) {
-            $post[$name . 'Update'] = json_decode($post[$name . 'Update']);
+            $post[$name . 'Update'] = json_decode($post[$name . 'Update'],true);
         }
         if (count(@$post[$name . 'Update']) > 0) {
             ActiveRecord::batchUpdate($model, $post[$name . 'Update']);
@@ -573,7 +573,7 @@ class ActiveRecord extends CActiveRecord {
         
         ## delete
         if (isset($post[$name . 'Delete']) && is_string($post[$name . 'Delete'])) {
-            $post[$name . 'Delete'] = json_decode($post[$name . 'Delet']);
+            $post[$name . 'Delete'] = json_decode($post[$name . 'Delete'],true);
         }
         if (count(@$post[$name . 'Delete']) > 0) {
             ActiveRecord::batchDelete($model, $post[$name . 'Delete']);
