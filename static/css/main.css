@@ -1597,6 +1597,19 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     margin:-2px -2px 0px 4px;
 }
 
+/********************************** MODAL BACKDROP **************************************/
+
+.modal-backdrop {
+    position:fixed;
+    top:0px;
+    left:0px;
+    right:0px;
+    bottom:0px;
+    background:rgba(0,0,0,.4);
+    z-index: 1050; 
+    display: block;
+}
+
 /********************************** MIGRATION **************************************/
 .migration-item {
     margin-bottom:5px;

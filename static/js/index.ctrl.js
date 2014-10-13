@@ -6,6 +6,7 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
     $scope.Yii = Yii;
     $scope.title = $("title").text();
 
+
     $storage = $localStorage;
     $scope.$storage = $storage;
 

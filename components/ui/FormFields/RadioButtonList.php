@@ -72,7 +72,7 @@ class RadioButtonList extends FormField {
             ),
             array (
                 'label' => 'Radio Button Item',
-                'fieldname' => 'list',
+                'name' => 'list',
                 'options' => array (
                     'ng-hide' => 'active.listExpr != \\\'\\\' || active.options[\\\'ps-list\\\'] != null',
                 ),
@@ -91,17 +91,17 @@ class RadioButtonList extends FormField {
             ),
             array (
                 'label' => 'Options',
-                'fieldname' => 'options',
+                'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
             array (
                 'label' => 'Label Options',
-                'fieldname' => 'labelOptions',
+                'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
             array (
                 'label' => 'Field Options',
-                'fieldname' => 'fieldOptions',
+                'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
             ),
         );

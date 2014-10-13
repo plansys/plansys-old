@@ -4,21 +4,22 @@
  * Class DataGrid
  * @author rizky
  */
-class SubForm extends FormField {
+class ModalDialog extends FormField {
 
     public $name = '';
     public $subForm = '';
-    public $options = '';
+    public $options = array();
     public $inlineJS = '';
+    public $size = '';
 
     /** @var string $toolbarName */
-    public static $toolbarName = "Sub Form";
+    public static $toolbarName = "Modal Dialog";
 
     /** @var string $category */
     public static $category = "Layout";
 
     /** @var string $toolbarIcon */
-    public static $toolbarIcon = "fa fa-file-text-o fa-nm";
+    public static $toolbarIcon = "fa fa-square fa-nm";
 
     public function getFieldProperties() {
         return array(
@@ -74,33 +75,10 @@ class SubForm extends FormField {
         return $this->subFormClass . ucfirst($this->name);
     }
 
-    public function getRenderUrl() {
-        return Yii::app()->controller->createUrl('/FormField/SubForm.render', array(
-                'name' => $this->name,
-                'class' => $this->subForm,
-                'js' => $this->inlineJS
-        ));
-    }
-
-    public function actionRender($name, $class, $js) {
-        $this->name = $name;
-        $this->subForm = $class;
-        $this->inlineJS = $js;
-        
-        
-        ## render
-        Yii::import($class);
-        $fb = FormBuilder::load($this->subFormClass);
-
-        $html = '<div ng-controller="' . $this->ctrlName . 'Controller">';
-        $html .= $fb->render(null, array(
-            'wrapForm' => false
-        ));
-
+    private function renderController() {
         $jspath = explode(".", $this->subForm);
         array_pop($jspath);
         $jspath = implode(".", $jspath);
-
         $inlineJS = str_replace("/", DIRECTORY_SEPARATOR, trim($this->inlineJS, "/"));
         $inlineJS = Yii::getPathOfAlias($jspath) . DIRECTORY_SEPARATOR . $inlineJS;
         if (is_file($inlineJS)) {
@@ -108,23 +86,27 @@ class SubForm extends FormField {
         } else {
             $inlineJS = '';
         }
-        
-        $html .= '</div>';
-        $controller = include("SubForm/controller.js.php");
-        $html .= '<script>' . $controller . '</script>';
-        echo $html;
+
+        $controller = include("ModalDialog/controller.js.php");
+        return '<script>' . $controller . '</script>';
     }
 
-    public function render() {
-        Yii::import($this->subForm);
+    public function includeJS() {
+        return array('modal-dialog.js');
+    }
 
+    public function renderSubForm() {
         if ($this->subFormClass == get_class($this)) {
             return '<center><i class="fa fa-warning"></i> Error Rendering SubForm: Subform can not be the same as its parent</center>';
         } else {
-            $attrs = is_array($this->options) ? $this->expandAttributes($this->options) : '';
-            
-            $html = '<div ' . $attrs . ' ng-include="\'' . $this->renderUrl . '\'"></div>';
-            return $html;
+            ## render
+            Yii::import($this->subForm);
+            $fb = FormBuilder::load($this->subFormClass);
+            $render = $fb->render($fb->model, array(
+                'wrapForm' => false
+            ));
+
+            return $render;
         }
     }
 

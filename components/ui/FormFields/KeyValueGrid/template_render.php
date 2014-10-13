@@ -1,6 +1,6 @@
 <div key-value-grid class='field-box keyvalue' <?= $this->expandAttributes($this->options) ?>>
     <!-- data -->
-    <data name="field_name" class="hide"><?= $this->fieldname ?></data>
+    <data name="field_name" class="hide"><?= $this->name ?></data>
     <data name="field_show" class="hide"><?= $this->show ?></data>
     <data name="allow_space" class="hide"><?= $this->allowSpaceOnKey ?></data>
     <data name="allow_empty" class="hide"><?= $this->allowSpaceOnKey ?></data>

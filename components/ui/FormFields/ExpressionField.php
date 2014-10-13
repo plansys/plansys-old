@@ -29,8 +29,6 @@ class ExpressionField extends FormField {
             array (
                 'label' => 'Label',
                 'name' => 'label',
-                'labelWidth' => '5',
-                'fieldWidth' => '7',
                 'options' => array (
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
@@ -52,7 +50,6 @@ class ExpressionField extends FormField {
                     'js' => 'JS',
                     'sql' => 'SQL',
                 ),
-                'labelWidth' => '5',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
@@ -62,7 +59,7 @@ class ExpressionField extends FormField {
             ),
             array (
                 'label' => 'Options',
-                'fieldname' => 'options',
+                'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
             array (
@@ -127,7 +124,7 @@ class ExpressionField extends FormField {
     */
     public function actionValidate() {
         $postdata = file_get_contents("php://input");
-        $post = json_decode($postdata);
+        $post = json_decode($postdata, true);
         $result = '';
 
         $this->evaluate(@$post['expr']);

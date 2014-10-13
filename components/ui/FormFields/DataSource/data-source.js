@@ -78,6 +78,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                         $timeout(function () {
                             $scope.isDataReloaded = true;
                             $scope.data = data.data;
+                            $scope.original = angular.copy($scope.data);
                             $scope.totalItems = data.count * 1;
                             $scope.setDebug(data.debug);
                             if (typeof f == "function") {
@@ -120,6 +121,8 @@ app.directive('psDataSource', function ($timeout, $http) {
                 if ($scope.relationTo != '-- NONE --' && $scope.relationTo != '') {
                     $scope.original = angular.copy($scope.data);
                     $scope.$watch('data', function (newval, oldval) {
+                        console.log($scope.insertData, $scope.updateData, $scope.deleteData);
+                        
                         if (newval !== oldval && $scope.trackChanges) {
                             if ($scope.isDataReloaded) {
                                 $scope.trackChanges = false;
@@ -193,7 +196,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                                             if (newv[x] != '')
                                                 isEmpty = false;
                                         }
-                                        
+
                                         if (!isEmpty) {
                                             $scope.insertData.push(newv);
                                         }
@@ -214,10 +217,9 @@ app.directive('psDataSource', function ($timeout, $http) {
                                         $scope.deleteData.push(del['id']);
                                     }
                                 }
-
-                                console.log($scope.insertData, $scope.updateData, $scope.deleteData);
                             }
                         }
+
                     }, true);
                 }
 

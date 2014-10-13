@@ -205,17 +205,17 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
             ),
             array(
                 'label' => 'Options',
-                'fieldname' => 'options',
+                'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
             array(
                 'label' => 'Label Options',
-                'fieldname' => 'labelOptions',
+                'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
             array(
                 'label' => 'Field Options',
-                'fieldname' => 'fieldOptions',
+                'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
             ),
         );

@@ -11,9 +11,9 @@ class KeyValueGrid extends FormField {
         return array (
             array (
                 'label' => 'Field Name',
-                'name' => 'fieldname',
+                'name' => 'name',
                 'options' => array (
-                    'ng-model' => 'active.fieldname',
+                    'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
                 ),
@@ -95,7 +95,7 @@ class KeyValueGrid extends FormField {
             ),
             array (
                 'label' => 'Options',
-                'fieldname' => 'options',
+                'name' => 'options',
                 'show' => 'Show',
                 'options' => array (
                     'ng-model' => 'active.options',
@@ -111,7 +111,7 @@ class KeyValueGrid extends FormField {
     public $label = '';
 	
     /** @var string $fieldname */
-    public $fieldname = '';
+    public $name = '';
 	
     /** @var string $value */
     public $value = '';
@@ -157,8 +157,8 @@ class KeyValueGrid extends FormField {
             && is_string($this->options['ng-model']) 
             && trim($this->options['ng-model']) != "";
         
-        if ($this->fieldname != '' && !$ngModelAvailable) {
-            $this->options['ng-model'] = 'active.' . $this->fieldname;
+        if ($this->name != '' && !$ngModelAvailable) {
+            $this->options['ng-model'] = 'active.' . $this->name;
         }
         return $this->renderInternal('template_render.php');
     }

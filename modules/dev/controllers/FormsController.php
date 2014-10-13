@@ -11,12 +11,14 @@ class FormsController extends Controller {
         if (count(FormsController::$modelFieldList) == 0) {
             if ($type == "AR") {
                 FormsController::$modelFieldList = $data;
+
+                $rel = isset($data['Relations']) ? $data['Relations'] : array();
                 FormsController::$relFieldList = array_merge(array(
                     '' => '-- None --',
                     '---' => '---',
                     'currentModel' => 'Current Model',
                     '--' => '---',
-                    ), $data['Relations']);
+                    ), $rel);
             } else {
                 foreach ($data as $name => $field) {
                     FormsController::$modelFieldList[$name] = $name;

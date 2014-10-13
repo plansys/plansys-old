@@ -8,6 +8,7 @@
             return a;
         };
         $scope.inEditor = true;
+        $scope.classPath = '<?= $classPath; ?>';
         $scope.fieldMatch = function (scope) {
             if (scope == null)
                 return false;

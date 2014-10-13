@@ -125,6 +125,11 @@ class ActiveRecord extends CActiveRecord {
                         return 0;
                     } else if (Helper::is_assoc($rel)) {
                         return 1;
+                    } else if ($name == 'currentModel') {
+                        $tableSchema = $this->tableSchema;
+                        $builder = $this->commandBuilder;
+                        $countCommand = $builder->createCountCommand($tableSchema, new CDbCriteria);
+                        return $countCommand->queryScalar();
                     } else {
                         $c = $this->getRelated($name, true, array(
                             'select' => 'count(1) as id',
@@ -157,7 +162,7 @@ class ActiveRecord extends CActiveRecord {
                 $name = substr_replace($name, '', -6);
                 return @$this->__relDelete[$name];
                 break;
-            case isset($this->getMetaData()->relations[$name]):
+            case ($name == 'currentModel' || isset($this->getMetaData()->relations[$name])):
                 $this->initRelation();
                 return @$this->__relations[$name];
                 break;
@@ -175,7 +180,27 @@ class ActiveRecord extends CActiveRecord {
         return $result;
     }
 
+    public function getModelArray($criteria = array()) {
+        if (isset($criteria['page'])) {
+            $criteria['offset'] = ($criteria['page'] - 1) * $criteria['pageSize'];
+            $criteria['limit'] = $criteria['pageSize'];
+            unset($criteria['page'], $criteria['pageSize']);
+        } else {
+            $criteria['limit'] = 25;
+        }
+
+        $tableSchema = $this->tableSchema;
+        $builder = $this->commandBuilder;
+
+        ## find
+        $command = $builder->createFindCommand($tableSchema, new CDbCriteria($criteria));
+        $rawData = $command->select('*')->queryAll();
+
+        return $rawData;
+    }
+
     public function loadRelations($name = null, $criteria = array()) {
+
         foreach ($this->getMetaData()->relations as $k => $rel) {
             if (!is_null($name) && $k != $name) {
                 continue;
@@ -226,6 +251,10 @@ class ActiveRecord extends CActiveRecord {
             }
         }
 
+        if ($name == 'currentModel' || is_null($name)) {
+            $this->__relations['currentModel'] = $this->getModelArray($criteria);
+        }
+
         $this->__isRelationLoaded = true;
         $this->__oldRelations = $this->__relations;
     }
@@ -272,7 +301,7 @@ class ActiveRecord extends CActiveRecord {
         $this->initRelation();
 
         foreach ($this->__relations as $k => $r) {
-            if (isset($values[$k])) {
+            if ($k != 'currentModel' && isset($values[$k])) {
                 $rel = $this->getMetaData()->relations[$k];
                 $this->__relations[$k] = $values[$k];
 
@@ -314,7 +343,6 @@ class ActiveRecord extends CActiveRecord {
             }
 
             if (isset($values[$k . 'Update'])) {
-
                 $value = $values[$k . 'Update'];
                 $value = is_string($value) ? json_decode($value, true) : $value;
                 $this->__relUpdate[$k] = $value;
@@ -410,6 +438,10 @@ class ActiveRecord extends CActiveRecord {
         return true;
     }
 
+    public function saveModelArray() {
+        $this->afterSave();
+    }
+    
     public function afterSave() {
         if ($this->isNewRecord) {
             $this->id = Yii::app()->db->getLastInsertID(); // this is hack
@@ -417,10 +449,14 @@ class ActiveRecord extends CActiveRecord {
 
         foreach ($this->__relations as $k => $new) {
             $new = $new == '' ? array() : $new;
-            $old = $this->__oldRelations[$k];
-            if (is_array($new) && is_array($old)) {
-                $rel = $this->getMetaData()->relations[$k];
+            $old = @$this->__oldRelations[$k];
+            if ((is_array($new) && is_array($old))) {
 
+                if ($k == 'currentModel') {
+                    $rel = new CHasManyRelation('currentModel', get_class($this), 'id');
+                } else {
+                    $rel = $this->getMetaData()->relations[$k];
+                }
                 switch (get_class($rel)) {
                     case 'CHasOneRelation':
                     case 'CBelongsToRelation':
@@ -441,27 +477,37 @@ class ActiveRecord extends CActiveRecord {
                     case 'CHasManyRelation':
                         //without through
                         if (is_string($rel->foreignKey)) {
-
                             $class = $rel->className;
-                            if (isset($this->__relInsert[$k])) {
-                                foreach ($this->__relInsert[$k] as $n => $m) {
-                                    $this->__relInsert[$k][$n][$rel->foreignKey] = $this->id;
-                                }
 
-                                ActiveRecord::batchInsert($class, $this->__relInsert[$k]);
+                            if (isset($this->__relInsert[$k])) {
+                                if ($k != 'currentModel') {
+                                    foreach ($this->__relInsert[$k] as $n => $m) {
+                                        $this->__relInsert[$k][$n][$rel->foreignKey] = $this->id;
+                                    }
+                                }
+                                if (count($this->__relInsert[$k]) > 0) {
+                                    ActiveRecord::batchInsert($class, $this->__relInsert[$k]);
+                                }
                                 $this->__relInsert[$k] = array();
                             }
 
                             if (isset($this->__relUpdate[$k])) {
-                                foreach ($this->__relUpdate[$k] as $n => $m) {
-                                    $this->__relUpdate[$k][$n][$rel->foreignKey] = $this->id;
+                                if ($k != 'currentModel') {
+                                    foreach ($this->__relUpdate[$k] as $n => $m) {
+                                        $this->__relUpdate[$k][$n][$rel->foreignKey] = $this->id;
+                                    }
                                 }
-                                ActiveRecord::batchUpdate($class, $this->__relUpdate[$k]);
+
+                                if (count($this->__relUpdate[$k]) > 0) {
+                                    ActiveRecord::batchUpdate($class, $this->__relUpdate[$k]);
+                                }
                                 $this->__relUpdate[$k] = array();
                             }
 
                             if (isset($this->__relDelete[$k])) {
-                                ActiveRecord::batchDelete($class, $this->__relDelete[$k]);
+                                if (count($this->__relDelete[$k]) > 0) {
+                                    ActiveRecord::batchDelete($class, $this->__relDelete[$k]);
+                                }
                                 $this->__relDelete[$k] = array();
                             }
                         }

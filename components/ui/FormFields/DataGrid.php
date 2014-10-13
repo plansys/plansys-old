@@ -74,7 +74,7 @@ class DataGrid extends FormField {
             ),
             array(
                 'label' => 'Grid Options',
-                'fieldname' => 'gridOptions',
+                'name' => 'gridOptions',
                 'show' => 'Show',
                 'type' => 'KeyValueGrid',
             ),

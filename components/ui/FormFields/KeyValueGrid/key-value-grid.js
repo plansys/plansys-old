@@ -1,23 +1,23 @@
-app.directive('keyValueGrid', function($timeout) {
+app.directive('keyValueGrid', function ($timeout) {
     return {
         require: '?ngModel',
         scope: true,
-        compile: function(element, attrs, transclude) {
+        compile: function (element, attrs, transclude) {
             if (attrs.ngModel && !attrs.ngDelay) {
                 attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
             }
 
-            return function($scope, $el, attrs, ctrl) {
+            return function ($scope, $el, attrs, ctrl) {
 
                 // when ng-model is changed from inside directive
-                $scope.change = function() {
+                $scope.change = function () {
                     $scope.value = cleanJSON($scope.value);
                     $scope.json = prettifyJSON(unformatJSON($scope.value));
 
                     if (typeof ctrl != 'undefined') {
-                        $timeout(function() {
+                        $timeout(function () {
                             ctrl.$setViewValue(unformatJSON($scope.value));
-                            
+
                             if (typeof attrs.ngChange == "undefined") {
                                 $scope.$parent.save();
                             }
@@ -25,7 +25,7 @@ app.directive('keyValueGrid', function($timeout) {
                     }
                 };
 
-                $scope.changeJSON = function() {
+                $scope.changeJSON = function () {
                     $scope.json_error = '';
                     try {
                         $scope.value = JSON.parse($scope.json);
@@ -36,7 +36,7 @@ app.directive('keyValueGrid', function($timeout) {
                     if ($scope.json_error == '') {
                         $scope.value = formatJSON(JSON.parse($scope.json));
                         if (typeof ctrl != 'undefined') {
-                            $timeout(function() {
+                            $timeout(function () {
                                 ctrl.$setViewValue(unformatJSON($scope.value));
                                 $scope.$parent.save();
                             }, 0);
@@ -67,10 +67,8 @@ app.directive('keyValueGrid', function($timeout) {
                 function formatJSON(raw_value) {
                     var filtered = [];
                     for (var key in raw_value) {
-                        if (!$scope.allowEmpty && raw_value[key].trim() == "")
-                            continue;
                         
-                        if ($scope.allowEmpty &&  raw_value[key].trim() == "" && raw_value[value].trim() == "") 
+                        if (!$scope.allowEmpty && key.trim() == "")
                             continue;
 
                         var item = filterKeyValue(key, raw_value[key]);
@@ -89,8 +87,8 @@ app.directive('keyValueGrid', function($timeout) {
                     for (i in raw) {
                         if (!$scope.allowEmpty && raw[i].key.trim() == "")
                             continue;
-                        
-                        if ($scope.allowEmpty && raw[i].key.trim() == "" && raw[i].value.trim() == "") 
+
+                        if ($scope.allowEmpty && raw[i].key.trim() == "" && raw[i].value.trim() == "")
                             continue;
 
                         var item = filterKeyValue(raw[i].key, raw[i].value);
@@ -105,8 +103,8 @@ app.directive('keyValueGrid', function($timeout) {
                     for (i in raw) {
                         if (!$scope.allowEmpty && raw[i].key.trim() == "")
                             continue;
-                        
-                        if ($scope.allowEmpty && raw[i].key.trim() == "" && raw[i].value.trim() == "") 
+
+                        if ($scope.allowEmpty && raw[i].key.trim() == "" && raw[i].value.trim() == "")
                             continue;
 
                         var item = filterKeyValue(raw[i].key, raw[i].value);
@@ -119,7 +117,7 @@ app.directive('keyValueGrid', function($timeout) {
 
                 // when ng-model is changed from outside directive
                 if (typeof ctrl != 'undefined') {
-                    ctrl.$render = function() {
+                    ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;
 
@@ -138,14 +136,16 @@ app.directive('keyValueGrid', function($timeout) {
                 $scope.allowSpace = $el.find("data[name=allow_space]").html().trim() == 'No' ? false : true;
                 $scope.allowDoubleQuote = $el.find("data[name=allow_dquote]").html().trim() == 'No' ? false : true;
                 $scope.mode = "grid";
-               
+
                 $scope.json_error = "";
-                $scope.value = formatJSON(JSON.parse($el.find("data[name='value']").text().trim()));
+                $scope.value = formatJSON(JSON.parse($el.find("data[name='value']:eq(0)").text().trim()));
+                
+                
                 $scope.json = prettifyJSON(unformatJSON($scope.value));
 
                 // if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {
-                    $timeout(function() {
+                    $timeout(function () {
                         var ngModelValue = $scope.$eval(attrs.ngModel);
                         if (typeof ngModelValue != "undefined") {
                             $scope.value = formatJSON(ngModelValue);

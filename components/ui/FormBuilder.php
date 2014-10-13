@@ -574,6 +574,7 @@ class FormBuilder extends CComponent {
      * @return string me-return string tag html hasil generate dari fungsi ini.
      */
     public function render($formdata = null, $options = array()) {
+
         return $this->renderInternal($formdata, $options, $this, $this->fields);
     }
 
@@ -610,6 +611,7 @@ class FormBuilder extends CComponent {
         $moduleName = $fb->module;
         $modelClass = get_class($fb->model);
 
+
         ## setup default options
         $wrapForm = isset($options['wrapForm']) ? $options['wrapForm'] : true;
         $action = isset($options['action']) ? $options['action'] : 'create';
@@ -642,6 +644,7 @@ class FormBuilder extends CComponent {
         ## define formdata
         $data = $this->defineFormData($formdata);
 
+
         ## render semua html
         foreach ($fields as $k => $f) {
             if (is_array($f)) {
@@ -649,6 +652,7 @@ class FormBuilder extends CComponent {
 
                 ## assign existing field configuration to newly created field
                 $field->attributes = $f;
+
 
                 if (property_exists($field, 'name')) {
                     $field->name = preg_replace("/[^0-9a-zA-Z_]/", "", $field->name);
@@ -988,7 +992,7 @@ EOF;
      * @return array Fungsi ini akan me-return sebuah array list form .
      */
     public static function listForm($module = null, $useAlias = true, $excludeModule = true) {
-         $list = array();
+        $list = array();
         $list[''] = '-- NONE --';
         $modules = FormBuilder::listFile(false);
         foreach ($modules as $m) {
