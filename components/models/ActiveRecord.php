@@ -441,7 +441,7 @@ class ActiveRecord extends CActiveRecord {
     public function saveModelArray() {
         $this->afterSave();
     }
-    
+
     public function afterSave() {
         if ($this->isNewRecord) {
             $this->id = Yii::app()->db->getLastInsertID(); // this is hack
@@ -551,6 +551,33 @@ class ActiveRecord extends CActiveRecord {
             );
         }
         return $array;
+    }
+
+    public static function batchPost($model, $post, $name) {
+
+        ## insert
+        if (isset($post[$name . 'Insert']) && is_string($post[$name . 'Insert'])) {
+            $post[$name . 'Insert'] = json_decode($post[$name . 'Insert']);
+        }
+        if (count(@$post[$name . 'Insert']) > 0) {
+            ActiveRecord::batchInsert($model, $post[$name . 'Insert']);
+        }
+
+        ## update
+        if (isset($post[$name . 'Update']) && is_string($post[$name . 'Update'])) {
+            $post[$name . 'Update'] = json_decode($post[$name . 'Update']);
+        }
+        if (count(@$post[$name . 'Update']) > 0) {
+            ActiveRecord::batchUpdate($model, $post[$name . 'Update']);
+        }
+        
+        ## delete
+        if (isset($post[$name . 'Delete']) && is_string($post[$name . 'Delete'])) {
+            $post[$name . 'Delete'] = json_decode($post[$name . 'Delet']);
+        }
+        if (count(@$post[$name . 'Delete']) > 0) {
+            ActiveRecord::batchDelete($model, $post[$name . 'Delete']);
+        }
     }
 
     public static function batch($model, $new, $old = array(), $delete = true) {

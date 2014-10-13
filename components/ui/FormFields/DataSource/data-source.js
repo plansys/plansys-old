@@ -12,7 +12,10 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.relationTo = $el.find("data[name=name]").text().trim();
                 $scope.insertData = [];
                 $scope.updateData = [];
+                
                 $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text());
+                $scope.deleteData = $scope.deleteData || [];
+                
                 $scope.untrackColumns = [];
 
                 $scope.resetParam = function (key, name) {
