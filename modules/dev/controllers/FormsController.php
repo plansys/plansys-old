@@ -99,18 +99,16 @@ class FormsController extends Controller {
             Yii::app()->cache->set('toolbarData', $toolbarData, 0);
         }
         foreach ($toolbarData as $k => $f) {
-            if($f['type'] != 'Modal'){
-                $ff = new $f['type'];
-                $scripts = $ff->renderScript();
-                foreach ($scripts as $script) {
-                    $ext = array_pop(explode(".", $script));
-                    if ($ext == "js") {
-                        Yii::app()->clientScript->registerScriptFile($script, CClientScript::POS_END);
-                    } else {
-                        Yii::app()->clientScript->registerCSSFile($script, CClientScript::POS_BEGIN);
-                    }
-                }
-            }
+			$ff = new $f['type'];
+			$scripts = $ff->renderScript();
+			foreach ($scripts as $script) {
+				$ext = array_pop(explode(".", $script));
+				if ($ext == "js") {
+					Yii::app()->clientScript->registerScriptFile($script, CClientScript::POS_END);
+				} else {
+					Yii::app()->clientScript->registerCSSFile($script, CClientScript::POS_BEGIN);
+				}
+			}
             
         }
 
