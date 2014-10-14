@@ -4,7 +4,7 @@ class ControllerGeneratorController extends Controller {
 
     public $module = '';
     
-    public function actionIndex() {
+    public function actionIndex() {	
         $controllers = ControllerGenerator::listAllFile();
         $this->render('index', array(
             'controllers' => $controllers

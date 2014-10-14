@@ -66,6 +66,9 @@ class FormField extends CComponent {
         'Data & Tables' => array(
             'icon' => 'fa-th-large',
         ),
+		'Charts' => array(
+			'icon' => 'fa-bar-chart',
+		)
     );
 
     /**

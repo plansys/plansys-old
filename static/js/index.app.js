@@ -112,7 +112,8 @@ var app = angular.module("main", [
     'ui.bootstrap',
     'ngGrid',
     'angularFileUpload',
-    'ngStorage'
+    'ngStorage',
+	'nvd3ChartDirectives'
 ]);
 app.config(function ($sceProvider, $controllerProvider) {
     controllerProvider = $controllerProvider;

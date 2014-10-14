@@ -254,7 +254,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     $timeout(function () {
                         var columns = [];
                         $scope.datasource = $scope.$parent[$el.find("data[name=datasource]").text()];
-
+						
                         if (typeof $scope.datasource != "undefined") {
                             $scope.data = $scope.datasource.data;
                         } else {

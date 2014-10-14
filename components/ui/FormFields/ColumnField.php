@@ -16,13 +16,6 @@ class ColumnField extends FormField {
                     'ng-change' => 'save()',
                     'ng-model' => 'active.totalColumns',
                 ),
-                'list' => array (
-                    '1 Column',
-                    '2 Columns',
-                    '3 Columns',
-                    '4 Columns',
-                    '5 Columns',
-                ),
                 'listExpr' => 'array(
    \'1\'=>\'1 Column\',
    \'2\'=>\'2 Columns\',
@@ -40,15 +33,14 @@ class ColumnField extends FormField {
                     'ng-model' => 'active.showBorder',
                     'ng-change' => 'save();relayout();',
                 ),
-                'list' => array (
-                    'Yes' => 'Yes',
-                    'No' => 'No',
-                ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            '<hr/>',
+            array (
+                'type' => 'Text',
+                'value' => '<hr/>',
+            ),
         );
     }
 	
