@@ -14,6 +14,8 @@
         <input name="<?= $this->getPostName('Insert'); ?>" type="hidden" value="{{ insertData | json }}" />
         <input name="<?= $this->getPostName('Update'); ?>" type="hidden" value="{{ updateData | json }}" />
         <input name="<?= $this->getPostName('Delete'); ?>" type="hidden" value="{{ deleteData | json }}" />
+    <?php else: ?>
+        <input name="<?= $this->getPostName(''); ?>" type="hidden" value="{{ value | json }}" />
     <?php endif; ?>
 
     <?php if ($this->debugSql == 'Yes'): ?>
