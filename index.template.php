@@ -2,6 +2,7 @@
 
 
 
+
 // change the following paths if necessary
 $yii = dirname ( __FILE__ ) . '/{root}/framework/yii.php';
 $config = dirname ( __FILE__ ) . '/{root}/config/main.php';
