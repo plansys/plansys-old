@@ -10,12 +10,12 @@
     <data name="params_get" class="hide"><?= json_encode($_GET); ?></data>
     <data name="params_default" class="hide"><?= @json_encode($this->data['params']); ?></data>
     <data name="delete_data" class="hide"><?= @json_encode(@$this->data['rel']['delete_data']); ?></data>
-    <?php if ($this->postData == 'Yes'): ?>
+    <?php if ($this->postData == 'Yes' && $this->relationTo != ''): ?>
         <input name="<?= $this->getPostName('Insert'); ?>" type="hidden" value="{{ insertData | json }}" />
         <input name="<?= $this->getPostName('Update'); ?>" type="hidden" value="{{ updateData | json }}" />
         <input name="<?= $this->getPostName('Delete'); ?>" type="hidden" value="{{ deleteData | json }}" />
     <?php else: ?>
-        <input name="<?= $this->getPostName(''); ?>" type="hidden" value="{{ value | json }}" />
+        <input name="<?= $this->getPostName(''); ?>" type="hidden" value="{{ data | json }}" />
     <?php endif; ?>
 
     <?php if ($this->debugSql == 'Yes'): ?>
