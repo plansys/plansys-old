@@ -242,7 +242,7 @@ class DevUserIndex extends Form {
                 'colWidth' => '7',
                 'chartWidth' => '500',
                 'chartHeight' => '500',
-                'position' => '100         , 400',
+                'position' => '100                 , 400',
                 'options' => array (
                     'showLabels' => 'true',
                     'showvalues' => 'true',
