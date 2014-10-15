@@ -171,6 +171,17 @@ class ActiveRecord extends CActiveRecord {
                 break;
         }
     }
+    
+    public static function jsonToArray(&$post, $data){
+        if (isset($post[$data . 'Insert']) && is_string($post[$data . 'Insert']))
+            $post[$data.'Insert'] = json_decode($post[$data.'Insert'],true);
+        
+        if (isset($post[$data . 'Update']) && is_string($post[$data . 'Update']))    
+            $post[$data.'Update'] = json_decode($post[$data.'Update'],true);
+        
+        if (isset($post[$data . 'Delete']) && is_string($post[$data . 'Delete']))
+            $post[$data.'Delete'] = json_decode($post[$data.'Delete'],true);
+    }
 
     public static function toArray($models = array()) {
         $result = array();
