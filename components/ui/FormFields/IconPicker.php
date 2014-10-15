@@ -103,7 +103,7 @@ class IconPicker extends FormField {
             ),
             array (
                 'label' => 'Icon List',
-                'fieldname' => 'list',
+                'name' => 'list',
                 'options' => array (
                     'ng-show' => 'active.listExpr == \\\'\\\'',
                     'ng-model' => 'active.list',
@@ -125,12 +125,12 @@ class IconPicker extends FormField {
             ),
             array (
                 'label' => 'Options',
-                'fieldname' => 'options',
+                'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
             array (
                 'label' => 'Label Options',
-                'fieldname' => 'labelOptions',
+                'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
         );

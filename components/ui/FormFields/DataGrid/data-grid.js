@@ -100,6 +100,9 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                 }
 
                 $scope.addRow = function (row) {
+                    if (typeof $scope.data == "undefined") {
+                        $scope.data = [];
+                    }
 
                     var data = {};
                     for (i in $scope.columns) {
@@ -333,11 +336,10 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             }
                             columns.push(col);
                         }
+
                         if (columns.length > 0) {
                             $scope.gridOptions.columnDefs = columns;
                         }
-
-
 
                         // pagingOptions
                         if ($scope.gridOptions['enablePaging']) {
@@ -347,6 +349,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 totalServerItems: $scope.datasource.totalItems,
                                 currentPage: 1
                             };
+                            var timeout = null;
                             $scope.$watch('gridOptions.pagingOptions', function (paging, oldpaging) {
                                 if (paging != oldpaging) {
                                     var ds = $scope.datasource;
@@ -361,10 +364,16 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     }
 
                                     if (typeof ds != "undefined") {
-                                        ds.updateParam('currentPage', paging.currentPage, 'paging');
-                                        ds.updateParam('pageSize', paging.pageSize, 'paging');
-                                        ds.updateParam('totalServerItems', paging.totalServerItems, 'paging');
-                                        ds.query();
+
+                                        if (timeout != null) {
+                                            clearTimeout(timeout);
+                                        }
+                                        timeout = setTimeout(function () {
+                                            ds.updateParam('currentPage', paging.currentPage, 'paging');
+                                            ds.updateParam('pageSize', paging.pageSize, 'paging');
+                                            ds.updateParam('totalServerItems', paging.totalServerItems, 'paging');
+                                            ds.query();
+                                        }, 100);
                                     }
                                 }
                             }, true);
@@ -458,7 +467,9 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             if ($scope.gridOptions['excelModeExcludeColumns']) {
                                 emec = $scope.$eval($scope.gridOptions['excelModeExcludeColumns']);
                             }
-
+                            for (i in emec) {
+                                $scope.datasource.untrackColumns.push(emec[i]);
+                            }
 
                             var excludeColumns = function (data) {
                                 var except = [];
@@ -496,8 +507,6 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     var idx = 0;
                                     for (i in $scope.data) {
                                         var row = $scope.data[i];
-
-                                        console.log($scope.isNotEmpty(row, except), row, except);
                                         if ($scope.isNotEmpty(row, except)) {
                                             newData.push(row);
                                         }
@@ -529,7 +538,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             });
 
                             $timeout(function () {
-                                if ($scope.data.length == 0) {
+                                if (typeof $scope.data == "undefined" || $scope.data.length == 0) {
                                     $scope.addRow();
                                 } else {
                                     var except = excludeColumns($scope.data[0]);
@@ -585,6 +594,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                                 }
 
                                                 if (typeof model != "undefined") {
+                                                    $scope.datasource.isDataReloaded = true;
                                                     row[col.name + "_label"] = model[col.labelField];
                                                 }
                                             }

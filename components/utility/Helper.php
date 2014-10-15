@@ -2,6 +2,18 @@
 
 class Helper {
 
+    public static function isLastString($str, $check) {
+        if (strlen($str) > strlen($check)) {
+            if (strrpos($str, $check, -strlen($check)) !== false) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     public static function coba() {
         return array(
             array(

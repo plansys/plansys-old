@@ -158,6 +158,21 @@ class ControllerGenerator extends CodeGenerator {
         $this->renderForm("' . $modelClass . '");';
         $this->updateFunction($actionName, $body, array('params' => $params));
     }
+    
+    public function addActionIndexWithPost($actionName, $modelClass = null, $params) {
+        $body = '
+        $model = new ' . $modelClass . ';
+                
+        if (isset($_POST["' . $modelClass . '"])) {
+            $model->attributes = $_POST["' . $modelClass . '"];
+            if ($model->saveModelArray()) {
+                $this->redirect(array("index"));
+            }
+        }
+        $this->renderForm("' . $modelClass . '",$model);';
+        $this->updateFunction($actionName, $body, array('params' => $params));
+    }
+
 
     public function addActionCreate($actionName, $modelClass = null, $params) {
         $body = '
@@ -195,12 +210,13 @@ class ControllerGenerator extends CodeGenerator {
 
     public static function getTemplate() {
         return array(
-            'default' => 'Default Action',
+            'default' => 'Default',
             '---' => '---',
-            'index' => 'actionIndex',
-            'create' => 'actionCreate',
-            'update' => 'actionUpdate',
-            'delete' => 'actionDelete',
+            'index' => 'Index Template',
+            'indexWithPost' => 'Index (Post CurrentModel)',
+            'create' => 'New Template',
+            'update' => 'Update Template',
+            'delete' => 'Delete Template',
         );
     }
 

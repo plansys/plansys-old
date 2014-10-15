@@ -311,7 +311,7 @@ i {
     border-radius:0 6px 6px 0px;
 }
 .dropdown-submenu .dropdown-submenu:hover>.dropdown-menu{display:block;}
-.dropdown-submenu .dropdown-submenu>a:after{
+.dropdown-submenu .dropdown-submenu>a:before{
     display:block;
     content:" ";
     float:right;
@@ -320,7 +320,7 @@ i {
     border-style:solid;
     border-width:5px 0 5px 5px;border-left-color:#cccccc;margin-top:5px;margin-right:0px;
 }
-.dropdown-submenu .dropdown-submenu.no-menu >a:after{
+.dropdown-submenu .dropdown-submenu.no-menu >a:before{
     display:none;
 }
 .dropdown-submenu .dropdown-submenu:hover>a:after{border-left-color:#ffffff;}
@@ -1595,6 +1595,19 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 .filter-manage .btn .caret {
     margin:-2px -2px 0px 4px;
+}
+
+/********************************** MODAL BACKDROP **************************************/
+
+.modal-backdrop {
+    position:fixed;
+    top:0px;
+    left:0px;
+    right:0px;
+    bottom:0px;
+    background:rgba(0,0,0,.4);
+    z-index: 1050; 
+    display: block;
 }
 
 /********************************** MIGRATION **************************************/

@@ -24,7 +24,7 @@ class HiddenField extends FormField {
             ),
             array (
                 'label' => 'Options',
-                'fieldname' => 'options',
+                'name' => 'options',
                 'show' => 'Show',
                 'type' => 'KeyValueGrid',
             ),

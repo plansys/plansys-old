@@ -92,7 +92,7 @@
             $scope.new = function() {
                 $scope.edit = true;
                 $scope.active = {
-                    'name': 'actionNew',
+                    'name': 'actionIndex',
                     'template': 'default',
                     'param': '',
                     'form': ''

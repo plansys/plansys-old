@@ -10,23 +10,23 @@ class DataSource extends FormField {
      * @return array Fungsi ini akan me-return array property DataSource.
      */
     public function getFieldProperties() {
-        return array(
-            array(
+        return array (
+            array (
                 'label' => 'Data Source Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Post Data ?',
                 'name' => 'postData',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.postData',
                     'ng-change' => 'save()',
                 ),
@@ -35,39 +35,42 @@ class DataSource extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Relation To',
                 'name' => 'relationTo',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.relationTo',
                     'ng-change' => 'save()',
-                    'ps-list' => 'modelFieldList',
+                    'ps-list' => 'relFieldList',
                     'ng-if' => 'active.postData == \\\'Yes\\\'',
                 ),
                 'labelWidth' => '5',
-                'fieldWidth' => '6',
+                'fieldWidth' => '7',
+                'otherLabel' => '-- NONE --',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Debug SQL ?',
                 'name' => 'debugSql',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.debugSql',
                     'ng-change' => 'save()',
+                    'ng-if' => 'active.relationTo == \\\'\\\' || active.postData == \\\'No\\\'',
                 ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'labelWidth' => '5',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Source Type',
                 'name' => 'fieldType',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.fieldType',
                     'ng-change' => 'save()',
+                    'ng-if' => 'active.relationTo == \\\'\\\' || active.postData == \\\'No\\\'',
                 ),
-                'list' => array(
+                'list' => array (
                     'sql' => 'SQL',
                     'php' => 'PHP Function',
                 ),
@@ -75,60 +78,75 @@ class DataSource extends FormField {
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Paging',
                 'name' => 'enablePaging',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.enablePaging',
                     'ng-change' => 'save()',
+                    'ng-if' => 'active.relationTo == \\\'\\\' || active.postData == \\\'No\\\'',
                 ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'labelWidth' => '5',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
+                'name' => 'relationCriteria',
+                'label' => 'Relation Query',
+                'options' => array (
+                    'ng-if' => 'active.postData == \\\'Yes\\\' && active.relationTo != \\\'\\\'',
+                    'ng-model' => 'active.relationCriteria',
+                    'ng-change' => 'save()',
+                ),
+                'modelClassJS' => 'DataSource/relation-criteria.js',
+                'type' => 'SqlCriteria',
+            ),
+            array (
                 'label' => 'SQL',
                 'fieldname' => 'sql',
                 'language' => 'sql',
-                'options' => array(
-                    'ng-show' => 'active.fieldType == \\\'sql\\\'',
+                'options' => array (
+                    'ng-show' => 'active.fieldType == \\\'sql\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array(
+            array (
                 'label' => 'PHP Function',
                 'fieldname' => 'php',
-                'options' => array(
-                    'ng-show' => 'active.fieldType == \\\'php\\\'',
+                'options' => array (
+                    'ng-show' => 'active.fieldType == \\\'php\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array(
+            array (
                 'label' => 'Total Item - PHP Function',
                 'fieldname' => 'pagingPHP',
-                'options' => array(
-                    'ng-show' => 'active.fieldType == \\\'php\\\' && active.enablePaging == \\\'Yes\\\'',
+                'options' => array (
+                    'ng-show' => 'active.fieldType == \\\'php\\\' && active.enablePaging == \\\'Yes\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array(
+            array (
                 'label' => 'Total Item - SQL',
                 'fieldname' => 'pagingSQL',
                 'language' => 'sql',
-                'options' => array(
-                    'ng-show' => 'active.fieldType == \\\'sql\\\' && active.enablePaging == \\\'Yes\\\'',
+                'options' => array (
+                    'ng-show' => 'active.fieldType == \\\'sql\\\' && active.enablePaging == \\\'Yes\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array(
+            array (
                 'label' => 'Parameters',
-                'fieldname' => 'params',
+                'name' => 'params',
                 'show' => 'Show',
+                'options' => array (
+                    'ng-if' => 'active.relationTo == \\\'\\\' || active.postData == \\\'No\\\'',
+                ),
                 'type' => 'KeyValueGrid',
             ),
         );
@@ -158,6 +176,7 @@ class DataSource extends FormField {
     public $pagingSQL = '';
     public $pagingPHP = '';
     public $relationTo = '';
+    public $relationCriteria = array();
     private $command;
 
     /** @var boolean $isHidden */
@@ -171,6 +190,23 @@ class DataSource extends FormField {
 
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "glyphicon glyphicon-book";
+    private $queryParams = array();
+
+    public function actionRelClass() {
+        Yii::import($_GET['class']);
+        $class = array_pop(explode(".", $_GET['class']));
+
+        $relClass = '';
+        if (@$_GET['rel'] == 'currentModel') {
+            $relClass = $class;
+        } else {
+            $model = new $class;
+            $rels = $model->relations();
+            $relClass = @$rels[$_GET['rel']][1];
+        }
+        
+        echo Helper::classAlias($relClass);
+    }
 
     public function actionQuery() {
         $postdata = file_get_contents("php://input");
@@ -180,16 +216,29 @@ class DataSource extends FormField {
 
         if (class_exists($class)) {
             $fb = FormBuilder::load($class);
-            $field = $fb->findField(array('name' => $post['name']));
-            $params = @$post['params'];
+            $fb->model = $class::model()->findByPk(@$post['model_id']);
+            if (is_null($fb->model)) {
+                $fb->model = new $class;
+            }
 
+            $field = $fb->findField(array('name' => $post['name']));
+            $this->queryParams = @$post['params'];
             $this->attributes = $field;
             $this->builder = $fb;
 
-            if ($this->fieldType == 'sql') {
-                $data = $this->query($params);
+            $isGenerate = isset($post['generate']);
+
+            if ($this->relationTo == '' || $this->relationTo == '-- NONE --') {
+                ## without relatedTo
+
+                if ($this->fieldType == 'sql') {
+                    $data = $this->query($this->params);
+                } else {
+                    $data = $this->execute($this->params);
+                }
             } else {
-                $data = $this->execute($params);
+                ## with relatedTo
+                $data = $this->getRelated($this->params, $isGenerate);
             }
 
             echo json_encode(array(
@@ -205,7 +254,6 @@ class DataSource extends FormField {
         preg_match_all("/\[(.*?)\]/", $sql, $matches);
         $params = $matches[1];
         $parsed = array();
-
 
         foreach ($params as $param) {
             $template = $sql;
@@ -251,11 +299,16 @@ class DataSource extends FormField {
         return array('sql' => $sql, 'params' => $parsed);
     }
 
-    public function getPostName() {
+    public function getPostName($mode = '') {
         if ($this->relationTo == '') {
-            return $this->name;
+            return $this->name . $mode;
         } else {
-            return str_replace($this->name, $this->relationTo, $this->renderName);
+            $name = str_replace($this->name, $this->relationTo, $this->renderName);
+
+            if ($mode != '') {
+                $name = substr_replace($name, $mode . ']', -1);
+            }
+            return $name;
         }
     }
 
@@ -295,13 +348,12 @@ class DataSource extends FormField {
         foreach ($params[0] as $p) {
             if (isset($postedParams[$p])) {
                 if (strpos($postedParams[$p], 'js:') !== false) {
-                    $returnParams[$p] = 'null';
+                    $returnParams[$p] = @$this->queryParams[$p];
                 } else {
                     $returnParams[$p] = $this->evaluate($postedParams[$p], true);
                 }
             }
         }
-
 
         return array(
             'sql' => trim($sql),
@@ -333,18 +385,18 @@ class DataSource extends FormField {
 
     /**
      * @param string $sql parameter query yang akan di-execute
-     * @return mixed me-return arraykosong jika parameter $sql == "", jika tidak maka akan me-return array data hasil execute SQL
+     * @return mixed me-return array kosong jika parameter $sql == "", jika tidak maka akan me-return array data hasil execute SQL
      */
     public function query($params = array()) {
         if (trim($this->sql) == "")
             return array();
+
 
         $db = Yii::app()->db;
         $template = $this->generateTemplate($this->sql, $params);
 
         ## execute SQL
         $this->command = $db->createCommand($template['sql']);
-
         $data = $this->command->queryAll(true, $template['params']);
 
         if ($this->enablePaging == 'Yes') {
@@ -372,18 +424,78 @@ class DataSource extends FormField {
         );
     }
 
+    public function generateCriteria($criteria) {
+        if (is_array(@$criteria['paging'])) {
+            $criteria['page'] = $criteria['paging']['currentPage'];
+            $criteria['pageSize'] = $criteria['paging']['pageSize'];
+        }
+
+        if (is_array(@$criteria['order']) && count(@$criteria['where']) > 0) {
+            $sql = '[order]';
+            $bracket = $this->processSQLBracket($sql, $criteria);
+            $criteria['order'] = str_replace("order by", "", $bracket['sql']);
+        }
+
+        if (is_array(@$criteria['where']) && count(@$criteria['where']) > 0) {
+            $sql = '[where]';
+            $bracket = $this->processSQLBracket($sql, $criteria);
+            $criteria['condition'] = substr($bracket['sql'], 5);
+            $criteria['params'] = $bracket['params']['where'];
+        }
+        
+        return $criteria;
+    }
+    
+    public function getRelated($params = array(), $isGenerate = false) {
+        $postedParams = $this->queryParams;
+        $relChanges = $this->model->getRelChanges($this->relationTo);
+        
+        $criteria = $this->generateCriteria($postedParams);
+        $rawData = $this->model->{$this->relationTo}($criteria);
+        $count = $this->model->{$this->relationTo . "Count"};
+
+        if (count($rawData) == 0 && $isGenerate) {
+            $rels = $this->model->relations();
+            $relClass = $rels[$this->relationTo][1];
+            $rawData = array($relClass::model()->getAttributes(true, false));
+        }
+
+        $data = array(
+            'data' => $rawData,
+            'debug' => array(
+                'count' => $count,
+                'params' => $postedParams,
+                'debug' => '',
+            ),
+            'rel' => array(
+                'insert_data' => $relChanges['insert'],
+                'update_data' => $relChanges['update'],
+                'delete_data' => $relChanges['delete'],
+            )
+        );
+        return $data;
+    }
+
     public function processQuery() {
-        if ($this->fieldType == 'sql') {
-            $data = $this->query($this->params);
+        if ($this->relationTo == '' || $this->postData == 'No') {
+            ## without relatedTo
+
+            if ($this->fieldType == 'sql') {
+                $data = $this->query($this->params);
+            } else {
+                $data = $this->execute($this->params);
+            }
         } else {
-            $data = $this->execute($this->params);
+            ## with relatedTo
+            $data = $this->getRelated();
         }
 
         $this->data = array(
             'data' => @$data['data'],
             'count' => @$data['debug']['count'],
             'params' => @$data['debug']['params'],
-            'debug' => ($this->debugSql == 'Yes' ? @$data['debug'] : array())
+            'debug' => ($this->debugSql == 'Yes' ? @$data['debug'] : array()),
+            'rel' => @$data['rel']
         );
     }
 

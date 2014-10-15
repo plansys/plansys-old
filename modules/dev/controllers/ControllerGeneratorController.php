@@ -3,8 +3,8 @@
 class ControllerGeneratorController extends Controller {
 
     public $module = '';
-    
-    public function actionIndex() {	
+
+    public function actionIndex() {
         $controllers = ControllerGenerator::listAllFile();
         $this->render('index', array(
             'controllers' => $controllers
@@ -19,7 +19,7 @@ class ControllerGeneratorController extends Controller {
     public function actionRenderProperties($module) {
         $properties = FormBuilder::load('DevControllerEditor');
         $properties->model->module = $module;
-        
+
         echo $properties->render();
     }
 
@@ -51,8 +51,11 @@ class ControllerGeneratorController extends Controller {
                 } else {
                     $param = array();
                 }
+                
                 if ($content['template'] == 'index' || $content['template'] == 'default') {
                     $gen->addActionIndex($content['name'], $content['form'], $param);
+                } elseif ($content['template'] == 'indexWithPost') {
+                    $gen->addActionIndexWithPost($content['name'], $content['form'], $param);
                 } elseif ($content['template'] == 'update') {
                     $gen->addActionUpdate($content['name'], $content['form'], $param);
                 } elseif ($content['template'] == 'create') {

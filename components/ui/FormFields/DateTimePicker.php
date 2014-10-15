@@ -77,22 +77,22 @@ class DateTimePicker extends FormField
             ),
             array (
                 'label' => 'Options',
-                'fieldname' => 'options',
+                'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
             array (
                 'label' => 'Label Options',
-                'fieldname' => 'labelOptions',
+                'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
             array (
                 'label' => 'Field Options',
-                'fieldname' => 'fieldOptions',
+                'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
             ),
             array (
                 'label' => 'DatePicker Options',
-                'fieldname' => 'datepickerOptions',
+                'name' => 'datepickerOptions',
                 'type' => 'KeyValueGrid',
             ),
         );

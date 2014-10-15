@@ -8,6 +8,7 @@
             return a;
         };
         $scope.inEditor = true;
+        $scope.classPath = '<?= $classPath; ?>';
         $scope.fieldMatch = function (scope) {
             if (scope == null)
                 return false;
@@ -188,6 +189,7 @@
         };
         /*********************** FIELDS ********************************/
         $scope.modelFieldList = <?php echo json_encode(FormsController::$modelFieldList); ?>;
+        $scope.relFieldList = <?php echo json_encode(FormsController::$relFieldList); ?>;
         $scope.dataSourceList = {};
         $scope.toolbarSettings = <?php echo json_encode(FormField::settings($formType)); ?>;
         $scope.form = <?php echo json_encode($fb->form); ?>;
@@ -202,8 +204,10 @@
                 class: modelClass
             })).success(function (data) {
                 $scope.relationFieldList = data;
-                
-                parentScope.updateListView();
+
+                if (parentScope != null) {
+                    parentScope.updateListView();
+                }
             });
         }
 
@@ -215,7 +219,8 @@
                 $scope.active.filters = [];
                 $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
                     name: $scope.active.datasource,
-                    class: '<?= Helper::classAlias($class) ?>'
+                    class: '<?= Helper::classAlias($class) ?>',
+                    generate: 1
                 }).success(function (data) {
                     if (typeof data == 'object') {
                         if (typeof data.data == 'object') {
@@ -254,7 +259,8 @@
                 $scope.active.columns = [];
                 $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
                     name: $scope.active.datasource,
-                    class: '<?= Helper::classAlias($class) ?>'
+                    class: '<?= Helper::classAlias($class) ?>',
+                    generate: 1
                 }).success(function (data) {
                     if (typeof data == 'object') {
                         if (typeof data.data == 'object') {

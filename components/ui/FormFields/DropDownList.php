@@ -125,7 +125,7 @@ class DropDownList extends FormField {
             ),
             array(
                 'label' => 'DropDown Item',
-                'fieldname' => 'list',
+                'name' => 'list',
                 'show' => 'Show',
                 'options' => array(
                     'ng-hide' => 'active.listExpr != \'\' || active.options[\'ps-list\'] != null',
@@ -146,17 +146,17 @@ class DropDownList extends FormField {
             ),
             array(
                 'label' => 'Options',
-                'fieldname' => 'options',
+                'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
             array(
                 'label' => 'Label Options',
-                'fieldname' => 'labelOptions',
+                'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
             array(
                 'label' => 'Field Options',
-                'fieldname' => 'fieldOptions',
+                'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
             ),
         );

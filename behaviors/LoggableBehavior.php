@@ -95,10 +95,10 @@ class LoggableBehavior extends CActiveRecordBehavior {
         return parent::afterDelete($event);
     }
 
-    public function afterFind($event) {
-        $this->setOldAttributes($this->getOwner()->getAttributes());
-        return parent::afterFind($event);
-    }
+//    public function afterFind($event) {
+//        $this->setOldAttributes($this->getOwner()->getAttributes());
+//        return parent::afterFind($event);
+//    }
 
     public function getOldAttributes() {
         return $this->_oldattributes;

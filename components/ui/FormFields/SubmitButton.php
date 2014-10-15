@@ -72,7 +72,7 @@ class SubmitButton extends FormField {
             ),
             array (
                 'label' => 'Options',
-                'fieldname' => 'options',
+                'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
         );
