@@ -231,6 +231,30 @@ class DevUserIndex extends Form {
                 ),
                 'type' => 'DataGrid',
             ),
+            array (
+                'name' => 'dataSource2',
+                'sql' => 'select 1 as a, 2 as b, 1 as c, 1 as d from dual',
+                'type' => 'DataSource',
+            ),
+            array (
+                'name' => 'pieChart1',
+                'datasource' => 'dataSource2',
+                'colWidth' => '7',
+                'chartWidth' => '500',
+                'chartHeight' => '500',
+                'position' => '100         , 400',
+                'options' => array (
+                    'showLabels' => 'true',
+                    'showvalues' => 'true',
+                    'noData' => 'No Data',
+                    'labelType' => 'percent',
+                    'tooltips' => 'true',
+                    'pieLabelsOutside' => 'false',
+                    'donut' => 'true',
+                    'donutRatio' => '0.25',
+                ),
+                'type' => 'ChartPie',
+            ),
         );
     }
     

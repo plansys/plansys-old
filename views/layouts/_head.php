@@ -14,12 +14,15 @@
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/lib/afu/angular-file-upload.min.js'));
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/index.app.js'));
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/index.ctrl.js'));
+	Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/nvd3/d3.js'));
+	Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/nvd3/nv.d3.js'));
+	Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/nvd3/angularjs-nvd3-directives.min.js'));
     
     Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/bootstrap.min.css'));
     Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/non-responsive.css'));
     Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/font-awesome.min.css'));
     Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/ng-grid.css'));
     Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/main.css'));
-    
+	Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/nv.d3.css'));
     ?> 
 </head>
