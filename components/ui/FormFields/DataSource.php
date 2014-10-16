@@ -44,6 +44,7 @@ class DataSource extends FormField {
                     'ps-list' => 'relFieldList',
                     'ng-if' => 'active.postData == \\\'Yes\\\'',
                 ),
+                'list' => array (),
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
                 'otherLabel' => '-- NONE --',
@@ -86,6 +87,7 @@ class DataSource extends FormField {
                     'ng-change' => 'save()',
                     'ng-if' => 'active.relationTo == \\\'\\\' || active.postData == \\\'No\\\'',
                 ),
+                'list' => array (),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'labelWidth' => '5',
                 'fieldWidth' => '4',
@@ -94,6 +96,8 @@ class DataSource extends FormField {
             array (
                 'name' => 'relationCriteria',
                 'label' => 'Relation Query',
+                'paramsField' => 'params',
+                'baseClass' => 'DataSource',
                 'options' => array (
                     'ng-if' => 'active.postData == \\\'Yes\\\' && active.relationTo != \\\'\\\'',
                     'ng-model' => 'active.relationCriteria',
@@ -144,9 +148,6 @@ class DataSource extends FormField {
                 'label' => 'Parameters',
                 'name' => 'params',
                 'show' => 'Show',
-                'options' => array (
-                    'ng-if' => 'active.relationTo == \\\'\\\' || active.postData == \\\'No\\\'',
-                ),
                 'type' => 'KeyValueGrid',
             ),
         );
@@ -250,31 +251,35 @@ class DataSource extends FormField {
         }
     }
 
-    protected function processSQLBracket($sql, $postedParams) {
+    protected static function processSQLBracket($sql, $postedParams, $field) {
         preg_match_all("/\[(.*?)\]/", $sql, $matches);
         $params = $matches[1];
         $parsed = array();
 
         foreach ($params as $param) {
             $template = $sql;
-            if (!isset($this->params[$param])) {
+            if (!isset($field->params[$param])) {
                 $sql = str_replace("[{$param}]", "", $sql);
                 $parsed[$param] = "";
                 continue;
             }
 
-            $field = $this->builder->findField(array('name' => $this->params[$param]));
-
-            if ($field['type'] == "DataFilter") {
-                $fieldSql = 'DataFilter::generateParams($paramName, $params, $template)';
-            } else if ($field['type'] == "DataGrid") {
-                $fieldSql = 'DataGrid::generateParams($paramName, $params, $template)';
-            } else {
-                $fieldSql = @$field['options']['ps-ds-sql'];
+            switch ($param) {
+                case "where":
+                case "paging":
+                    $fieldSql = 'DataFilter::generateParams($paramName, $params, $template)';
+                    break;
+                case "order":
+                    $fieldSql = 'DataGrid::generateParams($paramName, $params, $template)';
+                    break;
+                default:
+                    $ff = $field->builder->findField(array('name' => $field->params[$param]));
+                    $fieldSql = @$ff['options']['ps-ds-sql'];
+                    break;
             }
 
             if (isset($fieldSql)) {
-                $template = $this->evaluate($fieldSql, true, array(
+                $template = $field->evaluate($fieldSql, true, array(
                     'paramName' => $param,
                     'params' => @$postedParams[$param],
                     'template' => $template
@@ -319,7 +324,7 @@ class DataSource extends FormField {
         preg_match_all("/\{(.*?)\}/", $sql, $blocks);
 
         foreach ($blocks[1] as $block) {
-            $bracket = $this->processSQLBracket($block, $postedParams);
+            $bracket = DataSource::processSQLBracket($block, $postedParams, $this);
 
             $renderBracket = false;
             if (isset($bracket['render'])) {
@@ -391,7 +396,6 @@ class DataSource extends FormField {
         if (trim($this->sql) == "")
             return array();
 
-
         $db = Yii::app()->db;
         $template = $this->generateTemplate($this->sql, $params);
 
@@ -424,23 +428,26 @@ class DataSource extends FormField {
         );
     }
 
-    public function generateCriteria($criteria) {
+    public static function generateCriteria($criteria, $field) {
+        
+        ## paging criteria
         if (is_array(@$criteria['paging'])) {
             $criteria['page'] = $criteria['paging']['currentPage'];
             $criteria['pageSize'] = $criteria['paging']['pageSize'];
-        }
+            unset($criteria['paging']);
+        } 
 
-        if (is_array(@$criteria['order']) && count(@$criteria['where']) > 0) {
-            $sql = '[order]';
-            $bracket = $this->processSQLBracket($sql, $criteria);
+        if (isset($criteria['order'])) {
+            $sql = $this->relationCriteria['order'];        
+            $bracket = DataSource::processSQLBracket($sql, $criteria, $field);
             $criteria['order'] = str_replace("order by", "", $bracket['sql']);
         }
 
         if (is_array(@$criteria['where']) && count(@$criteria['where']) > 0) {
-            $sql = '[where]';
-            $bracket = $this->processSQLBracket($sql, $criteria);
+            $sql = $this->relationCriteria['condition'];
+            $bracket = DataSource::processSQLBracket($sql, $criteria, $field);
             $criteria['condition'] = substr($bracket['sql'], 5);
-            $criteria['params'] = $bracket['params']['where'];
+            $criteria['params'] = array_merge($criteria['params'], $bracket['params']['where']);
         }
         
         return $criteria;
@@ -450,7 +457,7 @@ class DataSource extends FormField {
         $postedParams = $this->queryParams;
         $relChanges = $this->model->getRelChanges($this->relationTo);
         
-        $criteria = $this->generateCriteria($postedParams);
+        $criteria = DataSource::generateCriteria($postedParams, $this);
         $rawData = $this->model->{$this->relationTo}($criteria);
         $count = $this->model->{$this->relationTo . "Count"};
 

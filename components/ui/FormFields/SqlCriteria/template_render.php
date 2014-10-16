@@ -1,5 +1,7 @@
 <div sql-criteria <?= $this->expandAttributes($this->options) ?>>
     <data name="name" class="hide"><?= $this->name; ?></data>
+    <data name="base_class" class="hide"><?= $this->baseClass; ?></data>
+    <data name="params_field" class="hide"><?= $this->paramsField; ?></data>
     <data name="value" class="hide"><?= json_encode($this->value); ?></data>
     <pre name="inline_js" class="hide"><?= $this->inlineJS; ?></pre>
     

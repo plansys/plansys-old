@@ -160,12 +160,15 @@ class FormField extends CComponent {
     public function evaluate($expr, $return = false, $variables = array()) {
         $error_level = error_reporting();
 
-//        error_reporting(0);
-        $result = $this->evaluateExpression($expr, array_merge($variables, array(
-            'model' => $this->builder->model,
-        )));
+        if (!isset($this->builder->model)) {
+            $result = $this->evaluateExpression($expr, $variables);
+        } else {
+            $result = $this->evaluateExpression($expr, array_merge($variables, array(
+                'model' => $this->builder->model,
+            )));    
+        }
+        
         error_reporting($error_level);
-
         if ($return) {
             return $result;
         } else {

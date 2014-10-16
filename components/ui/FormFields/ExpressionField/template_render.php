@@ -9,16 +9,6 @@
         <div class="label label-default" style="font-size:10px;float:right;margin:-1px 3px -3px 0px;">
             {{lang | uppercase}}
         </div>
-        <div class="btn btn-xs"
-             ng-hide="lang == 'html' || lang == 'sql' || value.trim() == '' || validating"
-             style="color:{{ valid ? 'green' : 'red' }}">
-            <i class="fa fa-{{valid ? 'check-circle' : 'warning' }}"></i>
-            {{ valid ? 'Valid' : 'Invalid Expression' }}
-        </div>
-        <div class="btn btn-xs" ng-hide="!validating" 
-             style="color:{{ valid ? 'orange' : 'red' }}">
-            <i class="fa fa-refresh fa-spin"></i> Validating...
-        </div>
         <?= $this->label ?>
     </div>
 

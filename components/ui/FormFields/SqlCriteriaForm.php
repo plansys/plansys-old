@@ -30,17 +30,7 @@ class SqlCriteriaForm extends Form {
                 'name' => 'relCriteria',
                 'show' => 'Show',
                 'options' => array (
-                    'ng-model' => '$parent.value.criteria',
-                    'ng-change' => 'update()',
-                ),
-                'type' => 'KeyValueGrid',
-            ),
-            array (
-                'label' => 'Params',
-                'name' => 'relParams',
-                'show' => 'Show',
-                'options' => array (
-                    'ng-model' => '$parent.value.params',
+                    'ng-model' => '$parent.value',
                     'ng-change' => 'update()',
                 ),
                 'type' => 'KeyValueGrid',
