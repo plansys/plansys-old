@@ -440,6 +440,7 @@
                         case 'DataFilter':
                             $scope.getDataSourceList();
                             break;
+						case 'ChartPie' :
                         case 'DataGrid':
                             $scope.getDataSourceList();
                             break;
