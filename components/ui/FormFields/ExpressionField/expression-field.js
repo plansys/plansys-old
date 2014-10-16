@@ -16,12 +16,10 @@ app.directive('expressionField', function($timeout, $http) {
                     if (typeof ctrl != 'undefined') {
                         $timeout(function() {
                             ctrl.$setViewValue($scope.value);
-                            if (execute_action) {
-                                $scope.$parent.$eval(attrs.psValid, {result: result});
-                            }
                         }, 0);
                     }
                 }
+
                 $scope.validate = function(execute_action) {
 
                     execute_action = typeof execute_action != "undefined" ? execute_action : true;
@@ -32,35 +30,9 @@ app.directive('expressionField', function($timeout, $http) {
                         $scope.valid = true;
                         return;
                     }
-
-                    if ($scope.lang == "php") {
-                        // validate php 
-                        $http.post(Yii.app.createUrl('formfield/ExpressionField.validate'), {
-                            expr: $scope.value,
-                            lang: $scope.lang
-                        }).success(function(data) {
-                            $scope.validating = false;
-                            if (data == '--invalid--') {
-                                $scope.valid = false;
-                            } else {
-                                $scope.valid = true;
-                                $scope.applyValue(data, execute_action);
-                            }
-                        });
-                    } else {
-                        // validate js
-                        $scope.applyValue([], execute_action);
-                    }
-                };
-                $scope.$watch('value', function(current, old) {
                     
-                    if (current == old || current == '') {
-                        $scope.validating = false;
-                        $scope.valid = true;
-                    } else if ($scope.lang == "php") {
-                        $scope.validating = true;
-                    }
-                }, true);
+                    $scope.applyValue([], execute_action);
+                };
                 $scope.forceFocus = function() {
                     $scope.isFocus = 1;
                     $timeout(function() {
@@ -90,9 +62,9 @@ app.directive('expressionField', function($timeout, $http) {
                 $scope.modelClass = $el.find("data[name='model_class']").text().trim();
                 $scope.fieldName = $el.find("data[name='field_name']").text().trim();
                 $scope.lang = $el.find("data[name='field_language']").text().trim();
-                $scope.valid = true;
                 $scope.isFocus = false;
                 $scope.validating = false;
+                $scope.valid = false;
                
                 $scope.modelClass = $el.find("data[name=model_class]").html();
             }

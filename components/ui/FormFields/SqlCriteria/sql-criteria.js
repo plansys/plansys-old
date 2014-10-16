@@ -9,21 +9,41 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
 
             return function ($scope, $el, attrs, ctrl) {
                 $scope.name = $el.find("data[name=name]").text();
+                $scope.paramsField = $el.find("data[name=params_field]").text();
                 $scope.inlineJS = $el.find("pre[name=inline_js]:eq(0)").text();
+                $scope.baseClass = $el.find('data[name=base_class]').text();
                 $scope.value = JSON.parse($el.find("data[name='value']:eq(0)").text().trim());
                 
                 $scope.previewSQL = '';
                 $scope.modelClass = '';
 
                 $scope.getPreviewSQL = function () {
+
+                    var postparam = {};
+
+                    switch($scope.baseClass) {
+                        case "DataSource":
+                            postparam = {
+                                class: $scope.modelClass,
+                                criteria: $scope.value,
+                                params: $scope.active[$scope.paramsField],
+                                baseclass: $scope.baseClass,
+                                dsname: $scope.$parent.active.name
+                            };
+                        break;
+                    }
+
                     url = Yii.app.createUrl('/FormField/SqlCriteria.previewSQL');
-                    $http.post(url, {
-                        class: $scope.modelClass,
-                        criteria: $scope.value.criteria
-                    }).success(function (data) {
+                    $http.post(url, postparam).success(function (data) {
                         $scope.previewSQL = data;
                     });
                 }
+
+                $scope.$watch('active.' + $scope.paramsField, function(newv,oldv) {
+                    if (newv != oldv) {
+                        $scope.getPreviewSQL();
+                    }
+                },true);
 
                 $scope.$watch('modelClass', function (newv) {
                     if (newv != '' && newv) {
@@ -37,7 +57,6 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
                         $timeout(function () {
                             ctrl.$setViewValue($scope.value);
                             $scope.getPreviewSQL();
-
                         }, 0);
                     }
                 };
