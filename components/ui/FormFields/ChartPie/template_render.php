@@ -2,6 +2,7 @@
 	
 	<data name="width" class="hide"><?= $this->chartWidth; ?></data>
 	<data name="height" class="hide"><?= $this->chartHeight; ?></data>
+	<data name="colorArray" class="hide"><?= json_encode($this->colorArray); ?></data>
 	<data name="datasource" class="hide"><?= $this->datasource; ?></data>
 	
     <nvd3-pie-chart <?= $this->expandAttributes($this->options) ?>

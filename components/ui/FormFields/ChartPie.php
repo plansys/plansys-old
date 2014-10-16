@@ -13,7 +13,10 @@ class ChartPie extends FormField {
     public $datasource;
 	
 	/** @var string $fieldWidth */
-    public $colWidth = 8;	
+    public $colWidth = 8;
+	
+	/** @var string $colorArray */
+	public $colorArray = array();
 	
 	/** @var string $chartWidth */
     public $chartWidth;
@@ -137,8 +140,20 @@ class ChartPie extends FormField {
                 'type' => 'Text',
             ),
             array (
+                'label' => 'Color',
+                'name' => 'colorArray',
+                'labelWidth' => '5',
+                'fieldWidth' => '7',
+                'type' => 'TextField',
+            ),
+            array (
+                'renderInEditor' => 'Yes',
+                'value' => '<div class=\\"clearfix\\"></div>',
+                'type' => 'Text',
+            ),
+            array (
                 'label' => 'Options',
-                'fieldname' => 'options',
+                'name' => 'options',
                 'show' => 'Show',
                 'type' => 'KeyValueGrid',
             ),

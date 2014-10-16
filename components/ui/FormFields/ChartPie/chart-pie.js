@@ -9,6 +9,16 @@ app.directive('psChartPie', function ($timeout) {
 				$scope.datasource = $scope.$parent[$el.find("data[name=datasource]").text()].data[0];
 				
 				$scope.chartData = toChartFormat($scope.datasource);
+				
+				var colorArray = $el.find("data[name=colorArray]").text();
+				
+				console.log(colorArray);
+				
+				$scope.colorFunction = function() {
+					return function(d, i) {
+						return colorArray[i];
+					};
+				}
 
 				$scope.xFunction = function() {
 				  return function(d) {
@@ -22,6 +32,8 @@ app.directive('psChartPie', function ($timeout) {
 				}
             }
 			
+			d3.select('.nv-legendWrap').attr('transform', 'translate(-100, 100)');
+			
 			function toChartFormat(array) {
 				var result = [];
 				for(key in array) {
@@ -33,4 +45,4 @@ app.directive('psChartPie', function ($timeout) {
 			}			
         }
     };
-});
+}, 0);
