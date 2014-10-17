@@ -70,7 +70,7 @@ class ActiveRecord extends CActiveRecord {
                 $criteria = array_merge($criteria, $opt);
             }
 
-            $this->loadRelations($name, $criteria);
+            $this->loadRelations($name, @$criteria);
             $this->applyRelChange($name);
             return $this->$name;
         } else {
@@ -211,7 +211,7 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function loadRelations($name = null, $criteria = array()) {
-
+        
         foreach ($this->getMetaData()->relations as $k => $rel) {
             if (!is_null($name) && $k != $name) {
                 continue;
@@ -242,18 +242,15 @@ class ActiveRecord extends CActiveRecord {
                         case 'CManyManyRelation':
                         case 'CHasManyRelation':
                             //without through
-                            if (is_string($rel->foreignKey)) {
-                                $this->__relationsObj[$k] = $this->getRelated($k, true, $criteria);
+                            $this->__relationsObj[$k] = $this->getRelated($k, true, $criteria);
 
-                                if (is_array($this->__relationsObj[$k])) {
-                                    $this->__relations[$k] = array();
+                            if (is_array($this->__relationsObj[$k])) {
+                                $this->__relations[$k] = array();
 
-                                    foreach ($this->__relationsObj[$k] as $i => $j) {
-                                        $this->__relations[$k][$i] = $j->getAttributes(true, false);
-                                    }
+                                foreach ($this->__relationsObj[$k] as $i => $j) {
+                                    $this->__relations[$k][$i] = $j->getAttributes(true, false);
                                 }
                             }
-
                             //with through
                             //todo..
                             break;
@@ -261,7 +258,6 @@ class ActiveRecord extends CActiveRecord {
                 }
             }
         }
-
         if ($name == 'currentModel' || is_null($name)) {
             $this->__relations['currentModel'] = $this->getModelArray($criteria);
         }
@@ -521,6 +517,44 @@ class ActiveRecord extends CActiveRecord {
                                 }
                                 $this->__relDelete[$k] = array();
                             }
+                        }elseif(is_array($rel->foreignKey)){
+                            $class = $rel->className;
+                            
+                            if (isset($this->__relInsert[$k])) {
+                                if ($k != 'currentModel') {
+                                    foreach ($this->__relInsert[$k] as $n => $m) {
+                                        foreach($rel->foreignKey as $rk => $fk){
+                                            $this->__relInsert[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
+                                        }
+                                    }
+                                }
+                                if (count($this->__relInsert[$k]) > 0) {
+                                    ActiveRecord::batchInsert($class, $this->__relInsert[$k]);
+                                }
+                                $this->__relInsert[$k] = array();
+                            }
+
+                            if (isset($this->__relUpdate[$k])) {
+                                if ($k != 'currentModel') {
+                                    foreach ($this->__relUpdate[$k] as $n => $m) {
+                                        foreach($rel->foreignKey as $rk => $fk){
+                                            $this->__relUpdate[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
+                                        }
+                                    }
+                                }
+
+                                if (count($this->__relUpdate[$k]) > 0) {
+                                    ActiveRecord::batchUpdate($class, $this->__relUpdate[$k]);
+                                }
+                                $this->__relUpdate[$k] = array();
+                            }
+
+                            if (isset($this->__relDelete[$k])) {
+                                if (count($this->__relDelete[$k]) > 0) {
+                                    ActiveRecord::batchDelete($class, $this->__relDelete[$k]);
+                                }
+                                $this->__relDelete[$k] = array();
+                            }
                         }
                         //with through
                         //todo..
@@ -529,7 +563,6 @@ class ActiveRecord extends CActiveRecord {
             }
             $this->__relations[$k] = $new;
         }
-//        var_dump($this->__relations);
 
         return true;
     }
