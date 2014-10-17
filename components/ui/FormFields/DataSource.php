@@ -470,6 +470,10 @@ class DataSource extends FormField {
 
         $criteria['distinct'] = (@$criteria['distinct'] == 'true' ? true : false);
 
+        if (isset($criteria['paging'])) {
+            unset($criteria['paging']);
+        }
+
         if (isset($criteria['select']) && $criteria['select'] == '') {
             unset($criteria['select']);
         }
@@ -484,9 +488,16 @@ class DataSource extends FormField {
         $criteria = DataSource::generateCriteria($postedParams, $this->relationCriteria, $this);
         $rawData = $this->model->{$this->relationTo}($criteria);
 
-        $criteria['select'] = 'count(1) as id';
-        $rawCount = $this->model->getRelated($this->relationTo, true, $criteria);
-        $count = $rawCount[0]->id;
+        if ($this->relationTo == 'currentModel') {
+            $tableSchema = $this->model->tableSchema;
+            $builder = $this->model->commandBuilder;
+            $countCommand = $builder->createCountCommand($tableSchema, new CDbCriteria($criteria));
+            $count = $countCommand->queryScalar();
+        } else {
+            $criteria['select'] = 'count(1) as id';
+            $rawCount = $this->model->getRelated($this->relationTo, true, $criteria);
+            $count = $rawCount[0]->id;
+        }
 
         if (count($rawData) == 0 && $isGenerate) {
             $rels = $this->model->relations();

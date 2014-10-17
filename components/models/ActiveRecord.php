@@ -171,16 +171,16 @@ class ActiveRecord extends CActiveRecord {
                 break;
         }
     }
-    
-    public static function jsonToArray(&$post, $data){
+
+    public static function jsonToArray(&$post, $data) {
         if (isset($post[$data . 'Insert']) && is_string($post[$data . 'Insert']))
-            $post[$data.'Insert'] = json_decode($post[$data.'Insert'],true);
-        
-        if (isset($post[$data . 'Update']) && is_string($post[$data . 'Update']))    
-            $post[$data.'Update'] = json_decode($post[$data.'Update'],true);
-        
+            $post[$data . 'Insert'] = json_decode($post[$data . 'Insert'], true);
+
+        if (isset($post[$data . 'Update']) && is_string($post[$data . 'Update']))
+            $post[$data . 'Update'] = json_decode($post[$data . 'Update'], true);
+
         if (isset($post[$data . 'Delete']) && is_string($post[$data . 'Delete']))
-            $post[$data.'Delete'] = json_decode($post[$data.'Delete'],true);
+            $post[$data . 'Delete'] = json_decode($post[$data . 'Delete'], true);
     }
 
     public static function toArray($models = array()) {
@@ -199,6 +199,9 @@ class ActiveRecord extends CActiveRecord {
         } else {
             $criteria['limit'] = 25;
         }
+
+        if (isset($criteria['paging']))
+            unset($criteria['paging']);
 
         $tableSchema = $this->tableSchema;
         $builder = $this->commandBuilder;
@@ -567,7 +570,7 @@ class ActiveRecord extends CActiveRecord {
 
         ## insert
         if (isset($post[$name . 'Insert']) && is_string($post[$name . 'Insert'])) {
-            $post[$name . 'Insert'] = json_decode($post[$name . 'Insert'],true);
+            $post[$name . 'Insert'] = json_decode($post[$name . 'Insert'], true);
         }
         if (count(@$post[$name . 'Insert']) > 0) {
             ActiveRecord::batchInsert($model, $post[$name . 'Insert']);
@@ -575,15 +578,15 @@ class ActiveRecord extends CActiveRecord {
 
         ## update
         if (isset($post[$name . 'Update']) && is_string($post[$name . 'Update'])) {
-            $post[$name . 'Update'] = json_decode($post[$name . 'Update'],true);
+            $post[$name . 'Update'] = json_decode($post[$name . 'Update'], true);
         }
         if (count(@$post[$name . 'Update']) > 0) {
             ActiveRecord::batchUpdate($model, $post[$name . 'Update']);
         }
-        
+
         ## delete
         if (isset($post[$name . 'Delete']) && is_string($post[$name . 'Delete'])) {
-            $post[$name . 'Delete'] = json_decode($post[$name . 'Delete'],true);
+            $post[$name . 'Delete'] = json_decode($post[$name . 'Delete'], true);
         }
         if (count(@$post[$name . 'Delete']) > 0) {
             ActiveRecord::batchDelete($model, $post[$name . 'Delete']);
