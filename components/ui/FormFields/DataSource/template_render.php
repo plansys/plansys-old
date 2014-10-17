@@ -6,6 +6,7 @@
     <data name="name" class="hide"><?= $this->name; ?></data>
     <data name="relation_to" class="hide"><?= $this->relationTo; ?></data>
     <data name="relation_def" class="hide"><?= json_encode(method_exists($this->model, 'relations') ? $this->model->relations() : array()); ?></data>
+    <data name="post_data" class="hide"><?= $this->postData; ?></data>
     <data name="class_alias" class="hide"><?= Helper::classAlias($model) ?></data>
     <data name="params_get" class="hide"><?= json_encode($_GET); ?></data>
     <data name="params_default" class="hide"><?= @json_encode($this->data['params']); ?></data>

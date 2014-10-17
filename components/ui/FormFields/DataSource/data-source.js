@@ -9,6 +9,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.totalItems = $el.find("data[name=total_item]").text();
                 $scope.name = $el.find("data[name=name]").text().trim();
                 $scope.class = $el.find("data[name=class_alias]").text().trim();
+                $scope.postData = $el.find("data[name=post_data]").text().trim();
                 $scope.relationTo = $el.find("data[name=relation_to]").text().trim();
                 $scope.insertData = [];
                 $scope.updateData = [];
@@ -122,7 +123,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.isDataReloaded = false;
                 $scope.trackChanges = true;
 
-                if ($scope.relationTo != '-- NONE --' && $scope.relationTo != '') {
+                if ($scope.postData == 'Yes') {
                     $scope.original = angular.copy($scope.data);
                     $scope.$watch('data', function (newval, oldval) {
                         console.log($scope.insertData, $scope.updateData, $scope.deleteData);
