@@ -70,6 +70,7 @@ class ActiveRecord extends CActiveRecord {
                 $criteria = array_merge($criteria, $opt);
             }
 
+            
             $this->loadRelations($name, @$criteria);
             $this->applyRelChange($name);
             return $this->$name;
@@ -208,6 +209,8 @@ class ActiveRecord extends CActiveRecord {
 
         ## find
         $command = $builder->createFindCommand($tableSchema, new CDbCriteria($criteria));
+       
+        
         $rawData = $command->select('*')->queryAll();
 
         return $rawData;
