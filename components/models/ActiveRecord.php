@@ -225,8 +225,7 @@ class ActiveRecord extends CActiveRecord {
                             if (is_string($rel->foreignKey)) {
                                 $class = $rel->className;
                                 $table = $class::tableName();
-
-                                $this->__relationsObj[$k] = $this->getRelated($k, false, $criteria);
+                                $this->__relationsObj[$k] = $this->getRelated($k, true, $criteria);
 
                                 if (isset($this->__relationsObj[$k])) {
                                     $this->__relations[$k] = $this->__relationsObj[$k]->attributes;

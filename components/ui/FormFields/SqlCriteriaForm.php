@@ -22,7 +22,11 @@ class SqlCriteriaForm extends Form {
     public function getFields() {
         return array (
             array (
-                'value' => '<pre>{{previewSQL}}</pre>',
+                'value' => '<pre ng-style=\\"{borderColor: (isError ? \\\'red\\\' : \\\'#ccc\\\')}\\">{{previewSQL}}</pre>',
+                'type' => 'Text',
+            ),
+            array (
+                'value' => '<div class=\\"alert alert-danger\\" style=\\"padding:5px;font-size:12px;\\" ng-if=\\"isError\\"> {{ errorMsg}}</div>',
                 'type' => 'Text',
             ),
             array (
