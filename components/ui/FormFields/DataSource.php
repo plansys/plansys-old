@@ -499,7 +499,7 @@ class DataSource extends FormField {
         } else {
             $criteria['select'] = 'count(1) as id';
             $rawCount = $this->model->getRelated($this->relationTo, true, $criteria);
-            $count = $rawCount[0]->id;
+            $count = count($rawCount) > 0 ? $rawCount[0]->id : 0;
         }
 
         if (count($rawData) == 0 && $isGenerate) {
