@@ -457,10 +457,12 @@ class DataSource extends FormField {
         if (isset($criteria['condition']) && is_string($criteria['condition'])) {
             $sql = $criteria['condition'];
             $bracket = DataSource::generateTemplate($sql, $postedParams, $field);
+
             if ($bracket['sql'] != '') {
-                if (substr($bracket['sql'], 5) == 'where') {
+                if (substr($bracket['sql'], 0, 5) == 'where') {
                     $criteria['condition'] = substr($bracket['sql'], 5);
                 }
+
                 $params = isset($postedParams['params']) ? $postedParams['params'] : array();
                 $criteria['params'] = array_merge($params, $bracket['params']);
             } else if ($bracket['sql'] == '') {
@@ -477,6 +479,7 @@ class DataSource extends FormField {
         if (isset($criteria['select']) && $criteria['select'] == '') {
             unset($criteria['select']);
         }
+
 
         return $criteria;
     }
