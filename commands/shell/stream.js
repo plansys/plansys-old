@@ -20,7 +20,7 @@ app.all('*', function (req, res, next) {
     next();
 });
 app.get('/:id', sse, function (req, res) {
-    console.log("Subsription #" + req.params.id + " started");
+    console.log("Subscriber #" + req.params.id + " connected");
     res.streamQuery = setInterval(function () {
         pool.getConnection(function (err, conn) {
             conn.query("USE " + config.db.dbname, function (err, rows) {
@@ -41,7 +41,7 @@ app.get('/:id', sse, function (req, res) {
                         var sql = "UPDATE p_nfy_messages set status = 1 WHERE id IN (" + ids.join(",") + ")";
                         conn.query(sql, function () {
                             res.json(rows);
-                            console.log("Subscription #" + req.params.id + " sent: " + JSON.stringify(rows));
+                            console.log("Subscriber #" + req.params.id + " sent: " + JSON.stringify(rows));
                             conn.release();
                         });
                     } else {
@@ -53,12 +53,17 @@ app.get('/:id', sse, function (req, res) {
     }, 1000);
     res.on("error", function () {
         clearInterval(res.streamQuery);
-        console.log("Subsription #" + req.params.id + " error");
+        console.log("Subscriber #" + req.params.id + " error");
     });
     res.on("close", function () {
         clearInterval(res.streamQuery);
-        console.log("Subsription #" + req.params.id + " ended");
+        console.log("Subscriber #" + req.params.id + " disconnected");
     });
 });
 app.listen(app.get('port'));
-console.log('Nfy server listening on port ' + app.get('port'));
+console.log('\
+----------------------------------------\n\
+Welcome To Plansys Notification Server\n\
+Nfy server listening on port ' + app.get('port') + "\n\
+---------------------------------------\n\
+");

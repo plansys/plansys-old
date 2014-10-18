@@ -24,6 +24,7 @@ class SiteController extends Controller {
         }
     }
 
+
     /**
      * This is the action to handle external exceptions.
      */

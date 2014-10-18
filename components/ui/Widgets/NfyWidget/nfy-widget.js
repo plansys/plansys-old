@@ -44,11 +44,20 @@ app.controller("NfyWidgetController", function ($scope, $http, $timeout, $localS
     eSource.onmessage = function (event) {
         var json = JSON.parse(event.data);
         var data = $scope.processNfy(json[0]);
-        console.log(data);
         $scope.$apply(function () {
             $storage.nfy.items.unshift(data);
             nfyWidget.badge = $storage.nfy.items.length;
         });
+    };
+
+    var startTrigger = false;
+    eSource.onerror = function (e) {
+        if (!startTrigger) {
+            $http.get(Yii.app.createUrl('/nfy/start')).success(function (data) {
+                startTrigger = false;
+            });
+            startTrigger = true;
+        }
     };
 
 
