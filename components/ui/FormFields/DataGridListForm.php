@@ -37,7 +37,6 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'buttons' => 'Buttons',
                     'dropdown' => 'Dropdown',
                     'relation' => 'Relation',
-                    'datetime' => 'DateTime'
                 ),
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
@@ -76,6 +75,14 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'style' => 'text-align:left;',
                 ),
                 'type' => 'TextField',
+            ),
+            array (
+                'name' => 'TypeString',
+                'subForm' => 'application.components.ui.FormFields.DataGridListFormString',
+                'options' => array (
+                    'ng-if' => 'value[$index].columnType == \\\'string\\\'',
+                ),
+                'type' => 'SubForm',
             ),
             array (
                 'name' => 'TypeDropDown',
@@ -140,6 +147,9 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
     public $label = '';
     public $options = array();
 
+    ### string options
+    public $inputMask = '';
+    
     ### button Options
     public $buttonCollapsed = 'Yes';
     public $buttons = array(

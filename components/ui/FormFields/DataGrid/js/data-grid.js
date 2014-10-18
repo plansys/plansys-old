@@ -1,3 +1,4 @@
+
 app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
     return {
         scope: true,
@@ -61,10 +62,6 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         e.stopPropagation();
                         return false;
                     }
-                }
-                
-                $scope.changeColumnType = function(column) {
-                    console.log(column);
                 }
 
                 $scope.excelModeSelectedRow = null;
@@ -175,6 +172,34 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     return output;
                 }
 
+                // Type: String
+                $scope.generateCellString = function (col) {
+                    var format = "";
+                    switch (col.inputMask) {
+                        case "99/99/9999 99:99":
+                            format = " | date:'dd/MM/yyyy HH:mm'";
+                            break;
+                        case "99/99/9999":
+                            format = " | date:'dd/MM/yyyy'";
+                            break;
+                        case "99:99":
+                            format = " | date:'HH:mm'";
+                            break;
+                    }
+
+                    var html = '<div class="ngCellText" ng-class="col.colIndex()">\
+                                <span ng-cell-text>{{row.getProperty(col.field)' + format + '}}</span>\
+                                </div>';
+                    return html;
+                }
+                $scope.generateEditString = function (col) {
+                    var uimask = col.inputMask ? "ui-mask='" + col.inputMask + "'" : "";
+                    var html = '<input ' + uimask + ' ng-class="\'colt\' + col.index" \
+                                ng-input="COL_FIELD"  ng-model="COL_FIELD" />';
+                    return html;
+                }
+
+                // Type: Button
                 $scope.generateButtons = function (column) {
                     var buttons = column.buttons;
                     var html = '<div class="ngCellButton colt{{$index}}">';
@@ -216,6 +241,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     return html;
                 }
 
+                // Type: Dropdown
                 $scope.generateDropdown = function (col) {
                     var id = $scope.name + '-' + col.name + '-dropdownlist';
 
@@ -232,6 +258,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     return html;
                 }
 
+                // Type: Relation
                 $scope.generateEditRelation = function (col) {
                     var html = '<input';
                     html += ' dg-relation';
@@ -261,7 +288,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     $timeout(function () {
                         var columns = [];
                         $scope.datasource = $scope.$parent[$el.find("data[name=datasource]").text()];
-						
+
                         if (typeof $scope.datasource != "undefined") {
                             $scope.data = $scope.datasource.data;
                         } else {
@@ -300,6 +327,14 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             evalArray(c.options);
 
                             switch (c.columnType) {
+                                case "string":
+                                    var col = angular.extend(c.options, {
+                                        field: c.name,
+                                        displayName: c.label,
+                                        cellTemplate: $scope.generateCellString(c),
+                                        editableCellTemplate: $scope.generateEditString(c)
+                                    });
+                                    break;
                                 case "buttons":
                                     var col = angular.extend(c.options, {
                                         field: 'button_' + buttonID,
@@ -329,12 +364,6 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                         displayName: c.label,
                                         cellTemplate: $scope.generateCellRelation(c),
                                         editableCellTemplate: $scope.generateEditRelation(c)
-                                    });
-                                    break;
-                                default:
-                                    var col = angular.extend(c.options, {
-                                        field: c.name,
-                                        displayName: c.label,
                                     });
                                     break;
                             }
@@ -404,7 +433,6 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                         }
                                         ds.updateParam('order_by', order_by, 'order');
                                         ds.query();
-
                                     }
                                 }
                             }, true);

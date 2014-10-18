@@ -39,6 +39,10 @@ app.directive('psDataSource', function ($timeout, $http) {
                         $scope.sqlParams[name] = {};
                     }
 
+                    if (typeof $scope.sqlParams[name] == "string" && key && value) {
+                        $scope.sqlParams[name] = {};
+                    }
+                    
                     $scope.sqlParams[name][key] = value;
                 }
 
