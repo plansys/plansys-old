@@ -100,6 +100,31 @@ class Controller extends CController {
         }
     }
 
+    public function beforeAction($action) {
+        parent::beforeAction($action);
+        if (in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1'])) {
+            session_start();
+            if (!@$_SESSION['nfy_started']) {
+                $connection = @fsockopen($_SERVER['HTTP_HOST'], '8981');
+                if (is_resource($connection)) {
+                    fclose($connection);
+                } else {
+                    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                        $bat = Yii::getPathOfAlias('webroot') . "/nfy_server.bat";
+                        $exe = "start /b " . $bat;
+                        pclose(popen($exe, 'r'));
+                    } else {
+                        $bat = Yii::getPathOfAlias('webroot') . "/nfy_server.bat";
+                        shell_exec("node {$bat} > /dev/null 2>&1");
+                    }
+                }
+                $_SESSION['nfy_started'] = true;
+            }
+        }
+
+        return true;
+    }
+
     public function loadModel($id, $form) {
         $model = $form::model()->findByPk($id);
 

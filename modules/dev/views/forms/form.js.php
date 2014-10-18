@@ -255,7 +255,7 @@
         /************************ DATA COLUMNS ****************************/
         $scope.generateColumns = function () {
             var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
-            if (confirm("Your current filters will be lost. Are you sure?")) {
+            if (confirm("Your current columns will be lost. Are you sure?")) {
                 $scope.active.columns = [];
                 $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
                     name: $scope.active.datasource,

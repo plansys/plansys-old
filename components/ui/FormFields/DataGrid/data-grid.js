@@ -62,6 +62,10 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         return false;
                     }
                 }
+                
+                $scope.changeColumnType = function(column) {
+                    console.log(column);
+                }
 
                 $scope.excelModeSelectedRow = null;
                 $scope.excelModeSelChange = function (row, event) {

@@ -1,5 +1,9 @@
 $scope.updateRole = function () {
+    console.log($scope.userRoles);
+    
     if ($scope.userRoles && $scope.userRoles.value.length > 0) {
+        
+        
         var roles = [];
         for (i in $scope.userRoles.value) {
             var c = $scope.userRoles.value[i];

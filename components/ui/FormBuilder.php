@@ -588,7 +588,7 @@ class FormBuilder extends CComponent {
         } else if (is_subclass_of($formdata, 'ActiveRecord')) {
             $this->model = $formdata;
 
-            $data['data'] = $formdata->attributesRelated;
+            $data['data'] = $formdata->attributes;
             $data['errors'] = $formdata->errors;
             $data['isNewRecord'] = $formdata->isNewRecord;
         }
@@ -653,7 +653,6 @@ class FormBuilder extends CComponent {
                 ## assign existing field configuration to newly created field
                 $field->attributes = $f;
 
-
                 if (property_exists($field, 'name')) {
                     $field->name = preg_replace("/[^0-9a-zA-Z_]/", "", $field->name);
                     $field->name = preg_replace("/^\d+\.\s*/", "", $field->name);
@@ -666,6 +665,7 @@ class FormBuilder extends CComponent {
                         $field->errors = $data['errors'][$f['name']];
                     }
                 }
+                
 
                 ## assign builder reference to this object
                 $field->builder = $this;

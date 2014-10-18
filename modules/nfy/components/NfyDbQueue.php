@@ -97,7 +97,7 @@ class NfyDbQueue extends NfyQueue {
         }
 
         $subscriptions = NfyDbSubscription::model()->current()->withQueue($this->id)->matchingCategory($category)->findAll();
-
+        
         $trx = $queueMessage->getDbConnection()->getCurrentTransaction() !== null ? null : $queueMessage->getDbConnection()->beginTransaction();
 
         // empty($subscriptions) &&
