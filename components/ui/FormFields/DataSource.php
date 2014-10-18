@@ -297,6 +297,7 @@ class DataSource extends FormField {
                     'template' => $template
                 ));
 
+
                 if (!isset($template['generateTemplate'])) {
                     $sql = str_replace("[{$param}]", $template['sql'], $sql);
                 } else {
@@ -317,7 +318,7 @@ class DataSource extends FormField {
     }
 
     public function getPostName($mode = '') {
-        if ($this->relationTo == '') {
+        if ($this->relationTo == '' || $this->relationTo == 'currentModel') {
             return $this->name . $mode;
         } else {
             $name = str_replace($this->name, $this->relationTo, $this->renderName);
@@ -352,6 +353,12 @@ class DataSource extends FormField {
                 }
             }
 
+            ## check if there is another params
+            preg_match_all("/\:[\w\d_]+/", $sql, $params);
+            if (count($params[0]) > 0) {
+                $renderBracket = true;
+            }
+            
             if ($renderBracket) {
                 $sql = str_replace("{{$block}}", $bracket['sql'], $sql);
             } else {
@@ -361,6 +368,7 @@ class DataSource extends FormField {
 
         ## find all params
         preg_match_all("/\:[\w\d_]+/", $sql, $params);
+
         $model = $field->model;
         foreach ($params[0] as $p) {
             if (isset($postedParams[$p])) {
@@ -456,15 +464,19 @@ class DataSource extends FormField {
 
         if (isset($criteria['condition']) && is_string($criteria['condition'])) {
             $sql = $criteria['condition'];
-            $bracket = DataSource::generateTemplate($sql, $postedParams, $field);
 
+            $bracket = DataSource::generateTemplate($sql, $postedParams, $field);
+            
             if ($bracket['sql'] != '') {
                 if (substr($bracket['sql'], 0, 5) == 'where') {
                     $criteria['condition'] = substr($bracket['sql'], 5);
+                } else {
+                    $criteria['condition'] = $bracket['sql'];
                 }
 
                 $params = isset($postedParams['params']) ? $postedParams['params'] : array();
                 $criteria['params'] = array_merge($params, $bracket['params']);
+                
             } else if ($bracket['sql'] == '') {
                 unset($criteria['condition']);
             }
@@ -485,10 +497,11 @@ class DataSource extends FormField {
     }
 
     public function getRelated($params = array(), $isGenerate = false) {
-        $postedParams = $this->queryParams;
+        $postedParams = array_merge($params, $this->queryParams);
         $relChanges = $this->model->getRelChanges($this->relationTo);
-
+        
         $criteria = DataSource::generateCriteria($postedParams, $this->relationCriteria, $this);
+ 
         $rawData = $this->model->{$this->relationTo}($criteria);
 
         if ($this->relationTo == 'currentModel') {
@@ -535,7 +548,7 @@ class DataSource extends FormField {
             }
         } else {
             ## with relatedTo
-            $data = $this->getRelated();
+            $data = $this->getRelated($this->params);
         }
 
         $this->data = array(
