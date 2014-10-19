@@ -289,14 +289,11 @@ class DataSource extends FormField {
             }
 
             if (isset($fieldSql)) {
-
-
                 $template = $field->evaluate($fieldSql, true, array(
                     'paramName' => $param,
                     'params' => @$postedParams[$param],
                     'template' => $template
                 ));
-
 
                 if (!isset($template['generateTemplate'])) {
                     $sql = str_replace("[{$param}]", $template['sql'], $sql);
@@ -354,7 +351,7 @@ class DataSource extends FormField {
             }
 
             ## check if there is another params
-            preg_match_all("/\:[\w\d_]+/", $sql, $params);
+            preg_match_all("/\:[\w\d_]+/", $bracket['sql'], $params);
             if (count($params[0]) > 0) {
                 $renderBracket = true;
             }

@@ -1812,7 +1812,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 .todo-shift-enter {
     float:right;
-    margin:0px 4px -6px 0px;
+    margin:0px -2px -6px 0px;
     display:none;
 }
 
