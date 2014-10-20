@@ -167,8 +167,8 @@ class DataSource extends FormField {
     public $postData = 'Yes';
 
     /** @var string $params */
-    public $params = '';
-    private $postedParams = '';
+    public $params = array();
+    private $postedParams = array();
 
     /** @var string $data */
     public $data;
@@ -233,7 +233,7 @@ class DataSource extends FormField {
             }
 
             $field = $fb->findField(array('name' => $post['name']));
-            $this->queryParams = @$post['params'];
+            $this->queryParams = (is_array(@$post['params']) ? @$post['params'] : array());
             $this->attributes = $field;
             $this->builder = $fb;
 
@@ -355,7 +355,7 @@ class DataSource extends FormField {
             if (count($params[0]) > 0) {
                 $renderBracket = true;
             }
-            
+
             if ($renderBracket) {
                 $sql = str_replace("{{$block}}", $bracket['sql'], $sql);
             } else {
@@ -463,7 +463,7 @@ class DataSource extends FormField {
             $sql = $criteria['condition'];
 
             $bracket = DataSource::generateTemplate($sql, $postedParams, $field);
-            
+
             if ($bracket['sql'] != '') {
                 if (substr($bracket['sql'], 0, 5) == 'where') {
                     $criteria['condition'] = substr($bracket['sql'], 5);
@@ -473,7 +473,6 @@ class DataSource extends FormField {
 
                 $params = isset($postedParams['params']) ? $postedParams['params'] : array();
                 $criteria['params'] = array_merge($params, $bracket['params']);
-                
             } else if ($bracket['sql'] == '') {
                 unset($criteria['condition']);
             }
@@ -496,9 +495,9 @@ class DataSource extends FormField {
     public function getRelated($params = array(), $isGenerate = false) {
         $postedParams = array_merge($params, $this->queryParams);
         $relChanges = $this->model->getRelChanges($this->relationTo);
-        
+
         $criteria = DataSource::generateCriteria($postedParams, $this->relationCriteria, $this);
- 
+
         $rawData = $this->model->{$this->relationTo}($criteria);
 
         if ($this->relationTo == 'currentModel') {
