@@ -180,28 +180,32 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     var emptyVal = "['']";
                     switch (col.inputMask) {
                         case "99/99/9999 99:99":
-                            format = " | dateFormat:'dd/MM/yyyy HH:mm'";
                             placeholder = "dd/mm/yyyy hh:mm";
+                            format = " | dateFormat:'dd/MM/yyyy HH:mm'";
                             emptyVal = "['','0000-00-00 00:00','0000-00-00', '00:00']";
                             break;
                         case "99/99/9999":
-                            format = " | dateFormat:'dd/MM/yyyy'";
                             placeholder = "dd/mm/yyyy";
+                            format = " | dateFormat:'dd/MM/yyyy'";
                             emptyVal = "['','0000-00-00 00:00','0000-00-00', '00:00']";
                             break;
                         case "99:99":
-                            format = " | dateFormat:'HH:mm'";
                             placeholder = "hh:mm";
+                            format = " | dateFormat:'HH:mm'";
                             emptyVal = "['','0000-00-00 00:00','0000-00-00', '00:00']";
                             break;
                     }
-                    
+
                     if (placeholder != "") {
-                        placeholderHtml = '<div ng-if="' + emptyVal + '.indexOf(row.getProperty(col.field)) >=0 " style="color:#999">' + placeholder + '</div>';
+                        placeholderHtml = '<div ng-if="' +
+                                emptyVal + '.indexOf(row.getProperty(col.field)) >=0 " style="color:#999">' +
+                                placeholder + '</div>';
                     }
 
+                    var ngIf = 'ng-if="' + emptyVal + '.indexOf(row.getProperty(col.field)) < 0 "';
+
                     var html = '<div class="ngCellText" ng-class="col.colIndex()">\
-                                <span ng-if="' + emptyVal + '.indexOf(row.getProperty(col.field)) < 0 " ng-cell-text>{{ row.getProperty(col.field)' + format + '}}</span>\
+                                <span ' + ngIf + ' ng-cell-text>{{ row.getProperty(col.field)' + format + '}}</span>\
                                 ' + placeholderHtml + '\
                                 </div>';
                     return html;

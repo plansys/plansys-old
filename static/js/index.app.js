@@ -127,9 +127,13 @@ app.filter('capitalize', function () {
     }
 });
 app.filter('dateFormat', function (dateFilter) {
-   return function(date) {
+   return function(date, format) {
        if (date != "0000-00-00") {
-           var d = dateFilter(date);
+           if (typeof date == "string") {
+               date = new Date(date);
+           }
+           
+           var d = dateFilter(date, format);
            if (d.trim() == "Jan 1, 1970") {
                return "";
            } else {
