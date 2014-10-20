@@ -23,6 +23,7 @@ class ActiveRecord extends CActiveRecord {
     private $__relInsert = array();
     private $__relUpdate = array();
     private $__relDelete = array();
+    private $__tempVar = array();
 
     private function initRelation() {
         $static = !(isset($this) && get_class($this) == get_called_class());
@@ -70,7 +71,7 @@ class ActiveRecord extends CActiveRecord {
                 $criteria = array_merge($criteria, $opt);
             }
 
-            
+
             $this->loadRelations($name, @$criteria);
             $this->applyRelChange($name);
             return $this->$name;
@@ -110,9 +111,17 @@ class ActiveRecord extends CActiveRecord {
                 }
                 break;
             default:
-                parent::__set($name, $value);
+                try {
+                    parent::__set($name, $value);
+                } catch (Exception $e) {
+                    $this->__tempVar[$name] = $value;
+                }
                 break;
         }
+    }
+
+    public function isTemp($name) {
+        return isset($this->__tempVar);
     }
 
     public function __get($name) {
@@ -167,6 +176,9 @@ class ActiveRecord extends CActiveRecord {
                 $this->initRelation();
                 return @$this->__relations[$name];
                 break;
+            case (isset($this->__tempVar[$name])):
+                return $this->__tempVar;
+                break;
             default:
                 return parent::__get($name);
                 break;
@@ -209,15 +221,15 @@ class ActiveRecord extends CActiveRecord {
 
         ## find
         $command = $builder->createFindCommand($tableSchema, new CDbCriteria($criteria));
-       
-        
+
+
         $rawData = $command->select('*')->queryAll();
 
         return $rawData;
     }
 
     public function loadRelations($name = null, $criteria = array()) {
-        
+
         foreach ($this->getMetaData()->relations as $k => $rel) {
             if (!is_null($name) && $k != $name) {
                 continue;
@@ -522,13 +534,13 @@ class ActiveRecord extends CActiveRecord {
                                 }
                                 $this->__relDelete[$k] = array();
                             }
-                        }elseif(is_array($rel->foreignKey)){
+                        } elseif (is_array($rel->foreignKey)) {
                             $class = $rel->className;
-                            
+
                             if (isset($this->__relInsert[$k])) {
                                 if ($k != 'currentModel') {
                                     foreach ($this->__relInsert[$k] as $n => $m) {
-                                        foreach($rel->foreignKey as $rk => $fk){
+                                        foreach ($rel->foreignKey as $rk => $fk) {
                                             $this->__relInsert[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
                                         }
                                     }
@@ -542,7 +554,7 @@ class ActiveRecord extends CActiveRecord {
                             if (isset($this->__relUpdate[$k])) {
                                 if ($k != 'currentModel') {
                                     foreach ($this->__relUpdate[$k] as $n => $m) {
-                                        foreach($rel->foreignKey as $rk => $fk){
+                                        foreach ($rel->foreignKey as $rk => $fk) {
                                             $this->__relUpdate[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
                                         }
                                     }
