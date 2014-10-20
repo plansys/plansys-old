@@ -239,6 +239,10 @@ class DataSource extends FormField {
 
             $isGenerate = isset($post['generate']);
 
+            if (is_string($this->params)) {
+                $this->params = array();
+            }
+
             if ($this->relationTo == '' || $this->relationTo == '-- NONE --') {
                 ## without relatedTo
 
