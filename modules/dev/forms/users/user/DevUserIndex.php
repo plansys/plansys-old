@@ -1,6 +1,6 @@
 <?php
 
-class DevUserIndex extends Form {
+class DevUserIndex extends User {
     public function getFields() {
         return array (
             array (

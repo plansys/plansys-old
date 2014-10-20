@@ -195,6 +195,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             emptyVal = "['','0000-00-00 00:00','0000-00-00', '00:00']";
                             break;
                     }
+                    
                     if (placeholder != "") {
                         placeholderHtml = '<div ng-if="' + emptyVal + '.indexOf(row.getProperty(col.field)) >=0 " style="color:#999">' + placeholder + '</div>';
                     }

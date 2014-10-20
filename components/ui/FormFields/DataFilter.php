@@ -284,6 +284,7 @@ class DataFilter extends FormField {
                 }
             }
         }
+        
         $query = '';
         if (count($sql) > 0) {
             $query = implode(" AND ", $sql);
@@ -300,7 +301,7 @@ class DataFilter extends FormField {
             'sql' => $query,
             'params' => $flatParams
         );
-
+        
 
         return $template;
     }

@@ -414,6 +414,7 @@ class DataSource extends FormField {
      * @return mixed me-return array kosong jika parameter $sql == "", jika tidak maka akan me-return array data hasil execute SQL
      */
     public function query($params = array()) {
+        $params = array_merge($params, $this->queryParams);
         if (trim($this->sql) == "")
             return array();
 

@@ -347,14 +347,13 @@ app.directive('uiMask', function ($timeout, $filter) {
             if (attrs.ngModel && !attrs.ngDelay) {
                 attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
             }
-
+            $("<input type='hidden' ng-model='' />").insertAfter(element);
             return function ($scope, $el, attrs, ctrl) {
                 $timeout(function () {
                     switch (attrs.uiMask) {
                         case "99/99/9999 99:99":
                             var dt = new Date(ctrl.$viewValue);
                             $el.val($filter('date')(dt, 'dd/MM/yyyy HH:mm'));
-
                             break;
                         case "99/99/9999":
                             var dt = new Date(ctrl.$viewValue);
