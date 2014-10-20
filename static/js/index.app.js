@@ -126,7 +126,20 @@ app.filter('capitalize', function () {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
 });
-
+app.filter('dateFormat', function (dateFilter) {
+   return function(date) {
+       if (date != "0000-00-00") {
+           var d = dateFilter(date);
+           if (d.trim() == "Jan 1, 1970") {
+               return "";
+           } else {
+               return d;
+           }
+       } else {
+           return "";
+       }
+   }
+});
 app.filter('elipsisMiddle', function () {
     return function (fullStr, strLen, separator) {
         if (fullStr.length <= strLen)

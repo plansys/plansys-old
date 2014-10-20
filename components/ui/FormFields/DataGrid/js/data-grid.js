@@ -175,26 +175,53 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                 // Type: String
                 $scope.generateCellString = function (col) {
                     var format = "";
+                    var placeholder = "";
+                    var placeholderHtml = "";
+                    var emptyVal = "['']";
                     switch (col.inputMask) {
                         case "99/99/9999 99:99":
-                            format = " | date:'dd/MM/yyyy HH:mm'";
+                            format = " | dateFormat:'dd/MM/yyyy HH:mm'";
+                            placeholder = "dd/mm/yyyy hh:mm";
+                            emptyVal = "['','0000-00-00 00:00','0000-00-00', '00:00']";
                             break;
                         case "99/99/9999":
-                            format = " | date:'dd/MM/yyyy'";
+                            format = " | dateFormat:'dd/MM/yyyy'";
+                            placeholder = "dd/mm/yyyy";
+                            emptyVal = "['','0000-00-00 00:00','0000-00-00', '00:00']";
                             break;
                         case "99:99":
-                            format = " | date:'HH:mm'";
+                            format = " | dateFormat:'HH:mm'";
+                            placeholder = "hh:mm";
+                            emptyVal = "['','0000-00-00 00:00','0000-00-00', '00:00']";
                             break;
+                    }
+                    if (placeholder != "") {
+                        placeholderHtml = '<div ng-if="' + emptyVal + '.indexOf(row.getProperty(col.field)) >=0 " style="color:#999">' + placeholder + '</div>';
                     }
 
                     var html = '<div class="ngCellText" ng-class="col.colIndex()">\
-                                <span ng-cell-text>{{row.getProperty(col.field)' + format + '}}</span>\
+                                <span ng-if="' + emptyVal + '.indexOf(row.getProperty(col.field)) < 0 " ng-cell-text>{{ row.getProperty(col.field)' + format + '}}</span>\
+                                ' + placeholderHtml + '\
                                 </div>';
                     return html;
                 }
                 $scope.generateEditString = function (col) {
                     var uimask = col.inputMask ? "ui-mask='" + col.inputMask + "'" : "";
-                    var html = '<input ' + uimask + ' ng-class="\'colt\' + col.index" \
+
+                    var placeholder = "";
+                    switch (col.inputMask) {
+                        case "99/99/9999 99:99":
+                            placeholder = "placeholder='dd/mm/yyyy hh:mm'";
+                            break;
+                        case "99/99/9999":
+                            placeholder = "placeholder='dd/mm/yyyy'";
+                            break;
+                        case "99:99":
+                            placeholder = "placeholder='hh:mm'";
+                            break;
+                    }
+
+                    var html = '<input ' + uimask + ' ' + placeholder + ' ng-class="\'colt\' + col.index" \
                                 ng-input="COL_FIELD"  ng-model="COL_FIELD" />';
                     return html;
                 }
@@ -325,7 +352,6 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
                             // prepare columns
                             evalArray(c.options);
-
                             switch (c.columnType) {
                                 case "string":
                                     var col = angular.extend(c.options, {
