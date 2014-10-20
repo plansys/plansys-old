@@ -538,6 +538,10 @@ class DataSource extends FormField {
     }
 
     public function processQuery() {
+        if (is_string($this->params)) {
+            $this->params = array();
+        }
+
         if ($this->relationTo == '' || $this->postData == 'No') {
             ## without relatedTo
 
