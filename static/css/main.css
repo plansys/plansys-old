@@ -1882,6 +1882,18 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     color:#428BCA;
 }
 
+/********************************** DASHBOARD **************************************/
+
+.dashboard-text {
+    text-align:center;
+    top:50%;
+    position:absolute;
+    margin:-60px 0px 0px -320px;
+    left:50%;
+    color:#ececeb;
+    font-size:100px;
+}
+
 /********************************** FORMS **************************************/
 .label-field-value {
     font-size:13px;
