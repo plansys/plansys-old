@@ -79,6 +79,10 @@ class RelationField extends FormField {
                 'label' => 'Sql Parameters',
                 'name' => 'params',
                 'show' => 'Show',
+                'options' => array (
+                    'ng-model' => 'active.params',
+                    'ng-change' => 'save();',
+                ),
                 'type' => 'KeyValueGrid',
             ),
             array (
@@ -340,18 +344,19 @@ class RelationField extends FormField {
 
         $fb = FormBuilder::load($m);
         $field = $fb->findField(array('name' => $f));
-
+        
         foreach ($field['columns'] as $column) {
             if ($c == $column['name']) {
                 $this->modelClass = $column['relModelClass'];
                 $this->idField = $column['relIdField'];
                 $this->labelField = $column['relLabelField'];
-                // $this->condition = @$column['relCondition'];
+                $this->relationCriteria = @$column['relCriteria'];
+                $this->params = @$column['relParams'];
             }
         }
         $this->builder = $fb;
 
-        echo json_encode($this->query(@$s, $params));
+        echo json_encode($this->query(@$s, $this->params));
     }
 
     public function actionSearch() {
@@ -368,10 +373,12 @@ class RelationField extends FormField {
     }
 
     public function generateCondition($search = '', &$jsparams = array()) {
-        preg_match_all("/\[(.*?)\]/", $this->relationCriteria['condition'], $blocks);
-        preg_match_all("/\{(.*?)\}/", $this->labelField, $fields);
-        $sql = $this->relationCriteria['condition'];
+        
+        $sql = @$this->relationCriteria['condition'] ? $this->relationCriteria['condition'] : "";
 
+        preg_match_all("/\[(.*?)\]/", $sql, $blocks);
+        preg_match_all("/\{(.*?)\}/", $this->labelField, $fields);
+        
         if ($search != '') {
             if (count($fields[1]) == 0) {
                 $fields[1] = [$this->labelField];
@@ -456,7 +463,7 @@ class RelationField extends FormField {
         $this->relationCriteria['condition'] = $condition["sql"];
         $this->relationCriteria['limit'] = ($search == '' ? '30' : '100');
         $this->params = array_merge($this->params,$condition['params']);
-
+        
         return DataSource::generateCriteria($this->params, $this->relationCriteria, $this);
     }
 
@@ -467,16 +474,6 @@ class RelationField extends FormField {
         $model = new $class;
         $table = $model->tableName();
 
-        
-        // $sql = "select t.* from {$table} t {$condition['sql']} {$limit}";
-
-        // if ($this->value != '') {
-        //     $sql = '(select t.* from ' . $table . ' t WHERE t.' . $this->idField. ' = :rl_current_value) UNION (' . $sql . ')  ';
-        //     $condition['params'][':rl_current_value'] = $this->value;
-        // }
-
-        // $rawlist = Yii::app()->db->createCommand($sql)->queryAll(true, $condition['params']);
-        
         $criteria = $this->generateCriteria($search, $params);
         $rawlist = $model->currentModel($criteria);
 

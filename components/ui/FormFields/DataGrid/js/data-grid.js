@@ -293,7 +293,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                 // Type: Relation
                 $scope.generateEditRelation = function (col) {
                     var html = '<input';
-                    html += ' dg-relation';
+                    html += ' dg-relation params=\'' + JSON.stringify(col.relParams) + '\'';
                     html += ' type="text" ng-class="\'colt\' + col.index"';
                     html += ' ng-input="COL_FIELD_label" ng-model="COL_FIELD_label" />';
 
@@ -359,7 +359,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             evalArray(c.options);
                             switch (c.columnType) {
                                 case "string":
-                                    var col = angular.extend(c.options, {
+                                    var col = angular.extend(c.options || {}, {
                                         field: c.name,
                                         displayName: c.label,
                                         cellTemplate: $scope.generateCellString(c),
@@ -367,7 +367,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     });
                                     break;
                                 case "buttons":
-                                    var col = angular.extend(c.options, {
+                                    var col = angular.extend(c.options || {}, {
                                         field: 'button_' + buttonID,
                                         displayName: c.label,
                                         enableCellEdit: false,
@@ -383,14 +383,14 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     buttonID++;
                                     break;
                                 case "dropdown":
-                                    var col = angular.extend(c.options, {
+                                    var col = angular.extend(c.options || {}, {
                                         field: c.name,
                                         displayName: c.label,
                                         editableCellTemplate: $scope.generateDropdown(c)
                                     });
                                     break;
                                 case "relation":
-                                    var col = angular.extend(c.options, {
+                                    var col = angular.extend(c.options || {}, {
                                         field: c.name,
                                         displayName: c.label,
                                         cellTemplate: $scope.generateCellRelation(c),

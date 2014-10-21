@@ -3,11 +3,22 @@
 class DataGridListFormRelation extends Form {
     
     /** @var string $name */
-    public $relCondition = '';
+    public $relParams = array();
+    public $relCriteria = array(
+        'select' => '',
+        'distinct' => 'false',
+        'alias' => 't',
+        'condition' => '{[search]}',
+        'order' => '',
+        'group' => '',
+        'having' => '',
+        'join' => ''
+    );
     public $relModelClass = '';
     public $relIdField = '';
     public $relLabelField = '';
-        
+    
+    
     public function getForm() {
         return array (
             'title' => 'DataGridListFormRelation',
@@ -84,21 +95,26 @@ class DataGridListFormRelation extends Form {
                 'type' => 'DropDownList',
             ),
             array (
-                'name' => 'relCondition',
-                'labelWidth' => '0',
-                'fieldWidth' => '12',
-                'fieldHeight' => '0',
+                'name' => 'relCriteria',
+                'label' => 'Sql Criteria',
+                'paramsField' => 'relParams',
+                'baseClass' => 'DataGrid',
                 'options' => array (
-                    'ng-model' => 'value[$index].relCondition',
+                    'ng-change' => 'save();',
+                    'ng-model' => 'value[$index].relCriteria',
+                ),
+                'modelClassJS' => 'DataGrid/inlinejs/relation-criteria.js',
+                'type' => 'SqlCriteria',
+            ),
+            array (
+                'label' => 'Sql Parameter',
+                'name' => 'relParams',
+                'show' => 'Show',
+                'options' => array (
                     'ng-change' => 'updateListView();',
+                    'ng-model' => 'item.relParams;',
                 ),
-                'fieldOptions' => array (
-                    'placeholder' => 'SQL Condition:
-
-Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [model.role_id]} {where [search]}',
-                    'style' => 'min-height:100px;',
-                ),
-                'type' => 'TextArea',
+                'type' => 'KeyValueGrid',
             ),
         );
     }

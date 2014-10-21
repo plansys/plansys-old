@@ -32,7 +32,6 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                 $scope.loading = false;
                 $scope.idx = 0;
 
-
                 $scope.original = {
                     label: Object.getProperty($scope.$parent, attrs.ngModel),
                     id: Object.getProperty($scope.$parent, attrs.ngModel.replace("_label", ''))
@@ -43,7 +42,25 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                     eval('$scope.$parent.' + attrs.ngModel + ' = text');
                 }
                 $scope.match = [];
-
+                $scope.paramValue = {};
+                
+                
+                $scope.params = JSON.parse(attrs.params);
+                for (i in $scope.params) {
+                    var p = $scope.params[i];
+                    if (p.indexOf('js:') === 0) {
+                        var value = $scope.$parent.$eval(p.replace('js:', ''));
+                        var key = i;
+                        $scope.$parent.$watch(p.replace('js:', ''), function (newv, oldv) {
+                            if (newv != oldv) {
+                                $scope.paramValue[key] = newv;
+                                $scope.doSearch();
+                            }
+                        }, true);
+                        $scope.paramValue[key] = value;
+                    }
+                }
+                
                 $scope.doSearch = function () {
                     var search = Object.getProperty($scope.$parent, attrs.ngModel);
                     search = search || "";
@@ -53,10 +70,9 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                         $http.post(Yii.app.createUrl('formfield/RelationField.dgrSearch'), {
                             's': search,
                             'm': $scope.modelClass,
-                            'c': $scope.col.field,
                             'f': $scope.name,
-                            'mf': parentScope.model,
-                            'rf': $scope.row.entity
+                            'c': $scope.col.field,
+                            'p': $scope.paramValue
                         }).success(function (data) {
                             $timeout(function () {
                                 var list = [];
@@ -74,7 +90,6 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                                 }
 
                                 $scope.match = list;
-
                                 $scope.loading = false;
                             }, 0);
                         }).error(function () {
@@ -108,15 +123,23 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                             $scope.refocus();
                         }, 0);
                     }
-
                     $scope.escaped = true;
                 }
+                
                 $el.keydown(function (e) {
                     $scope.escaped = false;
+                    function scroll() {
+                        $timeout(function () {
+                            var elHeight = $('.data-grid-dropdown li.hover').height();
+                            $('.data-grid-dropdown').scrollTop($scope.idx * elHeight);
+                        }, 0);
+                    }
+                    
                     $scope.$apply(function () {
                         switch (e.which) {
                             case 40:
                                 $scope.idx++;
+                                scroll();
                                 e.preventDefault();
                                 return false;
 
@@ -124,6 +147,7 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                             case 38:
                                 $scope.idx--;
 
+                                scroll();
                                 e.preventDefault();
                                 return false;
 

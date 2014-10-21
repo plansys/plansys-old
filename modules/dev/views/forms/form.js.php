@@ -205,7 +205,7 @@
             })).success(function (data) {
                 $scope.relationFieldList = data;
 
-                if (parentScope != null) {
+                if (parentScope != null && typeof parentScope.updateListView != "undefined") {
                     parentScope.updateListView();
                 }
             });
@@ -503,12 +503,11 @@
                 $el = $($scope.activeTree.$parent.$element);
                 switch (e.which) {
                     case 9:
-                        $("#toolbar-properties input, #toolbar-properties button").eq(0).focus();
-                        e.preventDefault();
-                        e.stopPropagation();
-                        break;
-                    case 46:
-                        $scope.deleteField();
+                        if ($("body > .modal-container").length == 0) {
+                            $("#toolbar-properties input, #toolbar-properties button").eq(0).focus();
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }
                         break;
                     case 38:
                         if ($el.prev().length > 0) {

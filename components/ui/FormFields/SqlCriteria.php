@@ -28,8 +28,7 @@ class SqlCriteria extends FormField {
                     'ng-model' => 'active.baseClass',
                     'ng-change' => 'save();',
                 ),
-                'list' => array(),
-                'listExpr' => 'array(\\\'DataSource\\\',\\\'RelationField\\\');',
+                'listExpr' => 'array(\\\'DataSource\\\',\\\'RelationField\\\',\\\'DataGrid\\\', \\\'DataFilter\\\');',
                 'type' => 'DropDownList',
             ),
             array(
@@ -115,11 +114,13 @@ class SqlCriteria extends FormField {
     public function actionPreviewSQL() {
         $postdata = file_get_contents("php://input");
         $post = json_decode($postdata, true);
-        $criteria = $post['criteria'];
-        $params = $post['params'];
+        $criteria = @$post['criteria'] ? $post['criteria'] : array();
+        $params = @$post['params'] ? $post['params'] : array();
         $baseClass = $post['baseclass'];
 
+
         switch ($baseClass) {
+            case "DataGrid":
             case "RelationField":
                 $rel = 'currentModel';
                 $name = $post['rfname'];
@@ -135,13 +136,14 @@ class SqlCriteria extends FormField {
                 $model = new $modelClass;
                 $builder = $model->commandBuilder;
 
-
                 $fb = FormBuilder::load($classPath);
                 $field = $fb->findField(array('name' => $name));
                 $rf = new RelationField();
-                $rf->builder =  $fb;
+                $rf->builder = $fb;
                 $rf->attributes = $field;
                 $rf->relationCriteria = $criteria;
+
+                $rf->params = $post['params'];
 
                 $criteria = $rf->generateCriteria('', array());
                 $criteria = new CDbCriteria($criteria);
@@ -177,7 +179,7 @@ class SqlCriteria extends FormField {
             $tableSchema = $model->tableSchema;
         } else {
             $parent = $model::model()->find();
-            
+
             $relMeta = $model->getMetadata()->relations[$rel];
             $relClass = $relMeta->className;
             $tableSchema = $relClass::model()->tableSchema;

@@ -11,9 +11,11 @@ ob_start();
         $scope.user = <?php echo @json_encode(Yii::app()->user->model->attributes); ?>;
         if ($scope.user != null) {
             $scope.user.role = [];
+            
             for (i in $scope.user.roles) {
                 $scope.user.role.push($scope.user.roles[i]['role_name']);
             }
+            
             $scope.user.isRole = function (role) {
                 return $scope.user.role.indexOf(role) >= 0;
             }
@@ -50,9 +52,7 @@ ob_start();
 
                     var parseParams = $parse(button.urlparams);
                     var urlParams = angular.extend($scope.params, parseParams($scope));
-
                     var url = Yii.app.createUrl(baseurl, urlParams);
-
                     $("div[ng-controller=<?= $modelClass ?>Controller] form").attr('action', url).submit();
                 }
             }, 0);

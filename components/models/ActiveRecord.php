@@ -742,9 +742,16 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    public static function listData($idField, $valueField, $condition = '') {
+    public static function listData($idField, $valueField, $criteria = array()) {
+        
+        if (is_bool($criteria)) {
+            $criteria = array(
+                'distinct' => $criteria
+            );
+        }
+        
         $class = get_called_class();
-        return CHtml::listData($class::model()->findAll(), $idField, $valueField);
+        return CHtml::listData($class::model()->findAll($criteria), $idField, $valueField);
     }
 
     public static function batchInsert($model, &$data) {

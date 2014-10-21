@@ -14,12 +14,12 @@ class DataGridListForm extends Form {
                 'type' => 'Text',
             ),
             array (
-                'value' => '<hr ng-show=\"value[$index].show\"
+                'value' => '<hr ng-if=\"value[$index].show\"
 style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'Text',
             ),
             array (
-                'value' => '<div ng-show=\\"value[$index].show\\">',
+                'value' => '<div ng-if=\\"value[$index].show\\">',
                 'type' => 'Text',
             ),
             array (
@@ -82,6 +82,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'options' => array (
                     'ng-if' => 'value[$index].columnType == \\\'string\\\'',
                 ),
+                'inlineJS' => 'DataGrid/inlinejs/dg-type.js',
                 'type' => 'SubForm',
             ),
             array (
@@ -90,6 +91,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'options' => array (
                     'ng-if' => 'value[$index].columnType == \\\'dropdown\\\'',
                 ),
+                'inlineJS' => 'DataGrid/inlinejs/dg-type.js',
                 'type' => 'SubForm',
             ),
             array (
@@ -98,6 +100,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'options' => array (
                     'ng-if' => 'value[$index].columnType == \\\'buttons\\\'',
                 ),
+                'inlineJS' => 'DataGrid/inlinejs/dg-type.js',
                 'type' => 'SubForm',
             ),
             array (
@@ -106,6 +109,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'options' => array (
                     'ng-if' => 'value[$index].columnType == \\\'relation\\\'',
                 ),
+                'inlineJS' => 'DataGrid/inlinejs/dg-type.js',
                 'type' => 'SubForm',
             ),
             array (
@@ -146,30 +150,42 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
     public $name = '';
     public $label = '';
     public $options = array();
+    public $typeOptions = array(
+        'string' => ['inputMask', 'options'],
+        'buttons' => ['buttonCollapsed', 'buttons', 'options'],
+        'dropdown' => ['listType', 'listExpr', 'listMustChoose', 'options'],
+        'relation' => ['relParams', 'relCriteria', 'relModelClass', 'relIdField', 'relLabelField', 'options']
+    );
 
     ### string options
     public $inputMask = '';
-    
+
     ### button Options
     public $buttonCollapsed = 'Yes';
-    public $buttons = array(
-        array(
-            'label' => '',
-            ''
-        )
-    );
-    
+    public $buttons = array(array());
+
     ### dropdown Options
     public $listType = 'php';
     public $listExpr = '';
     public $listMustChoose = 'No';
-    
+
     ### relation Options
-    public $relCondition = '';
+    public $relParams = array();
+    public $relCriteria = array(
+        'select' => '',
+        'distinct' => 'false',
+        'alias' => 't',
+        'condition' => '{[search]}',
+        'order' => '',
+        'group' => '',
+        'having' => '',
+        'join' => ''
+    );
     public $relModelClass = '';
     public $relIdField = '';
     public $relLabelField = '';
-    
+
+    ### columnType
     public $columnType = 'string';
 
 }

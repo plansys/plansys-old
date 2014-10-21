@@ -371,7 +371,6 @@ class DataSource extends FormField {
         preg_match_all("/\:[\w\d_]+/", $sql, $params);
 
         $model = $field->model;
-
         foreach ($params[0] as $p) {
             if (isset($postedParams[$p])) {
                 if (strpos($postedParams[$p], 'js:') !== false) {
@@ -384,6 +383,7 @@ class DataSource extends FormField {
                         break;
                     }
                 } else {
+                    
                     $returnParams[$p] = $field->evaluate($postedParams[$p], true, array(
                         'model'=> $model
                     ));
