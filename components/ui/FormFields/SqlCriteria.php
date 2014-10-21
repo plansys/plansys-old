@@ -29,7 +29,7 @@ class SqlCriteria extends FormField {
                     'ng-change' => 'save();',
                 ),
                 'list' => array(),
-                'listExpr' => 'array(\\\'DataSource\\\');',
+                'listExpr' => 'array(\\\'DataSource\\\',\\\'RelationField\\\');',
                 'type' => 'DropDownList',
             ),
             array(
@@ -118,11 +118,40 @@ class SqlCriteria extends FormField {
         $criteria = $post['criteria'];
         $params = $post['params'];
         $baseClass = $post['baseclass'];
-        $rel = $post['rel'];
 
         switch ($baseClass) {
+            case "RelationField":
+                $rel = 'currentModel';
+                $name = $post['rfname'];
+                $classPath = $post['rfclass'];
+                $modelClassPath = $post['rfmodel'];
+
+                $modelClass = array_pop(explode(".", $modelClassPath));
+                Yii::import($modelClassPath);
+
+                $class = array_pop(explode(".", $classPath));
+                Yii::import($classPath);
+
+                $model = new $modelClass;
+                $builder = $model->commandBuilder;
+
+
+                $fb = FormBuilder::load($classPath);
+                $field = $fb->findField(array('name' => $name));
+                $rf = new RelationField();
+                $rf->builder =  $fb;
+                $rf->attributes = $field;
+                $rf->relationCriteria = $criteria;
+
+                $criteria = $rf->generateCriteria('', array());
+                $criteria = new CDbCriteria($criteria);
+
+                break;
             case "DataSource":
+                $rel = $post['rel'];
+                $name = $post['dsname'];
                 $classPath = $post['dsclass'];
+
                 $class = array_pop(explode(".", $classPath));
                 Yii::import($classPath);
 
@@ -132,7 +161,7 @@ class SqlCriteria extends FormField {
                 $fb = FormBuilder::load($classPath);
                 $fb->model = new $model;
 
-                $field = $fb->findField(array('name' => $post['dsname']));
+                $field = $fb->findField(array('name' => $name));
                 $ds = new DataSource();
                 $ds->attributes = $field;
 
@@ -140,35 +169,37 @@ class SqlCriteria extends FormField {
                 $criteria = SqlCriteria::convertPagingCriteria($criteria);
                 $criteria = new CDbCriteria($criteria);
 
-                if ($rel == 'currentModel') {
-                    $tableSchema = $model->tableSchema;
-                } else {
-                    $parent = $model::model()->find();
-                    
-                    $relMeta = $model->getMetadata()->relations[$rel];
-                    $relClass = $relMeta->className;
-                    $tableSchema = $relClass::model()->tableSchema;
-
-                    switch (get_class($relMeta)) {
-                        case 'CHasOneRelation':
-                        case 'CBelongsToRelation':
-                            if (is_string($relMeta->foreignKey)) {
-                                $criteria->addColumnCondition([$relMeta->foreignKey => $parent->id]);
-                            }
-                            break;
-                        case 'CManyManyRelation':
-                        case 'CHasManyRelation':
-                            //without through
-                            if (is_string($relMeta->foreignKey)) {
-                                $criteria->addColumnCondition([$relMeta->foreignKey => $parent->id]);
-                            }
-
-                            //with through
-                            //todo..
-                            break;
-                    }
-                }
                 break;
+        }
+
+
+        if ($rel == 'currentModel') {
+            $tableSchema = $model->tableSchema;
+        } else {
+            $parent = $model::model()->find();
+            
+            $relMeta = $model->getMetadata()->relations[$rel];
+            $relClass = $relMeta->className;
+            $tableSchema = $relClass::model()->tableSchema;
+
+            switch (get_class($relMeta)) {
+                case 'CHasOneRelation':
+                case 'CBelongsToRelation':
+                    if (is_string($relMeta->foreignKey)) {
+                        $criteria->addColumnCondition([$relMeta->foreignKey => $parent->id]);
+                    }
+                    break;
+                case 'CManyManyRelation':
+                case 'CHasManyRelation':
+                    //without through
+                    if (is_string($relMeta->foreignKey)) {
+                        $criteria->addColumnCondition([$relMeta->foreignKey => $parent->id]);
+                    }
+
+                    //with through
+                    //todo..
+                    break;
+            }
         }
 
         $command = $builder->createFindCommand($tableSchema, $criteria);

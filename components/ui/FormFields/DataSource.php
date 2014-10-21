@@ -371,15 +371,28 @@ class DataSource extends FormField {
         preg_match_all("/\:[\w\d_]+/", $sql, $params);
 
         $model = $field->model;
+
         foreach ($params[0] as $p) {
             if (isset($postedParams[$p])) {
                 if (strpos($postedParams[$p], 'js:') !== false) {
-                    $returnParams[$p] = @$field->queryParams[$p];
+                    switch (get_class($field)) {
+                        case "DataSource":
+                            $returnParams[$p] = @$field->queryParams[$p];
+                        break;
+                        default:
+                            $returnParams[$p] = '';
+                        break;
+                    }
                 } else {
-                    $returnParams[$p] = $field->evaluate($postedParams[$p], true);
+                    $returnParams[$p] = $field->evaluate($postedParams[$p], true, array(
+                        'model'=> $model
+                    ));
                 }
             }
         }
+
+        $sql = str_ireplace("andand", "AND", $sql);
+        $sql = str_ireplace("oror", "OR", $sql);
 
         return array(
             'sql' => trim($sql),

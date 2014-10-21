@@ -161,7 +161,7 @@ app.directive('relationField', function ($timeout, $http) {
                         's': $scope.search,
                         'm': $scope.modelClass,
                         'f': $scope.name,
-                        'mf': $scope.$parent.model
+                        'p': $scope.paramValue
                     }).success(function (data) {
                         $scope.formList = data;
                         $scope.renderFormList();
@@ -197,8 +197,9 @@ app.directive('relationField', function ($timeout, $http) {
                 }
 
                 // set default value
+                $scope.search = "";
                 $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
-                $scope.watchParams = JSON.parse($el.find("data[name=watch_params]").text());
+                $scope.params = JSON.parse($el.find("data[name=params]").text());
                 $scope.renderedFormList = [];
                 $scope.renderFormList();
                 $scope.loading = false;
@@ -209,18 +210,27 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.value = $el.find("data[name=value]").html().trim();
                 $scope.name = $el.find("data[name=name]").html().trim();
                 $scope.modelField = JSON.parse($el.find("data[name=model_field]").text());
-
+                $scope.paramValue = {};
                 $scope.isOpen = false;
                 $scope.openedInField = false;
 
-                for (i in $scope.watchParams) {
-                    var param = $scope.watchParams[i];
-                    $scope.$watch(param, function (newparam, oldparam) {
+                for (i in $scope.params) {
+                    var p = $scope.params[i];
+                    if (p.indexOf('js:') === 0) {
+                        var value = $scope.$parent.$eval(p.replace('js:', ''));
+                        var key = i;
+                        $scope.$parent.$watch(p.replace('js:', ''), function (newv, oldv) {
+                            if (newv != oldv) {
+                                $scope.paramValue[key] = newv;
+                                $scope.doSearch();
+                            }
+                        }, true);
+                        $scope.paramValue[key] = value;
+
                         $scope.doSearch();
-                    }, true);
+                    }
                 }
 
-                $scope.search = "";
                 //if ngModel is present, use that instead of value from php
                 $timeout(function () {
                     if (attrs.ngModel) {

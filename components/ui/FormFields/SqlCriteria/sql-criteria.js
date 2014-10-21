@@ -33,6 +33,10 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
                             postparam.dsname = $scope.$parent.active.name;
                             postparam.dsclass = $scope.$parent.classPath;
                             break;
+                        case "RelationField":
+                            postparam.rfname = $scope.$parent.active.name;
+                            postparam.rfclass = $scope.$parent.classPath;
+                            postparam.rfmodel = $scope.$parent.active.modelClass;
                     }
 
                     url = Yii.app.createUrl('/FormField/SqlCriteria.previewSQL');
@@ -46,7 +50,9 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
 
                 $scope.$watch('active.' + $scope.paramsField, function (newv, oldv) {
                     if (newv != oldv) {
-                        $scope.getPreviewSQL();
+                        $timeout(function() {
+                            $scope.getPreviewSQL();
+                        },0);
                     }
                 }, true);
 

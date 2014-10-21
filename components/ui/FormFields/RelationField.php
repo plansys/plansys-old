@@ -10,24 +10,24 @@ class RelationField extends FormField {
      * @return array me-return array property DropDown.
      */
     public function getFieldProperties() {
-        return array(
-            array(
+        return array (
+            array (
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
                 ),
-                'list' => array(),
+                'list' => array (),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Model Class',
                 'name' => 'modelClass',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.modelClass',
                     'ng-change' => 'generateRelationField();save();',
                 ),
@@ -35,56 +35,60 @@ class RelationField extends FormField {
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'ID Field',
                 'name' => 'idField',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.idField',
                     'ng-change' => 'save();',
                     'ps-list' => 'relationFieldList',
                 ),
-                'list' => array(),
+                'list' => array (),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Label Field',
                 'name' => 'labelField',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.labelField',
                     'ng-change' => 'save();',
                     'ps-list' => 'relationFieldList',
                 ),
-                'list' => array(),
+                'list' => array (),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
             ),
-            array(
-                'label' => 'SQL Condition',
-                'fieldname' => 'condition',
-                'language' => 'sql',
-                'options' => array(
-                    'ng-model' => 'active.condition',
-                    'ng-change' => 'save()',
-                    'ng-delay' => '500',
+            array (
+                'name' => 'relationCriteria',
+                'label' => 'Sql Criteria',
+                'paramsField' => 'params',
+                'baseClass' => 'RelationField',
+                'options' => array (
+                    'ng-model' => 'active.relationCriteria',
+                    'ng-change' => 'save();',
                 ),
-                'desc' => 'SQL Template: select * from table [condition]<br/>
-
-Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [model.satker_id]} {where [search]}',
-                'type' => 'ExpressionField',
+                'modelClassJS' => 'RelationField/relation-criteria.js',
+                'type' => 'SqlCriteria',
             ),
-            array(
+            array (
+                'label' => 'Sql Parameters',
+                'name' => 'params',
+                'show' => 'Show',
+                'type' => 'KeyValueGrid',
+            ),
+            array (
                 'value' => '<hr/>',
                 'type' => 'Text',
             ),
-            array(
+            array (
                 'label' => 'Include Empty',
                 'name' => 'includeEmpty',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.includeEmpty',
                     'ng-change' => 'save();',
                 ),
@@ -92,10 +96,10 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Empty Value',
                 'name' => 'emptyValue',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.emptyValue',
                     'ng-change' => 'save()',
                     'ng-show' => 'active.includeEmpty == \\\'Yes\\\'',
@@ -103,10 +107,10 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Empty Label',
                 'name' => 'emptyLabel',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.emptyLabel',
                     'ng-change' => 'save()',
                     'ng-show' => 'active.includeEmpty == \\\'Yes\\\'',
@@ -114,24 +118,24 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'value' => '<hr/>',
                 'type' => 'Text',
             ),
-            array(
+            array (
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => 500,
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                 ),
@@ -139,10 +143,10 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Searchable',
                 'name' => 'searchable',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.searchable',
                     'ng-change' => 'save()',
                 ),
@@ -150,26 +154,26 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'value' => '<hr/>',
                 'type' => 'Text',
             ),
-            array(
+            array (
                 'totalColumns' => '4',
-                'column1' => array(
-                    array(
+                'column1' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),
-                'column2' => array(
-                    array(
+                'column2' => array (
+                    array (
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array(
+                        'options' => array (
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => 500,
@@ -177,43 +181,43 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
                         ),
                         'type' => 'TextField',
                     ),
-                    array(
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),
-                'column3' => array(
-                    array(
+                'column3' => array (
+                    array (
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array(
+                        'options' => array (
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => 500,
                         ),
                         'type' => 'TextField',
                     ),
-                    array(
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),
                 'type' => 'ColumnField',
             ),
-            array(
+            array (
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array(
+            array (
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
-            array(
+            array (
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
@@ -226,7 +230,17 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
 
     /** @var string $name */
     public $name = '';
-    public $condition = '';
+    public $relationCriteria = array(
+        'select' => '',
+        'distinct' => 'false',
+        'alias' => 't',
+        'condition' => '{[search]}',
+        'order' => '',
+        'group' => '',
+        'having' => '',
+        'join' => ''
+    );
+    public $params = array();
 
     /** @var string $value digunakan pada function checked */
     public $value = '';
@@ -269,7 +283,6 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
     public $modelClass = '';
     public $idField = '';
     public $labelField = '';
-    public $watchParams = array();
 
     /** @var string $toolbarName */
     public static $toolbarName = "Relation Field";
@@ -333,18 +346,10 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
                 $this->modelClass = $column['relModelClass'];
                 $this->idField = $column['relIdField'];
                 $this->labelField = $column['relLabelField'];
-                $this->condition = @$column['relCondition'];
+                // $this->condition = @$column['relCondition'];
             }
         }
         $this->builder = $fb;
-
-        $params = array();
-        foreach ($rf as $k => $v) {
-            $params['row.' . $k] = $v;
-        }
-        foreach ($mf as $k => $v) {
-            $params['model.' . $k] = $v;
-        }
 
         echo json_encode($this->query(@$s, $params));
     }
@@ -359,22 +364,13 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
         $this->attributes = $field;
         $this->builder = $fb;
 
-        if (isset($mf['id']) > 0) {
-            $this->model->findByPk($mf['id']);
-        }
-
-        $params = array();
-        foreach ($mf as $k => $v) {
-            $params['model.' . $k] = $v;
-        }
-
-        echo json_encode($this->query($s, $params));
+        echo json_encode($this->query($s, $p));
     }
 
     public function generateCondition($search = '', &$jsparams = array()) {
-        preg_match_all("/\[(.*?)\]/", $this->condition, $blocks);
+        preg_match_all("/\[(.*?)\]/", $this->relationCriteria['condition'], $blocks);
         preg_match_all("/\{(.*?)\}/", $this->labelField, $fields);
-        $sql = $this->condition;
+        $sql = $this->relationCriteria['condition'];
 
         if ($search != '') {
             if (count($fields[1]) == 0) {
@@ -422,13 +418,6 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
                 }
                 $params[$block] = $cond;
             }
-
-            ## usage: "where user_id = {model.id}", model = current angularjs model value
-            else if (strpos($block, '.') !== false) {
-                $cond = @$jsparams[$block];
-                $this->watchParams[] = $block;
-                $params[$block] = $cond;
-            }
         }
 
         ## remove empty-valued conditional curly braces
@@ -450,7 +439,7 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
         $i = 0;
         $returnParams = array();
         foreach ($params as $k => $p) {
-            $returnParams[':param_' . $i] = $p;
+            $returnParams[':param_' . $i] = "'" . $p . "'";
             $sql = str_replace('[' . $k . ']', ':param_' . $i, $sql);
             $i++;
         }
@@ -461,25 +450,37 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
         );
     }
 
+    public function generateCriteria($search, $params) {
+        $condition = $this->generateCondition($search, $params);
+
+        $this->relationCriteria['condition'] = $condition["sql"];
+        $this->relationCriteria['limit'] = ($search == '' ? '30' : '100');
+        $this->params = array_merge($this->params,$condition['params']);
+
+        return DataSource::generateCriteria($this->params, $this->relationCriteria, $this);
+    }
+
     public function query($search = '', $params = array()) {
         Yii::import($this->modelClass);
+        
         $class = array_pop(explode(".", $this->modelClass));
         $model = new $class;
         $table = $model->tableName();
+
+        
+        // $sql = "select t.* from {$table} t {$condition['sql']} {$limit}";
+
+        // if ($this->value != '') {
+        //     $sql = '(select t.* from ' . $table . ' t WHERE t.' . $this->idField. ' = :rl_current_value) UNION (' . $sql . ')  ';
+        //     $condition['params'][':rl_current_value'] = $this->value;
+        // }
+
+        // $rawlist = Yii::app()->db->createCommand($sql)->queryAll(true, $condition['params']);
+        
+        $criteria = $this->generateCriteria($search, $params);
+        $rawlist = $model->currentModel($criteria);
+
         $list = array();
-
-        $condition = $this->generateCondition($search, $params);
-        $limit = ($search == '' ? 'limit 30' : 'limit 100');
-
-        $sql = "select t.* from {$table} t {$condition['sql']} {$limit}";
-
-        if ($this->value != '') {
-            $sql = '(select t.* from ' . $table . ' t WHERE t.' . $this->idField. ' = :rl_current_value) UNION (' . $sql . ')  ';
-            $condition['params'][':rl_current_value'] = $this->value;
-        }
-
-        $rawlist = Yii::app()->db->createCommand($sql)->queryAll(true, $condition['params']);
-
         foreach ($rawlist as $k => $i) {
             $included = true;
             if ($included) {
@@ -659,8 +660,8 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
         }
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
-
         $this->query();
+
         return $this->renderInternal('template_render.php');
     }
 
