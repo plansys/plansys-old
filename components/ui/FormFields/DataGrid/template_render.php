@@ -54,11 +54,10 @@
                 </div>
             <?php endif; ?>
             <div ng-if="gridOptions.enableExcelMode"
-
                  <?php if (@$this->gridOptions['enablePaging'] == 'true'): ?>
                      style="float:right;border-right:1px solid #ccc;padding-right:10px;margin-right:5px;"
                  <?php else: ?>
-                     style="float:left;margin-left:-5px;"
+                     style="float:right;margin-left:-5px;"
                  <?php endif; ?>
                  class="data-grid-pageinfo">
                 <div class="btn-group pull-right" style="padding-top:2px;margin-left:5px;" >

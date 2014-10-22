@@ -20,18 +20,21 @@
 
         <!-- field -->
         <!-- date field -->
-        <div ng-if="fieldType != 'time'" class="date-field input-group">
+        <div ng-if="fieldType != 'time'" 
+             class="date-field <?php if (!@$this->fieldOptions['disabled']): ?>input-group<?php endif; ?>">
             <!-- value -->
             <input type="text" <?= $this->expandAttributes($this->fieldOptions) ?>
                    ng-model="date" ng-change="changeDate(this)" value="<?= $this->value ?>"
                    />
 
-            <!-- btn icon -->
-            <span class="input-group-btn">
-                <div ng-click="openDatePicker($event)" class="btn btn-sm btn-default">
-                    <i class="glyphicon glyphicon-calendar"></i>
-                </div>
-            </span>
+            <?php if (!@$this->fieldOptions['disabled']): ?>
+                <!-- btn icon -->
+                <span class="input-group-btn" >
+                    <div ng-click="openDatePicker($event)" class="btn btn-sm btn-default">
+                        <i class="glyphicon glyphicon-calendar"></i>
+                    </div>
+                </span>
+            <?php endif; ?>
         </div>
 
         <!-- time field -->

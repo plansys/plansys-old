@@ -585,17 +585,27 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             $el.on('focus', '[ng-cell] div', function () {
                                 $scope.lastFocus = $(this);
                             });
+                            
+//                            $scope.$on('ngGridEventEndCellEdit', function (evt) {
+//                                var row = evt.targetScope.row;
+//                                var data = row.entity;
+//                                var except = excludeColumns(data);
+//
+//                                if ($scope.isNotEmpty(data, except)) {
+//                                    if ($scope.data.length - 1 == row.rowIndex) {
+//                                        $timeout(function () {
+//                                            $scope.addRow(row);
+//                                        }, 0);
+//                                    }
+//                                }
+//                            });
 
-                            $scope.$on('ngGridEventEndCellEdit', function (evt) {
-                                var row = evt.targetScope.row;
-                                var data = row.entity;
-                                var except = excludeColumns(data);
-
-                                if ($scope.isNotEmpty(data, except)) {
-                                    if ($scope.data.length - 1 == row.rowIndex) {
-                                        $timeout(function () {
-                                            $scope.addRow(row);
-                                        }, 0);
+                            $el.on('keyup', '.ngCell', function (e) {
+                                if (e.which == 13) {
+                                    if ($scope.data.length - 1 == $scope.grid.selectionProvider.lastClickedRowIndex) {
+                                        $scope.$apply(function () {
+                                            $scope.addRow();
+                                        });
                                     }
                                 }
                             });
@@ -654,7 +664,6 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                                 try {
                                                     var model = data[col.model][col.idField][row[col.name]];
                                                 } catch (e) {
-                                                    console.log(data);
                                                 }
 
                                                 if (typeof model != "undefined") {

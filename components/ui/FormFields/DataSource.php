@@ -530,8 +530,12 @@ class DataSource extends FormField {
         }
 
         if (count($rawData) == 0 && $isGenerate) {
-            $rels = $this->model->relations();
-            $relClass = $rels[$this->relationTo][1];
+            if ($this->relationTo != 'currentModel') {
+                $rels = $this->model->relations();
+                $relClass = $rels[$this->relationTo][1];
+            } else {
+                $relClass = get_class($this->model);
+            }
             $rawData = array($relClass::model()->getAttributes(true, false));
         }
 

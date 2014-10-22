@@ -34,6 +34,13 @@ app.directive('relationField', function ($timeout, $http) {
                     }
                 }
 
+                $scope.fixScroll = function () {
+                    $el.find(".dropdown-menu").scrollTop(0);
+                    var top = $el.find("li:eq(0)").offset().top;
+                    var scroll = $el.find("li a[value='" + $scope.value + "']").offset().top;
+                    $el.find(".dropdown-menu").scrollTop(scroll - top);
+                }
+
                 $scope.dropdownKeypress = function (e) {
                     if (e.which === 13) {
                         if ($scope.isOpen) {
@@ -56,6 +63,7 @@ app.directive('relationField', function ($timeout, $http) {
                         $a = $el.find("li.hover").next();
                         if ($a.length == 0 && $scope.renderedFormList.length > 0) {
                             $scope.updateInternal($scope.renderedFormList[0].key);
+                            $el.find("li:eq(1)").addClass("hover");
                         } else {
                             var i = 0;
                             while ((!$a.is("li") || !$a.is(":visible")) && i < 100) {
@@ -65,9 +73,10 @@ app.directive('relationField', function ($timeout, $http) {
 
                             if ($a.length > 0 && $a.is("li")) {
                                 $el.find("li.hover").removeClass("hover")
-                                $a.addClass("hover").find("a");
+                                $a.addClass("hover");
                             }
                         }
+                        $scope.fixScroll();
                         e.preventDefault();
                         e.stopPropagation();
                     } else if (e.which === 38) {
@@ -83,6 +92,7 @@ app.directive('relationField', function ($timeout, $http) {
                             $el.find("li.hover").removeClass("hover")
                             $a.addClass("hover").find("a");
                         }
+                        $scope.fixScroll();
                         e.preventDefault();
                         e.stopPropagation();
                     }
@@ -143,11 +153,8 @@ app.directive('relationField', function ($timeout, $http) {
                         if ($el.find("li a[value='" + $scope.value + "']").length > 0) {
                             $el.find("li.hover").removeClass("hover")
                             $el.find("li a[value='" + $scope.value + "']").parent().addClass('hover');
-                            
-                            $el.find(".dropdown-menu").scrollTop(0);
-                            var top = $el.find("li:eq(0)").offset().top;
-                            var scroll = $el.find("li a[value='" + $scope.value + "']").offset().top;
-                            $el.find(".dropdown-menu").scrollTop(scroll - top);
+
+                            $scope.fixScroll();
                         } else {
                             $el.find("li a").blur();
                             $el.find(".dropdown-menu").scrollTop(0);

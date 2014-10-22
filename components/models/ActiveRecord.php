@@ -770,6 +770,16 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
+    public function delete() {
+        try {
+            parent::delete();
+        } catch (CDbException $e) {
+            if ($e->errorInfo[0] == "23000") {
+                Yii::app()->controller->redirect(array("/site/error&id=integrity"));
+            }
+        }
+    }
+    
     public function getDefaultFields() {
         $array = $this->modelFieldList;
         $length = count($array);

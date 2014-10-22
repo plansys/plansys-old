@@ -83,7 +83,6 @@
                 completed: null
             }, settings);
 
-
             defs = $.mask.definitions;
             tests = [];
             partialPosition = len = mask.length;
@@ -207,6 +206,7 @@
                     if (e.ctrlKey || e.altKey || e.metaKey || k < 32) {//Ignore
                         return;
                     } else if (k) {
+
                         if (pos.end - pos.begin !== 0) {
                             clearBuffer(pos.begin, pos.end);
                             shiftL(pos.begin, pos.end - 1);
@@ -276,7 +276,10 @@
                             lastMatch = i;
                         }
                     }
-                    if (allow) {
+
+                    if (allow == "initial") {
+                         input.val(input.val().substring(0, lastMatch + 1));
+                    } else if (allow) {
                         writeBuffer();
                     } else if (lastMatch + 1 < partialPosition) {
                         input.val("");
@@ -285,7 +288,9 @@
                         writeBuffer();
                         input.val(input.val().substring(0, lastMatch + 1));
                     }
-                    return (partialPosition ? i : firstNonMaskPos);
+
+                    var ret = (partialPosition ? i : firstNonMaskPos);
+                    return ret;
                 }
 
                 input.data($.mask.dataName, function () {
@@ -293,6 +298,7 @@
                         return tests[i] && c != settings.placeholder ? c : null;
                     }).join('');
                 });
+                console.log(input.val());
 
                 if (!input.attr("readonly"))
                     input
@@ -333,7 +339,8 @@
                                         settings.completed.call(input);
                                 }, 0);
                             });
-                checkVal(); //Perform initial check for existing values
+
+                checkVal("initial"); //Perform initial check for existing values
             });
         }
     });
@@ -382,9 +389,7 @@ app.directive('uiMask', function ($timeout, $filter) {
                             break;
                     }
 
-                    if (formatted != '') {
-                        $scope.$eval(model + '= "' + formatted + '"');
-                    }
+                    $scope.$eval(model + '= "' + formatted + '"');
                 });
 
                 $timeout(function () {
@@ -417,19 +422,20 @@ app.directive('uiMask', function ($timeout, $filter) {
                             break;
                     }
                     $el.val($scope.uiMaskValue);
-                    $el.mask(attrs.uiMask)
-                            .keypress(function () {
-                                if ($el.val().indexOf("_") < 0) {
-                                    $timeout(function () {
-                                        $scope.uiMaskValue = $el.val();
-                                    }, 0);
-                                }
-                            });
 
-                    $timeout(function () {
-                        $scope.uiMaskValue = $el.val();
-                    }, 0);
                 }, 0);
+
+                $timeout(function () {
+                    $el.mask(attrs.uiMask, {
+                        completed: function () {
+                            $scope.$apply(function () {
+                                $scope.uiMaskValue = $el.val();
+                            });
+                        }
+                    });
+                })
+
+
             }
         }
     };
