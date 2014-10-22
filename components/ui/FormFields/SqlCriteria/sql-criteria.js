@@ -39,7 +39,8 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
                             postparam.rfmodel = $scope.$parent.active.modelClass;
                             break;
                         case "DataGrid":
-                            postparam.params = $scope.item[$scope.paramsField];
+                        case "DataFilter":
+                            postparam.params = $scope.item[$scope.paramsField] || {};
                             postparam.rfname = $scope.$parent.active.name;
                             postparam.rfclass = $scope.$parent.classPath;
                             postparam.rfmodel = $scope.modelClass;

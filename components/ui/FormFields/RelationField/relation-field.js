@@ -143,9 +143,18 @@ app.directive('relationField', function ($timeout, $http) {
                         if ($el.find("li a[value='" + $scope.value + "']").length > 0) {
                             $el.find("li.hover").removeClass("hover")
                             $el.find("li a[value='" + $scope.value + "']").parent().addClass('hover');
+                            
+                            $el.find(".dropdown-menu").scrollTop(0);
+                            var top = $el.find("li:eq(0)").offset().top;
+                            var scroll = $el.find("li a[value='" + $scope.value + "']").offset().top;
+                            $el.find(".dropdown-menu").scrollTop(scroll - top);
                         } else {
                             $el.find("li a").blur();
                             $el.find(".dropdown-menu").scrollTop(0);
+                        }
+
+                        if ($scope.searchable) {
+                            $el.find(".search-dropdown").focus();
                         }
                     } else if ($scope.openedInField) {
                         $scope.openedInField = true;
@@ -203,7 +212,7 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.renderedFormList = [];
                 $scope.renderFormList();
                 $scope.loading = false;
-                $scope.searchable = $el.find("data[name=searchable]").text().trim() == "Yes" ? true : false;
+                $scope.searchable = true;
                 $scope.showOther = $el.find("data[name=show_other]").text().trim() == "Yes" ? true : false;
                 $scope.otherLabel = $el.find("data[name=other_label]").html();
                 $scope.modelClass = $el.find("data[name=model_class]").html();

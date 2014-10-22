@@ -280,10 +280,10 @@ class DataSource extends FormField {
 
             switch ($param) {
                 case "where":
-                case "paging":
                     $fieldSql = 'DataFilter::generateParams($paramName, $params, $template)';
                     break;
                 case "order":
+                case "paging":
                     $fieldSql = 'DataGrid::generateParams($paramName, $params, $template)';
                     break;
                 default:
@@ -377,15 +377,15 @@ class DataSource extends FormField {
                     switch (get_class($field)) {
                         case "DataSource":
                             $returnParams[$p] = @$field->queryParams[$p];
-                        break;
+                            break;
                         default:
                             $returnParams[$p] = '';
-                        break;
+                            break;
                     }
                 } else {
-                    
+
                     $returnParams[$p] = $field->evaluate($postedParams[$p], true, array(
-                        'model'=> $model
+                        'model' => $model
                     ));
                 }
             }

@@ -121,6 +121,7 @@ class SqlCriteria extends FormField {
 
         switch ($baseClass) {
             case "DataGrid":
+            case "DataFilter":
             case "RelationField":
                 $rel = 'currentModel';
                 $name = $post['rfname'];

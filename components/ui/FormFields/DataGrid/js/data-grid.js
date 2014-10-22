@@ -654,6 +654,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                                 try {
                                                     var model = data[col.model][col.idField][row[col.name]];
                                                 } catch (e) {
+                                                    console.log(data);
                                                 }
 
                                                 if (typeof model != "undefined") {
@@ -669,33 +670,24 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     });
                                 }
 
-                                loadRelation(function () {
-                                    if (typeof $scope.onGridLoaded == 'function') {
-                                        $scope.onGridLoaded($scope.gridOptions);
-                                    }
-                                    $scope.loaded = true;
-                                });
-
-
                                 var timeout = null;
-                                $scope.$watch('data', function () {
+                                var reloadRelation = function () {
                                     if (timeout !== null) {
                                         clearTimeout(timeout);
                                     }
 
                                     timeout = setTimeout(function () {
                                         loadRelation();
-                                    }, 100);
-                                });
+                                    }, 50);
+                                }
+                                reloadRelation();
+                                $scope.$watch('data', reloadRelation);
                             }
                         }, 100);
-
-                        if (dgrCols.length == 0) {
-                            if (typeof $scope.onGridLoaded == 'function') {
-                                $scope.onGridLoaded($scope.gridOptions);
-                            }
-                            $scope.loaded = true;
+                        if (typeof $scope.onGridLoaded == 'function') {
+                            $scope.onGridLoaded($scope.gridOptions);
                         }
+                        $scope.loaded = true;
 
                     }, 0);
                 }

@@ -24,17 +24,17 @@ class RelationField extends FormField {
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array (
-                'label' => 'Model Class',
-                'name' => 'modelClass',
-                'options' => array (
-                    'ng-model' => 'active.modelClass',
-                    'ng-change' => 'generateRelationField();save();',
-                ),
-                'listExpr' => 'RelationField::listModel()',
-                'searchable' => 'Yes',
-                'type' => 'DropDownList',
-            ),
+//            array (
+//                'label' => 'Model Class',
+//                'name' => 'modelClass',
+//                'options' => array (
+//                    'ng-model' => 'active.modelClass',
+//                    'ng-change' => 'generateRelationField();save();',
+//                ),
+//                'listExpr' => 'RelationField::listModel()',
+//                'searchable' => 'Yes',
+//                'type' => 'DropDownList',
+//            ),
             array (
                 'label' => 'ID Field',
                 'name' => 'idField',
