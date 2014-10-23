@@ -657,7 +657,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 });
                             }
 
-                            var url = Yii.app.createUrl('/FormField/RelationField.dgrInit');
+                            var url = Yii.app.createUrl('/formfield/RelationField.dgrInit');
 
                             function loadRelation(callback) {
                                 countDgr();
