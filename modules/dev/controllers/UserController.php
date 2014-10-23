@@ -40,14 +40,10 @@ class UserController extends Controller {
             $userRoles = $model->userRoles;
             if (!isset($_POST['DevUserForm']['subscribed']))
                 $_POST['DevUserForm']['subscribed'] = '';
-            
+
             $model->attributes = $_POST["DevUserForm"];
 
             if ($model->save()) {
-                foreach ($_POST['DevUserForm']['userRoles'] as $k => $u) {
-                    $_POST['DevUserForm']['userRoles'][$k]['user_id'] = $model->id;
-                }
-                ActiveRecord::batch('UserRole', $_POST['DevUserForm']['userRoles'], $userRoles);
 
                 Yii::app()->user->setFlash('info', 'User berhasil disimpan');
             }
@@ -61,11 +57,7 @@ class UserController extends Controller {
         if (isset($_POST["DevUserForm"])) {
             $model->attributes = $_POST["DevUserForm"];
             if ($model->save()) {
-                foreach ($_POST['DevUserForm']['userRoles'] as $k => $u) {
-                    $_POST['DevUserForm']['userRoles'][$k]['user_id'] = $model->id;
-                }
-                ActiveRecord::batch('UserRole', $_POST['DevUserForm']['userRoles'], $userRoles);
-
+                $model->subscribed = "on";
                 $this->redirect(array("index"));
             }
         }

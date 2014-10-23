@@ -13,6 +13,11 @@ class User extends ActiveRecord {
 
     public function afterSave() {
         parent::afterSave();
+        $ur = $this->userRoles;
+        foreach ($ur as $k => $u) {
+            $ur[$k]['user_id'] = $this->id;
+        }
+        ActiveRecord::batch('UserRole', $ur);
 
         if (!$this->isNewRecord) {
             Yii::app()->nfy->unsubscribe($this->id, null, true);
@@ -22,18 +27,18 @@ class User extends ActiveRecord {
             $roles = array();
 
             if ($this->isNewRecord) {
-                $a = $this->findByPk($this->id);
-                $this->roles = $a->roles;
+                $db = Yii::app()->db->createCommand('select * from p_user_role p inner join p_role r on p.role_id = r.id and p.user_id = ' . $this->id)->queryAll();
             }
-
-
-            foreach ($this->roles as $r) {
+            
+            foreach ($db as $r) {
                 $roles[] = "role_" . $r['role_name'] . ".";
             }
+            
             $category = array_merge(array(
                 'uid_' . $this->id,
                 ), $roles);
-
+            
+            
             Yii::app()->nfy->subscribe($this->id, $this->username, $category);
             $this->subscribed = true;
         } else {

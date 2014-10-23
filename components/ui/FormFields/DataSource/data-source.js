@@ -28,6 +28,16 @@ app.directive('psDataSource', function ($timeout, $http) {
                         delete $scope.sqlParams[name][key];
                     }
                 }
+                
+                $scope.isRowEmpty = function(row, except) {
+                    except = except || [];
+                    for (i in row) {
+                        if (row[i] != "" && $scope.untrackColumns.indexOf(i) < 0 && except.indexOf(i) < 0) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
 
                 $scope.updateParam = function (key, value, name) {
                     if (typeof name === "undefined") {

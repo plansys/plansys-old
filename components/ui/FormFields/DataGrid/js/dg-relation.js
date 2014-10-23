@@ -43,8 +43,8 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                 }
                 $scope.match = [];
                 $scope.paramValue = {};
-                
-                
+
+
                 $scope.params = JSON.parse(attrs.params);
                 for (i in $scope.params) {
                     var p = $scope.params[i];
@@ -60,7 +60,7 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                         $scope.paramValue[key] = value;
                     }
                 }
-                
+
                 $scope.doSearch = function () {
                     var search = Object.getProperty($scope.$parent, attrs.ngModel);
                     search = search || "";
@@ -112,20 +112,26 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                     if ($('.data-grid-dropdown li.hover').length == 0 || $scope.escaped) {
                         $(".data-grid-dropdown").remove();
                         $(document).off(".dataGridAutocomplete");
-                        
                         $timeout(function () {
-                            $scope.select($scope.original.id, $scope.original.label);
+                            if ($scope.deleteIntent) {
+                                $scope.select('', '');
+                                $scope.deleteIntent = false;
+                            } else {
+                                $scope.select($scope.original.id, $scope.original.label);
+                            }
                             $scope.refocus();
-                        }, 0);
+                        }, 100);
                     } else {
                         $timeout(function () {
                             $('.data-grid-dropdown li.hover').click();
                             $scope.refocus();
                         }, 0);
                     }
+
+
                     $scope.escaped = true;
                 }
-                
+
                 $el.keydown(function (e) {
                     $scope.escaped = false;
                     function scroll() {
@@ -134,7 +140,7 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                             $('.data-grid-dropdown').scrollTop($scope.idx * elHeight);
                         }, 0);
                     }
-                    
+
                     $scope.$apply(function () {
                         switch (e.which) {
                             case 40:
@@ -158,14 +164,19 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                     });
                 });
 
+                $scope.deleteIntent = true;
+
                 $el.keyup(function (e) {
                     $scope.escaped = false;
-                    if ([38, 40].indexOf(e.which) < 0) {
+                    if ([38, 40, 8, 46].indexOf(e.which) < 0) {
                         $scope.$apply(function () {
                             $scope.idx = 0;
                             $scope.doSearch();
                         });
                     }
+
+                    $scope.deleteIntent = (e.which == 8 || e.which == 46);
+
                 });
 
                 $el.focus(function (e) {
@@ -193,7 +204,13 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                             $(this).addClass('hover');
                         });
                         $('.data-grid-dropdown').on('click', 'li', function () {
-                            $scope.select($(this).attr('val'),$(this).attr('text'));
+                            var lbl = Object.getProperty($scope.$parent, attrs.ngModel);
+
+                            if (lbl && lbl.trim() == '') {
+                                $scope.select('', '');
+                            } else {
+                                $scope.select($(this).attr('val'), $(this).attr('text'));
+                            }
                             $(".data-grid-dropdown").remove();
                             $(document).off(".dataGridAutocomplete");
                         });

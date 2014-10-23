@@ -298,7 +298,6 @@
                         return tests[i] && c != settings.placeholder ? c : null;
                     }).join('');
                 });
-                console.log(input.val());
 
                 if (!input.attr("readonly"))
                     input

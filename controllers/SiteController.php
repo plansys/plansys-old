@@ -14,7 +14,7 @@ class SiteController extends Controller {
             if (Yii::app()->user->isGuest) {
                 $this->redirect(array("login"));
             }
-            $this->redirect(array(lcfirst(strtolower(Yii::app()->user->roles)) . '/default/index'));
+            $this->redirect(array(lcfirst(strtolower(Yii::app()->user->role)) . '/default/index'));
         } else {
             if (Setting::get("repo.path") == '') {
                 $path = Setting::getRootPath() . DIRECTORY_SEPARATOR . 'repo';

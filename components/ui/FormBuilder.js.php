@@ -8,18 +8,20 @@ ob_start();
         $scope.model = <?php echo @json_encode($data['data']); ?>;
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
         $scope.params = <?php echo @json_encode($renderParams); ?>;
-        $scope.user = <?php echo @json_encode(Yii::app()->user->model->attributes); ?>;
-        if ($scope.user != null) {
-            $scope.user.role = [];
-            
-            for (i in $scope.user.roles) {
-                $scope.user.role.push($scope.user.roles[i]['role_name']);
+<?php if (!Yii::app()->user->isGuest): ?>
+            $scope.user = <?php echo @json_encode(Yii::app()->user->info); ?>;
+            if ($scope.user != null) {
+                $scope.user.role = [];
+
+                for (i in $scope.user.roles) {
+                    $scope.user.role.push($scope.user.roles[i]['role_name']);
+                }
+
+                $scope.user.isRole = function (role) {
+                    return $scope.user.role.indexOf(role) >= 0;
+                }
             }
-            
-            $scope.user.isRole = function (role) {
-                return $scope.user.role.indexOf(role) >= 0;
-            }
-        }
+<?php endif; ?>
 
 <?php if (is_object(Yii::app()->controller) && is_object(Yii::app()->controller->module)): ?>
             $scope.module = '<?= Yii::app()->controller->module->id ?>';

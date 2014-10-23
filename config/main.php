@@ -7,7 +7,7 @@ $modules = Setting::getModules();
 
 return array(
     'basePath' => $basePath,
-    'name' => Setting::get('app.name'),
+    'name' => (!Setting::get('app.name') ? "Plansys" : Setting::get('app.name')),
     // preloading 'log' component
     'preload' => array('log', 'EJSUrlManager'),
     // autoloading model and component classes
