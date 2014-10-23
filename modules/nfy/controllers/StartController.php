@@ -9,12 +9,12 @@ class StartController extends Controller {
                 echo "Port 8981 already used";
                 fclose($connection);
             } else {
-                $cmd = "node " . realpath(Yii::getPathOfAlias('webroot') . "\plansys\commands\shell\stream.js");
+                $cmd = realpath(Yii::getPathOfAlias('webroot') . "\plansys\commands\shell\stream.js");
 
                 if (substr(php_uname(), 0, 7) == "Windows") {
-                    exec("plansys\commands\shell\psexec.exe -i -d " . $cmd);
+                    exec("plansys\commands\shell\psexec.exe -i -d node "  . $cmd);
                 } else {
-                    exec($cmd . " > /dev/null &");
+                    exec("nodejs " . $cmd . " > /dev/null &");
                 }
                 
                 echo "Nfy Server Started";
