@@ -99,17 +99,16 @@ class FormsController extends Controller {
             Yii::app()->cache->set('toolbarData', $toolbarData, 0);
         }
         foreach ($toolbarData as $k => $f) {
-			$ff = new $f['type'];
-			$scripts = $ff->renderScript();
-			foreach ($scripts as $script) {
-				$ext = array_pop(explode(".", $script));
-				if ($ext == "js") {
-					Yii::app()->clientScript->registerScriptFile($script, CClientScript::POS_END);
-				} else {
-					Yii::app()->clientScript->registerCSSFile($script, CClientScript::POS_BEGIN);
-				}
-			}
-            
+            $ff = new $f['type'];
+            $scripts = $ff->renderScript();
+            foreach ($scripts as $script) {
+                $ext = array_pop(explode(".", $script));
+                if ($ext == "js") {
+                    Yii::app()->clientScript->registerScriptFile($script, CClientScript::POS_END);
+                } else {
+                    Yii::app()->clientScript->registerCSSFile($script, CClientScript::POS_BEGIN);
+                }
+            }
         }
 
         FormField::$inEditor = true;
@@ -133,9 +132,8 @@ class FormsController extends Controller {
 
     public function actionSave($class) {
         FormField::$inEditor = true;
-  
-	$class = FormBuilder::classPath($class); 
 
+        $class = FormBuilder::classPath($class);
         $session = Yii::app()->session['FormBuilder_' . $class];
         $file = file(Yii::getPathOfAlias($class) . ".php", FILE_IGNORE_NEW_LINES);
 
@@ -146,6 +144,7 @@ class FormsController extends Controller {
             }
         }
 
+        
         if (!$changed) {
             $postdata = file_get_contents("php://input");
             $post = CJSON::decode($postdata);
@@ -170,6 +169,7 @@ class FormsController extends Controller {
 
     public function actionUpdate($class) {
         FormField::$inEditor = true;
+        $class = FormBuilder::classPath($class);
         Yii::app()->session['FormBuilder_' . $class] = null;
 
         $this->layout = "//layouts/blank";
