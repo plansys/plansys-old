@@ -18,29 +18,28 @@ class FormBuilder extends CComponent {
     /**
      * @var integer $countRenderID
      * @access private	
-     */ 
+     */
     private $countRenderID = 1;
     private $methods = array();
     private $file = array();
     private $sourceFile = '';
     private $originalClass = '';
-     
+
     public static function classPath($class) {
-	    $classArr = explode(".", $class);
-	    $class = "";
-	    $classFile = "";
-	    foreach($classArr as $k=>$c) {
-	        if ($k < count($classArr) -1) {
-		    $classFile .= strtolower($c) . "." ;
-		} else {
-		    $classFile .= $c;
-		}
-	    }
+        $classArr = explode(".", $class);
+        $class = "";
+        $classFile = "";
+        foreach ($classArr as $k => $c) {
+            if ($k < count($classArr) - 1 && $c != "FormFields") {
+                $classFile .= strtolower($c) . ".";
+            } else {
+                $classFile .= $c;
+            }
+        }
 
 
-	return $classFile == "" ? $class : $classFile;
+        return $classFile == "" ? $class : $classFile;
     }
-
 
     /**
      * load 
@@ -58,7 +57,7 @@ class FormBuilder extends CComponent {
         if (strpos($class, ".") !== false) {
             $classFile = FormBuilder::classPath($class);
             $class = array_pop(explode(".", $classFile));
-	    
+
             try {
                 Yii::import($classFile);
             } catch (Exception $e) {
@@ -683,7 +682,7 @@ class FormBuilder extends CComponent {
                         $field->errors = $data['errors'][$f['name']];
                     }
                 }
-                
+
 
                 ## assign builder reference to this object
                 $field->builder = $this;
