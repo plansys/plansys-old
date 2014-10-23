@@ -25,6 +25,14 @@ ob_start();
                         }
                     }
 
+                    for (i in $scope.user.role) {
+                        var r = $scope.user.role[i];
+                        console.log(r);
+                        if (r.indexOf(role + ".") == 0) {
+                            return true;
+                        }
+                    }
+
                     return $scope.user.role.indexOf(role) >= 0;
                 }
             }
