@@ -54,6 +54,9 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'ng-model' => 'value[$index].value',
                     'ng-change' => 'updateListView()',
                 ),
+                'fieldOptions' => array (
+                    'readonly' => 'true',
+                ),
                 'type' => 'TextField',
             ),
             array (
@@ -63,7 +66,10 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'fieldWidth' => '10',
                 'options' => array (
                     'ng-model' => 'value[$index].color',
-                    'ng-change' => 'updateListView()',
+                    'ng-change' => 'updateListView(); alert(\\\'sdsd\\\');',
+                ),
+                'fieldOptions' => array (
+                    'class' => 'colorpicker',
                 ),
                 'type' => 'TextField',
             ),

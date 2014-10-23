@@ -16,7 +16,7 @@
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/index.ctrl.js'));
 	Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/highcharts/highcharts.js'));
 	Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/highcharts/modules/exporting.js'));
-	Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/colorpicker/jscolor.js'));
+	Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/colorpicker/js/colorpicker.js'));
 	
     
     Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/bootstrap.min.css'));
@@ -24,5 +24,6 @@
     Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/font-awesome.min.css'));
     Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/ng-grid.css'));
     Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/main.css'));
+	Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/colorpicker/css/colorpicker.css'));
     ?> 
 </head>

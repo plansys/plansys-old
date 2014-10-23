@@ -14,9 +14,6 @@ app.directive('psChartPie', function ($timeout, $http, $compile, dateFilter) {
 				for(i in $scope.series)
 				{
 					var tmp = {};
-					//tmp.push($scope.series[i].label);
-					//tmp.push(parseInt($scope.series[i].value));
-					//tmp.push("#000");
 					tmp['name'] = $scope.series[i].label;
 					tmp['y'] = parseInt($scope.series[i].value);
 					tmp['color'] = $scope.series[i].color;
@@ -36,7 +33,7 @@ app.directive('psChartPie', function ($timeout, $http, $compile, dateFilter) {
 						text: $scope.chartTitle
 					},
 					tooltip: {
-						pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+						pointFormat: 'Percentage: <b>{point.percentage:.1f}%</b>'
 					},
 					plotOptions: {
 						pie: {
@@ -53,6 +50,7 @@ app.directive('psChartPie', function ($timeout, $http, $compile, dateFilter) {
 					},
 					series: [{
 						type: 'pie',
+						name: 'data',
 						data: chartData
 					}]
 				});
