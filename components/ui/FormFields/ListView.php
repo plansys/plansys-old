@@ -267,8 +267,9 @@ Use this code to access current item: <br/>
         $this->addClass('form-control', 'fieldOptions');
 
 
-        Yii::import($this->templateForm);
+        Yii::import(FormBuilder::classPath($this->templateForm));
         $class = array_pop(explode(".", $this->templateForm));
+
 
         if ($this->fieldTemplate == "form" && class_exists($class)) {
             $fb = FormBuilder::load($class);

@@ -50,10 +50,16 @@ class WebUser extends CWebUser {
             return "{}";
         }
 
-        $attr = $this->model->getAttributes(true, false);
-        unset($attr['password']);
-        $attr['role'] = $this->role;
-        $attr['full_role'] = $this->fullRole;
+        if (!isset(Yii::app()->session['userinfo'])) {
+            $attr = $this->model->getAttributes(true, false);
+            unset($attr['password']);
+            $attr['role'] = $this->role;
+            $attr['roles'] = $this->model->roles;
+            $attr['full_role'] = $this->fullRole;
+            Yii::app()->session['userinfo'] = $attr;
+        } else {
+            $attr = Yii::app()->session['userinfo'];
+        }
         return $attr;
     }
 

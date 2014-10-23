@@ -133,6 +133,8 @@ class FormsController extends Controller {
 
     public function actionSave($class) {
         FormField::$inEditor = true;
+  
+	$class = FormBuilder::classPath($class); 
 
         $session = Yii::app()->session['FormBuilder_' . $class];
         $file = file(Yii::getPathOfAlias($class) . ".php", FILE_IGNORE_NEW_LINES);
