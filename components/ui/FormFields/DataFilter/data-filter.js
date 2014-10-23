@@ -121,9 +121,9 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     var prepared = angular.copy(filter);
                     prepared.name = filter.name;
                     prepared.value = filter.value;
-                    if (filter.filterType == "relation") {
-                        prepared.value = filter.valueText;
-                    }
+//                    if (filter.filterType == "relation") {
+//                        prepared.value = filter.valueText;
+//                    }
                     return prepared;
                 }
 
