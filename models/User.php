@@ -28,6 +28,8 @@ class User extends ActiveRecord {
 
             if ($this->isNewRecord) {
                 $db = Yii::app()->db->createCommand('select * from p_user_role p inner join p_role r on p.role_id = r.id and p.user_id = ' . $this->id)->queryAll();
+            } else {
+                $db = [];
             }
             
             foreach ($db as $r) {
