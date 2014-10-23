@@ -1,36 +1,62 @@
-app.directive('psChartPie', function ($timeout) {
+app.directive('psChartPie', function ($timeout, $http, $compile, dateFilter) {
     return {
         scope: true,
         compile: function (element, attrs, transclude) {
             return function ($scope, $el, attrs, ctrl) {
-
-				$scope.width = $el.find("data[name=width]").text();
-				$scope.height = $el.find("data[name=height]").text();
-				$scope.datasource = $scope.$parent[$el.find("data[name=datasource]").text()].data[0];
 				
-				$scope.chartData = toChartFormat($scope.datasource);
-
-				$scope.xFunction = function() {
-				  return function(d) {
-					return d.key;
-				  };
-				}
-				$scope.yFunction = function() {
-				  return function(d) {
-					return d.y;
-				  };
-				}
-            }
-			
-			function toChartFormat(array) {
-				var result = [];
-				for(key in array) {
-					var tmp = {'key': key, 'y' : array[key]}
-					result.push(tmp);
+				$scope.chartTitle = $el.find("data[name=chartTitle]").text();
+				$scope.series = $el.find("data[name=series]").text();
+				
+				var chartData = [];
+				
+				$scope.series = jQuery.parseJSON($scope.series);
+				
+				for(i in $scope.series)
+				{
+					var tmp = {};
+					//tmp.push($scope.series[i].label);
+					//tmp.push(parseInt($scope.series[i].value));
+					//tmp.push("#000");
+					tmp['name'] = $scope.series[i].label;
+					tmp['y'] = parseInt($scope.series[i].value);
+					tmp['color'] = $scope.series[i].color;
+					
+					chartData.push(tmp);
 				}
 				
-				return result;
-			}			
-        }
-    };
+				console.log(chartData);
+				
+				$('#container').highcharts({
+					chart: {
+						plotBackgroundColor: null,
+						plotBorderWidth: 1,//null,
+						plotShadow: false
+					},
+					title: {
+						text: $scope.chartTitle
+					},
+					tooltip: {
+						pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+					},
+					plotOptions: {
+						pie: {
+							allowPointSelect: true,
+							cursor: 'pointer',
+							dataLabels: {
+								enabled: true,
+								format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+								style: {
+									color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+								}
+							}
+						}
+					},
+					series: [{
+						type: 'pie',
+						data: chartData
+					}]
+				});
+			}
+		}
+	}
 });

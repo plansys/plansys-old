@@ -6,31 +6,16 @@
  */
 class ChartPie extends FormField {
 
-	/** @var string $name */
-    public $name;
-
-    /** @var string $datasource */
-    public $datasource;
-	
-	/** @var string $fieldWidth */
-    public $colWidth = 8;	
-	
 	/** @var string $chartWidth */
-    public $chartWidth;
+    public $chartWidth = 200;
 	
 	/** @var string $chartHeight */
-    public $chartHeight;
+    public $chartHeight = 200;
 	
-	/** @var string $chartHeight */
-    public $position;
+	/** @var string $colWidth */
+    public $colWidth = 12;
 	
-	/** @var string $options */
-    public $options = array();
-	
-	/** @var boolean $isHidden */
-    public $isHidden = false;
-
-    /** @var string $toolbarName */
+	/** @var string $toolbarName */
     public static $toolbarName = "Pie Chart";
 
     /** @var string $category */
@@ -38,6 +23,27 @@ class ChartPie extends FormField {
 
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-pie-chart";
+	
+	
+
+	/** @var string $name */
+    public $name;
+
+    /** @var string $datasource */
+    public $datasource;
+	
+	/** @var string $chartTitle */
+    public $chartTitle;
+	
+	/** @var string $colorArray */
+	public $colorArray = array();
+	
+	/** @var string $series */
+    public $series;
+	
+	/** @var string $options */
+    public $options = array();
+	
 	
     /**
      * @return array Fungsi ini akan me-return array property DataSource.
@@ -51,6 +57,17 @@ class ChartPie extends FormField {
                 'fieldWidth' => '7',
                 'options' => array (
                     'ng-model' => 'active.name',
+                    'ng-change' => 'save()',
+                ),
+                'type' => 'TextField',
+            ),
+            array (
+                'label' => 'Chart Title',
+                'name' => 'chartTitle',
+                'labelWidth' => '5',
+                'fieldWidth' => '7',
+                'options' => array (
+                    'ng-model' => 'active.chartTitle',
                     'ng-change' => 'save()',
                 ),
                 'type' => 'TextField',
@@ -70,77 +87,48 @@ class ChartPie extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'Column Width',
-                'name' => 'colWidth',
-                'labelWidth' => '5',
-                'fieldWidth' => '7',
+                'renderInEditor' => 'Yes',
+                'value' => '<div class=\\"clearfix\\"></div>',
+                'type' => 'Text',
+            ),
+            array (
+                'label' => 'Generate Columns',
+                'buttonType' => 'success',
+                'icon' => 'magic',
+                'buttonSize' => 'btn-xs',
                 'options' => array (
-                    'ng-model' => 'active.colWidth',
-                    'ng-change' => 'save()',
+                    'style' => 'float:right;margin:0px 0px 5px 0px',
+                    'ng-show' => 'active.datasource != \\\'\\\'',
+                    'ng-click' => 'generateSeries()',
                 ),
-                'type' => 'TextField',
+                'type' => 'LinkButton',
             ),
             array (
-                'renderInEditor' => 'Yes',
                 'value' => '<div class=\\"clearfix\\"></div>',
                 'type' => 'Text',
             ),
             array (
-                'totalColumns' => '4',
-                'column1' => array (
-                    array (
-                        'value' => '<column-placeholder></column-placeholder>',
-                        'type' => 'Text',
-                    ),
-                ),
-                'column2' => array (
-                    array (
-                        'value' => '<column-placeholder></column-placeholder>',
-                        'type' => 'Text',
-                    ),
-                    array (
-                        'label' => 'Chart Width',
-                        'name' => 'chartWidth',
-                        'layout' => 'Vertical',
-                        'labelWidth' => '12',
-                        'fieldWidth' => '11',
-                        'options' => array (
-                            'ng-model' => 'active.chartWidth',
-                            'ng-change' => 'save()',
-                        ),
-                        'type' => 'TextField',
-                    ),
-                ),
-                'column3' => array (
-                    array (
-                        'value' => '<column-placeholder></column-placeholder>',
-                        'type' => 'Text',
-                    ),
-                    array (
-                        'label' => 'Chart Height',
-                        'name' => 'chartHeight',
-                        'layout' => 'Vertical',
-                        'labelWidth' => '12',
-                        'fieldWidth' => '11',
-                        'options' => array (
-                            'ng-model' => 'active.chartHeight',
-                            'ng-change' => 'save()',
-                        ),
-                        'type' => 'TextField',
-                    ),
-                ),
-                'type' => 'ColumnField',
-            ),
-            array (
-                'renderInEditor' => 'Yes',
-                'value' => '<div class=\\"clearfix\\"></div>',
-                'type' => 'Text',
-            ),
-            array (
-                'label' => 'Options',
+                'label' => 'Chart Options',
                 'name' => 'options',
                 'show' => 'Show',
                 'type' => 'KeyValueGrid',
+            ),
+            array (
+                'title' => 'Columns',
+                'type' => 'SectionHeader',
+            ),
+            array (
+                'name' => 'series',
+                'fieldTemplate' => 'form',
+                'templateForm' => 'application.components.ui.FormFields.ChartPieColumnsForm',
+                'labelWidth' => '0',
+                'fieldWidth' => '12',
+                'options' => array (
+                    'ng-model' => 'active.series',
+                    'ng-change' => 'save()',
+                    'ps-after-add' => 'value.show = true',
+                ),
+                'type' => 'ListView',
             ),
         );
     }
@@ -166,10 +154,7 @@ class ChartPie extends FormField {
      * Fungsi ini untuk me-render field dan atributnya
      * @return mixed me-return sebuah field dan atribut checkboxlist dari hasil render
      */
-    public function render() {
-		$this->position = trim($this->position);
-		$this->position = explode(',', $this->position);
-		
+    public function render() {		
         return $this->renderInternal('template_render.php');
     }
 
