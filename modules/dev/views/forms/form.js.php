@@ -210,8 +210,50 @@
                 }
             });
         }
+		
+		function getRandomColor() {
+			var letters = '0123456789ABCDEF'.split('');
+			var color = '#';
+			for (var i = 0; i < 6; i++ ) {
+				color += letters[Math.floor(Math.random() * 16)];
+			}
+			return color;
+		}
 
 
+		/************************ DATA PIE SERIES ****************************/
+        $scope.generateSeries = function () {
+            var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
+            if (confirm("Your current series will be lost. Are you sure?")) {
+                $scope.active.series = [];
+                $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
+                    name: $scope.active.datasource,
+                    class: '<?= Helper::classAlias($class) ?>',
+                    generate: 1
+                }).success(function (data) {
+                    if (typeof data == 'object') {
+                        if (typeof data.data == 'object') {
+                            data = data.data;
+                        } else {
+                            return;
+                        }
+
+                        if (data != null && 	data.length > 0 && typeof data[0] == "object") {
+                            for (i in data[0]) {
+                                var series = angular.extend({}, templateAttr);
+                                series.label = i;
+                                series.value = data[0][i];
+								series.color = getRandomColor();
+                                $scope.active.series.push(series);
+                            }
+                            $scope.save();
+                        }
+                    }
+
+                });
+            }
+        }
+		
         /************************ DATA FILTERS ****************************/
         $scope.generateFilters = function () {
             var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
@@ -262,6 +304,7 @@
                     class: '<?= Helper::classAlias($class) ?>',
                     generate: 1
                 }).success(function (data) {
+					console.log(data);
                     if (typeof data == 'object') {
                         if (typeof data.data == 'object') {
                             data = data.data;
