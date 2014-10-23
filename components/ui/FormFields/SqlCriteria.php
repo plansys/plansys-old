@@ -20,63 +20,63 @@ class SqlCriteria extends FormField {
     public $modelClassJS = ''; //digunakan untuk menggenerate Preview SQL
 
     public function getFieldProperties() {
-        return array(
-            array(
+        return array (
+            array (
                 'label' => 'Base Class',
                 'name' => 'baseClass',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.baseClass',
                     'ng-change' => 'save();',
                 ),
                 'listExpr' => 'array(\\\'DataSource\\\',\\\'RelationField\\\',\\\'DataGrid\\\', \\\'DataFilter\\\');',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Criteria Field',
                 'name' => 'name',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
                 ),
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Params Field',
                 'name' => 'paramsField',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.paramsField',
                     'ng-change' => 'save()',
                     'ps-list' => 'modelFieldList',
                 ),
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.label',
                     'ng-change' => 'save();',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'ModelClassJS',
                 'name' => 'modelClassJS',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.modelClassJS',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'value' => '<pre style=\"color:#999;font-size:11px;padding:6px;\"><i class=\"fa fa-info-circle\"></i> be sure to set $scope.modelClass in ModelClassJS File
 </pre>',
                 'type' => 'Text',
             ),
-            array(
+            array (
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',

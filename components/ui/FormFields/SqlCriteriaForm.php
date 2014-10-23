@@ -37,6 +37,7 @@ class SqlCriteriaForm extends Form {
                     'ng-model' => '$parent.value',
                     'ng-change' => 'update()',
                 ),
+                'allowDoubleQuote' => 'Yes',
                 'type' => 'KeyValueGrid',
             ),
         );
