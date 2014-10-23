@@ -488,7 +488,7 @@ class RelationField extends FormField {
         return DataSource::generateCriteria($this->params, $this->relationCriteria, $this);
     }
 
-    public function query($search = '', $params = array()) {
+    public function query($search = '', $params = array(), $initialID = null) {
         Yii::import($this->modelClass);
 
         $class = array_pop(explode(".", $this->modelClass));
@@ -497,6 +497,22 @@ class RelationField extends FormField {
 
         $criteria = $this->generateCriteria($search, $params);
         $rawlist = $model->currentModel($criteria);
+
+        if (!is_null($initialID) && $initialID != "") {
+            $found = false;
+            foreach ($rawlist as $r) {
+                if ($r['id'] == $initialID)
+                    $found = true;
+            }
+
+            if (!$found) {
+                $t = $criteria['alias'];
+                $criteria['condition'] = "{$t}.id = {$initialID}";
+                $initial = $model->currentModel($criteria);
+                $rawlist = array_merge($rawlist, $initial);
+            }
+        }
+
 
         $list = array();
         foreach ($rawlist as $k => $i) {
@@ -678,7 +694,7 @@ class RelationField extends FormField {
         }
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
-        $this->query();
+        $this->query('', array(), $this->value);
 
         return $this->renderInternal('template_render.php');
     }
