@@ -19,7 +19,7 @@
         <data name="model_class" class="hide"><?= Helper::getAlias($model) ?></data>
         <data name="model_field" class="hide"><?= json_encode($model->attributes) ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
-        <data name="watch_params" class="hide"><?= json_encode($this->watchParams) ?></data>
+        <data name="params" class="hide"><?= json_encode($this->params) ?></data>
         <!-- /data -->
 
         <!-- field -->

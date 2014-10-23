@@ -10,7 +10,7 @@
         <i class="fa fa-link"></i>
         Loading DataGrid...
     </div>
-    <div ng-if="!datasource" class="list-view-loading">
+    <div ng-if="!datasource && loaded" class="list-view-loading">
         <i class="fa fa-warning"></i>
         {{name}}: Please choose Data Source in Form Builder
     </div>
@@ -54,7 +54,6 @@
                 </div>
             <?php endif; ?>
             <div ng-if="gridOptions.enableExcelMode"
-
                  <?php if (@$this->gridOptions['enablePaging'] == 'true'): ?>
                      style="float:right;border-right:1px solid #ccc;padding-right:10px;margin-right:5px;"
                  <?php else: ?>

@@ -18,15 +18,32 @@ class FormBuilder extends CComponent {
     /**
      * @var integer $countRenderID
      * @access private	
-     */
+     */ 
     private $countRenderID = 1;
     private $methods = array();
     private $file = array();
     private $sourceFile = '';
     private $originalClass = '';
+     
+    public static function classPath($class) {
+	    $classArr = explode(".", $class);
+	    $class = "";
+	    $classFile = "";
+	    foreach($classArr as $k=>$c) {
+	        if ($k < count($classArr) -1) {
+		    $classFile .= strtolower($c) . "." ;
+		} else {
+		    $classFile .= $c;
+		}
+	    }
+
+
+	return $classFile == "" ? $class : $classFile;
+    }
+
 
     /**
-     * load
+     * load 
      * Fungsi ini digunakan untuk me-load FormBuilder
      * @param array $class
      * @param array $attributes
@@ -39,15 +56,16 @@ class FormBuilder extends CComponent {
 
         $originalClass = $class;
         if (strpos($class, ".") !== false) {
-            $classFile = $class;
+            $classFile = FormBuilder::classPath($class);
             $class = array_pop(explode(".", $classFile));
-
+	    
             try {
                 Yii::import($classFile);
             } catch (Exception $e) {
                 if (isset(Yii::app()->controller) && isset(Yii::app()->controller->module)) {
                     $basePath = Yii::app()->controller->module->basePath;
                 }
+
 
                 $classFile = str_replace(".", DIRECTORY_SEPARATOR, $classFile) . ".php";
                 $classFile = $basePath . DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR . $classFile;
@@ -588,7 +606,7 @@ class FormBuilder extends CComponent {
         } else if (is_subclass_of($formdata, 'ActiveRecord')) {
             $this->model = $formdata;
 
-            $data['data'] = $formdata->attributesRelated;
+            $data['data'] = $formdata->attributes;
             $data['errors'] = $formdata->errors;
             $data['isNewRecord'] = $formdata->isNewRecord;
         }
@@ -653,7 +671,6 @@ class FormBuilder extends CComponent {
                 ## assign existing field configuration to newly created field
                 $field->attributes = $f;
 
-
                 if (property_exists($field, 'name')) {
                     $field->name = preg_replace("/[^0-9a-zA-Z_]/", "", $field->name);
                     $field->name = preg_replace("/^\d+\.\s*/", "", $field->name);
@@ -666,6 +683,7 @@ class FormBuilder extends CComponent {
                         $field->errors = $data['errors'][$f['name']];
                     }
                 }
+                
 
                 ## assign builder reference to this object
                 $field->builder = $this;

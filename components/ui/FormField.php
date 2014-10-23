@@ -66,9 +66,9 @@ class FormField extends CComponent {
         'Data & Tables' => array(
             'icon' => 'fa-th-large',
         ),
-		'Charts' => array(
-			'icon' => 'fa-bar-chart',
-		)
+        'Charts' => array(
+            'icon' => 'fa-bar-chart',
+        )
     );
 
     /**
@@ -165,9 +165,9 @@ class FormField extends CComponent {
         } else {
             $result = $this->evaluateExpression($expr, array_merge($variables, array(
                 'model' => $this->builder->model,
-            )));    
+            )));
         }
-        
+
         error_reporting($error_level);
         if ($return) {
             return $result;
@@ -327,7 +327,7 @@ class FormField extends CComponent {
 
                     foreach ($files as $p) {
                         $p = str_replace($jspath, '', realpath($p));
-                        Yii::app()->clientScript->registerScriptFile($path . str_replace("\\", "/", $p));
+                        Yii::app()->clientScript->registerScriptFile($path . str_replace("\\", "/", $p), CClientScript::POS_END);
                     }
                 } else {
                     Yii::app()->clientScript->registerScriptFile(

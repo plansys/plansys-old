@@ -23,6 +23,7 @@ class ActiveRecord extends CActiveRecord {
     private $__relInsert = array();
     private $__relUpdate = array();
     private $__relDelete = array();
+    private $__tempVar = array();
 
     private function initRelation() {
         $static = !(isset($this) && get_class($this) == get_called_class());
@@ -70,7 +71,8 @@ class ActiveRecord extends CActiveRecord {
                 $criteria = array_merge($criteria, $opt);
             }
 
-            $this->loadRelations($name, $criteria);
+
+            $this->loadRelations($name, @$criteria);
             $this->applyRelChange($name);
             return $this->$name;
         } else {
@@ -109,9 +111,17 @@ class ActiveRecord extends CActiveRecord {
                 }
                 break;
             default:
-                parent::__set($name, $value);
+                try {
+                    parent::__set($name, $value);
+                } catch (Exception $e) {
+                    $this->__tempVar[$name] = $value;
+                }
                 break;
         }
+    }
+
+    public function isTemp($name) {
+        return isset($this->__tempVar);
     }
 
     public function __get($name) {
@@ -166,21 +176,24 @@ class ActiveRecord extends CActiveRecord {
                 $this->initRelation();
                 return @$this->__relations[$name];
                 break;
+            case (isset($this->__tempVar[$name])):
+                return $this->__tempVar;
+                break;
             default:
                 return parent::__get($name);
                 break;
         }
     }
-    
-    public static function jsonToArray(&$post, $data){
+
+    public static function jsonToArray(&$post, $data) {
         if (isset($post[$data . 'Insert']) && is_string($post[$data . 'Insert']))
-            $post[$data.'Insert'] = json_decode($post[$data.'Insert'],true);
-        
-        if (isset($post[$data . 'Update']) && is_string($post[$data . 'Update']))    
-            $post[$data.'Update'] = json_decode($post[$data.'Update'],true);
-        
+            $post[$data . 'Insert'] = json_decode($post[$data . 'Insert'], true);
+
+        if (isset($post[$data . 'Update']) && is_string($post[$data . 'Update']))
+            $post[$data . 'Update'] = json_decode($post[$data . 'Update'], true);
+
         if (isset($post[$data . 'Delete']) && is_string($post[$data . 'Delete']))
-            $post[$data.'Delete'] = json_decode($post[$data.'Delete'],true);
+            $post[$data . 'Delete'] = json_decode($post[$data . 'Delete'], true);
     }
 
     public static function toArray($models = array()) {
@@ -200,11 +213,16 @@ class ActiveRecord extends CActiveRecord {
             $criteria['limit'] = 25;
         }
 
+        if (isset($criteria['paging']))
+            unset($criteria['paging']);
+
         $tableSchema = $this->tableSchema;
         $builder = $this->commandBuilder;
 
         ## find
         $command = $builder->createFindCommand($tableSchema, new CDbCriteria($criteria));
+
+
         $rawData = $command->select('*')->queryAll();
 
         return $rawData;
@@ -225,8 +243,7 @@ class ActiveRecord extends CActiveRecord {
                             if (is_string($rel->foreignKey)) {
                                 $class = $rel->className;
                                 $table = $class::tableName();
-
-                                $this->__relationsObj[$k] = $this->getRelated($k, false, $criteria);
+                                $this->__relationsObj[$k] = $this->getRelated($k, true, $criteria);
 
                                 if (isset($this->__relationsObj[$k])) {
                                     $this->__relations[$k] = $this->__relationsObj[$k]->attributes;
@@ -242,18 +259,15 @@ class ActiveRecord extends CActiveRecord {
                         case 'CManyManyRelation':
                         case 'CHasManyRelation':
                             //without through
-                            if (is_string($rel->foreignKey)) {
-                                $this->__relationsObj[$k] = $this->getRelated($k, true, $criteria);
+                            $this->__relationsObj[$k] = $this->getRelated($k, true, $criteria);
 
-                                if (is_array($this->__relationsObj[$k])) {
-                                    $this->__relations[$k] = array();
+                            if (is_array($this->__relationsObj[$k])) {
+                                $this->__relations[$k] = array();
 
-                                    foreach ($this->__relationsObj[$k] as $i => $j) {
-                                        $this->__relations[$k][$i] = $j->getAttributes(true, false);
-                                    }
+                                foreach ($this->__relationsObj[$k] as $i => $j) {
+                                    $this->__relations[$k][$i] = $j->getAttributes(true, false);
                                 }
                             }
-
                             //with through
                             //todo..
                             break;
@@ -261,7 +275,6 @@ class ActiveRecord extends CActiveRecord {
                 }
             }
         }
-
         if ($name == 'currentModel' || is_null($name)) {
             $this->__relations['currentModel'] = $this->getModelArray($criteria);
         }
@@ -521,6 +534,44 @@ class ActiveRecord extends CActiveRecord {
                                 }
                                 $this->__relDelete[$k] = array();
                             }
+                        } elseif (is_array($rel->foreignKey)) {
+                            $class = $rel->className;
+
+                            if (isset($this->__relInsert[$k])) {
+                                if ($k != 'currentModel') {
+                                    foreach ($this->__relInsert[$k] as $n => $m) {
+                                        foreach ($rel->foreignKey as $rk => $fk) {
+                                            $this->__relInsert[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
+                                        }
+                                    }
+                                }
+                                if (count($this->__relInsert[$k]) > 0) {
+                                    ActiveRecord::batchInsert($class, $this->__relInsert[$k]);
+                                }
+                                $this->__relInsert[$k] = array();
+                            }
+
+                            if (isset($this->__relUpdate[$k])) {
+                                if ($k != 'currentModel') {
+                                    foreach ($this->__relUpdate[$k] as $n => $m) {
+                                        foreach ($rel->foreignKey as $rk => $fk) {
+                                            $this->__relUpdate[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
+                                        }
+                                    }
+                                }
+
+                                if (count($this->__relUpdate[$k]) > 0) {
+                                    ActiveRecord::batchUpdate($class, $this->__relUpdate[$k]);
+                                }
+                                $this->__relUpdate[$k] = array();
+                            }
+
+                            if (isset($this->__relDelete[$k])) {
+                                if (count($this->__relDelete[$k]) > 0) {
+                                    ActiveRecord::batchDelete($class, $this->__relDelete[$k]);
+                                }
+                                $this->__relDelete[$k] = array();
+                            }
                         }
                         //with through
                         //todo..
@@ -529,7 +580,6 @@ class ActiveRecord extends CActiveRecord {
             }
             $this->__relations[$k] = $new;
         }
-//        var_dump($this->__relations);
 
         return true;
     }
@@ -568,7 +618,7 @@ class ActiveRecord extends CActiveRecord {
 
         ## insert
         if (isset($post[$name . 'Insert']) && is_string($post[$name . 'Insert'])) {
-            $post[$name . 'Insert'] = json_decode($post[$name . 'Insert'],true);
+            $post[$name . 'Insert'] = json_decode($post[$name . 'Insert'], true);
         }
         if (count(@$post[$name . 'Insert']) > 0) {
             ActiveRecord::batchInsert($model, $post[$name . 'Insert']);
@@ -576,15 +626,15 @@ class ActiveRecord extends CActiveRecord {
 
         ## update
         if (isset($post[$name . 'Update']) && is_string($post[$name . 'Update'])) {
-            $post[$name . 'Update'] = json_decode($post[$name . 'Update'],true);
+            $post[$name . 'Update'] = json_decode($post[$name . 'Update'], true);
         }
         if (count(@$post[$name . 'Update']) > 0) {
             ActiveRecord::batchUpdate($model, $post[$name . 'Update']);
         }
-        
+
         ## delete
         if (isset($post[$name . 'Delete']) && is_string($post[$name . 'Delete'])) {
-            $post[$name . 'Delete'] = json_decode($post[$name . 'Delete'],true);
+            $post[$name . 'Delete'] = json_decode($post[$name . 'Delete'], true);
         }
         if (count(@$post[$name . 'Delete']) > 0) {
             ActiveRecord::batchDelete($model, $post[$name . 'Delete']);
@@ -692,9 +742,16 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    public static function listData($idField, $valueField, $condition = '') {
+    public static function listData($idField, $valueField, $criteria = array()) {
+        
+        if (is_bool($criteria)) {
+            $criteria = array(
+                'distinct' => $criteria
+            );
+        }
+        
         $class = get_called_class();
-        return CHtml::listData($class::model()->findAll(), $idField, $valueField);
+        return CHtml::listData($class::model()->findAll($criteria), $idField, $valueField);
     }
 
     public static function batchInsert($model, &$data) {
@@ -713,6 +770,16 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
+    public function delete() {
+        try {
+            parent::delete();
+        } catch (CDbException $e) {
+            if ($e->errorInfo[0] == "23000") {
+                Yii::app()->controller->redirect(array("/site/error&id=integrity"));
+            }
+        }
+    }
+    
     public function getDefaultFields() {
         $array = $this->modelFieldList;
         $length = count($array);

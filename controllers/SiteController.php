@@ -14,7 +14,7 @@ class SiteController extends Controller {
             if (Yii::app()->user->isGuest) {
                 $this->redirect(array("login"));
             }
-            $this->redirect(array(lcfirst(strtolower(Yii::app()->user->roles)) . '/default/index'));
+            $this->redirect(array(lcfirst(strtolower(Yii::app()->user->role)) . '/default/index'));
         } else {
             if (Setting::get("repo.path") == '') {
                 $path = Setting::getRootPath() . DIRECTORY_SEPARATOR . 'repo';
@@ -27,12 +27,42 @@ class SiteController extends Controller {
     /**
      * This is the action to handle external exceptions.
      */
-    public function actionError() {
+    public function actionError($id = "") {
         if ($error = Yii::app()->errorHandler->error) {
             if (Yii::app()->request->isAjaxRequest)
                 echo $error['message'];
-            else
+            else {
+                switch ($error['code']) {
+                    case 404:
+                        $error = array(
+                            'code' => 'Peringatan: Halaman tidak ditemukan',
+                            'message' => 'Halaman yang anda tuju tidak dapat ditemukan. <br/>'
+                            . 'Mohon periksa kembali URL yang ingin anda buka.<br/><br/>'
+                            . 'Atau mungkin juga data yang ingin anda akses sudah dihapus.'
+                        );
+                        break;
+                }
+                $this->pageTitle = $error['code'];
                 $this->render('error', $error);
+            }
+        } else {
+            switch ($id) {
+                case "integrity":
+                    $error = array(
+                        'code' => 'Peringatan: Integritas Data',
+                        'message' => 'Anda tidak dapat menghapus data ini karena<br/> '
+                        . 'data ini adalah referensi data lainnya. '
+                    );
+                    break;
+                default:
+                    $error = array(
+                        'code' => $id,
+                        'message' => 'Anda seharusnya tidak berada disini...'
+                    );
+                    break;
+            }
+            $this->pageTitle = $error['code'];
+            $this->render("error", $error);
         }
     }
 

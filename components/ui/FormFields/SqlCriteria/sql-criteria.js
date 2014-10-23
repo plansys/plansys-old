@@ -8,49 +8,69 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
             }
 
             return function ($scope, $el, attrs, ctrl) {
-                $scope.name = $el.find("data[name=name]").text();
+                $scope.name = $el.find("data[name=name]:eq(0)").text();
                 $scope.paramsField = $el.find("data[name=params_field]").text();
                 $scope.inlineJS = $el.find("pre[name=inline_js]:eq(0)").text();
                 $scope.baseClass = $el.find('data[name=base_class]').text();
-                $scope.value = JSON.parse($el.find("data[name='value']:eq(0)").text().trim());
-                
+                $scope.value = $scope.$parent.active[$scope.name];
+                $scope.isError = false;
+                $scope.isLoading = true;
+                $scope.errorMsg = '';
                 $scope.previewSQL = '';
                 $scope.modelClass = '';
 
                 $scope.getPreviewSQL = function () {
+                    $scope.isLoading = true;
+                    var postparam = {
+                        criteria: $scope.value,
+                        params: $scope.active[$scope.paramsField],
+                        baseclass: $scope.baseClass
+                    };
 
-                    var postparam = {};
-
-                    switch($scope.baseClass) {
+                    switch ($scope.baseClass) {
                         case "DataSource":
-                            postparam = {
-                                class: $scope.modelClass,
-                                criteria: $scope.value,
-                                params: $scope.active[$scope.paramsField],
-                                baseclass: $scope.baseClass,
-                                dsname: $scope.$parent.active.name
-                            };
-                        break;
+                            postparam.rel = $scope.$parent.active.relationTo;
+                            postparam.dsname = $scope.$parent.active.name;
+                            postparam.dsclass = $scope.$parent.classPath;
+                            break;
+                        case "RelationField":
+                            postparam.rfname = $scope.$parent.active.name;
+                            postparam.rfclass = $scope.$parent.classPath;
+                            postparam.rfmodel = $scope.$parent.active.modelClass;
+                            break;
+                        case "DataGrid":
+                        case "DataFilter":
+                            postparam.params = $scope.item[$scope.paramsField] || {};
+                            postparam.rfname = $scope.$parent.active.name;
+                            postparam.rfclass = $scope.$parent.classPath;
+                            postparam.rfmodel = $scope.modelClass;
+                            break;
+
                     }
 
                     url = Yii.app.createUrl('/FormField/SqlCriteria.previewSQL');
                     $http.post(url, postparam).success(function (data) {
-                        $scope.previewSQL = data;
+                        $scope.previewSQL = data.sql;
+                        $scope.errorMsg = data.error;
+                        $scope.isError = ($scope.errorMsg != '');
+                        $scope.isLoading = false;
                     });
                 }
 
-                $scope.$watch('active.' + $scope.paramsField, function(newv,oldv) {
+                $scope.$watch('active.' + $scope.paramsField, function (newv, oldv) {
                     if (newv != oldv) {
-                        $scope.getPreviewSQL();
+                        $timeout(function () {
+                            $scope.getPreviewSQL();
+                        }, 0);
                     }
-                },true);
+                }, true);
 
                 $scope.$watch('modelClass', function (newv) {
                     if (newv != '' && newv) {
                         $scope.getPreviewSQL();
                     }
                 });
-                
+
                 // when ng-model is changed from inside directive
                 $scope.update = function () {
                     if (typeof ctrl != 'undefined') {

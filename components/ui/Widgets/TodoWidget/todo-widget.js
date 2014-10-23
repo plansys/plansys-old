@@ -7,6 +7,7 @@ app.controller("TodoWidgetController", function ($scope, $http, $timeout, $local
     $scope.jsonItems = JSON.parse($("#todo-data").text().trim());
     $storage.todo = $storage.todo || {view: 'active', ext: {}};
     $storage.todo.items = [];
+    $scope.loading = false;
 
     for (i in $scope.jsonItems) {
         $storage.todo.items.push($scope.jsonItems[i]);
@@ -54,20 +55,24 @@ app.controller("TodoWidgetController", function ($scope, $http, $timeout, $local
                 $storage.todo.items.splice(i, 1);
             }
         }
-        $http.post(Yii.app.createUrl('/widget/TodoWidget.clear'), item);
+        $scope.loading = true;
+        $http.post(Yii.app.createUrl('/widget/TodoWidget.clear'), item).success(function () {
+            $scope.loading = false;
+        });
     }
 
-    $scope.count = function () {
+    $scope.count = function (mode) {
         var count = 0;
 
-        for (i in $storage.todo.items) {
+        mode = mode || $storage.todo.view;
 
+        for (i in $storage.todo.items) {
             if ($storage.todo.items[i] != null && $storage.todo.items[i].note != '') {
-                if ($storage.todo.view == 'completed' && $storage.todo.items[i].status == 1) {
+                if (mode == 'completed' && $storage.todo.items[i].status == 1) {
                     count++;
-                } else if ($storage.todo.view == 'active' && $storage.todo.items[i].status == 0) {
+                } else if (mode == 'active' && $storage.todo.items[i].status == 0) {
                     count++;
-                } else if ($storage.todo.view == 'all') {
+                } else if (mode == 'all') {
                     count++;
                 }
             }
@@ -75,21 +80,43 @@ app.controller("TodoWidgetController", function ($scope, $http, $timeout, $local
         return count;
     }
     $scope.updateTodo = function (item) {
+        $scope.loading = true;
         $http.post(Yii.app.createUrl('/widget/TodoWidget.update'), item)
                 .success(function (data) {
                     if (typeof data.id != "undefined") {
                         item.id = data.id;
                     }
+                    todoWidget.badge = $scope.count('active');
+                    $scope.loading = false;
                 });
     }
 
+    $scope.noteFocus = function (item, e) {
+        $(e.target).parent().find(".todo-shift-enter").show();
+    }
+
+    $scope.noteBlur = function (item, e) {
+        $(e.target).parent().find(".todo-shift-enter").hide();
+        $scope.prepareTodos();
+        $scope.updateTodo(item);
+    }
+
+    $scope.keyDown = function (e) {
+        if (e.keyCode == 13 && e.shiftKey) {
+            $scope.newNote();
+            e.stopPropagation();
+            e.preventDefault();
+            return false;
+        }
+    }
+
     $scope.typeTodo = function (item, e, i) {
+
         if (item.note.trim() == '') {
             e.preventDefault();
         } else {
             $scope.showNew = false;
         }
-        $scope.prepareTodos();
     }
 
 

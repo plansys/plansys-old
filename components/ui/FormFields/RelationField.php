@@ -64,18 +64,26 @@ class RelationField extends FormField {
                 'type' => 'DropDownList',
             ),
             array(
-                'label' => 'SQL Condition',
-                'fieldname' => 'condition',
-                'language' => 'sql',
+                'name' => 'relationCriteria',
+                'label' => 'Sql Criteria',
+                'paramsField' => 'params',
+                'baseClass' => 'RelationField',
                 'options' => array(
-                    'ng-model' => 'active.condition',
-                    'ng-change' => 'save()',
-                    'ng-delay' => '500',
+                    'ng-model' => 'active.relationCriteria',
+                    'ng-change' => 'save();',
                 ),
-                'desc' => 'SQL Template: select * from table [condition]<br/>
-
-Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [model.satker_id]} {where [search]}',
-                'type' => 'ExpressionField',
+                'modelClassJS' => 'RelationField/relation-criteria.js',
+                'type' => 'SqlCriteria',
+            ),
+            array(
+                'label' => 'Sql Parameters',
+                'name' => 'params',
+                'show' => 'Show',
+                'options' => array(
+                    'ng-model' => 'active.params',
+                    'ng-change' => 'save();',
+                ),
+                'type' => 'KeyValueGrid',
             ),
             array(
                 'value' => '<hr/>',
@@ -139,17 +147,17 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array(
-                'label' => 'Searchable',
-                'name' => 'searchable',
-                'options' => array(
-                    'ng-model' => 'active.searchable',
-                    'ng-change' => 'save()',
-                ),
-                'listExpr' => 'array(\\"Yes\\",\\"No\\")',
-                'fieldWidth' => '4',
-                'type' => 'DropDownList',
-            ),
+//            array (
+//                'label' => 'Searchable',
+//                'name' => 'searchable',
+//                'options' => array (
+//                    'ng-model' => 'active.searchable',
+//                    'ng-change' => 'save()',
+//                ),
+//                'listExpr' => 'array(\\"Yes\\",\\"No\\")',
+//                'fieldWidth' => '4',
+//                'type' => 'DropDownList',
+//            ),
             array(
                 'value' => '<hr/>',
                 'type' => 'Text',
@@ -226,7 +234,17 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
 
     /** @var string $name */
     public $name = '';
-    public $condition = '';
+    public $relationCriteria = array(
+        'select' => '',
+        'distinct' => 'false',
+        'alias' => 't',
+        'condition' => '{[search]}',
+        'order' => '',
+        'group' => '',
+        'having' => '',
+        'join' => ''
+    );
+    public $params = array();
 
     /** @var string $value digunakan pada function checked */
     public $value = '';
@@ -269,7 +287,6 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
     public $modelClass = '';
     public $idField = '';
     public $labelField = '';
-    public $watchParams = array();
 
     /** @var string $toolbarName */
     public static $toolbarName = "Relation Field";
@@ -333,20 +350,13 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
                 $this->modelClass = $column['relModelClass'];
                 $this->idField = $column['relIdField'];
                 $this->labelField = $column['relLabelField'];
-                $this->condition = @$column['relCondition'];
+                $this->relationCriteria = @$column['relCriteria'];
+                $this->params = @$column['relParams'];
             }
         }
         $this->builder = $fb;
 
-        $params = array();
-        foreach ($rf as $k => $v) {
-            $params['row.' . $k] = $v;
-        }
-        foreach ($mf as $k => $v) {
-            $params['model.' . $k] = $v;
-        }
-
-        echo json_encode($this->query(@$s, $params));
+        echo json_encode($this->query(@$s, $this->params));
     }
 
     public function actionSearch() {
@@ -359,26 +369,40 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
         $this->attributes = $field;
         $this->builder = $fb;
 
-        if (isset($mf['id']) > 0) {
-            $this->model->findByPk($mf['id']);
-        }
-
-        $params = array();
-        foreach ($mf as $k => $v) {
-            $params['model.' . $k] = $v;
-        }
-
-        echo json_encode($this->query($s, $params));
+        echo json_encode($this->query($s, $p));
     }
 
     public function generateCondition($search = '', &$jsparams = array()) {
-        preg_match_all("/\[(.*?)\]/", $this->condition, $blocks);
+
+        $sql = @$this->relationCriteria['condition'] ? $this->relationCriteria['condition'] : "";
+
+        preg_match_all("/\[(.*?)\]/", $sql, $blocks);
         preg_match_all("/\{(.*?)\}/", $this->labelField, $fields);
-        $sql = $this->condition;
 
         if ($search != '') {
             if (count($fields[1]) == 0) {
                 $fields[1] = [$this->labelField];
+            } else {
+                $rf = explode(",", @$this->relationCriteria['select']);
+                $als = [];
+                if (count($rf) > 0) {
+                    foreach ($rf as $key => $v) {
+                        if (stripos($v, " as ") !== false) {
+                            $t = explode(" as ", $v);
+                            if (count($t) < 2) {
+                                $t = explode(" as ", $v);
+                            }
+                            $als[trim($t[1])] = trim($t[0]);
+                        }
+                    }
+                }
+                foreach ($fields[1] as $key => $v) {
+                    if (isset($als[$v])) {
+                        $fields[1][$key] = $als[$v];
+                    } else {
+                        $fields[1][$key] = $this->relationCriteria['alias'] . "." . $v;
+                    }
+                }
             }
 
             if (count($blocks[1]) == 0) {
@@ -422,13 +446,6 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
                 }
                 $params[$block] = $cond;
             }
-
-            ## usage: "where user_id = {model.id}", model = current angularjs model value
-            else if (strpos($block, '.') !== false) {
-                $cond = @$jsparams[$block];
-                $this->watchParams[] = $block;
-                $params[$block] = $cond;
-            }
         }
 
         ## remove empty-valued conditional curly braces
@@ -450,7 +467,7 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
         $i = 0;
         $returnParams = array();
         foreach ($params as $k => $p) {
-            $returnParams[':param_' . $i] = $p;
+            $returnParams[':param_' . $i] = "'" . $p . "'";
             $sql = str_replace('[' . $k . ']', ':param_' . $i, $sql);
             $i++;
         }
@@ -461,25 +478,43 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
         );
     }
 
-    public function query($search = '', $params = array()) {
+    public function generateCriteria($search, $params) {
+        $condition = $this->generateCondition($search, $params);
+
+        $this->relationCriteria['condition'] = $condition["sql"];
+        $this->relationCriteria['limit'] = ($search == '' ? '30' : '100');
+        $this->params = array_merge($this->params, $condition['params']);
+
+        return DataSource::generateCriteria($this->params, $this->relationCriteria, $this);
+    }
+
+    public function query($search = '', $params = array(), $initialID = null) {
         Yii::import($this->modelClass);
+
         $class = array_pop(explode(".", $this->modelClass));
         $model = new $class;
         $table = $model->tableName();
-        $list = array();
 
-        $condition = $this->generateCondition($search, $params);
-        $limit = ($search == '' ? 'limit 30' : 'limit 100');
+        $criteria = $this->generateCriteria($search, $params);
+        $rawlist = $model->currentModel($criteria);
 
-        $sql = "select t.* from {$table} t {$condition['sql']} {$limit}";
+        if (!is_null($initialID) && $initialID != "") {
+            $found = false;
+            foreach ($rawlist as $r) {
+                if ($r['id'] == $initialID)
+                    $found = true;
+            }
 
-        if ($this->value != '') {
-            $sql = '(select t.* from ' . $table . ' t WHERE t.' . $this->idField. ' = :rl_current_value) UNION (' . $sql . ')  ';
-            $condition['params'][':rl_current_value'] = $this->value;
+            if (!$found) {
+                $t = $criteria['alias'];
+                $criteria['condition'] = "{$t}.id = {$initialID}";
+                $initial = $model->currentModel($criteria);
+                $rawlist = array_merge($rawlist, $initial);
+            }
         }
 
-        $rawlist = Yii::app()->db->createCommand($sql)->queryAll(true, $condition['params']);
 
+        $list = array();
         foreach ($rawlist as $k => $i) {
             $included = true;
             if ($included) {
@@ -659,8 +694,8 @@ Example: inner join p_user_role p on p_user.id = p.user_id {and p.role_id = [mod
         }
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        $this->query('', array(), $this->value);
 
-        $this->query();
         return $this->renderInternal('template_render.php');
     }
 

@@ -1810,6 +1810,12 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     text-align:center;
 }
 
+.todo-shift-enter {
+    float:right;
+    margin:0px -2px -6px 0px;
+    display:none;
+}
+
 /********************************** NOTIFICATION **************************************/
 .nfy-item {
     font-size:13px;
@@ -1874,6 +1880,18 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 .nfy-item:hover .nfy-role {
     border:1px solid #428BCA;
     color:#428BCA;
+}
+
+/********************************** DASHBOARD **************************************/
+
+.dashboard-text {
+    text-align:center;
+    top:50%;
+    position:absolute;
+    margin:-60px 0px 0px -320px;
+    left:50%;
+    color:#ececeb;
+    font-size:100px;
 }
 
 /********************************** FORMS **************************************/

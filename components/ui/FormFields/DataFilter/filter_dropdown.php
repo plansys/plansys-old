@@ -1,6 +1,6 @@
 
 
-<div class="btn-group" dropdown ng-click="focused($event)" 
+<div class="btn-group" dropdown ng-click="dropdownClick(filter,  $event)" 
      style="margin-right:7px;"
      is-open="filter.operatorDropdownOpen">
     <button type="button" class="btn btn-default btn-sm dropdown-toggle">
@@ -20,7 +20,7 @@
         <div class="search" ng-show="filter.searchable">
             <input type="text"
                    ng-model="filter.search"
-                   ng-keydown="listSearch($event)"
+                   ng-keydown="listSearch($event, filter)"
                    placeholder="Search ..."
                    class="input-block-level search-dropdown form-control" autocomplete="off">
         </div>
@@ -33,7 +33,8 @@
                             }"
                 ng-show="listFound(item.value + ' ' + item.key, filter)">
 
-                <a ng-if="!isObject(item.value) && filter.filterType == 'list'"
+                <a ng-if="!isObject(item.value) &&
+                                    (filter.filterType == 'list' || filter.filterType == 'relation')"
                    dropdown-toggle href="#" ng-click="updateDropdown($event, filter, item);"
                    value="{{item.key}}">
                     {{ item.value}}

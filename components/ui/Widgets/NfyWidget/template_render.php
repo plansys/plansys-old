@@ -3,7 +3,7 @@
         <i class = "fa fa-nm fa-newspaper-o"></i>&nbsp;
         Notifications
     </div>
-    <div class="hide" id="nfy-uid"><?= Yii::app()->user->id ?></div>
+    <div class="hide" id="nfy-uid"><?= Yii::app()->user->model->subscription['id'] ?></div>
     <div class="hide" id="nfy-data"><?= json_encode(Yii::app()->nfy->peek(Yii::app()->user->id, 25, NfyMessage::SENT)); ?></div>
 
     <div class="nfy-container widget-item-container" ng-if="!error">

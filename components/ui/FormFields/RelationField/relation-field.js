@@ -34,6 +34,13 @@ app.directive('relationField', function ($timeout, $http) {
                     }
                 }
 
+                $scope.fixScroll = function () {
+                    $el.find(".dropdown-menu").scrollTop(0);
+                    var top = $el.find("li:eq(0)").offset().top;
+                    var scroll = $el.find("li a[value='" + $scope.value + "']").offset().top;
+                    $el.find(".dropdown-menu").scrollTop(scroll - top);
+                }
+
                 $scope.dropdownKeypress = function (e) {
                     if (e.which === 13) {
                         if ($scope.isOpen) {
@@ -56,6 +63,7 @@ app.directive('relationField', function ($timeout, $http) {
                         $a = $el.find("li.hover").next();
                         if ($a.length == 0 && $scope.renderedFormList.length > 0) {
                             $scope.updateInternal($scope.renderedFormList[0].key);
+                            $el.find("li:eq(1)").addClass("hover");
                         } else {
                             var i = 0;
                             while ((!$a.is("li") || !$a.is(":visible")) && i < 100) {
@@ -65,9 +73,10 @@ app.directive('relationField', function ($timeout, $http) {
 
                             if ($a.length > 0 && $a.is("li")) {
                                 $el.find("li.hover").removeClass("hover")
-                                $a.addClass("hover").find("a");
+                                $a.addClass("hover");
                             }
                         }
+                        $scope.fixScroll();
                         e.preventDefault();
                         e.stopPropagation();
                     } else if (e.which === 38) {
@@ -83,6 +92,7 @@ app.directive('relationField', function ($timeout, $http) {
                             $el.find("li.hover").removeClass("hover")
                             $a.addClass("hover").find("a");
                         }
+                        $scope.fixScroll();
                         e.preventDefault();
                         e.stopPropagation();
                     }
@@ -143,9 +153,15 @@ app.directive('relationField', function ($timeout, $http) {
                         if ($el.find("li a[value='" + $scope.value + "']").length > 0) {
                             $el.find("li.hover").removeClass("hover")
                             $el.find("li a[value='" + $scope.value + "']").parent().addClass('hover');
+
+                            $scope.fixScroll();
                         } else {
                             $el.find("li a").blur();
                             $el.find(".dropdown-menu").scrollTop(0);
+                        }
+
+                        if ($scope.searchable) {
+                            $el.find(".search-dropdown").focus();
                         }
                     } else if ($scope.openedInField) {
                         $scope.openedInField = true;
@@ -161,7 +177,7 @@ app.directive('relationField', function ($timeout, $http) {
                         's': $scope.search,
                         'm': $scope.modelClass,
                         'f': $scope.name,
-                        'mf': $scope.$parent.model
+                        'p': $scope.paramValue
                     }).success(function (data) {
                         $scope.formList = data;
                         $scope.renderFormList();
@@ -197,30 +213,40 @@ app.directive('relationField', function ($timeout, $http) {
                 }
 
                 // set default value
+                $scope.search = "";
                 $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
-                $scope.watchParams = JSON.parse($el.find("data[name=watch_params]").text());
+                $scope.params = JSON.parse($el.find("data[name=params]").text());
                 $scope.renderedFormList = [];
                 $scope.renderFormList();
                 $scope.loading = false;
-                $scope.searchable = $el.find("data[name=searchable]").text().trim() == "Yes" ? true : false;
+                $scope.searchable = true;
                 $scope.showOther = $el.find("data[name=show_other]").text().trim() == "Yes" ? true : false;
                 $scope.otherLabel = $el.find("data[name=other_label]").html();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.value = $el.find("data[name=value]").html().trim();
                 $scope.name = $el.find("data[name=name]").html().trim();
                 $scope.modelField = JSON.parse($el.find("data[name=model_field]").text());
-
+                $scope.paramValue = {};
                 $scope.isOpen = false;
                 $scope.openedInField = false;
 
-                for (i in $scope.watchParams) {
-                    var param = $scope.watchParams[i];
-                    $scope.$watch(param, function (newparam, oldparam) {
+                for (i in $scope.params) {
+                    var p = $scope.params[i];
+                    if (p.indexOf('js:') === 0) {
+                        var value = $scope.$parent.$eval(p.replace('js:', ''));
+                        var key = i;
+                        $scope.$parent.$watch(p.replace('js:', ''), function (newv, oldv) {
+                            if (newv != oldv) {
+                                $scope.paramValue[key] = newv;
+                                $scope.doSearch();
+                            }
+                        }, true);
+                        $scope.paramValue[key] = value;
+
                         $scope.doSearch();
-                    }, true);
+                    }
                 }
 
-                $scope.search = "";
                 //if ngModel is present, use that instead of value from php
                 $timeout(function () {
                     if (attrs.ngModel) {

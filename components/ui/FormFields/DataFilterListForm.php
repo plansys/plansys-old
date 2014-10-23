@@ -37,6 +37,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'date' => 'Date',
                     'list' => 'DropDownList',
                     'check' => 'Checkbox',
+                    'relation' => 'Relation',
                 ),
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
@@ -76,7 +77,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'TextField',
             ),
             array (
-                'label' => 'Custom ?',
+                'label' => 'Custom Column ?',
                 'name' => 'isCustom',
                 'options' => array (
                     'ng-model' => 'value[$index].isCustom',
@@ -101,6 +102,15 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'style' => 'margin-bottom:8px;',
                 ),
                 'type' => 'ExpressionField',
+            ),
+            array (
+                'name' => 'TypeRelation',
+                'subForm' => 'application.components.ui.FormFields.DataFilterListFormRelation',
+                'options' => array (
+                    'ng-if' => 'value[$index].filterType == \\\'relation\\\'',
+                ),
+                'inlineJS' => 'DataFilter/inlinejs/dfr-init.js',
+                'type' => 'SubForm',
             ),
             array (
                 'value' => '<div style=\\"margin-bottom:-3px;\\"></div>',
@@ -131,4 +141,20 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
     public $listExpr = '';
     public $filterType = 'string';
     public $isCustom = 'No';
+    
+    /*** Relation ***/  
+    public $relParams = array();
+    public $relCriteria = array(
+        'select' => '',
+        'distinct' => 'false',
+        'alias' => 't',
+        'condition' => '{[search]}',
+        'order' => '',
+        'group' => '',
+        'having' => '',
+        'join' => ''
+    );
+    public $relModelClass = '';
+    public $relIdField = '';
+    public $relLabelField = '';
 }

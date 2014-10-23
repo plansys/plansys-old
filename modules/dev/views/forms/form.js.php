@@ -205,7 +205,7 @@
             })).success(function (data) {
                 $scope.relationFieldList = data;
 
-                if (parentScope != null) {
+                if (parentScope != null && typeof parentScope.updateListView != "undefined") {
                     parentScope.updateListView();
                 }
             });
@@ -297,7 +297,7 @@
         /************************ DATA COLUMNS ****************************/
         $scope.generateColumns = function () {
             var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
-            if (confirm("Your current filters will be lost. Are you sure?")) {
+            if (confirm("Your current columns will be lost. Are you sure?")) {
                 $scope.active.columns = [];
                 $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
                     name: $scope.active.datasource,
@@ -547,12 +547,11 @@
                 $el = $($scope.activeTree.$parent.$element);
                 switch (e.which) {
                     case 9:
-                        $("#toolbar-properties input, #toolbar-properties button").eq(0).focus();
-                        e.preventDefault();
-                        e.stopPropagation();
-                        break;
-                    case 46:
-                        $scope.deleteField();
+                        if ($("body > .modal-container").length == 0) {
+                            $("#toolbar-properties input, #toolbar-properties button").eq(0).focus();
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }
                         break;
                     case 38:
                         if ($el.prev().length > 0) {

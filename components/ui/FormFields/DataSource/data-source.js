@@ -9,6 +9,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.totalItems = $el.find("data[name=total_item]").text();
                 $scope.name = $el.find("data[name=name]").text().trim();
                 $scope.class = $el.find("data[name=class_alias]").text().trim();
+                $scope.postData = $el.find("data[name=post_data]").text().trim();
                 $scope.relationTo = $el.find("data[name=relation_to]").text().trim();
                 $scope.insertData = [];
                 $scope.updateData = [];
@@ -27,6 +28,16 @@ app.directive('psDataSource', function ($timeout, $http) {
                         delete $scope.sqlParams[name][key];
                     }
                 }
+                
+                $scope.isRowEmpty = function(row, except) {
+                    except = except || [];
+                    for (i in row) {
+                        if (row[i] != "" && $scope.untrackColumns.indexOf(i) < 0 && except.indexOf(i) < 0) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
 
                 $scope.updateParam = function (key, value, name) {
                     if (typeof name === "undefined") {
@@ -38,6 +49,10 @@ app.directive('psDataSource', function ($timeout, $http) {
                         $scope.sqlParams[name] = {};
                     }
 
+                    if (typeof $scope.sqlParams[name] == "string" && key && value) {
+                        $scope.sqlParams[name] = {};
+                    }
+                    
                     $scope.sqlParams[name][key] = value;
                 }
 
@@ -122,10 +137,10 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.isDataReloaded = false;
                 $scope.trackChanges = true;
 
-                if ($scope.relationTo != '-- NONE --' && $scope.relationTo != '') {
+                if ($scope.postData == 'Yes') {
                     $scope.original = angular.copy($scope.data);
                     $scope.$watch('data', function (newval, oldval) {
-                        console.log($scope.insertData, $scope.updateData, $scope.deleteData);
+//                        console.log($scope.insertData, $scope.updateData, $scope.deleteData);
                         
                         if (newval !== oldval && $scope.trackChanges) {
                             if ($scope.isDataReloaded) {
