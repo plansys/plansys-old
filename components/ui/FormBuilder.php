@@ -31,7 +31,7 @@ class FormBuilder extends CComponent {
         $classFile = "";
         foreach ($classArr as $k => $c) {
             if ($k < count($classArr) - 1) {
-                if ($c != "FormFields") {
+                if ($c == "FormFields") {
                     $classFile .= $c . ".";
                 } else {
                     $classFile .= strtolower($c) . ".";
