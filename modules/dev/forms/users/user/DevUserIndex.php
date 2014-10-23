@@ -321,7 +321,7 @@ class DevUserIndex extends User {
                     array (
                         'label' => 'Series 1',
                         'value' => '20',
-                        'color' => '#343434',
+                        'color' => '#343455',
                         'columnOptions' => array (),
                         'show' => true,
                     ),
@@ -335,7 +335,7 @@ class DevUserIndex extends User {
                     array (
                         'label' => 'Series 3',
                         'value' => '50',
-                        'color' => '#B824FE',
+                        'color' => '#B824FV',
                         'columnOptions' => array (),
                         'show' => false,
                     ),
