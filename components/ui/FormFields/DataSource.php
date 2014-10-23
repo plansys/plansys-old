@@ -506,6 +506,11 @@ class DataSource extends FormField {
             unset($criteria['select']);
         }
 
+        foreach ($criteria as $k => $m) {
+            if (is_string($m)) {
+                $criteria[$k] = stripcslashes($m);
+            }
+        }
 
         return $criteria;
     }
