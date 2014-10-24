@@ -18,7 +18,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'Text',
             ),
             array (
-                'value' => '<div ng-show=\\"value[$index].show\\">',
+                'value' => '<div ng-if=\\"value[$index].show\\">',
                 'type' => 'Text',
             ),
             array (

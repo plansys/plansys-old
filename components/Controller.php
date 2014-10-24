@@ -89,10 +89,14 @@ class Controller extends CController {
             return $default;
         } else {
             $module = Yii::app()->user->role;
+            $menuPath = Yii::app()->user->menuPath;
+            
+            $menuPath = $menuPath == '' ? 'MainMenu' : $menuPath;
 
-            $path = Yii::getPathOfAlias("application.modules.{$module}.menus.MainMenu") . ".php";
+            
+            $path = Yii::getPathOfAlias("application.modules.{$module}.menus.{$menuPath}") . ".php";
             if (!is_file($path)) {
-                $path = Yii::getPathOfAlias("app.modules.{$module}.menus.MainMenu") . ".php";
+                $path = Yii::getPathOfAlias("app.modules.{$module}.menus.{$menuPath}") . ".php";
             }
 
             $menuModule = include($path);

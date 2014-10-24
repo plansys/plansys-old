@@ -199,29 +199,27 @@
         $scope.relationFieldList = {};
         $scope.generateRelationField = function (modelClass, parentScope) {
             modelClass = modelClass || $scope.active.modelClass;
-
             $http.get(Yii.app.createUrl('/formfield/RelationField.listField', {
                 class: modelClass
             })).success(function (data) {
                 $scope.relationFieldList = data;
-
                 if (parentScope != null && typeof parentScope.updateListView != "undefined") {
                     parentScope.updateListView();
                 }
             });
         }
-		
-		function getRandomColor() {
-			var letters = '0123456789ABCDEF'.split('');
-			var color = '#';
-			for (var i = 0; i < 6; i++ ) {
-				color += letters[Math.floor(Math.random() * 16)];
-			}
-			return color;
-		}
+
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF'.split('');
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
 
 
-		/************************ DATA PIE SERIES ****************************/
+        /************************ DATA PIE SERIES ****************************/
         $scope.generateSeries = function () {
             var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
             if (confirm("Your current series will be lost. Are you sure?")) {
@@ -238,12 +236,12 @@
                             return;
                         }
 
-                        if (data != null && 	data.length > 0 && typeof data[0] == "object") {
+                        if (data != null && data.length > 0 && typeof data[0] == "object") {
                             for (i in data[0]) {
                                 var series = angular.extend({}, templateAttr);
                                 series.label = i;
                                 series.value = data[0][i];
-								series.color = getRandomColor();
+                                series.color = getRandomColor();
                                 $scope.active.series.push(series);
                             }
                             $scope.save();
@@ -253,7 +251,7 @@
                 });
             }
         }
-		
+
         /************************ DATA FILTERS ****************************/
         $scope.generateFilters = function () {
             var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
@@ -304,7 +302,7 @@
                     class: '<?= Helper::classAlias($class) ?>',
                     generate: 1
                 }).success(function (data) {
-					console.log(data);
+                    console.log(data);
                     if (typeof data == 'object') {
                         if (typeof data.data == 'object') {
                             data = data.data;
@@ -483,7 +481,7 @@
                         case 'DataFilter':
                             $scope.getDataSourceList();
                             break;
-						case 'ChartPie' :
+                        case 'ChartPie' :
                         case 'DataGrid':
                             $scope.getDataSourceList();
                             break;
@@ -545,24 +543,24 @@
                     return
                 }
                 $el = $($scope.activeTree.$parent.$element);
-                switch (e.which) {
-                    case 9:
-                        if ($("body > .modal-container").length == 0) {
+                if ($("body > .modal-container").length == 0) {
+                    switch (e.which) {
+                        case 9:
                             $("#toolbar-properties input, #toolbar-properties button").eq(0).focus();
                             e.preventDefault();
                             e.stopPropagation();
-                        }
-                        break;
-                    case 38:
-                        if ($el.prev().length > 0) {
-                            $el.prev().find(".form-field:eq(0)").click();
-                        }
-                        break;
-                    case 40:
-                        if ($el.next().length > 0) {
-                            $el.next().find(".form-field:eq(0)").click();
-                        }
-                        break;
+                            break;
+                        case 38:
+                            if ($el.prev().length > 0) {
+                                $el.prev().find(".form-field:eq(0)").click();
+                            }
+                            break;
+                        case 40:
+                            if ($el.next().length > 0) {
+                                $el.next().find(".form-field:eq(0)").click();
+                            }
+                            break;
+                    }
                 }
             }
 

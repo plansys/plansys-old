@@ -42,7 +42,6 @@ class UserController extends Controller {
                 $_POST['DevUserForm']['subscribed'] = '';
 
             $model->attributes = $_POST["DevUserForm"];
-
             if ($model->save()) {
 
                 Yii::app()->user->setFlash('info', 'User berhasil disimpan');

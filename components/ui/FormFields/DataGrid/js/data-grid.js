@@ -187,6 +187,26 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     return output;
                 }
 
+                $scope.getEditableClass = function (col) {
+                    if (!$scope.gridOptions['enableCellEdit'] && !$scope.gridOptions['enableExcelMode']) {
+                        return '';
+                    }
+
+                    var editable = false;
+                    if (typeof col != "undefined") {
+                        editable = col.options.enableCellEdit !== false;
+                    }
+
+                    return  editable ? '' : 'non-editable';
+                }
+
+                $scope.generateCell = function (col) {
+                    var editableClass = $scope.getEditableClass(col);
+                    var html = "<div class=\"ngCellText " + editableClass + "\" ng-class=\"col.colIndex()\">\n\
+                                    <span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div>";
+                    return html;
+                }
+
                 // Type: String
                 $scope.generateCellString = function (col) {
                     var format = "";
@@ -219,7 +239,9 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
                     var ngIf = 'ng-if="' + emptyVal + '.indexOf(row.getProperty(col.field)) < 0 "';
 
-                    var html = '<div class="ngCellText" ng-class="col.colIndex()">\
+                    var editableClass = $scope.getEditableClass(col);
+
+                    var html = '<div class="ngCellText ' + editableClass + '" ng-class="col.colIndex()">\
                                 <span ' + ngIf + ' ng-cell-text>{{ row.getProperty(col.field)' + format + '}}</span>\
                                 ' + placeholderHtml + '\
                                 </div>';
@@ -314,10 +336,10 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
                     return html;
                 }
-
                 $scope.generateCellRelation = function (col) {
+                    var editableClass = $scope.getEditableClass(col);
 
-                    var html = '<div class="ngCellText dgr" ng-class="col.colIndex()"';
+                    var html = '<div class="ngCellText dgr ' + editableClass + '" ng-class="col.colIndex()"';
                     html += 'dgr-id="{{row.getProperty(col.field)}}" dgr-model="' + col.relModelClass + '" ';
                     html += 'dgr-name="' + col.name + '" dgr-labelField="' + col.relLabelField + '" ';
                     html += 'dgr-idField="' + col.relIdField + '">';
@@ -401,6 +423,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     var col = angular.extend(c.options || {}, {
                                         field: c.name,
                                         displayName: c.label,
+                                        cellTemplate: $scope.generateCell(c),
                                         editableCellTemplate: $scope.generateDropdown(c)
                                     });
                                     break;
@@ -605,7 +628,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 var row = evt.targetScope.row;
                                 var data = row.entity;
                                 var except = excludeColumns(data);
-                                
+
                                 if ($scope.data.length - 1 == row.rowIndex) {
                                     $timeout(function () {
                                         $scope.addRow(row);

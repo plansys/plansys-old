@@ -272,6 +272,9 @@ class DataSource extends FormField {
 
         foreach ($params as $param) {
             $template = $sql;
+            $paramOptions = explode("|", $param);
+            $param = array_shift($paramOptions);
+            
             if (!isset($field->params[$param])) {
                 $sql = str_replace("[{$param}]", "", $sql);
                 $parsed[$param] = "";
@@ -280,11 +283,11 @@ class DataSource extends FormField {
 
             switch ($param) {
                 case "where":
-                    $fieldSql = 'DataFilter::generateParams($paramName, $params, $template)';
+                    $fieldSql = 'DataFilter::generateParams($paramName, $params, $template, $paramOptions)';
                     break;
                 case "order":
                 case "paging":
-                    $fieldSql = 'DataGrid::generateParams($paramName, $params, $template)';
+                    $fieldSql = 'DataGrid::generateParams($paramName, $params, $template, $paramOptions)';
                     break;
                 default:
                     $ff = $field->builder->findField(array('name' => $field->params[$param]));
@@ -296,7 +299,8 @@ class DataSource extends FormField {
                 $template = $field->evaluate($fieldSql, true, array(
                     'paramName' => $param,
                     'params' => @$postedParams[$param],
-                    'template' => $template
+                    'template' => $template,
+                    'paramOptions' => $paramOptions
                 ));
 
                 if (!isset($template['generateTemplate'])) {

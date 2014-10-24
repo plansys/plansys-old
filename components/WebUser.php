@@ -45,6 +45,32 @@ class WebUser extends CWebUser {
         return $this->getState('role');
     }
 
+    public function getHomeUrl() {
+        if (isset($this->info['roles'][0]['home_url'])) {
+            return $this->info['roles'][0]['home_url'];
+        } else {
+            return "";
+        }
+    }
+    
+    public function getMenuPath() {
+        
+        
+        if (isset($this->info['roles'][0]['menu_path'])) {
+            return $this->info['roles'][0]['menu_path'];
+        } else {
+            return "";
+        }
+    }
+
+    public function getReturnUrl($defaultUrl = null) {
+        if (is_null($defaultUrl) && $this->homeUrl != "") {
+            $defaultUrl = array($this->homeUrl);
+        }
+
+        return parent::getReturnUrl($defaultUrl);
+    }
+
     public function getInfo() {
         if (Yii::app()->user->isGuest) {
             return "{}";

@@ -133,7 +133,7 @@ app.filter('dateFormat', function (dateFilter) {
            }
            
            var d = dateFilter(date, format);
-           if (d.trim() == "Jan 1, 1970") {
+           if (typeof d == "undefined" || d.trim() == "Jan 1, 1970") {
                return "";
            } else {
                return d;

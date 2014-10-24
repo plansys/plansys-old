@@ -263,7 +263,7 @@ class DataFilter extends FormField {
         return array('sql' => $sql, 'param' => $param);
     }
 
-    public static function generateParams($paramName, $params, $template = '') {
+    public static function generateParams($paramName, $params, $template = '', $paramOptions = array()) {
         $sql = array();
         $flatParams = array();
 

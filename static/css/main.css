@@ -1338,6 +1338,20 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     font-size:13px;
     line-height:20px;
 }
+
+.data-grid-table .ngViewport .ngCellText.editable {
+    background-image:url('../img/data-grid-editable.png');
+    background-repeat: no-repeat;
+    background-position: bottom right;
+}
+
+.data-grid-table .ngViewport .ngCellText.non-editable {
+    background:rgba(0,0,0,.05);
+}
+
+.data-grid-table .ngViewport .ngCellText.non-editable:focus {
+    background:rgba(0,0,0,.15);
+}
 .data-grid-table .ngViewport .ngCellButton {
     padding:2px 10px;
     font-size:13px;

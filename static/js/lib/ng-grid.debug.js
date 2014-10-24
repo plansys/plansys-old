@@ -74,6 +74,13 @@
 
                 if (!focusedOnFirstColumn) {
                     newColumnIndex -= 1;
+                    if (charCode === 9 && evt.shiftKey) {
+                        while (newColumnIndex > 0 && visibleCols[newColumnIndex].enableCellEdit == false) {
+                            newColumnIndex -= 1;
+                            scrollTo = grid.$viewport.scrollLeft() - visibleCols[newColumnIndex].width;
+                            grid.$viewport.scrollLeft(scrollTo);
+                        }
+                    }
                 }
 
                 if (focusedOnFirstVisibleColumns) {
@@ -89,15 +96,15 @@
                 else if (pinnedCols.length > 0) {
                     scrollTo = grid.$viewport.scrollLeft() - visibleCols[newColumnIndex].width;
                 }
-                
-                
+
+
                 grid.$viewport.scrollLeft(scrollTo);
 
             }
             else if (charCode === 39 || (charCode === 9 && !evt.shiftKey)) {
                 if (focusedOnLastVisibleColumns) {
                     if (focusedOnLastColumn && charCode === 9 && !evt.shiftKey) {
-                        grid.$viewport.scrollLeft(0);
+//                        grid.$viewport.scrollLeft(0); //commented, buggy
                         newColumnIndex = $scope.showSelectionCheckbox ? 1 : 0;
                         lastInRow = true;
                     }
@@ -106,11 +113,28 @@
                     }
                 }
                 else if (focusedOnLastPinnedColumn) {
-                    grid.$viewport.scrollLeft(0);
+//                    grid.$viewport.scrollLeft(0); //commented, buggy
                 }
 
                 if (!focusedOnLastColumn) {
                     newColumnIndex += 1;
+                    if (charCode === 9 && !evt.shiftKey) {
+                        while (newColumnIndex < visibleCols.length - 1 && visibleCols[newColumnIndex].enableCellEdit == false) {
+                            newColumnIndex++;
+                            scrollTo = grid.$viewport.scrollLeft() + visibleCols[newColumnIndex].width;
+                            grid.$viewport.scrollLeft(scrollTo);
+                        }
+                    }
+                } else {
+                    newColumnIndex = 0;
+                    if (charCode === 9 && !evt.shiftKey) {
+                        while (newColumnIndex < visibleCols.length - 1 && visibleCols[newColumnIndex].enableCellEdit == false) {
+                            newColumnIndex++;
+                            scrollTo = grid.$viewport.scrollLeft() + visibleCols[newColumnIndex].width;
+                            grid.$viewport.scrollLeft(scrollTo);
+                        }
+                    }
+                    grid.$viewport.scrollLeft(0);
                 }
             }
         }
