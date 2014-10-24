@@ -203,7 +203,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                 $scope.generateCell = function (col) {
                     var editableClass = $scope.getEditableClass(col);
                     var html = "<div class=\"ngCellText " + editableClass + "\" ng-class=\"col.colIndex()\">\n\
-                                    <span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div>";
+                                    <span ng-cell-text>{{COL_FIELD}}</span></div>";
                     return html;
                 }
 

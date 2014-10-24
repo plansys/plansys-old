@@ -2,14 +2,14 @@ function ngGridFlexibleHeightPlugin(opts) {
     var self = this;
     self.grid = null;
     self.scope = null;
-    self.init = function(scope, grid, services) {
+    self.init = function (scope, grid, services) {
         self.domUtilityService = services.DomUtilityService;
         self.grid = grid;
         self.scope = scope;
-        var recalcHeightForData = function() {
+        var recalcHeightForData = function () {
             setTimeout(innerRecalcForData, 1);
         };
-        var innerRecalcForData = function() {
+        var innerRecalcForData = function () {
             var gridId = self.grid.gridId;
             var footerPanelSel = '.' + gridId + ' .ngFooterPanel';
             var extraHeight = self.grid.$topPanel.height() + $(footerPanelSel).height();
@@ -31,7 +31,7 @@ function ngGridFlexibleHeightPlugin(opts) {
                 self.domUtilityService.RebuildGrid(self.scope, self.grid);
             }
         };
-        self.scope.catHashKeys = function() {
+        self.scope.catHashKeys = function () {
             var hash = '',
                     idx;
             for (idx in self.scope.renderedRows) {
@@ -85,13 +85,13 @@ function ngGridFlexibleHeightPlugin(opts) {
 //    }
 //}
 
-app.directive('categoryHeader', function() {
+app.directive('categoryHeader', function () {
     function link(scope, element, attrs) {
 
         // create cols as soon as $gridscope is avavilable
         // grids in tabs with lazy loading come later, so we need to 
         // setup a watcher
-        scope.$watch('categoryHeader.$gridScope', function(gridScope, oldVal) {
+        scope.$watch('categoryHeader.$gridScope', function (gridScope, oldVal) {
             if (!gridScope) {
                 return;
             }
@@ -104,7 +104,7 @@ app.directive('categoryHeader', function() {
             // unclear how to fix this. a workaround is to set a constant value that equals your row height 
             scope.headerRowHeight = 28;
 
-            angular.element(viewPort).bind("scroll", function() {
+            angular.element(viewPort).bind("scroll", function () {
                 // copy total width to compensate scrollbar width
                 $(element).find(".categoryHeaderScroller")
                         .width($(headerContainer).find(".ngHeaderScroller").width());
@@ -113,23 +113,30 @@ app.directive('categoryHeader', function() {
             });
 
             // setup listener for table changes to update categories                
-            scope.categoryHeader.$gridScope.$on('ngGridEventColumns', function(event, reorderedColumns) {
+            scope.categoryHeader.$gridScope.$on('ngGridEventColumns', function (event, reorderedColumns) {
                 createCategories(event, reorderedColumns);
             });
         });
-        var createCategories = function(event, cols) {
+        var createCategories = function (event, cols) {
             scope.categories = [];
             var lastDisplayName = "";
             var totalWidth = 0;
             var left = 0;
 
-            angular.forEach(cols, function(col, key) {
+            angular.forEach(cols, function (col, key) {
                 if (!col.visible) {
                     return;
                 }
                 totalWidth += col.width;
-                var displayName = (typeof (col.colDef.categoryDisplayName) === "undefined") ?
-                        "\u00A0" : col.colDef.categoryDisplayName;
+                
+                if (typeof (col.colDef.category) !== "undefined") {
+                    var displayName = (typeof (col.colDef.category) === "undefined") ?
+                            "\u00A0" : col.colDef.category;
+                } else {
+                    var displayName = (typeof (col.colDef.categoryDisplayName) === "undefined") ?
+                            "\u00A0" : col.colDef.categoryDisplayName;
+                }
+
                 if (displayName !== lastDisplayName) {
                     scope.categories.push({
                         displayName: lastDisplayName,
