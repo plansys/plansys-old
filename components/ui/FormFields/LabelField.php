@@ -18,7 +18,7 @@ class LabelField extends FormField {
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                    'ng-if' => 'active.js != \\\'\\\'',
+                    'ng-if' => 'active.js == \\\'\\\'',
                 ),
                 'type' => 'DropDownList',
             ),
@@ -27,7 +27,7 @@ class LabelField extends FormField {
                 'name' => 'js',
                 'options' => array (
                     'ng-model' => 'active.js',
-                    'ng-change' => 'save()',
+                    'ng-change' => 'active.name=\\\'\\\';save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',

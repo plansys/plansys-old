@@ -168,13 +168,25 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                 $scope.generateUrl = function (url, type) {
                     var output = '';
                     if (typeof url == "string") {
+                        
+                        var match = url.match(/\{[a-zA-Z0-9_\.]+\}/ig);
+                        for (i in match) {
+                            var m = match[i];
+                            m = m.substr(1, m.length - 2);
+                            var result = "' + row.getProperty('" + m + "') + '";
+                            if (m.indexOf('.') > 0) {
+                                result = $scope.$eval(m);
+                            }
+                            url = url.replace('{' + m + '}', result);
+                        }
+                        
                         if (url.match(/http*/ig)) {
                             output = url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'");
                         } else if (url.trim() == '#') {
                             output = '#';
                         } else {
                             url = url.replace(/\?/ig, '&');
-                            output = "Yii.app.createUrl('" + url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'") + "')";
+                            output = "Yii.app.createUrl('" + url + "')";
                         }
 
                         if (type == 'html') {

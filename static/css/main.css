@@ -1434,6 +1434,15 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     background:transparent;
     border-bottom:0px;
 }
+
+.data-grid-category .ngTopPanel {
+    position:absolute;
+    z-index:3;
+}
+.data-grid-container.fixed .data-grid-category .ngTopPanel {
+    position:fixed;
+    z-index:20;
+}
 .data-grid-category .ngHeaderCell{
     border-bottom:0px;
     background-color: #eee;

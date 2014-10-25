@@ -630,6 +630,7 @@ class ActiveRecord extends CActiveRecord {
         }
         if (count(@$post[$name . 'Update']) > 0) {
             ActiveRecord::batchUpdate($model, $post[$name . 'Update']);
+           
         }
 
         ## delete

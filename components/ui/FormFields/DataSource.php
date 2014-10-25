@@ -274,7 +274,7 @@ class DataSource extends FormField {
             $template = $sql;
             $paramOptions = explode("|", $param);
             $param = array_shift($paramOptions);
-            
+
             if (!isset($field->params[$param])) {
                 $sql = str_replace("[{$param}]", "", $sql);
                 $parsed[$param] = "";
@@ -335,45 +335,19 @@ class DataSource extends FormField {
         }
     }
 
+    public static function concatSql($sql, $operator) {
+        $andsql = array_filter(preg_split("/\{" . $operator . "\}/i", $sql), function($e) {
+            return (trim($e) != "" ? trim($e) : false);
+        });
+        $sql = implode(" " . $operator . " ", $andsql);
+        return $sql;
+    }
+
     public static function generateTemplate($sql, $postedParams = array(), $field) {
         $returnParams = array();
 
-        ## find all blocks
-        preg_match_all("/\{(.*?)\}/", $sql, $blocks);
-
-        foreach ($blocks[1] as $block) {
-            $bracket = DataSource::processSQLBracket($block, $postedParams, $field);
-
-            $renderBracket = false;
-            if (isset($bracket['render'])) {
-                $renderBracket = $bracket['render'];
-            }
-
-            foreach ($bracket['params'] as $bracketParam => $bracketValue) {
-                if (is_array($bracketValue) && count($bracketValue) > 0) {
-                    $renderBracket = true;
-                    foreach ($bracketValue as $k => $p) {
-                        $returnParams[$k] = $p;
-                    }
-                }
-            }
-
-            ## check if there is another params
-            preg_match_all("/\:[\w\d_]+/", $bracket['sql'], $params);
-            if (count($params[0]) > 0) {
-                $renderBracket = true;
-            }
-
-            if ($renderBracket) {
-                $sql = str_replace("{{$block}}", $bracket['sql'], $sql);
-            } else {
-                $sql = str_replace("{{$block}}", "", $sql);
-            }
-        }
-
         ## find all params
         preg_match_all("/\:[\w\d_]+/", $sql, $params);
-
         $model = $field->model;
         foreach ($params[0] as $p) {
             if (isset($postedParams[$p])) {
@@ -395,8 +369,49 @@ class DataSource extends FormField {
             }
         }
 
-        $sql = str_ireplace("andand", "AND", $sql);
-        $sql = str_ireplace("oror", "OR", $sql);
+        ## find all blocks
+        preg_match_all("/\{(.*?)\}/", $sql, $blocks);
+
+        foreach ($blocks[1] as $block) {
+            if (strtolower($block) == "and" || strtolower($block) == "or") {
+                continue;
+            }
+
+            $bracket = DataSource::processSQLBracket($block, $postedParams, $field);
+
+            $renderBracket = false;
+            if (isset($bracket['render'])) {
+                $renderBracket = $bracket['render'];
+            }
+
+            foreach ($bracket['params'] as $bracketParam => $bracketValue) {
+                if (is_array($bracketValue) && count($bracketValue) > 0) {
+                    $renderBracket = true;
+                    foreach ($bracketValue as $k => $p) {
+                        $returnParams[$k] = $p;
+                    }
+                }
+            }
+
+            ## check if there is another params
+            preg_match_all("/\:[\w\d_]+/", $bracket['sql'], $params);
+            if (count($params[0]) > 0) {
+                if (@$returnParams[$params[0][0]]) {
+                    $renderBracket = true;
+                }
+            }
+
+            if ($renderBracket) {
+                $sql = str_replace("{{$block}}", $bracket['sql'], $sql);
+            } else {
+                $sql = str_replace("{{$block}}", "", $sql);
+            }
+        }
+
+        if ($sql != "") {
+            $sql = DataSource::concatSql($sql, "AND");
+            $sql = DataSource::concatSql($sql, "OR");
+        }
 
         return array(
             'sql' => trim($sql),
@@ -524,7 +539,6 @@ class DataSource extends FormField {
         $relChanges = $this->model->getRelChanges($this->relationTo);
 
         $criteria = DataSource::generateCriteria($postedParams, $this->relationCriteria, $this);
-
         $rawData = $this->model->{$this->relationTo}($criteria);
 
         if ($this->relationTo == 'currentModel') {

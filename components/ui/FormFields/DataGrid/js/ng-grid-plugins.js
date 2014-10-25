@@ -85,9 +85,12 @@ function ngGridFlexibleHeightPlugin(opts) {
 //    }
 //}
 
-app.directive('categoryHeader', function () {
+app.directive('categoryHeader', function ($timeout) {
     function link(scope, element, attrs) {
-
+        var headerContainer, viewPort;
+        $timeout(function () {
+            $(element).find('.ngTopPanel').width($(element).width());
+        });
         // create cols as soon as $gridscope is avavilable
         // grids in tabs with lazy loading come later, so we need to 
         // setup a watcher
@@ -96,30 +99,38 @@ app.directive('categoryHeader', function () {
                 return;
             }
             // setup listener for scroll events to sync categories with table
-            var viewPort = scope.categoryHeader.$gridScope.domAccessProvider.grid.$viewport[0];
-            var headerContainer = scope.categoryHeader.$gridScope.domAccessProvider.grid.$headerContainer[0];
+            viewPort = scope.categoryHeader.$gridScope.domAccessProvider.grid.$viewport[0];
+            headerContainer = scope.categoryHeader.$gridScope.domAccessProvider.grid.$headerContainer[0];
 
             // watch out, this line usually works, but not always, because under certains conditions
             // headerContainer.clientHeight is 0
             // unclear how to fix this. a workaround is to set a constant value that equals your row height 
             scope.headerRowHeight = 28;
-
+            scope.timeout = null;
             angular.element(viewPort).bind("scroll", function () {
                 // copy total width to compensate scrollbar width
                 $(element).find(".categoryHeaderScroller")
                         .width($(headerContainer).find(".ngHeaderScroller").width());
+
                 $(element).find(".ngHeaderContainer")
                         .scrollLeft($(this).scrollLeft());
-            });
 
+                clearTimeout(scope.timeout);
+                scope.timeout = setTimeout(function () {
+                    createCategories(scope.event, scope.reorderedColumns);
+                }, 200);
+            });
             // setup listener for table changes to update categories                
             scope.categoryHeader.$gridScope.$on('ngGridEventColumns', function (event, reorderedColumns) {
                 createCategories(event, reorderedColumns);
+                scope.event = event;
+                scope.reorderedColumns = reorderedColumns;
             });
         });
         var createCategories = function (event, cols) {
             scope.categories = [];
             var lastDisplayName = "";
+            var lastSingle = false;
             var totalWidth = 0;
             var left = 0;
 
@@ -128,31 +139,59 @@ app.directive('categoryHeader', function () {
                     return;
                 }
                 totalWidth += col.width;
-                
+
+                var cat = "";
                 if (typeof (col.colDef.category) !== "undefined") {
-                    var displayName = (typeof (col.colDef.category) === "undefined") ?
-                            "\u00A0" : col.colDef.category;
+                    cat = col.colDef.category || "";
                 } else {
-                    var displayName = (typeof (col.colDef.categoryDisplayName) === "undefined") ?
-                            "\u00A0" : col.colDef.categoryDisplayName;
+                    cat = col.colDef.categoryDisplayName || "";
                 }
+
+                var single = (cat == "");
+                var displayName = single ? col.colDef.displayName : cat;
 
                 if (displayName !== lastDisplayName) {
                     scope.categories.push({
-                        displayName: lastDisplayName,
+                        displayName: lastSingle ? "" : lastDisplayName,
                         width: totalWidth - col.width,
-                        left: left
+                        left: left,
+                        single: lastSingle
                     });
                     left += (totalWidth - col.width);
                     totalWidth = col.width;
                     lastDisplayName = displayName;
+                    lastSingle = single;
+
+                    if (lastSingle) {
+                        $timeout(function () {
+                            $(headerContainer)
+                                    .find(".ngHeaderCell.col" + key)
+                                    .css({
+                                        borderTop: '0px',
+                                        marginTop: '-28px',
+                                        paddingTop: '18px',
+                                        lineHeight: '56px',
+                                        height: '56px',
+                                        textAlign: 'center'
+                                    });
+
+
+                            $(headerContainer)
+                                    .find(".ngHeaderCell.col" + key + " .ngVerticalBar")
+                                    .css({
+                                        height: '38px',
+                                    });
+
+                        });
+                    }
                 }
             });
             if (totalWidth > 0) {
                 scope.categories.push({
-                    displayName: lastDisplayName,
+                    displayName: lastSingle ? "" : lastDisplayName,
                     width: totalWidth,
-                    left: left
+                    left: left,
+                    single: lastSingle
                 });
             }
         };
