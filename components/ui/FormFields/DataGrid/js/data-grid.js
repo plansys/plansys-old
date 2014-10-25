@@ -168,7 +168,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                 $scope.generateUrl = function (url, type) {
                     var output = '';
                     if (typeof url == "string") {
-                        
+
                         var match = url.match(/\{[a-zA-Z0-9_\.]+\}/ig);
                         for (i in match) {
                             var m = match[i];
@@ -179,7 +179,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             }
                             url = url.replace('{' + m + '}', result);
                         }
-                        
+
                         if (url.match(/http*/ig)) {
                             output = url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'");
                         } else if (url.trim() == '#') {
@@ -527,28 +527,33 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 var $dgcontainer = $el.find(".data-grid-container");
                                 var $pager = $el.find(".data-grid-paging");
                                 var $cat = $el.find('.data-grid-category');
+                                var $catt = $el.find('.data-grid-category .ngTopPanel');
                                 var $topp = $el.find('.data-grid-table .ngTopPanel');
                                 var $container = $el.parents('.container-full');
                                 var $wc = $el.parent();
-                                var formTop = $el.parents("form").offset().top;
+                                var $form = $el.parents("form");
+                                var formTopPos = Math.abs($form.position().top - $form.offset().top);
+                                var formTop = $form.offset().top;
                                 var pagerTop = $pager.length > 0 ? $pager.offset().top : 0;
                                 var pagerHeight = $pager.length > 0 ? $pager.height() : 0;
                                 var top = pagerTop - formTop;
+                                
                                 function fixHead() {
                                     var width = $wc.width();
+                                    $catt.width(width);
 
                                     if ($container.scrollTop() > top) {
                                         if (!$dgcontainer.hasClass('fixed')) {
                                             $dgcontainer.addClass('fixed');
                                         }
                                         $pager.width(width);
-                                        $pager.css('top', formTop);
+                                        $pager.css('top', formTopPos);
 
                                         $cat.width(width);
-                                        $cat.css('top', formTop + pagerHeight + 10);
+                                        $cat.css('top', formTopPos + pagerHeight + 10);
 
                                         $topp.width(width);
-                                        $topp.css('top', formTop + pagerHeight + $cat.height() + 10);
+                                        $topp.css('top', formTopPos + pagerHeight + $cat.height() + 10);
 
                                         $el.find(".data-grid-paging-shadow").show();
                                     } else {

@@ -1,4 +1,4 @@
-<div ng-if="categories.length > 2"  class="ngTopPanel categoryStyle">
+<div ng-if="showCategories" class="ngTopPanel categoryStyle">
 
     <div class="ngHeaderContainer" style="height:{{headerRowHeight }}px !important;">
         <div class="categoryHeaderScroller" style="height:{{headerRowHeight }}px;position:absolute;">  <!-- fixes scrollbar issue -->
@@ -9,4 +9,4 @@
         </div>
     </div>
 </div>
-<div style="height:{{headerRowHeight}}px;"></div>
+<div ng-if="showCategories" style="height:{{headerRowHeight}}px;visibility:hidden;"></div>

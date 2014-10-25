@@ -115,10 +115,10 @@ app.directive('categoryHeader', function ($timeout) {
                 $(element).find(".ngHeaderContainer")
                         .scrollLeft($(this).scrollLeft());
 
-                clearTimeout(scope.timeout);
-                scope.timeout = setTimeout(function () {
-                    createCategories(scope.event, scope.reorderedColumns);
-                }, 200);
+//                clearTimeout(scope.timeout);
+//                scope.timeout = setTimeout(function () {
+//                    createCategories(scope.event, scope.reorderedColumns);
+//                }, 1000);
             });
             // setup listener for table changes to update categories                
             scope.categoryHeader.$gridScope.$on('ngGridEventColumns', function (event, reorderedColumns) {
@@ -129,6 +129,7 @@ app.directive('categoryHeader', function ($timeout) {
         });
         var createCategories = function (event, cols) {
             scope.categories = [];
+            scope.showCategories = false;
             var lastDisplayName = "";
             var lastSingle = false;
             var totalWidth = 0;
@@ -143,12 +144,17 @@ app.directive('categoryHeader', function ($timeout) {
                 var cat = "";
                 if (typeof (col.colDef.category) !== "undefined") {
                     cat = col.colDef.category || "";
-                } else {
+                } else if (typeof (col.colDef.categoryDisplayName) !== "undefined") {
                     cat = col.colDef.categoryDisplayName || "";
                 }
 
                 var single = (cat == "");
                 var displayName = single ? col.colDef.displayName : cat;
+                
+                if (!single) {
+                    scope.showCategories = true;
+                }
+
 
                 if (displayName !== lastDisplayName) {
                     scope.categories.push({
@@ -162,7 +168,7 @@ app.directive('categoryHeader', function ($timeout) {
                     lastDisplayName = displayName;
                     lastSingle = single;
 
-                    if (lastSingle) {
+                    if (lastSingle && scope.showCategories) {
                         $timeout(function () {
                             $(headerContainer)
                                     .find(".ngHeaderCell.col" + key)
