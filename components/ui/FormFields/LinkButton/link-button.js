@@ -3,30 +3,45 @@ app.directive('linkBtn', function ($timeout, $parse, $compile) {
         scope: true,
         compile: function (element, attrs, transclude) {
 
-            var generateUrl = function (url, type) {
-                var output = '';
-                if (typeof url == "string") {
-                    if (url.match(/http*/ig)) {
-                        output = url.replace(/\{/g, "'+ $scope.").replace(/\}/g, " + '");
-                    } else if (url.trim() == '#') {
-                        output = '#';
-                    } else {
-                        url = url.replace(/\?/ig, '&');
-                        output = "Yii.app.createUrl('" + url.replace(/\{/g, "'+ $scope.").replace(/\}/g, " + '") + "')";
-                    }
-
-                    if (type == 'html') {
-                        if (output != '#') {
-                            output = '{{' + output + '}}';
-                        }
-                    }
-
-                }
-                return output;
-            }
-
 
             return function ($scope, $el, attrs, ctrl) {
+
+                var generateUrl = function (url, type) {
+                    var output = '';
+                    if (typeof url == "string") {
+
+
+                        var match = url.match(/{([^}]+)}/g);
+                        for (i in match) {
+                            var m = match[i];
+                            m = m.substr(1, m.length - 2);
+                            var result = "' + $scope." + m + " + '";
+                            if (m.indexOf('.') > 0) {
+                                result = $scope.$eval(m);
+                            }
+                            url = url.replace('{' + m + '}', result);
+                        }
+
+                        if (url.match(/http*/ig)) {
+                            output = url.replace(/\{/g, "'+ $scope.").replace(/\}/g, " + '");
+                        } else if (url.trim() == '#') {
+                            output = '#';
+                        } else {
+                            url = url.replace(/\?/ig, '&');
+                            output = "Yii.app.createUrl('" + url + "')";
+                        }
+
+                        if (type == 'html') {
+                            if (output != '#') {
+                                output = '{{' + output + '}}';
+                            }
+                        }
+
+                    }
+                    return output;
+                }
+
+
                 if ($el.attr('group') != '' && $(".link-btn[group=" + $el.attr('group') + "]").length > 1) {
                     $firstBtn = $(".link-btn[group=" + $el.attr('group') + "]").eq(0);
                     if (!$firstBtn.parent().hasClass('btn-group')) {

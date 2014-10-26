@@ -104,7 +104,6 @@
             else if (charCode === 39 || (charCode === 9 && !evt.shiftKey)) {
                 if (focusedOnLastVisibleColumns) {
                     if (focusedOnLastColumn && charCode === 9 && !evt.shiftKey) {
-//                        grid.$viewport.scrollLeft(0); //commented, buggy
                         newColumnIndex = $scope.showSelectionCheckbox ? 1 : 0;
                         lastInRow = true;
                     }
@@ -124,6 +123,9 @@
                             scrollTo = grid.$viewport.scrollLeft() + visibleCols[newColumnIndex].width;
                             grid.$viewport.scrollLeft(scrollTo);
                         }
+                    }
+                    if (newColumnIndex == visibleCols.length - 1) {
+                        grid.$viewport.scrollLeft(99999);
                     }
                 } else {
                     newColumnIndex = 0;

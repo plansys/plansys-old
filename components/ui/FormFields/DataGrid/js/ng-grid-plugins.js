@@ -106,7 +106,6 @@ app.directive('categoryHeader', function ($timeout) {
             // headerContainer.clientHeight is 0
             // unclear how to fix this. a workaround is to set a constant value that equals your row height 
             scope.headerRowHeight = 28;
-            scope.timeout = null;
             angular.element(viewPort).bind("scroll", function () {
                 // copy total width to compensate scrollbar width
                 $(element).find(".categoryHeaderScroller")
@@ -115,10 +114,10 @@ app.directive('categoryHeader', function ($timeout) {
                 $(element).find(".ngHeaderContainer")
                         .scrollLeft($(this).scrollLeft());
 
-//                clearTimeout(scope.timeout);
-//                scope.timeout = setTimeout(function () {
-//                    createCategories(scope.event, scope.reorderedColumns);
-//                }, 1000);
+                clearTimeout(scope.timeout);
+                scope.timeout = setTimeout(function () {
+                    createCategories(scope.event, scope.reorderedColumns);
+                }, 200);
             });
             // setup listener for table changes to update categories                
             scope.categoryHeader.$gridScope.$on('ngGridEventColumns', function (event, reorderedColumns) {
@@ -150,7 +149,7 @@ app.directive('categoryHeader', function ($timeout) {
 
                 var single = (cat == "");
                 var displayName = single ? col.colDef.displayName : cat;
-                
+
                 if (!single) {
                     scope.showCategories = true;
                 }
@@ -169,32 +168,31 @@ app.directive('categoryHeader', function ($timeout) {
                     lastSingle = single;
 
                     if (lastSingle && scope.showCategories) {
-                        $timeout(function () {
-                            $(headerContainer)
-                                    .find(".ngHeaderCell.col" + key)
-                                    .css({
-                                        borderTop: '0px',
-                                        marginTop: '-28px',
-                                        paddingTop: '18px',
-                                        lineHeight: '56px',
-                                        height: '56px',
-                                        textAlign: 'center'
-                                    });
+//                        $timeout(function () {
+                        $(headerContainer)
+                                .find(".ngHeaderCell.col" + key)
+                                .css({
+                                    borderTop: '0px',
+                                    marginTop: '-28px',
+                                    paddingTop: '20px',
+                                    lineHeight: '56px',
+                                    height: '56px',
+                                    textAlign: 'center'
+                                });
 
+                        $(headerContainer)
+                                .find(".ngHeaderCell.col" + key + " .ngVerticalBar")
+                                .css({
+                                    height: '38px',
+                                });
 
-                            $(headerContainer)
-                                    .find(".ngHeaderCell.col" + key + " .ngVerticalBar")
-                                    .css({
-                                        height: '38px',
-                                    });
-
-                        });
+//                        });
                     }
                 }
             });
             if (totalWidth > 0) {
                 scope.categories.push({
-                    displayName: lastSingle ? "" : lastDisplayName,
+                    displayName: lastSingle ? "" :lastDisplayName,
                     width: totalWidth,
                     left: left,
                     single: lastSingle
@@ -205,10 +203,12 @@ app.directive('categoryHeader', function ($timeout) {
     return {
         scope: {
             categoryHeader: '='
-        },
+        }
+        ,
         restrict: 'EA',
         templateUrl: 'category_header',
         link: link
-    };
+    }
+    ;
 });
   

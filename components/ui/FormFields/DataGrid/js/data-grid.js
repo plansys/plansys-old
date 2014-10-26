@@ -169,7 +169,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     var output = '';
                     if (typeof url == "string") {
 
-                        var match = url.match(/\{[a-zA-Z0-9_\.]+\}/ig);
+                        var match = url.match(/{([^}]+)}/g);
                         for (i in match) {
                             var m = match[i];
                             m = m.substr(1, m.length - 2);
@@ -179,6 +179,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             }
                             url = url.replace('{' + m + '}', result);
                         }
+                        
 
                         if (url.match(/http*/ig)) {
                             output = url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'");
