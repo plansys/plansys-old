@@ -16,10 +16,6 @@ app.directive('textField', function($timeout) {
                         }, 0);
                     }
                 };
-				
-				$el.find('.colorpicker').colorpicker().on('changeColor', function(ev){
-					$scope.updateListView();
-				});
 
                 // when ng-model is changed from outside directive
                 if (typeof ctrl != 'undefined') {
