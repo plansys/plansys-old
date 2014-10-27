@@ -1338,6 +1338,20 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     font-size:13px;
     line-height:20px;
 }
+
+.data-grid-table .ngViewport .ngCellText.editable {
+    background-image:url('../img/data-grid-editable.png');
+    background-repeat: no-repeat;
+    background-position: bottom right;
+}
+
+.data-grid-table .ngViewport .ngCellText.non-editable {
+    background:rgba(0,0,0,.05);
+}
+
+.data-grid-table .ngViewport .ngCellText.non-editable:focus {
+    background:rgba(0,0,0,.15);
+}
 .data-grid-table .ngViewport .ngCellButton {
     padding:2px 10px;
     font-size:13px;
@@ -1419,6 +1433,15 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 .data-grid-table .ngTopPanel {
     background:transparent;
     border-bottom:0px;
+}
+
+.data-grid-category .ngTopPanel {
+    position:absolute;
+    z-index:3;
+}
+.data-grid-container.fixed .data-grid-category .ngTopPanel {
+    position:fixed;
+    z-index:20;
 }
 .data-grid-category .ngHeaderCell{
     border-bottom:0px;
@@ -1899,6 +1922,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     font-size:13px;
     margin-top:6px;
     margin-bottom:4px;
+    border:1px solid #ececeb;border-radius:3px;padding:5px 10px;margin:0px;
 }
 .switchery {
     background-color: #fff;

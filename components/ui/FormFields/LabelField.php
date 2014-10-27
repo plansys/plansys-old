@@ -18,11 +18,19 @@ class LabelField extends FormField {
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
+                    'ng-if' => 'active.js == \\\'\\\'',
                 ),
-                'list' => array (),
-                'searchable' => 'Yes',
-                'showOther' => 'Yes',
                 'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'JS:',
+                'name' => 'js',
+                'options' => array (
+                    'ng-model' => 'active.js',
+                    'ng-change' => 'active.name=\\\'\\\';save()',
+                    'ng-delay' => '500',
+                ),
+                'type' => 'TextField',
             ),
             array (
                 'label' => 'Label',
@@ -62,8 +70,8 @@ class LabelField extends FormField {
                         'type' => 'TextField',
                     ),
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'column2' => array (
@@ -81,27 +89,27 @@ class LabelField extends FormField {
                         'type' => 'TextField',
                     ),
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'column3' => array (
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'column4' => array (
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'type' => 'ColumnField',
             ),
             array (
-                'type' => 'Text',
                 'value' => '<hr/>',
+                'type' => 'Text',
             ),
             array (
                 'label' => 'Options',
@@ -129,6 +137,8 @@ class LabelField extends FormField {
 
     /** @var string $value */
     public $value = '';
+    
+    public $js = '';
 
     /** @var string $layout */
     public $layout = 'Horizontal';
@@ -218,7 +228,9 @@ class LabelField extends FormField {
 
         $this->addClass('label-field-value', 'fieldOptions');
 
-        $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        if ($this->js != "") {
+            $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        }
 
         if (!is_string($this->value))
             $this->value = json_encode($this->value);

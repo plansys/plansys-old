@@ -244,15 +244,8 @@ class DataFilter extends FormField {
                 break;
             case "relation":
                 if ($filter['value'] != '') {
-                    ## taken from (is any of)..
-                    $param_raw = preg_split('/\s+/', trim($filter['value']));
-                    $param = array();
-                    $psql = array();
-                    foreach ($param_raw as $k => $p) {
-                        $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
-                        $psql[] = "{$column} LIKE :{$paramName}_{$pcolumn}_{$k}";
-                    }
-                    $sql = "(" . implode(" OR ", $psql) . ")";
+                    $sql = "{$column} = :{$paramName}_{$pcolumn}";
+                    $param = @$filter['value'];
                 }
                 break;
             case "check":
@@ -270,7 +263,7 @@ class DataFilter extends FormField {
         return array('sql' => $sql, 'param' => $param);
     }
 
-    public static function generateParams($paramName, $params, $template = '') {
+    public static function generateParams($paramName, $params, $template = '', $paramOptions = array()) {
         $sql = array();
         $flatParams = array();
 
@@ -280,7 +273,6 @@ class DataFilter extends FormField {
             foreach ($params as $column => $filter) {
                 
                 $param = DataFilter::buildSingleParam($paramName, $column, $filter);
-
                 $sql[] = $param['sql'];
                 if (is_array($param['param'])) {
                     foreach ($param['param'] as $key => $value) {

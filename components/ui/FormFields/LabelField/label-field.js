@@ -1,17 +1,17 @@
-app.directive('labelField', function($timeout) {
+app.directive('labelField', function ($timeout) {
     return {
         require: '?ngModel',
         scope: true,
-        compile: function(element, attrs, transclude) {
+        compile: function (element, attrs, transclude) {
             if (attrs.ngModel && !attrs.ngDelay) {
                 attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
             }
 
-            return function($scope, $el, attrs, ctrl) {
+            return function ($scope, $el, attrs, ctrl) {
                 // when ng-model is changed from inside directive
-                $scope.update = function() {
+                $scope.update = function () {
                     if (typeof ctrl != 'undefined') {
-                        $timeout(function() {
+                        $timeout(function () {
                             ctrl.$setViewValue($scope.value);
                         }, 0);
                     }
@@ -19,7 +19,7 @@ app.directive('labelField', function($timeout) {
 
                 // when ng-model is changed from outside directive
                 if (typeof ctrl != 'undefined') {
-                    ctrl.$render = function() {
+                    ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;
 
@@ -31,12 +31,17 @@ app.directive('labelField', function($timeout) {
                 }
 
                 // set default value
-                $scope.value = $el.find("data[name=value]").html().trim();
+                $scope.js = $el.find("data[name=js]").html().trim();
+                if ($scope.js != "") {
+                    $scope.value = $scope.$parent.$eval($scope.js);
+                } else {
+                    $scope.value = $el.find("data[name=value]").html().trim();
+                }
                 $scope.modelClass = $el.find("data[name=model_class]").html();
-               
+
                 // if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {
-                    $timeout(function() {
+                    $timeout(function () {
                         var ngModelValue = $scope.$eval(attrs.ngModel);
                         if (typeof ngModelValue != "undefined") {
                             $scope.value = ngModelValue;

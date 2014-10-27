@@ -1,7 +1,7 @@
 var active = $scope.active;
 
 function updateRelationCriteria() {
-    url = Yii.app.createUrl('/FormField/DataSource.relClass', {
+    url = Yii.app.createUrl('/formfield/DataSource.relClass', {
         class: $scope.classPath,
         rel: active.relationTo
     })

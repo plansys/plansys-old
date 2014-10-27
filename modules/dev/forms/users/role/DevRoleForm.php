@@ -63,6 +63,17 @@ class DevRoleForm extends Role {
                 ),
                 'column2' => array (
                     array (
+                        'label' => 'Home Page',
+                        'name' => 'home_url',
+                        'prefix' => 'url:',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Menu Path',
+                        'name' => 'menu_path',
+                        'type' => 'TextField',
+                    ),
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),

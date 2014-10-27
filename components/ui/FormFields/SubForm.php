@@ -75,7 +75,7 @@ class SubForm extends FormField {
     }
 
     public function getRenderUrl() {
-        return Yii::app()->controller->createUrl('/FormField/SubForm.render', array(
+        return Yii::app()->controller->createUrl('/formfield/SubForm.render', array(
                 'name' => $this->name,
                 'class' => $this->subForm,
                 'js' => $this->inlineJS

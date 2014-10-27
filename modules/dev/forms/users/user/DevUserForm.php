@@ -97,8 +97,8 @@ class DevUserForm extends User {
        style=\"padding-top:5px;\">
        <span 
        class=\"badge\"
-       ng-repeat=\"ur in model.userRoles\">
-       {{ ur.role.role_description }}
+       ng-repeat=\"ur in model.roles\">
+       {{ ur.role_description }}
        </span>
     </div>
 </div>',

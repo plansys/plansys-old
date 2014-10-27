@@ -21,7 +21,6 @@ class DevFormProperties extends Form {
                 ),
             ),
             'includeJS' => array (
-                'dej',
             ),
         );
     }

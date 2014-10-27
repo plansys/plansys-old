@@ -48,7 +48,7 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
 
                     }
 
-                    url = Yii.app.createUrl('/FormField/SqlCriteria.previewSQL');
+                    url = Yii.app.createUrl('/formfield/SqlCriteria.previewSQL');
                     $http.post(url, postparam).success(function (data) {
                         $scope.previewSQL = data.sql;
                         $scope.errorMsg = data.error;

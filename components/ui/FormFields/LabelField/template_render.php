@@ -14,6 +14,7 @@
 
         <!-- data -->
         <data name="value" class="hide"><?= $this->value ?></data>
+        <data name="js" class="hide"><?= $this->js ?></data>
         <data name="model_class" class="hide"><?= @get_class($model) ?></data>
         <!-- /data -->
 
