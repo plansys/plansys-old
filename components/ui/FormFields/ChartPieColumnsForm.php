@@ -66,12 +66,9 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'fieldWidth' => '10',
                 'options' => array (
                     'ng-model' => 'value[$index].color',
-                    'ng-change' => 'updateListView(); alert(\\\'sdsd\\\');',
+                    'ng-change' => 'updateListView()',
                 ),
-                'fieldOptions' => array (
-                    'class' => 'colorpicker',
-                ),
-                'type' => 'TextField',
+                'type' => 'ColorPicker',
             ),
             array (
                 'value' => '<div style=\\"margin-bottom:-3px;\\"></div>',
