@@ -179,7 +179,7 @@ class DataGrid extends FormField {
         } else {
             $currentPage = $params['currentPage'];
             $pageSize = $params['pageSize'];
-            $totalItems = $params['totalServerItems'];
+//            $totalItems = $params['totalServerItems'];
 
             $from = ($currentPage - 1) * $pageSize;
             $from = $from < 0 ? 0 : $from;

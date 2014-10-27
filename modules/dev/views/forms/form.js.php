@@ -363,7 +363,7 @@
                     return;
                 var name = ".d-" + $scope.formatName($(this).attr('fname'));
                 var $name = $(name);
-                if (name.trim() != ".d-") {
+                if (name.trim() != ".d-" && name.indexOf("text/") != 0) {
                     if ($name.length > 1) {
                         $(this).removeClass('ng-hide');
                     }

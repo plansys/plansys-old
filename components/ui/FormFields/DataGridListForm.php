@@ -151,7 +151,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
     public $label = '';
     public $options = array();
     public $typeOptions = array(
-        'string' => ['inputMask', 'options'],
+        'string' => ['inputMask', 'options', 'stringAlias'],
         'buttons' => ['buttonCollapsed', 'buttons', 'options'],
         'dropdown' => ['listType', 'listExpr', 'listMustChoose', 'options'],
         'relation' => ['relParams', 'relCriteria', 'relModelClass', 'relIdField', 'relLabelField', 'options']
@@ -159,6 +159,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
 
     ### string options
     public $inputMask = '';
+    public $stringAlias = array();
 
     ### button Options
     public $buttonCollapsed = 'Yes';

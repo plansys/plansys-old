@@ -109,7 +109,14 @@ class RepoManager extends CComponent{
     public function search(){
         
     }
-
+	
+    private static $_model = null;
+    public static function model() {
+    	if (is_null(self::$_model)) {
+    		self::$_model = new RepoManager();
+    	}
+    	return self::$_model;
+    }
 
     public function __construct() {
         if(Setting::get("repo.path") == ''){

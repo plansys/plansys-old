@@ -20,7 +20,7 @@
 
         <!-- field -->
         <div <?= $this->expandAttributes($this->fieldOptions) ?>>
-            {{ value }}
+            {{ value }} &nbsp;
         </div>
         <input type="hidden"
                id='<?= $this->renderID ?>'
