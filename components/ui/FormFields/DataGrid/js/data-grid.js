@@ -572,23 +572,25 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 var formTop = $form.offset().top;
                                 var pagerTop = $pager.length > 0 ? $pager.offset().top : 0;
                                 var pagerHeight = $pager.length > 0 ? $pager.height() : 0;
-                                var top = pagerTop - formTop;
+                                var top = Math.abs(pagerTop - formTop);
                                 var adjTop = 0;
                                 if ($scope.gridOptions['enableExcelMode'] || $scope.gridOptions['enablePaging']) {
                                     adjTop = 10;
+                                } else {
+                                    top += 100;
                                 }
-                                
+
                                 function fixHead() {
                                     var width = $wc.width();
                                     $catt.width(width);
-
-                                    if ($container.scrollTop() > top || $scope.gridOptions['fixedHeader'] == "always") {
+                                    
+                                    if (($container.scrollTop() > top) || $scope.gridOptions['fixedHeader'] == "always") {
                                         if (!$dgcontainer.hasClass('fixed')) {
                                             $dgcontainer.addClass('fixed');
                                         }
+                                        
                                         $pager.width(width);
                                         $pager.css('top', formTopPos);
-
 
                                         $cat.width(width);
                                         $cat.css('top', formTopPos + pagerHeight + adjTop);
