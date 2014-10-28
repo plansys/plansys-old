@@ -8,26 +8,49 @@ class Repo extends Form {
                 'name' => 'full-width',
                 'data' => array (
                     'col1' => array (
-                        'size' => '100',
-                        'sizetype' => '',
                         'type' => 'mainform',
+                        'size' => '100',
                     ),
                 ),
             ),
+            'inlineJS' => 'repo/repo.js',
         );
     }
 
     public function getFields() {
         return array (
             array (
-                'value' => '<div>
-',
+                'linkBar' => array (
+                    array (
+                        'label' => 'Upload',
+                        'group' => 'a',
+                        'icon' => 'upload',
+                        'type' => 'LinkButton',
+                    ),
+                ),
+                'title' => '',
+                'showSectionTab' => 'No',
+                'type' => 'ActionBar',
+            ),
+            array (
+                'value' => '<div style=\"position:fixed;top:40px;left:20px;z-index:10\">
+<div class=\"input-group\" style=\"margin:-5px 0px 0px -20px;width:54%;\">
+  <span class=\"input-group-addon\" style=\"background:white;border:0px;\"><i class=\"fa fa-lg fa-paper-plane-o\"></i></span>
+  <input type=\"text\" class=\"form-control\" ng-keydown=\"changeDir($event)\" ng-model=\"currentDir\" style=\"padding:4px 10px 3px 10px;border:1px solid #ccc;\">
+</div>
+    
+</div>',
+                'type' => 'Text',
+            ),
+            array (
+                'value' => '<div style=\"width:55%;position:absolute;left:0px;top:0px;bottom:-600px;border-right:1px solid #ddd;height:100%;\">
+<div style=\"margin:-34px -1px 0px 0px;\">',
                 'type' => 'Text',
             ),
             array (
                 'name' => 'dataSource1',
                 'fieldType' => 'php',
-                'php' => 'RepoManager::model()->browse()[\\\'item\\\'];',
+                'php' => 'RepoManager::model()->browse(RepoManager::getModuleDir())[\\\'item\\\'];',
                 'type' => 'DataSource',
             ),
             array (
@@ -35,170 +58,73 @@ class Repo extends Form {
                 'datasource' => 'dataSource1',
                 'columns' => array (
                     array (
-                        'name' => 'name',
-                        'label' => 'name',
-                        'options' => array (),
-                        'typeOptions' => array (
-                            'string' => array (
-                                'inputMask',
-                                'options',
-                            ),
-                            'buttons' => array (
-                                'buttonCollapsed',
-                                'buttons',
-                                'options',
-                            ),
-                            'dropdown' => array (
-                                'listType',
-                                'listExpr',
-                                'listMustChoose',
-                                'options',
-                            ),
-                            'relation' => array (
-                                'relParams',
-                                'relCriteria',
-                                'relModelClass',
-                                'relIdField',
-                                'relLabelField',
-                                'options',
-                            ),
-                        ),
-                        'inputMask' => '',
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (),
-                        ),
-                        'listType' => 'php',
-                        'listExpr' => '',
-                        'listMustChoose' => 'No',
-                        'relParams' => array (),
-                        'relCriteria' => array (
-                            'select' => '',
-                            'distinct' => 'false',
-                            'alias' => 't',
-                            'condition' => '{[search]}',
-                            'order' => '',
-                            'group' => '',
-                            'having' => '',
-                            'join' => '',
-                        ),
-                        'relModelClass' => '',
-                        'relIdField' => '',
-                        'relLabelField' => '',
-                        'columnType' => 'string',
-                    ),
-                    array (
                         'name' => 'type',
-                        'label' => 'type',
-                        'options' => array (),
-                        'typeOptions' => array (
-                            'string' => array (
-                                'inputMask',
-                                'options',
-                            ),
-                            'buttons' => array (
-                                'buttonCollapsed',
-                                'buttons',
-                                'options',
-                            ),
-                            'dropdown' => array (
-                                'listType',
-                                'listExpr',
-                                'listMustChoose',
-                                'options',
-                            ),
-                            'relation' => array (
-                                'relParams',
-                                'relCriteria',
-                                'relModelClass',
-                                'relIdField',
-                                'relLabelField',
-                                'options',
-                            ),
+                        'label' => '',
+                        'options' => array (
+                            'width' => '37',
+                            'resizable' => 'false',
                         ),
                         'inputMask' => '',
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (),
+                        'stringAlias' => array (
+                            'loading' => '<i class=\\\'fa fa-lg fa-folder-open\\\'></i>',
+                            'dir' => '<i class=\\\'fa fa-lg fa-folder\\\'></i>',
+                            '*' => '<i class=\\\'fa fa-lg fa-file-o\\\'></i>',
+                            'rx:/php|css|js|html/i' => '<i class=\\\'fa fa-lg fa-file-code-o\\\'></i>',
+                            'rx:/png|jpg|tif|jpeg|psd|gif|exif|bmp|tga/i' => '<i class=\\\'fa fa-lg fa-file-image-o\\\'></i>',
                         ),
-                        'listType' => 'php',
-                        'listExpr' => '',
-                        'listMustChoose' => 'No',
-                        'relParams' => array (),
-                        'relCriteria' => array (
-                            'select' => '',
-                            'distinct' => 'false',
-                            'alias' => 't',
-                            'condition' => '{[search]}',
-                            'order' => '',
-                            'group' => '',
-                            'having' => '',
-                            'join' => '',
-                        ),
-                        'relModelClass' => '',
-                        'relIdField' => '',
-                        'relLabelField' => '',
                         'columnType' => 'string',
+                        'show' => false,
                     ),
                     array (
-                        'name' => 'path',
-                        'label' => 'path',
-                        'options' => array (),
-                        'typeOptions' => array (
-                            'string' => array (
-                                'inputMask',
-                                'options',
-                            ),
-                            'buttons' => array (
-                                'buttonCollapsed',
-                                'buttons',
-                                'options',
-                            ),
-                            'dropdown' => array (
-                                'listType',
-                                'listExpr',
-                                'listMustChoose',
-                                'options',
-                            ),
-                            'relation' => array (
-                                'relParams',
-                                'relCriteria',
-                                'relModelClass',
-                                'relIdField',
-                                'relLabelField',
-                                'options',
-                            ),
+                        'name' => 'name',
+                        'label' => 'File Name',
+                        'options' => array (
+                            'sortable' => 'false',
                         ),
                         'inputMask' => '',
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (),
-                        ),
-                        'listType' => 'php',
-                        'listExpr' => '',
-                        'listMustChoose' => 'No',
-                        'relParams' => array (),
-                        'relCriteria' => array (
-                            'select' => '',
-                            'distinct' => 'false',
-                            'alias' => 't',
-                            'condition' => '{[search]}',
-                            'order' => '',
-                            'group' => '',
-                            'having' => '',
-                            'join' => '',
-                        ),
-                        'relModelClass' => '',
-                        'relIdField' => '',
-                        'relLabelField' => '',
+                        'stringAlias' => array (),
                         'columnType' => 'string',
+                        'show' => false,
                     ),
+                    array (
+                        'name' => 'size',
+                        'label' => 'Size',
+                        'options' => array (
+                            'cellFilter' => 'fileSize',
+                            'width' => '100',
+                        ),
+                        'inputMask' => '',
+                        'stringAlias' => array (),
+                        'columnType' => 'string',
+                        'show' => false,
+                    ),
+                ),
+                'gridOptions' => array (
+                    'fixedHeader' => 'always',
+                    'enableColumnResize' => 'false',
+                    'afterSelectionChange' => 'js: $scope.click',
                 ),
                 'type' => 'DataGrid',
             ),
             array (
                 'value' => '</div>
+</div>',
+                'type' => 'Text',
+            ),
+            array (
+                'value' => '<div style=\"width:45%;position:absolute;right:1px;top:0px;bottom:-600px;border-left:1px solid #ddd;z-index:1;\">
+<div id=\"properties\" style=\"position:fixed;\">
 ',
+                'type' => 'Text',
+            ),
+            array (
+                'name' => 'repoProperties',
+                'subForm' => 'application.forms.RepoProperties',
+                'type' => 'SubForm',
+            ),
+            array (
+                'value' => '</div> 
+</div>',
                 'type' => 'Text',
             ),
         );

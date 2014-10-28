@@ -321,9 +321,9 @@ class DevUserIndex extends User {
                     array (
                         'label' => 'Series 1',
                         'value' => '20',
-                        'color' => '#c100e0',
+                        'color' => '#ff0000',
                         'columnOptions' => array (),
-                        'show' => false,
+                        'show' => true,
                     ),
                     array (
                         'label' => 'Series 2',
@@ -337,7 +337,7 @@ class DevUserIndex extends User {
                         'value' => '50',
                         'color' => '#cacaca',
                         'columnOptions' => array (),
-                        'show' => true,
+                        'show' => false,
                     ),
                 ),
                 'type' => 'ChartPie',

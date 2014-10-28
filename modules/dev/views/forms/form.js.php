@@ -295,6 +295,7 @@
         /************************ DATA COLUMNS ****************************/
         $scope.generateColumns = function () {
             var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
+
             if (confirm("Your current columns will be lost. Are you sure?")) {
                 $scope.active.columns = [];
                 $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
@@ -302,7 +303,6 @@
                     class: '<?= Helper::classAlias($class) ?>',
                     generate: 1
                 }).success(function (data) {
-                    console.log(data);
                     if (typeof data == 'object') {
                         if (typeof data.data == 'object') {
                             data = data.data;
@@ -313,6 +313,13 @@
                         if (data != null && data.length > 0 && typeof data[0] == "object") {
                             for (i in data[0]) {
                                 var filter = angular.extend({}, templateAttr);
+                                for (k in filter) {
+                                    if (['columnType', 'name', 'label', 'show'].indexOf(k) < 0
+                                            && templateAttr.typeOptions[filter.columnType].indexOf(k) < 0) {
+                                        delete filter[k];
+                                    }
+                                }
+
                                 filter.name = i;
                                 filter.label = i;
                                 $scope.active.columns.push(filter);
@@ -515,7 +522,6 @@
             }
             $scope.save();
         }
-
         $scope.moveToNext = function (scope) {
             var index = scope.$parent.index();
             var clone = scope.$parent.$parentNodesScope.$modelValue[index];

@@ -61,4 +61,9 @@
         'icon' => 'fa-database',
         'url' => '/migration',
     ),
+    array (
+        'label' => 'Repository',
+        'icon' => 'fa-folder-open',
+        'url' => '/repo',
+    ),
 );
