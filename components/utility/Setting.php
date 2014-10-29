@@ -49,6 +49,7 @@ class Setting {
         Setting::$data = json_decode(file_get_contents(Setting::$path), true);
 
         Yii::setPathOfAlias('app', Setting::getAppPath());
+        Yii::setPathOfAlias('application', Setting::getApplicationPath());
         Yii::setPathOfAlias('repo', Setting::get('repo.path'));
     }
 
@@ -59,7 +60,7 @@ class Setting {
         while ($k = array_shift($keys)) {
             $arr = &$arr[$k];
         }
-        
+
         if ($arr == null) {
             $arr = $default;
         }
@@ -93,7 +94,11 @@ class Setting {
     public static function getAppPath() {
         return Setting::$rootPath . DIRECTORY_SEPARATOR . Setting::get('app.dir');
     }
-    
+
+    public static function getApplicationPath() {
+        return Setting::$rootPath . DIRECTORY_SEPARATOR . 'plansys';
+    }
+
     public static function getPlansysDirName() {
         return array_pop(explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application')));
     }
@@ -104,6 +109,28 @@ class Setting {
         } else {
             return Yii::getPathOfAlias('application.modules');
         }
+    }
+
+    public static function getControllerMap() {
+        $controllers = array();
+
+        if (is_dir(Yii::getPathOfAlias('app.controllers'))) {
+            $gls = glob(Yii::getPathOfAlias('app.controllers') . DIRECTORY_SEPARATOR . "*.php");
+            foreach ($gls as $g) {
+                $class = str_replace(".php", "", basename($g));
+                $ctrl = lcfirst(str_replace("Controller", "", $class));
+
+                if (substr($class, 0, 3) == "App") {
+                    $extendClass = substr($class, 3);
+                    Yii::import('application.controllers.' . $extendClass);
+
+                    $ctrl = lcfirst(substr($ctrl, 3));
+                }
+
+                $controllers[$ctrl] = 'app.controllers.' . $class;
+            }
+        }
+        return $controllers;
     }
 
     public static function getModules() {

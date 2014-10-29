@@ -46,7 +46,6 @@ class DataGridListFormString extends Form {
             array (
                 'label' => 'String Alias',
                 'name' => 'stringAlias',
-                'show' => 'Show',
                 'options' => array (
                     'ng-model' => 'item.stringAlias;',
                     'ng-change' => 'updateListView();',

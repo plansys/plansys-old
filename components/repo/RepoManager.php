@@ -13,10 +13,15 @@ class RepoManager extends CComponent {
     }
 
     public static function getModuleDir() {
-        return "/";
+        if (Yii::app()->user->isGuest) {
+            return DIRECTORY_SEPARATOR;
+        } else {
+            return DIRECTORY_SEPARATOR . Yii::app()->user->role;
+        }
     }
 
     public function browse($dir = "") {
+        $originaldir = $dir;
         if ($dir == "" || $dir == DIRECTORY_SEPARATOR) {
             $dir = $this->repoPath;
             $parent = "";
@@ -24,18 +29,38 @@ class RepoManager extends CComponent {
             $dir = $this->repoPath . DIRECTORY_SEPARATOR . trim($dir, DIRECTORY_SEPARATOR);
             $parent = dirname($dir);
         }
+        
+        if (!realpath($dir)) {
+            $dir = getcwd() . DIRECTORY_SEPARATOR . $dir;
+        }
 
         $list = array();
+        
+        if (!is_dir($dir)) {
+            if (RepoManager::getModuleDir() == $originaldir) {
+                mkdir($dir);
+            } else {
+                return false;
+            }
+        }
+        
         $olddir = getcwd();
         chdir($dir);
         $output = "";
-        exec('ls -la | awk \'{print $1, $5, $9}\'', $output);
+        $awk = 'awk';
+        $ls = 'ls';
+        if (substr(php_uname(), 0, 7) == "Windows") {
+            $awk = Yii::getPathOfAlias('application.commands.shell.awk') . ".exe";
+            $ls = Yii::getPathOfAlias('application.commands.shell.ls') . ".exe";
+        }
+        $command = $ls . ' -la | ' . $awk . ' "{print $1, $5, substr($0, index($0,$9))}"';
+        exec($command, $output);
         chdir($olddir);
 
         $list = [];
         foreach ($output as $o) {
             $f = explode(" ", $o);
-            if (count($f) > 2) {
+            if (is_array($f) && $f[0] != "total" && count($f) > 2) {
                 $perm = array_shift($f);
                 $size = array_shift($f);
                 $file = implode(" ", $f);
@@ -99,8 +124,15 @@ class RepoManager extends CComponent {
         usort($list, array('RepoManager', 'sortItem'));
         $count = count($list);
 
+        
+        if ($originaldir != "" && $originaldir != RepoManager::getModuleDir()) {
+            $parent = $this->relativePath($parent);
+        } else {
+            $parent = "";
+        }
+        
         $detail = array(
-            'parent' => $dir != "" ? $this->relativePath($parent) : "",
+            'parent' => $parent,
             'path' => $this->relativePath($dir),
             'type' => 'dir',
             'item' => $list,
@@ -175,29 +207,35 @@ class RepoManager extends CComponent {
             $base = basename($path);
             // we deliver a zip file
             header("Content-Type: archive/zip");
-
             // filename for the browser to save the zip file
             header("Content-Disposition: attachment; filename=$base" . ".zip");
-
             // get a tmp name for the .zip
             $tmp_zip = tempnam("tmp", "tempname") . ".zip";
 
+            $zip = "zip";
+            $delim = ';';
+            if (substr(php_uname(), 0, 7) == "Windows") {
+                $zip = Yii::getPathOfAlias('application.commands.shell.zip') . ".exe";
+                $delim = '&';
+            }
+
             // zip the stuff (dir and all in there) into the tmp_zip file
             $dir = dirname($path);
-            `cd $dir; zip -r $tmp_zip $base`;
+            $command = "cd {$dir} {$delim} {$zip} -r {$tmp_zip} {$base}";
+            `$command`;
 
             // calc the length of the zip. it is needed for the progress bar of the browser
             $filesize = filesize($tmp_zip);
             header("Content-Length: $filesize");
-
             // deliver the zip file
             $fp = fopen("$tmp_zip", "r");
             echo fpassthru($fp);
 
             // clean up the tmp zip file
             `rm $tmp_zip `;
+        } else {
+            Yii::app()->request->sendFile($name, file_get_contents($path));
         }
-        Yii::app()->request->sendFile($name, file_get_contents($path));
     }
 
     public function search() {

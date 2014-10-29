@@ -27,7 +27,7 @@ class Controller extends CController {
         $static = "/" . array_pop($dir) . "/static";
         return $this->url($static . $path);
     }
-
+    
     public function renderForm($class, $model = null, $params = array(), $options = array()) {
         $fb = FormBuilder::load($class);
         $this->pageTitle = $fb->form['title'];

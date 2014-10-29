@@ -2,16 +2,24 @@
 
 <div ng-controller="PageController">
     <div ui-layout options="{ flow : 'column'}">
-        <div size='17%' min-size="150px" class="sidebar">
-            <div ui-header>
-                Models
+        <div size='18%' min-size="180px" class="sidebar">
+            <div ui-header style="padding-left:5px;">
+                <div ng-if="!loading" class="btn btn-xs pull-right btn-default"
+                     ng-click="reload()" style="margin-top:3px;">Reload</div>
+
+                <div ng-if="loading" style="float:right;margin-right:4px;">
+                    Loading... 
+                </div>
+
+                <i class="fa fa-file-text-o fa-nm"></i>&nbsp; Forms
+
             </div>
             <div ui-content>
                 <script type="text/ng-template" id="FormTree"><?php include('form_dir.php'); ?></script>
                 <div ui-tree data-drag-enabled="false">
                     <ol ui-tree-nodes="" ng-model="list">
                         <li ng-repeat="item in list" ui-tree-node collapsed="true" ng-include="'FormTree'">
-                            
+
                         </li>
                     </ol>
                 </div>
@@ -33,10 +41,10 @@
     </div>
 </div>
 <script type="text/javascript">
-    app.controller("PageController", ["$scope", "$http", function($scope, $http) {
-            $scope.list = <?php echo CJSON::encode($forms); ?>;
+    app.controller("PageController", ["$scope", "$http", "$localStorage", function ($scope, $http, $localStorage) {
+            $scope.list = null;
             $scope.active = null;
-            $scope.select = function(item) {
+            $scope.select = function (item) {
                 $scope.active = item.$modelValue;
                 if ($scope.active.alias != null) {
                     $("iframe").addClass('invisible');
@@ -44,18 +52,36 @@
                     $('.loading').removeAttr('style');
                 }
             };
-            $scope.is_selected = function(item) {
+            $scope.is_selected = function (item) {
                 if (item.$modelValue === $scope.active) {
                     return "active";
                 } else {
                     return "";
                 }
             };
+
+            $scope.loading = false;
+            $scope.reload = function () {
+                $scope.loading = true;
+
+                $http.get(Yii.app.createUrl('/dev/forms/formList')).success(function (d) {
+                    $scope.list = d;
+                    $storage.formFields = d;
+                    $scope.loading = false;
+                });
+            }
+
+            $storage = $localStorage;
+            if ($storage.formFields == null) {
+                $scope.reload();
+            } else {
+                $scope.list = $storage.formFields;
+            }
         }
     ]);
 
-    $(document).ready(function() {
-        $('iframe').on('load', function() {
+    $(document).ready(function () {
+        $('iframe').on('load', function () {
             $('iframe').removeClass('invisible');
             $('.loading').addClass('invisible');
         });

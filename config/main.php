@@ -15,6 +15,7 @@ return array(
         'app.models.*',
         'application.models.*',
         'application.forms.*',
+        'app.forms.*',
         'application.components.*',
         'application.components.ui.*',
         'application.components.ui.FormFields.*',
@@ -29,6 +30,7 @@ return array(
     'sourceLanguage' => 'en_us',
     'language' => 'id',
     'modulePath' => Setting::getModulePath(),
+    'controllerMap' => Setting::getControllerMap(),
     'modules' => array_merge($modules, array(
         'gii' => array(
             'class' => 'system.gii.GiiModule',

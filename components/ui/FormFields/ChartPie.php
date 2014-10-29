@@ -24,7 +24,6 @@ class ChartPie extends FormField {
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-pie-chart";
 	
-	
 
 	/** @var string $name */
     public $name;

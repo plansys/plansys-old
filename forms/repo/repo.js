@@ -17,7 +17,7 @@ $scope.click = function (row) {
                 $http.get(Yii.app.createUrl('/repo/changeDir', {dir: $scope.selected.path})).success(function (data) {
                     $scope.currentDir = $scope.selected.path;
                     $scope.dataSource1.data = data.item;
-                    if (data.parent != null && data.path.length > 1) {
+                    if (data.parent != "" && data.path.length > 1) {
                         $scope.dataSource1.data.unshift({
                             name: "..",
                             path: data.parent,
@@ -26,6 +26,7 @@ $scope.click = function (row) {
                         });
                     }
                     $scope.selected.type = "dir";
+                    $("#col1").scrollTop(0);
                 });
                 $scope.lastSelectedPath = null;
             } else {

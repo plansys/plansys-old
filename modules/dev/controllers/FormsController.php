@@ -118,10 +118,13 @@ class FormsController extends Controller {
         );
     }
 
+    public function actionFormList() {
+        echo json_encode(FormBuilder::listFile());
+    }
+
     public function actionIndex() {
-        $forms = FormBuilder::listFile();
         $this->render('index', array(
-            'forms' => $forms
+            'forms' => array()
         ));
     }
 
@@ -144,7 +147,6 @@ class FormsController extends Controller {
             }
         }
 
-        
         if (!$changed) {
             $postdata = file_get_contents("php://input");
             $post = CJSON::decode($postdata);
@@ -193,6 +195,7 @@ class FormsController extends Controller {
         $fieldData = $fb->fields;
         FormsController::$modelField = $fieldData;
         $toolbar = $this->renderAllToolbar($formType);
+
 
         Yii::import('application.modules.' . $fb->module . '.controllers.*');
 

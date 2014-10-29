@@ -486,11 +486,22 @@ class FormField extends CComponent {
     public static function allSorted() {
 
         $all = FormField::all();
-        usort($all, function ($a, $b) {
-            return strlen($a['type']::$category) - strlen($b['type']::$category);
-        });
+        $cat = [];
 
-        return $all;
+        foreach ($all as $u) {
+            if (!isset($cat[$u['type']::$category])) {
+                $cat[$u['type']::$category] = [];
+            }
+            $cat[$u['type']::$category][] = $u;
+        }
+        $return = [];
+        foreach ($cat as $a) {
+            foreach ($a as $b) {
+                $return[] = $b;
+            }
+        }
+
+        return $return;
     }
 
     /**

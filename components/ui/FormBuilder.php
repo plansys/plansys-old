@@ -1097,6 +1097,8 @@ EOF;
     public static function listFile($formatRecursive = true) {
         $files = array();
 
+        $devMode = (bool) Setting::get('app.devMode');
+
         $func = function($m, $module = "", $aliaspath = "", $path) {
             return array(
                 'name' => str_replace(ucfirst($module), '', $m),
@@ -1106,24 +1108,67 @@ EOF;
             );
         };
 
-        ## add files in FormFields Dir
-        $forms_dir = Yii::getPathOfAlias("application.components.ui.FormFields") . DIRECTORY_SEPARATOR;
-        $items = glob($forms_dir . "*.php");
-        foreach ($items as $k => $f) {
-            $items[$k] = str_replace($forms_dir, "", $f);
-            $items[$k] = str_replace('.php', "", $items[$k]);
-            if (!is_null($func)) {
-                $items[$k] = $func($items[$k], "", "application.components.ui.FormFields", $f);
+        if ($devMode) {
+            ## add files in FormFields Dir
+            $forms_dir = Yii::getPathOfAlias("application.components.ui.FormFields") . DIRECTORY_SEPARATOR;
+            $items = glob($forms_dir . "*.php");
+            foreach ($items as $k => $f) {
+                $items[$k] = str_replace($forms_dir, "", $f);
+                $items[$k] = str_replace('.php', "", $items[$k]);
+                if (!is_null($func)) {
+                    $items[$k] = $func($items[$k], "", "application.components.ui.FormFields", $f);
+                }
+            }
+
+            $files[] = array(
+                'module' => 'Plansys: Fields',
+                'items' => $items,
+            );
+
+            ##  add files in Root Form dir
+            $forms_dir = Yii::getPathOfAlias("application.forms") . DIRECTORY_SEPARATOR;
+            $items = Helper::globRecursive($forms_dir . "*.php");
+            foreach ($items as $k => $f) {
+                $f = realpath($f);
+                $file_dir = dirname($f) . DIRECTORY_SEPARATOR;
+                $items[$k] = str_replace($file_dir, "", $f);
+                $items[$k] = str_replace('.php', "", $items[$k]);
+                if (!is_null($func)) {
+                    $alias = trim(str_replace($forms_dir, '', $file_dir), DIRECTORY_SEPARATOR);
+                    $alias = trim('application.forms.' . $alias, '.');
+                    $items[$k] = $func($items[$k], "", $alias, $f);
+                }
+            }
+
+            $files[] = array(
+                'module' => 'Plansys: Forms',
+                'items' => $items
+            );
+
+            ## add files in Plansys Modules Dir
+            $module_dir = Yii::getPathOfAlias('application.modules');
+            if (file_exists($module_dir)) {
+                $modules = glob($module_dir . DIRECTORY_SEPARATOR . "*");
+                foreach ($modules as $m) {
+                    $module = ucfirst(str_replace($module_dir . DIRECTORY_SEPARATOR, '', $m));
+                    $alias = "application.modules.{$module}.forms.";
+                    $item_dir = $m . DIRECTORY_SEPARATOR . "forms" . DIRECTORY_SEPARATOR;
+                    $items = Helper::globRecursive($item_dir . "*.php");
+                    $items = FormBuilder::formatGlob($items, $item_dir, $module, $func, $alias, $formatRecursive);
+
+                    if (count($items) > 0) {
+                        $files[] = array(
+                            'module' => 'Plansys: ' . $module,
+                            'items' => $items
+                        );
+                    }
+                }
             }
         }
 
-        $files[] = array(
-            'module' => 'Form Fields',
-            'items' => $items,
-        );
 
         ##  add files in Root Form dir
-        $forms_dir = Yii::getPathOfAlias("application.forms") . DIRECTORY_SEPARATOR;
+        $forms_dir = Yii::getPathOfAlias("app.forms") . DIRECTORY_SEPARATOR;
         $items = Helper::globRecursive($forms_dir . "*.php");
         foreach ($items as $k => $f) {
             $f = realpath($f);
@@ -1132,35 +1177,15 @@ EOF;
             $items[$k] = str_replace('.php', "", $items[$k]);
             if (!is_null($func)) {
                 $alias = trim(str_replace($forms_dir, '', $file_dir), DIRECTORY_SEPARATOR);
-                $alias = trim('application.forms.' . $alias, '.');
+                $alias = trim('app.forms.' . $alias, '.');
                 $items[$k] = $func($items[$k], "", $alias, $f);
             }
         }
 
         $files[] = array(
-            'module' => 'Root Form',
+            'module' => 'App',
             'items' => $items
         );
-
-        ## add files in Plansys Modules Dir
-        $module_dir = Yii::getPathOfAlias('application.modules');
-        if (file_exists($module_dir)) {
-            $modules = glob($module_dir . DIRECTORY_SEPARATOR . "*");
-            foreach ($modules as $m) {
-                $module = ucfirst(str_replace($module_dir . DIRECTORY_SEPARATOR, '', $m));
-                $alias = "application.modules.{$module}.forms.";
-                $item_dir = $m . DIRECTORY_SEPARATOR . "forms" . DIRECTORY_SEPARATOR;
-                $items = Helper::globRecursive($item_dir . "*.php");
-                $items = FormBuilder::formatGlob($items, $item_dir, $module, $func, $alias, $formatRecursive);
-
-                if (count($items) > 0) {
-                    $files[] = array(
-                        'module' => $module,
-                        'items' => $items
-                    );
-                }
-            }
-        }
 
         ## add files in App Modules Dir
         $module_dir = Yii::getPathOfAlias('app.modules');
