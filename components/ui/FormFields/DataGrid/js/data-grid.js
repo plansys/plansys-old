@@ -573,12 +573,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 var pagerTop = $pager.length > 0 ? $pager.offset().top : 0;
                                 var pagerHeight = $pager.length > 0 ? $pager.height() : 0;
                                 var top = Math.abs(pagerTop - formTop);
-                                var adjTop = 0;
-                                if ($scope.gridOptions['enableExcelMode'] || $scope.gridOptions['enablePaging']) {
-                                    adjTop = 10;
-                                } else {
-                                    top += 100;
-                                }
+                                var adjTop = 10;
 
                                 function fixHead() {
                                     var width = $wc.width();

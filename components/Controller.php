@@ -27,7 +27,7 @@ class Controller extends CController {
         $static = "/" . array_pop($dir) . "/static";
         return $this->url($static . $path);
     }
-    
+
     public function renderForm($class, $model = null, $params = array(), $options = array()) {
         $fb = FormBuilder::load($class);
         $this->pageTitle = $fb->form['title'];
@@ -57,6 +57,11 @@ class Controller extends CController {
     }
 
     public function getMainMenu() {
+        $name = "";
+        if (!Yii::app()->user->isGuest) {
+            $name = Yii::app()->user->model->fullname;
+        }
+
         $default = array(
             array(
                 'label' => 'Login',
@@ -64,7 +69,7 @@ class Controller extends CController {
                 'visible' => Yii::app()->user->isGuest
             ),
             array(
-                'label' => '' . ucfirst(Yii::app()->user->name),
+                'label' =>  ucfirst($name),
                 'url' => '#',
                 'items' => array(
                     array(
@@ -90,10 +95,9 @@ class Controller extends CController {
         } else {
             $module = Yii::app()->user->role;
             $menuPath = Yii::app()->user->menuPath;
-            
+
             $menuPath = $menuPath == '' ? 'MainMenu' : $menuPath;
 
-            
             $path = Yii::getPathOfAlias("application.modules.{$module}.menus.{$menuPath}") . ".php";
             if (!is_file($path)) {
                 $path = Yii::getPathOfAlias("app.modules.{$module}.menus.{$menuPath}") . ".php";

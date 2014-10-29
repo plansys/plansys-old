@@ -5,6 +5,7 @@ class Role extends ActiveRecord {
     public function rules() {
         return array(
             array('role_name, role_description', 'required'),
+            array('menu_path, home_url', 'safe'),
             array('role_name, role_description', 'length', 'max' => 255),
         );
     }
