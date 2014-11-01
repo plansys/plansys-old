@@ -6,6 +6,15 @@ class DevUserIndex extends User {
             array (
                 'linkBar' => array (
                     array (
+                        'label' => 'Import From LDAP',
+                        'icon' => 'user',
+                        'options' => array (
+                            'ng-if' => 'params.useLdap',
+                            'href' => 'url:/dev/user/ldap',
+                        ),
+                        'type' => 'LinkButton',
+                    ),
+                    array (
                         'label' => 'New User',
                         'url' => '/dev/user/new',
                         'buttonType' => 'success',
@@ -129,7 +138,7 @@ class DevUserIndex extends User {
                         'relIdField' => '',
                         'relLabelField' => '',
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                     ),
                     array (
                         'name' => 'nip',
@@ -218,27 +227,6 @@ class DevUserIndex extends User {
                     array (
                         'name' => 'username',
                         'label' => 'username',
-                        'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
-                        'listType' => 'php',
-                        'listExpr' => '',
-                        'listMustChoose' => 'No',
-                        'relCondition' => '',
-                        'relModelClass' => '',
-                        'relIdField' => '',
-                        'relLabelField' => '',
-                        'columnType' => 'string',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'password',
-                        'label' => 'password',
                         'options' => array (),
                         'buttonCollapsed' => 'Yes',
                         'buttons' => array (

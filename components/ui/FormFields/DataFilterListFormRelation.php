@@ -18,7 +18,6 @@ class DataFilterListFormRelation extends Form {
     public $relIdField = '';
     public $relLabelField = '';
     
-    
     public function getForm() {
         return array (
             'title' => 'DataGridListFormRelation',

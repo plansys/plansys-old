@@ -231,7 +231,7 @@ class DataSource extends FormField {
 
             $this->queryParams = (is_array(@$post['params']) ? @$post['params'] : array());
             
-            if ($field['fieldType'] != "php") {
+            if ($field['fieldType'] != "php" && method_exists($class, 'model')) {
 	            $fb->model = $class::model()->findByPk(@$post['model_id']);
 	            if (is_null($fb->model)) {
 	                $fb->model = new $class;

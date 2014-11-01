@@ -48,9 +48,26 @@ class DataFilter extends FormField {
             'Between',
             'Not Between',
             'Less Than',
-            'More Than'
+            'More Than',
+            'Daily',
+            'Weekly',
+            'Monthly',
+            'Yearly',
         )
     );
+
+    public static function getFilterOperators($date = "") {
+        $a = new DataFilter;
+        $filters = $a->filterOperators;
+        if ($date != "") {
+            $filters = $filters[$date];
+            $result = [];
+            foreach ($filters as $i => $k) {
+                $result[$k] = $k;
+            }
+        }
+        return array('' => 'No Operator') + $result;
+    }
 
     /**
      * @return array me-return array property DataFilter.
@@ -111,6 +128,7 @@ class DataFilter extends FormField {
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.DataFilterListForm',
                 'labelWidth' => '0',
+                'inlineJS' => 'DataFilter/inlinejs/dfr-init.js',
                 'fieldWidth' => '12',
                 'options' => array(
                     'ng-model' => 'active.filters',
@@ -205,6 +223,9 @@ class DataFilter extends FormField {
             case "date":
                 switch ($filter['operator']) {
                     case "Between":
+                    case "Weekly":
+                    case "Monthly":
+                    case "Yearly":
                         if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
                             $sql = "({$column} BETWEEN :{$paramName}_{$pcolumn}_from AND :{$paramName}_{$pcolumn}_to)";
                             $param = array(
@@ -232,6 +253,12 @@ class DataFilter extends FormField {
                         if (@$filter['value']['to'] != '') {
                             $sql = "{$column} < :{$paramName}_{$pcolumn}";
                             $param = @$filter['value']['to'];
+                        }
+                        break;
+                    case "Daily":
+                        if (@$filter['value'] != '') {
+                            $sql = "{$column} = DATE(:{$paramName}_{$pcolumn})";
+                            $param = @$filter['value'];
                         }
                         break;
                 }
@@ -271,7 +298,7 @@ class DataFilter extends FormField {
 
         if (is_array($params) && count($params) > 0) {
             foreach ($params as $column => $filter) {
-                
+
                 $param = DataFilter::buildSingleParam($paramName, $column, $filter);
                 $sql[] = $param['sql'];
                 if (is_array($param['param'])) {
@@ -321,10 +348,10 @@ class DataFilter extends FormField {
                     $list = array();
 
                     if ($listExpr != "") {
-                        ## evaluate expression
+## evaluate expression
                         $list = $this->evaluate($listExpr, true);
 
-                        ## change sequential array to associative array
+## change sequential array to associative array
                         if (is_array($list) && !Helper::is_assoc($list)) {
                             $list = Helper::toAssoc($list);
                         }

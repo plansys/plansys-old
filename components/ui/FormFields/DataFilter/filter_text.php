@@ -4,9 +4,9 @@
 
         <span style="font-size:13px;"> 
             {{filter.label}}<span 
-                ng-hide="filter.filterType == 'number' 
+                ng-hide="(filter.filterType == 'number' 
                             && filter.valueText != 'All'
-                            && filter.operator != 'Is Empty'
+                            && filter.operator != 'Is Empty') || filter.label == ''
                 ">:</span></span>
         <b>{{filter.valueText}}
         </b>

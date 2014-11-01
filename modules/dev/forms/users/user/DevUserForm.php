@@ -120,7 +120,7 @@ Harap hubungi administrator untuk mengubah username ataupun role.
                 ),
                 'column2' => array (
                     array (
-                        'label' => 'NIP',
+                        'label' => 'NIK',
                         'name' => 'nip',
                         'labelWidth' => '2',
                         'type' => 'TextField',
@@ -142,6 +142,18 @@ Harap hubungi administrator untuk mengubah username ataupun role.
                         'type' => 'Text',
                     ),
                     array (
+                        'type' => 'Text',
+                    ),
+                    array (
+                        'label' => 'LDAP User',
+                        'js' => '\\\'Yes - Synced\\\'',
+                        'labelWidth' => '2',
+                        'options' => array (
+                            'ng-if' => 'model.useLdap && model.password == \\\'\\\'',
+                        ),
+                        'type' => 'LabelField',
+                    ),
+                    array (
                         'label' => 'Notification',
                         'name' => 'subscribed',
                         'labelWidth' => '2',
@@ -157,6 +169,11 @@ Harap hubungi administrator untuk mengubah username ataupun role.
                     ),
                 ),
                 'type' => 'ColumnField',
+            ),
+            array (
+                'value' => '<div ng-if=\"!model.useLdap || (model.useLdap && model.password != \'\')\">
+',
+                'type' => 'Text',
             ),
             array (
                 'title' => '{{ isNewRecord ? \\"\\" : \\"Ubah \\"}} Password',
@@ -201,6 +218,10 @@ Isi field disamping untuk mengubah password.
                     ),
                 ),
                 'type' => 'ColumnField',
+            ),
+            array (
+                'value' => '</div>',
+                'type' => 'Text',
             ),
             array (
                 'title' => 'Audit Trail',
@@ -418,6 +439,8 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
     }
 
     public function editPassword() {
+        if ($this->useLdap) return true;
+        
         if ($this->changePassword != '' && $this->repeatPassword != $this->changePassword) {
             $this->addError('changePassword', 'Password tidak cocok.');
             $this->addError('repeatPassword', 'Password tidak cocok.');

@@ -155,7 +155,6 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     .error(function (data) {
                                         $scope.$eval($btn.attr('ajax-failed'), {row: row, data: data});
                                     });
-
                         }
 
                         e.preventDefault();
@@ -389,7 +388,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
                     var html = '<div class="ngCellText dgr ' + editableClass + '" ng-class="col.colIndex()"';
                     html += 'dgr-id="{{row.getProperty(col.field)}}" dgr-model="' + col.relModelClass + '" ';
-                    html += 'dgr-name="' + col.name + '" dgr-labelField="' + col.relLabelField + '" ';
+                    html += 'dgr-class="' + $scope.modelClass + '" dgr-name="' + $scope.name + '" dgr-col="' + col.name + '" dgr-labelField="' + col.relLabelField + '" ';
                     html += 'dgr-idField="' + col.relIdField + '">';
                     html += '<span ng-cell-text>{{row.getProperty(col.field + "_label")}}';
                     html += '</span></div>';
@@ -521,7 +520,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                         timeout = setTimeout(function () {
                                             ds.updateParam('currentPage', paging.currentPage, 'paging');
                                             ds.updateParam('pageSize', paging.pageSize, 'paging');
-                                            ds.updateParam('totalServerItems', paging.totalServerItems, 'paging');
+                                            ds.updateParam('totalServerItems', paging.totalServerItems, 'pagdgring');
                                             ds.query();
                                         }, 100);
                                     }
@@ -575,15 +574,23 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 var top = Math.abs(pagerTop - formTop);
                                 var adjTop = 10;
 
+//                                console.log($scope.gridOptions['enableExcelMode'], $scope.gridOptions['enablePaging'], $scope.gridOptions['enableCellEdit']);
+
+                                if (!$scope.gridOptions['enableExcelMode'] &&
+                                        !$scope.gridOptions['enableCellEdit'] &&
+                                        !$scope.gridOptions['enablePaging']) {
+                                    adjTop = 0;
+                                }
+
                                 function fixHead() {
                                     var width = $wc.width();
                                     $catt.width(width);
-                                    
+
                                     if (($container.scrollTop() > top) || $scope.gridOptions['fixedHeader'] == "always") {
                                         if (!$dgcontainer.hasClass('fixed')) {
                                             $dgcontainer.addClass('fixed');
                                         }
-                                        
+
                                         $pager.width(width);
                                         $pager.css('top', formTopPos);
 
@@ -708,32 +715,36 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         //load relation
                         $timeout(function () {
                             function countDgr() {
-                                dgr = {};
                                 dgrCols = [];
                                 $(".dgr").each(function () {
                                     var model = $(this).attr('dgr-model');
                                     var id = $(this).attr('dgr-id');
                                     var name = $(this).attr('dgr-name');
+                                    var cls = $(this).attr('dgr-class');
+                                    var col = $(this).attr('dgr-col');
                                     var labelField = $(this).attr('dgr-labelField');
                                     var idField = $(this).attr('dgr-idField');
 
                                     if (dgrCols.indexOf(name) < 0) {
                                         dgrCols.push({
-                                            name: name,
+                                            name: col,
                                             model: model,
                                             labelField: labelField,
                                             idField: idField
                                         });
                                     }
 
-                                    dgr[model] = dgr[model] || {};
-                                    dgr[model][idField] = dgr[model][idField] || [];
+                                    dgr['name'] = name;
+                                    dgr['class'] = cls;
+                                    dgr['cols'] = dgr['cols'] || {};
+                                    dgr['cols'][col] = dgr['cols'][col] || [];
 
-                                    if (id != "" && dgr[model][idField].indexOf(id) < 0) {
-                                        dgr[model][idField].push(id);
+                                    if (id != "" && dgr['cols'][col].indexOf(id) < 0) {
+                                        dgr['cols'][col].push(id);
                                     }
                                 });
                             }
+
 
                             var url = Yii.app.createUrl('/formfield/RelationField.dgrInit');
 
@@ -744,17 +755,17 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                         for (rowIdx in $scope.data) {
                                             var row = $scope.data[rowIdx];
 
-                                            for (colIdx in dgrCols) {
-                                                var col = dgrCols[colIdx];
+                                            for (dataIdx in data) {
+                                                var d = data[dataIdx];
+                                                if (row[dataIdx]) {
 
-                                                try {
-                                                    var model = data[col.model][col.idField][row[col.name]];
-                                                } catch (e) {
-                                                }
+                                                    for (i in d) {
+                                                        if (d[i].value == row[dataIdx]) {
+                                                            row[dataIdx + "_label"] = d[i].label;
+                                                            break;
+                                                        }
+                                                    }
 
-                                                if (typeof model != "undefined") {
-                                                    $scope.datasource.isDataReloaded = true;
-                                                    row[col.name + "_label"] = model[col.labelField];
                                                 }
                                             }
 
@@ -774,11 +785,14 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
                                 timeout = setTimeout(function () {
                                     loadRelation();
+//                                    console.log(dgrCols, dgr);
                                 }, 50);
                             }
                             reloadRelation();
                             $scope.$watch('data', reloadRelation);
+
                         }, 100);
+
                         if (typeof $scope.onGridLoaded == 'function') {
                             $scope.onGridLoaded($scope.gridOptions);
                         }

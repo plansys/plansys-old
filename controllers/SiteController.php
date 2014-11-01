@@ -54,6 +54,14 @@ class SiteController extends Controller {
                         . 'data ini adalah referensi data lainnya. '
                     );
                     break;
+                case "ldap_missing":
+                    $error = array(
+                        'code' => 'Peringatan: Login Tanpa Role',
+                        'message' => 'Anda berhasil login ke sistem, '
+                        . 'akan tetapi<br/>Anda belum memiliki Role pada sistem ini.'
+                        . '<br/><br/>Mohon hubungi Administrator<br/> untuk mendapatkan Role pada sistem'
+                    );
+                    break;
                 default:
                     $error = array(
                         'code' => $id,

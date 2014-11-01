@@ -35,6 +35,19 @@ class Setting {
         return Setting::$basePath;
     }
 
+    public static function getLDAP() {
+        $ldap = Setting::get('ldap');
+
+        if (!is_null($ldap)) {
+            return array(
+                'class' => 'application.extensions.adLDAP.YiiLDAP',
+                'options' => $ldap
+            );
+        } else {
+            return array();
+        }
+    }
+
     public static function init($configfile) {
         date_default_timezone_set("Asia/Jakarta");
         $bp = Setting::setupBasePath($configfile);

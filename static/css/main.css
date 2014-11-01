@@ -1921,6 +1921,73 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     font-size:100px;
 }
 
+.portlet {
+    position:absolute;
+    width:395px;
+    height:300px;
+    padding:5px;
+    /*border-radius:7px;*/
+    border:1px solid #ccc;
+    margin:10px;
+    background:white;
+    box-shadow: 0px 0px 0px 1px #fafafa;
+}
+.portlet * {
+    resize: none;
+}
+
+.portlet-title {
+    /*    border-top-left-radius: 7px;
+        border-top-right-radius: 7px;*/
+    margin:-5px -5px 10px -5px;
+    padding:8px 10px;
+    border-bottom:1px solid #ddd;
+
+    font-size:12px;
+    font-weight:bold;
+    background: #ffffff; /* Old browsers */
+    background: -moz-linear-gradient(top,  #ffffff 0%, #fafafa 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#fafafa)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ffffff 0%,#fafafa 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ffffff 0%,#fafafa 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ffffff 0%,#fafafa 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #ffffff 0%,#fafafa 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#fafafa',GradientType=0 ); /* IE6-9 */
+
+}
+.portlet .data-filter { 
+    margin:0px;
+    border:0px;
+    background: transparent;
+    box-shadow:none;
+    margin-bottom:-5px;
+}
+.portlet.single .data-filter {
+    padding:0px;
+    margin-bottom:-7px;
+    margin-top:-40px;
+    margin-right:-6px;
+}
+.portlet.single .filter-item-container {
+    float:right;
+}
+
+.portlet.single .filter-item-container .caret{
+    margin-top:-2px !important;
+}
+.portlet.single .filter-item-container .btn {
+    height:25px !important;
+    line-height:15px !important;
+}
+
+.portlet.single .data-filter .filter-reset {
+    display:none;
+}
+.portlet .filter-td:first-child { display:none; }
+.portlet .filter-td {
+    padding:0px;
+}
+
 /********************************** FORMS **************************************/
 .label-field-value {
     font-size:13px;

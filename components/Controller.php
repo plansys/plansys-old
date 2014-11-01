@@ -38,6 +38,10 @@ class Controller extends CController {
             'action' => $this->action->id,
         );
 
+        if (is_array($model)) {
+            $params = $model;
+            $model = null;
+        }
         $options['params'] = $params;
 
         $renderOptions = array_merge($renderOptions, $options);

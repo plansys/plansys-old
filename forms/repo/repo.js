@@ -1,5 +1,6 @@
 $(window).resize(function () {
     $("#properties").width($("#properties").parent().width());
+    $(".ngTopPanel").css('top',  top);
 }).resize();
 
 var repoClickTimeout = null;

@@ -50,6 +50,7 @@ return array(
         'themeManager' => array(
             'basePath' => 'app/themes'
         ),
+        'ldap' => Setting::getLDAP(),
         'nfy' => array(
             'class' => 'nfy.components.NfyDbQueue',
             'id' => 'Notifications',

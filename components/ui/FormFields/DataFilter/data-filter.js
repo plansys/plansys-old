@@ -127,10 +127,12 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     return prepared;
                 }
 
-                $scope.updateFilter = function (filter, e) {
+                $scope.updateFilter = function (filter, e, forceExec) {
                     $scope.changeValueText(filter);
 
-                    if (['list', 'check', 'relation'].indexOf(filter.filterType) < 0) {
+                    forceExec = typeof forceExec == "undefined" ? true : forceExec;
+
+                    if (typeof e != "undefined" && e != null && ['list', 'check', 'relation'].indexOf(filter.filterType) < 0) {
                         $scope.toggleFilterCriteria(e);
                     }
 
@@ -155,8 +157,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                             ds.resetParam(filter.name, dsParamName);
                         }
 
-                        ds.query(function () {
-                        });
+                        if (forceExec) {
+                            ds.query(function () {
+                            });
+                        }
                     }
                 }
 
@@ -262,15 +266,33 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     }
                 }
 
+                $scope.dateChangeOperator = function (f, o, e) {
+                    $scope.changeOperator(f, o, e);
+                    if (['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(f.operator) >= 0) {
+                        $scope.updateFilter(f, e);
+                    }
+                }
+
                 $scope.changeValueText = function (filter) {
+                    var dateCondition = filter.filterType == "date" && ['Between', 'Not Between', 'More Than', 'Less Than'].indexOf(filter.operator) >= 0;
+
                     if (filter.operator == 'Is Empty') {
                         filter.valueText = 'Is Empty';
-                    } else if (filter.value == '') {
+                    } else if (filter.value == '' && dateCondition) {
                         filter.valueText = 'All';
                     } else {
                         switch (filter.filterType) {
                             case "list":
                             case "relation":
+                                if (typeof filter.dropdownText == "undefined") {
+                                    for (i in filter.list) {
+                                        if (filter.value == filter.list[i].key) {
+                                            filter.dropdownText = filter.list[i].value;
+                                            break;
+                                        }
+                                    }
+                                }
+
                                 filter.valueText = filter.dropdownText;
                                 break;
                             case "check":
@@ -309,6 +331,71 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                     case "More Than":
                                         filter.valueText = filter.operator + " " + from;
                                         break;
+                                    case "Daily":
+                                        if (from == "") {
+                                            filter.from = new Date();
+                                        }
+
+                                        from = dateFilter(filter.from, 'dd MMM yyyy');
+                                        filter.value = dateFilter(filter.from, 'yyyy-MM-dd HH:mm:00');
+                                        filter.valueText = from;
+                                        break;
+                                    case "Weekly":
+                                        if (from == "") {
+                                            filter.from = new Date();
+                                        }
+                                        var monthName = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+                                        var weekNum = Math.floor(filter.from.getDate() / 7) + 1;
+                                        var monthYear = monthName[filter.from.getMonth()] + " " + (filter.from.getYear() + 1900);
+
+                                        var curr = filter.from;
+                                        var first = curr.getDate() - curr.getDay();
+                                        var last = first + 6;
+
+                                        filter.from = new Date(curr.setDate(first));
+                                        filter.value = {};
+                                        filter.value.from = dateFilter(curr.setDate(first), 'yyyy-MM-dd HH:mm:00');
+                                        filter.value.to = dateFilter(curr.setDate(last), 'yyyy-MM-dd HH:mm:00');
+                                        filter.valueText = "Week " + weekNum + " (" + monthYear + ")";
+                                        break;
+                                    case "Monthly":
+
+                                        if (from == "") {
+                                            filter.from = new Date();
+                                        }
+                                        var monthName = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+                                        var curr = filter.from;
+
+                                        first = new Date(curr.getFullYear(), curr.getMonth(), 1);
+                                        last = new Date(curr.getFullYear(), curr.getMonth() + 1, 0);
+
+                                        filter.from = new Date(first);
+                                        filter.value = {};
+                                        filter.value.from = dateFilter(first, 'yyyy-MM-dd HH:mm:00');
+                                        filter.value.to = dateFilter(last, 'yyyy-MM-dd HH:mm:00');
+
+                                        filter.valueText = monthName[filter.from.getMonth()] + " " + (filter.from.getYear() + 1900);
+                                        break;
+                                    case "Yearly":
+                                        if (from == "") {
+                                            filter.from = new Date();
+                                        }
+                                        
+                                        var curr = filter.from;
+                                        first = new Date(curr.getFullYear(), 0, 1);
+                                        last = new Date(curr.getFullYear() + 1, 0, 1);
+
+                                        filter.from = new Date(first);
+                                        filter.value = {};
+                                        filter.value.from = dateFilter(first, 'yyyy-MM-dd HH:mm:00');
+                                        filter.value.to = dateFilter(last, 'yyyy-MM-dd HH:mm:00');
+                                        
+                                        filter.valueText = curr.getFullYear();
+                                        break;
                                 }
                         }
 
@@ -321,8 +408,55 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     filter.operator = operator;
                     filter.operatorDropdownOpen = false;
                     $scope.focused(e);
-
                     $scope.changeValueText(filter, filter.value);
+                }
+
+                $scope.datePrev = function (filter, e) {
+                    if (['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(filter.operator) >= 0) {
+                        switch (filter.operator) {
+                            case 'Daily':
+                                filter.from.setDate(filter.from.getDate() - 1);
+                                $scope.updateFilter(filter);
+                                break;
+                            case 'Weekly':
+                                var first = filter.from.getDate() - filter.from.getDay();
+                                filter.from.setDate(first - 3);
+                                $scope.updateFilter(filter);
+                                break;
+                            case 'Monthly':
+                                filter.from.setMonth(filter.from.getMonth() - 1);
+                                $scope.updateFilter(filter);
+                                break;
+                            case 'Yearly':
+                                filter.from.setYear(filter.from.getYear() - 1 + 1900);
+                                $scope.updateFilter(filter);
+                                break;
+                        }
+                    }
+                }
+
+                $scope.dateNext = function (filter) {
+                    if (['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(filter.operator) >= 0) {
+                        switch (filter.operator) {
+                            case 'Daily':
+                                filter.from.setDate(filter.from.getDate() + 1);
+                                $scope.updateFilter(filter);
+                                break;
+                            case 'Weekly':
+                                var first = filter.from.getDate() - filter.from.getDay();
+                                filter.from.setDate(first + 10);
+                                $scope.updateFilter(filter);
+                                break;
+                            case 'Monthly':
+                                filter.from.setMonth(filter.from.getMonth() + 1);
+                                $scope.updateFilter(filter);
+                                break;
+                            case 'Yearly':
+                                filter.from.setYear(filter.from.getYear() + 1 + 1900);
+                                $scope.updateFilter(filter);
+                                break;
+                        }
+                    }
                 }
 
                 $scope.changeValueFromDate = function (filter, from) {
@@ -354,6 +488,43 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     date: 'filter_date'
                 }
                 $scope.$parent[$scope.name] = $scope;
+
+                // Set Default Filters Value
+                $timeout(function () {
+                    for (i in $scope.filters) {
+                        var f = $scope.filters[i];
+                        var dateCondition = (f.filterType == 'date' && ['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(f.defaultOperator) >= 0);
+
+                        if (f.defaultValue && f.defaultValue != "" || dateCondition) {
+                            if ($scope.operators[f.filterType]) {
+                                if (typeof f.defaultOperator != "undefined" && f.defaultOperator != "") {
+                                    f.operator = f.defaultOperator;
+
+                                    if (f.filterType == 'date') {
+                                        if (f.defaultOperator == 'Between' || f.defaultOperator == 'Not Between') {
+                                            f.from = f.defaultValueFrom;
+                                            f.to = f.defaultValueTo;
+                                            console.log(f);
+                                        } else if (f.defaultOperator == 'Less Than') {
+                                            f.to = f.defaultValueTo;
+                                        } else {
+                                            f.from = f.defaultValueFrom;
+                                        }
+                                    } else {
+                                        f.value = f.defaultValue;
+                                    }
+                                }
+                            } else {
+                                f.value = f.defaultValue;
+                            }
+                            $scope.updateFilter(f, null, false);
+                        }
+                    }
+
+                    $scope.$parent[$scope.datasource].query(function () {
+                    });
+                });
+
             }
         }
     };
