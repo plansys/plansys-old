@@ -16,6 +16,7 @@ return array(
         'application.models.*',
         'application.forms.*',
         'app.forms.*',
+        'app.components.utility.*',
         'application.components.*',
         'application.components.ui.*',
         'application.components.ui.FormFields.*',
