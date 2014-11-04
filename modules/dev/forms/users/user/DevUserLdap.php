@@ -38,12 +38,15 @@ class DevUserLdap extends Form {
                         'type' => 'TextField',
                     ),
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'column2' => array (
-                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
                     array (
                         'value' => '<div class=\"info\" ng-if=\"!isNewRecord\"><i class=\"fa fa-info-circle fa-nm fa-fw\"></i>&nbsp; 
 Search menggunakan kotak disamping, gunakan * (bintang) sebagai Wildcard<Br/> &nbsp; lalu klik nama user yang ingin di-import:
@@ -108,7 +111,7 @@ Search menggunakan kotak disamping, gunakan * (bintang) sebagai Wildcard<Br/> &n
                     ),
                 ),
                 'gridOptions' => array (
-                    'afterSelectionChange' => 'url:/dev/user/new?u={username}&f={fullname}',
+                    'afterSelectionChange' => 'url:/dev/user/new?u={username}&f={fullname}&ldap=1',
                 ),
                 'type' => 'DataGrid',
             ),

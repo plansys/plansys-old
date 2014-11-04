@@ -64,7 +64,13 @@ class UserController extends Controller {
 
             if ($model->save()) {
                 $model->subscribed = "on";
-                $this->redirect(array("index"));
+                Yii::app()->user->setFlash('info', 'User Berhasil dibuat !');
+
+                if (isset($_GET['ldap'])) {
+                    $this->redirect(array("ldap"));
+                } else {
+                    $this->redirect(array("index"));
+                }
             }
         }
         $this->renderForm("users.user.DevUserForm", $model);

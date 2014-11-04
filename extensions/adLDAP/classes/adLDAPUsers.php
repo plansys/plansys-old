@@ -628,7 +628,7 @@ class adLDAPUsers {
         $filter = "(&(objectClass=user)(samaccounttype=" . adLDAP::ADLDAP_NORMAL_ACCOUNT . ")(objectCategory=person)(cn=" . $search . "))";
         $fields = array("samaccountname", "displayname");
 
-        $pageSize = 50;
+        $pageSize = 25;
         $cookie = '';
 
         ldap_control_paged_result($this->adldap->getLdapConnection(), $pageSize, true, $cookie);

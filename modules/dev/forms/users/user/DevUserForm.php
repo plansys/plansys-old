@@ -9,16 +9,16 @@ class DevUserForm extends User {
             array (
                 'linkBar' => array (
                     array (
-                        'label' => 'Cancel',
+                        'label' => 'Kembali',
                         'url' => '/dev/user/index',
                         'options' => array (
                             'ng-show' => 'module == \\\'dev\\\'',
-                            'href' => 'url:/dev/user/index',
+                            'href' => 'url:/dev/user/{backUrl}',
                         ),
                         'type' => 'LinkButton',
                     ),
                     array (
-                        'label' => 'Save',
+                        'label' => 'Simpan',
                         'buttonType' => 'success',
                         'options' => array (
                             'ng-click' => 'form.submit(this)',
@@ -171,7 +171,7 @@ Harap hubungi administrator untuk mengubah username ataupun role.
                 'type' => 'ColumnField',
             ),
             array (
-                'value' => '<div ng-if=\"!model.useLdap || (model.useLdap && model.password != \'\')\">
+                'value' => '<div ng-if=\"!params.ldap && (!model.useLdap || (model.useLdap && model.password != \'\'))\">
 ',
                 'type' => 'Text',
             ),

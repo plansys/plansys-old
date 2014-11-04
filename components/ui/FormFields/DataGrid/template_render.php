@@ -16,7 +16,7 @@
     </div>
     <div class="data-grid-container" ng-if="loaded">
         <script type="text/ng-template" id="category_header"><?php include('category_header.php'); ?></script>
-        <div ng-if="datasource.totalItems != 0 || gridOptions.enableExcelMode" class="data-grid-paging-shadow" style="height:50px;display:none;"></div>
+        <div ng-if="datasource.data.length != 0 || gridOptions.enableExcelMode" class="data-grid-paging-shadow" style="height:50px;display:none;"></div>
         <div class="data-grid-paging" ng-if="gridOptions.enablePaging || gridOptions.enableExcelMode || gridOptions.enableCellEdit">
             <div class="data-grid-pageinfo pull-right" ng-if="gridOptions.enablePaging">
                 <div class="btn-group pull-right" style="padding-top:2px;margin-left:5px;" >
@@ -103,10 +103,10 @@
             </div>
             <div class="clearfix"></div>
         </div>
-        <div ng-show="datasource.totalItems != 0 || gridOptions.enableExcelMode" class="data-grid-category" category-header="gridOptions"></div>
-        <div ng-show="datasource.totalItems != 0 || gridOptions.enableExcelMode" class="data-grid-table" ng-init="initGrid()" ng-grid="gridOptions"></div>
+        <div ng-show="datasource.data.length != 0 || gridOptions.enableExcelMode" class="data-grid-category" category-header="gridOptions"></div>
+        <div ng-show="datasource.data.length != 0 || gridOptions.enableExcelMode" class="data-grid-table" ng-init="initGrid()" ng-grid="gridOptions"></div>
 
-        <div ng-if="datasource.totalItems == 0 && !gridOptions.enableExcelMode" 
+        <div ng-if="datasource.data.length == 0 && !gridOptions.enableExcelMode" 
              style="text-align:center;padding:20px;color:#ccc;font-size:25px;">
             &mdash; Data Empty &mdash;
         </div>
