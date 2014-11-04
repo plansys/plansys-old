@@ -104,6 +104,10 @@
             }
         }
 
+        $scope.filterFileName = function (model, field) {
+            model[field] = model[field].replace(/[\\\/\:\*\?\'\<\>\|]/g, '');
+        }
+
         /*********************** TEXT ********************************/
 
         $scope.aceLoaded = function (_editor) {

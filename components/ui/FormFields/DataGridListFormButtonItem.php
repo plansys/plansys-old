@@ -4,18 +4,19 @@ class DataGridListFormButtonItem extends Form {
     public function getFields() {
         return array (
             array (
-                'name' => 'url',
+                'name' => 'label',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
                 'options' => array (
-                    'ng-model' => 'item.url',
+                    'ng-model' => 'item.label',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
                 ),
                 'fieldOptions' => array (
-                    'placeholder' => 'Url',
+                    'placeholder' => 'Label',
                 ),
-                'type' => 'TextArea',
+                'type' => 'TextField',
+                'postfix' => 'Label',
             ),
             array (
                 'name' => 'icon',
@@ -34,7 +35,6 @@ class DataGridListFormButtonItem extends Form {
             ),
             array (
                 'label' => 'Button Options',
-                'fieldname' => 'options',
                 'show' => 'Show',
                 'options' => array (
                     'ng-model' => 'value[$index].options',
@@ -59,7 +59,7 @@ class DataGridListFormButtonItem extends Form {
             ),
         );
     }
-    public $url = '';
+    public $label = '';
     public $icon = '';
     public $options = array();
 }

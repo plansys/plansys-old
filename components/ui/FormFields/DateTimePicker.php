@@ -72,8 +72,18 @@ class DateTimePicker extends FormField
                 'type' => 'TextField',
             ),
             array (
-                'type' => 'Text',
+                'label' => 'Default To Today',
+                'name' => 'defaultToday',
+                'options' => array (
+                    'ng-model' => 'active.defaultToday',
+                    'ng-change' => 'save();',
+                ),
+                'listExpr' => '[\\\'Yes\\\',\\\'No\\\']',
+                'type' => 'DropDownList',
+            ),
+            array (
                 'value' => '<hr/>',
+                'type' => 'Text',
             ),
             array (
                 'label' => 'Options',
@@ -138,6 +148,8 @@ class DateTimePicker extends FormField
     public $datepickerOptions = array(
         'show-weeks' => 'false'
     );
+    
+    public $defaultToday = 'Yes';
 	
     /** @var string $toolbarName */
     public static $toolbarName = "Date Time Picker";

@@ -3,11 +3,11 @@
 class UploadFile extends FormField {
 
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
@@ -17,73 +17,120 @@ class UploadFile extends FormField {
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'File Type',
                 'name' => 'fileType',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.fileType',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
+                'fieldOptions' => array(
+                    'placeholder' => 'ex: jpg, doc, xls',
+                ),
                 'type' => 'TextField',
             ),
-            array (
-                'label' => 'Upload Path',
+            array(
+                'label' => 'Upload Path (PHP)',
                 'name' => 'uploadPath',
-                'prefix' => 'repo.',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.uploadPath',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
-                'type' => 'TextField',
+                'fieldOptions' => array(
+                    'placeholder' => 'ex: geo/{$model->id}',
+                    'style' => 'min-height:50px;white-space:pre;word-break:break-all;',
+                    'auto-grow' => '',
+                ),
+                'type' => 'TextArea',
             ),
-            array (
+            array(
+                'label' => 'File Pattern (PHP)',
+                'name' => 'filePattern',
+                'fieldHeight' => '0',
+                'options' => array(
+                    'ng-model' => 'active.filePattern',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                ),
+                'fieldOptions' => array(
+                    'placeholder' => 'ex: \\\'{$model->id}.docx\\\'',
+                    'auto-grow' => '',
+                    'style' => 'min-height:50px;white-space:pre;word-break:break-all;',
+                ),
+                'type' => 'TextArea',
+            ),
+            array(
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                 ),
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Mode',
                 'name' => 'mode',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.mode',
                     'ng-change' => 'save();',
                 ),
-                'list' => array (
+                'list' => array(
                     'Upload + Download' => 'Upload + Download',
                     'Download Only' => 'Download Only',
                 ),
                 'type' => 'DropDownList',
             ),
-            array (
-                'column1' => array (
-                    array (
+            array(
+                'label' => 'Allow Delete',
+                'name' => 'allowDelete',
+                'options' => array(
+                    'ng-model' => 'active.allowDelete',
+                    'ng-change' => 'save()',
+                ),
+                'listExpr' => '[\\\'Yes\\\',\\\'No\\\']',
+                'type' => 'DropDownList',
+            ),
+            array(
+                'label' => 'Allow Overwrite',
+                'name' => 'allowOverwrite',
+                'options' => array(
+                    'ng-model' => 'active.allowOverwrite',
+                    'ng-change' => 'save()',
+                ),
+                'listExpr' => '[\\\'Yes\\\',\\\'No\\\']',
+                'type' => 'DropDownList',
+            ),
+            array(
+                'value' => '<hr/>',
+                'type' => 'Text',
+            ),
+            array(
+                'column1' => array(
+                    array(
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
-                    array (
+                    array(
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
@@ -92,18 +139,18 @@ class UploadFile extends FormField {
                         'type' => 'TextField',
                     ),
                 ),
-                'column2' => array (
-                    array (
+                'column2' => array(
+                    array(
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
-                    array (
+                    array(
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
@@ -113,17 +160,17 @@ class UploadFile extends FormField {
                 ),
                 'type' => 'ColumnField',
             ),
-            array (
+            array(
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
@@ -136,11 +183,14 @@ class UploadFile extends FormField {
     public $layout = 'Horizontal';
     public $value;
     public $mode = 'Upload + Download';
+    public $filePattern = '';
     public $labelWidth = 4;
-    public $fieldWidth = 4;
+    public $fieldWidth = 8;
     public $uploadPath = '';
     public $fileType = '';
     public $options = array();
+    public $allowDelete = 'Yes';
+    public $allowOverwrite = 'Yes';
     public $labelOptions = array();
     public $fieldOptions = array();
 
@@ -190,48 +240,61 @@ class UploadFile extends FormField {
     }
 
     public function actionUpload($path = null) {
+        if (!isset($_FILES['file'])) {
+            echo json_encode(["success" => "No"]);
+            die();
+        }
         $file = $_FILES["file"];
-        $repo = new RepoManager;
         $name = $file['name'];
-        $filePath = base64_decode($path);
 
+        ## create temporary directory
+        $tmpdir = Yii::getPathOfAlias('webroot.assets.tmp');
+        if (!is_dir($tmpdir)) {
+            mkdir($tmpdir, true);
+        }
+
+        ## make sure there is no duplicate file name
         $i = 1;
         $actualName = pathinfo($name, PATHINFO_FILENAME);
         $originName = $actualName;
         $extension = pathinfo($name, PATHINFO_EXTENSION);
-        while (file_exists($filePath . DIRECTORY_SEPARATOR . $actualName . '.' . $extension)) {
+        while (file_exists($tmpdir . DIRECTORY_SEPARATOR . $actualName . '.' . $extension)) {
             $actualName = (string) $originName . '_' . $i;
             $name = $actualName . '.' . $extension;
             $i++;
         }
-        echo $name;
-        $repo->upload($file["tmp_name"], $name, $filePath);
+
+        $tmppath = $tmpdir . DIRECTORY_SEPARATOR . $name;
+        move_uploaded_file($file["tmp_name"], $tmppath);
+        echo json_encode([
+            'success' => 'Yes',
+            'path' => $tmppath,
+            'downloadPath' => base64_encode($tmppath),
+            'name' => $name
+        ]);
     }
 
-    public function actionDescription() {
-        $postdata = file_get_contents("php://input");
-        $post = CJSON::decode($postdata);
-        $name = base64_decode($post['name']);
-        $path = base64_decode($post['path']);
-        $content = base64_decode($post['desc']);
-        $desc = JsonModel::load($path . DIRECTORY_SEPARATOR . $name . '.json');
-        $desc->set('desc', $content);
-    }
+//    public function actionDescription() {
+//        $postdata = file_get_contents("php://input");
+//        $post = CJSON::decode($postdata);
+//        $name = base64_decode($post['name']);
+//        $path = base64_decode($post['path']);
+//        $content = base64_decode($post['desc']);
+//        $desc = JsonModel::load($path . DIRECTORY_SEPARATOR . $name . '.json');
+//        $desc->set('desc', $content);
+//    }
 
     public function actionCheckFile() {
         $postdata = file_get_contents("php://input");
-        $post = CJSON::decode($postdata);
-        $file = str_replace("/", DIRECTORY_SEPARATOR, Setting::get('repo.path') . DIRECTORY_SEPARATOR . base64_decode($post['file']));
-        $file = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $file);
+        $post = json_decode($postdata, true);
+        $file = RepoManager::resolve($post['file']);
 
         if (file_exists($file)) {
-
-            $json = JsonModel::load($file . '.json');
-            $desc = $json->get('desc');
-
+            $downloadPath = base64_encode($file);
             echo json_encode(array(
                 'status' => 'exist',
-                'desc' => $desc
+                'desc' => '',
+                'downloadPath' => $downloadPath
             ));
         } else {
             echo json_encode(array(
@@ -241,7 +304,12 @@ class UploadFile extends FormField {
     }
 
     public function actionDownload($f, $n) {
-        Yii::app()->request->sendFile($n, file_get_contents(base64_decode($f)));
+        $file = base64_decode($f);
+        if (!is_file($file)) {
+            throw new CHttpException(404);
+            return false;
+        }
+        Yii::app()->request->sendFile($n, file_get_contents($file));
     }
 
     public function actionRemove() {
@@ -249,11 +317,12 @@ class UploadFile extends FormField {
         $post = CJSON::decode($postdata);
         $file = base64_decode($post['file']);
         unlink($file);
-        unlink($file . '.json');
+//        unlink($file . '.json');
     }
 
     public function getFieldColClass() {
-        return "col-sm-" . $this->fieldWidth;
+        return "col-sm-" . $this->
+            fieldWidth;
     }
 
     public function render() {
@@ -262,7 +331,7 @@ class UploadFile extends FormField {
         $this->addClass($this->errorClass, 'options');
 
         $this->addClass('form-control', 'fieldOptions');
-        $this->setDefaultOption('style', 'height:auto', $this->fieldOptions);
+        $this->setDefaultOption('style', 'height:auto;padding:5px;', $this->fieldOptions);
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
         return $this->renderInternal('template_render.php');

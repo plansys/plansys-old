@@ -161,6 +161,62 @@ class FormBuilder extends CComponent {
 
     private $_findFieldCache = null;
 
+    public function findAllField($attributes, $recursive = null, $results = []) {
+        if (is_null($this->_findFieldCache)) {
+            ## cache the fields
+            $class = get_class($this->model);
+            $reflector = new ReflectionClass($class);
+
+            $functionName = 'getFields';
+            if (is_subclass_of($this->model, 'FormField')) {
+                $functionName = 'getFieldProperties';
+            }
+
+            if (!$reflector->hasMethod($functionName)) {
+                $this->model = new $class;
+                $fields = $this->model->defaultFields;
+            } else {
+                $fields = $this->model->$functionName();
+            }
+
+            $this->_findFieldCache = $this->parseFields($fields);
+        }
+
+        if (is_null($recursive)) {
+            $fields = $this->_findFieldCache;
+        } else {
+            $fields = $recursive;
+        }
+
+        foreach ($fields as $k => $f) {
+            if (!is_array($f))
+                continue;
+
+            $valid = 0;
+            foreach ($f as $key => $value) {
+                if (isset($f['name'])) {
+                    foreach ($attributes as $attrKey => $attrVal) {
+                        if ($key == $attrKey && $value == $attrVal) {
+                            $valid++;
+                        }
+                    }
+                }
+            }
+            
+            if ($valid == count($attributes)) {
+                $results[] = $f;
+            }
+
+            if (isset($f['parseField']) && count($f['parseField']) > 0) {
+                foreach ($f['parseField'] as $i => $j) {
+                    $results = $this->findAllField($attributes, $f[$i], $results);
+                }
+            }
+        }
+
+        return $results;
+    }
+
     public function findField($attributes, $recursive = null) {
         if (is_null($this->_findFieldCache)) {
             ## cache the fields

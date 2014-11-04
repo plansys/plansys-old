@@ -1,6 +1,6 @@
 <?php
 
-class DataGridListForm extends Form {
+class DataTableListForm extends Form {
 
     public function getFields() {
         return array (
@@ -135,7 +135,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
 
     public function getForm() {
         return array(
-            'formTitle' => 'DataFilterListForm',
+            'formTitle' => 'DataTableListForm',
             'layout' => array(
                 'name' => 'full-width',
                 'data' => array(

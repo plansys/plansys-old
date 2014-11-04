@@ -78,11 +78,11 @@ class ModelCode extends CCodeModel {
         } else
             $tables = array($this->getTableSchema($this->tableName));
 
-        
+
         $this->files = array();
         $this->relations = $this->generateRelations();
         $return = array();
-        
+
         foreach ($tables as $table) {
             $tableName = $this->removePrefix($table->name);
             $className = $this->generateClassName($table->name);
@@ -104,7 +104,7 @@ class ModelCode extends CCodeModel {
         $relatedTableName = (class_exists($model) ? $model::model()->tableName() : strtolower($model));
         $schema = $this->getTableSchema($relatedTableName);
         $columns = array_keys($schema->columns);
-        
+
         if (isset($columns[1])) {
             return $relation . "." . $columns[1];
         } else {
@@ -246,8 +246,13 @@ class ModelCode extends CCodeModel {
     }
 
     protected function removePrefix($tableName, $addBrackets = true) {
+        
+        ## mark plansys table prefix
+        Yii::app()->{$this->connectionId}->tablePrefix = 'p_'; //added by plansys
+        
         if ($addBrackets && Yii::app()->{$this->connectionId}->tablePrefix == '')
             return $tableName;
+
         $prefix = $this->tablePrefix != '' ? $this->tablePrefix : Yii::app()->{$this->connectionId}->tablePrefix;
         if ($prefix != '') {
             if ($addBrackets && Yii::app()->{$this->connectionId}->tablePrefix != '') {
@@ -339,9 +344,9 @@ class ModelCode extends CCodeModel {
     protected function isRelationTable($table) {
         $pk = $table->primaryKey;
         return (count($pk) === 2 // we want 2 columns
-                && isset($table->foreignKeys[$pk[0]]) // pk column 1 is also a foreign key
-                && isset($table->foreignKeys[$pk[1]]) // pk column 2 is also a foriegn key
-                && $table->foreignKeys[$pk[0]][0] !== $table->foreignKeys[$pk[1]][0]); // and the foreign keys point different tables
+            && isset($table->foreignKeys[$pk[0]]) // pk column 1 is also a foreign key
+            && isset($table->foreignKeys[$pk[1]]) // pk column 2 is also a foriegn key
+            && $table->foreignKeys[$pk[0]][0] !== $table->foreignKeys[$pk[1]][0]); // and the foreign keys point different tables
     }
 
     protected function generateClassName($tableName) {

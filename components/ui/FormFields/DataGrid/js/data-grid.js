@@ -269,9 +269,11 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             format = " | dateFormat:'HH:mm'";
                             emptyVal = "['','0000-00-00 00:00','0000-00-00', '00:00']";
                             break;
+                        case 'number':
+                            format = " | number";
                     }
-
-                    if (placeholder != "") {
+                    var showPlaceholder = $scope.gridOptions.enableCellEdit || $scope.gridOptions.enableExcelMode;
+                    if (placeholder != "" && showPlaceholder) {
                         placeholderHtml = '<div ng-if="' +
                                 emptyVal + '.indexOf(row.getProperty(col.field)) >=0 " style="color:#999">' +
                                 placeholder + '</div>';
@@ -284,7 +286,6 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     if (col.options.cellFilter) {
                         varDef += ' | ' + col.options.cellFilter;
                     }
-
                     var ngIf = 'ng-if="' + emptyVal + '.indexOf(row.getProperty(col.field)) < 0 "';
                     var editableClass = $scope.getEditableClass(col);
 
@@ -295,18 +296,21 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     return html;
                 }
                 $scope.generateEditString = function (col) {
-                    var uimask = col.inputMask ? "ui-mask='" + col.inputMask + "'" : "";
+                    var uimask = "";
 
                     var placeholder = "";
                     switch (col.inputMask) {
                         case "99/99/9999 99:99":
                             placeholder = "placeholder='dd/mm/yyyy hh:mm'";
+                            uimask = "ui-mask='" + col.inputMask + "'";
                             break;
                         case "99/99/9999":
                             placeholder = "placeholder='dd/mm/yyyy'";
+                            uimask = "ui-mask='" + col.inputMask + "'";
                             break;
                         case "99:99":
                             placeholder = "placeholder='hh:mm'";
+                            uimask = "ui-mask='" + col.inputMask + "'";
                             break;
                     }
 
@@ -318,7 +322,9 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                 // Type: Button
                 $scope.generateButtons = function (column) {
                     var buttons = column.buttons;
-                    var html = '<div class="ngCellButton colt{{$index}}">';
+                    var editable = $scope.getEditableClass(column);
+
+                    var html = '<div class="ngCellButton colt{{$index}} ' + editable + '">';
                     var btnSize = 'btn-xs';
 
                     if (column.buttonCollapsed == 'Yes') {
@@ -327,25 +333,37 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         html += '<div class="ngCellButtonCollapsedDetail">';
                     }
 
+                    column.calculatedWidth = 22;
                     for (i in buttons) {
                         var b = buttons[i];
                         var opt = b.options || {};
+                        var tag = "div";
+                        var label = b.label;
+                        var icon = "";
                         var attr = [];
 
-                        // create url
-                        var url = $scope.generateUrl(b.url, 'html');
 
                         // generate attribute
                         opt['ng-click'] = 'buttonClick(row, $event)';
                         opt.class = (opt.class || '') + ' btn ' + btnSize + ' btn-default';
-                        opt.href = url;
+
+                        if (typeof opt.href != "undefined") {
+                            opt.href = $scope.generateUrl(opt.href);
+                            tag = "a";
+                        }
+
+                        if (b.icon != "") {
+                            icon = '<i class="' + b.icon + '"></i>';
+                        }
+
                         for (i in opt) {
                             attr.push(i + '="' + opt[i] + '"');
                         }
 
                         // create html
-                        html += '<a ' + attr.join(' ') + '><i class="' + b.icon + '"></i></a>';
+                        html += '<' + tag + ' ' + attr.join(' ') + '>' + icon + ' ' + label + '</' + tag + '>';
 
+                        column.calculatedWidth += 30 + (icon == "" ? 0 : 12) + label.length * 4;
                     }
 
                     if (column.buttonCollapsed == 'Yes') {
@@ -420,16 +438,33 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         $scope.gridOptions.multiSelect = $scope.gridOptions.multiSelect || false;
                         $scope.gridOptions.enableColumnResize = $scope.gridOptions.enableColumnResize === false ? false : true;
 
-                        if ($scope.data !== null && $scope.columns !== null &&
-                                $scope.data.length > 0 && $scope.columns.length == 0) {
-                            for (i in $scope.data[0]) {
-                                $scope.columns.push({
-                                    label: i,
-                                    name: i,
-                                    options: {}
-                                });
+                        if ($scope.gridOptions.generateColumns || (
+                                $scope.data !== null &&
+                                $scope.columns !== null &&
+                                $scope.data.length > 0 &&
+                                $scope.columns.length == 0)) {
+
+                            $scope.availableCols = [];
+                            for (i in $scope.columns) {
+                                $scope.availableCols.push($scope.columns[i].name);
                             }
+                            for (i in $scope.data[0]) {
+                                if ($scope.availableCols.indexOf(i) < 0) {
+                                    $scope.columns.push({
+                                        label: i,
+                                        name: i,
+                                        columnType: "string",
+                                        options: {}
+                                    });
+                                }
+                            }
+
+                            if ($scope.gridOptions.generateColumns && $scope.data.length == 0) {
+                                $scope.columns.length = 0;
+                            }
+
                         }
+
                         if (typeof $scope.onBeforeLoaded == 'function') {
                             $scope.onBeforeLoaded($scope);
                         }
@@ -456,14 +491,10 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                         displayName: c.label,
                                         enableCellEdit: false,
                                         sortable: false,
-                                        cellTemplate: $scope.generateButtons(c)
                                     });
+                                    col.cellTemplate = $scope.generateButtons(c);
+                                    col.width = c.options.width || c.calculatedWidth;
 
-                                    if (c.buttonCollapsed == 'Yes') {
-                                        col.width = 30;
-                                    } else {
-                                        col.width = (c.buttons.length * 24) + ((c.buttons.length - 1) * 5) + 20;
-                                    }
                                     buttonID++;
                                     break;
                                 case "dropdown":
@@ -485,6 +516,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             }
                             columns.push(col);
                         }
+
 
                         if (columns.length > 0) {
                             $scope.gridOptions.columnDefs = columns;

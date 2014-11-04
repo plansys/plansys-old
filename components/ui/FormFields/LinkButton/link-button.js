@@ -55,14 +55,17 @@ app.directive('linkBtn', function ($timeout, $parse, $compile) {
 
 
                 if (attrs.href) {
-                    var href = attrs.href;
-                    if (href.trim().substr(0, 4) == "url:") {
-                        var url = href.trim().substr(4);
-                        href = eval(generateUrl(url, 'function'));
-                    }
+                    $timeout(function () {
+                        var href = attrs.href;
 
-                    $el.attr('href', href);
-                    $scope.url = href;
+                        if (href.trim().substr(0, 4) == "url:") {
+                            var url = href.trim().substr(4);
+                            href = eval(generateUrl(url, 'function'));
+                        }
+
+                        $el.attr('href', href);
+                        $scope.url = href;
+                    });
                 }
 
                 if (attrs.confirm) {
@@ -70,6 +73,15 @@ app.directive('linkBtn', function ($timeout, $parse, $compile) {
 
                         e.stopPropagation();
                         if (!confirm(attrs.confirm)) {
+                            return false;
+                        }
+                    });
+                }
+
+                if (attrs.prompt) {
+                    $el.click(function (e) {
+                        e.stopPropagation();
+                        if (prompt(attrs.prompt) != attrs.promptIf) {
                             return false;
                         }
                     });

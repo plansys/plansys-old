@@ -525,6 +525,7 @@ div[ui-content] {
     font-weight: bold;
     height: 28px;
     line-height: 18px;
+    margin:0px -15px 0px -15px;
 }
 
 .form-builder > form > div > ol > li > .SectionHeader {
@@ -1349,21 +1350,25 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     background-position: bottom right;
 }
 
-.data-grid-table .ngViewport .ngCellText.non-editable {
+.data-grid-table .ngViewport .non-editable {
     background:rgba(0,0,0,.05);
 }
 
-.data-grid-table .ngViewport .ngCellText.non-editable:focus {
+.data-grid-table .ngViewport .non-editable:focus {
     background:rgba(0,0,0,.15);
 }
 .data-grid-table .ngViewport .ngCellButton {
-    padding:2px 10px;
+    padding:2px 2px;
     font-size:13px;
-    border-bottom:1px solid #ddd;
-    line-height:20px;
+    white-space:nowrap;
+    line-height:21px;
+    text-align:center;
 }
 .data-grid-table .ngRow:last-child .ngCellButton {
     border-bottom:0px;
+}
+.data-grid-table .ngViewport .ngCellButton .btn {
+    margin-right:2px;
 }
 
 .data-grid-table .ngViewport .ngCellButtonCollapsed {
@@ -1483,7 +1488,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 .data-grid-page-selector {
     display:inline-block;
-    width:80px;
+    width:84px;
     padding:1px 3px 0px 3px;
 }
 
@@ -2047,6 +2052,15 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 ul[datepicker-popup-wrap] td {
     padding:2px;
+}
+
+ul[datepicker-popup-wrap] td .btn{
+    width:35px !important;
+    background:#fff !important;
+}
+
+ul[datepicker-popup-wrap] td .btn.active{
+    background:#ccc !important;
 }
 
 ul[datepicker-popup-wrap] table {

@@ -297,7 +297,6 @@ class RelationField extends FormField {
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
 
-
         $fb = FormBuilder::load($post['class']);
         $ff = $fb->findField(array('name' => $post['name']));
         $this->builder = $fb;

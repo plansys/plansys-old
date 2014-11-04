@@ -5,11 +5,397 @@ class RepoManager extends CComponent {
     public $repoPath;
 
     public function relativePath($path) {
-        $p = str_replace($this->repoPath, '', $path);
-        if ($p == "") {
-            return DIRECTORY_SEPARATOR;
+        return RepoManager::getRelativePath($path);
+    }
+
+    public static function getRelativePath($path) {
+        $rp = Setting::get('repo.path');
+        $rrp = str_replace("\\", "/", realpath($rp));
+
+        ## check if repo is part of the path (when repopath is a relative path)
+        if (strpos($path, $rp) !== 0) {
+            ## check if first directory of the path is inside repo
+            $pathArr = explode("/", $path);
+            $combined = str_replace("//", '/', $rp . "/" . $pathArr[0]);
+            if (realpath($combined)) {
+                ## the path is inside repo AND already relative
+                return $path;
+            } else {
+                if (strpos($path, $rrp) === 0) {
+                    ## this path is inside repo AND absolute path
+                    $path = substr($path, strlen($rrp));
+                    return $path;
+                } else {
+                    ## the path is outside repo, just return it.
+                    return $path;
+                }
+            }
+        } else {
+            ## this path is already relative 
+            return $path;
         }
-        return $p;
+    }
+
+    public static function createDir($path) {
+        $path = RepoManager::resolve($path);
+        if (!is_dir($path)) {
+            mkdir($path, 0777, true);
+        }
+        return $path;
+    }
+
+    public static function count($path, $pattern = "", $params = array()) {
+        $path = RepoManager::resolve($path);
+        if (!is_dir($path)) {
+            return 0;
+        }
+        if (!isset(RepoManager::$fileCounts[md5($path . $pattern . json_encode($params))])) {
+            RepoManager::listAll($path, $pattern, $params);
+        }
+        return RepoManager::$fileCounts[md5($path . $pattern . json_encode($params))];
+    }
+
+    public static function preparePattern($pattern) {
+        $pattern = '/' . trim($pattern, "/") . '/';
+        preg_match_all("/\{(.*?)\}/", $pattern, $blocks);
+        $columns = [];
+        foreach ($blocks[1] as $k => $b) {
+            $bl = explode(":", $b);
+            $name = trim($bl[0]);
+            $columns[] = $name;
+            $type = trim($bl[1]);
+            switch ($type) {
+                case "num":
+                    $pattern = str_replace('{' . $b . '}', "(?<{$name}>\d+)", $pattern);
+                    break;
+                case "date":
+                    $pattern = str_replace('{' . $b . '}', "(?<{$name}>\d+-\d+-\d+)", $pattern);
+                    break;
+                case "string":
+                case "str":
+                    $pattern = str_replace('{' . $b . '}', "(?<{$name}>[\w \~\!\@\#\$\%\^\&\_\-\.]+)", $pattern);
+                case "word":
+                    $pattern = str_replace('{' . $b . '}', "(?<{$name}>[\w]+)", $pattern);
+                default:
+                    $pattern = str_replace('{' . $b . '}', "(?<{$name}>{$type})", $pattern);
+
+                    break;
+            }
+        }
+
+        return [
+            'pattern' => $pattern,
+            'columns' => $columns
+        ];
+    }
+
+    public static function parseName($entry, $pattern, $parseEmpty = true) {
+        preg_match($pattern['pattern'], $entry, $preg);
+        $f = [];
+        $f['file'] = $entry;
+        if ($parseEmpty) {
+            foreach ($pattern['columns'] as $c) {
+                $f[$c] = "";
+            }
+        }
+
+        if (count($preg) > 0) {
+            foreach ($preg as $k => $l) {
+                if (is_int($k))
+                    continue;
+
+                $f[$k] = $l;
+            }
+        }
+        return $f;
+    }
+
+    public static function parse($entry, $pattern) {
+        $pattern = RepoManager::preparePattern($pattern);
+        return RepoManager::parseName($entry, $pattern);
+    }
+
+    public static $fileCounts = array();
+
+    public static function isColumnFilterMatch($columns, $filter, $filterColumn) {
+        $value = @$columns[$filterColumn];
+        if ($value == null)
+            return false;
+
+        switch ($filter['type']) {
+            case "string":
+                if ($filter['value'] != "" || $filter['operator'] == 'Is Empty') {
+                    switch ($filter['operator']) {
+                        case "Contains":
+                            return (strpos($value, $filter['value']) !== false);
+                            break;
+                        case "Does Not Contain":
+                            return (strpos($value, $filter['value']) === false);
+                            break;
+                        case "Is Equal To":
+                            return $value == $filter['value'];
+                            break;
+                        case "Starts With":
+                            return (strpos($value, $filter['value']) === 0);
+                            break;
+                        case "Ends With":
+                            return substr($haystack, -strlen($filter['value'])) === $filter['value'];
+                            break;
+                        case "Is Any Of":
+                            $array = preg_split('/\s+/', trim($filter['value']));
+
+                            foreach ($array as $a) {
+                                if (stripos($value, $a) !== false)
+                                    return true;
+                            }
+                            return false;
+                            break;
+                        case "Is Not Any Of":
+                            $array = preg_split('/\s+/', trim($filter['value']));
+                            foreach ($array as $a) {
+                                if (stripos($value, $a) !== false)
+                                    return false;
+                            }
+                            return true;
+                            break;
+                        case "Is Empty":
+                            return $value == "";
+                            break;
+                    }
+                }
+                break;
+            case "number":
+                if ($filter['value'] != "" || $filter['operator'] == 'Is Empty') {
+                    switch ($filter['operator']) {
+                        case "=":
+                        case "<>":
+                        case ">":
+                        case '>':
+                        case '>=':
+                        case '<=':
+                        case '<':
+                            eval('$result = $value ' . $filter['operator'] . ' ' . $filter['value']);
+                            return $result;
+                            break;
+                        case "Is Empty":
+                            return $value == "";
+                            break;
+                    }
+                }
+                break;
+            case "date":
+                switch ($filter['operator']) {
+                    case "Between":
+                    case "Weekly":
+                    case "Monthly":
+                    case "Yearly":
+                        if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
+                            $date = date('Y-m-d', strtotime($value));
+                            $from = date('Y-m-d', strtotime(@$filter['value']['from']));
+                            $to = date('Y-m-d', strtotime(@$filter['value']['to']));
+                            if ($date > $from && $date < $to) {
+                                return true;
+                            }
+                            return false;
+                        }
+                        break;
+                    case "Not Between":
+                        if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
+                            $date = date('Y-m-d', strtotime($value));
+                            $from = date('Y-m-d', strtotime(@$filter['value']['from']));
+                            $to = date('Y-m-d', strtotime(@$filter['value']['to']));
+                            if ($date > $from && $date < $to) {
+                                return false;
+                            }
+                            return true;
+                        }
+                        break;
+                    case "More Than":
+                        if (@$filter['value']['from'] != '') {
+                            $date = date('Y-m-d', strtotime($value));
+                            $from = date('Y-m-d', strtotime(@$filter['value']['from']));
+                            if ($date > $from) {
+                                return true;
+                            }
+                            return false;
+                        }
+                        break;
+                    case "Less Than":
+                        if (@$filter['value']['to'] != '') {
+                            $date = date('Y-m-d', strtotime($value));
+                            $to = date('Y-m-d', strtotime(@$filter['value']['to']));
+                            if ($date < $to) {
+                                return true;
+                            }
+                            return false;
+                        }
+                        break;
+                    case "Daily":
+                        if (@$filter['value'] != '') {
+                            $date = date('Y-m-d', strtotime($value));
+                            $to = date('Y-m-d', strtotime(@$filter['value']));
+                            if ($date == $to) {
+                                return true;
+                            }
+                            return false;
+                        }
+                        break;
+                }
+                break;
+            case "list":
+                if ($filter['value'] != '') {
+                    return $value == $filter['value'];
+                }
+                break;
+            case "relation":
+                if ($filter['value'] != '') {
+                    return $value == $filter['value'];
+                }
+                break;
+            case "check":
+                $array = $filter['value'];
+
+                foreach ($array as $a) {
+                    if (stripos($value, $a) !== false)
+                        return true;
+                }
+                return false;
+                break;
+        }
+    }
+
+    public static function isColumnMatch($columns, $params) {
+        foreach ($params as $col => $param) {
+            $valid = RepoManager::isColumnFilterMatch($columns, $param, $col);
+            if (!$valid) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static function listAll($path, $pattern = "", $params = array()) {
+        $result = [];
+
+        $path = RepoManager::resolve($path);
+        if (!is_dir($path)) {
+            return $result;
+        }
+
+        ## paging
+        $pageSize = 25;
+        $currentPage = 1;
+        if (isset($params['paging'])) {
+            $paging = $params['paging'];
+            if (is_array($paging)) {
+                $pageSize = $paging['pageSize'];
+                $currentPage = $paging['currentPage'];
+            }
+        }
+        $pageStart = ($currentPage - 1) * $pageSize;
+        $pageEnd = $currentPage * $pageSize;
+
+        ## order
+        $order = [];
+        if (is_array(@$params['order']) && isset($params['order']['order_by'][0])) {
+            $order = @$params['order']['order_by'][0];
+        }
+
+        ## filtering 
+        $where = [];
+        if (isset($params['where']) && is_array($params['where'])) {
+            $where = $params['where'];
+        }
+
+        ## splitting
+        $preparedPattern = RepoManager::preparePattern($pattern);
+
+        ## listing dir
+        if ($handle = opendir($path)) {
+            $i = 0;
+            $count = 0;
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry != "." && $entry != "..") {
+                    $isPatternMatch = false;
+                    if ($pattern != "") {
+                        $f = RepoManager::parseName($entry, $preparedPattern, false);
+                        if (count($f) > 1) {
+                            $isPatternMatch = true;
+                        }
+                    } else {
+                        $f = [];
+                        $f['file'] = $entry;
+                        $isPatternMatch = true;
+                    }
+
+                    $isNameMatch = true;
+                    if (count($where) > 0) {
+                        $isNameMatch = RepoManager::isColumnMatch($f, $where);
+                    }
+
+                    if ($isPatternMatch && $isNameMatch) {
+                        if (count($order) > 0) {
+                            $colname = $f[$order['field']];
+                            while (isset($result[$colname])) {
+                                $colname .= "_";
+                            }
+                            $result[$colname] = $f;
+                        } else if ($count >= $pageStart && $count < $pageEnd && $isPatternMatch) {
+                            $result[] = $f;
+                        }
+                        $count++;
+                    }
+                    $i++;
+                }
+            }
+            closedir($handle);
+        }
+        RepoManager::$fileCounts[md5($path . $pattern . json_encode($params))] = $count;
+
+        if (count($order) > 0) {
+            if ($order['direction'] == "asc") {
+                ksort($result);
+            } else {
+                krsort($result);
+            }
+
+            $result = array_values($result);
+            $result = array_slice($result, $pageStart, $pageSize);
+        }
+
+        return $result;
+    }
+
+    public static function resolve($path) {
+        $rp = Setting::get('repo.path');
+        $rrp = realpath($rp);
+
+        ## check if repo is part of the path
+        if (strpos($path, $rp) !== 0) {
+            ## check if first directory of the path is inside repo
+            $pathArr = explode("/", $path);
+            $combined = str_replace("//", '/', $rp . "/" . $pathArr[0]);
+            if (realpath($combined)) {
+                ## the path is inside repo
+                $path = str_replace("//", '/', $rp . "/" . $path);
+            } else {
+                ## the path is outside repo, just return it.
+                $path = str_replace("\\", "/", $path);
+                $path = str_replace("//", "/", $path);
+                return $path;
+            }
+        }
+        $file = basename($path);
+        $dir = dirname($path);
+        if (strpos($dir, $rp) === 0) {
+            $dir = $rrp . substr($dir, strlen($rp));
+        }
+
+        $result = $dir . DIRECTORY_SEPARATOR . $file;
+        $result = str_replace("\\", "/", $result);
+        $result = str_replace("//", "/", $result);
+
+        return $result;
     }
 
     public static function getModuleDir() {
@@ -29,13 +415,13 @@ class RepoManager extends CComponent {
             $dir = $this->repoPath . DIRECTORY_SEPARATOR . trim($dir, DIRECTORY_SEPARATOR);
             $parent = dirname($dir);
         }
-        
+
         if (!realpath($dir)) {
             $dir = getcwd() . DIRECTORY_SEPARATOR . $dir;
         }
 
         $list = array();
-        
+
         if (!is_dir($dir)) {
             if (RepoManager::getModuleDir() == $originaldir) {
                 mkdir($dir);
@@ -43,7 +429,7 @@ class RepoManager extends CComponent {
                 return false;
             }
         }
-        
+
         $olddir = getcwd();
         chdir($dir);
         $output = "";
@@ -53,13 +439,35 @@ class RepoManager extends CComponent {
             $awk = Yii::getPathOfAlias('application.commands.shell.awk') . ".exe";
             $ls = Yii::getPathOfAlias('application.commands.shell.ls') . ".exe";
         }
-        $command = $ls . ' -la | ' . $awk . ' "{print $1, $5, substr($0, index($0,$9))}"';
+        $command = $ls . ' -la';
         exec($command, $output);
         chdir($olddir);
 
-        $list = [];
-        foreach ($output as $o) {
+
+        $sout = [];
+        foreach ($output as $k => $o) {
             $f = explode(" ", $o);
+            if ($k < 3)
+                continue;
+            $idx = 0;
+            $n = [];
+            foreach ($f as $j) {
+                if ($j == '' && $idx < 9)
+                    continue;
+
+                $idx++;
+                if ($idx == 1 || $idx == 5 || $idx == 9) {
+                    $n[] = $j;
+                } else if ($idx > 9) {
+                    $n[count($n) - 1] .= " " . $j;
+                }
+            }
+
+            $sout[] = $n;
+        }
+
+        $list = [];
+        foreach ($sout as $f) {
             if (is_array($f) && $f[0] != "total" && count($f) > 2) {
                 $perm = array_shift($f);
                 $size = array_shift($f);
@@ -124,13 +532,13 @@ class RepoManager extends CComponent {
         usort($list, array('RepoManager', 'sortItem'));
         $count = count($list);
 
-        
+
         if ($originaldir != "" && $originaldir != RepoManager::getModuleDir()) {
             $parent = $this->relativePath($parent);
         } else {
             $parent = "";
         }
-        
+
         $detail = array(
             'parent' => $parent,
             'path' => $this->relativePath($dir),
@@ -188,8 +596,8 @@ class RepoManager extends CComponent {
     }
 
     public function upload($temp, $file, $path) {
-        $json = JsonModel::load($path . DIRECTORY_SEPARATOR . $file . '.json');
-        $json->default;
+//        $json = JsonModel::load($path . DIRECTORY_SEPARATOR . $file . '.json');
+//        $json->default;
         move_uploaded_file($temp, $path . DIRECTORY_SEPARATOR . $file);
     }
 
@@ -260,17 +668,17 @@ class RepoManager extends CComponent {
             $this->repoPath = Setting::get("repo.path");
         }
 
-        if (Yii::app()->user->role != 'admin' && Yii::app()->user->role != 'dev') {
-            $module = Yii::app()->user->role;
-            if (strpos($module, '.') == true) {
-                $module = explode('.', $module);
-                $module = implode(DIRECTORY_SEPARATOR, $module);
-            }
-            $this->repoPath = $this->repoPath . DIRECTORY_SEPARATOR . $module;
-            if (!file_exists($this->repoPath)) {
-                mkdir($this->repoPath, 0777, true);
-            }
-        }
+//        if (Yii::app()->user->role != 'admin' && Yii::app()->user->role != 'dev') {
+//            $module = Yii::app()->user->role;
+//            if (strpos($module, '.') == true) {
+//                $module = explode('.', $module);
+//                $module = implode(DIRECTORY_SEPARATOR, $module);
+//            }
+//            $this->repoPath = $this->repoPath . DIRECTORY_SEPARATOR . $module;
+//            if (!file_exists($this->repoPath)) {
+//                mkdir($this->repoPath, 0777, true);
+//            }
+//        }
     }
 
 }

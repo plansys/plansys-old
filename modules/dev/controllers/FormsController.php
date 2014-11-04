@@ -150,6 +150,7 @@ class FormsController extends Controller {
         if (!$changed) {
             $postdata = file_get_contents("php://input");
             $post = CJSON::decode($postdata);
+            
             $fb = FormBuilder::load($class);
 
             if (isset($post['fields'])) {

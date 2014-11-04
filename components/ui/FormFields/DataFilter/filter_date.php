@@ -27,12 +27,12 @@
 
     <div class="dropdown-menu filter-criteria" style="min-width:190px;" role="menu" >  
         <div ng-if="['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(filter.operator) >= 0"
-             style='float:left;margin:7px 5px 0px 0px;'
+             style='float:left;margin:4px 5px 0px 0px;'
              >
             Filter Option:
         </div>
         <button ng-if="['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(filter.operator) < 0" 
-                 ng-click="updateFilter(filter, $event)" class="pull-right btn btn-sm btn-info" type="button">
+                ng-click="updateFilter(filter, $event)" class="pull-right btn btn-sm btn-info" type="button">
             <b>Update 
                 <i class="fa fa-angle-right"></i>
             </b>
@@ -49,10 +49,13 @@
                 </li>
             </ul>
         </div>
+        <center ng-show="filter.operator == 'Weekly'">
+            <hr/><b>{{ filter.from | date: 'dd' }} - {{ filter.to | date:'dd (MMM yyyy)' }}</b>
+        </center>
 
         <div ng-if="['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(filter.operator) < 0" 
-            class="form-group-sm" 
-            style="padding-top:8px;margin-left:-1px;white-space: nowrap; word-wrap: normal;">
+             class="form-group-sm" 
+             style="padding-top:8px;margin-left:-1px;white-space: nowrap; word-wrap: normal;">
 
             <input type="text" class="form-control" 
                    datepicker-popup='dd/MM/yyyy'
