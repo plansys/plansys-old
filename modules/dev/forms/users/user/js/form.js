@@ -48,7 +48,6 @@ $timeout(function () {
     $scope.updateRole();
 }, 0);
 
-
 if ($scope.params.u && $scope.params.f && $scope.isNewRecord) {
     $scope.model.username = $scope.params.u;
     $scope.model.fullname = $scope.params.f;

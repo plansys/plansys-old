@@ -47,7 +47,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     $scope.fileDescLoadText = '...';
                     $http({
                         'method': 'post',
-                        'url': Yii.app.createUrl('/formfield/uploadFile.description'),
+                        'url': Yii.app.createUrl('/formfield/UploadFile.description'),
                         'data': {
                             'desc': desc,
                             'name': $scope.file.name
@@ -87,7 +87,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     $scope.$parent.uploading.push($scope.name);
 
                     $upload.upload({
-                        url: Yii.app.createUrl('/formfield/uploadFile.upload', {
+                        url: Yii.app.createUrl('/formfield/UploadFile.upload', {
                             class: $scope.classAlias,
                             name: $scope.name
                         }),
@@ -135,7 +135,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     $scope.errors = [];
                     var request = $http({
                         method: "post",
-                        url: Yii.app.createUrl('/formfield/uploadFile.remove'),
+                        url: Yii.app.createUrl('/formfield/UploadFile.remove'),
                         data: {file: file}
                     });
                     request.success(function (html) {
@@ -198,7 +198,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                 if ($scope.value != "") {
                     var request = $http({
                         method: "post",
-                        url: Yii.app.createUrl('/formfield/uploadFile.checkFile'),
+                        url: Yii.app.createUrl('/formfield/UploadFile.checkFile'),
                         data: {
                             file: $scope.value
                         }
