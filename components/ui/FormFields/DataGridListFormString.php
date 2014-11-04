@@ -3,6 +3,7 @@
 class DataGridListFormString extends Form {
 
     public $inputMask = '';
+    public $stringAlias = '';
 
     public function getForm() {
         return array(
@@ -36,11 +37,21 @@ class DataGridListFormString extends Form {
                     '99/99/9999 99:99' => 'Date Time',
                     '99/99/9999' => 'Date',
                     '99:99' => 'Time',
+                    'number' => 'Number',
                 ),
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'String Alias',
+                'name' => 'stringAlias',
+                'options' => array (
+                    'ng-model' => 'item.stringAlias;',
+                    'ng-change' => 'updateListView();',
+                ),
+                'type' => 'KeyValueGrid',
             ),
         );
     }

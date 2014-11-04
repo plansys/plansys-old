@@ -5,7 +5,7 @@
      is-open="filter.operatorDropdownOpen">
     <button type="button" class="btn btn-default btn-sm dropdown-toggle">
         <span style="font-size:13px;"> 
-            {{filter.label}}<span>:</span></span>
+            {{filter.label}}<span ng-hide="filter.label == ''">:</span></span>
         <b>{{filter.valueText}}</b>
 
 

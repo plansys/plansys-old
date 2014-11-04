@@ -36,6 +36,10 @@ class WebUser extends CWebUser {
 
         return $this->_model;
     }
+    
+    public function getUseLdap() {
+        return !is_null(Setting::get('ldap'));
+    }
 
     public function getfullRole() {
         return $this->getState('fullRole');

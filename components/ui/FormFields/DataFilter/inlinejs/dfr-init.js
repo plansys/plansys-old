@@ -1,20 +1,22 @@
-/**** clean data-grid column options by deleting unnecesary options ****/
+/**** clean data-filter column options by deleting unnecesary options ****/
 var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
-var relFields = ['relParams','relModelClass', 'relIdField', 'relLabelField', 'relCriteria'];
 
-if ($scope.item.filterType != "relation") {
-    for (i in relFields) {
-        var v = relFields[i];
-        if ($scope.item[v]) {
-            delete $scope.$parent.item[v];
+for (i in $scope.$parent.value) {
+    var item = $scope.$parent.value[i];
+    for (k in item) {
+        if (['filterType', 'name', 'label', 'show', 'isCustom'].indexOf(k) < 0
+                && templateAttr.typeOptions[item.filterType].indexOf(k) < 0) {
+            delete item[k];
         }
     }
-} else {
-    for (i in relFields) {
-        var v = relFields[i];
-        if (!$scope.item[v]) {
-            $scope.$parent.item[v] = templateAttr[v];
+
+    for (k in templateAttr.typeOptions[item.filterType]) {
+        var prop = templateAttr.typeOptions[item.filterType][k];
+        if (!item[prop]) {
+            item[prop] = templateAttr[prop];
         }
     }
+    $scope.$parent.save();
 }
-console.log($scope.$parent.item);
+
+delete $scope.$parent.$parent.filterRelation;

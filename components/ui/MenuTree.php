@@ -109,7 +109,7 @@ class MenuTree extends CComponent {
             } else {
                 if (!is_array($v['url'])) {
                     if (substr($v['url'], 0, 4) != 'http') {
-                        $list[$k]['url'] = array(str_replace('?', '&', $v['url']));
+                        $list[$k]['url'] = array(str_replace(["\n","\r"],"",str_replace('?', '&', $v['url'])));
                     }
                 }
             }

@@ -1,5 +1,5 @@
 $scope.updateRole = function () {
-    
+
     if ($scope.userRoles && $scope.userRoles.value.length > 0) {
         var roles = [];
         for (i in $scope.userRoles.value) {
@@ -47,3 +47,11 @@ $timeout(function () {
     }
     $scope.updateRole();
 }, 0);
+
+if ($scope.params.u && $scope.params.f && $scope.isNewRecord) {
+    $scope.model.username = $scope.params.u;
+    $scope.model.fullname = $scope.params.f;
+    $scope.model.useLdap = true;
+}
+
+$scope.backUrl = $scope.params.ldap ? 'ldap' : 'index?t=' . $scope.params.t;

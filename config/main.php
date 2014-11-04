@@ -15,6 +15,8 @@ return array(
         'app.models.*',
         'application.models.*',
         'application.forms.*',
+        'app.forms.*',
+        'app.components.utility.*',
         'application.components.*',
         'application.components.ui.*',
         'application.components.ui.FormFields.*',
@@ -29,6 +31,7 @@ return array(
     'sourceLanguage' => 'en_us',
     'language' => 'id',
     'modulePath' => Setting::getModulePath(),
+    'controllerMap' => Setting::getControllerMap(),
     'modules' => array_merge($modules, array(
         'gii' => array(
             'class' => 'system.gii.GiiModule',
@@ -48,6 +51,7 @@ return array(
         'themeManager' => array(
             'basePath' => 'app/themes'
         ),
+        'ldap' => Setting::getLDAP(),
         'nfy' => array(
             'class' => 'nfy.components.NfyDbQueue',
             'id' => 'Notifications',

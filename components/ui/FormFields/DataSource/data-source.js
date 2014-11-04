@@ -13,10 +13,10 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.relationTo = $el.find("data[name=relation_to]").text().trim();
                 $scope.insertData = [];
                 $scope.updateData = [];
-                
+
                 $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text());
                 $scope.deleteData = $scope.deleteData || [];
-                
+
                 $scope.untrackColumns = [];
 
                 $scope.resetParam = function (key, name) {
@@ -25,11 +25,13 @@ app.directive('psDataSource', function ($timeout, $http) {
                             delete $scope.sqlParams[i];
                         }
                     } else {
-                        delete $scope.sqlParams[name][key];
+                        if (typeof $scope.sqlParams[name] != "undefined") {
+                            delete $scope.sqlParams[name][key];
+                        }
                     }
                 }
-                
-                $scope.isRowEmpty = function(row, except) {
+
+                $scope.isRowEmpty = function (row, except) {
                     except = except || [];
                     for (i in row) {
                         if (row[i] != "" && $scope.untrackColumns.indexOf(i) < 0 && except.indexOf(i) < 0) {
@@ -52,7 +54,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                     if (typeof $scope.sqlParams[name] == "string" && key && value) {
                         $scope.sqlParams[name] = {};
                     }
-                    
+
                     $scope.sqlParams[name][key] = value;
                 }
 
@@ -141,7 +143,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                     $scope.original = angular.copy($scope.data);
                     $scope.$watch('data', function (newval, oldval) {
 //                        console.log($scope.insertData, $scope.updateData, $scope.deleteData);
-                        
+
                         if (newval !== oldval && $scope.trackChanges) {
                             if ($scope.isDataReloaded) {
                                 $scope.trackChanges = false;

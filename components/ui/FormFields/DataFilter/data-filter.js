@@ -72,6 +72,14 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                         var prepared = $scope.prepareDSParams(filter);
                         ds.resetParam(prepared.name, dsParamName);
                         ds.query(function () {
+                            if (ds.params.paging && $scope[ds.params.paging] && $scope[ds.params.paging].gridOptions) {
+                                var paging = $scope[ds.params.paging].gridOptions.pagingOptions;
+                                if (paging.currentPage * paging.pageSize > ds.totalItems) {
+                                    paging.currentPage = Math.floor(ds.totalItems / paging.pageSize);
+                                } else if (paging.currentPage == 0 && ds.totalItems > 0) {
+                                    paging.currentPage = 1;
+                                }
+                            }
                         });
                     }
                 }
@@ -127,10 +135,12 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     return prepared;
                 }
 
-                $scope.updateFilter = function (filter, e) {
+                $scope.updateFilter = function (filter, e, shouldExec) {
                     $scope.changeValueText(filter);
 
-                    if (['list', 'check', 'relation'].indexOf(filter.filterType) < 0) {
+                    shouldExec = typeof shouldExec == "undefined" ? true : shouldExec;
+
+                    if (typeof e != "undefined" && e != null && ['list', 'check', 'relation'].indexOf(filter.filterType) < 0) {
                         $scope.toggleFilterCriteria(e);
                     }
 
@@ -155,8 +165,18 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                             ds.resetParam(filter.name, dsParamName);
                         }
 
-                        ds.query(function () {
-                        });
+                        if (shouldExec) {
+                            ds.query(function () {
+                                if (ds.params.paging && $scope[ds.params.paging] && $scope[ds.params.paging].gridOptions) {
+                                    var paging = $scope[ds.params.paging].gridOptions.pagingOptions;
+                                    if (paging.currentPage * paging.pageSize > ds.totalItems) {
+                                        paging.currentPage = Math.floor(ds.totalItems / paging.pageSize);
+                                    } else if (paging.currentPage == 0 && ds.totalItems > 0) {
+                                        paging.currentPage = 1;
+                                    }
+                                }
+                            });
+                        }
                     }
                 }
 
@@ -262,15 +282,33 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     }
                 }
 
+                $scope.dateChangeOperator = function (f, o, e) {
+                    $scope.changeOperator(f, o, e);
+                    if (['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(f.operator) >= 0) {
+                        $scope.updateFilter(f, e);
+                    }
+                }
+
                 $scope.changeValueText = function (filter) {
+                    var dateCondition = filter.filterType == "date" && ['Between', 'Not Between', 'More Than', 'Less Than'].indexOf(filter.operator) >= 0;
+
                     if (filter.operator == 'Is Empty') {
                         filter.valueText = 'Is Empty';
-                    } else if (filter.value == '') {
+                    } else if (filter.value == '' && (dateCondition || filter.filterType != "date")) {
                         filter.valueText = 'All';
                     } else {
                         switch (filter.filterType) {
                             case "list":
                             case "relation":
+                                if (typeof filter.dropdownText == "undefined") {
+                                    for (i in filter.list) {
+                                        if (filter.value == filter.list[i].key) {
+                                            filter.dropdownText = filter.list[i].value;
+                                            break;
+                                        }
+                                    }
+                                }
+
                                 filter.valueText = filter.dropdownText;
                                 break;
                             case "check":
@@ -309,6 +347,115 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                     case "More Than":
                                         filter.valueText = filter.operator + " " + from;
                                         break;
+                                    case "Daily":
+                                        if (from == "") {
+                                            filter.from = new Date();
+                                        }
+
+                                        from = dateFilter(filter.from, 'dd MMM yyyy');
+                                        filter.value = dateFilter(filter.from, 'yyyy-MM-dd HH:mm:00');
+                                        filter.valueText = from;
+                                        break;
+                                    case "Weekly":
+                                        if (from == "") {
+                                            filter.from = new Date();
+                                        }
+                                        var monthName = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+                                        var curr = filter.from;
+                                        var startWeekDay = curr.getDate() - curr.getDay();
+                                        var first = new Date(curr);
+                                        var last = new Date(curr);
+                                        first.setDate(startWeekDay);
+                                        last.setDate(startWeekDay + 6);
+
+                                        Date.prototype.getWeekOfMonth = function (exact) {
+                                            var month = this.getMonth()
+                                                    , year = this.getFullYear()
+                                                    , firstWeekday = new Date(year, month, 1).getDay()
+                                                    , lastDateOfMonth = new Date(year, month + 1, 0).getDate()
+                                                    , offsetDate = this.getDate() + firstWeekday - 1
+                                                    , index = 1 // start index at 0 or 1, your choice
+                                                    , weeksInMonth = index + Math.ceil((lastDateOfMonth + firstWeekday - 7) / 7)
+                                                    , week = index + Math.floor(offsetDate / 7)
+                                                    ;
+                                            if (exact || week < 2 + index)
+                                                return week;
+                                            return week === weeksInMonth ? index + 5 : week;
+                                        };
+
+                                        var weekNum = first.getWeekOfMonth(true);
+                                        var monthYear = monthName[first.getMonth()] + " " + (first.getYear() + 1900);
+                                        if (weekNum == 5) {
+                                            var test = new Date(last);
+                                            test.setDate(test.getDate() + 3);
+                                            if (test.getWeekOfMonth(true) == 2) {
+                                                var nr = test.getMonth();
+                                                var yr = 0;
+                                                if (nr >= 12) {
+                                                    nr = 0;
+                                                    yr = 1;
+                                                }
+                                                weekNum = 1;
+                                                monthYear = monthName[nr] + " " + (test.getYear() + yr + 1900);
+                                            }
+                                        }
+                                        if (weekNum == 6) {
+                                            var nr = first.getMonth() + 1;
+                                            var yr = 0;
+                                            if (nr >= 12) {
+                                                nr = 0;
+                                                yr = 1;
+                                            }
+                                            weekNum = 1;
+                                            monthYear = monthName[nr] + " " + (first.getYear() + yr + 1900);
+                                        }
+
+                                        filter.value = {};
+                                        filter.from = new Date(first);
+                                        filter.to = new Date(last);
+                                        filter.value.from = dateFilter(first, 'yyyy-MM-dd HH:mm:00');
+                                        filter.value.to = dateFilter(last, 'yyyy-MM-dd HH:mm:00');
+
+                                        filter.valueText = "Week " + weekNum + " (" + monthYear + ")";
+                                        break;
+                                    case "Monthly":
+
+                                        if (from == "") {
+                                            filter.from = new Date();
+                                        }
+                                        var monthName = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+                                        var curr = filter.from;
+
+                                        first = new Date(curr.getFullYear(), curr.getMonth(), 1);
+                                        last = new Date(curr.getFullYear(), curr.getMonth() + 1, 0);
+
+                                        filter.from = new Date(first);
+                                        filter.value = {};
+                                        filter.value.from = dateFilter(first, 'yyyy-MM-dd HH:mm:00');
+                                        filter.value.to = dateFilter(last, 'yyyy-MM-dd HH:mm:00');
+
+                                        filter.valueText = monthName[filter.from.getMonth()] + " " + (filter.from.getYear() + 1900);
+                                        break;
+                                    case "Yearly":
+                                        if (from == "") {
+                                            filter.from = new Date();
+                                        }
+
+                                        var curr = filter.from;
+                                        first = new Date(curr.getFullYear(), 0, 1);
+                                        last = new Date(curr.getFullYear() + 1, 0, 1);
+
+                                        filter.from = new Date(first);
+                                        filter.value = {};
+                                        filter.value.from = dateFilter(first, 'yyyy-MM-dd HH:mm:00');
+                                        filter.value.to = dateFilter(last, 'yyyy-MM-dd HH:mm:00');
+
+                                        filter.valueText = curr.getFullYear();
+                                        break;
                                 }
                         }
 
@@ -321,8 +468,55 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     filter.operator = operator;
                     filter.operatorDropdownOpen = false;
                     $scope.focused(e);
-
                     $scope.changeValueText(filter, filter.value);
+                }
+
+                $scope.datePrev = function (filter, e) {
+                    if (['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(filter.operator) >= 0) {
+                        switch (filter.operator) {
+                            case 'Daily':
+                                filter.from.setDate(filter.from.getDate() - 1);
+                                $scope.updateFilter(filter);
+                                break;
+                            case 'Weekly':
+                                var first = filter.from.getDate() - filter.from.getDay();
+                                filter.from.setDate(first - 3);
+                                $scope.updateFilter(filter);
+                                break;
+                            case 'Monthly':
+                                filter.from.setMonth(filter.from.getMonth() - 1);
+                                $scope.updateFilter(filter);
+                                break;
+                            case 'Yearly':
+                                filter.from.setYear(filter.from.getYear() - 1 + 1900);
+                                $scope.updateFilter(filter);
+                                break;
+                        }
+                    }
+                }
+
+                $scope.dateNext = function (filter) {
+                    if (['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(filter.operator) >= 0) {
+                        switch (filter.operator) {
+                            case 'Daily':
+                                filter.from.setDate(filter.from.getDate() + 1);
+                                $scope.updateFilter(filter);
+                                break;
+                            case 'Weekly':
+                                var first = filter.from.getDate() - filter.from.getDay();
+                                filter.from.setDate(first + 10);
+                                $scope.updateFilter(filter);
+                                break;
+                            case 'Monthly':
+                                filter.from.setMonth(filter.from.getMonth() + 1);
+                                $scope.updateFilter(filter);
+                                break;
+                            case 'Yearly':
+                                filter.from.setYear(filter.from.getYear() + 1 + 1900);
+                                $scope.updateFilter(filter);
+                                break;
+                        }
+                    }
                 }
 
                 $scope.changeValueFromDate = function (filter, from) {
@@ -354,6 +548,57 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     date: 'filter_date'
                 }
                 $scope.$parent[$scope.name] = $scope;
+                $scope.available = false;
+
+                // Set Default Filters Value
+                $timeout(function () {
+                    var showCount = 0;
+                    var ds = $scope.$parent[$scope.datasource];
+                    
+                    if (ds.data.length > 0)
+                        $scope.available = true;
+
+                    for (i in $scope.filters) {
+                        var f = $scope.filters[i];
+                        var dateCondition = (f.filterType == 'date' && ['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(f.defaultOperator) >= 0);
+
+                        if (ds.data.length > 0 && typeof ds.data[0][f.name] == "undefined") {
+                            f.show = false;
+                        } else {
+                            f.show = (showCount > 5 ? false : true);
+                            showCount++;
+                        }
+
+                        if (f.defaultValue && f.defaultValue != "" || dateCondition) {
+                            if ($scope.operators[f.filterType]) {
+                                if (typeof f.defaultOperator != "undefined" && f.defaultOperator != "") {
+                                    f.operator = f.defaultOperator;
+
+                                    if (f.filterType == 'date') {
+                                        if (f.defaultOperator == 'Between' || f.defaultOperator == 'Not Between') {
+                                            f.from = f.defaultValueFrom;
+                                            f.to = f.defaultValueTo;
+                                            console.log(f);
+                                        } else if (f.defaultOperator == 'Less Than') {
+                                            f.to = f.defaultValueTo;
+                                        } else {
+                                            f.from = f.defaultValueFrom;
+                                        }
+                                    } else {
+                                        f.value = f.defaultValue;
+                                    }
+                                }
+                            } else {
+                                f.value = f.defaultValue;
+                            }
+                            $scope.updateFilter(f, null, false);
+                        }
+                    }
+
+                    $scope.$parent[$scope.datasource].query(function () {
+                    });
+                });
+
             }
         }
     };

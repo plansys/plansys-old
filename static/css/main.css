@@ -193,6 +193,10 @@ hr {
     font-size:14px;
 }
 
+.fa-99x {
+    font-size:130px;
+}
+
 .well-small {
     font-size:13px;color:#666;
 }
@@ -521,6 +525,7 @@ div[ui-content] {
     font-weight: bold;
     height: 28px;
     line-height: 18px;
+    margin:0px -15px 0px -15px;
 }
 
 .form-builder > form > div > ol > li > .SectionHeader {
@@ -1345,21 +1350,25 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     background-position: bottom right;
 }
 
-.data-grid-table .ngViewport .ngCellText.non-editable {
+.data-grid-table .ngViewport .non-editable {
     background:rgba(0,0,0,.05);
 }
 
-.data-grid-table .ngViewport .ngCellText.non-editable:focus {
+.data-grid-table .ngViewport .non-editable:focus {
     background:rgba(0,0,0,.15);
 }
 .data-grid-table .ngViewport .ngCellButton {
-    padding:2px 10px;
+    padding:2px 2px;
     font-size:13px;
-    border-bottom:1px solid #ddd;
-    line-height:20px;
+    white-space:nowrap;
+    line-height:21px;
+    text-align:center;
 }
 .data-grid-table .ngRow:last-child .ngCellButton {
     border-bottom:0px;
+}
+.data-grid-table .ngViewport .ngCellButton .btn {
+    margin-right:2px;
 }
 
 .data-grid-table .ngViewport .ngCellButtonCollapsed {
@@ -1479,7 +1488,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 .data-grid-page-selector {
     display:inline-block;
-    width:80px;
+    width:84px;
     padding:1px 3px 0px 3px;
 }
 
@@ -1917,6 +1926,73 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     font-size:100px;
 }
 
+.portlet {
+    position:absolute;
+    width:395px;
+    height:300px;
+    padding:5px;
+    /*border-radius:7px;*/
+    border:1px solid #ccc;
+    margin:10px;
+    background:white;
+    box-shadow: 0px 0px 0px 1px #fafafa;
+}
+.portlet * {
+    resize: none;
+}
+
+.portlet-title {
+    /*    border-top-left-radius: 7px;
+        border-top-right-radius: 7px;*/
+    margin:-5px -5px 10px -5px;
+    padding:8px 10px;
+    border-bottom:1px solid #ddd;
+
+    font-size:12px;
+    font-weight:bold;
+    background: #ffffff; /* Old browsers */
+    background: -moz-linear-gradient(top,  #ffffff 0%, #fafafa 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#fafafa)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ffffff 0%,#fafafa 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ffffff 0%,#fafafa 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ffffff 0%,#fafafa 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #ffffff 0%,#fafafa 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#fafafa',GradientType=0 ); /* IE6-9 */
+
+}
+.portlet .data-filter { 
+    margin:0px;
+    border:0px;
+    background: transparent;
+    box-shadow:none;
+    margin-bottom:-5px;
+}
+.portlet.single .data-filter {
+    padding:0px;
+    margin-bottom:-7px;
+    margin-top:-40px;
+    margin-right:-6px;
+}
+.portlet.single .filter-item-container {
+    float:right;
+}
+
+.portlet.single .filter-item-container .caret{
+    margin-top:-2px !important;
+}
+.portlet.single .filter-item-container .btn {
+    height:25px !important;
+    line-height:15px !important;
+}
+
+.portlet.single .data-filter .filter-reset {
+    display:none;
+}
+.portlet .filter-td:first-child { display:none; }
+.portlet .filter-td {
+    padding:0px;
+}
+
 /********************************** FORMS **************************************/
 .label-field-value {
     font-size:13px;
@@ -1976,6 +2052,15 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 ul[datepicker-popup-wrap] td {
     padding:2px;
+}
+
+ul[datepicker-popup-wrap] td .btn{
+    width:35px !important;
+    background:#fff !important;
+}
+
+ul[datepicker-popup-wrap] td .btn.active{
+    background:#ccc !important;
 }
 
 ul[datepicker-popup-wrap] table {

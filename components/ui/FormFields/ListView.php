@@ -51,6 +51,16 @@ class ListView extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
+                'label' => 'Inline JS',
+                'name' => 'inlineJS',
+                'options' => array (
+                    'ng-model' => 'active.inlineJS',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                ),
+                'type' => 'TextField',
+            ),
+            array (
                 'value' => '<div ng-show=\"active.fieldTemplate == \'form\'\" class=\"well well-sm\">
 Use this code to access current item: <br/> 
 <code>ng-model = value[$index]</code><br/>
@@ -178,6 +188,8 @@ Use this code to access current item: <br/>
 
     /** @var integer $labelWidth */
     public $labelWidth = 4;
+    
+    public $inlineJS = '';
 
     /** @var integer $fieldWidth */
     public $fieldWidth = 8;
@@ -266,7 +278,6 @@ Use this code to access current item: <br/>
         $this->fieldOptions['name'] = $this->name;
         $this->addClass('form-control', 'fieldOptions');
 
-
         Yii::import(FormBuilder::classPath($this->templateForm));
         $class = array_pop(explode(".", $this->templateForm));
 
@@ -284,7 +295,21 @@ Use this code to access current item: <br/>
         }
         
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
-        return $this->renderInternal('template_render.php');
+        
+        $jspath = explode(".", FormBuilder::classPath($this->templateForm));
+        array_pop($jspath);
+        $jspath = implode(".", $jspath);
+        
+        $inlineJS = str_replace("/", DIRECTORY_SEPARATOR, trim($this->inlineJS, "/"));
+        $inlineJS = Yii::getPathOfAlias($jspath) . DIRECTORY_SEPARATOR . $inlineJS;
+        
+        if (is_file($inlineJS)) {
+            $inlineJS = file_get_contents($inlineJS);
+        } else {
+            $inlineJS = '';
+        }
+        
+        return $this->renderInternal('template_render.php', ['inlineJS'=>$inlineJS]);
     }
 
 }

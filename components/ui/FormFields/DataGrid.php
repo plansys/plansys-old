@@ -179,7 +179,7 @@ class DataGrid extends FormField {
         } else {
             $currentPage = $params['currentPage'];
             $pageSize = $params['pageSize'];
-            $totalItems = $params['totalServerItems'];
+//            $totalItems = $params['totalServerItems'];
 
             $from = ($currentPage - 1) * $pageSize;
             $from = $from < 0 ? 0 : $from;
@@ -224,13 +224,24 @@ class DataGrid extends FormField {
     public function render() {
 
         foreach ($this->columns as $k => $c) {
-            if ($c['columnType'] == 'dropdown') {
-                $list = '[]';
-                if (@$c['listType'] == 'php') {
-                    $list = $this->evaluate(@$c['listExpr'], true);
-                    $list = json_encode($list);
-                }
-                $this->columns[$k]['listItem'] = $list;
+
+
+            switch ($c['columnType']) {
+                case 'dropdown':
+                    $list = '[]';
+                    if (@$c['listType'] == 'php') {
+                        $list = $this->evaluate(@$c['listExpr'], true);
+                        $list = json_encode($list);
+                    }
+                    $this->columns[$k]['listItem'] = $list;
+                    break;
+                case 'string':
+                    if (count(@$this->columns[$k]['stringAlias']) > 0) {
+                        foreach ($this->columns[$k]['stringAlias'] as $x => $y) {
+                            $this->columns[$k]['stringAlias'][$x] = htmlentities($y);
+                        }
+                    }
+                    break;
             }
         }
 

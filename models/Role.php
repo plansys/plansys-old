@@ -5,6 +5,7 @@ class Role extends ActiveRecord {
     public function rules() {
         return array(
             array('role_name, role_description', 'required'),
+            array('menu_path, home_url', 'safe'),
             array('role_name, role_description', 'length', 'max' => 255),
         );
     }
@@ -12,6 +13,7 @@ class Role extends ActiveRecord {
     public function relations() {
         return array(
             'userRoles' => array(self::HAS_MANY, 'UserRole', 'role_id'),
+            'users' => array(self::HAS_MANY, 'User', array('user_id' => 'id'), 'through' => 'userRoles'),
         );
     }
     

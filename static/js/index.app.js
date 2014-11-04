@@ -125,23 +125,57 @@ app.filter('capitalize', function () {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
 });
+app.filter('fileSize', function () {
+    return function (size, precision) {
+
+        if (precision == 0 || precision == null) {
+            precision = 1;
+        }
+        if (size == 0 || size == null) {
+            return "";
+        }
+        else if (!isNaN(size)) {
+            var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            var posttxt = 0;
+
+            if (size < 1024) {
+                return Number(size) + " " + sizes[posttxt];
+            }
+            while (size >= 1024) {
+                posttxt++;
+                size = size / 1024;
+            }
+
+            var power = Math.pow(10, precision);
+            var poweredVal = Math.ceil(size * power);
+
+            size = poweredVal / power;
+
+            return size + " " + sizes[posttxt];
+        } else {
+            console.log('Error: Not a number.');
+            return "";
+        }
+
+    };
+});
 app.filter('dateFormat', function (dateFilter) {
-   return function(date, format) {
-       if (date != "0000-00-00") {
-           if (typeof date == "string") {
-               date = new Date(date);
-           }
-           
-           var d = dateFilter(date, format);
-           if (typeof d == "undefined" || d.trim() == "Jan 1, 1970") {
-               return "";
-           } else {
-               return d;
-           }
-       } else {
-           return "";
-       }
-   }
+    return function (date, format) {
+        if (date != "0000-00-00") {
+            if (typeof date == "string") {
+                date = new Date(date);
+            }
+
+            var d = dateFilter(date, format);
+            if (typeof d == "undefined" || d.trim() == "Jan 1, 1970") {
+                return "";
+            } else {
+                return d;
+            }
+        } else {
+            return "";
+        }
+    }
 });
 app.filter('elipsisMiddle', function () {
     return function (fullStr, strLen, separator) {

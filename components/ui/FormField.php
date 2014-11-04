@@ -387,12 +387,12 @@ class FormField extends CComponent {
      * @param array $file
      * @return field Fungsi ini untuk me-render form field dan atributnya.
      */
-    public function renderInternal($file) {
+    public function renderInternal($file, $attr = array()) {
 
         $reflector = new ReflectionClass($this);
         $path = str_replace(".php", DIRECTORY_SEPARATOR . $file, $reflector->getFileName());
 
-        $attributes = array(
+        $attributes = $attr + array(
             'field' => $this->attributes,
             'form' => $this->_form_properties,
             'errors' => $this->_errors,
@@ -509,11 +509,22 @@ class FormField extends CComponent {
     public static function allSorted() {
 
         $all = FormField::all();
-        usort($all, function ($a, $b) {
-            return strlen($a['type']::$category) - strlen($b['type']::$category);
-        });
+        $cat = [];
 
-        return $all;
+        foreach ($all as $u) {
+            if (!isset($cat[$u['type']::$category])) {
+                $cat[$u['type']::$category] = [];
+            }
+            $cat[$u['type']::$category][] = $u;
+        }
+        $return = [];
+        foreach ($cat as $a) {
+            foreach ($a as $b) {
+                $return[] = $b;
+            }
+        }
+
+        return $return;
     }
 
     /**

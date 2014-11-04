@@ -39,21 +39,21 @@
 </div>
 </div>
 <script type="text/javascript">
-    app.controller("PageController", ["$scope", "$http", "$timeout", function($scope, $http, $timeout) {
+    app.controller("PageController", ["$scope", "$http", "$timeout", function ($scope, $http, $timeout) {
             $scope.list = <?php echo CJSON::encode($list); ?>;
             $scope.isDragged = false;
             $scope.isLoading = true;
             $scope.listOptions = {
-                dragStop: function(node) {
+                dragStop: function (node) {
                     if ($scope.isDragged) {
                         $scope.save();
                         $scope.isDragged = false;
                     }
                 },
-                dragStart: function(node) {
+                dragStart: function (node) {
                     $scope.isDragged = true;
                 },
-                beforeDrag: function(node) {
+                beforeDrag: function (node) {
                     $scope.select(node.$handleScope);
                     return true;
                 }
@@ -62,10 +62,10 @@
             $scope.active = null;
             $scope.saving = false;
             $scope.selecting = false;
-            $scope.select = function(item) {
+            $scope.select = function (item) {
                 $scope.selecting = true;
                 $scope.active = null;
-                $timeout(function() {
+                $timeout(function () {
                     $scope.active = item.$modelValue;
                     if (typeof $scope.active.state == "undefined") {
                         $scope.active.state = "";
@@ -75,44 +75,78 @@
                     $('#DevMenuEditor\\[label\\]').focus().select();
                 }, 0);
             };
-            $scope.iconAvailable = function(item) {
+            $scope.iconAvailable = function (item) {
                 if (typeof item.icon == "undefined")
                     return false;
                 else
                     return (item.icon != '');
             }
-            $scope.isCollapsed = function(item) {
+            $scope.isCollapsed = function (item) {
                 return item.state == 'collapsed' ? true : false;
             }
-            $scope.isSelected = function(item) {
+            $scope.isSelected = function (item) {
                 if (item.$modelValue === $scope.active) {
                     return "active";
                 } else {
                     return "";
                 }
             };
-            $scope.new = function() {
-                $scope.list.push({
-                    'label': 'New Menu',
-                    'icon': '',
-                    'url': '#',
-                    'items': [],
-                });
+
+            $scope.findParent = function (find, menus) {
+                if (typeof menus == "undefined") {
+                    menus = $scope.list;
+                }
+
+                for (i in menus) {
+                    if (!menus[i].$$hashKey)
+                        continue;
+
+                    if (menus[i].$$hashKey == find.$$hashKey) {
+                        return {items: menus, index: i};
+                    }
+
+                    if (menus[i].items && menus[i].items.length > 0) {
+                        var result = $scope.findParent(find, menus[i].items);
+                        if (result != false) {
+                            return result;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            $scope.new = function () {
+                if ($scope.active) {
+                    var parent = $scope.findParent($scope.active);
+                    parent.items.splice(parent.index == 0 ? 1 : parent.index + 1, 0, {
+                        'label': 'New Menu',
+                        'icon': '',
+                        'url': '#',
+                        'items': [],
+                    });
+                } else {
+                    $scope.list.push({
+                        'label': 'New Menu',
+                        'icon': '',
+                        'url': '#',
+                        'items': [],
+                    });
+                }
                 $scope.save();
             }
-            $scope.remove = function(item) {
+            $scope.remove = function (item) {
                 item.remove();
                 $scope.active = null;
                 $scope.save();
             }
-            $scope.save = function() {
+            $scope.save = function () {
                 $scope.saving = true;
                 $http.post('<?php echo $this->createUrl("save", array('class' => $path)); ?>',
                         {list: $scope.list})
-                        .success(function(data, status) {
+                        .success(function (data, status) {
                             $scope.saving = false;
                         })
-                        .error(function(data, status) {
+                        .error(function (data, status) {
                             $scope.saving = false;
                         });
             }

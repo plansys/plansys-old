@@ -459,6 +459,7 @@ class ActiveRecord extends CActiveRecord {
             $this->$primaryKey = null;
         }
 
+
         return true;
     }
 
@@ -581,6 +582,64 @@ class ActiveRecord extends CActiveRecord {
             $this->__relations[$k] = $new;
         }
 
+        if (method_exists($this, 'getFields')) {
+            $fb = FormBuilder::load(get_class($this));
+            $uploadFields = $fb->findAllField(array('type' => 'UploadFile'));
+            $attrs = [];
+            $model = $this;
+            foreach ($uploadFields as $k => $f) {
+                if (@$f['name'] == '' || @$f['uploadPath'] == '' || @$f['filePattern'] == '') {
+                    continue;
+                }
+                ## create directory
+                ## Jika disini gagal, berarti ada yang salah dengan format uploadPath di FormBuilder-nya
+                eval('$evalDir = "' . $f['uploadPath'] . '";');
+                $evalDir = str_replace(["\n", "\r"], "", $evalDir);
+                $repopath = realpath(Yii::getPathOfAlias("repo"));
+                $evalDirArr = explode("/", $evalDir);
+                foreach ($evalDirArr as $i => $j) {
+                    $evalDirArr[$i] = preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $j);
+                }
+                $evalDir = implode("/", $evalDirArr);
+                $dir = $repopath . "/" . $evalDir . "/";
+                $dir = str_replace(["\n", "\r"], "", $dir);
+                if (!is_dir($dir)) {
+                    mkdir($dir, 0777, true);
+                }
+
+                ## get oldname
+                $old = $this->{$f['name']};
+
+                $ext = pathinfo($old, PATHINFO_EXTENSION);
+
+                ## get newname
+                ## Jika disini gagal, berarti ada yang salah dengan format filePattern di FormBuilder-nya
+                eval('$newname = "' . $f['filePattern'] . '";');
+                $new = $dir . preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $newname);
+                $new = str_replace(["\n", "\r"], "", $new);
+
+                if (is_file($new) && $f['allowOverwrite'] == 'Yes' && is_file($old)) {
+                    unlink($new);
+                }
+
+                if (!is_file($new) && is_file($old)) {
+                    rename($old, $new);
+                    $this->{$f['name']} = trim($evalDir, "/") . "/" . $newname;
+                    $attrs[] = $f['name'];
+                }
+            }
+
+            if (count($attrs) > 0) {
+                if ($this->isNewRecord) {
+                    $this->isNewRecord = false;
+                    $this->update($attrs);
+                    $this->isNewRecord = true;
+                } else {
+                    $this->update($attrs);
+                }
+            }
+        }
+
         return true;
     }
 
@@ -630,7 +689,6 @@ class ActiveRecord extends CActiveRecord {
         }
         if (count(@$post[$name . 'Update']) > 0) {
             ActiveRecord::batchUpdate($model, $post[$name . 'Update']);
-           
         }
 
         ## delete
@@ -744,13 +802,13 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public static function listData($idField, $valueField, $criteria = array()) {
-        
+
         if (is_bool($criteria)) {
             $criteria = array(
                 'distinct' => $criteria
             );
         }
-        
+
         $class = get_called_class();
         return CHtml::listData($class::model()->findAll($criteria), $idField, $valueField);
     }
@@ -780,7 +838,7 @@ class ActiveRecord extends CActiveRecord {
             }
         }
     }
-    
+
     public function getDefaultFields() {
         $array = $this->modelFieldList;
         $length = count($array);

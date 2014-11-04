@@ -104,6 +104,10 @@
             }
         }
 
+        $scope.filterFileName = function (model, field) {
+            model[field] = model[field].replace(/[\\\/\:\*\?\'\<\>\|]/g, '');
+        }
+
         /*********************** TEXT ********************************/
 
         $scope.aceLoaded = function (_editor) {
@@ -372,6 +376,7 @@
         /************************ DATA COLUMNS ****************************/
         $scope.generateColumns = function () {
             var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
+
             if (confirm("Your current columns will be lost. Are you sure?")) {
                 $scope.active.columns = [];
                 $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
@@ -389,6 +394,13 @@
                         if (data != null && data.length > 0 && typeof data[0] == "object") {
                             for (i in data[0]) {
                                 var filter = angular.extend({}, templateAttr);
+                                for (k in filter) {
+                                    if (['columnType', 'name', 'label', 'show'].indexOf(k) < 0
+                                            && templateAttr.typeOptions[filter.columnType].indexOf(k) < 0) {
+                                        delete filter[k];
+                                    }
+                                }
+
                                 filter.name = i;
                                 filter.label = i;
                                 $scope.active.columns.push(filter);
@@ -439,7 +451,7 @@
                     return;
                 var name = ".d-" + $scope.formatName($(this).attr('fname'));
                 var $name = $(name);
-                if (name.trim() != ".d-") {
+                if (name.trim() != ".d-" && name.indexOf("text/") != 0) {
                     if ($name.length > 1) {
                         $(this).removeClass('ng-hide');
                     }
@@ -595,7 +607,6 @@
             }
             $scope.save();
         }
-
         $scope.moveToNext = function (scope) {
             var index = scope.$parent.index();
             var clone = scope.$parent.$parentNodesScope.$modelValue[index];

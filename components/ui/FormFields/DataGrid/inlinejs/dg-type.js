@@ -1,3 +1,4 @@
+
 /**** clean data-grid column options by deleting unnecesary options ****/
 var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
 

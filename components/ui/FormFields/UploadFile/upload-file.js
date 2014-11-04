@@ -9,7 +9,6 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
             }
 
             return function ($scope, $el, attrs, ctrl) {
-                $scope.filePath = null;
                 $scope.file = null;
                 $scope.loading = false;
                 $scope.progress = -1;
@@ -17,81 +16,15 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                 $scope.json;
 
 
-                //Decode Encode start
-                $scope._keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-
-                $scope.encode = function (input) {
-                    var output = "";
-                    var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-                    var i = 0;
-                    while (i < input.length) {
-
-                        chr1 = input.charCodeAt(i++);
-                        chr2 = input.charCodeAt(i++);
-                        chr3 = input.charCodeAt(i++);
-
-                        enc1 = chr1 >> 2;
-                        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-                        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-                        enc4 = chr3 & 63;
-
-                        if (isNaN(chr2)) {
-                            enc3 = enc4 = 64;
-                        } else if (isNaN(chr3)) {
-                            enc4 = 64;
-                        }
-
-                        output = output +
-                                $scope._keyStr.charAt(enc1) + $scope._keyStr.charAt(enc2) +
-                                $scope._keyStr.charAt(enc3) + $scope._keyStr.charAt(enc4);
-
-                    }
-
-                    return output;
-                };
-
-                $scope.decode = function (input) {
-                    var output = "";
-                    var chr1, chr2, chr3;
-                    var enc1, enc2, enc3, enc4;
-                    var i = 0;
-
-                    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-
-                    while (i < input.length) {
-
-                        enc1 = $scope._keyStr.indexOf(input.charAt(i++));
-                        enc2 = $scope._keyStr.indexOf(input.charAt(i++));
-                        enc3 = $scope._keyStr.indexOf(input.charAt(i++));
-                        enc4 = $scope._keyStr.indexOf(input.charAt(i++));
-
-                        chr1 = (enc1 << 2) | (enc2 >> 4);
-                        chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-                        chr3 = ((enc3 & 3) << 6) | enc4;
-
-                        output = output + String.fromCharCode(chr1);
-
-                        if (enc3 != 64) {
-                            output = output + String.fromCharCode(chr2);
-                        }
-                        if (enc4 != 64) {
-                            output = output + String.fromCharCode(chr3);
-                        }
-
-                    }
-
-                    return output;
-
-                };
-                //Decode Encode end
 
                 //default value
                 $scope.name = $el.find("data[name=name]").html().trim();
+                $scope.classAlias = $el.find("data[name=class_alias]").html().trim();
                 $scope.value = $el.find("data[name=value]").html().trim();
                 $scope.mode = $el.find("data[name=mode]").html().trim();
+                $scope.allowDelete = $el.find("data[name=allow_delete]").html().trim();
+                $scope.allowOverwrite = $el.find("data[name=allow_overwrite]").html().trim();
                 $scope.fileType = $el.find("data[name=file_type]").html().trim();
-                $scope.fileDir = $scope.decode($el.find("data[name=file_dir]").html().trim());
-                $scope.repoPath = $scope.decode($el.find("data[name=repo_path]").html().trim());
 
                 // when ng-model is changed from outside directive
                 if (typeof ctrl != 'undefined') {
@@ -102,10 +35,8 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                                 var data = ctrl.$viewValue;
                                 var fileName = data.split('/').pop();
                                 $scope.file = {
-                                    'name': fileName,
-                                    'path': $scope.fileDir + '/' + fileName
+                                    'name': fileName
                                 };
-                                $scope.filePath = $scope.fileDir.replace($scope.repoPath, '').replace(/\\/g, "/") + '/' + $scope.file.name;
                             }
                         }
                     };
@@ -116,11 +47,11 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     $scope.fileDescLoadText = '...';
                     $http({
                         'method': 'post',
-                        'url': Yii.app.createUrl('/formfield/uploadFile.description'),
+                        'url': Yii.app.createUrl('/formfield/UploadFile.description'),
                         'data': {
-                            'desc': $scope.encode(desc),
-                            'name': $scope.encode($scope.file.name),
-                            'path': $scope.encode($scope.fileDir)
+                            'desc': desc,
+                            'name': $scope.file.name
+//                            'path': $scope.encode($scope.fileDir)
                         }
                     }).success(function () {
                         $scope.fileDescLoadText = '';
@@ -148,6 +79,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                         }
                     }
                 };
+
                 $scope.upload = function (file) {
                     $scope.errors = [];
                     $scope.loading = true;
@@ -155,21 +87,28 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     $scope.$parent.uploading.push($scope.name);
 
                     $upload.upload({
-                        url: Yii.app.createUrl('/formfield/uploadFile.upload', {
-                            'path': $scope.encode($scope.fileDir)
+                        url: Yii.app.createUrl('/formfield/UploadFile.upload', {
+                            class: $scope.classAlias,
+                            name: $scope.name
                         }),
                         file: file
                     }).progress(function (evt) {
                         $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
                     }).success(function (data, html) {
                         $scope.progress = 101;
-                        $scope.file = {
-                            'name': data,
-                            'path': $scope.fileDir + '/' + data
-                        };
-                        $scope.filePath = $scope.fileDir.replace($scope.repoPath, '').replace(/\\/g, "/") + '/' + $scope.file.name;
 
-                        $scope.icon($scope.file);
+                        if (data.success == 'Yes') {
+                            $scope.value = data.path;
+                            $scope.file = {
+                                'name': data.name,
+                                'downloadPath': data.downloadPath
+                            };
+
+                            $scope.icon($scope.file);
+                        } else {
+                            alert("Error Uploading File. \n");
+                        }
+
                         $scope.loading = false;
                         $scope.progress = -1;
 
@@ -177,6 +116,15 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                         if (index > -1) {
                             $scope.$parent.uploading.splice(index, 1);
                         }
+                    }).error(function (data) {
+                        $scope.progress = -1;
+                        $scope.loading = false;
+                        var index = $scope.$parent.uploading.indexOf($scope.name);
+                        if (index > -1) {
+                            $scope.$parent.uploading.splice(index, 1);
+                        }
+                        alert(data);
+
                     });
                 };
                 //Upload Funcs end
@@ -187,18 +135,15 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     $scope.errors = [];
                     var request = $http({
                         method: "post",
-                        url: Yii.app.createUrl('/formfield/uploadFile.remove'),
-                        data: {file: $scope.encode(file)}
+                        url: Yii.app.createUrl('/formfield/UploadFile.remove'),
+                        data: {file: file}
                     });
-                    request.success(
-                            function (html) {
-                                $scope.file = null;
-                                $scope.loading = false;
-                            }
-                    );
+                    request.success(function (html) {
+                        $scope.file = null;
+                        $scope.loading = false;
+                    });
 
                 };
-
 
                 //Get the file extension
                 $scope.ext = function (file) {
@@ -225,27 +170,27 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     var pdf = ['pdf'];
 
                     if ($.inArray(type, image) > -1) {
-                        $scope.file.type = "image";
+                        $scope.file.type = "fa-file-image-o";
                     } else if ($.inArray(type, code) > -1) {
-                        $scope.file.type = "code";
+                        $scope.file.type = "fa-file-code-o";
                     } else if ($.inArray(type, archive) > -1) {
-                        $scope.file.type = "archive";
+                        $scope.file.type = "fa-file-archive-o";
                     } else if ($.inArray(type, audio) > -1) {
-                        $scope.file.type = "audio";
+                        $scope.file.type = "fa-file-audio-o";
                     } else if ($.inArray(type, video) > -1) {
-                        $scope.file.type = "movie";
+                        $scope.file.type = "fa-file-movie-o";
                     } else if ($.inArray(type, word) > -1) {
-                        $scope.file.type = "word";
+                        $scope.file.type = "fa-file-word-o";
                     } else if ($.inArray(type, text) > -1) {
-                        $scope.file.type = "text";
+                        $scope.file.type = "fa-file-text-o";
                     } else if ($.inArray(type, excel) > -1) {
-                        $scope.file.type = "excel";
+                        $scope.file.type = "fa-file-excel-o";
                     } else if ($.inArray(type, ppt) > -1) {
-                        $scope.file.type = "powerpoint";
+                        $scope.file.type = "fa-file-powerpoint-o";
                     } else if ($.inArray(type, pdf) > -1) {
-                        $scope.file.type = "pdf";
+                        $scope.file.type = "fa-file-pdf-o";
                     } else {
-                        $scope.file.type = "file";
+                        $scope.file.type = "fa-file-o";
                     }
                 };
 
@@ -253,22 +198,14 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                 if ($scope.value != "") {
                     var request = $http({
                         method: "post",
-                        url: Yii.app.createUrl('/formfield/uploadFile.checkFile'),
+                        url: Yii.app.createUrl('/formfield/UploadFile.checkFile'),
                         data: {
-                            file: $scope.encode($scope.value)
+                            file: $scope.value
                         }
                     });
                     request.success(function (result) {
-
                         if (result.status === 'exist') {
-                            var name = $scope.value.split('/');
-                            name = name[name.length - 1];
-                            var path = $scope.repoPath + $scope.value;
-                            $scope.file = {
-                                'name': name,
-                                'path': path
-                            };
-                            $scope.json = result.desc;
+                            $scope.file.downloadPath = result.downloadPath;
                             $scope.icon($scope.file);
                         } else {
                             $scope.file = null;

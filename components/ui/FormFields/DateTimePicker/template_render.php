@@ -15,6 +15,7 @@
         <data name="value" class="hide"><?= $this->value ?></data>
         <data name="model_class" class="hide"><?= @get_class($model) ?></data>
         <data name="field_type" class="hide"><?= $this->fieldType ?></data>
+        <data name="default_today" class="hide"><?= $this->defaultToday ?></data>
         <data name="date_options" class="hide"><?= json_encode($this->datepickerOptions) ?></data>
         <!-- /data -->
 
@@ -48,7 +49,7 @@
 
         <!-- error -->
         <?php if (count(@$errors) > 0): ?>
-            <div class="alert error alert-danger">
+            <div class="alert error alert-danger" style="border-top:0px;border-radius:4px;margin-top:1px;">
                 <?= $errors[0] ?>
             </div>
         <?php endif ?>

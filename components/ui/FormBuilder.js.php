@@ -1,4 +1,11 @@
 <?php
+if (count(@$renderParams['errors']) > 0) {
+    if (isset($data['errors'])) {
+        $data['errors'] = array_merge($data['errors'], $renderParams['errors']);
+    } else {
+        $data['errors'] = $renderParams['errors'];
+    }
+}
 ob_start();
 ?>
 <script type="text/javascript">
@@ -8,6 +15,7 @@ ob_start();
         $scope.model = <?php echo @json_encode($data['data']); ?>;
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
         $scope.params = <?php echo @json_encode($renderParams); ?>;
+
 <?php if (!Yii::app()->user->isGuest): ?>
             $scope.user = <?php echo @json_encode(Yii::app()->user->info); ?>;
             if ($scope.user != null) {
@@ -27,7 +35,6 @@ ob_start();
 
                     for (i in $scope.user.role) {
                         var r = $scope.user.role[i];
-                        console.log(r);
                         if (r.indexOf(role + ".") == 0) {
                             return true;
                         }

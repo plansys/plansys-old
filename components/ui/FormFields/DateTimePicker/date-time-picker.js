@@ -1,35 +1,35 @@
-app.directive('dateTimePicker', function($timeout, dateFilter) {
+app.directive('dateTimePicker', function ($timeout, dateFilter) {
     return {
         require: '?ngModel',
         scope: true,
-        compile: function(element, attrs, transclude) {
+        compile: function (element, attrs, transclude) {
             if (attrs.ngModel && !attrs.ngDelay) {
                 attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
             }
 
-            return function($scope, $el, attrs, ctrl) {
+            return function ($scope, $el, attrs, ctrl) {
                 // when ng-model is changed from inside directive
-                $scope.update = function() {
+                $scope.update = function () {
                     $scope.value = $scope.date + " " + $scope.time;
                     if (typeof ctrl != 'undefined') {
                         $el.find('ul[datepicker-popup-wrap]').hide();
-                        $timeout(function() {
+                        $timeout(function () {
                             ctrl.$setViewValue($scope.value);
                         }, 0);
                     }
                 };
 
-                $scope.changeDate = function(e) {
+                $scope.changeDate = function (e) {
                     $scope.date = dateFilter(e.date, 'yyyy-MM-dd');
                     $scope.update();
                 }
 
-                $scope.changeTime = function(e) {
+                $scope.changeTime = function (e) {
                     $scope.time = dateFilter(e.time, 'HH:mm:00');
                     $scope.update();
                 }
 
-                $scope.openDatePicker = function($event) {
+                $scope.openDatePicker = function ($event) {
                     $event.preventDefault();
                     $event.stopPropagation();
 
@@ -42,20 +42,20 @@ app.directive('dateTimePicker', function($timeout, dateFilter) {
                 };
 
                 $el.on({
-                    blur: function() {
+                    blur: function () {
                         if ($(this).attr('mouse-inside') == '0') {
                             $el.find('ul[datepicker-popup-wrap]').hide();
                         }
                     },
-                    mouseover: function() {
+                    mouseover: function () {
                         $(this).attr('mouse-inside', '1');
                     },
-                    mouseout: function() {
+                    mouseout: function () {
                         $(this).attr('mouse-inside', '0');
                     },
                 }, 'ul[datepicker-popup-wrap] table');
 
-                $scope.splitTime = function(delimiter, time) {
+                $scope.splitTime = function (delimiter, time) {
                     var ret = {};
                     if (time.split(delimiter).length > 1) {
                         ret.hour = time.split(delimiter)[0];
@@ -64,7 +64,7 @@ app.directive('dateTimePicker', function($timeout, dateFilter) {
                     return ret;
                 }
 
-                $scope.parseTime = function(time) {
+                $scope.parseTime = function (time) {
                     time = time.trim();
                     var newtime = {};
                     if (time.split(":").length > 1) {
@@ -81,9 +81,24 @@ app.directive('dateTimePicker', function($timeout, dateFilter) {
                     return d;
                 }
 
-                $scope.splitDateTime = function() {
-                    if ($scope.value == null || ($scope.value != null && $scope.value.trim() == '')) {
-                        $scope.value = dateFilter(new Date(), 'yyyy-MM-dd HH:mm:00');
+                $scope.splitDateTime = function () {
+                    if ($scope.value == null || ($scope.value != null && $scope.value.trim() == '') || $scope.value == '0000-00-00' || $scope.value == '0000-00-00 00:00:00') {
+                        if ($scope.defaultToday == 'Yes') {
+                            switch ($scope.fieldType) {
+                                case 'datetime':
+                                    $scope.value = dateFilter(new Date(), 'yyyy-MM-dd HH:mm:00');
+                                    break;
+                                case 'date':
+                                    $scope.value = dateFilter(new Date(), 'yyyy-MM-dd');
+                                    break;
+                                case 'time':
+                                    $scope.value = dateFilter(new Date(), 'HH:mm:00');
+                                    break;
+                            }
+
+                        } else {
+                            $scope.value = '';
+                        }
                     }
 
                     var split = $scope.value.trim().split(' ');
@@ -119,7 +134,7 @@ app.directive('dateTimePicker', function($timeout, dateFilter) {
 
                 // when ng-model is changed from outside directive
                 if (typeof ctrl != 'undefined') {
-                    ctrl.$render = function() {
+                    ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;
 
@@ -133,18 +148,19 @@ app.directive('dateTimePicker', function($timeout, dateFilter) {
 
                 // set default value
                 $scope.value = $el.find("data[name=value]").html().trim();
-                $scope.date = new Date();
+                $scope.defaultToday = $el.find("data[name=default_today]").html().trim();
+                $scope.date = null;
                 $scope.time = "";
                 $scope.splitDateTime();
 
                 $scope.modelClass = $el.find("data[name=model_class]").html();
-               
+
                 $scope.fieldType = $el.find("data[name=field_type]").text();
                 $scope.dateOptions = JSON.parse($el.find("data[name=date_options]").text());
 
                 // if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {
-                    $timeout(function() {
+                    $timeout(function () {
                         var ngModelValue = $scope.$eval(attrs.ngModel);
                         if (typeof ngModelValue != "undefined") {
                             $scope.value = ngModelValue;

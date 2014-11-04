@@ -45,7 +45,12 @@ class DevMenuEditor extends Form {
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
-                'type' => 'TextField',
+                'fieldOptions' => array (
+                    'auto-grow' => '',
+                    'style' => 'word-break:break-all;',
+                ),
+                'type' => 'TextArea',
+                'fieldHeight' => '',
             ),
             array (
                 'column1' => array (
@@ -77,14 +82,14 @@ class DevMenuEditor extends Form {
                         'type' => 'IconPicker',
                     ),
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'column2' => array (
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'type' => 'ColumnField',

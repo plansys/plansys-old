@@ -55,16 +55,43 @@ class UserController extends Controller {
 
         if (isset($_POST["DevUserForm"])) {
             $model->attributes = $_POST["DevUserForm"];
+
+            if (isset($_GET['u']) && isset($_GET['f'])) {
+                $model->username = $_GET['u'];
+                $model->fullname = $_GET['f'];
+                $model->useLdap = true;
+            }
+
             if ($model->save()) {
                 $model->subscribed = "on";
-                $this->redirect(array("index"));
+                Yii::app()->user->setFlash('info', 'User Berhasil dibuat !');
+
+                if (isset($_GET['ldap'])) {
+                    $this->redirect(array("ldap"));
+                } else {
+                    $this->redirect(array("index"));
+                }
             }
         }
         $this->renderForm("users.user.DevUserForm", $model);
     }
 
+    public function actionLdapSearch($q = "*") {
+        $result = Yii::app()->ldap->user()->searchRaw($q);
+
+        echo json_encode($result);
+    }
+
+    public function actionLdap() {
+        $this->renderForm("users.user.DevUserLdap", [
+            'data' => Yii::app()->ldap->user()->searchRaw('*')
+        ]);
+    }
+
     public function actionIndex() {
-        $this->renderForm("users.user.DevUserIndex");
+        $this->renderForm("users.user.DevUserIndex", [
+            'useLdap' => Yii::app()->user->useLdap
+        ]);
     }
 
 }

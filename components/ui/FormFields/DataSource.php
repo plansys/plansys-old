@@ -227,13 +227,17 @@ class DataSource extends FormField {
 
         if (class_exists($class)) {
             $fb = FormBuilder::load($class);
-            $fb->model = $class::model()->findByPk(@$post['model_id']);
-            if (is_null($fb->model)) {
-                $fb->model = new $class;
+            $field = $fb->findField(array('name' => $post['name']));
+
+            $this->queryParams = (is_array(@$post['params']) ? @$post['params'] : array());
+
+            if ($field['fieldType'] != "php" && method_exists($class, 'model')) {
+                $fb->model = $class::model()->findByPk(@$post['model_id']);
+                if (is_null($fb->model)) {
+                    $fb->model = new $class;
+                }
             }
 
-            $field = $fb->findField(array('name' => $post['name']));
-            $this->queryParams = (is_array(@$post['params']) ? @$post['params'] : array());
             $this->attributes = $field;
             $this->builder = $fb;
 
@@ -419,7 +423,10 @@ class DataSource extends FormField {
     }
 
     public function execute($params = array()) {
+        $params = array_merge($params, $this->queryParams);
+
         $data = $this->evaluate($this->php, true, array('params' => $params));
+
         $count = count($data);
         $countFunc = 'count($data);';
         if ($this->enablePaging == 'Yes') {
@@ -508,7 +515,6 @@ class DataSource extends FormField {
 
                 $params = isset($postedParams['params']) ? $postedParams['params'] : array();
                 $criteria['params'] = array_merge($params, $bracket['params']);
-
             } else if ($bracket['sql'] == '') {
                 unset($criteria['condition']);
             }
@@ -551,6 +557,10 @@ class DataSource extends FormField {
         } else {
             $criteria['select'] = 'count(1) as id';
             $rawCount = $this->model->getRelated($this->relationTo, true, $criteria);
+            if (!is_array($rawCount)) {
+                throw New Exception('Relation defintion is wrong! check your relations() function in model');
+            }
+
             $count = count($rawCount) > 0 ? $rawCount[0]->id : 0;
         }
 

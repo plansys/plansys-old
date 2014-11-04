@@ -1,4 +1,4 @@
-<div ps-data-filter class="data-filter">
+<div ng-show="available" ps-data-filter class="data-filter">
     <data name="filters" class="hide"><?= json_encode($this->filters); ?></data>
     <data name="operators" class="hide"><?= json_encode($this->filterOperators); ?></data>
     <data name="datasource" class="hide"><?= $this->datasource; ?></data>

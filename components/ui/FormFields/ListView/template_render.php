@@ -1,5 +1,5 @@
     
-<div list-view <?= $this->expandAttributes($this->options) ?>>
+<div list-view  <?= $this->expandAttributes($this->options) ?>>
 
     <!-- label -->
     <?php if ($this->label != ""): ?>
@@ -10,7 +10,7 @@
     <?php endif; ?>
     <!-- /label -->
 
-    <div class="<?= $this->fieldColClass ?>">
+    <div ng-controller="ListViewController" class="<?= $this->fieldColClass ?>">
         <!-- data -->
         <data name="name" class="hide"><?= $this->name; ?></data>
         <data name="value" class="hide"><?= json_encode($this->value) ?></data>
@@ -59,20 +59,20 @@
                     </li>
                 </ol>
             </div>
-            
+
             <div ng-show="loading" class="list-view-loading">
                 <i class="fa fa-link"></i>
                 Loading ListView...
             </div>
         <?php endif; ?>
-        
+
         <div ng-repeat="(key,val) in value">
             <div ng-repeat="(k,v) in val">
                 <input name="<?= $this->renderName ?>[{{key}}][{{k}}]" type="hidden" value='{{v}}' />
             </div>
         </div>
         <input ng-if="value.length == 0" name="<?= $this->renderName ?>" type="hidden" value='' />
-        
+
         <button type="button" ng-click="addItem($event)" 
                 style="margin:0px;"
                 class="btn list-view-add btn-default btn-sm">
@@ -88,4 +88,12 @@
         <?php endif ?>
         <!-- /error -->
     </div>
+    <script type="text/javascript">
+        app.controller("ListViewController", function ($scope, $parse, $timeout, $http, $localStorage) {
+            $timeout(function () {
+<?= $inlineJS ?>
+            });
+        });
+        registerController("ListViewController");
+    </script>
 </div>

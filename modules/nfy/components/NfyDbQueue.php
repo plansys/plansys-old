@@ -42,8 +42,8 @@ class NfyDbQueue extends NfyQueue {
             'body' => $body,
             'identifier' => $identifier
             ), false);
-        
-        
+
+
         return $this->formatMessage($message);
     }
 
@@ -85,19 +85,30 @@ class NfyDbQueue extends NfyQueue {
                     $k = 'uid';
                 }
 
-                $cat = $k . '_' . $v;
+                if (is_string($v)) {
+                    $cat = $k . '_' . $v;
 
-                if ($k == 'role') {
-                    $cat = $cat . '.%';
+                    if ($k == 'role') {
+                        $cat = $cat . '.%';
+                    }
+
+                    $sc[] = $cat;
+                } else if (is_array($v)) {
+                    foreach ($v as $r) {
+                        $cat = $k . '_' . $r;
+
+                        if ($k == 'role') {
+                            $cat = $cat . '.%';
+                        }
+
+                        $sc[] = $cat;
+                    }
                 }
-
-                $sc[] = $cat;
             }
             $category = $sc;
         }
 
         $subscriptions = NfyDbSubscription::model()->current()->withQueue($this->id)->matchingCategory($category)->findAll();
-        
         $trx = $queueMessage->getDbConnection()->getCurrentTransaction() !== null ? null : $queueMessage->getDbConnection()->beginTransaction();
 
         // empty($subscriptions) &&

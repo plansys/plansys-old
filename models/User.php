@@ -3,11 +3,13 @@
 class User extends ActiveRecord {
 
     public $subscribed = "";
+    public $useLdap = false;
 
     public function afterFind() {
         parent::afterFind();
         $this->subscribed = (Yii::app()->nfy->isSubscribed($this->id) ? "on" : "");
-        
+        $this->useLdap = Yii::app()->user->useLdap;
+
         return true;
     }
 
@@ -22,7 +24,7 @@ class User extends ActiveRecord {
         if (!$this->isNewRecord) {
             Yii::app()->nfy->unsubscribe($this->id, null, true);
         }
-        
+
         if ($this->subscribed === "on" || $this->isNewRecord) {
             $roles = array();
 
@@ -31,16 +33,16 @@ class User extends ActiveRecord {
             } else {
                 $db = [];
             }
-            
+
             foreach ($db as $r) {
                 $roles[] = "role_" . $r['role_name'] . ".";
             }
-            
+
             $category = array_merge(array(
                 'uid_' . $this->id,
                 ), $roles);
-            
-            
+
+
             Yii::app()->nfy->subscribe($this->id, $this->username, $category);
             $this->subscribed = true;
         } else {
@@ -58,10 +60,15 @@ class User extends ActiveRecord {
     }
 
     public function rules() {
+        $passwordReq = ', password, email, phone, nip';
+        if ($this->useLdap) {
+            $passwordReq = '';
+        }
+        
+
         return array(
-            array('nip, fullname, email, phone, username, password', 'required'),
+            array(' fullname,  username' . $passwordReq, 'required'),
             array('username', 'unique'),
-            array('nip, fullname, email, username, password', 'length', 'max' => 255),
             array('last_login', 'safe')
         );
     }

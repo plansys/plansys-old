@@ -31,7 +31,6 @@ app.controller("NfyWidgetController", function ($scope, $http, $timeout, $localS
     }
 
     $scope.parseDate = function (date) {
-        console.log(date);
         if (typeof date == "string") {
             var t = date.split(/[- :]/);
             var d = new Date(t[0], t[1] - 1, t[2], t[3], t[4], t[5] || 0);
