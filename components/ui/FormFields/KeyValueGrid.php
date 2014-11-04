@@ -23,8 +23,8 @@ class KeyValueGrid extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
-                'type' => 'Text',
                 'value' => '<hr/>',
+                'type' => 'Text',
             ),
             array (
                 'label' => 'Label',
@@ -94,6 +94,19 @@ class KeyValueGrid extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
+                'label' => 'Allow Extract Key',
+                'name' => 'allowExtractKey',
+                'options' => array (
+                    'ng-model' => 'active.allowExtractKey',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                ),
+                'listExpr' => 'array(\\\'No\\\',\\\'Yes\\\')',
+                'labelWidth' => '5',
+                'fieldWidth' => '3',
+                'type' => 'DropDownList',
+            ),
+            array (
                 'label' => 'Options',
                 'name' => 'options',
                 'show' => 'Show',
@@ -114,7 +127,7 @@ class KeyValueGrid extends FormField {
     public $name = '';
 	
     /** @var string $value */
-    public $value = '';
+    public $value = array();
 	
     /** @var string $show */
     public $show = 'Hide';
@@ -130,6 +143,9 @@ class KeyValueGrid extends FormField {
 	
     /** @var string $allowDoubleQuote */
     public $allowDoubleQuote = 'No';
+	
+	/** @var string $allowExtractKey */
+    public $allowExtractKey = 'No';
 	
     /** @var string $toolbarName */
     public static $toolbarName = "KeyValue Grid";

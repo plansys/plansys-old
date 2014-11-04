@@ -51,12 +51,12 @@ class ListView extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
-                'type' => 'Text',
                 'value' => '<div ng-show=\"active.fieldTemplate == \'form\'\" class=\"well well-sm\">
 Use this code to access current item: <br/> 
 <code>ng-model = value[$index]</code><br/>
     <code> ng-change = updateListView() </code> 
 </div>',
+                'type' => 'Text',
             ),
             array (
                 'label' => 'Label',
@@ -96,8 +96,8 @@ Use this code to access current item: <br/>
                         'type' => 'TextField',
                     ),
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'column2' => array (
@@ -115,27 +115,27 @@ Use this code to access current item: <br/>
                         'type' => 'TextField',
                     ),
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'column3' => array (
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'column4' => array (
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'type' => 'ColumnField',
             ),
             array (
-                'type' => 'Text',
                 'value' => '<hr/>',
+                'type' => 'Text',
             ),
             array (
                 'label' => 'Options',

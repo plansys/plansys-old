@@ -20,5 +20,6 @@
                    ng-model="color" value="<?= $this->color ?>"/>
 		
         <!-- /field -->
+		</div>
     </div>
 </div>
