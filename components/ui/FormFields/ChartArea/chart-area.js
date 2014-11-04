@@ -27,7 +27,6 @@ app.directive('psChartArea', function ($timeout) {
 				var chartData = [];				
 				for(i in $scope.series)
 				{
-					console.log($scope.series[i].label, $scope.tickSeries);
 					if($scope.series[i].label == $scope.tickSeries) {
 						xAxis = $scope.series[i].value.map(Number);
 					}
