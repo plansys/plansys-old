@@ -68,7 +68,7 @@ class Widget extends CApplicationComponent {
                 }
                 
                 Yii::app()->clientScript->registerScriptFile(
-                    Yii::app()->assetManager->publish($file), CClientScript::POS_END
+                    Asset::publish($file), CClientScript::POS_END
                 );
             }
         }
@@ -83,7 +83,7 @@ class Widget extends CApplicationComponent {
         if (count($includeJS) > 0) {
             foreach ($includeJS as $js) {
                 $class = get_class($this);
-                $html[] = Yii::app()->assetManager->publish(
+                $html[] = Asset::publish(
                     Yii::getPathOfAlias("application.components.ui.Widgets.{$class}") . '/' . $js, true
                 );
             }

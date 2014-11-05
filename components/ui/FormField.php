@@ -322,7 +322,7 @@ class FormField extends CComponent {
                 $jspath = realpath(Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js);
 
                 if (is_dir($jspath)) {
-                    $path = Yii::app()->assetManager->publish($jspath);
+                    $path = Asset::publish($jspath);
                     $files = glob($jspath . "/*");
 
                     foreach ($files as $p) {
@@ -331,7 +331,7 @@ class FormField extends CComponent {
                     }
                 } else {
                     Yii::app()->clientScript->registerScriptFile(
-                        Yii::app()->assetManager->publish($jspath, true), CClientScript::POS_END
+                        Asset::publish($jspath, true), CClientScript::POS_END
                     );
                 }
             }
@@ -342,7 +342,7 @@ class FormField extends CComponent {
             $class = get_class($this);
             $csspath = Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css;
             Yii::app()->clientScript->registerCSSFile(
-                Yii::app()->assetManager->publish($csspath, true), CClientScript::POS_HEAD
+                Asset::publish($csspath, true), CClientScript::POS_HEAD
             );
         }
     }
@@ -359,14 +359,14 @@ class FormField extends CComponent {
                 $jspath = realpath(Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js);
 
                 if (is_dir($jspath)) {
-                    $path = Yii::app()->assetManager->publish($jspath);
+                    $path = Asset::publish($jspath);
                     $files = glob($jspath . "/*");
                     foreach ($files as $p) {
                         $p = str_replace($jspath, '', realpath($p));
                         $html[] = $path . str_replace("\\", "/", $p);
                     }
                 } else {
-                    $html[] = Yii::app()->assetManager->publish($jspath);
+                    $html[] = Asset::publish($jspath);
                 }
             }
         }
@@ -375,7 +375,7 @@ class FormField extends CComponent {
         if (count($includeCSS) > 0) {
             foreach ($includeCSS as $css) {
                 $class = get_class($this);
-                $html[] = Yii::app()->assetManager->publish(
+                $html[] = Asset::publish(
                     Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css, true
                 );
             }
