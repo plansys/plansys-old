@@ -432,41 +432,48 @@ class RepoManager extends CComponent {
             }
         }
 
-        $olddir = getcwd();
-        chdir($dir);
-        $output = "";
-        $awk = 'awk';
-        $ls = 'ls';
-        if (substr(php_uname(), 0, 7) == "Windows") {
-            $awk = Yii::getPathOfAlias('application.commands.shell.awk') . ".exe";
-            $ls = Yii::getPathOfAlias('application.commands.shell.ls') . ".exe";
-        }
-        $command = $ls . ' -la';
-        exec($command, $output);
-        chdir($olddir);
 
+        ## listing dir
+        if ($handle = opendir($path)) {
+            $i = 0;
+            $count = 0;
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry != "." && $entry != "..") {
+                    $isPatternMatch = false;
+                    if ($pattern != "") {
+                        $f = RepoManager::parseName($entry, $preparedPattern, false);
+                        if (count($f) > 1) {
+                            $isPatternMatch = true;
+                        }
+                    } else {
+                        $f = [];
+                        $f['file'] = $entry;
+                        $isPatternMatch = true;
+                    }
 
-        $sout = [];
-        foreach ($output as $k => $o) {
-            $f = explode(" ", $o);
-            if ($k < 3)
-                continue;
-            $idx = 0;
-            $n = [];
-            foreach ($f as $j) {
-                if ($j == '' && $idx < 9)
-                    continue;
+                    $isNameMatch = true;
+                    if (count($where) > 0) {
+                        $isNameMatch = RepoManager::isColumnMatch($f, $where);
+                    }
 
-                $idx++;
-                if ($idx == 1 || $idx == 5 || $idx == 9) {
-                    $n[] = $j;
-                } else if ($idx > 9) {
-                    $n[count($n) - 1] .= " " . $j;
+                    if ($isPatternMatch && $isNameMatch) {
+                        if (count($order) > 0) {
+                            $colname = $f[$order['field']];
+                            while (isset($result[$colname])) {
+                                $colname .= "_";
+                            }
+                            $result[$colname] = $f;
+                        } else if ($count >= $pageStart && $count < $pageEnd && $isPatternMatch) {
+                            $result[] = $f;
+                        }
+                        $count++;
+                    }
+                    $i++;
                 }
             }
-
-            $sout[] = $n;
+            closedir($handle);
         }
+        RepoManager::$fileCounts[md5($path . $pattern . json_encode($params))] = $count;
 
         $list = [];
         foreach ($sout as $f) {
