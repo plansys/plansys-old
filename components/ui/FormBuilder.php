@@ -630,7 +630,7 @@ class FormBuilder extends CComponent {
             foreach ($this->form['includeJS'] as $script):
                 $src = $formDir . $script;
                 if (is_file($src)) {
-                    $scriptUrl = Yii::app()->assetManager->publish($src);
+                    $scriptUrl = Asset::publish($src);
 
                     if ($isAjax) {
                         echo '

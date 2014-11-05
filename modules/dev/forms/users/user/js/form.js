@@ -54,4 +54,4 @@ if ($scope.params.u && $scope.params.f && $scope.isNewRecord) {
     $scope.model.useLdap = true;
 }
 
-$scope.backUrl = $scope.params.ldap ? 'ldap' : 'index?t=' . $scope.params.t;
+$scope.backUrl = $scope.params.ldap ? 'ldap' : 'index';

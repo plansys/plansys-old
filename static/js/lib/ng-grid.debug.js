@@ -129,9 +129,10 @@
                         if (visibleCols[newColumnIndex].enableCellEdit == false) {
                             lastInRow = true;
                             newColumnIndex = 0;
+                            grid.$viewport.scrollLeft(0);
                             while (newColumnIndex < visibleCols.length - 1 && visibleCols[newColumnIndex].enableCellEdit == false) {
                                 newColumnIndex++;
-                                scrollTo = grid.$viewport.scrollLeft() + visibleCols[newColumnIndex].width;
+                                scrollTo = grid.$viewport.scrollLeft();
                                 grid.$viewport.scrollLeft(scrollTo);
                             }
                         }
