@@ -673,13 +673,24 @@ class ActiveRecord extends CActiveRecord {
         return $array;
     }
 
-    public static function batchPost($model, $post, $name) {
+    public static function batchPost($model, $post, $name, $attr = array()) {
+        $cols = array_keys($attr);
 
         ## insert
         if (isset($post[$name . 'Insert']) && is_string($post[$name . 'Insert'])) {
             $post[$name . 'Insert'] = json_decode($post[$name . 'Insert'], true);
         }
         if (count(@$post[$name . 'Insert']) > 0) {
+            if (count($attr) > 0) {
+                foreach ($post[$name . 'Insert'] as $k => $i) {
+                    foreach ($attr as $a => $b) {
+                        if (isset($post[$name . 'Insert'][$k])) {
+                            $post[$name . 'Insert'][$k][$a] = $b;
+                        }
+                    }
+                }
+            }
+
             ActiveRecord::batchInsert($model, $post[$name . 'Insert']);
         }
 
@@ -688,6 +699,16 @@ class ActiveRecord extends CActiveRecord {
             $post[$name . 'Update'] = json_decode($post[$name . 'Update'], true);
         }
         if (count(@$post[$name . 'Update']) > 0) {
+            if (count($attr) > 0) {
+                foreach ($post[$name . 'Update'] as $k => $i) {
+                    foreach ($attr as $a => $b) {
+                        if (isset($post[$name . 'Update'][$k])) {
+                            $post[$name . 'Update'][$k][$a] = $b;
+                        }
+                    }
+                }
+            }
+
             ActiveRecord::batchUpdate($model, $post[$name . 'Update']);
         }
 

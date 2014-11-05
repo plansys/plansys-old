@@ -52,7 +52,9 @@ class RepoManager extends CComponent {
         if (!isset(RepoManager::$fileCounts[md5($path . $pattern . json_encode($params))])) {
             RepoManager::listAll($path, $pattern, $params);
         }
-        return RepoManager::$fileCounts[md5($path . $pattern . json_encode($params))];
+        $count = @RepoManager::$fileCounts[md5($path . $pattern . json_encode($params))];
+
+        return (is_numeric($count) ? $count : 0);
     }
 
     public static function preparePattern($pattern) {

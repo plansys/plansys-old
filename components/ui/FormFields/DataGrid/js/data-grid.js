@@ -348,7 +348,10 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         opt.class = (opt.class || '') + ' btn ' + btnSize + ' btn-default';
 
                         if (typeof opt.href != "undefined") {
-                            opt.href = $scope.generateUrl(opt.href);
+                            if (opt.href.substr(0, 4) == "url:") {
+                                var url = opt.href.substr(4);
+                                opt.href = '{{' + $scope.generateUrl(url) + '}}';
+                            }
                             tag = "a";
                         }
 
@@ -432,7 +435,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         // prepare gridOptions
                         evalArray($scope.gridOptions);
                         $scope.gridOptions.data = 'data';
-                        $scope.gridOptions.plugins = [new ngGridFlexibleHeightPlugin()];
+                        $scope.gridOptions.plugins = [new ngGridFlexibleHeightPlugin(), new anchorLastColumn()];
                         $scope.gridOptions.headerRowHeight = 28;
                         $scope.gridOptions.rowHeight = 28;
                         $scope.gridOptions.multiSelect = $scope.gridOptions.multiSelect || false;

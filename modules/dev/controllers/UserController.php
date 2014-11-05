@@ -43,7 +43,6 @@ class UserController extends Controller {
 
             $model->attributes = $_POST["DevUserForm"];
             if ($model->save()) {
-
                 Yii::app()->user->setFlash('info', 'User berhasil disimpan');
             }
         }
@@ -78,7 +77,6 @@ class UserController extends Controller {
 
     public function actionLdapSearch($q = "*") {
         $result = Yii::app()->ldap->user()->searchRaw($q);
-
         echo json_encode($result);
     }
 

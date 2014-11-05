@@ -7,6 +7,7 @@ class DataGridListFormButtonItem extends Form {
                 'name' => 'label',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
+                'postfix' => 'Label',
                 'options' => array (
                     'ng-model' => 'item.label',
                     'ng-change' => 'updateListView()',
@@ -16,7 +17,6 @@ class DataGridListFormButtonItem extends Form {
                     'placeholder' => 'Label',
                 ),
                 'type' => 'TextField',
-                'postfix' => 'Label',
             ),
             array (
                 'name' => 'icon',
@@ -24,7 +24,7 @@ class DataGridListFormButtonItem extends Form {
                 'fieldWidth' => '12',
                 'postfix' => 'Icon',
                 'options' => array (
-                    'ng-model' => 'value[$index].icon',
+                    'ng-model' => 'item.icon',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
                 ),
@@ -37,7 +37,7 @@ class DataGridListFormButtonItem extends Form {
                 'label' => 'Button Options',
                 'show' => 'Show',
                 'options' => array (
-                    'ng-model' => 'value[$index].options',
+                    'ng-model' => 'item.options',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
                 ),

@@ -126,6 +126,15 @@
                     }
                     if (newColumnIndex == visibleCols.length - 1) {
                         grid.$viewport.scrollLeft(99999);
+                        if (visibleCols[newColumnIndex].enableCellEdit == false) {
+                            lastInRow = true;
+                            newColumnIndex = 0;
+                            while (newColumnIndex < visibleCols.length - 1 && visibleCols[newColumnIndex].enableCellEdit == false) {
+                                newColumnIndex++;
+                                scrollTo = grid.$viewport.scrollLeft() + visibleCols[newColumnIndex].width;
+                                grid.$viewport.scrollLeft(scrollTo);
+                            }
+                        }
                     }
                 } else {
                     newColumnIndex = 0;

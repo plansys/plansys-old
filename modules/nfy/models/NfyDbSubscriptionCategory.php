@@ -43,6 +43,7 @@ class NfyDbSubscriptionCategory extends CActiveRecord
 			array('is_exception', 'boolean'),
 		);
 	}
+    
 
 	/**
 	 * @return array relational rules.

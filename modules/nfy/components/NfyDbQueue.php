@@ -351,22 +351,27 @@ class NfyDbQueue extends NfyQueue {
             $categories = array($categories);
 
         foreach ($categories as $category) {
-            try {
-                $subscriptionCategory = new NfyDbSubscriptionCategory;
-                $subscriptionCategory->setAttributes(array(
-                    'subscription_id' => $subscription_id,
-                    'category' => str_replace('*', '%', $category),
-                    'is_exception' => $are_exceptions ? 1 : 0,
-                ));
+//            try {
+            $a = Yii::app()->db->createCommand('INSERT INTO p_nfy_subscription_categories (subscription_id,category,is_exception) VALUES (' . $subscription_id . ',"' . str_replace('*', '%', $category) . '",' . ($are_exceptions ? 1 : 0) . ')')->execute();
 
-                if (!$subscriptionCategory->save()) {
-                    throw new CException(Yii::t('NfyModule.app', 'Failed to save category {category} for subscription {subscription_id}', array('{category}' => $category, '{subscription_id}' => $subscription_id)));
-                }
-            } catch (CDbException $ex) {
-                // this is probably due to constraint violation, ignore
-                // TODO: distinct from constraint violation and other database exceptions
-            }
+//                $subscriptionCategory = new NfyDbSubscriptionCategory;
+//                $subscriptionCategory->setAttributes(array(
+//                    'subscription_id' => $subscription_id,
+//                    'category' => str_replace('*', '%', $category),
+//                    'is_exception' => $are_exceptions ? 1 : 0,
+//                ));
+//
+//                $saved = $subscriptionCategory->save();
+//
+//                if (!$saved) {
+//                    throw new CException(Yii::t('NfyModule.app', 'Failed to save category {category} for subscription {subscription_id}', array('{category}' => $category, '{subscription_id}' => $subscription_id)));
+//                }
+//            } catch (CDbException $ex) {
+//                // this is probably due to constraint violation, ignore
+//                // TODO: distinct from constraint violation and other database exceptions
+//            }
         }
+
         return true;
     }
 

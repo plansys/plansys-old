@@ -27,12 +27,8 @@ class User extends ActiveRecord {
 
         if ($this->subscribed === "on" || $this->isNewRecord) {
             $roles = array();
-
-            if ($this->isNewRecord) {
-                $db = Yii::app()->db->createCommand('select * from p_user_role p inner join p_role r on p.role_id = r.id and p.user_id = ' . $this->id)->queryAll();
-            } else {
-                $db = [];
-            }
+            
+            $db = Yii::app()->db->createCommand('select DISTINCT role_name from p_user_role p inner join p_role r on p.role_id = r.id and p.user_id = ' . $this->id)->queryAll();
 
             foreach ($db as $r) {
                 $roles[] = "role_" . $r['role_name'] . ".";
@@ -64,7 +60,7 @@ class User extends ActiveRecord {
         if ($this->useLdap) {
             $passwordReq = '';
         }
-        
+
 
         return array(
             array(' fullname,  username' . $passwordReq, 'required'),

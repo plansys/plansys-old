@@ -164,7 +164,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                                     if (typeof $scope.data[i].id == "undefined")
                                         continue;
 
-                                    if ($scope.deleteData.indexOf($scope.data[i].id) >= 0) {
+                                    if ($scope.deleteData != null && $scope.deleteData.indexOf($scope.data[i].id) >= 0) {
                                         $scope.data.splice(i, 1);
                                     }
                                 }
