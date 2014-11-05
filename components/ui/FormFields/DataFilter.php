@@ -151,6 +151,7 @@ class DataFilter extends FormField {
         $sql = "";
         $param = "";
         $pcolumn = preg_replace('/[^\da-z]/i', '_', $column);
+        
         switch ($filter['type']) {
             case "string":
                 if ($filter['value'] != "" || $filter['operator'] == 'Is Empty') {
@@ -293,12 +294,10 @@ class DataFilter extends FormField {
     public static function generateParams($paramName, $params, $template = '', $paramOptions = array()) {
         $sql = array();
         $flatParams = array();
-
         $paramName = preg_replace('/[^\da-z]/i', '_', $paramName);
 
         if (is_array($params) && count($params) > 0) {
             foreach ($params as $column => $filter) {
-
                 $param = DataFilter::buildSingleParam($paramName, $column, $filter);
                 $sql[] = $param['sql'];
                 if (is_array($param['param'])) {

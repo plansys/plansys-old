@@ -554,10 +554,11 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                 $timeout(function () {
                     var showCount = 0;
                     var ds = $scope.$parent[$scope.datasource];
-                    
+
                     if (ds.data.length > 0)
                         $scope.available = true;
 
+                    var defaultValueAvailable = false;
                     for (i in $scope.filters) {
                         var f = $scope.filters[i];
                         var dateCondition = (f.filterType == 'date' && ['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(f.defaultOperator) >= 0);
@@ -592,11 +593,14 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                 f.value = f.defaultValue;
                             }
                             $scope.updateFilter(f, null, false);
+                            defaultValueAvailable = true;
                         }
                     }
 
-                    $scope.$parent[$scope.datasource].query(function () {
-                    });
+                    if (defaultValueAvailable) {
+                        $scope.$parent[$scope.datasource].query(function () {
+                        });
+                    }
                 });
 
             }
