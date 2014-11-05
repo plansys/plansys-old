@@ -24,11 +24,15 @@ app.get('/:id', sse, function (req, res) {
     res.streamQuery = setInterval(function () {
         pool.getConnection(function (err, conn) {
             conn.query("USE " + config.db.dbname, function (err, rows) {
-                var sql = 'SELECT t.*, p.fullname as sender_name, r.role_name as sender_role FROM p_nfy_messages t \
+                // epic sql, do not edit!
+                var sql = '(SELECT t.*, "Notification" as sender_name, "SYSTEM" as sender_role FROM p_nfy_messages t \
+                               where status = 0 AND sender_id = 0 AND subscription_id = ' + req.params.id + ') \
+                           UNION \
+                           (SELECT t.*, p.fullname as sender_name, r.role_name as sender_role FROM p_nfy_messages t \
                                inner join p_user p      on t.sender_id = p.id \
                                inner join p_user_role q on q.user_id = p.id \
                                inner join p_role r      on q.role_id = r.id \
-                                WHERE status = 0 AND subscription_id = ' + req.params.id;
+                                WHERE status = 0 AND subscription_id = ' + req.params.id + ')';
 
                 conn.query(sql, function (err, rows) {
                     if (typeof rows != "undefined" && rows.length > 0) {

@@ -455,7 +455,7 @@ class DataSource extends FormField {
         $params = array_merge($params, $this->queryParams);
         if (trim($this->sql) == "")
             return array();
-
+        
         $db = Yii::app()->db;
         $template = DataSource::generateTemplate($this->sql, $params, $this);
 
