@@ -24,7 +24,7 @@ class NfyDbQueue extends NfyQueue {
      * @param string $body message body
      * @return NfyDbMessage
      */
-    protected function createMessage($body) {
+    protected function createMessage($body, $sender_id = null) {
         $message = new NfyDbMessage;
         $bodyObj = json_decode($body, true);
         if (isset($bodyObj['identifier'])) {
@@ -33,15 +33,19 @@ class NfyDbQueue extends NfyQueue {
             $identifier = '';
         }
 
+        if (is_null($sender_id) && $sender_id !== 0) {
+            $sender_id = Yii::app()->hasComponent('user') ? Yii::app()->user->getId() : null;
+        }
+
         $message->setAttributes(array(
             'queue_id' => $this->id,
             'timeout' => $this->timeout,
-            'sender_id' => Yii::app()->hasComponent('user') ? Yii::app()->user->getId() : null,
+            'sender_id' => $sender_id,
             'status' => NfyMessage::AVAILABLE,
             'created_on' => date('Y-m-d H:i:s'),
             'body' => $body,
             'identifier' => $identifier
-            ), false);
+                ), false);
 
 
         return $this->formatMessage($message);
@@ -66,10 +70,20 @@ class NfyDbQueue extends NfyQueue {
             $category = $message['to'];
         }
 
+        $sender_id = null;
+        if (isset($message['from'])) {
+            if ($message['from'] != 'system') {
+                $sender_id = $message['from'];
+            } else {
+                $sender_id = 0;
+            }
+        }
+
         if (!is_string($message)) {
             $message = json_encode($message);
         }
-        $queueMessage = $this->createMessage($message);
+
+        $queueMessage = $this->createMessage($message, $sender_id);
 
         if ($this->beforeSend($queueMessage) !== true) {
             Yii::log(Yii::t('NfyModule.app', "Not sending message '{msg}' to queue {queue_label}.", array('{msg}' => $queueMessage->body, '{queue_label}' => $this->label)), CLogger::LEVEL_INFO, 'nfy');
@@ -127,10 +141,10 @@ class NfyDbQueue extends NfyQueue {
 
             if (!$subscriptionMessage->save()) {
                 Yii::log(Yii::t('NfyModule.app', "Failed to save message '{msg}' in queue {queue_label} for the subscription {subscription_id}.", array(
-                        '{msg}' => $queueMessage->body,
-                        '{queue_label}' => $this->label,
-                        '{subscription_id}' => $subscription->id,
-                    )), CLogger::LEVEL_ERROR, 'nfy');
+                            '{msg}' => $queueMessage->body,
+                            '{queue_label}' => $this->label,
+                            '{subscription_id}' => $subscription->id,
+                        )), CLogger::LEVEL_ERROR, 'nfy');
                 $success = false;
             }
 
@@ -173,15 +187,15 @@ class NfyDbQueue extends NfyQueue {
 
         if ($status === null) {
             $messages = NfyDbMessage::model()
-                ->withQueue($this->id)
-                ->withSubscriber($subscriber_id)
-                ->findAll(array('index' => $pk, 'limit' => $limit, 'order' => 't.id desc'));
+                    ->withQueue($this->id)
+                    ->withSubscriber($subscriber_id)
+                    ->findAll(array('index' => $pk, 'limit' => $limit, 'order' => 't.id desc'));
         } else {
             $messages = NfyDbMessage::model()
-                ->withQueue($this->id)
-                ->withSubscriber($subscriber_id)
-                ->withStatus($status, $this->timeout)
-                ->findAll(array('index' => $pk, 'limit' => $limit, 'order' => 't.id desc'));
+                    ->withQueue($this->id)
+                    ->withSubscriber($subscriber_id)
+                    ->withStatus($status, $this->timeout)
+                    ->findAll(array('index' => $pk, 'limit' => $limit, 'order' => 't.id desc'));
         }
         return NfyDbMessage::createMessages($messages);
     }
@@ -220,8 +234,8 @@ class NfyDbQueue extends NfyQueue {
     protected function receiveInternal($subscriber_id = null, $limit = -1, $mode = self::GET_RESERVE) {
         $pk = NfyDbMessage::model()->tableSchema->primaryKey;
         $trx = NfyDbMessage::model()
-                ->getDbConnection()
-                ->getCurrentTransaction() !== null ? null : NfyDbMessage::model()->getDbConnection()->beginTransaction();
+                        ->getDbConnection()
+                        ->getCurrentTransaction() !== null ? null : NfyDbMessage::model()->getDbConnection()->beginTransaction();
 
 
         $message = NfyDbMessage::model()->withQueue($this->id)->withSubscriber($subscriber_id);
