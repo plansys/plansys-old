@@ -4,26 +4,25 @@
  * Class DataSource
  * @author rizky
  */
-class ChartPie extends FormField {
+class ChartArea extends FormField {
 	
 	/** @var string $colWidth */
     public $colWidth = 12;
 	
 	/** @var string $toolbarName */
-    public static $toolbarName = "Pie Chart";
+    public static $toolbarName = "Area Chart";
 
     /** @var string $category */
     public static $category = "Charts";
 
     /** @var string $toolbarIcon */
-    public static $toolbarIcon = "fa fa-pie-chart";
+    public static $toolbarIcon = "fa fa-area-chart";
 	
 	/** @var string $chartType */
-    public $chartType = 'Pie';
+    public $chartType = 'Area';
 	
 	/** @var string $retrieveMode */
-    public $retrieveMode = 'by Row';
-	
+    public $retrieveMode = 'by Column';
 	
 
 	/** @var string $name */
@@ -40,6 +39,9 @@ class ChartPie extends FormField {
 	
 	/** @var string $series */
     public $series;
+	
+	/** @var string $tickSeries */
+    public $tickSeries;
 	
 	/** @var array $options */
     public $options = array();
@@ -136,7 +138,25 @@ class ChartPie extends FormField {
                 'type' => 'SectionHeader',
             ),
             array (
-                'value' => '<div style=\\"margin-bottom:5px;\\"></div>',
+                'value' => '<div style=\"margin-top:5px;\"></div>
+',
+                'type' => 'Text',
+            ),
+            array (
+                'label' => 'Set as Tick',
+                'name' => 'tickSeries',
+                'options' => array (
+                    'ng-model' => 'active.tickSeries',
+                    'ng-change' => 'save()',
+                    'ps-list' => 'tickSeriesList',
+                ),
+                'labelWidth' => '3',
+                'fieldWidth' => '9',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'value' => '<div style=\"margin-bottom:5px;\"></div>
+<hr />',
                 'type' => 'Text',
             ),
             array (
@@ -147,7 +167,7 @@ class ChartPie extends FormField {
                 'fieldWidth' => '12',
                 'options' => array (
                     'ng-model' => 'active.series',
-                    'ng-change' => 'save()',
+                    'ng-change' => 'save(); setTickSeries();',
                     'ps-after-add' => 'value.show = true',
                 ),
                 'type' => 'ListView',
@@ -168,7 +188,7 @@ class ChartPie extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('chart-pie.js');
+        return array('chart-area.js');
     }
 
     /**

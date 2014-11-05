@@ -6,6 +6,15 @@ class DevUserIndex extends User {
             array (
                 'linkBar' => array (
                     array (
+                        'label' => 'Import From LDAP',
+                        'icon' => 'user',
+                        'options' => array (
+                            'ng-if' => 'params.useLdap',
+                            'href' => 'url:/dev/user/ldap',
+                        ),
+                        'type' => 'LinkButton',
+                    ),
+                    array (
                         'label' => 'New User',
                         'url' => '/dev/user/new',
                         'buttonType' => 'success',
@@ -80,33 +89,6 @@ class DevUserIndex extends User {
                         'show' => false,
                     ),
                 ),
-                'filterOperators' => array (
-                    'string' => array (
-                        'Is Any Of',
-                        'Is Not Any Of',
-                        'Contains',
-                        'Does Not Contain',
-                        'Is Equal To',
-                        'Starts With',
-                        'Ends With',
-                        'Is Empty',
-                    ),
-                    'number' => array (
-                        '=',
-                        '<>',
-                        '>',
-                        '>=',
-                        '<=',
-                        '<',
-                        'Is Empty',
-                    ),
-                    'date' => array (
-                        'Between',
-                        'Not Between',
-                        'Less Than',
-                        'More Than',
-                    ),
-                ),
                 'type' => 'DataFilter',
             ),
             array (
@@ -142,8 +124,12 @@ class DevUserIndex extends User {
                         'label' => 'id',
                         'options' => array (),
                         'columnType' => 'string',
+<<<<<<< HEAD
                         'show' => true,
                         'inputMask' => '',
+=======
+                        'show' => false,
+>>>>>>> 22118e2b95775387d798f77f075d96dfb4f64224
                     ),
                     array (
                         'name' => 'nip',
@@ -232,27 +218,6 @@ class DevUserIndex extends User {
                     array (
                         'name' => 'username',
                         'label' => 'username',
-                        'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
-                        'listType' => 'php',
-                        'listExpr' => '',
-                        'listMustChoose' => 'No',
-                        'relCondition' => '',
-                        'relModelClass' => '',
-                        'relIdField' => '',
-                        'relLabelField' => '',
-                        'columnType' => 'string',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'password',
-                        'label' => 'password',
                         'options' => array (),
                         'buttonCollapsed' => 'Yes',
                         'buttons' => array (
@@ -330,14 +295,19 @@ class DevUserIndex extends User {
             array (
                 'name' => 'pieChart1',
                 'datasource' => 'dataSource2',
-                'chartTitle' => 'Judul Pie',
+                'chartTitle' => 'Pie Title',
                 'series' => array (
                     array (
                         'label' => 'Series 1',
+<<<<<<< HEAD
                         'value' => '2',
                         'color' => '#750707',
+=======
+                        'value' => '20',
+                        'color' => '#ff0000',
+>>>>>>> 22118e2b95775387d798f77f075d96dfb4f64224
                         'columnOptions' => array (),
-                        'show' => false,
+                        'show' => true,
                     ),
                     array (
                         'label' => 'Series 2',
@@ -354,11 +324,9 @@ class DevUserIndex extends User {
                         'show' => false,
                     ),
                 ),
-                'options' => array (
-                    'plotOptions.pie.showinlegend' => 'false',
-                ),
                 'type' => 'ChartPie',
             ),
+<<<<<<< HEAD
             array (
                 'name' => 'lineChart1',
                 'datasource' => 'dataSource2',
@@ -372,7 +340,7 @@ class DevUserIndex extends User {
                             '3',
                             '4',
                         ),
-                        'color' => '#E358E1',
+                        'color' => '#5492DB',
                         'isTick' => NULL,
                         'columnOptions' => array (),
                         'show' => false,
@@ -385,7 +353,7 @@ class DevUserIndex extends User {
                             '3',
                             '2',
                         ),
-                        'color' => '#E226B5',
+                        'color' => '#23429D',
                         'isTick' => NULL,
                         'columnOptions' => array (),
                         'show' => false,
@@ -398,7 +366,7 @@ class DevUserIndex extends User {
                             '1',
                             '3',
                         ),
-                        'color' => '#AE26D7',
+                        'color' => '#7C63DF',
                         'isTick' => NULL,
                         'columnOptions' => array (),
                         'show' => false,
@@ -411,7 +379,7 @@ class DevUserIndex extends User {
                             '4',
                             '6',
                         ),
-                        'color' => '#E1EAAC',
+                        'color' => '#55229E',
                         'isTick' => NULL,
                         'columnOptions' => array (),
                         'show' => false,
@@ -547,6 +515,9 @@ class DevUserIndex extends User {
                 'type' => 'ChartArea',
             ),
         );
+=======
+        );
+>>>>>>> 22118e2b95775387d798f77f075d96dfb4f64224
     }
     
     public function getForm() {

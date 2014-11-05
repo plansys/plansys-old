@@ -1,6 +1,6 @@
 <?php
 
-class ChartPieColumnsForm extends Form {
+class ChartSeriesForm extends Form {
 	
 	/** @var string $label */
 	public $label = '';
@@ -10,6 +10,9 @@ class ChartPieColumnsForm extends Form {
 	
 	/** @var string $color */
     public $color;
+	
+	/** @var bool $isTick */
+    public $isTick;
 	
 	/** @var string $columnOptions */
     public $columnOptions = array();  
@@ -46,20 +49,6 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'TextField',
             ),
             array (
-                'label' => 'Value',
-                'name' => 'value',
-                'labelWidth' => '2',
-                'fieldWidth' => '10',
-                'options' => array (
-                    'ng-model' => 'value[$index].value',
-                    'ng-change' => 'updateListView()',
-                ),
-                'fieldOptions' => array (
-                    'readonly' => 'true',
-                ),
-                'type' => 'TextField',
-            ),
-            array (
                 'label' => 'Color',
                 'name' => 'color',
                 'labelWidth' => '2',
@@ -71,7 +60,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'ColorPicker',
             ),
             array (
-                'value' => '<div style=\\"margin-bottom:-3px;\\"></div>',
+                'value' => '<div style=\\"margin-top:10px;\\"></div>',
                 'type' => 'Text',
             ),
             array (

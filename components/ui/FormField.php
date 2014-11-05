@@ -453,6 +453,29 @@ class FormField extends CComponent {
                 return $key . '="' . $attributes[$key] . '"';
             }, array_keys($attributes)));
     }
+	
+	/**
+     * @param array $raw
+     * @return string me-return json hasil dari proses extract
+     */
+    public function extractJson($raw) {
+        if (count($raw) == 0)
+            return null;
+		$list = array();
+		foreach($raw as $key => $content) {
+			$keyArr = explode('.', $key);
+			$key = "['". implode("']['", $keyArr) . "']";
+			
+			if($content == 'true' || $content == 'false')
+			{
+				$content = ($content === 'true');
+			}
+			
+			eval('$list'. $key .'= $content;');
+		}
+		
+		return $list;
+    }
 
     /**
      * @return array me-return array semua atribut formfield.

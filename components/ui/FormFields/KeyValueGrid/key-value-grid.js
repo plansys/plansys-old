@@ -12,16 +12,16 @@ app.directive('keyValueGrid', function ($timeout) {
                 // when ng-model is changed from inside directive
                 $scope.change = function () {
                     $scope.value = cleanJSON($scope.value);
-                    $scope.json = prettifyJSON(unformatJSON($scope.value));
-
+                    $scope.json = prettifyJSON(unformatJSON($scope.value, false));
+					
                     if (typeof ctrl != 'undefined') {
                         $timeout(function () {
-                            ctrl.$setViewValue(unformatJSON($scope.value));
+                            ctrl.$setViewValue(unformatJSON($scope.value, true));
 
                             if (typeof attrs.ngChange == "undefined") {
                                 $scope.$parent.save();
                             }
-                        }, 0);
+                        }, 500);
                     }
                 };
 
@@ -37,7 +37,7 @@ app.directive('keyValueGrid', function ($timeout) {
                         $scope.value = formatJSON(JSON.parse($scope.json));
                         if (typeof ctrl != 'undefined') {
                             $timeout(function () {
-                                ctrl.$setViewValue(unformatJSON($scope.value));
+                                ctrl.$setViewValue(unformatJSON($scope.value, true));
                                 $scope.$parent.save();
                             }, 0);
                         }
@@ -57,6 +57,12 @@ app.directive('keyValueGrid', function ($timeout) {
                         filtered_key = filtered_key.replace(/"/g, '\'');
                         filtered_value = filtered_value.replace(/"/g, '\'');
                     }
+					
+					if(value.toLowerCase() === 'true' || value.toLowerCase() === 'false')
+						value = JSON.parse(value);
+					if(value[0] == '[' || value[0] == '{') {
+						eval("value = "+ value);
+					}
 
                     return {
                         key: filtered_key,
@@ -64,7 +70,8 @@ app.directive('keyValueGrid', function ($timeout) {
                     };
                 }
 
-                function formatJSON(raw_value) {
+                function formatJSON(raw_value) {					
+					
                     var filtered = [];
                     for (var key in raw_value) {
                         
@@ -77,6 +84,7 @@ app.directive('keyValueGrid', function ($timeout) {
                     filtered.push({key: "", value: ""});
                     return filtered;
                 }
+				
 
                 function prettifyJSON(json) {
                     return JSON.stringify(JSON.parse(JSON.stringify(json)), null, 2);
@@ -98,8 +106,12 @@ app.directive('keyValueGrid', function ($timeout) {
                     return list;
                 }
 
-                function unformatJSON(raw) {
-                    var list = {};
+                function unformatJSON(raw, tablerenderer) {
+				
+					tablerenderer = typeof tablerenderer !== 'undefined' ? tablerenderer : false;
+					
+					var list = {};
+						
                     for (i in raw) {
                         if (!$scope.allowEmpty && raw[i].key.trim() == "")
                             continue;
@@ -108,9 +120,29 @@ app.directive('keyValueGrid', function ($timeout) {
                             continue;
 
                         var item = filterKeyValue(raw[i].key, raw[i].value);
-
-                        list[item.key] = item.value;
+						
+						if(tablerenderer) {
+							list[item.key] = item.value;
+						} else {
+							var ref = list;
+							var itemArr = item.key.split('.');
+							
+							if ($scope.allowExtractKey) {
+								// create item var path
+								for(i in itemArr){
+									if (typeof ref[itemArr[i]] == "undefined") {
+										ref[itemArr[i]] = {};
+									}
+									ref = ref[itemArr[i]];
+								}
+							}
+							
+							// assign item path value
+							if(item.key[item.key.length - 1] != '.' && item.value != '') 
+								eval("list['" + itemArr.join("']['") + "'] = item.value");	
+						}
                     }
+					
                     return list;
                 }
 
@@ -123,7 +155,7 @@ app.directive('keyValueGrid', function ($timeout) {
 
                         if (typeof ctrl.$viewValue != 'undefined') {
                             $scope.value = formatJSON(ctrl.$viewValue);
-                            $scope.json = prettifyJSON(unformatJSON($scope.value));
+                            $scope.json = prettifyJSON(unformatJSON($scope.value, false));
                         }
                     };
                 }
@@ -135,13 +167,13 @@ app.directive('keyValueGrid', function ($timeout) {
                 $scope.allowEmpty = $el.find("data[name=allow_empty]").html().trim() == 'No' ? false : true;
                 $scope.allowSpace = $el.find("data[name=allow_space]").html().trim() == 'No' ? false : true;
                 $scope.allowDoubleQuote = $el.find("data[name=allow_dquote]").html().trim() == 'No' ? false : true;
+				$scope.allowExtractKey = $el.find("data[name=allow_extract]").html().trim() == 'No' ? false : true;
                 $scope.mode = "grid";
 
                 $scope.json_error = "";
-                $scope.value = formatJSON(JSON.parse($el.find("data[name='value']:eq(0)").text().trim()));
+                $scope.value = formatJSON(JSON.parse($el.find("data[name='value']:eq(0)").text().trim()));                
                 
-                
-                $scope.json = prettifyJSON(unformatJSON($scope.value));
+                $scope.json = prettifyJSON(unformatJSON($scope.value, false));
 
                 // if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {
@@ -149,7 +181,7 @@ app.directive('keyValueGrid', function ($timeout) {
                         var ngModelValue = $scope.$eval(attrs.ngModel);
                         if (typeof ngModelValue != "undefined") {
                             $scope.value = formatJSON(ngModelValue);
-                            $scope.json = prettifyJSON(unformatJSON($scope.value));
+                            $scope.json = prettifyJSON(unformatJSON($scope.value, false));
                         }
                     }, 0);
                 }

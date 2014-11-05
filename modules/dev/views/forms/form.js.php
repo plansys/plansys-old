@@ -213,18 +213,8 @@
             });
         }
 
-        function getRandomColor() {
-            var letters = '0123456789ABCDEF'.split('');
-            var color = '#';
-            for (var i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
-        }
-
-
         /************************ DATA PIE SERIES ****************************/
-        $scope.generateSeries = function () {
+        $scope.generateSeries = function (retrieveMode) {
             var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
             if (confirm("Your current series will be lost. Are you sure?")) {
                 $scope.active.series = [];
@@ -239,22 +229,109 @@
                         } else {
                             return;
                         }
-
-                        if (data != null && data.length > 0 && typeof data[0] == "object") {
-                            for (i in data[0]) {
-                                var series = angular.extend({}, templateAttr);
-                                series.label = i;
-                                series.value = data[0][i];
-                                series.color = getRandomColor();
-                                $scope.active.series.push(series);
-                            }
-                            $scope.save();
-                        }
+						
+						var generated;
+						switch(retrieveMode)
+						{
+							case 'by Row' :
+								generated = generateByRow(data);
+								break;
+							case 'by Column' :
+								generated = generateByColumn(data);
+								break;
+						}
+						
+						$scope.active.series = generated[0];
+						
+						$scope.setTickSeries();
+						
+						
+						
+						/*****  FUNCTION *****/
+						
+						function generateByRow(data) {
+							var filtered = [];
+							for(var i in data) {
+								var rowcontent = {};
+								for (var j in data[i]) {
+									rowcontent[j] = data[i][j];
+								}
+								filtered.push(rowcontent);
+							}
+							
+							var result = [];
+							for(var i in filtered) {
+								if(typeof result[i] == "undefined") {
+									result[i] = [];
+								}
+								
+								for(var j in filtered[i]) {
+									var series = angular.extend({}, templateAttr);
+									series.value = filtered[i][j];
+									series.label = j;
+									series.color = getRandomColor();
+									
+									result[i].push(series);
+								}								
+							}
+							
+							return result;
+							
+						}
+						
+						function generateByColumn(data) {
+							var filtered = {};
+							for(var i in data) {								
+								for (var j in data[i]) {
+									if(typeof filtered[j] == "undefined") {
+										filtered[j] = [];
+									}
+									filtered[j].push(data[i][j]);
+								}
+							}
+							
+							var color;
+							var result = [];
+							result[0] = [];
+							for(var i in filtered) {
+								var series = angular.extend({}, templateAttr);
+								series.label = i;
+								series.value = filtered[i];
+								series.color = getRandomColor();
+								result[0].push(series);
+							}
+							
+							return result;
+						}
+						
+						function getRandomColor() {
+							var letters = '0123456789ABCDEF'.split('');
+							var color = '#';
+							for (var i = 0; i < 6; i++) {
+								color += letters[Math.floor(Math.random() * 16)];
+							}
+							return color;
+						}
+						
+						$scope.save();
                     }
 
                 });
             }
         }
+		
+		$scope.setTickSeries = function() {
+			var series = $scope.active.series;
+			console.log($scope.active.series);
+			$scope.tickSeriesList = {
+				'': '-- NONE --',
+				'---': '---'
+			};
+			
+			for(var i in series) {
+				$scope.tickSeriesList[series[i].label] = series[i].label;
+			}
+		}
 
         /************************ DATA FILTERS ****************************/
         $scope.generateFilters = function () {
@@ -488,17 +565,21 @@
                     $scope.activeTree = item;
                     $scope.active = item.$modelValue;
                     $scope.tabs.properties = true;
+					
                     switch (item.$modelValue.type) {
                         case 'DataFilter':
-                            $scope.getDataSourceList();
-                            break;
-                        case 'ChartPie' :
                         case 'DataGrid':
                             $scope.getDataSourceList();
                             break;
                         case 'RelationField':
                             $scope.generateRelationField();
                             break;
+						default :
+							if(item.$modelValue.type.substr(0,5).toLowerCase() == "chart") {
+								$scope.getDataSourceList();
+								$scope.setTickSeries();
+							}
+							break;
                     }
 
                 });

@@ -5,6 +5,7 @@
     <data name="allow_space" class="hide"><?= $this->allowSpaceOnKey ?></data>
     <data name="allow_empty" class="hide"><?= $this->allowSpaceOnKey ?></data>
     <data name="allow_dquote" class="hide"><?= $this->allowDoubleQuote ?></data>
+	<data name="allow_extract" class="hide"><?= $this->allowExtractKey ?></data>
     <data name="model_class" class="hide"><?= @get_class($model) ?></data>
     <data name="value" class="hide"><?= json_encode($this->value) ?></data>
     <!-- /data -->
