@@ -1,4 +1,59 @@
 <script type="text/javascript">
+
+    /** jQuery Caret **/
+    (function ($) {
+        // Behind the scenes method deals with browser
+        // idiosyncrasies and such
+        $.caretTo = function (el, index) {
+            if (el.createTextRange) {
+                var range = el.createTextRange();
+                range.move("character", index);
+                range.select();
+            } else if (el.selectionStart != null) {
+                el.focus();
+                el.setSelectionRange(index, index);
+            }
+        };
+
+        // Set caret to a particular index
+        $.fn.setCaretPosition = function (index, offset) {
+            return this.queue(function (next) {
+                if (isNaN(index)) {
+                    var i = $(this).val().indexOf(index);
+
+                    if (offset === true) {
+                        i += index.length;
+                    } else if (offset) {
+                        i += offset;
+                    }
+
+                    $.caretTo(this, i);
+                } else {
+                    $.caretTo(this, index);
+                }
+
+                next();
+            });
+        };
+
+        $.fn.getCaretPosition = function () {
+            var input = this.get(0);
+            if (!input)
+                return; // No (input) element found
+            if ('selectionStart' in input) {
+                // Standard-compliant browsers
+                return input.selectionStart;
+            } else if (document.selection) {
+                // IE
+                input.focus();
+                var sel = document.selection.createRange();
+                var selLen = document.selection.createRange().text.length;
+                sel.moveStart('character', -input.value.length);
+                return sel.text.length - selLen;
+            }
+        }
+    })(jQuery);
+
     app.controller("PageController", function ($scope, $http, $timeout, $window, $compile) {
         $scope.getNumber = function (num) {
             a = [];
@@ -229,109 +284,109 @@
                         } else {
                             return;
                         }
-						
-						var generated;
-						switch(retrieveMode)
-						{
-							case 'by Row' :
-								generated = generateByRow(data);
-								break;
-							case 'by Column' :
-								generated = generateByColumn(data);
-								break;
-						}
-						
-						$scope.active.series = generated[0];
-						
-						$scope.setTickSeries();
-						
-						
-						
-						/*****  FUNCTION *****/
-						
-						function generateByRow(data) {
-							var filtered = [];
-							for(var i in data) {
-								var rowcontent = {};
-								for (var j in data[i]) {
-									rowcontent[j] = data[i][j];
-								}
-								filtered.push(rowcontent);
-							}
-							
-							var result = [];
-							for(var i in filtered) {
-								if(typeof result[i] == "undefined") {
-									result[i] = [];
-								}
-								
-								for(var j in filtered[i]) {
-									var series = angular.extend({}, templateAttr);
-									series.value = filtered[i][j];
-									series.label = j;
-									series.color = getRandomColor();
-									
-									result[i].push(series);
-								}								
-							}
-							
-							return result;
-							
-						}
-						
-						function generateByColumn(data) {
-							var filtered = {};
-							for(var i in data) {								
-								for (var j in data[i]) {
-									if(typeof filtered[j] == "undefined") {
-										filtered[j] = [];
-									}
-									filtered[j].push(data[i][j]);
-								}
-							}
-							
-							var color;
-							var result = [];
-							result[0] = [];
-							for(var i in filtered) {
-								var series = angular.extend({}, templateAttr);
-								series.label = i;
-								series.value = filtered[i];
-								series.color = getRandomColor();
-								result[0].push(series);
-							}
-							
-							return result;
-						}
-						
-						function getRandomColor() {
-							var letters = '0123456789ABCDEF'.split('');
-							var color = '#';
-							for (var i = 0; i < 6; i++) {
-								color += letters[Math.floor(Math.random() * 16)];
-							}
-							return color;
-						}
-						
-						$scope.save();
+
+                        var generated;
+                        switch (retrieveMode)
+                        {
+                            case 'by Row' :
+                                generated = generateByRow(data);
+                                break;
+                            case 'by Column' :
+                                generated = generateByColumn(data);
+                                break;
+                        }
+
+                        $scope.active.series = generated[0];
+
+                        $scope.setTickSeries();
+
+
+
+                        /*****  FUNCTION *****/
+
+                        function generateByRow(data) {
+                            var filtered = [];
+                            for (var i in data) {
+                                var rowcontent = {};
+                                for (var j in data[i]) {
+                                    rowcontent[j] = data[i][j];
+                                }
+                                filtered.push(rowcontent);
+                            }
+
+                            var result = [];
+                            for (var i in filtered) {
+                                if (typeof result[i] == "undefined") {
+                                    result[i] = [];
+                                }
+
+                                for (var j in filtered[i]) {
+                                    var series = angular.extend({}, templateAttr);
+                                    series.value = filtered[i][j];
+                                    series.label = j;
+                                    series.color = getRandomColor();
+
+                                    result[i].push(series);
+                                }
+                            }
+
+                            return result;
+
+                        }
+
+                        function generateByColumn(data) {
+                            var filtered = {};
+                            for (var i in data) {
+                                for (var j in data[i]) {
+                                    if (typeof filtered[j] == "undefined") {
+                                        filtered[j] = [];
+                                    }
+                                    filtered[j].push(data[i][j]);
+                                }
+                            }
+
+                            var color;
+                            var result = [];
+                            result[0] = [];
+                            for (var i in filtered) {
+                                var series = angular.extend({}, templateAttr);
+                                series.label = i;
+                                series.value = filtered[i];
+                                series.color = getRandomColor();
+                                result[0].push(series);
+                            }
+
+                            return result;
+                        }
+
+                        function getRandomColor() {
+                            var letters = '0123456789ABCDEF'.split('');
+                            var color = '#';
+                            for (var i = 0; i < 6; i++) {
+                                color += letters[Math.floor(Math.random() * 16)];
+                            }
+                            return color;
+                        }
+
+                        $scope.save();
                     }
 
                 });
             }
         }
-		
-		$scope.setTickSeries = function() {
-			var series = $scope.active.series;
-			console.log($scope.active.series);
-			$scope.tickSeriesList = {
-				'': '-- NONE --',
-				'---': '---'
-			};
-			
-			for(var i in series) {
-				$scope.tickSeriesList[series[i].label] = series[i].label;
-			}
-		}
+
+        $scope.setTickSeries = function () {
+            var series = $scope.active.series;
+            console.log($scope.active.series);
+            $scope.tickSeriesList = {
+                '': '-- NONE --',
+                '---': '---'
+            };
+
+            for (var i in series) {
+                $scope.tickSeriesList[series[i].label] = series[i].label;
+            }
+        }
 
         /************************ DATA FILTERS ****************************/
         $scope.generateFilters = function () {
@@ -429,12 +484,16 @@
             }
             $scope.dataSourceList = dslist;
         }
+
+
         $scope.changeActiveName = function () {
             $el = $(":focus");
-            var newName = $scope.formatName($scope.active.name);
-            var caretPos = $el.getCaretPosition() - ($scope.active.name.length - newName.length);
-            $el.val(newName).setCaretPosition(caretPos);
-            $scope.active.name = newName;
+            if (typeof $el != "undefined") {
+                var newName = $scope.formatName($scope.active.name);
+                var caretPos = $el.getCaretPosition() - ($scope.active.name.length - newName.length);
+                $el.val(newName).setCaretPosition(caretPos);
+                $scope.active.name = newName;
+            }
             $scope.detectDuplicate();
             $scope.save();
         }
@@ -565,7 +624,7 @@
                     $scope.activeTree = item;
                     $scope.active = item.$modelValue;
                     $scope.tabs.properties = true;
-					
+
                     switch (item.$modelValue.type) {
                         case 'DataFilter':
                         case 'DataGrid':
@@ -574,12 +633,12 @@
                         case 'RelationField':
                             $scope.generateRelationField();
                             break;
-						default :
-							if(item.$modelValue.type.substr(0,5).toLowerCase() == "chart") {
-								$scope.getDataSourceList();
-								$scope.setTickSeries();
-							}
-							break;
+                        default :
+                            if (item.$modelValue.type.substr(0, 5).toLowerCase() == "chart") {
+                                $scope.getDataSourceList();
+                                $scope.setTickSeries();
+                            }
+                            break;
                     }
 
                 });
