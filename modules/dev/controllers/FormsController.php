@@ -179,7 +179,8 @@ class FormsController extends Controller {
         $fb = FormBuilder::load($class);
         $classPath = $class;
         $class = array_pop(explode(".", $class));
-
+        
+        
         if (is_subclass_of($fb->model, 'ActiveRecord')) {
             $formType = "ActiveRecord";
             FormsController::setModelFieldList($class::model()->attributesList, "AR", $class);

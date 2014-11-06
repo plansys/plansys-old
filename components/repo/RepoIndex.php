@@ -20,91 +20,91 @@ class RepoIndex extends Form {
     }
 
     public function getForm() {
-        return array(
+        return [
             'title' => 'Repo List Directory',
-            'layout' => array(
+            'layout' => [
                 'name' => 'full-width',
-                'data' => array(
-                    'col1' => array(
+                'data' => [
+                    'col1' => [
                         'type' => 'mainform',
                         'size' => '100',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     public function getFields() {
-        return array(
-            array(
-                'linkBar' => array(
-                    array(
+        return [
+            [
+                'linkBar' => [
+                    [
                         'label' => 'Tambah {{ params.t }}',
                         'buttonType' => 'success',
                         'icon' => 'plus',
-                        'options' => array(
+                        'options' => [
                             'href' => 'url:{tambahUrl}',
-                        ),
+                        ],
                         'type' => 'LinkButton',
-                    ),
-                ),
+                    ],
+                ],
                 'showSectionTab' => 'No',
                 'type' => 'ActionBar',
-            ),
-            array(
+            ],
+            [
                 'name' => 'dataFilter1',
                 'datasource' => 'dataSource1',
-                'filters' => array(
-                ),
+                'filters' => [
+                ],
                 'type' => 'DataFilter',
-            ),
-            array(
+            ],
+            [
                 'name' => 'dataSource1',
                 'fieldType' => 'php',
                 'php' => 'RepoManager::listAll($model->path,$model->pattern, $params);',
-                'params' => array(
+                'params' => [
                     'paging' => 'dataGrid1',
                     'order' => 'dataGrid1',
                     'where' => 'dataFilter1',
-                ),
+                ],
                 'enablePaging' => 'Yes',
                 'pagingPHP' => 'RepoManager::count($model->path);',
                 'type' => 'DataSource',
-            ),
-            array(
+            ],
+            [
                 'name' => 'dataGrid1',
                 'datasource' => 'dataSource1',
-                'columns' => array(
-                    array(
+                'columns' => [
+                    [
                         'name' => 'file',
                         'label' => 'file',
-                        'options' => array(
+                        'options' => [
                             'visible' => 'false',
-                        ),
+                        ],
                         'inputMask' => '',
-                        'stringAlias' => array(),
+                        'stringAlias' => [],
                         'columnType' => 'string',
                         'show' => false,
-                    ),
-                    array(
+                    ],
+                    [
                         'name' => 'id',
                         'label' => '',
-                        'options' => array(
+                        'options' => [
                             'visible' => 'false',
-                        ),
+                        ],
                         'inputMask' => '',
-                        'stringAlias' => array(),
+                        'stringAlias' => [],
                         'columnType' => 'string',
                         'show' => false,
-                    ),
-                ),
-                'gridOptions' => array(
+                    ],
+                ],
+                'gridOptions' => [
                     'enablePaging' => 'true',
                     'generateColumns' => 'true',
-                ),
+                ],
                 'type' => 'DataGrid',
-            ),
-        );
+            ],
+        ];
     }
 
 }

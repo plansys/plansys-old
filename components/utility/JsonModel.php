@@ -2,7 +2,7 @@
 class JsonModel{
     private $data;
     public $path;
-    public $default = array();
+    public $default = [];
     
     
     public function setPath($path) {

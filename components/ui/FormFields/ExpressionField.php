@@ -8,78 +8,78 @@ class ExpressionField extends FormField {
      * @return array me-return array property ExpressionField.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return  [
+             [
                 'label' => 'Field Name:',
                 'name' => 'fieldname',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.fieldname',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ),
-                'list' => array (),
+                ],
+                'list' =>  [],
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'value' => '<hr/>',
                 'type' => 'Text',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Language',
                 'name' => 'language',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.language',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
-                'list' => array (
+                ],
+                'list' =>  [
                     'html' => 'HTML',
                     'php' => 'PHP',
                     'js' => 'JS',
                     'sql' => 'SQL',
-                ),
+                ],
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'value' => '<hr/>',
                 'type' => 'Text',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Info Message (HTML allowed)',
                 'name' => 'desc',
                 'labelWidth' => '5',
                 'fieldWidth' => '12',
                 'layout' => 'Vertical',
                 'fieldHeight' => '0',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.desc',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
-                'fieldOptions' => array (
+                ],
+                'fieldOptions' =>  [
                     'auto-grow' => '',
-                ),
+                ],
                 'type' => 'TextArea',
-            ),
-        );
+            ],
+        ];
     }
 
     /** @var string $label */
@@ -95,13 +95,13 @@ class ExpressionField extends FormField {
     public $value = '';
 	
     /** @var array $options */
-    public $options = array();
+    public $options = [];
 	
     /** @var string $desc */
     public $desc = '';
     
     /** @var array $labelOptions */
-    public $labelOptions = array();
+    public $labelOptions = [];
 	
     /** @var string $toolbarName */
     public static $toolbarName = "Expression Field";
@@ -116,7 +116,7 @@ class ExpressionField extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('expression-field.js');
+        return ['expression-field.js'];
     }
 
     /**

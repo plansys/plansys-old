@@ -10,120 +10,120 @@ class TextArea extends FormField {
      * @return array me-return array property TextArea.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return  [
+             [
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ),
-                'list' => array (),
+                ],
+                'list' =>  [],
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                     'ng-delay' => '500',
-                ),
+                ],
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'totalColumns' => '3',
-                'column1' => array (
-                    array (
+                'column1' =>  [
+                     [
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
-                    ),
-                    array (
+                    ],
+                     [
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '11',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' =>  [
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                             'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
-                        ),
+                        ],
                         'type' => 'TextField',
-                    ),
-                ),
-                'column2' => array (
-                    array (
+                    ],
+                ],
+                'column2' =>  [
+                     [
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
-                    ),
-                    array (
+                    ],
+                     [
                         'label' => 'Field Height',
                         'name' => 'fieldHeight',
                         'layout' => 'Vertical',
                         'labelWidth' => '11',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' =>  [
                             'ng-model' => 'active.fieldHeight',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                        ),
+                        ],
                         'type' => 'TextField',
-                    ),
-                ),
-                'column3' => array (
-                    array (
+                    ],
+                ],
+                'column3' =>  [
+                     [
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
-                    ),
-                    array (
+                    ],
+                     [
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '11',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' =>  [
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                        ),
+                        ],
                         'type' => 'TextField',
-                    ),
-                ),
+                    ],
+                ],
                 'type' => 'ColumnField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
     /** @var string $label */
@@ -148,13 +148,13 @@ class TextArea extends FormField {
     public $fieldHeight = 3;
 
     /** @var array $options */
-    public $options = array();
+    public $options = [];
 
     /** @var array $labelOptions */
-    public $labelOptions = array();
+    public $labelOptions = [];
 
     /** @var array $fieldOptions */
-    public $fieldOptions = array();
+    public $fieldOptions = [];
 
     /** @var string $toolbarName */
     public static $toolbarName = "Text Area";
@@ -169,7 +169,7 @@ class TextArea extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('text-area.js');
+        return ['text-area.js'];
     }
 
     /**

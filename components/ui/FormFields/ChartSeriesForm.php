@@ -15,11 +15,11 @@ class ChartSeriesForm extends Form {
     public $isTick;
 	
 	/** @var string $columnOptions */
-    public $columnOptions = array();  
+    public $columnOptions = [];  
 	
     public function getFields() {
-        return array (
-            array (
+        return  [
+             [
                 'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
 <div class=\"label data-filter-name pull-right\"> 
 {{value[$index].columnType}}</div>
@@ -27,61 +27,61 @@ class ChartSeriesForm extends Form {
 <div class=\"clearfix\"></div>
 </div>',
                 'type' => 'Text',
-            ),
-            array (
+            ],
+             [
                 'value' => '<hr ng-show=\"value[$index].show\"
 style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'Text',
-            ),
-            array (
+            ],
+             [
                 'value' => '<div ng-show=\\"value[$index].show\\">',
                 'type' => 'Text',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label',
                 'name' => 'label',
                 'labelWidth' => '2',
                 'fieldWidth' => '10',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'value[$index].label',
                     'ng-change' => 'updateListView()',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Color',
                 'name' => 'color',
                 'labelWidth' => '2',
                 'fieldWidth' => '10',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'value[$index].color',
                     'ng-change' => 'updateListView()',
-                ),
+                ],
                 'type' => 'ColorPicker',
-            ),
-            array (
+            ],
+             [
                 'value' => '<div style=\\"margin-top:10px;\\"></div>',
                 'type' => 'Text',
-            ),
-            array (
+            ],
+             [
                 'value' => '</div>',
                 'type' => 'Text',
-            ),
-        );
+            ],
+        ];
     }
 
     public function getForm() {
-        return array(
+        return [
             'formTitle' => 'DataFilterListForm',
-            'layout' => array(
+            'layout' => [
                 'name' => 'full-width',
-                'data' => array(
-                    'col1' => array(
+                'data' => [
+                    'col1' => [
                         'type' => 'mainform',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
       

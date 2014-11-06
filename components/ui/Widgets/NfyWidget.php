@@ -6,10 +6,10 @@ class NfyWidget extends Widget {
     public $badge = '';
 
     public function includeJS() {
-        return array(
+        return [
             'sse-client.js',
             'nfy-widget.js'
-        );
+        ];
     }
 
     public function actionRead($nid) {
@@ -27,13 +27,13 @@ class NfyWidget extends Widget {
     }
 
     public function actionNotify() {
-        Yii::app()->nfy->send(array(
-            'url' => Yii::app()->controller->createUrl('/dev/user/update/', array('id' => Yii::app()->user->id)),
+        Yii::app()->nfy->send([
+            'url' => Yii::app()->controller->createUrl('/dev/user/update/', ['id' => Yii::app()->user->id]),
             'message' => 'Pembuatan Rencana Kerja (6 Lubang) daerah bangka ',
             'notes' => 'tolong sekalian tambahin kerjaan nya ya...',
-            'to' => array(
+            'to' => [
                 'id' => '1'
-        )));
+        ]]);
     }
 
     public function actionPeek() {

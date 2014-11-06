@@ -13,15 +13,15 @@ class FormBuilder extends CComponent {
      * @var array $_buildRenderID 
      * @access private	
      */
-    private static $_buildRenderID = array();
+    private static $_buildRenderID = [];
 
     /**
      * @var integer $countRenderID
      * @access private	
      */
     private $countRenderID = 1;
-    private $methods = array();
-    private $file = array();
+    private $methods = [];
+    private $file = [];
     private $sourceFile = '';
     private $originalClass = '';
 
@@ -98,18 +98,18 @@ class FormBuilder extends CComponent {
                 if ($m->class == $class) {
                     $line = $m->getStartLine() - 1;
                     $length = $m->getEndLine() - $line;
-                    $model->methods[$m->name] = array(
+                    $model->methods[$m->name] = [
                         'line' => $line,
                         'length' => $length
-                    );
+                    ];
                 }
             }
 
-            Yii::app()->session['FormBuilder_' . $originalClass] = array(
+            Yii::app()->session['FormBuilder_' . $originalClass] = [
                 'sourceFile' => $model->sourceFile,
                 'file' => $model->file,
                 'methods' => $model->methods
-            );
+            ];
         } else {
             $s = Yii::app()->session['FormBuilder_' . $originalClass];
             $model->sourceFile = $s['sourceFile'];
@@ -202,7 +202,7 @@ class FormBuilder extends CComponent {
                     }
                 }
             }
-            
+
             if ($valid == count($attributes)) {
                 $results[] = $f;
             }
@@ -339,7 +339,7 @@ class FormBuilder extends CComponent {
      * @return array me-return sebuah array fields hasil parseFields
      */
     public function parseFields($fields) {
-        $processed = array();
+        $processed = [];
         if (!is_array($fields))
             return $processed;
 
@@ -360,10 +360,10 @@ class FormBuilder extends CComponent {
                 }
             } else {
                 $value = $f;
-                $processed[$k] = array(
+                $processed[$k] = [
                     'type' => 'Text',
                     'value' => str_replace("\'", "'", $value)
-                );
+                ];
             }
         }
         return $processed;
@@ -400,7 +400,7 @@ class FormBuilder extends CComponent {
             }
             $defaultAttributes = $fieldlist[$data['type']];
         } else {
-            $defaultAttributes = array();
+            $defaultAttributes = [];
         }
 
         foreach ($data as $i => $j) {
@@ -451,8 +451,8 @@ class FormBuilder extends CComponent {
      * @param array $fields
      */
     public function setFields($fields) {
-        $fieldlist = array();
-        $multiline = array();
+        $fieldlist = [];
+        $multiline = [];
 
         $this->tidyRecursive($fields, $multiline);
 
@@ -474,17 +474,29 @@ class FormBuilder extends CComponent {
         if (!$reflector->hasMethod('getForm')) {
             $this->model = new $class;
 
-            $defaultFields = array(
-                'title' => str_replace(ucfirst($this->module), '', $class),
-                'layout' => array(
+
+            $basic = explode("_", Helper::camelToUnderscore($class));
+            array_shift($basic);
+            $basic = implode(" ", array_map("ucfirst", $basic));
+            if (substr($class, -5) == "Index") {
+                $title = "Daftar " . substr($basic, 0, strlen($basic) - 5);
+            } else if (substr($class, -4) == "Form") {
+                $title = "Detail " . substr($basic, 0, strlen($basic) - 4);
+            } else {
+                $title = $basic;
+            }
+
+            $defaultFields = [
+                'title' => $title,
+                'layout' => [
                     'name' => 'full-width',
-                    'data' => array(
-                        'col1' => array(
+                    'data' => [
+                        'col1' => [
                             'type' => 'mainform'
-                        )
-                    )
-                ),
-            );
+                        ]
+                    ]
+                ],
+            ];
 
             if (empty($this->getFunctionBody($reflector->getFileName(), 'getForm'))) {
                 $this->form = $defaultFields;
@@ -582,7 +594,7 @@ class FormBuilder extends CComponent {
      * @param array $html
      * @return string me-return string berupa tag html.
      */
-    public function renderScriptInternal($fb, $fields, $html = array()) {
+    public function renderScriptInternal($fb, $fields, $html = []) {
         foreach ($fields as $k => $f) {
             if (is_array($f)) {
                 $field = new $f['type'];
@@ -605,7 +617,7 @@ class FormBuilder extends CComponent {
      * @param array $formdata
      * @return string me-return string script yang di-include
      */
-    public function renderAngularController($formdata = null, $renderParams = array()) {
+    public function renderAngularController($formdata = null, $renderParams = []) {
         $modelClass = get_class($this->model);
 
         ## define formdata
@@ -650,13 +662,13 @@ class FormBuilder extends CComponent {
      * @param array $options 
      * @return string me-return string tag html hasil generate dari fungsi ini.
      */
-    public function render($formdata = null, $options = array()) {
+    public function render($formdata = null, $options = []) {
 
         return $this->renderInternal($formdata, $options, $this, $this->fields);
     }
 
     private function defineFormData($formdata) {
-        $data = array();
+        $data = [];
         if (is_array($formdata)) {
             $data['data'] = $formdata;
         } else if (is_subclass_of($formdata, 'Form')) {
@@ -681,7 +693,7 @@ class FormBuilder extends CComponent {
      * @param array $fields
      * @return string me-return string berupa tag html 
      */
-    private function renderInternal($formdata = null, $options = array(), $fb, $fields) {
+    private function renderInternal($formdata = null, $options = [], $fb, $fields) {
         $html = "";
 
         $form = $fb->form;
@@ -695,7 +707,7 @@ class FormBuilder extends CComponent {
         $renderWithAngular = isset($options['renderWithAngular']) ? $options['renderWithAngular'] : true;
         $renderInAjax = isset($options['renderInAjax']) ? $options['renderInAjax'] : false;
         $FFRenderID = isset($options['FormFieldRenderID']) ? $options['FormFieldRenderID'] . '_' : '';
-        $renderParams = isset($options['params']) ? $options['params'] : array();
+        $renderParams = isset($options['params']) ? $options['params'] : [];
         $renderParams = array_merge($_GET, $renderParams);
 
         ## wrap form
@@ -703,13 +715,13 @@ class FormBuilder extends CComponent {
             $url = "#";
             $ngctrl = $renderWithAngular ? 'ng-controller="' . $modelClass . 'Controller"' : '';
 
-            $formOptions = (is_array(@$form['options']) ? @$form['options'] : array());
-            $formDefaultAttr = array(
+            $formOptions = (is_array(@$form['options']) ? @$form['options'] : []);
+            $formDefaultAttr = [
                 'action' => $url,
                 'method' => 'POST',
                 'class' => 'form-horizontal ' . @$formOptions['class'],
                 'role' => 'form',
-            );
+            ];
 
             $formAttr = array_merge($formOptions, $formDefaultAttr);
             $formAttr = Helper::expandAttributes($formAttr);
@@ -818,14 +830,14 @@ class FormBuilder extends CComponent {
         $fields = preg_replace("/[0-9]+\s*\=\> /i", '', $fields);
 
         ## replace unwanted formatting
-        $replace = array(
+        $replace = [
             "  " => '    ',
             "=> \n" => "=>"
-        );
+        ];
         $fields = str_replace(array_keys($replace), $replace, $fields);
-        $replace = array(
+        $replace = [
             "=>        array (" => '=> array (',
-        );
+        ];
         $fields = str_replace(array_keys($replace), $replace, $fields);
         $fields = explode("\n", $fields);
 
@@ -921,13 +933,13 @@ class FormBuilder extends CComponent {
                 $this->file[] = "}";
             }
         }
-        return array(
+        return [
             'file' => $this->file,
             'length' => $length,
             'line' => $line,
             'sourceFile' => $this->sourceFile,
             'isNewFunc' => $isNewFunc
-        );
+        ];
     }
 
     /**
@@ -994,11 +1006,11 @@ EOF;
             flock($fp, LOCK_UN); // release the lock
             //print_r(Yii::app()->session['FormBuilder_' . $this->originalClass]['methods']);
 
-            Yii::app()->session['FormBuilder_' . $this->originalClass] = array(
+            Yii::app()->session['FormBuilder_' . $this->originalClass] = [
                 'sourceFile' => $this->sourceFile,
                 'file' => $file,
                 'methods' => $this->methods
-            );
+            ];
 
             //print_r(Yii::app()->session['FormBuilder_' . $this->originalClass]['methods']);
         } else {
@@ -1019,7 +1031,7 @@ EOF;
      */
     public function getFunctionBody($sourceFile, $functionName) {
         $fd = fopen($sourceFile, "r");
-        $ret = array();
+        $ret = [];
         while (!feof($fd)) {
             $content = fgets($fd);
             if ($content == "") {
@@ -1053,7 +1065,7 @@ EOF;
     public static function listController($module) {
         $ctr_dir = Yii::getPathOfAlias("application.modules.{$module}.controllers") . DIRECTORY_SEPARATOR;
         $items = glob($ctr_dir . "*.php");
-        $list = array();
+        $list = [];
 
         foreach ($items as $k => $f) {
             $f = str_replace($ctr_dir, "", $f);
@@ -1069,7 +1081,7 @@ EOF;
      * @return array Fungsi ini akan me-return sebuah array list form .
      */
     public static function listForm($module = null, $useAlias = true, $excludeModule = true) {
-        $list = array();
+        $list = [];
         $list[''] = '-- NONE --';
         $modules = FormBuilder::listFile(false);
         foreach ($modules as $m) {
@@ -1082,7 +1094,7 @@ EOF;
                     continue;
             }
 
-            $list[$m['module']] = array();
+            $list[$m['module']] = [];
             foreach ($m['items'] as $file) {
                 $f = &$file;
                 while (!isset($f['alias'])) {
@@ -1100,11 +1112,11 @@ EOF;
         return $list;
     }
 
-    private static function formatGlob($items, $item_dir, $module, $func, $alias, $format = true, $return = array()) {
-        $subdir_val = array();
+    private static function formatGlob($items, $item_dir, $module, $func, $alias, $format = true, $return = []) {
+        $subdir_val = [];
         $id = 0;
         foreach ($items as $k => $i) {
-            $item = array();
+            $item = [];
             $i = realpath($i);
             $file_dir = dirname($i) . DIRECTORY_SEPARATOR;
             $subdir = trim(str_replace(DIRECTORY_SEPARATOR, '.', str_replace($item_dir, '', $file_dir)), '.');
@@ -1125,17 +1137,17 @@ EOF;
                 foreach ($subarr as $s) {
                     $id++;
                     if (!isset($curpath[$s])) {
-                        $curpath[$s] = array(
-                            'items' => array(),
+                        $curpath[$s] = [
+                            'items' => [],
                             'name' => ucfirst($s),
                             'id' => $id++
-                        );
+                        ];
                     }
                     $curpath = &$curpath[$s]['items'];
                 }
 
                 if (!isset($subdir_val[$subdir]))
-                    $subdir_val[$subdir] = array();
+                    $subdir_val[$subdir] = [];
 
                 $subdir_val[$subdir][] = $item;
                 $curpath = $subdir_val[$subdir];
@@ -1151,17 +1163,17 @@ EOF;
      * @return array me-return sebuah array list file .
      */
     public static function listFile($formatRecursive = true) {
-        $files = array();
+        $files = [];
 
         $devMode = (bool) Setting::get('app.devMode');
 
         $func = function($m, $module = "", $aliaspath = "", $path) {
-            return array(
+            return [
                 'name' => str_replace(ucfirst($module), '', $m),
                 'class' => $m,
                 'alias' => $aliaspath . "." . $m,
-                'items' => array()
-            );
+                'items' => []
+            ];
         };
 
         if ($devMode) {
@@ -1176,10 +1188,10 @@ EOF;
                 }
             }
 
-            $files[] = array(
+            $files[] = [
                 'module' => 'Plansys: Fields',
                 'items' => $items,
-            );
+            ];
 
             ##  add files in Root Form dir
             $forms_dir = Yii::getPathOfAlias("application.forms") . DIRECTORY_SEPARATOR;
@@ -1196,10 +1208,10 @@ EOF;
                 }
             }
 
-            $files[] = array(
+            $files[] = [
                 'module' => 'Plansys: Forms',
                 'items' => $items
-            );
+            ];
 
             ## add files in Plansys Modules Dir
             $module_dir = Yii::getPathOfAlias('application.modules');
@@ -1213,10 +1225,10 @@ EOF;
                     $items = FormBuilder::formatGlob($items, $item_dir, $module, $func, $alias, $formatRecursive);
 
                     if (count($items) > 0) {
-                        $files[] = array(
+                        $files[] = [
                             'module' => 'Plansys: ' . $module,
                             'items' => $items
-                        );
+                        ];
                     }
                 }
             }
@@ -1238,10 +1250,10 @@ EOF;
             }
         }
 
-        $files[] = array(
+        $files[] = [
             'module' => 'App',
             'items' => $items
-        );
+        ];
 
         ## add files in App Modules Dir
         $module_dir = Yii::getPathOfAlias('app.modules');
@@ -1255,10 +1267,10 @@ EOF;
                 $items = FormBuilder::formatGlob($items, $item_dir, $module, $func, $alias, $formatRecursive);
 
                 if (count($items) > 0) {
-                    $files[] = array(
+                    $files[] = [
                         'module' => $module,
                         'items' => $items
-                    );
+                    ];
                 }
             }
         }

@@ -2,45 +2,45 @@
 
 class SqlCriteriaForm extends Form {
 
-    public $relParams = array();
-    public $relCriteria = array();
+    public $relParams = [];
+    public $relCriteria = [];
 
     public function getForm() {
-        return array(
+        return [
             'title' => 'SqlCriteriaForm',
-            'layout' => array(
+            'layout' => [
                 'name' => 'full-width',
-                'data' => array(
-                    'col1' => array(
+                'data' => [
+                    'col1' => [
                         'type' => 'mainform',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     public function getFields() {
-        return array (
-            array (
+        return  [
+             [
                 'value' => '<pre ng-style=\\"{borderColor: (isError ? \\\'red\\\' : \\\'#ccc\\\')}\\">{{previewSQL}}</pre>',
                 'type' => 'Text',
-            ),
-            array (
+            ],
+             [
                 'value' => '<div class=\\"alert alert-danger\\" style=\\"padding:5px;font-size:12px;\\" ng-if=\\"isError\\"> {{ errorMsg}}</div>',
                 'type' => 'Text',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Criteria',
                 'name' => 'relCriteria',
                 'show' => 'Show',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => '$parent.value',
                     'ng-change' => 'update()',
-                ),
+                ],
                 'allowDoubleQuote' => 'Yes',
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
 }

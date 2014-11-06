@@ -7,7 +7,7 @@ class DevCrudForm extends Form {
     public $tableName;
 
     public static function getTables() {
-        $connection = Yii::app()->db; 
+        $connection = Yii::app()->db;
         $dbSchema = $connection->schema;
         $tables = $dbSchema->getTables();
         return array_keys($tables);
@@ -30,14 +30,14 @@ class DevCrudForm extends Form {
     }
 
     public function getFields() {
-        return array (
-            array (
-                'linkBar' => array (
-                    array (
+        return array(
+            array(
+                'linkBar' => array(
+                    array(
                         'label' => 'Generate CRUD',
                         'buttonType' => 'success',
                         'icon' => 'check',
-                        'options' => array (
+                        'options' => array(
                             'ng-click' => 'generate();',
                         ),
                         'type' => 'LinkButton',
@@ -46,20 +46,20 @@ class DevCrudForm extends Form {
                 'showSectionTab' => 'No',
                 'type' => 'ActionBar',
             ),
-            array (
+            array(
                 'showBorder' => 'Yes',
-                'column1' => array (
-                    array (
+                'column1' => array(
+                    array(
                         'label' => 'Module',
                         'name' => 'module',
                         'layout' => 'Vertical',
                         'fieldWidth' => '12',
                         'type' => 'TextField',
                     ),
-                    array (
+                    array(
                         'label' => 'Table Name',
                         'name' => 'tableName',
-                        'options' => array (
+                        'options' => array(
                             'ng-change' => 'model.model = snakeToCamel(model.tableName)',
                         ),
                         'listExpr' => 'DevCrudForm::getTables()',
@@ -68,20 +68,20 @@ class DevCrudForm extends Form {
                         'searchable' => 'Yes',
                         'type' => 'DropDownList',
                     ),
-                    array (
+                    array(
                         'label' => 'Model',
                         'name' => 'model',
                         'layout' => 'Vertical',
                         'fieldWidth' => '12',
                         'type' => 'TextField',
                     ),
-                    array (
+                    array(
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),
-                'column2' => array (
-                    array (
+                'column2' => array(
+                    array(
                         'value' => '<br/>
 Status: <b>{{status}}</b>
 
@@ -89,17 +89,27 @@ Status: <b>{{status}}</b>
   <div class=\"progress-bar\" role=\"progressbar\" aria-valuenow=\"{{progress}}\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width: {{progress}}%;\">
     <span class=\"sr-only\">{{progress}}% Complete</span>
   </div>
-</div>
-
-<pre>{{result}}</pre>',
+</div>',
                         'type' => 'Text',
                     ),
-                    array (
+                    array(
+                        'value' => '<pre ng-if="!error" style="margin-top:10px;"ng-bind-html=\\"result\\"></pre>',
+                        'type' => 'Text',
+                    ),
+                    array(
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),
                 'type' => 'ColumnField',
+            ),
+            array(
+                'title' => 'Debug Message',
+                'type' => 'SectionHeader',
+            ),
+            array(
+                'value' => '<div style="margin-top:10px;"ng-bind-html=\\"result\\"></div>',
+                'type' => 'Text',
             ),
         );
     }

@@ -13,8 +13,8 @@ class DataFilter extends FormField {
     public $datasource;
 
     /** @var string $filters */
-    public $filters = array();
-    public $options = array();
+    public $filters = [];
+    public $options = [];
 
     /** @var string $toolbarName */
     public static $toolbarName = "Data Filter";
@@ -24,8 +24,8 @@ class DataFilter extends FormField {
 
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-filter";
-    public $filterOperators = array(
-        'string' => array(
+    public $filterOperators = [
+        'string' => [
             'Is Any Of',
             'Is Not Any Of',
             'Contains',
@@ -34,8 +34,8 @@ class DataFilter extends FormField {
             'Starts With',
             'Ends With',
             'Is Empty'
-        ),
-        'number' => array(
+        ],
+        'number' => [
             '=',
             '<>',
             '>',
@@ -43,8 +43,8 @@ class DataFilter extends FormField {
             '<=',
             '<',
             'Is Empty'
-        ),
-        'date' => array(
+        ],
+        'date' => [
             'Between',
             'Not Between',
             'Less Than',
@@ -53,8 +53,8 @@ class DataFilter extends FormField {
             'Weekly',
             'Monthly',
             'Yearly',
-        )
-    );
+        ]
+    ];
 
     public static function getFilterOperators($date = "") {
         $a = new DataFilter;
@@ -66,85 +66,85 @@ class DataFilter extends FormField {
                 $result[$k] = $k;
             }
         }
-        return array('' => 'No Operator') + $result;
+        return ['' => 'No Operator'] + $result;
     }
 
     /**
      * @return array me-return array property DataFilter.
      */
     public function getFieldProperties() {
-        return array(
-            array(
+        return [
+            [
                 'label' => 'Data Filter Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Data Source Name',
                 'name' => 'datasource',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.datasource',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                     'ps-list' => 'dataSourceList',
-                ),
+                ],
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Generate Filters',
                 'buttonType' => 'success',
                 'icon' => 'magic',
                 'buttonSize' => 'btn-xs',
-                'options' => array(
+                'options' => [
                     'style' => 'float:right;margin:0px 0px 5px 0px',
                     'ng-show' => 'active.datasource != \\\'\\\'',
                     'ng-click' => 'generateFilters()',
-                ),
+                ],
                 'type' => 'LinkButton',
-            ),
-            array(
+            ],
+            [
                 'value' => '<div class=\\"clearfix\\"></div>',
                 'type' => 'Text',
-            ),
-            array(
+            ],
+            [
                 'title' => 'Filters',
                 'type' => 'SectionHeader',
-            ),
-            array(
+            ],
+            [
                 'value' => '<div style=\\"margin-top:5px;\\"></div>',
                 'type' => 'Text',
-            ),
-            array(
+            ],
+            [
                 'name' => 'filters',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.DataFilterListForm',
                 'labelWidth' => '0',
                 'inlineJS' => 'DataFilter/inlinejs/dfr-init.js',
                 'fieldWidth' => '12',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.filters',
                     'ng-change' => 'save()',
                     'ps-after-add' => 'value.show = true;',
-                ),
+                ],
                 'type' => 'ListView',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('data-filter.js');
+        return ['data-filter.js'];
     }
 
     protected static function buildSingleParam($paramName, $column, $filter) {
@@ -178,8 +178,8 @@ class DataFilter extends FormField {
                             break;
                         case "Is Any Of":
                             $param_raw = preg_split('/\s+/', trim($filter['value']));
-                            $param = array();
-                            $psql = array();
+                            $param = [];
+                            $psql = [];
                             foreach ($param_raw as $k => $p) {
                                 $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
                                 $psql[] = "{$column} LIKE :{$paramName}_{$pcolumn}_{$k}";
@@ -188,8 +188,8 @@ class DataFilter extends FormField {
                             break;
                         case "Is Not Any Of":
                             $param_raw = preg_split('/\s+/', trim($filter['value']));
-                            $param = array();
-                            $psql = array();
+                            $param = [];
+                            $psql = [];
                             foreach ($param_raw as $k => $p) {
                                 $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
                                 $psql[] = "{$column} NOT LIKE :{$paramName}_{$pcolumn}_{$k}";
@@ -229,19 +229,19 @@ class DataFilter extends FormField {
                     case "Yearly":
                         if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
                             $sql = "({$column} BETWEEN :{$paramName}_{$pcolumn}_from AND :{$paramName}_{$pcolumn}_to)";
-                            $param = array(
+                            $param = [
                                 ":{$paramName}_{$pcolumn}_from" => @$filter['value']['from'],
                                 ":{$paramName}_{$pcolumn}_to" => @$filter['value']['to'],
-                            );
+                            ];
                         }
                         break;
                     case "Not Between":
                         if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
                             $sql = "({$column} NOT BETWEEN :{$paramName}_{$pcolumn}_from AND :{$paramName}_{$pcolumn}_to)";
-                            $param = array(
+                            $param = [
                                 ":{$paramName}_{$pcolumn}_from" => @$filter['value']['from'],
                                 ":{$paramName}_{$pcolumn}_to" => @$filter['value']['to'],
-                            );
+                            ];
                         }
                         break;
                     case "More Than":
@@ -278,8 +278,8 @@ class DataFilter extends FormField {
                 break;
             case "check":
                 if ($filter['value'] != '') {
-                    $param = array();
-                    $psql = array();
+                    $param = [];
+                    $psql = [];
                     foreach ($filter['value'] as $k => $p) {
                         $param[":{$paramName}_{$pcolumn}_{$k}"] = "{$p}";
                         $psql[] = ":{$paramName}_{$pcolumn}_{$k}";
@@ -288,12 +288,12 @@ class DataFilter extends FormField {
                 }
                 break;
         }
-        return array('sql' => $sql, 'param' => $param);
+        return ['sql' => $sql, 'param' => $param];
     }
 
-    public static function generateParams($paramName, $params, $template = '', $paramOptions = array()) {
-        $sql = array();
-        $flatParams = array();
+    public static function generateParams($paramName, $params, $template = '', $paramOptions = []) {
+        $sql = [];
+        $flatParams = [];
         $paramName = preg_replace('/[^\da-z]/i', '_', $paramName);
 
         if (is_array($params) && count($params) > 0) {
@@ -323,10 +323,10 @@ class DataFilter extends FormField {
             }
         }
 
-        $template = array(
+        $template = [
             'sql' => $query,
             'params' => $flatParams
-        );
+        ];
 
         return $template;
     }
@@ -336,7 +336,7 @@ class DataFilter extends FormField {
      */
     public function processExpr() {
         if (count($this->filters) == 0)
-            return array();
+            return [];
 
         foreach ($this->filters as $k => $filter) {
 
@@ -344,7 +344,7 @@ class DataFilter extends FormField {
                 case "list":
                 case "check":
                     $listExpr = @$filter['listExpr'];
-                    $list = array();
+                    $list = [];
 
                     if ($listExpr != "") {
 ## evaluate expression
@@ -380,9 +380,9 @@ class DataFilter extends FormField {
             }
         }
 
-        return array(
+        return [
             'filters' => $this->filters
-        );
+        ];
     }
 
     /**

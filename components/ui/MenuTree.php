@@ -10,15 +10,15 @@ class MenuTree extends CComponent {
         ## dev
         $dir = Yii::getPathOfAlias('application.modules');
         $modules = glob($dir . DIRECTORY_SEPARATOR . "*");
-        $files = array();
+        $files = [];
         foreach ($modules as $m) {
             $module = ucfirst(str_replace($dir . DIRECTORY_SEPARATOR, '', $m));
             $items = MenuTree::listFile($module);
             if (count($items) > 0) {
-                $files[] = array(
+                $files[] = [
                     'module' => $module,
                     'items' => $items
-                );
+                ];
             }
         }
 
@@ -29,10 +29,10 @@ class MenuTree extends CComponent {
             $module = ucfirst(str_replace($dir . DIRECTORY_SEPARATOR, '', $m));
             $items = MenuTree::listFile($module);
             if (count($items) > 0) {
-                $files[] = array(
+                $files[] = [
                     'module' => $module,
                     'items' => $items
-                );
+                ];
             }
         }
         return $files;
@@ -52,19 +52,19 @@ class MenuTree extends CComponent {
             $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
             $m = str_replace('.php', "", $m);
 
-            $items[$k] = array(
+            $items[$k] = [
                 'name' => $m,
                 'module' => $module,
                 'class' => $path . '.' . $m,
                 'class_path' => $path
-            );
+            ];
         }
         return $items;
     }
 
     public static function listHtml($module, $includeEmpty = true) {
         $raw = MenuTree::listFile($module);
-        $list = array();
+        $list = [];
         foreach ($raw as $r) {
             $list[$r['class']] = $r['name'];
         }
@@ -78,7 +78,7 @@ class MenuTree extends CComponent {
 
     public static function fillMenuItems(&$list) {
         if (!is_array($list)) {
-            $list = array();
+            $list = [];
         }
 
         foreach ($list as $k => $v) {
@@ -87,7 +87,7 @@ class MenuTree extends CComponent {
             }
 
             if (!isset($v['items'])) {
-                $list[$k]['items'] = array();
+                $list[$k]['items'] = [];
             } else {
                 MenuTree::fillMenuItems($list[$k]['items']);
             }
@@ -109,7 +109,7 @@ class MenuTree extends CComponent {
             } else {
                 if (!is_array($v['url'])) {
                     if (substr($v['url'], 0, 4) != 'http') {
-                        $list[$k]['url'] = array(str_replace(["\n","\r"],"",str_replace('?', '&', $v['url'])));
+                        $list[$k]['url'] = [str_replace(["\n","\r"],"",str_replace('?', '&', $v['url']))];
                     }
                 }
             }
@@ -120,9 +120,9 @@ class MenuTree extends CComponent {
                 }
                 MenuTree::formatMenuItems($list[$k]['items'], true);
             } else {
-                $list[$k]['itemOptions'] = array(
+                $list[$k]['itemOptions'] = [
                     'class' => 'no-menu'
-                );
+                ];
             }
         }
     }
@@ -160,13 +160,13 @@ class MenuTree extends CComponent {
     }
 
     public function renderScript() {
-        $script = Yii::app()->controller->renderPartial('//layouts/menu_js', array(
+        $script = Yii::app()->controller->renderPartial('//layouts/menu_js', [
             'list' => $this->list,
             'class' => $this->class,
             'options' => $this->options,
-            ), true);
+            ], true);
 
-        return str_replace(array("<script>", "</script>"), "", $script);
+        return str_replace(["<script>", "</script>"], "", $script);
     }
 
     public function render($registerScript = true) {
@@ -180,13 +180,13 @@ class MenuTree extends CComponent {
             $script = $this->renderScript();
         }
 
-        return $ctrl->renderPartial("//layouts/menu", array(
+        return $ctrl->renderPartial("//layouts/menu", [
                 'class' => $this->class,
                 'classpath' => $this->classpath,
                 'title' => $this->title,
                 'options' => $this->options,
                 'script' => $script,
-                ), true);
+                ], true);
     }
 
 }

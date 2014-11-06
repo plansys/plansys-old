@@ -28,15 +28,15 @@ class Controller extends CController {
         return $this->url($static . $path);
     }
 
-    public function renderForm($class, $model = null, $params = array(), $options = array()) {
+    public function renderForm($class, $model = null, $params = [], $options = []) {
         $fb = FormBuilder::load($class);
         $this->pageTitle = $fb->form['title'];
         $this->layout = '//layouts/form';
 
-        $renderOptions = array(
+        $renderOptions = [
             'wrapForm' => true,
             'action' => $this->action->id,
-        );
+        ];
 
         if (is_array($model)) {
             $params = $model;
@@ -66,34 +66,34 @@ class Controller extends CController {
             $name = Yii::app()->user->model->fullname;
         }
 
-        $default = array(
-            array(
+        $default = [
+            [
                 'label' => 'Login',
-                'url' => array('/site/login'),
+                'url' => ['/site/login'],
                 'visible' => Yii::app()->user->isGuest
-            ),
-            array(
+            ],
+            [
                 'label' =>  ucfirst($name),
                 'url' => '#',
-                'items' => array(
-                    array(
+                'items' => [
+                    [
                         'label' => 'Edit Profile',
-                        'url' => array('/sys/profile/index'),
-                    ),
-                    array(
+                        'url' => ['/sys/profile/index'],
+                    ],
+                    [
                         'label' => '---',
-                    ),
-                    array(
+                    ],
+                    [
                         'label' => 'Logout',
-                        'url' => array('/site/logout'),
-                    )
-                ),
-                'itemOptions' => array(
+                        'url' => ['/site/logout'],
+                    ]
+                ],
+                'itemOptions' => [
                     'style' => 'border-right:1px solid rgba(0,0,0,.1)'
-                ),
+                ],
                 'visible' => !Yii::app()->user->isGuest
-            ),
-        );
+            ],
+        ];
         if (Yii::app()->user->isGuest) {
             return $default;
         } else {

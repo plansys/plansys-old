@@ -6,24 +6,24 @@ class ActiveRecord extends CActiveRecord {
      * @return array of used behaviors
      */
     public function behaviors() {
-        return array(
-            'LoggableBehavior' => array(
+        return [
+            'LoggableBehavior' => [
                 'class' => 'LoggableBehavior'
-            ),
-        );
+            ],
+        ];
     }
 
-    private $__relations = array();
-    private $__relationsObj = array();
-    private $__oldRelations = array();
+    private $__relations = [];
+    private $__relationsObj = [];
+    private $__oldRelations = [];
     private $__isRelationLoaded = false;
     private $__defaultPageSize = 25;
-    private $__pageSize = array();
-    private $__page = array();
-    private $__relInsert = array();
-    private $__relUpdate = array();
-    private $__relDelete = array();
-    private $__tempVar = array();
+    private $__pageSize = [];
+    private $__page = [];
+    private $__relInsert = [];
+    private $__relUpdate = [];
+    private $__relDelete = [];
+    private $__tempVar = [];
 
     private function initRelation() {
         $static = !(isset($this) && get_class($this) == get_called_class());
@@ -38,10 +38,10 @@ class ActiveRecord extends CActiveRecord {
         $pageSize = $this->{$name . 'PageSize'};
         $start = ($page - 1) * $pageSize;
 
-        return array(
+        return [
             'limit' => $pageSize,
             'offset' => $start
-        );
+        ];
     }
 
     public function __call($name, $args) {
@@ -141,9 +141,9 @@ class ActiveRecord extends CActiveRecord {
                         $countCommand = $builder->createCountCommand($tableSchema, new CDbCriteria);
                         return $countCommand->queryScalar();
                     } else {
-                        $c = $this->getRelated($name, true, array(
+                        $c = $this->getRelated($name, true, [
                             'select' => 'count(1) as id',
-                        ));
+                        ]);
                         return $c[0]->id;
                     }
                 }
@@ -196,15 +196,15 @@ class ActiveRecord extends CActiveRecord {
             $post[$data . 'Delete'] = json_decode($post[$data . 'Delete'], true);
     }
 
-    public static function toArray($models = array()) {
-        $result = array();
+    public static function toArray($models = []) {
+        $result = [];
         foreach ($models as $k => $m) {
             $result[$k] = $m->attributes;
         }
         return $result;
     }
 
-    public function getModelArray($criteria = array()) {
+    public function getModelArray($criteria = []) {
         if (isset($criteria['page'])) {
             $criteria['offset'] = ($criteria['page'] - 1) * $criteria['pageSize'];
             $criteria['limit'] = $criteria['pageSize'];
@@ -228,7 +228,7 @@ class ActiveRecord extends CActiveRecord {
         return $rawData;
     }
 
-    public function loadRelations($name = null, $criteria = array()) {
+    public function loadRelations($name = null, $criteria = []) {
 
         foreach ($this->getMetaData()->relations as $k => $rel) {
             if (!is_null($name) && $k != $name) {
@@ -262,7 +262,7 @@ class ActiveRecord extends CActiveRecord {
                             $this->__relationsObj[$k] = $this->getRelated($k, true, $criteria);
 
                             if (is_array($this->__relationsObj[$k])) {
-                                $this->__relations[$k] = array();
+                                $this->__relations[$k] = [];
 
                                 foreach ($this->__relationsObj[$k] as $i => $j) {
                                     $this->__relations[$k][$i] = $j->getAttributes(true, false);
@@ -284,11 +284,11 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function getRelChanges($name) {
-        return array(
-            'insert' => count(@$this->__relInsert[$name]) > 0 ? @$this->__relInsert[$name] : array(),
-            'update' => count(@$this->__relUpdate[$name]) > 0 ? @$this->__relUpdate[$name] : array(),
-            'delete' => count(@$this->__relDelete[$name]) > 0 ? @$this->__relDelete[$name] : array(),
-        );
+        return [
+            'insert' => count(@$this->__relInsert[$name]) > 0 ? @$this->__relInsert[$name] : [],
+            'update' => count(@$this->__relUpdate[$name]) > 0 ? @$this->__relUpdate[$name] : [],
+            'delete' => count(@$this->__relDelete[$name]) > 0 ? @$this->__relDelete[$name] : [],
+        ];
     }
 
     private function applyRelChange($name) {
@@ -333,7 +333,7 @@ class ActiveRecord extends CActiveRecord {
                     if (is_string($values[$k])) {
                         $attr = json_decode($values[$k], true);
                         if (!is_array($attr)) {
-                            $attr = array();
+                            $attr = [];
                         }
                     } else {
                         $attr = $values[$k];
@@ -411,7 +411,7 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function getAttributeProperties() {
-        $props = array();
+        $props = [];
         $class = new ReflectionClass($this);
         $properties = Helper::getClassProperties($this);
 
@@ -422,9 +422,9 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function getAttributesList($names = true) {
-        $fields = array();
-        $props = array();
-        $relations = array();
+        $fields = [];
+        $props = [];
+        $relations = [];
         foreach (parent::getAttributes($names) as $k => $i) {
             $fields[$k] = $k;
         }
@@ -439,14 +439,14 @@ class ActiveRecord extends CActiveRecord {
             $props[$k] = $k;
         }
 
-        $attributes = array('DB Fields' => $fields);
+        $attributes = ['DB Fields' => $fields];
 
         if (count($props) > 0) {
-            $attributes = $attributes + array('Properties' => $props);
+            $attributes = $attributes + ['Properties' => $props];
         }
 
         if (count($relations) > 0) {
-            $attributes = $attributes + array('Relations' => $relations);
+            $attributes = $attributes + ['Relations' => $relations];
         }
 
         return $attributes;
@@ -473,7 +473,7 @@ class ActiveRecord extends CActiveRecord {
         }
 
         foreach ($this->__relations as $k => $new) {
-            $new = $new == '' ? array() : $new;
+            $new = $new == '' ? [] : $new;
             $old = @$this->__oldRelations[$k];
             if ((is_array($new) && is_array($old))) {
 
@@ -513,7 +513,7 @@ class ActiveRecord extends CActiveRecord {
                                 if (count($this->__relInsert[$k]) > 0) {
                                     ActiveRecord::batchInsert($class, $this->__relInsert[$k]);
                                 }
-                                $this->__relInsert[$k] = array();
+                                $this->__relInsert[$k] = [];
                             }
 
                             if (isset($this->__relUpdate[$k])) {
@@ -526,14 +526,14 @@ class ActiveRecord extends CActiveRecord {
                                 if (count($this->__relUpdate[$k]) > 0) {
                                     ActiveRecord::batchUpdate($class, $this->__relUpdate[$k]);
                                 }
-                                $this->__relUpdate[$k] = array();
+                                $this->__relUpdate[$k] = [];
                             }
 
                             if (isset($this->__relDelete[$k])) {
                                 if (count($this->__relDelete[$k]) > 0) {
                                     ActiveRecord::batchDelete($class, $this->__relDelete[$k]);
                                 }
-                                $this->__relDelete[$k] = array();
+                                $this->__relDelete[$k] = [];
                             }
                         } elseif (is_array($rel->foreignKey)) {
                             $class = $rel->className;
@@ -549,7 +549,7 @@ class ActiveRecord extends CActiveRecord {
                                 if (count($this->__relInsert[$k]) > 0) {
                                     ActiveRecord::batchInsert($class, $this->__relInsert[$k]);
                                 }
-                                $this->__relInsert[$k] = array();
+                                $this->__relInsert[$k] = [];
                             }
 
                             if (isset($this->__relUpdate[$k])) {
@@ -564,14 +564,14 @@ class ActiveRecord extends CActiveRecord {
                                 if (count($this->__relUpdate[$k]) > 0) {
                                     ActiveRecord::batchUpdate($class, $this->__relUpdate[$k]);
                                 }
-                                $this->__relUpdate[$k] = array();
+                                $this->__relUpdate[$k] = [];
                             }
 
                             if (isset($this->__relDelete[$k])) {
                                 if (count($this->__relDelete[$k]) > 0) {
                                     ActiveRecord::batchDelete($class, $this->__relDelete[$k]);
                                 }
-                                $this->__relDelete[$k] = array();
+                                $this->__relDelete[$k] = [];
                             }
                         }
                         //with through
@@ -584,7 +584,7 @@ class ActiveRecord extends CActiveRecord {
 
         if (method_exists($this, 'getFields')) {
             $fb = FormBuilder::load(get_class($this));
-            $uploadFields = $fb->findAllField(array('type' => 'UploadFile'));
+            $uploadFields = $fb->findAllField(['type' => 'UploadFile']);
             $attrs = [];
             $model = $this;
             foreach ($uploadFields as $k => $f) {
@@ -664,16 +664,16 @@ class ActiveRecord extends CActiveRecord {
                 $type = "TextField";
             }
 
-            $array[] = array(
+            $array[] = [
                 'name' => $f,
                 'type' => $type,
                 'label' => $this->getAttributeLabel($f)
-            );
+            ];
         }
         return $array;
     }
 
-    public static function batchPost($model, $post, $name, $attr = array()) {
+    public static function batchPost($model, $post, $name, $attr = []) {
         $cols = array_keys($attr);
 
         ## insert
@@ -721,9 +721,9 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    public static function batch($model, $new, $old = array(), $delete = true) {
-        $deleteArr = array();
-        $updateArr = array();
+    public static function batch($model, $new, $old = [], $delete = true) {
+        $deleteArr = [];
+        $updateArr = [];
 
         foreach ($old as $k => $v) {
             $is_deleted = true;
@@ -744,8 +744,8 @@ class ActiveRecord extends CActiveRecord {
             }
         }
 
-        $insertArr = array();
-        $insertIds = array();
+        $insertArr = [];
+        $insertIds = [];
         foreach ($new as $i => $j) {
             if (@$j['id'] == '' || is_null(@$j['id'])) {
                 $insertArr[] = $j;
@@ -777,7 +777,7 @@ class ActiveRecord extends CActiveRecord {
         $table = $model::model()->tableSchema->name;
 
         if (is_array($data[0])) {
-            $ids = array();
+            $ids = [];
             foreach ($data as $i => $j) {
                 $ids[] = $j['id'];
             }
@@ -804,7 +804,7 @@ class ActiveRecord extends CActiveRecord {
         foreach ($data as $d) {
             $cond = $d['id'];
             unset($d['id']);
-            $updatearr = array();
+            $updatearr = [];
             for ($i = 0; $i < $columnCount; $i++) {
                 if (isset($columnName[$i]) && isset($d[$columnName[$i]])) {
                     $updatearr[] = $columnName[$i] . " = '{$d[$columnName[$i]]}'";
@@ -822,12 +822,12 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    public static function listData($idField, $valueField, $criteria = array()) {
+    public static function listData($idField, $valueField, $criteria = []) {
 
         if (is_bool($criteria)) {
-            $criteria = array(
+            $criteria = [
                 'distinct' => $criteria
-            );
+            ];
         }
 
         $class = get_called_class();
@@ -855,50 +855,13 @@ class ActiveRecord extends CActiveRecord {
             parent::delete();
         } catch (CDbException $e) {
             if ($e->errorInfo[0] == "23000") {
-                Yii::app()->controller->redirect(array("/site/error&id=integrity"));
+                Yii::app()->controller->redirect(["/site/error&id=integrity"]);
             }
         }
     }
 
     public function getDefaultFields() {
-        $array = $this->modelFieldList;
-        $length = count($array);
-        $column1 = array();
-        $column2 = array();
-        $array_id = null;
-
-        foreach ($array as $k => $i) {
-            if ($array[$k]['name'] == 'id') {
-                $array_id = $array [$k];
-                continue;
-            }
-
-            if ($k < $length / 2) {
-                $column1[] = $array[$k];
-            } else {
-                $column2[] = $array[$k];
-            }
-        }
-
-        $column1[] = '<column-placeholder></column-placeholder>';
-        $column2[] = '<column-placeholder></column-placeholder>';
-
-        $return = array();
-        $return[] = array(
-            'type' => 'ActionBar',
-        );
-
-        if (!is_null($array_id)) {
-            $return[] = $array_id;
-        }
-
-        $return[] = array(
-            'type' => 'ColumnField',
-            'column1' => $column1,
-            'column2' => $column2
-            )
-        ;
-        return $return;
+        return ActiveRecordForm::generateFields($this);
     }
 
 }

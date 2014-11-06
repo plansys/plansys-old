@@ -10,115 +10,115 @@ class ToggleSwitch extends FormField {
      * @return array me-return array property TextField.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return  [
+             [
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ),
-                'list' => array (),
+                ],
+                'list' =>  [],
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
-                ),
+                ],
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ),
-            array (
-                'column1' => array (
-                    array (
+            ],
+             [
+                'column1' =>  [
+                     [
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' =>  [
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                             'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
-                        ),
+                        ],
                         'type' => 'TextField',
-                    ),
-                    array (
+                    ],
+                     [
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
-                    ),
-                ),
-                'column2' => array (
-                    array (
+                    ],
+                ],
+                'column2' =>  [
+                     [
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => 12,
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' =>  [
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                        ),
+                        ],
                         'type' => 'TextField',
-                    ),
-                    array (
+                    ],
+                     [
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
-                    ),
-                ),
-                'column3' => array (
-                    array (
+                    ],
+                ],
+                'column3' =>  [
+                     [
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
-                    ),
-                ),
-                'column4' => array (
-                    array (
+                    ],
+                ],
+                'column4' =>  [
+                     [
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
-                    ),
-                ),
+                    ],
+                ],
                 'type' => 'ColumnField',
-            ),
-            array (
+            ],
+             [
                 'type' => 'Text',
                 'value' => '<hr/>',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
     /** @var string $label */
@@ -141,13 +141,13 @@ class ToggleSwitch extends FormField {
 
 
     /** @var array $options */
-    public $options = array();
+    public $options = [];
 
     /** @var array $labelOptions */
-    public $labelOptions = array();
+    public $labelOptions = [];
 
     /** @var array $fieldOptions */
-    public $fieldOptions = array();
+    public $fieldOptions = [];
 
     /** @var string $toolbarName */
     public static $toolbarName = "Toggle Switch";
@@ -162,11 +162,11 @@ class ToggleSwitch extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array(
+        return [
             'switchery.min.js',
             'ng-switchery.js',
             'toggle-switch.js'
-        );
+        ];
     }
 
     /**

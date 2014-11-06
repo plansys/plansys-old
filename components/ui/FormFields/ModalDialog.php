@@ -8,7 +8,7 @@ class ModalDialog extends FormField {
 
     public $name = '';
     public $subForm = '';
-    public $options = array();
+    public $options = [];
     public $inlineJS = '';
     public $size = '';
 
@@ -22,44 +22,44 @@ class ModalDialog extends FormField {
     public static $toolbarIcon = "fa fa-square fa-nm";
 
     public function getFieldProperties() {
-        return array(
-            array(
+        return [
+            [
                 'label' => 'SubForm Name',
                 'name' => 'name',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.name',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array(
+            ],
+            [
                 'label' => 'SubForm',
                 'name' => 'subForm',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.subForm',
                     'ng-change' => 'save()',
-                ),
+                ],
                 'listExpr' => 'FormBuilder::listForm(null, true)',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Inline JS',
                 'name' => 'inlineJS',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.inlineJS',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
     private $_subformClass = "";
@@ -92,7 +92,7 @@ class ModalDialog extends FormField {
     }
 
     public function includeJS() {
-        return array('modal-dialog.js');
+        return ['modal-dialog.js'];
     }
 
     public function renderSubForm() {
@@ -102,9 +102,9 @@ class ModalDialog extends FormField {
             ## render
             Yii::import($this->subForm);
             $fb = FormBuilder::load($this->subFormClass);
-            $render = $fb->render($fb->model, array(
+            $render = $fb->render($fb->model, [
                 'wrapForm' => false
-            ));
+            ]);
 
             return $render;
         }

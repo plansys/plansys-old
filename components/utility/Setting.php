@@ -6,21 +6,21 @@ class Setting {
     public static $basePath;
     public static $rootPath;
     public static $path = "";
-    public static $default = array(
-        'db' => array(
+    public static $default = [
+        'db' => [
             'driver' => 'mysql',
             'server' => '',
             'username' => '',
             'password' => '',
             'dbname' => ''
-        ),
-        'repo' => array(
+        ],
+        'repo' => [
             'path' => 'repo'
-        ),
-        'app' => array(
+        ],
+        'app' => [
             'dir' => 'app'
-        ),
-    );
+        ],
+    ];
 
     private static function setupBasePath($configfile) {
         $basePath = dirname($configfile);
@@ -39,12 +39,12 @@ class Setting {
         $ldap = Setting::get('ldap');
 
         if (!is_null($ldap)) {
-            return array(
+            return [
                 'class' => 'application.extensions.adLDAP.YiiLDAP',
                 'options' => $ldap
-            );
+            ];
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -125,7 +125,7 @@ class Setting {
     }
 
     public static function getControllerMap() {
-        $controllers = array();
+        $controllers = [];
 
         if (is_dir(Yii::getPathOfAlias('app.controllers'))) {
             $gls = glob(Yii::getPathOfAlias('app.controllers') . DIRECTORY_SEPARATOR . "*.php");
@@ -150,46 +150,46 @@ class Setting {
         $modules = glob(Setting::getBasePath() . DIRECTORY_SEPARATOR . "modules" . DIRECTORY_SEPARATOR . "*");
         $appModules = glob(Setting::getAppPath() . DIRECTORY_SEPARATOR . "modules" . DIRECTORY_SEPARATOR . "*");
 
-        $return = array();
+        $return = [];
         foreach ($modules as $key => $module) {
             $m = array_pop(explode(DIRECTORY_SEPARATOR, $module));
-            $return[$m] = array(
+            $return[$m] = [
                 'class' => 'application.modules.' . $m . '.' . ucfirst($m) . 'Module'
-            );
+            ];
         }
 
         foreach ($appModules as $key => $module) {
             $m = array_pop(explode(DIRECTORY_SEPARATOR, $module));
-            $return[$m] = array(
+            $return[$m] = [
                 'class' => 'app.modules.' . $m . '.' . ucfirst($m) . 'Module'
-            );
+            ];
         }
         return $return;
     }
 
     public static function getDB() {
         if (Setting::get('db.port') == null) {
-            $connection = array(
+            $connection = [
                 'connectionString' => Setting::get('db.driver') . ':host=' . Setting::get('db.server') . ';dbname=' . Setting::get('db.dbname'),
                 'emulatePrepare' => true,
                 'username' => Setting::get('db.username'),
                 'password' => Setting::get('db.password'),
                 'charset' => 'utf8',
-            );
+            ];
         } else {
-            $connection = array(
+            $connection = [
                 'connectionString' => Setting::get('db.driver') . ':host=' . Setting::get('db.server') . ';port=' . Setting::get('db.port') . ';dbname=' . Setting::get('db.dbname'),
                 'emulatePrepare' => true,
                 'username' => Setting::get('db.username'),
                 'password' => Setting::get('db.password'),
                 'charset' => 'utf8',
-            );
+            ];
         }
         return $connection;
     }
 
     public static function getDBDriverList() {
-        return array(
+        return [
             'mysql' => 'MySQL',
             /*
               'pgsql' => 'PostgreSQL',
@@ -198,7 +198,7 @@ class Setting {
               'oci' => 'Oracle'
              * 
              */
-        );
+        ];
     }
 
 }

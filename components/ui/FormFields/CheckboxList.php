@@ -10,114 +10,114 @@ class CheckboxList extends FormField {
      * @return array me-return array property Checkbox.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return  [
+             [
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ),
-                'list' => array (),
+                ],
+                'list' =>  [],
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                     'ng-delay' => '500',
-                ),
+                ],
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Item Layout',
                 'name' => 'itemLayout',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.itemLayout',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label Width',
                 'name' => 'labelWidth',
                 'fieldWidth' => '4',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.labelWidth',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                     'ng-disabled' => 'active.layout == \\\'Vertical\\\';',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Convert List to String ?',
                 'name' => 'convertToString',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.convertToString',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'listExpr' => 'array(\\"Yes\\",\\"No\\")',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'CheckBox Item',
                 'name' => 'list',
                 'show' => 'Show',
-                'options' => array (
+                'options' =>  [
                     'ng-hide' => 'active.listExpr != \\\'\\\' || active.options[\\\'ps-list\\\'] != null',
-                ),
+                ],
                 'allowSpaceOnKey' => 'Yes',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'List Expression',
                 'fieldname' => 'listExpr',
-                'options' => array (
+                'options' =>  [
                     'ng-hide' => 'active.options[\\\'ps-list\\\'] != null',
                     'ps-valid' => 'active.list = result;save();',
-                ),
+                ],
                 'desc' => '<i class=\\"fa fa-warning\\"></i> WARNING: Using List Expression will replace <i>CheckBox Item</i>with expression result',
                 'type' => 'ExpressionField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
     /** @var string $label */
@@ -151,13 +151,13 @@ class CheckboxList extends FormField {
     public $fieldWidth = 8;
 
     /** @var array $options */
-    public $options = array();
+    public $options = [];
 
     /** @var array $labelOptions */
-    public $labelOptions = array();
+    public $labelOptions = [];
 
     /** @var array $fieldOptions */
-    public $fieldOptions = array();
+    public $fieldOptions = [];
 
     /** @var string $toolbarName */
     public static $toolbarName = "Checkbox List";
@@ -172,7 +172,7 @@ class CheckboxList extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('check-box-list.js');
+        return ['check-box-list.js'];
     }
 
     /**
@@ -182,7 +182,7 @@ class CheckboxList extends FormField {
         if ($this->listExpr != "") {
             if (FormField::$inEditor) {
                 $this->list = '';
-                return array('list' => '');
+                return ['list' => ''];
             }
 
             ## evaluate expression
@@ -196,9 +196,9 @@ class CheckboxList extends FormField {
             $this->list = Helper::toAssoc($this->list);
         }
 
-        return array(
+        return [
             'list' => $this->list
-        );
+        ];
     }
 
     /**
@@ -255,9 +255,9 @@ class CheckboxList extends FormField {
         } else if (is_array($this->value)) {
             $list = $this->value;
         } else if (is_string($this->value)) {
-            $list = array($this->value);
+            $list = [$this->value];
         } else {
-            $list = array();
+            $list = [];
         }
 
         return in_array($value, $list) ? 'checked="checked"' : '';

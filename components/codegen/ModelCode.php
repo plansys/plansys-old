@@ -18,23 +18,23 @@ class ModelCode extends CCodeModel {
     protected $relations;
 
     public function rules() {
-        return array(
-            array('tablePrefix, baseClass, tableName, modelClass, modelPath, connectionId', 'filter', 'filter' => 'trim'),
-            array('connectionId, tableName, modelPath, baseClass', 'required'),
-            array('tablePrefix, tableName, modelPath', 'match', 'pattern' => '/^(\w+[\w\.]*|\*?|\w+\.\*)$/', 'message' => '{attribute} should only contain word characters, dots, and an optional ending asterisk.'),
-            array('connectionId', 'validateConnectionId', 'skipOnError' => true),
-            array('tableName', 'validateTableName', 'skipOnError' => true),
-            array('tablePrefix, modelClass', 'match', 'pattern' => '/^[a-zA-Z_]\w*$/', 'message' => '{attribute} should only contain word characters.'),
-            array('baseClass', 'match', 'pattern' => '/^[a-zA-Z_][\w\\\\]*$/', 'message' => '{attribute} should only contain word characters and backslashes.'),
-            array('modelPath', 'validateModelPath', 'skipOnError' => true),
-            array('baseClass, modelClass', 'validateReservedWord', 'skipOnError' => true),
-            array('baseClass', 'validateBaseClass', 'skipOnError' => true),
-            array('connectionId, tablePrefix, modelPath, baseClass, buildRelations, commentsAsLabels', 'sticky'),
-        );
+        return [
+            ['tablePrefix, baseClass, tableName, modelClass, modelPath, connectionId', 'filter', 'filter' => 'trim'],
+            ['connectionId, tableName, modelPath, baseClass', 'required'],
+            ['tablePrefix, tableName, modelPath', 'match', 'pattern' => '/^(\w+[\w\.]*|\*?|\w+\.\*)$/', 'message' => '{attribute} should only contain word characters, dots, and an optional ending asterisk.'],
+            ['connectionId', 'validateConnectionId', 'skipOnError' => true],
+            ['tableName', 'validateTableName', 'skipOnError' => true],
+            ['tablePrefix, modelClass', 'match', 'pattern' => '/^[a-zA-Z_]\w*$/', 'message' => '{attribute} should only contain word characters.'],
+            ['baseClass', 'match', 'pattern' => '/^[a-zA-Z_][\w\\\\]*$/', 'message' => '{attribute} should only contain word characters and backslashes.'],
+            ['modelPath', 'validateModelPath', 'skipOnError' => true],
+            ['baseClass, modelClass', 'validateReservedWord', 'skipOnError' => true],
+            ['baseClass', 'validateBaseClass', 'skipOnError' => true],
+            ['connectionId, tablePrefix, modelPath, baseClass, buildRelations, commentsAsLabels', 'sticky'],
+        ];
     }
 
     public function attributeLabels() {
-        return array_merge(parent::attributeLabels(), array(
+        return array_merge(parent::attributeLabels(), [
             'tablePrefix' => 'Table Prefix',
             'tableName' => 'Table Name',
             'modelPath' => 'Model Path',
@@ -43,13 +43,13 @@ class ModelCode extends CCodeModel {
             'buildRelations' => 'Build Relations',
             'commentsAsLabels' => 'Use Column Comments as Attribute Labels',
             'connectionId' => 'Database Connection',
-        ));
+        ]);
     }
 
     public function requiredTemplates() {
-        return array(
+        return [
             'model.php',
-        );
+        ];
     }
 
     public function init() {
@@ -76,25 +76,25 @@ class ModelCode extends CCodeModel {
                 }
             }
         } else
-            $tables = array($this->getTableSchema($this->tableName));
+            $tables = [$this->getTableSchema($this->tableName)];
 
 
-        $this->files = array();
+        $this->files = [];
         $this->relations = $this->generateRelations();
-        $return = array();
+        $return = [];
 
         foreach ($tables as $table) {
             $tableName = $this->removePrefix($table->name);
             $className = $this->generateClassName($table->name);
-            $params = array(
+            $params = [
                 'tableName' => $schema === '' ? $tableName : $schema . '.' . $tableName,
                 'modelClass' => $className,
                 'columns' => $table->columns,
                 'labels' => $this->generateLabels($table),
                 'rules' => $this->generateRules($table),
-                'relations' => isset($this->relations[$className]) ? $this->relations[$className] : array(),
+                'relations' => isset($this->relations[$className]) ? $this->relations[$className] : [],
                 'connectionId' => $this->connectionId,
-            );
+            ];
             $return[] = $params;
         }
         return $return;
@@ -116,8 +116,8 @@ class ModelCode extends CCodeModel {
         if ($this->hasErrors())
             return;
 
-        $invalidTables = array();
-        $invalidColumns = array();
+        $invalidTables = [];
+        $invalidColumns = [];
 
         if ($this->tableName[strlen($this->tableName) - 1] === '*') {
             if (($pos = strrpos($this->tableName, '.')) !== false)
@@ -146,9 +146,9 @@ class ModelCode extends CCodeModel {
                 $invalidColumns[] = $invalidColumn;
         }
 
-        if ($invalidTables != array())
+        if ($invalidTables != [])
             $this->addError('tableName', 'Model class cannot take a reserved PHP keyword! Table name: ' . implode(', ', $invalidTables) . ".");
-        if ($invalidColumns != array())
+        if ($invalidColumns != [])
             $this->addError('tableName', 'Column names that does not follow PHP variable naming convention: ' . implode(', ', $invalidColumns) . ".");
     }
 
@@ -185,12 +185,12 @@ class ModelCode extends CCodeModel {
     }
 
     public function generateLabels($table) {
-        $labels = array();
+        $labels = [];
         foreach ($table->columns as $column) {
             if ($this->commentsAsLabels && $column->comment)
                 $labels[$column->name] = $column->comment;
             else {
-                $label = ucwords(trim(strtolower(str_replace(array('-', '_'), ' ', preg_replace('/(?<![A-Z])[A-Z]/', ' \0', $column->name)))));
+                $label = ucwords(trim(strtolower(str_replace(['-', '_'], ' ', preg_replace('/(?<![A-Z])[A-Z]/', ' \0', $column->name)))));
                 $label = preg_replace('/\s+/', ' ', $label);
                 if (strcasecmp(substr($label, -3), ' id') === 0)
                     $label = substr($label, 0, -3);
@@ -204,12 +204,12 @@ class ModelCode extends CCodeModel {
     }
 
     public function generateRules($table) {
-        $rules = array();
-        $required = array();
-        $integers = array();
-        $numerical = array();
-        $length = array();
-        $safe = array();
+        $rules = [];
+        $required = [];
+        $integers = [];
+        $numerical = [];
+        $length = [];
+        $safe = [];
         foreach ($table->columns as $column) {
             if ($column->autoIncrement)
                 continue;
@@ -225,24 +225,24 @@ class ModelCode extends CCodeModel {
             elseif (!$column->isPrimaryKey && !$r)
                 $safe[] = $column->name;
         }
-        if ($required !== array())
+        if ($required !== [])
             $rules[] = "array('" . implode(', ', $required) . "', 'required')";
-        if ($integers !== array())
+        if ($integers !== [])
             $rules[] = "array('" . implode(', ', $integers) . "', 'numerical', 'integerOnly'=>true)";
-        if ($numerical !== array())
+        if ($numerical !== [])
             $rules[] = "array('" . implode(', ', $numerical) . "', 'numerical')";
-        if ($length !== array()) {
+        if ($length !== []) {
             foreach ($length as $len => $cols)
                 $rules[] = "array('" . implode(', ', $cols) . "', 'length', 'max'=>$len)";
         }
-        if ($safe !== array())
+        if ($safe !== [])
             $rules[] = "array('" . implode(', ', $safe) . "', 'safe')";
 
         return $rules;
     }
 
     public function getRelations($className) {
-        return isset($this->relations[$className]) ? $this->relations[$className] : array();
+        return isset($this->relations[$className]) ? $this->relations[$className] : [];
     }
 
     protected function removePrefix($tableName, $addBrackets = true) {
@@ -275,13 +275,13 @@ class ModelCode extends CCodeModel {
 
     protected function generateRelations() {
         if (!$this->buildRelations)
-            return array();
+            return [];
 
         $schemaName = '';
         if (($pos = strpos($this->tableName, '.')) !== false)
             $schemaName = substr($this->tableName, 0, $pos);
 
-        $relations = array();
+        $relations = [];
         foreach (Yii::app()->{$this->connectionId}->schema->getTables($schemaName) as $table) {
             if ($this->tablePrefix != '' && strpos($table->name, $this->tablePrefix) !== 0)
                 continue;

@@ -36,10 +36,10 @@
     </table>
 
     <?php
-    echo FormBuilder::build('ModalDialog', array(
+    echo FormBuilder::build('ModalDialog', [
         'name' => 'CriteriaDialog',
         'subForm' => 'SqlCriteriaForm',
-    ));
+    ]);
     ?>
 
 </div>

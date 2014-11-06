@@ -44,7 +44,7 @@ class RepoManager extends CComponent {
         return $path;
     }
 
-    public static function count($path, $pattern = "", $params = array()) {
+    public static function count($path, $pattern = "", $params = []) {
         $path = RepoManager::resolve($path);
         if (!is_dir($path)) {
             return 0;
@@ -117,7 +117,7 @@ class RepoManager extends CComponent {
         return RepoManager::parseName($entry, $pattern);
     }
 
-    public static $fileCounts = array();
+    public static $fileCounts = [];
 
     public static function isColumnFilterMatch($columns, $filter, $filterColumn) {
         $value = @$columns[$filterColumn];
@@ -276,7 +276,7 @@ class RepoManager extends CComponent {
         return true;
     }
 
-    public static function listAll($path, $pattern = "", $params = array()) {
+    public static function listAll($path, $pattern = "", $params = []) {
         $result = [];
 
         $path = RepoManager::resolve($path);
@@ -422,7 +422,7 @@ class RepoManager extends CComponent {
             $dir = getcwd() . DIRECTORY_SEPARATOR . $dir;
         }
 
-        $list = array();
+        $list = [];
 
         if (!is_dir($dir)) {
             if (RepoManager::getModuleDir() == $originaldir) {
@@ -485,12 +485,12 @@ class RepoManager extends CComponent {
                 if ($file == "." || $file == ".." || $file[0] == ".")
                     continue;
 
-                $new = array(
+                $new = [
                     'name' => $file,
                     'type' => $perm[0] == 'd' ? "dir" : "." . substr($file, strrpos($file, '.') + 1),
                     'size' => $size,
                     'path' => $this->relativePath($dir . DIRECTORY_SEPARATOR . $file)
-                );
+                ];
 
                 if ($new['type'] == "dir") {
                     $new['size'] = 0;
@@ -538,7 +538,7 @@ class RepoManager extends CComponent {
 //                }
 //            }
 //        }
-        usort($list, array('RepoManager', 'sortItem'));
+        usort($list, ['RepoManager', 'sortItem']);
         $count = count($list);
 
 
@@ -548,13 +548,13 @@ class RepoManager extends CComponent {
             $parent = "";
         }
 
-        $detail = array(
+        $detail = [
             'parent' => $parent,
             'path' => $this->relativePath($dir),
             'type' => 'dir',
             'item' => $list,
             'count' => $count,
-        );
+        ];
         return $detail;
     }
 

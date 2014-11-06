@@ -10,212 +10,212 @@ class RelationField extends FormField {
      * @return array me-return array property DropDown.
      */
     public function getFieldProperties() {
-        return array(
-            array(
+        return [
+            [
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ),
-                'list' => array(),
+                ],
+                'list' => [],
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Model Class',
                 'name' => 'modelClass',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.modelClass',
                     'ng-change' => 'generateRelationField();save();',
-                ),
+                ],
                 'listExpr' => 'RelationField::listModel()',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'label' => 'ID Field',
                 'name' => 'idField',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.idField',
                     'ng-change' => 'save();',
                     'ps-list' => 'relationFieldList',
-                ),
-                'list' => array(),
+                ],
+                'list' => [],
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Label Field',
                 'name' => 'labelField',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.labelField',
                     'ng-change' => 'save();',
                     'ps-list' => 'relationFieldList',
-                ),
-                'list' => array(),
+                ],
+                'list' => [],
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'name' => 'relationCriteria',
                 'label' => 'Sql Criteria',
                 'paramsField' => 'params',
                 'baseClass' => 'RelationField',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.relationCriteria',
                     'ng-change' => 'save();',
-                ),
+                ],
                 'modelClassJS' => 'RelationField/relation-criteria.js',
                 'type' => 'SqlCriteria',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Sql Parameters',
                 'name' => 'params',
                 'show' => 'Show',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.params',
                     'ng-change' => 'save();',
-                ),
+                ],
                 'type' => 'KeyValueGrid',
-            ),
-            array(
+            ],
+            [
                 'value' => '<hr/>',
                 'type' => 'Text',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Include Empty',
                 'name' => 'includeEmpty',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.includeEmpty',
                     'ng-change' => 'save();',
-                ),
+                ],
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Empty Value',
                 'name' => 'emptyValue',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.emptyValue',
                     'ng-change' => 'save()',
                     'ng-show' => 'active.includeEmpty == \\\'Yes\\\'',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Empty Label',
                 'name' => 'emptyLabel',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.emptyLabel',
                     'ng-change' => 'save()',
                     'ng-show' => 'active.includeEmpty == \\\'Yes\\\'',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array(
+            ],
+            [
                 'value' => '<hr/>',
                 'type' => 'Text',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => 500,
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
-                ),
+                ],
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'value' => '<hr/>',
                 'type' => 'Text',
-            ),
-            array(
+            ],
+            [
                 'totalColumns' => '4',
-                'column1' => array(
-                    array(
+                'column1' => [
+                    [
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
-                    ),
-                ),
-                'column2' => array(
-                    array(
+                    ],
+                ],
+                'column2' => [
+                    [
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array(
+                        'options' => [
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => 500,
                             'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
-                        ),
+                        ],
                         'type' => 'TextField',
-                    ),
-                    array(
+                    ],
+                    [
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
-                    ),
-                ),
-                'column3' => array(
-                    array(
+                    ],
+                ],
+                'column3' => [
+                    [
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array(
+                        'options' => [
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => 500,
-                        ),
+                        ],
                         'type' => 'TextField',
-                    ),
-                    array(
+                    ],
+                    [
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
-                    ),
-                ),
+                    ],
+                ],
                 'type' => 'ColumnField',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
     /** @var string $label */
@@ -223,7 +223,7 @@ class RelationField extends FormField {
 
     /** @var string $name */
     public $name = '';
-    public $relationCriteria = array(
+    public $relationCriteria = [
         'select' => '',
         'distinct' => 'false',
         'alias' => 't',
@@ -232,20 +232,20 @@ class RelationField extends FormField {
         'group' => '',
         'having' => '',
         'join' => ''
-    );
-    public $params = array();
+    ];
+    public $params = [];
 
     /** @var string $value digunakan pada function checked */
     public $value = '';
 
     /** @var array $options */
-    public $options = array();
+    public $options = [];
 
     /** @var array $fieldOptions */
-    public $fieldOptions = array();
+    public $fieldOptions = [];
 
     /** @var array $labelOptions */
-    public $labelOptions = array();
+    public $labelOptions = [];
 
     /** @var string $list */
     public $list = '';
@@ -290,7 +290,7 @@ class RelationField extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('relation-field.js');
+        return ['relation-field.js'];
     }
 
     public function actionDgrInit() {
@@ -298,11 +298,11 @@ class RelationField extends FormField {
         $post = CJSON::decode($postdata);
 
         $fb = FormBuilder::load($post['class']);
-        $ff = $fb->findField(array('name' => $post['name']));
+        $ff = $fb->findField(['name' => $post['name']]);
         $this->builder = $fb;
-        $return = array();
+        $return = [];
         foreach ($post['cols'] as $alias => $ids) {
-            $return[$alias] = array();
+            $return[$alias] = [];
             $fc = null;
             foreach ($ff['columns'] as $ffc) {
                 if ($ffc['columnType'] == "relation" && $ffc['name'] == $alias) {
@@ -335,7 +335,7 @@ class RelationField extends FormField {
                         $this->relationCriteria['condition'] = "({$id} IN ({$ids}))";
                     }
 
-                    $result = $this->query('', is_null($this->params) ? array() : $this->params);
+                    $result = $this->query('', is_null($this->params) ? [] : $this->params);
 
                     foreach ($result as $i => $r) {
                         $return[$alias] = $result;
@@ -352,7 +352,7 @@ class RelationField extends FormField {
         extract($post);
 
         $fb = FormBuilder::load($m);
-        $field = $fb->findField(array('name' => $f));
+        $field = $fb->findField(['name' => $f]);
 
         foreach ($field['columns'] as $column) {
             if ($c == $column['name']) {
@@ -374,14 +374,14 @@ class RelationField extends FormField {
         extract($post);
 
         $fb = FormBuilder::load($m);
-        $field = $fb->findField(array('name' => $f));
+        $field = $fb->findField(['name' => $f]);
         $this->attributes = $field;
         $this->builder = $fb;
 
         echo json_encode($this->query($s, $p));
     }
 
-    public function generateCondition($search = '', &$jsparams = array()) {
+    public function generateCondition($search = '', &$jsparams = []) {
 
         $sql = @$this->relationCriteria['condition'] ? $this->relationCriteria['condition'] : "";
 
@@ -421,7 +421,7 @@ class RelationField extends FormField {
         }
 
 ## generate parameters
-        $params = array();
+        $params = [];
         foreach ($blocks[1] as $k => $block) {
             $cond = '';
 
@@ -474,17 +474,17 @@ class RelationField extends FormField {
 
 ## assemble parameters
         $i = 0;
-        $returnParams = array();
+        $returnParams = [];
         foreach ($params as $k => $p) {
             $returnParams[':param_' . $i] = "'" . $p . "'";
             $sql = str_replace('[' . $k . ']', ':param_' . $i, $sql);
             $i++;
         }
 
-        return array(
+        return [
             'sql' => $sql,
             'params' => $returnParams
-        );
+        ];
     }
 
     public function generateCriteria($search, $params) {
@@ -498,7 +498,7 @@ class RelationField extends FormField {
         return DataSource::generateCriteria($this->params, $this->relationCriteria, $this);
     }
 
-    public function query($search = '', $params = array(), $initialID = null) {
+    public function query($search = '', $params = [], $initialID = null) {
         Yii::import($this->modelClass);
 
         $class = array_pop(explode(".", $this->modelClass));
@@ -524,7 +524,7 @@ class RelationField extends FormField {
         }
 
 
-        $list = array();
+        $list = [];
         foreach ($rawlist as $k => $i) {
             $included = true;
             if ($included) {
@@ -542,24 +542,24 @@ class RelationField extends FormField {
                     $label = $this->evaluate("\"" . str_replace("{", "{\$", $this->labelField) . "\"", true, $i);
                 }
 
-                $list[] = array(
+                $list[] = [
                     'value' => $value,
                     'label' => $label
-                );
+                ];
             }
         }
 
         if ($this->includeEmpty == 'Yes') {
             if (count($list) > 0) {
-                array_unshift($list, array(
+                array_unshift($list, [
                     'value' => '---',
                     'label' => '---'
-                ));
+                ]);
             }
-            array_unshift($list, array(
+            array_unshift($list, [
                 'value' => $this->emptyValue,
                 'label' => $this->emptyLabel
-            ));
+            ]);
         }
 
         $this->list = $list;
@@ -568,7 +568,7 @@ class RelationField extends FormField {
 
     public function actionListField() {
         if (!@$_GET['class']) {
-            echo json_encode(array());
+            echo json_encode([]);
             die();
         }
 
@@ -577,7 +577,7 @@ class RelationField extends FormField {
         Yii::import($class);
         $class = array_pop(explode(".", $class));
         $model = new $class;
-        $data = array();
+        $data = [];
         if (is_subclass_of($model, 'ActiveRecord')) {
             $formType = "ActiveRecord";
             $data = $class::model()->attributesList;
@@ -606,7 +606,7 @@ class RelationField extends FormField {
         $devItems = glob($devDir . DIRECTORY_SEPARATOR . "*");
         $appItems = glob($appDir . DIRECTORY_SEPARATOR . "*");
 
-        $items = array();
+        $items = [];
         foreach ($appItems as $k => $m) {
             $m = str_replace($appDir . DIRECTORY_SEPARATOR, "", $m);
             $m = str_replace('.php', "", $m);
@@ -704,7 +704,7 @@ class RelationField extends FormField {
         }
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
-        $this->query('', array(), $this->value);
+        $this->query('', [], $this->value);
 
         return $this->renderInternal('template_render.php');
     }

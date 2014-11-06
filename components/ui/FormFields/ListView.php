@@ -10,159 +10,159 @@ class ListView extends FormField {
      * @return array me-return array property TextField.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return  [
+             [
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ),
-                'list' => array (),
+                ],
+                'list' =>  [],
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Field Template',
                 'name' => 'fieldTemplate',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.fieldTemplate',
                     'ng-change' => 'save();',
-                ),
-                'list' => array (
+                ],
+                'list' =>  [
                     'default' => 'Default',
                     'form' => 'Form',
-                ),
+                ],
                 'otherLabel' => 'Other...',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Template Form',
                 'name' => 'templateForm',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.templateForm',
                     'ng-show' => 'active.fieldTemplate == \\\'form\\\'',
                     'ng-change' => 'save();',
-                ),
+                ],
                 'listExpr' => 'FormBuilder::listForm()',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Inline JS',
                 'name' => 'inlineJS',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.inlineJS',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'value' => '<div ng-show=\"active.fieldTemplate == \'form\'\" class=\"well well-sm\">
 Use this code to access current item: <br/> 
 <code>ng-model = value[$index]</code><br/>
     <code> ng-change = updateListView() </code> 
 </div>',
                 'type' => 'Text',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
-                ),
+                ],
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ),
-            array (
-                'column1' => array (
-                    array (
+            ],
+             [
+                'column1' =>  [
+                     [
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' =>  [
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                             'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
-                        ),
+                        ],
                         'type' => 'TextField',
-                    ),
-                    array (
+                    ],
+                     [
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
-                    ),
-                ),
-                'column2' => array (
-                    array (
+                    ],
+                ],
+                'column2' =>  [
+                     [
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => 12,
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' =>  [
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                        ),
+                        ],
                         'type' => 'TextField',
-                    ),
-                    array (
+                    ],
+                     [
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
-                    ),
-                ),
-                'column3' => array (
-                    array (
+                    ],
+                ],
+                'column3' =>  [
+                     [
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
-                    ),
-                ),
-                'column4' => array (
-                    array (
+                    ],
+                ],
+                'column4' =>  [
+                     [
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
-                    ),
-                ),
+                    ],
+                ],
                 'type' => 'ColumnField',
-            ),
-            array (
+            ],
+             [
                 'value' => '<hr/>',
                 'type' => 'Text',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
     /** @var string $label */
@@ -195,13 +195,13 @@ Use this code to access current item: <br/>
     public $fieldWidth = 8;
 
     /** @var array $options */
-    public $options = array();
+    public $options = [];
 
     /** @var array $labelOptions */
-    public $labelOptions = array();
+    public $labelOptions = [];
 
     /** @var array $fieldOptions */
-    public $fieldOptions = array();
+    public $fieldOptions = [];
 
     /** @var string $toolbarName */
     public static $toolbarName = "List View";
@@ -216,7 +216,7 @@ Use this code to access current item: <br/>
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('list-view.js');
+        return ['list-view.js'];
     }
 
     /**
@@ -262,7 +262,7 @@ Use this code to access current item: <br/>
     }
 
     protected $renderTemplateForm;
-    protected $templateAttributes = array();
+    protected $templateAttributes = [];
 
     /**
      * render
@@ -287,11 +287,11 @@ Use this code to access current item: <br/>
             $model = new $class;
             
             if ($this->value == "") {
-                $this->value = array();
+                $this->value = [];
             }
             
             $this->templateAttributes = $model->attributes;
-            $this->renderTemplateForm = $fb->render($this->templateAttributes, array('wrapForm' => false));
+            $this->renderTemplateForm = $fb->render($this->templateAttributes, ['wrapForm' => false]);
         }
         
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);

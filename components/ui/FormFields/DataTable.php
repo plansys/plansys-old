@@ -13,8 +13,8 @@ class DataTable extends FormField {
     public $datasource;
 
     /** @var string $filters */
-    public $columns = array();
-    public $gridOptions = array();
+    public $columns = [];
+    public $gridOptions = [];
 
     /** @var string $toolbarName */
     public static $toolbarName = "Data Table";
@@ -29,83 +29,83 @@ class DataTable extends FormField {
      * @return array me-return array property DataTable.
      */
     public function getFieldProperties() {
-        return array(
-            array(
+        return [
+            [
                 'label' => 'Data Filter Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Data Source Name',
                 'name' => 'datasource',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.datasource',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                     'ps-list' => 'dataSourceList',
-                ),
+                ],
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Generate Columns',
                 'buttonType' => 'success',
                 'icon' => 'magic',
                 'buttonSize' => 'btn-xs',
-                'options' => array(
+                'options' => [
                     'style' => 'float:right;margin:0px 0px 5px 0px',
                     'ng-show' => 'active.datasource != \\\'\\\'',
                     'ng-click' => 'generateColumns()',
-                ),
+                ],
                 'type' => 'LinkButton',
-            ),
-            array(
+            ],
+            [
                 'value' => '<div class=\\"clearfix\\"></div>',
                 'type' => 'Text',
-            ),
-            array(
+            ],
+            [
                 'label' => 'DataTable Options',
                 'name' => 'gridOptions',
                 'show' => 'Show',
                 'type' => 'KeyValueGrid',
-            ),
-            array(
+            ],
+            [
                 'title' => 'Columns',
                 'type' => 'SectionHeader',
-            ),
-            array(
+            ],
+            [
                 'type' => 'Text',
                 'value' => '<div style=\\"margin-top:5px\\"></div>',
-            ),
-            array(
+            ],
+            [
                 'name' => 'columns',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.DataTableListForm',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.columns',
                     'ng-change' => 'save()',
-                ),
+                ],
                 'type' => 'ListView',
-            ),
-        );
+            ],
+        ];
     }
 
-    private static function generateOrderParams($params, $template, $paramOptions = array()) {
-        $sqlparams = array();
-        $sql = array();
+    private static function generateOrderParams($params, $template, $paramOptions = []) {
+        $sqlparams = [];
+        $sql = [];
 
         if (!is_array($params)) {
-            $params = array('order_by' => array());
+            $params = ['order_by' => []];
         }
 
         $tmpl = preg_replace("/order\s+by/i", "", $template);
@@ -122,15 +122,15 @@ class DataTable extends FormField {
                 }
 
                 if ($index < 0) {
-                    array_unshift($params['order_by'], array(
+                    array_unshift($params['order_by'], [
                         'field' => $o[0],
                         'direction' => $o[1]
-                    ));
+                    ]);
                 } else {
-                    $params['order_by'][$index] = array(
+                    $params['order_by'][$index] = [
                         'field' => $o[0],
                         'direction' => $o[1]
-                    );
+                    ];
                 }
             }
         }
@@ -159,23 +159,23 @@ class DataTable extends FormField {
             $query = "order by " . @$paramOptions[0];
         }
 
-        return array(
+        return [
             'sql' => $query,
-            'params' => array(),
+            'params' => [],
             'render' => true,
             'generateTemplate' => true
-        );
+        ];
     }
 
-    public static function generatePagingParams($params, $paramOptions = array()) {
+    public static function generatePagingParams($params, $paramOptions = []) {
         if (!isset($params['currentPage']) || count($params['currentPage']) == 0) {
             $defaultPageSize = "25";
 
-            $template = array(
+            $template = [
                 'sql' => "limit {$defaultPageSize}",
-                'params' => array(),
+                'params' => [],
                 'render' => true
-            );
+            ];
         } else {
             $currentPage = $params['currentPage'];
             $pageSize = $params['pageSize'];
@@ -186,21 +186,21 @@ class DataTable extends FormField {
 
             $to = $currentPage * $pageSize;
 
-            $template = array(
+            $template = [
                 'sql' => "limit {$from},{$to}",
-                'params' => array(
+                'params' => [
                     'limit' => $pageSize,
                     'offset' => $from,
                     'page' => $currentPage,
                     'pageSize' => $pageSize
-                ),
+                ],
                 'render' => true
-            );
+            ];
         }
         return $template;
     }
 
-    public static function generateParams($paramName, $params, $template, $paramOptions = array()) {
+    public static function generateParams($paramName, $params, $template, $paramOptions = []) {
         switch ($paramName) {
             case "order":
                 return DataTable::generateOrderParams($params, $template, $paramOptions);
@@ -213,7 +213,7 @@ class DataTable extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('js');
+        return ['js'];
     }
 
     /**

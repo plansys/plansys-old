@@ -28,7 +28,7 @@ class Timer
      *
      * @var array
      */
-    private static $_queue = array();
+    private static $_queue = [];
  
  
     /**
@@ -63,7 +63,7 @@ class Timer
     public static function reset()
     {
         // reset the queue
-        self::$_queue = array();
+        self::$_queue = [];
     }
  
  
@@ -119,12 +119,12 @@ class Timer
         $usec = (int) ($usec * self::USECDIV);
  
         // create the array
-        $time = array(
-            $cmd => array(
+        $time = [
+            $cmd => [
                 'sec'   => $sec,
                 'usec'  => $usec,
-            ),
-        );
+            ],
+        ];
  
         // add a time entry depending on the command
         if ($cmd == self::CMD_START) {

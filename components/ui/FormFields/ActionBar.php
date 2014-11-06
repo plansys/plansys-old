@@ -9,70 +9,70 @@ class ActionBar extends FormField {
      * @return array me-return array property ActionBar.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return  [
+             [
                 'label' => 'Title',
                 'name' => 'title',
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.title',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
-                'labelOptions' => array (
+                ],
+                'labelOptions' =>  [
                     'style' => 'text-align:left',
-                ),
-                'fieldOptions' => array (
+                ],
+                'fieldOptions' =>  [
                     'auto-grow' => '',
-                ),
+                ],
                 'type' => 'TextArea',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Show Tab',
                 'name' => 'showSectionTab',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.showSectionTab',
                     'ng-change' => 'save()',
-                ),
-                'labelOptions' => array (
+                ],
+                'labelOptions' =>  [
                     'style' => 'text-align:left;',
-                ),
+                ],
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'labelWidth' => '3',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'First Tab',
                 'name' => 'firstTabName',
                 'labelWidth' => '3',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.firstTabName',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                     'ng-if' => 'active.showSectionTab == \\\'Yes\\\'',
-                ),
-                'labelOptions' => array (
+                ],
+                'labelOptions' =>  [
                     'style' => 'text-align:left;',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Title Breacrumb Link',
                 'name' => 'titleLink',
                 'show' => 'Show',
                 'allowSpaceOnKey' => 'Yes',
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('action-bar.js');
+        return ['action-bar.js'];
     }
 
     /** @var string $toolbarName */
@@ -86,23 +86,23 @@ class ActionBar extends FormField {
 
     
     /** @var array $parseField */
-    public $parseField = array(
+    public $parseField = [
         'linkBar' => 'renderLinkBar',
-    );
+    ];
     
     /** @var array $linkBar */
-    public $linkBar = array(
-        array(
+    public $linkBar = [
+        [
             'label' => 'Save',
             'buttonType' => 'success',
             'buttonSize' => 'btn-sm',
             'type' => 'LinkButton',
             'displayInline' => true,
-            'options' => array(
+            'options' => [
                 'ng-click' => 'form.submit(this)'
-            )
-        ),
-    );
+            ]
+        ],
+    ];
     
     /** @var string $renderLinkBar */
     public $renderLinkBar = "";
@@ -113,7 +113,7 @@ class ActionBar extends FormField {
     public $firstTabName = 'General';
     
     /** @var array $titleLink */
-    public $titleLink = array();
+    public $titleLink = [];
     
     /** @var string $bottomLeft */
     public $bottomLeft = "";

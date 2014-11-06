@@ -6,54 +6,54 @@ class DataGridListFormString extends Form {
     public $stringAlias = '';
 
     public function getForm() {
-        return array(
+        return [
             'title' => 'DataGridListFormString',
-            'layout' => array(
+            'layout' => [
                 'name' => 'full-width',
-                'data' => array(
-                    'col1' => array(
+                'data' => [
+                    'col1' => [
                         'type' => 'mainform',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     public function getFields() {
-        return array (
-            array (
+        return  [
+             [
                 'label' => 'Input Mask',
                 'name' => 'inputMask',
-                'options' => array (
+                'options' =>  [
                     'ng-change' => 'updateListView();',
                     'ng-model' => 'item.inputMask',
-                ),
-                'labelOptions' => array (
+                ],
+                'labelOptions' =>  [
                     'style' => 'text-align:left;',
-                ),
-                'list' => array (
+                ],
+                'list' =>  [
                     '' => '-- NONE --',
                     '--' => '---',
                     '99/99/9999 99:99' => 'Date Time',
                     '99/99/9999' => 'Date',
                     '99:99' => 'Time',
                     'number' => 'Number',
-                ),
+                ],
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'String Alias',
                 'name' => 'stringAlias',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'item.stringAlias;',
                     'ng-change' => 'updateListView();',
-                ),
+                ],
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
 }

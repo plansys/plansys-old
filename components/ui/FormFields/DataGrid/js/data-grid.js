@@ -266,7 +266,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             break;
                         case "99:99":
                             placeholder = "hh:mm";
-                            format = " | dateFormat:'HH:mm'";
+                            format = " | hourFormat";
                             emptyVal = "['','0000-00-00 00:00','0000-00-00', '00:00']";
                             break;
                         case 'number':
@@ -282,10 +282,11 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     if (Object.prototype.toString.call(col.stringAlias) == "[object Object]") {
                         varDef = 'stringAlias(row.getProperty(col.field),col.field)';
                     }
-
                     if (col.options.cellFilter) {
                         varDef += ' | ' + col.options.cellFilter;
                     }
+
+
                     var ngIf = 'ng-if="' + emptyVal + '.indexOf(row.getProperty(col.field)) < 0 "';
                     var editableClass = $scope.getEditableClass(col);
 
@@ -548,14 +549,13 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                     }
 
                                     if (typeof ds != "undefined") {
-
                                         if (timeout != null) {
                                             clearTimeout(timeout);
                                         }
                                         timeout = setTimeout(function () {
                                             ds.updateParam('currentPage', paging.currentPage, 'paging');
                                             ds.updateParam('pageSize', paging.pageSize, 'paging');
-                                            ds.updateParam('totalServerItems', paging.totalServerItems, 'pagdgring');
+                                            ds.updateParam('totalServerItems', paging.totalServerItems, 'paging');
                                             ds.query();
                                         }, 100);
                                     }

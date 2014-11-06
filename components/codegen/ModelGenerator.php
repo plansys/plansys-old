@@ -10,42 +10,42 @@ class ModelGenerator extends CodeGenerator {
         $devItems = glob($dir . DIRECTORY_SEPARATOR . "*");
         $appItems = glob($appDir . DIRECTORY_SEPARATOR . "*");
 
-        $items = array();
+        $items = [];
         foreach ($devItems as $k => $m) {
             $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
             $m = str_replace('.php', "", $m);
 
-            $devItems[$k] = array(
+            $devItems[$k] = [
                 'name' => $m,
                 'class' => 'application.models.' . $m,
                 'class_path' => 'application.models',
                 'exist' => (class_exists($m)) ? 'yes' : 'no',
                 'type' => 'dev'
-            );
+            ];
         }
 
         foreach ($appItems as $k => $m) {
             $m = str_replace($appDir . DIRECTORY_SEPARATOR, "", $m);
             $m = str_replace('.php', "", $m);
 
-            $appItems[$k] = array(
+            $appItems[$k] = [
                 'name' => $m,
                 'class' => 'app.models.' . $m,
                 'class_path' => 'app.models',
                 'exist' => (class_exists($m)) ? 'yes' : 'no',
                 'type' => 'app'
-            );
+            ];
         }
-        $models = array(
-            array(
+        $models = [
+            [
                 'name' => 'Plansys',
                 'items' => $devItems,
-            ),
-            array(
+            ],
+            [
                 'name' => 'Application',
                 'items' => $appItems,
-            )
-        );
+            ]
+        ];
         return $models;
     }
 
@@ -135,7 +135,7 @@ class ModelGenerator extends CodeGenerator {
         $info = $this->modelInfo;
 
         ## add new relation property
-        $relations = array();
+        $relations = [];
         $lastIndex = count($info['relations']) - 1;
         $i = 0;
         foreach ($info['relations'] as $k => $v) {
@@ -156,7 +156,7 @@ EOF;
 
     protected function addRules() {
         $info = $this->modelInfo;
-        $rules = array();
+        $rules = [];
         foreach ($info['rules'] as $k => $v) {
             $rules[] = <<<EOF
             $v,
@@ -175,7 +175,7 @@ EOF;
         $info = $this->modelInfo;
 
         $colnames = array_reverse(array_keys($info['columns']));
-        $attributeLabels = array();
+        $attributeLabels = [];
         foreach ($colnames as $name) {
             $column = <<<EOF
             '{$name}'=> '{$info['labels'][$name]}',

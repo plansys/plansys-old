@@ -11,7 +11,7 @@ class WebUser extends CWebUser {
      * @param mixed $params (opt) Parameters for this operation, usually the object to access.
      * @return bool Permission granted?
      */
-    public function checkAccess($operation, $params = array()) {
+    public function checkAccess($operation, $params = []) {
         if (empty($this->id)) {
             // Not identified => no rights
             return false;
@@ -58,8 +58,6 @@ class WebUser extends CWebUser {
     }
     
     public function getMenuPath() {
-        
-        
         if (isset($this->info['roles'][0]['menu_path'])) {
             return $this->info['roles'][0]['menu_path'];
         } else {
@@ -69,7 +67,7 @@ class WebUser extends CWebUser {
 
     public function getReturnUrl($defaultUrl = null) {
         if (is_null($defaultUrl) && $this->homeUrl != "") {
-            $defaultUrl = array($this->homeUrl);
+            $defaultUrl = [$this->homeUrl];
         }
 
         return parent::getReturnUrl($defaultUrl);

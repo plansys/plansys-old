@@ -21,44 +21,44 @@ class SubForm extends FormField {
     public static $toolbarIcon = "fa fa-file-text-o fa-nm";
 
     public function getFieldProperties() {
-        return array(
-            array(
+        return [
+            [
                 'label' => 'SubForm Name',
                 'name' => 'name',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.name',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array(
+            ],
+            [
                 'label' => 'SubForm',
                 'name' => 'subForm',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.subForm',
                     'ng-change' => 'save()',
-                ),
+                ],
                 'listExpr' => 'FormBuilder::listForm(null, true)',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Inline JS',
                 'name' => 'inlineJS',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.inlineJS',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
     private $_subformClass = "";
@@ -75,11 +75,11 @@ class SubForm extends FormField {
     }
 
     public function getRenderUrl() {
-        return Yii::app()->controller->createUrl('/formfield/SubForm.render', array(
+        return Yii::app()->controller->createUrl('/formfield/SubForm.render', [
                 'name' => $this->name,
                 'class' => $this->subForm,
                 'js' => $this->inlineJS
-        ));
+        ]);
     }
 
     public function actionRender($name, $class, $js) {
@@ -93,9 +93,9 @@ class SubForm extends FormField {
         $fb = FormBuilder::load($this->subFormClass);
 
         $html = '<div ng-controller="' . $this->ctrlName . 'Controller">';
-        $html .= $fb->render(null, array(
+        $html .= $fb->render(null, [
             'wrapForm' => false
-        ));
+        ]);
 
         $jspath = explode(".", $this->subForm);
         array_pop($jspath);

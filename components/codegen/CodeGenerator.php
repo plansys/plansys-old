@@ -8,7 +8,7 @@ abstract class CodeGenerator extends CComponent {
     protected $classPath;
     protected $filePath;
     protected $file;
-    protected $methods = array();
+    protected $methods = [];
 
     public function load($class) {
         if (!is_string($class)) {
@@ -40,10 +40,10 @@ class {$class} extends {$this->baseClass} {\n \n}
             if ($m->class == $this->class) {
                 $line = $m->getStartLine() - 1;
                 $length = $m->getEndLine() - $line;
-                $this->methods[$m->name] = array(
+                $this->methods[$m->name] = [
                     'line' => $line,
                     'length' => $length
-                );
+                ];
             }
         }
 
@@ -197,7 +197,7 @@ class {$class} extends {$this->baseClass} {\n \n}
         if (isset($this->methods[$name])) {
             return array_slice($this->file, $this->methods[$name]['line'], $this->methods[$name]['length']);
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -209,7 +209,7 @@ class {$class} extends {$this->baseClass} {\n \n}
                 array_pop($body);
                 array_shift($body);
                 $body = implode("\n", $body);
-                $this->updateFunction($oldName, $body, array('params' => $param));
+                $this->updateFunction($oldName, $body, ['params' => $param]);
             }
 
             ## rename fungsinya
@@ -221,7 +221,7 @@ class {$class} extends {$this->baseClass} {\n \n}
             $this->file[$line] = $new;
 
             ## rename oldname dalam daftar method
-            $newMethod = array();
+            $newMethod = [];
             foreach ($this->methods as $k => $m) {
                 if ($k == $oldName)
                     $k = $newName;
@@ -232,7 +232,7 @@ class {$class} extends {$this->baseClass} {\n \n}
         }
     }
 
-    protected function updateFunction($name, $body, $options = array()) {
+    protected function updateFunction($name, $body, $options = []) {
         $isNewFunc = false;
         ## get first line of the class       
         if (!isset($this->methods[$name])) {
@@ -254,10 +254,10 @@ class {$class} extends {$this->baseClass} {\n \n}
             }
         }
 
-        $default = array(
+        $default = [
             'visibility' => 'public',
-            'params' => array()
-        );
+            'params' => []
+        ];
         $options = array_merge($default, $options);
         $params = implode(",", $options['params']);
 
@@ -284,10 +284,10 @@ EOF;
         }
 
 
-        $this->methods[$name] = array(
+        $this->methods[$name] = [
             'line' => $line,
             'length' => $newlength
-        );
+        ];
 
         $this->save();
     }

@@ -8,14 +8,14 @@ class ColumnField extends FormField {
      * @return array me-return array property ColumnField.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return  [
+             [
                 'label' => 'Total Columns',
                 'name' => 'totalColumns',
-                'options' => array (
+                'options' =>  [
                     'ng-change' => 'save()',
                     'ng-model' => 'active.totalColumns',
-                ),
+                ],
                 'listExpr' => 'array(
    \'1\'=>\'1 Column\',
    \'2\'=>\'2 Columns\',
@@ -25,23 +25,23 @@ class ColumnField extends FormField {
 )',
                 'fieldWidth' => '5',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Show Border',
                 'name' => 'showBorder',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.showBorder',
                     'ng-change' => 'save();relayout();',
-                ),
+                ],
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'type' => 'Text',
                 'value' => '<hr/>',
-            ),
-        );
+            ],
+        ];
     }
 	
     /** @var integer $totalColumns */
@@ -51,28 +51,28 @@ class ColumnField extends FormField {
     public $showBorder = 'No';
 	
     /** @var array $parseField */
-    public $parseField = array(
+    public $parseField = [
         'column1' => 'renderColumn1',
         'column2' => 'renderColumn2',
         'column3' => 'renderColumn3',
         'column4' => 'renderColumn4',
         'column5' => 'renderColumn5',
-    );
+    ];
 	
     /** @var array $column1 */
-    public $column1 = array('<column-placeholder></column-placeholder>');
+    public $column1 = ['<column-placeholder></column-placeholder>'];
 	
     /** @var array $column2 */
-    public $column2 = array('<column-placeholder></column-placeholder>');
+    public $column2 = ['<column-placeholder></column-placeholder>'];
 	
     /** @var array $column3 */
-    public $column3 = array('<column-placeholder></column-placeholder>');
+    public $column3 = ['<column-placeholder></column-placeholder>'];
 	
     /** @var array $column4 */
-    public $column4 = array('<column-placeholder></column-placeholder>');
+    public $column4 = ['<column-placeholder></column-placeholder>'];
 	
     /** @var array $column5 */
-    public $column5 = array('<column-placeholder></column-placeholder>');
+    public $column5 = ['<column-placeholder></column-placeholder>'];
 	
     /** @var string $renderColumn1 */
     public $renderColumn1 = "";

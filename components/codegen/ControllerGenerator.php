@@ -9,24 +9,24 @@ class ControllerGenerator extends CodeGenerator {
         $modules = glob($dir . DIRECTORY_SEPARATOR . "*");
         $appModules = glob($appDir . DIRECTORY_SEPARATOR . "*");
         
-        $files = array();
+        $files = [];
         foreach ($modules as $m) {
             $module = ucfirst(str_replace($dir . DIRECTORY_SEPARATOR, '', $m));
             $items = ControllerGenerator::listFile($module, 'dev');
-            $files[] = array(
+            $files[] = [
                 'module' => $module,
                 'items' => $items,
                 'type' => 'dev'
-            );
+            ];
         }
         foreach ($appModules as $m) {
             $module = ucfirst(str_replace($appDir . DIRECTORY_SEPARATOR, '', $m));
             $items = ControllerGenerator::listFile($module, 'app');
-            $files[] = array(
+            $files[] = [
                 'module' => $module,
                 'items' => $items,
                 'type' => 'app'
-            );
+            ];
         }
         return $files;
     }
@@ -52,13 +52,13 @@ class ControllerGenerator extends CodeGenerator {
                 $exist = 'no';
             }
             
-            $items[$k] = array(
+            $items[$k] = [
                 'name' => $m,
                 'module' => $module,
                 'class' =>  $path. lcfirst($module) . '.controllers.' . $m,
                 'class_path' => $path . lcfirst($module) . '.controllers.',
                 'exist' => $exist,
-            );
+            ];
         }
         return $items;
     }
@@ -70,11 +70,11 @@ class ControllerGenerator extends CodeGenerator {
             Yii::import($class, true);
         $reflection = new ReflectionClass($class_name);
         $methods = $reflection->getMethods();
-        $action = array();
+        $action = [];
         foreach ($methods as $m) {
             if ($m->class == $class_name && !$reflection->getMethod($m->name)->isProtected() && !$reflection->getMethod($m->name)->isStatic() && self::isAction($m->name) == true) {
                 $rawParams = $reflection->getMethod($m->name)->getParameters();
-                $params = array();
+                $params = [];
                 if (!empty($rawParams)) {
                     foreach ($rawParams as $p) {
                         if ($p->isOptional()) {
@@ -93,10 +93,10 @@ class ControllerGenerator extends CodeGenerator {
                     $strParams = implode(',', $params);
                 else
                     $strParams = null;
-                $action[] = array(
+                $action[] = [
                     'name' => $m->name,
                     'param' => $strParams
-                );
+                ];
             }
         }
         return $action;
@@ -143,10 +143,10 @@ class ControllerGenerator extends CodeGenerator {
         $module = explode('.controllers.', $module[1]);
         $moduleName = $module[0];
         $controllerName = self::controllerName($class);
-        return array(
+        return [
             'module' => $moduleName,
             'controller' => $controllerName
-        );
+        ];
     }
 
     //CodeGenerator
@@ -156,7 +156,7 @@ class ControllerGenerator extends CodeGenerator {
     public function addActionIndex($actionName, $modelClass = null, $params) {
         $body = '
         $this->renderForm("' . $modelClass . '");';
-        $this->updateFunction($actionName, $body, array('params' => $params));
+        $this->updateFunction($actionName, $body, ['params' => $params]);
     }
     
     public function addActionIndexWithPost($actionName, $modelClass = null, $params) {
@@ -170,7 +170,7 @@ class ControllerGenerator extends CodeGenerator {
             }
         }
         $this->renderForm("' . $modelClass . '",$model);';
-        $this->updateFunction($actionName, $body, array('params' => $params));
+        $this->updateFunction($actionName, $body, ['params' => $params]);
     }
 
 
@@ -185,7 +185,7 @@ class ControllerGenerator extends CodeGenerator {
             }
         }
         $this->renderForm("' . $modelClass . '",$model);';
-        $this->updateFunction($actionName, $body, array('params' => $params));
+        $this->updateFunction($actionName, $body, ['params' => $params]);
     }
 
     public function addActionUpdate($actionName, $modelClass = null, $params) {
@@ -199,17 +199,17 @@ class ControllerGenerator extends CodeGenerator {
             }
         }
         $this->renderForm("' . $modelClass . '",$model);';
-        $this->updateFunction($actionName, $body, array('params' => $params));
+        $this->updateFunction($actionName, $body, ['params' => $params]);
     }
 
     public function addActionDelete($actionName, $modelClass = null, $params) {
         $body = '
         $this->loadModel($id , "' . $modelClass . '")->delete();';
-        $this->updateFunction($actionName, $body, array('params' => $params));
+        $this->updateFunction($actionName, $body, ['params' => $params]);
     }
 
     public static function getTemplate() {
-        return array(
+        return [
             'default' => 'Default',
             '---' => '---',
             'index' => 'Index Template',
@@ -217,7 +217,7 @@ class ControllerGenerator extends CodeGenerator {
             'create' => 'New Template',
             'update' => 'Update Template',
             'delete' => 'Delete Template',
-        );
+        ];
     }
 
     public function __construct($module, $class, $type = null) {

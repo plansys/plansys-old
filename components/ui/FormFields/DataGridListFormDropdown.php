@@ -7,65 +7,65 @@ class DataGridListFormDropdown extends Form {
     public $listMustChoose = 'No';
     
     public function getForm() {
-        return array (
+        return  [
             'title' => 'DataGridListFormDropdown',
-            'layout' => array (
+            'layout' =>  [
                 'name' => 'full-width',
-                'data' => array (
-                    'col1' => array (
+                'data' =>  [
+                    'col1' =>  [
                         'type' => 'mainform',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     public function getFields() {
-        return array (
-            array (
+        return  [
+             [
                 'label' => 'List Type',
                 'name' => 'listType',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'value[$index].listType',
                     'ng-change' => 'updateListView()',
-                ),
-                'labelOptions' => array (
+                ],
+                'labelOptions' =>  [
                     'style' => 'text-align:left;',
-                ),
-                'list' => array (
+                ],
+                'list' =>  [
                     'php' => 'PHP Function',
                     'js' => 'JS Function',
-                ),
+                ],
                 'labelWidth' => '6',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Must Choose',
                 'name' => 'listMustChoose',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'value[$index].listMustChoose',
                     'ng-change' => 'updateListView()',
-                ),
-                'labelOptions' => array (
+                ],
+                'labelOptions' =>  [
                     'style' => 'text-align:left;',
-                ),
+                ],
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\');',
                 'labelWidth' => '8',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'List Expression',
                 'fieldname' => 'listExpr',
                 'language' => 'html',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'value[$index].listExpr',
                     'ng-change' => 'updateListView()',
-                ),
+                ],
                 'type' => 'ExpressionField',
-            ),
-        );
+            ],
+        ];
     }
 
 }

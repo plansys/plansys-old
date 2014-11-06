@@ -9,103 +9,103 @@ class DateTimePicker extends FormField
      * @return array me-return array property DateTimePicker.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return  [
+             [
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ),
-                'list' => array (),
+                ],
+                'list' =>  [],
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Type',
                 'name' => 'fieldType',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.fieldType',
                     'ng-change' => 'save();',
-                ),
-                'list' => array (
+                ],
+                'list' =>  [
                     'datetime' => 'Date Time',
                     'date' => 'Date',
                     'time' => 'Time',
-                ),
+                ],
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
-                ),
+                ],
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label Width',
                 'name' => 'labelWidth',
                 'fieldWidth' => '3',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.labelWidth',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                     'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Default To Today',
                 'name' => 'defaultToday',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.defaultToday',
                     'ng-change' => 'save();',
-                ),
+                ],
                 'listExpr' => '[\\\'Yes\\\',\\\'No\\\']',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'value' => '<hr/>',
                 'type' => 'Text',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'DatePicker Options',
                 'name' => 'datepickerOptions',
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
     /** @var string $label */
@@ -133,21 +133,21 @@ class DateTimePicker extends FormField
     public $postfix = '';
 	
     /** @var array $options */
-    public $options = array();
+    public $options = [];
 	
     /** @var array $labelOptions */
-    public $labelOptions = array();
+    public $labelOptions = [];
     
     /** @var string $fieldType */
     public $fieldType = "date";
 	
     /** @var array $fieldOptions */
-    public $fieldOptions = array();
+    public $fieldOptions = [];
     
     /** @var array $fieldOptions */
-    public $datepickerOptions = array(
+    public $datepickerOptions = [
         'show-weeks' => 'false'
-    );
+    ];
     
     public $defaultToday = 'Yes';
 	
@@ -165,7 +165,7 @@ class DateTimePicker extends FormField
      */
     public function includeJS()
     {
-        return array('date-time-picker.js');
+        return ['date-time-picker.js'];
     }
 
     /**

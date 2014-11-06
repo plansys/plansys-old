@@ -8,27 +8,27 @@ class HiddenField extends FormField {
      * @return array me-return array property HiddenField.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return  [
+             [
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ),
+                ],
                 'listExpr' => 'FormsController::$modelFieldList',
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Options',
                 'name' => 'options',
                 'show' => 'Show',
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
     
     /** @var string $name */
@@ -37,7 +37,7 @@ class HiddenField extends FormField {
     /** @var string $value */
     public $value = '';
 	
-    public $options = array();
+    public $options = [];
     
     /** @var boolean $isHidden */
     public $isHidden = true;

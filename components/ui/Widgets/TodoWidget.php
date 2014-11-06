@@ -41,16 +41,16 @@ class TodoWidget extends Widget {
             }
         }
 
-        return array_merge(array(
+        return array_merge([
             'todo-widget.js'
-            ), $files);
+            ], $files);
     }
 
     public function getList() {
         $models = Todo::model()->findAllByAttributes(
-            array('user_id' => Yii::app()->user->id), array(
+            ['user_id' => Yii::app()->user->id], [
             'order' => 'id desc'
-        ));
+        ]);
 
         $array = ActiveRecord::toArray($models);
         foreach ($array as $k => $a) {
@@ -74,10 +74,10 @@ class TodoWidget extends Widget {
     }
 
     public function actionClear() {
-        Todo::model()->deleteAllByAttributes(array(
+        Todo::model()->deleteAllByAttributes([
             'user_id' => Yii::app()->user->id,
             'status' => 1
-        ));
+        ]);
     }
 
     public function actionUpdate() {

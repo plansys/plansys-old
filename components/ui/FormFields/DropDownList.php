@@ -10,156 +10,156 @@ class DropDownList extends FormField {
      * @return array me-return array property DropDown.
      */
     public function getFieldProperties() {
-        return array(
-            array(
+        return [
+            [
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
                     
-                ),
-                'list' => array(),
+                ],
+                'list' => [],
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => 500,
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
-                ),
+                ],
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'totalColumns' => '4',
-                'column1' => array(
+                'column1' => [
                     '<column-placeholder></column-placeholder>',
-                ),
-                'column2' => array(
-                    array(
+                ],
+                'column2' => [
+                    [
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array(
+                        'options' => [
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => 500,
                             'ng-disabled' => 'active.layout == \'Vertical\'',
-                        ),
+                        ],
                         'type' => 'TextField',
-                    ),
+                    ],
                     '<column-placeholder></column-placeholder>',
-                ),
-                'column3' => array(
-                    array(
+                ],
+                'column3' => [
+                    [
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array(
+                        'options' => [
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => 500,
-                        ),
+                        ],
                         'type' => 'TextField',
-                    ),
+                    ],
                     '<column-placeholder></column-placeholder>',
-                ),
+                ],
                 'type' => 'ColumnField',
-            ),
+            ],
             '<hr/>',
-            array(
+            [
                 'label' => 'Searchable',
                 'name' => 'searchable',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.searchable',
                     'ng-change' => 'save()',
-                ),
+                ],
                 'listExpr' => 'array(\\"Yes\\",\\"No\\")',
                 'labelWidth' => '6',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Show \\"Other\\" Item',
                 'name' => 'showOther',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.showOther',
                     'ng-change' => 'save()',
-                ),
+                ],
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'labelWidth' => '6',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'label' => '\\"Other\\" Item Label',
                 'name' => 'otherLabel',
                 'labelWidth' => '6',
                 'fieldWidth' => '4',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.otherLabel',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                     'ng-show' => 'active.showOther == \'Yes\'',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array(
+            ],
+            [
                 'label' => 'DropDown Item',
                 'name' => 'list',
                 'show' => 'Show',
-                'options' => array(
+                'options' => [
                     'ng-hide' => 'active.listExpr != \'\' || active.options[\'ps-list\'] != null',
-                ),
+                ],
                 'allowEmptyKey' => 'Yes',
                 'allowSpaceOnKey' => 'Yes',
                 'type' => 'KeyValueGrid',
-            ),
-            array(
+            ],
+            [
                 'label' => 'List Expression',
                 'fieldname' => 'listExpr',
-                'options' => array(
+                'options' => [
                     'ng-hide' => 'active.options[\'ps-list\'] != null',
                     'ps-valid' => 'active.list = result;save();',
-                ),
+                ],
                 'desc' => '<i class=\\"fa fa-warning\\"></i> WARNING: Using List Expression will replace <i>DropDown Item</i> with expression result',
                 'type' => 'ExpressionField',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
     /** @var string $label */
@@ -172,13 +172,13 @@ class DropDownList extends FormField {
     public $value = '';
 
     /** @var array $options */
-    public $options = array();
+    public $options = [];
 
     /** @var array $fieldOptions */
-    public $fieldOptions = array();
+    public $fieldOptions = [];
 
     /** @var array $labelOptions */
-    public $labelOptions = array();
+    public $labelOptions = [];
 
     /** @var string $list */
     public $list = '';
@@ -217,7 +217,7 @@ class DropDownList extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('drop-down-list.js');
+        return ['drop-down-list.js'];
     }
 
     /**
@@ -228,7 +228,7 @@ class DropDownList extends FormField {
         if ($this->listExpr != "") {
             if (FormField::$inEditor) {
                 $this->list = '';
-                return array('list' => '');
+                return ['list' => ''];
             }
 
             ## evaluate expression
@@ -243,9 +243,9 @@ class DropDownList extends FormField {
             $this->list = Helper::toAssoc($this->list);
         }
 
-        return array(
+        return [
             'list' => $this->list
-        );
+        ];
     }
 
     /**

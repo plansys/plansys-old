@@ -11,9 +11,9 @@ class UserIdentity extends CUserIdentity {
 
     public function loggedIn($record) {
         $this->id = $record->id;
-        $role = UserRole::model()->findByAttributes(array(
+        $role = UserRole::model()->findByAttributes([
             'user_id' => $this->id, 'is_default_role' => 'Yes'
-        ));
+        ]);
         $this->setState('fullRole', $role->role['role_name']);
 
         $rootRole = array_shift(explode(".", $role->role['role_name']));
@@ -23,7 +23,7 @@ class UserIdentity extends CUserIdentity {
     }
 
     public function authenticate() {
-        $record = User::model()->findByAttributes(array('username' => $this->username));
+        $record = User::model()->findByAttributes(['username' => $this->username]);
 
         $useLdap = false;
         if (!is_null($record) && $record->password == '' && Yii::app()->user->useLdap) {

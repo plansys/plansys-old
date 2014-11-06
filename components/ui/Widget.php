@@ -4,7 +4,7 @@ class Widget extends CApplicationComponent {
 
     public $icon = "";
     public $badge = "";
-    private static $activeWidgets = array();
+    private static $activeWidgets = [];
 
     public function render() {
         return $this->renderInternal('template_render.php');
@@ -27,7 +27,7 @@ class Widget extends CApplicationComponent {
             $dir = Yii::getPathOfAlias($path);
 
             $items = glob($dir . DIRECTORY_SEPARATOR . "*.php");
-            $result = array();
+            $result = [];
             foreach ($items as $k => $m) {
                 $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
                 $m = str_replace('.php', "", $m);
@@ -41,11 +41,11 @@ class Widget extends CApplicationComponent {
                 }
 
                 if ($include) {
-                    $result[$m] = array(
+                    $result[$m] = [
                         'class' => $m,
                         'widget' => $widget,
                         'class_path' => $path . '.' . $m,
-                    );
+                    ];
                 }
             }
             Widget::$activeWidgets = $result;
@@ -79,7 +79,7 @@ class Widget extends CApplicationComponent {
      */
     public function renderScript() {
         $includeJS = $this->includeJS();
-        $html = array();
+        $html = [];
         if (count($includeJS) > 0) {
             foreach ($includeJS as $js) {
                 $class = get_class($this);

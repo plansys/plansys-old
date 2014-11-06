@@ -2,64 +2,64 @@
 
 class DataGridListFormButtonItem extends Form {
     public function getFields() {
-        return array (
-            array (
+        return  [
+             [
                 'name' => 'label',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
                 'postfix' => 'Label',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'item.label',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                ),
-                'fieldOptions' => array (
+                ],
+                'fieldOptions' =>  [
                     'placeholder' => 'Label',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'name' => 'icon',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
                 'postfix' => 'Icon',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'item.icon',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                ),
-                'fieldOptions' => array (
+                ],
+                'fieldOptions' =>  [
                     'placeholder' => 'Icon',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Button Options',
                 'show' => 'Show',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'item.options',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
     
     public function getForm() {
-        return array (
+        return  [
             'formTitle' => 'DataFilterListFormButton',
-            'layout' => array (
+            'layout' =>  [
                 'name' => 'full-width',
-                'data' => array (
-                    'col1' => array (
+                'data' =>  [
+                    'col1' =>  [
                         'type' => 'mainform',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
     public $label = '';
     public $icon = '';
-    public $options = array();
+    public $options = [];
 }

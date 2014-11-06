@@ -10,47 +10,47 @@ class ListView extends FormField {
      * @return array me-return array property TextField.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return  [
+             [
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ),
-                'list' => array (),
+                ],
+                'list' =>  [],
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Field Template',
                 'name' => 'fieldTemplate',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.fieldTemplate',
                     'ng-change' => 'save();',
-                ),
-                'list' => array (
+                ],
+                'list' =>  [
                     'default' => 'Default',
                     'form' => 'Form',
-                ),
+                ],
                 'otherLabel' => 'Other...',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Template Form',
                 'name' => 'templateForm',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.templateForm',
                     'ng-show' => 'active.fieldTemplate == \\\'form\\\'',
                     'ng-change' => 'save();',
-                ),
+                ],
                 'listExpr' => 'FormBuilder::listForm()',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
 <<<<<<< HEAD
 =======
                 'label' => 'Inline JS',

@@ -1,4 +1,4 @@
-<table class="column-field" style='width:100%;margin-bottom:5px;'>
+<table class="column-field" style='width:100%;'>
     <tr valign="top">
         <?php for ($i = 1; $i <= $this->totalColumns; $i++): ?> 
             <td style="width:<?= $this->columnWidth ?>%;

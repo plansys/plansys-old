@@ -10,104 +10,104 @@ class ColorPicker extends FormField {
      * @return array me-return array property TextField.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return  [
+             [
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ),
-                'list' => array (),
+                ],
+                'list' =>  [],
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
-                'column1' => array (
-                    array (
+            ],
+             [
+                'column1' =>  [
+                     [
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' =>  [
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                             'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
-                        ),
+                        ],
                         'type' => 'TextField',
-                    ),
-                    array (
+                    ],
+                     [
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
-                    ),
-                ),
-                'column2' => array (
-                    array (
+                    ],
+                ],
+                'column2' =>  [
+                     [
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => 12,
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' =>  [
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                        ),
+                        ],
                         'type' => 'TextField',
-                    ),
-                    array (
+                    ],
+                     [
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
-                    ),
-                ),
-                'column3' => array (
-                    array (
+                    ],
+                ],
+                'column3' =>  [
+                     [
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
-                    ),
-                ),
-                'column4' => array (
-                    array (
+                    ],
+                ],
+                'column4' =>  [
+                     [
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
-                    ),
-                ),
+                    ],
+                ],
                 'type' => 'ColumnField',
-            ),
-            array (
+            ],
+             [
                 'value' => '<hr/>',
                 'type' => 'Text',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
     /** @var string $label */
@@ -132,13 +132,13 @@ class ColorPicker extends FormField {
     public $fieldWidth = 8;
 
     /** @var array $options */
-    public $options = array();
+    public $options = [];
 
     /** @var array $labelOptions */
-    public $labelOptions = array();
+    public $labelOptions = [];
 
     /** @var array $fieldOptions */
-    public $fieldOptions = array();
+    public $fieldOptions = [];
 
     /** @var string $toolbarName */
     public static $toolbarName = "Color Picker";
@@ -153,7 +153,7 @@ class ColorPicker extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('color-picker.js');
+        return ['color-picker.js'];
     }
 
     /**

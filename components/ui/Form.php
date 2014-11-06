@@ -13,7 +13,7 @@ class Form extends CFormModel {
     public function getAttributes() {
         $reflect = new ReflectionClass($this);
         $props = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
-        $result = array();
+        $result = [];
         foreach ($props as $k => $p) {
             if (!$p->isStatic()) {
                 $name = $p->getName();
@@ -47,14 +47,14 @@ class Form extends CFormModel {
      */
     public function getDefaultFields() {
         $fields = $this->attributes;
-        $exclude = array();
-        $array = array();
+        $exclude = [];
+        $array = [];
         foreach ($fields as $k => $f) {
-            $array[] = array(
+            $array[] = [
                 'name' => $k,
                 'type' => 'TextField',
                 'label' => ucfirst($k)
-            );
+            ];
         }
         return $array;
     }

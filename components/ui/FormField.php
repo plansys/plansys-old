@@ -10,23 +10,23 @@ class FormField extends CComponent {
      * @var array $_errors 
      * @access private	
      */
-    private $_errors = array();
+    private $_errors = [];
 
     /**
      * @var array $_form_properties 
      * @access private	
      */
-    private $_form_properties = array(
+    private $_form_properties = [
         'formTitle' => '',
-        'layout' => array(
+        'layout' => [
             'name' => 'full-width',
-            'data' => array(
-                'col1' => array(
+            'data' => [
+                'col1' => [
                     'type' => 'mainform'
-                )
-            )
-        ),
-    );
+                ]
+            ]
+        ],
+    ];
 
     /**
      * @var array $_builder
@@ -35,7 +35,7 @@ class FormField extends CComponent {
     private $_builder = null;
 
     /** @var array $parseField */
-    public $parseField = array(); // list of form fields to be parsed array('from'=>'to')
+    public $parseField = []; // list of form fields to be parsed array('from'=>'to')
 
     /** @var string $renderID */
     public $renderID = ""; //to distinguish one field to another, will be filled when rendering, -NOT- in editor
@@ -56,30 +56,30 @@ class FormField extends CComponent {
     public static $inEditor = false;
 
     /** @var array $categorySettings */
-    public static $categorySettings = array(
-        'User Interface' => array(
+    public static $categorySettings = [
+        'User Interface' => [
             'icon' => 'fa-cubes',
-        ),
-        'Layout' => array(
+        ],
+        'Layout' => [
             'icon' => 'fa-image',
-        ),
-        'Data & Tables' => array(
+        ],
+        'Data & Tables' => [
             'icon' => 'fa-th-large',
-        ),
-        'Charts' => array(
+        ],
+        'Charts' => [
             'icon' => 'fa-bar-chart',
-        )
-    );
+        ]
+    ];
 
     /**
      * @return array me-return array javascript yang di-include.
      */
     public function includeJS() {
-        return array();
+        return [];
     }
 
     public function includeCSS() {
-        return array();
+        return [];
     }
 
     /**
@@ -116,7 +116,7 @@ class FormField extends CComponent {
         if (!is_null($this->_builder) && get_class($this->_builder) == "FormBuilder") {
             return $this->_builder->model;
         }
-        return array();
+        return [];
     }
 
     ## parent form properties
@@ -157,15 +157,15 @@ class FormField extends CComponent {
      * @param boolean $return
      * @return array Fungsi ini digunakan untuk evaluate expression dan akan me-return hasil dalam bentuk pesan error.
      */
-    public function evaluate($expr, $return = false, $variables = array()) {
+    public function evaluate($expr, $return = false, $variables = []) {
         $error_level = error_reporting();
 
         if (!isset($this->builder->model)) {
             $result = $this->evaluateExpression($expr, $variables);
         } else {
-            $result = $this->evaluateExpression($expr, array_merge($variables, array(
+            $result = $this->evaluateExpression($expr, array_merge($variables, [
                 'model' => $this->builder->model,
-            )));
+            ]));
         }
 
         error_reporting($error_level);
@@ -239,7 +239,7 @@ class FormField extends CComponent {
     public function getAttributes() {
         $reflect = new ReflectionClass($this);
         $props = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
-        $result = array();
+        $result = [];
         foreach ($props as $k => $p) {
             if (!$p->isStatic()) {
                 $name = $p->getName();
@@ -271,7 +271,7 @@ class FormField extends CComponent {
         }
         if (strpos($this->name, "[") !== false) {
             $name = explode("[", $this->name);
-            $name = str_replace(array(" ", "]"), "", $name[count($name) - 1]);
+            $name = str_replace([" ", "]"], "", $name[count($name) - 1]);
             return $name;
         } else {
             return $this->name;
@@ -283,20 +283,20 @@ class FormField extends CComponent {
      */
     public function getDefaultFields() {
         $fields = $this->attributes;
-        $exclude = array(
+        $exclude = [
             'data',
             'id'
-        );
+        ];
         foreach ($fields as $k => $f) {
             if (in_array($k, $exclude)) {
                 unset($fields[$k]);
                 continue;
             }
 
-            $fields[] = array(
+            $fields[] = [
                 'name' => $k,
                 'type' => 'Text'
-            );
+            ];
         }
         return $fields;
     }
@@ -352,7 +352,7 @@ class FormField extends CComponent {
      */
     public function renderScript() {
         $includeJS = $this->includeJS();
-        $html = array();
+        $html = [];
         if (count($includeJS) > 0) {
             foreach ($includeJS as $js) {
                 $class = get_class($this);
@@ -387,17 +387,17 @@ class FormField extends CComponent {
      * @param array $file
      * @return field Fungsi ini untuk me-render form field dan atributnya.
      */
-    public function renderInternal($file, $attr = array()) {
+    public function renderInternal($file, $attr = []) {
 
         $reflector = new ReflectionClass($this);
         $path = str_replace(".php", DIRECTORY_SEPARATOR . $file, $reflector->getFileName());
 
-        $attributes = $attr + array(
+        $attributes = $attr + [
             'field' => $this->attributes,
             'form' => $this->_form_properties,
             'errors' => $this->_errors,
             'model' => $this->model
-        );
+        ];
 
         extract($attributes);
 
@@ -461,7 +461,7 @@ class FormField extends CComponent {
     public function extractJson($raw) {
         if (count($raw) == 0)
             return null;
-		$list = array();
+		$list = [];
 		foreach($raw as $key => $content) {
 			$keyArr = explode('.', $key);
 			$key = "['". implode("']['", $keyArr) . "']";
@@ -484,7 +484,7 @@ class FormField extends CComponent {
         $ffdir = Yii::getPathOfAlias('application.components.ui.FormFields') . DIRECTORY_SEPARATOR;
         $dir = glob($ffdir . "*.php");
 
-        $return = array();
+        $return = [];
         foreach ($dir as $k => $d) {
             $class = str_replace($ffdir, "", $d);
             $class = str_replace(".php", "", $class);
@@ -534,10 +534,10 @@ class FormField extends CComponent {
     public static function settings($formType) {
         $ffdir = Yii::getPathOfAlias('application.components.ui.FormFields') . DIRECTORY_SEPARATOR;
         $dir = glob($ffdir . "*.php");
-        $result = array(
-            'icon' => array(),
-            'category' => array()
-        );
+        $result = [
+            'icon' => [],
+            'category' => []
+        ];
         foreach ($dir as $d) {
             $class = str_replace($ffdir, "", $d);
             $class = str_replace(".php", "", $class);

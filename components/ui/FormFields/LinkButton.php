@@ -12,7 +12,7 @@ class LinkButton extends FormField {
     public $url = '#';
 	
     /** @var array $urlparams */
-    public $urlparams = array();
+    public $urlparams = [];
 	
     /** @var string $group */
     public $group = '';
@@ -30,7 +30,7 @@ class LinkButton extends FormField {
     public $buttonSize = 'btn-sm';
 	
     /** @var array $options */
-    public $options = array();
+    public $options = [];
 	
     /** @var boolean $displayInline */
     public $displayInline = true;
@@ -48,7 +48,7 @@ class LinkButton extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('link-button.js');
+        return ['link-button.js'];
     }
 
     /**
@@ -67,62 +67,62 @@ class LinkButton extends FormField {
      * @return array me-return array property LinkButton.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return  [
+             [
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Group',
                 'name' => 'group',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.group',
                     'ng-change' => 'save();',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Group Type',
                 'name' => 'groupType',
-                'options' => array (
+                'options' =>  [
                     'ng-show' => 'active.group.trim() != \\\'\\\'',
                     'ng-model' => 'active.groupType',
                     'ng-change' => 'save()',
-                ),
+                ],
                 'listExpr' => 'array(\\\'ButtonGroup\\\', \\\'DropDown\\\')',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'value' => '<Hr/>',
                 'type' => 'Text',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Icon',
                 'name' => 'icon',
                 'fieldWidth' => '7',
                 'prefix' => 'fa-',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.icon',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Button Type',
                 'name' => 'buttonType',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.buttonType',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'listExpr' => 'array(
      \'primary\' => \'Primary\',
      \'info\' => \'Info\',
@@ -133,15 +133,15 @@ class LinkButton extends FormField {
 );',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Button Size',
                 'name' => 'buttonSize',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.buttonSize',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'listExpr' => 'array(
     \'btn-xs\' => \'Very Small\',
     \'btn-sm\' => \'Small\',
@@ -150,14 +150,14 @@ class LinkButton extends FormField {
 )',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Options',
                 'name' => 'options',
                 'show' => 'Show',
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
 }

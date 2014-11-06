@@ -15,15 +15,15 @@ class Helper {
     }
 
     public static function coba() {
-        return array(
-            array(
+        return [
+            [
                 'coba_dunk' => 'Coba Dunk',
                 'coba_1' => 'Testing',
                 '---' => '---',
                 'fukiii' => 'fukiii',
                 'admin' => 'test'
-            )
-        );
+            ]
+        ];
     }
 
     /**
@@ -36,7 +36,7 @@ class Helper {
     public static function getClassProperties($className, $types = 'public') {
         $ref = new ReflectionClass($className);
         $props = $ref->getProperties();
-        $props_arr = array();
+        $props_arr = [];
         foreach ($props as $prop) {
             $f = $prop->getName();
 
@@ -103,7 +103,7 @@ class Helper {
         if (!is_array($array))
             return $array;
 
-        $temp = array();
+        $temp = [];
         return array_filter($array, function ($v) use (&$temp, $key) {
             if (in_array($v[$key], $temp)) {
                 return false;
@@ -146,7 +146,7 @@ class Helper {
     }
 
     public static function toAssoc($arr) {
-        $list = array();
+        $list = [];
         foreach ($arr as $k => $f) {
             if (is_string($f)) {
                 $list[$f] = $f;
@@ -226,6 +226,12 @@ class Helper {
         }
         return implode('-', $ret);
     }
+    
+    public static function camelToSpacedCamel($input) {
+        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
+        $ret = $matches[0];
+        return implode(' ', $ret);
+    }
 
     public static function camelToUnderscore($input) {
         preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
@@ -245,7 +251,7 @@ class Helper {
     }
 
     public static function iconList() {
-        $icon = array(
+        $icon = [
             '' => '- NONE -',
             'fa-adjust' => 'Adjust',
             'fa-adn' => 'Adn',
@@ -686,7 +692,7 @@ class Helper {
             'fa-youtube' => 'Youtube',
             'fa-youtube-play' => 'Youtube play',
             'fa-youtube-square' => 'Youtube square',
-        );
+        ];
 
         foreach ($icon as $k => $v) {
             $icon[$k] = '<i class="fa ' . $k . '"></i> ' . $v;

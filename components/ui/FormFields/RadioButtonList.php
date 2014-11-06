@@ -10,101 +10,101 @@ class RadioButtonList extends FormField {
      * @return array me-return array property RadioButton.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return  [
+             [
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ),
-                'list' => array (),
+                ],
+                'list' =>  [],
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                     'ng-delay' => '500',
-                ),
+                ],
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Item Layout',
                 'name' => 'itemLayout',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.itemLayout',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\',\\\'ButtonGroup\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label Width',
                 'name' => 'labelWidth',
                 'fieldWidth' => '4',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'active.labelWidth',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                     'ng-disabled' => 'active.layout == \\\'Vertical\\\';',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Radio Button Item',
                 'name' => 'list',
-                'options' => array (
+                'options' =>  [
                     'ng-hide' => 'active.listExpr != \\\'\\\' || active.options[\\\'ps-list\\\'] != null',
-                ),
+                ],
                 'allowSpaceOnKey' => 'Yes',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'List Expression',
                 'fieldname' => 'listExpr',
-                'options' => array (
+                'options' =>  [
                     'ng-hide' => 'active.options[\\\'ps-list\\\'] != null',
                     'ps-valid' => 'active.list = result;save();',
-                ),
+                ],
                 'desc' => '<i class=\\"fa fa-warning\\"></i> WARNING: Using List Expression will replace <i>Radio Button Item</i> with expression result',
                 'type' => 'ExpressionField',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
     /** @var string $label */
@@ -132,13 +132,13 @@ class RadioButtonList extends FormField {
     public $labelWidth = 4;
 
     /** @var array $options */
-    public $options = array();
+    public $options = [];
 
     /** @var array $labelOptions */
-    public $labelOptions = array();
+    public $labelOptions = [];
 
     /** @var array $fieldOptions */
-    public $fieldOptions = array();
+    public $fieldOptions = [];
 
     /** @var string $toolbarName */
     public static $toolbarName = "RadioButton List";
@@ -153,7 +153,7 @@ class RadioButtonList extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return array('radio-button-list.js');
+        return ['radio-button-list.js'];
     }
 
     /**
@@ -163,7 +163,7 @@ class RadioButtonList extends FormField {
         if ($this->listExpr != "") {
             if (FormField::$inEditor) {
                 $this->list = '';
-                return array('list' => '');
+                return ['list' => ''];
             }
 
             ## evaluate expression
@@ -177,9 +177,9 @@ class RadioButtonList extends FormField {
             $this->list = Helper::toAssoc($this->list);
         }
 
-        return array(
+        return [
             'list' => $this->list
-        );
+        ];
     }
 
     /**

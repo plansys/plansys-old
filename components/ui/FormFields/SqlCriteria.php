@@ -13,79 +13,79 @@ class SqlCriteria extends FormField {
     public $name = '';
     public $label = '';
     public $paramsField = '';
-    public $params = array();
+    public $params = [];
     public $baseClass = '';
-    public $value = array();
-    public $options = array();
+    public $value = [];
+    public $options = [];
     public $modelClassJS = ''; //digunakan untuk menggenerate Preview SQL
 
     public function getFieldProperties() {
-        return array(
-            array(
+        return [
+            [
                 'label' => 'Base Class',
                 'name' => 'baseClass',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.baseClass',
                     'ng-change' => 'save();',
-                ),
+                ],
                 'listExpr' => 'array(\\\'DataSource\\\',\\\'RelationField\\\',\\\'DataGrid\\\', \\\'DataFilter\\\');',
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Criteria Field',
                 'name' => 'name',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ),
+                ],
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Params Field',
                 'name' => 'paramsField',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.paramsField',
                     'ng-change' => 'save()',
                     'ps-list' => 'modelFieldList',
-                ),
+                ],
                 'type' => 'DropDownList',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.label',
                     'ng-change' => 'save();',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array(
+            ],
+            [
                 'label' => 'ModelClassJS',
                 'name' => 'modelClassJS',
-                'options' => array(
+                'options' => [
                     'ng-model' => 'active.modelClassJS',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ),
+                ],
                 'type' => 'TextField',
-            ),
-            array(
+            ],
+            [
                 'value' => '<pre style=\"color:#999;font-size:11px;padding:6px;\"><i class=\"fa fa-info-circle\"></i> be sure to set $scope.modelClass in ModelClassJS File
 </pre>',
                 'type' => 'Text',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
     public function includeJS() {
-        return array('sql-criteria.js');
+        return ['sql-criteria.js'];
     }
 
     public static function convertPagingCriteria($criteria) {
@@ -114,8 +114,8 @@ class SqlCriteria extends FormField {
     public function actionPreviewSQL() {
         $postdata = file_get_contents("php://input");
         $post = json_decode($postdata, true);
-        $criteria = @$post['criteria'] ? $post['criteria'] : array();
-        $params = @$post['params'] ? $post['params'] : array();
+        $criteria = @$post['criteria'] ? $post['criteria'] : [];
+        $params = @$post['params'] ? $post['params'] : [];
         $baseClass = $post['baseclass'];
 
 
@@ -138,7 +138,7 @@ class SqlCriteria extends FormField {
                 $builder = $model->commandBuilder;
 
                 $fb = FormBuilder::load($classPath);
-                $field = $fb->findField(array('name' => $name));
+                $field = $fb->findField(['name' => $name]);
                 $rf = new RelationField();
                 $rf->builder = $fb;
                 $rf->attributes = $field;
@@ -146,7 +146,7 @@ class SqlCriteria extends FormField {
 
                 $rf->params = $post['params'];
 
-                $criteria = $rf->generateCriteria('', array());
+                $criteria = $rf->generateCriteria('', []);
                 $criteria = new CDbCriteria($criteria);
 
                 break;
@@ -164,7 +164,7 @@ class SqlCriteria extends FormField {
                 $fb = FormBuilder::load($classPath);
                 $fb->model = new $model;
 
-                $field = $fb->findField(array('name' => $name));
+                $field = $fb->findField(['name' => $name]);
                 $ds = new DataSource();
                 $ds->attributes = $field;
 

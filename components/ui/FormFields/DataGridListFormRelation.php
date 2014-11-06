@@ -3,8 +3,8 @@
 class DataGridListFormRelation extends Form {
     
     /** @var string $name */
-    public $relParams = array();
-    public $relCriteria = array(
+    public $relParams = [];
+    public $relCriteria = [
         'select' => '',
         'distinct' => 'false',
         'alias' => 't',
@@ -13,110 +13,110 @@ class DataGridListFormRelation extends Form {
         'group' => '',
         'having' => '',
         'join' => ''
-    );
+    ];
     public $relModelClass = '';
     public $relIdField = '';
     public $relLabelField = '';
     
     
     public function getForm() {
-        return array (
+        return  [
             'title' => 'DataGridListFormRelation',
-            'layout' => array (
+            'layout' =>  [
                 'name' => 'full-width',
-                'data' => array (
-                    'col1' => array (
+                'data' =>  [
+                    'col1' =>  [
                         'type' => 'mainform',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     public function getFields() {
-        return array (
-            array (
+        return  [
+             [
                 'value' => '<Hr/>',
                 'type' => 'Text',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Model',
                 'name' => 'relModelClass',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => '$parent.value[$parent.$index].relModelClass',
                     'ng-change' => 'generateRelationField(value, $parent.value[$index]);updateListView();',
                     'ng-init' => 'generateRelationField(value[$index].relModelClass);',
-                ),
-                'labelOptions' => array (
+                ],
+                'labelOptions' =>  [
                     'style' => 'text-align:left;',
-                ),
+                ],
                 'listExpr' => 'RelationField::listModel()',
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'ID Field',
                 'name' => 'relIdField',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'item.relIdField',
                     'ng-change' => 'updateListView();',
                     'ps-list' => 'relationFieldList',
-                ),
-                'labelOptions' => array (
+                ],
+                'labelOptions' =>  [
                     'style' => 'text-align:left;',
-                ),
-                'list' => array (),
+                ],
+                'list' =>  [],
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Label',
                 'name' => 'relLabelField',
-                'options' => array (
+                'options' =>  [
                     'ng-model' => 'item.relLabelField',
                     'ng-change' => 'updateListView();',
                     'ps-list' => 'relationFieldList',
-                ),
-                'labelOptions' => array (
+                ],
+                'labelOptions' =>  [
                     'style' => 'text-align:left;',
-                ),
-                'list' => array (),
+                ],
+                'list' =>  [],
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
-            ),
-            array (
+            ],
+             [
                 'name' => 'relCriteria',
                 'label' => 'Sql Criteria',
                 'paramsField' => 'relParams',
                 'baseClass' => 'DataGrid',
-                'options' => array (
+                'options' =>  [
                     'ng-change' => 'save();',
                     'ng-model' => 'value[$index].relCriteria',
-                ),
+                ],
                 'modelClassJS' => 'DataGrid/inlinejs/relation-criteria.js',
                 'type' => 'SqlCriteria',
-            ),
-            array (
+            ],
+             [
                 'label' => 'Sql Parameter',
                 'name' => 'relParams',
                 'show' => 'Show',
-                'options' => array (
+                'options' =>  [
                     'ng-change' => 'updateListView();',
                     'ng-model' => 'item.relParams;',
-                ),
+                ],
                 'type' => 'KeyValueGrid',
-            ),
-        );
+            ],
+        ];
     }
 
 }
