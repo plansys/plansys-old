@@ -34,6 +34,16 @@
                 'icon' => 'fa-cube',
                 'url' => '/dev/modelGenerator/index',
             ),
+            array (
+                'label' => '---',
+                'icon' => '',
+                'url' => '#',
+            ),
+            array (
+                'label' => 'Crud Generator',
+                'icon' => 'fa-cubes',
+                'url' => '/dev/crudGenerator/index',
+            ),
         ),
         'state' => 'collapsed',
         'icon' => 'fa-gavel',
