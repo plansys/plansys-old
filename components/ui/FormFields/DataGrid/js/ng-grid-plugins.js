@@ -178,9 +178,7 @@ app.directive('categoryHeader', function ($timeout) {
                     lastDisplayName = displayName;
                     lastSingle = single;
 
-                    console.log(lastSingle, scope.showCategories);
                     if (lastSingle && scope.showCategories) {
-
                         $timeout(function () {
                         $(headerContainer)
                                 .find(".ngHeaderCell.col" + key)

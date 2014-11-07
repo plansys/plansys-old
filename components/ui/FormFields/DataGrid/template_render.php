@@ -104,12 +104,13 @@
             <div class="clearfix"></div>
         </div>
 
-        <div ng-show="datasource.data.length != 0 || gridOptions.enableExcelMode" class="data-grid-category" category-header="gridOptions"></div>
-        <div ng-show="datasource.data.length != 0 || gridOptions.enableExcelMode" class="data-grid-table" ng-init="initGrid()" ng-grid="gridOptions"></div>
-
         <div ng-if="datasource.data.length == 0 && !gridOptions.enableExcelMode" 
              style="text-align:center;padding:20px;color:#ccc;font-size:25px;">
             &mdash; Data Empty &mdash;
+        </div>
+        <div style="{{ datasource.data.length != 0 || gridOptions.enableExcelMode ? '' : 'opacity:0'}}">
+            <div class="data-grid-category" category-header="gridOptions"></div>
+            <div class="data-grid-table" ng-init="initGrid()" ng-grid="gridOptions"></div>
         </div>
     </div>
 </div>

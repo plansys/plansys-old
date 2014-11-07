@@ -644,7 +644,30 @@ class DataSource extends FormField {
      * @return mixed me-return sebuah field dan atribut checkboxlist dari hasil render
      */
     public function render() {
-        $this->processQuery();
+        $execQuery = true;
+        if (isset($this->params['where'])) {
+            $field = $this->builder->findField(['name' => $this->params['where']]);
+            if ($field) {
+                foreach ($field['filters']as $f) {
+                    if (@$f['defaultValue'] != '' || @$f['defaultOperator'] != '' ||
+                        @$f['defaultValueFrom'] != '' || @$f['defaultValueTo'] != ''
+                    ) {
+                        $execQuery = false;
+                    }
+                }
+            }
+        }
+        if ($execQuery) {
+            $this->processQuery();
+        } else {
+            $this->data = [
+                'data' => [],
+                'count' => 0,
+                'params' => $this->params,
+                'debug' => '',
+                'rel' => ''
+            ];
+        }
         return $this->renderInternal('template_render.php');
     }
 

@@ -823,7 +823,9 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 if (!$scope.loading)
                                     loadRelation();
                             }
-                            reloadRelation();
+                            $timeout(function () {
+                                reloadRelation();
+                            },100);
                             $scope.$watch('data', reloadRelation);
 
                         }, 100);
