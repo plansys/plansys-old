@@ -103,6 +103,7 @@
             </div>
             <div class="clearfix"></div>
         </div>
+
         <div ng-show="datasource.data.length != 0 || gridOptions.enableExcelMode" class="data-grid-category" category-header="gridOptions"></div>
         <div ng-show="datasource.data.length != 0 || gridOptions.enableExcelMode" class="data-grid-table" ng-init="initGrid()" ng-grid="gridOptions"></div>
 

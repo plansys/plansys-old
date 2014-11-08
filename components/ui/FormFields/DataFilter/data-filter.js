@@ -596,7 +596,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                             defaultValueAvailable = true;
                         }
                     }
-                    console.log(defaultValueAvailable);
                     if (defaultValueAvailable) {
                         $scope.$parent[$scope.datasource].query(function () {
                         });

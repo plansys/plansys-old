@@ -2,7 +2,7 @@
 
 <div ng-controller="PageController">
     <div ui-layout options="{ flow : 'column'}">
-        <div size='18%' min-size="180px" class="sidebar">
+        <div size='20%' min-size="200px" class="sidebar">
             <div ui-header style="padding-left:5px;">
                 <div ng-if="!loading" class="btn btn-xs pull-right btn-default"
                      ng-click="reload()" style="margin-top:3px;">Reload</div>
@@ -72,11 +72,7 @@
             }
 
             $storage = $localStorage;
-            if ($storage.formFields == null) {
-                $scope.reload();
-            } else {
-                $scope.list = $storage.formFields;
-            }
+            $scope.reload();
         }
     ]);
 
