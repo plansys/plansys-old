@@ -65,7 +65,7 @@ class SubForm extends FormField {
 
     public function getSubFormClass() {
         if ($this->_subformClass == "") {
-            $this->_subformClass = array_pop(explode(".", $this->subForm));
+            $this->_subformClass = Helper::explodeLast(".", $this->subForm);
         }
         return $this->_subformClass;
     }

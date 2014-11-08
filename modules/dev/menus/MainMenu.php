@@ -76,4 +76,9 @@
         'icon' => 'fa-folder-open',
         'url' => '/repo/index',
     ),
+    array (
+        'label' => 'Settings',
+        'icon' => 'fa-sliders',
+        'url' => '#',
+    ),
 );

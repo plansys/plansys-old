@@ -153,7 +153,7 @@ class MenuTree extends CComponent {
         $mt->title = @$options['title'];
         $mt->options = @$options['options'];
         $mt->classpath = $classpath;
-        $mt->class = array_pop(explode(".", $classpath));
+        $mt->class = Helper::explodeLast(".", $classpath);
         $mt->list = include(Yii::getPathOfAlias($classpath) . ".php");
         MenuTree::fillMenuItems($mt->list);
         return $mt;

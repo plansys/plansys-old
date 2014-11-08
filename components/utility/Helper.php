@@ -13,17 +13,15 @@ class Helper {
             return false;
         }
     }
+    
+    public static function explodeFirst($delimeter, $str) {
+        $a = explode($delimeter, $str);
+        return array_shift($a);
+    }
 
-    public static function coba() {
-        return [
-            [
-                'coba_dunk' => 'Coba Dunk',
-                'coba_1' => 'Testing',
-                '---' => '---',
-                'fukiii' => 'fukiii',
-                'admin' => 'test'
-            ]
-        ];
+    public static function explodeLast($delimeter, $str) {
+        $a = explode($delimeter, $str);
+        return end($a);
     }
 
     /**
@@ -226,7 +224,7 @@ class Helper {
         }
         return implode('-', $ret);
     }
-    
+
     public static function camelToSpacedCamel($input) {
         preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
         $ret = $matches[0];

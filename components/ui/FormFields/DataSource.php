@@ -205,7 +205,7 @@ class DataSource extends FormField {
 
     public function actionRelClass() {
         Yii::import($_GET['class']);
-        $class = array_pop(explode(".", $_GET['class']));
+        $class = Helper::explodeLast(".", $_GET['class']);
 
         $relClass = '';
         if (@$_GET['rel'] == 'currentModel') {
@@ -222,7 +222,7 @@ class DataSource extends FormField {
     public function actionQuery() {
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
-        $class = array_pop(explode(".", $post['class']));
+        $class = Helper::explodeLast(".", $post['class']);
         Yii::import($post['class']);
 
         if (class_exists($class)) {

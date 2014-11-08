@@ -501,7 +501,7 @@ class RelationField extends FormField {
     public function query($search = '', $params = [], $initialID = null) {
         Yii::import($this->modelClass);
 
-        $class = array_pop(explode(".", $this->modelClass));
+        $class = Helper::explodeLast(".", $this->modelClass);
         $model = new $class;
         $table = $model->tableName();
 
@@ -575,7 +575,7 @@ class RelationField extends FormField {
         $class = $_GET['class'];
 
         Yii::import($class);
-        $class = array_pop(explode(".", $class));
+        $class = Helper::explodeLast(".", $class);
         $model = new $class;
         $data = [];
         if (is_subclass_of($model, 'ActiveRecord')) {

@@ -16,7 +16,7 @@ class UserIdentity extends CUserIdentity {
         ]);
         $this->setState('fullRole', $role->role['role_name']);
 
-        $rootRole = array_shift(explode(".", $role->role['role_name']));
+        $rootRole = Helper::explodeFirst(".", $role->role['role_name']);
         $this->setState('role', $rootRole);
 
         $this->errorCode = self::ERROR_NONE;

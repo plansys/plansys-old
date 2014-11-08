@@ -113,7 +113,7 @@ class Setting {
     }
 
     public static function getPlansysDirName() {
-        return array_pop(explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application')));
+        return Helper::explodeLast(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
     }
 
     public static function getModulePath() {
@@ -146,20 +146,26 @@ class Setting {
         return $controllers;
     }
 
+    public static function explodeLast($delimeter, $str) {
+        $a = explode($delimeter, $str);
+        return end($a);
+    }
+
+    
     public static function getModules() {
         $modules = glob(Setting::getBasePath() . DIRECTORY_SEPARATOR . "modules" . DIRECTORY_SEPARATOR . "*");
         $appModules = glob(Setting::getAppPath() . DIRECTORY_SEPARATOR . "modules" . DIRECTORY_SEPARATOR . "*");
 
         $return = [];
         foreach ($modules as $key => $module) {
-            $m = array_pop(explode(DIRECTORY_SEPARATOR, $module));
+            $m = Setting::explodeLast(DIRECTORY_SEPARATOR, $module);
             $return[$m] = [
                 'class' => 'application.modules.' . $m . '.' . ucfirst($m) . 'Module'
             ];
         }
 
         foreach ($appModules as $key => $module) {
-            $m = array_pop(explode(DIRECTORY_SEPARATOR, $module));
+            $m = Setting::explodeLast(DIRECTORY_SEPARATOR, $module);
             $return[$m] = [
                 'class' => 'app.modules.' . $m . '.' . ucfirst($m) . 'Module'
             ];

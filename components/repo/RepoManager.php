@@ -408,6 +408,59 @@ class RepoManager extends CComponent {
         }
     }
 
+    public static function getPerms($path) {
+        $perms = fileperms($path);
+
+        if (($perms & 0xC000) == 0xC000) {
+            // Socket
+            $info = 's';
+        } elseif (($perms & 0xA000) == 0xA000) {
+            // Symbolic Link
+            $info = 'l';
+        } elseif (($perms & 0x8000) == 0x8000) {
+            // Regular
+            $info = '-';
+        } elseif (($perms & 0x6000) == 0x6000) {
+            // Block special
+            $info = 'b';
+        } elseif (($perms & 0x4000) == 0x4000) {
+            // Directory
+            $info = 'd';
+        } elseif (($perms & 0x2000) == 0x2000) {
+            // Character special
+            $info = 'c';
+        } elseif (($perms & 0x1000) == 0x1000) {
+            // FIFO pipe
+            $info = 'p';
+        } else {
+            // Unknown
+            $info = 'u';
+        }
+
+        // Owner
+        $info .= (($perms & 0x0100) ? 'r' : '-');
+        $info .= (($perms & 0x0080) ? 'w' : '-');
+        $info .= (($perms & 0x0040) ?
+                (($perms & 0x0800) ? 's' : 'x' ) :
+                (($perms & 0x0800) ? 'S' : '-'));
+
+        // Group
+        $info .= (($perms & 0x0020) ? 'r' : '-');
+        $info .= (($perms & 0x0010) ? 'w' : '-');
+        $info .= (($perms & 0x0008) ?
+                (($perms & 0x0400) ? 's' : 'x' ) :
+                (($perms & 0x0400) ? 'S' : '-'));
+
+        // World
+        $info .= (($perms & 0x0004) ? 'r' : '-');
+        $info .= (($perms & 0x0002) ? 'w' : '-');
+        $info .= (($perms & 0x0001) ?
+                (($perms & 0x0200) ? 't' : 'x' ) :
+                (($perms & 0x0200) ? 'T' : '-'));
+
+        return $info;
+    }
+
     public function browse($dir = "") {
         $originaldir = $dir;
         if ($dir == "" || $dir == DIRECTORY_SEPARATOR) {
@@ -432,75 +485,57 @@ class RepoManager extends CComponent {
             }
         }
 
-
         ## listing dir
-        if ($handle = opendir($path)) {
-            $i = 0;
+        $list = [];
+
+        if ($handle = opendir($dir)) {
             $count = 0;
             while (false !== ($entry = readdir($handle))) {
                 if ($entry != "." && $entry != "..") {
-                    $isPatternMatch = false;
-                    if ($pattern != "") {
-                        $f = RepoManager::parseName($entry, $preparedPattern, false);
-                        if (count($f) > 1) {
-                            $isPatternMatch = true;
-                        }
-                    } else {
-                        $f = [];
-                        $f['file'] = $entry;
-                        $isPatternMatch = true;
-                    }
+                    $path = RepoManager::resolve($dir . DIRECTORY_SEPARATOR . $entry);
 
-                    $isNameMatch = true;
-                    if (count($where) > 0) {
-                        $isNameMatch = RepoManager::isColumnMatch($f, $where);
-                    }
+                    $perm = RepoManager::getPerms($path);
+                    $size = filesize($path);
 
-                    if ($isPatternMatch && $isNameMatch) {
-                        if (count($order) > 0) {
-                            $colname = $f[$order['field']];
-                            while (isset($result[$colname])) {
-                                $colname .= "_";
-                            }
-                            $result[$colname] = $f;
-                        } else if ($count >= $pageStart && $count < $pageEnd && $isPatternMatch) {
-                            $result[] = $f;
-                        }
-                        $count++;
-                    }
-                    $i++;
+                    $path = $this->relativePath($dir . DIRECTORY_SEPARATOR . $entry);
+                    $path = substr($path, strlen(RepoManager::getModuleDir()));
+
+                    $list[] = [
+                        'name' => $entry,
+                        'type' => $perm[0] == 'd' ? "dir" : "." . substr($entry, strrpos($entry, '.') + 1),
+                        'size' => $size,
+                        'path' => $path
+                    ];
+                    $count++;
                 }
             }
             closedir($handle);
         }
-        RepoManager::$fileCounts[md5($path . $pattern . json_encode($params))] = $count;
-
-        $list = [];
-        foreach ($sout as $f) {
-            if (is_array($f) && $f[0] != "total" && count($f) > 2) {
-                $perm = array_shift($f);
-                $size = array_shift($f);
-                $file = implode(" ", $f);
-
-                if ($file == "." || $file == ".." || $file[0] == ".")
-                    continue;
-
-                $new = [
-                    'name' => $file,
-                    'type' => $perm[0] == 'd' ? "dir" : "." . substr($file, strrpos($file, '.') + 1),
-                    'size' => $size,
-                    'path' => $this->relativePath($dir . DIRECTORY_SEPARATOR . $file)
-                ];
-
-                if ($new['type'] == "dir") {
-                    $new['size'] = 0;
-                    array_unshift($list, $new);
-                } else {
-                    array_push($list, $new);
-                }
-            }
-        }
-
+//        $list = [];
+//        foreach ($sout as $f) {
+//            if (is_array($f) && $f[0] != "total" && count($f) > 2) {
+//                $perm = array_shift($f);
+//                $size = array_shift($f);
+//                $file = implode(" ", $f);
+//
+//                if ($file == "." || $file == ".." || $file[0] == ".")
+//                    continue;
+//
+//                $new = [
+//                    'name' => $file,
+//                    'type' => $perm[0] == 'd' ? "dir" : "." . substr($file, strrpos($file, '.') + 1),
+//                    'size' => $size,
+//                    'path' => $this->relativePath($dir . DIRECTORY_SEPARATOR . $file)
+//                ];
+//
+//                if ($new['type'] == "dir") {
+//                    $new['size'] = 0;
+//                    array_unshift($list, $new);
+//                } else {
+//                    array_push($list, $new);
+//                }
+//            }
+//        }
 //        $dire = opendir($dir);
 //        while (($currentFile = readdir($dire)) !== false) {
 //            if ($currentFile == '.' or $currentFile == '..' or $currentFile[0] == '.') {
@@ -542,8 +577,10 @@ class RepoManager extends CComponent {
         $count = count($list);
 
 
+
         if ($originaldir != "" && $originaldir != RepoManager::getModuleDir()) {
             $parent = $this->relativePath($parent);
+            $parent = substr($parent, strlen(RepoManager::getModuleDir()));
         } else {
             $parent = "";
         }
@@ -555,6 +592,7 @@ class RepoManager extends CComponent {
             'item' => $list,
             'count' => $count,
         ];
+
         return $detail;
     }
 

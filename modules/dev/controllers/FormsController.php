@@ -102,7 +102,7 @@ class FormsController extends Controller {
             $ff = new $f['type'];
             $scripts = $ff->renderScript();
             foreach ($scripts as $script) {
-                $ext = array_pop(explode(".", $script));
+                $ext = Helper::explodeLast(".", $script);
                 if ($ext == "js") {
                     Yii::app()->clientScript->registerScriptFile($script, CClientScript::POS_END);
                 } else {
@@ -178,7 +178,7 @@ class FormsController extends Controller {
         $this->layout = "//layouts/blank";
         $fb = FormBuilder::load($class);
         $classPath = $class;
-        $class = array_pop(explode(".", $class));
+        $class = Helper::explodeLast(".", $class);
         
         
         if (is_subclass_of($fb->model, 'ActiveRecord')) {

@@ -1,6 +1,6 @@
 $(window).resize(function () {
     $("#properties").width($("#properties").parent().width());
-    $(".ngTopPanel").css('top',  top);
+    $(".ngTopPanel").css('top', top);
 }).resize();
 
 var repoClickTimeout = null;
@@ -8,8 +8,8 @@ $scope.selected = null;
 $scope.lastSelectedPath = null;
 $scope.currentDir = $scope.params.currentDir;
 $scope.click = function (row) {
-        $scope.selected = row.entity;
-    
+    $scope.selected = row.entity;
+
     clearTimeout(repoClickTimeout);
     repoClickTimeout = setTimeout(function () {
         if ($scope.selected.type == "dir") {
@@ -18,7 +18,12 @@ $scope.click = function (row) {
                 $http.get(Yii.app.createUrl('/repo/changeDir', {dir: $scope.selected.path})).success(function (data) {
                     $scope.currentDir = $scope.selected.path;
                     $scope.dataSource1.data = data.item;
-                    if (data.parent != "" && data.path.length > 1) {
+                    if (!$scope.dataSource1.data) {
+                        $scope.dataSource1.data = [];
+                    }
+                    if (data.parent != "") {
+                        console.log(data);
+                        
                         $scope.dataSource1.data.unshift({
                             name: "..",
                             path: data.parent,

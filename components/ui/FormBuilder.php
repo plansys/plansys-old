@@ -60,7 +60,7 @@ class FormBuilder extends CComponent {
         $originalClass = $class;
         if (strpos($class, ".") !== false) {
             $classFile = FormBuilder::classPath($class);
-            $class = array_pop(explode(".", $classFile));
+            $class = Helper::explodeLast(".", $classFile);
 
             try {
                 Yii::import($classFile);

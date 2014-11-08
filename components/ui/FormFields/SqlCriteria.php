@@ -128,10 +128,10 @@ class SqlCriteria extends FormField {
                 $classPath = $post['rfclass'];
                 $modelClassPath = $post['rfmodel'];
 
-                $modelClass = array_pop(explode(".", $modelClassPath));
+                $modelClass = Helper::explodeLast(".", $modelClassPath);
                 Yii::import($modelClassPath);
 
-                $class = array_pop(explode(".", $classPath));
+                $class = Helper::explodeLast(".", $classPath);
                 Yii::import($classPath);
 
                 $model = new $modelClass;
@@ -155,7 +155,7 @@ class SqlCriteria extends FormField {
                 $name = $post['dsname'];
                 $classPath = $post['dsclass'];
 
-                $class = array_pop(explode(".", $classPath));
+                $class = Helper::explodeLast(".", $classPath);
                 Yii::import($classPath);
 
                 $model = new $class;

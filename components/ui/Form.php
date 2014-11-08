@@ -10,7 +10,7 @@ class Form extends CFormModel {
      * Fungsi ini digunakan untuk mendapatkan attributes field dan me-returnnya
      * @return array me-return array atribut field
      */
-    public function getAttributes() {
+    public function getAttributes($names = NULL) { 
         $reflect = new ReflectionClass($this);
         $props = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
         $result = [];
@@ -26,7 +26,7 @@ class Form extends CFormModel {
     /**
      * @param array $values parameter sebuah array atribut field
      */
-    public function setAttributes($values) {
+    public function setAttributes($values, $safeOnly = true) {
         foreach ($values as $k => $v) {
             if (property_exists($this, $k)) {
                 $this->$k = $v;

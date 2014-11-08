@@ -242,7 +242,7 @@ class ActiveRecord extends CActiveRecord {
                         case 'CBelongsToRelation':
                             if (is_string($rel->foreignKey)) {
                                 $class = $rel->className;
-                                $table = $class::tableName();
+                                $table = $class::model()->tableName();
                                 $this->__relationsObj[$k] = $this->getRelated($k, true, $criteria);
 
                                 if (isset($this->__relationsObj[$k])) {
