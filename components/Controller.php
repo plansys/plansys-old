@@ -115,6 +115,7 @@ class Controller extends CController {
     public function loadModel($id, $form) {
         $model = $form::model()->findByPk($id);
 
+        
         if ($model === null)
             throw new CHttpException(404, 'The requested page does not exist.');
         return $model;

@@ -57,9 +57,11 @@ class ActiveRecord extends CActiveRecord {
             } else if (is_array($args[0])) {
                 $opt = $args[0];
 
+                $setRelPaging = false;
                 if (isset($opt['page'])) {
                     $this->__page[$name] = $opt['page'];
                     unset($opt['page']);
+                    $setRelPaging = true;
                 }
 
                 if (isset($opt['pageSize'])) {
@@ -67,8 +69,12 @@ class ActiveRecord extends CActiveRecord {
                     unset($opt['pageSize']);
                 }
 
-                $criteria = $this->relPagingCriteria($name);
-                $criteria = array_merge($criteria, $opt);
+                if ($setRelPaging) {
+                    $criteria = $this->relPagingCriteria($name);
+                    $criteria = array_merge($criteria, $opt);
+                } else {
+                    $criteria = $opt;
+                }
             }
 
 
@@ -209,7 +215,7 @@ class ActiveRecord extends CActiveRecord {
             $criteria['offset'] = ($criteria['page'] - 1) * $criteria['pageSize'];
             $criteria['limit'] = $criteria['pageSize'];
             unset($criteria['page'], $criteria['pageSize']);
-        } else {
+        } else if (!isset($criteria['limit'])) {
             $criteria['limit'] = 25;
         }
 

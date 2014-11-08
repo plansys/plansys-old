@@ -20,7 +20,7 @@
         </b>
         <span class="caret" style="margin-left:5px;"></span>
     </button>
-    <button type="button" ng-click="resetFilter(filter)" ng-show="filter.valueText != 'All'"
+    <button type="button" ng-click="resetFilter(filter)" ng-show="filter.valueText != 'All' && filter.resetable == 'Yes'"
             class="btn btn-inverse btn-sm filter-reset" >
         <i class="fa fa-times fa-nm" ></i>
     </button>

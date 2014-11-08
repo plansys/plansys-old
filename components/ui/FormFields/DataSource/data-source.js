@@ -13,6 +13,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.relationTo = $el.find("data[name=relation_to]").text().trim();
                 $scope.insertData = [];
                 $scope.updateData = [];
+                $scope.loading = false;
 
                 $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text());
                 $scope.deleteData = $scope.deleteData || [];
@@ -88,13 +89,14 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.query = function (f) {
                     var model = $scope.model || {};
                     var model_id = model.id || null;
-                    
+
                     var params = $.extend({}, $scope.sqlParams);
                     for (i in $scope.params) {
                         if (i[0] == ':' && $scope.params[i]) {
                             params[i] = $scope.params[i];
-                        } 
+                        }
                     }
+                    $scope.loading = true;
 
                     $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
                         model_id: model_id,
@@ -111,6 +113,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                             if (typeof f == "function") {
                                 f(true, data);
                             }
+                            $scope.loading = false;
                         }, 0);
                     }).error(function (data) {
                         if (typeof f == "function") {

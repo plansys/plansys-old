@@ -93,6 +93,21 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'DropDownList',
             ],
             [
+                'label' => 'Reset-able',
+                'name' => 'resetable',
+                'options' => [
+                    'ng-model' => 'value[$index].resetable',
+                    'ng-change' => 'updateListView()',
+                ],
+                'labelOptions' => [
+                    'style' => 'text-align:left;',
+                ],
+                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\');',
+                'labelWidth' => '6',
+                'fieldWidth' => '6',
+                'type' => 'DropDownList',
+            ],
+            [
                 'value' => '<div style=\"margin-top:15px;\">
     <hr/>
     <div style=\"background:white;margin-top:-19px;color:#aaa;padding:5px 5px 5px 3px;width:50px;margin-left:-4px;\">Default</div>
@@ -249,6 +264,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
     public $listExpr = '';
     public $filterType = 'string';
     public $isCustom = 'No';
+    public $resetable = 'Yes';
     public $defaultValue = '';
     public $defaultValueFrom = '';
     public $defaultValueTo = '';

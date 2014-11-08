@@ -50,6 +50,20 @@
                     View Per Page:
                 </div>
             </div>
+
+            <?php if (@$this->gridOptions['badge']): ?>
+                <div style="left:0px;position:absolute;font-size:13px;text-align:center;margin-top:6px;width:100%;">
+                    <?php $badges = explode("|||", $this->gridOptions['badge']); ?>
+                    <?php foreach ($badges as $badge): ?>
+                        <div class="badge">
+                            <?php $badge = str_replace('||', '<span class="badge-separator"></span>', $badge); ?>
+                            <?= $badge ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
+
             <div ng-if="gridOptions.enableExcelMode"
             <?php if (@$this->gridOptions['enablePaging'] == 'true'): ?>
                      style="float:right;border-right:1px solid #ccc;padding-right:10px;margin-right:5px;"
@@ -106,9 +120,9 @@
 
         <div ng-if="datasource.data.length == 0 && !gridOptions.enableExcelMode" 
              style="text-align:center;padding:20px;color:#ccc;font-size:25px;">
-            &mdash; Data Empty &mdash;
+            &mdash; {{ !datasource.loading ? 'Data Empty' : 'Loading Data'; }} &mdash;
         </div>
-        <div style="{{ datasource.data.length != 0 || gridOptions.enableExcelMode ? '' : 'opacity:0'}}">
+        <div style="margin:0px -15px;{{ datasource.data.length != 0 || gridOptions.enableExcelMode ? '' : 'opacity:0'}}">
             <div class="data-grid-category" category-header="gridOptions"></div>
             <div class="data-grid-table" ng-init="initGrid()" ng-grid="gridOptions"></div>
         </div>

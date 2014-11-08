@@ -9,6 +9,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     for (i in array) {
                         if (typeof array[i] == "string") {
                             if (array[i].trim().substr(0, 3) == "js:") {
+                                console.log(array[i]);
                                 eval('array[i] = ' + array[i].trim().substr(3));
                             } else if (array[i].trim().substr(0, 4) == "url:") {
                                 var url = array[i].trim().substr(4);
@@ -272,6 +273,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         case 'number':
                             format = " | number";
                     }
+
                     var showPlaceholder = $scope.gridOptions.enableCellEdit || $scope.gridOptions.enableExcelMode;
                     if (placeholder != "" && showPlaceholder) {
                         placeholderHtml = '<div ng-if="' +
@@ -468,7 +470,17 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             if ($scope.gridOptions.generateColumns && $scope.data.length == 0) {
                                 $scope.columns.length = 0;
                             }
+                        }
 
+                        if ($scope.gridOptions.groups) {
+                            for (i in $scope.columns) {
+                                var c = $scope.columns[i];
+                                if ($scope.gridOptions.groups.indexOf(c.name) >= 0) {
+                                    if (!c.options.visible) {
+                                        c.options.visible = false;
+                                    }
+                                }
+                            }
                         }
 
                         if (typeof $scope.onBeforeLoaded == 'function') {
@@ -531,7 +543,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         // pagingOptions
                         if ($scope.gridOptions['enablePaging']) {
                             $scope.gridOptions.pagingOptions = {
-                                pageSizes: [25, 50, 100],
+                                pageSizes: [25, 50, 100, 250, 500],
                                 pageSize: 25,
                                 totalServerItems: $scope.datasource.totalItems,
                                 currentPage: 1
@@ -825,9 +837,8 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             }
                             $timeout(function () {
                                 reloadRelation();
-                            },100);
+                            }, 100);
                             $scope.$watch('data', reloadRelation);
-
                         }, 100);
 
                         if (typeof $scope.onGridLoaded == 'function') {

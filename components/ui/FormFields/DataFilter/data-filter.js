@@ -96,6 +96,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                         } else {
                             f.operator = "";
                         }
+                        
+                        if (!f.resetable) {
+                            f.resetable = 'Yes';
+                        }
 
                         if (['list', 'check', 'relation'].indexOf(f.filterType) >= 0) {
                             f.list = $scope.renderFormList(f.list);

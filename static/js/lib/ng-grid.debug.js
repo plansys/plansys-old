@@ -695,7 +695,7 @@
         this.rowFactory = rowFactory;
         this.rowHeight = rowHeight;
         this.isAggRow = true;
-        this.offsetLeft = aggEntity.gDepth * 25;
+        this.offsetLeft = aggEntity.gDepth * 10;
         this.aggLabelFilter = aggEntity.aggLabelFilter;
     };
 
@@ -1410,7 +1410,7 @@
             //Initial fields to group data by. Array of field names, not displayName.
             groups: [],
             // set the initial state of aggreagate grouping. "true" means they will be collapsed when grouping changes, "false" means they will be expanded by default.
-            groupsCollapsedByDefault: true,
+            groupsCollapsedByDefault: false,
             //The height of the header row in pixels.
             headerRowHeight: 30,
             //Define a header row template for further customization. See github wiki for more details.
@@ -2464,6 +2464,7 @@
                 }
             }
         };
+        var grouperTimer = null;
         //Shuffle the data into their respective groupings.
         self.getGrouping = function (groups) {
             self.aggCache = [];
@@ -2517,25 +2518,28 @@
 
             //moved out of above loops due to if no data initially, but has initial grouping, columns won't be added
             if (cols.length > 0) {
-                for (var z = 0; z < groups.length; z++) {
-                    if (!cols[z].isAggCol && z <= maxDepth) {
-                        cols.splice(0, 0, new ngColumn({
-                            colDef: {
-                                field: '',
-                                width: 25,
-                                sortable: false,
-                                resizable: false,
-                                headerCellTemplate: '<div class="ngAggHeader"></div>',
-                                pinned: grid.config.pinSelectionCheckbox
-
-                            },
-                            enablePinning: grid.config.enablePinning,
-                            isAggCol: true,
-                            headerRowHeight: grid.config.headerRowHeight
-
-                        }, $scope, grid, domUtilityService, $templateCache, $utils));
-                    }
-                }
+//                clearTimeout(grouperTimer);
+//                grouperTimer = setTimeout(function () {
+//                    for (var z = 0; z < groups.length; z++) {
+//                        if (!cols[z].isAggCol && z <= maxDepth) {
+//                            cols.splice(0, 0, new ngColumn({
+//                                colDef: {
+//                                    field: '',
+//                                    width: 25,
+//                                    sortable: false,
+//                                    resizable: false,
+//                                    headerCellTemplate: '<div class="ngAggHeader"></div>',
+//                                    pinned: grid.config.pinSelectionCheckbox
+//
+//                                },
+//                                enablePinning: grid.config.enablePinning,
+//                                isAggCol: true,
+//                                headerRowHeight: grid.config.headerRowHeight
+//
+//                            }, $scope, grid, domUtilityService, $templateCache, $utils));
+//                        }
+//                    }
+//                }, 10);
             }
 
             grid.fixColumnIndexes();
@@ -2937,9 +2941,6 @@
         };
         $scope.rowStyle = function (row) {
             var ret = {"top": row.offsetTop + "px", "height": $scope.rowHeight + "px"};
-            if (row.isAggRow) {
-                ret.left = row.offsetLeft;
-            }
             return ret;
         };
         $scope.canvasStyle = function () {
@@ -3721,9 +3722,9 @@
             $templateCache.put('aggregateTemplate.html',
                     "<div ng-click=\"row.toggleExpand()\" ng-style=\"rowStyle(row)\" class=\"ngAggregate\">\r" +
                     "\n" +
-                    "    <span class=\"ngAggregateText\">{{row.label CUSTOM_FILTERS}} ({{row.totalChildren()}} {{AggItemsLabel}})</span>\r" +
+                    "    <span class=\"ngAggregateText\" style=\"margin-left:{{row.offsetLeft}}px;\">{{row.label CUSTOM_FILTERS}} ({{row.totalChildren()}}{{!AggItemsLabel ? ')' : ' ' + AggItemsLabel + ')'}}</span>\r" +
                     "\n" +
-                    "    <div class=\"{{row.aggClass()}}\"></div>\r" +
+                    "    <div class=\"{{row.aggClass()}}\"  style=\"margin-left:{{row.offsetLeft}}px;\"></div>\r" +
                     "\n" +
                     "</div>\r" +
                     "\n"

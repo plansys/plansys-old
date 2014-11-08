@@ -551,8 +551,6 @@ class DataSource extends FormField {
         if (@$criteria['params']) {
             $criteria['params'] = array_filter($criteria['params']);
         }
-        $rawData = $this->model->{$this->relationTo}($criteria);
-
         if ($this->relationTo == 'currentModel') {
             $tableSchema = $this->model->tableSchema;
             $builder = $this->model->commandBuilder;
@@ -577,6 +575,8 @@ class DataSource extends FormField {
 
             $count = count($rawCount) > 0 ? $rawCount[0]->id : 0;
         }
+
+        $rawData = $this->model->{$this->relationTo}($criteria);
 
         if (count($rawData) == 0 && $isGenerate) {
             if ($this->relationTo != 'currentModel') {
