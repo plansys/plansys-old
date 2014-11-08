@@ -413,7 +413,8 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     html += 'dgr-class="' + $scope.modelClass + '" dgr-name="' + $scope.name + '" dgr-col="' + col.name + '" dgr-labelField="' + col.relLabelField + '" ';
                     html += 'dgr-idField="' + col.relIdField + '">';
                     html += '<span ng-if=\'!row.getProperty(col.field + "_label")\' style="color:#999;font-size:12px;">Loading ...</span>';
-                    html += '<span ng-cell-text>{{row.getProperty(col.field + "_label")}}';
+                    html += '<span ng-if=\'row.getProperty(col.field + "_label") == "!@# EMPTY #@!"\' style="color:#999;font-size:12px;">- Empty -</span>';
+                    html += '<span ng-if=\'row.getProperty(col.field + "_label") != "!@# EMPTY #@!"\' ng-cell-text>{{row.getProperty(col.field + "_label")}}';
                     html += '</span></div>';
 
                     return html;
@@ -787,8 +788,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             function loadRelation(callback) {
                                 countDgr();
                                 if (dgrCols.length > 0) {
-                                    console.log(dgr);
-
+                                    $scope.loading = true;
                                     $http.post(url, dgr).success(function (data) {
                                         for (rowIdx in $scope.data) {
                                             var row = $scope.data[rowIdx];
@@ -805,26 +805,23 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                                     }
 
                                                 }
+                                                if (!row[dataIdx + "_label"]) {
+                                                    row[dataIdx + "_label"] = '!@# EMPTY #@!';
+                                                }
                                             }
 
                                             if (typeof callback == "function") {
                                                 callback();
                                             }
                                         }
+                                        $scope.loading = false;
                                     });
                                 }
                             }
 
-                            var timeout = null;
                             reloadRelation = function () {
-                                if (timeout !== null) {
-                                    clearTimeout(timeout);
-                                }
-
-                                timeout = setTimeout(function () {
+                                if (!$scope.loading)
                                     loadRelation();
-//                                    console.log(dgrCols, dgr);
-                                }, 50);
                             }
                             reloadRelation();
                             $scope.$watch('data', reloadRelation);

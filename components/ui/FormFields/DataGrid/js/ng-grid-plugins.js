@@ -44,44 +44,44 @@ function ngGridFlexibleHeightPlugin(opts) {
     };
 }
 
-function anchorLastColumn () {
+function anchorLastColumn() {
     var self = this;
     self.grid = null;
     self.scope = null;
     self.services = null;
     self.init = function (scope, grid, services) {
-      self.grid = grid;
-      self.scope = scope;
-      self.services = services;
+        self.grid = grid;
+        self.scope = scope;
+        self.services = services;
 
-      self.scope.$watch('isColumnResizing', function (newValue, oldValue) {
-        if (newValue === false && oldValue === true) { //on stop resizing
-          var gridWidth = self.grid.rootDim.outerWidth;
-          var viewportH = self.scope.viewportDimHeight();
-          var maxHeight = self.grid.maxCanvasHt;
-          if(maxHeight > viewportH) { // remove vertical scrollbar width
-              gridWidth -= self.services.DomUtilityService.ScrollW;
-          }
-
-          var cols = self.scope.columns;
-          var col = null, i = cols.length;
-          while(col == null && i-- > 0) {
-              if(cols[i].visible) {
-                  col = cols[i]; // last column VISIBLE
-              }
-          }
-          var sum = 0;
-          for(var i = 0; i < cols.length - 1; i++) {
-                if(cols[i].visible) {
-                    sum += cols[i].width;
+        self.scope.$watch('isColumnResizing', function (newValue, oldValue) {
+            if (newValue === false && oldValue === true) { //on stop resizing
+                var gridWidth = self.grid.rootDim.outerWidth;
+                var viewportH = self.scope.viewportDimHeight();
+                var maxHeight = self.grid.maxCanvasHt;
+                if (maxHeight > viewportH) { // remove vertical scrollbar width
+                    gridWidth -= self.services.DomUtilityService.ScrollW;
                 }
-          }
 
-          if(sum + col.minWidth <= gridWidth) {
-            col.width = gridWidth - sum; // the last gets the remaining
-          }
-        }
-      });
+                var cols = self.scope.columns;
+                var col = null, i = cols.length;
+                while (col == null && i-- > 0) {
+                    if (cols[i].visible) {
+                        col = cols[i]; // last column VISIBLE
+                    }
+                }
+                var sum = 0;
+                for (var i = 0; i < cols.length - 1; i++) {
+                    if (cols[i].visible) {
+                        sum += cols[i].width;
+                    }
+                }
+
+                if (sum + col.minWidth <= gridWidth) {
+                    col.width = gridWidth - sum; // the last gets the remaining
+                }
+            }
+        });
     }
 }
 
@@ -135,6 +135,18 @@ app.directive('categoryHeader', function ($timeout) {
             var left = 0;
 
             angular.forEach(cols, function (col, key) {
+                var cat = "";
+                if (typeof (col.colDef.category) !== "undefined") {
+                    cat = col.colDef.category || "";
+                } else if (typeof (col.colDef.categoryDisplayName) !== "undefined") {
+                    cat = col.colDef.categoryDisplayName || "";
+                }
+                if (cat != "") {
+                    scope.showCategories = true;
+                }
+            });
+
+            angular.forEach(cols, function (col, key) {
                 if (!col.visible) {
                     return;
                 }
@@ -154,7 +166,6 @@ app.directive('categoryHeader', function ($timeout) {
                     scope.showCategories = true;
                 }
 
-
                 if (displayName !== lastDisplayName) {
                     scope.categories.push({
                         displayName: lastSingle ? "" : lastDisplayName,
@@ -167,8 +178,10 @@ app.directive('categoryHeader', function ($timeout) {
                     lastDisplayName = displayName;
                     lastSingle = single;
 
+                    console.log(lastSingle, scope.showCategories);
                     if (lastSingle && scope.showCategories) {
-//                        $timeout(function () {
+
+                        $timeout(function () {
                         $(headerContainer)
                                 .find(".ngHeaderCell.col" + key)
                                 .css({
@@ -186,13 +199,13 @@ app.directive('categoryHeader', function ($timeout) {
                                     height: '38px',
                                 });
 
-//                        });
+                        });
                     }
                 }
             });
             if (totalWidth > 0) {
                 scope.categories.push({
-                    displayName: lastSingle ? "" :lastDisplayName,
+                    displayName: lastSingle ? "" : lastDisplayName,
                     width: totalWidth,
                     left: left,
                     single: lastSingle

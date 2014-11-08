@@ -492,7 +492,11 @@ class DataSource extends FormField {
 
         ## paging criteria
         if (is_array(@$postedParams['paging'])) {
-            $criteria['page'] = $postedParams['paging']['currentPage'];
+            if (isset($postedParams['paging']['currentPage'])) {
+                $criteria['page'] = $postedParams['paging']['currentPage'];
+            } else {
+                $criteria['page'] = 1;
+            }
             $criteria['pageSize'] = $postedParams['paging']['pageSize'];
         }
 
