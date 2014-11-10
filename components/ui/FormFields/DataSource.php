@@ -551,24 +551,28 @@ class DataSource extends FormField {
         if (@$criteria['params']) {
             $criteria['params'] = array_filter($criteria['params']);
         }
+
+        $criteriaCount = $criteria;
         if ($this->relationTo == 'currentModel') {
             $tableSchema = $this->model->tableSchema;
+            $builder = $this->model->tableSchema;
             $builder = $this->model->commandBuilder;
-            if (array_key_exists('page', $criteria)) {
-                $start = ($criteria['page'] - 1) * $criteria['pageSize'];
-                $pageSize = $criteria['pageSize'];
-                $criteria['limit'] = $pageSize;
-                $criteria['offset'] = $start;
+            if (array_key_exists('page', $criteriaCount)) {
+                $start = ($criteriaCount['page'] - 1) * $criteriaCount['pageSize'];
+                $pageSize = $criteriaCount['pageSize'];
+                $criteriaCount['limit'] = $pageSize;
+                $criteriaCount['offset'] = $start;
 
-                unset($criteria['pageSize']);
-                unset($criteria['page']);
+                unset($criteriaCount['pageSize']);
+                unset($criteriaCount['page']);
             }
 
-            $countCommand = $builder->createCountCommand($tableSchema, new CDbCriteria($criteria));
+            $countCommand = $builder->createCountCommand($tableSchema, new CDbCriteria($criteriaCount));
             $count = $countCommand->queryScalar();
         } else {
-            $criteria['select'] = 'count(1) as id';
-            $rawCount = $this->model->getRelated($this->relationTo, true, $criteria);
+            $criteriaCount = $criteria;
+            $criteriaCount['select'] = 'count(1) as id';
+            $rawCount = $this->model->getRelated($this->relationTo, true, $criteriaCount);
             if (!is_array($rawCount)) {
                 throw New Exception('Relation defintion is wrong! check your relations() function in model');
             }
@@ -576,7 +580,7 @@ class DataSource extends FormField {
             $count = count($rawCount) > 0 ? $rawCount[0]->id : 0;
         }
 
-        $rawData = $this->model->{$this->relationTo}($criteria);
+        $rawData = $this->model->{$this->relationTo}($criteria, false);
 
         if (count($rawData) == 0 && $isGenerate) {
             if ($this->relationTo != 'currentModel') {
@@ -650,7 +654,7 @@ class DataSource extends FormField {
             if ($field) {
                 foreach ($field['filters']as $f) {
                     if (@$f['defaultValue'] != '' || @$f['defaultOperator'] != '' ||
-                        @$f['defaultValueFrom'] != '' || @$f['defaultValueTo'] != ''
+                            @$f['defaultValueFrom'] != '' || @$f['defaultValueTo'] != ''
                     ) {
                         $execQuery = false;
                     }

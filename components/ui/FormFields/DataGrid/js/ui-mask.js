@@ -278,7 +278,7 @@
                     }
 
                     if (allow == "initial") {
-                         input.val(input.val().substring(0, lastMatch + 1));
+                        input.val(input.val().substring(0, lastMatch + 1));
                     } else if (allow) {
                         writeBuffer();
                     } else if (lastMatch + 1 < partialPosition) {
@@ -362,65 +362,71 @@ app.directive('uiMask', function ($timeout, $filter) {
 
                 $scope.$watch('uiMaskValue', function (val) {
                     var formatted = '';
-                    switch (attrs.uiMask) {
-                        case "99/99/9999 99:99":
-                            var raw = val.split(" ");
-                            var date = raw[0].split("/");
-                            var time = raw.length > 1 ? raw[1].split(":") : ["00", "00"];
-                            if (date.length > 1 && time.length > 1) {
-                                var dt = new Date(date[2], date[1] - 1, date[0], time[0], time[1]);
-                                formatted = ($filter('date')(dt, 'yyyy-MM-dd HH:mm'));
-                            }
-                            break;
-                        case "99/99/9999":
-                            var date = val.split("/");
-                            if (date.length > 1) {
-                                var dt = new Date(date[2], date[1] - 1, date[0]);
-                                formatted = ($filter('date')(dt, 'yyyy-MM-dd'));
-                            }
-                            break;
-                        case "99:99":
-                            var time = val.split(":");
-                            if (time.length > 1) {
-                                var dt = new Date(2014, 1, 1, time[0], time[1]);
-                                formatted = ($filter('date')(dt, 'HH:mm'));
-                            }
-                            break;
+
+                    if (val) {
+                        switch (attrs.uiMask) {
+                            case "99/99/9999 99:99":
+                                var raw = val.split(" ");
+                                var date = raw[0].split("/");
+                                var time = raw.length > 1 ? raw[1].split(":") : ["00", "00"];
+                                if (date.length > 1 && time.length > 1) {
+                                    var dt = new Date(date[2], date[1] - 1, date[0], time[0], time[1]);
+                                    formatted = ($filter('date')(dt, 'yyyy-MM-dd HH:mm'));
+                                }
+                                break;
+                            case "99/99/9999":
+                                var date = val.split("/");
+                                if (date.length > 1) {
+                                    var dt = new Date(date[2], date[1] - 1, date[0]);
+                                    formatted = ($filter('date')(dt, 'yyyy-MM-dd'));
+                                }
+                                break;
+                            case "99:99":
+                                var time = val.split(":");
+                                if (time.length > 1) {
+                                    var dt = new Date(2014, 1, 1, time[0], time[1]);
+                                    formatted = ($filter('date')(dt, 'HH:mm'));
+                                }
+                                break;
+                        }
+                        $scope.$eval(model + '= "' + formatted + '"');
                     }
 
-                    $scope.$eval(model + '= "' + formatted + '"');
                 });
 
                 $timeout(function () {
                     var val = ctrl.$viewValue;
-                    switch (attrs.uiMask) {
-                        case "99/99/9999 99:99":
-                            var raw = val.split(" ");
-                            var date = raw[0].split("-");
-                            var time = raw.length > 1 ? raw[1].split(":") : ["00", "00"];
-                            if (date.length > 1) {
-                                var dt = new Date(date[0], date[1] - 1, date[2], time[0], time[1]);
-                                $scope.uiMaskValue = ($filter('date')(dt, 'dd/MM/yyyy HH:mm'));
-                            }
-                            break;
-                        case "99/99/9999":
-                            var date = val.split("-");
-                            if (date.length > 1) {
-                                var dt = new Date(date[0], date[1] - 1, date[2]);
-                                $scope.uiMaskValue = ($filter('date')(dt, 'dd/MM/yyyy'));
-                            }
-                            break;
-                        case "99:99":
-                            var time = val.split(":");
-                            if (time.length > 1) {
-                                var dt = new Date(2014, 1, 1, time[0], time[1]);
-                                $scope.uiMaskValue = ($filter('date')(dt, 'HH:MM'));
-                            } else {
-                                $scope.uiMaskValue = "";
-                            }
-                            break;
+
+                    if (val) {
+                        switch (attrs.uiMask) {
+                            case "99/99/9999 99:99":
+                                var raw = val.split(" ");
+                                var date = raw[0].split("-");
+                                var time = raw.length > 1 ? raw[1].split(":") : ["00", "00"];
+                                if (date.length > 1) {
+                                    var dt = new Date(date[0], date[1] - 1, date[2], time[0], time[1]);
+                                    $scope.uiMaskValue = ($filter('date')(dt, 'dd/MM/yyyy HH:mm'));
+                                }
+                                break;
+                            case "99/99/9999":
+                                var date = val.split("-");
+                                if (date.length > 1) {
+                                    var dt = new Date(date[0], date[1] - 1, date[2]);
+                                    $scope.uiMaskValue = ($filter('date')(dt, 'dd/MM/yyyy'));
+                                }
+                                break;
+                            case "99:99":
+                                var time = val.split(":");
+                                if (time.length > 1) {
+                                    var dt = new Date(2014, 1, 1, time[0], time[1]);
+                                    $scope.uiMaskValue = ($filter('date')(dt, 'HH:MM'));
+                                } else {
+                                    $scope.uiMaskValue = "";
+                                }
+                                break;
+                        }
+                        $el.val($scope.uiMaskValue);
                     }
-                    $el.val($scope.uiMaskValue);
 
                 }, 0);
 
