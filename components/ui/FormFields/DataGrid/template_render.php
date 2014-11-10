@@ -130,7 +130,7 @@
              style="text-align:center;padding:20px;color:#ccc;font-size:25px;">
             &mdash; {{ !datasource.loading ? 'Data Empty' : 'Loading Data'; }} &mdash;
         </div>
-        <div style="margin:0px -15px;{{ datasource.data.length != 0 || gridOptions.enableExcelMode ? '' : 'opacity:0'}}">
+        <div style="margin:0px 0px;{{ datasource.data.length != 0 || gridOptions.enableExcelMode ? '' : 'opacity:0'}}">
             <div class="data-grid-category" category-header="gridOptions"></div>
             <div class="data-grid-table" ng-init="initGrid()" ng-grid="gridOptions"></div>
         </div>
