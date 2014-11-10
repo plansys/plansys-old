@@ -93,7 +93,11 @@ app.directive('psDataSource', function ($timeout, $http) {
                     var params = $.extend({}, $scope.sqlParams);
                     for (i in $scope.params) {
                         if (i[0] == ':' && $scope.params[i]) {
-                            params[i] = $scope.params[i];
+                            if ($scope.params[i].substr(0, 3) == 'js:') {
+                                params[i] = $scope.sqlParams[i];
+                            } else {
+                                params[i] = $scope.params[i];
+                            }
                         }
                     }
                     $scope.loading = true;

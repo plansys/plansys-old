@@ -109,7 +109,7 @@ app.filter('fileSize', function () {
 
 app.filter('hourFormat', function () {
     return function (str) {
-        if (str.split(":").length >= 2) {
+        if (str && str.split(":").length >= 2) {
             str = str.split(":")[0] + ":" + str.split(":")[1];
             return str;
         }
