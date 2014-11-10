@@ -420,12 +420,12 @@ class RelationField extends FormField {
             }
         }
 
-## generate parameters
+        ## generate parameters
         $params = [];
         foreach ($blocks[1] as $k => $block) {
             $cond = '';
 
-## usage: "where [search]", [search] = search term
+            ## usage: "where [search]", [search] = search term
             if (strpos($block, 'search') !== false) {
                 if ($search != '') {
                     if (strpos($this->labelField, '{') !== false) {
@@ -442,7 +442,7 @@ class RelationField extends FormField {
                 }
             }
 
-## usage: "where user_id = {$model->id}",  $model = current form activerecord
+            ## usage: "where user_id = {$model->id}",  $model = current form activerecord
             else if (strpos($block, '$model') !== false) {
                 preg_match("/\\\$model->[\w_]+/", $block, $modelVar);
                 foreach ($modelVar as $v) {
@@ -457,7 +457,7 @@ class RelationField extends FormField {
             }
         }
 
-## remove empty-valued conditional curly braces
+        ## remove empty-valued conditional curly braces
         preg_match_all("/\{(.*?)\}/", $sql, $curlies);
         foreach ($curlies[0] as $c => $curly) {
             foreach ($params as $k => $p) {
@@ -472,7 +472,7 @@ class RelationField extends FormField {
             }
         }
 
-## assemble parameters
+        ## assemble parameters
         $i = 0;
         $returnParams = [];
         foreach ($params as $k => $p) {

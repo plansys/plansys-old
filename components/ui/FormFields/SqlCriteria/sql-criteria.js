@@ -45,7 +45,6 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
                             postparam.rfclass = $scope.$parent.classPath;
                             postparam.rfmodel = $scope.modelClass;
                             break;
-
                     }
 
                     url = Yii.app.createUrl('/formfield/SqlCriteria.previewSQL');
@@ -84,16 +83,12 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
                 // when ng-model is changed from outside directive
                 if (typeof ctrl != 'undefined') {
                     ctrl.$render = function () {
-                        if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
-                            return;
-
                         if (typeof ctrl.$viewValue != "undefined") {
                             $scope.value = ctrl.$viewValue;
                             $scope.update();
                         }
                     };
                 }
-
                 eval($scope.inlineJS);
             }
         }

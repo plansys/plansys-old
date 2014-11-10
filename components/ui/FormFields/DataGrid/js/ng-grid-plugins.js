@@ -89,7 +89,7 @@ app.directive('categoryHeader', function ($timeout) {
     function link(scope, element, attrs) {
         var headerContainer, viewPort;
         $timeout(function () {
-            $(element).find('.ngTopPanel').width($(element).width());
+            $(element).find('.ngTopPanel').width($(element).width() + 20);
         });
         // create cols as soon as $gridscope is avavilable
         // grids in tabs with lazy loading come later, so we need to 

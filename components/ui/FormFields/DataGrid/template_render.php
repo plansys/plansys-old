@@ -52,7 +52,15 @@
             </div>
 
             <?php if (@$this->gridOptions['badge']): ?>
-                <div style="left:0px;position:absolute;font-size:13px;text-align:center;margin-top:6px;width:100%;">
+                <div style="
+                     left:0px;
+                     position:absolute;
+                     font-size:13px;
+                     text-align:center;
+                     margin-top:6px;
+                     width:100%;
+                     pointer-events: none;
+                     ">
                     <?php $badges = explode("|||", $this->gridOptions['badge']); ?>
                     <?php foreach ($badges as $badge): ?>
                         <div class="badge">

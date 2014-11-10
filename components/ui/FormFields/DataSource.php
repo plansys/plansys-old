@@ -186,7 +186,7 @@ class DataSource extends FormField {
         'paging' => '{[paging]}',
         'group' => '',
         'having' => '',
-        'join' => ''
+        'join' => '',
     ];
     private $command;
 
@@ -551,9 +551,11 @@ class DataSource extends FormField {
         if (@$criteria['params']) {
             $criteria['params'] = array_filter($criteria['params']);
         }
+        
         if ($this->relationTo == 'currentModel') {
             $tableSchema = $this->model->tableSchema;
             $builder = $this->model->commandBuilder;
+            
             if (array_key_exists('page', $criteria)) {
                 $start = ($criteria['page'] - 1) * $criteria['pageSize'];
                 $pageSize = $criteria['pageSize'];
