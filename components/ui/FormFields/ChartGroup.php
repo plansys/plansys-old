@@ -32,15 +32,10 @@ class ChartGroup extends FormField {
                 'type' => 'TextField',
             ),
             array (
-                'label' => 'Show Border',
-                'name' => 'showBorder',
-                'options' => array (
-                    'ng-model' => 'active.showBorder',
-                    'ng-change' => 'save();relayout();',
-                ),
-                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
-                'fieldWidth' => '4',
-                'type' => 'DropDownList',
+                'label' => 'Options',
+                'name' => 'options',
+                'allowExtractKey' => 'Yes',
+                'type' => 'KeyValueGrid',
             ),
             array (
                 'value' => '<hr/>',
@@ -69,6 +64,9 @@ class ChartGroup extends FormField {
 	
 	/** @var string $title */
 	public $title;
+	
+	/** @var string $title */
+	public $options;
 	
     /** @var array $column1 */
     public $column1 = ['<column-placeholder class="hide"></column-placeholder>'];

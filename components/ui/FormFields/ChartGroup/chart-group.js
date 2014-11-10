@@ -3,11 +3,27 @@ app.directive('psChartGroup', function ($timeout) {
 		scope: true,
 		controller: function($scope, $element) {
 			
+			/*********************** DEEP EXTEND ********************************/
+			var deepExtend = function (destination, source) {
+			  for (var property in source) {
+				if (source[property] && source[property].constructor &&
+				 source[property].constructor === Object) {
+				  destination[property] = destination[property] || {};
+				  arguments.callee(destination[property], source[property]);
+				} else {
+				  destination[property] = source[property];
+				}
+			  }
+			  return destination;
+			}
+			
 			$scope.data = [];
+			$scope.xAxisGroup;
 			$scope.isgroup = true;
 			
 			$scope.groupTitle = $element.find("data[name=groupTitle]").text();
 			$scope.groupName = $element.find("data[name=groupName]").text();
+			$scope.groupOptions = JSON.parse($element.find("data[name=groupOptions]").text());
 			
 			$scope.defaultOptions = {
 				chart : {
@@ -18,9 +34,21 @@ app.directive('psChartGroup', function ($timeout) {
 				}
 			};
 			
+			if($scope.groupOptions == null) {
+				$scope.groupOptions = {};
+			}
+			
+			$scope.groupOptions = deepExtend($scope.groupOptions, $scope.defaultOptions);
+			
+			$scope.setxAxisGroup = function(value) {
+				$scope.xAxisGroup = value;
+			}
+			
 			$scope.redraw = function () {
-				var chart = new Highcharts.Chart($scope.defaultOptions);
+				var chart = new Highcharts.Chart($scope.groupOptions);
 				chart.setTitle({ text: $scope.groupTitle });
+				
+				chart.xAxis[0].setCategories($scope.xAxisGroup);
 				
 				for(i in $scope.data) {
 					eval( i + 'Data(chart, $scope.data[i])');

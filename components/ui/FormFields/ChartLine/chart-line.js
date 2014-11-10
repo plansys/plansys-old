@@ -61,6 +61,7 @@ app.directive('psChartLine', function ($timeout) {
 					$scope.data[$scope.chartType] = [];
 				
 				$scope.data['line'].push(chartData);
+				$scope.setxAxisGroup(xAxis);
 				
 				$el.hide();
 				$scope.redraw();
