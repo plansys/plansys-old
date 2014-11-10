@@ -28,7 +28,7 @@ app.directive('psChartArea', function ($timeout) {
 				for(i in $scope.series)
 				{
 					if($scope.series[i].label == $scope.tickSeries) {
-						xAxis = $scope.series[i].value.map(Number);
+						xAxis = $scope.series[i].value;
 					}
 					else {	
 						var tmp = {};
@@ -42,7 +42,7 @@ app.directive('psChartArea', function ($timeout) {
 				var defaultOptions = {
 					chart : {
 						type: 'area',
-						renderTo : 'areaContainer'
+						renderTo : 'areaContainer' + $scope.chartTitle
 					},
 					credits : {
 						enabled : false

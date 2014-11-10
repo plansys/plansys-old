@@ -60,7 +60,7 @@ app.directive('keyValueGrid', function ($timeout) {
 
                     if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false')
                         value = JSON.parse(value);
-
+					
                     if (value[0] && (value[0] == '[' || value[0] == '{')) {
                         try {
                             eval("value = '" + value + "';");

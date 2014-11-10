@@ -28,7 +28,7 @@ app.directive('psChartLine', function ($timeout) {
 				for(i in $scope.series)
 				{
 					if($scope.series[i].label == $scope.tickSeries) {
-						xAxis = $scope.series[i].value.map(Number);
+						xAxis = $scope.series[i].value;
 					}
 					else {	
 						var tmp = {};
@@ -42,7 +42,7 @@ app.directive('psChartLine', function ($timeout) {
 				var defaultOptions = {
 					chart : {
 						type: 'line',
-						renderTo : 'lineContainer'
+						renderTo : 'lineContainer' + $scope.chartTitle
 					},
 					credits : {
 						enabled : false
