@@ -633,7 +633,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
                                 function fixHead() {
                                     var width = $wc.width();
-                                    $catt.width(width+ 30);
+                                    $catt.width(width);
 
                                     if (($container.scrollTop() > top) || $scope.gridOptions['fixedHeader'] == "always") {
                                         if (!$dgcontainer.hasClass('fixed')) {

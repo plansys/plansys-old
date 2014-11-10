@@ -364,7 +364,6 @@ class DataSource extends FormField {
                             break;
                     }
                 } else {
-
                     $returnParams[$p] = $field->evaluate($postedParams[$p], true, [
                         'model' => $model
                     ]);
@@ -456,9 +455,10 @@ class DataSource extends FormField {
         if (trim($this->sql) == "")
             return [];
 
+
         $db = Yii::app()->db;
         $template = DataSource::generateTemplate($this->sql, $params, $this);
-
+        
         ## execute SQL
         $this->command = $db->createCommand($template['sql']);
         $data = $this->command->queryAll(true, $template['params']);
@@ -654,7 +654,7 @@ class DataSource extends FormField {
             if ($field) {
                 foreach ($field['filters']as $f) {
                     if (@$f['defaultValue'] != '' || @$f['defaultOperator'] != '' ||
-                            @$f['defaultValueFrom'] != '' || @$f['defaultValueTo'] != ''
+                        @$f['defaultValueFrom'] != '' || @$f['defaultValueTo'] != ''
                     ) {
                         $execQuery = false;
                     }
