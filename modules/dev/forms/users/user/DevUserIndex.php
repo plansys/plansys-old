@@ -6,6 +6,15 @@ class DevUserIndex extends User {
             array (
                 'linkBar' => array (
                     array (
+                        'label' => 'Import From LDAP',
+                        'icon' => 'user',
+                        'options' => array (
+                            'ng-if' => 'params.useLdap',
+                            'href' => 'url:/dev/user/ldap',
+                        ),
+                        'type' => 'LinkButton',
+                    ),
+                    array (
                         'label' => 'New User',
                         'url' => '/dev/user/new',
                         'buttonType' => 'success',
