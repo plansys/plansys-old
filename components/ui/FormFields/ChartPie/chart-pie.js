@@ -74,7 +74,6 @@ app.directive('psChartPie', function ($timeout) {
 				$el.hide();
 				$scope.redraw();
 			} else {
-				console.log($scope.options);
 				var chart = new Highcharts.Chart($scope.options);
 				
 				chart.setTitle({ text: $scope.chartTitle });

@@ -18,6 +18,7 @@ app.directive('psChartGroup', function ($timeout) {
 			}
 			
 			$scope.data = [];
+			$scope.yAxisGroup = [];
 			$scope.xAxisGroup;
 			$scope.isgroup = true;
 			
@@ -32,8 +33,24 @@ app.directive('psChartGroup', function ($timeout) {
 				},
 				credits : {
 					enabled : false
-				}
+				},
+				xAxis : {
+					labels : {
+						rotation : 90
+					}
+				},
 			};
+			
+			if($scope.yAxisType.toLowerCase() == "double") {
+				var shared = {
+					tooltip: {
+						shared: true
+					}
+				}
+				
+				$scope.defaultOptions = deepExtend($scope.defaultOptions, shared);
+				
+			}
 			
 			if($scope.groupOptions == null) {
 				$scope.groupOptions = {};
@@ -45,23 +62,63 @@ app.directive('psChartGroup', function ($timeout) {
 				$scope.xAxisGroup = value;
 			}
 			
-			$scope.redraw = function () {
+			$scope.redraw = function () {			
+				var series = [];
+				var yAxis = [];
+				
 				var chart = new Highcharts.Chart($scope.groupOptions);
 				chart.setTitle({ text: $scope.groupTitle });
 				
 				chart.xAxis[0].setCategories($scope.xAxisGroup);
 				
+				var count = 0;
 				for(i in $scope.data) {
-					eval( i + 'Data(chart, $scope.data[i])');
+					var tmpyAxis = {
+						'title' : {
+							'text' : $scope.data[i][0].yAxis[0].axisTitle.textStr
+						}
+					};
+					
+					if(count%2 == 1) {
+						tmpyAxis.opposite = true;
+					}
+					
+					yAxis.push(tmpyAxis);
+					
+					for( j in $scope.data[i][0].series) {
+						var tmpData = {
+							'color' : $scope.data[i][0].series[j].color,
+							'name' : $scope.data[i][0].series[j].name,
+							'type' : $scope.data[i][0].series[j].type,
+							'data' : $scope.data[i][0].series[j].yData,
+						}
+						
+						if($scope.yAxisType.toLowerCase() == "double")
+							tmpData.yAxis = count;
+						
+						series.push(tmpData);
+					}
+					
+					count++;
 				}
+				
+				chart.yAxis[0].update(yAxis[0]);
+				
+				for(i in series) {
+					if(typeof chart.yAxis[series[i].yAxis] == "undefined" && $scope.yAxisType.toLowerCase() == "double")
+						chart.addAxis(yAxis[series[i].yAxis]);
+					chart.addSeries(series[i]);
+				}
+				
+				chart.redraw();
 			}
 			
 			function lineData(chart, data) {
 				for(i in data) {
 					for(j in data[i]) {
 						data[i][j].type = 'line';
+						chart.addSeries(data[i][j]);
 					}
-					chart.addSeries(data[i][j]);
 				}
 			}
 			
@@ -69,8 +126,8 @@ app.directive('psChartGroup', function ($timeout) {
 				for(i in data) {
 					for(j in data[i]) {
 						data[i][j].type = 'column';
+						chart.addSeries(data[i][j]);
 					}
-					chart.addSeries(data[i][j]);
 				}
 			}
 		}
