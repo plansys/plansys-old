@@ -57,17 +57,16 @@ app.directive('keyValueGrid', function ($timeout) {
                         filtered_key = filtered_key.replace(/"/g, '\'');
                         filtered_value = filtered_value.replace(/"/g, '\'');
                     }
-
-                    if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false')
-                        value = JSON.parse(value);
-
+					
                     if (value[0] && (value[0] == '[' || value[0] == '{')) {
                         try {
                             eval("value = '" + value + "';");
                         } catch (e) {
                             eval("value = " + value + ";");
                         }
-                    }
+                    } else {
+						value = JSON.parse(value);
+					}
 
                     return {
                         key: filtered_key,

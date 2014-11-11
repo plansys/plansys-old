@@ -377,7 +377,6 @@
 
         $scope.setTickSeries = function () {
             var series = $scope.active.series;
-            console.log($scope.active.series);
             $scope.tickSeriesList = {
                 '': '-- NONE --',
                 '---': '---'
@@ -482,6 +481,7 @@
                     dslist[$scope.fields[i].name] = $scope.fields[i].name;
                 }
             }
+			
             $scope.dataSourceList = dslist;
         }
 

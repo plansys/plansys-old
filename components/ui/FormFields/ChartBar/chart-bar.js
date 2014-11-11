@@ -1,61 +1,71 @@
 app.directive('psChartBar', function ($timeout) {
     return {
         scope: true,
-        compile: function (element, attrs, transclude) {
-            return function ($scope, $el, attrs, ctrl) {
-				
-				/*********************** DEEP EXTEND ********************************/
-				var deepExtend = function (destination, source) {
-				  for (var property in source) {
-					if (source[property] && source[property].constructor &&
-					 source[property].constructor === Object) {
-					  destination[property] = destination[property] || {};
-					  arguments.callee(destination[property], source[property]);
-					} else {
-					  destination[property] = source[property];
-					}
-				  }
-				  return destination;
+        link: function ($scope, $el, attrs) {
+		
+			/*********************** DEEP EXTEND ********************************/
+			var deepExtend = function (destination, source) {
+			  for (var property in source) {
+				if (source[property] && source[property].constructor &&
+				 source[property].constructor === Object) {
+				  destination[property] = destination[property] || {};
+				  arguments.callee(destination[property], source[property]);
+				} else {
+				  destination[property] = source[property];
 				}
-				
-				$scope.chartTitle = $el.find("data[name=chartTitle]").text();
-				$scope.tickSeries = $el.find("data[name=tickSeries]").text();
-				$scope.chartType = $el.find("data[name=chartType]").text().toLowerCase();
-				$scope.series = JSON.parse($el.find("data[name=series]").text());
-				$scope.options = JSON.parse($el.find("data[name=options]").text());	
-				
-				var xAxis = [];
-				var chartData = [];				
-				for(i in $scope.series)
-				{
-					if($scope.series[i].label == $scope.tickSeries) {
-						xAxis = $scope.series[i].value.map(Number);
-					}
-					else {	
-						var tmp = {};
-						tmp['name'] = $scope.series[i].label;
-						tmp['data'] = $scope.series[i].value.map(Number);
-						tmp['color'] = $scope.series[i].color;
-						chartData.push(tmp);
-					}
+			  }
+			  return destination;
+			}
+			
+			$scope.chartTitle = $el.find("data[name=chartTitle]").text();
+			$scope.chartName = $el.find("data[name=chartName]").text();
+			$scope.tickSeries = $el.find("data[name=tickSeries]").text();
+			$scope.chartType = $el.find("data[name=chartType]").text().toLowerCase();
+			$scope.series = JSON.parse($el.find("data[name=series]").text());
+			$scope.options = JSON.parse($el.find("data[name=options]").text());	
+			
+			var xAxis = [];
+			var chartData = [];				
+			for(i in $scope.series)
+			{
+				if($scope.series[i].label == $scope.tickSeries) {
+					xAxis = $scope.series[i].value;
 				}
-				
-				var defaultOptions = {
-					chart : {
-						type: $scope.chartType,
-						renderTo : 'barContainer'
-					},
-					credits : {
-						enabled : false
-					}
+				else {	
+					var tmp = {};
+					tmp['name'] = $scope.series[i].label;
+					tmp['data'] = $scope.series[i].value.map(Number);
+					tmp['color'] = $scope.series[i].color;
+					chartData.push(tmp);
 				}
-				
-				if($scope.options == null) {
-					$scope.options = {};
+			}
+			
+			var defaultOptions = {
+				chart : {
+					type: $scope.chartType,
+					renderTo : $scope.chartType + 'Container' + $scope.chartName
+				},
+				credits : {
+					enabled : false
 				}
+			};
+			
+			if($scope.options == null) {
+				$scope.options = {};
+			}
+			
+			$scope.options = deepExtend($scope.options, defaultOptions);
+			
+			if(typeof $scope.isgroup != 'undefined' && $scope.isgroup) {
+				if(typeof $scope.data[$scope.chartType] == 'undefined')
+					$scope.data[$scope.chartType] = [];
 				
-				$scope.options = deepExtend($scope.options, defaultOptions);
+				$scope.data[$scope.chartType].push(chartData);
+				$scope.setxAxisGroup(xAxis);
 				
+				$el.hide();
+				$scope.redraw();
+			} else {
 				var chart = new Highcharts.Chart($scope.options);
 				
 				chart.setTitle({ text: $scope.chartTitle });

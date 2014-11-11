@@ -8,44 +8,44 @@ class KeyValueGrid extends FormField {
      * @return array me-return array property KeyValueGrid.
      */
     public function getFieldProperties() {
-        return  [
-             [
+        return array (
+            array (
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ],
-                'list' =>  [],
+                ),
+                'list' => array (),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'value' => '<hr/>',
                 'type' => 'Text',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Label',
                 'name' => 'label',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
+                ),
                 'type' => 'TextField',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Grid Initial State',
                 'name' => 'show',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.show',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
+                ),
                 'listExpr' => 'array(
    \'Show\',
    \'Hide\',
@@ -53,71 +53,66 @@ class KeyValueGrid extends FormField {
                 'labelWidth' => '5',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Allow Empty Key',
                 'name' => 'allowEmptyKey',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.allowEmptyKey',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
+                ),
                 'listExpr' => 'array(\\\'No\\\',\\\'Yes\\\');',
                 'labelWidth' => '5',
                 'fieldWidth' => '3',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Allow Space in Key',
                 'name' => 'allowSpaceOnKey',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.allowSpaceOnKey',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
+                ),
                 'listExpr' => 'array(\\\'No\\\',\\\'Yes\\\');',
                 'labelWidth' => '5',
                 'fieldWidth' => '3',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Allow Double Quote',
                 'name' => 'allowDoubleQuote',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.allowDoubleQuote',
                     'ng-change' => 'save()',
                     'ng-delay' => 500,
-                ],
+                ),
                 'listExpr' => 'array(\\\'No\\\',\\\'Yes\\\')',
                 'labelWidth' => '5',
                 'fieldWidth' => '3',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Allow Extract Key',
                 'name' => 'allowExtractKey',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.allowExtractKey',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
+                ),
                 'listExpr' => 'array(\\\'No\\\',\\\'Yes\\\')',
                 'labelWidth' => '5',
                 'fieldWidth' => '3',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Options',
                 'name' => 'options',
                 'show' => 'Show',
-                'options' =>  [
-                    'ng-model' => 'active.options',
-                    'ng-change' => 'save()',
-                    'ng-delay' => 500,
-                ],
                 'type' => 'KeyValueGrid',
-            ],
-        ];
+            ),
+        );
     }
 
     /** @var string $label */
