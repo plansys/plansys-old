@@ -49,19 +49,12 @@ app.directive('keyValueGrid', function ($timeout) {
                     var filtered_key = key;
                     var filtered_value = (value == null) ? null : value.toString();
 
-
-                    if ((filtered_value[0] == '[' && filtered_value[filtered_value.length - 1] == ']')
-                            || (filtered_value[0] == '{' && filtered_value[filtered_value.length - 1] == '}')) {
-                        
-                        // To Andri: tolong buat filtered value ini jadi opsional, dan default nya harus FALSE
-                        // soalnya kalo filtered_value ini selalu di-eval bakal 
-                        // ngerusak FormField DataSource,DataFilter,DataGrid,SqlCriteria,RelationField,dsb..
-                        
-                        //eval("filtered_value = " + filtered_value + ";");
-                        
-                        
-                    } else if (filtered_value.trim() == "true" || filtered_value.trim() == "false") {
-                        filtered_value = JSON.parse(filtered_value);
+                    if ($scope.allowExtractKey) {
+                        if ((filtered_value[0] == '[' && filtered_value[filtered_value.length - 1] == ']') || (filtered_value[0] == '{' && filtered_value[filtered_value.length - 1] == '}')) {
+                            eval("filtered_value = " + filtered_value + ";");
+                        } else if (filtered_value.trim() == "true" || filtered_value.trim() == "false") {
+                            filtered_value = JSON.parse(filtered_value);
+                        }
                     } else {
                         if (!$scope.allowSpace) {
                             filtered_key = filtered_key.replace(/\s*/g, '');
@@ -80,7 +73,6 @@ app.directive('keyValueGrid', function ($timeout) {
                 }
 
                 function formatJSON(raw_value) {
-
                     var filtered = [];
                     for (var key in raw_value) {
 
@@ -116,7 +108,6 @@ app.directive('keyValueGrid', function ($timeout) {
                 }
 
                 function unformatJSON(raw, tablerenderer) {
-
                     tablerenderer = typeof tablerenderer !== 'undefined' ? tablerenderer : false;
 
                     var list = {};
@@ -130,20 +121,18 @@ app.directive('keyValueGrid', function ($timeout) {
 
                         var item = filterKeyValue(raw[i].key, raw[i].value);
 
-                        if (tablerenderer) {
+                        if (tablerenderer || !$scope.allowExtractKey) {
                             list[item.key] = item.value;
                         } else {
                             var ref = list;
                             var itemArr = item.key.split('.');
 
-                            if ($scope.allowExtractKey) {
-                                // create item var path
-                                for (i in itemArr) {
-                                    if (typeof ref[itemArr[i]] == "undefined") {
-                                        ref[itemArr[i]] = {};
-                                    }
-                                    ref = ref[itemArr[i]];
+                            // create item var path
+                            for (i in itemArr) {
+                                if (typeof ref[itemArr[i]] == "undefined") {
+                                    ref[itemArr[i]] = {};
                                 }
+                                ref = ref[itemArr[i]];
                             }
 
                             // assign item path value
