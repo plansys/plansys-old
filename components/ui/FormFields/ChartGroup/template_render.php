@@ -2,6 +2,7 @@
 	
 	<data name="groupTitle" class="hide"><?= $this->title; ?></data>
 	<data name="groupName" class="hide"><?= $this->name; ?></data>
+	<data name="yAxisType" class="hide"><?= $this->yAxisType; ?></data>
 	<data name="groupOptions" class="hide"><?= json_encode($this->extractJson($this->options)); ?></data>
 	
 	<?= $this->renderColumn(1); ?>
