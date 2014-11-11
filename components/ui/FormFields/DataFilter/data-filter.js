@@ -68,7 +68,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                         dsParamName = 'where';
                     }
 
-                    if (dsParamName != "" && filter.isCustom === "No") {
+                    if (dsParamName != "" && (!filter.isCustom || filter.isCustom === "No")) {
                         var prepared = $scope.prepareDSParams(filter);
                         ds.resetParam(prepared.name, dsParamName);
                         ds.query(function () {
@@ -96,7 +96,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                         } else {
                             f.operator = "";
                         }
-                        
+
                         if (!f.resetable) {
                             f.resetable = 'Yes';
                         }
@@ -139,8 +139,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     return prepared;
                 }
 
-                $scope.beforeQuery = function(ds) {};
-                $scope.afterQuery = function(ds) {};
+                $scope.beforeQuery = function (ds) {
+                };
+                $scope.afterQuery = function (ds) {
+                };
 
                 $scope.updateFilter = function (filter, e, shouldExec) {
                     $scope.changeValueText(filter);
@@ -174,7 +176,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                         if (shouldExec && filter.isCustom === "No") {
                             $scope.beforeQuery(ds);
-                            
+
                             ds.query(function () {
                                 if (ds.params.paging && $scope[ds.params.paging] && $scope[ds.params.paging].gridOptions) {
                                     var paging = $scope[ds.params.paging].gridOptions.pagingOptions;
@@ -184,7 +186,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                         paging.currentPage = 1;
                                     }
                                 }
-                                
+
                                 $scope.afterQuery(ds);
                             });
                         }
@@ -441,15 +443,21 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                                         var curr = filter.from;
 
-                                        first = new Date(curr.getFullYear(), curr.getMonth(), 1);
-                                        last = new Date(curr.getFullYear(), curr.getMonth() + 1, 0);
+                                        monthSpan = (filter.options.monthSpan || 1) * 1;
+                                        startingMonth = curr.getMonth() - (curr.getMonth() % monthSpan);
+                                        first = new Date(curr.getFullYear(), startingMonth, 1);
+                                        last = new Date(curr.getFullYear(), startingMonth + monthSpan, 0);
 
                                         filter.from = new Date(first);
+                                        filter.to = new Date(last);
                                         filter.value = {};
                                         filter.value.from = dateFilter(first, 'yyyy-MM-dd HH:mm:00');
                                         filter.value.to = dateFilter(last, 'yyyy-MM-dd HH:mm:00');
 
                                         filter.valueText = monthName[filter.from.getMonth()] + " " + (filter.from.getYear() + 1900);
+                                        if (monthSpan > 1) {
+                                            filter.valueText += " - " + monthName[filter.to.getMonth()] + " " + (filter.to.getYear() + 1900);
+                                        }
                                         break;
                                     case "Yearly":
                                         if (from == "") {
@@ -517,7 +525,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                 $scope.updateFilter(filter);
                                 break;
                             case 'Monthly':
-                                filter.from.setMonth(filter.from.getMonth() + 1);
+                                monthSpan = (filter.options.monthSpan || 1) * 1;
+                                filter.from.setMonth(filter.from.getMonth() + monthSpan);
                                 $scope.updateFilter(filter);
                                 break;
                             case 'Yearly':
