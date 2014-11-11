@@ -25,17 +25,19 @@ app.directive('psChartBar', function ($timeout) {
 			$scope.options = JSON.parse($el.find("data[name=options]").text());	
 			
 			var xAxis = [];
-			var chartData = [];				
+			var chartData = [];
+			
 			for(i in $scope.series)
 			{
 				if($scope.series[i].label == $scope.tickSeries) {
 					xAxis = $scope.series[i].value;
 				}
-				else {	
+				else {
 					var tmp = {};
 					tmp['name'] = $scope.series[i].label;
 					tmp['data'] = $scope.series[i].value.map(Number);
 					tmp['color'] = $scope.series[i].color;
+					
 					chartData.push(tmp);
 				}
 			}
@@ -56,24 +58,24 @@ app.directive('psChartBar', function ($timeout) {
 			
 			$scope.options = deepExtend($scope.options, defaultOptions);
 			
+			var chart = new Highcharts.Chart($scope.options);
+				
+			chart.setTitle({ text: $scope.chartTitle });
+			chart.xAxis[0].setCategories(xAxis);
+			
+			for(i in chartData) {
+				chart.addSeries(chartData[i]);
+			}
+			
 			if(typeof $scope.isgroup != 'undefined' && $scope.isgroup) {
 				if(typeof $scope.data[$scope.chartType] == 'undefined')
 					$scope.data[$scope.chartType] = [];
 				
-				$scope.data[$scope.chartType].push(chartData);
+				$scope.data[$scope.chartType].push(chart);
 				$scope.setxAxisGroup(xAxis);
 				
 				$el.hide();
 				$scope.redraw();
-			} else {
-				var chart = new Highcharts.Chart($scope.options);
-				
-				chart.setTitle({ text: $scope.chartTitle });
-				chart.xAxis[0].setCategories(xAxis);
-				
-				for(i in chartData) {
-					chart.addSeries(chartData[i]);
-				}
 			}
 		}
 	}

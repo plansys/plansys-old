@@ -56,24 +56,24 @@ app.directive('psChartLine', function ($timeout) {
 			
 			$scope.options = deepExtend($scope.options, defaultOptions);
 			
+			var chart = new Highcharts.Chart($scope.options);
+				
+			chart.setTitle({ text: $scope.chartTitle });
+			chart.xAxis[0].setCategories(xAxis);
+			
+			for(i in chartData) {
+				chart.addSeries(chartData[i]);
+			}
+			
 			if(typeof $scope.isgroup != 'undefined' && $scope.isgroup) {
 				if(typeof $scope.data[$scope.chartType] == 'undefined')
 					$scope.data[$scope.chartType] = [];
 				
-				$scope.data['line'].push(chartData);
+				$scope.data['line'].push(chart);
 				$scope.setxAxisGroup(xAxis);
 				
 				$el.hide();
 				$scope.redraw();
-			} else {
-				var chart = new Highcharts.Chart($scope.options);
-				
-				chart.setTitle({ text: $scope.chartTitle });
-				chart.xAxis[0].setCategories(xAxis);
-				
-				for(i in chartData) {
-					chart.addSeries(chartData[i]);
-				}
 			}
 		}
 	}

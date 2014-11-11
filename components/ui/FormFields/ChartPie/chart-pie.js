@@ -41,6 +41,16 @@ app.directive('psChartPie', function ($timeout) {
 				},
 				credits : {
 					enabled : false
+				},
+				plotOptions : {
+					pie : {
+						dataLabels : {
+							format : '<i>{point.percentage:.1f}%</i>',
+							color : 'white',
+							distance: -20
+						},
+						showInLegend : true
+					}
 				}
 			}
 			
@@ -48,7 +58,7 @@ app.directive('psChartPie', function ($timeout) {
 				$scope.options = {};
 			}
 			
-			$scope.options = deepExtend($scope.options, defaultOptions);
+			$scope.options = deepExtend(defaultOptions, $scope.options);
 			
 			if(typeof $scope.isgroup != 'undefined' && $scope.isgroup) {
 				if(typeof $scope.data[$scope.chartType] == 'undefined')
@@ -65,7 +75,7 @@ app.directive('psChartPie', function ($timeout) {
 				$scope.redraw();
 			} else {
 				var chart = new Highcharts.Chart($scope.options);
-			
+				
 				chart.setTitle({ text: $scope.chartTitle });
 				chart.addSeries({
 					name: 'value', 

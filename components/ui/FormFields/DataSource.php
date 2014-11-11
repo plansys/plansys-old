@@ -10,148 +10,147 @@ class DataSource extends FormField {
      * @return array Fungsi ini akan me-return array property DataSource.
      */
     public function getFieldProperties() {
-        return [
-            [
+        return array (
+            array (
                 'label' => 'Data Source Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
-                ],
+                ),
                 'type' => 'TextField',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Post Data ?',
                 'name' => 'postData',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.postData',
                     'ng-change' => 'save()',
-                ],
+                ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'labelWidth' => '5',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Relation To',
                 'name' => 'relationTo',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.relationTo',
                     'ng-change' => 'save()',
                     'ps-list' => 'relFieldList',
                     'ng-if' => 'active.postData == \\\'Yes\\\'',
-                ],
-                'list' => [],
-                'searchable' => 'Yes',
+                ),
+                'list' => array (),
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
+                'searchable' => 'Yes',
                 'otherLabel' => '-- NONE --',
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Debug SQL ?',
                 'name' => 'debugSql',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.debugSql',
                     'ng-change' => 'save()',
                     'ng-if' => 'active.relationTo == \\\'\\\' || active.postData == \\\'No\\\'',
-                ],
+                ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'labelWidth' => '5',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Source Type',
                 'name' => 'fieldType',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.fieldType',
                     'ng-change' => 'save()',
                     'ng-if' => 'active.relationTo == \\\'\\\' || active.postData == \\\'No\\\'',
-                ],
-                'list' => [
+                ),
+                'list' => array (
                     'sql' => 'SQL',
                     'php' => 'PHP Function',
-                ],
+                ),
                 'labelWidth' => '5',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Paging',
                 'name' => 'enablePaging',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.enablePaging',
                     'ng-change' => 'save()',
                     'ng-if' => 'active.relationTo == \\\'\\\' || active.postData == \\\'No\\\'',
-                ],
-                'list' => [],
+                ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'labelWidth' => '5',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'name' => 'relationCriteria',
                 'label' => 'Relation Query',
                 'paramsField' => 'params',
                 'baseClass' => 'DataSource',
-                'options' => [
+                'options' => array (
                     'ng-if' => 'active.postData == \\\'Yes\\\' && active.relationTo != \\\'\\\'',
                     'ng-model' => 'active.relationCriteria',
                     'ng-change' => 'save()',
-                ],
+                ),
                 'modelClassJS' => 'DataSource/relation-criteria.js',
                 'type' => 'SqlCriteria',
-            ],
-            [
+            ),
+            array (
                 'label' => 'SQL',
                 'fieldname' => 'sql',
                 'language' => 'sql',
-                'options' => [
+                'options' => array (
                     'ng-show' => 'active.fieldType == \\\'sql\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
-                ],
+                ),
                 'type' => 'ExpressionField',
-            ],
-            [
+            ),
+            array (
                 'label' => 'PHP Function',
                 'fieldname' => 'php',
-                'options' => [
+                'options' => array (
                     'ng-show' => 'active.fieldType == \\\'php\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
-                ],
+                ),
                 'type' => 'ExpressionField',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Total Item - PHP Function',
                 'fieldname' => 'pagingPHP',
-                'options' => [
+                'options' => array (
                     'ng-show' => 'active.fieldType == \\\'php\\\' && active.enablePaging == \\\'Yes\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
-                ],
+                ),
                 'type' => 'ExpressionField',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Total Item - SQL',
                 'fieldname' => 'pagingSQL',
                 'language' => 'sql',
-                'options' => [
+                'options' => array (
                     'ng-show' => 'active.fieldType == \\\'sql\\\' && active.enablePaging == \\\'Yes\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
-                ],
+                ),
                 'type' => 'ExpressionField',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Parameters',
                 'name' => 'params',
                 'show' => 'Show',
                 'type' => 'KeyValueGrid',
-            ],
-        ];
+            ),
+        );
     }
 
     /** @var string $name */
