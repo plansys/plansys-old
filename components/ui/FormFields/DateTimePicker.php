@@ -43,6 +43,7 @@ class DateTimePicker extends FormField
                 'list' =>  [
                     'datetime' => 'Date Time',
                     'date' => 'Date',
+                    'monthyear' => 'Month Year',
                     'time' => 'Time',
                 ],
                 'fieldWidth' => '4',

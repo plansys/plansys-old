@@ -48,21 +48,30 @@ app.directive('keyValueGrid', function ($timeout) {
                 function filterKeyValue(key, value) {
                     var filtered_key = key;
                     var filtered_value = (value == null) ? null : value.toString();
-					
-                    if ((filtered_value[0] == '[' && filtered_value[filtered_value.length-1] == ']') || (filtered_value[0] == '{' && filtered_value[filtered_value.length-1] == '}')) {
-                        eval("filtered_value = " + filtered_value + ";");
-                    } else if(filtered_value.trim() == "true" || filtered_value.trim() == "false") {
-						filtered_value = JSON.parse(filtered_value);
-					} else {
-						if (!$scope.allowSpace) {
-							filtered_key = filtered_key.replace(/\s*/g, '');
-						}
 
-						if (!$scope.allowDoubleQuote) {
-							filtered_key = filtered_key.replace(/"/g, '\'');
-							filtered_value = filtered_value.replace(/"/g, '\'');
-						}
-					}
+
+                    if ((filtered_value[0] == '[' && filtered_value[filtered_value.length - 1] == ']')
+                            || (filtered_value[0] == '{' && filtered_value[filtered_value.length - 1] == '}')) {
+                        
+                        // To Andri: tolong buat filtered value ini jadi opsional
+                        // soalnya kalo filtered_value ini selalu di-eval bakal 
+                        // ngerusak FormField DataSource,DataFilter,DataGrid,SqlCriteria,RelationField,dsb..
+                        
+                        //eval("filtered_value = " + filtered_value + ";");
+                        
+                        
+                    } else if (filtered_value.trim() == "true" || filtered_value.trim() == "false") {
+                        filtered_value = JSON.parse(filtered_value);
+                    } else {
+                        if (!$scope.allowSpace) {
+                            filtered_key = filtered_key.replace(/\s*/g, '');
+                        }
+
+                        if (!$scope.allowDoubleQuote) {
+                            filtered_key = filtered_key.replace(/"/g, '\'');
+                            filtered_value = filtered_value.replace(/"/g, '\'');
+                        }
+                    }
 
                     return {
                         key: filtered_key,

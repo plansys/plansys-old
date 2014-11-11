@@ -82,7 +82,8 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                 }
 
                 $scope.splitDateTime = function () {
-                    if ($scope.value == null || ($scope.value != null && $scope.value.trim() == '') || $scope.value == '0000-00-00' || $scope.value == '0000-00-00 00:00:00') {
+                    if ($scope.value == null || ($scope.value != null && $scope.value.trim() == '')
+                            || $scope.value == '0000-00-00' || $scope.value == '0000-00-00 00:00:00') {
                         if ($scope.defaultToday == 'Yes') {
                             switch ($scope.fieldType) {
                                 case 'datetime':
@@ -129,8 +130,8 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                             }
                             break;
                     }
-
                 }
+
 
                 // when ng-model is changed from outside directive
                 if (typeof ctrl != 'undefined') {
