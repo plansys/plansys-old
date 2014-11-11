@@ -32,6 +32,18 @@ class ChartGroup extends FormField {
                 'type' => 'TextField',
             ),
             array (
+                'label' => 'yAxis Type',
+                'name' => 'yAxisType',
+                'options' => array (
+                    'ng-model' => 'active.yAxisType',
+                    'ng-change' => 'save()',
+                ),
+                'listExpr' => 'array(\\"Single\\", \\"Double\\")',
+                'labelWidth' => '5',
+                'fieldWidth' => '7',
+                'type' => 'DropDownList',
+            ),
+            array (
                 'label' => 'Options',
                 'name' => 'options',
                 'allowExtractKey' => 'Yes',
@@ -65,8 +77,11 @@ class ChartGroup extends FormField {
 	/** @var string $title */
 	public $title;
 	
-	/** @var string $title */
+	/** @var string $options */
 	public $options;
+	
+	/** @var string $yAxisType */
+	public $yAxisType;
 	
     /** @var array $column1 */
     public $column1 = ['<column-placeholder class="hide"></column-placeholder>'];

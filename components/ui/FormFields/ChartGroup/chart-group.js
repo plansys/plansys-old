@@ -23,6 +23,7 @@ app.directive('psChartGroup', function ($timeout) {
 			
 			$scope.groupTitle = $element.find("data[name=groupTitle]").text();
 			$scope.groupName = $element.find("data[name=groupName]").text();
+			$scope.yAxisType = $element.find("data[name=yAxisType]").text();
 			$scope.groupOptions = JSON.parse($element.find("data[name=groupOptions]").text());
 			
 			$scope.defaultOptions = {
