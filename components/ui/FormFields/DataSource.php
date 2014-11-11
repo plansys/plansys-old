@@ -45,6 +45,7 @@ class DataSource extends FormField {
                     'ng-if' => 'active.postData == \\\'Yes\\\'',
                 ],
                 'list' => [],
+                'searchable' => 'Yes',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
                 'otherLabel' => '-- NONE --',

@@ -830,14 +830,14 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 }
                             }
 
-                            reloadRelation = function () {
-                                if (!$scope.loading)
-                                    loadRelation();
-                            }
                             $timeout(function () {
-                                reloadRelation();
+                                loadRelation();
                             }, 100);
-                            $scope.$watch('data', reloadRelation);
+                            $scope.datasource.afterQueryInternal = function () {
+                                $timeout(function () {
+                                    loadRelation();
+                                });
+                            };
                         }, 100);
 
                         if (typeof $scope.onGridLoaded == 'function') {

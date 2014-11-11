@@ -15,8 +15,6 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                 $scope.errors = [];
                 $scope.json;
 
-
-
                 //default value
                 $scope.name = $el.find("data[name=name]").html().trim();
                 $scope.classAlias = $el.find("data[name=class_alias]").html().trim();
@@ -25,6 +23,9 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                 $scope.allowDelete = $el.find("data[name=allow_delete]").html().trim();
                 $scope.allowOverwrite = $el.find("data[name=allow_overwrite]").html().trim();
                 $scope.fileType = $el.find("data[name=file_type]").html().trim();
+
+                $scope.afterUpload = function () {
+                };
 
                 // when ng-model is changed from outside directive
                 if (typeof ctrl != 'undefined') {
@@ -80,6 +81,19 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     }
                 };
 
+                $scope.getFile = function (callback) {
+                    if (typeof callback == "function") {
+                        var url =  Yii.app.createUrl('/formfield/UploadFile.download', {
+                            f: $scope.file.downloadPath,
+                            n: $scope.file.name,
+                            d: 'direct'
+                        });
+                        $http.get(url).success(function(data) {
+                            callback(data);
+                        });
+                    }
+                }
+
                 $scope.upload = function (file) {
                     $scope.errors = [];
                     $scope.loading = true;
@@ -116,6 +130,13 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                         if (index > -1) {
                             $scope.$parent.uploading.splice(index, 1);
                         }
+
+                        if (data.success == 'Yes') {
+                            $timeout(function () {
+                                $scope.afterUpload($scope);
+                            }, 100);
+                        }
+
                     }).error(function (data) {
                         $scope.progress = -1;
                         $scope.loading = false;
@@ -215,6 +236,8 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                 } else {
                     $scope.file = null;
                 }
+
+                $scope.$parent[$scope.name] = $scope;
             };
         }
     };

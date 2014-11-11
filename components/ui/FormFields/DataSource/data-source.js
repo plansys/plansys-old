@@ -87,6 +87,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                 }
 
                 $scope.afterQuery = null;
+                $scope.afterQueryInternal = null;
                 $scope.query = function (f) {
                     var model = $scope.model || {};
                     var model_id = model.id || null;
@@ -118,7 +119,11 @@ app.directive('psDataSource', function ($timeout, $http) {
                                 f(true, data);
                             }
                             $scope.loading = false;
-                            
+
+                            if ($scope.afterQueryInternal) {
+                                $scope.afterQueryInternal($scope);
+                            }
+
                             if ($scope.afterQuery != null) {
                                 $scope.afterQuery($scope);
                             }
@@ -138,7 +143,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                         var key = i;
                         $scope.$parent.$watch(p.replace('js:', ''), function (newv, oldv) {
                             if (newv != oldv) {
-                                $scope.updateParam(key,"'" + newv + "'");
+                                $scope.updateParam(key, "'" + newv + "'");
                                 $scope.query();
                             }
                         }, true);

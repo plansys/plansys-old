@@ -309,7 +309,11 @@ class UploadFile extends FormField {
             throw new CHttpException(404);
             return false;
         }
-        Yii::app()->request->sendFile($n, file_get_contents($file));
+        if (isset($_GET['d'])) {
+            echo file_get_contents($file);
+        } else {
+            Yii::app()->request->sendFile($n, file_get_contents($file));
+        }
     }
 
     public function actionRemove() {
@@ -322,7 +326,7 @@ class UploadFile extends FormField {
 
     public function getFieldColClass() {
         return "col-sm-" . $this->
-            fieldWidth;
+                fieldWidth;
     }
 
     public function render() {
