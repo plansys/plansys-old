@@ -81,7 +81,7 @@ class ChartGroup extends FormField {
 	public $options;
 	
 	/** @var string $yAxisType */
-	public $yAxisType;
+	public $yAxisType = "Single";
 	
     /** @var array $column1 */
     public $column1 = ['<column-placeholder class="hide"></column-placeholder>'];
