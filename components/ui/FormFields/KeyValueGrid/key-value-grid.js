@@ -53,7 +53,7 @@ app.directive('keyValueGrid', function ($timeout) {
                     if ((filtered_value[0] == '[' && filtered_value[filtered_value.length - 1] == ']')
                             || (filtered_value[0] == '{' && filtered_value[filtered_value.length - 1] == '}')) {
                         
-                        // To Andri: tolong buat filtered value ini jadi opsional
+                        // To Andri: tolong buat filtered value ini jadi opsional, dan default nya harus FALSE
                         // soalnya kalo filtered_value ini selalu di-eval bakal 
                         // ngerusak FormField DataSource,DataFilter,DataGrid,SqlCriteria,RelationField,dsb..
                         
