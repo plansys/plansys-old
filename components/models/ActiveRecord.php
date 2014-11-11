@@ -588,6 +588,8 @@ class ActiveRecord extends CActiveRecord {
             $this->__relations[$k] = $new;
         }
 
+
+        ## handling untuk file upload
         if (method_exists($this, 'getFields')) {
             $fb = FormBuilder::load(get_class($this));
             $uploadFields = $fb->findAllField(['type' => 'UploadFile']);
@@ -615,7 +617,6 @@ class ActiveRecord extends CActiveRecord {
 
                 ## get oldname
                 $old = $this->{$f['name']};
-
                 $ext = pathinfo($old, PATHINFO_EXTENSION);
 
                 ## get newname

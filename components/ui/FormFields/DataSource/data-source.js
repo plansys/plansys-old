@@ -86,6 +86,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                     $scope.setDebug({});
                 }
 
+                $scope.afterQuery = null;
                 $scope.query = function (f) {
                     var model = $scope.model || {};
                     var model_id = model.id || null;
@@ -101,7 +102,6 @@ app.directive('psDataSource', function ($timeout, $http) {
                         }
                     }
                     $scope.loading = true;
-
                     $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
                         model_id: model_id,
                         name: $scope.name,
@@ -118,6 +118,10 @@ app.directive('psDataSource', function ($timeout, $http) {
                                 f(true, data);
                             }
                             $scope.loading = false;
+                            
+                            if ($scope.afterQuery != null) {
+                                $scope.afterQuery($scope);
+                            }
                         }, 0);
                     }).error(function (data) {
                         if (typeof f == "function") {
@@ -134,7 +138,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                         var key = i;
                         $scope.$parent.$watch(p.replace('js:', ''), function (newv, oldv) {
                             if (newv != oldv) {
-                                $scope.updateParam(key, newv);
+                                $scope.updateParam(key,"'" + newv + "'");
                                 $scope.query();
                             }
                         }, true);
