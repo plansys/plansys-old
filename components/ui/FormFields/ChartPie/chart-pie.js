@@ -50,13 +50,28 @@ app.directive('psChartPie', function ($timeout) {
 			
 			$scope.options = deepExtend($scope.options, defaultOptions);
 			
-			var chart = new Highcharts.Chart($scope.options);
+			if(typeof $scope.isgroup != 'undefined' && $scope.isgroup) {
+				if(typeof $scope.data[$scope.chartType] == 'undefined')
+					$scope.data[$scope.chartType] = [];
+				
+				$scope.data[$scope.chartType].push({
+					name: 'value', 
+					data: chartData
+				});
+				
+				$scope.setxAxisGroup(xAxis);
+				
+				$el.hide();
+				$scope.redraw();
+			} else {
+				var chart = new Highcharts.Chart($scope.options);
 			
-			chart.setTitle({ text: $scope.chartTitle });
-			chart.addSeries({
-				name: 'value', 
-				data: chartData
-			});
+				chart.setTitle({ text: $scope.chartTitle });
+				chart.addSeries({
+					name: 'value', 
+					data: chartData
+				});
+			}
 		}
 	}
 });

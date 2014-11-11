@@ -47,25 +47,21 @@ app.directive('keyValueGrid', function ($timeout) {
                 // set default value, executed when one formfield is selected
                 function filterKeyValue(key, value) {
                     var filtered_key = key;
-                    var filtered_value = typeof value == "undefined" ? "" : value.toString();
-
-                    if (!$scope.allowSpace) {
-                        filtered_key = filtered_key.replace(/\s*/g, '');
-                    }
-
-                    if (!$scope.allowDoubleQuote) {
-                        filtered_key = filtered_key.replace(/"/g, '\'');
-                        filtered_value = filtered_value.replace(/"/g, '\'');
-                    }
+                    var filtered_value = (value == null) ? null : value.toString();
 					
-                    if (value[0] && (value[0] == '[' || value[0] == '{')) {
-                        try {
-                            eval("value = '" + value + "';");
-                        } catch (e) {
-                            eval("value = " + value + ";");
-                        }
-                    } else {
-						value = JSON.parse(value);
+                    if ((filtered_value[0] == '[' && filtered_value[filtered_value.length-1] == ']') || (filtered_value[0] == '{' && filtered_value[filtered_value.length-1] == '}')) {
+                        eval("filtered_value = " + filtered_value + ";");
+                    } else if(filtered_value.trim() == "true" || filtered_value.trim() == "false") {
+						filtered_value = JSON.parse(filtered_value);
+					} else {
+						if (!$scope.allowSpace) {
+							filtered_key = filtered_key.replace(/\s*/g, '');
+						}
+
+						if (!$scope.allowDoubleQuote) {
+							filtered_key = filtered_key.replace(/"/g, '\'');
+							filtered_value = filtered_value.replace(/"/g, '\'');
+						}
 					}
 
                     return {
