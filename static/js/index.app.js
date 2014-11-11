@@ -111,6 +111,7 @@ app.filter('hourFormat', function () {
     return function (str) {
         if (str && str.split(":").length >= 2) {
             str = str.split(":")[0] + ":" + str.split(":")[1];
+            
             return str;
         }
     }

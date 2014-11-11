@@ -68,7 +68,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                         dsParamName = 'where';
                     }
 
-                    if (dsParamName != "") {
+                    if (dsParamName != "" && filter.isCustom === "No") {
                         var prepared = $scope.prepareDSParams(filter);
                         ds.resetParam(prepared.name, dsParamName);
                         ds.query(function () {
@@ -139,6 +139,9 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     return prepared;
                 }
 
+                $scope.beforeQuery = function(ds) {};
+                $scope.afterQuery = function(ds) {};
+
                 $scope.updateFilter = function (filter, e, shouldExec) {
                     $scope.changeValueText(filter);
 
@@ -169,7 +172,9 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                             ds.resetParam(filter.name, dsParamName);
                         }
 
-                        if (shouldExec) {
+                        if (shouldExec && filter.isCustom === "No") {
+                            $scope.beforeQuery(ds);
+                            
                             ds.query(function () {
                                 if (ds.params.paging && $scope[ds.params.paging] && $scope[ds.params.paging].gridOptions) {
                                     var paging = $scope[ds.params.paging].gridOptions.pagingOptions;
@@ -179,6 +184,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                         paging.currentPage = 1;
                                     }
                                 }
+                                
+                                $scope.afterQuery(ds);
                             });
                         }
                     }
@@ -462,8 +469,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                         break;
                                 }
                         }
-
-
                     }
                 }
 

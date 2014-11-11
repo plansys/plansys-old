@@ -359,10 +359,8 @@ app.directive('uiMask', function ($timeout, $filter) {
 
             return function ($scope, $el, attrs, ctrl) {
                 $scope.uiMaskValue = $scope.$eval(model);
-
                 $scope.$watch('uiMaskValue', function (val) {
                     var formatted = '';
-
                     if (val) {
                         switch (attrs.uiMask) {
                             case "99/99/9999 99:99":
@@ -391,7 +389,14 @@ app.directive('uiMask', function ($timeout, $filter) {
                         }
                         $scope.$eval(model + '= "' + formatted + '"');
                     }
+                });
 
+                $el.focus(function () {
+                    $timeout(function () {
+                        if ($el.val() == "") {
+                            $scope.$eval(model + '= ""');
+                        }
+                    }, 100);
                 });
 
                 $timeout(function () {
@@ -420,8 +425,6 @@ app.directive('uiMask', function ($timeout, $filter) {
                                 if (time.length > 1) {
                                     var dt = new Date(2014, 1, 1, time[0], time[1]);
                                     $scope.uiMaskValue = ($filter('date')(dt, 'HH:MM'));
-                                } else {
-                                    $scope.uiMaskValue = "";
                                 }
                                 break;
                         }

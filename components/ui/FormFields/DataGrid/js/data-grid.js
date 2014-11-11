@@ -414,9 +414,8 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     html += 'dgr-id="{{row.getProperty(col.field)}}" dgr-model="' + col.relModelClass + '" ';
                     html += 'dgr-class="' + $scope.modelClass + '" dgr-name="' + $scope.name + '" dgr-col="' + col.name + '" dgr-labelField="' + col.relLabelField + '" ';
                     html += 'dgr-idField="' + col.relIdField + '">';
-                    html += '<span ng-if=\'!row.getProperty(col.field + "_label")\' style="color:#999;font-size:12px;">Loading ...</span>';
-                    html += '<span ng-if=\'row.getProperty(col.field + "_label") == "!@# EMPTY #@!"\' style="color:#999;font-size:12px;">- Empty -</span>';
-                    html += '<span ng-if=\'row.getProperty(col.field + "_label") != "!@# EMPTY #@!"\' ng-cell-text>{{row.getProperty(col.field + "_label")}}';
+                    html += '<span ng-if=\'row.getProperty(col.field + "_label") == ""\' style="color:#999;font-size:12px;">- Empty -</span>';
+                    html += '<span ng-if=\'row.getProperty(col.field + "_label") != ""\' ng-cell-text>{{row.getProperty(col.field + "_label")}}';
                     html += '</span></div>';
 
                     return html;
@@ -818,7 +817,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
                                                 }
                                                 if (!row[dataIdx + "_label"]) {
-                                                    row[dataIdx + "_label"] = '!@# EMPTY #@!';
+                                                    row[dataIdx + "_label"] = '';
                                                 }
                                             }
 
