@@ -111,7 +111,7 @@ app.filter('hourFormat', function () {
     return function (str) {
         if (str && str.split(":").length >= 2) {
             str = str.split(":")[0] + ":" + str.split(":")[1];
-            
+
             return str;
         }
     }
@@ -120,7 +120,11 @@ app.filter('dateFormat', function (dateFilter) {
     return function (date, format) {
         if (date != "0000-00-00") {
             if (typeof date == "string") {
-                date = new Date(date);
+                if (date.indexOf(" ") > 0) {
+                    date = new Date(date.replace(" ","T") + "Z");
+                } else {
+                    date = new Date(date);
+                }
             }
 
             var d = dateFilter(date, format);
