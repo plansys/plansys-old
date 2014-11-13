@@ -2,7 +2,7 @@ app.directive('repoDialog', function ($timeout, $compile, $http) {
     return {
         require: '?ngModel',
         scope: true,
-        templateUrl: Yii.app.createUrl('/formField/RepoBrowser.browse'),
+        templateUrl: Yii.app.createUrl('/formfield/RepoBrowser.browse'),
         compile: function (element, attrs, transclude) {
             $container = element.find(".modal-container");
             return function ($scope, $el, attrs, ctrl) {
