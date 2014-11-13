@@ -49,14 +49,22 @@ app.directive('psChartBar', function ($timeout) {
 				},
 				credits : {
 					enabled : false
-				}
+				},
+				xAxis : {
+					labels : {
+						rotation : 90
+					}
+				},
 			};
+			
+			if($scope.chartType == "bar")
+				defaultOptions.xAxis.labels.rotation = 0;
 			
 			if($scope.options == null) {
 				$scope.options = {};
 			}
 			
-			$scope.options = deepExtend($scope.options, defaultOptions);
+			$scope.options = deepExtend(defaultOptions, $scope.options);
 			
 			var chart = new Highcharts.Chart($scope.options);
 				
