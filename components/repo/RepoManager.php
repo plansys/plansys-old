@@ -369,6 +369,10 @@ class RepoManager extends CComponent {
     }
 
     public static function resolve($path) {
+        if (realpath($path)) {
+            return $path;
+        }
+        
         $rp = Setting::get('repo.path');
         $rrp = realpath($rp);
 
