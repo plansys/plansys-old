@@ -118,7 +118,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                                 f(true, data);
                             }
                             $scope.loading = false;
-                            
+
                             if ($scope.afterQuery != null) {
                                 $scope.afterQuery($scope);
                             }
@@ -138,7 +138,12 @@ app.directive('psDataSource', function ($timeout, $http) {
                         var key = i;
                         $scope.$parent.$watch(p.replace('js:', ''), function (newv, oldv) {
                             if (newv != oldv) {
-                                $scope.updateParam(key,"'" + newv + "'");
+                                for (i in $scope.params) {
+                                    var x = $scope.params[i];
+                                    if (x == p) {
+                                        $scope.updateParam(i, "'" + newv + "'");
+                                    }
+                                }
                                 $scope.query();
                             }
                         }, true);

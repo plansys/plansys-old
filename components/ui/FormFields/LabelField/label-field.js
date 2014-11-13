@@ -3,9 +3,9 @@ app.directive('labelField', function ($timeout) {
         require: '?ngModel',
         scope: true,
         compile: function (element, attrs, transclude) {
-            if (attrs.ngModel && !attrs.ngDelay) {
-                attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
-            }
+//            if (attrs.ngModel && !attrs.ngDelay) {
+//                attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
+//            }
 
             return function ($scope, $el, attrs, ctrl) {
                 // when ng-model is changed from inside directive

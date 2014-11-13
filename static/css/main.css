@@ -2617,6 +2617,12 @@ textarea.form-control {
 label.input-group {
     font-weight:normal;
 }
+
+input[type=file] {
+    height:auto !important;
+    padding:4px !important;
+}
+
 label input[type=checkbox], label input[type=radio] {
     margin:2px 4px 2px 0px;
     float:left;

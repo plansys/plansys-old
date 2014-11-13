@@ -89,6 +89,8 @@ class UploadFile extends FormField {
                     'ng-change' => 'save();',
                 ],
                 'list' => [
+                    'Upload + Browse + Download' => 'Upload + Browse + Download',
+                    'Browse + Download' => 'Browse + Download',
                     'Upload + Download' => 'Upload + Download',
                     'Download Only' => 'Download Only',
                 ],
@@ -182,7 +184,7 @@ class UploadFile extends FormField {
     public $label = "File Upload";
     public $layout = 'Horizontal';
     public $value;
-    public $mode = 'Upload + Download';
+    public $mode = 'Upload + Browse + Download';
     public $filePattern = '';
     public $labelWidth = 4;
     public $fieldWidth = 8;
@@ -238,6 +240,7 @@ class UploadFile extends FormField {
         $class .= @$this->labelOptions['class'];
         return $class;
     }
+
 
     public function actionUpload($path = null) {
         if (!isset($_FILES['file'])) {
@@ -309,7 +312,11 @@ class UploadFile extends FormField {
             throw new CHttpException(404);
             return false;
         }
-        Yii::app()->request->sendFile($n, file_get_contents($file));
+        if (isset($_GET['d'])) {
+            echo file_get_contents($file);
+        } else {
+            Yii::app()->request->sendFile($n, file_get_contents($file));
+        }
     }
 
     public function actionRemove() {
@@ -322,7 +329,7 @@ class UploadFile extends FormField {
 
     public function getFieldColClass() {
         return "col-sm-" . $this->
-            fieldWidth;
+                fieldWidth;
     }
 
     public function render() {
@@ -331,7 +338,6 @@ class UploadFile extends FormField {
         $this->addClass($this->errorClass, 'options');
 
         $this->addClass('form-control', 'fieldOptions');
-        $this->setDefaultOption('style', 'height:auto;padding:5px;', $this->fieldOptions);
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
         return $this->renderInternal('template_render.php');

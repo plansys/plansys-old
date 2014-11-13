@@ -15,8 +15,6 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                 $scope.errors = [];
                 $scope.json;
 
-
-
                 //default value
                 $scope.name = $el.find("data[name=name]").html().trim();
                 $scope.classAlias = $el.find("data[name=class_alias]").html().trim();
@@ -25,6 +23,35 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                 $scope.allowDelete = $el.find("data[name=allow_delete]").html().trim();
                 $scope.allowOverwrite = $el.find("data[name=allow_overwrite]").html().trim();
                 $scope.fileType = $el.find("data[name=file_type]").html().trim();
+                $scope.options = JSON.parse($el.find("data[name=options]").text());
+
+                $scope.choosing = "";
+                $scope.choose = function (c) {
+                    $scope.choosing = c;
+                    switch (c) {
+                        case "Browse":
+                            $timeout(function () {
+                                $scope.BrowseDialog.afterChoose = function (f) {
+                                    $timeout(function () {
+                                        $scope.value = f.path;
+                                        $scope.file = {
+                                            'name': f.name,
+                                            'downloadPath': f.path
+                                        };
+                                        $scope.icon(f.name);
+                                    });
+                                }
+                                $scope.BrowseDialog.open();
+                            });
+                            break;
+                        case "":
+                            $scope.file = null;
+                            $scope.value = null;
+                            break;
+                    }
+                }
+
+
 
                 // when ng-model is changed from outside directive
                 if (typeof ctrl != 'undefined') {
@@ -79,6 +106,13 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                         }
                     }
                 };
+
+                $scope.formatName = function (name) {
+                    if (!name) {
+                        return '';
+                    }
+                    return name.split("/").pop().split("\\").pop();
+                }
 
                 $scope.upload = function (file) {
                     $scope.errors = [];
@@ -147,7 +181,14 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
 
                 //Get the file extension
                 $scope.ext = function (file) {
-                    var type = file.name.split('.');
+                    var type = '';
+                    if (typeof file.name == 'string') {
+                       type = file.name.split('.');
+                    } 
+                    if (typeof file == 'string') {
+                       type = file.split('.');
+                    }
+                    
                     if (type.length === 1 || (type[0] === "" && type.length === 2)) {
                         return "";
                     }
@@ -215,6 +256,19 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                 } else {
                     $scope.file = null;
                 }
+
+
+                if ($scope.options['ps-mode']) {
+                    $scope.$watch('$parent.' + $scope.options['ps-mode'], function (n, o) {
+                        if (n !== o) {
+                            $timeout(function () {
+                                $scope.mode = n;
+
+                            });
+                        }
+                    }, true);
+                }
+
             };
         }
     };

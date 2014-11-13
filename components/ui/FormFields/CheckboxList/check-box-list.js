@@ -49,7 +49,7 @@ app.directive('checkBoxList', function($timeout) {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;
 
-                        if (typeof ctrl.$viewValue != 'undefined') {
+                        if (typeof ctrl.$viewValue == 'string') {
                             $scope.selected = [];
                             ctrl.$viewValue.split(',').map(function(item) {
                                 $scope.selected.push(item);

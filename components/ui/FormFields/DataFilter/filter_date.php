@@ -8,17 +8,18 @@
        ng-if="['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(filter.operator) >= 0">
         <i class="fa fa-chevron-right"></i>
     </a>
-    <button type="button" ng-click="toggleFilterCriteria($event)"   style="height:31px;"
-            class="btn btn-default btn-sm dropdown-toggle filter-criteria-button" style="color:#666;">
+    <button type="button" ng-click="toggleFilterCriteria($event)" ng-disabled="filter.options.lockOperator"  
+            class="btn btn-default btn-sm dropdown-toggle filter-criteria-button" 
+            style="color:#666;opacity:1;height:31px;">
         <span style="font-size:13px;"> 
             {{filter.label}}<span 
                 ng-hide="(filter.filterType == 'number'
                                 && filter.valueText != 'All'
                                 && filter.operator != 'Is Empty') || filter.label == ''
                 ">:</span></span>
-        <b>{{filter.valueText}} 
+        <b>{{filter.valueText}}
         </b>
-        <span class="caret" style="margin-left:5px;"></span>
+        <span style="margin-left:5px;display:inline-block;"></span><span class="caret" ng-if="!filter.options.lockOperator" ></span>
     </button>
     <button type="button" ng-click="resetFilter(filter)" ng-show="filter.valueText != 'All' && filter.resetable == 'Yes'"
             class="btn btn-inverse btn-sm filter-reset" >

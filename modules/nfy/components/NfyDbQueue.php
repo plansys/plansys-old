@@ -78,11 +78,11 @@ class NfyDbQueue extends NfyQueue {
                 $sender_id = 0;
             }
         }
+        
 
         if (!is_string($message)) {
             $message = json_encode($message);
         }
-
         $queueMessage = $this->createMessage($message, $sender_id);
 
         if ($this->beforeSend($queueMessage) !== true) {
@@ -91,7 +91,6 @@ class NfyDbQueue extends NfyQueue {
         }
 
         $success = true;
-
         if (Helper::is_assoc($category)) {
             $sc = array();
             foreach ($category as $k => $v) {
@@ -125,7 +124,6 @@ class NfyDbQueue extends NfyQueue {
         $subscriptions = NfyDbSubscription::model()->current()->withQueue($this->id)->matchingCategory($category)->findAll();
         $trx = $queueMessage->getDbConnection()->getCurrentTransaction() !== null ? null : $queueMessage->getDbConnection()->beginTransaction();
 
-        // empty($subscriptions) &&
         if (!$queueMessage->save()) {
             Yii::log(Yii::t('NfyModule.app', "Failed to save message '{msg}' in queue {queue_label}.", array('{msg}' => $queueMessage->body, '{queue_label}' => $this->label)), CLogger::LEVEL_ERROR, 'nfy');
             return false;

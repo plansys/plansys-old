@@ -19,10 +19,13 @@ app.directive('modalDialog', function ($timeout, $compile) {
                 $scope.open = function () {
                     $container.show();
                 };
-                
+
                 $scope.$parent[$scope.name] = $scope;
                 $compile($container)($scope);
+                
+                eval($scope.inlineJS);
             };
+
         }
     }
 });
