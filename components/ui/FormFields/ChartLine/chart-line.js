@@ -34,7 +34,7 @@ app.directive('psChartLine', function ($timeout) {
 				else {	
 					var tmp = {};
 					tmp['name'] = $scope.series[i].label;
-					tmp['data'] = $scope.series[i].value.map(Number);
+					tmp['data'] = $scope.series[i].value.map(function(e, i){ return JSON.parse(e)});
 					tmp['color'] = $scope.series[i].color;
 					chartData.push(tmp);
 				}
@@ -47,17 +47,22 @@ app.directive('psChartLine', function ($timeout) {
 				},
 				credits : {
 					enabled : false
-				}
+				},
+				xAxis : {
+					labels : {
+						rotation : 90
+					}
+				},
 			}
 			
 			if($scope.options == null) {
 				$scope.options = {};
 			}
 			
-			$scope.options = deepExtend($scope.options, defaultOptions);
+			$scope.options = deepExtend(defaultOptions, $scope.options);
 			
 			var chart = new Highcharts.Chart($scope.options);
-				
+			
 			chart.setTitle({ text: $scope.chartTitle });
 			chart.xAxis[0].setCategories(xAxis);
 			

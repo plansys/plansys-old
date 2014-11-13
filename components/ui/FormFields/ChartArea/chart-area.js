@@ -47,20 +47,25 @@ app.directive('psChartArea', function ($timeout) {
 				},
 				credits : {
 					enabled : false
-				}
+				},
+				xAxis : {
+					labels : {
+						rotation : 90
+					}
+				},
 			}
 			
 			if($scope.options == null) {
 				$scope.options = {};
 			}
 			
-			$scope.options = deepExtend($scope.options, defaultOptions);
+			$scope.options = deepExtend(defaultOptions, $scope.options);
 			
 			if(typeof $scope.isgroup != 'undefined' && $scope.isgroup) {
 				if(typeof $scope.data[$scope.chartType] == 'undefined')
 					$scope.data[$scope.chartType] = [];
 				
-				$scope.data[$scope.chartType].push(chartData);
+				$scope.data[$scope.chartType].push(chart);
 				$scope.setxAxisGroup(xAxis);
 				
 				$el.hide();
