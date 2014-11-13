@@ -6,6 +6,7 @@
     <data name="value" class="hide"><?= $this->value; ?></data>
     <data name="name" class="hide"><?= $this->name; ?></data>
     <data name="mode" class="hide"><?= $this->mode; ?></data>
+    <data name="options" class="hide"><?= json_encode($this->options); ?></data>
     <data name="class_alias" class="hide"><?= Helper::classAlias($model) ?></data>
     <data name="allow_delete" class="hide"><?= $this->allowDelete; ?></data>
     <data name="allow_overwrite" class="hide"><?= $this->allowOverwrite; ?></data>
@@ -28,10 +29,49 @@
                name="<?= $this->renderName ?>" 
                ng-value="value"
                />
-        <div ng-if="mode == 'Upload + Download' && (allowOverwrite == 'Yes' || allowOverwrite == 'No' && file === null)" >
+        <div ng-if="mode != 'Download Only' && (allowOverwrite == 'Yes' || allowOverwrite == 'No' && file === null)" >
+            <div ng-if="mode == 'Upload + Browse + Download' && choosing == ''" class="form-control" style="height:auto;padding-top:0px;padding-bottom:0px;">
+                <div style="margin:3px -6px;" class="btn btn-success btn-xs" ng-click="choose('Browse')">
+                    <i class="fa fa-folder-open"></i>   Browse Repository
+                </div>
+                <label for="<?= $this->renderID . "inf" ?>" style="margin:3px -6px;" 
+                       class="btn btn-default pull-right btn-xs" ng-click="choose('Upload')">
+                    <i class="fa fa-upload"></i> Upload From Computer
+                </label>
+                <div class="clearfix"></div>
+            </div>
 
-            <input type="file" <?= $this->expandAttributes($this->fieldOptions) ?> 
-                   ng-file-select="onFileSelect($files)" onclick="this.value = null"/>
+            <div ng-if="choosing == 'Browse'">
+                <div ng-show="choosing == 'Browse' && mode == 'Upload + Browse + Download'"
+                     class=" pull-right">
+                    <div class="btn btn btn-xs btn-danger"
+                         ng-click="choose('')"
+                         style="position:absolute;margin:4px 0px 0px -28px;">
+                        <i class="fa fa-rotate-left"></i>
+                    </div>
+                </div>
+                <div class="form-control">
+                    <div style="margin:-2px 0px 0px -7px;" class="btn btn-xs" ng-click="choose('Browse')">
+                        <i class="fa fa-folder-open"></i>   Browse Repository
+                    </div>
+                </div>
+            </div>
+
+            <div class="upload-field-internal" ng-if="choosing == 'Upload' || mode.indexOf('Upload') >= 0">    
+                <div ng-show="choosing == 'Upload' && mode == 'Upload + Browse + Download'"
+                     class=" pull-right">
+                    <div class="btn btn btn-xs btn-danger"
+                         ng-click="choose('')"
+                         style="position:absolute;margin:4px 0px 0px -28px;">
+                        <i class="fa fa-rotate-left"></i>
+                    </div>
+                </div>
+
+                <input id="<?= $this->renderID . "inf" ?>"
+                       ng-show="choosing == 'Upload' || mode != 'Upload + Browse + Download'" 
+                       type="file" <?= $this->expandAttributes($this->fieldOptions) ?> 
+                       ng-file-select="onFileSelect($files)" onclick="this.value = null"/>
+            </div>
 
             <div class="form-control" 
                  style="padding:5px 5px 5px 5px;
@@ -85,10 +125,8 @@
                          ng-if="allowDelete == 'Yes'" ng-click="remove(file.downloadPath)">
                         Remove
                     </div>
-                    <i class="fa fa-nm {{file.type}} pull-left" 
-                       style="margin-right:5px;margin-top:3px;"></i>
                     <div style="word-wrap: break-word;width:50%;float:left;">
-                        {{file.name| elipsisMiddle:25 }}
+                        {{ formatName(file.name) | elipsisMiddle:25}}
                     </div>
                 </div>
                 <div class="clearfix"></div>
@@ -98,16 +136,16 @@
         <div ng-if="mode == 'Download Only' || (allowOverwrite == 'No' && file !== null)" class="form-control"
              style="padding:5px 5px 2px 0px;">
             <div ng-if="file.name">
-                <i class="fa fa-nm fa-file-{{file.type}}-o pull-left" 
-                   style="margin-right:5px;margin-top:3px;"></i>
+                <i class="fa fa-nm {{file.type}} pull-left" 
+                   style="margin:2px 6px 0px 6px;"></i>
                 <div style="word-wrap: break-word;width:50%;float:left;">
-                    {{file.name| elipsisMiddle:30}}
+                    {{ formatName(file.name) | elipsisMiddle:30}}
                 </div>
 
                 <a  href="{{ Yii.app.createUrl('/formfield/UploadFile.download', {
-                        f: file.downloadPath,
-                        n: file.name
-                    })}}" class="btn btn-xs btn-success pull-right" style="margin-top:-2px;">
+                                f: file.downloadPath,
+                                n: file.name
+                            })}}" class="btn btn-xs btn-success pull-right" style="margin-top:-2px;">
                     Download
                 </a>
                 <div class="btn btn-xs btn-danger pull-right" style="margin-right:5px;margin-top:-2px;"
@@ -130,4 +168,12 @@
         </div>
         <!-- /error -->
     </div>
+
+    <?php
+    echo FormBuilder::build('RepoBrowser', [
+        'name' => 'BrowseDialog',
+        'showBrowseButton' => 'No',
+    ]);
+    ?>
+
 </div>

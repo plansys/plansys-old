@@ -443,7 +443,12 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                                         var curr = filter.from;
 
-                                        monthSpan = (filter.options.monthSpan || 1) * 1;
+                                        if (filter.options && filter.options.monthSpan) {
+                                            monthSpan = (filter.options.monthSpan || 1) * 1;
+                                        } else {
+                                            monthSpan = 1;
+                                        }
+
                                         startingMonth = curr.getMonth() - (curr.getMonth() % monthSpan);
                                         first = new Date(curr.getFullYear(), startingMonth, 1);
                                         last = new Date(curr.getFullYear(), startingMonth + monthSpan, 0);
@@ -525,7 +530,13 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                 $scope.updateFilter(filter);
                                 break;
                             case 'Monthly':
-                                monthSpan = (filter.options.monthSpan || 1) * 1;
+
+                                if (filter.options && filter.options.monthSpan) {
+                                    monthSpan = (filter.options.monthSpan || 1) * 1;
+                                } else {
+                                    monthSpan = 1;
+                                }
+
                                 filter.from.setMonth(filter.from.getMonth() + monthSpan);
                                 $scope.updateFilter(filter);
                                 break;

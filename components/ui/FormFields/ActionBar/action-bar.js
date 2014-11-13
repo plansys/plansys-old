@@ -44,7 +44,7 @@ $(function () {
             } else {
                 $(".action-bar:eq(0) .action-tab a").each(function () {
                     var top = container.scrollTop() + $($(this).attr('href')).position().top;
-                    if (container.scrollTop() >= top) {
+                    if (container.scrollTop() >= top -1) {
                         active = $(this);
                     }
                 });

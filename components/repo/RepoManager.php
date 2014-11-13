@@ -592,7 +592,7 @@ class RepoManager extends CComponent {
             'item' => $list,
             'count' => $count,
         ];
-
+        
         return $detail;
     }
 

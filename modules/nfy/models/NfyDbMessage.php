@@ -175,7 +175,7 @@ class NfyDbMessage extends CActiveRecord {
                 case NfyMessage::SENT:
                     $conditions[] = "$t.status=" . $status;
                     if ($timeout !== null) {
-                        $conditions[] = "($t.status=" . NfyMessage::SENT. " AND $t.sent_on <= :timeout)";
+                        $conditions[] = "($t.status=" . NfyMessage::SENT . " AND $t.sent_on <= :timeout)";
                         $criteria->params = array(':timeout' => $now->format('Y-m-d H:i:s'));
                     }
                     break;
@@ -249,7 +249,7 @@ class NfyDbMessage extends CActiveRecord {
             unset($attributes['subscription_id']);
             unset($attributes['mimetype']);
             $attributes['body'] = json_decode($attributes['body'], true);
-            
+
             $message = new NfyMessage;
             $message->setAttributes($attributes);
             $result[] = $message;
@@ -258,7 +258,7 @@ class NfyDbMessage extends CActiveRecord {
         }
 
         $userIds = array_unique($userIds);
-        
+
         if (count($userIds) > 0) {
             $sql = "SELECT u.id,fullname,role_name from p_user u
  left outer join 
@@ -280,9 +280,14 @@ class NfyDbMessage extends CActiveRecord {
             foreach ($result as $k => $r) {
                 $result[$k]->subscriber_name = $users[$r->subscriber_id]['name'];
                 $result[$k]->subscriber_role = $users[$r->subscriber_id]['role'];
-                
-                $result[$k]->sender_name = $users[$r->sender_id]['name'];
-                $result[$k]->sender_role = $users[$r->sender_id]['role'];
+
+                if ($r->sender_id != 0) {
+                    $result[$k]->sender_name = $users[$r->sender_id]['name'];
+                    $result[$k]->sender_role = $users[$r->sender_id]['role'];
+                } else {
+                    $result[$k]->sender_name = "Notification";
+                    $result[$k]->sender_role = "SYSTEM";
+                }
             }
         }
 

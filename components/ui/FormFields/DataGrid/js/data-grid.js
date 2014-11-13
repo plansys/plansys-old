@@ -9,7 +9,6 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     for (i in array) {
                         if (typeof array[i] == "string") {
                             if (array[i].trim().substr(0, 3) == "js:") {
-                                console.log(array[i]);
                                 eval('array[i] = ' + array[i].trim().substr(3));
                             } else if (array[i].trim().substr(0, 4) == "url:") {
                                 var url = array[i].trim().substr(4);

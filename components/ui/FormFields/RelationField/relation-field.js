@@ -230,17 +230,25 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.isOpen = false;
                 $scope.openedInField = false;
 
+
                 for (i in $scope.params) {
                     var p = $scope.params[i];
                     if (p.indexOf('js:') === 0) {
                         var value = $scope.$parent.$eval(p.replace('js:', ''));
                         var key = i;
+
                         $scope.$parent.$watch(p.replace('js:', ''), function (newv, oldv) {
                             if (newv != oldv) {
-                                $scope.paramValue[key] = newv;
+                                for (i in $scope.params) {
+                                    var x = $scope.params[i];
+                                    if (x == p) {
+                                        $scope.paramValue[i] = newv;
+                                    }
+                                }
                                 $scope.doSearch();
                             }
                         }, true);
+
                         $scope.paramValue[key] = value;
 
                         $scope.doSearch();

@@ -480,6 +480,7 @@ class RelationField extends FormField {
             $sql = str_replace('[' . $k . ']', ':param_' . $i, $sql);
             $i++;
         }
+        $returnParams = array_merge($returnParams, $jsparams);
 
         return [
             'sql' => $sql,
@@ -705,6 +706,7 @@ class RelationField extends FormField {
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
         $this->query('', [], $this->value);
+        
 
         return $this->renderInternal('template_render.php');
     }

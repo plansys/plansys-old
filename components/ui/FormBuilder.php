@@ -534,9 +534,16 @@ class FormBuilder extends CComponent {
      * @param array $attributes
      * @return array me-return array field 
      */
-    public static function build($class, $attributes) {
+    public static function build($class, $attributes, $model = null) {
         $field = new $class;
         $field->attributes = $attributes;
+
+        if (!is_null($model)) {
+            $fb = new FormBuilder();
+            $fb->model = $model;
+            $field->builder = $fb;
+        }
+
 
         ## make sure there is no duplicate renderID
         do {

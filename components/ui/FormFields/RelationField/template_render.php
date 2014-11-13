@@ -31,10 +31,13 @@
             <!-- default button -->
             <button 
                 ng-if="!showOther || (showOther && itemExist())" type="button" 
-                <?= $this->expandAttributes($this->fieldOptions) ?> >
-                    <i ng-show='loading' class="fa fa-spin fa-refresh" 
-                       style="position:absolute;right:25px;top:8px;"></i>
-                <span class="caret pull-right"></span>
+                <?= $this->expandAttributes($this->fieldOptions) ?> 
+                <?php if (@$this->fieldOptions['disabled']): ?>style="opacity:1;background:#fff;border:1px solid #ececeb;"<?php endif; ?> 
+                >
+                <i ng-show='loading' class="fa fa-spin fa-refresh" 
+                   style="position:absolute;right:25px;top:8px;"></i>
+                <span <?php if (@$this->fieldOptions['disabled']): ?>style="display:none"<?php endif; ?> 
+                                                                     class="caret pull-right"></span>
                 <span class="dropdown-text" ng-bind-html="text"></span>
             </button>
 

@@ -219,7 +219,12 @@ class FormField extends CComponent {
      */
     public function getRenderName() {
         if (property_exists($this, 'name')) {
-            return get_class($this->model) . "[" . $this->name . "]";
+
+            if (is_array($this->model)) {
+                return $this->name;
+            } else {
+                return get_class($this->model) . "[" . $this->name . "]";
+            }
         } else {
             return "";
         }
@@ -376,7 +381,7 @@ class FormField extends CComponent {
             foreach ($includeCSS as $css) {
                 $class = get_class($this);
                 $html[] = Asset::publish(
-                    Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css, true
+                        Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css, true
                 );
             }
         }
@@ -453,28 +458,27 @@ class FormField extends CComponent {
                 return $key . '="' . $attributes[$key] . '"';
             }, array_keys($attributes)));
     }
-	
-	/**
+
+    /**
      * @param array $raw
      * @return string me-return json hasil dari proses extract
      */
     public function extractJson($raw) {
         if (count($raw) == 0)
             return null;
-		$list = [];
-		foreach($raw as $key => $content) {
-			$keyArr = explode('.', $key);
-			$key = "['". implode("']['", $keyArr) . "']";
-			
-			if($content == 'true' || $content == 'false')
-			{
-				$content = ($content === 'true');
-			}
-			
-			eval('$list'. $key .'= $content;');
-		}
-		
-		return $list;
+        $list = [];
+        foreach ($raw as $key => $content) {
+            $keyArr = explode('.', $key);
+            $key = "['" . implode("']['", $keyArr) . "']";
+
+            if ($content == 'true' || $content == 'false') {
+                $content = ($content === 'true');
+            }
+
+            eval('$list' . $key . '= $content;');
+        }
+
+        return $list;
     }
 
     /**
