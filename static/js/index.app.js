@@ -121,7 +121,7 @@ app.filter('dateFormat', function (dateFilter) {
         if (date != "0000-00-00") {
             if (typeof date == "string") {
                 if (date.indexOf(" ") > 0) {
-                    date = new Date(date.replace(" ","T") + "Z");
+                    date = new Date(date.replace(" ","T"));
                 } else {
                     date = new Date(date);
                 }
