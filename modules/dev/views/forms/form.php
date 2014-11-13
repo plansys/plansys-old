@@ -1,6 +1,6 @@
 
 
-<div ng-controller="PageController" ng-cloak>
+<div ng-controller="PageController" ng-cloak >
     
     <div ng-if="mustReload"
         style="z-index:9999;position:absolute;top:0px;left:0px;
