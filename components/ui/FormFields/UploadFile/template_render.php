@@ -36,7 +36,7 @@
                 </div>
                 <label for="<?= $this->renderID . "inf" ?>" style="margin:3px -6px;" 
                        class="btn btn-default pull-right btn-xs" ng-click="choose('Upload')">
-                    <i class="fa fa-upload"></i> Upload From Computer
+                    <i class="fa fa-upload"></i> Upload File
                 </label>
                 <div class="clearfix"></div>
             </div>
