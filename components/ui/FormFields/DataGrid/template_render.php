@@ -2,6 +2,7 @@
 
     <data name="datasource" class="hide"><?= $this->datasource; ?></data>
     <data name="name" class="hide"><?= $this->name; ?></data>
+    <data name="render_id" class="hide"><?= $this->renderID; ?></data>
     <data name="columns" class="hide"><?= json_encode($this->columns); ?></data>
     <data name="model_class" class="hide"><?= Helper::getAlias($model) ?></data>
     <data name="grid_options" class="hide"><?= json_encode($this->gridOptions); ?></data>

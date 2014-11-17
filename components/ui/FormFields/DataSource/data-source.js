@@ -86,6 +86,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                     $scope.setDebug({});
                 }
 
+                $scope.afterQueryInternal = {};
                 $scope.afterQuery = null;
                 $scope.query = function (f) {
                     var model = $scope.model || {};
@@ -102,27 +103,31 @@ app.directive('psDataSource', function ($timeout, $http) {
                         }
                     }
                     $scope.loading = true;
+
                     $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
                         model_id: model_id,
                         name: $scope.name,
                         class: $scope.class,
                         params: params
                     }).success(function (data) {
-                        $timeout(function () {
-                            $scope.isDataReloaded = true;
-                            $scope.data = data.data;
-                            $scope.original = angular.copy($scope.data);
-                            $scope.totalItems = data.count * 1;
-                            $scope.setDebug(data.debug);
-                            if (typeof f == "function") {
-                                f(true, data);
-                            }
-                            $scope.loading = false;
+                        $scope.isDataReloaded = true;
+                        $scope.data = data.data;
+                        $scope.original = angular.copy($scope.data);
+                        $scope.totalItems = data.count * 1;
+                        $scope.setDebug(data.debug);
+                        if (typeof f == "function") {
+                            f(true, data);
+                        }
+                        $scope.loading = false;
 
-                            if ($scope.afterQuery != null) {
-                                $scope.afterQuery($scope);
-                            }
-                        }, 0);
+                        for (i in $scope.afterQueryInternal) {
+                            $scope.afterQueryInternal[i]($scope);
+                        }
+
+                        if ($scope.afterQuery != null) {
+                            $scope.afterQuery($scope);
+                        }
+
                     }).error(function (data) {
                         if (typeof f == "function") {
                             f(false, data);

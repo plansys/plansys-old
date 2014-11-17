@@ -331,6 +331,10 @@ class FormField extends CComponent {
                     $files = glob($jspath . "/*");
 
                     foreach ($files as $p) {
+                        if (pathinfo($p, PATHINFO_EXTENSION) != "js") {
+                            continue;
+                        }
+
                         $p = str_replace($jspath, '', realpath($p));
                         Yii::app()->clientScript->registerScriptFile($path . str_replace("\\", "/", $p), CClientScript::POS_END);
                     }
@@ -346,9 +350,7 @@ class FormField extends CComponent {
         foreach ($includeCSS as $css) {
             $class = get_class($this);
             $csspath = Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css;
-            Yii::app()->clientScript->registerCSSFile(
-                Asset::publish($csspath, true), CClientScript::POS_HEAD
-            );
+            Yii::app()->clientScript->registerCSSFile(Asset::publish($csspath, true), 'ALL');
         }
     }
 

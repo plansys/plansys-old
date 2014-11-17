@@ -1,6 +1,6 @@
 <?php
 
-class DevUserIndex extends User {
+class DevUserIndexH extends User {
     public function getFields() {
         return array (
             array (
@@ -35,58 +35,95 @@ class DevUserIndex extends User {
                     array (
                         'name' => 'id',
                         'label' => 'id',
-                        'listExpr' => '',
                         'filterType' => 'number',
                         'show' => false,
+                        'defaultOperator' => '',
+                        'defaultValue' => '',
                     ),
                     array (
                         'name' => 'nip',
                         'label' => 'nip',
-                        'listExpr' => '',
                         'filterType' => 'string',
                         'show' => false,
+                        'defaultOperator' => '',
+                        'defaultValue' => '',
                     ),
                     array (
                         'name' => 'fullname',
                         'label' => 'fullname',
-                        'listExpr' => '',
                         'filterType' => 'string',
                         'show' => false,
+                        'defaultOperator' => '',
+                        'defaultValue' => '',
                     ),
                     array (
                         'name' => 'email',
                         'label' => 'email',
-                        'listExpr' => '',
                         'filterType' => 'string',
                         'show' => false,
+                        'defaultOperator' => '',
+                        'defaultValue' => '',
                     ),
                     array (
                         'name' => 'phone',
                         'label' => 'phone',
-                        'listExpr' => '',
                         'filterType' => 'string',
                         'show' => false,
+                        'defaultOperator' => '',
+                        'defaultValue' => '',
                     ),
                     array (
                         'name' => 'username',
                         'label' => 'username',
-                        'listExpr' => '',
                         'filterType' => 'string',
                         'show' => false,
+                        'defaultOperator' => '',
+                        'defaultValue' => '',
                     ),
                     array (
                         'name' => 'last_login',
                         'label' => 'last login',
-                        'listExpr' => '',
                         'filterType' => 'date',
                         'show' => false,
+                        'defaultOperator' => '',
+                        'defaultValue' => '',
+                        'defaultValueFrom' => '',
+                        'defaultValueTo' => '',
                     ),
                     array (
                         'name' => 'role',
                         'label' => 'role',
-                        'listExpr' => '',
                         'filterType' => 'string',
                         'show' => false,
+                        'defaultOperator' => '',
+                        'defaultValue' => '',
+                    ),
+                ),
+                'filterOperators' => array (
+                    'string' => array (
+                        'Is Any Of',
+                        'Is Not Any Of',
+                        'Contains',
+                        'Does Not Contain',
+                        'Is Equal To',
+                        'Starts With',
+                        'Ends With',
+                        'Is Empty',
+                    ),
+                    'number' => array (
+                        '=',
+                        '<>',
+                        '>',
+                        '>=',
+                        '<=',
+                        '<',
+                        'Is Empty',
+                    ),
+                    'date' => array (
+                        'Between',
+                        'Not Between',
+                        'Less Than',
+                        'More Than',
                     ),
                 ),
                 'type' => 'DataFilter',
@@ -124,16 +161,33 @@ class DevUserIndex extends User {
                         'label' => 'id',
                         'options' => array (),
                         'columnType' => 'string',
-<<<<<<< HEAD
-                        'show' => true,
-                        'inputMask' => '',
-=======
                         'show' => false,
->>>>>>> 22118e2b95775387d798f77f075d96dfb4f64224
+                        'inputMask' => '',
                     ),
                     array (
                         'name' => 'nip',
                         'label' => 'nip',
+                        'options' => array (),
+                        'buttonCollapsed' => 'Yes',
+                        'buttons' => array (
+                            array (
+                                '',
+                                'label' => '',
+                            ),
+                        ),
+                        'listType' => 'php',
+                        'listExpr' => '',
+                        'listMustChoose' => 'No',
+                        'relCondition' => '',
+                        'relModelClass' => '',
+                        'relIdField' => '',
+                        'relLabelField' => '',
+                        'columnType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'username',
+                        'label' => 'username',
                         'options' => array (),
                         'buttonCollapsed' => 'Yes',
                         'buttons' => array (
@@ -216,8 +270,8 @@ class DevUserIndex extends User {
                         'show' => false,
                     ),
                     array (
-                        'name' => 'username',
-                        'label' => 'username',
+                        'name' => 'role',
+                        'label' => 'role',
                         'options' => array (),
                         'buttonCollapsed' => 'Yes',
                         'buttons' => array (
@@ -257,27 +311,6 @@ class DevUserIndex extends User {
                         'columnType' => 'string',
                         'show' => false,
                     ),
-                    array (
-                        'name' => 'role',
-                        'label' => 'role',
-                        'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
-                        'listType' => 'php',
-                        'listExpr' => '',
-                        'listMustChoose' => 'No',
-                        'relCondition' => '',
-                        'relModelClass' => '',
-                        'relIdField' => '',
-                        'relLabelField' => '',
-                        'columnType' => 'string',
-                        'show' => false,
-                    ),
                 ),
                 'gridOptions' => array (
                     'useExternalSorting' => 'true',
@@ -285,239 +318,9 @@ class DevUserIndex extends User {
                     'afterSelectionChange' => 'url:/dev/user/update?id={id}',
                     'enableColumnResize' => 'true',
                 ),
-                'type' => 'DataGrid',
-            ),
-            array (
-                'name' => 'dataSource2',
-                'sql' => 'select * from chartdummy',
-                'type' => 'DataSource',
-            ),
-            array (
-                'name' => 'pieChart1',
-                'datasource' => 'dataSource2',
-                'chartTitle' => 'Pie Title',
-                'series' => array (
-                    array (
-                        'label' => 'Series 1',
-<<<<<<< HEAD
-                        'value' => '2',
-                        'color' => '#750707',
-=======
-                        'value' => '20',
-                        'color' => '#ff0000',
->>>>>>> 22118e2b95775387d798f77f075d96dfb4f64224
-                        'columnOptions' => array (),
-                        'show' => true,
-                    ),
-                    array (
-                        'label' => 'Series 2',
-                        'value' => '1',
-                        'color' => '#57C391',
-                        'columnOptions' => array (),
-                        'show' => false,
-                    ),
-                    array (
-                        'label' => 'Series 3',
-                        'value' => '2',
-                        'color' => '#022E77',
-                        'columnOptions' => array (),
-                        'show' => false,
-                    ),
-                ),
-                'type' => 'ChartPie',
-            ),
-<<<<<<< HEAD
-            array (
-                'name' => 'lineChart1',
-                'datasource' => 'dataSource2',
-                'chartTitle' => 'Line Chart',
-                'series' => array (
-                    array (
-                        'label' => 'No',
-                        'value' => array (
-                            '1',
-                            '2',
-                            '3',
-                            '4',
-                        ),
-                        'color' => '#5492DB',
-                        'isTick' => NULL,
-                        'columnOptions' => array (),
-                        'show' => false,
-                    ),
-                    array (
-                        'label' => 'Series 1',
-                        'value' => array (
-                            '2',
-                            '3',
-                            '3',
-                            '2',
-                        ),
-                        'color' => '#23429D',
-                        'isTick' => NULL,
-                        'columnOptions' => array (),
-                        'show' => false,
-                    ),
-                    array (
-                        'label' => 'Series 2',
-                        'value' => array (
-                            '1',
-                            '2',
-                            '1',
-                            '3',
-                        ),
-                        'color' => '#7C63DF',
-                        'isTick' => NULL,
-                        'columnOptions' => array (),
-                        'show' => false,
-                    ),
-                    array (
-                        'label' => 'Series 3',
-                        'value' => array (
-                            '2',
-                            '1',
-                            '4',
-                            '6',
-                        ),
-                        'color' => '#55229E',
-                        'isTick' => NULL,
-                        'columnOptions' => array (),
-                        'show' => false,
-                    ),
-                ),
-                'tickSeries' => 'No',
-                'options' => array (
-                    'yAxis.title.text' => 'ini yaxis',
-                ),
-                'type' => 'ChartLine',
-            ),
-            array (
-                'chartType' => 'column',
-                'name' => 'barChart1',
-                'datasource' => 'dataSource2',
-                'chartTitle' => 'Bar Title',
-                'series' => array (
-                    array (
-                        'label' => 'No',
-                        'value' => array (
-                            '1',
-                            '2',
-                            '3',
-                            '4',
-                        ),
-                        'color' => '#179796',
-                        'isTick' => NULL,
-                        'columnOptions' => array (),
-                        'show' => false,
-                    ),
-                    array (
-                        'label' => 'Series 1',
-                        'value' => array (
-                            '2',
-                            '3',
-                            '3',
-                            '2',
-                        ),
-                        'color' => '#F105BC',
-                        'isTick' => NULL,
-                        'columnOptions' => array (),
-                        'show' => false,
-                    ),
-                    array (
-                        'label' => 'Series 2',
-                        'value' => array (
-                            '1',
-                            '2',
-                            '1',
-                            '3',
-                        ),
-                        'color' => '#B15FFA',
-                        'isTick' => NULL,
-                        'columnOptions' => array (),
-                        'show' => false,
-                    ),
-                    array (
-                        'label' => 'Series 3',
-                        'value' => array (
-                            '2',
-                            '1',
-                            '4',
-                            '6',
-                        ),
-                        'color' => '#9291C7',
-                        'isTick' => NULL,
-                        'columnOptions' => array (),
-                        'show' => false,
-                    ),
-                ),
-                'tickSeries' => 'No',
-                'type' => 'ChartBar',
-            ),
-            array (
-                'name' => 'areaChart1',
-                'datasource' => 'dataSource2',
-                'chartTitle' => 'AreaTitle',
-                'series' => array (
-                    array (
-                        'label' => 'No',
-                        'value' => array (
-                            '1',
-                            '2',
-                            '3',
-                            '4',
-                        ),
-                        'color' => '#53E4BB',
-                        'isTick' => NULL,
-                        'columnOptions' => array (),
-                        'show' => false,
-                    ),
-                    array (
-                        'label' => 'Series 1',
-                        'value' => array (
-                            '2',
-                            '3',
-                            '3',
-                            '2',
-                        ),
-                        'color' => '#A55E4A',
-                        'isTick' => NULL,
-                        'columnOptions' => array (),
-                        'show' => false,
-                    ),
-                    array (
-                        'label' => 'Series 2',
-                        'value' => array (
-                            '1',
-                            '2',
-                            '1',
-                            '3',
-                        ),
-                        'color' => '#C259C5',
-                        'isTick' => NULL,
-                        'columnOptions' => array (),
-                        'show' => false,
-                    ),
-                    array (
-                        'label' => 'Series 3',
-                        'value' => array (
-                            '2',
-                            '1',
-                            '4',
-                            '6',
-                        ),
-                        'color' => '#B848E1',
-                        'isTick' => NULL,
-                        'columnOptions' => array (),
-                        'show' => false,
-                    ),
-                ),
-                'tickSeries' => 'No',
-                'type' => 'ChartArea',
+                'type' => 'DataTable',
             ),
         );
-=======
-        );
->>>>>>> 22118e2b95775387d798f77f075d96dfb4f64224
     }
     
     public function getForm() {

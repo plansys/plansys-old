@@ -832,7 +832,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                             $timeout(function () {
                                 loadRelation();
                             }, 100);
-                            $scope.datasource.afterQueryInternal = function () {
+                            $scope.datasource.afterQueryInternal[$scope.renderID] = function () {
                                 $timeout(function () {
                                     loadRelation();
                                 });
@@ -852,6 +852,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         $scope.data = $scope.datasource.data;
                     }
                 });
+
                 $scope.reset = function () {
                     location.reload();
                 }
@@ -860,6 +861,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                 $scope.grid = null;
                 $scope.name = $el.find("data[name=name]").text();
                 $scope.modelClass = $el.find("data[name=model_class]").text();
+                $scope.renderID = $el.find("data[name=render_id]").text();
                 $scope.gridOptions = JSON.parse($el.find("data[name=grid_options]").text());
                 $scope.columns = JSON.parse($el.find("data[name=columns]").text());
                 $scope.loaded = false;

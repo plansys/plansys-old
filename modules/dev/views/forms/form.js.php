@@ -481,7 +481,7 @@
                     dslist[$scope.fields[i].name] = $scope.fields[i].name;
                 }
             }
-			
+
             $scope.dataSourceList = dslist;
         }
 
@@ -628,6 +628,7 @@
                     switch (item.$modelValue.type) {
                         case 'DataFilter':
                         case 'DataGrid':
+                        case 'DataTable':
                             $scope.getDataSourceList();
                             break;
                         case 'RelationField':
