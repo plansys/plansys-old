@@ -411,7 +411,9 @@ class FormField extends CComponent {
         $this->registerScript();
 
         ob_start();
-        include($path);
+        if(file_exists($path)){
+            include($path);
+        }
         return Helper::minifyHtml(ob_get_clean());
     }
 
