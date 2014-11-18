@@ -5,6 +5,7 @@
  * @author rizky
  */
 class DataTable extends FormField {
+
     /** @var string $name */
     public $name;
 
@@ -28,23 +29,23 @@ class DataTable extends FormField {
      * @return array me-return array property DataTable.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Data Filter Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Data Source Name',
                 'name' => 'datasource',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.datasource',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -54,43 +55,43 @@ class DataTable extends FormField {
                 'fieldWidth' => '7',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Generate Columns',
                 'buttonType' => 'success',
                 'icon' => 'magic',
                 'buttonSize' => 'btn-xs',
-                'options' => array (
+                'options' => array(
                     'style' => 'float:right;margin:0px 0px 5px 0px',
                     'ng-show' => 'active.datasource != \\\'\\\'',
                     'ng-click' => 'generateColumns()',
                 ),
                 'type' => 'LinkButton',
             ),
-            array (
+            array(
                 'value' => '<div class=\\"clearfix\\"></div>',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'label' => 'DataTable Options',
                 'name' => 'gridOptions',
                 'show' => 'Show',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'title' => 'Columns',
                 'type' => 'SectionHeader',
             ),
-            array (
+            array(
                 'value' => '<div style=\\"margin-top:5px\\"></div>',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'name' => 'columns',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.DataTableListForm',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.columns',
                     'ng-change' => 'save()',
                 ),
@@ -107,7 +108,7 @@ class DataTable extends FormField {
     }
 
     public function includeCSS() {
-        return ['css/jquery.handsontable.full.min.css'];
+        return ['css/jquery.handsontable.full.min.css', 'css/data-table.css'];
     }
 
 }
