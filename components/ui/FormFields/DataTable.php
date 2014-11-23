@@ -15,6 +15,8 @@ class DataTable extends FormField {
     /** @var string $filters */
     public $columns = [];
     public $gridOptions = [];
+    public $stringAlias = [];
+    public $listItem = [];
 
     /** @var string $toolbarName */
     public static $toolbarName = "Data Table";
@@ -108,7 +110,36 @@ class DataTable extends FormField {
     }
 
     public function includeCSS() {
-        return ['css/jquery.handsontable.full.min.css', 'css/data-table.css'];
+        return [
+            'css/jquery.handsontable.full.min.css',
+            'css/data-table.css',
+            'css/jquery-ui-datepicker.min.css'];
+    }
+
+    public function render() {
+        foreach ($this->columns as $k => $c) {
+            switch ($c['columnType']) {
+                case 'dropdown':
+                    $list = '[]';
+                    if (@$c['listType'] == 'php') {
+                        $list = $this->evaluate(@$c['listExpr'], true);
+                        $list = json_encode(array_values($list));
+                    }
+                    
+                    
+                    $this->columns[$k]['listItem'] = $list;
+                    break;
+                case 'string':
+                    if (count(@$this->columns[$k]['stringAlias']) > 0) {
+                        foreach ($this->columns[$k]['stringAlias'] as $x => $y) {
+                            $this->columns[$k]['stringAlias'][$x] = htmlentities($y);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        return $this->renderInternal('template_render.php');
     }
 
 }

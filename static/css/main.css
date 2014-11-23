@@ -1450,6 +1450,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     padding-bottom:7px;
     font-size:13px;
 }
+
 .data-grid-category {
     margin-bottom:0px;
 }
@@ -1525,7 +1526,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 .data-grid-container.fixed .data-grid-paging {
     margin-left:-15px;
     margin-right:-15px;
-    z-index:20;
+    z-index:21;
     padding:5px 15px;
     position:fixed;
     background:white;

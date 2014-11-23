@@ -31,9 +31,20 @@
     font-size: 13px;
     line-height: 20px;
 }
+.handsontable .manualColumnResizer {
+    height:29px;
+}
 
 .dataTable.handsontable tr:nth-child(odd) td{
     background:#FAFAFA;
+}
+.dataTable.handsontable tr td:hover,.dataTable.handsontable tr td.current{
+    background:#EEF;
+}
+
+
+.handsontable .header-grouping th {
+    padding-bottom:0px !important;
 }
 
 .dataTable.handsontable .htCore tbody td.area {
@@ -51,19 +62,39 @@
 .handsontable .htNoFrame+td, .handsontable .htNoFrame+th, .handsontable td:first-child, .handsontable th:first-child {    
     border-left: 1px solid #ddd;
 }
+.handsontable.listbox {
+    margin-top:-5px;
+    padding-right:0px;
+}
+.handsontable.listbox .wtHider {
+    padding-bottom:0px !important;
+}
+.handsontable.listbox .htDimmed {
+    border:0px !important;
+}
 
+.handsontable.listbox .htCore {
+    /*box-shadow:none !important;*/
+}
 
 .handsontableInput {
     box-sizing:content-box;
-    line-height:23px;
+    min-height:23px !important;
+    line-height:23px !important;
     padding: 0px 8px 0px 8px;
 }
-
 .data-table-container .ht_clone_top {
+    display:none;
+}
+[ps-data-table] .ht_top table {
+    border-bottom:1px solid #ddd;
+}
+[ps-data-table] .ht_top {
     display:none;
     position:fixed !important;
 }
-.data-table-container.fixed .ht_clone_top {
+
+[ps-data-table].fixed .ht_top {
     display:block;
     position:fixed !important;
 }

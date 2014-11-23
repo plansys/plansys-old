@@ -192,8 +192,8 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     if (type.length === 1 || (type[0] === "" && type.length === 2)) {
                         return "";
                     }
-                    return type.pop();
-                }
+                    return type.pop().toLowerCase();
+                };
 
                 //Create icon based on extension 
                 $scope.icon = function (file) {
