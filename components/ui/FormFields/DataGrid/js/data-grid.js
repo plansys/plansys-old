@@ -250,17 +250,33 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
 
 
                 // Generate Excel Template
-                $scope.generateTemplate = function () {
+
+                $scope.getCols = function (return_array) {
                     var cols = [];
-                    if ($scope.datasource.data == 0) {
-                        for (i in $scope.gridOptions.columnDefs) {
-                            cols.push($scope.gridOptions.columnDefs[i]);
+                    if ($scope.columns) {
+                        for (i in  $scope.columns) {
+                            if ($scope.columns[i].visible === false) continue;
+
+                            if (!return_array) {
+                                cols.push({idx: i, label: $scope.columns[i].label, name: $scope.columns[i].name});
+                            } else {
+                                cols.push($scope.columns[i].label);
+                            }
                         }
-                    } else {
+                    } else if ($scope.datasource.data) {
                         for (i in $scope.datasource.data[0]) {
-                            cols.push(i);
+                            if (!return_array) {
+                                cols.push({label: i, name: i});
+                            } else {
+                                cols.push(i);
+                            }
                         }
                     }
+                    return cols;
+                };
+
+                $scope.generateTemplate = function () {
+                    var cols = $scope.getCols(true);
 
                     location.href = Yii.app.createUrl('/formfield/DataGrid.generateExcelTemplate', {
                         columns: JSON.stringify(cols)
@@ -270,10 +286,24 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                 // Export Excel
                 $scope.exportExcel = function () {
                     var url = Yii.app.createUrl('/formfield/DataGrid.exportExcel');
-                    var data = JSON.stringify($scope.datasource.data);
                     var file = $scope.form.title;
+                    var cols = $scope.getCols();
+                    var data = [];
+                    for (i in $scope.datasource.data) {
+                        var row = $scope.datasource.data[i];
+                        var d = {};
+                        for (k in cols) {
+                            var col = cols[k];
 
-                    console.log(data);
+                            if (row[col.name + "_label"] && $scope.columns[col.idx].columnType == "relation") {
+                                d[col.label] = row[col.name + "_label"];
+                            } else {
+                                d[col.label] = row[col.name];
+                            }
+                        }
+                        data.push(d);
+                    }
+                    var data = JSON.stringify(data);
 
                     var form = $('<form target="_blank" action="' + url + '" method="post">' +
                     '<input type="hidden" name="data" value=\'' + data + '\' />' +

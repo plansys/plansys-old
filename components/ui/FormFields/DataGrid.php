@@ -247,21 +247,6 @@ class DataGrid extends FormField
         $data = json_decode($_POST['data'], true);
         $file = $_POST['file'];
 
-        ## clean data
-        foreach ($data as $k => $row) {
-            foreach ($row as $i => $j) {
-                if (substr($i, -9) == "_id_label") {
-                    $data[$k][substr($i, 0, count($i) - 10)] = $j;
-                    unset($data[$k][$i]);
-                } else if (substr($i, -6) == "_label") {
-                    $data[$k][substr($i, 0, count($i) - 6)] = $j;
-                    unset($data[$k][$i]);
-                } else if (substr($i, -3) == "_id") {
-                    unset($data[$k][$i]);
-                }
-            }
-        }
-
         ## add header
         array_unshift($data, $data[0]);
         foreach ($data[0] as $k => $i) {
@@ -283,7 +268,7 @@ class DataGrid extends FormField
 
     public function actionGenerateExcelTemplate()
     {
-        $cols = json_decode($_GET['columns']);
+        $cols = json_decode($_GET['columns'],true);
         Yii::import('ext.phpexcel.XPHPExcel');
         $phpExcelObject = XPHPExcel::createPHPExcel();
         $phpExcelObject->getActiveSheet()->fromArray($cols, null, 'A1');

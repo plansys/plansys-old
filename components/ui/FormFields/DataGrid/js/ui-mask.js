@@ -7,16 +7,16 @@
 (function ($) {
     function getPasteEvent() {
         var el = document.createElement('input'),
-                name = 'onpaste';
+            name = 'onpaste';
         el.setAttribute(name, '');
         return (typeof el[name] === 'function') ? 'paste' : 'input';
     }
 
     var pasteEventName = getPasteEvent() + ".mask",
-            ua = navigator.userAgent,
-            iPhone = /iphone/i.test(ua),
-            android = /android/i.test(ua),
-            caretTimeoutId;
+        ua = navigator.userAgent,
+        iPhone = /iphone/i.test(ua),
+        android = /android/i.test(ua),
+        caretTimeoutId;
 
     $.mask = {
         //Predefined character definitions
@@ -68,11 +68,11 @@
         },
         mask: function (mask, settings) {
             var input,
-                    defs,
-                    tests,
-                    partialPosition,
-                    firstNonMaskPos,
-                    len;
+                defs,
+                tests,
+                partialPosition,
+                firstNonMaskPos,
+                len;
 
             if (!mask && this.length > 0) {
                 input = $(this[0]);
@@ -104,14 +104,14 @@
 
             return this.trigger("unmask").each(function () {
                 var input = $(this),
-                        buffer = $.map(
-                                mask.split(""),
-                                function (c, i) {
-                                    if (c != '?') {
-                                        return defs[c] ? settings.placeholder : c;
-                                    }
-                                }),
-                        focusText = input.val();
+                    buffer = $.map(
+                        mask.split(""),
+                        function (c, i) {
+                            if (c != '?') {
+                                return defs[c] ? settings.placeholder : c;
+                            }
+                        }),
+                    focusText = input.val();
 
                 function seekNext(pos) {
                     while (++pos < len && !tests[pos])
@@ -127,7 +127,7 @@
 
                 function shiftL(begin, end) {
                     var i,
-                            j;
+                        j;
 
                     if (begin < 0) {
                         return;
@@ -151,9 +151,9 @@
 
                 function shiftR(pos) {
                     var i,
-                            c,
-                            j,
-                            t;
+                        c,
+                        j,
+                        t;
 
                     for (i = pos, c = settings.placeholder; i < len; i++) {
                         if (tests[i]) {
@@ -171,9 +171,9 @@
 
                 function keydownEvent(e) {
                     var k = e.which,
-                            pos,
-                            begin,
-                            end;
+                        pos,
+                        begin,
+                        end;
 
                     //backspace, delete, and escape get special treatment
                     if (k === 8 || k === 46 || (iPhone && k === 127)) {
@@ -198,10 +198,10 @@
 
                 function keypressEvent(e) {
                     var k = e.which,
-                            pos = input.caret(),
-                            p,
-                            c,
-                            next;
+                        pos = input.caret(),
+                        p,
+                        c,
+                        next;
 
                     if (e.ctrlKey || e.altKey || e.metaKey || k < 32) {//Ignore
                         return;
@@ -253,9 +253,9 @@
                 function checkVal(allow) {
                     //try to place characters where they belong
                     var test = input.val(),
-                            lastMatch = -1,
-                            i,
-                            c;
+                        lastMatch = -1,
+                        i,
+                        c;
 
                     for (i = 0, pos = 0; i < len; i++) {
                         if (tests[i]) {
@@ -301,43 +301,43 @@
 
                 if (!input.attr("readonly"))
                     input
-                            .one("unmask", function () {
-                                input
-                                        .unbind(".mask")
-                                        .removeData($.mask.dataName);
-                            })
-                            .bind("focus.mask", function () {
-                                clearTimeout(caretTimeoutId);
-                                var pos,
-                                        moveCaret;
+                        .one("unmask", function () {
+                            input
+                                .unbind(".mask")
+                                .removeData($.mask.dataName);
+                        })
+                        .bind("focus.mask", function () {
+                            clearTimeout(caretTimeoutId);
+                            var pos,
+                                moveCaret;
 
-                                focusText = input.val();
-                                pos = checkVal();
+                            focusText = input.val();
+                            pos = checkVal();
 
-                                caretTimeoutId = setTimeout(function () {
-                                    writeBuffer();
-                                    if (pos == mask.length) {
-                                        input.caret(0, pos);
-                                    } else {
-                                        input.caret(pos);
-                                    }
-                                }, 10);
-                            })
-                            .bind("blur.mask", function () {
-                                checkVal();
-                                if (input.val() != focusText)
-                                    input.change();
-                            })
-                            .bind("keydown.mask", keydownEvent)
-                            .bind("keypress.mask", keypressEvent)
-                            .bind(pasteEventName, function () {
-                                setTimeout(function () {
-                                    var pos = checkVal(true);
+                            caretTimeoutId = setTimeout(function () {
+                                writeBuffer();
+                                if (pos == mask.length) {
+                                    input.caret(0, pos);
+                                } else {
                                     input.caret(pos);
-                                    if (settings.completed && pos == input.val().length)
-                                        settings.completed.call(input);
-                                }, 0);
-                            });
+                                }
+                            }, 10);
+                        })
+                        .bind("blur.mask", function () {
+                            checkVal();
+                            if (input.val() != focusText)
+                                input.change();
+                        })
+                        .bind("keydown.mask", keydownEvent)
+                        .bind("keypress.mask", keypressEvent)
+                        .bind(pasteEventName, function () {
+                            setTimeout(function () {
+                                var pos = checkVal(true);
+                                input.caret(pos);
+                                if (settings.completed && pos == input.val().length)
+                                    settings.completed.call(input);
+                            }, 0);
+                        });
 
                 checkVal("initial"); //Perform initial check for existing values
             });
@@ -414,14 +414,16 @@ app.directive('uiMask', function ($timeout, $filter) {
                                 }
                                 break;
                             case "99/99/9999":
-                                var date = val.split("-");
+                                var raw = val.split(" ");
+                                var date = raw[0].split("-");
                                 if (date.length > 1) {
                                     var dt = new Date(date[0], date[1] - 1, date[2]);
                                     $scope.uiMaskValue = ($filter('date')(dt, 'dd/MM/yyyy'));
                                 }
                                 break;
                             case "99:99":
-                                var time = val.split(":");
+                                var raw = val.split(" ");
+                                var time = raw.length > 1 ? raw[1].split(":") : raw[0].split(":");
                                 if (time.length > 1) {
                                     var dt = new Date(2014, 1, 1, time[0], time[1]);
                                     $scope.uiMaskValue = ($filter('date')(dt, 'HH:MM'));
