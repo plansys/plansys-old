@@ -23,7 +23,7 @@
  * @property NfyDbSubscription $subscription
  * @property Users $sender
  */
-class NfyDbMessage extends CActiveRecord {
+class NfyDbMessage extends ActiveRecord {
 
     /**
      * Returns the static model of the specified AR class.

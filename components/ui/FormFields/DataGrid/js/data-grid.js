@@ -226,7 +226,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                         if ($scope.columns[i].name == field) {
                             var newval = '';
                             for (k in $scope.columns[i].stringAlias) {
-                                if (k.toLowerCase() == value.toLowerCase()) {
+                                if (k.toLowerCase() == value.toLowerCase() || k.toLowerCase() == "'" + value.toLowerCase() + "'") {
                                     return $scope.columns[i].stringAlias[k];
                                 }
                                 if (k.indexOf('rx:') == 0) {
@@ -402,6 +402,10 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                     if (Object.prototype.toString.call(col.stringAlias) == "[object Object]") {
                         varDef = 'stringAlias(row.getProperty(col.field),col.field)';
                     }
+                    if (col.options['parse-func']) {
+                        varDef = col.options['parse-func'] + '(row.getProperty(col.field),row)';
+                    }
+
                     if (col.options.cellFilter) {
                         varDef += ' | ' + col.options.cellFilter;
                     }
@@ -528,11 +532,19 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                 $scope.generateCellRelation = function (col) {
                     var editableClass = $scope.getEditableClass(col);
 
+
+                    var emptyString = '- Empty -';
+                    var emptyStyle = 'color:#999;font-size:12px;';
+                    if (col.options['if-empty']) {
+                        emptyString = col.options['if-empty'];
+                        emptyStyle = '';
+                    }
+
                     var html = '<div class="ngCellText dgr ' + editableClass + '" ng-class="col.colIndex()"';
                     html += 'dgr-id="{{row.getProperty(col.field)}}" dgr-model="' + col.relModelClass + '" ';
                     html += 'dgr-class="' + $scope.modelClass + '" dgr-name="' + $scope.name + '" dgr-col="' + col.name + '" dgr-labelField="' + col.relLabelField + '" ';
                     html += 'dgr-idField="' + col.relIdField + '">';
-                    html += '<span ng-if=\'row.getProperty(col.field + "_label") == ""\' style="color:#999;font-size:12px;">- Empty -</span>';
+                    html += '<span ng-if=\'row.getProperty(col.field + "_label") == ""\' style="' + emptyStyle + '">' + emptyString + '</span>';
                     html += '<span ng-if=\'row.getProperty(col.field + "_label") != ""\' ng-cell-text>{{row.getProperty(col.field + "_label")}}';
                     html += '</span></div>';
 

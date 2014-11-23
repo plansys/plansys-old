@@ -523,7 +523,6 @@ class RelationField extends FormField {
             }
         }
 
-
         $list = [];
         foreach ($rawlist as $k => $i) {
             $included = true;
