@@ -32,23 +32,30 @@
                         </button>
                         <ul class="dropdown-menu pull-right" style="z-index:99;" role="menu">
                             <li style="overflow:hidden;">
-                                <a style="pointer-events:none;padding:3px 7px;" href="#">Load From Excel</a>
+                                <a style="pointer-events:none;padding:3px 7px;" dropdown-toggle href="#">Load From Excel</a>
                                 <input style="position:absolute;opacity:0;cursor:pointer;margin-top:-25px;"
                                        onmouseover="$(this).prev().css('background','#f5f5f5');"
                                        onmouseout="$(this).prev().css('background','#fff');"
                                        type="file" ng-file-select="loadExcel($files)" />
                             </li>
                             <li class="divider" style="margin:0px;"></li>
-                            <li><a style="padding:3px 7px;" href="#"> Download Template</a></li>
+                            <li><a style="padding:3px 7px;"
+                                   ng-click="generateTemplate()"
+                                   dropdown-toggle href="#">Download Template</a>
+                            </li>
                         </ul>
                     </div>
 
-                    <div class="btn-group" dropdown>
+                    <div ng-if="gridOptions.enableExport" class="btn-group" dropdown>
                         <button type="button" class="btn btn-default dropdown-toggle">
-                            <i class="fa fa-download"></i> <span class="caret"></span>
+                            <i class="fa fa-archive"></i> <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu  pull-right" style="z-index:99;" role="menu">
-                            <li><a style="padding:3px 7px;" href="#">Download Excel</a>
+                            <li><a style="padding:3px 7px;"
+                                   ng-click="exportExcel()"
+                            dropdown-toggle href="#">
+                                    <i class="fa fa-file-excel-o"></i>
+                                    Export To Excel</a>
                             </li>
                         </ul>
                     </div>

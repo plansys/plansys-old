@@ -247,6 +247,7 @@ class DevUserIndexH extends User {
                     'afterSelectionChange' => 'url:/dev/user/update?id={id}',
                     'enableColumnResize' => 'true',
                     'enableImport' => 'true',
+                    'enableExport' => 'true',
                 ),
                 'type' => 'DataGrid',
             ),

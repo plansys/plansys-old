@@ -333,7 +333,7 @@ define('SPREADSHEET_EXCEL_READER_UTCOFFSETDAYS1904', 24107);
 define('SPREADSHEET_EXCEL_READER_MSINADAY',          86400);
 define('SPREADSHEET_EXCEL_READER_DEF_NUM_FORMAT',    "%s");
 
-class SpreadsheetExcelReader {
+class ExcelImport {
     /**
      * Array of worksheets found
      */

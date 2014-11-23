@@ -222,9 +222,78 @@ class DataGrid extends FormField
         return ['js'];
     }
 
-    public function importExcel($file)
+    public function generateExcel($phpExcelObject, $filename)
     {
+        // Redirect output to a client’s web browser (Excel5)
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
 
+        // If you're serving to IE over SSL, then the following may be needed
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header('Pragma: public'); // HTTP/1.0
+
+        $objWriter = PHPExcel_IOFactory::createWriter($phpExcelObject, 'Excel5');
+        $objWriter->save('php://output');
+        exit;
+    }
+
+    public function actionExportExcel()
+    {
+        $data = json_decode($_POST['data'], true);
+        $file = $_POST['file'];
+
+        ## clean data
+        foreach ($data as $k => $row) {
+            foreach ($row as $i => $j) {
+                if (substr($i, -9) == "_id_label") {
+                    $data[$k][substr($i, 0, count($i) - 10)] = $j;
+                    unset($data[$k][$i]);
+                } else if (substr($i, -6) == "_label") {
+                    $data[$k][substr($i, 0, count($i) - 6)] = $j;
+                    unset($data[$k][$i]);
+                } else if (substr($i, -3) == "_id") {
+                    unset($data[$k][$i]);
+                }
+            }
+        }
+
+        ## add header
+        array_unshift($data, $data[0]);
+        foreach ($data[0] as $k => $i) {
+            $data[0][$k] = $k;
+        }
+
+        ## generate excel
+        Yii::import('ext.phpexcel.XPHPExcel');
+        $phpExcelObject = XPHPExcel::createPHPExcel();
+        $phpExcelObject->getActiveSheet()->fromArray($data, null, 'A1');
+        foreach (range('A', $phpExcelObject->getActiveSheet()->getHighestDataColumn()) as $col) {
+            $phpExcelObject->getActiveSheet()
+                ->getColumnDimension($col)
+                ->setAutoSize(true);
+        }
+
+        $this->generateExcel($phpExcelObject, $file);
+    }
+
+    public function actionGenerateExcelTemplate()
+    {
+        $cols = json_decode($_GET['columns']);
+        Yii::import('ext.phpexcel.XPHPExcel');
+        $phpExcelObject = XPHPExcel::createPHPExcel();
+        $phpExcelObject->getActiveSheet()->fromArray($cols, null, 'A1');
+        foreach (range('A', $phpExcelObject->getActiveSheet()->getHighestDataColumn()) as $col) {
+            $phpExcelObject->getActiveSheet()
+                ->getColumnDimension($col)
+                ->setAutoSize(true);
+        }
+
+        $this->generateExcel($phpExcelObject, 'contoh-template');
     }
 
     public function actionUpload($path = null)
@@ -258,7 +327,7 @@ class DataGrid extends FormField
 
         switch (@$_GET['a']) {
             case "excel":
-                $reader = new SpreadsheetExcelReader();
+                $reader = new ExcelImport();
                 $reader->read($tmppath);
                 $se = $reader->sheets[0]['cells'];
                 $arr = array_shift($se);
