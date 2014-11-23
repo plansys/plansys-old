@@ -511,7 +511,7 @@ class RelationField extends FormField {
         if (!is_null($initialID) && $initialID != "") {
             $found = false;
             foreach ($rawlist as $r) {
-                if ($r['id'] == $initialID)
+                if ($r[$this->idField] == $initialID)
                     $found = true;
             }
 
