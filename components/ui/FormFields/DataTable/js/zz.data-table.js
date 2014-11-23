@@ -254,6 +254,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     contextMenu: ['row_above', 'row_below', '---------', 'remove_row', '---------', 'undo', 'redo']
                 }, $scope.gridOptions);
 
+                if (typeof $scope.beforeGridLoaded == "function") {
+                    $scope.beforeGridLoaded(options);
+                }
+                
                 $("#" + $scope.renderID).handsontable(options);
 
                 //relation init
