@@ -75,12 +75,16 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     }
 
                     var index = row.rowIndex;
-                    $scope.data.splice(index, 1);
+                    var oldData = $scope.data.splice(index, 1);
                     $timeout(function () {
                         if ($scope.data.length <= index) {
                             $scope.grid.selectedItems.length = 0;
                         } else {
                             $scope.grid.gridOptions.selectItem(index, true);
+                        }
+
+                        if (typeof $scope.afterRemove == "function") {
+                            $scope.afterRemove(index, oldData);
                         }
                     }, 0);
                 };
