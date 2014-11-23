@@ -10,7 +10,18 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
             return function ($scope, $el, attrs, ctrl) {
                 // when ng-model is changed from inside directive
                 $scope.update = function () {
-                    $scope.value = $scope.date + " " + $scope.time;
+                    switch ($scope.fieldType) {
+                        case 'datetime':
+                            $scope.value = $scope.date + " " + $scope.time;
+                            break;
+                        case 'date':
+                            $scope.value = $scope.date;
+                            break;
+                        case 'time':
+                            $scope.value = $scope.time;
+                            break;
+                    }
+                    
                     if (typeof ctrl != 'undefined') {
                         $el.find('ul[datepicker-popup-wrap]').hide();
                         $timeout(function () {
@@ -96,7 +107,6 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                                     $scope.value = dateFilter(new Date(), 'HH:mm:00');
                                     break;
                             }
-
                         } else {
                             $scope.value = '';
                         }
