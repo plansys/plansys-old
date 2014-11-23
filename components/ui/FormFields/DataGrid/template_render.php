@@ -20,23 +20,58 @@
         <div ng-if="datasource.data.length != 0 || gridOptions.enableExcelMode" class="data-grid-paging-shadow"
              style="height:50px;display:none;"></div>
         <div class="data-grid-paging"
-             ng-if="gridOptions.enablePaging || gridOptions.enableExcelMode || gridOptions.enableCellEdit">
+             ng-if="gridOptions.enablePaging ||
+             gridOptions.enableExcelMode ||
+             gridOptions.enableCellEdit ||
+             gridOptions.enableImport ||
+             gridOptions.enableExport">
+
+            <div ng-if="gridOptions.enableExcelMode"
+                <?php if (@$this->gridOptions['enablePaging'] == 'true'): ?>
+                    style="float:left;border-right:1px solid #ccc;padding-right:10px;margin-right:5px;"
+                <?php else: ?>
+                    style="float:left;margin-left:-5px;"
+                <?php endif; ?>
+                 class="data-grid-pageinfo">
+                <div class="btn-group pull-right" style="padding-top:2px;margin-left:5px;">
+                    <button ng-click="addRow(excelModeSelectedRow)" type="button" class="btn btn-default">
+                        <i class="fa fa-plus"></i> Add
+                    </button>
+                    <button ng-click="removeRow(excelModeSelectedRow)"
+                            ng-if="grid.selectedItems.length > 0"
+                            type="button" class="btn btn-default">
+                        <i class="fa fa-times"></i> Remove
+                    </button>
+                </div>
+
+                <div class="pull-right" ng-if="!gridOptions.enablePaging" style="margin:5px;">
+                    Row:
+                </div>
+            </div>
 
             <div ng-if="gridOptions.enableImport || gridOptions.enableExport"
-                 style="float:right;margin:2px 0px 0px 5px;">
-                <div class="btn-group">
+                <?php if (@$this->gridOptions['enablePaging'] == 'true'): ?>
+                    style="float:right;margin:2px 0px 0px 5px;"
+                <?php else: ?>
+                    style="float:left;border-right:1px solid #ccc;padding-right:10px;margin-right:5px;"
+                <?php endif; ?>>
+
+                <div class="btn-group pull-left">
+
                     <div ng-if="gridOptions.enableImport" class="btn-group" dropdown>
                         <button type="button" class="btn btn-default dropdown-toggle">
                             <i class="fa {{importIcon}}"></i>
                             <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu pull-right" style="z-index:99;" role="menu">
+                        <ul class="dropdown-menu" ng-class="{'pull-right': gridOptions.enablePaging}"
+                            style="z-index:99;" role="menu">
                             <li style="overflow:hidden;">
-                                <a style="pointer-events:none;padding:3px 7px;" dropdown-toggle href="#">Load From Excel</a>
+                                <a style="pointer-events:none;padding:3px 7px;" dropdown-toggle href="#">Load From
+                                    Excel</a>
                                 <input style="position:absolute;opacity:0;cursor:pointer;margin-top:-25px;"
                                        onmouseover="$(this).prev().css('background','#f5f5f5');"
                                        onmouseout="$(this).prev().css('background','#fff');"
-                                       type="file" ng-file-select="loadExcel($files)" />
+                                       type="file" ng-file-select="loadExcel($files)"/>
                             </li>
                             <li class="divider" style="margin:0px;"></li>
                             <li><a style="padding:3px 7px;"
@@ -48,19 +83,20 @@
 
                     <div ng-if="gridOptions.enableExport" class="btn-group" dropdown>
                         <button type="button" class="btn btn-default dropdown-toggle">
-                            <i class="fa fa-archive"></i> <span class="caret"></span>
+                            <i class="fa fa-download"></i> <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu  pull-right" style="z-index:99;" role="menu">
+                        <ul class="dropdown-menu" ng-class="{'pull-right': gridOptions.enablePaging}"
+                            style="z-index:99;" role="menu">
                             <li><a style="padding:3px 7px;"
                                    ng-click="exportExcel()"
-                            dropdown-toggle href="#">
+                                   dropdown-toggle href="#">
                                     <i class="fa fa-file-excel-o"></i>
                                     Export To Excel</a>
                             </li>
                         </ul>
                     </div>
-
                 </div>
+                <div class="clearfix"></div>
             </div>
             <div class="data-grid-pageinfo pull-right" ng-if="gridOptions.enablePaging">
                 <div class="btn-group pull-right" style="padding-top:2px;margin-left:5px;">
@@ -115,28 +151,6 @@
                 </div>
             <?php endif; ?>
 
-            <div ng-if="gridOptions.enableExcelMode"
-                <?php if (@$this->gridOptions['enablePaging'] == 'true'): ?>
-                    style="float:right;border-right:1px solid #ccc;padding-right:10px;margin-right:5px;"
-                <?php else: ?>
-                    style="float:left;margin-left:-5px;"
-                <?php endif; ?>
-                 class="data-grid-pageinfo">
-                <div class="btn-group pull-right" style="padding-top:2px;margin-left:5px;">
-                    <button ng-click="addRow(excelModeSelectedRow)" type="button" class="btn btn-default">
-                        <i class="fa fa-plus"></i> Add
-                    </button>
-                    <button ng-click="removeRow(excelModeSelectedRow)"
-                            ng-if="grid.selectedItems.length > 0"
-                            type="button" class="btn btn-default">
-                        <i class="fa fa-times"></i> Remove
-                    </button>
-                </div>
-
-                <div class="pull-right" style="margin:5px;">
-                    Row:
-                </div>
-            </div>
             <div class="data-grid-pagination" ng-if="gridOptions.enablePaging">
                 <div class="pull-left" style="margin:5px;">Page:</div>
                 <div class="pull-left">

@@ -300,7 +300,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                     }
                     return type.pop().toLowerCase();
                 };
-                $scope.importIcon = "fa-download";
+                $scope.importIcon = "fa-upload";
                 $scope.importProgress = 0;
                 $scope.loadExcel = function ($files) {
                     if ($scope.datasource.data.length > 1) {
@@ -315,7 +315,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                         if (['xls', 'xlsx'].indexOf(ext) < 0) {
                             return false;
                         }
-                        $scope.importIcon = "faa-flash animated fa-download";
+                        $scope.importIcon = "faa-flash animated fa-upload";
 
                         $upload.upload({
                             url: Yii.app.createUrl('/formfield/DataGrid.upload', {
@@ -326,11 +326,11 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                             $scope.importProgress = parseInt(100.0 * evt.loaded / evt.total);
                         }).success(function (data, html) {
                             $scope.importProgress = 0;
-                            $scope.importIcon = "fa-download";
+                            $scope.importIcon = "fa-upload";
                             $scope.datasource.data = data;
                         }).error(function (data) {
                             $scope.importProgress = 0;
-                            $scope.importIcon = "fa-download";
+                            $scope.importIcon = "fa-upload";
                             alert(data);
                         });
                     }
