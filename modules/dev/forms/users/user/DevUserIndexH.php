@@ -243,11 +243,9 @@ class DevUserIndexH extends User {
                 ),
                 'gridOptions' => array (
                     'useExternalSorting' => 'true',
-                    'enablePaging' => 'true',
                     'afterSelectionChange' => 'url:/dev/user/update?id={id}',
                     'enableColumnResize' => 'true',
-                    'enableImport' => 'true',
-                    'enableExport' => 'true',
+                    'enablePaging' => 'true',
                 ),
                 'type' => 'DataGrid',
             ),
