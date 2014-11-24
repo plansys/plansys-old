@@ -45,6 +45,12 @@ class DevUserForm extends User {
                         'type' => 'Text',
                     ),
                     array (
+                        'label' => 'Date Time Picker',
+                        'name' => 'last_login',
+                        'fieldType' => 'monthyear',
+                        'type' => 'DateTimePicker',
+                    ),
+                    array (
                         'label' => 'Username',
                         'name' => 'username',
                         'type' => 'TextField',

@@ -13,7 +13,14 @@ class ProfileController extends Controller {
             if ($model->save()) {
                 Yii::app()->user->setFlash('info', 'Profil Anda Tersimpan.');
             }
+
+
         }
+
+        if (isset($_GET['e']) && $_GET['e'] && !isset($_POST["DevUserForm"])) {
+            $model->addError('email','Isi e-mail untuk menerima notifikasi');
+        }
+
         $this->renderForm("DevUserForm", $model);
     }
 

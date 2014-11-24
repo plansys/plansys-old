@@ -78,7 +78,6 @@ class NfyDbQueue extends NfyQueue {
                 $sender_id = 0;
             }
         }
-        
 
         if (!is_string($message)) {
             $message = json_encode($message);

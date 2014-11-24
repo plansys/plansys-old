@@ -243,8 +243,9 @@ class NfyDbMessage extends ActiveRecord {
         $result = array();
         $userIds = array();
         foreach ($dbMessages as $dbMessage) {
+
             $attributes = $dbMessage->getAttributes();
-            $attributes['subscriber_id'] = $dbMessage->subscription_id === null ? null : $dbMessage->subscription->subscriber_id;
+            $attributes['subscriber_id'] = is_null($dbMessage->subscription_id) ? null : $dbMessage->subscription['subscriber_id'];
             unset($attributes['queue_id']);
             unset($attributes['subscription_id']);
             unset($attributes['mimetype']);

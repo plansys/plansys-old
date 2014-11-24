@@ -53,4 +53,7 @@ class NfyWidget extends Widget
         Yii::app()->controller->renderForm("application.forms.NfyMessagesForm", $model);
     }
 
+    public function actionMail() {
+    }
+
 }

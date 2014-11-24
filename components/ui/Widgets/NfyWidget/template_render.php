@@ -13,6 +13,14 @@
 
     <div class="nfy-container widget-item-container" ng-if="!error">
         <div class="nfy-items">
+            <?php if (Yii::app()->user->model->email == ""): ?>
+                <div class="alert alert-warning"
+                     style="border-radius:0px;padding:10px;font-size:13px;text-align:center;margin:0px;">
+                    <a style="color:#8a6d3b;" href="{{ Yii.app.createUrl('/sys/profile/index', {e:'email'}) }}">
+                        Mohon lengkapi e-mail Anda untuk menerima notifikasi via e-mail.
+                    </a>
+                </div>
+            <?php endif; ?>
             <div ng-repeat="item in $storage.nfy.items" class="nfy-item">
                 <div class="nfy-item-sub">
                     <div class="nfy-item-left"></div>
@@ -37,8 +45,8 @@
                 </div>
             </div>
             <div ng-if="$storage.nfy.items.length == 0"
-                 style="color:#aaa;text-align:center;line-height:35px;padding:20px;">
-                    <i class="fa fa-send-o fa-4x"></i><br/>
+                 style="color:#ccc;text-align:center;line-height:35px;padding:50px 0px;">
+                <i class="fa fa-send-o fa-4x"></i><br/>
                 <b>Notification Empty</b>
             </div>
         </div>

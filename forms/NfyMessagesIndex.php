@@ -175,7 +175,7 @@ inner join p_role r on p.role_id = r.id',
                         ),
                         'name' => 'status',
                         'label' => 'Status',
-                        'show' => true,
+                        'show' => false,
                         'inputMask' => '',
                         'stringAlias' => array (
                             '\'2\'' => '<div class=\\\'label label-default\\\'>READ</div>',
