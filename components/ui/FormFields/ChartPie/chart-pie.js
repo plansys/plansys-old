@@ -33,6 +33,13 @@ app.directive('psChartPie', function ($timeout) {
 				return chartData;
 			}
 			
+			$scope.$watch('datasource.data', function () {
+				if ($scope.datasource != null) {
+					$scope.data = $scope.datasource.data;
+					$scope.fillSeries();					
+				}
+			});
+			
 			$scope.fillSeries = function () {
 				$timeout(function () {
 					var series = [];
@@ -45,49 +52,47 @@ app.directive('psChartPie', function ($timeout) {
 						$scope.data = [];
 					}
 					
-					$scope.$watch('datasource.data', function () {
-						if ($scope.datasource != null) {
-							$scope.data = $scope.datasource.data;
-						}
-					});
+					var chartData = [];
 					
-					var filtered = [];
-					for (var i in $scope.data) {
-						var rowcontent = {};
-						for (var j in $scope.data[i]) {
-							rowcontent[j] = $scope.data[i][j];
+					if($scope.data.length > 0)
+					{
+						var filtered = [];
+						for (var i in $scope.data) {
+							var rowcontent = {};
+							for (var j in $scope.data[i]) {
+								rowcontent[j] = $scope.data[i][j];
+							}
+							filtered.push(rowcontent);
 						}
-						filtered.push(rowcontent);
-					}
 
-					var result = [];
-					for (var i in filtered) {
-						if (typeof result[i] == "undefined") {
-							result[i] = [];
-						}
-						
-						for (var j in filtered[i]) {
-							var series = {};
-							series.value = filtered[i][j];
-							series.label = j;
+						var result = [];
+						for (var i in filtered) {
+							if (typeof result[i] == "undefined") {
+								result[i] = [];
+							}
+							
+							for (var j in filtered[i]) {
+								var series = {};
+								series.value = filtered[i][j];
+								series.label = j;
 
-							result[i][j] = (series);
+								result[i][j] = (series);
+							}
 						}
-					}
 
-					var chartData_raw = result[0];
-					chartData = formatChartData(chartData_raw);
-					
-					
-					if($scope.series != null) {
-						for(i in $scope.series) {
-							$scope.series[i] = angular.extend($scope.series[i], chartData_raw[$scope.series[i].label]);
-						}
-						
-						chartData_raw = $scope.series;
+						var chartData_raw = result[0];
 						chartData = formatChartData(chartData_raw);
+						
+						
+						if($scope.series != null) {
+							for(i in $scope.series) {
+								$scope.series[i] = angular.extend($scope.series[i], chartData_raw[$scope.series[i].label]);
+							}
+							
+							chartData_raw = $scope.series;
+							chartData = formatChartData(chartData_raw);
+						}
 					}
-					
 					
 					var defaultOptions = {
 						chart : {
