@@ -356,15 +356,14 @@ class RelationField extends FormField {
 
         foreach ($field['columns'] as $column) {
             if ($c == $column['name']) {
-                $this->modelClass = $column['relModelClass'];
-                $this->idField = $column['relIdField'];
-                $this->labelField = $column['relLabelField'];
+                $this->modelClass = @$column['relModelClass'];
+                $this->idField = @$column['relIdField'];
+                $this->labelField = @$column['relLabelField'];
                 $this->relationCriteria = @$column['relCriteria'];
-                $this->params = @$column['relParams'];
+                $this->params = is_null(@$column['relParams']) ? [] : $column['relParams'];
             }
         }
         $this->builder = $fb;
-
         echo json_encode($this->query(@$s, $this->params));
     }
 
@@ -512,7 +511,7 @@ class RelationField extends FormField {
         if (!is_null($initialID) && $initialID != "") {
             $found = false;
             foreach ($rawlist as $r) {
-                if ($r['id'] == $initialID)
+                if ($r[$this->idField] == $initialID)
                     $found = true;
             }
 
@@ -706,7 +705,7 @@ class RelationField extends FormField {
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
         $this->query('', [], $this->value);
-        
+
 
         return $this->renderInternal('template_render.php');
     }

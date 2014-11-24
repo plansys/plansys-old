@@ -4,7 +4,8 @@
  * Class DataGrid
  * @author rizky
  */
-class DataGrid extends FormField {
+class DataGrid extends FormField
+{
 
     /** @var string $name */
     public $name;
@@ -28,24 +29,25 @@ class DataGrid extends FormField {
     /**
      * @return array me-return array property DataGrid.
      */
-    public function getFieldProperties() {
-        return array (
-            array (
+    public function getFieldProperties()
+    {
+        return array(
+            array(
                 'label' => 'Data Filter Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Data Source Name',
                 'name' => 'datasource',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.datasource',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -55,43 +57,43 @@ class DataGrid extends FormField {
                 'fieldWidth' => '7',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Generate Columns',
                 'buttonType' => 'success',
                 'icon' => 'magic',
                 'buttonSize' => 'btn-xs',
-                'options' => array (
+                'options' => array(
                     'style' => 'float:right;margin:0px 0px 5px 0px',
                     'ng-show' => 'active.datasource != \\\'\\\'',
                     'ng-click' => 'generateColumns()',
                 ),
                 'type' => 'LinkButton',
             ),
-            array (
+            array(
                 'value' => '<div class=\\"clearfix\\"></div>',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'label' => 'Grid Options',
                 'name' => 'gridOptions',
                 'show' => 'Show',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'title' => 'Columns',
                 'type' => 'SectionHeader',
             ),
-            array (
+            array(
                 'value' => '<div style=\\"margin-top:5px\\"></div>',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'name' => 'columns',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.DataGridListForm',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.columns',
                     'ng-change' => 'save()',
                 ),
@@ -100,7 +102,8 @@ class DataGrid extends FormField {
         );
     }
 
-    private static function generateOrderParams($params, $template, $paramOptions = []) {
+    private static function generateOrderParams($params, $template, $paramOptions = [])
+    {
         $sqlparams = [];
         $sql = [];
 
@@ -167,7 +170,8 @@ class DataGrid extends FormField {
         ];
     }
 
-    public static function generatePagingParams($params, $paramOptions = []) {
+    public static function generatePagingParams($params, $paramOptions = [])
+    {
         if (!isset($params['currentPage']) || count($params['currentPage']) == 0) {
             $defaultPageSize = "25";
 
@@ -185,14 +189,14 @@ class DataGrid extends FormField {
             $from = $from < 0 ? 0 : $from;
 
             $to = $currentPage * $pageSize;
-            
+
             $template = [
                 'sql' => "limit {$from},{$to}",
                 'params' => [
-    //                    'limit' => $pageSize,
-    //                    'offset' => $from,
-    //                    'page' => $currentPage,
-    //                    'pageSize' => $pageSize
+                    //                    'limit' => $pageSize,
+                    //                    'offset' => $from,
+                    //                    'page' => $currentPage,
+                    //                    'pageSize' => $pageSize
                 ],
                 'render' => true
             ];
@@ -200,7 +204,8 @@ class DataGrid extends FormField {
         return $template;
     }
 
-    public static function generateParams($paramName, $params, $template, $paramOptions = []) {
+    public static function generateParams($paramName, $params, $template, $paramOptions = [])
+    {
         switch ($paramName) {
             case "order":
                 return DataGrid::generateOrderParams($params, $template, $paramOptions);
@@ -212,8 +217,127 @@ class DataGrid extends FormField {
     /**
      * @return array me-return array javascript yang di-include
      */
-    public function includeJS() {
+    public function includeJS()
+    {
         return ['js'];
+    }
+
+    public function generateExcel($phpExcelObject, $filename)
+    {
+        // Redirect output to a client’s web browser (Excel5)
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+
+        // If you're serving to IE over SSL, then the following may be needed
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header('Pragma: public'); // HTTP/1.0
+
+        $objWriter = PHPExcel_IOFactory::createWriter($phpExcelObject, 'Excel5');
+        $objWriter->save('php://output');
+        exit;
+    }
+
+    public function actionExportExcel()
+    {
+        $data = json_decode($_POST['data'], true);
+        $file = $_POST['file'];
+
+        ## add header
+        array_unshift($data, $data[0]);
+        foreach ($data[0] as $k => $i) {
+            $data[0][$k] = $k;
+        }
+
+        ## generate excel
+        Yii::import('ext.phpexcel.XPHPExcel');
+        $phpExcelObject = XPHPExcel::createPHPExcel();
+        $phpExcelObject->getActiveSheet()->fromArray($data, null, 'A1');
+        foreach (range('A', $phpExcelObject->getActiveSheet()->getHighestDataColumn()) as $col) {
+            $phpExcelObject->getActiveSheet()
+                ->getColumnDimension($col)
+                ->setAutoSize(true);
+        }
+
+        $this->generateExcel($phpExcelObject, $file);
+    }
+
+    public function actionGenerateExcelTemplate()
+    {
+        $cols = json_decode($_GET['columns'],true);
+        Yii::import('ext.phpexcel.XPHPExcel');
+        $phpExcelObject = XPHPExcel::createPHPExcel();
+        $phpExcelObject->getActiveSheet()->fromArray($cols, null, 'A1');
+        foreach (range('A', $phpExcelObject->getActiveSheet()->getHighestDataColumn()) as $col) {
+            $phpExcelObject->getActiveSheet()
+                ->getColumnDimension($col)
+                ->setAutoSize(true);
+        }
+
+        $this->generateExcel($phpExcelObject, 'contoh-template');
+    }
+
+    public function actionUpload($path = null)
+    {
+        if (!isset($_FILES['file'])) {
+            echo json_encode(["success" => "No"]);
+            die();
+        }
+        $file = $_FILES["file"];
+        $name = $file['name'];
+
+        ## create temporary directory
+        $tmpdir = Yii::getPathOfAlias('webroot.assets.tmp_exim');
+        if (!is_dir($tmpdir)) {
+            mkdir($tmpdir, true);
+        }
+
+        ## make sure there is no duplicate file name
+        $i = 1;
+        $actualName = pathinfo($name, PATHINFO_FILENAME);
+        $originName = $actualName;
+        $extension = pathinfo($name, PATHINFO_EXTENSION);
+        while (file_exists($tmpdir . DIRECTORY_SEPARATOR . $actualName . '.' . $extension)) {
+            $actualName = (string)$originName . '_' . $i;
+            $name = $actualName . '.' . $extension;
+            $i++;
+        }
+
+        $tmppath = $tmpdir . DIRECTORY_SEPARATOR . $name;
+        move_uploaded_file($file["tmp_name"], $tmppath);
+
+        switch (@$_GET['a']) {
+            case "excel":
+                $reader = new ExcelImport();
+                $reader->read($tmppath);
+                $se = $reader->sheets[0]['cells'];
+                $arr = array_shift($se);
+                $result = array();
+
+                foreach ($se as $row) {
+                    $temp = [];
+                    foreach ($row as $k => $val) {
+                        if (isset($arr[$k])) {
+                            $temp[$arr[$k]] = $val;
+                        }
+                    }
+                    $result[] = $temp;
+                }
+                echo json_encode($result);
+                break;
+            default:
+                echo json_encode([
+                    'success' => 'Yes',
+                    'path' => $tmppath,
+                    'downloadPath' => base64_encode($tmppath),
+                    'name' => $name
+                ]);
+                break;
+        }
     }
 
     /**
@@ -221,7 +345,8 @@ class DataGrid extends FormField {
      * Fungsi ini untuk me-render field dan atributnya
      * @return mixed me-return sebuah field dan atribut datafilter dari hasil render
      */
-    public function render() {
+    public function render()
+    {
 
         foreach ($this->columns as $k => $c) {
 

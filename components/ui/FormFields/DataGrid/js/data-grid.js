@@ -1,9 +1,7 @@
-
-app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
+app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFilter) {
     return {
         scope: true,
         compile: function (element, attrs, transclude) {
-
             return function ($scope, $el, attrs, ctrl) {
                 function evalArray(array) {
                     for (i in array) {
@@ -37,12 +35,12 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         var $detail = $(this).find('.ngCellButtonCollapsedDetail').remove();
                         var offset = {
                             right: $(this).parents('.ngCanvas').width() -
-                                    ($(this).parents('.ngCell').css('left').replace('px', '') * 1 +
-                                            $(this).parents('.ngCell').width())
+                            ($(this).parents('.ngCell').css('left').replace('px', '') * 1 +
+                            $(this).parents('.ngCell').width())
                         };
                         $detail.attr('colt', $(this).parents('.ngCell').attr('class').split(' ').pop())
-                                .css(offset)
-                                .show();
+                            .css(offset)
+                            .show();
 
                         $detail.appendTo($(this).parents('.ngRow'));
                         $compile($detail)(angular.element($container).scope());
@@ -52,8 +50,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                                 $(this).hide().remove().appendTo($container);
                             }
                         });
-
-                    },
+                    }
                 }, '.ngCellButtonCollapsed');
 
                 $scope.pagingKeypress = function (e) {
@@ -62,12 +59,12 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         e.stopPropagation();
                         return false;
                     }
-                }
+                };
 
                 $scope.excelModeSelectedRow = null;
                 $scope.excelModeSelChange = function (row, event) {
                     $scope.excelModeSelectedRow = row;
-                }
+                };
 
                 $scope.removeRow = function (row) {
                     if (typeof row == "undefined" || typeof row.rowIndex != 'number') {
@@ -75,12 +72,16 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     }
 
                     var index = row.rowIndex;
-                    $scope.data.splice(index, 1);
+                    var oldData = $scope.data.splice(index, 1);
                     $timeout(function () {
                         if ($scope.data.length <= index) {
                             $scope.grid.selectedItems.length = 0;
                         } else {
                             $scope.grid.gridOptions.selectItem(index, true);
+                        }
+
+                        if (typeof $scope.afterRemove == "function") {
+                            $scope.afterRemove(index, oldData);
                         }
                     }, 0);
                 };
@@ -149,12 +150,12 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         if ($btn.attr('ajax-success')) {
 
                             $http.get($btn.attr('href'))
-                                    .success(function (data) {
-                                        $scope.$eval($btn.attr('ajax-success'), {row: row, data: data});
-                                    })
-                                    .error(function (data) {
-                                        $scope.$eval($btn.attr('ajax-failed'), {row: row, data: data});
-                                    });
+                                .success(function (data) {
+                                    $scope.$eval($btn.attr('ajax-success'), {row: row, data: data});
+                                })
+                                .error(function (data) {
+                                    $scope.$eval($btn.attr('ajax-failed'), {row: row, data: data});
+                                });
                         }
 
                         e.preventDefault();
@@ -209,7 +210,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         editable = col.options.enableCellEdit !== false;
                     }
 
-                    return  editable ? '' : 'non-editable';
+                    return editable ? '' : 'non-editable';
                 }
 
                 $scope.generateCell = function (col) {
@@ -247,6 +248,124 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     return value;
                 }
 
+
+                // Generate Excel Template
+
+                $scope.getCols = function (return_array) {
+                    var cols = [];
+                    if ($scope.columns) {
+                        for (i in  $scope.columns) {
+                            if ($scope.columns[i].visible === false) continue;
+
+                            if (!return_array) {
+                                cols.push({idx: i, label: $scope.columns[i].label, name: $scope.columns[i].name});
+                            } else {
+                                cols.push($scope.columns[i].label);
+                            }
+                        }
+                    } else if ($scope.datasource.data) {
+                        for (i in $scope.datasource.data[0]) {
+                            if (!return_array) {
+                                cols.push({label: i, name: i});
+                            } else {
+                                cols.push(i);
+                            }
+                        }
+                    }
+                    return cols;
+                };
+
+                $scope.generateTemplate = function () {
+                    var cols = $scope.getCols(true);
+
+                    location.href = Yii.app.createUrl('/formfield/DataGrid.generateExcelTemplate', {
+                        columns: JSON.stringify(cols)
+                    });
+                };
+
+                // Export Excel
+                $scope.exportExcel = function () {
+                    var url = Yii.app.createUrl('/formfield/DataGrid.exportExcel');
+                    var file = $scope.form.title;
+                    var cols = $scope.getCols();
+                    var data = [];
+                    for (i in $scope.datasource.data) {
+                        var row = $scope.datasource.data[i];
+                        var d = {};
+                        for (k in cols) {
+                            var col = cols[k];
+
+                            if (row[col.name + "_label"] && $scope.columns[col.idx].columnType == "relation") {
+                                d[col.label] = row[col.name + "_label"];
+                            } else {
+                                d[col.label] = row[col.name];
+                            }
+                        }
+                        data.push(d);
+                    }
+                    var data = JSON.stringify(data);
+
+                    var form = $('<form target="_blank" action="' + url + '" method="post">' +
+                    '<input type="hidden" name="data" value=\'' + data + '\' />' +
+                    '<input type="hidden" name="file" value="' + file + '" />' +
+                    '</form>');
+
+                    $('body').append(form);
+                    form.submit();
+                    form.remove();
+                };
+
+                // Import Excel
+                $scope.ext = function (file) {
+                    var type = '';
+                    if (typeof file.name == 'string') {
+                        type = file.name.split('.');
+                    }
+                    if (typeof file == 'string') {
+                        type = file.split('.');
+                    }
+
+                    if (type.length === 1 || (type[0] === "" && type.length === 2)) {
+                        return "";
+                    }
+                    return type.pop().toLowerCase();
+                };
+                $scope.importIcon = "fa-upload";
+                $scope.importProgress = 0;
+                $scope.loadExcel = function ($files) {
+                    if ($scope.datasource.data.length > 1) {
+                        if (!confirm("Data will be replaced, are you sure ?")) {
+                            return false;
+                        }
+                    }
+
+                    if ($files.length > 0) {
+                        var file = $files[0];
+                        var ext = $scope.ext(file);
+                        if (['xls', 'xlsx'].indexOf(ext) < 0) {
+                            return false;
+                        }
+                        $scope.importIcon = "faa-flash animated fa-upload";
+
+                        $upload.upload({
+                            url: Yii.app.createUrl('/formfield/DataGrid.upload', {
+                                a: 'excel'
+                            }),
+                            file: file
+                        }).progress(function (evt) {
+                            $scope.importProgress = parseInt(100.0 * evt.loaded / evt.total);
+                        }).success(function (data, html) {
+                            $scope.importProgress = 0;
+                            $scope.importIcon = "fa-upload";
+                            $scope.datasource.data = data;
+                        }).error(function (data) {
+                            $scope.importProgress = 0;
+                            $scope.importIcon = "fa-upload";
+                            alert(data);
+                        });
+                    }
+                };
+
                 // Type: String
                 $scope.generateCellString = function (col) {
                     var format = "";
@@ -276,8 +395,8 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                     var showPlaceholder = $scope.gridOptions.enableCellEdit || $scope.gridOptions.enableExcelMode;
                     if (placeholder != "" && showPlaceholder) {
                         placeholderHtml = '<div ng-if="' +
-                                emptyVal + '.indexOf(row.getProperty(col.field)) >=0 " style="color:#999">' +
-                                placeholder + '</div>';
+                        emptyVal + '.indexOf(row.getProperty(col.field)) >=0 " style="color:#999">' +
+                        placeholder + '</div>';
                     }
                     var varDef = 'row.getProperty(col.field)';
                     if (Object.prototype.toString.call(col.stringAlias) == "[object Object]") {
@@ -445,10 +564,10 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
                         $scope.gridOptions.enableColumnResize = $scope.gridOptions.enableColumnResize === false ? false : true;
 
                         if ($scope.gridOptions.generateColumns || (
-                                $scope.data !== null &&
-                                $scope.columns !== null &&
-                                $scope.data.length > 0 &&
-                                $scope.columns.length == 0)) {
+                            $scope.data !== null &&
+                            $scope.columns !== null &&
+                            $scope.data.length > 0 &&
+                            $scope.columns.length == 0)) {
 
                             $scope.availableCols = [];
                             for (i in $scope.columns) {
@@ -623,9 +742,7 @@ app.directive('psDataGrid', function ($timeout, $http, $compile, dateFilter) {
 
 //                                console.log($scope.gridOptions['enableExcelMode'], $scope.gridOptions['enablePaging'], $scope.gridOptions['enableCellEdit']);
 
-                                if (!$scope.gridOptions['enableExcelMode'] &&
-                                        !$scope.gridOptions['enableCellEdit'] &&
-                                        !$scope.gridOptions['enablePaging']) {
+                                if (!$scope.gridOptions['enableExcelMode'] && !$scope.gridOptions['enableCellEdit'] && !$scope.gridOptions['enablePaging']) {
                                     adjTop = 0;
                                 }
 

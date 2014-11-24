@@ -1,26 +1,27 @@
-app.directive('checkBoxList', function($timeout) {
+app.directive('checkBoxList', function ($timeout) {
     return {
         require: '?ngModel',
         scope: true,
-        compile: function(element, attrs, transclude) {
+        compile: function (element, attrs, transclude) {
             if (attrs.ngModel && !attrs.ngDelay) {
                 attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
             }
 
-            return function($scope, $el, attrs, ctrl) {
+            return function ($scope, $el, attrs, ctrl) {
                 // when ng-model is changed from inside directive
 
-                $scope.updateItem = function(value) {
+                $scope.updateItem = function (value) {
                     $scope.updateItemInternal(value);
                     if (typeof ctrl != 'undefined' && value) {
-                        $timeout(function() {
+                        $timeout(function () {
                             ctrl.$setViewValue($scope.selectedText);
                         }, 0);
                     }
                 };
 
-                $scope.updateItemInternal = function(value) {
+                $scope.updateItemInternal = function (value) {
                     if (typeof value != 'undefined') {
+                        
                         var ar = $scope.selected;
                         if (ar.indexOf(value) >= 0) {
                             ar.splice(ar.indexOf(value), 1);
@@ -36,7 +37,7 @@ app.directive('checkBoxList', function($timeout) {
                 if (attrs.psList) {
                     //ps-list, replace entire list using js instead of rendered from server
                     function changeFieldList() {
-                        $timeout(function() {
+                        $timeout(function () {
                             $scope.formList = $scope.$eval(attrs.psList);
                             $scope.updateItemInternal($scope.value);
                         }, 0);
@@ -45,13 +46,13 @@ app.directive('checkBoxList', function($timeout) {
                 }
 
                 if (typeof ctrl != 'undefined') {
-                    ctrl.$render = function() {
+                    ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;
 
                         if (typeof ctrl.$viewValue == 'string') {
                             $scope.selected = [];
-                            ctrl.$viewValue.split(',').map(function(item) {
+                            ctrl.$viewValue.split(',').map(function (item) {
                                 $scope.selected.push(item);
                                 $scope.selectedText = $scope.selected.join(",");
                             });
@@ -59,26 +60,28 @@ app.directive('checkBoxList', function($timeout) {
                     };
                 }
 
-                // set default value
-                $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
-                $scope.selected = JSON.parse($el.find("data[name=selected]").text());
-                $scope.modelClass = $el.find("data[name=model_class]").html();
-                if (typeof $scope.selected == "string") {
-                    $scope.selected = $scope.selected.split(',').map(function(item) {
-                        return(item.trim());
-                    });
-                }
-                $scope.selectedText = $scope.selected.join(',');
+                $timeout(function () {
+                    // set default value
+                    $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
+                    $scope.selected = JSON.parse($el.find("data[name=selected]").text());
+                    $scope.modelClass = $el.find("data[name=model_class]").html();
+                    if (typeof $scope.selected == "string") {
+                        $scope.selected = $scope.selected.split(',').map(function (item) {
+                            return(item.trim());
+                        });
+                    }
+                    $scope.selectedText = $scope.selected.join(',');
+                });
 
                 //if ngModel is present, use that instead of value from php
-                if (attrs.ngModel) {
-                    $timeout(function() {
-                        var ngModelValue = $scope.$eval(attrs.ngModel);
-                        if (typeof ngModelValue != "undefined") {
-                            $scope.updateItemInternal(ngModelValue);
-                        }
-                    }, 0);
-                }
+//                if (attrs.ngModel) {
+//                    $timeout(function () {
+//                        var ngModelValue = $scope.$eval(attrs.ngModel);
+//                        if (typeof ngModelValue != "undefined") {
+//                            $scope.updateItemInternal(ngModelValue);
+//                        }
+//                    }, 0);
+//                }
             }
         }
     };

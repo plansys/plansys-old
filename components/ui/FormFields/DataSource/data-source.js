@@ -263,6 +263,9 @@ app.directive('psDataSource', function ($timeout, $http) {
                                     }
 
                                     if (!found) {
+                                        if ($scope.deleteData == null) {
+                                            $scope.deleteData = [];
+                                        }
                                         $scope.deleteData.push(del['id']);
                                     }
                                 }

@@ -121,14 +121,14 @@ app.filter('dateFormat', function (dateFilter) {
         if (date != "0000-00-00") {
             if (typeof date == "string") {
                 if (date.indexOf(" ") > 0) {
-                    date = new Date(date.replace(" ","T"));
+                    date = new Date(date.replace(" ", "T"));
                 } else {
                     date = new Date(date);
                 }
             }
 
             var d = dateFilter(date, format);
-            if (typeof d == "undefined" || d.trim() == "Jan 1, 1970") {
+            if (typeof d == "undefined" || d.trim() == "Jan 1, 1970" || d.indexOf('NaN') >= 0) {
                 return "";
             } else {
                 return d;
@@ -324,6 +324,12 @@ app.directive('contentEdit', ['$timeout', function ($timeout) {
             }
         }
     }]);
+
+String.prototype.fromMysqlDate = String.prototype.fromMysqlDate ||  function () {
+    var t = this.split(/[- :]/);
+    return new Date(t[0], t[1] - 1, t[2], t[3], t[4], t[5]);
+}
+
 app.directive('modelChange', function () {
     return {
         restrict: 'A',

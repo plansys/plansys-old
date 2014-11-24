@@ -467,15 +467,19 @@ class RepoManager extends CComponent {
 
     public function browse($dir = "") {
         $originaldir = $dir;
+        $isRelativePath = false;
         if ($dir == "" || $dir == DIRECTORY_SEPARATOR) {
             $dir = $this->repoPath;
             $parent = "";
         } else {
+            if (strpos($this->repoPath, $dir) === 0) {
+                $isRelativePath = true;
+            }
             $dir = $this->repoPath . DIRECTORY_SEPARATOR . trim($dir, DIRECTORY_SEPARATOR);
             $parent = dirname($dir);
         }
-
-        if (!realpath($dir)) {
+        
+        if (!realpath($dir) && $isRelativePath) {
             $dir = getcwd() . DIRECTORY_SEPARATOR . $dir;
         }
 
