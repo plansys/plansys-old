@@ -11,7 +11,7 @@ app.directive('psChartArea', function ($timeout) {
 				  destination[property] = destination[property] || {};
 				  arguments.callee(destination[property], source[property]);
 				} else {
-				  destination[property] = source[property];
+				  destination[property] = isNaN(source[property]) ? source[property] : parseInt(source[property]);
 				}
 			  }
 			  return destination;
@@ -34,7 +34,7 @@ app.directive('psChartArea', function ($timeout) {
 				else {	
 					var tmp = {};
 					tmp['name'] = $scope.series[i].label;
-					tmp['data'] = $scope.series[i].value.map(Number);
+					tmp['data'] = $scope.series[i].value.map(function(e, i){ return JSON.parse(e)});
 					tmp['color'] = $scope.series[i].color;
 					chartData.push(tmp);
 				}
