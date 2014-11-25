@@ -21,8 +21,6 @@ app.directive('psChartLine', function ($timeout) {
 				var chartData = [];
 				var xAxis = [];
 				
-				console.log(chartData);
-				
 				for(i in chartData_raw)
 				{
 					if(chartData_raw[i].label == $scope.tickSeries) {
@@ -95,9 +93,7 @@ app.directive('psChartLine', function ($timeout) {
 						
 						if($scope.series != null) {
 							for(i in $scope.series) {
-								console.log($scope.series[i], chartData_raw[$scope.series[i].label]);
-								console.log("--");
-								$scope.series[i] = angular.extend(chartData_raw[$scope.series[i].label], $scope.series[i]);
+								$scope.series[i] = angular.extend($scope.series[i], chartData_raw[$scope.series[i].label]);
 							}
 							
 							chartData_raw = $scope.series;
@@ -142,7 +138,7 @@ app.directive('psChartLine', function ($timeout) {
 						if(typeof $scope.data[$scope.chartType] == 'undefined')
 							$scope.data[$scope.chartType] = [];
 						
-						$scope.data['line'].push(chart);
+						$scope.data[$scope.chartType].push(chart);
 						$scope.setxAxisGroup(xAxis);
 						
 						$el.hide();
