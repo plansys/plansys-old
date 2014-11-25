@@ -44,6 +44,29 @@ class ChartGroup extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
+                'label' => 'Group of Pie Charts',
+                'name' => 'isPieGroup',
+                'options' => array (
+                    'ng-model' => 'active.isPieGroup',
+                    'ng-change' => 'save()',
+                ),
+                'listExpr' => 'array(\\"False\\", \\"True\\")',
+                'labelWidth' => '5',
+                'fieldWidth' => '7',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Margin',
+                'name' => 'textField3',
+                'labelWidth' => '5',
+                'fieldWidth' => '7',
+                'postfix' => 'px',
+                'options' => array (
+                    'ng-show' => 'active.isPieGroup == \\\'True\\\'',
+                ),
+                'type' => 'TextField',
+            ),
+            array (
                 'label' => 'Options',
                 'name' => 'options',
                 'allowExtractKey' => 'Yes',
@@ -82,6 +105,9 @@ class ChartGroup extends FormField {
 	
 	/** @var string $yAxisType */
 	public $yAxisType = "Single";
+	
+	/** @var bool $isPieGroup */
+	public $isPieGroup = "False";
 	
     /** @var array $column1 */
     public $column1 = ['<column-placeholder class="hide"></column-placeholder>'];

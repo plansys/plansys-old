@@ -11,9 +11,14 @@ app.directive('psChartPie', function ($timeout) {
 				  destination[property] = destination[property] || {};
 				  arguments.callee(destination[property], source[property]);
 				} else {
-				  destination[property] = isNaN(source[property]) ? source[property] : parseInt(source[property]);
+					if(typeof source[property] != "undefined") {
+						destination[property] = (typeof source[property] == "string") ? source[property] : JSON.parse(source[property]);
+					} else {
+						destination[property] = undefined;
+					}
 				}
 			  }
+			  
 			  return destination;
 			}
 			
@@ -108,8 +113,7 @@ app.directive('psChartPie', function ($timeout) {
 									format : '<i>{point.percentage:.1f}%</i>',
 									color : 'white',
 									distance: -20
-								},
-								showInLegend : true
+								}
 							}
 						}
 					}
@@ -128,8 +132,6 @@ app.directive('psChartPie', function ($timeout) {
 							name: 'value', 
 							data: chartData
 						});
-						
-						$scope.setxAxisGroup(xAxis);
 						
 						$el.hide();
 						$scope.redraw();
@@ -151,6 +153,8 @@ app.directive('psChartPie', function ($timeout) {
 			$scope.chartName = $el.find("data[name=chartName]").text();
 			$scope.series = JSON.parse($el.find("data[name=series]").text());
 			$scope.options = JSON.parse($el.find("data[name=options]").text());
+			
+			console.log($scope.options);
 			
 			$scope.fillSeries();
             $scope.$parent[$scope.name] = $scope;
