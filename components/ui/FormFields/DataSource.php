@@ -346,7 +346,7 @@ class DataSource extends FormField {
         return $sql;
     }
 
-    public static function generateTemplate($sql, $postedParams = [], $field) {
+    public static function generateTemplate($sql, $postedParams = [], $field, $paramDefs = []) {
         $returnParams = [];
 
         ## find all params
@@ -354,7 +354,9 @@ class DataSource extends FormField {
         $model = $field->model;
         foreach ($params[0] as $p) {
             if (isset($postedParams[$p])) {
-                if (strpos($postedParams[$p], 'js:') !== false) {
+                $isJs = strpos($postedParams[$p], 'js:') !== false || (isset($paramDefs[$p]) && strpos($paramDefs[$p], 'js:') !== false);
+                
+                if ($isJs) {
                     switch (get_class($field)) {
                         case "DataSource":
                             $returnParams[$p] = @$field->queryParams[$p];
@@ -451,14 +453,14 @@ class DataSource extends FormField {
      * @return mixed me-return array kosong jika parameter $sql == "", jika tidak maka akan me-return array data hasil execute SQL
      */
     public function query($params = []) {
+        $paramDefs = $params;
         $params = array_merge($params, $this->queryParams);
         if (trim($this->sql) == "")
             return [];
 
 
         $db = Yii::app()->db;
-        $template = DataSource::generateTemplate($this->sql, $params, $this);
-        
+        $template = DataSource::generateTemplate($this->sql, $params, $this, $paramDefs);
         ## execute SQL
         $this->command = $db->createCommand($template['sql']);
         $data = $this->command->queryAll(true, $template['params']);
