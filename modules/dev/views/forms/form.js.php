@@ -268,7 +268,7 @@
             });
         }
 
-        /************************ DATA PIE SERIES ****************************/
+        /************************ DATA CHART SERIES ****************************/
         $scope.generateSeries = function (retrieveMode) {
             var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
             if (confirm("Your current series will be lost. Are you sure?")) {
