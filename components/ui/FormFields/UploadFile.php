@@ -322,7 +322,8 @@ class UploadFile extends FormField {
     public function actionRemove() {
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
-        $file = base64_decode($post['file']);
+        $file = $post['file'];
+        $file = RepoManager::resolve($file);
         unlink($file);
 //        unlink($file . '.json');
     }
