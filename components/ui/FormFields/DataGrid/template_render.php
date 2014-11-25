@@ -65,8 +65,8 @@
                         </button>
                         <ul class="dropdown-menu" ng-class="{'pull-right': gridOptions.enablePaging}"
                             style="z-index:99;" role="menu">
-                            <li style="overflow:hidden;">
-                                <a style="pointer-events:none;padding:3px 7px;" dropdown-toggle href="#">Load From
+                            <li style="overflow:hidden;cursor:pointer;">
+                                <a style="padding:3px 7px;" dropdown-toggle href="#">Load From
                                     Excel</a>
                                 <input style="position:absolute;opacity:0;cursor:pointer;margin-top:-25px;"
                                        onmouseover="$(this).prev().css('background','#f5f5f5');"

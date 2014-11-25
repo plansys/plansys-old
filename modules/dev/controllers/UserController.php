@@ -87,7 +87,7 @@ class UserController extends Controller {
     }
 
     public function actionIndex() {
-        $this->renderForm("users.user.DevUserIndexH", [
+        $this->renderForm("users.user.DevUserIndex", [
             'useLdap' => Yii::app()->user->useLdap
         ]);
     }

@@ -1,6 +1,7 @@
 <?php
 
-class Setting {
+class Setting
+{
 
     private static $data;
     public static $basePath;
@@ -22,7 +23,8 @@ class Setting {
         ],
     ];
 
-    private static function setupBasePath($configfile) {
+    private static function setupBasePath($configfile)
+    {
         $basePath = dirname($configfile);
         $basePath = explode(DIRECTORY_SEPARATOR, $basePath);
 
@@ -35,7 +37,8 @@ class Setting {
         return Setting::$basePath;
     }
 
-    public static function getLDAP() {
+    public static function getLDAP()
+    {
         $ldap = Setting::get('ldap');
 
         if (!is_null($ldap)) {
@@ -48,7 +51,8 @@ class Setting {
         }
     }
 
-    public static function init($configfile) {
+    public static function init($configfile)
+    {
         date_default_timezone_set("Asia/Jakarta");
         $bp = Setting::setupBasePath($configfile);
         Setting::$path = $bp . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
@@ -61,12 +65,21 @@ class Setting {
         }
         Setting::$data = json_decode(file_get_contents(Setting::$path), true);
 
+        ## set host
+        if (!Setting::get('app.host')) {
+            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+            $port = $_SERVER['SERVER_PORT'] == 443 || $_SERVER['SERVER_PORT'] == 80 ? "" : ":" . $_SERVER['SERVER_PORT'];
+            Setting::set('app.host', $protocol . $_SERVER['HTTP_HOST'] . $port);
+        }
+
+        ## set path
         Yii::setPathOfAlias('app', Setting::getAppPath());
         Yii::setPathOfAlias('application', Setting::getApplicationPath());
         Yii::setPathOfAlias('repo', Setting::get('repo.path'));
     }
 
-    public static function get($key, $default = null) {
+    public static function get($key, $default = null)
+    {
         $keys = explode('.', $key);
 
         $arr = Setting::$data;
@@ -81,12 +94,14 @@ class Setting {
         return $arr;
     }
 
-    public static function set($key, $value) {
+    public static function set($key, $value)
+    {
         Setting::setInternal(Setting::$data, $key, $value);
         file_put_contents(Setting::$path, json_encode(Setting::$data, JSON_PRETTY_PRINT));
     }
 
-    private static function setInternal(&$arr, $path, $value) {
+    private static function setInternal(&$arr, $path, $value)
+    {
         $keys = explode('.', $path);
 
         while ($key = array_shift($keys)) {
@@ -96,27 +111,33 @@ class Setting {
         $arr = $value;
     }
 
-    public static function getBasePath() {
+    public static function getBasePath()
+    {
         return Setting::$basePath;
     }
 
-    public static function getRootPath() {
+    public static function getRootPath()
+    {
         return Setting::$rootPath;
     }
 
-    public static function getAppPath() {
+    public static function getAppPath()
+    {
         return Setting::$rootPath . DIRECTORY_SEPARATOR . Setting::get('app.dir');
     }
 
-    public static function getApplicationPath() {
+    public static function getApplicationPath()
+    {
         return Setting::$rootPath . DIRECTORY_SEPARATOR . 'plansys';
     }
 
-    public static function getPlansysDirName() {
+    public static function getPlansysDirName()
+    {
         return Helper::explodeLast(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
     }
 
-    public static function getModulePath() {
+    public static function getModulePath()
+    {
         if (file_exists(Yii::getPathOfAlias('app.modules'))) {
             return Yii::getPathOfAlias('app.modules');
         } else {
@@ -124,7 +145,8 @@ class Setting {
         }
     }
 
-    public static function getControllerMap() {
+    public static function getControllerMap()
+    {
         $controllers = [];
 
         if (is_dir(Yii::getPathOfAlias('app.controllers'))) {
@@ -146,13 +168,15 @@ class Setting {
         return $controllers;
     }
 
-    public static function explodeLast($delimeter, $str) {
+    public static function explodeLast($delimeter, $str)
+    {
         $a = explode($delimeter, $str);
         return end($a);
     }
 
-    
-    public static function getModules() {
+
+    public static function getModules()
+    {
         $modules = glob(Setting::getBasePath() . DIRECTORY_SEPARATOR . "modules" . DIRECTORY_SEPARATOR . "*");
         $appModules = glob(Setting::getAppPath() . DIRECTORY_SEPARATOR . "modules" . DIRECTORY_SEPARATOR . "*");
 
@@ -173,7 +197,8 @@ class Setting {
         return $return;
     }
 
-    public static function getDB() {
+    public static function getDB()
+    {
         if (Setting::get('db.port') == null) {
             $connection = [
                 'connectionString' => Setting::get('db.driver') . ':host=' . Setting::get('db.server') . ';dbname=' . Setting::get('db.dbname'),
@@ -194,7 +219,8 @@ class Setting {
         return $connection;
     }
 
-    public static function getDBDriverList() {
+    public static function getDBDriverList()
+    {
         return [
             'mysql' => 'MySQL',
             /*

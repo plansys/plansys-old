@@ -15,6 +15,7 @@
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/index.app.js'));
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/index.ctrl.js'));
 	Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/highcharts/highcharts.js'));
+	Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/highcharts/no-data-to-display.src.js'));
 	Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/colorpicker/js/colorpicker.js'));
 	
     

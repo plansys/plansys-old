@@ -723,17 +723,6 @@ class RepoManager extends CComponent {
             $this->repoPath = Setting::get("repo.path");
         }
 
-//        if (Yii::app()->user->role != 'admin' && Yii::app()->user->role != 'dev') {
-//            $module = Yii::app()->user->role;
-//            if (strpos($module, '.') == true) {
-//                $module = explode('.', $module);
-//                $module = implode(DIRECTORY_SEPARATOR, $module);
-//            }
-//            $this->repoPath = $this->repoPath . DIRECTORY_SEPARATOR . $module;
-//            if (!file_exists($this->repoPath)) {
-//                mkdir($this->repoPath, 0777, true);
-//            }
-//        }
     }
 
 }

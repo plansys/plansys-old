@@ -17,11 +17,14 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                         case 'date':
                             $scope.value = $scope.date;
                             break;
+                        case 'monthyear':
+                            $scope.value = $scope.date;
+                            break;
                         case 'time':
                             $scope.value = $scope.time;
                             break;
                     }
-                    
+
                     if (typeof ctrl != 'undefined') {
                         $el.find('ul[datepicker-popup-wrap]').hide();
                         $timeout(function () {
@@ -29,6 +32,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                         }, 0);
                     }
                 };
+
 
                 $scope.changeDate = function (e) {
                     $scope.date = dateFilter(e.date, 'yyyy-MM-dd');
@@ -106,6 +110,8 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                                 case 'time':
                                     $scope.value = dateFilter(new Date(), 'HH:mm:00');
                                     break;
+                                case 'monthyear':
+                                    $scope.value = dateFilter(new Date(), 'yyyy-MM-01');
                             }
                         } else {
                             $scope.value = '';
@@ -139,9 +145,30 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                                 $scope.time = $scope.parseTime(split[1]);
                             }
                             break;
+                        case "monthyear":
+                            var date = split[0].split("-");
+                            if (date.length > 1) {
+                                $scope.month = date[1] - 1;
+                                $scope.year = date[0];
+                                var y = $scope.year * 1;
+                                $scope.yearList = [y - 1, y, y + 1];
+                            }
                     }
                 }
 
+                $scope.changeMonth = function (m) {
+                    $scope.month = m;
+                    
+                    var month = $scope.month < 10 ? "0" + ($scope.month + 1) : $scope.month + 1;
+                    $scope.value = $scope.year + "-" + month + "-01";
+                }
+                
+                $scope.changeYear = function (y) {
+                    $scope.year = y;
+                    
+                    var month = $scope.month < 10 ? "0" + ($scope.month + 1) : $scope.month + 1;
+                    $scope.value = $scope.year + "-" + month + "-01";
+                }
 
                 // when ng-model is changed from outside directive
                 if (typeof ctrl != 'undefined') {
@@ -163,7 +190,8 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                 $scope.date = null;
                 $scope.time = "";
                 $scope.splitDateTime();
-
+                $scope.monthList = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                    "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
                 $scope.modelClass = $el.find("data[name=model_class]").html();
 
                 $scope.fieldType = $el.find("data[name=field_type]").text();

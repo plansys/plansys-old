@@ -11,7 +11,7 @@ app.directive('psChartLine', function ($timeout) {
 				  destination[property] = destination[property] || {};
 				  arguments.callee(destination[property], source[property]);
 				} else {
-				  destination[property] = source[property];
+				  destination[property] = isNaN(source[property]) ? source[property] : parseInt(source[property]);
 				}
 			  }
 			  return destination;

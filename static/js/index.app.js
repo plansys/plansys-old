@@ -1,9 +1,9 @@
 if (!Array.prototype.filter) {
     Array.prototype.filter = function (fn, context) {
         var i,
-                value,
-                result = [],
-                length;
+            value,
+            result = [],
+            length;
         if (!this || typeof fn !== 'function' || (fn instanceof RegExp)) {
             throw new TypeError();
         }
@@ -45,8 +45,8 @@ function registerController(controllerName) {
     for (var i = 0; i < queue.length; i++) {
         var call = queue[i];
         if (call[0] == "$controllerProvider" &&
-                call[1] == "register" &&
-                call[2][0] == controllerName) {
+            call[1] == "register" &&
+            call[2][0] == controllerName) {
             controllerProvider.register(controllerName, call[2][1]);
         }
     }
@@ -146,13 +146,13 @@ app.filter('elipsisMiddle', function () {
         separator = separator || '...';
 
         var sepLen = separator.length,
-                charsToShow = strLen - sepLen,
-                frontChars = Math.ceil(charsToShow / 2),
-                backChars = Math.floor(charsToShow / 2);
+            charsToShow = strLen - sepLen,
+            frontChars = Math.ceil(charsToShow / 2),
+            backChars = Math.floor(charsToShow / 2);
 
         return fullStr.substr(0, frontChars) +
-                separator +
-                fullStr.substr(fullStr.length - backChars);
+        separator +
+        fullStr.substr(fullStr.length - backChars);
     };
 });
 app.filter('countLine', function () {
@@ -193,15 +193,15 @@ app.filter("timeago", function () {
         }
 
         var
-                offset = Math.abs((local - time) / 1000),
-                span = [],
-                MINUTE = 60,
-                HOUR = 3600,
-                DAY = 86400,
-                WEEK = 604800,
-                MONTH = 2629744,
-                YEAR = 31556926,
-                DECADE = 315569260;
+            offset = Math.abs((local - time) / 1000),
+            span = [],
+            MINUTE = 60,
+            HOUR = 3600,
+            DAY = 86400,
+            WEEK = 604800,
+            MONTH = 2629744,
+            YEAR = 31556926,
+            DECADE = 315569260;
 
         if (offset <= MINUTE)
             span = ['', raw ? 'now' : 'beberapa saat'];
@@ -232,103 +232,103 @@ app.filter("timeago", function () {
     }
 });
 app.directive('contentEdit', ['$timeout', function ($timeout) {
-        return {
-            restrict: 'A',
-            require: '?ngModel',
-            link: function (scope, element, attrs, ngModel) {
-                // don't do anything unless this is actually bound to a model
-                if (!ngModel) {
-                    return
-                }
+    return {
+        restrict: 'A',
+        require: '?ngModel',
+        link: function (scope, element, attrs, ngModel) {
+            // don't do anything unless this is actually bound to a model
+            if (!ngModel) {
+                return
+            }
 
-                // options
-                var opts = {}
-                angular.forEach([
-                    'stripBr',
-                    'noLineBreaks',
-                    'selectNonEditable',
-                    'moveCaretToEndOnChange',
-                ], function (opt) {
-                    var o = attrs[opt]
-                    opts[opt] = o && o !== 'false'
-                })
+            // options
+            var opts = {}
+            angular.forEach([
+                'stripBr',
+                'noLineBreaks',
+                'selectNonEditable',
+                'moveCaretToEndOnChange',
+            ], function (opt) {
+                var o = attrs[opt]
+                opts[opt] = o && o !== 'false'
+            })
 
-                // view -> model
-                element.bind('input', function (e) {
-                    scope.$apply(function () {
-                        var html, html2, rerender
-                        html = element.html()
-                        rerender = false
-                        if (opts.stripBr) {
-                            html = html.replace(/<br>$/, '')
-                        }
-                        if (opts.noLineBreaks) {
-                            html2 = html.replace(/<div>/g, '').replace(/<br>/g, '').replace(/<\/div>/g, '')
-                            if (html2 !== html) {
-                                rerender = true
-                                html = html2
-                            }
-                        }
-                        ngModel.$setViewValue(html)
-                        if (rerender) {
-                            ngModel.$render()
-                        }
-                        if (html === '') {
-                            // the cursor disappears if the contents is empty
-                            // so we need to refocus
-                            $timeout(function () {
-                                element[0].blur()
-                                element[0].focus()
-                            })
-                        }
-                    })
-                })
-
-                // model -> view
-                var oldRender = ngModel.$render
-                ngModel.$render = function () {
-                    var el, el2, range, sel
-                    if (!!oldRender) {
-                        oldRender()
+            // view -> model
+            element.bind('input', function (e) {
+                scope.$apply(function () {
+                    var html, html2, rerender
+                    html = element.html()
+                    rerender = false
+                    if (opts.stripBr) {
+                        html = html.replace(/<br>$/, '')
                     }
-                    element.html(ngModel.$viewValue || '')
-                    if (opts.moveCaretToEndOnChange) {
-                        el = element[0]
+                    if (opts.noLineBreaks) {
+                        html2 = html.replace(/<div>/g, '').replace(/<br>/g, '').replace(/<\/div>/g, '')
+                        if (html2 !== html) {
+                            rerender = true
+                            html = html2
+                        }
+                    }
+                    ngModel.$setViewValue(html)
+                    if (rerender) {
+                        ngModel.$render()
+                    }
+                    if (html === '') {
+                        // the cursor disappears if the contents is empty
+                        // so we need to refocus
+                        $timeout(function () {
+                            element[0].blur()
+                            element[0].focus()
+                        })
+                    }
+                })
+            })
+
+            // model -> view
+            var oldRender = ngModel.$render
+            ngModel.$render = function () {
+                var el, el2, range, sel
+                if (!!oldRender) {
+                    oldRender()
+                }
+                element.html(ngModel.$viewValue || '')
+                if (opts.moveCaretToEndOnChange) {
+                    el = element[0]
+                    range = document.createRange()
+                    sel = window.getSelection()
+                    if (el.childNodes.length > 0) {
+                        el2 = el.childNodes[el.childNodes.length - 1]
+                        range.setStartAfter(el2)
+                    } else {
+                        range.setStartAfter(el)
+                    }
+                    range.collapse(true)
+                    sel.removeAllRanges()
+                    sel.addRange(range)
+                }
+            }
+            if (opts.selectNonEditable) {
+                element.bind('click', function (e) {
+                    var range, sel, target
+                    target = e.toElement
+                    if (target !== this && angular.element(target).attr('contenteditable') === 'false') {
                         range = document.createRange()
                         sel = window.getSelection()
-                        if (el.childNodes.length > 0) {
-                            el2 = el.childNodes[el.childNodes.length - 1]
-                            range.setStartAfter(el2)
-                        } else {
-                            range.setStartAfter(el)
-                        }
-                        range.collapse(true)
+                        range.setStartBefore(target)
+                        range.setEndAfter(target)
                         sel.removeAllRanges()
                         sel.addRange(range)
                     }
-                }
-                if (opts.selectNonEditable) {
-                    element.bind('click', function (e) {
-                        var range, sel, target
-                        target = e.toElement
-                        if (target !== this && angular.element(target).attr('contenteditable') === 'false') {
-                            range = document.createRange()
-                            sel = window.getSelection()
-                            range.setStartBefore(target)
-                            range.setEndAfter(target)
-                            sel.removeAllRanges()
-                            sel.addRange(range)
-                        }
-                    })
-                }
+                })
             }
         }
-    }]);
+    }
+}]);
 
-String.prototype.fromMysqlDate = String.prototype.fromMysqlDate ||  function () {
-    var t = this.split(/[- :]/);
-    return new Date(t[0], t[1] - 1, t[2], t[3], t[4], t[5]);
-}
+//String.prototype.fromMysqlDate = String.prototype.fromMysqlDate ||  function () {
+//    var t = this.split(/[- :]/);
+//    return new Date(t[0], t[1] - 1, t[2], t[3], t[4], t[5]);
+//}
 
 app.directive('modelChange', function () {
     return {
@@ -371,184 +371,184 @@ app.directive('ngEnter', function () {
     };
 });
 app.directive('autoGrow', ['$timeout', '$window', function ($timeout, $window) {
-        'use strict';
-        var config = {
-            append: ''
-        };
-        return {
-            require: 'ngModel',
-            restrict: 'A, C',
-            link: function (scope, element, attrs, ngModel) {
+    'use strict';
+    var config = {
+        append: ''
+    };
+    return {
+        require: 'ngModel',
+        restrict: 'A, C',
+        link: function (scope, element, attrs, ngModel) {
 
-                // cache a reference to the DOM element
-                var ta = element[0],
-                        $ta = element;
-                // ensure the element is a textarea, and browser is capable
-                if (ta.nodeName !== 'TEXTAREA' || !$window.getComputedStyle) {
-                    return;
-                }
+            // cache a reference to the DOM element
+            var ta = element[0],
+                $ta = element;
+            // ensure the element is a textarea, and browser is capable
+            if (ta.nodeName !== 'TEXTAREA' || !$window.getComputedStyle) {
+                return;
+            }
 
-                // set these properties before measuring dimensions
-                $ta.css({
-                    'overflow': 'hidden',
-                    'overflow-y': 'hidden',
-                    'word-wrap': 'break-word'
-                });
-                // force text reflow
-                var text = ta.value;
-                ta.value = '';
-                ta.value = text;
-                var appendText = attrs.msdElastic || config.append,
-                        append = appendText === '\\n' ? '\n' : appendText,
-                        $win = angular.element($window),
-                        mirrorStyle = 'position: absolute; top: -999px; right: auto; bottom: auto; left: 0 ;' +
-                        'overflow: hidden; -webkit-box-sizing: content-box;' +
-                        '-moz-box-sizing: content-box; box-sizing: content-box;' +
-                        'min-height: 0 !important; height: 0 !important; padding: 0;' +
-                        'word-wrap: break-word; border: 0;',
-                        $mirror = angular.element('<textarea tabindex="-1" ' +
-                                'style="' + mirrorStyle + '"/>').data('elastic', true),
-                        mirror = $mirror[0],
-                        taStyle = getComputedStyle(ta), resize = taStyle.getPropertyValue('resize'),
-                        borderBox = taStyle.getPropertyValue('box-sizing') === 'border-box' ||
-                        taStyle.getPropertyValue('-moz-box-sizing') === 'border-box' || taStyle.getPropertyValue('-webkit-box-sizing') === 'border-box',
-                        boxOuter = !borderBox ? {width: 0, height: 0} : {
+            // set these properties before measuring dimensions
+            $ta.css({
+                'overflow': 'hidden',
+                'overflow-y': 'hidden',
+                'word-wrap': 'break-word'
+            });
+            // force text reflow
+            var text = ta.value;
+            ta.value = '';
+            ta.value = text;
+            var appendText = attrs.msdElastic || config.append,
+                append = appendText === '\\n' ? '\n' : appendText,
+                $win = angular.element($window),
+                mirrorStyle = 'position: absolute; top: -999px; right: auto; bottom: auto; left: 0 ;' +
+                    'overflow: hidden; -webkit-box-sizing: content-box;' +
+                    '-moz-box-sizing: content-box; box-sizing: content-box;' +
+                    'min-height: 0 !important; height: 0 !important; padding: 0;' +
+                    'word-wrap: break-word; border: 0;',
+                $mirror = angular.element('<textarea tabindex="-1" ' +
+                'style="' + mirrorStyle + '"/>').data('elastic', true),
+                mirror = $mirror[0],
+                taStyle = getComputedStyle(ta), resize = taStyle.getPropertyValue('resize'),
+                borderBox = taStyle.getPropertyValue('box-sizing') === 'border-box' ||
+                    taStyle.getPropertyValue('-moz-box-sizing') === 'border-box' || taStyle.getPropertyValue('-webkit-box-sizing') === 'border-box',
+                boxOuter = !borderBox ? {width: 0, height: 0} : {
                     width: parseInt(taStyle.getPropertyValue('border-right-width'), 10) +
-                            parseInt(taStyle.getPropertyValue('padding-right'), 10) +
-                            parseInt(taStyle.getPropertyValue('padding-left'), 10) + parseInt(taStyle.getPropertyValue('border-left-width'), 10),
+                    parseInt(taStyle.getPropertyValue('padding-right'), 10) +
+                    parseInt(taStyle.getPropertyValue('padding-left'), 10) + parseInt(taStyle.getPropertyValue('border-left-width'), 10),
                     height: parseInt(taStyle.getPropertyValue('border-top-width'), 10) +
-                            parseInt(taStyle.getPropertyValue('padding-top'), 10) +
-                            parseInt(taStyle.getPropertyValue('padding-bottom'), 10) +
-                            parseInt(taStyle.getPropertyValue('border-bottom-width'), 10)
+                    parseInt(taStyle.getPropertyValue('padding-top'), 10) +
+                    parseInt(taStyle.getPropertyValue('padding-bottom'), 10) +
+                    parseInt(taStyle.getPropertyValue('border-bottom-width'), 10)
                 },
                 minHeightValue = parseInt(taStyle.getPropertyValue('min-height'), 10),
-                        heightValue = parseInt(taStyle.getPropertyValue('height'), 10),
-                        minHeight = Math.max(minHeightValue, heightValue) - boxOuter.height,
-                        maxHeight = parseInt(taStyle.getPropertyValue('max-height'), 10),
-                        mirrored,
-                        active,
-                        copyStyle = ['font-family',
-                            'font-size',
-                            'font-weight',
-                            'font-style',
-                            'letter-spacing',
-                            'line-height',
-                            'text-transform',
-                            'word-spacing',
-                            'text-indent'];
-                // exit if elastic already applied (or is the mirror element)
-                if ($ta.data('elastic')) {
-                    return;
-                }
-
-                // Opera returns max-height of -1 if not set
-                maxHeight = maxHeight && maxHeight > 0 ? maxHeight : 9e4;
-                // append mirror to the DOM
-                if (mirror.parentNode !== document.body) {
-                    angular.element(document.body).append(mirror);
-                }
-
-                // set resize and apply elastic
-                $ta.css({
-                    'resize': (resize === 'none' || resize === 'vertical') ? 'none' : 'horizontal'
-                }).data('elastic', true);
-                /*
-                 * methods
-                 */
-
-                function initMirror() {
-                    mirrored = ta;
-                    // copy the essential styles from the textarea to the mirror
-                    taStyle = getComputedStyle(ta);
-                    angular.forEach(copyStyle, function (val) {
-                        mirrorStyle += val + ':' + taStyle.getPropertyValue(val) + ';';
-                    });
-                    mirror.setAttribute('style', mirrorStyle);
-                }
-
-                function adjust() {
-                    var taHeight,
-                            taComputedStyleWidth,
-                            mirrorHeight,
-                            width,
-                            overflow;
-                    if (mirrored !== ta) {
-                        initMirror();
-                    }
-
-                    // active flag prevents actions in function from calling adjust again
-                    if (!active) {
-                        active = true;
-                        mirror.value = ta.value + append; // optional whitespace to improve animation
-                        mirror.style.overflowY = ta.style.overflowY;
-                        taHeight = ta.style.height === '' ? 'auto' : parseInt(ta.style.height, 10);
-                        taComputedStyleWidth = getComputedStyle(ta).getPropertyValue('width');
-                        // ensure getComputedStyle has returned a readable 'used value' pixel width
-                        if (taComputedStyleWidth.substr(taComputedStyleWidth.length - 2, 2) === 'px') {
-                            // update mirror width in case the textarea width has changed
-                            width = parseInt(taComputedStyleWidth, 10) - boxOuter.width;
-                            mirror.style.width = width + 'px';
-                        }
-
-                        mirrorHeight = mirror.scrollHeight;
-                        if (mirrorHeight > maxHeight) {
-                            mirrorHeight = maxHeight;
-                            overflow = 'scroll';
-                        } else if (mirrorHeight < minHeight) {
-                            mirrorHeight = minHeight;
-                        }
-                        mirrorHeight += boxOuter.height;
-                        ta.style.overflowY = overflow || 'hidden';
-                        if (taHeight !== mirrorHeight) {
-                            ta.style.height = mirrorHeight + 'px';
-                            scope.$emit('elastic:resize', $ta);
-                        }
-
-                        // small delay to prevent an infinite loop
-                        $timeout(function () {
-                            active = false;
-                        }, 1);
-                    }
-                }
-
-                function forceAdjust() {
-                    active = false;
-                    adjust();
-                }
-
-                /*
-                 * initialise
-                 */
-
-                // listen
-                if ('onpropertychange' in ta && 'oninput' in ta) {
-                    // IE9
-                    ta['oninput'] = ta.onkeyup = adjust;
-                } else {
-                    ta['oninput'] = adjust;
-                }
-
-                $win.bind('resize', forceAdjust);
-                scope.$watch(function () {
-                    return ngModel.$modelValue;
-                }, function (newValue) {
-                    forceAdjust();
-                });
-                scope.$on('elastic:adjust', function () {
-                    forceAdjust();
-                });
-                $timeout(adjust);
-                /*
-                 * destroy
-                 */
-
-                scope.$on('$destroy', function () {
-                    $mirror.remove();
-                    $win.unbind('resize', forceAdjust);
-                });
+                heightValue = parseInt(taStyle.getPropertyValue('height'), 10),
+                minHeight = Math.max(minHeightValue, heightValue) - boxOuter.height,
+                maxHeight = parseInt(taStyle.getPropertyValue('max-height'), 10),
+                mirrored,
+                active,
+                copyStyle = ['font-family',
+                    'font-size',
+                    'font-weight',
+                    'font-style',
+                    'letter-spacing',
+                    'line-height',
+                    'text-transform',
+                    'word-spacing',
+                    'text-indent'];
+            // exit if elastic already applied (or is the mirror element)
+            if ($ta.data('elastic')) {
+                return;
             }
-        };
-    }
+
+            // Opera returns max-height of -1 if not set
+            maxHeight = maxHeight && maxHeight > 0 ? maxHeight : 9e4;
+            // append mirror to the DOM
+            if (mirror.parentNode !== document.body) {
+                angular.element(document.body).append(mirror);
+            }
+
+            // set resize and apply elastic
+            $ta.css({
+                'resize': (resize === 'none' || resize === 'vertical') ? 'none' : 'horizontal'
+            }).data('elastic', true);
+            /*
+             * methods
+             */
+
+            function initMirror() {
+                mirrored = ta;
+                // copy the essential styles from the textarea to the mirror
+                taStyle = getComputedStyle(ta);
+                angular.forEach(copyStyle, function (val) {
+                    mirrorStyle += val + ':' + taStyle.getPropertyValue(val) + ';';
+                });
+                mirror.setAttribute('style', mirrorStyle);
+            }
+
+            function adjust() {
+                var taHeight,
+                    taComputedStyleWidth,
+                    mirrorHeight,
+                    width,
+                    overflow;
+                if (mirrored !== ta) {
+                    initMirror();
+                }
+
+                // active flag prevents actions in function from calling adjust again
+                if (!active) {
+                    active = true;
+                    mirror.value = ta.value + append; // optional whitespace to improve animation
+                    mirror.style.overflowY = ta.style.overflowY;
+                    taHeight = ta.style.height === '' ? 'auto' : parseInt(ta.style.height, 10);
+                    taComputedStyleWidth = getComputedStyle(ta).getPropertyValue('width');
+                    // ensure getComputedStyle has returned a readable 'used value' pixel width
+                    if (taComputedStyleWidth.substr(taComputedStyleWidth.length - 2, 2) === 'px') {
+                        // update mirror width in case the textarea width has changed
+                        width = parseInt(taComputedStyleWidth, 10) - boxOuter.width;
+                        mirror.style.width = width + 'px';
+                    }
+
+                    mirrorHeight = mirror.scrollHeight;
+                    if (mirrorHeight > maxHeight) {
+                        mirrorHeight = maxHeight;
+                        overflow = 'scroll';
+                    } else if (mirrorHeight < minHeight) {
+                        mirrorHeight = minHeight;
+                    }
+                    mirrorHeight += boxOuter.height;
+                    ta.style.overflowY = overflow || 'hidden';
+                    if (taHeight !== mirrorHeight) {
+                        ta.style.height = mirrorHeight + 'px';
+                        scope.$emit('elastic:resize', $ta);
+                    }
+
+                    // small delay to prevent an infinite loop
+                    $timeout(function () {
+                        active = false;
+                    }, 1);
+                }
+            }
+
+            function forceAdjust() {
+                active = false;
+                adjust();
+            }
+
+            /*
+             * initialise
+             */
+
+            // listen
+            if ('onpropertychange' in ta && 'oninput' in ta) {
+                // IE9
+                ta['oninput'] = ta.onkeyup = adjust;
+            } else {
+                ta['oninput'] = adjust;
+            }
+
+            $win.bind('resize', forceAdjust);
+            scope.$watch(function () {
+                return ngModel.$modelValue;
+            }, function (newValue) {
+                forceAdjust();
+            });
+            scope.$on('elastic:adjust', function () {
+                forceAdjust();
+            });
+            $timeout(adjust);
+            /*
+             * destroy
+             */
+
+            scope.$on('$destroy', function () {
+                $mirror.remove();
+                $win.unbind('resize', forceAdjust);
+            });
+        }
+    };
+}
 ]);
 app.directive('dynamic', function ($compile) {
     return {
@@ -630,21 +630,21 @@ app.directive('ngDelay', ['$timeout',
     }
 ]);
 app.directive("formSubmit", ['$timeout', function ($timeout) {
-        return {
-            scope: {
-                formSubmit: "@"
-            },
-            link: function (scope, element, attributes) {
-                element.bind("submit", function (loadEvent) {
+    return {
+        scope: {
+            formSubmit: "@"
+        },
+        link: function (scope, element, attributes) {
+            element.bind("submit", function (loadEvent) {
 
-                    scope.$parent.$eval(scope.formSubmit);
+                scope.$parent.$eval(scope.formSubmit);
 
-                    element.unbind("submit");
-                    $timeout(function () {
-                        element.submit();
-                    }, 0);
-                    return false;
-                });
-            }
+                element.unbind("submit");
+                $timeout(function () {
+                    element.submit();
+                }, 0);
+                return false;
+            });
         }
-    }]);
+    }
+}]);

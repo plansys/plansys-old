@@ -226,7 +226,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                         if ($scope.columns[i].name == field) {
                             var newval = '';
                             for (k in $scope.columns[i].stringAlias) {
-                                if (k.toLowerCase() == value.toLowerCase()) {
+                                if (k.toLowerCase() == value.toLowerCase() || k.toLowerCase() == "'" + value.toLowerCase() + "'") {
                                     return $scope.columns[i].stringAlias[k];
                                 }
                                 if (k.indexOf('rx:') == 0) {
@@ -250,17 +250,33 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
 
 
                 // Generate Excel Template
-                $scope.generateTemplate = function () {
+
+                $scope.getCols = function (return_array) {
                     var cols = [];
-                    if ($scope.datasource.data == 0) {
-                        for (i in $scope.gridOptions.columnDefs) {
-                            cols.push($scope.gridOptions.columnDefs[i]);
+                    if ($scope.columns) {
+                        for (i in  $scope.columns) {
+                            if ($scope.columns[i].visible === false) continue;
+
+                            if (!return_array) {
+                                cols.push({idx: i, label: $scope.columns[i].label, name: $scope.columns[i].name});
+                            } else {
+                                cols.push($scope.columns[i].label);
+                            }
                         }
-                    } else {
+                    } else if ($scope.datasource.data) {
                         for (i in $scope.datasource.data[0]) {
-                            cols.push(i);
+                            if (!return_array) {
+                                cols.push({label: i, name: i});
+                            } else {
+                                cols.push(i);
+                            }
                         }
                     }
+                    return cols;
+                };
+
+                $scope.generateTemplate = function () {
+                    var cols = $scope.getCols(true);
 
                     location.href = Yii.app.createUrl('/formfield/DataGrid.generateExcelTemplate', {
                         columns: JSON.stringify(cols)
@@ -270,10 +286,24 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                 // Export Excel
                 $scope.exportExcel = function () {
                     var url = Yii.app.createUrl('/formfield/DataGrid.exportExcel');
-                    var data = JSON.stringify($scope.datasource.data);
                     var file = $scope.form.title;
+                    var cols = $scope.getCols();
+                    var data = [];
+                    for (i in $scope.datasource.data) {
+                        var row = $scope.datasource.data[i];
+                        var d = {};
+                        for (k in cols) {
+                            var col = cols[k];
 
-                    console.log(data);
+                            if (row[col.name + "_label"] && $scope.columns[col.idx].columnType == "relation") {
+                                d[col.label] = row[col.name + "_label"];
+                            } else {
+                                d[col.label] = row[col.name];
+                            }
+                        }
+                        data.push(d);
+                    }
+                    var data = JSON.stringify(data);
 
                     var form = $('<form target="_blank" action="' + url + '" method="post">' +
                     '<input type="hidden" name="data" value=\'' + data + '\' />' +
@@ -372,6 +402,10 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                     if (Object.prototype.toString.call(col.stringAlias) == "[object Object]") {
                         varDef = 'stringAlias(row.getProperty(col.field),col.field)';
                     }
+                    if (col.options['parse-func']) {
+                        varDef = col.options['parse-func'] + '(row.getProperty(col.field),row)';
+                    }
+
                     if (col.options.cellFilter) {
                         varDef += ' | ' + col.options.cellFilter;
                     }
@@ -498,11 +532,19 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                 $scope.generateCellRelation = function (col) {
                     var editableClass = $scope.getEditableClass(col);
 
+
+                    var emptyString = '- Empty -';
+                    var emptyStyle = 'color:#999;font-size:12px;';
+                    if (col.options['if-empty']) {
+                        emptyString = col.options['if-empty'];
+                        emptyStyle = '';
+                    }
+
                     var html = '<div class="ngCellText dgr ' + editableClass + '" ng-class="col.colIndex()"';
                     html += 'dgr-id="{{row.getProperty(col.field)}}" dgr-model="' + col.relModelClass + '" ';
                     html += 'dgr-class="' + $scope.modelClass + '" dgr-name="' + $scope.name + '" dgr-col="' + col.name + '" dgr-labelField="' + col.relLabelField + '" ';
                     html += 'dgr-idField="' + col.relIdField + '">';
-                    html += '<span ng-if=\'row.getProperty(col.field + "_label") == ""\' style="color:#999;font-size:12px;">- Empty -</span>';
+                    html += '<span ng-if=\'row.getProperty(col.field + "_label") == ""\' style="' + emptyStyle + '">' + emptyString + '</span>';
                     html += '<span ng-if=\'row.getProperty(col.field + "_label") != ""\' ng-cell-text>{{row.getProperty(col.field + "_label")}}';
                     html += '</span></div>';
 

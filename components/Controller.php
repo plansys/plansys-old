@@ -4,7 +4,8 @@
  * Controller is the customized base controller class.
  * All controller classes for this application should extend from this base class.
  */
-class Controller extends CController {
+class Controller extends CController
+{
 
     /**
      * @var string the default layout for the controller view. Defaults to '//layouts/column1',
@@ -12,23 +13,27 @@ class Controller extends CController {
      */
     public $layout = '//layouts/main';
 
-    public function url($path) {
+    public function url($path)
+    {
         return Yii::app()->request->baseUrl . $path;
     }
 
-    public function staticUrl($path) {
+    public function staticUrl($path)
+    {
         $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
         $static = "/" . array_pop($dir) . "/static";
         return $this->url($static . $path);
     }
 
-    public function staticAppUrl($path) {
+    public function staticAppUrl($path)
+    {
         $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
         $static = "/" . array_pop($dir) . "/static";
         return $this->url($static . $path);
     }
 
-    public function renderForm($class, $model = null, $params = [], $options = []) {
+    public function renderForm($class, $model = null, $params = [], $options = [])
+    {
         $fb = FormBuilder::load($class);
         $this->pageTitle = $fb->form['title'];
         $this->layout = '//layouts/form';
@@ -60,7 +65,8 @@ class Controller extends CController {
         $this->renderText($layout, false);
     }
 
-    public function getMainMenu() {
+    public function getMainMenu()
+    {
         $name = "";
         if (!Yii::app()->user->isGuest) {
             $name = Yii::app()->user->model->fullname;
@@ -73,7 +79,7 @@ class Controller extends CController {
                 'visible' => Yii::app()->user->isGuest
             ],
             [
-                'label' =>  ucfirst($name),
+                'label' => ucfirst($name),
                 'url' => '#',
                 'items' => [
                     [
@@ -112,10 +118,15 @@ class Controller extends CController {
         }
     }
 
-    public function loadModel($id, $form) {
-        $model = $form::model()->findByPk($id);
+    public function loadModel($id, $form)
+    {
+        if (strpos($form, '.') > 0) {
+            Yii::import($form);
+            $form = Helper::explodeLast(".", $form);
+        }
 
-        
+        $model = $form::model($form)->findByPk($id);
+
         if ($model === null)
             throw new CHttpException(404, 'The requested page does not exist.');
         return $model;
