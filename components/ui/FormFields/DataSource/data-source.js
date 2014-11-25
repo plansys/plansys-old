@@ -146,7 +146,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                                 for (i in $scope.params) {
                                     var x = $scope.params[i];
                                     if (x == p) {
-                                        $scope.updateParam(i, "'" + newv + "'");
+                                        $scope.updateParam(i, newv);
                                     }
                                 }
                                 $scope.query();

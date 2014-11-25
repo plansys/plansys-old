@@ -46,23 +46,23 @@
 
         <!-- Month Year -->
         <div ng-if="['monthyear'].indexOf(fieldType) >= 0"  >
-
             <div class="btn-group" dropdown>
                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="disabled">
-                    {{ bulan }} <span class="caret"></span>
+                    {{ monthList[month] }} <span class="caret"></span>
                 </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li ng-repeat="i in bulanList"><a href="#">{{ i }}</a></li>
+                <ul class="dropdown-menu" dropdown-toggle role="menu">
+                    <li ng-repeat="i in monthList"><a href="#" ng-click="changeMonth($index)">{{ i }}</a></li>
                 </ul>
             </div>
             <div class="btn-group" dropdown>
                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="disabled">
-                    2014 <span class="caret"></span>
+                    {{ year }} <span class="caret"></span>
                 </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href="#">Januari</a></li>
+                <ul class="dropdown-menu" dropdown-toggle role="menu">
+                    <li ng-repeat="i in yearList"><a href="#" ng-click="changeYear(i)">{{ i }}</a></li>
                 </ul>
             </div>
+            
         </div>
 
 

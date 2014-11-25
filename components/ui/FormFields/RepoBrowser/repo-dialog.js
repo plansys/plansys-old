@@ -11,16 +11,24 @@ app.directive('repoDialog', function ($timeout, $compile, $http) {
                     $el.find('.modal-container').css('display', 'none');
                     if (f) {
                         f($scope);
+                    } else {
+                        $timeout(function () {
+                            if ($scope.afterChoose) {
+                                $scope.afterChoose({});
+                            }
+                        });
                     }
                 };
 
                 $scope.choose = function (file) {
-                    $scope.close();
-                    $timeout(function () {
-                        if ($scope.afterChoose) {
-                            $scope.afterChoose(file);
-                        }
+                    $scope.close(function () {
+                        $timeout(function () {
+                            if ($scope.afterChoose) {
+                                $scope.afterChoose(file);
+                            }
+                        });
                     });
+
                 }
 
                 $scope.open = function (f) {
@@ -59,17 +67,20 @@ app.directive('repoDialog', function ($timeout, $compile, $http) {
                         return wildCard;
                     return value;
                 }
-
-                $scope.$parent[$scope.name] = $scope;
                 $scope.loading = false;
                 $scope.path = "/";
                 var t = null;
                 $timeout(function () {
+
                     $scope.data = JSON.parse($el.find("data[name=repodata]").text());
                     $scope.gridOptions = {
                         data: 'data',
                         multiSelect: false,
                         afterSelectionChange: function (r) {
+                            if ($scope.selected != r.entity.name) {
+                                $scope.selected = r.entity.name;
+                                return false;
+                            }
                             clearTimeout(t);
                             t = setTimeout(function () {
                                 if (r.entity.type == "dir") {
@@ -87,9 +98,11 @@ app.directive('repoDialog', function ($timeout, $compile, $http) {
                                                 type: "dir"
                                             });
                                         }
+                                        $scope.selected = null;
                                     });
                                 } else {
                                     $scope.choose(r.entity);
+                                    $scope.selected = null;
                                 }
                             }, 100);
                         },
@@ -112,7 +125,7 @@ app.directive('repoDialog', function ($timeout, $compile, $http) {
                             },
                         ]
                     };
-                    $scope.ready = true;
+                    $scope.gridReady = true;
                 });
             }
         }

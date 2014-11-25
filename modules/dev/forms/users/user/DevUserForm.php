@@ -142,9 +142,6 @@ Harap hubungi administrator untuk mengubah username ataupun role.
                         'type' => 'Text',
                     ),
                     array (
-                        'type' => 'Text',
-                    ),
-                    array (
                         'label' => 'LDAP User',
                         'js' => '\\\'Yes - Synced\\\'',
                         'labelWidth' => '2',

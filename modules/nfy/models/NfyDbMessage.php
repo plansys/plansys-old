@@ -23,7 +23,7 @@
  * @property NfyDbSubscription $subscription
  * @property Users $sender
  */
-class NfyDbMessage extends CActiveRecord {
+class NfyDbMessage extends ActiveRecord {
 
     /**
      * Returns the static model of the specified AR class.
@@ -243,8 +243,9 @@ class NfyDbMessage extends CActiveRecord {
         $result = array();
         $userIds = array();
         foreach ($dbMessages as $dbMessage) {
+
             $attributes = $dbMessage->getAttributes();
-            $attributes['subscriber_id'] = $dbMessage->subscription_id === null ? null : $dbMessage->subscription->subscriber_id;
+            $attributes['subscriber_id'] = is_null($dbMessage->subscription_id) ? null : $dbMessage->subscription['subscriber_id'];
             unset($attributes['queue_id']);
             unset($attributes['subscription_id']);
             unset($attributes['mimetype']);
