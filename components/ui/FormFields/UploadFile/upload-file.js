@@ -49,9 +49,15 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                             });
                             break;
                         case "":
+                            if ($scope.file && $scope.value) {
+                                $scope.oldFile = $scope.file;
+                            }
+
                             $scope.file = null;
-                            $scope.value = null;
                             break;
+                        case "undo":
+                            $scope.file = $scope.oldFile;
+
                     }
                 }
 
@@ -171,16 +177,17 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                 $scope.remove = function (file) {
                     if ($scope.choosing == 'Browse') {
                         $scope.choose('');
-                    } else {
+                    } else if (confirm("Are you sure want to remove this file ?")) {
                         $scope.loading = true;
                         $scope.errors = [];
                         var request = $http({
                             method: "post",
                             url: Yii.app.createUrl('/formfield/UploadFile.remove'),
                             data: {file: file}
-                        });
-                        request.success(function (html) {
-                            $scope.file = null;
+                        }).success(function (html) {
+                            $scope.choose('');
+                            $scope.loading = false;
+                        }).error(function() {
                             $scope.loading = false;
                         });
                     }

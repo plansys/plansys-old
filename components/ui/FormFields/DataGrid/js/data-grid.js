@@ -535,7 +535,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
 
                     var emptyString = '- Empty -';
                     var emptyStyle = 'color:#999;font-size:12px;';
-                    if (col.options['if-empty']) {
+                    if (col.options && col.options['if-empty']) {
                         emptyString = col.options['if-empty'];
                         emptyStyle = '';
                     }

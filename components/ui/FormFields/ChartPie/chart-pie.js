@@ -86,7 +86,7 @@ app.directive('psChartPie', function ($timeout) {
 						
 						if($scope.series != null) {
 							for(i in $scope.series) {
-								$scope.series[i] = angular.extend(chartData_raw[$scope.series[i].label], $scope.series[i]);
+								$scope.series[i] = angular.extend($scope.series[i], chartData_raw[$scope.series[i].label]);
 							}
 							
 							chartData_raw = $scope.series;
