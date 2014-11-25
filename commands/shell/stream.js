@@ -5,6 +5,7 @@ var mysql = require('mysql');
 var rekuire = require('rekuire');
 var dateFormat = require('dateformat');
 var nodemailer = require('nodemailer');
+var smtpPool = require('nodemailer-smtp-pool');
 var validator = require('validator');
 var htmlToText = require('html-to-text');
 var swig = require('swig');
@@ -17,7 +18,7 @@ var pool = mysql.createPool({
     password: config.db.password
 });
 if (config.email && config.email.transport) {
-    var transporter = nodemailer.createTransport(config.email.transport);
+    var transport = nodemailer.createTransport(smtpPool(config.email.transport));
     function getTemplate(name, tpl) {
         if (config.email && config.email.template && config.email.template[name]) {
             return config.email.template[name];
@@ -94,7 +95,7 @@ streamQuery = setInterval(function () {
                                     wordwrap: 130
                                 });
 
-                                transporter.sendMail(mailOptions, function (error, info) {
+                                transport.sendMail(mailOptions, function (error, info) {
                                     if (error) {
                                         console.log(error);
                                     } else {
@@ -102,6 +103,7 @@ streamQuery = setInterval(function () {
                                     }
                                 });
                             }
+                            transport.close();
                         }
 
                         conn.release();
