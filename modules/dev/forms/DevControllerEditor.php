@@ -42,8 +42,8 @@ class DevControllerEditor extends Form{
                 'type' => 'DropDownList',
             ),
             array (
-                'type' => 'Text',
                 'value' => '<hr>',
+                'type' => 'Text',
             ),
             array (
                 'label' => 'Submit',

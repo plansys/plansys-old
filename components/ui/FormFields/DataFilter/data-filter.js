@@ -590,8 +590,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                 $timeout(function () {
                     var showCount = 0;
                     var ds = $scope.$parent[$scope.datasource];
-
-                    if (ds.data.length > 0)
+                    var dataAvailable = ds.data != null && ds.data.length > 0;
+                    
+                    
+//                    if (dataAvailable)
                         $scope.available = true;
 
                     var defaultValueAvailable = false;
@@ -599,7 +601,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                         var f = $scope.filters[i];
                         var dateCondition = (f.filterType == 'date' && ['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(f.defaultOperator) >= 0);
 
-                        if (ds.data.length > 0 && typeof ds.data[0][f.name] == "undefined") {
+                        if (dataAvailable && typeof ds.data[0][f.name] == "undefined") {
                             f.show = false;
                         } else {
                             f.show = (showCount > 5 ? false : true);

@@ -13,10 +13,10 @@ app.directive('repoBrowser', function ($timeout, $compile, $http) {
                 $scope.name = $el.find("data[name=name]").text();
                 $scope.renderID = $el.find("data[name=render_id]").text();
 
-                $a = setInterval(function () {
+                var a = setInterval(function () {
                     $scope.dialog = angular.element($("body > .repo-dialog .modal-container")[0]).scope();
                     if ($scope.dialog) {
-                        clearInterval($a);
+                        clearInterval(a);
                         $scope.open = function () {
                             if ($scope.afterChoose) {
                                 $scope.dialog.afterChoose = $scope.afterChoose;
@@ -26,10 +26,10 @@ app.directive('repoBrowser', function ($timeout, $compile, $http) {
                         $scope.close = function () {
                             $scope.dialog.close();
                         }
+                        $scope.$parent[$scope.name] = $scope;
                     }
                 }, 10);
 
-                $scope.$parent[$scope.name] = $scope;
             }
         }
     };
