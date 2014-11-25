@@ -33,12 +33,16 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                             $timeout(function () {
                                 $scope.BrowseDialog.afterChoose = function (f) {
                                     $timeout(function () {
-                                        $scope.value = f.path;
-                                        $scope.file = {
-                                            'name': f.name,
-                                            'downloadPath': f.path
-                                        };
-                                        $scope.icon(f.name);
+                                        if (typeof f.name != "undefined") {
+                                            $scope.value = f.path;
+                                            $scope.file = {
+                                                'name': f.name,
+                                                'downloadPath': f.path
+                                            };
+                                            $scope.icon(f.name);
+                                        } else {
+                                            $scope.choose('');
+                                        }
                                     });
                                 }
                                 $scope.BrowseDialog.open();
@@ -165,17 +169,21 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
 
                 //Remove Func
                 $scope.remove = function (file) {
-                    $scope.loading = true;
-                    $scope.errors = [];
-                    var request = $http({
-                        method: "post",
-                        url: Yii.app.createUrl('/formfield/UploadFile.remove'),
-                        data: {file: file}
-                    });
-                    request.success(function (html) {
-                        $scope.file = null;
-                        $scope.loading = false;
-                    });
+                    if ($scope.choosing == 'Browse') {
+                        $scope.choose('');
+                    } else {
+                        $scope.loading = true;
+                        $scope.errors = [];
+                        var request = $http({
+                            method: "post",
+                            url: Yii.app.createUrl('/formfield/UploadFile.remove'),
+                            data: {file: file}
+                        });
+                        request.success(function (html) {
+                            $scope.file = null;
+                            $scope.loading = false;
+                        });
+                    }
 
                 };
 
@@ -183,12 +191,12 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                 $scope.ext = function (file) {
                     var type = '';
                     if (typeof file.name == 'string') {
-                       type = file.name.split('.');
-                    } 
-                    if (typeof file == 'string') {
-                       type = file.split('.');
+                        type = file.name.split('.');
                     }
-                    
+                    if (typeof file == 'string') {
+                        type = file.split('.');
+                    }
+
                     if (type.length === 1 || (type[0] === "" && type.length === 2)) {
                         return "";
                     }
