@@ -621,7 +621,7 @@
                     }
                 },
                 evalProperty: function (entity, path) {
-                    return $parse("entity['" + path + "']")({entity: entity});
+                    return $parse("entity['" + path.replace("'",'') + "']")({entity: entity});
                 },
                 endsWith: function (str, suffix) {
                     if (!str || !suffix || typeof str !== "string") {
@@ -2444,7 +2444,7 @@
                             children: [],
                             aggChildren: [],
                             aggIndex: self.numberOfAggregates,
-                            aggLabelFilter: g[NG_COLUMN].aggLabelFilter
+                            aggLabelFilter: g[NG_COLUMN] ? g[NG_COLUMN].aggLabelFilter : ''
                         }, 0);
                         self.numberOfAggregates++;
                         //set the aggregate parent to the parent in the array that is one less deep.
