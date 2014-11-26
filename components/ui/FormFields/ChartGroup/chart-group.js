@@ -19,13 +19,14 @@ app.directive('psChartGroup', function ($timeout) {
 			
 			$scope.data = [];
 			$scope.yAxisGroup = [];
-			$scope.xAxisGroup;
+			$scope.xAxisGroup = null;
 			$scope.isgroup = true;
 			
 			$scope.groupTitle = $element.find("data[name=groupTitle]").text();
 			$scope.groupName = $element.find("data[name=groupName]").text();
 			$scope.yAxisType = $element.find("data[name=yAxisType]").text();
 			$scope.groupOptions = JSON.parse($element.find("data[name=groupOptions]").text());
+			$scope.isPieGroup = JSON.parse($element.find("data[name=isPieGroup	]").text().toLowerCase());
 			
 			$scope.defaultOptions = {
 				chart : {
