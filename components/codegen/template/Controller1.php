@@ -31,7 +31,7 @@ class TemplateController extends Controller {
         $this->renderForm("TemplateForm", $model);
     }
 
-    public function actionDelete() {
+    public function actionDelete($id) {
         $model = $this->loadModel($id, "TemplateForm");
         if (!is_null($model)) {
             Yii::app()->user->setFlash('info', 'Data berhasil dihapus');
