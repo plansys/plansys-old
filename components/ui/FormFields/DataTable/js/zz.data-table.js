@@ -15,8 +15,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 var colHeaders = [];
                 var columns = [];
 
-                window.s = $scope;
-
                 // define columns
                 var categories = [];
                 var lastCat = '';
@@ -108,6 +106,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             break;
                     }
 
+                    if (c.options.enableCellEdit == "false" || c.options.readOnly == "true") {
+                        colDef.readOnly = true;
+                    }
+
                     var col = $.extend(c, colDef);
                     //add column
                     columns.push(col);
@@ -118,6 +120,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     // add category header
                     var cat = c.options.category || '';
                     if (lastCat == cat) {
+                        if (categories.length == 0 && lastCat == '') {
+                            categories.push({
+                                title: lastCat,
+                                span: 0
+                            });
+                        }
+
                         var idx = i;
                         while (typeof categories[idx] == "undefined" && idx > 0) {
                             idx--;
@@ -198,16 +207,25 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         }
                     },
                     beforeChange: function (changes, source) {
-                        if (typeof $scope.afterCellEdit == "function" && source == "edit") {
-                            $scope.changed = this.getSelected();
+                        if (typeof $scope.beforeCellEdit == "function" && source == "edit") {
+                            var ht = $("#" + $scope.renderID).handsontable('getInstance');
+                            var ch = changes[0];
+                            // beforeCellEdit(value, row, col, data, ht);
+                            $scope.beforeCellEdit(ch[3], ch[0], ch[1], $scope.datasource.data[ch[0]], ht);
+                        }
+                    },
+                    beforeKeyDown: function (event) {
+                        if (typeof $scope.beforeKeyDown == "function") {
+                            var ht = $("#" + $scope.renderID).handsontable('getInstance');
+                            $scope.beforeKeyDown(event, ht);
                         }
                     },
                     afterChange: function (changes, source) {
                         if (typeof $scope.afterCellEdit == "function" && source == "edit") {
-                            var col = $scope.changed[1];
-                            var row = $scope.changed[0];
-                            var colname = columns[col].name;
-                            $scope.afterCellEdit($scope.datasource.data[row][colname], row, colname, $scope.datasource.data[row]);
+                            var ht = $("#" + $scope.renderID).handsontable('getInstance');
+                            var ch = changes[0];
+                            // afterCellEdit(value, row, col, data, ht);
+                            $scope.afterCellEdit(ch[3], ch[0], ch[1], $scope.datasource.data[ch[0]], ht);
                         }
                     },
                     afterRender: function () {
@@ -257,12 +275,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 if (typeof $scope.beforeGridLoaded == "function") {
                     $scope.beforeGridLoaded(options);
                 }
-                
+
                 $("#" + $scope.renderID).handsontable(options);
 
                 //relation init
                 var dgr = {};
                 var relCols = [];
+
                 function countDgr() {
                     relCols = [];
                     for (i in columns) {
@@ -293,6 +312,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         }
                     }
                 }
+
                 function loadRelation(callback) {
                     $scope.triggerWatch = false;
                     countDgr();
@@ -329,19 +349,20 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         });
                     }
                 }
+
                 $timeout(function () {
                     loadRelation();
                 });
 
-                $scope.$watch('datasource.data', function (n, o) {
-                    if (n !== o && $scope.triggerWatch) {
-                        loadRelation(function () {
-                            $("#" + $scope.renderID)
-                                    .handsontable('getInstance')
-                                    .loadData($scope.datasource.data);
-                        });
-                    }
-                }, true);
+                //$scope.$watch('datasource.data', function (n, o) {
+                //    if (n !== o && $scope.triggerWatch) {
+                //        loadRelation(function () {
+                //            $("#" + $scope.renderID)
+                //                .handsontable('getInstance')
+                //                .loadData($scope.datasource.data);
+                //        });
+                //    }
+                //}, true);
 
                 $scope.$parent[$scope.name] = $scope;
             }

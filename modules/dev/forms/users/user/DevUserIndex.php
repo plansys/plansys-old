@@ -159,10 +159,13 @@ class DevUserIndex extends User {
                     array (
                         'name' => 'id',
                         'label' => 'id',
-                        'options' => array (),
+                        'options' => array (
+                            'enableCellEdit' => 'false',
+                        ),
                         'columnType' => 'string',
-                        'show' => false,
+                        'show' => true,
                         'inputMask' => '',
+                        'stringAlias' => array (),
                     ),
                     array (
                         'name' => 'nip',
@@ -295,7 +298,7 @@ class DevUserIndex extends User {
                         'label' => 'last_login',
                         'options' => array (),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                         'inputMask' => '99/99/9999 99:99',
                         'stringAlias' => array (),
                     ),

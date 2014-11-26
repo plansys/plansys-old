@@ -180,7 +180,6 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                             url = url.replace('{' + m + '}', result);
                         }
 
-
                         if (url.match(/http*/ig)) {
                             output = url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'");
                         } else if (url.trim() == '#') {
@@ -250,7 +249,6 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
 
 
                 // Generate Excel Template
-
                 $scope.getCols = function (return_array) {
                     var cols = [];
                     if ($scope.columns) {
@@ -510,7 +508,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                     if (col.listType == 'js') {
                         col.listItem = JSON.stringify($scope.$parent.$eval(col.listExpr));
                     }
-                    $('<div id="' + id + '">' + col.listItem + '</div>').appendTo('body');
+                    $('<div id="' + id + '" style="display:none;">' + col.listItem + '</div>').appendTo('body');
 
                     var html = '<input';
                     html += ' dg-autocomplete dga-id="' + id + '" dga-must-choose="' + col.listMustChoose + '"';

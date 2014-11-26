@@ -32,7 +32,7 @@
         <div ng-if="file == null && mode != 'Download Only'
                         && (allowOverwrite == 'Yes' || allowOverwrite == 'No' && file === null)" >
 
-            <div ng-if="mode == 'Upload + Browse + Download'" class="form-control" style="height:auto;padding-top:0px;padding-bottom:0px;">
+            <div ng-if="mode == 'Upload + Browse + Download' && choosing != 'Upload'" class="form-control" style="height:auto;padding-top:0px;padding-bottom:0px;">
                 <div style="margin:3px -6px;" class="btn btn-default btn-xs" ng-click="choose('Browse')">
                     <i class="fa fa-folder-open"></i>   Browse Repository
                 </div>
@@ -48,7 +48,7 @@
                 <div ng-show="choosing == 'Upload' && mode == 'Upload + Browse + Download'"
                      class=" pull-right">
                     <div class="btn btn btn-xs btn-default"
-                         ng-click="choose('undo')"
+                         ng-click="choose('')"
                          style="position:absolute;margin:6px 0px 0px -56px;color:green;">
                         Cancel
                     </div>
@@ -86,7 +86,7 @@
         </div>
 
         <div ng-if="!loading && file !== null" class="form-control"
-             style="padding:5px 5px 2px 0px;">
+             style="padding:5px 5px 2px 0px;height:auto;">
             <div ng-if="file.name">
                 <a  href="{{ Yii.app.createUrl('/formfield/UploadFile.download', {
                         f: file.downloadPath,
