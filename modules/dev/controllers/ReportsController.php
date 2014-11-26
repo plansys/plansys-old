@@ -1,6 +1,4 @@
 <?php
-require_once(Yii::app()->basePath . '/vendor/jasper/Jasper/Jasper.php');
-
 class ReportsController extends Controller {
     public function actionIndex() {
 		$reports_raw = Report::model()->findAll();

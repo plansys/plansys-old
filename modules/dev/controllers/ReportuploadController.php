@@ -1,6 +1,4 @@
 <?php
-require_once(Yii::app()->basePath . '/vendor/jasper/Jasper/Jasper.php');
-
 class ReportuploadController extends Controller {
     
     public function actionIndex() {
