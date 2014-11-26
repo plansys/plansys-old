@@ -601,12 +601,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                         var f = $scope.filters[i];
                         var dateCondition = (f.filterType == 'date' && ['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(f.defaultOperator) >= 0);
 
-                        if (dataAvailable && typeof ds.data[0][f.name] == "undefined") {
-                            f.show = false;
-                        } else {
-                            f.show = (showCount > 5 ? false : true);
-                            showCount++;
-                        }
+						f.show = (showCount > 5 ? false : true);
+						showCount++;
 
                         if (f.defaultValue && f.defaultValue != "" || dateCondition) {
                             if ($scope.operators[f.filterType]) {
