@@ -21,7 +21,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
 
                 for (i in $scope.columns) {
                     var c = $scope.columns[i];
-                    if (c.options.visible == "false") {
+                    if (c.options.visible && c.options.visible == "false") {
                         continue;
                     }
                     var colDef = {
