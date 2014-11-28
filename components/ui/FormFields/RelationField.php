@@ -10,212 +10,213 @@ class RelationField extends FormField {
      * @return array me-return array property DropDown.
      */
     public function getFieldProperties() {
-        return [
-            [
+        return array (
+            array (
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ],
-                'list' => [],
+                ),
+                'list' => array (),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Model Class',
                 'name' => 'modelClass',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.modelClass',
                     'ng-change' => 'generateRelationField();save();',
-                ],
+                ),
+                'menuPos' => 'pull-right',
                 'listExpr' => 'RelationField::listModel()',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'label' => 'ID Field',
                 'name' => 'idField',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.idField',
                     'ng-change' => 'save();',
                     'ps-list' => 'relationFieldList',
-                ],
-                'list' => [],
+                ),
+                'list' => array (),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Label Field',
                 'name' => 'labelField',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.labelField',
                     'ng-change' => 'save();',
                     'ps-list' => 'relationFieldList',
-                ],
-                'list' => [],
+                ),
+                'list' => array (),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'name' => 'relationCriteria',
                 'label' => 'Sql Criteria',
                 'paramsField' => 'params',
                 'baseClass' => 'RelationField',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.relationCriteria',
                     'ng-change' => 'save();',
-                ],
+                ),
                 'modelClassJS' => 'RelationField/relation-criteria.js',
                 'type' => 'SqlCriteria',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Sql Parameters',
                 'name' => 'params',
                 'show' => 'Show',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.params',
                     'ng-change' => 'save();',
-                ],
+                ),
                 'type' => 'KeyValueGrid',
-            ],
-            [
+            ),
+            array (
                 'value' => '<hr/>',
                 'type' => 'Text',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Include Empty',
                 'name' => 'includeEmpty',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.includeEmpty',
                     'ng-change' => 'save();',
-                ],
+                ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Empty Value',
                 'name' => 'emptyValue',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.emptyValue',
                     'ng-change' => 'save()',
                     'ng-show' => 'active.includeEmpty == \\\'Yes\\\'',
                     'ng-delay' => '500',
-                ],
+                ),
                 'type' => 'TextField',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Empty Label',
                 'name' => 'emptyLabel',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.emptyLabel',
                     'ng-change' => 'save()',
                     'ng-show' => 'active.includeEmpty == \\\'Yes\\\'',
                     'ng-delay' => '500',
-                ],
+                ),
                 'type' => 'TextField',
-            ],
-            [
+            ),
+            array (
                 'value' => '<hr/>',
                 'type' => 'Text',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => 500,
-                ],
+                ),
                 'type' => 'TextField',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
-                ],
+                ),
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'value' => '<hr/>',
                 'type' => 'Text',
-            ],
-            [
+            ),
+            array (
                 'totalColumns' => '4',
-                'column1' => [
-                    [
+                'column1' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
-                    ],
-                ],
-                'column2' => [
-                    [
+                    ),
+                ),
+                'column2' => array (
+                    array (
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => [
+                        'options' => array (
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => 500,
                             'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
-                        ],
+                        ),
                         'type' => 'TextField',
-                    ],
-                    [
+                    ),
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
-                    ],
-                ],
-                'column3' => [
-                    [
+                    ),
+                ),
+                'column3' => array (
+                    array (
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => [
+                        'options' => array (
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => 500,
-                        ],
+                        ),
                         'type' => 'TextField',
-                    ],
-                    [
+                    ),
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
-                    ],
-                ],
+                    ),
+                ),
                 'type' => 'ColumnField',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
-            ],
-        ];
+            ),
+        );
     }
 
     /** @var string $label */

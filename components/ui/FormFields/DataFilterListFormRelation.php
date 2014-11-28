@@ -33,89 +33,90 @@ class DataFilterListFormRelation extends Form {
     }
 
     public function getFields() {
-        return  [
-             [
+        return array (
+            array (
                 'value' => '<Hr/>',
                 'type' => 'Text',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Model',
                 'name' => 'relModelClass',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => '$parent.value[$parent.$index].relModelClass',
                     'ng-change' => 'generateRelationField(value, $parent.value[$index]);updateListView();',
                     'ng-init' => 'generateRelationField(value[$index].relModelClass);',
-                ],
-                'labelOptions' =>  [
+                ),
+                'menuPos' => 'pull-right',
+                'labelOptions' => array (
                     'style' => 'text-align:left;',
-                ],
+                ),
                 'listExpr' => 'RelationField::listModel()',
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'label' => 'ID Field',
                 'name' => 'relIdField',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'item.relIdField',
                     'ng-change' => 'updateListView();',
                     'ps-list' => 'relationFieldList',
-                ],
-                'labelOptions' =>  [
+                ),
+                'labelOptions' => array (
                     'style' => 'text-align:left;',
-                ],
-                'list' =>  [],
+                ),
+                'list' => array (),
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Label',
                 'name' => 'relLabelField',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'item.relLabelField',
                     'ng-change' => 'updateListView();',
                     'ps-list' => 'relationFieldList',
-                ],
-                'labelOptions' =>  [
+                ),
+                'labelOptions' => array (
                     'style' => 'text-align:left;',
-                ],
-                'list' =>  [],
+                ),
+                'list' => array (),
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'name' => 'relCriteria',
                 'label' => 'Sql Criteria',
                 'paramsField' => 'relParams',
                 'baseClass' => 'DataFilter',
-                'options' =>  [
+                'options' => array (
                     'ng-change' => 'save();',
                     'ng-model' => 'value[$index].relCriteria',
-                ],
+                ),
                 'modelClassJS' => 'DataFilter/inlinejs/relation-criteria.js',
                 'type' => 'SqlCriteria',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Sql Parameter',
                 'name' => 'relParams',
                 'show' => 'Show',
-                'options' =>  [
+                'options' => array (
                     'ng-change' => 'updateListView();',
                     'ng-model' => 'item.relParams;',
-                ],
+                ),
                 'type' => 'KeyValueGrid',
-            ],
-        ];
+            ),
+        );
     }
 
 }

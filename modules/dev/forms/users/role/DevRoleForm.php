@@ -49,11 +49,13 @@ class DevRoleForm extends Role {
                     array (
                         'label' => 'Role Name',
                         'name' => 'role_name',
+                        'autocomplete' => 'rel',
                         'type' => 'TextField',
                     ),
                     array (
                         'label' => 'Role Description',
                         'name' => 'role_description',
+                        'autocomplete' => 'rel',
                         'type' => 'TextField',
                     ),
                     array (
@@ -66,11 +68,13 @@ class DevRoleForm extends Role {
                         'label' => 'Home Page',
                         'name' => 'home_url',
                         'prefix' => 'url:',
+                        'autocomplete' => 'rel',
                         'type' => 'TextField',
                     ),
                     array (
                         'label' => 'Menu Path',
                         'name' => 'menu_path',
+                        'autocomplete' => 'rel',
                         'type' => 'TextField',
                     ),
                     array (

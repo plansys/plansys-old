@@ -1,6 +1,6 @@
 <?php
 
-class DataGridListFormRelation extends Form {
+class TextFieldRelation extends Form {
     
     /** @var string $name */
     public $relParams = [];
@@ -36,16 +36,12 @@ class DataGridListFormRelation extends Form {
     public function getFields() {
         return array (
             array (
-                'value' => '<hr/>',
-                'type' => 'Text',
-            ),
-            array (
                 'label' => 'Model',
                 'name' => 'relModelClass',
                 'options' => array (
-                    'ng-model' => '$parent.value[$parent.$index].relModelClass',
-                    'ng-change' => 'generateRelationField(value, $parent.value[$index]);updateListView();',
-                    'ng-init' => 'generateRelationField(value[$index].relModelClass);',
+                    'ng-model' => 'active.relModelClass',
+                    'ng-change' => 'generateRelationField(active.relModelClass);save()',
+                    'ng-init' => 'generateRelationField(active.relModelClass);',
                 ),
                 'menuPos' => 'pull-right',
                 'labelOptions' => array (
@@ -58,29 +54,10 @@ class DataGridListFormRelation extends Form {
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'ID Field',
-                'name' => 'relIdField',
-                'options' => array (
-                    'ng-model' => 'item.relIdField',
-                    'ng-change' => 'updateListView();',
-                    'ps-list' => 'relationFieldList',
-                ),
-                'labelOptions' => array (
-                    'style' => 'text-align:left;',
-                ),
-                'list' => array (),
-                'labelWidth' => '3',
-                'fieldWidth' => '9',
-                'searchable' => 'Yes',
-                'showOther' => 'Yes',
-                'otherLabel' => 'Custom',
-                'type' => 'DropDownList',
-            ),
-            array (
                 'label' => 'Label',
                 'name' => 'relLabelField',
                 'options' => array (
-                    'ng-model' => 'item.relLabelField',
+                    'ng-model' => 'active.relLabelField',
                     'ng-change' => 'updateListView();',
                     'ps-list' => 'relationFieldList',
                 ),
