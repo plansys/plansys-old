@@ -21,7 +21,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
 
                 for (i in $scope.columns) {
                     var c = $scope.columns[i];
-                    if (c.options.visible && c.options.visible == "false") {
+                    if (c.options && c.options.visible && c.options.visible == "false") {
                         continue;
                     }
                     var colDef = {
@@ -106,7 +106,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             break;
                     }
 
-                    if (c.options.enableCellEdit == "false" || c.options.readOnly == "true") {
+                    if (c.options && (c.options.enableCellEdit == "false" || c.options.readOnly == "true")) {
                         colDef.readOnly = true;
                     }
 
@@ -117,31 +117,36 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     // add header
                     colHeaders.push(c.label);
 
-                    // add category header
-                    var cat = c.options.category || '';
-                    if (lastCat == cat) {
-                        if (categories.length == 0 && lastCat == '') {
+                    if (c.options && c.options.category) {
+                        // add category header
+                        var cat = c.options.category || '';
+                        if (lastCat == cat) {
+                            if (categories.length == 0 && lastCat == '') {
+                                categories.push({
+                                    title: lastCat,
+                                    span: 0
+                                });
+                            }
+
+                            var idx = i;
+                            while (typeof categories[idx] == "undefined" && idx > 0) {
+                                idx--;
+                            }
+                            if (typeof categories[idx] != "undefined") {
+                                categories[idx].span++;
+                            }
+                        } else {
                             categories.push({
-                                title: lastCat,
-                                span: 0
+                                title: cat,
+                                span: 1
                             });
                         }
-
-                        var idx = i;
-                        while (typeof categories[idx] == "undefined" && idx > 0) {
-                            idx--;
-                        }
-                        if (typeof categories[idx] != "undefined") {
-                            categories[idx].span++;
-                        }
+                        lastCat = cat;
                     } else {
-                        categories.push({
-                            title: cat,
-                            span: 1
-                        });
+                        categories = [];    
                     }
-                    lastCat = cat;
                 }
+                
 
                 // fixedHeader
                 var fh = {};
