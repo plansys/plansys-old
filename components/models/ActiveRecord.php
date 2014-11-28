@@ -77,7 +77,6 @@ class ActiveRecord extends CActiveRecord {
                 }
             }
 
-
             $this->loadRelations($name, @$criteria);
             $this->applyRelChange($name);
             return $this->$name;

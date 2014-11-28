@@ -38,6 +38,9 @@ class DevUserForm extends User {
                     array (
                         'label' => 'Fullname',
                         'name' => 'fullname',
+                        'modelClass' => 'application.models.User',
+                        'idField' => 'fullname',
+                        'labelField' => 'fullname',
                         'type' => 'TextField',
                     ),
                     array (

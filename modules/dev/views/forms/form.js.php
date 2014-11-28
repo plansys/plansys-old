@@ -632,6 +632,7 @@
                             $scope.getDataSourceList();
                             break;
                         case 'RelationField':
+                        case 'TextField':
                             $scope.generateRelationField();
                             break;
                         default :

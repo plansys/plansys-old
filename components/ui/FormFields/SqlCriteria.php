@@ -123,6 +123,7 @@ class SqlCriteria extends FormField {
             case "DataGrid":
             case "DataFilter":
             case "RelationField":
+            case "TextField":
                 $rel = 'currentModel';
                 $name = $post['rfname'];
                 $classPath = $post['rfclass'];
@@ -174,7 +175,6 @@ class SqlCriteria extends FormField {
 
                 break;
         }
-
 
         if ($rel == 'currentModel') {
             $tableSchema = $model->tableSchema;

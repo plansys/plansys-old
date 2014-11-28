@@ -139,11 +139,8 @@ class TextField extends FormField {
                 'type' => 'SubForm',
             ),
             array (
-                'value' => '</div>',
-                'type' => 'Text',
-            ),
-            array (
-                'value' => '<hr/>',
+                'value' => '</div>
+<hr/>',
                 'type' => 'Text',
             ),
             array (
@@ -249,6 +246,22 @@ class TextField extends FormField {
 
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-text-height";
+    
+    /** @var string $name */
+    public $modelClass = '';
+    public $params = [];
+    public $criteria = [
+        'select' => '',
+        'distinct' => 'false',
+        'alias' => 't',
+        'condition' => '{[search]}',
+        'order' => '',
+        'group' => '',
+        'having' => '',
+        'join' => ''
+    ];
+    public $idField = '';
+    public $labelField = '';
 
     /**
      * @return array me-return array javascript yang di-include

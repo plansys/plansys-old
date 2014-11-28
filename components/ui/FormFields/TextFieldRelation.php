@@ -3,8 +3,8 @@
 class TextFieldRelation extends Form {
     
     /** @var string $name */
-    public $relParams = [];
-    public $relCriteria = [
+    public $params = [];
+    public $criteria = [
         'select' => '',
         'distinct' => 'false',
         'alias' => 't',
@@ -14,9 +14,9 @@ class TextFieldRelation extends Form {
         'having' => '',
         'join' => ''
     ];
-    public $relModelClass = '';
-    public $relIdField = '';
-    public $relLabelField = '';
+    public $modelClass = '';
+    public $idField = '';
+    public $labelField = '';
     
     
     public function getForm() {
@@ -37,60 +37,64 @@ class TextFieldRelation extends Form {
         return array (
             array (
                 'label' => 'Model',
-                'name' => 'relModelClass',
+                'name' => 'modelClass',
                 'options' => array (
-                    'ng-model' => 'active.relModelClass',
-                    'ng-change' => 'generateRelationField(active.relModelClass);save()',
-                    'ng-init' => 'generateRelationField(active.relModelClass);',
+                    'ng-model' => 'active.modelClass',
+                    'ng-change' => 'generateRelationField(active.modelClass);save()',
+                    'ng-init' => 'generateRelationField(active.modelClass);',
                 ),
                 'menuPos' => 'pull-right',
-                'labelOptions' => array (
-                    'style' => 'text-align:left;',
-                ),
                 'listExpr' => 'RelationField::listModel()',
-                'labelWidth' => '3',
-                'fieldWidth' => '9',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'Label',
-                'name' => 'relLabelField',
+                'label' => 'ID Field',
+                'name' => 'idField',
                 'options' => array (
-                    'ng-model' => 'active.relLabelField',
-                    'ng-change' => 'updateListView();',
+                    'ng-model' => 'active.idField',
+                    'ng-change' => 'save();',
                     'ps-list' => 'relationFieldList',
                 ),
-                'labelOptions' => array (
-                    'style' => 'text-align:left;',
-                ),
                 'list' => array (),
-                'labelWidth' => '3',
-                'fieldWidth' => '9',
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
             ),
             array (
-                'name' => 'relCriteria',
+                'label' => 'Label',
+                'name' => 'labelField',
+                'options' => array (
+                    'ng-model' => 'active.labelField',
+                    'ng-change' => 'save();',
+                    'ps-list' => 'relationFieldList',
+                ),
+                'list' => array (),
+                'searchable' => 'Yes',
+                'showOther' => 'Yes',
+                'otherLabel' => 'Custom',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'name' => 'criteria',
                 'label' => 'Sql Criteria',
-                'paramsField' => 'relParams',
-                'baseClass' => 'DataGrid',
+                'paramsField' => 'params',
+                'baseClass' => 'TextField',
                 'options' => array (
                     'ng-change' => 'save();',
-                    'ng-model' => 'value[$index].relCriteria',
+                    'ng-model' => 'value[$index].criteria',
                 ),
-                'modelClassJS' => 'DataGrid/inlinejs/relation-criteria.js',
+                'modelClassJS' => 'TextField/inlinejs/relation-criteria.js',
                 'type' => 'SqlCriteria',
             ),
             array (
                 'label' => 'Sql Parameter',
-                'name' => 'relParams',
+                'name' => 'params',
                 'show' => 'Show',
                 'options' => array (
-                    'ng-change' => 'updateListView();',
-                    'ng-model' => 'item.relParams;',
+                    'ng-change' => 'save();',
+                    'ng-model' => 'active.params;',
                 ),
                 'type' => 'KeyValueGrid',
             ),
