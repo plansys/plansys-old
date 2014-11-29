@@ -38,9 +38,11 @@ class DevUserForm extends User {
                     array (
                         'label' => 'Fullname',
                         'name' => 'fullname',
+                        'acMode' => 'comma',
                         'modelClass' => 'application.models.User',
                         'idField' => 'fullname',
                         'labelField' => 'fullname',
+                        'acPHP' => '[\\\'JOS\\\',\\\'ASDasDAS\\\',\\\'asdsa\\\']',
                         'type' => 'TextField',
                     ),
                     array (

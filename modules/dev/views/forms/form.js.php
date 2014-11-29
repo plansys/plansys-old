@@ -256,7 +256,7 @@
         $scope.saving = false;
         /************************ RELATION FIELD  ****************************/
         $scope.relationFieldList = {};
-        $scope.generateRelationField = function(modelClass, parentScope) {
+        $scope.generateRelationField = function (modelClass, parentScope) {
             modelClass = modelClass || $scope.active.modelClass;
             $http.get(Yii.app.createUrl('/formfield/RelationField.listField', {
                 class: modelClass
@@ -608,6 +608,7 @@
                     });
         };
         var selectTimeout = null;
+        $scope.propMsg = 'Welcome To Form Builder';
         $scope.select = function (item, event) {
             event.stopPropagation();
             event.preventDefault();
@@ -615,6 +616,9 @@
             $(event.currentTarget).addClass("active");
             $(".toolbar-type").removeClass('open');
             clearTimeout(selectTimeout);
+            $scope.active = null;
+            $scope.activeTree = null;
+            $scope.propMsg = 'Loading Field'
             selectTimeout = setTimeout(function () {
                 $scope.$apply(function () {
                     if ($scope.active == null || item.$modelValue.type != $scope.active.type) {

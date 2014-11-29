@@ -67,7 +67,7 @@ app.directive('dropDownList', function ($timeout) {
 
                         $a = $el.find("li.hover").prev();
 
-                        if ($a.length == 0) {
+                        if ($a.length && $a.length == 0) {
                             $a = $el.find("li:last-child");
                         }
 
@@ -76,7 +76,7 @@ app.directive('dropDownList', function ($timeout) {
                             $a = $a.prev();
                             i++;
                         }
-                        if ($a.length > 0 && $a.is("li")) {
+                        if ($a.length && $a.length > 0 && $a.is("li")) {
                             $el.find("li.hover").removeClass("hover")
                             $a.addClass("hover").find("a").focus();
                         }

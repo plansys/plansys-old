@@ -15,9 +15,11 @@
         <data name="name" class="hide"><?= $this->name ?></data>
         <data name="value" class="hide"><?= $this->value ?></data>
         <data name="autocomplete" class="hide"><?= $this->autocomplete ?></data>
+        <data name="ac_mode" class="hide"><?= $this->acMode ?></data>
         <data name="model_class" class="hide"><?= Helper::getAlias($model) ?></data>
         <data name="rel_model_class" class="hide"><?= $this->modelClass ?></data>
         <data name="params" class="hide"><?= json_encode($this->params) ?></data>
+        <data name="list" class="hide"><?= json_encode($this->acList) ?></data>
         <!-- /data -->
 
         <!-- field -->
@@ -51,10 +53,14 @@
         <!-- /field -->
 
         <span dropdown is-open="showDropdown" >
-            <ul style="margin-left:15px;max-height:150px;overflow-y:auto;" class="dropdown-menu">
+            <ul ng-if="list.length > 0" style="margin-left:15px;max-height:150px;overflow-y:auto;" class="dropdown-menu">
                 <li ng-repeat="choice in list" style="font-size:13px;">
-                    <a href="" ng-click="" dropdown-toggle>{{choice.label}}</a>
+                    <a href="" ng-click="choose()" dropdown-toggle>{{ autocomplete == 'php' ? choice : choice.label}}</a>
                 </li>
+            </ul>
+
+            <ul ng-if="(list.length == 0) && showDropdown " class="dropdown-menu" style="margin-left:15px;max-height:150px;overflow-y:auto;">
+                <li style="text-align:center;padding:10px;font-size:12px;color:#999;">&mdash; Not Found &mdash;</li>
             </ul>
         </span>
 

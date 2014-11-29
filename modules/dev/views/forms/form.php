@@ -80,8 +80,7 @@
                                   if ($formType == "ActiveRecord" || $formType == "Form"):
                                       include('form_properties.php');
                                   else:
-                                      echo '<br /><br /><br /><center>&mdash; Welcome '
-                                      . 'To Form Builder &mdash;</center>';
+                                      echo '<br /><br /><br /><center>&mdash; {{propMsg}} &mdash;</center>';
                                   endif;
                                   ?>
                         </form>
