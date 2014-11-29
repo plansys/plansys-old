@@ -52,12 +52,12 @@
             <div ng-if="gridOptions.enableImport || gridOptions.enableExport"
                 <?php if (@$this->gridOptions['enablePaging'] == 'true'): ?>
                     style="float:right;margin:2px 0px 0px 5px;"
-                <?php else: ?>
+                <?php elseif (@$this->gridOptions['enableExcelMode'] == 'true'): ?>
                     style="float:left;border-right:1px solid #ccc;padding-right:10px;margin-right:5px;"
                 <?php endif; ?>>
 
                 <div class="btn-group pull-left">
-
+					
                     <div ng-if="gridOptions.enableImport" class="btn-group" dropdown>
                         <button type="button" class="btn btn-default dropdown-toggle">
                             <i class="fa {{importIcon}}"></i>
@@ -82,6 +82,10 @@
                     </div>
 
                     <div ng-if="gridOptions.enableExport" class="btn-group" dropdown>
+						<div ng-if="!gridOptions.enableImport 
+						&& !gridOptions.enablePaging
+						&& !gridOptions.enableExcelMode" 
+						class="pull-left" style="margin:2px 10px 0px 0px;">Export: </div>
                         <button type="button" class="btn btn-default dropdown-toggle">
                             <i class="fa fa-download"></i> <span class="caret"></span>
                         </button>
