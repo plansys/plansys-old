@@ -594,8 +594,9 @@ class ActiveRecord extends CActiveRecord {
             $uploadFields = $fb->findAllField(['type' => 'UploadFile']);
             $attrs = [];
             $model = $this;
+			
             foreach ($uploadFields as $k => $f) {
-                if (@$f['name'] == '' || @$f['uploadPath'] == '' || @$f['filePattern'] == '') {
+                if (@$f['name'] == '' || @$f['uploadPath'] == '') {
                     continue;
                 }
                 ## create directory
@@ -617,17 +618,25 @@ class ActiveRecord extends CActiveRecord {
                 ## get oldname
                 $old = $this->{$f['name']};
                 $ext = pathinfo($old, PATHINFO_EXTENSION);
-
-                ## get newname
-                ## Jika disini gagal, berarti ada yang salah dengan format filePattern di FormBuilder-nya
-                eval('$newname = "' . $f['filePattern'] . '";');
-                $new = $dir . preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $newname);
-                $new = str_replace(["\n", "\r"], "", $new);
-
+				$filename = pathinfo($old, PATHINFO_FILENAME);
+				
+				if (@$f['filePattern']) {
+					## get newname
+					## Jika disini gagal, berarti ada yang salah dengan format filePattern di FormBuilder-nya
+					eval('$newname = "' . $f['filePattern'] . '";');
+				} else {
+					$newname = $filename . "." . $ext;
+				}
+				
+				$new = $dir . preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $newname);
+				$new = str_replace(["\n", "\r"], "", $new);
+				
+				## delete file if already exist and allowed to overwrite
                 if (is_file($new) && $f['allowOverwrite'] == 'Yes' && is_file($old)) {
                     unlink($new);
                 }
-
+				
+				
                 if (!is_file($new) && is_file($old)) {
                     rename($old, $new);
                     $this->{$f['name']} = trim($evalDir, "/") . "/" . $newname;

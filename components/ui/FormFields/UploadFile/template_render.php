@@ -98,7 +98,7 @@
 
                 <div class="btn btn-xs btn-default pull-right" 
                      style="margin-right:0px;margin-top:-2px;"
-                     ng-if="allowDelete == 'Yes'" ng-click="remove(file.name)">
+                     ng-if="allowDelete == 'Yes'" ng-click="remove(file.downloadPath)">
                     <i class="fa fa-trash fa-nm"></i>
                 </div>
                 <div class="btn btn-xs btn-default pull-right" style="margin-right:5px;margin-top:-2px;"
