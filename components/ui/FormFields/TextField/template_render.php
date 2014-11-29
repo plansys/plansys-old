@@ -1,4 +1,3 @@
-    
 <div text-field <?= $this->expandAttributes($this->options) ?>>
 
     <!-- label -->
@@ -11,10 +10,14 @@
     <!-- /label -->
 
     <div class="<?= $this->fieldColClass ?>">
-        
+
         <!-- data -->
+        <data name="name" class="hide"><?= $this->name ?></data>
         <data name="value" class="hide"><?= $this->value ?></data>
-        <data name="model_class" class="hide"><?= @get_class($model) ?></data>
+        <data name="autocomplete" class="hide"><?= $this->autocomplete ?></data>
+        <data name="model_class" class="hide"><?= Helper::getAlias($model) ?></data>
+        <data name="rel_model_class" class="hide"><?= $this->modelClass ?></data>
+        <data name="params" class="hide"><?= json_encode($this->params) ?></data>
         <!-- /data -->
 
         <!-- field -->
@@ -46,6 +49,16 @@
 
         <?php endif; ?>
         <!-- /field -->
+
+        <span dropdown is-open="showDropdown" >
+            <ul style="margin-left:15px;max-height:150px;overflow-y:auto;" class="dropdown-menu">
+                <li ng-repeat="choice in list" style="font-size:13px;">
+                    <a href="" ng-click="" dropdown-toggle>{{choice.label}}</a>
+                </li>
+            </ul>
+        </span>
+
+
 
         <!-- error -->
         <?php if (count(@$errors) > 0): ?>

@@ -26,7 +26,7 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
                         params: $scope.active[$scope.paramsField],
                         baseclass: $scope.baseClass
                     };
-
+                    
                     switch ($scope.baseClass) {
                         case "DataSource":
                             postparam.rel = $scope.$parent.active.relationTo;
@@ -34,6 +34,11 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
                             postparam.dsclass = $scope.$parent.classPath;
                             break;
                         case "RelationField":
+                            postparam.rfname = $scope.$parent.active.name;
+                            postparam.rfclass = $scope.$parent.classPath;
+                            postparam.rfmodel = $scope.$parent.active.modelClass;
+                            break;
+                        case "TextField":
                             postparam.rfname = $scope.$parent.active.name;
                             postparam.rfclass = $scope.$parent.classPath;
                             postparam.rfmodel = $scope.$parent.active.modelClass;
@@ -89,6 +94,7 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
                         }
                     };
                 }
+                
                 eval($scope.inlineJS);
             }
         }

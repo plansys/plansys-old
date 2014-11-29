@@ -9,6 +9,7 @@ class ActiveRecordForm extends CComponent {
 
         $classPart = explode("-", Helper::camelToSnake(get_class($model)));
         $module = array_shift($classPart);
+        
         if ($classPart[count($classPart) - 1] == "form" || $classPart[count($classPart) - 1] == "index") {
             $type = array_pop($classPart);
         } else {

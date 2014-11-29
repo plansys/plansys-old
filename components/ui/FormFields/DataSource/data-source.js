@@ -141,14 +141,10 @@ app.directive('psDataSource', function ($timeout, $http) {
                     if (p.indexOf('js:') === 0) {
                         var value = $scope.$parent.$eval(p.replace('js:', ''));
                         var key = i;
+
                         $scope.$parent.$watch(p.replace('js:', ''), function (newv, oldv) {
                             if (newv != oldv) {
-                                for (i in $scope.params) {
-                                    var x = $scope.params[i];
-                                    if (x == p) {
-                                        $scope.updateParam(i, newv);
-                                    }
-                                }
+                                $scope.updateParam(key, newv);
                                 $scope.query();
                             }
                         }, true);

@@ -47,7 +47,7 @@
                    class="form-control dropdown-other-type">
 
             <!-- dropdown item -->
-            <div class="dropdown-menu open">
+            <div class="dropdown-menu open <?= $this->menuPos; ?>">
                 <div class="search" ng-show="searchable">
                     <input type="text"
                            ng-model="search"

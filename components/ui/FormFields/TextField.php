@@ -10,169 +10,194 @@ class TextField extends FormField {
      * @return array me-return array property TextField.
      */
     public function getFieldProperties() {
-        return  [
-             [
+        return array (
+            array (
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ],
-                'list' =>  [],
+                ),
+                'list' => array (),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Label',
                 'name' => 'label',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
+                ),
                 'type' => 'TextField',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Field Type',
                 'name' => 'fieldType',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.fieldType',
                     'ng-change' => 'save();',
-                ],
-                'list' =>  [
+                ),
+                'list' => array (
                     'text' => 'Text Field',
                     'password' => 'Password Field',
-                ],
+                ),
                 'showOther' => 'Yes',
                 'otherLabel' => 'Other...',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
-                ],
+                ),
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ],
-             [
-                'column1' =>  [
-                     [
+            ),
+            array (
+                'column1' => array (
+                    array (
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' =>  [
+                        'options' => array (
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                             'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
-                        ],
+                        ),
                         'type' => 'TextField',
-                    ],
-                     [
-                        'type' => 'Text',
+                    ),
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                    ],
-                ],
-                'column2' =>  [
-                     [
+                        'type' => 'Text',
+                    ),
+                ),
+                'column2' => array (
+                    array (
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => 12,
                         'fieldWidth' => '11',
-                        'options' =>  [
+                        'options' => array (
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                        ],
+                        ),
                         'type' => 'TextField',
-                    ],
-                     [
-                        'type' => 'Text',
+                    ),
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                    ],
-                ],
-                'column3' =>  [
-                     [
                         'type' => 'Text',
+                    ),
+                ),
+                'column3' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                    ],
-                ],
-                'column4' =>  [
-                     [
                         'type' => 'Text',
+                    ),
+                ),
+                'column4' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                    ],
-                ],
+                        'type' => 'Text',
+                    ),
+                ),
                 'type' => 'ColumnField',
-            ],
-             [
-                'type' => 'Text',
+            ),
+            array (
                 'value' => '<hr/>',
-            ],
-             [
-                'column1' =>  [
-                     [
+                'type' => 'Text',
+            ),
+            array (
+                'label' => 'Auto Complete',
+                'name' => 'autocomplete',
+                'options' => array (
+                    'ng-model' => 'active.autocomplete',
+                    'ng-change' => 'save();',
+                ),
+                'listExpr' => '[\\\'\\\'=>\\\'Off\\\',\\\'rel\\\'=>\\\'On - Using Relation\\\', \\\'php\\\'=>\\\'On - Using PHP\\\']',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'value' => '<div ng-if=\"active.autocomplete == \'rel\'\">
+<hr/>',
+                'type' => 'Text',
+            ),
+            array (
+                'name' => 'TypeRelation',
+                'subForm' => 'application.components.ui.FormFields.TextFieldRelation',
+                'type' => 'SubForm',
+            ),
+            array (
+                'value' => '</div>
+<hr/>',
+                'type' => 'Text',
+            ),
+            array (
+                'column1' => array (
+                    array (
                         'name' => 'prefix',
                         'layout' => 'Vertical',
                         'fieldWidth' => '11',
                         'prefix' => 'Prefix',
-                        'options' =>  [
+                        'options' => array (
                             'ng-model' => 'active.prefix',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                        ],
+                        ),
                         'type' => 'TextField',
-                    ],
-                     [
-                        'type' => 'Text',
+                    ),
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                    ],
-                ],
-                'column2' =>  [
-                     [
+                        'type' => 'Text',
+                    ),
+                ),
+                'column2' => array (
+                    array (
                         'name' => 'postfix',
                         'layout' => 'Vertical',
                         'fieldWidth' => '11',
                         'prefix' => 'Postfix',
-                        'options' =>  [
+                        'options' => array (
                             'ng-model' => 'active.postfix',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                        ],
+                        ),
                         'type' => 'TextField',
-                    ],
-                     [
-                        'type' => 'Text',
+                    ),
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                    ],
-                ],
+                        'type' => 'Text',
+                    ),
+                ),
                 'type' => 'ColumnField',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
-            ],
-        ];
+            ),
+        );
     }
 
     /** @var string $label */
@@ -202,6 +227,8 @@ class TextField extends FormField {
     /** @var string $postfix */
     public $postfix = '';
 
+    public $autocomplete = '';
+    
     /** @var array $options */
     public $options = [];
 
@@ -219,6 +246,22 @@ class TextField extends FormField {
 
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-text-height";
+    
+    /** @var string $name */
+    public $modelClass = '';
+    public $params = [];
+    public $criteria = [
+        'select' => '',
+        'distinct' => 'false',
+        'alias' => 't',
+        'condition' => '{[search]}',
+        'order' => '',
+        'group' => '',
+        'having' => '',
+        'join' => ''
+    ];
+    public $idField = '';
+    public $labelField = '';
 
     /**
      * @return array me-return array javascript yang di-include
