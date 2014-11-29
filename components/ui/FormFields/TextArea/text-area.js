@@ -34,8 +34,6 @@ app.directive('textArea', function($timeout) {
                 $scope.value = $el.find("data[name=value]").html();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                
-
-
                 //if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {
                     $timeout(function() {

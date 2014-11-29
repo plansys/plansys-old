@@ -30,6 +30,23 @@ app.directive('textField', function ($timeout, $http) {
                     };
                 }
 
+                $scope.renderFormList = function () {
+                    $scope.list = [];
+                    for (key in $scope.originalList) {
+                        if (angular.isObject($scope.originalList[key])) {
+                            var subItem = [];
+                            var rawSub = $scope.originalList[key];
+
+                            for (subkey in rawSub) {
+                                subItem.push({key: subkey, value: rawSub[subkey]});
+                            }
+                            $scope.list.push({key: key, value: subItem});
+                        } else {
+                            $scope.list.push({key: key, value: $scope.originalList[key]});
+                        }
+                    }
+                }
+
                 // set default value
                 var keytimeout = null;
                 $scope.name = $el.find("data[name=name]").html().trim();
@@ -37,10 +54,17 @@ app.directive('textField', function ($timeout, $http) {
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.relModelClass = $el.find("data[name=rel_model_class]").html();
                 $scope.autocomplete = $el.find("data[name=autocomplete]").html();
+                $scope.acMode = $el.find("data[name=ac_mode]").html();
                 $scope.params = JSON.parse($el.find("data[name=params]").text());
                 $scope.paramValue = {};
-                $scope.list = [];
                 $scope.showDropdown = false;
+                if ($scope.autocomplete == 'php') {
+                    $scope.originalList = JSON.parse($el.find("data[name=list]").text());
+                    $scope.list = [];
+                    $scope.renderFormList();
+                } else {
+                    $scope.list = [];
+                }
 
                 for (i in $scope.params) {
                     var p = $scope.params[i];
@@ -56,17 +80,34 @@ app.directive('textField', function ($timeout, $http) {
                                         $scope.paramValue[i] = newv;
                                     }
                                 }
-                                $scope.doSearch();
+                                $scope.doSearchRelation();
                             }
                         }, true);
 
                         $scope.paramValue[key] = value;
-                        $scope.doSearch();
+                        $scope.doSearchRelation();
                     }
                 }
 
-                $scope.doSearch = function () {
-                    var val = $scope.value;
+                $scope.doSearchList = function (val) {
+                    $scope.search = val;
+                    $scope.list = [];
+                    for (i in $scope.originalList) {
+                        var choice = $scope.originalList[i];
+                        if (val == '' || $scope.isFound(choice)) {
+                            $scope.list.push(choice);
+                        }
+                    }
+                    $timeout(function () {
+                        $scope.openDropdown(true);
+                    });
+                }
+
+                $scope.isFound = function (input) {
+                    return $scope.search == '' || input.toLowerCase().indexOf($scope.search.toLowerCase()) > -1;
+                }
+
+                $scope.doSearchRelation = function (val) {
                     $http.post(Yii.app.createUrl('formfield/RelationField.search'), {
                         's': val,
                         'm': $scope.modelClass,
@@ -74,32 +115,175 @@ app.directive('textField', function ($timeout, $http) {
                         'p': $scope.paramValue
                     }).success(function (data) {
                         $scope.list = data;
-                        $scope.showDropdown = true;
-                        $timeout(function() {
-                            $el.find("input[type=text]").focus();
-                        },10);
+                        $scope.openDropdown(true);
                     });
                 }
-                $scope.choose = function () {
-                    $scope.showDropdown = false;
+
+                $scope.openDropdown = function (scroll) {
+                    var isOpened = $scope.showDropDown == true;
+                    if ($scope.list && $scope.list.length > 0 && (!isOpened || scroll)) {
+                        $scope.showDropdown = true;
+
+                        $timeout(function () {
+                            if (scroll) {
+                                $el.find('.dropdown-menu').scrollTop(0);
+                                $el.find('.dropdown-menu li.hover').removeClass('hover');
+                                var f = $el.find('.dropdown-menu li:eq(0)');
+                                if (!f.hasClass('hover')) {
+                                    f.addClass('hover');
+                                }
+                            }
+
+                            $timeout(function () {
+                                $el.find("input[type=text]").focus();
+                            });
+                        }, 10);
+
+                    }
                 }
 
-                $el.find("input[type=text]").keydown(function () {
+                $scope.choose = function () {
+                    switch ($scope.acMode) {
+                        case "comma":
+                            var val = $el.find(".dropdown-menu li.hover a").text();
+                            var vr = $scope.value.split(",");
+                            if (vr.length > 1) {
+                                vr[vr.length - 1] = val;
+                            } else {
+                                vr[0] = val;
+                            }
+                            for (i in vr) {
+                                vr[i] = vr[i].trim();
+                            }
+
+                            $scope.value = vr.join(", ");
+                            $scope.search = val;
+                            break;
+                        default:
+                            $scope.value = $el.find(".dropdown-menu li.hover a").text();
+                            break;
+                    }
+                    $scope.update();
+
+                    $timeout(function () {
+                        $scope.showDropdown = false;
+                    });
+                }
+
+                $scope.doSearch = function (e) {
+                    if ($scope.value == '') {
+                        $scope.showDropDown = false;
+                    }
+
                     clearTimeout(keytimeout);
                     keytimeout = setTimeout(function () {
-                        if ($scope.autocomplete != '') {
+                        var val = $scope.value;
+                        if (val != '') {
+                            switch ($scope.acMode) {
+                                case "comma":
+                                    val = val.split(",").pop();
+                                default:
+                                    break;
+
+                            }
+
                             switch ($scope.autocomplete) {
                                 case "rel":
-                                    $scope.doSearch();
+                                    $scope.doSearchRelation(val);
                                     break
                                 case "php":
-                                    console.log($(this).val());
+                                    $scope.doSearchList(val);
                                     break;
                             }
                         }
-                    }, 50);
-                });
+                    }, 100);
+                }
 
+                $el.find("input[type=text]").keydown(function (e) {
+                    if ($scope.autocomplete == '') {
+                        return true;
+                    }
+                    if ($(this).val() == '') {
+                        $timeout(function () {
+                            $scope.showDropdown = false;
+                        });
+                    }
+                    switch (e.keyCode) {
+                        case 37:
+                        case 39:
+                            $scope.openDropdown();
+                            break;
+                        case 13:
+                            if ($scope.showDropdown) {
+                                $scope.choose();
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }
+                        case 188:
+                            if ($scope.acMode == 'comma') {
+                                if ($scope.showDropdown) {
+                                    $timeout(function () {
+                                        $scope.choose();
+                                    });
+                                } else {
+                                    $scope.doSearch(e);
+                                }
+                            }
+                            break;
+                        case 38:
+                            $scope.openDropdown();
+
+                            $a = $el.find(".dropdown-menu li.hover").prev();
+                            if ($a.length && $a.length == 0) {
+                                $a = $el.find("li:last-child");
+                            }
+
+                            var i = 0;
+                            while ((!$a.is("li") || !$a.is(":visible")) && i < 100) {
+                                $a = $a.prev();
+                                i++;
+                            }
+                            if ($a.length && $a.length > 0 && $a.is("li")) {
+                                $el.find(".dropdown-menu li.hover").removeClass("hover")
+                                $a.addClass("hover").find("a").focus();
+                            }
+
+                            $timeout(function () {
+                                $el.find("input[type=text]").focus();
+                            });
+                            e.preventDefault();
+                            e.stopPropagation();
+                            break;
+                        case 40:
+                            $scope.openDropdown();
+
+                            $a = $el.find(".dropdown-menu li.hover").next();
+                            if ($a.length && $a.length == 0 && $scope.list.length > 0) {
+                                $scope.updateInternal($scope.list[0].key);
+                            } else {
+                                var i = 0;
+                                while ((!$a.is("li") || !$a.is(":visible")) && i < 100) {
+                                    $a = $a.next();
+                                    i++;
+                                }
+
+                                if ($a.length && $a.length > 0 && $a.is("li")) {
+                                    $el.find(".dropdown-menu li.hover").removeClass("hover");
+                                    $a.addClass("hover").find("a").focus();
+                                }
+                            }
+
+                            $timeout(function () {
+                                $el.find("input[type=text]").focus();
+                            });
+                            e.preventDefault();
+                            e.stopPropagation();
+                            break;
+                        default:
+                            $scope.doSearch(e);
+                            break;
+                    }
+                });
 
                 // if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {

@@ -129,6 +129,17 @@ class TextField extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
+                'label' => 'AC Mode',
+                'name' => 'acMode',
+                'options' => array (
+                    'ng-model' => 'active.acMode',
+                    'ng-change' => 'save();',
+                    'ng-if' => 'active.autocomplete != \\\'\\\'',
+                ),
+                'listExpr' => '[\\\'\\\'=>\\\'Default\\\',\\\'comma\\\'=>\\\'Comma Separated\\\']',
+                'type' => 'DropDownList',
+            ),
+            array (
                 'value' => '<div ng-if=\"active.autocomplete == \'rel\'\">
 <hr/>',
                 'type' => 'Text',
@@ -137,6 +148,17 @@ class TextField extends FormField {
                 'name' => 'TypeRelation',
                 'subForm' => 'application.components.ui.FormFields.TextFieldRelation',
                 'type' => 'SubForm',
+            ),
+            array (
+                'value' => '</div>
+<div ng-if=\"active.autocomplete == \'php\'\">
+<hr/>',
+                'type' => 'Text',
+            ),
+            array (
+                'label' => 'PHP Expression',
+                'fieldname' => 'acPHP',
+                'type' => 'ExpressionField',
             ),
             array (
                 'value' => '</div>
@@ -226,9 +248,9 @@ class TextField extends FormField {
 
     /** @var string $postfix */
     public $postfix = '';
-
     public $autocomplete = '';
-    
+    public $acMode = '';
+
     /** @var array $options */
     public $options = [];
 
@@ -246,7 +268,7 @@ class TextField extends FormField {
 
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-text-height";
-    
+
     /** @var string $name */
     public $modelClass = '';
     public $params = [];
@@ -262,6 +284,8 @@ class TextField extends FormField {
     ];
     public $idField = '';
     public $labelField = '';
+    public $acPHP = '';
+    public $acList = [];
 
     /**
      * @return array me-return array javascript yang di-include
@@ -313,6 +337,34 @@ class TextField extends FormField {
     }
 
     /**
+     * @return array me-return array hasil proses expression.
+     */
+    public function processExpr() {
+
+        if ($this->acPHP != "") {
+            if (FormField::$inEditor) {
+                $this->acList = '';
+                return ['list' => ''];
+            }
+
+            ## evaluate expression
+            $this->acList = $this->evaluate($this->acPHP, true);
+
+            if (is_array($this->acList) && !Helper::is_assoc($this->acList)) {
+                if (!is_array($this->acList[0])) {
+                    $this->acList = Helper::toAssoc($this->acList);
+                }
+            }
+        } else if (is_array($this->acList) && !Helper::is_assoc($this->acList)) {
+            $this->acList = Helper::toAssoc($this->acList);
+        }
+
+        return [
+            'list' => $this->acList
+        ];
+    }
+
+    /**
      * render
      * Fungsi ini untuk me-render field dan atributnya
      * @return mixed me-return sebuah field dan atribut checkboxlist dari hasil render
@@ -330,6 +382,10 @@ class TextField extends FormField {
 
         if (!is_string($this->value))
             $this->value = json_encode($this->value);
+
+        if ($this->autocomplete == 'php') {
+            $this->processExpr();
+        }
 
         return $this->renderInternal('template_render.php');
     }
