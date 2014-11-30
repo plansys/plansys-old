@@ -117,8 +117,11 @@ app.directive('dropDownList', function ($timeout) {
                 }
 
                 $scope.itemExist = function (value) {
-                    if (typeof value == "undefined")
+                    if (!value || value.trim() == '')
                         value = $scope.value;
+
+                    if (!value)
+                        return true;
 
                     return $el.find("li.dropdown-item a[value='" + value + "']").length != 0;
                 }
@@ -132,6 +135,8 @@ app.directive('dropDownList', function ($timeout) {
                         }
                     }, true);
                 }
+
+
                 $scope.toggled = function (open) {
                     if (open) {
                         $scope.openedInField = true;
@@ -172,6 +177,9 @@ app.directive('dropDownList', function ($timeout) {
                 }
 
                 $scope.isFound = function (input) {
+                    if (!$scope.search)
+                        return true;
+
                     return $scope.search == '' || input.toLowerCase().indexOf($scope.search.toLowerCase()) > -1;
                 }
 
@@ -208,22 +216,35 @@ app.directive('dropDownList', function ($timeout) {
                 $scope.otherLabel = $el.find("data[name=other_label]").html();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.value = $el.find("data[name=value]").html().trim();
+                $scope.defaultValue = $el.find("data[name=default_value]").html().trim();
+                $scope.defaultType = $el.find("data[name=default_type]").html().trim();
                 $scope.isOpen = false;
                 $scope.openedInField = false;
 
                 $scope.search = "";
                 //if ngModel is present, use that instead of value from php
                 $timeout(function () {
-
-                    if (attrs.ngModel) {
-                        var ngModelValue = $scope.$eval(attrs.ngModel);
-                        if (typeof ngModelValue != "undefined") {
-                            $scope.updateInternal(ngModelValue);
+                    function init() {
+                        if (attrs.ngModel) {
+                            var ngModelValue = $scope.$eval(attrs.ngModel);
+                            if (typeof ngModelValue != "undefined") {
+                                $scope.updateInternal(ngModelValue);
+                            } else {
+                                $scope.updateInternal($el.find("data[name=value]").html());
+                            }
                         } else {
                             $scope.updateInternal($el.find("data[name=value]").html());
                         }
-                    } else {
-                        $scope.updateInternal($el.find("data[name=value]").html());
+                    }
+                    switch ($scope.defaultType) {
+                        case '':
+                            init();
+                            break;
+                        case 'first':
+                            if ($scope.renderedFormList.length > 0 && $scope.value == '') {
+                                $scope.update($scope.renderedFormList[0].value);
+                            }
+                            break;
                     }
 
                     if (attrs.searchable) {

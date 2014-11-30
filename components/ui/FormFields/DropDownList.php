@@ -146,6 +146,35 @@ class DropDownList extends FormField {
                 'type' => 'TextField',
             ),
             array (
+                'value' => '<hr/>',
+                'type' => 'Text',
+            ),
+            array (
+                'label' => 'Default Value',
+                'name' => 'defaultType',
+                'options' => array (
+                    'ng-model' => 'active.defaultType',
+                    'ng-change' => 'save()',
+                ),
+                'listExpr' => '[\\\'\\\'=>\\\'-- None --\\\',\\\'first\\\' => \\\'First Item\\\']',
+                'labelWidth' => '6',
+                'fieldWidth' => '6',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Default Value Expression',
+                'fieldname' => 'defaultValue',
+                'language' => 'js',
+                'options' => array (
+                    'ng-if' => '[\\\'\\\',\\\'first\\\'].indexOf(active.defaultType) < 0',
+                ),
+                'type' => 'ExpressionField',
+            ),
+            array (
+                'value' => '<hr/>',
+                'type' => 'Text',
+            ),
+            array (
                 'label' => 'DropDown Item',
                 'name' => 'list',
                 'show' => 'Show',
@@ -197,6 +226,10 @@ class DropDownList extends FormField {
     public $options = [];
     
     public $menuPos = '';
+    
+    public $defaultType = '';
+    public $defaultValue = '';
+    
 
     /** @var array $fieldOptions */
     public $fieldOptions = [];

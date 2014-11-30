@@ -16,6 +16,8 @@
         <data name="show_other" class="hide" ><?= $this->showOther ?></data>
         <data name="other_label" class="hide" ><?= $this->otherLabel ?></data>
         <data name="model_class" class="hide"><?= @get_class($model) ?></data>
+        <data name="default_type" class="hide"><?= $this->defaultType ?></data>
+        <data name="default_value" class="hide"><?= $this->defaultValue ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
         <!-- /data -->
 
@@ -45,7 +47,6 @@
             <input ng-if="showOther && !itemExist()" type="text"
                    ng-model="value" ng-change="updateOther(value)" ng-delay="500"
                    class="form-control dropdown-other-type">
-
             <!-- dropdown item -->
             <div class="dropdown-menu open <?= $this->menuPos; ?>">
                 <div class="search" ng-show="searchable">

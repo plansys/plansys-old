@@ -21,44 +21,45 @@ class SubForm extends FormField {
     public static $toolbarIcon = "fa fa-file-text-o fa-nm";
 
     public function getFieldProperties() {
-        return [
-            [
+        return array (
+            array (
                 'label' => 'SubForm Name',
                 'name' => 'name',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
+                ),
                 'type' => 'TextField',
-            ],
-            [
+            ),
+            array (
                 'label' => 'SubForm',
                 'name' => 'subForm',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.subForm',
                     'ng-change' => 'save()',
-                ],
+                ),
+                'menuPos' => 'pull-right',
                 'listExpr' => 'FormBuilder::listForm(null, true)',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Inline JS',
                 'name' => 'inlineJS',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.inlineJS',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
+                ),
                 'type' => 'TextField',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ],
-        ];
+            ),
+        );
     }
 
     private $_subformClass = "";

@@ -47,6 +47,7 @@
         <?php else: ?>
             <!-- value -->
             <input type="<?= $this->fieldType ?>" <?= $this->expandAttributes($this->fieldOptions) ?>
+                   <?php if ($this->autocomplete != ''): ?>autocomplete="off"<?php endif; ?>
                    ng-model="value" ng-change="update()" value="<?= $this->value ?>"/>
 
         <?php endif; ?>

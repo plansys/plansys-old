@@ -65,7 +65,7 @@ class UploadFile extends FormField {
                     'ng-delay' => '500',
                 ],
                 'fieldOptions' => [
-                    'placeholder' => 'ex: \\\'{$model->id}.docx\\\'',
+                    'placeholder' => 'ex: \\\'{$model->id}.{$ext}\\\'',
                     'auto-grow' => '',
                     'style' => 'min-height:50px;white-space:pre;word-break:break-all;',
                 ],
@@ -324,7 +324,7 @@ class UploadFile extends FormField {
         $post = CJSON::decode($postdata);
         $file = base64_decode($post['file']);
         $file = RepoManager::resolve($file);
-        unlink($file);
+        @unlink($file);
 //        unlink($file . '.json');
     }
 
