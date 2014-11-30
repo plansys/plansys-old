@@ -117,8 +117,10 @@ app.directive('dropDownList', function ($timeout) {
                 }
 
                 $scope.itemExist = function (value) {
-                    if (typeof value == "undefined")
+                    if (!value || value.trim() == '')
                         value = $scope.value;
+                    
+                    if (!value) return true;
 
                     return $el.find("li.dropdown-item a[value='" + value + "']").length != 0;
                 }
