@@ -286,6 +286,10 @@ class UploadFile extends FormField {
 //        $desc = JsonModel::load($path . DIRECTORY_SEPARATOR . $name . '.json');
 //        $desc->set('desc', $content);
 //    }
+    
+    public function actionThumb() {
+        
+    }
 
     public function actionCheckFile() {
         $postdata = file_get_contents("php://input");

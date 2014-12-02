@@ -32,7 +32,7 @@
                    name="<?= $this->renderName ?>" 
                    ng-value="value"
                    />
-            <div ng-if="!loading && file == null && mode != 'Download Only'
+            <div ng-if="file == null && mode != 'Download Only'
                             && (allowOverwrite == 'Yes' || allowOverwrite == 'No' && file === null)" >
 
                 <div ng-if="mode == 'Upload + Browse + Download' && choosing != 'Upload'" class="form-control" style="height:auto;padding-top:0px;padding-bottom:0px;">
@@ -45,7 +45,6 @@
                     </label>
                     <div class="clearfix"></div>
                 </div>
-
 
                 <div class="upload-field-internal" ng-if="choosing == 'Upload' || mode.indexOf('Upload') >= 0">    
                     <div ng-show="choosing == 'Upload' && mode == 'Upload + Browse + Download'"
@@ -62,8 +61,7 @@
                            type="file" <?= $this->expandAttributes($this->fieldOptions) ?> 
                            ng-file-select="onFileSelect($files)" onclick="this.value = null"/>
                 </div>
-
-
+                
                 <div class="form-control" 
                      style="padding:5px 5px 5px 5px;
                      margin-top: -2px;

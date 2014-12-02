@@ -85,7 +85,7 @@ app.directive('repoDialog', function ($timeout, $compile, $http) {
 									return false;
 								}
                                 if (r.entity.type == "dir") {
-                                    $http.get(Yii.app.createUrl('/repo/changeDir', {dir: r.entity.path})).success(function (data) {
+                                    $http.get(Yii.app.createUrl('/repo/changeDir', {dir: r.entity.path || ''})).success(function (data) {
                                         $scope.path = data.path;
                                         $scope.data = data.item;
                                         if (!$scope.data) {
