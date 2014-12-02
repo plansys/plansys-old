@@ -295,7 +295,7 @@ class UploadFile extends FormField {
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
-        $thumb = $dir . DIRECTORY_SEPARATOR . basename(time() . rand(1, 10000) . "." . pathinfo($file, PATHINFO_EXTENSION));
+        $thumb = $dir . DIRECTORY_SEPARATOR . basename(time() . '_' . rand(1, 10000) . "." . pathinfo($file, PATHINFO_EXTENSION));
         $img->save($thumb);
         $url = str_replace(Yii::getPathOfAlias('webroot'), '', $thumb);
         $url = str_replace('\\', '/', $url);
