@@ -241,7 +241,6 @@ class UploadFile extends FormField {
         return $class;
     }
 
-
     public function actionUpload($path = null) {
         if (!isset($_FILES['file'])) {
             echo json_encode(["success" => "No"]);
@@ -287,6 +286,23 @@ class UploadFile extends FormField {
 //        $desc->set('desc', $content);
 //    }
 
+    public function actionThumb($t) {
+        $file = base64_decode($t);
+        $img = Yii::app()->img->load($file);
+        $img->resizeToWidth(250);
+
+        $dir = Yii::getPathOfAlias('webroot.assets.thumb.' . date('Y-m-d'));
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        $thumb = $dir . DIRECTORY_SEPARATOR . basename(time() . '_' . rand(1, 10000) . "." . pathinfo($file, PATHINFO_EXTENSION));
+        $img->save($thumb);
+        $url = str_replace(Yii::getPathOfAlias('webroot'), '', $thumb);
+        $url = str_replace('\\', '/', $url);
+
+        echo Yii::app()->baseUrl . $url;
+    }
+
     public function actionCheckFile() {
         $postdata = file_get_contents("php://input");
         $post = json_decode($postdata, true);
@@ -330,7 +346,7 @@ class UploadFile extends FormField {
 
     public function getFieldColClass() {
         return "col-sm-" . $this->
-                fieldWidth;
+            fieldWidth;
     }
 
     public function render() {

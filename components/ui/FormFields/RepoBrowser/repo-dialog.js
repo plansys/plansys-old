@@ -79,13 +79,12 @@ app.directive('repoDialog', function ($timeout, $compile, $http) {
                         afterSelectionChange: function (r) {
                             clearTimeout(t);
                             t = setTimeout(function () {
-								console.log($scope.selected ,r.entity.name);
-								if ($scope.selected != r.entity.name) {
-									$scope.selected = r.entity.name;
-									return false;
-								}
+                                if ($scope.selected != r.entity.name) {
+                                    $scope.selected = r.entity.name;
+                                    return false;
+                                }
                                 if (r.entity.type == "dir") {
-                                    $http.get(Yii.app.createUrl('/repo/changeDir', {dir: r.entity.path})).success(function (data) {
+                                    $http.get(Yii.app.createUrl('/repo/changeDir', {dir: r.entity.path || ''})).success(function (data) {
                                         $scope.path = data.path;
                                         $scope.data = data.item;
                                         if (!$scope.data) {

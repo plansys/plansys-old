@@ -61,8 +61,6 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     }
                 }
 
-
-
                 // when ng-model is changed from outside directive
                 if (typeof ctrl != 'undefined') {
                     ctrl.$render = function () {
@@ -88,7 +86,6 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                         'data': {
                             'desc': desc,
                             'name': $scope.file.name
-//                            'path': $scope.encode($scope.fileDir)
                         }
                     }).success(function () {
                         $scope.fileDescLoadText = '';
@@ -129,7 +126,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     $scope.loading = true;
                     $scope.progress = 0;
                     $scope.$parent.uploading.push($scope.name);
-
+                    $scope.thumb = '';
                     $upload.upload({
                         url: Yii.app.createUrl('/formfield/UploadFile.upload', {
                             class: $scope.classAlias,
@@ -140,6 +137,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                         $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
                     }).success(function (data, html) {
                         $scope.progress = 101;
+                        var ext = $scope.ext(data);
 
                         if (data.success == 'Yes') {
                             $scope.value = data.path;
@@ -149,6 +147,10 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                             };
 
                             $scope.icon($scope.file);
+
+                            if (['jpg', 'gif', 'png', 'jpeg'].indexOf(ext) >= 0) {
+                                $scope.getThumb();
+                            }
                         } else {
                             alert("Error Uploading File. \n");
                         }
@@ -164,16 +166,15 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                         $scope.progress = -1;
                         $scope.loading = false;
                         var index = $scope.$parent.uploading.indexOf($scope.name);
+
                         if (index > -1) {
                             $scope.$parent.uploading.splice(index, 1);
                         }
-                        alert(data);
+                        alert($(data).text());
 
                     });
                 };
-                //Upload Funcs end
 
-                //Remove Func
                 $scope.remove = function (file) {
                     if ($scope.choosing == 'Browse') {
                         $scope.choose('');
@@ -191,8 +192,16 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                             $scope.loading = false;
                         });
                     }
-
                 };
+
+                $scope.thumb = '';
+                $scope.getThumb = function () {
+                    $http.get(Yii.app.createUrl('/formfield/UploadFile.thumb', {
+                        't': $scope.file.downloadPath
+                    })).success(function (url) {
+                        $scope.thumb = url;
+                    });
+                }
 
                 //Get the file extension
                 $scope.ext = function (file) {
@@ -213,7 +222,6 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                 //Create icon based on extension 
                 $scope.icon = function (file) {
                     var type = $scope.ext(file);
-
                     var code = ['php', 'js', 'html', 'json'];
                     var archive = ['zip'];
                     var image = ['jpg', 'jpeg', 'png', 'bmp'];
@@ -252,6 +260,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
 
                 //check if file is defined from outside
                 if ($scope.value != "") {
+                    $scope.thumb = '';
                     var request = $http({
                         method: "post",
                         url: Yii.app.createUrl('/formfield/UploadFile.checkFile'),
@@ -267,6 +276,10 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                             $scope.file = null;
                         }
                         $scope.loading = false;
+
+                        if (['jpg', 'gif', 'png', 'jpeg'].indexOf(ext) >= 0) {
+                            $scope.getThumb();
+                        }
                     }
                     );
                 } else {
@@ -274,13 +287,12 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     $scope.loading = false;
                 }
 
-
                 if ($scope.options['ps-mode']) {
+                    $scope.mode = $scope.$parent[$scope.options['ps-mode']];
                     $scope.$watch('$parent.' + $scope.options['ps-mode'], function (n, o) {
                         if (n !== o) {
                             $timeout(function () {
                                 $scope.mode = n;
-
                             });
                         }
                     }, true);
