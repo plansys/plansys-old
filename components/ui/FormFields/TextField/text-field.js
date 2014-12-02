@@ -284,7 +284,7 @@ app.directive('textField', function ($timeout, $http) {
                             break;
                     }
                 });
-
+                
                 // if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {
                     $timeout(function () {
@@ -294,6 +294,7 @@ app.directive('textField', function ($timeout, $http) {
                         }
                     }, 0);
                 }
+                
             }
         }
     };

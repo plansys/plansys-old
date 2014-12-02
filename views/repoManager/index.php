@@ -10,7 +10,7 @@
                     Up<i class="fa fa-nm fa-level-up"></i>
                 </div>
             </div>
-            <div ui-content>
+            <div ui-content oc-lazy-load="{name: 'ui.tree', files: ['<?= $this->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
                 <div ui-tree data-drag-enabled="false">
                     <ol ui-tree-nodes="" ng-model="list.item">
                         <li ng-repeat="item in list.item" ui-tree-node class='menu-list-item'>

@@ -306,3 +306,135 @@ I(this,"mouseOver");this.setState("hover");a.hoverSeries=this},onMouseOut:functi
 function(b){b.setVisible(a,!1)});if(g)d.isDirtyBox=!0;b!==!1&&d.redraw();I(c,f)},setTooltipPoints:function(a){var b=[],c,d,e=this.xAxis,f=e&&e.getExtremes(),g=e?e.tooltipLen||e.len:this.chart.plotSizeX,h,i,j=[];if(!(this.options.enableMouseTracking===!1||this.singularTooltips)){if(a)this.tooltipPoints=null;q(this.segments||this.points,function(a){b=b.concat(a)});e&&e.reversed&&(b=b.reverse());this.orderTooltipPoints&&this.orderTooltipPoints(b);a=b.length;for(i=0;i<a;i++)if(e=b[i],c=e.x,c>=f.min&&
 c<=f.max){h=b[i+1];c=d===u?0:d+1;for(d=b[i+1]?L(t(0,U((e.clientX+(h?h.wrappedClientX||h.clientX:g))/2)),g):g;c>=0&&c<=d;)j[c++]=e}this.tooltipPoints=j}},show:function(){this.setVisible(!0)},hide:function(){this.setVisible(!1)},select:function(a){this.selected=a=a===u?!this.selected:a;if(this.checkbox)this.checkbox.checked=a;I(this,a?"select":"unselect")},drawTracker:T.drawTrackerGraph});r(K,{Axis:na,Chart:Ya,Color:ya,Point:Fa,Tick:Ta,Renderer:Za,Series:O,SVGElement:S,SVGRenderer:ta,arrayMin:Oa,arrayMax:Ca,
 charts:W,dateFormat:cb,format:Ja,pathAnim:vb,getOptions:function(){return E},hasBidiBug:Ob,isTouchDevice:Ib,numberFormat:Ba,seriesTypes:H,setOptions:function(a){E=w(!0,E,a);Bb();return E},addEvent:N,removeEvent:X,createElement:$,discardElement:Qa,css:B,each:q,extend:r,map:Va,merge:w,pick:p,splat:ra,extendClass:ma,pInt:y,wrap:Na,svg:ba,canvas:ga,vml:!ba&&!ga,product:"Highcharts",version:"4.0.4"})})();
+
+/**
+ * @license @product.name@ JS v@product.version@ (@product.date@)
+ * Plugin for displaying a message when there is no data visible in chart.
+ *
+ * (c) 2010-2014 Highsoft AS
+ * Author: Oystein Moseng
+ *
+ * License: www.highcharts.com/license
+ */
+
+(function (H) {
+	
+	var seriesTypes = H.seriesTypes,
+		chartPrototype = H.Chart.prototype,
+		defaultOptions = H.getOptions(),
+		extend = H.extend;
+
+	// Add language option
+	extend(defaultOptions.lang, {
+		noData: 'No data to display'
+	});
+	
+	// Add default display options for message
+	defaultOptions.noData = {
+		position: {
+			x: 0,
+			y: 0,			
+			align: 'center',
+			verticalAlign: 'middle'
+		},
+		attr: {						
+		},
+		style: {	
+			fontWeight: 'bold',		
+			fontSize: '12px',
+			color: '#60606a'		
+		}
+	};
+
+	/**
+	 * Define hasData functions for series. These return true if there are data points on this series within the plot area
+	 */	
+	function hasDataPie() {
+		return !!this.points.length; /* != 0 */
+	}
+
+	if (seriesTypes.pie) {
+		seriesTypes.pie.prototype.hasData = hasDataPie;
+	}
+
+	if (seriesTypes.gauge) {
+		seriesTypes.gauge.prototype.hasData = hasDataPie;
+	}
+
+	if (seriesTypes.waterfall) {
+		seriesTypes.waterfall.prototype.hasData = hasDataPie;
+	}
+
+	H.Series.prototype.hasData = function () {
+		return this.dataMax !== undefined && this.dataMin !== undefined;
+	};
+	
+	/**
+	 * Display a no-data message.
+	 *
+	 * @param {String} str An optional message to show in place of the default one 
+	 */
+	chartPrototype.showNoData = function (str) {
+		var chart = this,
+			options = chart.options,
+			text = str || options.lang.noData,
+			noDataOptions = options.noData;
+
+		if (!chart.noDataLabel) {
+			chart.noDataLabel = chart.renderer.label(text, 0, 0, null, null, null, null, null, 'no-data')
+				.attr(noDataOptions.attr)
+				.css(noDataOptions.style)
+				.add();
+			chart.noDataLabel.align(extend(chart.noDataLabel.getBBox(), noDataOptions.position), false, 'plotBox');
+		}
+	};
+
+	/**
+	 * Hide no-data message	
+	 */	
+	chartPrototype.hideNoData = function () {
+		var chart = this;
+		if (chart.noDataLabel) {
+			chart.noDataLabel = chart.noDataLabel.destroy();
+		}
+	};
+
+	/**
+	 * Returns true if there are data points within the plot area now
+	 */	
+	chartPrototype.hasData = function () {
+		var chart = this,
+			series = chart.series,
+			i = series.length;
+
+		while (i--) {
+			if (series[i].hasData() && !series[i].options.isInternal) { 
+				return true;
+			}	
+		}
+
+		return false;
+	};
+
+	/**
+	 * Show no-data message if there is no data in sight. Otherwise, hide it.
+	 */
+	function handleNoData() {
+		var chart = this;
+		if (chart.hasData()) {
+			chart.hideNoData();
+		} else {
+			chart.showNoData();
+		}
+	}
+
+	/**
+	 * Add event listener to handle automatic display of no-data message
+	 */
+	chartPrototype.callbacks.push(function (chart) {
+		H.addEvent(chart, 'load', handleNoData);
+		H.addEvent(chart, 'redraw', handleNoData);
+	});
+
+}(Highcharts));
+//window.console && console.log('--- Running modules/no-data-to-display.src.js from GitHub, branch/commit/tag "master" ---');

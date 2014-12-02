@@ -35,7 +35,6 @@ if (!Object.getProperty) {
     }
 }
 
-
 function registerController(controllerName) {
     if (controllerProvider == null)
         return;
@@ -55,11 +54,9 @@ function registerController(controllerName) {
 var controllerProvider = null;
 var app = angular.module("main", [
     'ui.layout',
-    'ui.tree',
     'ui.bootstrap',
-    'ngGrid',
-    'angularFileUpload',
     'ngStorage',
+    'oc.lazyLoad'
 ]);
 app.config(function ($sceProvider, $controllerProvider) {
     controllerProvider = $controllerProvider;

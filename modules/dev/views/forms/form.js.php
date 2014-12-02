@@ -1,5 +1,6 @@
 <script type="text/javascript">
 
+
     /** jQuery Caret **/
     (function ($) {
         // Behind the scenes method deals with browser
@@ -14,13 +15,11 @@
                 el.setSelectionRange(index, index);
             }
         };
-
         // Set caret to a particular index
         $.fn.setCaretPosition = function (index, offset) {
             return this.queue(function (next) {
                 if (isNaN(index)) {
                     var i = $(this).val().indexOf(index);
-
                     if (offset === true) {
                         i += index.length;
                     } else if (offset) {
@@ -35,7 +34,6 @@
                 next();
             });
         };
-
         $.fn.getCaretPosition = function () {
             var input = this.get(0);
             if (!input)
@@ -53,7 +51,6 @@
             }
         }
     })(jQuery);
-
     app.controller("PageController", function ($scope, $http, $timeout, $window, $compile) {
         $scope.getNumber = function (num) {
             a = [];
@@ -267,6 +264,29 @@
                 }
             });
         }
+        /************************ TEXT AUTO COMPLETE  ****************************/
+        $scope.generateAutoComplete = function () {
+            switch ($scope.active.autocomplete) {
+                case "rel":
+                    $timeout(function () {
+                        $scope.active.modelClass = '<?= Helper::classAlias(get_parent_class($class), false) ?>';
+                        $scope.active.idField = $scope.active.name;
+                        $scope.active.labelField = $scope.active.name;
+                        $scope.active.criteria = {
+                            'select': $scope.active.name,
+                            'distinct': 'true',
+                            'alias': 't',
+                            'condition': '{[search]}',
+                            'order': '',
+                            'group': '',
+                            'having': '',
+                            'join': ''
+                        };
+                        $scope.save();
+                    });
+                    break;
+            }
+        }
 
         /************************ DATA CHART SERIES ****************************/
         $scope.generateSeries = function (retrieveMode) {
@@ -297,11 +317,7 @@
                         }
 
                         $scope.active.series = generated[0];
-
                         $scope.setTickSeries();
-
-
-
                         /*****  FUNCTION *****/
 
                         function generateByRow(data) {
@@ -325,13 +341,11 @@
                                     series.value = filtered[i][j];
                                     series.label = j;
                                     series.color = getRandomColor();
-
                                     result[i].push(series);
                                 }
                             }
 
                             return result;
-
                         }
 
                         function generateByColumn(data) {
@@ -381,7 +395,6 @@
                 '': '-- NONE --',
                 '---': '---'
             };
-
             for (var i in series) {
                 $scope.tickSeriesList[series[i].label] = series[i].label;
             }
@@ -430,7 +443,6 @@
         /************************ DATA COLUMNS ****************************/
         $scope.generateColumns = function () {
             var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
-
             if (confirm("Your current columns will be lost. Are you sure?")) {
                 $scope.active.columns = [];
                 $http.post(Yii.app.createUrl('/formfield/DataSource.query'), {
@@ -628,7 +640,6 @@
                     $scope.activeTree = item;
                     $scope.active = item.$modelValue;
                     $scope.tabs.properties = true;
-
                     switch (item.$modelValue.type) {
                         case 'DataFilter':
                         case 'DataGrid':

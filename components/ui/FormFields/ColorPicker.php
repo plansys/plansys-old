@@ -10,39 +10,39 @@ class ColorPicker extends FormField {
      * @return array me-return array property TextField.
      */
     public function getFieldProperties() {
-        return  [
-             [
+        return [
+            [
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' =>  [
+                'options' => [
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
                 ],
-                'list' =>  [],
+                'list' => [],
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ],
-             [
+            [
                 'label' => 'Label',
                 'name' => 'label',
-                'options' =>  [
+                'options' => [
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ],
                 'type' => 'TextField',
             ],
-             [
-                'column1' =>  [
-                     [
+            [
+                'column1' => [
+                    [
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' =>  [
+                        'options' => [
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
@@ -50,59 +50,59 @@ class ColorPicker extends FormField {
                         ],
                         'type' => 'TextField',
                     ],
-                     [
+                    [
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ],
                 ],
-                'column2' =>  [
-                     [
+                'column2' => [
+                    [
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => 12,
                         'fieldWidth' => '11',
-                        'options' =>  [
+                        'options' => [
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                         ],
                         'type' => 'TextField',
                     ],
-                     [
+                    [
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ],
                 ],
-                'column3' =>  [
-                     [
+                'column3' => [
+                    [
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ],
                 ],
-                'column4' =>  [
-                     [
+                'column4' => [
+                    [
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ],
                 ],
                 'type' => 'ColumnField',
             ],
-             [
+            [
                 'value' => '<hr/>',
                 'type' => 'Text',
             ],
-             [
+            [
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
             ],
-             [
+            [
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ],
-             [
+            [
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
@@ -153,7 +153,11 @@ class ColorPicker extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return ['color-picker.js'];
+        return ['jquery.colorpicker.js', 'color-picker.js'];
+    }
+
+    public function includeCSS() {
+        return ['colorpicker/css/colorpicker.css'];
     }
 
     /**

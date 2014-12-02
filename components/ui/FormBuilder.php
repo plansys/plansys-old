@@ -1095,7 +1095,6 @@ EOF;
             if (!is_null($module) && strtolower($m['module']) != strtolower($module))
                 continue;
 
-
             if ($excludeModule !== true) {
                 if (in_array($m['module'], $excludeModule))
                     continue;
@@ -1176,7 +1175,7 @@ EOF;
 
         $func = function($m, $module = "", $aliaspath = "", $path) {
             return [
-                'name' => str_replace(ucfirst($module), '', $m),
+                'name' => str_replace($module, '', $m),
                 'class' => $m,
                 'alias' => $aliaspath . "." . $m,
                 'items' => []

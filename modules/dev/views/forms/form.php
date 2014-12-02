@@ -1,16 +1,15 @@
 
 
 <div ng-controller="PageController" ng-cloak >
-    
+
     <div ng-if="mustReload"
-        style="z-index:9999;position:absolute;top:0px;left:0px;
+         style="z-index:9999;position:absolute;top:0px;left:0px;
          right:0px;bottom:0px;background:rgba(255,255,255,.9);text-align:center;padding:200px;">
         <h3>Source file has changed</h3>
         <div class="btn btn-success" onclick="location.reload()"><i class="fa fa-refresh"></i> Refresh Form</div>
     </div>
     <div ui-layout class="sub" options="{ flow : 'column' }">
-
-        <div size='69%' min-size="300px">
+        <div size='69%' min-size="300px" >
             <!-- form-builder-content -->
             <div class="form-builder-saving">
                 <span ng-show='saving'> 
@@ -37,7 +36,8 @@
                      class="pull-right btn btn-xs" style="margin:2px;">
                     <i class="fa fa-refresh fa-nm"></i>
                 </div>
-                <tab ng-click="tabs.toolbar = true" active="tabs.toolbar" ng-controller="ToolbarController">
+                <tab ng-click="tabs.toolbar = true" active="tabs.toolbar" 
+                     ng-controller="ToolbarController">
                     <tab-heading>
                         <i class="fa fa-bars"></i> Toolbar
                     </tab-heading>
@@ -58,7 +58,7 @@
                             <div class="toolbar-type btn-group" dropdown on-toggle="openToolbarType(open)">
                                 <button type="button" class="btn btn-xs btn-default dropdown-toggle change-type">
                                     <i style="margin-top:1px;float:left;"
-                                        class="fa-nm" ng-class="toolbarSettings['icon'][active.type]"></i>
+                                       class="fa-nm" ng-class="toolbarSettings['icon'][active.type]"></i>
                                     &nbsp; {{active.type}}
                                     <span class="caret"></span>
                                 </button>
@@ -66,7 +66,8 @@
 
                                     <li ng-repeat="(name, icon) in toolbarSettings['icon']">
                                         <a href="#" dropdown-toggle value="{{name}}" 
-                                           ng-click="active.type = name; save();">
+                                           ng-click="active.type = name;
+                                                           save();">
                                             <i class="{{icon}}"></i> {{name}}
                                         </a>
                                     </li>

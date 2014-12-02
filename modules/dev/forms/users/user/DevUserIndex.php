@@ -163,7 +163,7 @@ class DevUserIndex extends User {
                             'enableCellEdit' => 'false',
                         ),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                         'inputMask' => '',
                         'stringAlias' => array (),
                     ),

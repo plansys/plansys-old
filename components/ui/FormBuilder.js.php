@@ -15,12 +15,10 @@ ob_start();
         $scope.model = <?php echo @json_encode($data['data']); ?>;
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
         $scope.params = <?php echo @json_encode($renderParams); ?>;
-
 <?php if (!Yii::app()->user->isGuest): ?>
             $scope.user = <?php echo @json_encode(Yii::app()->user->info); ?>;
             if ($scope.user != null) {
                 $scope.user.role = [];
-
                 for (i in $scope.user.roles) {
                     $scope.user.role.push($scope.user.roles[i]['role_name']);
                 }
@@ -60,7 +58,6 @@ ob_start();
 
         $storage = $localStorage;
         $scope.$storage = $storage;
-
         document.title = $scope.form.title;
         $scope.$watch('form.title', function () {
             document.title = $scope.form.title;
@@ -81,7 +78,6 @@ ob_start();
                 }
             }, 0);
         };
-
         $("div[ng-controller=<?= $modelClass ?>Controller] form").submit(function (e) {
             if ($scope.uploading.length > 0) {
                 alert("Mohon tunggu sampai proses file upload selesai.");
@@ -92,7 +88,6 @@ ob_start();
 
             $scope.formSubmitting = true;
         });
-
         $scope.form.canGoBack = function () {
             return (document.referrer == "" || window.history.length > 1);
         }
@@ -102,12 +97,30 @@ ob_start();
         }
 
         $scope.uploading = [];
+        $scope.dataGrids = {length: 0};
+        $("[ng-controller=<?= $modelClass ?>Controller] .data-grid-loader").each(function () {
+            $scope.dataGrids[$(this).attr('name')] = false;
+            $scope.dataGrids.length++;
+        });
+        
+        function inlineJS() {
+            $("div[ng-controller=<?= $modelClass ?>Controller]").css('opacity', 1);
+<?= $inlineJS; ?>
+        }
 
         // execute inline JS
         $timeout(function () {
-            $("div[ng-controller=<?= $modelClass ?>Controller]").css('opacity', 1);
-
-<?= $inlineJS; ?>
+            // make sure datagrids is loaded before executing inlinejs
+            if ($scope.dataGrids.length > 0) {
+                var dgWatch = $scope.$watch('dataGrids.length', function (n) {
+                    if (n == 0) {
+                        dgWatch();
+                        inlineJS();
+                    }
+                }, true);
+            } else {
+                inlineJS();
+            }
         }, 0);
     });
 <?php $script = ob_get_clean(); ?>

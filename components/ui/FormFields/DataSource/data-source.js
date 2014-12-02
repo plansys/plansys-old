@@ -3,6 +3,8 @@ app.directive('psDataSource', function ($timeout, $http) {
         scope: true,
         compile: function (element, attrs, transclude) {
             return function ($scope, $el, attrs, ctrl) {
+                var parent = $scope.$parent;
+                
                 $scope.params = JSON.parse($el.find("data[name=params]").text());
                 $scope.paramsGet = JSON.parse($el.find("data[name=params_get]").text());
                 $scope.sqlParams = JSON.parse($el.find("data[name=params_default]").text());
@@ -139,10 +141,10 @@ app.directive('psDataSource', function ($timeout, $http) {
                 for (i in $scope.params) {
                     var p = $scope.params[i];
                     if (p.indexOf('js:') === 0) {
-                        var value = $scope.$parent.$eval(p.replace('js:', ''));
+                        var value = parent.$eval(p.replace('js:', ''));
                         var key = i;
 
-                        $scope.$parent.$watch(p.replace('js:', ''), function (newv, oldv) {
+                        parent.$watch(p.replace('js:', ''), function (newv, oldv) {
                             if (newv != oldv) {
                                 $scope.updateParam(key, newv);
                                 $scope.query();
@@ -271,7 +273,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                     }, true);
                 }
 
-                $scope.$parent[$scope.name] = $scope;
+                parent[$scope.name] = $scope;
 
             }
 

@@ -12,6 +12,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
             });
 
             return function ($scope, $el, attrs, ctrl) {
+                var parent = $scope.$parent;
+
                 /************* All Filter **************/
                 $scope.toggleFilterCriteria = function (e) {
                     var parent = $(e.target).parents('.btn-group');
@@ -60,7 +62,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                     $scope.changeValueText(filter);
 
-                    var ds = $scope.$parent[$scope.datasource];
+                    var ds = parent[$scope.datasource];
                     var dsParamName = "";
                     if (filter.isCustom === "Yes") {
                         dsParamName = filter.name;
@@ -157,7 +159,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                         $scope.toggleFilterCriteria(e);
                     }
 
-                    var ds = $scope.$parent[$scope.datasource];
+                    var ds = parent[$scope.datasource];
                     var dsParamName = "";
 
                     if (filter.isCustom === "Yes") {
@@ -583,26 +585,26 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     relation: 'filter_dropdown',
                     date: 'filter_date'
                 }
-                $scope.$parent[$scope.name] = $scope;
+                parent[$scope.name] = $scope;
                 $scope.available = false;
 
                 // Set Default Filters Value
                 $timeout(function () {
                     var showCount = 0;
-                    var ds = $scope.$parent[$scope.datasource];
+                    var ds = parent[$scope.datasource];
                     var dataAvailable = ds.data != null && ds.data.length > 0;
-                    
-                    
+
+
 //                    if (dataAvailable)
-                        $scope.available = true;
+                    $scope.available = true;
 
                     var defaultValueAvailable = false;
                     for (i in $scope.filters) {
                         var f = $scope.filters[i];
                         var dateCondition = (f.filterType == 'date' && ['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(f.defaultOperator) >= 0);
 
-						f.show = (showCount > 5 ? false : true);
-						showCount++;
+                        f.show = (showCount > 5 ? false : true);
+                        showCount++;
 
                         if (f.defaultValue && f.defaultValue != "" || dateCondition) {
                             if ($scope.operators[f.filterType]) {
@@ -631,7 +633,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                         }
                     }
                     if (defaultValueAvailable) {
-                        $scope.$parent[$scope.datasource].query(function () {
+                        parent[$scope.datasource].query(function () {
                         });
                     }
                 });

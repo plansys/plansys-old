@@ -13,7 +13,7 @@ class Helper {
             return false;
         }
     }
-    
+
     public static function explodeFirst($delimeter, $str) {
         $a = explode($delimeter, $str);
         return array_shift($a);
@@ -162,14 +162,16 @@ class Helper {
         }
     }
 
-    public static function classAlias($class) {
+    public static function classAlias($class, $withWebroot = true) {
 
         $reflector = new ReflectionClass($class);
 
+        $wr = $withWebroot ? "webroot" : '';
+
         $fn = $reflector->getFileName();
         $webroot = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('webroot'));
-        $alias = str_replace(DIRECTORY_SEPARATOR, ".", str_replace(".php", "", str_replace($webroot, "webroot", $fn)));
-        return $alias;
+        $alias = str_replace(DIRECTORY_SEPARATOR, ".", str_replace(".php", "", str_replace($webroot, $wr, $fn)));
+        return trim($alias, ".");
     }
 
     public static function expandAttributes($attributes) {

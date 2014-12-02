@@ -123,13 +123,13 @@ class TextField extends FormField {
                 'name' => 'autocomplete',
                 'options' => array (
                     'ng-model' => 'active.autocomplete',
-                    'ng-change' => 'save();',
+                    'ng-change' => 'generateAutoComplete(scope); save();',
                 ),
                 'listExpr' => '[\\\'\\\'=>\\\'Off\\\',\\\'rel\\\'=>\\\'On - Using Relation\\\', \\\'php\\\'=>\\\'On - Using PHP\\\']',
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'AC Mode',
+                'label' => 'Typing Mode',
                 'name' => 'acMode',
                 'options' => array (
                     'ng-model' => 'active.acMode',
@@ -274,7 +274,7 @@ class TextField extends FormField {
     public $params = [];
     public $criteria = [
         'select' => '',
-        'distinct' => 'false',
+        'distinct' => 'true',
         'alias' => 't',
         'condition' => '{[search]}',
         'order' => '',

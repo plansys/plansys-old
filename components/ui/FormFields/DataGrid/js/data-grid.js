@@ -1,8 +1,10 @@
-app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFilter) {
+app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLazyLoad, dateFilter) {
     return {
         scope: true,
         compile: function (element, attrs, transclude) {
             return function ($scope, $el, attrs, ctrl) {
+                var parent = $scope.$parent;
+
                 function evalArray(array) {
                     for (i in array) {
                         if (typeof array[i] == "string") {
@@ -35,12 +37,12 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                         var $detail = $(this).find('.ngCellButtonCollapsedDetail').remove();
                         var offset = {
                             right: $(this).parents('.ngCanvas').width() -
-                            ($(this).parents('.ngCell').css('left').replace('px', '') * 1 +
-                            $(this).parents('.ngCell').width())
+                                    ($(this).parents('.ngCell').css('left').replace('px', '') * 1 +
+                                            $(this).parents('.ngCell').width())
                         };
                         $detail.attr('colt', $(this).parents('.ngCell').attr('class').split(' ').pop())
-                            .css(offset)
-                            .show();
+                                .css(offset)
+                                .show();
 
                         $detail.appendTo($(this).parents('.ngRow'));
                         $compile($detail)(angular.element($container).scope());
@@ -150,12 +152,12 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                         if ($btn.attr('ajax-success')) {
 
                             $http.get($btn.attr('href'))
-                                .success(function (data) {
-                                    $scope.$eval($btn.attr('ajax-success'), {row: row, data: data});
-                                })
-                                .error(function (data) {
-                                    $scope.$eval($btn.attr('ajax-failed'), {row: row, data: data});
-                                });
+                                    .success(function (data) {
+                                        $scope.$eval($btn.attr('ajax-success'), {row: row, data: data});
+                                    })
+                                    .error(function (data) {
+                                        $scope.$eval($btn.attr('ajax-failed'), {row: row, data: data});
+                                    });
                         }
 
                         e.preventDefault();
@@ -253,7 +255,8 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                     var cols = [];
                     if ($scope.columns) {
                         for (i in  $scope.columns) {
-                            if ($scope.columns[i].visible === false) continue;
+                            if ($scope.columns[i].visible === false)
+                                continue;
 
                             if (!return_array) {
                                 cols.push({idx: i, label: $scope.columns[i].label, name: $scope.columns[i].name});
@@ -304,9 +307,9 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                     var data = JSON.stringify(data);
 
                     var form = $('<form target="_blank" action="' + url + '" method="post">' +
-                    '<input type="hidden" name="data" value=\'' + data + '\' />' +
-                    '<input type="hidden" name="file" value="' + file + '" />' +
-                    '</form>');
+                            '<input type="hidden" name="data" value=\'' + data + '\' />' +
+                            '<input type="hidden" name="file" value="' + file + '" />' +
+                            '</form>');
 
                     $('body').append(form);
                     form.submit();
@@ -393,8 +396,8 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                     var showPlaceholder = $scope.gridOptions.enableCellEdit || $scope.gridOptions.enableExcelMode;
                     if (placeholder != "" && showPlaceholder) {
                         placeholderHtml = '<div ng-if="' +
-                        emptyVal + '.indexOf(row.getProperty(col.field)) >=0 " style="color:#999">' +
-                        placeholder + '</div>';
+                                emptyVal + '.indexOf(row.getProperty(col.field)) >=0 " style="color:#999">' +
+                                placeholder + '</div>';
                     }
                     var varDef = 'row.getProperty(col.field)';
                     if (Object.prototype.toString.call(col.stringAlias) == "[object Object]") {
@@ -506,7 +509,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                     var id = $scope.name + '-' + col.name + '-dropdownlist';
 
                     if (col.listType == 'js') {
-                        col.listItem = JSON.stringify($scope.$parent.$eval(col.listExpr));
+                        col.listItem = JSON.stringify(parent.$eval(col.listExpr));
                     }
                     $('<div id="' + id + '" style="display:none;">' + col.listItem + '</div>').appendTo('body');
 
@@ -556,7 +559,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                 $scope.fillColumns = function () {
                     $timeout(function () {
                         var columns = [];
-                        $scope.datasource = $scope.$parent[$el.find("data[name=datasource]").text()];
+                        $scope.datasource = parent[$el.find("data[name=datasource]").text()];
 
                         if (typeof $scope.datasource != "undefined") {
                             $scope.data = $scope.datasource.data;
@@ -574,10 +577,10 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                         $scope.gridOptions.enableColumnResize = $scope.gridOptions.enableColumnResize === false ? false : true;
 
                         if ($scope.gridOptions.generateColumns || (
-                            $scope.data !== null &&
-                            $scope.columns !== null &&
-                            $scope.data.length > 0 &&
-                            $scope.columns.length == 0)) {
+                                $scope.data !== null &&
+                                $scope.columns !== null &&
+                                $scope.data.length > 0 &&
+                                $scope.columns.length == 0)) {
 
                             $scope.availableCols = [];
                             for (i in $scope.columns) {
@@ -750,8 +753,6 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                                 var top = Math.abs(pagerTop - formTop);
                                 var adjTop = 10;
 
-//                                console.log($scope.gridOptions['enableExcelMode'], $scope.gridOptions['enablePaging'], $scope.gridOptions['enableCellEdit']);
-
                                 if (!$scope.gridOptions['enableExcelMode'] && !$scope.gridOptions['enableCellEdit'] && !$scope.gridOptions['enablePaging']) {
                                     adjTop = 0;
                                 }
@@ -773,7 +774,6 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
 
                                         $topp.width(width);
                                         $topp.css('top', formTopPos + pagerHeight + $cat.height() + adjTop);
-
                                         $el.find(".data-grid-paging-shadow").show();
                                     } else {
                                         if ($dgcontainer.hasClass('fixed')) {
@@ -782,6 +782,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                                         $pager.attr('style', '');
                                         $cat.attr("style", '');
                                         $topp.attr("style", '');
+                                        $catt.css('margin-top', '0px');
                                         $el.find(".data-grid-paging-shadow").hide();
 
                                     }
@@ -995,7 +996,9 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, dateFi
                 $scope.onGridLoaded = '';
                 $scope.fillColumns();
 
-                $scope.$parent[$scope.name] = $scope;
+                parent[$scope.name] = $scope;
+                parent.dataGrids[$scope.name] = true;
+                parent.dataGrids.length--;
             }
         }
     };

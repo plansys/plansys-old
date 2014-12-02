@@ -1474,6 +1474,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 .data-grid-container.fixed .data-grid-category .ngTopPanel {
     position:fixed;
     z-index:20;
+    margin-top:-20px;
 }
 .data-grid-category .ngHeaderCell{
     border-bottom:0px;

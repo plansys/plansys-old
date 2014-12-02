@@ -27,6 +27,7 @@ return array(
         'application.components.repo.*',
         'application.behaviors.*',
         'ext.YiiJasper.*',
+        'application.extensions.ImageFly.components.*'
     ),
     'sourceLanguage' => 'en_us',
     'language' => 'id',

@@ -3,13 +3,15 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
         scope: true,
         compile: function (element, attrs, transclude) {
             return function ($scope, $el, attrs, ctrl) {
+                var parent = $scope.$parent.$parent;
+                
                 $scope.triggerWatch = true;
                 $scope.name = $el.find("data[name=name]").text();
                 $scope.renderID = $el.find("data[name=render_id]").text();
                 $scope.modelClass = $el.find("data[name=model_class]").text();
                 $scope.gridOptions = JSON.parse($el.find("data[name=grid_options]").text());
                 $scope.columns = JSON.parse($el.find("data[name=columns]").text());
-                $scope.datasource = $scope.$parent[$el.find("data[name=datasource]").text()];
+                $scope.datasource = parent[$el.find("data[name=datasource]").text()];
                 $scope.lastRelList = {};
 
                 var colHeaders = [];
@@ -31,9 +33,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         case "dropdown":
                             colDef.type = "dropdown";
                             if (c.listType == 'js') {
-                                c.listItem = $scope.$parent.$eval(col.listExpr);
+                                c.listItem = parent.$eval(col.listExpr);
                             }
-                            colDef.source = $scope.$parent.$eval(c.listItem);
+                            colDef.source = parent.$eval(c.listItem);
                             break;
                         case "relation":
                             colDef.data = c.name + "_label";
@@ -369,7 +371,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 //    }
                 //}, true);
 
-                $scope.$parent[$scope.name] = $scope;
+                parent[$scope.name] = $scope;
             }
         }
     }

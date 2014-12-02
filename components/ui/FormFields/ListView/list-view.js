@@ -8,6 +8,7 @@ app.directive('listView', function($timeout) {
             }
 
             return function($scope, $el, attrs, ctrl) {
+                var parent = $scope.$parent;
                 // when ng-model is changed from inside directive
                 $scope.updateListView = function() {
                     if (typeof ctrl != 'undefined') {
@@ -104,7 +105,7 @@ app.directive('listView', function($timeout) {
                             $scope.value = ngModelValue;
                         }
                         if (!$scope.inEditor) {
-                            $scope.$parent[$scope.name] = $scope;
+                            parent[$scope.name] = $scope;
                         }
                     }, 0);
                 }

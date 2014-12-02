@@ -2,16 +2,14 @@ app.directive('linkBtn', function ($timeout, $parse, $compile) {
     return {
         scope: true,
         compile: function (element, attrs, transclude) {
-
-
             return function ($scope, $el, attrs, ctrl) {
+                var urlVars = [];
 
                 var generateUrl = function (url, type) {
                     var output = '';
                     if (typeof url == "string") {
-
-
                         var match = url.match(/{([^}]+)}/g);
+                        urlVars.length = 0;
                         for (i in match) {
                             var m = match[i];
                             m = m.substr(1, m.length - 2);
@@ -19,6 +17,7 @@ app.directive('linkBtn', function ($timeout, $parse, $compile) {
                             if (m.indexOf('.') > 0) {
                                 result = $scope.$eval(m);
                             }
+                            urlVars.push(m);
                             url = url.replace('{' + m + '}', result);
                         }
 
@@ -36,11 +35,9 @@ app.directive('linkBtn', function ($timeout, $parse, $compile) {
                                 output = '{{' + output + '}}';
                             }
                         }
-
                     }
                     return output;
                 }
-
 
                 if ($el.attr('group') != '' && $(".link-btn[group=" + $el.attr('group') + "]").length > 1) {
                     $firstBtn = $(".link-btn[group=" + $el.attr('group') + "]").eq(0);
@@ -57,10 +54,21 @@ app.directive('linkBtn', function ($timeout, $parse, $compile) {
                 if (attrs.href) {
                     $timeout(function () {
                         var href = attrs.href;
+                        var originalHref = href;
 
                         if (href.trim().substr(0, 4) == "url:") {
                             var url = href.trim().substr(4);
                             href = eval(generateUrl(url, 'function'));
+                            
+                            //watch URL Variables
+                            for (i in urlVars) {
+                                $scope.$watch(urlVars[i], function (n) {
+                                    var url = originalHref.trim().substr(4);
+                                    href = eval(generateUrl(url, 'function'));
+                                    $el.attr('href', href);
+                                    $scope.url = href;
+                                });
+                            }
                         }
 
                         $el.attr('href', href);

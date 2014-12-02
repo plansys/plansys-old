@@ -16,10 +16,12 @@
             </div>
             <div ui-content>
                 <script type="text/ng-template" id="FormTree"><?php include('form_menu.php'); ?></script>
-                <div ui-tree="listOptions" class="menu-editor">
-                    <ol ui-tree-nodes ng-model="list">
-                        <li data-collapsed="isCollapsed(item)" ng-repeat="item in list" ui-tree-node ng-include="'FormTree'"></li>
-                    </ol>
+                <div oc-lazy-load="{name: 'ui.tree', files: ['<?= $this->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
+                    <div ui-tree="listOptions" class="menu-editor">
+                        <ol ui-tree-nodes ng-model="list">
+                            <li data-collapsed="isCollapsed(item)" ng-repeat="item in list" ui-tree-node ng-include="'FormTree'"></li>
+                        </ol>
+                    </div>
                 </div>
             </div>
         </div>

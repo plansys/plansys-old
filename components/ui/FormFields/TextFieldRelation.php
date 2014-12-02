@@ -83,7 +83,7 @@ class TextFieldRelation extends Form {
                 'baseClass' => 'TextField',
                 'options' => array (
                     'ng-change' => 'save();',
-                    'ng-model' => 'value[$index].criteria',
+                    'ng-model' => 'active.criteria',
                 ),
                 'modelClassJS' => 'TextField/inlinejs/relation-criteria.js',
                 'type' => 'SqlCriteria',

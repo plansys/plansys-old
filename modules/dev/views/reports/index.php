@@ -4,7 +4,7 @@
 			<div ui-header>
                 Reports
             </div>
-			<div ui-content>
+			<div ui-content oc-lazy-load="{name: 'ui.tree', files: ['<?= $this->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
                 <div ui-tree data-drag-enabled="false">
 					<ol ui-tree-nodes="" ng-model="list">
 						<li ng-repeat="item in list" ui-tree-node>

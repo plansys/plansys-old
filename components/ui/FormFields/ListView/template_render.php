@@ -21,43 +21,49 @@
         <!-- /data -->
         <!-- field -->
         <?php if ($this->fieldTemplate == "default"): ?>
-            <div ng-if="value != null" ui-tree="uiTreeOptions">
-                <ol ui-tree-nodes ng-model="value">
-                    <li ui-tree-node ng-repeat="item in value" class="list-view-item">
-                        <div style="float:right;margin-top:7px;">
-                            <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
-                                <i class="fa fa-times"></i>
+            <div ng-if="value != null" oc-lazy-load="{name: 'ui.tree', files: ['<?= Yii::app()->controller->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
+                <div ui-tree="uiTreeOptions">
+                    <ol ui-tree-nodes ng-model="value">
+                        <li ui-tree-node ng-repeat="item in value" class="list-view-item">
+                            <div style="float:right;margin-top:7px;">
+                                <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
+                                    <i class="fa fa-times"></i>
+                                </div>
                             </div>
-                        </div>
-                        <div ui-tree-handle class="list-view-item-move " style="float:left;padding-top:7px;">
-                            <i class="fa fa-arrows"></i>
-                        </div>
-                        <div class='list-view-item-container'>
-                            <input class="list-view-item-text form-control" 
-                                   ng-change="updateListView()"
-                                   ng-delay="500"
-                                   ng-model="value[$index]" type="text" />
-                        </div>
-                    </li>
-                </ol>
+                            <div ui-tree-handle class="list-view-item-move " style="float:left;padding-top:7px;">
+                                <i class="fa fa-arrows"></i>
+                            </div>
+                            <div class='list-view-item-container'>
+                                <input class="list-view-item-text form-control" 
+                                       ng-change="updateListView()"
+                                       ng-delay="500"
+                                       ng-model="value[$index]" type="text" />
+                            </div>
+                        </li>
+                    </ol>
+                </div>
             </div>
         <?php elseif ($this->fieldTemplate == "form"): ?>
-            <div ng-if="!loading && value != null" class="list-view-form" ui-tree="uiTreeOptions">
-                <ol ui-tree-nodes ng-model="value">
-                    <li ui-tree-node ng-repeat="item in value" class="list-view-item">
-                        <div style="float:right;">
-                            <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
-                                <i class="fa fa-times"></i>
+            <div ng-if="!loading && value != null"
+                 class="list-view-form"
+                 oc-lazy-load="{name: 'ui.tree', files: ['<?= Yii::app()->controller->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
+                <div ui-tree="uiTreeOptions">
+                    <ol ui-tree-nodes ng-model="value">
+                        <li ui-tree-node ng-repeat="item in value" class="list-view-item">
+                            <div style="float:right;">
+                                <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
+                                    <i class="fa fa-times"></i>
+                                </div>
                             </div>
-                        </div>
-                        <div ui-tree-handle class="list-view-item-move " style="float:left;">
-                            <i class="fa fa-arrows"></i>
-                        </div>
-                        <div class='list-view-item-container'>
-                            <?= $this->renderTemplateForm; ?>
-                        </div>
-                    </li>
-                </ol>
+                            <div ui-tree-handle class="list-view-item-move " style="float:left;">
+                                <i class="fa fa-arrows"></i>
+                            </div>
+                            <div class='list-view-item-container'>
+                                <?= $this->renderTemplateForm; ?>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
             </div>
 
             <div ng-show="loading" class="list-view-loading">

@@ -5,7 +5,7 @@
     function relationRenderer(instance, td, row, col, prop, value, cellProperties) {
         Handsontable.AutocompleteCell.renderer.apply(this, arguments);
         var opt = instance.getSettings().columns[col];
-        if (!$(td).hasClass('dgr')) {
+        if (!$(td).hasClass('dgr') && opt.scope.datasource.data[row] && opt.scope.datasource.data[row][opt.name]) {
             $(td).addClass("dgr");
             $(td).attr("dgr-id", opt.scope.datasource.data[row][opt.name]);
             $(td).attr("dgr-model", opt.relModelClass);

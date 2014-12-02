@@ -9,6 +9,7 @@ app.directive('modalDialog', function ($timeout, $compile) {
             $container.appendTo('body');
 
             return function ($scope, $el, attrs, ctrl) {
+                var parent = $scope.$parent;
                 $scope.name = $el.find("data[name=name]").text();
                 $scope.renderID = $el.find("data[name=render_id]").text();
 
@@ -20,7 +21,7 @@ app.directive('modalDialog', function ($timeout, $compile) {
                     $container.show();
                 };
 
-                $scope.$parent[$scope.name] = $scope;
+                parent[$scope.name] = $scope;
                 $compile($container)($scope);
                 
                 eval($scope.inlineJS);

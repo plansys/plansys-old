@@ -95,10 +95,6 @@ class ChartPie extends FormField {
                 'type' => 'HiddenField',
             ),
             array (
-                'value' => '<div style=\\"margin-top:25px\\"></div>',
-                'type' => 'Text',
-            ),
-            array (
                 'totalColumns' => '1',
                 'column1' => array (
                     array (
@@ -119,10 +115,6 @@ class ChartPie extends FormField {
                     ),
                 ),
                 'type' => 'ColumnField',
-            ),
-            array (
-                'value' => '<div style=\\"margin-bottom:25px\\"></div>',
-                'type' => 'Text',
             ),
             array (
                 'label' => 'Options',

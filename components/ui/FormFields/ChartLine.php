@@ -51,128 +51,120 @@ class ChartLine extends FormField {
      * @return array Fungsi ini akan me-return array property DataSource.
      */
     public function getFieldProperties() {
-        return  [
-             [
+        return array (
+            array (
                 'label' => 'Chart Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'save()',
-                ],
+                ),
                 'type' => 'TextField',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Chart Title',
                 'name' => 'chartTitle',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.chartTitle',
                     'ng-change' => 'save()',
-                ],
+                ),
                 'type' => 'TextField',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Data Source Name',
                 'name' => 'datasource',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.datasource',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                     'ps-list' => 'dataSourceList',
-                ],
-                'list' =>  [],
+                ),
+                'list' => array (),
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'name' => 'retrieveMode',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.retrieveMode',
                     'ng-change' => 'save()',
-                ],
+                ),
                 'type' => 'HiddenField',
-            ],
-             [
-                'value' => '<div style=\\"margin-top:25px\\"></div>',
-                'type' => 'Text',
-            ],
-             [
+            ),
+            array (
                 'totalColumns' => '1',
-                'column1' =>  [
-                     [
+                'column1' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
-                    ],
-                     [
+                    ),
+                    array (
                         'label' => 'Generate Series',
                         'buttonType' => 'success',
                         'icon' => 'magic',
                         'buttonSize' => 'btn-xs',
-                        'options' =>  [
+                        'options' => array (
                             'style' => 'float:right;margin:10px 0px 5px 0px',
                             'ng-show' => 'active.datasource != \\\'\\\'',
                             'ng-click' => 'generateSeries(active.retrieveMode)',
-                        ],
+                        ),
                         'type' => 'LinkButton',
-                    ],
-                ],
+                    ),
+                ),
                 'type' => 'ColumnField',
-            ],
-             [
-                'value' => '<div style=\\"margin-bottom:25px\\"></div>',
-                'type' => 'Text',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Options',
                 'name' => 'options',
                 'show' => 'Show',
                 'allowExtractKey' => 'Yes',
                 'type' => 'KeyValueGrid',
-            ],
-             [
+            ),
+            array (
                 'title' => 'Series',
                 'type' => 'SectionHeader',
-            ],
-             [
+            ),
+            array (
                 'value' => '<div style=\"margin-top:5px;\"></div>
 ',
                 'type' => 'Text',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Set as Tick',
                 'name' => 'tickSeries',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.tickSeries',
                     'ng-change' => 'save()',
                     'ps-list' => 'tickSeriesList',
-                ],
+                ),
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'value' => '<div style=\"margin-bottom:5px;\"></div>
 <hr />',
                 'type' => 'Text',
-            ],
-             [
+            ),
+            array (
                 'name' => 'series',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.ChartSeriesForm',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.series',
                     'ng-change' => 'save(); setTickSeries();',
                     'ps-after-add' => 'value.show = true',
-                ],
+                ),
                 'type' => 'ListView',
-            ],
-        ];
+            ),
+        );
     }
 
 	/**

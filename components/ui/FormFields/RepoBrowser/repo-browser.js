@@ -3,18 +3,21 @@ app.directive('repoBrowser', function ($timeout, $compile, $http) {
         require: '?ngModel',
         scope: true,
         compile: function (element, attrs, transclude) {
-            $a = element.find(".repo-dialog").remove();
-            if ($("body > .repo-dialog").length == 0) {
-                $a.attr('repo-dialog', '');
-                $("body").append($a);
+
+            if ($("body > [repo-dialog]").length == 0) {
+                $("body").append('<div repo-dialog></div>');
             }
 
             return function ($scope, $el, attrs, ctrl) {
+                var parent = $scope.$parent;
+                if ($("body > [repo-dialog] .modal-container").length == 0) {
+                    $compile($("body > [repo-dialog]"))($scope.$parent);
+                }
                 $scope.name = $el.find("data[name=name]").text();
                 $scope.renderID = $el.find("data[name=render_id]").text();
 
                 var a = setInterval(function () {
-                    $scope.dialog = angular.element($("body > .repo-dialog .modal-container")[0]).scope();
+                    $scope.dialog = angular.element($("body > [repo-dialog] .modal-container")[0]).scope();
                     if ($scope.dialog) {
                         clearInterval(a);
                         $scope.open = function () {
@@ -26,9 +29,9 @@ app.directive('repoBrowser', function ($timeout, $compile, $http) {
                         $scope.close = function () {
                             $scope.dialog.close();
                         }
-                        $scope.$parent[$scope.name] = $scope;
+                        parent[$scope.name] = $scope;
                     }
-                }, 10);
+                }, 100);
 
             }
         }

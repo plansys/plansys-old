@@ -21,7 +21,7 @@ app.directive('checkBoxList', function ($timeout) {
 
                 $scope.updateItemInternal = function (value) {
                     if (typeof value != 'undefined') {
-                        
+
                         var ar = $scope.selected;
                         if (ar.indexOf(value) >= 0) {
                             ar.splice(ar.indexOf(value), 1);

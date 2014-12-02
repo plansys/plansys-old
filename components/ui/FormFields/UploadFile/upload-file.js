@@ -10,7 +10,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
 
             return function ($scope, $el, attrs, ctrl) {
                 $scope.file = null;
-                $scope.loading = false;
+                $scope.loading = true;
                 $scope.progress = -1;
                 $scope.errors = [];
                 $scope.json;
@@ -187,7 +187,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                         }).success(function (html) {
                             $scope.choose('');
                             $scope.loading = false;
-                        }).error(function() {
+                        }).error(function () {
                             $scope.loading = false;
                         });
                     }
@@ -266,10 +266,12 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                         } else {
                             $scope.file = null;
                         }
+                        $scope.loading = false;
                     }
                     );
                 } else {
                     $scope.file = null;
+                    $scope.loading = false;
                 }
 
 
