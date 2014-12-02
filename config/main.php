@@ -27,7 +27,6 @@ return array(
         'application.components.repo.*',
         'application.behaviors.*',
         'ext.YiiJasper.*',
-        'application.extensions.ImageFly.components.*'
     ),
     'sourceLanguage' => 'en_us',
     'language' => 'id',
@@ -51,6 +50,9 @@ return array(
     'components' => array(
         'themeManager' => array(
             'basePath' => 'app/themes'
+        ),
+        'img' => array(
+            'class' => 'application.extensions.simpleimage.CSimpleImage',
         ),
         'ldap' => Setting::getLDAP(),
         'nfy' => array(

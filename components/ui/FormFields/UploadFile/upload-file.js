@@ -126,7 +126,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     $scope.loading = true;
                     $scope.progress = 0;
                     $scope.$parent.uploading.push($scope.name);
-
+                    $scope.thumb = '';
                     $upload.upload({
                         url: Yii.app.createUrl('/formfield/UploadFile.upload', {
                             class: $scope.classAlias,
@@ -139,10 +139,6 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                         $scope.progress = 101;
                         var ext = $scope.ext(data);
 
-                        if (['jpg', 'gif', 'png', 'jpeg'].indexOf(ext) >= 0) {
-                            $scope.getThumb();
-                        }
-
                         if (data.success == 'Yes') {
                             $scope.value = data.path;
                             $scope.file = {
@@ -151,6 +147,10 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                             };
 
                             $scope.icon($scope.file);
+
+                            if (['jpg', 'gif', 'png', 'jpeg'].indexOf(ext) >= 0) {
+                                $scope.getThumb();
+                            }
                         } else {
                             alert("Error Uploading File. \n");
                         }
@@ -193,9 +193,14 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                         });
                     }
                 };
-                
-                $scope.getThumb = function() {
-                    console.log($scope.file.name);
+
+                $scope.thumb = '';
+                $scope.getThumb = function () {
+                    $http.get(Yii.app.createUrl('/formfield/UploadFile.thumb', {
+                        't': $scope.file.downloadPath
+                    })).success(function (url) {
+                        $scope.thumb = url;
+                    });
                 }
 
                 //Get the file extension
@@ -255,6 +260,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
 
                 //check if file is defined from outside
                 if ($scope.value != "") {
+                    $scope.thumb = '';
                     var request = $http({
                         method: "post",
                         url: Yii.app.createUrl('/formfield/UploadFile.checkFile'),
@@ -270,6 +276,10 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                             $scope.file = null;
                         }
                         $scope.loading = false;
+
+                        if (['jpg', 'gif', 'png', 'jpeg'].indexOf(ext) >= 0) {
+                            $scope.getThumb();
+                        }
                     }
                     );
                 } else {
