@@ -22,4 +22,12 @@
         <!-- /field -->
 		</div>
     </div>
+	<?php 
+		
+		$path = Yii::app()->baseUrl . '/plansys/components/ui/FormFields/ColorPicker';
+		
+		foreach($this->includeCSS() as $css) {
+			echo "<link rel='stylesheet' href='$path/$css' />";
+		}
+	?>
 </div>
