@@ -20,14 +20,7 @@ class Repo extends Form {
     public function getFields() {
         return array (
             array (
-                'linkBar' => array (
-                    array (
-                        'label' => 'Upload',
-                        'group' => 'a',
-                        'icon' => 'upload',
-                        'type' => 'LinkButton',
-                    ),
-                ),
+                'linkBar' => array (),
                 'title' => '',
                 'showSectionTab' => 'No',
                 'type' => 'ActionBar',

@@ -92,7 +92,7 @@ app.directive('dropDownList', function ($timeout) {
                     }, 0);
                 };
                 $scope.updateInternal = function (value) {
-                    $scope.value = value || '';
+                    $scope.value = typeof value != "string" ? '' : value;
                     if ($scope.showOther && !$scope.itemExist()) {
                         $scope.value = $el.find("li a").attr('value');
                         $scope.value = value;
