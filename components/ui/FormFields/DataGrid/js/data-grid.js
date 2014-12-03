@@ -523,8 +523,14 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
 
                 // Type: Relation
                 $scope.generateEditRelation = function (col) {
+                    var relParams = [];
+                    if(typeof JSON.stringify(col.relParams) == 'undefined'){
+                        relParams = [];
+                    }else{
+                        relParams = JSON.stringify(col.relParams).replace(/[']/g, "ï¿½qï¿½");
+                    }
                     var html = '<input';
-                    html += ' dg-relation params=\'' + JSON.stringify(col.relParams).replace(/[']/g, "«q»") + '\'';
+                    html += ' dg-relation params=\'' + relParams + '\'';
                     html += ' type="text" ng-class="\'colt\' + col.index"';
                     html += ' ng-input="COL_FIELD_label" ng-model="COL_FIELD_label" />';
 
