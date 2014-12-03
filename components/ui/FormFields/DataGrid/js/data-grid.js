@@ -524,7 +524,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                 // Type: Relation
                 $scope.generateEditRelation = function (col) {
                     var html = '<input';
-                    html += ' dg-relation params=\'' + JSON.stringify(col.relParams) + '\'';
+                    html += ' dg-relation params=\'' + JSON.stringify(col.relParams).replace(/[']/g, "«q»") + '\'';
                     html += ' type="text" ng-class="\'colt\' + col.index"';
                     html += ' ng-input="COL_FIELD_label" ng-model="COL_FIELD_label" />';
 

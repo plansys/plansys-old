@@ -21,9 +21,11 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
 
                 $scope.getPreviewSQL = function () {
                     $scope.isLoading = true;
+					var activeParams = $scope.$parent.active[$scope.paramsField] || {};				
+					
                     var postparam = {
                         criteria: $scope.value,
-                        params: $scope.active[$scope.paramsField],
+                        params: activeParams,
                         baseclass: $scope.baseClass
                     };
                     
@@ -60,18 +62,24 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
                         $scope.isLoading = false;
                     });
                 }
-
+				
+				var timer = null;
+				
                 $scope.$watch('active.' + $scope.paramsField, function (newv, oldv) {
                     if (newv != oldv) {
-                        $timeout(function () {
-                            $scope.getPreviewSQL();
-                        }, 0);
+						clearTimeout(timer);
+						timer = setTimeout(function() {
+							$scope.getPreviewSQL();
+						}, 100);
                     }
                 }, true);
 
                 $scope.$watch('modelClass', function (newv) {
                     if (newv != '' && newv) {
-                        $scope.getPreviewSQL();
+						clearTimeout(timer);
+						timer = setTimeout(function() {
+							$scope.getPreviewSQL();
+						}, 100);
                     }
                 });
 

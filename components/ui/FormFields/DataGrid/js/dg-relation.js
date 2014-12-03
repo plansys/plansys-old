@@ -44,8 +44,7 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                 $scope.match = [];
                 $scope.paramValue = {};
 
-
-                $scope.params = JSON.parse(attrs.params);
+                $scope.params = JSON.parse(attrs.params.replace(/«q»/g, "'"));
                 for (i in $scope.params) {
                     var p = $scope.params[i];
                     if (p.indexOf('js:') === 0) {
