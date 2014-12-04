@@ -64,7 +64,7 @@ class NfyMessagesIndex extends NfyDbMessage {
                         'name' => 'status',
                         'label' => 'Status',
                         'defaultValue' => '',
-                        'show' => true,
+                        'show' => false,
                         'listExpr' => '[\\\'1\\\'=>\\\'NEW\\\',\\\'2\\\'=>\\\'READ\\\']',
                     ),
                     array (
