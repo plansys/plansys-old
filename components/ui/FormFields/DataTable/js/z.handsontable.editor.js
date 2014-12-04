@@ -41,7 +41,12 @@
         var opt = this.instance.getSettings().columns[col];
 
         setTimeout(function () {
-            var label = opt.scope.datasource.data[row][opt.name + "_label"];
+            var label = ''
+            if (opt.scope.datasource.data[row]) {
+                label = opt.scope.datasource.data[row][opt.name + "_label"];
+            } else {
+                return false;
+            }
             var value = opt.scope.lastRelList[label];
             if (typeof value != "undefined") {
                 opt.scope.datasource.data[row][opt.name] = value;

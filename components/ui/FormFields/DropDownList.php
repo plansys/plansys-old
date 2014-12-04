@@ -166,7 +166,7 @@ class DropDownList extends FormField {
                 'fieldname' => 'defaultValue',
                 'language' => 'js',
                 'options' => array (
-                    'ng-if' => '[\\\'\\\',\\\'first\\\'].indexOf(active.defaultType) < 0',
+                    'ng-if' => 'false',
                 ),
                 'type' => 'ExpressionField',
             ),

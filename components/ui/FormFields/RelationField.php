@@ -449,7 +449,7 @@ class RelationField extends FormField {
                     $val = $this->evaluate("\"{$v}\"", true);
                     if ($val == '') {
                         $cond = '';
-                    } else {
+                    }  else {
                         $cond = $val;
                     }
                 }

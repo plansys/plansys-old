@@ -48,6 +48,10 @@
     box-shadow: inset 0px 0px 0px 9999px rgba(0, 0, 0, .05);
 }
 
+.data-table-container.no-read-only > .dataTable.handsontable > .htContainer > .wtHolder > .wtHider > .wtSpreader > .htCore  .htDimmed{
+    box-shadow:none;
+}
+
 .handsontable .header-grouping th {
     padding-bottom: 0px !important;
 }

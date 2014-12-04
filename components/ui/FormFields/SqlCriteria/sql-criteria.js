@@ -21,14 +21,12 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
 
                 $scope.getPreviewSQL = function () {
                     $scope.isLoading = true;
-					var activeParams = $scope.$parent.active[$scope.paramsField] || {};				
-					
                     var postparam = {
                         criteria: $scope.value,
-                        params: activeParams,
+                        params: $scope.active[$scope.paramsField],
                         baseclass: $scope.baseClass
                     };
-                    
+
                     switch ($scope.baseClass) {
                         case "DataSource":
                             postparam.rel = $scope.$parent.active.relationTo;
@@ -62,24 +60,24 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
                         $scope.isLoading = false;
                     });
                 }
-				
-				var timer = null;
-				
+
+                var sctimer = null;
+
                 $scope.$watch('active.' + $scope.paramsField, function (newv, oldv) {
                     if (newv != oldv) {
-						clearTimeout(timer);
-						timer = setTimeout(function() {
-							$scope.getPreviewSQL();
-						}, 100);
+                        clearTimeout(sctimer);
+                        sctimer = setTimeout(function () {
+                            $scope.getPreviewSQL();
+                        }, 100);
                     }
                 }, true);
 
                 $scope.$watch('modelClass', function (newv) {
                     if (newv != '' && newv) {
-						clearTimeout(timer);
-						timer = setTimeout(function() {
-							$scope.getPreviewSQL();
-						}, 100);
+                        clearTimeout(sctimer);
+                        sctimer = setTimeout(function () {
+                            $scope.getPreviewSQL();
+                        }, 100);
                     }
                 });
 
@@ -88,7 +86,10 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
                     if (typeof ctrl != 'undefined') {
                         $timeout(function () {
                             ctrl.$setViewValue($scope.value);
-                            $scope.getPreviewSQL();
+                            clearTimeout(sctimer);
+                            sctimer = setTimeout(function () {
+                                $scope.getPreviewSQL();
+                            }, 100);
                         }, 0);
                     }
                 };
@@ -102,7 +103,7 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
                         }
                     };
                 }
-                
+
                 eval($scope.inlineJS);
             }
         }

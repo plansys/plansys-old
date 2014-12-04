@@ -74,7 +74,6 @@ class DevRoleForm extends Role {
                     array (
                         'label' => 'Menu Path',
                         'name' => 'menu_path',
-                        'autocomplete' => 'rel',
                         'type' => 'TextField',
                     ),
                     array (
