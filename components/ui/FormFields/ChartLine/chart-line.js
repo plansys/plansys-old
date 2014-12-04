@@ -2,7 +2,7 @@ app.directive('psChartLine', function ($timeout) {
     return {
         scope: true,
         link: function ($scope, $el, attrs) {
-            var parent = $scope.$parent.$parent;
+			var parent = $scope.$parent;
 
             /*********************** DEEP EXTEND ********************************/
             var deepExtend = function (destination, source) {
@@ -30,7 +30,9 @@ app.directive('psChartLine', function ($timeout) {
                     else {
                         var tmp = {};
                         tmp['name'] = chartData_raw[i].label;
-                        tmp['data'] = chartData_raw[i].value;
+                        tmp['data'] = chartData_raw[i].value.map(function (e, i) {
+                            return JSON.parse(e)
+                        });
 
                         if (typeof chartData_raw[i].color != 'undefined')
                             tmp['color'] = chartData_raw[i].color
@@ -38,7 +40,6 @@ app.directive('psChartLine', function ($timeout) {
                         chartData.push(tmp);
                     }
                 }
-
                 return [chartData, xAxis];
             }
 
@@ -54,7 +55,7 @@ app.directive('psChartLine', function ($timeout) {
                     var series = [];
                     var chartData = [];
                     $scope.datasource = parent[$el.find("data[name=datasource]").text()];
-
+					
                     if (typeof $scope.datasource != "undefined") {
                         $scope.data = $scope.datasource.data;
                     } else {
@@ -117,7 +118,7 @@ app.directive('psChartLine', function ($timeout) {
                             labels: {
                                 rotation: 90
                             }
-                        },
+                        }
                     }
 
                     if ($scope.options == null) {
@@ -134,7 +135,7 @@ app.directive('psChartLine', function ($timeout) {
                     for (i in chartData) {
                         chart.addSeries(chartData[i]);
                     }
-
+					
                     if (typeof $scope.isgroup != 'undefined' && $scope.isgroup) {
                         if (typeof $scope.data[$scope.chartType] == 'undefined')
                             $scope.data[$scope.chartType] = [];
@@ -157,7 +158,6 @@ app.directive('psChartLine', function ($timeout) {
             $scope.options = JSON.parse($el.find("data[name=options]").text());
 
             $scope.fillSeries();
-            parent[$scope.name] = $scope;
 
         }
     }
