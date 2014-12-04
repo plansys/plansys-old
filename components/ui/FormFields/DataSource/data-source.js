@@ -4,7 +4,7 @@ app.directive('psDataSource', function ($timeout, $http) {
         compile: function (element, attrs, transclude) {
             return function ($scope, $el, attrs, ctrl) {
                 var parent = $scope.$parent;
-                
+
                 $scope.params = JSON.parse($el.find("data[name=params]").text());
                 $scope.paramsGet = JSON.parse($el.find("data[name=params_get]").text());
                 $scope.sqlParams = JSON.parse($el.find("data[name=params_default]").text());

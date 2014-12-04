@@ -1107,6 +1107,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     position:relative;
     padding-bottom:12px;
 }
+
 .text-editor-preview {
     white-space:pre-wrap;
     font-family:'Courier', Monaco, monospace;

@@ -5,7 +5,7 @@
     <data name="model_class" class="hide"><?= Helper::getAlias($model) ?></data>
     <data name="columns" class="hide"><?= json_encode($this->columns); ?></data>
     <data name="grid_options" class="hide"><?= json_encode($this->gridOptions); ?></data>
-    <div class="data-table-container" >
+    <div class="data-table-container {{ gridOptions.noReadOnlyCSS ? 'no-read-only' : '' }}">
         <div id="<?= $this->renderID ?>" style="width:100%" class="dataTable"></div>
     </div>
 </div>

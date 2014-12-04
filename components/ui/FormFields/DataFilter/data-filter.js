@@ -479,7 +479,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                                         var curr = filter.from;
                                         first = new Date(curr.getFullYear(), 0, 1);
-                                        last = new Date(curr.getFullYear() + 1, 0, 1);
+                                        last = new Date(curr.getFullYear() + 1, 0, 0);
 
                                         filter.from = new Date(first);
                                         filter.value = {};

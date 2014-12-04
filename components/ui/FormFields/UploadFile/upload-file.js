@@ -272,14 +272,17 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                         if (result.status === 'exist') {
                             $scope.file.downloadPath = result.downloadPath;
                             $scope.icon($scope.file);
+                            var ext = $scope.ext($scope.file);
+                            console.log($scope.file);
+                            if (['jpg', 'gif', 'png', 'jpeg'].indexOf(ext) >= 0) {
+                                $scope.getThumb();
+                            }
                         } else {
                             $scope.file = null;
                         }
                         $scope.loading = false;
 
-                        if (['jpg', 'gif', 'png', 'jpeg'].indexOf(ext) >= 0) {
-                            $scope.getThumb();
-                        }
+                        
                     }
                     );
                 } else {
