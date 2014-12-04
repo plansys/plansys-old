@@ -932,13 +932,16 @@ class FormBuilder extends CComponent {
             $endline = $line + $length;
 
             ## when last line is like "}}" then separate it to new line
-            $lastline = trim($this->file[$endline - 1]);
-            if (substr($lastline, -2) == "}}") {
-                $lastline[strlen($lastline) - 1] = " ";
-                $this->file[$endline - 1] = $lastline;
-                $this->file[] = "\n";
-                $this->file[] = "}";
-            }
+			
+			if (@$this->file[$endline - 1]) {
+				$lastline = trim($this->file[$endline - 1]);
+				if (substr($lastline, -2) == "}}") {
+					$lastline[strlen($lastline) - 1] = " ";
+					$this->file[$endline - 1] = $lastline;
+					$this->file[] = "\n";
+					$this->file[] = "}";
+				}
+			}
         }
         return [
             'file' => $this->file,

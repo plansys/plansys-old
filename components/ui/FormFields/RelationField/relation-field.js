@@ -105,19 +105,17 @@ app.directive('relationField', function ($timeout, $http) {
                     }, 0);
                 };
                 $scope.updateInternal = function (value) {
-                    $scope.value = value;
+                    $scope.value = typeof value != "string" ? '' : value;;
                     if ($scope.showOther && !$scope.itemExist()) {
                         $scope.value = $el.find("li a").attr('value');
                         $scope.value = value;
                     }
-
+					
                     $el.find("li").each(function () {
-                        if (typeof $(this).find("a").attr('value') == "string" && typeof value == "string") {
-                            if ($(this).find("a").attr('value').trim() == value.trim()) {
-                                $scope.text = $(this).find("a").text();
-                            }
+                        if ($(this).find("a").attr('value').trim() == $scope.value.trim()) {
+                            $scope.text = $(this).find("a").text();
                         }
-                    });
+					});
                     $scope.toggled(false);
                 };
 
@@ -147,6 +145,7 @@ app.directive('relationField', function ($timeout, $http) {
                         }
                     }, true);
                 }
+                
                 $scope.toggled = function (open) {
                     if (open) {
                         $scope.openedInField = true;
@@ -168,9 +167,11 @@ app.directive('relationField', function ($timeout, $http) {
                         $el.find("[dropdown] button").focus();
                     }
                 };
+                
                 $scope.changeOther = function () {
                     $scope.value = $scope.otherLabel;
                 };
+                
                 $scope.doSearch = function () {
                     $scope.loading = true;
                     $http.post(Yii.app.createUrl('formfield/RelationField.search'), {
@@ -229,7 +230,6 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.paramValue = {};
                 $scope.isOpen = false;
                 $scope.openedInField = false;
-
 
                 for (i in $scope.params) {
                     var p = $scope.params[i];
