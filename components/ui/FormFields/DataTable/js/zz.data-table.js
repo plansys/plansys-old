@@ -285,6 +285,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         },
                         afterChange: function (changes, source) {
                             if (typeof $scope.afterCellEdit == "function" && source == "edit") {
+                                var ht = $("#" + $scope.renderID).handsontable('getInstance');
                                 var ch = changes[0];
                                 // afterCellEdit(value, row, col, data, ht);
                                 $scope.afterCellEdit(ch[3], ch[0], ch[1], $scope.datasource.data[ch[0]], ht);
