@@ -31,7 +31,7 @@ app.directive('psChartBar', function ($timeout) {
                         var tmp = {};
                         tmp['name'] = chartData_raw[i].label;
                         tmp['data'] = chartData_raw[i].value.map(function (e, i) {
-                            return JSON.parse(e)
+                            return typeof e == "string" ? JSON.parse(e) : e;
                         });
 
                         if (typeof chartData_raw[i].color != 'undefined')
