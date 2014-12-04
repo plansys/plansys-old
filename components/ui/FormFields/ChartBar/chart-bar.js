@@ -2,7 +2,7 @@ app.directive('psChartBar', function ($timeout) {
     return {
         scope: true,
         link: function ($scope, $el, attrs) {
-            var parent = $scope.$parent.$parent;
+            var parent = $scope.$parent;
 
             /*********************** DEEP EXTEND ********************************/
             var deepExtend = function (destination, source) {
@@ -161,7 +161,6 @@ app.directive('psChartBar', function ($timeout) {
             $scope.options = JSON.parse($el.find("data[name=options]").text());
 
             $scope.fillSeries();
-            parent[$scope.name] = $scope;
 
         }
     }

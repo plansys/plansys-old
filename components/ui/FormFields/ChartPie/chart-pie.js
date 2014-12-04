@@ -2,7 +2,7 @@ app.directive('psChartPie', function ($timeout) {
     return {
         scope: true,
         link: function ($scope, $el, attrs) {
-            var parent = $scope.$parent.$parent;
+            var parent = $scope.$parent;
 
             /*********************** DEEP EXTEND ********************************/
             var deepExtend = function (destination, source) {
@@ -50,6 +50,7 @@ app.directive('psChartPie', function ($timeout) {
                 $timeout(function () {
                     var series = [];
                     var chartData = [];
+
                     $scope.datasource = parent[$el.find("data[name=datasource]").text()];
 
                     if (typeof $scope.datasource != "undefined") {
@@ -98,6 +99,7 @@ app.directive('psChartPie', function ($timeout) {
                             chartData_raw = $scope.series;
                             chartData = formatChartData(chartData_raw);
                         }
+						
                     }
 
                     var defaultOptions = {
@@ -144,6 +146,7 @@ app.directive('psChartPie', function ($timeout) {
                             name: 'value',
                             data: chartData
                         });
+						
                     }
 
                 }, 0);
@@ -155,10 +158,7 @@ app.directive('psChartPie', function ($timeout) {
             $scope.series = JSON.parse($el.find("data[name=series]").text());
             $scope.options = JSON.parse($el.find("data[name=options]").text());
 
-            console.log($scope.options);
-
             $scope.fillSeries();
-            parent[$scope.name] = $scope;
 
         }
     }
