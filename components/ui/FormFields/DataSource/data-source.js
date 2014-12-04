@@ -21,6 +21,12 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.deleteData = $scope.deleteData || [];
 
                 $scope.untrackColumns = [];
+                
+                $scope.resetData = function() {
+                    $scope.deleteData.length = 0;
+                    $scope.updateData.length = 0;
+                    $scope.insertData.length = 0;
+                }
 
                 $scope.resetParam = function (key, name) {
                     if (typeof key == "undefined") {

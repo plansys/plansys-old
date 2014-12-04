@@ -109,7 +109,7 @@
                     <div class="clearfix"></div>
                     <div style="font-size:12px;color:#999;">{{ json}}</div>
                     <div ng-if="thumb != ''" style="padding:5px;">
-                        <img style="max-width:100%;" ng-src="thumb" alt="" />
+                        <img style="max-width:100%;" ng-src="{{thumb}}" alt="" />
                     </div>
                 </div>
                 <div ng-if="!file.name" style="font-size:12px;color:#999;text-align:center;">

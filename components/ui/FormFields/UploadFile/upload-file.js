@@ -196,11 +196,13 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
 
                 $scope.thumb = '';
                 $scope.getThumb = function () {
-                    $http.get(Yii.app.createUrl('/formfield/UploadFile.thumb', {
-                        't': $scope.file.downloadPath
-                    })).success(function (url) {
-                        $scope.thumb = url;
-                    });
+                    if ($scope.file.downloadPath) {
+                        $http.get(Yii.app.createUrl('/formfield/UploadFile.thumb', {
+                            't': $scope.file.downloadPath
+                        })).success(function (url) {
+                            $scope.thumb = url;
+                        });
+                    }
                 }
 
                 //Get the file extension
@@ -273,7 +275,6 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                             $scope.file.downloadPath = result.downloadPath;
                             $scope.icon($scope.file);
                             var ext = $scope.ext($scope.file);
-                            console.log($scope.file);
                             if (['jpg', 'gif', 'png', 'jpeg'].indexOf(ext) >= 0) {
                                 $scope.getThumb();
                             }
@@ -281,10 +282,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                             $scope.file = null;
                         }
                         $scope.loading = false;
-
-                        
-                    }
-                    );
+                    });
                 } else {
                     $scope.file = null;
                     $scope.loading = false;
