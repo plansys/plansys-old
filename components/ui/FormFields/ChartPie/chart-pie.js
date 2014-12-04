@@ -146,7 +146,6 @@ app.directive('psChartPie', function ($timeout) {
                             name: 'value',
                             data: chartData
                         });
-						
                     }
 
                 }, 0);

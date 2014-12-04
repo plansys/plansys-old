@@ -30,7 +30,9 @@ app.directive('psChartBar', function ($timeout) {
                     else {
                         var tmp = {};
                         tmp['name'] = chartData_raw[i].label;
-                        tmp['data'] = chartData_raw[i].value;
+                        tmp['data'] = chartData_raw[i].value.map(function (e, i) {
+                            return JSON.parse(e)
+                        });
 
                         if (typeof chartData_raw[i].color != 'undefined')
                             tmp['color'] = chartData_raw[i].color
@@ -149,7 +151,6 @@ app.directive('psChartBar', function ($timeout) {
                         $el.hide();
                         $scope.redraw();
                     }
-
                 }, 0);
             }
 
