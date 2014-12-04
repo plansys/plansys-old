@@ -26,18 +26,14 @@ class Repo extends Form {
                 'type' => 'ActionBar',
             ),
             array (
-                'value' => '<div style=\"position:fixed;top:40px;left:20px;z-index:10;width:100%;\">
-<div class=\"input-group\" style=\"margin:-5px 0px 0px -20px;width:53%;\">
-  <span class=\"input-group-addon\" style=\"background:white;border:0px;\"><i class=\"fa fa-lg fa-paper-plane-o\"></i></span>
-  <input type=\"text\" class=\"form-control\" ng-keydown=\"changeDir($event)\" ng-model=\"currentDir\" style=\"padding:4px 10px 3px 10px;border:1px solid #ccc;\">
-</div>
-    
-</div>',
-                'type' => 'Text',
-            ),
-            array (
-                'value' => '<div style=\"width:55%;position:absolute;left:0px;top:0px;bottom:-600px;border-right:1px solid #ddd;height:100%;\">
-<div style=\"margin:-34px -1px 0px 0px;-moz-user-select:none !important;-webkit-user-select:none !important;\">',
+                'value' => '
+<div style=\"pointer-events: none;width:100%;position:fixed;margin-top:-35px;z-index:99;\">
+    <i class=\"fa fa-lg fa-folder-open-o\"></i>
+     <span ng-repeat=\"d in dirs\">
+     {{d}}
+        <i class=\"fa fa-chevron-right\"></i>
+     </span>
+  </div>',
                 'type' => 'Text',
             ),
             array (
@@ -45,6 +41,16 @@ class Repo extends Form {
                 'fieldType' => 'php',
                 'php' => 'RepoManager::model()->browse(RepoManager::getModuleDir())[\\\'item\\\'];',
                 'type' => 'DataSource',
+            ),
+            array (
+                'value' => '<div ng-if=\\"dataSource1.data.length\\">',
+                'type' => 'Text',
+            ),
+            array (
+                'value' => '<div style=\"width:55%;position:absolute;left:0px;top:0px;bottom:-600px;border-right:1px solid #ddd;height:100%;\">
+<div style=\"margin:-35px -1px 0px 0px;-moz-user-select:none !important;-webkit-user-select:none !important;\">
+',
+                'type' => 'Text',
             ),
             array (
                 'name' => 'dataGrid1',
@@ -117,6 +123,15 @@ class Repo extends Form {
             ),
             array (
                 'value' => '</div> 
+</div>',
+                'type' => 'Text',
+            ),
+            array (
+                'value' => '</div>
+<div 
+style=\"color:#999;font-size:20px;\"
+ng-if=\"!dataSource1.data.length\">
+    <br/><br/><center> &mdash; Repository Empty &mdash;</center><br/><br/>
 </div>',
                 'type' => 'Text',
             ),

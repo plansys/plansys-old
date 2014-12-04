@@ -6,17 +6,23 @@ $(window).resize(function () {
 var repoClickTimeout = null;
 $scope.selected = null;
 $scope.lastSelectedPath = null;
-$scope.currentDir = $scope.params.currentDir;
+$scope.setCurrentDir = function(dir) {
+    $scope.currentDir = dir.replace(/\\/g,'/');
+    $scope.dirs = $scope.currentDir.split("/");
+}
+$scope.setCurrentDir($scope.params.currentDir);
+
+
 $scope.click = function (row) {
     $scope.selected = row.entity;
 
     clearTimeout(repoClickTimeout);
-    repoClickTimeout = setTimeout(function () {
+    repoClickTimeout = setTimeout(function() {
         if ($scope.selected.type == "dir") {
             if ($scope.lastSelectedPath == $scope.selected.path) {
                 $scope.selected.type = "loading";
                 $http.get(Yii.app.createUrl('/repo/changeDir', {dir: $scope.selected.path})).success(function (data) {
-                    $scope.currentDir = $scope.selected.path;
+                    $scope.setCurrentDir($scope.selected.path);
                     $scope.dataSource1.data = data.item;
                     if (!$scope.dataSource1.data) {
                         $scope.dataSource1.data = [];
