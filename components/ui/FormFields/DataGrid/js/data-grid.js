@@ -524,9 +524,9 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                 // Type: Relation
                 $scope.generateEditRelation = function (col) {
                     var relParams = [];
-                    if(typeof JSON.stringify(col.relParams) == 'undefined'){
+                    if (typeof JSON.stringify(col.relParams) == 'undefined') {
                         relParams = [];
-                    }else{
+                    } else {
                         relParams = JSON.stringify(col.relParams).replace(/[']/g, "�q�");
                     }
                     var html = '<input';
@@ -667,6 +667,10 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                                         editableCellTemplate: $scope.generateEditRelation(c)
                                     });
                                     break;
+                            }
+
+                            if (!col.width && columns.length > 11) {
+                                col.width = Math.max(col.displayName.length * 12, 50);
                             }
                             columns.push(col);
                         }

@@ -78,6 +78,14 @@
     padding-right: 0px;
 }
 
+.handsontable .handsontable table {
+    box-shadow: none;
+}
+.wtHolder tbody th {
+    height:0px !important;
+    padding:0px !important;
+}
+
 .handsontable.listbox .wtHider {
     padding-bottom: 0px !important;
 }
@@ -113,4 +121,9 @@
 [ps-data-table].fixed .ht_top {
     display: block;
     position: fixed !important;
+}
+
+
+[ps-data-table] {
+    margin-bottom:15px;
 }

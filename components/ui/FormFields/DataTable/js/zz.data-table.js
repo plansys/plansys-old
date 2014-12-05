@@ -27,7 +27,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 }
 
                 $scope.eventsInternal = {};
-                $scope.grid = function(command) {
+                $scope.grid = function (command) {
                     command = command || 'getInstance';
                     return $("#" + $scope.renderID).handsontable(command);
                 };
@@ -342,6 +342,16 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         },
                         beforeRender: function () {
                             $el.find('.header-grouping').remove();
+
+                            var ht = $("#" + $scope.renderID).handsontable('getInstance');
+
+                            for (i in $scope.columns) {
+                                var c = $scope.columns[i];
+                                if (c.options && c.options.width) {
+                                    ht.setCellMeta(0, i, 'width', c.options.width);
+                                }
+                            }
+
 
                             if (typeof $scope.eventsInternal.beforeRender == "function") {
                                 $scope.eventsInternal.beforeRender();

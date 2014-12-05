@@ -10,24 +10,24 @@ class RelationField extends FormField {
      * @return array me-return array property DropDown.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
                 ),
-                'list' => array (),
+                'list' => array(),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Model Class',
                 'name' => 'modelClass',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.modelClass',
                     'ng-change' => 'generateRelationField();save();',
                 ),
@@ -36,64 +36,64 @@ class RelationField extends FormField {
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'ID Field',
                 'name' => 'idField',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.idField',
                     'ng-change' => 'save();',
                     'ps-list' => 'relationFieldList',
                 ),
-                'list' => array (),
+                'list' => array(),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Label Field',
                 'name' => 'labelField',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.labelField',
                     'ng-change' => 'save();',
                     'ps-list' => 'relationFieldList',
                 ),
-                'list' => array (),
+                'list' => array(),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'name' => 'relationCriteria',
                 'label' => 'Sql Criteria',
                 'paramsField' => 'params',
                 'baseClass' => 'RelationField',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.relationCriteria',
                     'ng-change' => 'save();',
                 ),
                 'modelClassJS' => 'RelationField/relation-criteria.js',
                 'type' => 'SqlCriteria',
             ),
-            array (
+            array(
                 'label' => 'Sql Parameters',
                 'name' => 'params',
                 'show' => 'Show',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.params',
                     'ng-change' => 'save();',
                 ),
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'value' => '<hr/>',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'label' => 'Include Empty',
                 'name' => 'includeEmpty',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.includeEmpty',
                     'ng-change' => 'save();',
                 ),
@@ -101,10 +101,10 @@ class RelationField extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Empty Value',
                 'name' => 'emptyValue',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.emptyValue',
                     'ng-change' => 'save()',
                     'ng-show' => 'active.includeEmpty == \\\'Yes\\\'',
@@ -112,10 +112,10 @@ class RelationField extends FormField {
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Empty Label',
                 'name' => 'emptyLabel',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.emptyLabel',
                     'ng-change' => 'save()',
                     'ng-show' => 'active.includeEmpty == \\\'Yes\\\'',
@@ -123,24 +123,24 @@ class RelationField extends FormField {
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'value' => '<hr/>',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => 500,
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                 ),
@@ -148,26 +148,26 @@ class RelationField extends FormField {
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'value' => '<hr/>',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'totalColumns' => '4',
-                'column1' => array (
-                    array (
+                'column1' => array(
+                    array(
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),
-                'column2' => array (
-                    array (
+                'column2' => array(
+                    array(
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => 500,
@@ -175,43 +175,43 @@ class RelationField extends FormField {
                         ),
                         'type' => 'TextField',
                     ),
-                    array (
+                    array(
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),
-                'column3' => array (
-                    array (
+                'column3' => array(
+                    array(
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => 500,
                         ),
                         'type' => 'TextField',
                     ),
-                    array (
+                    array(
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),
                 'type' => 'ColumnField',
             ),
-            array (
+            array(
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
@@ -297,6 +297,9 @@ class RelationField extends FormField {
     public function actionDgrInit() {
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
+
+        if (count($post) == 0)
+            throw new CHttpException(404);
 
         $fb = FormBuilder::load($post['class']);
         $ff = $fb->findField(['name' => $post['name']]);
@@ -449,7 +452,7 @@ class RelationField extends FormField {
                     $val = $this->evaluate("\"{$v}\"", true);
                     if ($val == '') {
                         $cond = '';
-                    }  else {
+                    } else {
                         $cond = $val;
                     }
                 }
