@@ -12,7 +12,7 @@
              style="
              width:100%;
              overflow:auto;
-             padding-bottom:35px;"></div>
+             padding-bottom:50px;"></div>
 
         <div ng-if="loaded && datasource.data.length == 0"
              style="text-align:center;padding:20px;color:#ccc;font-size:25px;">
