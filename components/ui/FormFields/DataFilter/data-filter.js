@@ -594,10 +594,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     var ds = parent[$scope.datasource];
                     var dataAvailable = ds.data != null && ds.data.length > 0;
 
-
-//                    if (dataAvailable)
-                    $scope.available = true;
-
                     var defaultValueAvailable = false;
                     for (i in $scope.filters) {
                         var f = $scope.filters[i];
@@ -615,7 +611,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                         if (f.defaultOperator == 'Between' || f.defaultOperator == 'Not Between') {
                                             f.from = f.defaultValueFrom;
                                             f.to = f.defaultValueTo;
-                                            console.log(f);
                                         } else if (f.defaultOperator == 'Less Than') {
                                             f.to = f.defaultValueTo;
                                         } else {

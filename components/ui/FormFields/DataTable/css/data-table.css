@@ -94,10 +94,6 @@
     border: 0px !important;
 }
 
-.handsontable.listbox .htCore {
-    /*box-shadow:none !important;*/
-}
-
 .handsontableInput {
     box-sizing: content-box;
     min-height: 23px !important;

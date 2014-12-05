@@ -40,10 +40,12 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 $scope.columns = JSON.parse($el.find("data[name=columns]").text());
                 $scope.datasource = parent[$el.find("data[name=datasource]").text()];
 
+
                 $scope.lastRelList = {};
 
                 var colHeaders = [];
                 var columns = [];
+                var loadTimeout = null;
 
                 // define columns
                 var categories = [];
@@ -201,7 +203,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     }
                     fh.formTopPos = Math.abs(fh.form.position().top - fh.form.offset().top);
                     fh.formTop = fh.form.offset().top;
-
                 });
 
                 function fixHead() {
@@ -220,14 +221,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     }
                 }
 
-                if ($scope.gridOptions['fixedHeader'] !== false) {
-                    $timeout(function () {
-                        $(window).resize(fixHead);
-                        $el.on('mousedown', 'td', fixHead);
-                        $el.parents('.container-full').scroll(fixHead);
-                        fixHead();
-                    }, 100);
-                }
+                
                 $timeout(function () {
                     evalArray($scope.gridOptions);
                     var options = $.extend({
@@ -237,12 +231,14 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         contextMenu: true,
                         colHeaders: colHeaders,
                         columns: columns,
+                        autoWrapRow: true,
+                        autoWrapCol: true,
                         manualColumnResize: true,
                         beforeAutofill: function (s, e, d) {
                             if (typeof $scope.eventsInternal.beforeAutofill == "function") {
                                 return $scope.eventsInternal.beforeAutofill(s, e, d);
                             }
-
+                            
                             if (s.col == e.col && d.length > 1) {
                                 var ht = $("#" + $scope.renderID).handsontable('getInstance');
                                 var col = columns[s.col].data;
@@ -327,6 +323,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             if (typeof $scope.eventsInternal.afterRender == "function") {
                                 $scope.eventsInternal.afterRender();
                             }
+
                         },
                         afterLoadData: function () {
                             $timeout(function () {
@@ -355,6 +352,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             if (typeof $scope.eventsInternal.beforeRender == "function") {
                                 $scope.eventsInternal.beforeRender();
                             }
+                            
+                            $timeout(function () {
+                                $scope.loaded = true;
+                            });
                         },
                         modifyColWidth: function () {
                             $el.find('.header-grouping').remove();
