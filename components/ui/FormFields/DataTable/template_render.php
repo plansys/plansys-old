@@ -11,8 +11,7 @@
              id="<?= $this->renderID ?>" class="dataTable" 
              style="
              width:100%;
-             overflow:auto;
-             padding-bottom:50px;"></div>
+             overflow:auto;"></div>
 
         <div ng-if="loaded && datasource.data.length == 0"
              style="text-align:center;padding:20px;color:#ccc;font-size:25px;">

@@ -333,6 +333,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 }
                             });
 
+                            $el.find(".dataTable").height($el.find(".dataTable > .htcontainer").height());
+
                             if (typeof $scope.eventsInternal.afterLoadData == "function") {
                                 $scope.eventsInternal.afterLoadData();
                             }
