@@ -21,10 +21,7 @@
         
         <div ng-class="{invisible: datasource.data.length == 0}"  
              id="<?= $this->renderID ?>" class="dataTable" 
-             style="
-             width:100%;
-             overflow:auto;"></div>
-
+             style="width:100%;"></div>
 
     </div>
 </div>

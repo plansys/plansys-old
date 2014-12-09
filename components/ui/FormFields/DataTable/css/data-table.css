@@ -122,3 +122,29 @@
 [ps-data-table] {
     margin-bottom:15px;
 }
+
+.groups {
+    background:#ffc !important;
+    box-shadow: none !important;
+    cursor:pointer;
+    text-transform: uppercase;
+    color: #222;
+    font-size: 11px !important;
+    padding: 4px 10px;
+    line-height: 20px;
+    font-weight: bold
+}
+
+.gr.fa {
+    position:absolute;
+    margin:4px 0px 0px -5px;
+    width:20px;
+    color:black;
+}
+
+.empty {
+    background:#fff !important;
+    box-shadow: none !important;
+    cursor:default;
+    border:0px;
+}

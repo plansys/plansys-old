@@ -4,22 +4,6 @@
     /*************** RELATION TYPE *******************/
     function relationRenderer(instance, td, row, col, prop, value, cellProperties) {
         Handsontable.AutocompleteCell.renderer.apply(this, arguments);
-        var opt = instance.getSettings().columns[col];
-        if (!$(td).hasClass('dgr') && opt.scope.datasource.data[row] && opt.scope.datasource.data[row][opt.name]) {
-            $(td).addClass("dgr");
-            $(td).attr("dgr-id", opt.scope.datasource.data[row][opt.name]);
-            $(td).attr("dgr-model", opt.relModelClass);
-            $(td).attr("dgr-name", opt.scope.name);
-            $(td).attr("dgr-col", opt.name);
-            $(td).attr("dgr-class", opt.scope.modelClass);
-            $(td).attr("dgr-labelField", opt.relLabelField);
-            $(td).attr("dgr-idField", opt.relIdField);
-
-            if (typeof opt.scope.datasource.data[row][opt.name + "_label"] != "undefined") {
-                var arrow = $(td).find(".htAutocompleteArrow").remove();
-                $(td).html(opt.scope.datasource.data[row][opt.name + "_label"]).append(arrow);
-            }
-        }
 
         return td;
     }
@@ -33,6 +17,7 @@
 
         Handsontable.editors.AutocompleteEditor.prototype.open.apply(this, arguments);
     }
+    
     RelationEditor.prototype.close = function () {
         var ins = this.instance;
         var s = ins.getActiveEditor();
@@ -62,6 +47,7 @@
     }
     Handsontable.editors.RelationEditor = RelationEditor;
     Handsontable.editors.registerEditor('relation', RelationEditor);
+    
     /*************** DATE TIME / INPUT MASK *******************/
     function formatDate(val, format, $filter, td) {
         var oldval = val;
@@ -70,7 +56,16 @@
 
         if (typeof val == "string") {
             var t = val.split(/[- :]/);
-            val = new Date(t[0], t[1] - 1, t[2], t[3], t[4]);
+
+            if (t.length > 3) {
+                val = new Date(t[0], t[1] - 1, t[2], t[3], t[4]);
+            } else if (t.length == 3) {
+                val = new Date(t[0], t[1] - 1, t[2], 0, 0);
+            } else if (t.length == 2) {
+                val = new Date();
+                val.setMinutes(t[0]);
+                val.setMinutes(t[1]);
+            }
             if (val == "Invalid Date" || val.getFullYear() < 1900) {
                 val = "";
             }

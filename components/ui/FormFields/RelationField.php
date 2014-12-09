@@ -299,7 +299,7 @@ class RelationField extends FormField {
         $post = CJSON::decode($postdata);
 
         if (count($post) == 0)
-            throw new CHttpException(404);
+            die();
 
         $fb = FormBuilder::load($post['class']);
         $ff = $fb->findField(['name' => $post['name']]);
@@ -409,10 +409,15 @@ class RelationField extends FormField {
                     }
                 }
                 foreach ($fields[1] as $key => $v) {
+
                     if (isset($als[$v])) {
                         $fields[1][$key] = $als[$v];
                     } else {
-                        $fields[1][$key] = $this->relationCriteria['alias'] . "." . $v;
+                        if (strpos($v, ".") !== false) {
+                            $fields[1][$key] = $v;
+                        } else {
+                            $fields[1][$key] = $this->relationCriteria['alias'] . "." . $v;
+                        }
                     }
                 }
             }
@@ -432,7 +437,34 @@ class RelationField extends FormField {
             if (strpos($block, 'search') !== false) {
                 if ($search != '') {
                     if (strpos($this->labelField, '{') !== false) {
-                        $sqlcond = "CONCAT(" . implode(",", $fields[1]) . ")" . ' like ' . "[{$block}]";
+                        $select = explode(",", $this->relationCriteria['select']);
+                        $concatFields = $fields[1];
+                        foreach ($select as $sel) {
+                            $selall = explode(" ", $sel);
+                            $sellast = array_pop($selall);
+
+                            foreach ($fields[1] as $kf => $f) {
+                                if ($f == $sellast ||
+                                    $f == $this->relationCriteria['alias'] . "." . $sellast) {
+                                    $concatFields[$kf] = implode(" ", $selall);
+                                }
+                            }
+                        }
+                        $trimmed = trim($this->labelField);
+                        $implodedLabels = $trimmed;
+                        preg_match_all("/\{(.*?)\}/", $this->labelField, $fs);
+                        foreach ($fs[0] as $k => $i) {
+                            $implodedLabels = str_replace($i, "'," . $concatFields[$k] . ",'", $implodedLabels);
+                        }
+                        $implodedLabels = trim($implodedLabels, "',");
+                        if ($trimmed[0] != '{') {
+                            $implodedLabels = "'" . $implodedLabels;
+                        }
+                        if ($trimmed[strlen($trimmed) - 1] != '}') {
+                            $implodedLabels = $implodedLabels . "'";
+                        }
+
+                        $sqlcond = "CONCAT(" . $implodedLabels . ")" . ' like ' . "[{$block}]";
                     } else {
                         $sqlcond = $this->labelField . ' like ' . "[{$block}]";
                     }
@@ -538,6 +570,7 @@ class RelationField extends FormField {
                 } else {
                     $value = $this->evaluate("\"" . str_replace("{", "{\$", $this->idField) . "\"", true, $i);
                 }
+
 
                 if (in_array($this->labelField, $field)) {
                     $label = $i[$this->labelField];
