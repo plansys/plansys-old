@@ -377,7 +377,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
 
                     var options = $.extend({
                         data: $scope.data,
-                        minSpareRows: 0,
+                        minSpareRows: 1,
                         columnSorting: !$scope.dtGroups,
                         contextMenu: true,
                         scope: $scope,
