@@ -23,10 +23,26 @@ Handsontable.DataTableGroups = function (settings) {
 
             return this;
         },
+        prepareTotalRow: function (row) {
+            function span(text, col) {
+                return text;
+            }
+
+            function sum(col) {
+                return 'sum_' + col;
+            }
+            
+            var tr = this.totalRows.split(",");
+            
+            for (i in tr) {
+                var text = tr[i].trim();
+                
+                this.columns[i]
+            }
+        },
         group: function (instance) {
             if (!instance)
                 return;
-
             var cur;
             var cols = this.columns;
             var $scope = this.scope;
@@ -62,9 +78,7 @@ Handsontable.DataTableGroups = function (settings) {
                             lvstr += "&nbsp;&nbsp;";
                         }
                         lvstr += ' <i class="gr fa fa-caret-down fa-lg "></i> &nbsp;&nbsp;&nbsp;';
-
                         if (i > 0 && newrows[newrows.length - 1]['__dt_lvl'] >= lv) {
-                            
                             var newrow = {};
                             newrow[this.columns[0].name] = '';
                             newrow['__dt_flg'] = "E";
@@ -87,7 +101,6 @@ Handsontable.DataTableGroups = function (settings) {
                 }
             }
             console.log(groupTree);
-
             this.changed = true;
             var colLength = this.columns.length;
             var cellMerge = [];
@@ -103,7 +116,6 @@ Handsontable.DataTableGroups = function (settings) {
             }
             instance.mergeCells = new Handsontable.MergeCells(cellMerge);
             instance.render();
-
             $timeout(function () {
                 this.changed = false;
             });

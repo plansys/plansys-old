@@ -345,7 +345,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 $scope.edited = true;
                             }
 
-                            $scope.ht.loadData($scope.data);
+                            $("#" + $scope.renderID).handsontable('getInstance').loadData($scope.data);
 
                             $timeout(function () {
                                 $scope.edited = false;
