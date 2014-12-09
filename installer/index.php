@@ -146,7 +146,7 @@ $requirements=array(
 	),
 	array(
 		t('yii','Fileinfo extension'),
-		true,
+		false,
 		extension_loaded("fileinfo"),
 		'<a href="http://www.yiiframework.com/doc/api/CFileValidator">CFileValidator</a>',
 		t('yii','Required for MIME-type validation')

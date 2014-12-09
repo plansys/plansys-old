@@ -17,7 +17,7 @@
 
         Handsontable.editors.AutocompleteEditor.prototype.open.apply(this, arguments);
     }
-    
+
     RelationEditor.prototype.close = function () {
         var ins = this.instance;
         var s = ins.getActiveEditor();
@@ -47,7 +47,7 @@
     }
     Handsontable.editors.RelationEditor = RelationEditor;
     Handsontable.editors.registerEditor('relation', RelationEditor);
-    
+
     /*************** DATE TIME / INPUT MASK *******************/
     function formatDate(val, format, $filter, td) {
         var oldval = val;
@@ -56,17 +56,17 @@
 
         if (typeof val == "string") {
             var t = val.split(/[- :]/);
-
             if (t.length > 3) {
                 val = new Date(t[0], t[1] - 1, t[2], t[3], t[4]);
             } else if (t.length == 3) {
-                val = new Date(t[0], t[1] - 1, t[2], 0, 0);
+                val = new Date(1,0,0,t[0], t[1], t[2]);
             } else if (t.length == 2) {
                 val = new Date();
                 val.setMinutes(t[0]);
                 val.setMinutes(t[1]);
             }
-            if (val == "Invalid Date" || val.getFullYear() < 1900) {
+            
+            if (val == "Invalid Date" || (typeof val == 'object' && val.getFullYear() < 1900)) {
                 val = "";
             }
         } else {
