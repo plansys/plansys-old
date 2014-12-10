@@ -99,7 +99,11 @@ app.directive('textField', function ($timeout, $http) {
                         }
                     }
                     $timeout(function () {
-                        $scope.openDropdown(true);
+                        if (!$scope.initSearch) {
+                            $scope.initSearch = true;
+                        } else {
+                            $scope.openDropdown(true);
+                        }
                     });
                 }
 
@@ -115,38 +119,45 @@ app.directive('textField', function ($timeout, $http) {
                         'p': $scope.paramValue
                     }).success(function (data) {
                         $scope.list = data;
-                        $scope.openDropdown(true);
+                        if (!$scope.initSearch) {
+                            $scope.initSearch = true;
+                        } else {
+                            $scope.openDropdown(true);
+                        }
                     });
                 }
-
+                $scope.closeDropdown = function () {
+                    $el.find('[dropdown]').removeClass('open');
+                    $scope.showDropDown = false;
+                }
                 $scope.openDropdown = function (scroll) {
-                    var isOpened = $scope.showDropDown == true;
-                    if ($scope.list && $scope.list.length > 0 && (!isOpened || scroll)) {
-                        $scope.showDropdown = true;
+                    $timeout(function () {
+                        if (!$el.find("input[type=text]").is(':focus'))
+                            return;
 
-                        $timeout(function () {
+                        var isOpened = $scope.showDropDown == true;
+                        if (!$scope.blurred && $scope.list && $scope.list.length > 0 && (!isOpened || scroll)) {
+                            $el.find('[dropdown]').addClass('open');
+                            $scope.showDropDown = true;
+
                             if (scroll) {
                                 $el.find('.dropdown-menu').scrollTop(0);
                                 $el.find('.dropdown-menu li.hover').removeClass('hover');
-                                var f = $el.find('.dropdown-menu li:eq(0)');
-                                if (!f.hasClass('hover')) {
+                                $timeout(function () {
+                                    var f = $el.find('.dropdown-menu li:eq(0)');
                                     f.addClass('hover');
-                                }
+                                });
                             }
-
-                            $timeout(function () {
-                                $el.find("input[type=text]").focus();
-                            });
-                        }, 10);
-
-                    }
+                        }
+                    });
                 }
 
-                $scope.choose = function () {
+                $scope.choose = function (choice) {
+                    $scope.dropdownHover = true;
+                    var val = choice || $el.find(".dropdown-menu li.hover a").text();
                     switch ($scope.acMode) {
                         case "comma":
-                            var val = $el.find(".dropdown-menu li.hover a").text();
-                            var vr = $scope.value.split(",");
+                            var vr = $scope.value ? $scope.value.split(",") : [''];
                             if (vr.length > 1) {
                                 vr[vr.length - 1] = val;
                             } else {
@@ -155,70 +166,90 @@ app.directive('textField', function ($timeout, $http) {
                             for (i in vr) {
                                 vr[i] = vr[i].trim();
                             }
-
                             $scope.value = vr.join(", ");
                             $scope.search = val;
                             break;
                         default:
-                            $scope.value = $el.find(".dropdown-menu li.hover a").text();
+                            $scope.value = val;
                             break;
                     }
-                    $scope.update();
+                    $scope.closeDropdown();
+                    $el.find("input[type=text]").focus();
 
                     $timeout(function () {
-                        $scope.showDropdown = false;
+                        $scope.dropdownHover = false;
                     });
                 }
 
-                $scope.doSearch = function (e) {
-                    if ($scope.value == '') {
-                        $scope.showDropDown = false;
-                    }
+                $scope.doSearch = function (val) {
+                    $scope.blurred = false;
 
                     clearTimeout(keytimeout);
                     keytimeout = setTimeout(function () {
-                        var val = $scope.value;
-                        if (val != '') {
-                            switch ($scope.acMode) {
-                                case "comma":
-                                    val = val.split(",").pop();
-                                default:
-                                    break;
+                        val = val || $scope.value;
+                        switch ($scope.acMode) {
+                            case "comma":
+                                val = typeof val == "string" ? val.split(",").pop() : '';
+                            default:
+                                break;
+                        }
 
-                            }
-
-                            switch ($scope.autocomplete) {
-                                case "rel":
-                                    $scope.doSearchRelation(val);
-                                    break
-                                case "php":
-                                    $scope.doSearchList(val);
-                                    break;
-                            }
+                        switch ($scope.autocomplete) {
+                            case "rel":
+                                $scope.doSearchRelation(val);
+                                break
+                            case "php":
+                                $scope.doSearchList(val);
+                                break;
                         }
                     }, 100);
                 }
 
+
+                $el.find("[dropdown]").hover(function (e) {
+                    $scope.dropdownHover = true;
+                }, function (e) {
+                    $scope.dropdownHover = false;
+                });
+
+                if ($scope.autocomplete) {
+                    $timeout(function () {
+                        $scope.doSearch('');
+                    });
+                }
+                $el.find("input[type=text]").focus(function (e) {
+                    if (!$scope.dropdownHover) {
+                        $scope.openDropdown($scope.value ? false : true);
+                    }
+                    e.preventDefault();
+                });
+
+                $el.find("input[type=text]").blur(function (e) {
+                    if (!$scope.dropdownHover) {
+                        $scope.closeDropdown();
+                    }
+                    e.preventDefault();
+                });
                 $el.find("input[type=text]").keydown(function (e) {
-                    if ($scope.autocomplete == '') {
-                        return true;
-                    }
-                    if ($(this).val() == '') {
-                        $timeout(function () {
-                            $scope.showDropdown = false;
-                        });
-                    }
+
                     switch (e.keyCode) {
                         case 37:
                         case 39:
-                            $scope.openDropdown();
+                            $scope.dropdownHover = false;
+                            $timeout(function () {
+                                $scope.openDropdown();
+                            });
+                            e.preventDefault();
+                            e.stopPropagation();
+                            break;
+                        case 9:
+                            $scope.closeDropdown();
                             break;
                         case 13:
-                            if ($scope.showDropdown) {
-                                $scope.choose();
-                                e.preventDefault();
-                                e.stopPropagation();
-                            }
+                            $scope.choose();
+                            e.preventDefault();
+                            e.stopPropagation();
+                            return true;
                         case 188:
                             if ($scope.acMode == 'comma') {
                                 if ($scope.showDropdown) {
@@ -231,8 +262,15 @@ app.directive('textField', function ($timeout, $http) {
                             }
                             break;
                         case 38:
-                            $scope.openDropdown();
+                            if (!$el.find('[dropdown]').hasClass('open')) {
+                                $scope.dropdownHover = false;
+                                $timeout(function () {
+                                    $scope.openDropdown();
+                                });
+                                return false;
+                            }
 
+                            $scope.dropdownHover = true;
                             $a = $el.find(".dropdown-menu li.hover").prev();
                             if ($a.length && $a.length == 0) {
                                 $a = $el.find("li:last-child");
@@ -250,13 +288,22 @@ app.directive('textField', function ($timeout, $http) {
 
                             $timeout(function () {
                                 $el.find("input[type=text]").focus();
+                                $scope.dropdownHover = false;
                             });
+
                             e.preventDefault();
                             e.stopPropagation();
                             break;
                         case 40:
-                            $scope.openDropdown();
+                            if (!$el.find('[dropdown]').hasClass('open')) {
+                                $scope.dropdownHover = false;
+                                $timeout(function () {
+                                    $scope.openDropdown();
+                                });
+                                return false;
+                            }
 
+                            $scope.dropdownHover = true;
                             $a = $el.find(".dropdown-menu li.hover").next();
                             if ($a.length && $a.length == 0 && $scope.list.length > 0) {
                                 $scope.updateInternal($scope.list[0].key);
@@ -275,16 +322,17 @@ app.directive('textField', function ($timeout, $http) {
 
                             $timeout(function () {
                                 $el.find("input[type=text]").focus();
+                                $scope.dropdownHover = false;
                             });
                             e.preventDefault();
                             e.stopPropagation();
                             break;
                         default:
-                            $scope.doSearch(e);
+                            $scope.doSearch();
                             break;
                     }
                 });
-                
+
                 // if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {
                     $timeout(function () {
@@ -294,7 +342,7 @@ app.directive('textField', function ($timeout, $http) {
                         }
                     }, 0);
                 }
-                
+
             }
         }
     };
