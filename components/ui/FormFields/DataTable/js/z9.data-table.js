@@ -45,6 +45,25 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 $scope.lastRelList = {};
                 $scope.dtGroups = null;
 
+                $scope.contextMenu = function () {
+                    if ($scope.dtGroups) {
+                        return [
+                            'undo',
+                            'redo'
+                        ]
+                    } else {
+                        return [
+                            'row_above',
+                            'row_below',
+                            '---------',
+                            'remove_row',
+                            '---------',
+                            'undo',
+                            'redo'
+                        ];
+                    }
+                }
+
                 $scope.$timeout = $timeout;
 
                 // setup internal variables
@@ -400,6 +419,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                         cellProperties.readOnly = true;
                                         cellProperties.renderer = 'html';
                                         break;
+                                    case 'T':
+                                        cellProperties.className = 'total';
+                                        cellProperties.readOnly = true;
+                                        cellProperties.renderer = 'html';
+                                        break;
                                     default:
                                         cellProperties.className = '';
                                         cellProperties.renderer = 'text';
@@ -444,6 +468,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 $scope.beforeCellEdit(ch[3], ch[0], ch[1], $scope.data[ch[0]], ht);
                             }
 
+
                             if (typeof $scope.eventsInternal.beforeChange == "function") {
                                 $scope.eventsInternal.beforeChange(changes, source);
                             }
@@ -475,6 +500,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 default:
                                     $scope.datasource.data = $scope.data;
                                     break;
+                            }
+
+
+                            if ($scope.dtGroups && !$scope.dtGroups.changed) {
+                                $scope.dtGroups.reCalcChanges(changes, source, ht);
                             }
 
                             $timeout(function () {
@@ -560,15 +590,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 $scope.eventsInternal.modifyColWidth();
                             }
                         },
-                        contextMenu: [
-                            'row_above',
-                            'row_below',
-                            '---------',
-                            'remove_row',
-                            '---------',
-                            'undo',
-                            'redo'
-                        ]
+                        contextMenu: $scope.contextMenu()
                     }, $scope.gridOptions);
 
                     //prepare data table groups   

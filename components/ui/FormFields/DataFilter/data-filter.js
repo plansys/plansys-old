@@ -478,6 +478,12 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                         }
 
                                         var curr = filter.from;
+
+                                        if (typeof curr != "object") {
+                                            curr = new Date();
+                                            curr.setFullYear(filter.from);
+                                        }
+
                                         first = new Date(curr.getFullYear(), 0, 1);
                                         last = new Date(curr.getFullYear() + 1, 0, 0);
 
@@ -588,6 +594,13 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                 parent[$scope.name] = $scope;
                 $scope.available = false;
 
+                $scope.evalValue = function (value) {
+                    if (typeof value == "string" && value.substr(0, 3) == "js:") {
+                        return $scope.$eval(value.trim().substr(3));
+                    }
+                    return value;
+                }
+
                 // Set Default Filters Value
                 $timeout(function () {
                     var showCount = 0;
@@ -597,7 +610,9 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     var defaultValueAvailable = false;
                     for (i in $scope.filters) {
                         var f = $scope.filters[i];
-                        var dateCondition = (f.filterType == 'date' && ['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(f.defaultOperator) >= 0);
+                        var dateCondition = (f.filterType == 'date'
+                                && ['Daily', 'Weekly', 'Monthly', 'Yearly']
+                                .indexOf(f.defaultOperator) >= 0);
 
                         f.show = (showCount > 5 ? false : true);
                         showCount++;
@@ -608,23 +623,38 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                     f.operator = f.defaultOperator;
 
                                     if (f.filterType == 'date') {
-                                        if (f.defaultOperator == 'Between' || f.defaultOperator == 'Not Between') {
-                                            f.from = f.defaultValueFrom;
-                                            f.to = f.defaultValueTo;
+                                        if (f.defaultOperator == 'Between'
+                                                || f.defaultOperator == 'Not Between') {
+                                            f.from = $scope.evalValue(f.defaultValueFrom);
+                                            f.to = $scope.evalValue(f.defaultValueTo);
                                         } else if (f.defaultOperator == 'Less Than') {
-                                            f.to = f.defaultValueTo;
+                                            f.to = $scope.evalValue(f.defaultValueTo);
                                         } else {
-                                            f.from = f.defaultValueFrom;
+                                            f.from = $scope.evalValue(f.defaultValue);
                                         }
                                     } else {
-                                        f.value = f.defaultValue;
+                                        f.value = $scope.evalValue(f.defaultValue);
                                     }
                                 }
-                            } else {
-                                f.value = f.defaultValue;
+
+                                $scope.updateFilter(f, null, false);
+                                defaultValueAvailable = true;
+                            } else if (f.filterType == 'list') {
+                                var filt = f;
+                                $timeout(function () {
+                                    filt.value = $scope.evalValue(filt.defaultValue);
+                                    $scope.updateFilter(filt, null, false);
+                                    defaultValueAvailable = true;
+                                    parent[$scope.datasource].query(function () {
+                                    });
+                                }, 1000);
                             }
-                            $scope.updateFilter(f, null, false);
-                            defaultValueAvailable = true;
+                            else {
+                                f.value = $scope.evalValue(f.defaultValue);
+                                $scope.updateFilter(f, null, false);
+                                defaultValueAvailable = true;
+                            }
+
                         }
                     }
                     if (defaultValueAvailable) {

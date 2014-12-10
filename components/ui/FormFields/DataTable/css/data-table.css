@@ -148,3 +148,13 @@
     cursor:default;
     border:0px;
 }
+
+.total {
+    background:#efefef !important;
+    box-shadow: none !important;
+    cursor:default;
+    color:#555 !important;
+    font-size:12px !important;
+    font-weight:bold;
+    border-top:1px solid #ddd;
+}
