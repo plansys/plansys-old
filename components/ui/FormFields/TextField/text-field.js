@@ -206,132 +206,132 @@ app.directive('textField', function ($timeout, $http) {
                 }
 
 
-                $el.find("[dropdown]").hover(function (e) {
-                    $scope.dropdownHover = true;
-                }, function (e) {
-                    $scope.dropdownHover = false;
-                });
-
-                if ($scope.autocomplete) {
-                    $timeout(function () {
-                        $scope.doSearch('');
+                if ($scope.autocomplete != '') {
+                    $el.find("[dropdown]").hover(function (e) {
+                        $scope.dropdownHover = true;
+                    }, function (e) {
+                        $scope.dropdownHover = false;
                     });
-                }
-                $el.find("input[type=text]").focus(function (e) {
-                    if (!$scope.dropdownHover) {
-                        $scope.openDropdown($scope.value ? false : true);
-                    }
-                    e.preventDefault();
-                });
 
-                $el.find("input[type=text]").blur(function (e) {
-                    if (!$scope.dropdownHover) {
-                        $scope.closeDropdown();
+                    if ($scope.autocomplete) {
+                        $timeout(function () {
+                            $scope.doSearch('');
+                        });
                     }
-                    e.preventDefault();
-                });
-                $el.find("input[type=text]").keydown(function (e) {
+                    $el.find("input[type=text]").focus(function (e) {
+                        if (!$scope.dropdownHover) {
+                            $scope.openDropdown($scope.value ? false : true);
+                        }
+                        e.preventDefault();
+                    });
 
-                    switch (e.keyCode) {
-                        case 37:
-                        case 39:
-                            $scope.dropdownHover = false;
-                            $timeout(function () {
-                                $scope.openDropdown();
-                            });
-                            e.preventDefault();
-                            e.stopPropagation();
-                            break;
-                        case 9:
+                    $el.find("input[type=text]").blur(function (e) {
+                        if (!$scope.dropdownHover) {
                             $scope.closeDropdown();
-                            break;
-                        case 13:
-                            $scope.choose();
-                            e.preventDefault();
-                            e.stopPropagation();
-                            return true;
-                        case 188:
-                            if ($scope.acMode == 'comma') {
-                                if ($scope.showDropdown) {
-                                    $timeout(function () {
-                                        $scope.choose();
-                                    });
-                                } else {
-                                    $scope.doSearch(e);
+                        }
+                        e.preventDefault();
+                    });
+                    $el.find("input[type=text]").keydown(function (e) {
+
+                        switch (e.keyCode) {
+                            case 37:
+                            case 39:
+                                $scope.dropdownHover = false;
+                                $timeout(function () {
+                                    $scope.openDropdown();
+                                });
+                                break;
+                            case 9:
+                                $scope.closeDropdown();
+                                break;
+                            case 13:
+                                $scope.choose();
+                                e.preventDefault();
+                                e.stopPropagation();
+                                return true;
+                            case 188:
+                                if ($scope.acMode == 'comma') {
+                                    if ($scope.showDropdown) {
+                                        $timeout(function () {
+                                            $scope.choose();
+                                        });
+                                    } else {
+                                        $scope.doSearch(e);
+                                    }
                                 }
-                            }
-                            break;
-                        case 38:
-                            if (!$el.find('[dropdown]').hasClass('open')) {
-                                $scope.dropdownHover = false;
-                                $timeout(function () {
-                                    $scope.openDropdown();
-                                });
-                                return false;
-                            }
+                                break;
+                            case 38:
+                                if (!$el.find('[dropdown]').hasClass('open')) {
+                                    $scope.dropdownHover = false;
+                                    $timeout(function () {
+                                        $scope.openDropdown();
+                                    });
+                                    return false;
+                                }
 
-                            $scope.dropdownHover = true;
-                            $a = $el.find(".dropdown-menu li.hover").prev();
-                            if ($a.length && $a.length == 0) {
-                                $a = $el.find("li:last-child");
-                            }
+                                $scope.dropdownHover = true;
+                                $a = $el.find(".dropdown-menu li.hover").prev();
+                                if ($a.length && $a.length == 0) {
+                                    $a = $el.find("li:last-child");
+                                }
 
-                            var i = 0;
-                            while ((!$a.is("li") || !$a.is(":visible")) && i < 100) {
-                                $a = $a.prev();
-                                i++;
-                            }
-                            if ($a.length && $a.length > 0 && $a.is("li")) {
-                                $el.find(".dropdown-menu li.hover").removeClass("hover")
-                                $a.addClass("hover").find("a").focus();
-                            }
-
-                            $timeout(function () {
-                                $el.find("input[type=text]").focus();
-                                $scope.dropdownHover = false;
-                            });
-
-                            e.preventDefault();
-                            e.stopPropagation();
-                            break;
-                        case 40:
-                            if (!$el.find('[dropdown]').hasClass('open')) {
-                                $scope.dropdownHover = false;
-                                $timeout(function () {
-                                    $scope.openDropdown();
-                                });
-                                return false;
-                            }
-
-                            $scope.dropdownHover = true;
-                            $a = $el.find(".dropdown-menu li.hover").next();
-                            if ($a.length && $a.length == 0 && $scope.list.length > 0) {
-                                $scope.updateInternal($scope.list[0].key);
-                            } else {
                                 var i = 0;
                                 while ((!$a.is("li") || !$a.is(":visible")) && i < 100) {
-                                    $a = $a.next();
+                                    $a = $a.prev();
                                     i++;
                                 }
-
                                 if ($a.length && $a.length > 0 && $a.is("li")) {
-                                    $el.find(".dropdown-menu li.hover").removeClass("hover");
+                                    $el.find(".dropdown-menu li.hover").removeClass("hover")
                                     $a.addClass("hover").find("a").focus();
                                 }
-                            }
 
-                            $timeout(function () {
-                                $el.find("input[type=text]").focus();
-                                $scope.dropdownHover = false;
-                            });
-                            e.preventDefault();
-                            e.stopPropagation();
-                            break;
-                        default:
-                            $scope.doSearch();
-                            break;
-                    }
-                });
+                                $timeout(function () {
+                                    $el.find("input[type=text]").focus();
+                                    $scope.dropdownHover = false;
+                                });
+
+                                e.preventDefault();
+                                e.stopPropagation();
+                                break;
+                            case 40:
+                                if (!$el.find('[dropdown]').hasClass('open')) {
+                                    $scope.dropdownHover = false;
+                                    $timeout(function () {
+                                        $scope.openDropdown();
+                                    });
+                                    return false;
+                                }
+
+                                $scope.dropdownHover = true;
+                                $a = $el.find(".dropdown-menu li.hover").next();
+                                if ($a.length && $a.length == 0 && $scope.list.length > 0) {
+                                    $scope.updateInternal($scope.list[0].key);
+                                } else {
+                                    var i = 0;
+                                    while ((!$a.is("li") || !$a.is(":visible")) && i < 100) {
+                                        $a = $a.next();
+                                        i++;
+                                    }
+
+                                    if ($a.length && $a.length > 0 && $a.is("li")) {
+                                        $el.find(".dropdown-menu li.hover").removeClass("hover");
+                                        $a.addClass("hover").find("a").focus();
+                                    }
+                                }
+
+                                $timeout(function () {
+                                    $el.find("input[type=text]").focus();
+                                    $scope.dropdownHover = false;
+                                });
+                                e.preventDefault();
+                                e.stopPropagation();
+                                break;
+                            default:
+                                $scope.doSearch();
+                                break;
+                        }
+                    });
+                }
 
                 // if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {
