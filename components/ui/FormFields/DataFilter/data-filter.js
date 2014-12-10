@@ -596,7 +596,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                 $scope.evalValue = function (value) {
                     if (typeof value == "string" && value.substr(0, 3) == "js:") {
-                        return $scope.$parent.$eval(value.trim().substr(3));
+                        return $scope.$eval(value.trim().substr(3));
                     }
                     return value;
                 }
@@ -636,11 +636,25 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                         f.value = $scope.evalValue(f.defaultValue);
                                     }
                                 }
-                            } else {
-                                f.value = $scope.evalValue(f.defaultValue);
+
+                                $scope.updateFilter(f, null, false);
+                                defaultValueAvailable = true;
+                            } else if (f.filterType == 'list') {
+                                var filt = f;
+                                $timeout(function () {
+                                    filt.value = $scope.evalValue(filt.defaultValue);
+                                    $scope.updateFilter(filt, null, false);
+                                    defaultValueAvailable = true;
+                                    parent[$scope.datasource].query(function () {
+                                    });
+                                }, 1000);
                             }
-                            $scope.updateFilter(f, null, false);
-                            defaultValueAvailable = true;
+                            else {
+                                f.value = $scope.evalValue(f.defaultValue);
+                                $scope.updateFilter(f, null, false);
+                                defaultValueAvailable = true;
+                            }
+
                         }
                     }
                     if (defaultValueAvailable) {
