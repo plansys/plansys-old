@@ -53,14 +53,14 @@
         <?php endif; ?>
         <!-- /field -->
 
-        <span dropdown is-open="showDropdown" >
+        <span dropdown>
             <ul ng-if="list.length > 0" style="margin-left:15px;max-height:150px;overflow-y:auto;" class="dropdown-menu">
-                <li ng-repeat="choice in list" style="font-size:13px;">
-                    <a href="" ng-click="choose()" dropdown-toggle>{{ autocomplete == 'php' ? choice : choice.label}}</a>
+                <li class="{{ choice.value == value ? 'hover' : ''}}" ng-repeat="choice in list" style="font-size:13px;">
+                    <a href=""  ng-click="choose(choice.value)">{{ autocomplete == 'php' ? choice : choice.label}}</a>
                 </li>
             </ul>
 
-            <ul ng-if="(list.length == 0) && showDropdown " class="dropdown-menu" style="margin-left:15px;max-height:150px;overflow-y:auto;">
+            <ul ng-if="(list.length == 0)" class="dropdown-menu" style="margin-left:15px;max-height:150px;overflow-y:auto;">
                 <li style="text-align:center;padding:10px;font-size:12px;color:#999;">&mdash; Not Found &mdash;</li>
             </ul>
         </span>
