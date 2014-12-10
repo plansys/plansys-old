@@ -41,8 +41,29 @@ class DevUserIndex extends User {
                         'defaultValue' => '',
                     ),
                     array (
-                        'name' => 'nip',
-                        'label' => 'nip',
+                        'name' => 'role_description',
+                        'label' => 'role',
+                        'filterType' => 'relation',
+                        'show' => false,
+                        'defaultValue' => '',
+                        'relParams' => array (),
+                        'relCriteria' => array (
+                            'select' => '',
+                            'distinct' => 'false',
+                            'alias' => 't',
+                            'condition' => '{[search]}',
+                            'order' => '',
+                            'group' => '',
+                            'having' => '',
+                            'join' => '',
+                        ),
+                        'relModelClass' => 'application.models.Role',
+                        'relIdField' => 'role_description',
+                        'relLabelField' => 'role_description',
+                    ),
+                    array (
+                        'name' => 'username',
+                        'label' => 'username',
                         'filterType' => 'string',
                         'show' => false,
                         'defaultOperator' => '',
@@ -51,6 +72,24 @@ class DevUserIndex extends User {
                     array (
                         'name' => 'fullname',
                         'label' => 'fullname',
+                        'filterType' => 'string',
+                        'show' => false,
+                        'defaultOperator' => '',
+                        'defaultValue' => '',
+                    ),
+                    array (
+                        'name' => 'last_login',
+                        'label' => 'last login',
+                        'filterType' => 'date',
+                        'show' => false,
+                        'defaultOperator' => '',
+                        'defaultValue' => '',
+                        'defaultValueFrom' => '',
+                        'defaultValueTo' => '',
+                    ),
+                    array (
+                        'name' => 'nip',
+                        'label' => 'nip',
                         'filterType' => 'string',
                         'show' => false,
                         'defaultOperator' => '',
@@ -71,45 +110,6 @@ class DevUserIndex extends User {
                         'show' => false,
                         'defaultOperator' => '',
                         'defaultValue' => '',
-                    ),
-                    array (
-                        'name' => 'username',
-                        'label' => 'username',
-                        'filterType' => 'string',
-                        'show' => false,
-                        'defaultOperator' => '',
-                        'defaultValue' => '',
-                    ),
-                    array (
-                        'name' => 'last_login',
-                        'label' => 'last login',
-                        'filterType' => 'date',
-                        'show' => false,
-                        'defaultOperator' => '',
-                        'defaultValue' => '',
-                        'defaultValueFrom' => '',
-                        'defaultValueTo' => '',
-                    ),
-                    array (
-                        'name' => 'role',
-                        'label' => 'role',
-                        'filterType' => 'relation',
-                        'show' => true,
-                        'defaultValue' => '',
-                        'relParams' => array (),
-                        'relCriteria' => array (
-                            'select' => '',
-                            'distinct' => 'false',
-                            'alias' => 't',
-                            'condition' => '{[search]}',
-                            'order' => '',
-                            'group' => '',
-                            'having' => '',
-                            'join' => '',
-                        ),
-                        'relModelClass' => 'application.models.Role',
-                        'relIdField' => 'role_description',
-                        'relLabelField' => 'role_description',
                     ),
                 ),
                 'filterOperators' => array (
@@ -156,13 +156,29 @@ class DevUserIndex extends User {
                     'paging' => 'dataGrid1',
                 ),
                 'enablePaging' => 'Yes',
-                'pagingSQL' => 'select * from (select count(1) as role from p_user u
+                'pagingSQL' => 'select count(1) from (select * from (select u.*,r.role_description as role from p_user u
  left outer join 
    p_user_role p on u.id = p.user_id 
    and p.is_default_role = \'Yes\' 
  left outer join 
-   p_role r on r.id = p.role_id 
- ) a {where [where]}',
+   p_role r on r.id = p.role_id
+ {where [where]}) a) b',
+                'relationTo' => 'currentModel',
+                'relationCriteria' => array (
+                    'select' => 'u.*,r.role_description',
+                    'distinct' => 'false',
+                    'alias' => 'u',
+                    'condition' => '{[where]}',
+                    'order' => '{[order]}',
+                    'paging' => '{[paging]}',
+                    'group' => '',
+                    'having' => '',
+                    'join' => 'left outer join 
+   p_user_role p on u.id = p.user_id 
+   and p.is_default_role = \'Yes\' 
+ left outer join 
+   p_role r on r.id = p.role_id',
+                ),
                 'type' => 'DataSource',
             ),
             array (
@@ -286,25 +302,13 @@ class DevUserIndex extends User {
                         'show' => false,
                     ),
                     array (
-                        'name' => 'role',
+                        'name' => 'role_description',
                         'label' => 'role',
                         'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
-                        'listType' => 'php',
-                        'listExpr' => '',
-                        'listMustChoose' => 'No',
-                        'relCondition' => '',
-                        'relModelClass' => '',
-                        'relIdField' => '',
-                        'relLabelField' => '',
                         'columnType' => 'string',
-                        'show' => false,
+                        'show' => true,
+                        'inputMask' => '',
+                        'stringAlias' => array (),
                     ),
                     array (
                         'name' => 'last_login',
