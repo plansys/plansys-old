@@ -9,7 +9,7 @@ class User extends ActiveRecord {
         parent::afterFind();
         $this->subscribed = (Yii::app()->nfy->isSubscribed($this->id) ? "on" : "");
         $this->useLdap = Yii::app()->user->useLdap;
-
+        $this->getRoles();
         return true;
     }
 
@@ -89,11 +89,16 @@ class User extends ActiveRecord {
         );
     }
 
+    public $roles = ['a'];
+    
     public function getRoles($originalSorting = false) {
         $uid = Yii::app()->user->id;
-        $sql = "select * from p_role r inner join p_user_role p on r.id = p.role_id where p.user_id = {$uid} ";
+        if (!$uid) {
+            return [$this->role];
+        }
+        
+        $sql = "select * from p_role r inner join p_user_role p on r.id = p.role_id where p.user_id = {$uid} order by is_default_role asc";
         $roles = Yii::app()->db->createCommand($sql)->queryAll();
-
         if ($originalSorting) {
             return $roles;
         }
@@ -109,6 +114,7 @@ class User extends ActiveRecord {
         $role = array_splice($roles, $idx, 1);
         array_unshift($roles, $role[0]);
 
+        $this->roles = $roles;
         return $roles;
     }
 

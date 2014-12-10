@@ -35,7 +35,7 @@ class UserController extends Controller {
 
     public function actionUpdate($id) {
         $model = $this->loadModel($id, "DevUserForm");
-
+        
         if (isset($_POST["DevUserForm"])) {
             $userRoles = $model->userRoles;
             if (!isset($_POST['DevUserForm']['subscribed']))

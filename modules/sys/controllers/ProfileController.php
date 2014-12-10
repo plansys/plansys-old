@@ -32,7 +32,7 @@ class ProfileController extends Controller {
             }
         }
 
-        $this->redirect(Yii::app()->request->urlReferrer ? Yii::app()->request->urlReferrer : Yii::app()->user->returnUrl );
+        $this->redirect(Yii::app()->user->returnUrl);
     }
 
 }

@@ -12,7 +12,8 @@ class UserIdentity extends CUserIdentity {
     public function loggedIn($record) {
         $this->id = $record->id;
         $role = UserRole::model()->findByAttributes([
-            'user_id' => $this->id, 'is_default_role' => 'Yes'
+            'user_id' => $this->id,
+            'is_default_role' => 'Yes'
         ]);
         $this->setState('fullRole', $role->role['role_name']);
 
