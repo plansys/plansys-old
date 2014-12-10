@@ -28,7 +28,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                     $scope.insertData.length = 0;
                 }
 
-                $scope.resetParam = function (key, name) {
+                $scope.resetParam = function (key, name) { 
                     if (typeof key == "undefined") {
                         for (i in $scope.sqlParams) {
                             delete $scope.sqlParams[i];
@@ -246,7 +246,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                                             if ($scope.untrackColumns.indexOf(x) >= 0)
                                                 continue;
 
-                                            if (newv[x] != '')
+                                            if (!!newv[x])
                                                 isEmpty = false;
                                         }
 
