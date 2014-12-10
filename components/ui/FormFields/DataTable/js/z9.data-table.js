@@ -396,7 +396,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
 
                     var options = $.extend({
                         data: $scope.data,
-                        minSpareRows: 1,
+                        minSpareRows: !$scope.dtGroups ? 1 : 0,
                         columnSorting: !$scope.dtGroups,
                         contextMenu: true,
                         scope: $scope,
@@ -405,6 +405,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         autoWrapRow: true,
                         autoWrapCol: true,
                         mergeCells: true,
+                        comments: true,
                         manualColumnResize: true,
                         cells: function (row, col, prop) {
                             var cellProperties = {};
@@ -503,12 +504,16 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             }
 
 
-                            if ($scope.dtGroups && !$scope.dtGroups.changed) {
-                                $scope.dtGroups.reCalcChanges(changes, source, ht);
-                            }
 
                             $timeout(function () {
-                                $scope.edited = false;
+                                if ($scope.dtGroups && !$scope.dtGroups.changed) {
+                                    $scope.dtGroups.calculate(changes, source, ht);
+                                    ht.render();
+                                }
+
+                                $timeout(function () {
+                                    $scope.edited = false;
+                                });
                             });
                         },
                         afterRender: function () {
@@ -567,8 +572,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
 
                             var ht = $("#" + $scope.renderID).handsontable('getInstance');
 
-                            for (i in $scope.columns) {
-                                var c = $scope.columns[i];
+                            for (i in columnsInternal) {
+                                var c = columnsInternal[i];
                                 if (c.options && c.options.width) {
                                     ht.setCellMeta(0, i, 'width', c.options.width);
                                 }
