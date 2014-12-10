@@ -240,8 +240,12 @@ app.directive('dropDownList', function ($timeout) {
                             init();
                             break;
                         case 'first':
-                            if ($scope.renderedFormList.length > 0 && $scope.value == '') {
-                                $scope.update($scope.renderedFormList[0].value);
+                            if ($scope.renderedFormList.length > 0) {
+                                if ($scope.value == '') {
+                                    $scope.update($scope.renderedFormList[0].value);
+                                } else {
+                                    $scope.update($scope.value)
+                                }
                             }
                             break;
                     }
