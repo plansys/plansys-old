@@ -93,10 +93,23 @@ class DevUserIndex extends User {
                     array (
                         'name' => 'role',
                         'label' => 'role',
-                        'filterType' => 'string',
-                        'show' => false,
-                        'defaultOperator' => '',
+                        'filterType' => 'relation',
+                        'show' => true,
                         'defaultValue' => '',
+                        'relParams' => array (),
+                        'relCriteria' => array (
+                            'select' => '',
+                            'distinct' => 'false',
+                            'alias' => 't',
+                            'condition' => '{[search]}',
+                            'order' => '',
+                            'group' => '',
+                            'having' => '',
+                            'join' => '',
+                        ),
+                        'relModelClass' => 'application.models.Role',
+                        'relIdField' => 'role_description',
+                        'relLabelField' => 'role_description',
                     ),
                 ),
                 'filterOperators' => array (
@@ -130,26 +143,26 @@ class DevUserIndex extends User {
             ),
             array (
                 'name' => 'dataSource1',
-                'sql' => 'select u.*,r.role_description as role from p_user u
+                'sql' => 'select * from (select u.*,r.role_description as role from p_user u
  left outer join 
    p_user_role p on u.id = p.user_id 
    and p.is_default_role = \'Yes\' 
  left outer join 
    p_role r on r.id = p.role_id 
- {where [where]} group by u.id {[order]} {[paging]}',
+) a {where [where]} group by id {[order]} {[paging]}',
                 'params' => array (
                     'where' => 'dataFilter1',
                     'order' => 'dataGrid1',
                     'paging' => 'dataGrid1',
                 ),
                 'enablePaging' => 'Yes',
-                'pagingSQL' => 'select count(1) as role from p_user u
+                'pagingSQL' => 'select * from (select count(1) as role from p_user u
  left outer join 
    p_user_role p on u.id = p.user_id 
    and p.is_default_role = \'Yes\' 
  left outer join 
    p_role r on r.id = p.role_id 
-    {where [where]}',
+ ) a {where [where]}',
                 'type' => 'DataSource',
             ),
             array (

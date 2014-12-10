@@ -27,7 +27,7 @@ class User extends ActiveRecord {
 
         if ($this->subscribed === "on" || $this->isNewRecord) {
             $roles = array();
-            
+
             $db = Yii::app()->db->createCommand('select DISTINCT role_name from p_user_role p inner join p_role r on p.role_id = r.id and p.user_id = ' . $this->id)->queryAll();
 
             foreach ($db as $r) {
@@ -65,7 +65,7 @@ class User extends ActiveRecord {
         return array(
             array(' fullname,  username' . $passwordReq, 'required'),
             array('username', 'unique'),
-            array('email','email'),
+            array('email', 'email'),
             array('last_login', 'safe')
         );
     }
@@ -84,10 +84,32 @@ class User extends ActiveRecord {
         return array(
             'userInfos' => array(self::HAS_MANY, 'UserInfo', 'user_id'),
             'userRoles' => array(self::HAS_MANY, 'UserRole', 'user_id', 'order' => 'is_default_role ASC'),
-            'roles' => array(self::HAS_MANY, 'Role', array('role_id' => 'id'), 'through' => 'userRoles'),
             'role' => array(self::HAS_ONE, 'Role', array('role_id' => 'id'), 'through' => 'userRoles',
                 'condition' => 'is_default_role = "Yes"'),
         );
+    }
+
+    public function getRoles($originalSorting = false) {
+        $uid = Yii::app()->user->id;
+        $sql = "select * from p_role r inner join p_user_role p on r.id = p.role_id where p.user_id = {$uid} ";
+        $roles = Yii::app()->db->createCommand($sql)->queryAll();
+
+        if ($originalSorting) {
+            return $roles;
+        }
+        
+        $idx = 0;
+        foreach ($roles as $k => $role) {
+            if ($role['role_name'] == Yii::app()->user->getState('role')) {
+                $idx = $k;
+                break;
+            }
+        }
+
+        $role = array_splice($roles, $idx, 1);
+        array_unshift($roles, $role[0]);
+
+        return $roles;
     }
 
     public function tableName() {

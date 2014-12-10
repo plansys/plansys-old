@@ -66,6 +66,41 @@ class Controller extends CController {
             $name = Yii::app()->user->model->fullname;
         }
 
+        $userItems = [
+            [
+                'label' => 'Edit Profile',
+                'url' => ['/sys/profile/index'],
+            ],
+            [
+                'label' => '---',
+            ],
+            [
+                'label' => 'Logout',
+                'url' => ['/site/logout'],
+            ]
+        ];
+
+        if (Yii::app()->user->model) {
+            $roles = Yii::app()->user->model->getRoles(true);
+
+            if (count($roles) > 1) {
+
+                $roleItems = [];
+                foreach ($roles as $k => $r) {
+                    $rc = ($r['role_name'] == Yii::app()->user->fullRole ? 'fa-check-square-o' : 'fa-square-o');
+
+                    array_push($roleItems, [
+                        'label' => '&nbsp; <i class="fa ' . $rc . '"></i> &nbsp;' . $r['role_description'],
+                        'url' => ['/sys/profile/changeUser', 'id' => $r['id']]
+                    ]);
+                }
+                array_unshift($userItems, [
+                    'label' => 'Switch Role',
+                    'items' => $roleItems
+                ]);
+            }
+        }
+
         $default = [
             [
                 'label' => 'Login',
@@ -75,19 +110,7 @@ class Controller extends CController {
             [
                 'label' => ucfirst($name),
                 'url' => '#',
-                'items' => [
-                    [
-                        'label' => 'Edit Profile',
-                        'url' => ['/sys/profile/index'],
-                    ],
-                    [
-                        'label' => '---',
-                    ],
-                    [
-                        'label' => 'Logout',
-                        'url' => ['/site/logout'],
-                    ]
-                ],
+                'items' => $userItems,
                 'itemOptions' => [
                     'style' => 'border-right:1px solid rgba(0,0,0,.1)'
                 ],
@@ -108,7 +131,7 @@ class Controller extends CController {
             }
 
             $menuModule = include($path);
-            
+
             if (is_array($menuModule)) {
                 return array_merge($default, $menuModule);
             } else {
