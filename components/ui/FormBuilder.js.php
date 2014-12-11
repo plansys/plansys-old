@@ -10,11 +10,12 @@ ob_start();
 ?>
 <script type="text/javascript">
 <?php ob_start(); ?>
-    app.controller("<?= $modelClass ?>Controller", function ($scope, $parse, $timeout, $http, $localStorage) {
+    app.controller("<?= $modelClass ?>Controller", function ($scope, $parse, $timeout, $http, $localStorage, $filter) {
         $scope.form = <?php echo json_encode($this->form); ?>;
         $scope.model = <?php echo @json_encode($data['data']); ?>;
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
         $scope.params = <?php echo @json_encode($renderParams); ?>;
+		$scope.filter = $filter;
 <?php if (!Yii::app()->user->isGuest): ?>
             $scope.user = <?php echo @json_encode(Yii::app()->user->info); ?>;
             if ($scope.user != null) {
