@@ -616,7 +616,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                         f.show = (showCount > 5 ? false : true);
                         showCount++;
-
                         if (f.defaultValue && f.defaultValue != "" || dateCondition) {
                             if ($scope.operators[f.filterType]) {
                                 if (typeof f.defaultOperator != "undefined" && f.defaultOperator != "") {
@@ -639,16 +638,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                                 $scope.updateFilter(f, null, false);
                                 defaultValueAvailable = true;
-                            } else if (f.filterType == 'list') {
-                                var filt = f;
-                                $timeout(function () {
-                                    filt.value = $scope.evalValue(filt.defaultValue);
-                                    $scope.updateFilter(filt, null, false);
-                                    defaultValueAvailable = true;
-                                    parent[$scope.datasource].query(function () {
-                                    });
-                                }, 1000);
-                            }
+                            } 
                             else {
                                 f.value = $scope.evalValue(f.defaultValue);
                                 $scope.updateFilter(f, null, false);
