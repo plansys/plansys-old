@@ -26,6 +26,41 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     }
                 }
 
+
+                $scope.generateUrl = function (url, type) {
+                    var output = '';
+                    if (typeof url == "string") {
+
+                        var match = url.match(/{([^}]+)}/g);
+                        for (i in match) {
+                            var m = match[i];
+                            m = m.substr(1, m.length - 2);
+                            var result = "' + row['" + m + "'] + '";
+                            if (m.indexOf('.') > 0) {
+                                result = $scope.$eval(m);
+                            }
+                            url = url.replace('{' + m + '}', result);
+                        }
+
+                        if (url.match(/http*/ig)) {
+                            output = url.replace(/\{/g, "'+ row['").replace(/\}/g, "'] +'");
+                        } else if (url.trim() == '#') {
+                            output = '#';
+                        } else {
+                            url = url.replace(/\?/ig, '&');
+                            output = "Yii.app.createUrl('" + url + "')";
+                        }
+
+                        if (type == 'html') {
+                            if (output != '#') {
+                                output = '{{' + output + '}}';
+                            }
+                        }
+
+                    }
+                    return output;
+                }
+                
                 // setup variables
                 $scope.eventsInternal = {};
                 $scope.grid = function (command) {
@@ -376,6 +411,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 // Generate DataTable Options -- start
                 $timeout(function () {
                     evalArray($scope.gridOptions);
+                    console.log($scope.gridOptions);
 
                     // initialize data table groups
                     if ($scope.gridOptions.groups) {
@@ -396,7 +432,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
 
                     var options = $.extend({
                         data: $scope.data,
-                        minSpareRows: !$scope.dtGroups ? 1 : 0,
+                        minSpareRows: $scope.gridOptions.readOnly ? 0 : (!$scope.dtGroups ? 1 : 0),
                         columnSorting: !$scope.dtGroups,
                         contextMenu: true,
                         scope: $scope,
@@ -477,6 +513,15 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         beforeKeyDown: function (event) {
                             if (typeof $scope.eventsInternal.beforeKeyDown == "function") {
                                 $scope.eventsInternal.beforeKeyDown(events);
+                            }
+                        },
+                        afterSelectionEnd: function (r, c, r2, c2) {
+                            if (typeof $scope.eventsInternal.afterSelectionEnd == "function") {
+                                $scope.eventsInternal.afterSelectionEnd(events);
+                            }
+
+                            if (typeof $scope.gridOptions.afterSelectionChange == "function") {
+                                $scope.gridOptions.afterSelectionChange($scope.data[r]);
                             }
                         },
                         afterChange: function (changes, source) {
