@@ -4,8 +4,7 @@
  * Class DataGrid
  * @author rizky
  */
-class DataGrid extends FormField
-{
+class DataGrid extends FormField {
 
     /** @var string $name */
     public $name;
@@ -30,23 +29,23 @@ class DataGrid extends FormField
      * @return array me-return array property DataGrid.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Data Filter Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Data Source Name',
                 'name' => 'datasource',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.datasource',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -56,43 +55,43 @@ class DataGrid extends FormField
                 'fieldWidth' => '7',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Generate Columns',
                 'buttonType' => 'success',
                 'icon' => 'magic',
                 'buttonSize' => 'btn-xs',
-                'options' => array (
+                'options' => array(
                     'style' => 'float:right;margin:0px 0px 5px 0px',
                     'ng-show' => 'active.datasource != \\\'\\\'',
                     'ng-click' => 'generateColumns()',
                 ),
                 'type' => 'LinkButton',
             ),
-            array (
+            array(
                 'value' => '<div class=\\"clearfix\\"></div>',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'label' => 'Grid Options',
                 'name' => 'gridOptions',
                 'show' => 'Show',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'title' => 'Columns',
                 'type' => 'SectionHeader',
             ),
-            array (
+            array(
                 'value' => '<div style=\\"margin-top:5px\\"></div>',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'name' => 'columns',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.DataGridListForm',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.columns',
                     'ng-change' => 'save()',
                 ),
@@ -101,8 +100,7 @@ class DataGrid extends FormField
         );
     }
 
-    private static function generateOrderParams($params, $template, $paramOptions = [])
-    {
+    private static function generateOrderParams($params, $template, $paramOptions = []) {
         $sqlparams = [];
         $sql = [];
 
@@ -169,8 +167,7 @@ class DataGrid extends FormField
         ];
     }
 
-    public static function generatePagingParams($params, $paramOptions = [])
-    {
+    public static function generatePagingParams($params, $paramOptions = []) {
         if (!isset($params['currentPage']) || count($params['currentPage']) == 0) {
             $defaultPageSize = "25";
 
@@ -192,10 +189,10 @@ class DataGrid extends FormField
             $template = [
                 'sql' => "limit {$from},{$to}",
                 'params' => [
-                    //                    'limit' => $pageSize,
-                    //                    'offset' => $from,
-                    //                    'page' => $currentPage,
-                    //                    'pageSize' => $pageSize
+                //                    'limit' => $pageSize,
+                //                    'offset' => $from,
+                //                    'page' => $currentPage,
+                //                    'pageSize' => $pageSize
                 ],
                 'render' => true
             ];
@@ -203,8 +200,7 @@ class DataGrid extends FormField
         return $template;
     }
 
-    public static function generateParams($paramName, $params, $template, $paramOptions = [])
-    {
+    public static function generateParams($paramName, $params, $template, $paramOptions = []) {
         switch ($paramName) {
             case "order":
                 return DataGrid::generateOrderParams($params, $template, $paramOptions);
@@ -216,13 +212,11 @@ class DataGrid extends FormField
     /**
      * @return array me-return array javascript yang di-include
      */
-    public function includeJS()
-    {
+    public function includeJS() {
         return ['js'];
     }
 
-    public function generateExcel($phpExcelObject, $filename)
-    {
+    public function generateExcel($phpExcelObject, $filename) {
         // Redirect output to a client’s web browser (Excel5)
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
@@ -241,17 +235,17 @@ class DataGrid extends FormField
         exit;
     }
 
-    public function actionExportExcel()
-    {
+    public function actionExportExcel() {
         $data = json_decode($_POST['data'], true);
         $file = $_POST['file'];
 
         ## add header
-        array_unshift($data, $data[0]);
-        foreach ($data[0] as $k => $i) {
-            $data[0][$k] = $k;
+        if (count($data) > 0) {
+            array_unshift($data, $data[0]);
+            foreach ($data[0] as $k => $i) {
+                $data[0][$k] = $k;
+            }
         }
-
         ## generate excel
         Yii::import('ext.phpexcel.XPHPExcel');
         $phpExcelObject = XPHPExcel::createPHPExcel();
@@ -265,9 +259,8 @@ class DataGrid extends FormField
         $this->generateExcel($phpExcelObject, $file);
     }
 
-    public function actionGenerateExcelTemplate()
-    {
-        $cols = json_decode($_GET['columns'],true);
+    public function actionGenerateExcelTemplate() {
+        $cols = json_decode($_GET['columns'], true);
         Yii::import('ext.phpexcel.XPHPExcel');
         $phpExcelObject = XPHPExcel::createPHPExcel();
         $phpExcelObject->getActiveSheet()->fromArray($cols, null, 'A1');
@@ -280,8 +273,7 @@ class DataGrid extends FormField
         $this->generateExcel($phpExcelObject, 'contoh-template');
     }
 
-    public function actionUpload($path = null)
-    {
+    public function actionUpload($path = null) {
         if (!isset($_FILES['file'])) {
             echo json_encode(["success" => "No"]);
             die();
@@ -301,7 +293,7 @@ class DataGrid extends FormField
         $originName = $actualName;
         $extension = pathinfo($name, PATHINFO_EXTENSION);
         while (file_exists($tmpdir . DIRECTORY_SEPARATOR . $actualName . '.' . $extension)) {
-            $actualName = (string)$originName . '_' . $i;
+            $actualName = (string) $originName . '_' . $i;
             $name = $actualName . '.' . $extension;
             $i++;
         }
@@ -344,8 +336,7 @@ class DataGrid extends FormField
      * Fungsi ini untuk me-render field dan atributnya
      * @return mixed me-return sebuah field dan atribut datafilter dari hasil render
      */
-    public function render()
-    {
+    public function render() {
 
         foreach ($this->columns as $k => $c) {
 
