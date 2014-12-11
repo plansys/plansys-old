@@ -62,7 +62,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 }
                 
                 // setup variables
-                $scope.eventsInternal = {};
+                $scope.events = {};
                 $scope.grid = function (command) {
                     command = command || 'getInstance';
                     return $("#" + $scope.renderID).handsontable(command);
@@ -79,7 +79,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 $scope.data = null;
                 $scope.lastRelList = {};
                 $scope.dtGroups = null;
-
+                $scope.getInstance = function () {
+                    return $("#" + $scope.renderID).handsontable('getInstance');
+                }
+                
                 $scope.contextMenu = function () {
                     if ($scope.dtGroups) {
                         return [
@@ -470,8 +473,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             return cellProperties;
                         },
                         beforeAutofill: function (s, e, d) {
-                            if (typeof $scope.eventsInternal.beforeAutofill == "function") {
-                                return $scope.eventsInternal.beforeAutofill(s, e, d);
+                            if (typeof $scope.events.beforeAutofill == "function") {
+                                return $scope.events.beforeAutofill(s, e, d);
                             }
 
                             if (s.col == e.col && d.length > 1) {
@@ -506,13 +509,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             }
 
 
-                            if (typeof $scope.eventsInternal.beforeChange == "function") {
-                                $scope.eventsInternal.beforeChange(changes, source);
+                            if (typeof $scope.events.beforeChange == "function") {
+                                $scope.events.beforeChange(changes, source);
                             }
                         },
                         beforeKeyDown: function (event) {
-                            if (typeof $scope.eventsInternal.beforeKeyDown == "function") {
-                                $scope.eventsInternal.beforeKeyDown(events);
+                            if (typeof $scope.events.beforeKeyDown == "function") {
+                                $scope.events.beforeKeyDown(events);
                             }
                         },
                         afterSelectionEnd: function (r, c, r2, c2) {
@@ -532,8 +535,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 $scope.afterCellEdit(ch[3], ch[0], ch[1], $scope.data[ch[0]], ht);
                             }
 
-                            if (typeof $scope.eventsInternal.afterChange == "function") {
-                                $scope.eventsInternal.afterChange(changes, source, $scope.grid());
+                            if (typeof $scope.events.afterChange == "function") {
+                                $scope.events.afterChange(changes, source, $scope.grid());
                             }
 
                             //change datasource
@@ -587,8 +590,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 $el.find('.ht_top thead').prepend(html);
                                 fixHead();
                             });
-                            if (typeof $scope.eventsInternal.afterRender == "function") {
-                                $scope.eventsInternal.afterRender();
+                            if (typeof $scope.events.afterRender == "function") {
+                                $scope.events.afterRender();
                             }
                         },
                         afterLoadData: function () {
@@ -598,18 +601,18 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                     $scope.gridLoaded = true;
                                 }
                             });
-                            if (typeof $scope.eventsInternal.afterLoadData == "function") {
-                                $scope.eventsInternal.afterLoadData();
+                            if (typeof $scope.events.afterLoadData == "function") {
+                                $scope.events.afterLoadData();
                             }
                         },
                         beforeColumnSort: function (column, order) {
-                            if (typeof $scope.eventsInternal.beforeColumnSort == "function") {
-                                $scope.eventsInternal.beforeColumnSort(column, column);
+                            if (typeof $scope.events.beforeColumnSort == "function") {
+                                $scope.events.beforeColumnSort(column, column);
                             }
                         },
                         afterColumnSort: function (column, order) {
-                            if (typeof $scope.eventsInternal.afterColumnSort == "function") {
-                                $scope.eventsInternal.afterColumnSort(column, column);
+                            if (typeof $scope.events.afterColumnSort == "function") {
+                                $scope.events.afterColumnSort(column, column);
                             }
                         },
                         beforeRender: function () {
@@ -624,8 +627,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 }
                             }
 
-                            if (typeof $scope.eventsInternal.beforeRender == "function") {
-                                $scope.eventsInternal.beforeRender();
+                            if (typeof $scope.events.beforeRender == "function") {
+                                $scope.events.beforeRender();
                             }
 
                             $timeout.cancel(renderTimeout);
@@ -636,8 +639,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         modifyColWidth: function () {
                             $el.find('.header-grouping').remove();
 
-                            if (typeof $scope.eventsInternal.modifyColWidth == "function") {
-                                $scope.eventsInternal.modifyColWidth();
+                            if (typeof $scope.events.modifyColWidth == "function") {
+                                $scope.events.modifyColWidth();
                             }
                         },
                         contextMenu: $scope.contextMenu()
@@ -652,10 +655,15 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     // Generate DataTable Options -- end
 
 
-                    // Setup Data Watcher
+                    // Setup Data Watcher                    
                     if (options.events) {
-                        $scope.eventsInternal = options.events;
+                        $scope.events = options.events;
                     }
+
+                    if (!!$scope.events) {
+                        options = $.extend(options, $scope.events);
+                    }
+                    $scope.columns = columnsInternal;
 
                     $("#" + $scope.renderID).handsontable(options);
                     $scope.ht = $("#" + $scope.renderID).handsontable('getInstance');
