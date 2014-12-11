@@ -60,7 +60,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     }
                     return output;
                 }
-                
+
                 // setup variables
                 $scope.events = {};
                 $scope.grid = function (command) {
@@ -82,7 +82,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 $scope.getInstance = function () {
                     return $("#" + $scope.renderID).handsontable('getInstance');
                 }
-                
+
                 $scope.contextMenu = function () {
                     if ($scope.dtGroups) {
                         return [
@@ -352,6 +352,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                     callback();
                                 }
 
+                                $timeout(function () {
+                                    $scope.loadingRelation = false;
+                                });
                             });
                         });
                     } else {
@@ -393,15 +396,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 $scope.$watch('datasource.data', function (n, o) {
                     if (n !== o && !$scope.edited && !$scope.loadingRelation) {
                         $scope.loaded = true;
-
                         var executeGroup = ($scope.dtGroups);
-
                         prepareData(function () {
                             if (executeGroup) {
                                 $scope.dtGroups.group($scope.ht);
                                 $scope.edited = true;
                             }
-
+                            
                             $("#" + $scope.renderID).handsontable('getInstance').loadData($scope.data);
 
                             $timeout(function () {
@@ -414,7 +415,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 // Generate DataTable Options -- start
                 $timeout(function () {
                     evalArray($scope.gridOptions);
-                    console.log($scope.gridOptions);
 
                     // initialize data table groups
                     if ($scope.gridOptions.groups) {
@@ -519,8 +519,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             }
                         },
                         afterSelectionEnd: function (r, c, r2, c2) {
-                            if (typeof $scope.eventsInternal.afterSelectionEnd == "function") {
-                                $scope.eventsInternal.afterSelectionEnd(events);
+                            if (typeof $scope.events.afterSelectionEnd == "function") {
+                                $scope.events.afterSelectionEnd(events);
                             }
 
                             if (typeof $scope.gridOptions.afterSelectionChange == "function") {
@@ -550,8 +550,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                     $scope.datasource.data = $scope.data;
                                     break;
                             }
-
-
 
                             $timeout(function () {
                                 if ($scope.dtGroups && !$scope.dtGroups.changed) {

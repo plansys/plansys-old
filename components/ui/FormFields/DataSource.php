@@ -246,7 +246,7 @@ class DataSource extends FormField {
             if (is_string($this->params)) {
                 $this->params = [];
             }
-            
+
             if ($this->postData == 'No' || $this->relationTo == '' || $this->relationTo == '-- NONE --') {
                 ## without relatedTo
 
@@ -273,8 +273,8 @@ class DataSource extends FormField {
         preg_match_all("/\[(.*?)\]/", $sql, $matches);
         $params = $matches[1];
         $parsed = [];
-        
-        
+
+
         foreach ($params as $param) {
             $template = $sql;
             $paramOptions = explode("|", $param);
@@ -307,7 +307,7 @@ class DataSource extends FormField {
                     'template' => $template,
                     'paramOptions' => $paramOptions
                 ]);
-                
+
 
 
                 if (!isset($template['generateTemplate'])) {
@@ -587,7 +587,7 @@ class DataSource extends FormField {
 
             $count = count($rawCount) > 0 ? $rawCount[0]->id : 0;
         }
-
+        
         $rawData = $this->model->{$this->relationTo}($criteria, false);
 
         if (count($rawData) == 0 && $isGenerate) {
@@ -597,6 +597,7 @@ class DataSource extends FormField {
             } else {
                 $relClass = get_class($this->model);
             }
+
             $rawData = [$relClass::model()->getAttributes(true, false)];
         }
 
