@@ -68,7 +68,6 @@ class DevRoleForm extends Role {
                         'label' => 'Home Page',
                         'name' => 'home_url',
                         'prefix' => 'url:',
-                        'autocomplete' => 'rel',
                         'type' => 'TextField',
                     ),
                     array (
