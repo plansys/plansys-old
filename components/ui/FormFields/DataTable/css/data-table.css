@@ -158,3 +158,22 @@
     font-weight:bold;
     border-top:1px solid #ddd;
 }
+
+.no-read-only .handsontable .wtBorder {
+    display: none !important;
+}
+.dataTable > .htContainer {
+}
+.no-read-only .dataTable.handsontable tr td:hover, .no-read-only .dataTable.handsontable tr td.current {
+    background: transparent;
+}
+.no-read-only .dataTable.handsontable tr td:hover, .no-read-only .dataTable.handsontable tr td.current {
+    background: transparent;
+}
+.no-read-only .dataTable.handsontable .htCore tbody td.area {
+    background: transparent;
+}
+.no-read-only .dataTable.handsontable tr:hover td {
+    background:#ffc;
+    cursor:pointer;
+}

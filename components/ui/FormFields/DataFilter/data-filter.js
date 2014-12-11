@@ -372,7 +372,11 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                         if (from == "") {
                                             filter.from = new Date();
                                         }
-
+                                        
+                                        if (typeof filter.from == 'string') {
+                                            filter.from = new Date(filter.from);
+                                        }
+                                        
                                         from = dateFilter(filter.from, 'dd MMM yyyy');
                                         filter.value = dateFilter(filter.from, 'yyyy-MM-dd HH:mm:00');
                                         filter.valueText = from;
