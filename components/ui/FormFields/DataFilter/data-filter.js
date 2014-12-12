@@ -388,6 +388,9 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                         var monthName = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+                                        if (typeof filter.from == 'string') {
+                                            filter.from = new Date(filter.from);
+                                        }
                                         var curr = filter.from;
                                         var startWeekDay = curr.getDate() - curr.getDay();
                                         var first = new Date(curr);
@@ -453,6 +456,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                         var monthName = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+                                        if (typeof filter.from == 'string') {
+                                            filter.from = new Date(filter.from);
+                                        }
+                                        
                                         var curr = filter.from;
 
                                         if (filter.options && filter.options.monthSpan) {

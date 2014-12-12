@@ -381,6 +381,10 @@ class RelationField extends FormField {
         $this->attributes = $field;
         $this->builder = $fb;
 
+        if ($field['criteria']) {
+            $this->relationCriteria = $field['criteria'];
+        }
+
         echo json_encode($this->query($s, $p));
     }
 
@@ -530,7 +534,6 @@ class RelationField extends FormField {
         $this->relationCriteria['limit'] = ($search == '' ? '30' : '100');
 
         $this->params = array_merge(is_null($this->params) ? [] : $this->params, $condition['params']);
-
         return DataSource::generateCriteria($this->params, $this->relationCriteria, $this);
     }
 
