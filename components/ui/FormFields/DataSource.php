@@ -10,23 +10,23 @@ class DataSource extends FormField {
      * @return array Fungsi ini akan me-return array property DataSource.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Data Source Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Post Data ?',
                 'name' => 'postData',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.postData',
                     'ng-change' => 'save()',
                 ),
@@ -35,26 +35,26 @@ class DataSource extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Relation To',
                 'name' => 'relationTo',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.relationTo',
                     'ng-change' => 'save()',
                     'ps-list' => 'relFieldList',
                     'ng-if' => 'active.postData == \\\'Yes\\\'',
                 ),
-                'list' => array (),
+                'list' => array(),
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
                 'searchable' => 'Yes',
                 'otherLabel' => '-- NONE --',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Debug SQL ?',
                 'name' => 'debugSql',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.debugSql',
                     'ng-change' => 'save()',
                     'ng-if' => 'active.relationTo == \\\'\\\' || active.postData == \\\'No\\\'',
@@ -64,27 +64,27 @@ class DataSource extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Source Type',
                 'name' => 'fieldType',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.fieldType',
                     'ng-change' => 'save()',
                     'ng-if' => 'active.relationTo == \\\'\\\' || active.postData == \\\'No\\\'',
                 ),
-                'list' => array (
+                'list' => array(
                     'sql' => 'SQL',
-                    'phpsql' => 'PHP (Return SQL Text)',
-                    'php' => 'PHP (Return SQL Data)',
+                    'phpsql' => 'PHP (Return SQL)',
+                    'php' => 'PHP (Return Array)',
                 ),
                 'labelWidth' => '5',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Paging',
                 'name' => 'enablePaging',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.enablePaging',
                     'ng-change' => 'save()',
                     'ng-if' => 'active.relationTo == \\\'\\\' || active.postData == \\\'No\\\'',
@@ -94,12 +94,12 @@ class DataSource extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'name' => 'relationCriteria',
                 'label' => 'Relation Query',
                 'paramsField' => 'params',
                 'baseClass' => 'DataSource',
-                'options' => array (
+                'options' => array(
                     'ng-if' => 'active.postData == \\\'Yes\\\' && active.relationTo != \\\'\\\'',
                     'ng-model' => 'active.relationCriteria',
                     'ng-change' => 'save()',
@@ -107,45 +107,45 @@ class DataSource extends FormField {
                 'modelClassJS' => 'DataSource/relation-criteria.js',
                 'type' => 'SqlCriteria',
             ),
-            array (
+            array(
                 'label' => 'SQL',
                 'fieldname' => 'sql',
                 'language' => 'sql',
-                'options' => array (
+                'options' => array(
                     'ng-show' => 'active.fieldType == \\\'sql\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'PHP Function',
                 'fieldname' => 'php',
-                'options' => array (
+                'options' => array(
                     'ng-show' => '(active.fieldType == \\\'php\\\' || active.fieldType == \\\'phpsql\\\') && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'Total Item - PHP Function',
                 'fieldname' => 'pagingPHP',
-                'options' => array (
+                'options' => array(
                     'ng-show' => '(active.fieldType == \\\'php\\\' || active.fieldType == \\\'phpsql\\\') && active.enablePaging == \\\'Yes\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'Total Item - SQL',
                 'fieldname' => 'pagingSQL',
                 'language' => 'sql',
-                'options' => array (
+                'options' => array(
                     'ng-show' => 'active.fieldType == \\\'sql\\\' && active.enablePaging == \\\'Yes\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'Parameters',
                 'name' => 'params',
                 'show' => 'Show',
@@ -251,10 +251,17 @@ class DataSource extends FormField {
             if ($this->postData == 'No' || $this->relationTo == '' || $this->relationTo == '-- NONE --') {
                 ## without relatedTo
 
-                if ($this->fieldType == 'sql') {
-                    $data = $this->query($this->params);
-                } else {
-                    $data = $this->execute($this->params);
+                switch ($this->fieldType) {
+                    case "sql":
+                        $data = $this->query($this->params);
+                        break;
+                    case "phpsql":
+                        $this->sql = $this->execute($this->params);
+                        $data = $this->query($this->params);
+                        break;
+                    case "php":
+                        $data = $this->execute($this->params);
+                        break;
                 }
             } else {
                 ## with relatedTo
@@ -440,17 +447,21 @@ class DataSource extends FormField {
             $countFunc = $this->pagingPHP;
         }
 
-        return [
-            'data' => $data,
-            'count' => $count,
-            'debug' => [
-                'function' => $this->php,
+        if ($this->fieldType == "php") {
+            return [
+                'data' => $data,
                 'count' => $count,
-                'countFunction' => $countFunc,
-                'params' => $params,
-                'timestamp' => date('Y-m-d H:i:s')
-            ]
-        ];
+                'debug' => [
+                    'function' => $this->php,
+                    'count' => $count,
+                    'countFunction' => $countFunc,
+                    'params' => $params,
+                    'timestamp' => date('Y-m-d H:i:s')
+                ]
+            ];
+        } else {
+            return $data;
+        }
     }
 
     /**
@@ -462,7 +473,6 @@ class DataSource extends FormField {
         $params = array_merge($params, $this->queryParams);
         if (trim($this->sql) == "")
             return [];
-
 
         $db = Yii::app()->db;
         $template = DataSource::generateTemplate($this->sql, $params, $this, $paramDefs);
@@ -588,7 +598,7 @@ class DataSource extends FormField {
 
             $count = count($rawCount) > 0 ? $rawCount[0]->id : 0;
         }
-        
+
         $rawData = $this->model->{$this->relationTo}($criteria, false);
 
         if (count($rawData) == 0 && $isGenerate) {
@@ -627,10 +637,17 @@ class DataSource extends FormField {
         if ($this->relationTo == '' || $this->postData == 'No') {
             ## without relatedTo
 
-            if ($this->fieldType == 'sql') {
-                $data = $this->query($this->params);
-            } else {
-                $data = $this->execute($this->params);
+            switch ($this->fieldType) {
+                case "sql":
+                    $data = $this->query($this->params);
+                    break;
+                case "phpsql":
+                    $this->sql = $this->execute($this->params);
+                    $data = $this->query($this->params);
+                    break;
+                case "php":
+                    $data = $this->execute($this->params);
+                    break;
             }
         } else {
             ## with relatedTo
