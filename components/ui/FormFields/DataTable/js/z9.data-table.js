@@ -188,6 +188,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 case "number":
                                     colDef.type = 'numeric';
                                     colDef.format = '0,0.00';
+                                    delete(colDef.renderer);
                                     break;
                                 case "99/99/9999":
                                 case "99/99/9999 99:99":
@@ -402,7 +403,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 $scope.dtGroups.group($scope.ht);
                                 $scope.edited = true;
                             }
-                            
+
                             $("#" + $scope.renderID).handsontable('getInstance').loadData($scope.data);
 
                             $timeout(function () {
@@ -453,6 +454,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                     case 'E':
                                         cellProperties.className = 'empty';
                                         cellProperties.readOnly = true;
+
                                         break;
                                     case 'G':
                                         cellProperties.className = 'groups';
@@ -460,13 +462,16 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                         cellProperties.renderer = 'html';
                                         break;
                                     case 'T':
+                                        var c = $scope.dtGroups.totalGroups[$scope.dtGroups.columns[col].name];
+                                        if (c.trim().substr(0, 4) != 'span') {
+                                            cellProperties.type = 'numeric';
+                                            cellProperties.format = '0,0.00';
+                                        }
                                         cellProperties.className = 'total';
                                         cellProperties.readOnly = true;
-                                        cellProperties.renderer = 'html';
                                         break;
                                     default:
                                         cellProperties.className = '';
-                                        cellProperties.renderer = 'text';
                                         break;
                                 }
                             }

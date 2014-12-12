@@ -261,7 +261,7 @@ Handsontable.DataTableGroups = function (settings) {
                             this.prepareTotalRow(newrow);
 
                             if (i == $scope.data.length - 1) {
-                                // add total in last row
+                                // add total in very last row
                                 var lastgrp = angular.copy(last['__dt_grp']);
                                 for (l in last['__dt_grp']) {
                                     var newrow = angular.copy(newrow);
@@ -275,14 +275,14 @@ Handsontable.DataTableGroups = function (settings) {
                                 newrow['__dt_lvl'] = newrow['__dt_grp'].length;
                                 $scope.data.push(newrow);
                             } else {
-                                // add total in last row
+                                // add total in last row of each group
                                 var p = 0;
                                 var lastgrp = angular.copy(last['__dt_grp']);
                                 for (var l = last['__dt_lvl']; l >= row['__dt_lvl']; l--) {
                                     var newrow = angular.copy(newrow);
                                     newrow['__dt_grp'] = angular.copy(lastgrp);
                                     newrow['__dt_lvl'] = newrow['__dt_grp'].length;
-                                    $scope.data.splice(i + 1 - l, 0, newrow);
+                                    $scope.data.splice(i , 0, newrow);
                                     lastgrp.pop();
                                 }
                             }
