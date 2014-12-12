@@ -13,15 +13,15 @@
     </div>
     <div ng-class="{invisible: !loaded}"   
          class=" data-table-container {{ gridOptions.noReadOnlyCSS || gridOptions.readOnly ? 'no-read-only' : '' }}">
-        
+
         <div ng-if="loaded && datasource.data.length == 0"
              style="text-align:center;padding:20px;color:#ccc;font-size:25px;">
             &mdash; {{ !datasource.loading ? 'Data Empty' : 'Loading Data'; }} &mdash;
         </div>
-        
+
         <div ng-class="{invisible: datasource.data.length == 0}"  
              id="<?= $this->renderID ?>" class="dataTable" 
-             style="width:100%;"></div>
+             style="{{ relAvailable ? '' : 'overflow:auto;'}}"></div>
 
     </div>
 </div>

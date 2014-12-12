@@ -70,6 +70,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 $scope.edited = false;
                 $scope.loadingRelation = false;
                 $scope.triggerRelationWatch = true;
+                $scope.relAvailable = false;
                 $scope.name = $el.find("data[name=name]").text();
                 $scope.renderID = $el.find("data[name=render_id]").text();
                 $scope.modelClass = $el.find("data[name=model_class]").text();
@@ -123,6 +124,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     };
                     switch (c.columnType) {
                         case "dropdown":
+                            $scope.relAvailable = true;
                             colDef.type = "dropdown";
                             if (c.listType == 'js') {
                                 c.listItem = parent.$eval(col.listExpr);
@@ -130,6 +132,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             colDef.source = parent.$eval(c.listItem);
                             break;
                         case "relation":
+                            $scope.relAvailable = true;
                             colDef.data = c.name + "_label";
                             colDef.type = "autocomplete";
                             colDef.renderer = "relation";
