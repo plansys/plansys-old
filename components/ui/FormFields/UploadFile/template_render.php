@@ -108,7 +108,10 @@
                     </div>
                     <div class="clearfix"></div>
                     <div style="font-size:12px;color:#999;">{{ json}}</div>
-                    <div ng-if="thumb != ''" style="padding:5px;">
+                    <div ng-if="thumb != ''" style="padding:5px;text-align:center;
+                         border-top:1px solid #ddd;
+                         margin:5px -5px 0px 0px;
+                         padding-top:5px;">
                         <img style="max-width:100%;" ng-src="{{thumb}}" alt="" />
                     </div>
                 </div>
