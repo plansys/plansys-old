@@ -390,7 +390,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                             emptyVal = "['','0000-00-00 00:00','0000-00-00', '00:00']";
                             break;
                         case 'number':
-                            format = " | number";
+                            format = " | number:2";
                     }
 
                     var showPlaceholder = $scope.gridOptions.enableCellEdit || $scope.gridOptions.enableExcelMode;

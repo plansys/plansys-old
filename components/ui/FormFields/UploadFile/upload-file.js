@@ -170,7 +170,8 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                         if (index > -1) {
                             $scope.$parent.uploading.splice(index, 1);
                         }
-                        alert($(data).text());
+                        alert("Upload Failed");
+                        console.log(data);
 
                     });
                 };

@@ -60,7 +60,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     }
                     return output;
                 }
-                
+
                 // setup variables
                 $scope.events = {};
                 $scope.grid = function (command) {
@@ -82,7 +82,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 $scope.getInstance = function () {
                     return $("#" + $scope.renderID).handsontable('getInstance');
                 }
-                
+
                 $scope.contextMenu = function () {
                     if ($scope.dtGroups) {
                         return [
@@ -188,6 +188,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 case "number":
                                     colDef.type = 'numeric';
                                     colDef.format = '0,0.00';
+                                    delete(colDef.renderer);
                                     break;
                                 case "99/99/9999":
                                 case "99/99/9999 99:99":
@@ -352,6 +353,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                     callback();
                                 }
 
+                                $timeout(function () {
+                                    $scope.loadingRelation = false;
+                                });
                             });
                         });
                     } else {
@@ -393,9 +397,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 $scope.$watch('datasource.data', function (n, o) {
                     if (n !== o && !$scope.edited && !$scope.loadingRelation) {
                         $scope.loaded = true;
-
                         var executeGroup = ($scope.dtGroups);
-
                         prepareData(function () {
                             if (executeGroup) {
                                 $scope.dtGroups.group($scope.ht);
@@ -414,7 +416,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 // Generate DataTable Options -- start
                 $timeout(function () {
                     evalArray($scope.gridOptions);
-                    console.log($scope.gridOptions);
 
                     // initialize data table groups
                     if ($scope.gridOptions.groups) {
@@ -453,6 +454,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                     case 'E':
                                         cellProperties.className = 'empty';
                                         cellProperties.readOnly = true;
+
                                         break;
                                     case 'G':
                                         cellProperties.className = 'groups';
@@ -460,13 +462,16 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                         cellProperties.renderer = 'html';
                                         break;
                                     case 'T':
+                                        var c = $scope.dtGroups.totalGroups[$scope.dtGroups.columns[col].name];
+                                        if (c.trim().substr(0, 4) != 'span') {
+                                            cellProperties.type = 'numeric';
+                                            cellProperties.format = '0,0.00';
+                                        }
                                         cellProperties.className = 'total';
                                         cellProperties.readOnly = true;
-                                        cellProperties.renderer = 'html';
                                         break;
                                     default:
                                         cellProperties.className = '';
-                                        cellProperties.renderer = 'text';
                                         break;
                                 }
                             }
@@ -519,8 +524,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             }
                         },
                         afterSelectionEnd: function (r, c, r2, c2) {
-                            if (typeof $scope.eventsInternal.afterSelectionEnd == "function") {
-                                $scope.eventsInternal.afterSelectionEnd(events);
+                            if (typeof $scope.events.afterSelectionEnd == "function") {
+                                $scope.events.afterSelectionEnd(events);
                             }
 
                             if (typeof $scope.gridOptions.afterSelectionChange == "function") {
@@ -550,8 +555,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                     $scope.datasource.data = $scope.data;
                                     break;
                             }
-
-
 
                             $timeout(function () {
                                 if ($scope.dtGroups && !$scope.dtGroups.changed) {

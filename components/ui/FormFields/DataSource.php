@@ -74,7 +74,8 @@ class DataSource extends FormField {
                 ),
                 'list' => array(
                     'sql' => 'SQL',
-                    'php' => 'PHP Function',
+                    'phpsql' => 'PHP (Return SQL)',
+                    'php' => 'PHP (Return Array)',
                 ),
                 'labelWidth' => '5',
                 'fieldWidth' => '6',
@@ -120,7 +121,7 @@ class DataSource extends FormField {
                 'label' => 'PHP Function',
                 'fieldname' => 'php',
                 'options' => array(
-                    'ng-show' => 'active.fieldType == \\\'php\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
+                    'ng-show' => '(active.fieldType == \\\'php\\\' || active.fieldType == \\\'phpsql\\\') && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
@@ -129,7 +130,7 @@ class DataSource extends FormField {
                 'label' => 'Total Item - PHP Function',
                 'fieldname' => 'pagingPHP',
                 'options' => array(
-                    'ng-show' => 'active.fieldType == \\\'php\\\' && active.enablePaging == \\\'Yes\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
+                    'ng-show' => '(active.fieldType == \\\'php\\\' || active.fieldType == \\\'phpsql\\\') && active.enablePaging == \\\'Yes\\\' && (active.relationTo == \\\'\\\' || active.postData == \\\'No\\\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
@@ -246,14 +247,21 @@ class DataSource extends FormField {
             if (is_string($this->params)) {
                 $this->params = [];
             }
-            
+
             if ($this->postData == 'No' || $this->relationTo == '' || $this->relationTo == '-- NONE --') {
                 ## without relatedTo
 
-                if ($this->fieldType == 'sql') {
-                    $data = $this->query($this->params);
-                } else {
-                    $data = $this->execute($this->params);
+                switch ($this->fieldType) {
+                    case "sql":
+                        $data = $this->query($this->params);
+                        break;
+                    case "phpsql":
+                        $this->sql = $this->execute($this->params);
+                        $data = $this->query($this->params);
+                        break;
+                    case "php":
+                        $data = $this->execute($this->params);
+                        break;
                 }
             } else {
                 ## with relatedTo
@@ -273,8 +281,8 @@ class DataSource extends FormField {
         preg_match_all("/\[(.*?)\]/", $sql, $matches);
         $params = $matches[1];
         $parsed = [];
-        
-        
+
+
         foreach ($params as $param) {
             $template = $sql;
             $paramOptions = explode("|", $param);
@@ -307,7 +315,7 @@ class DataSource extends FormField {
                     'template' => $template,
                     'paramOptions' => $paramOptions
                 ]);
-                
+
 
 
                 if (!isset($template['generateTemplate'])) {
@@ -439,17 +447,21 @@ class DataSource extends FormField {
             $countFunc = $this->pagingPHP;
         }
 
-        return [
-            'data' => $data,
-            'count' => $count,
-            'debug' => [
-                'function' => $this->php,
+        if ($this->fieldType == "php") {
+            return [
+                'data' => $data,
                 'count' => $count,
-                'countFunction' => $countFunc,
-                'params' => $params,
-                'timestamp' => date('Y-m-d H:i:s')
-            ]
-        ];
+                'debug' => [
+                    'function' => $this->php,
+                    'count' => $count,
+                    'countFunction' => $countFunc,
+                    'params' => $params,
+                    'timestamp' => date('Y-m-d H:i:s')
+                ]
+            ];
+        } else {
+            return $data;
+        }
     }
 
     /**
@@ -461,7 +473,6 @@ class DataSource extends FormField {
         $params = array_merge($params, $this->queryParams);
         if (trim($this->sql) == "")
             return [];
-
 
         $db = Yii::app()->db;
         $template = DataSource::generateTemplate($this->sql, $params, $this, $paramDefs);
@@ -597,6 +608,7 @@ class DataSource extends FormField {
             } else {
                 $relClass = get_class($this->model);
             }
+
             $rawData = [$relClass::model()->getAttributes(true, false)];
         }
 
@@ -625,10 +637,17 @@ class DataSource extends FormField {
         if ($this->relationTo == '' || $this->postData == 'No') {
             ## without relatedTo
 
-            if ($this->fieldType == 'sql') {
-                $data = $this->query($this->params);
-            } else {
-                $data = $this->execute($this->params);
+            switch ($this->fieldType) {
+                case "sql":
+                    $data = $this->query($this->params);
+                    break;
+                case "phpsql":
+                    $this->sql = $this->execute($this->params);
+                    $data = $this->query($this->params);
+                    break;
+                case "php":
+                    $data = $this->execute($this->params);
+                    break;
             }
         } else {
             ## with relatedTo

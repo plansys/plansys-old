@@ -149,6 +149,7 @@ class ActiveRecord extends CActiveRecord {
                         $c = $this->getRelated($name, true, [
                             'select' => 'count(1) as id',
                         ]);
+
                         return $c[0]->id;
                     }
                 }
@@ -249,7 +250,6 @@ class ActiveRecord extends CActiveRecord {
                                 $class = $rel->className;
                                 $table = $class::model()->tableName();
                                 $this->__relationsObj[$k] = $this->getRelated($k, true, $criteria);
-
                                 if (isset($this->__relationsObj[$k])) {
                                     $this->__relations[$k] = $this->__relationsObj[$k]->attributes;
 
@@ -286,6 +286,28 @@ class ActiveRecord extends CActiveRecord {
 
         $this->__isRelationLoaded = true;
         $this->__oldRelations = $this->__relations;
+    }
+
+    /**
+     * Creates an active record with the given attributes.
+     * This method is internally used by the find methods.
+     * @param array $attributes attribute values (column name=>column value)
+     * @param boolean $callAfterFind whether to call {@link afterFind} after the record is populated.
+     * @return CActiveRecord the newly created active record. The class of the object is the same as the model class.
+     * Null is returned if the input data is false.
+     */
+    public function populateRecord($attributes, $callAfterFind = true) {
+        $record = parent::populateRecord($attributes, $callAfterFind);
+
+        if (is_subclass_of($record, 'ActiveRecord')) {
+            foreach ($attributes as $k => $a) {
+                if (!isset($record->{$k})) {
+                    $record->{$k} = $a;
+                }
+            }
+        }
+
+        return $record;
     }
 
     public function getRelChanges($name) {
@@ -396,7 +418,6 @@ class ActiveRecord extends CActiveRecord {
     public function getAttributes($names = true, $withRelation = true) {
         $attributes = parent::getAttributes($names);
         $attributes = array_merge($this->attributeProperties, $attributes);
-
         if ($withRelation) {
             $this->initRelation();
             foreach ($this->__relations as $k => $r) {
@@ -420,6 +441,9 @@ class ActiveRecord extends CActiveRecord {
         $class = new ReflectionClass($this);
         $properties = Helper::getClassProperties($this);
 
+        foreach ($this->__tempVar as $k => $p) {
+            $props[$k] = $p;
+        }
         foreach ($properties as $p) {
             $props[$p->name] = $this->{$p->name};
         }
