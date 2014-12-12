@@ -852,7 +852,7 @@ class ActiveRecord extends CActiveRecord {
             $updatearr = [];
             for ($i = 0; $i < $columnCount; $i++) {
                 if (isset($columnName[$i]) && isset($d[$columnName[$i]])) {
-                    $updatearr[] = $columnName[$i] . " = '{$d[$columnName[$i]]}'";
+                    $updatearr[] = '`' . $columnName[$i] . "` = '{$d[$columnName[$i]]}'";
                 }
             }
 
