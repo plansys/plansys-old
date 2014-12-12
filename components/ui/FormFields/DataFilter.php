@@ -151,7 +151,7 @@ class DataFilter extends FormField {
         $sql = "";
         $param = "";
         $pcolumn = preg_replace('/[^\da-z]/i', '_', $column);
-        
+
         switch ($filter['type']) {
             case "string":
                 if ($filter['value'] != "" || $filter['operator'] == 'Is Empty') {
@@ -229,18 +229,21 @@ class DataFilter extends FormField {
                     case "Yearly":
                         if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
                             $sql = "({$column} BETWEEN :{$paramName}_{$pcolumn}_from AND :{$paramName}_{$pcolumn}_to)";
+                            $toLastHour = date('Y-m-d 23:59:00', strtotime(@$filter['value']['to']));
                             $param = [
                                 ":{$paramName}_{$pcolumn}_from" => @$filter['value']['from'],
-                                ":{$paramName}_{$pcolumn}_to" => @$filter['value']['to'],
+                                ":{$paramName}_{$pcolumn}_to" => $toLastHour,
                             ];
                         }
                         break;
                     case "Not Between":
                         if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
                             $sql = "({$column} NOT BETWEEN :{$paramName}_{$pcolumn}_from AND :{$paramName}_{$pcolumn}_to)";
+
+                            $toLastHour = date('Y-m-d 23:59:00', strtotime(@$filter['value']['to']));
                             $param = [
                                 ":{$paramName}_{$pcolumn}_from" => @$filter['value']['from'],
-                                ":{$paramName}_{$pcolumn}_to" => @$filter['value']['to'],
+                                ":{$paramName}_{$pcolumn}_to" => $toLastHour,
                             ];
                         }
                         break;
