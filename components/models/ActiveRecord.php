@@ -211,6 +211,7 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function getModelArray($criteria = []) {
+
         if (isset($criteria['page'])) {
             $criteria['offset'] = ($criteria['page'] - 1) * $criteria['pageSize'];
             $criteria['limit'] = $criteria['pageSize'];
@@ -226,16 +227,19 @@ class ActiveRecord extends CActiveRecord {
         $builder = $this->commandBuilder;
 
         ## find
-        $command = $builder->createFindCommand($tableSchema, new CDbCriteria($criteria));
+        $cdbCriteria = new CDbCriteria($criteria);
+        $command = $builder->createFindCommand($tableSchema, $cdbCriteria);
 
-
-        $rawData = $command->select('*')->queryAll();
+        if (!@$criteria['distinct']) {
+            $rawData = $command->select('*')->queryAll();
+        } else {
+            $rawData = $command->queryAll();
+        }
 
         return $rawData;
     }
 
     public function loadRelations($name = null, $criteria = []) {
-
         foreach ($this->getMetaData()->relations as $k => $rel) {
             if (!is_null($name) && $k != $name) {
                 continue;
@@ -281,6 +285,8 @@ class ActiveRecord extends CActiveRecord {
             }
         }
         if ($name == 'currentModel' || is_null($name)) {
+
+
             $this->__relations['currentModel'] = $this->getModelArray($criteria);
         }
 
@@ -846,7 +852,7 @@ class ActiveRecord extends CActiveRecord {
             $updatearr = [];
             for ($i = 0; $i < $columnCount; $i++) {
                 if (isset($columnName[$i]) && isset($d[$columnName[$i]])) {
-                    $updatearr[] = $columnName[$i] . " = '{$d[$columnName[$i]]}'";
+                    $updatearr[] = '`' . $columnName[$i] . "` = '{$d[$columnName[$i]]}'";
                 }
             }
 

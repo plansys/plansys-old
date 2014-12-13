@@ -163,6 +163,7 @@
     display: none !important;
 }
 .dataTable > .htContainer {
+    padding-bottom:50px;
 }
 .no-read-only.link-url .dataTable.handsontable tr td:hover, .no-read-only .dataTable.handsontable tr td.current {
     background: transparent;

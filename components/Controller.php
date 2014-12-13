@@ -139,18 +139,31 @@ class Controller extends CController {
             }
         }
     }
+    
+    public function loadAllModel($id,$form){
+        if (strpos($form, '.') > 0) {
+            Yii::import($form);
+            $form = Helper::explodeLast(".", $form);
+        }
+        $model = $form::model($form)->findAllByAttributes($id);
+        if (empty($model))
+            throw new CHttpException(404, 'The requested page does not exist.');
+        return $model;
+    }
 
     public function loadModel($id, $form) {
         if (strpos($form, '.') > 0) {
             Yii::import($form);
             $form = Helper::explodeLast(".", $form);
         }
-
-        $model = $form::model($form)->findByPk($id);
-
+        if(is_array($id)){
+            $model = $form::model($form)->findByAttributes($id);
+        }else{
+            $model = $form::model($form)->findByPk($id);
+        }
+        
         if ($model === null)
             throw new CHttpException(404, 'The requested page does not exist.');
         return $model;
     }
-
 }

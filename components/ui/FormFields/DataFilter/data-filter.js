@@ -155,6 +155,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                     shouldExec = typeof shouldExec == "undefined" ? true : shouldExec;
 
+
                     if (typeof e != "undefined" && e != null && ['list', 'check', 'relation'].indexOf(filter.filterType) < 0) {
                         $scope.toggleFilterCriteria(e);
                     }
@@ -180,8 +181,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                             ds.resetParam(filter.name, dsParamName);
                         }
 
-                        if (shouldExec && (!filter.isCustom || filter.isCustom === "No")) {
-                            $scope.beforeQuery(ds);
+                        if (shouldExec) {
+                            if (typeof $scope.beforeQuery == 'function') {
+                                $scope.beforeQuery(ds);
+                            }
 
                             ds.afterQueryInternal[$scope.renderID] = function () {
                                 if (ds.params.paging && $scope[ds.params.paging] && $scope[ds.params.paging].gridOptions) {
@@ -372,11 +375,11 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                         if (from == "") {
                                             filter.from = new Date();
                                         }
-                                        
+
                                         if (typeof filter.from == 'string') {
                                             filter.from = new Date(filter.from);
                                         }
-                                        
+
                                         from = dateFilter(filter.from, 'dd MMM yyyy');
                                         filter.value = dateFilter(filter.from, 'yyyy-MM-dd HH:mm:00');
                                         filter.valueText = from;
@@ -388,6 +391,9 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                         var monthName = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+                                        if (typeof filter.from == 'string') {
+                                            filter.from = new Date(filter.from);
+                                        }
                                         var curr = filter.from;
                                         var startWeekDay = curr.getDate() - curr.getDay();
                                         var first = new Date(curr);
@@ -452,6 +458,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                         }
                                         var monthName = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+                                        if (typeof filter.from == 'string') {
+                                            filter.from = new Date(filter.from);
+                                        }
 
                                         var curr = filter.from;
 
@@ -642,7 +652,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                                 $scope.updateFilter(f, null, false);
                                 defaultValueAvailable = true;
-                            } 
+                            }
                             else {
                                 f.value = $scope.evalValue(f.defaultValue);
                                 $scope.updateFilter(f, null, false);
