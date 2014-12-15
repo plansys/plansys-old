@@ -315,9 +315,12 @@
                                 generated = generateByColumn(data);
                                 break;
                         }
-
-                        $scope.active.series = generated[0];
-                        $scope.setTickSeries();
+						if (typeof generated == "object" && generated.length > 0) {						
+							$scope.active.series = generated[0];
+							$scope.setTickSeries();
+						} else {
+							alert("Field generation failed");
+						}
                         /*****  FUNCTION *****/
 
                         function generateByRow(data) {
