@@ -28,8 +28,8 @@ class DevFormLayoutProperties extends Form {
                 'type' => 'RadioButtonList',
             ),
             array (
-                'type' => 'Text',
                 'value' => '<hr/>',
+                'type' => 'Text',
             ),
             array (
                 'label' => 'Size',
@@ -47,8 +47,8 @@ class DevFormLayoutProperties extends Form {
                 'type' => 'TextField',
             ),
             array (
-                'type' => 'Text',
                 'value' => '<div class=\\"clearfix\\"></div><hr/>',
+                'type' => 'Text',
             ),
             array (
                 'label' => 'Menu Tree',
@@ -81,8 +81,8 @@ class DevFormLayoutProperties extends Form {
                 'type' => 'DropDownList',
             ),
             array (
-                'type' => 'Text',
                 'value' => '<hr ng-show=\\"layout.type == \\\'menu\\\'\\"/>',
+                'type' => 'Text',
             ),
             array (
                 'label' => 'Menu Options',

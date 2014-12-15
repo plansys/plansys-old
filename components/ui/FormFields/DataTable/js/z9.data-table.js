@@ -63,6 +63,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
 
                 // setup variables
                 $scope.events = {};
+                $scope.Math = window.Math;
                 $scope.grid = function (command) {
                     command = command || 'getInstance';
                     return $("#" + $scope.renderID).handsontable(command);
@@ -323,6 +324,53 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         }
                     }
                 }
+
+
+                // pagingOptions
+                if ($scope.gridOptions['enablePaging']) {
+                    $scope.gridOptions.pagingOptions = {
+                        pageSizes: [25, 50, 100, 250, 500],
+                        pageSize: 25,
+                        totalServerItems: $scope.datasource.totalItems,
+                        currentPage: 1
+                    };
+                    var timeout = null;
+                    $scope.$watch('gridOptions.pagingOptions', function (paging, oldpaging) {
+                        if (paging != oldpaging) {
+                            var ds = $scope.datasource;
+                            var maxPage = Math.ceil($scope.datasource.totalItems / $scope.gridOptions.pagingOptions.pageSize);
+
+                            if (isNaN($scope.gridOptions.pagingOptions.currentPage) || $scope.gridOptions.pagingOptions.currentPage == '') {
+                                $scope.gridOptions.pagingOptions.currentPage = 1;
+                            }
+
+                            if ($scope.gridOptions.pagingOptions.currentPage > maxPage) {
+                                $scope.gridOptions.pagingOptions.currentPage = maxPage;
+                            }
+                            
+                            if (typeof ds != "undefined") {
+                                if (timeout != null) {
+                                    clearTimeout(timeout);
+                                }
+                                timeout = setTimeout(function () {
+                                    ds.updateParam('currentPage', paging.currentPage, 'paging');
+                                    ds.updateParam('pageSize', paging.pageSize, 'paging');
+                                    ds.updateParam('totalServerItems', paging.totalServerItems, 'paging');
+                                    ds.query();
+                                }, 100);
+                            }
+                        }
+                    }, true);
+
+                    $scope.pageForward = function () {
+                        $scope.gridOptions.pagingOptions.currentPage++;
+                    }
+
+                    $scope.pageBackward = function () {
+                        $scope.gridOptions.pagingOptions.currentPage--;
+                    }
+                }
+
 
                 // Load Relation -- start
                 function loadRelation(callback) {
@@ -671,9 +719,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     }
                     $scope.columns = columnsInternal;
 
-                    $("#" + $scope.renderID).handsontable(options);
-                    $scope.ht = $("#" + $scope.renderID).handsontable('getInstance');
-
+                    if (!!$("#" + $scope.renderID)[0]) {
+                        $("#" + $scope.renderID).handsontable(options);
+                        $scope.ht = $("#" + $scope.renderID).handsontable('getInstance');
+                    }
                 });
 
                 parent[$scope.name] = $scope;

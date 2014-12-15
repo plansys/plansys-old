@@ -156,6 +156,7 @@ class DropDownList extends FormField {
                     'ng-model' => 'active.defaultType',
                     'ng-change' => 'save()',
                 ),
+                'menuPos' => 'pull-right',
                 'listExpr' => '[\\\'\\\'=>\\\'-- None --\\\',\\\'first\\\' => \\\'First Item\\\']',
                 'labelWidth' => '6',
                 'fieldWidth' => '6',
