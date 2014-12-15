@@ -90,7 +90,6 @@ app.directive('psChartPie', function ($timeout) {
                         var chartData_raw = result[0];
                         chartData = formatChartData(chartData_raw);
 
-
                         if ($scope.series != null) {
                             for (i in $scope.series) {
                                 $scope.series[i] = angular.extend($scope.series[i], chartData_raw[$scope.series[i].label]);
