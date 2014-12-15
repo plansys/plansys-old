@@ -118,8 +118,8 @@
 }
 
 [ps-data-table] {
-    margin-bottom:15px;
     padding-top:12px;
+    padding-bottom:12px;
 }
 
 .groups {
@@ -162,7 +162,6 @@
     display: none !important;
 }
 .dataTable > .htContainer {
-    padding-bottom:50px;
 }
 .no-read-only.link-url .dataTable.handsontable tr td:hover, .no-read-only .dataTable.handsontable tr td.current {
     background: transparent;

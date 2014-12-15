@@ -61,6 +61,7 @@
                          font-size:13px;
                          text-align:center;
                          margin-top:6px;
+                         padding-bottom:0px;
                          width:100%;
                          pointer-events: none;
                          ">
