@@ -583,7 +583,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                         $scope.gridOptions.enableColumnResize = $scope.gridOptions.enableColumnResize === false ? false : true;
 
                         if ($scope.gridOptions.generateColumns || (
-                                $scope.data !== null &&
+                                !!$scope.data && !!$scope.data.length &&
                                 $scope.columns !== null &&
                                 $scope.data.length > 0 &&
                                 $scope.columns.length == 0)) {
