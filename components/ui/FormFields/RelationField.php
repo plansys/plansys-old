@@ -381,8 +381,8 @@ class RelationField extends FormField {
         $this->attributes = $field;
         $this->builder = $fb;
 
-        if ($field['criteria']) {
-            $this->relationCriteria = $field['criteria'];
+        if (@$field['criteria']) {
+            $this->relationCriteria = @$field['criteria'];
         }
 
         echo json_encode($this->query($s, $p));
