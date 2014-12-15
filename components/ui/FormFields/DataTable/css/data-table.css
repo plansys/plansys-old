@@ -161,8 +161,6 @@
 .no-read-only.link-url .handsontable .wtBorder {
     display: none !important;
 }
-.dataTable > .htContainer {
-}
 .no-read-only.link-url .dataTable.handsontable tr td:hover, .no-read-only .dataTable.handsontable tr td.current {
     background: transparent;
 }

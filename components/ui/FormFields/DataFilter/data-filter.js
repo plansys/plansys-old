@@ -161,6 +161,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     }
 
                     var ds = parent[$scope.datasource];
+                    if (!ds) {
+                        return false;
+                    }
+
                     var dsParamName = "";
 
                     if (filter.isCustom === "Yes") {
@@ -619,7 +623,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                 $timeout(function () {
                     var showCount = 0;
                     var ds = parent[$scope.datasource];
-                    var dataAvailable = ds.data != null && ds.data.length > 0;
+                    var dataAvailable = ds && ds.data != null && ds.data.length > 0;
 
                     var defaultValueAvailable = false;
                     for (i in $scope.filters) {
@@ -662,8 +666,11 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                         }
                     }
                     if (defaultValueAvailable) {
-                        parent[$scope.datasource].query(function () {
-                        });
+                        var ds = parent[$scope.datasource];
+                        if (ds) {
+                            ds.query(function () {
+                            });
+                        }
                     }
                 });
 
