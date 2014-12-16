@@ -21,14 +21,14 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.deleteData = $scope.deleteData || [];
 
                 $scope.untrackColumns = [];
-                
-                $scope.resetData = function() {
+
+                $scope.resetData = function () {
                     $scope.deleteData.length = 0;
                     $scope.updateData.length = 0;
                     $scope.insertData.length = 0;
                 }
 
-                $scope.resetParam = function (key, name) { 
+                $scope.resetParam = function (key, name) {
                     if (typeof key == "undefined") {
                         for (i in $scope.sqlParams) {
                             delete $scope.sqlParams[i];
@@ -51,6 +51,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                 }
 
                 $scope.updateParam = function (key, value, name) {
+
                     if (typeof name === "undefined") {
                         $scope.sqlParams[key] = value;
                         return true;
@@ -144,22 +145,22 @@ app.directive('psDataSource', function ($timeout, $http) {
                 }
 
                 var jsParamExist = false;
-                for (i in $scope.params) {
-                    var p = $scope.params[i];
+                angular.forEach($scope.params, function (p, i) {
                     if (p.indexOf('js:') === 0) {
                         var value = parent.$eval(p.replace('js:', ''));
+                        var watch = parent.$eval('"' + p.replace('js:', '') + '"');
                         var key = i;
-
-                        parent.$watch(p.replace('js:', ''), function (newv, oldv) {
+                        parent.$watchCollection(watch, function (newv, oldv) {
                             if (newv != oldv) {
                                 $scope.updateParam(key, newv);
                                 $scope.query();
                             }
-                        }, true);
+                        });
+
                         $scope.updateParam(i, value)
                         jsParamExist = true;
                     }
-                }
+                });
 
                 if (jsParamExist) {
                     $scope.query();
@@ -196,7 +197,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                                     if (typeof $scope.data[i].id == "undefined")
                                         continue;
 
-                                    if ($scope.deleteData != null && 
+                                    if ($scope.deleteData != null &&
                                             $scope.deleteData.indexOf($scope.data[i].id) >= 0) {
                                         $scope.data.splice(i, 1);
                                     }
