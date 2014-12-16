@@ -10,38 +10,38 @@ class TextField extends FormField {
      * @return array me-return array property TextField.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
                 ),
-                'list' => array (),
+                'list' => array(),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Field Type',
                 'name' => 'fieldType',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.fieldType',
                     'ng-change' => 'save();',
                 ),
-                'list' => array (
+                'list' => array(
                     'text' => 'Text Field',
                     'password' => 'Password Field',
                 ),
@@ -49,10 +49,10 @@ class TextField extends FormField {
                 'otherLabel' => 'Other...',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                 ),
@@ -60,15 +60,15 @@ class TextField extends FormField {
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array (
-                'column1' => array (
-                    array (
+            array(
+                'column1' => array(
+                    array(
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
@@ -76,62 +76,62 @@ class TextField extends FormField {
                         ),
                         'type' => 'TextField',
                     ),
-                    array (
+                    array(
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),
-                'column2' => array (
-                    array (
+                'column2' => array(
+                    array(
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => 12,
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                         ),
                         'type' => 'TextField',
                     ),
-                    array (
+                    array(
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),
-                'column3' => array (
-                    array (
+                'column3' => array(
+                    array(
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),
-                'column4' => array (
-                    array (
+                'column4' => array(
+                    array(
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),
                 'type' => 'ColumnField',
             ),
-            array (
+            array(
                 'value' => '<hr/>',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'label' => 'Auto Complete',
                 'name' => 'autocomplete',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.autocomplete',
                     'ng-change' => 'generateAutoComplete(scope); save();',
                 ),
                 'listExpr' => '[\\\'\\\'=>\\\'Off\\\',\\\'rel\\\'=>\\\'On - Using Relation\\\', \\\'php\\\'=>\\\'On - Using PHP\\\']',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Typing Mode',
                 'name' => 'acMode',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.acMode',
                     'ng-change' => 'save();',
                     'ng-if' => 'active.autocomplete != \\\'\\\'',
@@ -139,82 +139,82 @@ class TextField extends FormField {
                 'listExpr' => '[\\\'\\\'=>\\\'Default\\\',\\\'comma\\\'=>\\\'Comma Separated\\\']',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'value' => '<div ng-if=\"active.autocomplete == \'rel\'\">
 <hr/>',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'name' => 'TypeRelation',
                 'subForm' => 'application.components.ui.FormFields.TextFieldRelation',
                 'type' => 'SubForm',
             ),
-            array (
+            array(
                 'value' => '</div>
 <div ng-if=\"active.autocomplete == \'php\'\">
 <hr/>',
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'label' => 'PHP Expression',
                 'fieldname' => 'acPHP',
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'value' => '</div>
 <hr/>',
                 'type' => 'Text',
             ),
-            array (
-                'column1' => array (
-                    array (
+            array(
+                'column1' => array(
+                    array(
                         'name' => 'prefix',
                         'layout' => 'Vertical',
                         'fieldWidth' => '11',
                         'prefix' => 'Prefix',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.prefix',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                         ),
                         'type' => 'TextField',
                     ),
-                    array (
+                    array(
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),
-                'column2' => array (
-                    array (
+                'column2' => array(
+                    array(
                         'name' => 'postfix',
                         'layout' => 'Vertical',
                         'fieldWidth' => '11',
                         'prefix' => 'Postfix',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.postfix',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                         ),
                         'type' => 'TextField',
                     ),
-                    array (
+                    array(
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),
                 'type' => 'ColumnField',
             ),
-            array (
+            array(
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
@@ -377,6 +377,10 @@ class TextField extends FormField {
         $this->fieldOptions['id'] = $this->renderID;
         $this->fieldOptions['name'] = $this->renderName;
         $this->addClass('form-control', 'fieldOptions');
+
+        if (isset($this->fieldOptions['disabled'])) {
+            $this->addClass('disabled', 'fieldOptions');
+        }
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
 

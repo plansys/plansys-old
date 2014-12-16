@@ -2631,6 +2631,11 @@ input[type=file] {
     padding:4px !important;
 }
 
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+    background:#fff;
+    box-shadow:none;
+    border:1px solid #ececeb;
+}
 label input[type=checkbox], label input[type=radio] {
     margin:2px 4px 2px 0px;
     float:left;

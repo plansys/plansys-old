@@ -13,7 +13,11 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                             } else if (array[i].trim().substr(0, 4) == "url:") {
                                 var url = array[i].trim().substr(4);
                                 array[i] = function (row) {
-                                    location.href = eval($scope.generateUrl(url, 'function'));
+									if (!!array['target'] && array['target'] == '_blank') {
+										window.open(eval($scope.generateUrl(url, 'function')),'_blank');
+									} else {
+										location.href = eval($scope.generateUrl(url, 'function'));
+									}
                                 }
                             } else {
                                 if (array[i].match(/true/i)) {

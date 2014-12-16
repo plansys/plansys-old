@@ -326,7 +326,7 @@ class DevUserIndex extends User {
                     'afterSelectionChange' => 'url:/dev/user/update?id={id}',
                     'enableColumnResize' => 'true',
                 ),
-                'type' => 'DataTable',
+                'type' => 'DataGrid',
             ),
         );
     }
