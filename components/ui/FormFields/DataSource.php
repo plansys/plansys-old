@@ -267,7 +267,9 @@ class DataSource extends FormField {
                 }
             } else {
                 ## with relatedTo
+                
                 $data = $this->getRelated($this->params, $isGenerate);
+                
             }
 
             echo json_encode([

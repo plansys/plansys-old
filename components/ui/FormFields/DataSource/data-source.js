@@ -21,14 +21,14 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.deleteData = $scope.deleteData || [];
 
                 $scope.untrackColumns = [];
-                
-                $scope.resetData = function() {
+
+                $scope.resetData = function () {
                     $scope.deleteData.length = 0;
                     $scope.updateData.length = 0;
                     $scope.insertData.length = 0;
                 }
 
-                $scope.resetParam = function (key, name) { 
+                $scope.resetParam = function (key, name) {
                     if (typeof key == "undefined") {
                         for (i in $scope.sqlParams) {
                             delete $scope.sqlParams[i];
@@ -174,7 +174,6 @@ app.directive('psDataSource', function ($timeout, $http) {
                 if ($scope.postData == 'Yes') {
                     $scope.original = angular.copy($scope.data);
                     $scope.$watch('data', function (newval, oldval) {
-//                        console.log($scope.insertData, $scope.updateData, $scope.deleteData);
 
                         if (newval !== oldval && $scope.trackChanges) {
                             if ($scope.isDataReloaded) {
@@ -192,11 +191,12 @@ app.directive('psDataSource', function ($timeout, $http) {
                                     }
                                 }
 
+
                                 for (var i = $scope.data.length - 1; i >= 0; i--) {
                                     if (typeof $scope.data[i].id == "undefined")
                                         continue;
 
-                                    if ($scope.deleteData != null && 
+                                    if ($scope.deleteData != null &&
                                             $scope.deleteData.indexOf($scope.data[i].id) >= 0) {
                                         $scope.data.splice(i, 1);
                                     }

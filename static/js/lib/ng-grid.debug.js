@@ -3194,7 +3194,8 @@
                     return {
                         pre: function ($scope, iElement, iAttrs) {
                             var $element = $(iElement);
-                            var options = $scope.$eval(iAttrs.ngGrid);
+                            var options = $scope.$eval(iAttrs.ngGrid) || {}; 
+                            
                             options.gridDim = new ngDimension({outerHeight: $($element).height(), outerWidth: $($element).width()});
 
                             var grid = new ngGrid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q);

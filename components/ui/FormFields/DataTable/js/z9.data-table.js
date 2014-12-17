@@ -184,7 +184,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             };
                             break;
                         case "string":
-                            if (c.stringAlias) {
+                            colDef.renderer = "text";
+                            if (typeof c.stringAlias == "object" && !$.isArray(c.stringAlias)) {
                                 colDef.renderer = "html";
                             }
                             switch (c.inputMask) {
@@ -555,6 +556,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         },
                         beforeChange: function (changes, source) {
                             $scope.edited = true;
+
                             if (typeof $scope.beforeCellEdit == "function" && source == "edit") {
                                 var ht = $("#" + $scope.renderID).handsontable('getInstance');
                                 var ch = changes[0];
@@ -563,10 +565,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 $scope.beforeCellEdit(ch[3], ch[0], ch[1], $scope.data[ch[0]], ht);
                             }
 
-
                             if (typeof $scope.events.beforeChange == "function") {
                                 $scope.events.beforeChange(changes, source);
                             }
+
                         },
                         beforeKeyDown: function (event) {
                             if (typeof $scope.events.beforeKeyDown == "function") {
@@ -583,6 +585,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             }
                         },
                         afterChange: function (changes, source) {
+
                             var ht = $("#" + $scope.renderID).handsontable('getInstance');
                             if (typeof $scope.afterCellEdit == "function" && source == "edit") {
                                 var ch = changes[0];
@@ -642,6 +645,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 $el.find('.ht_top').remove();
                                 $el.find('.ht_top thead').prepend(html);
                                 fixHead();
+
+                                $el.find(".htContainer").height($el.find(".htContainer .htCore:eq(0)").height() + 10);
                             });
                             if (typeof $scope.events.afterRender == "function") {
                                 $scope.events.afterRender();
