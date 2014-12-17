@@ -614,7 +614,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                 $scope.evalValue = function (value) {
                     if (typeof value == "string" && value.substr(0, 3) == "js:") {
-                        return $scope.$eval(value.trim().substr(3));
+                        return $scope.$parent.$eval(value.trim().substr(3));
                     }
                     return value;
                 }
@@ -659,8 +659,19 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                             }
                             else {
                                 f.value = $scope.evalValue(f.defaultValue);
-                                $scope.updateFilter(f, null, false);
-                                defaultValueAvailable = true;
+                                if (!f.value) {
+                                    var a = $scope.$parent.$watch('lokasi', function () {
+                                        $scope.updateFilter(f, null, false);
+                                        var ds = parent[$scope.datasource];
+                                        if (ds) {
+                                            ds.query(function () {
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    $scope.updateFilter(f, null, false);
+                                    defaultValueAvailable = true;
+                                }
                             }
 
                         }

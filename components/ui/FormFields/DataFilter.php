@@ -268,7 +268,7 @@ class DataFilter extends FormField {
                 }
                 break;
             case "list":
-                if ($filter['value'] != '') {
+                if (isset($filter['value']) && $filter['value'] != '') {
                     $sql = "{$column} LIKE :{$paramName}_{$pcolumn}";
                     $param = @$filter['value'];
                 }
