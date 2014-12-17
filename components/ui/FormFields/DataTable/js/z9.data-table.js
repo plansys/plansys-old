@@ -519,6 +519,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                         if (c.trim().substr(0, 4) != 'span') {
                                             cellProperties.type = 'numeric';
                                             cellProperties.format = '0,0.00';
+                                        } else {
+                                            cellProperties.renderer = 'html';
                                         }
                                         cellProperties.className = 'total';
                                         cellProperties.readOnly = true;
