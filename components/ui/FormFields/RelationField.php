@@ -449,34 +449,67 @@ class RelationField extends FormField {
             if (strpos($block, 'search') !== false) {
                 if ($search != '') {
                     if (strpos($this->labelField, '{') !== false) {
-                        $select = explode(",", $this->relationCriteria['select']);
-                        $concatFields = $fields[1];
-                        foreach ($select as $sel) {
-                            $selall = explode(" ", $sel);
-                            $sellast = array_pop($selall);
+                        $alias = $this->relationCriteria['alias'];
+                        $select = $this->relationCriteria['select'];
+                        $field = $this->labelField;
 
-                            foreach ($fields[1] as $kf => $f) {
-                                if ($f == $sellast ||
-                                    $f == $this->relationCriteria['alias'] . "." . $sellast) {
-                                    $concatFields[$kf] = implode(" ", $selall);
+                        // generate translasi alias
+                        $x = [];
+                        $trans = explode(',', $select);
+                        foreach ($trans as $k => $t) {
+                            $list = explode(" ", trim($t));
+                            $li = array_shift($list);
+                            $x[$li] = $li;
+
+                            // pemisah alias
+                            $ds = explode(".", $li);
+                            if (count($ds) > 1) {
+                                $x[$ds[count($ds) - 1]] = $li;
+                            } else {
+                                $x[$li] = $alias . "." . $li;
+                                $x[$alias . '.' . $li] = $alias . '.' . $li;
+                            }
+
+                            // jika ada AS
+                            if (count($list) > 0) {
+                                $liOri = $li;
+                                $li = array_pop($list);
+
+                                //jika pake alias
+                                if (count($ds) > 1) {
+                                    $x[$li] = $liOri;
+                                } else {
+                                    $x[$li] = $alias . "." . $liOri;
                                 }
                             }
                         }
-                        $trimmed = trim($this->labelField);
-                        $implodedLabels = $trimmed;
-                        preg_match_all("/\{(.*?)\}/", $this->labelField, $fs);
-                        foreach ($fs[0] as $k => $i) {
-                            $implodedLabels = str_replace($i, "'," . $concatFields[$k] . ",'", $implodedLabels);
-                        }
-                        $implodedLabels = trim($implodedLabels, "',");
-                        if ($trimmed[0] != '{') {
-                            $implodedLabels = "'" . $implodedLabels;
-                        }
-                        if ($trimmed[strlen($trimmed) - 1] != '}') {
-                            $implodedLabels = $implodedLabels . "'";
+
+                        // replace kurung kurawal
+                        preg_match_all("/\{(.*?)\}/", $field, $fieldArray);
+                        $hasil = $field;
+                        foreach ($fieldArray[0] as $k => $f) {
+                            if (@$x[$fieldArray[1][$k]]) {
+                                $hasil = str_replace($f, '{' . $x[$fieldArray[1][$k]] . '}', $hasil);
+                            } else {
+                                $hasil = str_replace($f, '{' . $fieldArray[1][$k] . '}', $hasil);
+                            }
                         }
 
-                        $sqlcond = "CONCAT(" . $implodedLabels . ")" . ' like ' . "[{$block}]";
+                        $hasil = str_replace('{', "',", $field);
+                        $hasil = str_replace('}', ",'", $hasil);
+
+                        if ($hasil[0] == "'") {
+                            $hasil = substr($hasil, 2);
+                        } else {
+                            $hasil = "'" . $hasil;
+                        }
+                        if ($hasil[strlen($hasil) - 1] == "'") {
+                            $hasil = substr($hasil, 0, strlen($hasil) - 2);
+                        } else {
+                            $hasil = $hasil . "'";
+                        }
+
+                        $sqlcond = "CONCAT(" . $hasil . ")" . ' like ' . "[{$block}]";
                     } else {
                         $sqlcond = $this->labelField . ' like ' . "[{$block}]";
                     }
