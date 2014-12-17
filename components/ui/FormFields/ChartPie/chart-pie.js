@@ -39,12 +39,12 @@ app.directive('psChartPie', function ($timeout) {
                 return chartData;
             }
 
-            $scope.$watch('datasource.data', function () {
-                if ($scope.datasource != null) {
+            $scope.$watch('datasource.data', function (n,o) {
+                if (n !== o && $scope.datasource != null) {
                     $scope.data = $scope.datasource.data;
                     $scope.fillSeries();
                 }
-            });
+            }, true);
 
             $scope.fillSeries = function () {
                 $timeout(function () {
