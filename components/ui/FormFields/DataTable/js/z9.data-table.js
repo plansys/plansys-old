@@ -205,7 +205,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             break;
                     }
 
-                    if (c.options && (c.options.enableCellEdit == "false" || c.options.readOnly == "true")) {
+                    
+                    if (c.options && !!c.options.enableCellEdit) {
+                        c.options.enableCellEdit = evalArray(c.options.enableCellEdit);
                         colDef.readOnly = true;
                     }
 

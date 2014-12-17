@@ -579,6 +579,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
 
                         // prepare gridOptions
                         evalArray($scope.gridOptions);
+                        
                         $scope.gridOptions.data = 'data';
                         $scope.gridOptions.plugins = [new ngGridFlexibleHeightPlugin(), new anchorLastColumn()];
                         $scope.gridOptions.headerRowHeight = 28;
