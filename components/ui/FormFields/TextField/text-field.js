@@ -118,7 +118,14 @@ app.directive('textField', function ($timeout, $http) {
                         'f': $scope.name,
                         'p': $scope.paramValue
                     }).success(function (data) {
-                        $scope.list = data;
+
+			$scope.list = [];
+			for (l in data) {
+				if (!!data[l].value) {
+					$scope.list.push(data[l]);
+				}
+			}
+	
                         if (!$scope.initSearch) {
                             $scope.initSearch = true;
                         } else {

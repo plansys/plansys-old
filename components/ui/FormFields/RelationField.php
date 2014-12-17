@@ -385,6 +385,14 @@ class RelationField extends FormField {
             $this->relationCriteria = @$field['criteria'];
         }
 
+        if (@$field['params']) {
+            foreach ($field['params'] as $k => $ff) {
+                if (substr($ff, 0, 3) == "js:") {
+                    $p[$k] = "'" . $k . "'";
+                }
+            }
+        }
+
         echo json_encode($this->query($s, $p));
     }
 

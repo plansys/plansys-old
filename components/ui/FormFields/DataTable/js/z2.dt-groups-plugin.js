@@ -81,7 +81,12 @@ Handsontable.DataTableGroups = function (settings) {
             }
 
             function sum(col) {
-                calc[col] += row[col] * 1;
+                console.log("*************** SUM: " + col + " " + row[col]);
+                if (isNaN(parseFloat(row[col]))) {
+                    return calc[col];
+                }
+
+                calc[col] += parseFloat(row[col]);
                 return calc[col] * 1;
             }
 
@@ -104,10 +109,10 @@ Handsontable.DataTableGroups = function (settings) {
                 if (row['__dt_flg'] != 'Z')
                     continue;
 
+
                 //calculate each level
                 for (var lv = row['__dt_lvl']; lv >= -1; lv--) {
                     var calc = this.getTotalRow(grp);
-
 
                     //calculate each column
                     for (var column in this.totalGroups) {
@@ -119,7 +124,6 @@ Handsontable.DataTableGroups = function (settings) {
 
                     grp.pop();
                 }
-
                 idx++;
             }
         },
@@ -282,7 +286,7 @@ Handsontable.DataTableGroups = function (settings) {
                                     var newrow = angular.copy(newrow);
                                     newrow['__dt_grp'] = angular.copy(lastgrp);
                                     newrow['__dt_lvl'] = newrow['__dt_grp'].length;
-                                    $scope.data.splice(i , 0, newrow);
+                                    $scope.data.splice(i, 0, newrow);
                                     lastgrp.pop();
                                 }
                             }

@@ -161,6 +161,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     }
 
                     var ds = parent[$scope.datasource];
+                    if (!ds) {
+                        return false;
+                    }
+
                     var dsParamName = "";
 
                     if (filter.isCustom === "Yes") {
@@ -610,7 +614,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                 $scope.evalValue = function (value) {
                     if (typeof value == "string" && value.substr(0, 3) == "js:") {
-                        return $scope.$eval(value.trim().substr(3));
+                        return $scope.$parent.$eval(value.trim().substr(3));
                     }
                     return value;
                 }
@@ -619,7 +623,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                 $timeout(function () {
                     var showCount = 0;
                     var ds = parent[$scope.datasource];
-                    var dataAvailable = ds.data != null && ds.data.length > 0;
+                    var dataAvailable = ds && ds.data != null && ds.data.length > 0;
 
                     var defaultValueAvailable = false;
                     for (i in $scope.filters) {
@@ -655,15 +659,29 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                             }
                             else {
                                 f.value = $scope.evalValue(f.defaultValue);
-                                $scope.updateFilter(f, null, false);
-                                defaultValueAvailable = true;
+                                if (!f.value) {
+                                    var a = $scope.$parent.$watch('lokasi', function () {
+                                        $scope.updateFilter(f, null, false);
+                                        var ds = parent[$scope.datasource];
+                                        if (ds) {
+                                            ds.query(function () {
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    $scope.updateFilter(f, null, false);
+                                    defaultValueAvailable = true;
+                                }
                             }
 
                         }
                     }
                     if (defaultValueAvailable) {
-                        parent[$scope.datasource].query(function () {
-                        });
+                        var ds = parent[$scope.datasource];
+                        if (ds) {
+                            ds.query(function () {
+                            });
+                        }
                     }
                 });
 

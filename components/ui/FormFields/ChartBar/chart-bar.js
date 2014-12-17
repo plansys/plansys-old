@@ -30,8 +30,15 @@ app.directive('psChartBar', function ($timeout) {
                     else {
                         var tmp = {};
                         tmp['name'] = chartData_raw[i].label;
+						
                         tmp['data'] = chartData_raw[i].value.map(function (e, i) {
-                            return typeof e == "string" ? JSON.parse(e) : e;
+							var ret = e;
+							try {
+								ret = JSON.parse(e);
+							} catch(e) {
+								ret = e;
+							}
+                            return ret;
                         });
 
                         if (typeof chartData_raw[i].color != 'undefined')
@@ -43,26 +50,11 @@ app.directive('psChartBar', function ($timeout) {
 
                 return [chartData, xAxis];
             }
-
-            $scope.$watch('datasource.data', function () {
-                if ($scope.datasource != null) {
-                    $scope.data = $scope.datasource.data;
-                    $scope.fillSeries();
-                }
-            });
+			
 
             $scope.fillSeries = function () {
                 $timeout(function () {
                     var series = [];
-                    var chartData = [];
-                    $scope.datasource = parent[$el.find("data[name=datasource]").text()];
-
-                    if (typeof $scope.datasource != "undefined") {
-                        $scope.data = $scope.datasource.data;
-                    } else {
-                        $scope.data = [];
-                    }
-
                     var chartData = [];
 
                     if ($scope.data.length > 0)
@@ -88,8 +80,6 @@ app.directive('psChartBar', function ($timeout) {
                         }
 
                         var chartData_raw = result[0];
-
-                        console.log(chartData_raw, result[0]);
 
                         var formatChart = formatChartData(chartData_raw);
                         var chartData = formatChart[0];
@@ -153,6 +143,7 @@ app.directive('psChartBar', function ($timeout) {
                     }
                 }, 0);
             }
+			
 
             $scope.chartTitle = $el.find("data[name=chartTitle]").text();
             $scope.chartType = $el.find("data[name=chartType]").text().toLowerCase();
@@ -160,9 +151,22 @@ app.directive('psChartBar', function ($timeout) {
             $scope.series = JSON.parse($el.find("data[name=series]").text());
             $scope.tickSeries = $el.find("data[name=tickSeries]").text();
             $scope.options = JSON.parse($el.find("data[name=options]").text());
+			$scope.data = [];
+			
+			$scope.datasource = parent[$el.find("data[name=datasource]").text()];
+			console.log($scope.datasource.data);
+			$scope.$watch('datasource.data', function (n,o) {
+				if (n !== o && $scope.datasource != null) {
+					$scope.data = $.extend([], $scope.datasource.data, true);
+					$scope.fillSeries();
+				}
+			}, true);
 
-            $scope.fillSeries();
-
+			$timeout(function() {			
+				
+				$scope.data = $.extend([], $scope.datasource.data, true);
+				$scope.fillSeries();
+			});
         }
     }
 });

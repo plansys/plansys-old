@@ -15,7 +15,7 @@ ob_start();
         $scope.model = <?php echo @json_encode($data['data']); ?>;
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
         $scope.params = <?php echo @json_encode($renderParams); ?>;
-		$scope.filter = $filter;
+        $scope.filter = $filter;
 <?php if (!Yii::app()->user->isGuest): ?>
             $scope.user = <?php echo @json_encode(Yii::app()->user->info); ?>;
             if ($scope.user != null) {
@@ -103,26 +103,14 @@ ob_start();
             $scope.dataGrids[$(this).attr('name')] = false;
             $scope.dataGrids.length++;
         });
-        
+
         function inlineJS() {
             $("div[ng-controller=<?= $modelClass ?>Controller]").css('opacity', 1);
 <?= $inlineJS; ?>
         }
-
-        // execute inline JS
         $timeout(function () {
-            // make sure datagrids is loaded before executing inlinejs
-            if ($scope.dataGrids.length > 0) {
-                var dgWatch = $scope.$watch('dataGrids.length', function (n) {
-                    if (n == 0) {
-                        dgWatch();
-                        inlineJS();
-                    }
-                }, true);
-            } else {
-                inlineJS();
-            }
-        }, 0);
+            inlineJS();
+        });
     });
 <?php $script = ob_get_clean(); ?>
 </script>

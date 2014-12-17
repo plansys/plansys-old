@@ -27,7 +27,10 @@
             <div class="input-group">
                 <!-- prefix -->
                 <?php if ($this->prefix != ""): ?>
-                    <span class="input-group-addon">
+                    <span class="input-group-addon"
+                    <?php if (@$this->fieldOptions['disabled']): ?>
+                              style="background:#fff;border:1px solid #ececeb; border-right:0px;"
+                          <?php endif; ?>>
                         <?= $this->prefix ?>
                     </span>
                 <?php endif; ?>
@@ -39,8 +42,11 @@
 
                 <!-- postfix -->
                 <?php if ($this->postfix != ""): ?>
-                    <span class="input-group-addon">
-                        <?= $this->postfix ?>
+                    <span class="input-group-addon"
+                    <?php if (@$this->fieldOptions['disabled']): ?>
+                              style="background:#fff;border:1px solid #ececeb; border-left:0px;"
+                          <?php endif; ?>>
+                              <?= $this->postfix ?>
                     </span>
                 <?php endif; ?>
             </div>

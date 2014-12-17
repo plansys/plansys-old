@@ -31,7 +31,13 @@ app.directive('psChartArea', function ($timeout) {
                         var tmp = {};
                         tmp['name'] = chartData_raw[i].label;
                         tmp['data'] = chartData_raw[i].value.map(function (e, i) {
-                            return typeof e == "string" ? JSON.parse(e) : e;
+							var ret = e;
+							try {
+								ret = JSON.parse(e);
+							} catch(e) {
+								ret = e;
+							}
+                            return ret;
                         });
 
                         if (typeof chartData_raw[i].color != 'undefined')
@@ -44,13 +50,14 @@ app.directive('psChartArea', function ($timeout) {
                 return [chartData, xAxis];
             }
 
-            $scope.$watch('datasource.data', function () {
-                if ($scope.datasource != null) {
+
+            $scope.$watch('datasource.data', function (n,o) {
+                if (n !== o && $scope.datasource != null) {
                     $scope.data = $scope.datasource.data;
                     $scope.fillSeries();
                 }
-            });
-
+            }, true);
+			
             $scope.fillSeries = function () {
                 $timeout(function () {
                     var series = [];
