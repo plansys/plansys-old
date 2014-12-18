@@ -572,10 +572,10 @@ class RelationField extends FormField {
         $condition = $this->generateCondition($search, $params);
 
         $this->relationCriteria['condition'] = $condition["sql"];
-        if ($this->relationCriteria['limit'] == 30) {
+        if (!isset($this->relationCriteria['limit']) || @$this->relationCriteria['limit'] == 30) {
             $this->relationCriteria['limit'] = ($search == '' ? '30' : '100');
         }
-        
+
 
         $this->params = array_merge(is_null($this->params) ? [] : $this->params, $condition['params']);
         return DataSource::generateCriteria($this->params, $this->relationCriteria, $this);
