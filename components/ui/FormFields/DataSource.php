@@ -690,7 +690,6 @@ class DataSource extends FormField {
                     if (@$f['defaultValue'] != '' || $dateCondition ||
                             @$f['defaultValueFrom'] != '' || @$f['defaultValueTo'] != ''
                     ) {
-                        var_dump($f);
                         $execQuery = false;
                     }
                 }
