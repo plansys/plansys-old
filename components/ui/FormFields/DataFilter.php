@@ -368,6 +368,11 @@ class DataFilter extends FormField {
                     $rf->params = $filter['relParams'];
                     $rf->modelClass = $filter['relModelClass'];
                     $rf->relationCriteria = $filter['relCriteria'];
+                    
+                    //TODO: request relation via ajax
+                    $rf->relationCriteria['limit'] = '9999';
+                    
+                    
                     $rf->idField = $filter['relIdField'];
                     $rf->labelField = $filter['relLabelField'];
                     $rf->builder = $this->builder;
@@ -377,6 +382,8 @@ class DataFilter extends FormField {
                     foreach ($rawList as $key => $val) {
                         $list[$val['value']] = $val['label'];
                     }
+                    
+                    
 
                     $this->filters[$k]['list'] = $list;
                     break;

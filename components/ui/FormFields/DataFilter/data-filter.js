@@ -619,7 +619,13 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     }
                     return value;
                 }
+                $scope.ngIf = function (filter) {
 
+                    if (!!filter.options && !!filter.options['ng-if']) {
+                        return $scope.$parent.$eval(filter.options['ng-if']);
+                    }
+                    return true;
+                }
                 // Set Default Filters Value
                 $timeout(function () {
                     var showCount = 0;
@@ -634,7 +640,9 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                 .indexOf(f.defaultOperator) >= 0);
 
                         f.show = (showCount > 5 ? false : true);
-                        showCount++;
+                        if ($scope.ngIf(f)) {
+                            showCount++;
+                        }
                         if (f.defaultValue && f.defaultValue != "" || dateCondition) {
                             if ($scope.operators[f.filterType]) {
                                 if (typeof f.defaultOperator != "undefined" && f.defaultOperator != "") {

@@ -1,5 +1,3 @@
-
-
 <div class="btn-group" dropdown ng-click="dropdownClick(filter, $event)" 
      style="margin-right:7px;"
      is-open="filter.operatorDropdownOpen">

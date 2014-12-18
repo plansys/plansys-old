@@ -18,7 +18,7 @@
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
-                        <li ng-repeat="filter in filters">
+                        <li ng-if="ngIf(filter)" ng-repeat="filter in filters">
                             <a href="" ng-click="toggleShowFilter(filter)">
                                 <label>
                                     <input ng-checked="filter.show"
@@ -33,7 +33,7 @@
             </td>
             <td class="filter-td" style="width:100%">
                 <div class="filter-item-container" ng-repeat="filter in filters" ng-if="filter.show">
-                    <div ng-include="filterTemplate[filter.filterType]"></div>
+                    <div ng-if="ngIf(filter)" ng-include="filterTemplate[filter.filterType]"></div>
                 </div>
             </td>
         </tr>
