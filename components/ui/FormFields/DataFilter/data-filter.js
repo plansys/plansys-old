@@ -118,19 +118,19 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                             if (f.filterType == 'check') {
                                 f.checked = [];
-                                for (i in f.list) {
-                                    if (angular.isObject(f.list[i].value)) {
-                                        for (k in f.list[i].value) {
-                                            if (f.list[i].value[k].key == '---')
-                                                continue;
-                                            f.checked.push(f.list[i].value[k].key);
-                                        }
-                                    } else {
-                                        if (f.list[i].key == '---')
-                                            continue;
-                                        f.checked.push(f.list[i].key);
-                                    }
-                                }
+//                                for (i in f.list) {
+//                                    if (angular.isObject(f.list[i].value)) {
+//                                        for (k in f.list[i].value) {
+//                                            if (f.list[i].value[k].key == '---')
+//                                                continue;
+//                                            f.checked.push(f.list[i].value[k].key);
+//                                        }
+//                                    } else {
+//                                        if (f.list[i].key == '---')
+//                                            continue;
+//                                        f.checked.push(f.list[i].key);
+//                                    }
+//                                }
                                 f.checkedLength = f.checked.length;
                             }
                             // todo: fix search focus
@@ -271,7 +271,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                 $scope.dropdownChecked = function (filter, item) {
                     if (filter.valueText == 'All') {
-                        return true;
+                        return false;
                     } else if (filter.checked.indexOf(item.key) >= 0) {
                         return true;
                     } else {
