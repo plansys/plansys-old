@@ -208,11 +208,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
 
 
                     if (c.options && !!c.options.enableCellEdit) {
-                        if (c.options.enableCellEdit.trim().substr(0, 3) == "js:") {
+                        if (c.options.enableCellEdit.trim().substr(0, 3) === "js:") {
                             c.options.enableCellEdit = $scope.$parent.$eval(c.options.enableCellEdit.trim().substr(3));
+                        } else if (typeof c.options.enableCellEdit == "string") {
+                            c.options.enableCellEdit = $scope.$parent.$eval(c.options.enableCellEdit.trim());
                         }
 
-                        if (c.options.enableCellEdit) {
+                        if (!c.options.enableCellEdit) {
                             colDef.readOnly = true;
                         }
                     }

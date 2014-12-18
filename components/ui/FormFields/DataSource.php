@@ -686,7 +686,6 @@ class DataSource extends FormField {
             if ($field) {
                 foreach ($field['filters']as $f) {
                     $dateCondition = @$f['defaultOperator'] != '' && @$f['filterType'] == 'date';
-
                     if (@$f['defaultValue'] != '' || $dateCondition ||
                             @$f['defaultValueFrom'] != '' || @$f['defaultValueTo'] != ''
                     ) {
