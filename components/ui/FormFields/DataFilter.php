@@ -350,10 +350,10 @@ class DataFilter extends FormField {
                     $list = [];
 
                     if ($listExpr != "") {
-## evaluate expression
+                        ## evaluate expression
                         $list = $this->evaluate($listExpr, true);
 
-## change sequential array to associative array
+                        ## change sequential array to associative array
                         if (is_array($list) && !Helper::is_assoc($list)) {
                             $list = Helper::toAssoc($list);
                         }
@@ -368,11 +368,10 @@ class DataFilter extends FormField {
                     $rf->params = $filter['relParams'];
                     $rf->modelClass = $filter['relModelClass'];
                     $rf->relationCriteria = $filter['relCriteria'];
-                    
+
                     //TODO: request relation via ajax
                     $rf->relationCriteria['limit'] = '9999';
-                    
-                    
+
                     $rf->idField = $filter['relIdField'];
                     $rf->labelField = $filter['relLabelField'];
                     $rf->builder = $this->builder;
@@ -380,10 +379,11 @@ class DataFilter extends FormField {
                     $list = [];
                     $rawList = $rf->query('', $rf->params);
                     foreach ($rawList as $key => $val) {
-                        $list[$val['value']] = $val['label'];
+                        $list[] = [
+                            'key' => $val['value'],
+                            'value' => $val['label']
+                        ];
                     }
-                    
-                    
 
                     $this->filters[$k]['list'] = $list;
                     break;

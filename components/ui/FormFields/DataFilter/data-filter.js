@@ -283,12 +283,17 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     var newList = [];
                     for (key in list) {
                         if (angular.isObject(list[key])) {
-                            var subItem = [];
-                            var rawSub = list[key];
-                            for (subkey in rawSub) {
-                                subItem.push({key: subkey, value: rawSub[subkey]});
+
+                            if (!!list[key].key) {
+                                newList.push({key: list[key].key, value: list[key].value});
+                            } else {
+                                var subItem = [];
+                                var rawSub = list[key];
+                                for (subkey in rawSub) {
+                                    subItem.push({key: subkey, value: rawSub[subkey]});
+                                }
+                                newList.push({key: key, value: subItem});
                             }
-                            newList.push({key: key, value: subItem});
                         } else {
                             newList.push({key: key, value: list[key]});
                         }

@@ -27,7 +27,7 @@
                    class="input-block-level search-dropdown form-control" autocomplete="off">
         </div>
         <ul class="dropdown-menu inner" role="menu">
-            <li ng-repeat-start="item in filter.list track by $index" 
+            <li ng-repeat-start="item in filter.list track by $index " 
                 ng-if="item.value != '---'" class="dropdown-item" 
                 ng-class="{
                             'dropdown-header': isObject(item.value),
@@ -59,7 +59,7 @@
                     </div>
                     <ul class="dropdown-menu inner" role="menu" 
                         style="display:block;border-radius:0px;">
-                        <li ng-repeat-start="subitem in item.value track by $index" 
+                        <li ng-repeat-start="subitem in item.value track by $index " 
                             ng-if="subitem.value != '---'"
                             ng-class="{'hover': subitem.key == filter.value}"
                             ng-show="listFound(subitem.value + ' ' + subitem.key, filter)">
