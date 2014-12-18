@@ -267,6 +267,10 @@ Handsontable.DataTableGroups = function (settings) {
                             if (i == $scope.data.length - 1) {
                                 // add total in very last row
                                 var lastgrp = angular.copy(last['__dt_grp']);
+
+                                if (!lastgrp)
+                                    continue;
+
                                 for (l in last['__dt_grp']) {
                                     var newrow = angular.copy(newrow);
                                     newrow['__dt_grp'] = angular.copy(lastgrp);

@@ -77,6 +77,9 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                         ds.afterQueryInternal[$scope.renderID] = function () {
                             if (ds.params.paging && $scope[ds.params.paging] && $scope[ds.params.paging].gridOptions) {
                                 var paging = $scope[ds.params.paging].gridOptions.pagingOptions;
+                                if (!paging)
+                                    return;
+
                                 if (paging.currentPage * paging.pageSize > ds.totalItems) {
                                     paging.currentPage = Math.floor(ds.totalItems / paging.pageSize);
                                 } else if (paging.currentPage == 0 && ds.totalItems > 0) {
@@ -154,8 +157,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     $scope.changeValueText(filter);
 
                     shouldExec = typeof shouldExec == "undefined" ? true : shouldExec;
-
-
                     if (typeof e != "undefined" && e != null && ['list', 'check', 'relation'].indexOf(filter.filterType) < 0) {
                         $scope.toggleFilterCriteria(e);
                     }
@@ -624,7 +625,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     var showCount = 0;
                     var ds = parent[$scope.datasource];
                     var dataAvailable = ds && ds.data != null && ds.data.length > 0;
-
+                    var watchDefaultValue = [];
                     var defaultValueAvailable = false;
                     for (i in $scope.filters) {
                         var f = $scope.filters[i];
@@ -660,22 +661,34 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                             else {
                                 f.value = $scope.evalValue(f.defaultValue);
                                 if (!f.value) {
-                                    var a = $scope.$parent.$watch('lokasi', function () {
-                                        $scope.updateFilter(f, null, false);
-                                        var ds = parent[$scope.datasource];
-                                        if (ds) {
-                                            ds.query(function () {
-                                            });
-                                        }
+                                    var fclone = $.extend({}, f, true);
+                                    watchDefaultValue.push({
+                                        name: f.name,
+                                        watch: fclone.defaultValue.substr(3)
                                     });
                                 } else {
                                     $scope.updateFilter(f, null, false);
                                     defaultValueAvailable = true;
                                 }
                             }
-
                         }
                     }
+
+                    watchDefaultValue.map(function (item, k) {
+                        var a = $scope.$parent.$watch(item.watch, function (n) {
+                            if (!n)
+                                return;
+
+                            for (i in $scope.filters) {
+                                if ($scope.filters[i].name == item.name) {
+                                    $scope.filters[i].value = n;
+                                    $scope.updateFilter($scope.filters[i], null);
+                                    a();
+                                }
+                            }
+                        });
+                    });
+
                     if (defaultValueAvailable) {
                         var ds = parent[$scope.datasource];
                         if (ds) {

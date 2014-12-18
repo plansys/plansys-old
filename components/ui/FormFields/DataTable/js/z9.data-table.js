@@ -80,6 +80,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 $scope.data = null;
                 $scope.lastRelList = {};
                 $scope.dtGroups = null;
+                $scope.fixHeightTimeout = null;
                 $scope.getInstance = function () {
                     return $("#" + $scope.renderID).handsontable('getInstance');
                 }
@@ -655,7 +656,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 $el.find('.ht_top thead').prepend(html);
                                 fixHead();
 
-                                $el.find(".htContainer").height($el.find(".htContainer .htCore:eq(0)").height() + 10);
                             });
                             if (typeof $scope.events.afterRender == "function") {
                                 $scope.events.afterRender();
@@ -671,7 +671,17 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             if (typeof $scope.events.afterLoadData == "function") {
                                 $scope.events.afterLoadData();
                             }
+                            $el.find(".htContainer").css('overflow-y', 'hidden');
 
+                            if ($scope.fixHeightTimeout !== null) {
+                                $timeout.cancel($scope.fixHeightTimeout);
+                            }
+
+                            $scope.fixHeightTimeout = $timeout(function () {
+                                $el.find(".htContainer")
+                                        .css('overflow-y', 'auto')
+                                        .height($el.find(".htContainer .htCore:eq(0)").height() + 150);
+                            }, 1000);
                         },
                         beforeColumnSort: function (column, order) {
                             if (typeof $scope.events.beforeColumnSort == "function") {
@@ -702,8 +712,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             $timeout.cancel(renderTimeout);
                             renderTimeout = $timeout(function () {
                                 $scope.loaded = true;
-
-                                $el.find(".htContainer").height($el.find(".htContainer .htCore:eq(0)").height() + 10);
                             });
                         },
                         modifyColWidth: function () {
