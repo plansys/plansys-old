@@ -10,12 +10,11 @@ ob_start();
 ?>
 <script type="text/javascript">
 <?php ob_start(); ?>
-    app.controller("<?= $modelClass ?>Controller", function ($scope, $parse, $timeout, $http, $localStorage, $filter) {
+    app.controller("<?= $modelClass ?>Controller", function ($scope, $parse, $timeout, $http, $localStorage) {
         $scope.form = <?php echo json_encode($this->form); ?>;
         $scope.model = <?php echo @json_encode($data['data']); ?>;
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
         $scope.params = <?php echo @json_encode($renderParams); ?>;
-        $scope.filter = $filter;
 <?php if (!Yii::app()->user->isGuest): ?>
             $scope.user = <?php echo @json_encode(Yii::app()->user->info); ?>;
             if ($scope.user != null) {
@@ -103,14 +102,26 @@ ob_start();
             $scope.dataGrids[$(this).attr('name')] = false;
             $scope.dataGrids.length++;
         });
-
+        
         function inlineJS() {
             $("div[ng-controller=<?= $modelClass ?>Controller]").css('opacity', 1);
 <?= $inlineJS; ?>
         }
+
+        // execute inline JS
         $timeout(function () {
-            inlineJS();
-        });
+            // make sure datagrids is loaded before executing inlinejs
+            if ($scope.dataGrids.length > 0) {
+                var dgWatch = $scope.$watch('dataGrids.length', function (n) {
+                    if (n == 0) {
+                        dgWatch();
+                        inlineJS();
+                    }
+                }, true);
+            } else {
+                inlineJS();
+            }
+        }, 0);
     });
 <?php $script = ob_get_clean(); ?>
 </script>
@@ -118,4 +129,3 @@ ob_start();
 ob_get_clean();
 
 return $script;
-
