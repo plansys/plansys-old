@@ -62,36 +62,38 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                     $scope.changeValueText(filter);
 
-                    var ds = parent[$scope.datasource];
-                    var dsParamName = "";
-                    if (filter.isCustom === "Yes") {
-                        dsParamName = filter.name;
-                    } else {
-                        dsParamName = 'where';
-                    }
-
-                    if (dsParamName != "" && (!filter.isCustom || filter.isCustom === "No")) {
-                        var prepared = $scope.prepareDSParams(filter);
-                        ds.resetParam(prepared.name, dsParamName);
-
-                        ds.afterQueryInternal[$scope.renderID] = function () {
-                            if (ds.params.paging && $scope[ds.params.paging] && $scope[ds.params.paging].gridOptions) {
-                                var paging = $scope[ds.params.paging].gridOptions.pagingOptions;
-                                if (!paging)
-                                    return;
-
-                                if (paging.currentPage * paging.pageSize > ds.totalItems) {
-                                    paging.currentPage = Math.floor(ds.totalItems / paging.pageSize);
-                                } else if (paging.currentPage == 0 && ds.totalItems > 0) {
-                                    paging.currentPage = 1;
-                                }
-                            }
+                    $scope.datasources.map(function (dataSourceName) {
+                        var ds = parent[dataSourceName];
+                        var dsParamName = "";
+                        if (filter.isCustom === "Yes") {
+                            dsParamName = filter.name;
+                        } else {
+                            dsParamName = 'where';
                         }
 
-                        ds.query(function () {
-                            delete ds.afterQueryInternal[$scope.renderID];
-                        });
-                    }
+                        if (dsParamName != "" && (!filter.isCustom || filter.isCustom === "No")) {
+                            var prepared = $scope.prepareDSParams(filter);
+                            ds.resetParam(prepared.name, dsParamName);
+
+                            ds.afterQueryInternal[$scope.renderID] = function () {
+                                if (ds.params.paging && $scope[ds.params.paging] && $scope[ds.params.paging].gridOptions) {
+                                    var paging = $scope[ds.params.paging].gridOptions.pagingOptions;
+                                    if (!paging)
+                                        return;
+
+                                    if (paging.currentPage * paging.pageSize > ds.totalItems) {
+                                        paging.currentPage = Math.floor(ds.totalItems / paging.pageSize);
+                                    } else if (paging.currentPage == 0 && ds.totalItems > 0) {
+                                        paging.currentPage = 1;
+                                    }
+                                }
+                            }
+
+                            ds.query(function () {
+                                delete ds.afterQueryInternal[$scope.renderID];
+                            });
+                        }
+                    });
                 }
 
                 $scope.initFilters = function (filters) {
@@ -160,53 +162,54 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     if (typeof e != "undefined" && e != null && ['list', 'check', 'relation'].indexOf(filter.filterType) < 0) {
                         $scope.toggleFilterCriteria(e);
                     }
-
-                    var ds = parent[$scope.datasource];
-                    if (!ds) {
-                        return false;
-                    }
-
-                    var dsParamName = "";
-
-                    if (filter.isCustom === "Yes") {
-                        dsParamName = filter.name;
-                    } else {
-                        dsParamName = 'where';
-                    }
-
-                    if (dsParamName != "") {
-                        if (filter.value != "") {
-                            var prepared = $scope.prepareDSParams(filter);
-                            ds.updateParam(prepared.name, {
-                                value: prepared.value,
-                                operator: prepared.operator,
-                                type: prepared.filterType
-                            }, dsParamName);
-                        } else {
-                            ds.resetParam(filter.name, dsParamName);
+                    $scope.datasources.map(function (dataSourceName) {
+                        var ds = parent[dataSourceName];
+                        if (!ds) {
+                            return false;
                         }
 
-                        if (shouldExec) {
-                            if (typeof $scope.beforeQuery == 'function') {
-                                $scope.beforeQuery(ds);
+                        var dsParamName = "";
+
+                        if (filter.isCustom === "Yes") {
+                            dsParamName = filter.name;
+                        } else {
+                            dsParamName = 'where';
+                        }
+
+                        if (dsParamName != "") {
+                            if (filter.value != "") {
+                                var prepared = $scope.prepareDSParams(filter);
+                                ds.updateParam(prepared.name, {
+                                    value: prepared.value,
+                                    operator: prepared.operator,
+                                    type: prepared.filterType
+                                }, dsParamName);
+                            } else {
+                                ds.resetParam(filter.name, dsParamName);
                             }
 
-                            ds.afterQueryInternal[$scope.renderID] = function () {
-                                if (ds.params.paging && $scope[ds.params.paging] && $scope[ds.params.paging].gridOptions) {
-                                    var paging = $scope[ds.params.paging].gridOptions.pagingOptions;
-                                    if (paging.currentPage * paging.pageSize > ds.totalItems) {
-                                        paging.currentPage = Math.floor(ds.totalItems / paging.pageSize);
-                                    } else if (paging.currentPage == 0 && ds.totalItems > 0) {
-                                        paging.currentPage = 1;
+                            if (shouldExec) {
+                                if (typeof $scope.beforeQuery == 'function') {
+                                    $scope.beforeQuery(ds);
+                                }
+
+                                ds.afterQueryInternal[$scope.renderID] = function () {
+                                    if (ds.params.paging && $scope[ds.params.paging] && $scope[ds.params.paging].gridOptions) {
+                                        var paging = $scope[ds.params.paging].gridOptions.pagingOptions;
+                                        if (paging.currentPage * paging.pageSize > ds.totalItems) {
+                                            paging.currentPage = Math.floor(ds.totalItems / paging.pageSize);
+                                        } else if (paging.currentPage == 0 && ds.totalItems > 0) {
+                                            paging.currentPage = 1;
+                                        }
                                     }
                                 }
-                            }
 
-                            ds.query(function () {
-                                delete ds.afterQueryInternal[$scope.renderID];
-                            });
+                                ds.query(function () {
+                                    delete ds.afterQueryInternal[$scope.renderID];
+                                });
+                            }
                         }
-                    }
+                    });
                 }
 
                 /************** Filter Dropdown ***************/
@@ -602,6 +605,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                 $scope.operators = JSON.parse($el.find("data[name=operators]").text());
                 $scope.filters = $scope.initFilters(JSON.parse($el.find("data[name=filters]").text()));
                 $scope.datasource = $el.find("data[name=datasource]").text();
+                $scope.datasources = JSON.parse($el.find("data[name=datasources]").text());
                 $scope.name = $el.find("data[name=name]").text();
                 $scope.renderID = $el.find("data[name=render_id]").text();
                 $scope.dateOptions = {

@@ -4,6 +4,14 @@
         <div class="title-bar">
             <span class="title"><?= $this->title ?></span>
         </div>
+        <div class="print-bar">
+            <div class="btn btn-sm btn-default ac-print">
+                <i class="fa fa-print fa-lg "></i>
+            </div>
+            <div class="btn btn-sm btn-danger ac-exit-print">
+                 Exit Print Preview
+            </div>
+        </div>
         <div class="link-bar">
             <div ng-show='!formSubmitting'>
                 <?= $this->renderLinkBar ?>

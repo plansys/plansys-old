@@ -334,6 +334,17 @@ class DataFilter extends FormField {
         return $template;
     }
 
+    public function datasources() {
+        $ds = $this->builder->findAllField(['type' => 'DataSource']);
+        $return = [];
+        foreach ($ds as $d) {
+            if ($d['params']['where'] == $this->name) {
+                array_push($return, $d['name']);
+            }
+        }
+        return $return;
+    }
+
     /**
      * @return array me-return array hasil proses expression.
      */

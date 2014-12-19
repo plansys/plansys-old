@@ -2,6 +2,7 @@
     <data name="filters" class="hide"><?= json_encode($this->filters); ?></data>
     <data name="operators" class="hide"><?= json_encode($this->filterOperators); ?></data>
     <data name="datasource" class="hide"><?= $this->datasource; ?></data>
+    <data name="datasources" class="hide"><?= json_encode($this->datasources()); ?></data>
     <data name="render_id" class="hide"><?= $this->renderID; ?></data>
     <data name="name" class="hide"><?= $this->name; ?></data>
 
