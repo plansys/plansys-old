@@ -25,6 +25,20 @@ class DevUserForm extends User {
                         ),
                         'type' => 'LinkButton',
                     ),
+                    array (
+                        'renderInEditor' => 'Yes',
+                        'value' => '<div ng-if=\\"!isNewRecord\\" class=\\"separator\\"></div>',
+                        'type' => 'Text',
+                    ),
+                    array (
+                        'label' => 'Hapus',
+                        'buttonType' => 'danger',
+                        'options' => array (
+                            'href' => 'url:/dev/user/del?id={model.id}',
+                            'ng-if' => '!isNewRecord',
+                        ),
+                        'type' => 'LinkButton',
+                    ),
                 ),
                 'title' => '{{ form.title}}',
                 'type' => 'ActionBar',

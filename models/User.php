@@ -29,7 +29,7 @@ class User extends ActiveRecord {
             $roles = array();
 
             $db = Yii::app()->db->createCommand('select DISTINCT role_name from p_user_role p inner join p_role r on p.role_id = r.id and p.user_id = ' . $this->id)->queryAll();
-
+            
             foreach ($db as $r) {
                 $roles[] = "role_" . $r['role_name'] . ".";
             }
@@ -39,6 +39,7 @@ class User extends ActiveRecord {
                 ), $roles);
 
 
+            
             Yii::app()->nfy->subscribe($this->id, $this->username, $category);
             $this->subscribed = true;
         } else {
