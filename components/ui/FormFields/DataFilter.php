@@ -281,13 +281,23 @@ class DataFilter extends FormField {
                 break;
             case "check":
                 if ($filter['value'] != '') {
+
                     $param = [];
                     $psql = [];
                     foreach ($filter['value'] as $k => $p) {
-                        $param[":{$paramName}_{$pcolumn}_{$k}"] = "{$p}";
-                        $psql[] = ":{$paramName}_{$pcolumn}_{$k}";
+                        $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
+                        $psql[] = "{$column} LIKE :{$paramName}_{$pcolumn}_{$k}";
                     }
-                    $sql = "{$column} IN (" . implode(", ", $psql) . ")";
+                    $sql = "(" . implode(" OR ", $psql) . ")";
+
+                    // USING IN...
+//                    $param = [];
+//                    $psql = [];
+//                    foreach ($filter['value'] as $k => $p) {
+//                        $param[":{$paramName}_{$pcolumn}_{$k}"] = "{$p}";
+//                        $psql[] = ":{$paramName}_{$pcolumn}_{$k}";
+//                    }
+//                    $sql = "{$column} IN (" . implode(", ", $psql) . ")";
                 }
                 break;
         }
@@ -366,7 +376,9 @@ class DataFilter extends FormField {
 
                         ## change sequential array to associative array
                         if (is_array($list) && !Helper::is_assoc($list)) {
-                            $list = Helper::toAssoc($list);
+                            if (!isset($list[0]['key'])) {
+                                $list = Helper::toAssoc($list);
+                            }
                         }
                     } else if (is_array($list) && !Helper::is_assoc($list)) {
                         $list = Helper::toAssoc($this->list);

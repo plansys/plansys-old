@@ -4,11 +4,8 @@
 
     <button type="button" class="btn btn-default btn-sm dropdown-toggle">
         <span style="font-size:13px;"> 
-            {{filter.label}}<span ng-hide="filter.label == ''">:</span></span>
+            {{filter.label}}<span ng-hide="filter.label == '' || filter.filterType == 'check'">:</span></span>
         <b ng-hide="filter.filterType == 'check'">{{filter.valueText}}</b>
-        <b ng-hide="filter.filterType != 'check'">
-            {{filter.valueText| limitTo:6 }}{{filter.valueText.length >6? '...' : ''}}
-        </b>
 
 
         <span class="caret" style="margin-left:5px;"></span>
@@ -18,7 +15,7 @@
         <i class="fa fa-times fa-nm" ></i>
     </button>
     <!-- dropdown item -->
-    <div class="dropdown-menu open" style="font-size:13px;">
+    <div class="dropdown-menu open" style="font-size:13px;max-height:240px;">
         <div class="search" ng-show="filter.searchable">
             <input type="text"
                    ng-model="filter.search"
@@ -26,7 +23,7 @@
                    placeholder="Search ..."
                    class="input-block-level search-dropdown form-control" autocomplete="off">
         </div>
-        <ul class="dropdown-menu inner" role="menu">
+        <ul class="dropdown-menu inner" style="overflow-x:hidden;max-height:none;" role="menu">
             <li ng-repeat-start="item in filter.list track by $index " 
                 ng-if="item.value != '---'" class="dropdown-item" 
                 ng-class="{
