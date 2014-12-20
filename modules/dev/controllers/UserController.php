@@ -29,12 +29,21 @@ class UserController extends Controller {
         $this->renderForm("users.role.DevRoleIndex");
     }
 
-    public function actionDelete($id) {
-        $this->loadModel($id, "DevUserForm")->delete();
+    public function actionDel($id) {
+        $user = $this->loadModel($id, "DevUserForm");
+        $user->is_deleted = 1;
+        $user->username = $user->username . " (DELETED - " . time() . ")";
+        $user->update(['is_deleted', 'username']);
+        Yii::app()->nfy->unsubscribe($user->id, null, true);
+        Yii::app()->user->setFlash('info', 'User berhasil dihapus');
+        $this->redirect(['/dev/user/index']);
     }
 
     public function actionUpdate($id) {
         $model = $this->loadModel($id, "DevUserForm");
+        if ($model->is_deleted) {
+            throw new CHttpException(404);
+        }
         
         if (isset($_POST["DevUserForm"])) {
             $userRoles = $model->userRoles;

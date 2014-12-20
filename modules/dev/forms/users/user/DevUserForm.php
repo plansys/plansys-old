@@ -36,6 +36,8 @@ class DevUserForm extends User {
                         'options' => array (
                             'href' => 'url:/dev/user/del?id={model.id}',
                             'ng-if' => '!isNewRecord',
+                            'prompt' => 'Ketik \\\'DELETE\\\' (tanpa kutip) untuk menghapus user ini',
+                            'prompt-if' => 'DELETE',
                         ),
                         'type' => 'LinkButton',
                     ),
