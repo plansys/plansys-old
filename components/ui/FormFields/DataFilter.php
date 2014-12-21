@@ -352,6 +352,7 @@ class DataFilter extends FormField {
                 array_push($return, $d['name']);
             }
         }
+        
         return $return;
     }
 

@@ -291,7 +291,7 @@ class DataSource extends FormField {
             $paramOptions = explode("|", $param);
             $param = array_shift($paramOptions);
 
-            if (!isset($field->params[$param]) && !isset($field->queryParams[$param])) {
+            if ($param != "order" && (!isset($field->params[$param]) && !isset($field->queryParams[$param]))) {
                 $sql = str_replace("[{$param}]", "", $sql);
                 $parsed[$param] = "";
                 continue;
@@ -523,6 +523,7 @@ class DataSource extends FormField {
         if (isset($criteria['order']) && is_string($criteria['order'])) {
             $sql = $criteria['order'];
             $bracket = DataSource::generateTemplate($sql, $postedParams, $field);
+
             $criteria['order'] = str_replace("order by", "", $bracket['sql']);
         }
 
@@ -569,10 +570,12 @@ class DataSource extends FormField {
         $postedParams = array_merge($params, $this->queryParams);
         $relChanges = $this->model->getRelChanges($this->relationTo);
 
+
         $criteria = DataSource::generateCriteria($postedParams, $this->relationCriteria, $this);
         if (@$criteria['params']) {
             $criteria['params'] = array_filter($criteria['params']);
         }
+
 
         $criteriaCount = $criteria;
         if ($this->relationTo == 'currentModel') {
@@ -687,14 +690,14 @@ class DataSource extends FormField {
                 foreach ($field['filters']as $f) {
                     $dateCondition = @$f['defaultOperator'] != '' && @$f['filterType'] == 'date';
                     if (@$f['defaultValue'] != '' || $dateCondition ||
-                            @$f['defaultValueFrom'] != '' || @$f['defaultValueTo'] != ''
+                        @$f['defaultValueFrom'] != '' || @$f['defaultValueTo'] != ''
                     ) {
                         $execQuery = false;
                     }
                 }
             }
         }
-        
+
         if ($execQuery) {
             $this->processQuery();
         } else {
