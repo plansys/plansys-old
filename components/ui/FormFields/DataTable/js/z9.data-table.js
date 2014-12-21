@@ -544,27 +544,22 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             if (typeof $scope.events.beforeAutofill == "function") {
                                 return $scope.events.beforeAutofill(s, e, d);
                             }
-
                             if (s.col == e.col && d.length > 1) {
-                                var ht = $("#" + $scope.renderID).handsontable('getInstance');
-                                var col = columnsInternal[s.col].data;
-                                var seq = Math.abs(d[0][0] - d[1][0]);
+                                var seq = d[1][0] - d[0][0];
 
-                                if (!isNaN(seq) && seq > 0) {
+                                if (!isNaN(seq)) {
                                     var se = (d[d.length - 1][0] * 1);
-                                    $scope.edited = true;
-                                    $timeout(function () {
-                                        for (i = s.row; i <= e.row; i++) {
-                                            $scope.data[i][col] = (se * 1) + seq;
-                                            se = $scope.data[i][col];
-                                        }
-                                        $scope.edited = false;
-                                        ht.render();
-                                    });
+                                    var length = Math.abs(s.row - e.row) + 1;
+                                    var last = d[d.length - 1];
+                                    d.length = 0;
+                                    for (var i = 0; i < length; i++) {
+                                        last = last * 1 + seq * 1;
+                                        d.push([last + ""]);
+                                    }
+                                    
+                                    return d;
                                 }
-                                return false;
                             }
-
                         },
                         beforeChange: function (changes, source) {
                             $scope.edited = true;
@@ -597,6 +592,29 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             }
                         },
                         afterChange: function (changes, source) {
+                            //watch datasource changes
+                            switch (true) {
+                                case source == "edit":
+                                    var c = changes[0];
+                                    break;
+                                case ($scope.dtGroups && $scope.dtGroups.changed):
+                                    break;
+                                default:
+                                    switch (source) {
+                                        case "edit":
+                                            $scope.datasource.data[changes[0]][changes[1]] = changes[3];
+                                            break;
+                                        case "paste":
+                                            changes.map(function (change) {
+                                                $scope.datasource.data[change[0]][change[1]] = change[3];
+                                            });
+                                            break;
+                                        case "loadData":
+                                            $scope.datasource.data = $scope.data;
+                                            break;
+                                    }
+                                    break;
+                            }
 
                             var ht = $("#" + $scope.renderID).handsontable('getInstance');
                             if (typeof $scope.afterCellEdit == "function" && source == "edit") {
@@ -607,18 +625,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
 
                             if (typeof $scope.events.afterChange == "function") {
                                 $scope.events.afterChange(changes, source, $scope.grid());
-                            }
-
-                            //change datasource
-                            switch (true) {
-                                case source == "edit":
-                                    var c = changes[0];
-                                    break;
-                                case ($scope.dtGroups && $scope.dtGroups.changed):
-                                    break;
-                                default:
-                                    $scope.datasource.data = $scope.data;
-                                    break;
                             }
 
                             $timeout(function () {
