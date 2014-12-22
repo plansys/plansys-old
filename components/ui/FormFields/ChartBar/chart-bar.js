@@ -30,14 +30,14 @@ app.directive('psChartBar', function ($timeout) {
                     else {
                         var tmp = {};
                         tmp['name'] = chartData_raw[i].label;
-						
+
                         tmp['data'] = chartData_raw[i].value.map(function (e, i) {
-							var ret = e;
-							try {
-								ret = JSON.parse(e);
-							} catch(e) {
-								ret = e;
-							}
+                            var ret = e;
+                            try {
+                                ret = JSON.parse(e);
+                            } catch (e) {
+                                ret = e;
+                            }
                             return ret;
                         });
 
@@ -50,7 +50,7 @@ app.directive('psChartBar', function ($timeout) {
 
                 return [chartData, xAxis];
             }
-			
+
 
             $scope.fillSeries = function () {
                 $timeout(function () {
@@ -143,7 +143,7 @@ app.directive('psChartBar', function ($timeout) {
                     }
                 }, 0);
             }
-			
+
 
             $scope.chartTitle = $el.find("data[name=chartTitle]").text();
             $scope.chartType = $el.find("data[name=chartType]").text().toLowerCase();
@@ -151,22 +151,21 @@ app.directive('psChartBar', function ($timeout) {
             $scope.series = JSON.parse($el.find("data[name=series]").text());
             $scope.tickSeries = $el.find("data[name=tickSeries]").text();
             $scope.options = JSON.parse($el.find("data[name=options]").text());
-			$scope.data = [];
-			
-			$scope.datasource = parent[$el.find("data[name=datasource]").text()];
-			console.log($scope.datasource.data);
-			$scope.$watch('datasource.data', function (n,o) {
-				if (n !== o && $scope.datasource != null) {
-					$scope.data = $.extend([], $scope.datasource.data, true);
-					$scope.fillSeries();
-				}
-			}, true);
+            $scope.data = [];
 
-			$timeout(function() {			
-				
-				$scope.data = $.extend([], $scope.datasource.data, true);
-				$scope.fillSeries();
-			});
+            $scope.datasource = parent[$el.find("data[name=datasource]").text()];
+            $scope.$watch('datasource.data', function (n, o) {
+                if (n !== o && $scope.datasource != null) {
+                    $scope.data = $.extend([], $scope.datasource.data, true);
+                    $scope.fillSeries();
+                }
+            }, true);
+
+            $timeout(function () {
+
+                $scope.data = $.extend([], $scope.datasource.data, true);
+                $scope.fillSeries();
+            });
         }
     }
 });

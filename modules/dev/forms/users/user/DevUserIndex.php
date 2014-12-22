@@ -168,7 +168,7 @@ class DevUserIndex extends User {
                     'select' => 'u.*,r.role_description',
                     'distinct' => 'false',
                     'alias' => 'u',
-                    'condition' => '{[where]}',
+                    'condition' => 'is_deleted = 0 {AND [where]}',
                     'order' => '{[order]}',
                     'paging' => '{[paging]}',
                     'group' => '',

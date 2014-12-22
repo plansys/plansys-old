@@ -118,8 +118,31 @@ class FormsController extends Controller {
         );
     }
 
-    public function actionFormList() {
-        echo json_encode(FormBuilder::listFile());
+    public function actionFormList($m = '') {
+        $list = FormBuilder::listFile();
+        $return = [];
+        if ($m == '') {
+            foreach ($list as $k => $l) {
+                array_push($return, [
+                    'module' => $l['module'],
+                    'count' => $l['count'],
+                    'items' => [
+                        [
+                            'name' => 'Loading...',
+                            'items' => []
+                        ]
+                    ]
+                ]);
+            }
+        } else {
+            foreach ($list as $k => $l) {
+                if ($m == $l['module']) {
+                    $return = $l['items'];
+                }
+            }
+        }
+
+        echo json_encode($return);
     }
 
     public function actionIndex() {
@@ -150,7 +173,7 @@ class FormsController extends Controller {
         if (!$changed) {
             $postdata = file_get_contents("php://input");
             $post = CJSON::decode($postdata);
-            
+
             $fb = FormBuilder::load($class);
 
             if (isset($post['fields'])) {
@@ -179,8 +202,8 @@ class FormsController extends Controller {
         $fb = FormBuilder::load($class);
         $classPath = $class;
         $class = Helper::explodeLast(".", $class);
-        
-        
+
+
         if (is_subclass_of($fb->model, 'ActiveRecord')) {
             $formType = "ActiveRecord";
             FormsController::setModelFieldList($class::model()->attributesList, "AR", $class);

@@ -89,12 +89,27 @@ class Helper {
     }
 
     // Does not support flag GLOB_BRACE  
-    public static function globRecursive($pattern, $flags = 0) {
+    public static function globRecursive($pattern, $flags = 0, $returnCount = false, $count = 0) {
         $files = glob($pattern, $flags);
-        foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR | GLOB_NOSORT) as $dir) {
-            $files = array_merge($files, Helper::globRecursive($dir . '/' . basename($pattern), $flags));
+        if ($returnCount) {
+            $count = count($files);
         }
-        return $files;
+        foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR | GLOB_NOSORT) as $dir) {
+            $recureGlob = Helper::globRecursive($dir . '/' . basename($pattern), $flags, $returnCount);
+            if ($returnCount) {
+                $files = array_merge($files, $recureGlob['files']);
+                $count--;
+                $count += $recureGlob['count'];
+            } else {
+                $files = array_merge($files, $recureGlob);
+            }
+        }
+
+        if ($returnCount) {
+            return ['files' => $files, 'count' => $count];
+        } else {
+            return $files;
+        }
     }
 
     public static function uniqueArray($array, $key) {

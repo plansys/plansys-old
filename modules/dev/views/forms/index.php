@@ -4,8 +4,6 @@
     <div ui-layout options="{ flow : 'column'}">
         <div size='20%' min-size="200px" class="sidebar">
             <div ui-header style="padding-left:5px;">
-                <div ng-if="!loading" class="btn btn-xs pull-right btn-default"
-                     ng-click="reload()" style="margin-top:3px;">Reload</div>
 
                 <div ng-if="loading" style="float:right;margin-right:4px;">
                     Loading... 
@@ -38,18 +36,36 @@
     </div>
 </div>
 <script type="text/javascript">
-    app.controller("PageController", function ($scope, $http, $localStorage) {
-        $scope.list = null;
+    app.controller("PageController", function ($scope, $http, $localStorage, $timeout) {
+        $scope.list = <?= $this->actionFormList() ?>;
         $scope.active = null;
-        $scope.select = function (item) {
-            $scope.active = item.$modelValue;
-            if ($scope.active.alias != null) {
+        $scope.select = function (scope, item) {
+            $scope.active = scope.$modelValue;
+            if (!!$scope.active && $scope.active.alias != null) {
                 $("iframe").addClass('invisible');
                 $(".loading").removeClass('invisible');
                 $('.loading').removeAttr('style');
             }
+            if (item && item.items && item.items.length > 0 && item.items[0].name == "Loading...") {
+                $http.get(Yii.app.createUrl('/dev/forms/formList', {
+                    m: item.module
+                })).success(function (d) {
+                    item.items = d;
+                });
+                $storage.formBuilder.selected = {
+                    module: item.module
+                };
+            }
         };
+        $scope.init = false;
         $scope.is_selected = function (item) {
+            var s = $storage.formBuilder.selected;
+            var m = item.$modelValue;
+            if (!!s && !!m && !$scope.active && m.module == s.module) {
+                $scope.init = true;
+                return "active";
+            }
+
             if (item.$modelValue === $scope.active) {
                 return "active";
             } else {
@@ -58,18 +74,12 @@
         };
 
         $scope.loading = false;
-        $scope.reload = function () {
-            $scope.loading = true;
-
-            $http.get(Yii.app.createUrl('/dev/forms/formList')).success(function (d) {
-                $scope.list = d;
-                $storage.formFields = d;
-                $scope.loading = false;
-            });
-        }
-
         $storage = $localStorage;
-        $scope.reload();
+        $storage.formBuilder = $storage.formBuilder || {};
+        
+        $timeout(function () {
+            $("[ui-tree-handle].active").click();
+        }, 100);
     });
 
     $(document).ready(function () {

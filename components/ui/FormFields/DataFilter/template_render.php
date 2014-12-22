@@ -2,6 +2,7 @@
     <data name="filters" class="hide"><?= json_encode($this->filters); ?></data>
     <data name="operators" class="hide"><?= json_encode($this->filterOperators); ?></data>
     <data name="datasource" class="hide"><?= $this->datasource; ?></data>
+    <data name="datasources" class="hide"><?= json_encode($this->datasources()); ?></data>
     <data name="render_id" class="hide"><?= $this->renderID; ?></data>
     <data name="name" class="hide"><?= $this->name; ?></data>
 
@@ -18,7 +19,7 @@
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
-                        <li ng-repeat="filter in filters">
+                        <li ng-if="ngIf(filter)" ng-repeat="filter in filters">
                             <a href="" ng-click="toggleShowFilter(filter)">
                                 <label>
                                     <input ng-checked="filter.show"
@@ -33,7 +34,7 @@
             </td>
             <td class="filter-td" style="width:100%">
                 <div class="filter-item-container" ng-repeat="filter in filters" ng-if="filter.show">
-                    <div ng-include="filterTemplate[filter.filterType]"></div>
+                    <div ng-if="ngIf(filter)" ng-include="filterTemplate[filter.filterType]"></div>
                 </div>
             </td>
         </tr>

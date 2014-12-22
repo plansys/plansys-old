@@ -16,6 +16,8 @@ for (i in $scope.$parent.value) {
             item[prop] = templateAttr[prop];
         }
     }
+    
+    console.log(item);
     $scope.$parent.save();
 }
 

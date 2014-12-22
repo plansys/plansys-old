@@ -97,12 +97,14 @@ app.directive('dropDownList', function ($timeout) {
                         $scope.value = $el.find("li a").attr('value');
                         $scope.value = value;
                     }
-					
+
+
                     $el.find("li").each(function () {
                         if ($(this).find("a").attr('value').trim() == $scope.value.trim()) {
                             $scope.text = $(this).find("a").text();
                         }
-					});
+                    });
+                    
                     $scope.toggled(false);
                 };
 
@@ -187,6 +189,7 @@ app.directive('dropDownList', function ($timeout) {
                     function changeFieldList() {
                         $scope.formList = $scope.$eval(attrs.psList);
                         $scope.renderFormList();
+
                         $timeout(function () {
                             $scope.updateInternal($scope.value);
                         }, 0);
@@ -198,8 +201,8 @@ app.directive('dropDownList', function ($timeout) {
                     ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;
-
                         if (typeof ctrl.$viewValue != "undefined") {
+
                             $scope.updateInternal(ctrl.$viewValue);
                         }
                     };

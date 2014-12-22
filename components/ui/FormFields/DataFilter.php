@@ -268,7 +268,7 @@ class DataFilter extends FormField {
                 }
                 break;
             case "list":
-                if ($filter['value'] != '') {
+                if (isset($filter['value']) && $filter['value'] != '') {
                     $sql = "{$column} LIKE :{$paramName}_{$pcolumn}";
                     $param = @$filter['value'];
                 }
@@ -281,13 +281,23 @@ class DataFilter extends FormField {
                 break;
             case "check":
                 if ($filter['value'] != '') {
+
                     $param = [];
                     $psql = [];
                     foreach ($filter['value'] as $k => $p) {
-                        $param[":{$paramName}_{$pcolumn}_{$k}"] = "{$p}";
-                        $psql[] = ":{$paramName}_{$pcolumn}_{$k}";
+                        $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
+                        $psql[] = "{$column} LIKE :{$paramName}_{$pcolumn}_{$k}";
                     }
-                    $sql = "{$column} IN (" . implode(", ", $psql) . ")";
+                    $sql = "(" . implode(" OR ", $psql) . ")";
+
+                    // USING IN...
+//                    $param = [];
+//                    $psql = [];
+//                    foreach ($filter['value'] as $k => $p) {
+//                        $param[":{$paramName}_{$pcolumn}_{$k}"] = "{$p}";
+//                        $psql[] = ":{$paramName}_{$pcolumn}_{$k}";
+//                    }
+//                    $sql = "{$column} IN (" . implode(", ", $psql) . ")";
                 }
                 break;
         }
@@ -334,6 +344,18 @@ class DataFilter extends FormField {
         return $template;
     }
 
+    public function datasources() {
+        $ds = $this->builder->findAllField(['type' => 'DataSource']);
+        $return = [];
+        foreach ($ds as $d) {
+            if (@$d['params']['where'] == $this->name) {
+                array_push($return, $d['name']);
+            }
+        }
+        
+        return $return;
+    }
+
     /**
      * @return array me-return array hasil proses expression.
      */
@@ -350,12 +372,14 @@ class DataFilter extends FormField {
                     $list = [];
 
                     if ($listExpr != "") {
-## evaluate expression
+                        ## evaluate expression
                         $list = $this->evaluate($listExpr, true);
 
-## change sequential array to associative array
+                        ## change sequential array to associative array
                         if (is_array($list) && !Helper::is_assoc($list)) {
-                            $list = Helper::toAssoc($list);
+                            if (!isset($list[0]['key'])) {
+                                $list = Helper::toAssoc($list);
+                            }
                         }
                     } else if (is_array($list) && !Helper::is_assoc($list)) {
                         $list = Helper::toAssoc($this->list);
@@ -368,6 +392,10 @@ class DataFilter extends FormField {
                     $rf->params = $filter['relParams'];
                     $rf->modelClass = $filter['relModelClass'];
                     $rf->relationCriteria = $filter['relCriteria'];
+
+                    //TODO: request relation via ajax
+                    $rf->relationCriteria['limit'] = '9999';
+
                     $rf->idField = $filter['relIdField'];
                     $rf->labelField = $filter['relLabelField'];
                     $rf->builder = $this->builder;
@@ -375,7 +403,10 @@ class DataFilter extends FormField {
                     $list = [];
                     $rawList = $rf->query('', $rf->params);
                     foreach ($rawList as $key => $val) {
-                        $list[$val['value']] = $val['label'];
+                        $list[] = [
+                            'key' => $val['value'],
+                            'value' => $val['label']
+                        ];
                     }
 
                     $this->filters[$k]['list'] = $list;

@@ -119,14 +119,14 @@
     }
 
     function dateTimeRenderer(instance, td, row, col, prop, value, cellProperties) {
+        Handsontable.TextCell.renderer.apply(this, arguments);
         var options = instance.getSettings().columns[col];
         var val = value;
         var oldval = value;
 
         val = formatDate(val, options.inputMask, options.filter, td);
-
+        
         $(td).html(val);
-
         return td;
     }
     Handsontable.renderers.registerRenderer('datetime', dateTimeRenderer);

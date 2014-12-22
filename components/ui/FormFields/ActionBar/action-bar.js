@@ -1,14 +1,33 @@
 $(function () {
     if ($(".action-bar").length > 0) {
 
+        $(".ac-print").click(function () {
+            $("#print-css").attr('href', $("#print-css").attr('u'));
+            html2canvas(document.body, {
+                onrendered: function (canvas) {
+                    $("#content").hide();
+                    $("body").prepend(canvas);
+                    $("body > canvas").click(function () {
+                        location.reload();
+//                        $("#print-css").removeAttr('href');
+//                        $("#content").show();
+//                        $("body > canvas").remove();
+//                        $(window).resize();
+                    });
+                    window.print();
+                }
+            });
+        });
+
+
         $(window).resize(function () {
             $(".action-bar-container").each(function () {
                 var height = $(this).height();
-                
+
                 $(this).css({
                     top: $("#content").offset().top,
                     left: $(this).parents('.container-full').offset().left,
-                    width: $(this).parents('.container-full').width() 
+                    width: $(this).parents('.container-full').width()
                 });
 
                 $(this).parents('.container-full').css({
@@ -44,7 +63,7 @@ $(function () {
             } else {
                 $(".action-bar:eq(0) .action-tab a").each(function () {
                     var top = container.scrollTop() + $($(this).attr('href')).position().top;
-                    if (container.scrollTop() >= top -1) {
+                    if (container.scrollTop() >= top - 1) {
                         active = $(this);
                     }
                 });

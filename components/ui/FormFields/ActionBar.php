@@ -72,7 +72,7 @@ class ActionBar extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return ['action-bar.js'];
+        return ['html2canvas.min.js','action-bar.js'];
     }
 
     /** @var string $toolbarName */

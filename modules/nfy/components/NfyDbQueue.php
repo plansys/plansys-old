@@ -45,7 +45,7 @@ class NfyDbQueue extends NfyQueue {
             'created_on' => date('Y-m-d H:i:s'),
             'body' => $body,
             'identifier' => $identifier
-                ), false);
+            ), false);
 
 
         return $this->formatMessage($message);
@@ -138,10 +138,10 @@ class NfyDbQueue extends NfyQueue {
 
             if (!$subscriptionMessage->save()) {
                 Yii::log(Yii::t('NfyModule.app', "Failed to save message '{msg}' in queue {queue_label} for the subscription {subscription_id}.", array(
-                            '{msg}' => $queueMessage->body,
-                            '{queue_label}' => $this->label,
-                            '{subscription_id}' => $subscription->id,
-                        )), CLogger::LEVEL_ERROR, 'nfy');
+                        '{msg}' => $queueMessage->body,
+                        '{queue_label}' => $this->label,
+                        '{subscription_id}' => $subscription->id,
+                    )), CLogger::LEVEL_ERROR, 'nfy');
                 $success = false;
             }
 
@@ -184,15 +184,15 @@ class NfyDbQueue extends NfyQueue {
 
         if ($status === null) {
             $messages = NfyDbMessage::model()
-                    ->withQueue($this->id)
-                    ->withSubscriber($subscriber_id)
-                    ->findAll(array('index' => $pk, 'limit' => $limit, 'order' => 't.id desc'));
+                ->withQueue($this->id)
+                ->withSubscriber($subscriber_id)
+                ->findAll(array('index' => $pk, 'limit' => $limit, 'order' => 't.id desc'));
         } else {
             $messages = NfyDbMessage::model()
-                    ->withQueue($this->id)
-                    ->withSubscriber($subscriber_id)
-                    ->withStatus($status, $this->timeout)
-                    ->findAll(array('index' => $pk, 'limit' => $limit, 'order' => 't.id desc'));
+                ->withQueue($this->id)
+                ->withSubscriber($subscriber_id)
+                ->withStatus($status, $this->timeout)
+                ->findAll(array('index' => $pk, 'limit' => $limit, 'order' => 't.id desc'));
         }
         return NfyDbMessage::createMessages($messages);
     }
@@ -231,8 +231,8 @@ class NfyDbQueue extends NfyQueue {
     protected function receiveInternal($subscriber_id = null, $limit = -1, $mode = self::GET_RESERVE) {
         $pk = NfyDbMessage::model()->tableSchema->primaryKey;
         $trx = NfyDbMessage::model()
-                        ->getDbConnection()
-                        ->getCurrentTransaction() !== null ? null : NfyDbMessage::model()->getDbConnection()->beginTransaction();
+                ->getDbConnection()
+                ->getCurrentTransaction() !== null ? null : NfyDbMessage::model()->getDbConnection()->beginTransaction();
 
 
         $message = NfyDbMessage::model()->withQueue($this->id)->withSubscriber($subscriber_id);
@@ -393,11 +393,11 @@ class NfyDbQueue extends NfyQueue {
     public function unsubscribe($subscriber_id, $categories = null, $permanent = true) {
         $trx = NfyDbSubscription::model()->getDbConnection()->getCurrentTransaction() !== null ? null : NfyDbSubscription::model()->getDbConnection()->beginTransaction();
         $subscription = NfyDbSubscription::model()->withQueue($this->id)->withSubscriber($subscriber_id)->matchingCategory($categories)->find();
+      
 
         if ($subscription !== null) {
             if ($permanent) {
-                NfyDbSubscriptionCategory::model()->deleteAllByAttributes(array('subscription_id' => $subscription->id));
-                $subscription->delete();
+                NfyDbSubscription::model()->deleteAllByAttributes(array('label' => $subscription->label));
             } else
                 $subscription->saveAttributes(array('is_deleted' => true));
         }

@@ -1,21 +1,18 @@
 <?php
 
-class NfyWidget extends Widget
-{
+class NfyWidget extends Widget {
 
     public $icon = "fa fa-newspaper-o fa-2x ";
     public $badge = '';
 
-    public function includeJS()
-    {
+    public function includeJS() {
         return [
             'sse-client.js',
             'nfy-widget.js'
         ];
     }
 
-    public function actionRead($nid)
-    {
+    public function actionRead($nid) {
         $nfy = Yii::app()->nfy->read($nid, true);
         $now = new DateTime('now');
         $body = json_decode($nfy->body, true);
@@ -26,11 +23,11 @@ class NfyWidget extends Widget
         } else {
             $body['url'] .= '&nfyid=' . $nfy->id;
         }
-        Yii::app()->controller->redirect($body['url']);
+        
+        Yii::app()->controller->redirect(Yii::app()->baseUrl .  $body['url']);
     }
 
-    public function actionMarkRead()
-    {
+    public function actionMarkRead() {
         $sql = 'select id from p_nfy_subscriptions where subscriber_id = ' . Yii::app()->user->id;
         $sub_id = Yii::app()->db->createCommand($sql)->queryScalar();
 
@@ -40,20 +37,19 @@ class NfyWidget extends Widget
         Yii::app()->controller->redirect(['widget/NfyWidget.history']);
     }
 
-    public function actionHistory()
-    {
+    public function actionHistory() {
         $sql = 'select id from p_nfy_subscriptions where subscriber_id = ' . Yii::app()->user->id;
         $_GET['sub_id'] = Yii::app()->db->createCommand($sql)->queryScalar();
         Yii::app()->controller->renderForm('application.forms.NfyMessagesIndex');
     }
 
-    public function actionHistoryView($id)
-    {
+    public function actionHistoryView($id) {
         $model = Yii::app()->controller->loadModel($id, "application.forms.NfyMessagesForm");
         Yii::app()->controller->renderForm("application.forms.NfyMessagesForm", $model);
     }
 
     public function actionMail() {
+        
     }
 
 }

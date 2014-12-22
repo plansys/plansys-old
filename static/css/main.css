@@ -1461,6 +1461,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 }
 .data-grid-category .ngHeaderContainer {
     height:24px !important;
+    background:transparent !important;
 }
 .data-grid-category .ngTopPanel,
 .data-grid-table .ngTopPanel {
@@ -1575,7 +1576,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     width: 1px;
     height: 18px;
     margin: -5px 3px;
-    
+
 }
 
 /********************************** DATA FILTER **************************************/
@@ -2148,6 +2149,10 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
     overflow-x:hidden;
     padding-bottom:20px;
 }
+.ac-exit-print {
+    display:none;
+}
+
 
 .action-bar {
     background:white;
@@ -2207,11 +2212,16 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
     background:#ececeb;
 }
 
-.action-bar .link-bar  {
+.action-bar .link-bar,.action-bar .print-bar  {
     float:right;
     text-align:right;
     padding:7px 5px;
     height:49px;
+}
+
+.action-bar .print-bar  {
+    border-left:1px solid #ececeb;
+    padding:9px 7px 5px 7px;
 }
 
 .action-bar .link-bar .separator,
