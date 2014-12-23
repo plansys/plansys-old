@@ -7,6 +7,7 @@ Handsontable.DataTableGroups = function (settings) {
         groupArgs: [],
         groupTree: {},
         totals: [],
+        grouped: false,
         totalGroups: null,
         prepare: function () {
             var gc = this.groupCols;
@@ -24,7 +25,7 @@ Handsontable.DataTableGroups = function (settings) {
             }
 
             // prepare total group
-            if (this.totalGroups) {
+            if (!!this.totalGroups) {
                 var tg = this.totalGroups.split(",");
                 this.totalGroups = {};
                 for (i in this.columns) {
@@ -128,7 +129,7 @@ Handsontable.DataTableGroups = function (settings) {
         },
         prepareTotalRow: function (row) {
             var $scope = this.scope;
-            if (this.totalGroups) {
+            if (!!this.totalGroups) {
                 for (i in this.columns) {
                     row[this.columns[i].name] = '';
                 }
@@ -169,7 +170,7 @@ Handsontable.DataTableGroups = function (settings) {
             }
         },
         group: function (instance) {
-            if (!instance)
+            if (!instance || this.grouped)
                 return;
 
             var cur;
@@ -249,7 +250,7 @@ Handsontable.DataTableGroups = function (settings) {
                 $scope.data.splice(newrows[i]['__dt_idx'], 0, newrows[i]);
             }
 
-            if (this.totalGroups) {
+            if (!!this.totalGroups) {
                 // Add Total
                 for (var i = $scope.data.length - 1; i >= 0; i--) {
                     if (i > 0) {
@@ -320,6 +321,7 @@ Handsontable.DataTableGroups = function (settings) {
             instance.mergeCells = new Handsontable.MergeCells(cellMerge);
             instance.render();
             var plugin = this;
+            this.grouped = true;
             $timeout(function () {
                 plugin.calculate();
                 instance.render();

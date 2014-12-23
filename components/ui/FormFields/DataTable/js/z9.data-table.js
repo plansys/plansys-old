@@ -114,6 +114,21 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 var categories = [];
                 var lastCat = '';
 
+                // add columns from datasource when columns definition is empty
+                if ($scope.columns.length == 0) {
+                    if ($scope.dataSource1.data && $scope.dataSource1.data.length > 0) {
+                        for (i in $scope.dataSource1.data[0]) {
+                            if (i == 'id')
+                                continue;
+
+                            $scope.columns.push({
+                                name: i,
+                                label: i
+                            });
+                        }
+                    }
+                }
+
                 // assemble each columns -- start
                 for (i in $scope.columns) {
                     var c = $scope.columns[i];
@@ -271,7 +286,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 }
                 // assemble each columns -- end
 
-
                 $scope.fixHeight = function () {
                     $el.find(".dataTable").height($el.find(".htContainer .htCore:eq(0)").height() + 22);
                 }
@@ -310,13 +324,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     var sl = $scope.$container.scrollLeft();
                     var st = $scope.$container.scrollTop();
                     var rh = $el.find('.rowHeader:eq(0)');
-                    var cl = $el.find('.ht_clone_left'); 
+                    var cl = $el.find('.ht_clone_left');
                 }
                 $scope.$container.on('scroll', function () {
                     $scope.fixClone();
                 });
-
-
 
                 // fixHead
                 //TODO: still broken, fix this
@@ -427,7 +439,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         $scope.gridOptions.pagingOptions.currentPage--;
                     }
                 }
-
 
                 // Load Relation -- start
                 function loadRelation(callback) {
@@ -545,6 +556,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         delete($scope.gridOptions.groups);
 
                         if ($scope.data.length > 0) {
+                            if (!$scope.getInstance()) {
+                                $timeout(function () {
+                                    $scope.ht = $scope.getInstance();
+                                    $scope.dtGroups.group($scope.ht);
+                                });
+                            }
+                        } else {
                             $scope.dtGroups.group($scope.ht);
                         }
                     }
@@ -565,6 +583,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         cells: function (row, col, prop) {
                             var cellProperties = {};
                             if ($scope.dtGroups && $scope.data[row] && $scope.data[row]['__dt_flg']) {
+                                        
                                 switch ($scope.data[row]['__dt_flg']) {
                                     case 'E':
                                         cellProperties.className = 'empty';
@@ -578,6 +597,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                         break;
                                     case 'T':
                                         var c = $scope.dtGroups.totalGroups[$scope.dtGroups.columns[col].name];
+                                        
                                         if (c.trim().substr(0, 4) != 'span') {
                                             cellProperties.type = 'numeric';
                                             cellProperties.format = '0,0.00';
