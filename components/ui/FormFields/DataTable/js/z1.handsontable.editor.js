@@ -4,7 +4,6 @@
     /*************** RELATION TYPE *******************/
     function relationRenderer(instance, td, row, col, prop, value, cellProperties) {
         Handsontable.AutocompleteCell.renderer.apply(this, arguments);
-
         return td;
     }
     Handsontable.renderers.registerRenderer('relation', relationRenderer);

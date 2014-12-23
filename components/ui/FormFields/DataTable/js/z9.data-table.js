@@ -175,7 +175,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                                 var labels = [];
                                                 for (i in data) {
                                                     labels.push(data[i].label);
-                                                    $scope.lastRelList[data[i].label] = data[i].value;
+                                                    $scope.lastRelList[data[i].label.trim('"')] = data[i].value;
                                                 }
                                                 if (labels.length && labels.length > 0) {
                                                     process(labels);

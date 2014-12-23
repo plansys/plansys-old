@@ -81,7 +81,6 @@ Handsontable.DataTableGroups = function (settings) {
             }
 
             function sum(col) {
-                console.log("*************** SUM: " + col + " " + row[col]);
                 if (isNaN(parseFloat(row[col]))) {
                     return calc[col];
                 }
