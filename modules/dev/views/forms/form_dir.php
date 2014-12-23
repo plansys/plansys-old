@@ -2,7 +2,7 @@
     select(this, item);" ng-class="is_selected(this)">
 
     <div class="ui-tree-handle-info" ng-if="!isNaN(item.count)">
-        {{item.count}} form{{item.items.length > 1 ? 's' : ''}}
+        {{item.count ? item.count : item.items.length }} form{{item.items.length > 1 ? 's' : ''}}
     </div>
 
     <i ng-show="this.collapsed" class="fa fa-caret-right"></i>
