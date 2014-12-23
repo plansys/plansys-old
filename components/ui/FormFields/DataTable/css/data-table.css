@@ -94,13 +94,14 @@
     box-sizing: content-box;
     min-height: 23px !important;
     line-height: 23px !important;
+    padding: 0px 8px 0px 8px;
 }
 
-.data-table-container .ht_clone_top {
+.data-table-container .ht_clone_top,
+.data-table-container .ht_clone_left,
+.data-table-container .ht_clone_corner {
     display: none;
 }
-
-
 
 [ps-data-table] .ht_top table {
     border-bottom: 1px solid #ddd;

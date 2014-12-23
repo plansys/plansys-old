@@ -115,6 +115,6 @@
 
         <div ng-class="{invisible: data.length == 0}"  
              id="<?= $this->renderID ?>" class="dataTable" 
-             style="{{ relAvailable ? '' : 'overflow:hidden;'}}"></div>
+             style=""></div>
     </div>
 </div>
