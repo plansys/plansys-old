@@ -1254,7 +1254,7 @@ EOF;
 
         ##  add files in Root Form dir
         $forms_dir = Yii::getPathOfAlias("app.forms") . DIRECTORY_SEPARATOR;
-        $glob = Helper::globRecursive($item_dir . "*.php", 0, true);
+        $glob = Helper::globRecursive($forms_dir . "*.php", 0, true);
         $items = $glob['files'];
         foreach ($items as $k => $f) {
             $f = realpath($f);
