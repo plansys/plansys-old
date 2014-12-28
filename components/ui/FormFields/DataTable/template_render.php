@@ -19,8 +19,6 @@
                  style="height:50px;display:none;"></div>
             <div class="data-grid-paging"
                  ng-if="gridOptions.enablePaging || gridOptions.enableExport">
-
-
                 <div class="data-grid-pageinfo pull-right" ng-if="gridOptions.enablePaging">
                     <div class="btn-group pull-right" style="padding-top:2px;margin-left:5px;">
                         <button ng-click="datasource.query()"

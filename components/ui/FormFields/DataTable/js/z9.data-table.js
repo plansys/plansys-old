@@ -326,9 +326,16 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     var rh = $el.find('.rowHeader:eq(0)');
                     var cl = $el.find('.ht_clone_left');
                 }
+                $scope.fixComments = function () {
+                    $("body > .htComments").css('margin-top', $scope.$container.scrollTop() * -1);
+                }
+
                 $scope.$container.on('scroll', function () {
                     $scope.fixClone();
+                    $scope.fixComments();
                 });
+
+
 
                 // fixHead
                 //TODO: still broken, fix this
@@ -520,9 +527,15 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
 
                 // watch datasource changes
                 $scope.$watch('datasource.data', function (n, o) {
+
                     if (n !== o && !$scope.edited && !$scope.loadingRelation) {
                         $scope.loaded = true;
                         var executeGroup = ($scope.dtGroups);
+
+                        if (executeGroup && $scope.dtGroups.grouped) {
+                            $scope.dtGroups.ungroup($scope.ht);
+                        }
+
                         prepareData(function () {
                             if (executeGroup) {
                                 $scope.dtGroups.group($scope.ht);
@@ -537,7 +550,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         });
                     }
                 }, true);
-
 
                 // Generate DataTable Options -- start
                 $timeout(function () {
@@ -583,7 +595,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         cells: function (row, col, prop) {
                             var cellProperties = {};
                             if ($scope.dtGroups && $scope.data[row] && $scope.data[row]['__dt_flg']) {
-                                        
+
                                 switch ($scope.data[row]['__dt_flg']) {
                                     case 'E':
                                         cellProperties.className = 'empty';
@@ -597,7 +609,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                         break;
                                     case 'T':
                                         var c = $scope.dtGroups.totalGroups[$scope.dtGroups.columns[col].name];
-                                        
+
                                         if (c.trim().substr(0, 4) != 'span') {
                                             cellProperties.type = 'numeric';
                                             cellProperties.format = '0,0.00';
@@ -691,7 +703,20 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                             });
                                             break;
                                         case "loadData":
-                                            $scope.datasource.data = $scope.data;
+                                            //clean grouped data
+                                            $scope.cleanedData = angular.copy($scope.data);
+                                            if ($scope.dtGroups) {
+                                                $scope.cleanedData.forEach(function (item, idx) {
+                                                    if (item['__dt_flg'] != "Z") {
+                                                        $scope.cleanedData.splice(idx, 1);
+                                                    } else {
+                                                        delete item['__dt_flg'];
+                                                    }
+                                                });
+                                            }
+                                            $scope.edited = true;
+
+                                            $scope.datasource.data = $scope.cleanedData;
                                             break;
                                     }
                                     break;
@@ -709,7 +734,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             }
 
                             $timeout(function () {
-                                if ($scope.dtGroups && !$scope.dtGroups.changed) {
+                                if (false && $scope.dtGroups && !$scope.dtGroups.changed && source != 'loadData') {
                                     $scope.dtGroups.calculate(changes, source, ht);
                                     ht.render();
                                 }
@@ -769,7 +794,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             }
 
                             //FIX HEIGHT OVERFLOW
-
                         },
                         beforeColumnSort: function (column, order) {
                             if (typeof $scope.events.beforeColumnSort == "function") {

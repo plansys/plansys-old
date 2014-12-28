@@ -70,6 +70,7 @@ Handsontable.DataTableGroups = function (settings) {
 
             function span(text, col) {
                 if (i == plugin.columns[0].name || column == plugin.columns[0].name) {
+                    
                     var lvstr = "&nbsp;";
                     for (var ll = 1; ll <= calc['__dt_lvl']; ll++) {
                         lvstr += "&nbsp;&nbsp;";
@@ -169,6 +170,22 @@ Handsontable.DataTableGroups = function (settings) {
                     break;
             }
         },
+        ungroup: function (instance) {
+            if (!instance || !this.grouped)
+                return;
+
+            var $scope = this.scope;
+            instance.mergeCells = new Handsontable.MergeCells([]);
+            instance.render();
+
+            $scope.data.forEach(function (item, idx) {
+                if (item['__dt_flg'] != 'Z') {
+                    $scope.data.splice(idx, i);
+                }
+            });
+            
+            this.grouped = false;
+        },
         group: function (instance) {
             if (!instance || this.grouped)
                 return;
@@ -250,7 +267,7 @@ Handsontable.DataTableGroups = function (settings) {
                 $scope.data.splice(newrows[i]['__dt_idx'], 0, newrows[i]);
             }
 
-            if (!!this.totalGroups) {
+            if (false && !!this.totalGroups) {
                 // Add Total
                 for (var i = $scope.data.length - 1; i >= 0; i--) {
                     if (i > 0) {
@@ -283,6 +300,7 @@ Handsontable.DataTableGroups = function (settings) {
                                 newrow['__dt_lvl'] = newrow['__dt_grp'].length;
                                 $scope.data.push(newrow);
                             } else {
+
                                 // add total in last row of each group
                                 var p = 0;
                                 var lastgrp = angular.copy(last['__dt_grp']);
@@ -323,7 +341,10 @@ Handsontable.DataTableGroups = function (settings) {
             var plugin = this;
             this.grouped = true;
             $timeout(function () {
-                plugin.calculate();
+                if (false && !!this.totalGroups) {
+                    plugin.calculate();
+                }
+
                 instance.render();
 
                 plugin.changed = false;
