@@ -883,6 +883,7 @@ class ActiveRecord extends CActiveRecord {
         if (!is_array($data) || count($data) == 0)
             return;
 
+        
         $table = $model::model()->tableSchema->name;
         $builder = Yii::app()->db->schema->commandBuilder;
         $command = $builder->createMultipleInsertCommand($table, $data);

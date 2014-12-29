@@ -25,15 +25,15 @@
         var col = opt.name;
         var $scope = opt.scope;
 
-        var label = $(".autocompleteEditor td.current").text();
+        var label = $(".autocompleteEditor td.current").text().trim();
         var value = $scope.lastRelList[label];
-
+        
         if ($scope.datasource.data.length != $scope.data.length) {
             var newrow = angular.copy($scope.data[row]);
             $scope.datasource.data.splice(row, 0, newrow);
         }
-
         $scope.datasource.data[row][col] = value;
+
         Handsontable.editors.AutocompleteEditor.prototype.close.apply(this, arguments);
 
     }
