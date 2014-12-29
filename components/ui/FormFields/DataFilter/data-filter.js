@@ -159,9 +159,11 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     $scope.changeValueText(filter);
 
                     shouldExec = typeof shouldExec == "undefined" ? true : shouldExec;
-                    if (typeof e != "undefined" && e != null && ['list', 'check', 'relation'].indexOf(filter.filterType) < 0) {
+                    if (typeof e != "undefined" && e != null &&
+                            ['list', 'check', 'relation'].indexOf(filter.filterType) < 0) {
                         $scope.toggleFilterCriteria(e);
                     }
+
                     $scope.datasources.map(function (dataSourceName) {
                         var ds = parent[dataSourceName];
                         if (!ds) {
@@ -707,11 +709,14 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     });
 
                     if (defaultValueAvailable) {
-                        var ds = parent[$scope.datasource];
-                        if (ds) {
-                            ds.query(function () {
-                            });
-                        }
+
+
+                        $scope.datasources.map(function (dataSourceName) {
+                            var ds = parent[dataSourceName];
+                            if (ds) {
+                                ds.query();
+                            }
+                        });
                     }
                 });
 

@@ -526,7 +526,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 // watch datasource changes
                 $scope.$watch('datasource.data', function (n, o) {
 
-                    if (n !== o && (!$scope.edited  || $scope.data.length == 0) && !$scope.loadingRelation) {
+                    if (n !== o && (!$scope.edited || $scope.data.length == 0) && !$scope.loadingRelation) {
                         $scope.loaded = true;
                         var executeGroup = ($scope.dtGroups);
 
