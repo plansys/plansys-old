@@ -98,7 +98,7 @@ class User extends ActiveRecord {
             return [$this->role];
         }
         
-        $sql = "select * from p_role r inner join p_user_role p on r.id = p.role_id where p.user_id = {$uid} order by is_default_role asc";
+        $sql = "select *,r.id from p_role r inner join p_user_role p on r.id = p.role_id where p.user_id = {$uid} order by is_default_role asc";
         $roles = Yii::app()->db->createCommand($sql)->queryAll();
         if ($originalSorting) {
             return $roles;
@@ -110,11 +110,8 @@ class User extends ActiveRecord {
                 $idx = $k;
                 break;
             }
-			
-			$roles[$k]['id'] = $role['role_id'];
-			
         }
-
+		
         $role = array_splice($roles, $idx, 1);
         array_unshift($roles, $role[0]);
 
