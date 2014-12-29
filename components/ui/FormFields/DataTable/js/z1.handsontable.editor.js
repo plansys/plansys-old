@@ -11,7 +11,6 @@
     var RelationEditor = Handsontable.editors.AutocompleteEditor.prototype.extend();
     RelationEditor.prototype.open = function () {
         var opt = this.instance.getSettings().columns[this.instance.getActiveEditor().col];
-        opt.scope.triggerWatch = false;
         opt.originalValue = this.originalValue;
 
         Handsontable.editors.AutocompleteEditor.prototype.open.apply(this, arguments);
@@ -20,27 +19,21 @@
     RelationEditor.prototype.close = function () {
         var ins = this.instance;
         var s = ins.getActiveEditor();
-        var col = s.col;
+        var colIdx = s.col;
         var row = s.row;
-        var opt = this.instance.getSettings().columns[col];
+        var opt = this.instance.getSettings().columns[colIdx];
+        var col = opt.name;
+        var $scope = opt.scope;
 
-        setTimeout(function () {
-            var label = ''
-            if (opt.scope.datasource.data[row]) {
-                label = opt.scope.datasource.data[row][opt.name + "_label"];
-            } else {
-                return false;
-            }
-            var value = opt.scope.lastRelList[label];
-            if (typeof value != "undefined") {
-                opt.scope.datasource.data[row][opt.name] = value;
-            } else {
-                ins.setDataAtCell(row, col, opt.originalValue);
-            }
-            setTimeout(function () {
-                opt.scope.triggerWatch = true;
-            }, 0);
-        }, 0);
+        var label = $(".autocompleteEditor td.current").text();
+        var value = $scope.lastRelList[label];
+
+        if ($scope.datasource.data.length != $scope.data.length) {
+            var newrow = angular.copy($scope.data[row]);
+            $scope.datasource.data.splice(row, 0, newrow);
+        }
+
+        $scope.datasource.data[row][col] = value;
         Handsontable.editors.AutocompleteEditor.prototype.close.apply(this, arguments);
 
     }
@@ -124,7 +117,7 @@
         var oldval = value;
 
         val = formatDate(val, options.inputMask, options.filter, td);
-        
+
         $(td).html(val);
         return td;
     }

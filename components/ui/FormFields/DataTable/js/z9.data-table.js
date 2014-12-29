@@ -399,7 +399,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     }
                 }
 
-
                 // pagingOptions
                 if ($scope.gridOptions['enablePaging']) {
                     $scope.gridOptions.pagingOptions = {
@@ -525,7 +524,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
 
                 // watch datasource changes
                 $scope.$watch('datasource.data', function (n, o) {
-
                     if (n !== o && (!$scope.edited || $scope.data.length == 0) && !$scope.loadingRelation) {
                         $scope.loaded = true;
                         var executeGroup = ($scope.dtGroups);
@@ -682,22 +680,27 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             }
                             $scope.fixScroll();
                         },
+                        afterRemoveRow: function (index, amount) {
+                            $scope.datasource.data.splice(index, amount);
+                        },
                         afterChange: function (changes, source) {
                             //watch datasource changes
                             switch (true) {
-                                case source == "edit":
-                                    var c = changes[0];
-                                    break;
                                 case ($scope.dtGroups && $scope.dtGroups.changed):
                                     break;
                                 default:
                                     switch (source) {
                                         case "edit":
-                                            $scope.datasource.data[changes[0]][changes[1]] = changes[3];
+                                            $timeout(function () {
+                                                var c = changes[0];
+                                                $scope.datasource.data[c[0]][c[1]] = c[3];
+                                            });
                                             break;
                                         case "paste":
-                                            changes.map(function (change) {
-                                                $scope.datasource.data[change[0]][change[1]] = change[3];
+                                            $timeout(function () {
+                                                changes.map(function (change) {
+                                                    $scope.datasource.data[change[0]][change[1]] = change[3];
+                                                });
                                             });
                                             break;
                                         case "loadData":
