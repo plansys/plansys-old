@@ -110,6 +110,9 @@ class User extends ActiveRecord {
                 $idx = $k;
                 break;
             }
+			
+			$roles[$k]['id'] = $role['role_id'];
+			
         }
 
         $role = array_splice($roles, $idx, 1);
