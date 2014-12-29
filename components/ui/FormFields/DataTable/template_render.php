@@ -110,7 +110,8 @@
              style="text-align:center;padding:20px;color:#ccc;font-size:25px;">
             &mdash; {{ !datasource.loading ? 'Data Empty' : 'Loading Data'; }} &mdash;
         </div>
-
+        
+        
         <div ng-class="{invisible: data.length == 0}"  
              id="<?= $this->renderID ?>" class="dataTable" 
              style=""></div>
