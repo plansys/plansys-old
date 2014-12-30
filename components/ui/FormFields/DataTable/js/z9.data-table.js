@@ -286,8 +286,18 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 }
                 // assemble each columns -- end
 
+                $scope.fhTimer = null;
                 $scope.fixHeight = function () {
-                    $el.find(".dataTable").height($el.find(".htContainer .htCore:eq(0)").height() + 22);
+                    if ($scope.fhTimer != null) {
+                        clearTimeout($scope.fhTimer);
+                    }
+
+                    $scope.fhTimer = setTimeout(function () {
+                        $el
+                                .find(".dataTable")
+                                .height($el.find(".htContainer .htCore:eq(0)").height() + 22)
+                                .css('overflow', 'visible');
+                    }, 100);
                 }
 
                 $scope.fixScroll = function () {

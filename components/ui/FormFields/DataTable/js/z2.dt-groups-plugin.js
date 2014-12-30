@@ -70,7 +70,7 @@ Handsontable.DataTableGroups = function (settings) {
 
             function span(text, col) {
                 if (i == plugin.columns[0].name || column == plugin.columns[0].name) {
-                    
+
                     var lvstr = "&nbsp;";
                     for (var ll = 1; ll <= calc['__dt_lvl']; ll++) {
                         lvstr += "&nbsp;&nbsp;";
@@ -183,147 +183,66 @@ Handsontable.DataTableGroups = function (settings) {
                     $scope.data.splice(idx, i);
                 }
             });
-            
+
             this.grouped = false;
         },
         group: function (instance) {
-            if (!instance || this.grouped)
+            if (!instance)
                 return;
 
-            var cur;
             var cols = this.columns;
             var $scope = this.scope;
             var $timeout = this.scope.$timeout;
-            this.groupArgs = [];
-            for (i in $scope.data) {
-                $scope.data[i]['__dt_idx'] = i;
-                $scope.data[i]['__dt_flg'] = 'Z';
+            var grouped = [];
+            var cellMerge = [];
+            var groupTree = {
+                groups: {},
+                rows: []
+            };
+
+            // generate group cols
+            var groups = [];
+            for (i in this.groupCols) {
+                groups.push(this.groupCols[i]);
             }
 
-            // sort all groups
-            this.sortGroups();
+            // group current data
+            var ridx = 0;
+            $scope.data.forEach(function (item, idx) {
+                // generate groups
+                var cur = groupTree;
+                groups.forEach(function (g, gidx) {
+                    var group = item[g];
 
-            $scope.edited = false;
-
-            this.groupTree = {};
-            var newrows = [];
-            var idx = 0;
-
-            for (i in $scope.data) {
-                var row = $scope.data[i];
-                cur = this.groupTree;
-
-                var grp = [];
-                for (var lv = 0; lv < this.groupArgs.length; lv++) {
-                    var lvcol = this.groupArgs[lv];
-                    var isLastLevel = this.groupArgs.length - 1 == lv;
-                    var header = row[lvcol];
-
-
-                    if (header == '' || !header)
-                        break;
-
-                    grp.push(header);
-
-                    if (!cur[header]) {
-                        cur[header] = {
-                            items: {},
-                            total: {}
-                        }
-
+                    if (!cur.groups[group]) {
+                        // add new group
                         var lvstr = "&nbsp;";
-                        for (var ll = 1; ll <= lv; ll++) {
+                        for (var ll = 0; ll <= gidx; ll++) {
                             lvstr += "&nbsp;&nbsp;";
                         }
                         lvstr += ' <i class="gr fa fa-caret-down fa-lg "></i> &nbsp;&nbsp;&nbsp;';
-
                         var newrow = {};
-                        newrow[this.columns[0].name] = lvstr + header;
+                        newrow[$scope.columns[0].name] = lvstr + group;
                         newrow['__dt_flg'] = "G";
-                        newrow['__dt_idx'] = i;
-                        newrow['__dt_lvl'] = lv;
-                        newrow['__dt_grp'] = grp;
-                        newrows.push(newrow);
-                        idx += 1;
+                        newrow['__dt_lvl'] = gidx;
+                        grouped.push(newrow);
+
+                        cur.groups[group] = {
+                            group: newrow,
+                            groups: {},
+                            rows: []
+                        };
                     }
+                    cur = cur.groups[group];
+                });
 
-                    cur = cur[header];
-
-                    if (isLastLevel) {
-                        row['__dt_lvl'] = lv;
-                        row['__dt_grp'] = grp;
-                        cur.items[idx++] = row;
-                    }
-                }
-            }
-
-            // mark data group as changed
-            this.changed = true;
-            var colLength = this.columns.length;
-            var cellMerge = [];
-
-            // Merge All
-            for (var i = newrows.length - 1; i >= 0; i--) {
-                $scope.data.splice(newrows[i]['__dt_idx'], 0, newrows[i]);
-            }
-
-            if (false && !!this.totalGroups) {
-                // Add Total
-                for (var i = $scope.data.length - 1; i >= 0; i--) {
-                    if (i > 0) {
-                        var row = $scope.data[i];
-                        var last = $scope.data[i - 1];
-
-                        if ((last['__dt_flg'] == "Z" && row['__dt_flg'] == "G") ||
-                                i == $scope.data.length - 1) {
-
-                            var newrow = angular.copy(last);
-                            newrow['__dt_flg'] = "T";
-                            this.prepareTotalRow(newrow);
-
-                            if (i == $scope.data.length - 1) {
-                                // add total in very last row
-                                var lastgrp = angular.copy(last['__dt_grp']);
-
-                                if (!lastgrp)
-                                    continue;
-
-                                for (l in last['__dt_grp']) {
-                                    var newrow = angular.copy(newrow);
-                                    newrow['__dt_grp'] = angular.copy(lastgrp);
-                                    newrow['__dt_lvl'] = newrow['__dt_grp'].length;
-                                    $scope.data.push(newrow);
-                                    lastgrp.pop();
-                                }
-                                var newrow = angular.copy(newrow);
-                                newrow['__dt_grp'] = angular.copy(lastgrp);
-                                newrow['__dt_lvl'] = newrow['__dt_grp'].length;
-                                $scope.data.push(newrow);
-                            } else {
-
-                                // add total in last row of each group
-                                var p = 0;
-                                var lastgrp = angular.copy(last['__dt_grp']);
-                                for (var l = last['__dt_lvl']; l >= row['__dt_lvl']; l--) {
-                                    var newrow = angular.copy(newrow);
-                                    newrow['__dt_grp'] = angular.copy(lastgrp);
-                                    newrow['__dt_lvl'] = newrow['__dt_grp'].length;
-                                    $scope.data.splice(i, 0, newrow);
-                                    lastgrp.pop();
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Assign total row to groupTree
-                for (i in $scope.data) {
-                    if ($scope.data[i]['__dt_flg'] == 'T') {
-                        this.getTreeData($scope.data[i]['__dt_grp']).total = i;
-                    }
-                }
-            }
-
+                item['__dt_flg'] = 'Z';
+                grouped.push(item);
+                cur.rows.push(item);
+            });
+            
+            $scope.data = grouped;
+            
             // do cell Merge
             for (var i = $scope.data.length - 1; i >= 0; i--) {
                 if (['G', 'E'].indexOf($scope.data[i]['__dt_flg']) >= 0) {
@@ -331,61 +250,13 @@ Handsontable.DataTableGroups = function (settings) {
                         row: i,
                         col: 0,
                         rowspan: 1,
-                        colspan: colLength
+                        colspan: $scope.columns.length
                     });
                 }
             }
-
+            
             instance.mergeCells = new Handsontable.MergeCells(cellMerge);
             instance.render();
-            var plugin = this;
-            this.grouped = true;
-            $timeout(function () {
-                if (false && !!this.totalGroups) {
-                    plugin.calculate();
-                }
-
-                instance.render();
-
-                plugin.changed = false;
-            });
         },
-        sortGroups: function () {
-            var $scope = this.scope;
-            function dynamicSort(property) {
-                var sortOrder = 1;
-                if (property[0] === "-") {
-                    sortOrder = -1;
-                    property = property.substr(1);
-                }
-                return function (a, b) {
-                    var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
-                    return result * sortOrder;
-                }
-            }
-
-            function dynamicSortMultiple() {
-                var props = arguments;
-                return function (obj1, obj2) {
-                    var i = 0, result = 0, numberOfProperties = props.length;
-                    /* try getting a different result from 0 (equal)
-                     * as long as we have extra properties to compare
-                     */
-                    while (result === 0 && i < numberOfProperties) {
-                        result = dynamicSort(props[i])(obj1, obj2);
-                        i++;
-                    }
-
-                    return result;
-                }
-            }
-
-            this.groupArgs = [];
-            for (i in this.groupCols) {
-                this.groupArgs.push(this.groupCols[i]);
-            }
-
-            $scope.data.sort(dynamicSortMultiple.apply(this, this.groupArgs));
-        }
     }, settings);
 };

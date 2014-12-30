@@ -27,7 +27,7 @@ class DevUserForm extends User {
                     ),
                     array (
                         'renderInEditor' => 'Yes',
-                        'value' => '<div ng-if=\\"!isNewRecord\\" class=\\"separator\\"></div>',
+                        'value' => '<div ng-if=\\"!isNewRecord && module == \\\'dev\\\'\\" class=\\"separator\\"></div>',
                         'type' => 'Text',
                     ),
                     array (
@@ -35,7 +35,7 @@ class DevUserForm extends User {
                         'buttonType' => 'danger',
                         'options' => array (
                             'href' => 'url:/dev/user/del?id={model.id}',
-                            'ng-if' => '!isNewRecord',
+                            'ng-if' => '!isNewRecord && module == \\\'dev\\\'',
                             'prompt' => 'Ketik \\\'DELETE\\\' (tanpa kutip) untuk menghapus user ini',
                             'prompt-if' => 'DELETE',
                         ),
