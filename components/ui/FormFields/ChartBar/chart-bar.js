@@ -35,7 +35,7 @@ app.directive('psChartBar', function ($timeout) {
                             var ret = e;
                             try {
                                 ret = JSON.parse(e);
-                            } catch (e) {
+                            } catch (err) {
                                 ret = e;
                             }
                             return ret;
@@ -80,10 +80,11 @@ app.directive('psChartBar', function ($timeout) {
                         }
 
                         var chartData_raw = result[0];
-
                         var formatChart = formatChartData(chartData_raw);
                         var chartData = formatChart[0];
                         var xAxis = formatChart[1];
+                        console.log($scope.chartTitle, chartData, xAxis);
+                        
 
                         if ($scope.series != null) {
                             for (i in $scope.series) {
@@ -143,7 +144,6 @@ app.directive('psChartBar', function ($timeout) {
                     }
                 }, 0);
             }
-
 
             $scope.chartTitle = $el.find("data[name=chartTitle]").text();
             $scope.chartType = $el.find("data[name=chartType]").text().toLowerCase();
