@@ -4,6 +4,16 @@ class WebUser extends CWebUser {
 
     private $_model;
 
+    public function login($identity, $duration = 0) {
+
+        try {
+            parent::login($identity, $duration);
+        } catch (Exception $e) {
+            var_dump($e);
+            die();
+        }
+    }
+
     /**
      * Overrides a Yii method that is used for roles in controllers (accessRules).
      *
@@ -36,7 +46,7 @@ class WebUser extends CWebUser {
 
         return $this->_model;
     }
-    
+
     public function getUseLdap() {
         return !is_null(Setting::get('ldap'));
     }
@@ -56,7 +66,7 @@ class WebUser extends CWebUser {
             return "";
         }
     }
-    
+
     public function getMenuPath() {
         if (isset($this->info['roles'][0]['menu_path'])) {
             return $this->info['roles'][0]['menu_path'];

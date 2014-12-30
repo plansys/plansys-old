@@ -7,20 +7,10 @@ class SiteController extends Controller {
      * when an action is not explicitly requested by users.
      */
     public function actionIndex() {
-        // renders the view file 'protected/views/site/index.php'
-        // using the default layout 'protected/views/layouts/main.php'
-        $dblockPath = Yii::getPathOfAlias("application.installer.setup_db");
-        if (!file_exists($dblockPath . '.lock')) {
-            if (Yii::app()->user->isGuest) {
-                $this->redirect(array("login"));
-            }
-            $this->redirect(array(lcfirst(strtolower(Yii::app()->user->role)) . '/default/index'));
+        if (Yii::app()->user->isGuest) {
+            $this->redirect(array("login"));
         } else {
-            if (Setting::get("repo.path") == '') {
-                $path = Setting::getRootPath() . DIRECTORY_SEPARATOR . 'repo';
-                Setting::set("repo.path", $path);
-            }
-            $this->redirect(array("install/index"));
+            $this->redirect(array("/" . lcfirst(strtolower(Yii::app()->user->role)) . '/default/index'));
         }
     }
 
@@ -110,7 +100,7 @@ class SiteController extends Controller {
      * Logs out the current user and redirect to homepage.
      */
     public function actionLogout() {
-        Yii::app()->user->logout();
+        Yii::app()->user->logout(false);
         $this->redirect(Yii::app()->homeUrl);
     }
 

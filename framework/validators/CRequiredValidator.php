@@ -70,7 +70,6 @@ class CRequiredValidator extends CValidator
 			$message=$this->message!==null?$this->message:Yii::t('yii','{attribute} cannot be blank.');
 			$this->addError($object,$attribute,$message);
 		}
-        
 	}
 
 	/**

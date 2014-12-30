@@ -13,7 +13,7 @@ $this->breadcrumbs=array(
 
 <?php if(Yii::app()->user->hasFlash('contact')): ?>
 
-<div class="label-field-value-success">
+<div class="flash-success">
 	<?php echo Yii::app()->user->getFlash('contact'); ?>
 </div>
 

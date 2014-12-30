@@ -4,7 +4,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
         compile: function (element, attrs, transclude) {
             return function ($scope, $el, attrs, ctrl) {
                 var parent = $scope.$parent;
-
                 function evalArray(array) {
                     for (i in array) {
                         if (typeof array[i] == "string") {
@@ -84,7 +83,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     return $("#" + $scope.renderID).handsontable('getInstance');
                 }
                 $scope.$container = $el.parents('.container-full');
-
                 $scope.contextMenu = function () {
                     if ($scope.dtGroups) {
                         return [
@@ -105,7 +103,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 }
 
                 $scope.$timeout = $timeout;
-
                 // setup internal variables
                 var colHeaders = [];
                 var columnsInternal = [];
@@ -113,14 +110,12 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 var renderTimeout = null;
                 var categories = [];
                 var lastCat = '';
-
                 // add columns from datasource when columns definition is empty
                 if ($scope.columns.length == 0) {
                     if ($scope.dataSource1.data && $scope.dataSource1.data.length > 0) {
                         for (i in $scope.dataSource1.data[0]) {
                             if (i == 'id')
                                 continue;
-
                             $scope.columns.push({
                                 name: i,
                                 label: i
@@ -164,10 +159,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                     var row = s[0];
                                     var col = s[1];
                                     var opt = this.instance.getSettings().columns[col];
-
                                     if (opt.columnType != "relation")
                                         return;
-
                                     for (i in opt.relParams) {
                                         var p = opt.relParams[i];
                                         if (p.indexOf('js:') === 0) {
@@ -182,7 +175,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                         'c': opt.name,
                                         'p': opt.relParams
                                     };
-
                                     $http.post(Yii.app.createUrl('formfield/RelationField.dgrSearch'), ck)
                                             .success(function (data) {
                                                 // cache query
@@ -235,13 +227,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     }
 
                     var col = $.extend(c, colDef);
-
                     //add column
                     columnsInternal.push(col);
-
                     // add header
                     colHeaders.push(c.label);
-
                     if (c.options && c.options.category) {
                         // add category header
                         var cat = c.options.category || '';
@@ -304,13 +293,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     var c = $el.find('td.current');
                     if (c.length == 0)
                         return;
-
                     var w = c[0].offsetWidth;
                     var h = c[0].offsetHeight;
                     var o = c.offset();
                     var p = c.position();
-
-
                     // scroll horizontal
                     var sl = $scope.$container.scrollLeft();
                     var slw = o.left + w + 17;
@@ -344,7 +330,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     $scope.fixClone();
                     $scope.fixComments();
                 });
-
                 // fixHead
                 //TODO: still broken, fix this
                 var fh = {};
@@ -358,7 +343,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     fh.formTopPos = Math.abs(fh.form.position().top - fh.form.offset().top);
                     fh.formTop = fh.form.offset().top;
                 });
-
                 function fixHead() {
                     if ((fh.container.scrollTop() > fh.formTop) || $scope.gridOptions['fixedHeader'] == "always") {
                         if (!$el.hasClass('fixed')) {
@@ -387,7 +371,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     }
                     for (i in $scope.datasource.data) {
                         var d = $scope.datasource.data[i];
-
                         for (ir in relCols) {
                             var r = relCols[ir];
                             var model = r.relModelClass;
@@ -397,7 +380,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             var col = r.name;
                             var labelField = r.relLabelField;
                             var idField = r.relIdField;
-
                             dgr['name'] = name;
                             dgr['class'] = cls;
                             dgr['cols'] = dgr['cols'] || {};
@@ -422,7 +404,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         if (paging != oldpaging) {
                             var ds = $scope.datasource;
                             var maxPage = Math.ceil($scope.datasource.totalItems / $scope.gridOptions.pagingOptions.pageSize);
-
                             if (isNaN($scope.gridOptions.pagingOptions.currentPage) || $scope.gridOptions.pagingOptions.currentPage == '') {
                                 $scope.gridOptions.pagingOptions.currentPage = 1;
                             }
@@ -444,7 +425,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             }
                         }
                     }, true);
-
                     $scope.pageForward = function () {
                         $scope.gridOptions.pagingOptions.currentPage++;
                     }
@@ -464,7 +444,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         $http.post(url, dgr).success(function (data) {
                             for (rowIdx in $scope.data) {
                                 var row = $scope.data[rowIdx];
-
                                 for (dataIdx in data) {
                                     var d = data[dataIdx];
                                     if (row[dataIdx]) {
@@ -528,16 +507,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             callback();
                         }
                     });
-
                 }
                 prepareData();
-
                 // watch datasource changes
                 $scope.$watch('datasource.data', function (n, o) {
                     if (n !== o && (!$scope.edited || $scope.data.length == 0) && !$scope.loadingRelation) {
                         $scope.loaded = true;
                         var executeGroup = ($scope.dtGroups);
-
                         if (executeGroup && $scope.dtGroups.grouped) {
                             $scope.dtGroups.ungroup($scope.ht);
                         }
@@ -549,18 +525,15 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             }
 
                             $("#" + $scope.renderID).handsontable('getInstance').loadData($scope.data);
-
                             $timeout(function () {
                                 $scope.edited = false;
                             });
                         });
                     }
                 }, true);
-
                 // Generate DataTable Options -- start
                 $timeout(function () {
                     evalArray($scope.gridOptions);
-
                     // initialize data table groups
                     if ($scope.gridOptions.groups) {
                         $scope.dtGroups = new Handsontable.DataTableGroups({
@@ -570,9 +543,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             totalGroups: $scope.gridOptions.totalGroups,
                             colHeaders: colHeaders,
                         }).prepare();
-
                         delete($scope.gridOptions.groups);
-
                         if ($scope.data.length > 0) {
                             if (!$scope.getInstance()) {
                                 $timeout(function () {
@@ -606,7 +577,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                     case 'E':
                                         cellProperties.className = 'empty';
                                         cellProperties.readOnly = true;
-
                                         break;
                                     case 'G':
                                         cellProperties.className = 'groups';
@@ -615,7 +585,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                         break;
                                     case 'T':
                                         var c = $scope.dtGroups.totalGroups[$scope.dtGroups.columns[col].name];
-
                                         if (c.trim().substr(0, 4) != 'span') {
                                             cellProperties.type = 'numeric';
                                             cellProperties.format = '0,0.00';
@@ -638,7 +607,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             }
                             if (s.col == e.col && d.length > 1) {
                                 var seq = d[1][0] - d[0][0];
-
                                 if (!isNaN(seq)) {
                                     var se = (d[d.length - 1][0] * 1);
                                     var length = Math.abs(s.row - e.row) + 1;
@@ -655,11 +623,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         },
                         beforeChange: function (changes, source) {
                             $scope.edited = true;
-
                             if (typeof $scope.beforeCellEdit == "function" && source == "edit") {
                                 var ht = $("#" + $scope.renderID).handsontable('getInstance');
                                 var ch = changes[0];
-
                                 // beforeCellEdit(value, row, col, data, ht);
                                 $scope.beforeCellEdit(ch[3], ch[0], ch[1], $scope.data[ch[0]], ht);
                             }
@@ -674,15 +640,26 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 $scope.events.beforeKeyDown(events);
                             }
                         },
+                        afterOnCellMouseDown: function (event, coords, TD) {
+                            if (typeof $scope.events.afterOnCellMouseDown == "function") {
+                                $scope.events.afterOnCellMouseDown(event, coords, TD);
+                            }
+
+                            $scope.mouseDown = true;
+                        },
                         afterSelection: function (r, c, r2, c2) {
                             if (typeof $scope.events.afterSelection == "function") {
-                                $scope.events.afterSelection(events);
+                                $scope.events.afterSelection(r, c, r2, c2);
                             }
-                            $scope.fixScroll();
+
+                            if (!$scope.mouseDown) {
+                                $scope.fixScroll();
+                            }
+                            $scope.mouseDown = false;
                         },
                         afterSelectionEnd: function (r, c, r2, c2) {
                             if (typeof $scope.events.afterSelectionEnd == "function") {
-                                $scope.events.afterSelectionEnd(events);
+                                $scope.events.afterSelectionEnd(r, c, r2, c2);
                             }
 
                             if (typeof $scope.gridOptions.afterSelectionChange == "function") {
@@ -726,7 +703,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                                 });
                                             }
                                             $scope.edited = true;
-
                                             $scope.datasource.data = $scope.cleanedData;
                                             break;
                                     }
@@ -760,7 +736,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             if (categories.length > 0) {
                                 //add category header
                                 var html = '<tr class="header-grouping">';
-
                                 if (!!options.rowHeaders) {
                                     html += '<th><div class="relative"><span class="rowHeader">&nbsp;</span></div></th>';
                                 }
@@ -782,11 +757,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                         .remove()
                                         .insertAfter($el.find('.data-table-container'));
                                 fh.topp = $el.find('.ht_top');
-
                                 $el.find('.ht_top').remove();
                                 $el.find('.ht_top thead').prepend(html);
                                 fixHead();
-
                             });
                             if (typeof $scope.events.afterRender == "function") {
                                 $scope.events.afterRender();
@@ -818,9 +791,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         },
                         beforeRender: function () {
                             $el.find('.header-grouping').remove();
-
                             var ht = $("#" + $scope.renderID).handsontable('getInstance');
-
                             for (i in columnsInternal) {
                                 var c = columnsInternal[i];
                                 if (c.options && c.options.width) {
@@ -839,14 +810,12 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         },
                         modifyColWidth: function () {
                             $el.find('.header-grouping').remove();
-
                             if (typeof $scope.events.modifyColWidth == "function") {
                                 $scope.events.modifyColWidth();
                             }
                         },
                         contextMenu: $scope.contextMenu()
                     }, $scope.gridOptions);
-
                     //prepare data table groups   
 
                     // if there is beforeGridLoaded event, call it.
@@ -865,14 +834,12 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         options = $.extend(options, $scope.events);
                     }
                     $scope.columns = columnsInternal;
-
                     if (!!$("#" + $scope.renderID)[0]) {
                         $("#" + $scope.renderID).width($el.width());
                         $("#" + $scope.renderID).handsontable(options);
                         $scope.ht = $("#" + $scope.renderID).handsontable('getInstance');
                     }
                 });
-
                 parent[$scope.name] = $scope;
             }
         }
