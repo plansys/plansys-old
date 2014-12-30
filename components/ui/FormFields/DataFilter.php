@@ -229,9 +229,10 @@ class DataFilter extends FormField {
                     case "Yearly":
                         if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
                             $sql = "({$column} BETWEEN :{$paramName}_{$pcolumn}_from AND :{$paramName}_{$pcolumn}_to)";
+                            $fromStartHour = date('Y-m-d 23:59:00', strtotime('-1 day', strtotime(@$filter['value']['from'])));
                             $toLastHour = date('Y-m-d 23:59:00', strtotime(@$filter['value']['to']));
                             $param = [
-                                ":{$paramName}_{$pcolumn}_from" => @$filter['value']['from'],
+                                ":{$paramName}_{$pcolumn}_from" => $fromStartHour,
                                 ":{$paramName}_{$pcolumn}_to" => $toLastHour,
                             ];
                         }
