@@ -105,17 +105,26 @@ app.directive('relationField', function ($timeout, $http) {
                     }, 0);
                 };
                 $scope.updateInternal = function (value) {
-                    $scope.value = typeof value != "string" ? '' : value;;
+                    $scope.value = typeof value != "string" ? '' : value;
+
                     if ($scope.showOther && !$scope.itemExist()) {
                         $scope.value = $el.find("li a").attr('value');
                         $scope.value = value;
                     }
-					
+
+                    var isFound = false;
                     $el.find("li").each(function () {
                         if ($(this).find("a").attr('value').trim() == $scope.value.trim()) {
                             $scope.text = $(this).find("a").text();
+                            isFound = true;
                         }
-					});
+                    });
+
+                    if (!isFound) {
+                        $scope.value = $el.find("li:eq(0) a").attr('value').trim();
+                        $scope.text = $el.find("li:eq(0) a").text();
+                    }
+
                     $scope.toggled(false);
                 };
 
@@ -145,7 +154,7 @@ app.directive('relationField', function ($timeout, $http) {
                         }
                     }, true);
                 }
-                
+
                 $scope.toggled = function (open) {
                     if (open) {
                         $scope.openedInField = true;
@@ -167,11 +176,11 @@ app.directive('relationField', function ($timeout, $http) {
                         $el.find("[dropdown] button").focus();
                     }
                 };
-                
+
                 $scope.changeOther = function () {
                     $scope.value = $scope.otherLabel;
                 };
-                
+
                 $scope.doSearch = function () {
                     $scope.loading = true;
                     $http.post(Yii.app.createUrl('formfield/RelationField.search'), {
@@ -195,12 +204,19 @@ app.directive('relationField', function ($timeout, $http) {
                     function changeFieldList() {
                         $timeout(function () {
                             $scope.formList = $scope.$eval(attrs.psList);
-                            $scope.renderFormList();
-                            $scope.updateInternal($scope.value);
                         }, 0);
                     }
                     $scope.$watch(attrs.psList, changeFieldList);
                 }
+
+                // watch form list
+                $scope.$watch('formList', function (n, o) {
+                    $timeout(function () {
+                        $scope.renderFormList();
+                        $scope.openedInField = false;
+                        $scope.updateInternal($scope.value);
+                    });
+                }, true);
 
                 if (typeof ctrl != 'undefined') {
                     ctrl.$render = function () {
@@ -231,7 +247,7 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.isOpen = false;
                 $scope.openedInField = false;
 
-                for (i in $scope.params) {
+                angular.forEach($scope.params, function (p, i) {
                     var p = $scope.params[i];
                     if (p.indexOf('js:') === 0) {
                         var value = $scope.$parent.$eval(p.replace('js:', ''));
@@ -253,7 +269,7 @@ app.directive('relationField', function ($timeout, $http) {
 
                         $scope.doSearch();
                     }
-                }
+                });
 
                 //if ngModel is present, use that instead of value from php
                 $timeout(function () {

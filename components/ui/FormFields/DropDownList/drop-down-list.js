@@ -98,13 +98,19 @@ app.directive('dropDownList', function ($timeout) {
                         $scope.value = value;
                     }
 
-
+                    var isFound = false;
                     $el.find("li").each(function () {
                         if ($(this).find("a").attr('value').trim() == $scope.value.trim()) {
                             $scope.text = $(this).find("a").text();
+                            isFound = true;
                         }
                     });
-                    
+
+                    if (!isFound) {
+                        $scope.value = $el.find("li:eq(0) a").attr('value').trim();
+                        $scope.text = $el.find("li:eq(0) a").text();
+                    }
+
                     $scope.toggled(false);
                 };
 
@@ -196,6 +202,15 @@ app.directive('dropDownList', function ($timeout) {
                     }
                     $scope.$watch(attrs.psList, changeFieldList);
                 }
+
+                // watch form list
+                $scope.$watch('formList', function (n, o) {
+                    $timeout(function () {
+                        $scope.renderFormList();
+                        $scope.openedInField = false;
+                        $scope.updateInternal($scope.value);
+                    });
+                }, true);
 
                 if (typeof ctrl != 'undefined') {
                     ctrl.$render = function () {
