@@ -93,8 +93,8 @@
 .handsontableInput {
     box-sizing: content-box;
     min-height: 23px !important;
-    line-height: 23px !important;
-    padding: 0px 8px 0px 8px;
+    line-height: 24px !important;
+    padding: 0px 0px 0px 6px;
 }
 
 .data-table-container .ht_clone_top,
@@ -173,4 +173,12 @@
 .no-read-only.link-url .dataTable.handsontable tr:hover td {
     background:#ffc;
     cursor:pointer;
+}
+
+.handsontable th.currentRow .relative{
+    background: #d6e1f6 !important;
+}
+
+.handsontable th.currentCol .relative  {
+    background: #d6e1f6 !important;
 }

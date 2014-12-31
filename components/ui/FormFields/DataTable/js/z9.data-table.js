@@ -286,7 +286,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 .find(".dataTable")
                                 .height($el.find(".htContainer .htCore:eq(0)").height() + 22)
                                 .css('overflow', 'visible');
-                    }, 100);
+                    }, 1000);
                 }
 
                 $scope.fixScroll = function () {
@@ -568,6 +568,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         autoWrapCol: true,
                         mergeCells: true,
                         comments: true,
+                        currentRowClassName: 'currentRow',
+                        currentColClassName: 'currentCol',
                         manualColumnResize: true,
                         cells: function (row, col, prop) {
                             var cellProperties = {};
@@ -650,7 +652,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             if (!$scope.mouseDown) {
                                 $scope.fixScroll();
                             }
-                            $scope.mouseDown = false;
                         },
                         afterSelectionEnd: function (r, c, r2, c2) {
                             if (typeof $scope.events.afterSelectionEnd == "function") {
@@ -660,7 +661,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             if (typeof $scope.gridOptions.afterSelectionChange == "function") {
                                 $scope.gridOptions.afterSelectionChange($scope.data[r]);
                             }
-                            $scope.fixScroll();
+                            if (!$scope.mouseDown) {
+                                $scope.fixScroll();
+                            }
+                            $scope.mouseDown = false;
                         },
                         afterRemoveRow: function (index, amount) {
                             $scope.datasource.data.splice(index, amount);
@@ -673,32 +677,22 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 default:
                                     switch (source) {
                                         case "edit":
-                                            $timeout(function () {
-                                                var c = changes[0];
-                                                $scope.datasource.data[c[0]][c[1]] = c[3];
-                                            });
-                                            break;
                                         case "paste":
                                             $timeout(function () {
-                                                changes.map(function (change) {
-                                                    $scope.datasource.data[change[0]][change[1]] = change[3];
+                                                changes.map(function (c) {
+                                                    if ($scope.dtGroups) {
+                                                        var row = $scope.data[c[0]]['__dt_row'];
+                                                        $scope.datasource.data[row][c[1]] = c[3];
+                                                    } else {
+                                                        $scope.datasource.data[c[0]][c[1]] = c[3];
+                                                    }
                                                 });
                                             });
                                             break;
                                         case "loadData":
-                                            //clean grouped data
-                                            $scope.cleanedData = angular.copy($scope.data);
-                                            if ($scope.dtGroups) {
-                                                $scope.cleanedData.forEach(function (item, idx) {
-                                                    if (item['__dt_flg'] != "Z") {
-                                                        $scope.cleanedData.splice(idx, 1);
-                                                    } else {
-                                                        delete item['__dt_flg'];
-                                                    }
-                                                });
+                                            if (!$scope.edited) {
+                                                $scope.datasource.data = angular.copy($scope.data);
                                             }
-                                            $scope.edited = true;
-                                            $scope.datasource.data = $scope.cleanedData;
                                             break;
                                     }
                                     break;

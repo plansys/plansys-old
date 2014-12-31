@@ -199,7 +199,6 @@ Handsontable.DataTableGroups = function (settings) {
                 groups: {},
                 rows: []
             };
-
             // generate group cols
             var groups = [];
             for (i in this.groupCols) {
@@ -250,11 +249,16 @@ Handsontable.DataTableGroups = function (settings) {
                 // add row
                 item['__dt_flg'] = 'Z';
                 item['__dt_idx'] = newidx;
+                item['__dt_row'] = idx;
                 grouped.splice(newidx, 0, item);
                 cur.rows.push(item);
+                ridx++;
             });
 
-            $scope.data = grouped;
+            $scope.data.length = 0;
+            grouped.forEach(function(item,idx) {
+                $scope.data.push(item);
+            });
 
             // do cell Merge
             for (var i = $scope.data.length - 1; i >= 0; i--) {
