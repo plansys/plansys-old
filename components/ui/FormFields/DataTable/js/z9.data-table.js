@@ -297,6 +297,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     var h = c[0].offsetHeight;
                     var o = c.offset();
                     var p = c.position();
+                    
                     // scroll horizontal
                     var sl = $scope.$container.scrollLeft();
                     var slw = o.left + w + 17;
