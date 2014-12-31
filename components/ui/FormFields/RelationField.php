@@ -388,11 +388,12 @@ class RelationField extends FormField {
         if (@$field['params']) {
             foreach ($field['params'] as $k => $ff) {
                 if (substr($ff, 0, 3) == "js:") {
-                    $p[$k] = "'" . $k . "'";
+                    $p[$k] = "'" . $p[$k] . "'";
                 }
             }
         }
 
+        
         echo json_encode($this->query($s, $p));
     }
 
@@ -591,7 +592,6 @@ class RelationField extends FormField {
         $criteria = $this->generateCriteria($search, $params);
         $rawlist = $model->currentModel($criteria);
 
-
         if (!is_null($initialID) && $initialID != "") {
             $found = false;
             foreach ($rawlist as $r) {
@@ -645,6 +645,8 @@ class RelationField extends FormField {
                 'label' => $this->emptyLabel
             ]);
         }
+        
+        
 
         $this->list = $list;
         return $list;
