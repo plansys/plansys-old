@@ -213,7 +213,6 @@ Handsontable.DataTableGroups = function (settings) {
                 var cur = groupTree;
                 groups.forEach(function (g, gidx) {
                     var group = item[g];
-
                     if (!cur.groups[group]) {
                         // add new group
                         var lvstr = "&nbsp;";
@@ -224,6 +223,7 @@ Handsontable.DataTableGroups = function (settings) {
                         var newrow = {};
                         newrow[$scope.columns[0].name] = lvstr + group;
                         newrow['__dt_flg'] = "G";
+                        newrow['__dt_idx'] = ridx++;
                         newrow['__dt_lvl'] = gidx;
                         grouped.push(newrow);
 
@@ -236,13 +236,26 @@ Handsontable.DataTableGroups = function (settings) {
                     cur = cur.groups[group];
                 });
 
+                // find new idx
+                var newidx = cur.group['__dt_idx'] + 1;
+                if (cur.rows.length > 0) {
+                    newidx = cur.rows[cur.rows.length - 1]['__dt_idx'] + 1;
+                }
+
+                // adjust idx 
+                for (i = newidx; i < grouped.length; i++) {
+                    grouped[i]['__dt_idx']++;
+                }
+
+                // add row
                 item['__dt_flg'] = 'Z';
-                grouped.push(item);
+                item['__dt_idx'] = newidx;
+                grouped.splice(newidx, 0, item);
                 cur.rows.push(item);
             });
-            
+
             $scope.data = grouped;
-            
+
             // do cell Merge
             for (var i = $scope.data.length - 1; i >= 0; i--) {
                 if (['G', 'E'].indexOf($scope.data[i]['__dt_flg']) >= 0) {
@@ -254,7 +267,7 @@ Handsontable.DataTableGroups = function (settings) {
                     });
                 }
             }
-            
+
             instance.mergeCells = new Handsontable.MergeCells(cellMerge);
             instance.render();
         },

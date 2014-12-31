@@ -4,16 +4,6 @@ class WebUser extends CWebUser {
 
     private $_model;
 
-    public function login($identity, $duration = 0) {
-
-        try {
-            parent::login($identity, $duration);
-        } catch (Exception $e) {
-            var_dump($e);
-            die();
-        }
-    }
-
     /**
      * Overrides a Yii method that is used for roles in controllers (accessRules).
      *

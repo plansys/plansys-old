@@ -64,7 +64,7 @@ class User extends ActiveRecord {
 
 
         return array(
-            array(' fullname,  username' . $passwordReq, 'required'),
+            array('fullname, username' . $passwordReq, 'required'),
             array('username', 'unique'),
             array('email', 'email'),
             array('last_login', 'safe')

@@ -44,8 +44,8 @@ class DevUserLdap extends Form {
                 ),
                 'column2' => array (
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                     array (
                         'value' => '<div class=\"info\" ng-if=\"!isNewRecord\"><i class=\"fa fa-info-circle fa-nm fa-fw\"></i>&nbsp; 
@@ -111,7 +111,7 @@ Search menggunakan kotak disamping, gunakan * (bintang) sebagai Wildcard<Br/> &n
                     ),
                 ),
                 'gridOptions' => array (
-                    'afterSelectionChange' => 'url:/dev/user/new?u={username}&f={fullname}&ldap=1',
+                    'afterSelectionChange' => 'url:/dev/user/new?u={username}&f={fullname}&d={dc}&ldap=1',
                 ),
                 'type' => 'DataGrid',
             ),

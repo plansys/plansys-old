@@ -635,11 +635,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             }
                             $scope.fixHeight();
                         },
-                        beforeKeyDown: function (event) {
-                            if (typeof $scope.events.beforeKeyDown == "function") {
-                                $scope.events.beforeKeyDown(events);
-                            }
-                        },
                         afterOnCellMouseDown: function (event, coords, TD) {
                             if (typeof $scope.events.afterOnCellMouseDown == "function") {
                                 $scope.events.afterOnCellMouseDown(event, coords, TD);
@@ -823,7 +818,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         $scope.beforeGridLoaded(options);
                     }
                     // Generate DataTable Options -- end
-
 
                     // Setup Data Watcher                    
                     if (options.events) {

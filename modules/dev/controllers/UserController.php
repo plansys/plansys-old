@@ -44,7 +44,7 @@ class UserController extends Controller {
         if ($model->is_deleted) {
             throw new CHttpException(404);
         }
-        
+
         if (isset($_POST["DevUserForm"])) {
             $userRoles = $model->userRoles;
             if (!isset($_POST['DevUserForm']['subscribed']))
@@ -61,6 +61,12 @@ class UserController extends Controller {
     public function actionNew() {
         $model = new DevUserForm;
 
+        if (isset($_GET['d'], $_GET['u'])) {
+            $model->email = @$_GET['u'] . "@" . trim(@$_GET['d'], '.');
+            $model->nip = "-";
+            $model->phone = "-";
+        }
+
         if (isset($_POST["DevUserForm"])) {
             $model->attributes = $_POST["DevUserForm"];
 
@@ -72,7 +78,7 @@ class UserController extends Controller {
 
             if ($model->save()) {
                 $model->subscribed = "on";
-                Yii::app()->user->setFlash('info', 'User Berhasil dibuat !');
+                Yii::app()->user->setFlash('info', 'User Berhasil dibuat! Silakan search untuk menambah user lain.');
 
                 if (isset($_GET['ldap'])) {
                     $this->redirect(array("ldap"));
