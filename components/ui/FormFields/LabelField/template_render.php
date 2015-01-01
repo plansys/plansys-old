@@ -19,13 +19,7 @@
         <!-- /data -->
 
         <!-- field -->
-        <div <?= $this->expandAttributes($this->fieldOptions) ?>>
-            <?php if ($this->js != ""): ?>
-                {{ <?= $this->js ?>}}
-            <?php else: ?>
-                {{ value}}
-            <?php endif; ?> &nbsp;
-        </div>
+        <div <?= $this->expandAttributes($this->fieldOptions) ?>><?php if ($this->js != ""): ?>{{ <?= $this->js ?>}}<?php else: ?>{{ value}}<?php endif; ?> &nbsp;</div>
         <input type="hidden"
                id='<?= $this->renderID ?>'
                name='<?= $this->renderName ?>'
