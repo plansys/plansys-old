@@ -120,7 +120,7 @@ app.directive('relationField', function ($timeout, $http) {
                         }
                     });
 
-                    if (!isFound) {
+                    if (!isFound && $el.find("li:eq(0) a").attr('value')) {
                         $scope.value = $el.find("li:eq(0) a").attr('value').trim();
                         $scope.text = $el.find("li:eq(0) a").text();
                     }
