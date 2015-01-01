@@ -1,4 +1,4 @@
-<div ng-if='!item.class' ui-tree-handle ng-click="toggle(this);
+<div ng-if='!item.class' class="sidebar-tree" ui-tree-handle ng-click="toggle(this);
     select(this, item);" ng-class="is_selected(this)">
 
     <div class="ui-tree-handle-info" ng-if="!isNaN(item.count)">

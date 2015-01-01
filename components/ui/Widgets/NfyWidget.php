@@ -23,8 +23,14 @@ class NfyWidget extends Widget {
         } else {
             $body['url'] .= '&nfyid=' . $nfy->id;
         }
-        
-        Yii::app()->controller->redirect(Yii::app()->baseUrl .  $body['url']);
+
+        ## cleanup url
+        $url = $body['url'];
+        if (strpos($url, Yii::app()->baseUrl) === 0) {
+            $url = Yii::app()->baseUrl . substr($url, strlen(Yii::app()->baseUrl));
+        }
+
+        Yii::app()->controller->redirect($url);
     }
 
     public function actionMarkRead() {
@@ -46,10 +52,6 @@ class NfyWidget extends Widget {
     public function actionHistoryView($id) {
         $model = Yii::app()->controller->loadModel($id, "application.forms.NfyMessagesForm");
         Yii::app()->controller->renderForm("application.forms.NfyMessagesForm", $model);
-    }
-
-    public function actionMail() {
-        
     }
 
 }

@@ -687,6 +687,7 @@ div[ui-content] {
 .ui-tree-handle-info {
     float:right;
     opacity:.3;
+    margin-left:10px;
 }
 
 .angular-ui-tree-handle:hover {
@@ -742,6 +743,15 @@ li > .item-btn {
 li:hover > .item-btn {
     display:block;
 }
+
+.sidebar-tree {
+    word-break:break-all;
+    padding-left:20px;
+}
+.sidebar-tree i.fa-caret-right,.sidebar-tree i.fa-caret-down {
+    margin-left:-12px;
+}
+
 
 /************************** FORM BUILDER *****************************/
 .toolbar-item {
