@@ -854,6 +854,7 @@ li:hover > .item-btn {
     z-index:99999;
 }
 
+
 .form-builder li:hover > .field > .field-info {
     display:block;
 }
@@ -925,6 +926,23 @@ li:hover > .item-btn {
 
 #toolbar-properties hr {
     margin:5px -5px;
+}
+
+/********************************* PORTLET ***********************************/
+
+.form-builder li .Portlet > .field-info {
+    right:auto;
+    width:auto;
+    top:auto;
+}
+
+.form-builder li .Portlet {
+    float:left;
+}
+
+.angular-ui-tree-placeholder.Portlet {
+    float:left;
+    margin:6px !important;
 }
 
 /********************************* LIST VIEW ***********************************/

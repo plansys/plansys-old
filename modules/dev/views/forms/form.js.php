@@ -1,6 +1,5 @@
 <script type="text/javascript">
 
-
     /** jQuery Caret **/
     (function ($) {
         // Behind the scenes method deals with browser
@@ -315,12 +314,12 @@
                                 generated = generateByColumn(data);
                                 break;
                         }
-						if (typeof generated == "object" && generated.length > 0) {						
-							$scope.active.series = generated[0];
-							$scope.setTickSeries();
-						} else {
-							alert("Field generation failed");
-						}
+                        if (typeof generated == "object" && generated.length > 0) {
+                            $scope.active.series = generated[0];
+                            $scope.setTickSeries();
+                        } else {
+                            alert("Field generation failed");
+                        }
                         /*****  FUNCTION *****/
 
                         function generateByRow(data) {
@@ -533,7 +532,6 @@
             });
         }
         $scope.detectEmptyPlaceholder = function () {
-
             $timeout(function () {
                 $('.field-tree .angular-ui-tree-empty').remove();
                 if ($scope.fields.length == 0) {
@@ -569,6 +567,17 @@
             }, 10);
         }
         $scope.fieldsOptions = {
+            dragInit: function (e) {
+                if (e.element.find('> .Portlet').length == 1) {
+                    e.placeholder.addClass('Portlet');
+                    var height = "height: " + e.element.find('> .Portlet').height() + "px;";
+                    var width = "width: " + e.element.find('> .Portlet').width() + "px !important;";
+                    e.placeholder.css('cssText', height + width);
+
+                    e.pos.offsetX = e.element.offset().left;
+                    e.pos.offsetY = e.element.offset().top;
+                }
+            },
             dragStart: function (scope) {
                 if ($scope.isCloning) {
                     $scope.isCloneDragging = true;
