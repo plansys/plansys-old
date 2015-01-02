@@ -542,11 +542,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                         if (item.filterType != 'date' && item.name != "col")
                             return;
 
-                        if (typeof $scope.filters[idx].value.from == "string") {
-                            var split = $scope.filters[idx].value.from.split(" ");
-                            if (split.length > 0) {
-                                ret = split[0].trim();
-                            }
+                        if (typeof $scope.filters[idx].valueText == "string") {
+                            ret = date("Y-m-d", strtotime($scope.filters[idx].valueText));
                         } else {
                             ret = "";
                         }
@@ -728,8 +725,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     });
 
                     if (defaultValueAvailable) {
-
-
                         $scope.datasources.map(function (dataSourceName) {
                             var ds = parent[dataSourceName];
                             if (ds) {
