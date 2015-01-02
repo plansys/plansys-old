@@ -106,7 +106,7 @@ app.directive('dropDownList', function ($timeout) {
                         }
                     });
 
-                    if (!isFound && $el.find("li:eq(0) a").attr('value')) {
+                    if (!$scope.showOther && !isFound && $el.find("li:eq(0) a").attr('value')) {
                         $scope.value = $el.find("li:eq(0) a").attr('value').trim();
                         $scope.text = $el.find("li:eq(0) a").text();
                     }
@@ -143,7 +143,6 @@ app.directive('dropDownList', function ($timeout) {
                     }, true);
                 }
 
-
                 $scope.toggled = function (open) {
                     if (open) {
                         $scope.openedInField = true;
@@ -169,9 +168,11 @@ app.directive('dropDownList', function ($timeout) {
                         }
                     }
                 };
+                
                 $scope.changeOther = function () {
                     $scope.value = $scope.otherLabel;
                 };
+                
                 $scope.doSearch = function () {
                     $timeout(function () {
                         $el.find("li.hover").removeClass("hover");

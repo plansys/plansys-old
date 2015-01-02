@@ -154,6 +154,9 @@ app.filter('elipsisMiddle', function () {
 });
 app.filter('countLine', function () {
     return function (input) {
+        if (typeof input != 'string')
+            return 0;
+
         // do some bounds checking here to ensure it has that index
         var len = input.split(/\r\n|\r|\n/).length;
         return len + " line" + (len - 3 > 1 ? 's' : '');

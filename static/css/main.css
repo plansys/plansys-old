@@ -953,12 +953,84 @@ li:hover > .item-btn {
 }
 
 .portlet-container {
-    border:1px solid #aaa;
-    padding:5px;
-    box-shadow:0px 0px 5px 0px #fafafa;
+    border:1px solid #ccc;
+    box-shadow:0px 0px 5px 0px #efefef;
     border-radius:4px;
+
+    -webkit-transition : border 100ms;
+    -moz-transition : border 100ms;
+    -o-transition : border 100ms;
+    transition : border 100ms;
 }
 
+.portlet-container:hover {
+    border:1px solid #888;
+}
+
+.portlet-container > .angular-ui-tree-nodes {
+    height:100% !important;
+}
+
+.portlet-container > .angular-ui-tree-nodes > .angular-ui-tree-node.cpl {
+    height:100% !important;
+}
+
+.portlet-container > .angular-ui-tree-nodes > .angular-ui-tree-node.cpl > .column-placeholder {
+    height:100% !important;
+}
+
+[portlet] {
+    display:block;
+    float:left;
+    margin:5px;
+    background:white;
+    overflow:hidden;
+    opacity:0;
+    z-index:99;
+}
+
+.portlet-inner {
+    padding:5px;
+    width:100%;
+    height:100%;
+}
+
+.portlet-buttons {
+    position:absolute;
+    right:0;
+    margin:3px;
+    opacity: 0;
+    -webkit-transition : opacity 100ms;
+    -moz-transition : opacity 100ms;
+    -o-transition : opacity 100ms;
+    transition : opacity 100ms;
+}
+[portlet]:hover .portlet-buttons {
+    opacity: .3;
+}
+
+[portlet]:hover .portlet-buttons:hover {
+    opacity:1;
+}
+
+[portlet].maximized {
+    border:0px !important;
+    box-shadow:none !important;
+    position:absolute !important;
+    top:0px !important;
+    left:0px !important;
+    right:0px !important;
+    bottom:0px !important;
+    width:auto !important;
+    height:auto !important;
+}
+[portlet].maximized .ui-resizable-handle {
+    display:none !important;
+}
+
+[portlet].maximized .portlet-buttons.minimize {
+    opacity:1 !important;
+}
 
 /********************************* LIST VIEW ***********************************/
 .list-view-item {
@@ -1149,6 +1221,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     overflow-y:hidden;
     position:relative;
     padding-bottom:12px;
+    resize:none;
 }
 
 .text-editor-preview {

@@ -567,15 +567,31 @@
             }, 10);
         }
         $scope.fieldsOptions = {
+            accept: function (s, d, i) {
+                if (s.$modelValue.type == 'Portlet') {
+                    var pl = $(".form-builder .angular-ui-tree-placeholder");
+                    var width = "width: " + s.$modelValue.width + "px !important;";
+                    var height = "height: " + s.$modelValue.height + "px;";
+
+                    pl.addClass('Portlet');
+                    pl.css('cssText', height + width);
+                    
+                    if (d.$nodeScope != null && d.$nodeScope.$modelValue.type == 'Portlet') {
+                        return false;
+                    }
+                }
+
+                return true;
+            },
             dragInit: function (e) {
                 if (e.element.hasClass('Portlet')) {
                     e.placeholder.addClass('Portlet');
-                    var height = "height: " + e.element.height() + "px;";
-                    var width = "width: " + e.element.width() + "px !important;";
+                    var height = "height: " + e.element.find('.portlet-container:eq(0)').height() + "px;";
+                    var width = "width: " + e.element.find('.portlet-container:eq(0)').width() + "px !important;";
                     e.placeholder.css('cssText', height + width);
 
-                    e.pos.offsetX = e.element.offset().left;
-                    e.pos.offsetY = e.element.offset().top;
+//                    e.pos.offsetX = e.element.offset().left;
+//                    e.pos.offsetY = e.element.offset().top;
                 }
             },
             dragStart: function (scope) {
