@@ -545,7 +545,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                         if (typeof $scope.filters[idx].value.from == "string") {
                             var split = $scope.filters[idx].value.from.split(" ");
                             if (split.length > 0) {
-                                ret = split[0];
+                                ret = split[0].trim();
                             }
                         } else {
                             ret = "";
