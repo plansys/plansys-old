@@ -536,6 +536,22 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     $scope.changeValueText(filter, filter.value);
                 }
 
+                $scope.getDate = function (col) {
+                    var ret = "";
+                    $scope.filters.forEach(function (item, idx) {
+                        if (item.filterType != 'date' && item.name != "col")
+                            return;
+
+                        if (typeof $scope.filters[idx].valueText == "string") {
+                            ret = date("Y-m-d", strtotime($scope.filters[idx].valueText));
+                        } else {
+                            ret = "";
+                        }
+                    });
+
+                    return ret;
+                }
+
                 $scope.datePrev = function (filter, e) {
                     if (['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(filter.operator) >= 0) {
                         switch (filter.operator) {
@@ -709,8 +725,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     });
 
                     if (defaultValueAvailable) {
-
-
                         $scope.datasources.map(function (dataSourceName) {
                             var ds = parent[dataSourceName];
                             if (ds) {
