@@ -6,6 +6,16 @@
  */
 class Portlet extends FormField {
 
+    public $name;
+    
+    public $title;
+    
+    public $items = ['<column-placeholder></column-placeholder>'];
+    public $renderItems;
+    public $parseField = [
+        'items' => 'renderItems'
+    ];
+    
     public function includeJS() {
         return [];
     }
@@ -19,6 +29,8 @@ class Portlet extends FormField {
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-square-o";
 
+    
+    
     /**
      * @return array me-return array property ActionBar.
      */

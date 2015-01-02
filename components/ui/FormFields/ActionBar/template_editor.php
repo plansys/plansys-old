@@ -5,9 +5,9 @@
     </div>
     <div class="ab-editor-link-bar">
         <ol ui-tree-nodes ng-model="field.linkBar">
-            <li ng-repeat="field in field.linkBar" ui-tree-node ng-include="'FormTree'" ng-class="{
-                        cpl: isPlaceholder(field), inline:field.displayInline
-                    }"></li>
+            <li ng-repeat="field in field.linkBar" 
+                ui-tree-node ng-include="'FormTree'" 
+                ng-class="{cpl: isPlaceholder(field), inline:field.displayInline}"></li>
         </ol>
     </div>
     <div class="clearfix"></div>

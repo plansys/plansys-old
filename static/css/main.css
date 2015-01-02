@@ -849,7 +849,6 @@ li:hover > .item-btn {
     height:30px;
     position:absolute;
     right:0px;
-    top:0px;
     width:250px;
     z-index:99999;
 }
@@ -930,13 +929,21 @@ li:hover > .item-btn {
 
 /********************************* PORTLET ***********************************/
 
-.form-builder li .Portlet > .field-info {
+.form-builder li.Portlet > .form-field > .field-info {
     right:auto;
     width:auto;
     top:auto;
 }
 
-.form-builder li .Portlet {
+.form-builder li.Portlet {
+    float:left;
+    resize: both;
+}
+.form-builder li.Portlet .angular-ui-tree-nodes {
+    padding:0px !important;
+}
+
+.form-builder li.Portlet {
     float:left;
 }
 
@@ -944,6 +951,14 @@ li:hover > .item-btn {
     float:left;
     margin:6px !important;
 }
+
+.portlet-container {
+    border:1px solid #aaa;
+    padding:5px;
+    box-shadow:0px 0px 5px 0px #fafafa;
+    border-radius:4px;
+}
+
 
 /********************************* LIST VIEW ***********************************/
 .list-view-item {

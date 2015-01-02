@@ -5,7 +5,7 @@
 <div ng-if="!isPlaceholder(field)" 
      ng-click="select(this, $event);"
      depth="{{this.$nodeScope.depth()}}" 
-     class='form-field field {{field.type}}'>
+     class='form-field field'>
     <div class='field-info' >
         <div class="btn-group pull-right">
             <div class='field-select btn btn-default btn-sm'>

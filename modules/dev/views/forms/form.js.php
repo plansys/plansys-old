@@ -568,10 +568,10 @@
         }
         $scope.fieldsOptions = {
             dragInit: function (e) {
-                if (e.element.find('> .Portlet').length == 1) {
+                if (e.element.hasClass('Portlet')) {
                     e.placeholder.addClass('Portlet');
-                    var height = "height: " + e.element.find('> .Portlet').height() + "px;";
-                    var width = "width: " + e.element.find('> .Portlet').width() + "px !important;";
+                    var height = "height: " + e.element.height() + "px;";
+                    var width = "width: " + e.element.width() + "px !important;";
                     e.placeholder.css('cssText', height + width);
 
                     e.pos.offsetX = e.element.offset().left;
