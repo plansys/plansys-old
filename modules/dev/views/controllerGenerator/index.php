@@ -9,7 +9,7 @@
             <div ui-content oc-lazy-load="{name: 'ui.tree', files: ['<?= $this->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
                 <div ui-tree data-drag-enabled="false">
                     <ol ui-tree-nodes="" ng-model="list">
-                        <li ng-repeat="item in list track by $index" ui-tree-node>
+                        <li ng-repeat="item in list track by $index" collapsed="true" ui-tree-node>
                             <div ui-tree-handle ng-click="toggle(this);
                                             select(this);"  ng-class="is_selected(this)">
 
@@ -38,7 +38,7 @@
                                         <span style="word-wrap:break-word;padding-left:20px;">
                                             <i style='float:left;margin:3px -20px 0px 0px;'
                                                class="fa {{subItem.name == 'MainMenu' ? 'fa-sitemap' : 'fa-book'}} fa-nm"></i> 
-                                            {{subItem.name}}
+                                            {{formatName(subItem.name)}}
                                         </span>
                                     </a>
 

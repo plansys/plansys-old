@@ -8,15 +8,14 @@
         <h3>Source file has changed</h3>
         <div class="btn btn-success" onclick="location.reload()"><i class="fa fa-refresh"></i> Refresh Form</div>
     </div>
-    <div ui-layout class="sub" options="{ flow : 'column' }">
-        <div size='69%' min-size="300px" >
+    <div ui-layout class="sub" ng-class="{fbmin:minimized}" options="{ flow : 'column' }">
+        <div class="fb1" size='69%' min-size="300px" >
             <!-- form-builder-content -->
             <div class="form-builder-saving">
                 <span ng-show='saving'> 
                     <i class="fa fa-refresh fa-spin"></i>
                     Saving... 
                 </span>
-
                 <span ng-show='!saving && layoutChanging'>
                     <i class="fa fa-refresh fa-spin"></i>
                     Rendering Layout...
@@ -28,13 +27,16 @@
             <!-- /form-builder-content -->
         </div>
 
-        <div min-size="250px">
+        <div class="fb2" min-size="250px">
+            <div class="ov btn" ng-click="maximize()">
+                <div class="i fa fa-arrow-left" style="color:white;margin:-12px;"></div>
+            </div>
             <!-- form-builder-toolbar -->
             <tabset class="toolbar">
                 <div ng-show="!layoutChanging" 
-                     ng-click="cacheBusterChange();"
+                     ng-click="minimize();"
                      class="pull-right btn btn-xs" style="margin:2px;">
-                    <i class="fa fa-refresh fa-nm"></i>
+                    <i class="fa fa-arrow-right fa-nm"></i>
                 </div>
                 <tab ng-click="tabs.toolbar = true" active="tabs.toolbar" 
                      ng-controller="ToolbarController">

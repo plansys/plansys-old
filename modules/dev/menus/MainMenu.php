@@ -67,11 +67,6 @@
         'state' => 'collapsed',
     ),
     array (
-        'label' => 'DB Migration',
-        'icon' => 'fa-database',
-        'url' => '/migration/index',
-    ),
-    array (
         'label' => 'Repository',
         'icon' => 'fa-folder-open',
         'url' => '/repo/index',

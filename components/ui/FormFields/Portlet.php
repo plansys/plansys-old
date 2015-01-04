@@ -8,6 +8,8 @@ class Portlet extends FormField {
 
     public $name;
     public $title;
+    public $top = "";
+    public $left = "";
     public $width = 400;
     public $height = 300;
     public $items = ['<column-placeholder></column-placeholder>'];
@@ -16,15 +18,14 @@ class Portlet extends FormField {
         'items' => 'renderItems'
     ];
     public $options = [];
-
+    
+    public $showBorder = 'Yes';
+    public $zoomable = 'Yes';
+    
     public function includeJS() {
-        return ['js/portlet.js', 'js/jquery-ui.min.js', 'js/jquery.ui.touch-punch.min.js'];
+        return ['js/interact-1.2.1.min.js', 'js/portlet.js'];
     }
-
-    public function includeCSS() {
-        return ['css/jquery-ui.min.css'];
-    }
-
+    
     /** @var string $toolbarName */
     public static $toolbarName = "Portlet";
 
@@ -63,6 +64,28 @@ class Portlet extends FormField {
                 'type' => 'TextArea',
             ),
             array (
+                'label' => 'Show Border',
+                'name' => 'showBorder',
+                'options' => array (
+                    'ng-model' => 'active.showBorder',
+                    'ng-change' => 'save()',
+                ),
+                'listExpr' => '[\\\'Yes\\\',\\\'No\\\']',
+                'fieldWidth' => '4',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Zoomable',
+                'name' => 'zoomable',
+                'options' => array (
+                    'ng-model' => 'active.zoomable',
+                    'ng-change' => 'save()',
+                ),
+                'listExpr' => '[\\\'Yes\\\',\\\'No\\\']',
+                'fieldWidth' => '4',
+                'type' => 'DropDownList',
+            ),
+            array (
                 'value' => '<hr>',
                 'type' => 'Text',
             ),
@@ -73,10 +96,19 @@ class Portlet extends FormField {
                         'type' => 'Text',
                     ),
                     array (
+                        'label' => 'Left',
+                        'name' => 'left',
+                        'labelWidth' => '3',
+                        'fieldWidth' => '9',
+                        'postfix' => 'px',
+                        'type' => 'TextField',
+                    ),
+                    array (
                         'label' => 'Width',
                         'name' => 'width',
                         'fieldType' => 'number',
-                        'fieldWidth' => '7',
+                        'labelWidth' => '3',
+                        'fieldWidth' => '9',
                         'postfix' => 'px',
                         'options' => array (
                             'ng-model' => 'active.width',
@@ -92,10 +124,19 @@ class Portlet extends FormField {
                         'type' => 'Text',
                     ),
                     array (
+                        'label' => 'Top',
+                        'name' => 'top',
+                        'labelWidth' => '3',
+                        'fieldWidth' => '9',
+                        'postfix' => 'px',
+                        'type' => 'TextField',
+                    ),
+                    array (
                         'label' => 'Height',
                         'name' => 'height',
                         'fieldType' => 'number',
-                        'fieldWidth' => '7',
+                        'labelWidth' => '3',
+                        'fieldWidth' => '9',
                         'postfix' => 'px',
                         'options' => array (
                             'ng-model' => 'active.height',

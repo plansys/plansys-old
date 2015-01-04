@@ -83,8 +83,6 @@ app.directive('psChartBar', function ($timeout) {
                         var formatChart = formatChartData(chartData_raw);
                         var chartData = formatChart[0];
                         var xAxis = formatChart[1];
-                        console.log($scope.chartTitle, chartData, xAxis);
-                        
 
                         if ($scope.series != null) {
                             for (i in $scope.series) {
@@ -132,15 +130,15 @@ app.directive('psChartBar', function ($timeout) {
                         chart.addSeries(chartData[i]);
                     }
 
-                    if (typeof $scope.isgroup != 'undefined' && $scope.isgroup) {
-                        if (typeof $scope.data[$scope.chartType] == 'undefined')
-                            $scope.data[$scope.chartType] = [];
+                    if (typeof parent.isgroup != 'undefined' && parent.isgroup) {
+                        if (typeof parent.data[$scope.chartType] == 'undefined')
+                            parent.data[$scope.chartType] = [];
 
-                        $scope.data[$scope.chartType].push(chart);
-                        $scope.setxAxisGroup(xAxis);
+                        parent.data[$scope.chartType].push(chart);
+                        parent.setxAxisGroup(xAxis);
 
                         $el.hide();
-                        $scope.redraw();
+                        parent.redraw();
                     }
                 }, 0);
             }

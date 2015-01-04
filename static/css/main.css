@@ -499,6 +499,27 @@ div[ui-content] {
     cursor: col-resize;
 }
 
+.fbmin .ui-splitbar {
+    display:none !important;
+}
+.fbmin .fb2 {
+    overflow:hidden;
+}
+.fb2 .ov {
+    display:none;
+    border-radius: 0px;
+}
+.fbmin .fb2 .ov {
+    position:absolute;
+    left:0px;
+    top:0px;
+    right:0px;
+    bottom:0px;
+    display:block;
+    z-index:9;
+    background:#aaa;
+    overflow:hidden;
+}
 
 .form-builder-layout > .ui-splitbar {
     background-color: #ececeb !important;
@@ -789,9 +810,6 @@ li:hover > .item-btn {
     line-height:28px;
 }
 
-.toolbar .properties-body .dropdown-menu {
-    max-width:230px;
-}
 
 .toolbar .nav-tabs > li > a {
     padding:4px 8px 3px 8px;
@@ -963,8 +981,13 @@ li:hover > .item-btn {
     transition : border 100ms;
 }
 
-.portlet-container:hover {
-    border:1px solid #888;
+.portlet-container.showborder {
+    border:0px !important;
+    box-shadow:none;
+}
+.portlet-container:hover,
+.portlet-container.hover{
+    border:2px solid #aaa;
 }
 
 .portlet-container > .angular-ui-tree-nodes {
@@ -1005,7 +1028,8 @@ li:hover > .item-btn {
     -o-transition : opacity 100ms;
     transition : opacity 100ms;
 }
-[portlet]:hover .portlet-buttons {
+[portlet]:hover .portlet-buttons,
+[portlet].hover .portlet-buttons{
     opacity: .3;
 }
 
@@ -1023,6 +1047,7 @@ li:hover > .item-btn {
     bottom:0px !important;
     width:auto !important;
     height:auto !important;
+    cursor:default !important;
 }
 [portlet].maximized .ui-resizable-handle {
     display:none !important;
@@ -1240,6 +1265,16 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     top:50px;
     bottom:0px;
     color:#ccc;
+}
+
+.Text.inline {
+    float:left;
+    display:block !important;
+}
+.Text.inline > .form-field > .field-info {
+    right: auto;
+    width: auto;
+    top: auto;
 }
 
 /********************************* COLUMN FIELD ********************************/
