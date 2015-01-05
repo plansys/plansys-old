@@ -22,7 +22,6 @@
                     </span>
                 </span>
             </div>
-
             <div ui-tree-handle class='field-move btn btn-default btn-sm'>
                 <i class='fa fa-arrows'></i>
                 <span class="field-info-text">Move</span> 

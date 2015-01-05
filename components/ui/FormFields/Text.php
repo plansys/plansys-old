@@ -10,22 +10,42 @@ class Text extends FormField {
      * @return array me-return array property Text.
      */
     public function getFieldProperties() {
-        return  [
-             [
+        return array (
+            array (
+                'value' => '<div style=\\"width:70px;\\" class=\\"pull-right\\">',
+                'type' => 'Text',
+            ),
+            array (
+                'name' => 'display',
+                'options' => array (
+                    'ng-model' => 'active.display',
+                    'ng-change' => 'save()',
+                ),
+                'menuPos' => 'pull-right',
+                'listExpr' => '[\\\'block\\\',\\\'inline\\\']',
+                'labelWidth' => '0',
+                'fieldWidth' => '12',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'value' => '</div>',
+                'type' => 'Text',
+            ),
+            array (
                 'label' => 'Render In Editor',
                 'name' => 'renderInEditor',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.renderInEditor',
                     'ng-change' => 'save()',
-                ],
-                'labelOptions' =>  [
+                ),
+                'labelOptions' => array (
                     'style' => 'text-align:left;',
-                ],
+                ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'fieldWidth' => '3',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'value' => '<div class=\"text-editor-builder\">
   <div class=\"text-editor\" ui-ace=\"{
   useWrapMode : true,
@@ -44,12 +64,14 @@ style=\"width:100%;height:300px;margin-bottom:-250px;font-size:13px;position: re
 </div>
 ',
                 'type' => 'Text',
-            ],
-        ];
+            ),
+        );
     }
 
     public $renderInEditor = 'No';
 
+    public $display = 'block';
+    
     /** @var string $value */
     public $value;
 

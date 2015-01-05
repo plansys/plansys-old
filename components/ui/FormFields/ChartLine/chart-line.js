@@ -2,7 +2,7 @@ app.directive('psChartLine', function ($timeout) {
     return {
         scope: true,
         link: function ($scope, $el, attrs) {
-			var parent = $scope.$parent;
+            var parent = $scope.$parent;
 
             /*********************** DEEP EXTEND ********************************/
             var deepExtend = function (destination, source) {
@@ -31,12 +31,12 @@ app.directive('psChartLine', function ($timeout) {
                         var tmp = {};
                         tmp['name'] = chartData_raw[i].label;
                         tmp['data'] = chartData_raw[i].value.map(function (e, i) {
-							var ret = e;
-							try {
-								ret = JSON.parse(e);
-							} catch(e) {
-								ret = e;
-							}
+                            var ret = e;
+                            try {
+                                ret = JSON.parse(e);
+                            } catch (e) {
+                                ret = e;
+                            }
                             return ret;
                         });
 
@@ -49,7 +49,7 @@ app.directive('psChartLine', function ($timeout) {
                 return [chartData, xAxis];
             }
 
-            $scope.$watch('datasource.data', function (n,o) {
+            $scope.$watch('datasource.data', function (n, o) {
                 if (n !== o && $scope.datasource != null) {
                     $scope.data = $scope.datasource.data;
                     $scope.fillSeries();
@@ -61,7 +61,7 @@ app.directive('psChartLine', function ($timeout) {
                     var series = [];
                     var chartData = [];
                     $scope.datasource = parent[$el.find("data[name=datasource]").text()];
-					
+
                     if (typeof $scope.datasource != "undefined") {
                         $scope.data = $scope.datasource.data;
                     } else {
@@ -141,16 +141,16 @@ app.directive('psChartLine', function ($timeout) {
                     for (i in chartData) {
                         chart.addSeries(chartData[i]);
                     }
-					
-                    if (typeof $scope.isgroup != 'undefined' && $scope.isgroup) {
-                        if (typeof $scope.data[$scope.chartType] == 'undefined')
-                            $scope.data[$scope.chartType] = [];
 
-                        $scope.data[$scope.chartType].push(chart);
-                        $scope.setxAxisGroup(xAxis);
+                    if (typeof parent.isgroup != 'undefined' && parent.isgroup) {
+                        if (typeof parent.data[$scope.chartType] == 'undefined')
+                            parent.data[$scope.chartType] = [];
 
+                        parent.data[$scope.chartType].push(chart);
+                        parent.setxAxisGroup(xAxis);
+                        
                         $el.hide();
-                        $scope.redraw();
+                        parent.redraw();
                     }
 
                 }, 0);

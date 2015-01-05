@@ -31,7 +31,11 @@ class SiteController extends Controller {
                             . 'Atau mungkin juga data yang ingin anda akses sudah dihapus.'
                         );
                         break;
+                    default:
+                        $error['code'] = "Kesalahan Sistem <small><br/>[Error: " . $error['code'] . "]</small>";
+                        break;
                 }
+
                 $this->pageTitle = $error['code'];
                 $this->render('error', $error);
             }

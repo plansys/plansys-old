@@ -26,7 +26,7 @@ app.directive('psChartGroup', function ($timeout) {
             $scope.groupName = $element.find("data[name=groupName]").text();
             $scope.yAxisType = $element.find("data[name=yAxisType]").text();
             $scope.groupOptions = JSON.parse($element.find("data[name=groupOptions]").text());
-            $scope.isPieGroup = JSON.parse($element.find("data[name=isPieGroup	]").text().toLowerCase());
+            $scope.isPieGroup = JSON.parse($element.find("data[name=isPieGroup]").text().toLowerCase());
 
             $scope.defaultOptions = {
                 chart: {
@@ -72,11 +72,18 @@ app.directive('psChartGroup', function ($timeout) {
 
                 chart.xAxis[0].setCategories($scope.xAxisGroup);
 
+
                 var count = 0;
                 for (i in $scope.data) {
+
+                    var idx = 0;
+                    while (typeof $scope.data[i][idx].yAxis == "undefined" && idx < $scope.data[i].length) {
+                        idx++;
+                    }
+
                     var tmpyAxis = {
                         'title': {
-                            'text': $scope.data[i][0].yAxis[0].axisTitle.textStr
+                            'text': $scope.data[i][idx].yAxis[0].axisTitle.textStr
                         }
                     };
 
@@ -86,12 +93,12 @@ app.directive('psChartGroup', function ($timeout) {
 
                     yAxis.push(tmpyAxis);
 
-                    for (j in $scope.data[i][0].series) {
+                    for (j in $scope.data[i][idx].series) {
                         var tmpData = {
-                            'color': $scope.data[i][0].series[j].color,
-                            'name': $scope.data[i][0].series[j].name,
-                            'type': $scope.data[i][0].series[j].type,
-                            'data': $scope.data[i][0].series[j].yData,
+                            'color': $scope.data[i][idx].series[j].color,
+                            'name': $scope.data[i][idx].series[j].name,
+                            'type': $scope.data[i][idx].series[j].type,
+                            'data': $scope.data[i][idx].series[j].yData,
                         }
 
                         if ($scope.yAxisType.toLowerCase() == "double")
@@ -106,8 +113,10 @@ app.directive('psChartGroup', function ($timeout) {
                 chart.yAxis[0].update(yAxis[0]);
 
                 for (i in series) {
-                    if (typeof chart.yAxis[series[i].yAxis] == "undefined" && $scope.yAxisType.toLowerCase() == "double")
+                    if (typeof chart.yAxis[series[i].yAxis] == "undefined" &&
+                            $scope.yAxisType.toLowerCase() == "double") {
                         chart.addAxis(yAxis[series[i].yAxis]);
+                    }
                     chart.addSeries(series[i]);
                 }
 
