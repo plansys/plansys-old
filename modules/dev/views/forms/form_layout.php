@@ -9,7 +9,7 @@ FormField::$inEditor = false;
         Close
     </div>
     <i class = "fa fa-file-text"></i>&nbsp;
-    Form Layout <span class="label label-default">{{layout.name| uppercase }}</span>
+    Form Layout <span class="label label-default">{{layout.name | uppercase }}</span>
 </div>
 
 <div ui-content style="padding:6px 5px 0px 10px;">

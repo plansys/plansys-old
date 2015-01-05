@@ -65,11 +65,9 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu" style="min-width:160px;max-height:200px;" role="menu">
-
                                     <li ng-repeat="(name, icon) in toolbarSettings['icon']">
                                         <a href="#" dropdown-toggle value="{{name}}" 
-                                           ng-click="active.type = name;
-                                                           save();">
+                                           ng-click="active.type = name;save();">
                                             <i class="{{icon}}"></i> {{name}}
                                         </a>
                                     </li>
