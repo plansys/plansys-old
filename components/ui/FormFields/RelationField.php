@@ -594,7 +594,12 @@ class RelationField extends FormField {
 
         if (!is_null($initialID) && $initialID != "") {
             $found = false;
+            
             foreach ($rawlist as $r) {
+                if (!isset($r[$this->idField])) {
+                    continue;
+                }
+                
                 if ($r[$this->idField] == $initialID)
                     $found = true;
             }
@@ -789,7 +794,6 @@ class RelationField extends FormField {
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
         $this->query('', [], $this->value);
-
 
         return $this->renderInternal('template_render.php');
     }
