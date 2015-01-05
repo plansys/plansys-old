@@ -26,10 +26,9 @@ class NfyWidget extends Widget {
 
         ## cleanup url
         $url = $body['url'];
-        if (strpos($url, Yii::app()->baseUrl) !== 0) {
+        if (Yii::app()->baseUrl != "" && strpos($url, Yii::app()->baseUrl) !== 0) {
             $url = Yii::app()->baseUrl . $url;
         }
-        
 
         Yii::app()->controller->redirect($url);
     }
