@@ -684,7 +684,8 @@ class FormBuilder extends CComponent {
         } else if (is_subclass_of($formdata, 'ActiveRecord')) {
             $this->model = $formdata;
 
-            $data['data'] = $formdata->attributes;
+            $data['data'] = $formdata->getAttributes(true, true);
+            
             $data['errors'] = $formdata->errors;
             $data['isNewRecord'] = $formdata->isNewRecord;
         }

@@ -53,5 +53,4 @@ class NfyWidget extends Widget {
         $model = Yii::app()->controller->loadModel($id, "application.forms.NfyMessagesForm");
         Yii::app()->controller->renderForm("application.forms.NfyMessagesForm", $model);
     }
-
 }

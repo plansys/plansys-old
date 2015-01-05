@@ -421,7 +421,7 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    public function getAttributes($names = true, $withRelation = true) {
+    public function getAttributes($names = true, $withRelation = false) {
         $attributes = parent::getAttributes($names);
         $attributes = array_merge($this->attributeProperties, $attributes);
         if ($withRelation) {
