@@ -646,8 +646,6 @@ class RelationField extends FormField {
             ]);
         }
         
-        
-
         $this->list = $list;
         return $list;
     }

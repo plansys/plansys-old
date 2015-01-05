@@ -409,7 +409,7 @@ class DataFilter extends FormField {
                             'value' => $val['label']
                         ];
                     }
-
+                    
                     $this->filters[$k]['list'] = $list;
                     break;
             }
