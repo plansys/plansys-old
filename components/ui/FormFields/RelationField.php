@@ -586,6 +586,9 @@ class RelationField extends FormField {
         Yii::import($this->modelClass);
 
         $class = Helper::explodeLast(".", $this->modelClass);
+        
+        if (!class_exists($class)) return;
+        
         $model = new $class;
         $table = $model->tableName();
 
