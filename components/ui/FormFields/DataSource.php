@@ -623,7 +623,7 @@ class DataSource extends FormField {
             'debug' => [
                 'count' => $count,
                 'params' => $postedParams,
-                'debug' => '',
+                'debug' => $criteria,
             ],
             'rel' => [
                 'insert_data' => $relChanges['insert'],
