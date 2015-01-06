@@ -390,8 +390,6 @@ class DataSource extends FormField {
             }
         }
 
-        $returnParams = array_filter($returnParams);
-
         ## find all blocks
         preg_match_all("/\{(.*?)\}/", $sql, $blocks);
 
