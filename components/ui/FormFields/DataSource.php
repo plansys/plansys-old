@@ -459,6 +459,7 @@ class DataSource extends FormField {
         if ($this->enablePaging == 'Yes') {
             if ($this->fieldType == 'phpsql') {
                 $this->pagingSQL = $this->evaluate($this->pagingPHP, true, ['params' => $params]);
+                $this->pagingSQL = str_replace("{[paging]}", "", $this->pagingSQL);
             } else {
                 $count = $this->evaluate($this->pagingPHP, true, ['params' => $params]);
             }
@@ -502,7 +503,6 @@ class DataSource extends FormField {
 
         if ($this->enablePaging == 'Yes') {
             $tc = DataSource::generateTemplate($this->pagingSQL, $params, $this);
-
             $count = $db->createCommand($tc['sql'])->queryAll(true, $tc['params']);
 
             if (count($count) > 0) {
