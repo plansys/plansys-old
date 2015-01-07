@@ -250,18 +250,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
                         });
                     }
                 };
-
-                $scope.searchFocus = function (e, idx, f) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    var watch = $scope.$watch('filters[' + idx + '].operatorDropdownOpen', function (n) {
-                        if (n === false) {
-                            f.operatorDropdownOpen = true;
-                            watch();
-                        }
-                    }, true);
-                }
-
+                
                 $scope.relationNext = function (e, filter) {
                     e.stopPropagation();
                     e.preventDefault();
