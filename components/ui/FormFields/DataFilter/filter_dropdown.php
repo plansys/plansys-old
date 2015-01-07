@@ -6,30 +6,29 @@
         <span style="font-size:13px;"> 
             {{filter.label}}<span ng-hide="filter.label == '' || filter.filterType == 'check'">:</span></span>
         <b ng-hide="filter.filterType == 'check'">{{filter.valueText}}</b>
-
-
         <span class="caret" style="margin-left:5px;"></span>
     </button>
-    <button type="button" ng-click="resetFilter(filter);" ng-show="filter.valueText != 'All' && filter.resetable == 'Yes'"
+    <button type="button" ng-click="resetFilter(filter);"
+            ng-show="filter.valueText != 'All' && filter.resetable == 'Yes'"
             class="btn btn-inverse btn-sm filter-reset" >
         <i class="fa fa-times fa-nm" ></i>
     </button>
     <!-- dropdown item -->
-    <div class="dropdown-menu open" style="font-size:13px;max-height:240px;">
-        <div class="search" ng-show="filter.searchable">
+    <div class="dropdown-menu open" style="font-size:13px;">
+        <div class="search" ng-show="filter.searchable" style="margin-bottom:0px;">
             <input type="text"
                    ng-model="filter.search"
                    ng-keydown="listSearch($event, filter)"
+                   ng-click="$event.preventDefault()"
                    placeholder="Search ..."
                    class="input-block-level search-dropdown form-control" autocomplete="off">
+
         </div>
-        <ul class="dropdown-menu inner" style="overflow-x:hidden;max-height:none;" role="menu">
+        <ul class="dropdown-menu inner" style="overflow-x:hidden;max-height:240px;" role="menu">
             <li ng-repeat-start="item in filter.list track by $index " 
                 ng-if="item.value != '---'" class="dropdown-item" 
-                ng-class="{
-                            'dropdown-header': isObject(item.value),
-                                    'hover': item.key == filter.value
-                            }"
+                ng-class="{'dropdown-header': isObject(item.value),
+                                    'hover': item.key == filter.value}"
                 ng-show="listFound(item.value + ' ' + item.key, filter)">
 
                 <a ng-if="!isObject(item.value) &&
@@ -44,7 +43,8 @@
                    value="{{item.key}}">
 
                     <label class="filter-dropdown-label">
-                        <input type="checkbox" ng-checked="dropdownChecked(filter, item)" />
+                        <i class="fa fa-check-square-o fa-lg fa-fw" ng-if="dropdownChecked(filter, subitem)" ></i>
+                        <i class="fa fa-square-o fa-lg fa-fw" ng-if="!dropdownChecked(filter, subitem)" ></i>
                         {{ item.value}}
                     </label>
                 </a>
@@ -71,8 +71,9 @@
                                ng-click="updateDropdown($event, filter, subitem);"
                                value="{{subitem.key}}">
 
-                                <label class="filter-dropdown-label">
-                                    <input type="checkbox" ng-checked="dropdownChecked(filter, subitem)" />
+                                <label class="filter-dropdown-label" style="margin-left:-10px;">
+                                    <i class="fa fa-check-square-o fa-lg fa-fw" ng-if="dropdownChecked(filter, subitem)" ></i>
+                                    <i class="fa fa-square-o fa-lg fa-fw" ng-if="!dropdownChecked(filter, subitem)" ></i>
                                     {{ subitem.value}}
                                 </label>
                             </a>
@@ -83,6 +84,13 @@
                 </div>
             </li>
             <hr ng-repeat-end ng-if="item.value == '---'"/>
+            <hr ng-if="filter.filterType == 'relation' && filter.count > filter.list.length"/>
+            <li ng-if="filter.filterType == 'relation' && filter.count > filter.list.length">
+                <a href="#" ng-click="relationNext($event, filter)" style="margin-left:-5px;"> 
+                    <span ng-if="!loading"><i class="fa fa-angle-down"></i> &nbsp; Load More</span>
+                    <span ng-if="loading"><i class="fa fa-refresh fa-spin"></i> &nbsp; Loading... </span>
+                </a>
+            </li>
         </ul>
     </div>
 </div>

@@ -2,6 +2,7 @@
     <data name="filters" class="hide"><?= json_encode($this->filters); ?></data>
     <data name="operators" class="hide"><?= json_encode($this->filterOperators); ?></data>
     <data name="datasource" class="hide"><?= $this->datasource; ?></data>
+    <data name="model_class" class="hide"><?= Helper::getAlias($model) ?></data>
     <data name="datasources" class="hide"><?= json_encode($this->datasources()); ?></data>
     <data name="render_id" class="hide"><?= $this->renderID; ?></data>
     <data name="name" class="hide"><?= $this->name; ?></data>
@@ -14,7 +15,7 @@
         <tr>
             <td class="filter-td filter-manage">
                 <div class="btn-group" dropdown>
-                    <button type="button" class="btn btn-sm btn-default dropdown-toggle">
+                    <button  type="button" class="btn btn-sm btn-default dropdown-toggle">
                         <i class="fa fa-bars fa-nm"></i> 
                         <span class="caret"></span>
                     </button>
@@ -22,9 +23,9 @@
                         <li ng-if="ngIf(filter)" ng-repeat="filter in filters">
                             <a href="" ng-click="toggleShowFilter(filter)">
                                 <label>
-                                    <input ng-checked="filter.show"
-                                           type="checkbox" 
-                                           name="<?= $this->name ?>_filter" value="{{filter.name}}"/>
+                                    <i class="fa fa-check-square-o fa-lg fa-fw" ng-if="filter.show" ></i>
+                                    <i class="fa fa-square-o fa-lg fa-fw" ng-if="!filter.show" ></i>
+
                                     {{filter.label}}
                                 </label>
                             </a>

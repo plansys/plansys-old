@@ -356,9 +356,9 @@ class DataSource extends FormField {
             return (trim($e) != "" ? trim($e) : false);
         });
         $sql = implode(" " . $operator . " ", $andsql);
-
         $sql = preg_replace("/where\s+{$operator}/i", "WHERE", $sql);
-        
+        $sql = preg_replace("/where\s+where/i", "WHERE", $sql);
+
         return $sql;
     }
 
@@ -429,13 +429,19 @@ class DataSource extends FormField {
             }
         }
 
+        ## concat 'WHERE' sql with operators
         if ($sql != "") {
             $sql = DataSource::concatSql($sql, "AND");
-
-
             $sql = DataSource::concatSql($sql, "OR");
         }
 
+        ## remove uneeded return params
+        preg_match_all("/\:[\w\d_]+/", $sql, $cp);
+        foreach ($returnParams as $k => $p) {
+            if (!in_array($k, $cp[0]) && !in_array(':' . $k, $cp[0])) {
+                unset($returnParams[$k]);
+            }
+        }
 
         return [
             'sql' => trim($sql),
@@ -486,6 +492,7 @@ class DataSource extends FormField {
         $template = DataSource::generateTemplate($this->sql, $params, $this, $paramDefs);
 
         ## execute SQL
+
         $this->command = $db->createCommand($template['sql']);
         $data = $this->command->queryAll(true, $template['params']);
 
@@ -587,7 +594,6 @@ class DataSource extends FormField {
         $criteriaCount = $criteria;
         if ($this->relationTo == 'currentModel') {
             $tableSchema = $this->model->tableSchema;
-            $builder = $this->model->tableSchema;
             $builder = $this->model->commandBuilder;
             if (array_key_exists('page', $criteriaCount)) {
                 $start = ($criteriaCount['page'] - 1) * $criteriaCount['pageSize'];

@@ -353,8 +353,55 @@ class DataFilter extends FormField {
                 array_push($return, $d['name']);
             }
         }
-        
+
         return $return;
+    }
+
+    public function actionRelnext() {
+
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+
+        if (count($post) == 0)
+            die();
+
+        $start = @$post['i'];
+
+        $fb = FormBuilder::load($post['m']);
+        $ff = $fb->findField(['name' => $post['f']]);
+
+        foreach ($ff['filters'] as $filter) {
+            if ($filter['name'] != $post['n'])
+                continue;
+
+            $rf = new RelationField;
+            $rf->params = $filter['relParams'];
+            $rf->modelClass = $filter['relModelClass'];
+            $rf->relationCriteria = $filter['relCriteria'];
+            $rf->relationCriteria['limit'] = '20';
+            $rf->relationCriteria['offset'] = $start;
+
+            $rf->idField = $filter['relIdField'];
+            $rf->labelField = $filter['relLabelField'];
+            $rf->builder = $this->builder;
+
+            $list = [];
+            $rawList = $rf->query(@$post['s'], $rf->params);
+            foreach ($rawList as $key => $val) {
+                $list[] = [
+                    'key' => $val['value'],
+                    'value' => $val['label']
+                ];
+            }
+
+            $count = $rf->count(@$post['s'], $rf->params);
+
+            echo json_encode([
+                'list' => $list,
+                'count' => $count,
+                's' => $post['s']
+            ]);
+        }
     }
 
     /**
@@ -393,9 +440,7 @@ class DataFilter extends FormField {
                     $rf->params = $filter['relParams'];
                     $rf->modelClass = $filter['relModelClass'];
                     $rf->relationCriteria = $filter['relCriteria'];
-
-                    //TODO: request relation via ajax
-                    $rf->relationCriteria['limit'] = '9999';
+                    $rf->relationCriteria['limit'] = '20';
 
                     $rf->idField = $filter['relIdField'];
                     $rf->labelField = $filter['relLabelField'];
@@ -409,8 +454,11 @@ class DataFilter extends FormField {
                             'value' => $val['label']
                         ];
                     }
-                    
+
+                    $count = $rf->count('', $rf->params);
+
                     $this->filters[$k]['list'] = $list;
+                    $this->filters[$k]['count'] = $count;
                     break;
             }
         }

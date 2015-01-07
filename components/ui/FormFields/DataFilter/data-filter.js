@@ -1,10 +1,11 @@
-app.directive('psDataFilter', function ($timeout, dateFilter) {
+app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
     return {
         scope: true,
         compile: function (element, attrs, transclude) {
             //hide filter criteria when mouse is clicked outside
             $(document).mouseup(function (e) {
                 var container = $(".filter-criteria");
+
                 if (!container.is(e.target) && container.parent().has(e.target).length === 0) {
                     container.hide().removeClass('open');
                     $(".filter-criteria-button").removeClass('active');
@@ -60,6 +61,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                         filter.operator = "";
                     }
 
+                    if (filter.checked) {
+                        filter.checked.length = 0;
+                    }
+
                     $scope.changeValueText(filter);
 
                     $scope.datasources.map(function (dataSourceName) {
@@ -76,7 +81,9 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                             ds.resetParam(prepared.name, dsParamName);
 
                             ds.afterQueryInternal[$scope.renderID] = function () {
-                                if (ds.params.paging && $scope[ds.params.paging] && $scope[ds.params.paging].gridOptions) {
+                                if (ds.params.paging && $scope[ds.params.paging]
+                                        && $scope[ds.params.paging].gridOptions) {
+
                                     var paging = $scope[ds.params.paging].gridOptions.pagingOptions;
                                     if (!paging)
                                         return;
@@ -120,19 +127,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
 
                             if (f.filterType == 'check') {
                                 f.checked = [];
-//                                for (i in f.list) {
-//                                    if (angular.isObject(f.list[i].value)) {
-//                                        for (k in f.list[i].value) {
-//                                            if (f.list[i].value[k].key == '---')
-//                                                continue;
-//                                            f.checked.push(f.list[i].value[k].key);
-//                                        }
-//                                    } else {
-//                                        if (f.list[i].key == '---')
-//                                            continue;
-//                                        f.checked.push(f.list[i].key);
-//                                    }
-//                                }
                                 f.checkedLength = f.checked.length;
                             }
                             // todo: fix search focus
@@ -145,9 +139,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     var prepared = angular.copy(filter);
                     prepared.name = filter.name;
                     prepared.value = filter.value;
-//                    if (filter.filterType == "relation") {
-//                        prepared.value = filter.valueText;
-//                    }
                     return prepared;
                 }
 
@@ -196,7 +187,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                                 }
 
                                 ds.afterQueryInternal[$scope.renderID] = function () {
-                                    if (ds.params.paging && $scope[ds.params.paging] && $scope[ds.params.paging].gridOptions) {
+                                    if (ds.params.paging && $scope[ds.params.paging]
+                                            && $scope[ds.params.paging].gridOptions) {
                                         var paging = $scope[ds.params.paging].gridOptions.pagingOptions;
                                         if (paging.currentPage * paging.pageSize > ds.totalItems) {
                                             paging.currentPage = Math.floor(ds.totalItems / paging.pageSize);
@@ -226,21 +218,73 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     return angular.isObject(input);
                 }
 
-                $scope.listSearch = function (e, filter) {
-                    if (e.which == 13) {
-                        e.preventDefault();
-                        $(e.target).parents("[dropdown]").removeClass("open");
-                        filter.operatorDropdownOpen = false;
 
-                        if (filter.filterType == "relation") {
-                            filter.valueText = filter.search;
-                            $scope.updateDropdown(e, filter, {
-                                value: filter.valueText,
-                                key: filter.valueText,
+                $scope.listSearch = function (e, filter) {
+                    if (filter.filterType == "relation") {
+                        $timeout(function () {
+                            $scope.loading = true;
+                            $http.post(Yii.app.createUrl('formfield/DataFilter.relnext'), {
+                                's': filter.search,
+                                'f': $scope.name,
+                                'n': filter.name,
+                                'm': $scope.modelClass,
+                                'i': 0
+                            }).success(function (data) {
+                                $scope.loading = false;
+                                filter.list.length = 0;
+
+                                if (data.list && data.list.length && data.list.length > 0) {
+                                    data.list.forEach(function (item) {
+                                        filter.list.push(item);
+                                    });
+
+                                    if (data.count) {
+                                        filter.count = data.count;
+                                    }
+                                }
+
+                                if (data.list.length == 0) {
+                                    filter.count = 0;
+                                }
                             });
-                        }
+                        });
                     }
                 };
+
+                $scope.searchFocus = function (e, idx, f) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    var watch = $scope.$watch('filters[' + idx + '].operatorDropdownOpen', function (n) {
+                        if (n === false) {
+                            f.operatorDropdownOpen = true;
+                            watch();
+                        }
+                    }, true);
+                }
+
+                $scope.relationNext = function (e, filter) {
+                    e.stopPropagation();
+                    e.preventDefault();
+
+                    $scope.loading = true;
+                    $http.post(Yii.app.createUrl('formfield/DataFilter.relnext'), {
+                        's': filter.search,
+                        'f': $scope.name,
+                        'n': filter.name,
+                        'm': $scope.modelClass,
+                        'i': filter.list.length
+                    }).success(function (data) {
+                        $scope.loading = false;
+                        if (data.list && data.list.length && data.list.length > 0) {
+                            data.list.forEach(function (item) {
+                                filter.list.push(item);
+                            });
+                        }
+                    });
+
+                    return false;
+                }
+
 
                 $scope.toggleShowFilter = function (filter) {
                     filter.show = (filter.show ? false : true);
@@ -249,7 +293,13 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                     if (filter.searchable) {
                         $(e.target).parents("[dropdown]").find(".search-dropdown").focus();
                     }
-                    $(e.target).parents("[dropdown]").find(".dropdown-menu").scrollTop(0);
+
+                    var scroll = 0;
+                    var active = $(e.target).parents("[dropdown]").find(".dropdown-menu li.hover");
+                    if (active.length > 0) {
+                        scroll = active.position().top + 50;
+                    }
+                    $(e.target).parents("[dropdown]").find(".dropdown-menu").scrollTop(scroll);
                 }
 
                 $scope.updateDropdown = function (e, filter, value) {
@@ -620,6 +670,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter) {
                 $scope.focusDatePicker = function (filter, from) {
                     filter[from + "Open"] = true;
                 }
+                $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.operators = JSON.parse($el.find("data[name=operators]").text());
                 $scope.filters = $scope.initFilters(JSON.parse($el.find("data[name=filters]").text()));
                 $scope.datasource = $el.find("data[name=datasource]").text();

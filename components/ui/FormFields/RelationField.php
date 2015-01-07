@@ -393,7 +393,7 @@ class RelationField extends FormField {
             }
         }
 
-        
+
         echo json_encode($this->query($s, $p));
     }
 
@@ -460,12 +460,16 @@ class RelationField extends FormField {
                         foreach ($trans as $k => $t) {
                             $list = explode(" ", trim($t));
                             $li = array_shift($list);
+                            $liOri = $li;
+
                             $x[$li] = $li;
 
                             // pemisah alias
                             $ds = explode(".", $li);
                             if (count($ds) > 1) {
-                                $x[$ds[count($ds) - 1]] = $li;
+                                if (!isset($x[$ds[count($ds) - 1]])) {
+                                    $x[$ds[count($ds) - 1]] = $li;
+                                }
                             } else {
                                 $x[$li] = $alias . "." . $li;
                                 $x[$alias . '.' . $li] = $alias . '.' . $li;
@@ -473,7 +477,6 @@ class RelationField extends FormField {
 
                             // jika ada AS
                             if (count($list) > 0) {
-                                $liOri = $li;
                                 $li = array_pop($list);
 
                                 //jika pake alias
@@ -496,7 +499,8 @@ class RelationField extends FormField {
                             }
                         }
 
-                        $hasil = str_replace('{', "',", $field);
+
+                        $hasil = str_replace('{', "',", $hasil);
                         $hasil = str_replace('}', ",'", $hasil);
 
                         if ($hasil[0] == "'") {
@@ -577,18 +581,43 @@ class RelationField extends FormField {
             $this->relationCriteria['limit'] = ($search == '' ? '30' : '100');
         }
 
-
         $this->params = array_merge(is_null($this->params) ? [] : $this->params, $condition['params']);
         return DataSource::generateCriteria($this->params, $this->relationCriteria, $this);
+    }
+
+    public function count($search = '', $params = []) {
+        Yii::import($this->modelClass);
+
+        $class = Helper::explodeLast(".", $this->modelClass);
+        if (!class_exists($class))
+            return;
+
+        $model = new $class;
+        $tableSchema = $model->tableSchema;
+        $builder = $model->commandBuilder;
+        $criteria = $this->generateCriteria($search, $params);
+        if (array_key_exists('page', $criteria)) {
+            $start = ($criteria['page'] - 1) * $criteria['pageSize'];
+            $pageSize = $criteria['pageSize'];
+            $criteria['limit'] = $pageSize;
+            $criteria['offset'] = $start;
+
+            unset($criteria['pageSize']);
+            unset($criteria['page']);
+        }
+
+        $countCommand = $builder->createCountCommand($tableSchema, new CDbCriteria($criteria));
+        $count = $countCommand->queryScalar();
+        return $count;
     }
 
     public function query($search = '', $params = [], $initialID = null) {
         Yii::import($this->modelClass);
 
         $class = Helper::explodeLast(".", $this->modelClass);
-        
-        if (!class_exists($class)) return;
-        
+        if (!class_exists($class))
+            return;
+
         $model = new $class;
         $table = $model->tableName();
 
@@ -597,12 +626,12 @@ class RelationField extends FormField {
 
         if (!is_null($initialID) && $initialID != "") {
             $found = false;
-            
+
             foreach ($rawlist as $r) {
                 if (!isset($r[$this->idField])) {
                     continue;
                 }
-                
+
                 if ($r[$this->idField] == $initialID)
                     $found = true;
             }
@@ -624,14 +653,13 @@ class RelationField extends FormField {
                 if (in_array($this->idField, $field)) {
                     $value = $i[$this->idField];
                 } else {
-                    $value = $this->evaluate("\"" . str_replace("{", "{\$", $this->idField) . "\"", true, $i);
+                    $value = @$this->evaluate("\"" . str_replace("{", "{\$", $this->idField) . "\"", true, $i);
                 }
-
 
                 if (in_array($this->labelField, $field)) {
                     $label = $i[$this->labelField];
                 } else {
-                    $label = $this->evaluate("\"" . str_replace("{", "{\$", $this->labelField) . "\"", true, $i);
+                    $label = @$this->evaluate("\"" . str_replace("{", "{\$", $this->labelField) . "\"", true, $i);
                 }
 
                 $list[] = [

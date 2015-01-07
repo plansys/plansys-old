@@ -34,7 +34,7 @@
                 <?php if (@$this->fieldOptions['disabled']): ?>style="opacity:1;background:#fff;border:1px solid #ececeb;"<?php endif; ?> 
                 >
                 <span <?php if (@$this->fieldOptions['disabled']): ?>style="display:none"<?php endif; ?> 
-                                                                    class="caret pull-right"></span>
+                                                                     class="caret pull-right"></span>
                 <span class="dropdown-text" ng-bind-html="text"></span>
             </button>
 
@@ -54,7 +54,7 @@
                            ng-model="search"
                            ng-change="doSearch()"
                            placeholder="Search ..."
-                           ng-mouseup="searchFocus($event)"
+                           ng-mouseup="searchFocus($event, filter)"
                            class="input-block-level search-dropdown form-control" 
                            autocomplete="off">
                 </div>
