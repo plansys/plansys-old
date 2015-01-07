@@ -518,6 +518,18 @@
                 return "";
             }
         }
+        $scope.generateIdentity = function (field) {
+            switch (field.type) {
+                case "RelationField":
+                    return  field.label;
+                    break;
+                default:
+                    return field.name;
+                    break;
+            }
+
+        }
+
         $scope.detectDuplicate = function () {
             $(".duplicate").addClass('ng-hide').each(function () {
                 if ($(this).attr('fname') == '')
@@ -566,7 +578,7 @@
             $(".fb1").width(l);
             $(".fb2").width(30).css('left', l);
         }
-        $scope.maximize = function() {
+        $scope.maximize = function () {
             $scope.minimized = false;
             $(".fb1").width("69%");
             $(".fb2").width("31%").css("left", "69%");

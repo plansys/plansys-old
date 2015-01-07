@@ -40,7 +40,7 @@
             </div>
         </div>
     </div>
-    <div fname="{{field.name}}" ng-class="'d-' + formatName(field.name)"
+    <div fname="{{ generateIdentity(field) }}" ng-class="'d-' + formatName(field.name)"
          class="duplicate label label-warning ng-hide" 
          style="position:absolute;"><i class="fa fa-warning"></i> Duplicate 
         <span style="font-weight:normal">[{{field.name}}]</span>
