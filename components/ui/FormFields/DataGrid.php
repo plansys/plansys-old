@@ -187,7 +187,7 @@ class DataGrid extends FormField {
             $to = $currentPage * $pageSize;
 
             $template = [
-                'sql' => "limit {$from},{$to}",
+                'sql' => "limit {$from},{$pageSize}",
                 'params' => [
                 //                    'limit' => $pageSize,
                 //                    'offset' => $from,
