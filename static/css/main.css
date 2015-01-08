@@ -1419,7 +1419,6 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 /********************************** DATA GRID **************************************/
 .data-grid {
-
     padding-top:12px;
 }
 .data-grid-table {
@@ -1667,6 +1666,17 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     display:inline-block;
     width:84px;
     padding:1px 3px 0px 3px;
+}
+
+.data-grid-paging .paging-input {
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    -ms-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
+.data-grid-paging .paging-input:focus {
+    width:60px;
 }
 
 .data-grid-paging .btn,

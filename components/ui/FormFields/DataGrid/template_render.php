@@ -175,8 +175,9 @@
                                             <i class="fa fa-chevron-left"></i>
                                         </button>
                                     </span>
-                                    <input type="text" class="text-center form-control"
-                                           ng-keypress="pagingKeypress($event)"
+                                    <input type="text" class="text-center paging-input form-control"
+                                           ng-change="pagingKeypress($event)"
+                                           ng-delay="500"
                                            ng-model="gridOptions.pagingOptions.currentPage">
                                     <span class="input-group-btn">
                                         <button class="btn btn-default" ng-click="grid.pageForward()" type="button">
