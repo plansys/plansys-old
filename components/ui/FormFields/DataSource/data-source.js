@@ -96,8 +96,11 @@ app.directive('psDataSource', function ($timeout, $http) {
                 }
 
                 $scope.afterQueryInternal = {};
+                $scope.beforeQueryInternal = {};
                 $scope.afterQuery = null;
                 $scope.shouldCount = true;
+                $scope.lastQueryFrom = "";
+
                 $scope.queryWithoutCount = function (f) {
                     $scope.shouldCount = false;
                     $scope.query(f);
@@ -106,6 +109,11 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.query = function (f) {
                     var model = $scope.model || {};
                     var model_id = model.id || null;
+
+
+                    for (i in $scope.beforeQueryInternal) {
+                        $scope.beforeQueryInternal[i]($scope);
+                    }
 
                     var params = $.extend({}, $scope.sqlParams);
                     for (i in $scope.params) {

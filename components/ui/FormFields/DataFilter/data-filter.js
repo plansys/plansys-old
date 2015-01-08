@@ -96,6 +96,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
                                 }
                             }
 
+                            ds.lastQueryFrom = "DataFilter";
                             ds.query(function () {
                                 delete ds.afterQueryInternal[$scope.renderID];
                             });
@@ -198,6 +199,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
                                     }
                                 }
 
+                                ds.lastQueryFrom = "DataFilter";
                                 ds.query(function () {
                                     delete ds.afterQueryInternal[$scope.renderID];
                                 });
@@ -768,6 +770,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
                         $scope.datasources.map(function (dataSourceName) {
                             var ds = parent[dataSourceName];
                             if (ds) {
+                                ds.lastQueryFrom = "DataFilter";
                                 ds.query();
                             }
                         });

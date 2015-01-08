@@ -715,6 +715,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                                             ds.updateParam('currentPage', paging.currentPage, 'paging');
                                             ds.updateParam('pageSize', paging.pageSize, 'paging');
                                             ds.updateParam('totalServerItems', paging.totalServerItems, 'paging');
+                                            ds.lastQueryFrom = "DataGrid";
                                             if (paging.pageSize == oldpaging.pageSize) {
                                                 ds.queryWithoutCount();
                                             } else {
@@ -745,6 +746,8 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                                                 direction: sort.directions[i]
                                             });
                                         }
+
+                                        ds.lastQueryFrom = "DataGrid";
                                         ds.updateParam('order_by', order_by, 'order');
                                         ds.queryWithoutCount();
                                     }
@@ -978,6 +981,12 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                             $timeout(function () {
                                 loadRelation();
                             }, 100);
+
+                            $scope.datasource.beforeQueryInternal[$scope.renderID] = function () {
+                                if ($scope.datasource.lastQueryFrom == "DataFilter") {
+                                    $scope.gridOptions.pagingOptions.currentPage = 1;
+                                }
+                            }
                             $scope.datasource.afterQueryInternal[$scope.renderID] = function () {
                                 $timeout(function () {
                                     loadRelation();
