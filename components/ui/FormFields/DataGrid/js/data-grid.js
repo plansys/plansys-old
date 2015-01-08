@@ -60,7 +60,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                 }, '.ngCellButtonCollapsed');
 
                 $scope.pagingKeypress = function (e) {
-                    if (e.which == 13) {
+                    if (typeof e != "undefined" && e.which == 13) {
                         e.preventDefault();
                         e.stopPropagation();
                         return false;
