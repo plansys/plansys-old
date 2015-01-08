@@ -221,7 +221,7 @@ class DataSource extends FormField {
         echo Helper::classAlias($relClass);
     }
 
-    private $shouldCount = true;
+    private $lastCount = 0;
 
     public function actionQuery() {
         $postdata = file_get_contents("php://input");
@@ -229,7 +229,7 @@ class DataSource extends FormField {
         $class = Helper::explodeLast(".", $post['class']);
         Yii::import($post['class']);
 
-        $shouldCount = @$post['nc'] == 'y';
+        $this->lastCount = @$post['lc'] > 0 ? @$post['lc'] : 0;
 
         if (class_exists($class)) {
             $fb = FormBuilder::load($class);
@@ -506,7 +506,7 @@ class DataSource extends FormField {
         $data = $this->command->queryAll(true, $template['params']);
 
         ## if should count, then count..
-        if ($this->shouldCount) {
+        if ($this->lastCount == 0) {
             if ($this->enablePaging == 'Yes') {
                 $tc = DataSource::generateTemplate($this->pagingSQL, $params, $this);
                 $count = $db->createCommand($tc['sql'])->queryAll(true, $tc['params']);
@@ -524,9 +524,9 @@ class DataSource extends FormField {
         } else {
             $count = '';
             ## default shouldcount to true;
-            $this->shouldCount = true;
+            $this->lastCount = 0;
         }
-        
+
         $template['count'] = $count;
         $template['timestamp'] = date('Y-m-d H:i:s');
 

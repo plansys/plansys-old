@@ -118,13 +118,13 @@ app.directive('psDataSource', function ($timeout, $http) {
                         }
                     }
                     $scope.loading = true;
-                    
+
                     $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
                         model_id: model_id,
                         name: $scope.name,
                         class: $scope.class,
                         params: params,
-                        nc: $scope.shouldCount ? 'y' : 't'
+                        nc: $scope.shouldCount ? 0 : $scope.totalItems
                     }).success(function (data) {
                         $scope.isDataReloaded = true;
                         $scope.data = data.data;
