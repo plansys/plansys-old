@@ -715,7 +715,11 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                                             ds.updateParam('currentPage', paging.currentPage, 'paging');
                                             ds.updateParam('pageSize', paging.pageSize, 'paging');
                                             ds.updateParam('totalServerItems', paging.totalServerItems, 'paging');
-                                            ds.queryWithoutCount();
+                                            if (paging.pageSize == oldpaging.pageSize) {
+                                                ds.queryWithoutCount();
+                                            } else {
+                                                ds.query();
+                                            }
                                         }, 100);
                                     }
                                 }
