@@ -715,7 +715,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                                             ds.updateParam('currentPage', paging.currentPage, 'paging');
                                             ds.updateParam('pageSize', paging.pageSize, 'paging');
                                             ds.updateParam('totalServerItems', paging.totalServerItems, 'paging');
-                                            ds.query();
+                                            ds.queryWithoutCount();
                                         }, 100);
                                     }
                                 }
@@ -742,7 +742,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                                             });
                                         }
                                         ds.updateParam('order_by', order_by, 'order');
-                                        ds.query();
+                                        ds.queryWithoutCount();
                                     }
                                 }
                             }, true);
@@ -799,7 +799,6 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                                         $topp.attr("style", '');
                                         $catt.css('margin-top', '0px');
                                         $el.find(".data-grid-paging-shadow").hide();
-
                                     }
                                 }
 

@@ -97,6 +97,12 @@ app.directive('psDataSource', function ($timeout, $http) {
 
                 $scope.afterQueryInternal = {};
                 $scope.afterQuery = null;
+                $scope.shouldCount = true;
+                $scope.queryWithoutCount = function (f) {
+                    $scope.shouldCount = false;
+                    $scope.query(f);
+                }
+
                 $scope.query = function (f) {
                     var model = $scope.model || {};
                     var model_id = model.id || null;
@@ -112,12 +118,13 @@ app.directive('psDataSource', function ($timeout, $http) {
                         }
                     }
                     $scope.loading = true;
-
+                    
                     $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
                         model_id: model_id,
                         name: $scope.name,
                         class: $scope.class,
-                        params: params
+                        params: params,
+                        nc: $scope.shouldCount ? 'y' : 't'
                     }).success(function (data) {
                         $scope.isDataReloaded = true;
                         $scope.data = data.data;
@@ -142,6 +149,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                             f(false, data);
                         }
                     });
+                    $scope.shouldCount = true;
                 }
 
                 var jsParamExist = false;
@@ -272,7 +280,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                                         if ($scope.deleteData == null || !!!$scope.deleteData || typeof $scope.deleteData != 'object') {
                                             $scope.deleteData = [];
                                         }
-                                        
+
                                         $scope.deleteData.push(del['id']);
                                     }
                                 }

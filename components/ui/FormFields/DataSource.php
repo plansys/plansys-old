@@ -221,11 +221,15 @@ class DataSource extends FormField {
         echo Helper::classAlias($relClass);
     }
 
+    private $shouldCount = true;
+
     public function actionQuery() {
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
         $class = Helper::explodeLast(".", $post['class']);
         Yii::import($post['class']);
+
+        $shouldCount = @$post['nc'] == 'y';
 
         if (class_exists($class)) {
             $fb = FormBuilder::load($class);
@@ -501,21 +505,28 @@ class DataSource extends FormField {
         $this->command = $db->createCommand($template['sql']);
         $data = $this->command->queryAll(true, $template['params']);
 
-        if ($this->enablePaging == 'Yes') {
-            $tc = DataSource::generateTemplate($this->pagingSQL, $params, $this);
-            $count = $db->createCommand($tc['sql'])->queryAll(true, $tc['params']);
+        ## if should count, then count..
+        if ($this->shouldCount) {
+            if ($this->enablePaging == 'Yes') {
+                $tc = DataSource::generateTemplate($this->pagingSQL, $params, $this);
+                $count = $db->createCommand($tc['sql'])->queryAll(true, $tc['params']);
 
-            if (count($count) > 0) {
-                $count = array_values($count[0]);
-                $count = $count[0];
+                if (count($count) > 0) {
+                    $count = array_values($count[0]);
+                    $count = $count[0];
+                } else {
+                    $count = 0;
+                }
+                $template['countSQL'] = $tc['sql'];
             } else {
-                $count = 0;
+                $count = count($data);
             }
-            $template['countSQL'] = $tc['sql'];
         } else {
-            $count = count($data);
+            $count = '';
+            ## default shouldcount to true;
+            $this->shouldCount = true;
         }
-
+        
         $template['count'] = $count;
         $template['timestamp'] = date('Y-m-d H:i:s');
 
