@@ -522,7 +522,7 @@ class DataSource extends FormField {
                 $count = count($data);
             }
         } else {
-            $count = '';
+            $count = $this->lastCount;
             ## default shouldcount to true;
             $this->lastCount = 0;
         }
