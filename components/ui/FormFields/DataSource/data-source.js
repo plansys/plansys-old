@@ -124,7 +124,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                         name: $scope.name,
                         class: $scope.class,
                         params: params,
-                        nc: $scope.shouldCount ? 0 : $scope.totalItems
+                        lc: $scope.shouldCount ? 0 : $scope.totalItems
                     }).success(function (data) {
                         $scope.isDataReloaded = true;
                         $scope.data = data.data;
