@@ -356,8 +356,8 @@ class DataSource extends FormField {
             return (trim($e) != "" ? trim($e) : false);
         });
         $sql = implode(" " . $operator . " ", $andsql);
-        $sql = preg_replace("/where\s+{$operator}/i", "WHERE", $sql);
-        $sql = preg_replace("/where\s+where/i", "WHERE", $sql);
+        $sql = preg_replace("/\s+where\s+{$operator}/i", "WHERE", $sql);
+        $sql = preg_replace("/\s+where\s+where\s+/i", "WHERE", $sql);
 
         return $sql;
     }
