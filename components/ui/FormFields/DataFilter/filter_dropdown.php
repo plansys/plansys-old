@@ -18,7 +18,8 @@
         <div class="search" ng-show="filter.searchable" style="margin-bottom:0px;">
             <input type="text"
                    ng-model="filter.search"
-                   ng-keydown="listSearch($event, filter)"
+                   ng-change="listSearch($event, filter)"
+                   ng-delay="500"
                    ng-click="$event.preventDefault()"
                    placeholder="Search ..."
                    class="input-block-level search-dropdown form-control" autocomplete="off">

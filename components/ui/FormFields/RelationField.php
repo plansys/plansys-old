@@ -491,11 +491,12 @@ class RelationField extends FormField {
                         // replace kurung kurawal
                         preg_match_all("/\{(.*?)\}/", $field, $fieldArray);
                         $hasil = $field;
+                        
                         foreach ($fieldArray[0] as $k => $f) {
                             if (@$x[$fieldArray[1][$k]]) {
-                                $hasil = str_replace($f, '{' . $x[$fieldArray[1][$k]] . '}', $hasil);
+                                $hasil = str_replace($f, '{IFNULL(' . $x[$fieldArray[1][$k]] . ', "")}', $hasil);
                             } else {
-                                $hasil = str_replace($f, '{' . $fieldArray[1][$k] . '}', $hasil);
+                                $hasil = str_replace($f, '{IFNULL(' . $fieldArray[1][$k] . ', "")}', $hasil);
                             }
                         }
 

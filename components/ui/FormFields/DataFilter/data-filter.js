@@ -243,7 +243,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
                                     }
                                 }
 
-                                if (data.list.length == 0) {
+                                if (!data.list || (data.list.length && data.list.length == 0)) {
                                     filter.count = 0;
                                 }
                             });
