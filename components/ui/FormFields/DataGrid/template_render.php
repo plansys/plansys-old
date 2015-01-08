@@ -187,11 +187,18 @@
                             </div>
                         </div>
                         <div class="pull-left" style="margin:5px">
-                            of {{ Math.ceil(datasource.totalItems / gridOptions.pagingOptions.pageSize) | number }}
+                            of {{ Math.ceil(datasource.totalItems / gridOptions.pagingOptions.pageSize) | number}}
                         </div>
                         <div class="pull-left"
                              style="border-left:1px solid #ccc;margin:2px 5px;padding:3px 8px;">
-                            Total of {{ datasource.totalItems | number }} Record{{ datasource.totalItems >1 ? 's' :'' }}
+
+                            <div ng-if="datasource.loading">
+                                <i class="fa fa-refresh fa-spin"></i> Loading Data...
+                            </div>
+                            <div ng-if="!datasource.loading">
+                                Total of {{ datasource.totalItems | number }} Record{{ datasource.totalItems >1 ? 's' :'' }}
+                            </div>
+
                         </div>
                     </div>
                     <div class="clearfix"></div>

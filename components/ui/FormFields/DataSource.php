@@ -606,7 +606,6 @@ class DataSource extends FormField {
             $criteria['params'] = array_filter($criteria['params']);
         }
 
-
         $criteriaCount = $criteria;
         if ($this->relationTo == 'currentModel') {
             $tableSchema = $this->model->tableSchema;
