@@ -1663,8 +1663,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 
 .data-grid-page-selector {
-    display:inline-block;
-    width:84px;
+    display:block;
     padding:1px 3px 0px 3px;
 }
 
@@ -1674,6 +1673,8 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     -o-transition: all .2s ease-in-out;
     -ms-transition: all .2s ease-in-out;
     transition: all .2s ease-in-out;
+    display:inline-block;
+    width:40px;
 }
 .data-grid-paging .paging-input:focus {
     width:60px;

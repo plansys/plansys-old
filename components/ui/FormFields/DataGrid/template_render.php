@@ -167,23 +167,21 @@
 
                     <div class="data-grid-pagination" ng-if="gridOptions.enablePaging">
                         <div class="pull-left" style="margin:5px;">Page:</div>
-                        <div class="pull-left">
-                            <div class="data-grid-page-selector">
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default" ng-click="grid.pageBackward()" type="button">
-                                            <i class="fa fa-chevron-left"></i>
-                                        </button>
-                                    </span>
-                                    <input type="text" class="text-center paging-input form-control"
-                                           ng-change="pagingKeypress($event)"
-                                           ng-delay="500"
-                                           ng-model="gridOptions.pagingOptions.currentPage">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default" ng-click="grid.pageForward()" type="button">
-                                            <i class="fa fa-chevron-right"></i>
-                                        </button>
-                                    </span>
+                        <div class="pull-left data-grid-page-selector">
+                            <div class="input-group input-group-sm pull-left" style="display:block;">
+                                <div class="input-group-btn pull-left" style="width:24px;">
+                                    <button class="btn btn-default" ng-click="grid.pageBackward()" type="button">
+                                        <i class="fa fa-chevron-left"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="text-center paging-input form-control pull-left"
+                                       ng-change="pagingKeypress($event)"
+                                       ng-delay="500"
+                                       ng-model="gridOptions.pagingOptions.currentPage" />
+                                <div class="input-group-btn pull-left" style="width:25px;">
+                                    <button class="btn btn-default" ng-click="grid.pageForward()" type="button">
+                                        <i class="fa fa-chevron-right"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
