@@ -83,6 +83,7 @@ class FormsController extends Controller {
 
         $data['editor'] = true;
         $data[$mainFormSection]['content'] = $builder;
+        
         Layout::render($layout, $data);
     }
 

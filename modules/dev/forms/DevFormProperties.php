@@ -40,7 +40,7 @@ class DevFormProperties extends Form {
             array (
                 'label' => 'Form Layout',
                 'name' => 'layoutName',
-                'listExpr' => 'array(\\\'full-width\\\',\\\'2-cols\\\',\\\'3-cols\\\',\\\'2-rows\\\')',
+                'listExpr' => 'array(\\\'full-width\\\',\\\'dashboard\\\')',
                 'iconTemplate' => '<img src=\\"{plansys_url}/static/img/columns/{icon}.png\\" />',
                 'fieldWidth' => '150',
                 'options' => array (
@@ -70,7 +70,6 @@ class DevFormProperties extends Form {
             ),
             array (
                 'label' => 'Form Options',
-                'fieldname' => 'options',
                 'show' => 'Show',
                 'options' => array (
                     'ng-model' => '$parent.form.options',

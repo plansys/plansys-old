@@ -52,12 +52,13 @@ class Layout extends CComponent {
 
     public static function defaultSection($layout) {
         $section = [
+            'dashboard' => 'col1',
             'full-width' => 'col1',
             '2-cols' => 'col1',
             '3-cols' => 'col1',
             '2-rows' => 'row1'
         ];
-
+        
         return @$section[$layout];
     }
 

@@ -101,8 +101,8 @@
                 var name = $scope.layout.name;
                 $scope.form.layout.data[name] = $scope.layout;
             }
-
-            if ($scope.form.layout.name == 'full-width') {
+            
+            if ($scope.form.layout.name == 'full-width' || $scope.form.layout.name == 'dashboard') {
                 $scope.form.layout.data.col1.size = "100";
             }
 
@@ -179,7 +179,7 @@
                 }
             }
 
-            if ($scope.form.layout.name == "full-width") {
+            if ($scope.form.layout.name == "full-width" || $scope.form.layout.name == "dashboard" ) {
                 return true;
             }
 
@@ -209,6 +209,7 @@
             }
             switch ($scope.form.layout.name) {
                 case "full-width":
+                case "dashboard":
                     $scope.form.layout.data.col1 = setsize("", "", "mainform");
                     break;
                 case "2-cols":

@@ -946,7 +946,7 @@ li:hover > .item-btn {
 }
 
 /********************************* PORTLET ***********************************/
-
+/*
 .form-builder li.Portlet > .form-field > .field-info {
     right:auto;
     width:auto;
@@ -968,7 +968,7 @@ li:hover > .item-btn {
 .angular-ui-tree-placeholder.Portlet {
     float:left;
     margin:6px !important;
-}
+}*/
 
 .portlet-container {
     border:1px solid #ccc;
@@ -1334,7 +1334,8 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 }
 
 .field.column-placeholder {
-    height:50px;
+    min-height:50px;
+    height:100%;
     display:block;
     width:100%;
     padding:0px !important;
@@ -1343,6 +1344,10 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 .form-builder-column .angular-ui-tree-nodes {
     padding-left:0px;
+}
+
+.form-builder-column > .angular-ui-tree-nodes {
+    height:100%;
 }
 /********************************** KEYVALUE GRID **************************************/
 
@@ -2833,7 +2838,7 @@ div[icon-picker] .popover {
 div[icon-picker] .popover-content {
     padding-right:0px;
     max-height:150px;
-    min-height: 100px;
+    min-height: 70px;
     overflow-y:auto;
 }
 
