@@ -2,9 +2,7 @@
 
 <div ng-controller="PageController" ng-cloak >
 
-    <div ng-if="mustReload"
-         style="z-index:9999;position:absolute;top:0px;left:0px;
-         right:0px;bottom:0px;background:rgba(255,255,255,.9);text-align:center;padding:200px;">
+    <div id="must-reload">
         <h3>Source file has changed</h3>
         <div class="btn btn-success" onclick="location.reload()"><i class="fa fa-refresh"></i> Refresh Form</div>
     </div>
@@ -67,7 +65,8 @@
                                 <ul class="dropdown-menu" style="min-width:160px;max-height:200px;" role="menu">
                                     <li ng-repeat="(name, icon) in toolbarSettings['icon']">
                                         <a href="#" dropdown-toggle value="{{name}}" 
-                                           ng-click="active.type = name;save();">
+                                           ng-click="active.type = name;
+                                                           save();">
                                             <i class="{{icon}}"></i> {{name}}
                                         </a>
                                     </li>

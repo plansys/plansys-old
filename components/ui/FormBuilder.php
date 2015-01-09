@@ -217,6 +217,39 @@ class FormBuilder extends CComponent {
         return $results;
     }
 
+    public function updateField($attributes, $values, &$fields = null, $level = 0) {
+        if ($fields == null) {
+            $fields = $this->getFields();
+        }
+
+        foreach ($fields as $k => $f) {
+            if (!is_array($f))
+                continue;
+
+            $valid = 0;
+            foreach ($f as $key => $value) {
+                if (isset($f['name'])) {
+                    if (!is_array($value)) {
+                        foreach ($attributes as $attrKey => $attrVal) {
+                            if ($key == $attrKey && $value == $attrVal) {
+                                $valid++;
+                            }
+                        }
+                    } else if (is_array($value) && count($value) > 0) {
+                        $fields[$k][$key] = $this->updatefield($attributes, $values, $value, $level);
+                    }
+                }
+            }
+            if ($valid == count($attributes)) {
+                foreach ($values as $vk => $val) {
+                    $fields[$k][$vk] = $val;
+                }
+            }
+        }
+
+        return $fields;
+    }
+
     public function findField($attributes, $recursive = null) {
         if (is_null($this->_findFieldCache)) {
             ## cache the fields
@@ -687,7 +720,7 @@ class FormBuilder extends CComponent {
             $data['errors'] = $formdata->errors;
             $data['isNewRecord'] = $formdata->isNewRecord;
         }
-        
+
         return $data;
     }
 

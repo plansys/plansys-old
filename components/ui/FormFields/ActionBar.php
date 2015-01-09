@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class ActionBar
  * @author rizky
@@ -9,33 +10,33 @@ class ActionBar extends FormField {
      * @return array me-return array property ActionBar.
      */
     public function getFieldProperties() {
-        return  [
-             [
+        return [
+            [
                 'label' => 'Title',
                 'name' => 'title',
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
-                'options' =>  [
+                'options' => [
                     'ng-model' => 'active.title',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ],
-                'labelOptions' =>  [
+                'labelOptions' => [
                     'style' => 'text-align:left',
                 ],
-                'fieldOptions' =>  [
+                'fieldOptions' => [
                     'auto-grow' => '',
                 ],
                 'type' => 'TextArea',
             ],
-             [
+            [
                 'label' => 'Show Tab',
                 'name' => 'showSectionTab',
-                'options' =>  [
+                'options' => [
                     'ng-model' => 'active.showSectionTab',
                     'ng-change' => 'save()',
                 ],
-                'labelOptions' =>  [
+                'labelOptions' => [
                     'style' => 'text-align:left;',
                 ],
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
@@ -43,22 +44,22 @@ class ActionBar extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ],
-             [
+            [
                 'label' => 'First Tab',
                 'name' => 'firstTabName',
                 'labelWidth' => '3',
-                'options' =>  [
+                'options' => [
                     'ng-model' => 'active.firstTabName',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                     'ng-if' => 'active.showSectionTab == \\\'Yes\\\'',
                 ],
-                'labelOptions' =>  [
+                'labelOptions' => [
                     'style' => 'text-align:left;',
                 ],
                 'type' => 'TextField',
             ],
-             [
+            [
                 'label' => 'Title Breacrumb Link',
                 'name' => 'titleLink',
                 'show' => 'Show',
@@ -72,7 +73,7 @@ class ActionBar extends FormField {
      * @return array me-return array javascript yang di-include
      */
     public function includeJS() {
-        return ['html2canvas.min.js','action-bar.js'];
+        return ['html2canvas.min.js', 'action-bar.js'];
     }
 
     /** @var string $toolbarName */
@@ -84,12 +85,11 @@ class ActionBar extends FormField {
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-suitcase";
 
-    
     /** @var array $parseField */
     public $parseField = [
         'linkBar' => 'renderLinkBar',
     ];
-    
+
     /** @var array $linkBar */
     public $linkBar = [
         [
@@ -103,24 +103,32 @@ class ActionBar extends FormField {
             ]
         ],
     ];
-    
+
     /** @var string $renderLinkBar */
     public $renderLinkBar = "";
-    
+
     /** @var string $title */
     public $title = "{{form.title}}";
-    
     public $firstTabName = 'General';
-    
+
     /** @var array $titleLink */
     public $titleLink = [];
-    
+
     /** @var string $bottomLeft */
     public $bottomLeft = "";
-    
+
     /** @var string $bottomRight */
     public $bottomRight = "";
-    
     public $showSectionTab = "Yes";
+
+    public function getPortlets() {
+        $portlets = $this->builder->findAllField(['type' => 'Portlet']);
+        $results = [];
+        foreach ($portlets as $p) {
+            $results[] = $p['name'];
+        }
+
+        return $results;
+    }
 
 }

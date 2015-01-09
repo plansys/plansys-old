@@ -1,17 +1,37 @@
 
-<div class="action-bar-container">
+<div ps-action-bar class="action-bar-container">
     <div class="action-bar" >
         <div class="title-bar">
             <span class="title"><?= $this->title ?></span>
         </div>
-        <div class="print-bar">
-            <div class="btn btn-sm btn-default ac-print">
-                <i class="fa fa-print fa-lg "></i>
+        <?php if ($this->form['layout']['name'] == 'full-width'): ?>
+            <div class="print-bar">
+                <div class="btn btn-sm btn-default ac-print">
+                    <i class="fa fa-print fa-lg "></i>
+                </div>
+                <div class="btn btn-sm btn-danger ac-exit-print">
+                    Exit Print Preview
+                </div>
             </div>
-            <div class="btn btn-sm btn-danger ac-exit-print">
-                 Exit Print Preview
+        <?php endif; ?>
+        <?php if ($this->form['layout']['name'] == 'dashboard'): ?>
+            <div class="data hide" name="portlets"><?= json_encode($this->portlets); ?></div>
+            <div class="print-bar">
+                <div class="ac-portlet-btngroup btn-group" dropdown>
+                    <button type="button" class="btn ac-portlet-button btn-sm btn-default dropdown-toggle">
+                        <i class="fa fa-bars fa-nm"></i> 
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="ac-portlet-menu dropdown-menu pull-right" role="menu">
+                        <li dropdown-toggle>
+                            <a href="">
+                                asdasd
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
+        <?php endif; ?>
         <div class="link-bar">
             <div ng-show='!formSubmitting'>
                 <?= $this->renderLinkBar ?>
@@ -24,10 +44,10 @@
         <div class="clearfix"></div>
         <?php if ($this->showSectionTab == "Yes"): ?>
             <div class="action-tab" >
-                <a href="#<?= strtolower(preg_replace('/[^\da-z]/i', '_', $this->firstTabName))?>" top="0" class="active"><?= $this->firstTabName ?></a>
+                <a href="#<?= strtolower(preg_replace('/[^\da-z]/i', '_', $this->firstTabName)) ?>" top="0" class="active"><?= $this->firstTabName ?></a>
                 <div class="clearfix"></div>
             </div>
         <?php endif; ?>
     </div>
 </div>
-<div id="<?= strtolower(preg_replace('/[^\da-z]/i', '_', $this->firstTabName))?>"></div>
+<div id="<?= strtolower(preg_replace('/[^\da-z]/i', '_', $this->firstTabName)) ?>"></div>

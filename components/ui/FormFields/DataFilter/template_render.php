@@ -25,7 +25,6 @@
                                 <label>
                                     <i class="fa fa-check-square-o fa-lg fa-fw" ng-if="filter.show" ></i>
                                     <i class="fa fa-square-o fa-lg fa-fw" ng-if="!filter.show" ></i>
-
                                     {{filter.label}}
                                 </label>
                             </a>

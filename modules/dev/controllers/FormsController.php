@@ -18,7 +18,7 @@ class FormsController extends Controller {
                     '---' => '---',
                     'currentModel' => 'Current Model',
                     '--' => '---',
-                    ), $rel);
+                        ), $rel);
             } else {
                 foreach ($data as $name => $field) {
                     FormsController::$modelFieldList[$name] = $name;
@@ -28,16 +28,12 @@ class FormsController extends Controller {
         }
     }
 
-    public function actionNew() {
-        $this->renderForm("");
-    }
-
     public function renderPropertiesForm($field) {
         FormField::$inEditor = false;
         $fbp = FormBuilder::load($field['type']);
         return $fbp->render($field, array(
-                'wrapForm' => false,
-                'FormFieldRenderID' => $this->countRenderID++
+                    'wrapForm' => false,
+                    'FormFieldRenderID' => $this->countRenderID++
         ));
     }
 
@@ -83,7 +79,7 @@ class FormsController extends Controller {
 
         $data['editor'] = true;
         $data[$mainFormSection]['content'] = $builder;
-        
+
         Layout::render($layout, $data);
     }
 
@@ -155,6 +151,30 @@ class FormsController extends Controller {
     public function actionEmpty() {
         $this->layout = "//layouts/blank";
         $this->render('empty');
+    }
+
+    public function actionDashboard($f) {
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+        FormField::$inEditor = true;
+
+        $classPath = FormBuilder::classPath($f);
+        $fb = FormBuilder::load($classPath);
+        if (isset($post['save'])) {
+            switch ($post['save']) {
+                case "portlet":
+                    $fields = $fb->updateField(['name' => $post['name']], $post['data']);
+                    $fb->fields = $fields;
+                    break;
+            }
+
+            return;
+        }
+
+        $this->renderForm($f, [
+            'classPath' => $classPath,
+            'fields' => $fb->fields
+        ]);
     }
 
     public function actionSave($class) {

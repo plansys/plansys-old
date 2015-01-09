@@ -827,6 +827,12 @@ li:hover > .item-btn {
     background:rgba(255,255,255,1);
 }
 
+#must-reload {
+    z-index:9999;position:absolute;top:0px;left:0px;
+    right:0px;bottom:0px;background:rgba(255,255,255,.7);text-align:center;padding:200px;
+    display:none;
+}
+
 .form-builder {
     padding:10px;
 }
@@ -946,29 +952,6 @@ li:hover > .item-btn {
 }
 
 /********************************* PORTLET ***********************************/
-/*
-.form-builder li.Portlet > .form-field > .field-info {
-    right:auto;
-    width:auto;
-    top:auto;
-}
-
-.form-builder li.Portlet {
-    float:left;
-    resize: both;
-}
-.form-builder li.Portlet .angular-ui-tree-nodes {
-    padding:0px !important;
-}
-
-.form-builder li.Portlet {
-    float:left;
-}
-
-.angular-ui-tree-placeholder.Portlet {
-    float:left;
-    margin:6px !important;
-}*/
 
 .portlet-container {
     border:1px solid #ccc;
@@ -980,14 +963,34 @@ li:hover > .item-btn {
     -o-transition : border 100ms;
     transition : border 100ms;
 }
+.portlet-container .portlet-info {
+    position:absolute;padding:5px;font-size:11px;color:#999;
+    opacity:0;
+    -webkit-transition : opacity 100ms;
+    -moz-transition : opacity 100ms;
+    -o-transition : opacity 100ms;
+    transition : opacity 100ms;
+}
+.portlet-container:hover .portlet-info {
+    opacity:1;
+}
 
 .portlet-container.showborder {
-    border:0px !important;
-    box-shadow:none;
+    border-color:transparent !important;
+    box-shadow:none !important;
+    background:transparent;
 }
+
+.portlet-edit.portlet-container.showborder {
+    border:1px solid #ddd !important;
+}
+.portlet-edit.portlet-container.showborder:hover {
+    border:1px solid #ccc !important;
+}
+
 .portlet-container:hover,
 .portlet-container.hover{
-    border:2px solid #aaa;
+    border:1px solid #aaa;
 }
 
 .portlet-container > .angular-ui-tree-nodes {
@@ -1048,6 +1051,7 @@ li:hover > .item-btn {
     width:auto !important;
     height:auto !important;
     cursor:default !important;
+    z-index:110 !important;
 }
 [portlet].maximized .ui-resizable-handle {
     display:none !important;
@@ -1055,6 +1059,10 @@ li:hover > .item-btn {
 
 [portlet].maximized .portlet-buttons.minimize {
     opacity:1 !important;
+}
+
+.dashboard {
+    background:#f5f5f5;
 }
 
 /********************************* LIST VIEW ***********************************/
@@ -2312,24 +2320,26 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
 }
 
 .action-bar-container {
-    z-index: 3;
     position:fixed;
     width:inherit;
     overflow-x:hidden;
+    pointer-events:none;
     padding-bottom:20px;
 }
+
 .ac-exit-print {
     display:none;
 }
 
-
 .action-bar {
+    pointer-events:all;
     background:white;
     padding:0px 50px;
     margin:0px -50px;
     -webkit-box-shadow: 0 8px 6px -6px #ececeb;
     -moz-box-shadow: 0 8px 6px -6px #ececeb;
     box-shadow: 0 8px 6px -6px #ececeb;
+    border-bottom:1px solid #ddd;
 }
 
 .action-bar .title-bar {

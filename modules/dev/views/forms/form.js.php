@@ -1,5 +1,4 @@
 <script type="text/javascript">
-
     /** jQuery Caret **/
     (function ($) {
         // Behind the scenes method deals with browser
@@ -14,6 +13,7 @@
                 el.setSelectionRange(index, index);
             }
         };
+
         // Set caret to a particular index
         $.fn.setCaretPosition = function (index, offset) {
             return this.queue(function (next) {
@@ -50,7 +50,8 @@
             }
         }
     })(jQuery);
-    app.controller("PageController", function ($scope, $http, $timeout, $window, $compile) {
+
+    app.controller("PageController", function ($scope, $http, $timeout, $window, $compile, $localStorage) {
         $scope.getNumber = function (num) {
             a = [];
             for (i = 1; i <= num; i++) {
@@ -101,7 +102,7 @@
                 var name = $scope.layout.name;
                 $scope.form.layout.data[name] = $scope.layout;
             }
-            
+
             if ($scope.form.layout.name == 'full-width' || $scope.form.layout.name == 'dashboard') {
                 $scope.form.layout.data.col1.size = "100";
             }
@@ -160,7 +161,6 @@
         }
 
         /*********************** TEXT ********************************/
-
         $scope.aceLoaded = function (_editor) {
             $(window).resize();
         };
@@ -179,7 +179,7 @@
                 }
             }
 
-            if ($scope.form.layout.name == "full-width" || $scope.form.layout.name == "dashboard" ) {
+            if ($scope.form.layout.name == "full-width" || $scope.form.layout.name == "dashboard") {
                 return true;
             }
 
@@ -249,7 +249,25 @@
         $scope.dataSourceList = {};
         $scope.toolbarSettings = <?php echo json_encode(FormField::settings($formType)); ?>;
         $scope.form = <?php echo json_encode($fb->form); ?>;
-        $scope.fields = <?php echo json_encode($fieldData); ?>;
+
+        /*********************** FIELD LOCAL STORAGE SYNC *****************/
+        $scope.$storage = $localStorage;
+        $scope.serverFields = <?php echo json_encode($fieldData); ?>;
+        if (!$scope.$storage.plansysFormBuilder) {
+            $scope.$storage.plansysFormBuilder = {};
+        }
+        if (!$scope.$storage.plansysFormBuilder[$scope.classPath]) {
+            $scope.$storage.plansysFormBuilder[$scope.classPath] = [];
+        }
+        $scope.$storage.plansysFormBuilder[$scope.classPath] = $scope.serverFields;
+        $scope.fields = $scope.$storage.plansysFormBuilder[$scope.classPath];
+        $scope.$watch('$storage', function (n, o) {
+            if ($scope.$storage.plansysFormBuilder[$scope.classPath] != $scope.fields) {
+                $scope.fields = $scope.$storage.plansysFormBuilder[$scope.classPath];
+                $scope.unselect();
+            }
+        }, true);
+
         $scope.saving = false;
         /************************ RELATION FIELD  ****************************/
         $scope.relationFieldList = {};
@@ -592,33 +610,6 @@
             }, 10);
         }
         $scope.fieldsOptions = {
-            accept: function (s, d, i) {
-                if (s.$modelValue.type == 'Portlet') {
-                    var pl = $(".form-builder .angular-ui-tree-placeholder");
-                    var width = "width: " + s.$modelValue.width + "px !important;";
-                    var height = "height: " + s.$modelValue.height + "px;";
-
-                    pl.addClass('Portlet');
-                    pl.css('cssText', height + width);
-
-                    if (d.$nodeScope != null && d.$nodeScope.$modelValue.type == 'Portlet') {
-                        return false;
-                    }
-                }
-
-                return true;
-            },
-            dragInit: function (e) {
-                if (e.element.hasClass('Portlet')) {
-                    e.placeholder.addClass('Portlet');
-                    var height = "height: " + e.element.find('.portlet-container:eq(0)').height() + "px;";
-                    var width = "width: " + e.element.find('.portlet-container:eq(0)').width() + "px !important;";
-                    e.placeholder.css('cssText', height + width);
-
-//                    e.pos.offsetX = e.element.offset().left;
-//                    e.pos.offsetY = e.element.offset().top;
-                }
-            },
             dragStart: function (scope) {
                 if ($scope.isCloning) {
                     $scope.isCloneDragging = true;

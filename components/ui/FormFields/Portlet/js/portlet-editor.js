@@ -13,23 +13,65 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
                 $scope.zoomable = $el.find("data[name=zoomable]:eq(0)").text().trim() == 'Yes';
                 $scope.showBorder = $el.find("data[name=showBorder]:eq(0)").text().trim() == 'Yes';
 
-                /************* Prepare LocalStorage *****************/
-                if ($localStorage.portlet == null) {
-                    $localStorage.portlet = {};
+                $scope.$storage = $localStorage;
+                if (!$scope.$storage.plansysFormBuilder || !$scope.$storage.plansysFormBuilder[$scope.params.classPath]) {
+                    $("#must-reload").show();
+                    $("#must-reload h3").html('Warning<br/><small>Dashboard Mode can only be<br/> opened through FormBuilder</small>');
+                    $("#must-reload .btn").hide();
+                    return false;
                 }
-                var $portlet = $localStorage.portlet;
 
-                /** get url **/
-                if ($portlet[$scope.pageUrl] == null) {
-                    $portlet[$scope.pageUrl] = {};
+                if (!$scope.$parent.fields) {
+                    // load fields from server fields (params.fields)
+                    $scope.$parent.fields = $scope.$storage.plansysFormBuilder[$scope.params.classPath];
+                    $scope.$parent.fields.length = 0;
+                    $scope.params.fields.forEach(function (item) {
+                        $scope.$parent.fields.push(item);
+                    });
                 }
-                $portlet = $portlet[$scope.pageUrl];
 
-                /** get portlet name **/
-                if ($portlet[$scope.name] == null) {
-                    $portlet[$scope.name] = {};
+                $scope.fields = $scope.$parent.fields;
+
+                $scope.searchPortlet = function (search) {
+                    if (typeof search == "undefined") {
+                        search = $scope.$storage.plansysFormBuilder[$scope.params.classPath];
+                    }
+
+                    for (var i in search) {
+                        var item = search[i];
+                        if (typeof item != "object" || item == null)
+                            continue;
+
+                        if (item.name === $scope.name) {
+                            return item;
+                        }
+
+                        for (var k in item) {
+                            var subitem = item[k];
+                            if (typeof subitem != "object" || !subitem || subitem == null)
+                                continue;
+
+                            var result = $scope.searchPortlet(subitem);
+                            if (result)
+                                return result;
+                        }
+                    }
                 }
-                $portlet = $portlet[$scope.name];
+                $scope.localPortlet = $scope.searchPortlet();
+
+                $scope.$watch('$storage', function () {
+                    if ($scope.$storage.plansysFormBuilder[$scope.params.classPath] !== $scope.fields) {
+                        $("#must-reload").show();
+                    }
+                }, true);
+
+                var $portlet = {
+                    top: $scope.localPortlet.top,
+                    left: $scope.localPortlet.left,
+                    width: $scope.localPortlet.width,
+                    height: $scope.localPortlet.height,
+                };
+                $scope.portlet = $portlet;
 
                 $scope.reset = function () {
                     if (!$scope.maximized) {
@@ -42,6 +84,28 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
                             $el.css($portlet);
                         });
                     }
+                }
+
+                $scope.save = function () {
+                    $(".dashboard-saving").show();
+                    var url = Yii.app.createUrl('/dev/forms/save', {class: $scope.params.classPath});
+                    $scope.localPortlet = $scope.searchPortlet();
+
+                    $scope.localPortlet.top = Math.round($portlet.top);
+                    $scope.localPortlet.left = Math.round($portlet.left);
+                    $scope.localPortlet.width = Math.round($portlet.width);
+                    $scope.localPortlet.height = Math.round($portlet.height);
+
+                    $http.post(url, {fields: $scope.fields})
+                            .success(function (data, status) {
+                                if (data == "FAILED") {
+                                    $("#must-reload").show();
+                                }
+                                $(".dashboard-saving").hide();
+                            })
+                            .error(function (data, status) {
+                                $(".dashboard-saving").hide();
+                            });
                 }
 
                 $scope.maximize = function () {
@@ -80,22 +144,26 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
                                 elementRect: {top: 0, left: 0, bottom: 1, right: 1}
                             }, onmove: function (event) {
                                 if (!$scope.maximized) {
-                                    $scope.top = $scope.top || $portlet.top * 1;
-                                    $scope.left = $scope.left || $portlet.left * 1;
-                                    $scope.left = $scope.left + event.dx;
-                                    $scope.top = $scope.top + event.dy;
+                                    $scope.vtop = $scope.vtop || $portlet.top * 1;
+                                    $scope.vleft = $scope.vleft || $portlet.left * 1;
+                                    $scope.vleft = $scope.vleft + event.dx;
+                                    $scope.vtop = $scope.vtop + event.dy;
 
-                                    $el.css('left', $scope.left);
-                                    $el.css('top', $scope.top);
+                                    $el.css('left', $scope.vleft);
+                                    $el.css('top', $scope.vtop);
                                     $el.addClass('hover');
 
                                     $timeout(function () {
-                                        $portlet.left = $scope.left;
-                                        $portlet.top = $scope.top;
+                                        $portlet.left = $scope.vleft;
+                                        $portlet.top = $scope.vtop;
                                     });
                                 } else {
                                     $el.removeClass('hover');
                                 }
+                                $scope.dragging = true;
+                            }, onend: function (event) {
+                                $scope.dragging = false;
+                                $scope.save();
                             }
                         }).resizable(true).on('resizemove', function (event) {
                             if (!$scope.maximized) {
@@ -122,8 +190,12 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
                             } else {
                                 $el.removeClass('hover');
                             }
-                        });
 
+                            clearTimeout($scope.resizeTimeout);
+                            $scope.resizeTimeout = setTimeout(function () {
+                                $scope.save();
+                            }, 100);
+                        });
                         $el.css('opacity', 1);
                     });
                 });
