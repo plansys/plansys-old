@@ -538,15 +538,17 @@
             }
         }
         $scope.generateIdentity = function (field) {
-            switch (field.type) {
-                case "RelationField":
-                    return  field.label;
-                    break;
-                default:
-                    return field.name;
-                    break;
+            if (!!field.name) {
+                var name = $scope.formatName(field.name);
+                switch (field.type) {
+                    case "RelationField":
+                        return name + field.identifier;
+                        break;
+                    default:
+                        return name;
+                        break;
+                }
             }
-
         }
 
         $scope.detectDuplicate = function () {

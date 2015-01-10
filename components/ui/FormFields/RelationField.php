@@ -65,6 +65,17 @@ class RelationField extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
+                'label' => 'JS Variable',
+                'name' => 'identifier',
+                'prefix' => 'js: rel.',
+                'options' => array (
+                    'ng-model' => 'active.identifier',
+                    'ng-change' => 'save();',
+                    'ng-delay' => '500',
+                ),
+                'type' => 'TextField',
+            ),
+            array (
                 'name' => 'relationCriteria',
                 'label' => 'Sql Criteria',
                 'paramsField' => 'params',
@@ -234,6 +245,7 @@ class RelationField extends FormField {
         'having' => '',
         'join' => ''
     ];
+    public $identifier = '';
     public $params = [];
 
     /** @var string $value digunakan pada function checked */
@@ -377,7 +389,7 @@ class RelationField extends FormField {
         extract($post);
 
         $fb = FormBuilder::load($m);
-        $field = $fb->findField(['name' => $f]);
+        $field = $fb->findField(['name' => $f, 'identifier' => $i]);
         $this->attributes = $field;
         $this->builder = $fb;
 
@@ -491,7 +503,7 @@ class RelationField extends FormField {
                         // replace kurung kurawal
                         preg_match_all("/\{(.*?)\}/", $field, $fieldArray);
                         $hasil = $field;
-                        
+
                         foreach ($fieldArray[0] as $k => $f) {
                             if (@$x[$fieldArray[1][$k]]) {
                                 $hasil = str_replace($f, '{IFNULL(' . $x[$fieldArray[1][$k]] . ', "")}', $hasil);
@@ -682,7 +694,7 @@ class RelationField extends FormField {
                 'label' => $this->emptyLabel
             ]);
         }
-        
+
         $this->list = $list;
         return $list;
     }
