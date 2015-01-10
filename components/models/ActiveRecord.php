@@ -460,7 +460,8 @@ class ActiveRecord extends CActiveRecord {
         $fields = [];
         $props = [];
         $relations = [];
-        foreach (parent::getAttributes($names) as $k => $i) {
+        $attrs = parent::getAttributes($names, true);
+        foreach ($attrs as $k => $i) {
             $fields[$k] = $k;
         }
         foreach ($this->getMetaData()->relations as $k => $r) {
