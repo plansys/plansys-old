@@ -2342,6 +2342,11 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
     border-bottom:1px solid #ddd;
 }
 
+.ac-portlet-menu i {
+    margin-left:-5px;
+    margin-right:5px;
+}
+
 .action-bar .title-bar {
     margin-top:3px;
     line-height:30px;

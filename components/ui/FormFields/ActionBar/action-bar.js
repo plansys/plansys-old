@@ -3,7 +3,9 @@ app.directive('psActionBar', function ($timeout) {
         scope: true,
         link: function ($scope, $el, attrs) {
 
-            $scope.portlets = JSON.parse($el.find('.data[name=portlets]').text());
+            if ($el.find('.data[name=portlets]').length > 0) {
+                $scope.portlets = JSON.parse($el.find('.data[name=portlets]').text());
+            }
 
             $(".ac-print").click(function () {
                 $("#print-css").attr('href', $("#print-css").attr('u'));
@@ -23,16 +25,16 @@ app.directive('psActionBar', function ($timeout) {
                 var dd = $(this).parent().find('.ac-portlet-menu');
                 if (dd.css('position') != 'fixed') {
                     var pos = dd.offset();
-                    var w = dd.width() + 20;
+                    var w = dd.width();
                     var h = dd.height() + 10;
                     dd.css({
                         top: pos.top,
-                        left: pos.left,
+                        left: pos.left + 20,
                         minWidth: w + 'px',
                         width: w + 'px',
                         height: h + 'px',
                         position: 'fixed',
-                        zIndex: 999999
+                        zIndex: 110
                     });
                 }
             });

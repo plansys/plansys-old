@@ -23,9 +23,15 @@
                         <span class="caret"></span>
                     </button>
                     <ul class="ac-portlet-menu dropdown-menu pull-right" role="menu">
+                        <hr/>
                         <li dropdown-toggle>
-                            <a href="">
-                                asdasd
+                            <a href="#">
+                                <i class="fa fa-pencil fa-nm"></i> Edit Dashboard
+                            </a>
+                        </li>
+                        <li dropdown-toggle>
+                            <a href="#">
+                                <i class="fa fa-rotate-left fa-nm"></i> Reset Dashboard
                             </a>
                         </li>
                     </ul>
