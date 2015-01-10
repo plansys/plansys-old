@@ -29,7 +29,7 @@ app.directive('psActionBar', function ($timeout) {
                     var h = dd.height() + 10;
                     dd.css({
                         top: pos.top,
-                        left: pos.left + 20,
+                        left: pos.left + 3,
                         minWidth: w + 'px',
                         width: w + 'px',
                         height: h + 'px',

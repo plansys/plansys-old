@@ -9,9 +9,6 @@
                 <div class="btn btn-sm btn-default ac-print">
                     <i class="fa fa-print fa-lg "></i>
                 </div>
-                <div class="btn btn-sm btn-danger ac-exit-print">
-                    Exit Print Preview
-                </div>
             </div>
         <?php endif; ?>
         <?php if ($this->form['layout']['name'] == 'dashboard'): ?>

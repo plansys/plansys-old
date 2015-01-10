@@ -2322,7 +2322,7 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
 .action-bar-container {
     position:fixed;
     width:inherit;
-    overflow-x:hidden;
+    overflow:hidden;
     pointer-events:none;
     padding-bottom:20px;
 }
