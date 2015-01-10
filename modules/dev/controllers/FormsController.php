@@ -12,7 +12,7 @@ class FormsController extends Controller {
             if ($type == "AR") {
                 FormsController::$modelFieldList = $data;
                 $rel = isset($data['Relations']) ? $data['Relations'] : array();
-                                
+                         
                 FormsController::$relFieldList = array_merge(array(
                     '' => '-- None --',
                     '---' => '---',
@@ -228,6 +228,7 @@ class FormsController extends Controller {
         if (is_subclass_of($fb->model, 'ActiveRecord')) {
             $formType = "ActiveRecord";
             FormsController::setModelFieldList($class::model()->attributesList, "AR", $class);
+            
         } else if (is_subclass_of($fb->model, 'FormField')) {
             $formType = "FormField";
             $mf = new $class;

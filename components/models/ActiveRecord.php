@@ -460,17 +460,21 @@ class ActiveRecord extends CActiveRecord {
         $fields = [];
         $props = [];
         $relations = [];
-        $attrs = parent::getAttributes($names, true);
+        $attrs = parent::getAttributes($names);
         foreach ($attrs as $k => $i) {
             $fields[$k] = $k;
         }
+
         foreach ($this->getMetaData()->relations as $k => $r) {
             if (!isset($fields[$k])) {
                 if (@class_exists($r->className)) {
                     $relations[$k] = $k;
+                } else {
+                    throw new CException('Failed to load relation "' . $k . '" in ' . get_class($this));
                 }
             }
         }
+
         foreach ($this->attributeProperties as $k => $r) {
             $props[$k] = $k;
         }
@@ -884,7 +888,7 @@ class ActiveRecord extends CActiveRecord {
         if (!is_array($data) || count($data) == 0)
             return;
 
-        
+
         $table = $model::model()->tableSchema->name;
         $builder = Yii::app()->db->schema->commandBuilder;
         $command = $builder->createMultipleInsertCommand($table, $data);
