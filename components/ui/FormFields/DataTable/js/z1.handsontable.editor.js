@@ -61,8 +61,6 @@
                 val.setMinutes(t[0]);
                 val.setMinutes(t[1]);
             }
-            console.log(val);
-
             if (val == "Invalid Date" || (typeof val == 'object' && val.getFullYear() < 1900)) {
                 val = "";
             }
