@@ -14,6 +14,7 @@
         <data name="name" class="hide"><?= $this->name; ?></data>
         <data name="value" class="hide" ><?= $this->value ?></data>
         <data name="searchable" class="hide" ><?= $this->searchable ?></data>
+        <data name="identifier" class="hide" ><?= $this->identifier ?></data>
         <data name="show_other" class="hide" ><?= $this->showOther ?></data>
         <data name="other_label" class="hide" ><?= $this->otherLabel ?></data>
         <data name="model_class" class="hide"><?= Helper::getAlias($model) ?></data>

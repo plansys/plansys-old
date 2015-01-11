@@ -9,6 +9,8 @@ app.directive('relationField', function ($timeout, $http) {
             }
 
             return function ($scope, $el, attrs, ctrl) {
+                var parent = $scope.$parent;
+
                 // when ng-model is changed from inside directive
                 $scope.renderFormList = function () {
                     $scope.renderedFormList = [];
@@ -125,6 +127,10 @@ app.directive('relationField', function ($timeout, $http) {
                         $scope.text = $el.find("li:eq(0) a").text();
                     }
 
+                    if ($scope.identifier != '' && $scope.text) {
+                        parent.rel[$scope.identifier] = $scope.text.trim();
+                    }
+
                     $scope.toggled(false);
                 };
 
@@ -187,7 +193,8 @@ app.directive('relationField', function ($timeout, $http) {
                         's': $scope.search,
                         'm': $scope.modelClass,
                         'f': $scope.name,
-                        'p': $scope.paramValue
+                        'p': $scope.paramValue,
+                        'i': $scope.identifier
                     }).success(function (data) {
                         $scope.formList = data;
                         $scope.renderFormList();
@@ -245,15 +252,16 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.modelField = JSON.parse($el.find("data[name=model_field]").text());
                 $scope.paramValue = {};
                 $scope.isOpen = false;
+                $scope.identifier = $el.find("data[name=identifier]").text().trim();
                 $scope.openedInField = false;
 
                 angular.forEach($scope.params, function (p, i) {
                     var p = $scope.params[i];
                     if (p.indexOf('js:') === 0) {
-                        var value = $scope.$parent.$eval(p.replace('js:', ''));
+                        var value = $scope.$eval(p.replace('js:', ''));
                         var key = i;
 
-                        $scope.$parent.$watch(p.replace('js:', ''), function (newv, oldv) {
+                        $scope.$watch(p.replace('js:', ''), function (newv, oldv) {
                             if (newv != oldv) {
                                 for (i in $scope.params) {
                                     var x = $scope.params[i];
@@ -266,8 +274,7 @@ app.directive('relationField', function ($timeout, $http) {
                         }, true);
 
                         $scope.paramValue[key] = value;
-
-                        $scope.doSearch();
+//                        $scope.doSearch()
                     }
                 });
 

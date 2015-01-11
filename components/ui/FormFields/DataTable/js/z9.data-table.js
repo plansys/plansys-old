@@ -297,7 +297,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     var h = c[0].offsetHeight;
                     var o = c.offset();
                     var p = c.position();
-                    
+
                     // scroll horizontal
                     var sl = $scope.$container.scrollLeft();
                     var slw = o.left + w + 17;
@@ -501,8 +501,15 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 $scope.data[i][$scope.columns[b].name] = '';
                             }
                         }
-                    }
 
+                        var item = $scope.data[i];
+                        for (k in item) {
+                            if (item[k] == null) {
+                                item[k] = '';
+                            }
+                        }
+                    }
+                    
                     loadRelation(function () {
                         if (typeof callback == "function") {
                             callback();
