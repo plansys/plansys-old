@@ -1,4 +1,4 @@
-<div portlet class="portlet-container" ng-class="{maximized:maximized,showborder:!showBorder}" style="width:{{width}}px;height:{{height}}px;">
+<div portlet name="<?= $this->name; ?>" class="portlet-container" ng-class="{maximized:maximized,showborder:!showBorder, editing: editing}" style="width:{{width}}px;height:{{height}}px;">
     <data name="top" class="hide"><?= $this->top; ?></data>
     <data name="left" class="hide"><?= $this->left; ?></data>
     <data name="width" class="hide"><?= $this->width; ?></data>
@@ -7,9 +7,15 @@
     <data name="zoomable" class="hide"><?= $this->zoomable; ?></data>
     <data name="showBorder" class="hide"><?= $this->showBorder; ?></data>
 
-    <div class="portlet-buttons">
-        <div ng-if="!maximized" class="btn btn-xs btn-default reset" ng-click="reset()">
-            <i class="fa fa-rotate-left fa-fw"></i>
+    <div class="portlet-buttons" ng-class="{editing:editing}">
+        <div ng-if="!maximized && editing" class="btn btn-xs btn-default reset" ng-click="reset()">
+            <i class="fa fa-rotate-left fa-fw"></i> 
+        </div>
+        <div ng-if="!maximized && editing" class="btn btn-xs btn-default reset" ng-click="doneEdit()">
+            <i class="fa fa-check fa-fw"></i> 
+        </div>
+        <div ng-if="!maximized && !editing" class="btn btn-xs btn-default maximize" ng-click="edit()">
+            <i class="fa fa-pencil fa-fw"></i>
         </div>
         <div ng-if="!maximized && zoomable" class="btn btn-xs btn-default maximize" ng-click="maximize()">
             <i class="fa fa-desktop fa-fw"></i>
@@ -19,5 +25,7 @@
         </div>
     </div>
 
+    <div class="portlet-title"><?= $this->title; ?></div>
+    <div ng-if="editing" style="position:absolute;width:100%;height:100%;z-index:100;background:rgba(255,255,255,.6);cursor:move;"></div>
     <div class="portlet-inner"><?= $this->renderItems ?></div>
 </div>

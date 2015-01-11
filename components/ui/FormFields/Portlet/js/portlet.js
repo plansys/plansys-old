@@ -30,6 +30,7 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
                     $portlet[$scope.name] = {};
                 }
                 $portlet = $portlet[$scope.name];
+                $scope.portlet = $portlet;
 
                 $scope.reset = function () {
                     if (!$scope.maximized) {
@@ -38,10 +39,27 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
                             $portlet.height = $portlet.original.height;
                             $portlet.top = $portlet.original.top;
                             $portlet.left = $portlet.original.left;
-
+                            $portlet.changed = false;
                             $el.css($portlet);
+                            $scope.doneEdit();
                         });
                     }
+                }
+
+                $scope.doneEdit = function () {
+                    $timeout(function () {
+                        interact($el[0])
+                                .draggable({enabled: false})
+                                .resizable(false);
+
+                        $scope.editing = false;
+                    });
+                }
+                $scope.edit = function () {
+                    $scope.editing = true;
+                    interact($el[0])
+                            .draggable({enabled: true})
+                            .resizable(true);
                 }
 
                 $scope.maximize = function () {
@@ -60,19 +78,28 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
                             !isNaN($portlet.top) &&
                             !isNaN($portlet.left)) {
                         $el.css($portlet);
-                    } else {
-                        $portlet.width = $scope.width * 1;
-                        $portlet.height = $scope.height * 1;
-                        $portlet.top = $scope.top == '' ? $el.position().top : $scope.top * 1;
-                        $portlet.left = $scope.left == '' ? $el.position().left : $scope.left * 1;
-                        $portlet.original = angular.copy($portlet);
-
-                        $el.css($portlet);
                     }
+
+                    if (!$portlet.original)
+                        $portlet.original = {};
+
+                    $portlet.original.width = $scope.width * 1;
+                    $portlet.original.height = $scope.height * 1;
+                    $portlet.original.top = $scope.top == '' ? $el.position().top : $scope.top * 1;
+                    $portlet.original.left = $scope.left == '' ? $el.position().left : $scope.left * 1;
+
+                    if (!$portlet.changed) {
+                        $portlet.left = $portlet.original.left;
+                        $portlet.top = $portlet.original.top;
+                        $portlet.width = $portlet.original.width;
+                        $portlet.height = $portlet.original.height;
+                    }
+                    $el.css($portlet);
 
                     $timeout(function () {
                         $el.css('position', 'absolute');
                         interact($el[0]).draggable({
+                            enabled: false,
                             inertia: true,
                             restrict: {
                                 restriction: $("#col1 > .container-fluid")[0],
@@ -80,25 +107,26 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
                                 elementRect: {top: 0, left: 0, bottom: 1, right: 1}
                             }, onmove: function (event) {
                                 if (!$scope.maximized) {
-                                    $scope.top = $scope.top || $portlet.top * 1;
-                                    $scope.left = $scope.left || $portlet.left * 1;
-                                    $scope.left = $scope.left + event.dx;
-                                    $scope.top = $scope.top + event.dy;
+                                    $scope.vtop = $scope.vtop || $portlet.top * 1;
+                                    $scope.vleft = $scope.vleft || $portlet.left * 1;
+                                    $scope.vleft = $scope.vleft + event.dx;
+                                    $scope.vtop = $scope.vtop + event.dy;
 
-                                    $el.css('left', $scope.left);
-                                    $el.css('top', $scope.top);
+                                    $el.css('left', $scope.vleft);
+                                    $el.css('top', $scope.vtop);
                                     $el.addClass('hover');
 
-                                    $timeout(function () {
-                                        $portlet.left = $scope.left;
-                                        $portlet.top = $scope.top;
-                                    });
                                 } else {
                                     $el.removeClass('hover');
                                 }
+                            }, onend: function (event) {
+                                $portlet.changed = true;
+                                $portlet.left = $scope.vleft;
+                                $portlet.top = $scope.vtop;
                             }
-                        }).resizable(true).on('resizemove', function (event) {
+                        }).resizable(false).on('resizemove', function (event) {
                             if (!$scope.maximized) {
+                                $portlet.changed = true;
                                 var target = event.target;
                                 var newWidth = parseFloat(target.style.width) + event.dx;
                                 var newHeight = parseFloat(target.style.height) + event.dy;
@@ -114,18 +142,24 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
                                 target.style.width = newWidth + 'px';
                                 target.style.height = newHeight + 'px';
 
-                                $timeout(function () {
-                                    $portlet.width = target.style.width.replace('px', '');
-                                    $portlet.height = target.style.height.replace('px', '');
-                                });
                                 $el.addClass('hover');
                             } else {
                                 $el.removeClass('hover');
                             }
+
+                            clearTimeout($scope.resizeTimeout);
+                            $scope.resizeTimeout = setTimeout(function () {
+                                $timeout(function () {
+                                    $portlet.width = target.style.width.replace('px', '');
+                                    $portlet.height = target.style.height.replace('px', '');
+                                });
+                            }, 100);
                         });
 
                         $el.css('opacity', 1);
+
                     });
+
                 });
 
             }

@@ -1,10 +1,52 @@
-app.directive('psActionBar', function ($timeout) {
+app.directive('psActionBar', function ($timeout, $localStorage) {
     return {
         scope: true,
         link: function ($scope, $el, attrs) {
 
+            if ($localStorage.portlet == null) {
+                $localStorage.portlet = {};
+            }
+            if ($localStorage.portlet[$scope.pageUrl] == null) {
+                $localStorage.portlet[$scope.pageUrl] = {};
+            }
+            var $portletLocal = $localStorage.portlet[$scope.pageUrl];
+
             if ($el.find('.data[name=portlets]').length > 0) {
                 $scope.portlets = JSON.parse($el.find('.data[name=portlets]').text());
+                $scope.portlets.forEach(function (item) {
+                    if ($portletLocal[item.name] && !!$portletLocal[item.name].hide) {
+                        item.hide = $portletLocal[item.name].hide;
+                    }
+                    if (item.hide) {
+                        $timeout(function () {
+                            $(".portlet-container[name=" + item.name + "]").hide();
+                        })
+                    }
+                });
+            }
+            $scope.resetDashboard = function () {
+                if (confirm("Your dashboard will now reset, are you sure?")) {
+                    delete $localStorage.portlet[$scope.pageUrl];
+                    location.reload();
+                }
+            }
+
+            $scope.togglePortlet = function (portlet, e) {
+
+                e.preventDefault();
+                e.stopPropagation();
+                if ($portletLocal[portlet.name] == null) {
+                    $portletLocal[portlet.name] = {};
+                }
+                var $portlet = $portletLocal[portlet.name];
+                portlet.hide = !portlet.hide;
+                $portlet.hide = portlet.hide;
+
+                if (portlet.hide) {
+                    $(".portlet-container[name=" + portlet.name + "]").hide();
+                } else {
+                    $(".portlet-container[name=" + portlet.name + "]").show();
+                }
             }
 
             $(".ac-print").click(function () {
@@ -40,18 +82,35 @@ app.directive('psActionBar', function ($timeout) {
             });
 
             $(window).resize(function () {
-                $(".action-bar-container").each(function () {
-                    var height = $(this).height();
-                    $(this).css({
-                        top: $("#content").offset().top,
-                        left: $(this).parents('.container-full').offset().left,
-                        width: $(this).parents('[ui-layout]').width()
-                    });
-                    $(this).parents('.container-full').css({
-                        'margin-top': height + 'px',
-                        'border-top': '0px'
-                    });
+                var height = $el.height();
+                $el.css({
+                    top: $("#content").offset().top,
+                    left: $el.parents('.container-full').offset().left,
+                    width: $el.parents('[ui-layout]').width(),
+                    opacity: 1,
                 });
+
+                if ($scope.form.layout.name == 'dashboard' && $el.parent().is('form')) {
+                    var dashFilter = $el.parent().find('> [ps-data-filter]:eq(0)');
+
+                    if (dashFilter.length > 0) {
+                        dashFilter.css({
+                            top: $("#content").offset().top + height,
+                            width: $el.parents('[ui-layout]').width(),
+                            position: 'fixed'
+                        });
+                        dashFilter.addClass('dash-filter');
+                        height += dashFilter.height() +4;
+                        $el.addClass('filtered');
+                    }
+                }
+
+                $el.parents('.container-full').css({
+                    'margin-top': height + 'px',
+                    'border-top': '0px'
+                });
+
+
                 $(".ac-portlet-btngroup.open").click();
                 $(".ac-portlet-menu").removeAttr('style').css('position', 'absolute');
             }).resize();

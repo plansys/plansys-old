@@ -210,6 +210,7 @@
             switch ($scope.form.layout.name) {
                 case "full-width":
                 case "dashboard":
+                    location.reload();
                     $scope.form.layout.data.col1 = setsize("", "", "mainform");
                     break;
                 case "2-cols":
@@ -252,21 +253,26 @@
 
         /*********************** FIELD LOCAL STORAGE SYNC *****************/
         $scope.$storage = $localStorage;
+        $scope.storageWatch = null;
         $scope.serverFields = <?php echo json_encode($fieldData); ?>;
-        if (!$scope.$storage.plansysFormBuilder) {
-            $scope.$storage.plansysFormBuilder = {};
-        }
-        if (!$scope.$storage.plansysFormBuilder[$scope.classPath]) {
-            $scope.$storage.plansysFormBuilder[$scope.classPath] = [];
-        }
-        $scope.$storage.plansysFormBuilder[$scope.classPath] = $scope.serverFields;
-        $scope.fields = $scope.$storage.plansysFormBuilder[$scope.classPath];
-        $scope.$watch('$storage', function (n, o) {
-            if ($scope.$storage.plansysFormBuilder[$scope.classPath] != $scope.fields) {
-                $scope.fields = $scope.$storage.plansysFormBuilder[$scope.classPath];
-                $scope.unselect();
+        if ($scope.form.layout.name == "dashboard") {
+            if (!$scope.$storage.plansysFormBuilder) {
+                $scope.$storage.plansysFormBuilder = {};
             }
-        }, true);
+            if (!$scope.$storage.plansysFormBuilder[$scope.classPath]) {
+                $scope.$storage.plansysFormBuilder[$scope.classPath] = [];
+            }
+            $scope.$storage.plansysFormBuilder[$scope.classPath] = $scope.serverFields;
+            $scope.fields = $scope.$storage.plansysFormBuilder[$scope.classPath];
+            $scope.storageWatch = $scope.$watch('$storage', function (n, o) {
+                if ($scope.$storage.plansysFormBuilder[$scope.classPath] != $scope.fields) {
+                    $scope.fields = $scope.$storage.plansysFormBuilder[$scope.classPath];
+                    $scope.unselect();
+                }
+            }, true);
+        } else {
+            $scope.fields = $scope.serverFields;
+        }
 
         $scope.saving = false;
         /************************ RELATION FIELD  ****************************/

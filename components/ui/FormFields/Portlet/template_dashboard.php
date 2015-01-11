@@ -1,4 +1,4 @@
-<div portlet class="portlet-container portlet-edit" ng-class="{maximized:maximized,showborder:!showBorder}" style="width:{{width}}px;height:{{height}}px;">
+<div portlet name="<?= $this->name; ?>" class="portlet-container portlet-edit" ng-class="{maximized:maximized,showborder:!showBorder}" style="width:{{width}}px;height:{{height}}px;">
     <data name="width" class="hide"><?= $this->width; ?></data>
     <data name="height" class="hide"><?= $this->height; ?></data>
     <data name="top" class="hide"><?= $this->top; ?></data>
@@ -8,9 +8,6 @@
     <data name="showBorder" class="hide"><?= $this->showBorder; ?></data>
 
     <div class="portlet-buttons">
-        <div ng-if="!maximized" class="btn btn-xs btn-default reset" ng-click="reset()">
-            <i class="fa fa-rotate-left fa-fw"></i>
-        </div>
         <div ng-if="!maximized && zoomable" class="btn btn-xs btn-default maximize" ng-click="maximize()">
             <i class="fa fa-desktop fa-fw"></i>
         </div>
@@ -43,6 +40,9 @@
         </table>
 
     </div>
+
+    <div class="portlet-title"><?= $this->title; ?></div> 
+    <div class="portlet-overlay"></div>
 
     <div class="portlet-inner"><?= $this->renderItems ?></div>
 </div>

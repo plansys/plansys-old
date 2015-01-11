@@ -1,5 +1,10 @@
 <div ui-layout options="{flow: 'column'}" class='dashboard'>
     <div id='col1' class="container-full">
+        
+        <div class="dashboard-mode" style="display:none;position:absolute;right:0px;font-size:11px;font-weight:bold;color:#999;padding:5px;">
+            <i class="fa fa-desktop"></i> Dashboard Mode
+        </div>
+
         <div class="form-builder-saving dashboard-saving" style="display:none;z-index:101;opacity:.6">
             <span> 
                 <i class="fa fa-refresh fa-spin"></i>

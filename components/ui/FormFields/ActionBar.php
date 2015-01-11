@@ -69,6 +69,12 @@ class ActionBar extends FormField {
         ];
     }
 
+    public function getDashboardMode() {
+        return (Yii::app()->controller->module->id == "dev" &&
+                Yii::app()->controller->id == "forms" &&
+                Yii::app()->controller->action->id == "dashboard" ? "edit" : "view");
+    }
+
     /**
      * @return array me-return array javascript yang di-include
      */
@@ -125,7 +131,10 @@ class ActionBar extends FormField {
         $portlets = $this->builder->findAllField(['type' => 'Portlet']);
         $results = [];
         foreach ($portlets as $p) {
-            $results[] = $p['name'];
+            $results[] = [
+                'name' => $p['name'],
+                'title' => $p['title'],
+            ];
         }
 
         return $results;

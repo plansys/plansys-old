@@ -15,6 +15,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
             return function ($scope, $el, attrs, ctrl) {
                 var parent = $scope.$parent;
 
+
                 /************* All Filter **************/
                 $scope.toggleFilterCriteria = function (e) {
                     var parent = $(e.target).parents('.btn-group');
@@ -252,7 +253,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
                         });
                     }
                 };
-                
+
                 $scope.relationNext = function (e, filter) {
                     e.stopPropagation();
                     e.preventDefault();
@@ -276,7 +277,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
                     return false;
                 }
 
-
                 $scope.toggleShowFilter = function (filter) {
                     filter.show = (filter.show ? false : true);
                 }
@@ -291,6 +291,40 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
                         scroll = active.position().top + 50;
                     }
                     $(e.target).parents("[dropdown]").find(".dropdown-menu").scrollTop(scroll);
+                }
+
+                $scope.generateUrl = function (url, type) {
+                    var output = '';
+                    if (typeof url == "string") {
+
+                        var match = url.match(/{([^}]+)}/g);
+                        for (i in match) {
+                            var m = match[i];
+                            m = m.substr(1, m.length - 2);
+                            var result = "' + row.getProperty('" + m + "') + '";
+                            if (m.indexOf('.') > 0) {
+                                result = $scope.$eval(m);
+                            }
+                            url = url.replace('{' + m + '}', result);
+                        }
+
+                        if (url.match(/http*/ig)) {
+                            output = url.replace(/\{/g, "'+ row.getProperty('").replace(/\}/g, "') +'");
+                        } else if (url.trim() == '#') {
+                            output = '#';
+                        } else {
+                            url = url.replace(/\?/ig, '&');
+                            output = "Yii.app.createUrl('" + url + "')";
+                        }
+
+                        if (type == 'html') {
+                            if (output != '#') {
+                                output = '{{' + output + '}}';
+                            }
+                        }
+
+                    }
+                    return $scope.$eval(output);
                 }
 
                 $scope.updateDropdown = function (e, filter, value) {
@@ -312,6 +346,12 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
                         filter.value = filter.checked;
                     }
 
+                    if (!!value.url) {
+                        var url = value.url.substr(4);
+                        location.href = $scope.generateUrl(url);
+                        return false;
+                    }
+
                     $scope.updateFilter(filter, e);
                 }
 
@@ -329,7 +369,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
                     var newList = [];
                     for (key in list) {
                         if (angular.isObject(list[key])) {
-
                             if (!!list[key].key) {
                                 newList.push({key: list[key].key, value: list[key].value});
                             } else {
@@ -341,7 +380,11 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
                                 newList.push({key: key, value: subItem});
                             }
                         } else {
-                            newList.push({key: key, value: list[key]});
+                            if (list[key].indexOf('url:') == 0) {
+                                newList.push({key: key, value: key, url: list[key]});
+                            } else {
+                                newList.push({key: key, value: list[key]});
+                            }
                         }
                     }
                     return newList

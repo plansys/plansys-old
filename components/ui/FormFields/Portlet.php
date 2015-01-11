@@ -24,11 +24,11 @@ class Portlet extends FormField {
     public function getDashboardMode() {
         return (Yii::app()->controller->module->id == "dev" &&
                 Yii::app()->controller->id == "forms" &&
-                Yii::app()->controller->action->id == "dashboard");
+                Yii::app()->controller->action->id == "dashboard" ? "edit" : "view");
     }
 
     public function includeJS() {
-        if ($this->dashboardMode) {
+        if ($this->dashboardMode == "edit") {
             return ['js/interact-1.2.1.min.js', 'js/portlet-editor.js'];
         } else {
             return ['js/interact-1.2.1.min.js', 'js/portlet.js'];
@@ -45,7 +45,7 @@ class Portlet extends FormField {
     public static $toolbarIcon = "fa fa-square-o";
 
     public function render() {
-        if ($this->dashboardMode) {
+        if ($this->dashboardMode == "edit") {
             return $this->renderInternal('template_dashboard.php');
         } else {
             return $this->renderInternal('template_render.php');

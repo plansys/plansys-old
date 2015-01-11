@@ -4,7 +4,7 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
         compile: function (element, attrs, transclude) {
             $("#col1").css("padding-right", "17px");
             return function ($scope, $el, attrs, ctrl) {
-
+                $(".dashboard-mode").show();
                 $scope.name = $el.find("data[name=name]:eq(0)").text();
                 $scope.top = $el.find("data[name=top]:eq(0)").text();
                 $scope.left = $el.find("data[name=left]:eq(0)").text();
@@ -61,7 +61,7 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
 
                 $scope.$watch('$storage', function () {
                     if ($scope.$storage.plansysFormBuilder[$scope.params.classPath] !== $scope.fields) {
-                        $("#must-reload").show();
+                        location.reload();
                     }
                 }, true);
 
@@ -99,7 +99,8 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
                     $http.post(url, {fields: $scope.fields})
                             .success(function (data, status) {
                                 if (data == "FAILED") {
-                                    $("#must-reload").show();
+                                    $("#must-reload h3").html('Warning<br/><small>Dashboard Data is inconsistent<br/> Please open this page through FormBuilder</small>');
+                                    $("#must-reload .btn").hide();
                                 }
                                 $(".dashboard-saving").hide();
                             })

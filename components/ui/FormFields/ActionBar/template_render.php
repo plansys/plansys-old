@@ -19,18 +19,22 @@
                         <i class="fa fa-bars fa-nm"></i> 
                         <span class="caret"></span>
                     </button>
-                    <ul class="ac-portlet-menu dropdown-menu pull-right" role="menu">
-                        <hr/>
-                        <li dropdown-toggle>
-                            <a href="#">
-                                <i class="fa fa-pencil fa-nm"></i> Edit Dashboard
+                    <ul class="ac-portlet-menu dropdown-menu pull-right" role="menu" >
+                        <li class="ac-portlet-list" ng-repeat="portlet in portlets">
+                            <a href="#" ng-click="togglePortlet(portlet, $event)">
+                                <i class="fa fa-check-square-o fa-lg fa-fw" ng-if="!portlet.hide" ></i>
+                                <i class="fa fa-square-o fa-lg fa-fw" ng-if="portlet.hide" ></i>
+                                {{ !!portlet.title && portlet.title != '' ? portlet.title : portlet.name }}
                             </a>
                         </li>
-                        <li dropdown-toggle>
-                            <a href="#">
-                                <i class="fa fa-rotate-left fa-nm"></i> Reset Dashboard
-                            </a>
-                        </li>
+                        <?php if ($this->dashboardMode == "view"): ?>
+                            <hr/>
+                            <li dropdown-toggle>
+                                <a href="#" ng-click="resetDashboard()">
+                                    <i class="fa fa-flag-checkered fa-nm"></i> Reset 
+                                </a>
+                            </li>
+                        <?php endif; ?>
                     </ul>
                 </div>
             </div>
