@@ -407,7 +407,6 @@ app.directive('uiMask', function ($timeout, $filter) {
                     $el.mask(attrs.uiMask, {
                         completed: function () {
                             var val = $el.val();
-                            console.log($el.val());
                             var formatted = '';
                             if (val) {
                                 switch (attrs.uiMask) {

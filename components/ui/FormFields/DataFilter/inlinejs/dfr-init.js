@@ -17,7 +17,6 @@ for (i in $scope.$parent.value) {
         }
     }
     
-    console.log(item);
     $scope.$parent.save();
 }
 
