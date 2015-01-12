@@ -983,7 +983,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                             }, 100);
 
                             $scope.datasource.beforeQueryInternal[$scope.renderID] = function () {
-                                if ($scope.datasource.lastQueryFrom == "DataFilter") {
+                                if ($scope.datasource.lastQueryFrom == "DataFilter" && !!$scope.gridOptions.pagingOptions) {
                                     $scope.gridOptions.pagingOptions.currentPage = 1;
                                 }
                             }
