@@ -372,7 +372,7 @@ class RepoManager extends CComponent {
         if (realpath($path)) {
             return $path;
         }
-        
+
         $rp = Setting::get('repo.path');
         $rrp = realpath($rp);
 
@@ -445,27 +445,31 @@ class RepoManager extends CComponent {
         $info .= (($perms & 0x0100) ? 'r' : '-');
         $info .= (($perms & 0x0080) ? 'w' : '-');
         $info .= (($perms & 0x0040) ?
-                (($perms & 0x0800) ? 's' : 'x' ) :
-                (($perms & 0x0800) ? 'S' : '-'));
+                        (($perms & 0x0800) ? 's' : 'x' ) :
+                        (($perms & 0x0800) ? 'S' : '-'));
 
         // Group
         $info .= (($perms & 0x0020) ? 'r' : '-');
         $info .= (($perms & 0x0010) ? 'w' : '-');
         $info .= (($perms & 0x0008) ?
-                (($perms & 0x0400) ? 's' : 'x' ) :
-                (($perms & 0x0400) ? 'S' : '-'));
+                        (($perms & 0x0400) ? 's' : 'x' ) :
+                        (($perms & 0x0400) ? 'S' : '-'));
 
         // World
         $info .= (($perms & 0x0004) ? 'r' : '-');
         $info .= (($perms & 0x0002) ? 'w' : '-');
         $info .= (($perms & 0x0001) ?
-                (($perms & 0x0200) ? 't' : 'x' ) :
-                (($perms & 0x0200) ? 'T' : '-'));
+                        (($perms & 0x0200) ? 't' : 'x' ) :
+                        (($perms & 0x0200) ? 'T' : '-'));
 
         return $info;
     }
 
     public function browse($dir = "") {
+        if (!is_dir(Setting::get('repo.path'))) {
+            mkdir(Setting::get('repo.path'));
+        }
+
         $originaldir = $dir;
         $isRelativePath = false;
         if ($dir == "" || $dir == DIRECTORY_SEPARATOR) {
@@ -478,7 +482,7 @@ class RepoManager extends CComponent {
             $dir = $this->repoPath . DIRECTORY_SEPARATOR . trim($dir, DIRECTORY_SEPARATOR);
             $parent = dirname($dir);
         }
-        
+
         if (!realpath($dir) && $isRelativePath) {
             $dir = getcwd() . DIRECTORY_SEPARATOR . $dir;
         }
@@ -600,7 +604,7 @@ class RepoManager extends CComponent {
             'item' => $list,
             'count' => $count,
         ];
-        
+
         return $detail;
     }
 
@@ -722,7 +726,6 @@ class RepoManager extends CComponent {
         } else {
             $this->repoPath = Setting::get("repo.path");
         }
-
     }
 
 }
