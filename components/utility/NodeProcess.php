@@ -11,19 +11,29 @@ class NodeProcess extends CComponent {
 
         if ($cmd) {
             if (substr(php_uname(), 0, 7) == "Windows") {
-                exec("plansys\commands\shell\psexec.exe -i -d node " . $cmd);
+                exec("plansys\commands\shell\psexec.exe -d node " . $cmd, $output, $input);
+                return $input;
             } else {
-                exec("nodejs " . $cmd . " > /dev/null &");
+                exec("nodejs " . $cmd . " > /dev/null &", $output, $input);
+                var_dump($input);
+                die();
             }
         }
     }
 
-    public function isRunning($id = 0) {
+    public function isRunning($pid = 0) {
         return true;
     }
 
-    public function stop($id = 0) {
-        
+    public function stop($pid) {
+        if ($pid) {
+            if (substr(php_uname(), 0, 7) == "Windows") {
+                exec("plansys\commands\shell\pskill.exe " . $pid, $output, $input);
+                return $input;
+            } else {
+                exec("nodejs " . $cmd . " > /dev/null &");
+            }
+        }
     }
 
 }
