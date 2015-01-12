@@ -81,9 +81,14 @@ app.directive('psChartGroup', function ($timeout) {
                         idx++;
                     }
 
+                    var title = '';
+                    if ($scope.data[i][idx].yAxis[0].axisTitle && $scope.data[i][idx].yAxis[0].axisTitle.textStr) {
+                        title = $scope.data[i][idx].yAxis[0].axisTitle.textStr;
+                    }
+
                     var tmpyAxis = {
                         'title': {
-                            'text': $scope.data[i][idx].yAxis[0].axisTitle.textStr
+                            'text': title
                         }
                     };
 
