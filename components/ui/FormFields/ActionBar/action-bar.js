@@ -81,13 +81,17 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                 }
             });
 
-            $(window).resize(function () {
+            $scope.resize = function (st) {
                 var height = $el.height();
                 $el.css({
                     top: $("#content").offset().top,
                     left: $el.parents('.container-full').offset().left,
-                    width: $el.parents('[ui-layout]').width(),
-                    opacity: 1,
+                    width: $('#content').width(),
+                    opacity: .999
+                });
+
+                $timeout(function () {
+                    $el.css({opacity: 1});
                 });
 
                 if ($scope.form.layout.name == 'dashboard' && $el.parent().is('form')) {
@@ -96,13 +100,15 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                     if (dashFilter.length > 0) {
                         dashFilter.css({
                             top: $("#content").offset().top + height,
-                            width: $el.parents('[ui-layout]').width(),
-                            position: 'fixed'
+                            width: $('#content').width(),
+                            position: 'fixed',
+                            opacity: .999
                         });
                         dashFilter.addClass('dash-filter');
-                        height += dashFilter.height() +4;
+                        height += dashFilter.height() ;
                         $el.addClass('filtered');
                     }
+
                 }
 
                 $el.parents('.container-full').css({
@@ -110,10 +116,15 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                     'border-top': '0px'
                 });
 
-
                 $(".ac-portlet-btngroup.open").click();
                 $(".ac-portlet-menu").removeAttr('style').css('position', 'absolute');
-            }).resize();
+            }
+
+            $scope.resize('init');
+
+            $(window).resize(function () {
+                $scope.resize();
+            });
 
             // add action tab link
             $(".section-header").each(function () {

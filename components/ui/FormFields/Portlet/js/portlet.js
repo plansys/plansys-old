@@ -103,7 +103,7 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
                             inertia: true,
                             restrict: {
                                 restriction: $("#col1 > .container-fluid")[0],
-                                endOnly: false,
+                                endOnly: true,
                                 elementRect: {top: 0, left: 0, bottom: 1, right: 1}
                             }, onmove: function (event) {
                                 if (!$scope.maximized) {

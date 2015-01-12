@@ -139,11 +139,7 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
                         $el.css('position', 'absolute');
                         interact($el[0]).draggable({
                             inertia: true,
-                            restrict: {
-                                restriction: $("#col1 > .container-fluid")[0],
-                                endOnly: false,
-                                elementRect: {top: 0, left: 0, bottom: 1, right: 1}
-                            }, onmove: function (event) {
+                            onmove: function (event) {
                                 if (!$scope.maximized) {
                                     $scope.vtop = $scope.vtop || $portlet.top * 1;
                                     $scope.vleft = $scope.vleft || $portlet.left * 1;

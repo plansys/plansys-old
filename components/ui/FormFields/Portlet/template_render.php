@@ -26,6 +26,6 @@
     </div>
 
     <div class="portlet-title"><?= $this->title; ?></div>
-    <div ng-if="editing" style="position:absolute;width:100%;height:100%;z-index:100;background:rgba(255,255,255,.6);cursor:move;"></div>
-    <div class="portlet-inner"><?= $this->renderItems ?></div>
+    <div ng-if="editing" class="portlet-overlay"></div>
+    <div class="portlet-inner <?= $this->title == '' ? '' : 'with-title'?>"><div class="portlet-inner-content"><?= $this->renderItems ?></div></div>
 </div>

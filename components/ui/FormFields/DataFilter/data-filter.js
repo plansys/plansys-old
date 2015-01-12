@@ -732,7 +732,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
                     return value;
                 }
                 $scope.ngIf = function (filter) {
-
                     if (!!filter.options && !!filter.options['ng-if']) {
                         return $scope.$parent.$eval(filter.options['ng-if']);
                     }

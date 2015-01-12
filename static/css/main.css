@@ -964,14 +964,13 @@ li:hover > .item-btn {
     transition : border 100ms;
 }
 
-.portlet-container.editing,.portlet-edit {
+.portlet-container.editing,.portlet-edit:hover {
     border:3px solid #ccc;
     border-radius:8px;
 }
 
 .portlet-container .portlet-info {
     position:absolute;padding:5px;font-size:11px;color:#999;
-    opacity:0;
     background:white;
     z-index:120;
     border-right:1px solid #ddd;
@@ -990,9 +989,6 @@ li:hover > .item-btn {
     cursor:move;
 }
 
-.portlet-container:hover .portlet-info {
-    opacity:1;
-}
 
 .portlet-container.showborder {
     border-color:transparent !important;
@@ -1030,12 +1026,23 @@ li:hover > .item-btn {
 }
 
 .portlet-inner {
-    padding:5px;
     width:100%;
     height:100%;
-    overflow:auto;
 }
 
+.portlet-inner-content {
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    padding:5px;
+}
+.portlet-inner-content:hover {
+    overflow-y:auto;
+}
+
+.portlet-inner.with-title {
+    padding-bottom:29px;
+}
 .portlet-buttons {
     position:absolute;
     right:0;
@@ -1786,11 +1793,6 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 .data-filter.dash-filter {
     background:#fff;
-    -webkit-transition: all .1s;
-    -moz-transition: all .1s;
-    -o-transition: all .1s;
-    -ms-transition: all .1s;
-    transition: all .1s;
     z-index:120;
 }
 .dash-filter .filter-item-container > div > .btn-group > .btn {
@@ -2382,7 +2384,6 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
     padding-bottom:20px;
     z-index:500;
 
-    opacity:0;
     -webkit-transition: all .1s;
     -moz-transition: all .1s;
     -o-transition: all .1s;
