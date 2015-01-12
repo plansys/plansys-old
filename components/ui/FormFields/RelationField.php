@@ -393,7 +393,7 @@ class RelationField extends FormField {
         extract($post);
 
         $fb = FormBuilder::load($m);
-        $field = $fb->findField(['name' => $f, 'identifier' => $i]);
+        $field = $fb->findField(['name' => $f, 'identifier' => @$i]);
         $this->attributes = $field;
         $this->builder = $fb;
 
