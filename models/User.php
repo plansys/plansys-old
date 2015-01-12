@@ -19,7 +19,9 @@ class User extends ActiveRecord {
         foreach ($ur as $k => $u) {
             $ur[$k]['user_id'] = $this->id;
         }
-        ActiveRecord::batch('UserRole', $ur);
+        $olduser = ActiveRecord::toArray($this->getRelated('userRoles'));
+
+        ActiveRecord::batch('UserRole', $ur, $olduser);
 
         if (!$this->isNewRecord) {
             Yii::app()->nfy->unsubscribe($this->id, null, true);
@@ -29,17 +31,15 @@ class User extends ActiveRecord {
             $roles = array();
 
             $db = Yii::app()->db->createCommand('select DISTINCT role_name from p_user_role p inner join p_role r on p.role_id = r.id and p.user_id = ' . $this->id)->queryAll();
-            
+
             foreach ($db as $r) {
                 $roles[] = "role_" . $r['role_name'] . ".";
             }
 
             $category = array_merge(array(
                 'uid_' . $this->id,
-                ), $roles);
+                    ), $roles);
 
-
-            
             Yii::app()->nfy->subscribe($this->id, $this->username, $category);
             $this->subscribed = true;
         } else {
@@ -91,19 +91,19 @@ class User extends ActiveRecord {
     }
 
     public $roles = ['a'];
-    
+
     public function getRoles($originalSorting = false) {
         $uid = Yii::app()->user->id;
         if (!$uid) {
             return [$this->role];
         }
-        
+
         $sql = "select *,r.id from p_role r inner join p_user_role p on r.id = p.role_id where p.user_id = {$uid} order by is_default_role asc";
         $roles = Yii::app()->db->createCommand($sql)->queryAll();
         if ($originalSorting) {
             return $roles;
         }
-        
+
         $idx = 0;
         foreach ($roles as $k => $role) {
             if ($role['role_name'] == Yii::app()->user->getState('role')) {
@@ -111,7 +111,7 @@ class User extends ActiveRecord {
                 break;
             }
         }
-		
+
         $role = array_splice($roles, $idx, 1);
         array_unshift($roles, $role[0]);
 
