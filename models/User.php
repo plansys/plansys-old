@@ -90,8 +90,7 @@ class User extends ActiveRecord {
         );
     }
 
-    public $roles = ['a'];
-
+    public $roles = [''];
     public function getRoles($originalSorting = false) {
         $uid = Yii::app()->user->id;
         if (!$uid) {
