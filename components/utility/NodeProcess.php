@@ -14,9 +14,8 @@ class NodeProcess extends CComponent {
                 exec("plansys\commands\shell\psexec.exe -d node " . $cmd, $output, $input);
                 return $input;
             } else {
-                exec("nodejs " . $cmd . " > /dev/null &", $output, $input);
-                var_dump($input);
-                die();
+                $pid = exec("nodejs " . $cmd . " > /dev/null 2>&1 & echo $!;", $output, $input);
+                return $pid;
             }
         }
     }
@@ -27,9 +26,7 @@ class NodeProcess extends CComponent {
                 exec("plansys\commands\shell\pslist.exe " . $pid, $output, $input);
                 return $input == 0;
             } else {
-                exec("nodejs " . $cmd . " > /dev/null &", $output, $input);
-                var_dump($input);
-                die();
+                return (file_exists("/proc/$pid"));
             }
         }
     }
@@ -40,7 +37,7 @@ class NodeProcess extends CComponent {
                 exec("plansys\commands\shell\pskill.exe " . $pid, $output, $input);
                 return $input;
             } else {
-                exec("nodejs " . $cmd . " > /dev/null &");
+                exec("kill -9 $pid");
             }
         }
     }
