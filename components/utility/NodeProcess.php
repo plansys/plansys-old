@@ -22,13 +22,15 @@ class NodeProcess extends CComponent {
     }
 
     public function isRunning($pid = 0) {
-        if (substr(php_uname(), 0, 7) == "Windows") {
-            exec("plansys\commands\shell\pslist.exe -d node " . $cmd, $output, $input);
-            return $input;
-        } else {
-            exec("nodejs " . $cmd . " > /dev/null &", $output, $input);
-            var_dump($input);
-            die();
+        if (is_numeric($pid)) {
+            if (substr(php_uname(), 0, 7) == "Windows") {
+                exec("plansys\commands\shell\pslist.exe " . $pid, $output, $input);
+                return $input == 0;
+            } else {
+                exec("nodejs " . $cmd . " > /dev/null &", $output, $input);
+                var_dump($input);
+                die();
+            }
         }
     }
 
