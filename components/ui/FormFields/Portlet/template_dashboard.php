@@ -44,5 +44,5 @@
     <div class="portlet-title"><?= $this->title; ?></div> 
     <div class="portlet-overlay"></div>
 
-    <div class="portlet-inner"><?= $this->renderItems ?></div>
+    <div class="portlet-inner"></div>
 </div>
