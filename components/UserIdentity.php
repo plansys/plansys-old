@@ -6,7 +6,6 @@
  * data can identity the user.
  */
 class UserIdentity extends CUserIdentity {
-
     private $id;
 
     public function loggedIn($record) {

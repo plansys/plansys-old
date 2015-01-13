@@ -325,14 +325,21 @@ class UploadFile extends FormField {
     public function actionDownload($f, $n) {
         $file = base64_decode($f);
         if (!is_file($file)) {
-            throw new CHttpException(404);
-            return false;
+            $file = RepoManager::resolve($file);
+            if (!is_file($file)) {
+                throw new CHttpException(404);
+                return false;
+            }
         }
+
+        $mem_limit = ini_get('memory_limit');
+        ini_set('memory_limit', -1);
         if (isset($_GET['d'])) {
             echo file_get_contents($file);
         } else {
             Yii::app()->request->sendFile($n, file_get_contents($file));
         }
+        ini_set('memory_limit', $mem_limit);
     }
 
     public function actionRemove() {
@@ -346,7 +353,7 @@ class UploadFile extends FormField {
 
     public function getFieldColClass() {
         return "col-sm-" . $this->
-            fieldWidth;
+                fieldWidth;
     }
 
     public function render() {

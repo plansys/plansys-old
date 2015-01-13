@@ -25,7 +25,7 @@
         </div>
     </div>
 
-    <div class="portlet-title"><?= $this->title; ?></div>
+    <?php if ($this->title != ''): ?> <div class="portlet-title"><?= $this->title; ?></div><?php endif; ?>
     <div ng-if="editing" class="portlet-overlay"></div>
-    <div class="portlet-inner <?= $this->title == '' ? '' : 'with-title'?>"><div class="portlet-inner-content"><?= $this->renderItems ?></div></div>
+    <div class="portlet-inner <?= $this->title == '' ? '' : 'with-title' ?>"><div class="portlet-inner-content"><?= $this->renderItems ?></div></div>
 </div>

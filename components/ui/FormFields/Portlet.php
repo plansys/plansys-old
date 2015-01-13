@@ -56,38 +56,38 @@ class Portlet extends FormField {
      * @return array me-return array property ActionBar.
      */
     public function getFieldProperties() {
-        return array(
-            array(
+        return array (
+            array (
                 'label' => 'Portlet Name',
                 'name' => 'name',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Title',
                 'name' => 'title',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.title',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
-                'fieldOptions' => array(
+                'fieldOptions' => array (
                     'auto-grow' => 'true',
                 ),
                 'type' => 'TextArea',
             ),
-            array(
+            array (
                 'value' => '<hr>',
                 'type' => 'Text',
             ),
-            array(
+            array (
                 'label' => 'Show Border',
                 'name' => 'showBorder',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.showBorder',
                     'ng-change' => 'save()',
                 ),
@@ -95,10 +95,10 @@ class Portlet extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Zoomable',
                 'name' => 'zoomable',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.zoomable',
                     'ng-change' => 'save()',
                 ),
@@ -106,11 +106,60 @@ class Portlet extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'value' => '<hr>',
                 'type' => 'Text',
             ),
-            array(
+            array (
+                'column1' => array (
+                    array (
+                        'label' => 'X',
+                        'name' => 'top',
+                        'options' => array (
+                            'ng-model' => 'active.left',
+                            'ng-change' => 'save()',
+                            'ng-delay' => '500',
+                        ),
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'W',
+                        'name' => 'width',
+                        'options' => array (
+                            'ng-model' => 'active.width',
+                            'ng-change' => 'save()',
+                            'ng-delay' => '500',
+                        ),
+                        'type' => 'TextField',
+                    ),
+                    '<column-placeholder></column-placeholder>',
+                ),
+                'column2' => array (
+                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'label' => 'Y',
+                        'name' => 'left',
+                        'options' => array (
+                            'ng-model' => 'active.top',
+                            'ng-change' => 'save()',
+                            'ng-delay' => '500',
+                        ),
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'H',
+                        'name' => 'height',
+                        'options' => array (
+                            'ng-model' => 'active.height',
+                            'ng-change' => 'save()',
+                            'ng-delay' => '500',
+                        ),
+                        'type' => 'TextField',
+                    ),
+                ),
+                'type' => 'ColumnField',
+            ),
+            array (
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',

@@ -516,6 +516,7 @@ class RepoManager extends CComponent {
                         'name' => $entry,
                         'type' => $perm[0] == 'd' ? "dir" : "." . substr($entry, strrpos($entry, '.') + 1),
                         'size' => $size,
+                        'downloadPath' => base64_encode($path),
                         'path' => $path
                     ];
                     $count++;

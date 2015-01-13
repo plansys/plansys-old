@@ -37,7 +37,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                                             $scope.value = f.path;
                                             $scope.file = {
                                                 'name': f.name,
-                                                'downloadPath': f.path
+                                                'downloadPath': f.downloadPath
                                             };
                                             $scope.icon(f.name);
                                         } else {
@@ -299,6 +299,8 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     }, true);
                 }
 
+                var parent = $scope.$parent;
+                parent[$scope.name] = $scope;
             };
         }
     };
