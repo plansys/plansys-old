@@ -401,14 +401,14 @@ class RelationField extends FormField {
             $this->relationCriteria = @$field['criteria'];
         }
 
-        if (@$field['params']) {
+        if (is_array(@$field['params'])) {
+            
             foreach ($field['params'] as $k => $ff) {
                 if (substr($ff, 0, 3) == "js:" && isset($p[$k])) {
                     $p[$k] = "'" . $p[$k] . "'";
                 }
             }
         }
-
 
         echo json_encode($this->query($s, $p));
     }

@@ -851,13 +851,26 @@ class ActiveRecord extends CActiveRecord {
         $columnCount = count($field);
         $columnName = array_keys($field);
         $update = "";
+
+        $rels = $model::model()->relations();
+        $foreign_keys = [];
+        foreach ($rels as $r) {
+            if ($r[0] == 'CBelongsToRelation' && is_string($r[2])) {
+                $foreign_keys[] = $r[2];
+            }
+        }
+
         foreach ($data as $d) {
             $cond = $d['id'];
             unset($d['id']);
             $updatearr = [];
             for ($i = 0; $i < $columnCount; $i++) {
                 if (isset($columnName[$i]) && isset($d[$columnName[$i]])) {
-                    $updatearr[] = '`' . $columnName[$i] . "` = '{$d[$columnName[$i]]}'";
+                    if (in_array($columnName[$i], $foreign_keys) && $d[$columnName[$i]] == '') {
+                        $updatearr[] = '`' . $columnName[$i] . "` = NULL";
+                    } else {
+                        $updatearr[] = '`' . $columnName[$i] . "` = '{$d[$columnName[$i]]}'";
+                    }
                 }
             }
 
@@ -868,7 +881,13 @@ class ActiveRecord extends CActiveRecord {
         }
         if ($update != '') {
             $command = Yii::app()->db->createCommand($update);
-            $command->execute();
+            try {
+                $command->execute();
+            } catch (Exception $e) {
+                echo $update;
+                var_dump($data);
+                die();
+            }
         }
     }
 

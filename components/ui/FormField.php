@@ -207,9 +207,11 @@ class FormField extends CComponent {
      * @param array $values
      */
     public function setAttributes($values) {
-        foreach ($values as $k => $v) {
-            if (property_exists($this, $k)) {
-                $this->$k = $v;
+        if (is_array(@$values)) {
+            foreach ($values as $k => $v) {
+                if (property_exists($this, $k)) {
+                    $this->$k = $v;
+                }
             }
         }
     }
@@ -340,7 +342,7 @@ class FormField extends CComponent {
                     }
                 } else {
                     Yii::app()->clientScript->registerScriptFile(
-                        Asset::publish($jspath, true), CClientScript::POS_END
+                            Asset::publish($jspath, true), CClientScript::POS_END
                     );
                 }
             }
@@ -383,7 +385,7 @@ class FormField extends CComponent {
             foreach ($includeCSS as $css) {
                 $class = get_class($this);
                 $html[] = Asset::publish(
-                        Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css, true
+                                Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css, true
                 );
             }
         }
@@ -411,7 +413,7 @@ class FormField extends CComponent {
         $this->registerScript();
 
         ob_start();
-        if(file_exists($path)){
+        if (file_exists($path)) {
             include($path);
         }
         return Helper::minifyHtml(ob_get_clean());
@@ -456,11 +458,11 @@ class FormField extends CComponent {
         if (count($attributes) == 0)
             return "";
         return join(' ', array_map(function ($key) use ($attributes) {
-                if (is_bool($attributes[$key])) {
-                    return $attributes[$key] ? $key : '';
-                }
-                return $key . '="' . $attributes[$key] . '"';
-            }, array_keys($attributes)));
+                    if (is_bool($attributes[$key])) {
+                        return $attributes[$key] ? $key : '';
+                    }
+                    return $key . '="' . $attributes[$key] . '"';
+                }, array_keys($attributes)));
     }
 
     /**

@@ -207,7 +207,6 @@ app.directive('psDataSource', function ($timeout, $http) {
                                     }
                                 }
 
-
                                 for (var i = $scope.data.length - 1; i >= 0; i--) {
                                     if (typeof $scope.data[i].id == "undefined")
                                         continue;
@@ -293,7 +292,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                                 }
                             }
                         }
-
+                        console.log($scope.insertData, $scope.updateData, $scope.deleteData);
                     }, true);
                 }
 

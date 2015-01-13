@@ -692,6 +692,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                                         var row = $scope.data[c[0]]['__dt_row'];
                                                         $scope.datasource.data[row][c[1]] = c[3];
                                                     } else {
+                                                        if (!$scope.datasource.data[c[0]]) {
+                                                            $scope.datasource.data[c[0]] = {};
+                                                        }
                                                         $scope.datasource.data[c[0]][c[1]] = c[3];
                                                     }
                                                 });
