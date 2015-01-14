@@ -129,7 +129,7 @@
 
             <!-- error -->
             <div class="alert error alert-danger" ng-show="errors.length > 0">
-                <li ng-repeat="error in errors">
+                <li ng-repeat="error in errors" style="list-style-type:none;">
                     {{error}}
                 </li>
             </div>

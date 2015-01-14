@@ -27,6 +27,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
 
                 $scope.choosing = "";
                 $scope.choose = function (c) {
+                    $scope.errors.length = 0;
                     $scope.choosing = c;
                     switch (c) {
                         case "Browse":

@@ -8,8 +8,8 @@ class NodeProcess extends CComponent {
 
     public static function start($jsfile) {
         $cmd = realpath(Yii::getPathOfAlias('webroot') . $jsfile);
-
-        if ($cmd) {
+        
+        if (is_file($cmd)) {
             if (substr(php_uname(), 0, 7) == "Windows") {
                 exec("plansys\commands\shell\psexec.exe -d node " . $cmd, $output, $input);
                 return $input;
@@ -17,6 +17,8 @@ class NodeProcess extends CComponent {
                 $pid = exec("nodejs " . $cmd . " > /dev/null 2>&1 & echo $!;", $output, $input);
                 return $pid;
             }
+        } else {
+            throw new CException("File Not Found");
         }
     }
 
