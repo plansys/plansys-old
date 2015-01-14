@@ -292,7 +292,6 @@ app.directive('psDataSource', function ($timeout, $http) {
                                 }
                             }
                         }
-                        console.log($scope.insertData, $scope.updateData, $scope.deleteData);
                     }, true);
                 }
 

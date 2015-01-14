@@ -6,19 +6,19 @@
 
 class NodeProcess extends CComponent {
 
-    public static function start($jsfile) {
-        $cmd = realpath(Yii::getPathOfAlias('webroot') . $jsfile);
-        
+    public static function start($jsfile, $params = "") {
+        $cmd = realpath(Yii::getPathOfAlias('webroot') . '/' . trim($jsfile, '/'));
+
         if (is_file($cmd)) {
             if (substr(php_uname(), 0, 7) == "Windows") {
-                exec("plansys\commands\shell\psexec.exe -d node " . $cmd, $output, $input);
+                exec("plansys\commands\shell\psexec.exe -d node " . $cmd . " " . $params, $output, $input);
                 return $input;
             } else {
                 $pid = exec("nodejs " . $cmd . " > /dev/null 2>&1 & echo $!;", $output, $input);
                 return $pid;
             }
         } else {
-            throw new CException("File Not Found");
+            throw new CException("File Not Found " . $cmd);
         }
     }
 
