@@ -18,6 +18,11 @@ class DataFilterListFormRelation extends Form {
     public $relIdField = '';
     public $relLabelField = '';
     
+    
+    public $relIncludeEmpty = 'No';
+    public $relEmptyValue = '';
+    public $relEmptyLabel = '-- NONE --';
+    
     public function getForm() {
         return  [
             'title' => 'DataGridListFormRelation',
@@ -93,6 +98,42 @@ class DataFilterListFormRelation extends Form {
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom',
                 'type' => 'DropDownList',
+            ),
+            array (
+                'value' => '<hr/>',
+                'type' => 'Text',
+            ),
+            array (
+                'label' => 'Include Empty',
+                'name' => 'relIncludeEmpty',
+                'options' => array (
+                    'ng-model' => 'item.relIncludeEmpty',
+                    'ng-change' => 'updateListView();',
+                ),
+                'listExpr' => '[\\\'No\\\',\\\'Yes\\\']',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Empty Value',
+                'name' => 'relEmptyValue',
+                'options' => array (
+                    'ng-model' => 'item.relEmptyValue',
+                    'ng-change' => 'updateListView();',
+                    'ng-delay' => '500',
+                    'ng-if' => 'item.relIncludeEmpty == \\\'Yes\\\'',
+                ),
+                'type' => 'TextField',
+            ),
+            array (
+                'label' => 'Empty Label',
+                'name' => 'relEmptyLabel',
+                'options' => array (
+                    'ng-model' => 'item.relEmptyLabel',
+                    'ng-change' => 'updateListView();',
+                    'ng-delay' => '500',
+                    'ng-if' => 'item.relIncludeEmpty == \\\'Yes\\\'',
+                ),
+                'type' => 'TextField',
             ),
             array (
                 'name' => 'relCriteria',

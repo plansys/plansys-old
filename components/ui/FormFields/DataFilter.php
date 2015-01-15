@@ -16,6 +16,10 @@ class DataFilter extends FormField {
     public $filters = [];
     public $options = [];
 
+    public $includeEmpty = 'No';
+    public $emptyValue = '';
+    public $emptyLabel = '';
+    
     /** @var string $toolbarName */
     public static $toolbarName = "Data Filter";
 
