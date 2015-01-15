@@ -119,13 +119,14 @@ app.directive('textField', function ($timeout, $http) {
                         'p': $scope.paramValue
                     }).success(function (data) {
 
-			$scope.list = [];
-			for (l in data) {
-				if (!!data[l].value) {
-					$scope.list.push(data[l]);
-				}
-			}
-	
+                        $scope.list = [];
+
+                        for (l in data) {
+                            if (data[l] != null && !!data[l].value) {
+                                $scope.list.push(data[l]);
+                            }
+                        }
+
                         if (!$scope.initSearch) {
                             $scope.initSearch = true;
                         } else {

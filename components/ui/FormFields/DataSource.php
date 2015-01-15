@@ -288,7 +288,6 @@ class DataSource extends FormField {
         $params = $matches[1];
         $parsed = [];
 
-
         foreach ($params as $param) {
             $template = $sql;
             $paramOptions = explode("|", $param);
@@ -321,8 +320,6 @@ class DataSource extends FormField {
                     'template' => $template,
                     'paramOptions' => $paramOptions
                 ]);
-
-
 
                 if (!isset($template['generateTemplate'])) {
                     $sql = str_replace("[{$param}]", $template['sql'], $sql);
@@ -368,7 +365,6 @@ class DataSource extends FormField {
 
     public static function generateTemplate($sql, $postedParams = [], $field, $paramDefs = []) {
         $returnParams = [];
-
 
         ## find all params
         preg_match_all("/\:[\w\d_]+/", $sql, $params);
