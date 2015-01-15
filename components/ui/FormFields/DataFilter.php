@@ -15,11 +15,10 @@ class DataFilter extends FormField {
     /** @var string $filters */
     public $filters = [];
     public $options = [];
-
     public $includeEmpty = 'No';
     public $emptyValue = '';
     public $emptyLabel = '';
-    
+
     /** @var string $toolbarName */
     public static $toolbarName = "Data Filter";
 
@@ -279,9 +278,22 @@ class DataFilter extends FormField {
                 }
                 break;
             case "relation":
-                if ($filter['value'] != '') {
-                    $sql = "{$column} = :{$paramName}_{$pcolumn}";
-                    $param = @$filter['value'];
+                switch ($filter['operator']) {
+                    case 'empty':
+                        if ($filter['value'] == 'null') {
+                            $sql = "{$column} is null";
+                            $param = @$filter['value'];
+                        } else {
+                            $sql = "{$column} = :{$paramName}_{$pcolumn}";
+                            $param = @$filter['value'];
+                        }
+                        break;
+                    default:
+                        if ($filter['value'] != '') {
+                            $sql = "{$column} = :{$paramName}_{$pcolumn}";
+                            $param = @$filter['value'];
+                        }
+                        break;
                 }
                 break;
             case "check":

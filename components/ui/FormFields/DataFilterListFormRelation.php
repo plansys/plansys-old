@@ -17,10 +17,8 @@ class DataFilterListFormRelation extends Form {
     public $relModelClass = '';
     public $relIdField = '';
     public $relLabelField = '';
-    
-    
     public $relIncludeEmpty = 'No';
-    public $relEmptyValue = '';
+    public $relEmptyValue = 'null';
     public $relEmptyLabel = '-- NONE --';
     
     public function getForm() {
@@ -111,11 +109,15 @@ class DataFilterListFormRelation extends Form {
                     'ng-change' => 'updateListView();',
                 ),
                 'listExpr' => '[\\\'No\\\',\\\'Yes\\\']',
+                'labelWidth' => '6',
+                'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
             array (
                 'label' => 'Empty Value',
                 'name' => 'relEmptyValue',
+                'labelWidth' => '5',
+                'fieldWidth' => '7',
                 'options' => array (
                     'ng-model' => 'item.relEmptyValue',
                     'ng-change' => 'updateListView();',
@@ -127,6 +129,8 @@ class DataFilterListFormRelation extends Form {
             array (
                 'label' => 'Empty Label',
                 'name' => 'relEmptyLabel',
+                'labelWidth' => '5',
+                'fieldWidth' => '7',
                 'options' => array (
                     'ng-model' => 'item.relEmptyLabel',
                     'ng-change' => 'updateListView();',

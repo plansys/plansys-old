@@ -15,7 +15,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
             return function ($scope, $el, attrs, ctrl) {
                 var parent = $scope.$parent;
 
-
                 /************* All Filter **************/
                 $scope.toggleFilterCriteria = function (e) {
                     var parent = $(e.target).parents('.btn-group');
@@ -141,6 +140,16 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
                     var prepared = angular.copy(filter);
                     prepared.name = filter.name;
                     prepared.value = filter.value;
+
+                    if (filter.filterType == 'relation') {
+                        if (filter.relIncludeEmpty == 'Yes') {
+                            prepared.operator = 'empty';
+                            prepared.value = filter.relEmptyValue;
+                        } else {
+                            prepared.operator = '';
+                        }
+                    }
+
                     return prepared;
                 }
 

@@ -26,6 +26,15 @@
 
         </div>
         <ul class="dropdown-menu inner" style="overflow-x:hidden;max-height:240px;" role="menu">
+            <li class="dropdown-item" ng-if="filter.relIncludeEmpty == 'Yes'" >
+                <a dropdown-toggle href="#" style="padding-top:6px;" ng-click="updateDropdown($event, filter, {
+                        key: filter.relEmptyValue,
+                        value: filter.relEmptyLabel
+                    });">
+                    {{ filter.relEmptyLabel}}
+                </a>
+            </li>
+            <hr ng-if="filter.relIncludeEmpty == 'Yes'" style="margin:0px;"/>
             <li ng-repeat-start="item in filter.list track by $index " 
                 ng-if="item.value != '---'" class="dropdown-item" 
                 ng-class="{'dropdown-header': isObject(item.value),
@@ -33,7 +42,7 @@
                 ng-show="listFound(item.value + ' ' + item.key, filter)">
 
                 <a ng-if="!isObject(item.value) &&
-                                    (filter.filterType == 'list' || filter.filterType == 'relation')"
+                                (filter.filterType == 'list' || filter.filterType == 'relation')"
                    dropdown-toggle href="#" ng-click="updateDropdown($event, filter, item);"
                    value="{{item.key}}">
                     {{ item.value}}
@@ -57,6 +66,7 @@
                     </div>
                     <ul class="dropdown-menu inner" role="menu" 
                         style="display:block;border-radius:0px;">
+
                         <li ng-repeat-start="subitem in item.value track by $index " 
                             ng-if="subitem.value != '---'"
                             ng-class="{'hover': subitem.key == filter.value}"

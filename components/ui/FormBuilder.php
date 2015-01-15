@@ -1044,7 +1044,10 @@ EOF;
         ## write new function to sourceFile
         if (flock($fp, LOCK_EX)) { // acquire an exclusive lock
             ftruncate($fp, 0); // truncate file
-            fwrite($fp, implode("\n", $file));
+            $buffer = implode("\n", $file);
+            //TODO: fix gigantic bug, do not allow more than 200 consecutive spaces
+            $buffer = preg_replace('/\s{200,}/',' ', $buffer); 
+            fwrite($fp, $buffer);
             fflush($fp); // flush output before releasing the lock
             flock($fp, LOCK_UN); // release the lock
             //print_r(Yii::app()->session['FormBuilder_' . $this->originalClass]['methods']);

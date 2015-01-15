@@ -11,3 +11,15 @@ $scope.$watch('item.relParams', function (newv, oldv) {
         $scope.getPreviewSQL();
     }
 }, true);
+$scope.$watch('item.relIncludeEmpty', function (newv, oldv) {
+    function isWrong(val) {
+        if (val == '' || !val) {
+            return true;
+        }
+        return false;
+    }
+    if (newv == 'Yes' && isWrong($scope.item.relEmptyValue) && isWrong($scope.item.relEmptyLabel)) {
+        $scope.item.relEmptyValue = 'null';
+        $scope.item.relEmptyLabel = '-- NONE --';
+    }
+}, true);
