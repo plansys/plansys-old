@@ -13,6 +13,9 @@
         <!-- data -->
         <data name="name" class="hide"><?= $this->name; ?></data>
         <data name="value" class="hide" ><?= $this->value ?></data>
+        <data name="include_empty" class="hide" ><?= $this->includeEmpty ?></data>
+        <data name="empty_value" class="hide" ><?= $this->emptyValue ?></data>
+        <data name="empty_label" class="hide" ><?= $this->emptyLabel ?></data>
         <data name="count" class="hide"><?= $this->count('', []); ?></data>
         <data name="searchable" class="hide" ><?= $this->searchable ?></data>
         <data name="identifier" class="hide" ><?= $this->identifier ?></data>
