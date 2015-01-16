@@ -106,15 +106,7 @@ app.directive('psDataSource', function ($timeout, $http) {
                     $scope.query(f);
                 }
 
-                $scope.query = function (f) {
-                    var model = $scope.model || {};
-                    var model_id = model.id || null;
-
-
-                    for (i in $scope.beforeQueryInternal) {
-                        $scope.beforeQueryInternal[i]($scope);
-                    }
-
+                $scope.prepareParams = function () {
                     var params = $.extend({}, $scope.sqlParams);
                     for (i in $scope.params) {
                         if (i[0] == ':' && $scope.params[i]) {
@@ -125,6 +117,18 @@ app.directive('psDataSource', function ($timeout, $http) {
                             }
                         }
                     }
+                    return params;
+                }
+
+                $scope.query = function (f) {
+                    var model = $scope.model || {};
+                    var model_id = model.id || null;
+
+                    for (i in $scope.beforeQueryInternal) {
+                        $scope.beforeQueryInternal[i]($scope);
+                    }
+
+                    var params = $scope.prepareParams();
                     $scope.loading = true;
 
                     $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
