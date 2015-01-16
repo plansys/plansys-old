@@ -13,6 +13,7 @@
         <!-- data -->
         <data name="name" class="hide"><?= $this->name; ?></data>
         <data name="value" class="hide" ><?= $this->value ?></data>
+        <data name="count" class="hide"><?= $this->count('', []); ?></data>
         <data name="searchable" class="hide" ><?= $this->searchable ?></data>
         <data name="identifier" class="hide" ><?= $this->identifier ?></data>
         <data name="show_other" class="hide" ><?= $this->showOther ?></data>
@@ -45,7 +46,7 @@
 
             <!-- dropdown item -->
             <div class="dropdown-menu open">
-                <div class="search" ng-show="searchable">
+                <div class="search" ng-show="searchable" style="margin-bottom:0px;">
                     <input type="text"
                            ng-model="search"
                            ng-delay="500"
@@ -98,6 +99,14 @@
                         <a dropdown-toggle href="#" ng-click="update(otherLabel);" value="{{itemExist() ? otherLabel : value}}">
                             {{ itemExist() ? otherLabel : value}}
                         </a>                        
+                    </li>
+                    <hr ng-repeat-end ng-if="item.value == '---'"/>
+                    <hr ng-if="count > renderedFormList.length"/>
+                    <li ng-if="count > renderedFormList.length">
+                        <a href="#" ng-click="next($event)" style="margin-left:-5px;padding-bottom:50px;"> 
+                            <span ng-if="!loading"><i class="fa fa-angle-down"></i> &nbsp; Load More</span>
+                            <span ng-if="loading"><i class="fa fa-refresh fa-spin"></i> &nbsp; Loading... </span>
+                        </a>
                     </li>
                 </ul>
             </div>

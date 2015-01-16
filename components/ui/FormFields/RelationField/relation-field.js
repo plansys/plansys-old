@@ -116,7 +116,8 @@ app.directive('relationField', function ($timeout, $http) {
 
                     var isFound = false;
                     $el.find("li").each(function () {
-                        if ($(this).find("a").attr('value').trim() == $scope.value.trim()) {
+                        var fv = $(this).find("a").attr('value');
+                        if (!!fv && fv.trim() == $scope.value.trim()) {
                             $scope.text = $(this).find("a").text();
                             isFound = true;
                         }
@@ -197,7 +198,28 @@ app.directive('relationField', function ($timeout, $http) {
                         'p': $scope.paramValue,
                         'i': $scope.identifier
                     }).success(function (data) {
-                        $scope.formList = data;
+                        $scope.formList = data.list;
+                        $scope.count = data.count;
+                        $scope.renderFormList();
+                        $scope.loading = false;
+                    });
+                };
+                $scope.next = function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+
+                    $scope.loading = true;
+                    $http.post(Yii.app.createUrl('formfield/RelationField.search'), {
+                        's': $scope.search,
+                        'm': $scope.modelClass,
+                        'f': $scope.name,
+                        'p': $scope.paramValue,
+                        'i': $scope.identifier,
+                        'start': $scope.formList.length
+                    }).success(function (data) {
+                        data.list.forEach(function (item) {
+                            $scope.formList.push(item);
+                        });
                         $scope.renderFormList();
                         $scope.loading = false;
                     });
@@ -244,6 +266,7 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.renderedFormList = [];
                 $scope.renderFormList();
                 $scope.loading = false;
+                $scope.count = $el.find("data[name=count]").html().trim();
                 $scope.searchable = true;
                 $scope.showOther = $el.find("data[name=show_other]").text().trim() == "Yes" ? true : false;
                 $scope.otherLabel = $el.find("data[name=other_label]").html();
