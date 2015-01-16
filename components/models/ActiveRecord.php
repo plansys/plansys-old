@@ -853,10 +853,10 @@ class ActiveRecord extends CActiveRecord {
         $update = "";
 
         $rels = $model::model()->relations();
-        $foreign_keys = [];
+        $foreignKeys = [];
         foreach ($rels as $r) {
             if ($r[0] == 'CBelongsToRelation' && is_string($r[2])) {
-                $foreign_keys[] = $r[2];
+                $foreignKeys[] = $r[2];
             }
         }
 
@@ -865,10 +865,15 @@ class ActiveRecord extends CActiveRecord {
             unset($d['id']);
             $updatearr = [];
             for ($i = 0; $i < $columnCount; $i++) {
+                
+                ## cek apakah ada kolom yg dimaksud, jika ada maka
                 if (isset($columnName[$i]) && isset($d[$columnName[$i]])) {
-                    if (in_array($columnName[$i], $foreign_keys) && $d[$columnName[$i]] == '') {
+                    
+                    ## jika yg kolom itu foreign key DAN kolom nya kosong, maka set NULL (karena foreign_key ga boleh string kosong)
+                    if (in_array($columnName[$i], $foreignKeys) && $d[$columnName[$i]] == '') {
                         $updatearr[] = '`' . $columnName[$i] . "` = NULL";
                     } else {
+                        ## selain itu, hajar seperti biasa...
                         $updatearr[] = '`' . $columnName[$i] . "` = '{$d[$columnName[$i]]}'";
                     }
                 }
@@ -878,7 +883,7 @@ class ActiveRecord extends CActiveRecord {
             if ($updatesql != '') {
                 $update .= "UPDATE {$table} SET {$updatesql} WHERE id='{$cond}';";
             }
-        }
+        }  
         if ($update != '') {
             $command = Yii::app()->db->createCommand($update);
             try {

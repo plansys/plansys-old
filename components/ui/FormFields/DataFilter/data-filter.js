@@ -80,6 +80,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
                             var prepared = $scope.prepareDSParams(filter);
                             ds.resetParam(prepared.name, dsParamName);
 
+                            if (typeof $scope.beforeQuery == 'function') {
+                                $scope.beforeQuery(ds);
+                            }
+
                             ds.afterQueryInternal[$scope.renderID] = function () {
                                 if (ds.params.paging && $scope[ds.params.paging]
                                         && $scope[ds.params.paging].gridOptions) {

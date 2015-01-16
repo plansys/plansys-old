@@ -391,12 +391,16 @@ class RelationField extends FormField {
         }
 
         extract($post);
-
         $fb = FormBuilder::load($m);
-        $field = $fb->findField(['name' => $f, 'identifier' => @$i]);
+        if (isset($i)) {
+            $field = $fb->findField(['name' => $f, 'identifier' => @$i]);
+        } else {
+            $field = $fb->findField(['name' => $f]);
+        }
+        
         $this->attributes = $field;
         $this->builder = $fb;
-
+        
         if (@$field['criteria']) {
             $this->relationCriteria = @$field['criteria'];
         }
@@ -668,6 +672,8 @@ class RelationField extends FormField {
         $criteria = $this->generateCriteria($search, $params);
 
         $rawlist = $model->currentModel($criteria);
+
+
 
         if (!is_null($initialID) && $initialID != "") {
             $found = false;
