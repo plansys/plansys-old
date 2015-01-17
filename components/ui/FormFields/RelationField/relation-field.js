@@ -107,6 +107,10 @@ app.directive('relationField', function ($timeout, $http) {
                     }, 0);
                 };
                 $scope.updateInternal = function (value) {
+                    function isEmpty(a) {
+                        return !a || a == '';
+                    }
+                    
                     $scope.value = typeof value != "string" ? '' : value;
 
                     if ($scope.showOther && !$scope.itemExist()) {
@@ -133,6 +137,14 @@ app.directive('relationField', function ($timeout, $http) {
                         parent.rel[$scope.identifier] = $scope.text.trim();
                     }
 
+                    if ($scope.includeEmpty == 'Yes') {
+                        if ((isEmpty($scope.value) && isEmpty($scope.text)) ||
+                                $scope.value == $scope.emptyValue) {
+                            $scope.value = $scope.emptyValue;
+                            $scope.text = $scope.emptyLabel;
+                        }
+                    }
+                    console.log($scope.identifier, $scope.value, $scope.text, isFound);
                     $scope.toggled(false);
                 };
 
@@ -267,6 +279,9 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.renderFormList();
                 $scope.loading = false;
                 $scope.count = $el.find("data[name=count]").html().trim();
+                $scope.includeEmpty = $el.find("data[name=include_empty]").html().trim();
+                $scope.emptyValue = $el.find("data[name=empty_value]").html().trim();
+                $scope.emptyLabel = $el.find("data[name=empty_label]").html().trim();
                 $scope.searchable = true;
                 $scope.showOther = $el.find("data[name=show_other]").text().trim() == "Yes" ? true : false;
                 $scope.otherLabel = $el.find("data[name=other_label]").html();

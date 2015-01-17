@@ -595,6 +595,7 @@ class RelationField extends FormField {
         }
         $returnParams = array_merge($returnParams, $jsparams);
 
+        ## trim and or, etc
         return [
             'sql' => $sql,
             'params' => $returnParams
@@ -610,7 +611,25 @@ class RelationField extends FormField {
         }
 
         $this->params = array_merge(is_null($this->params) ? [] : $this->params, $condition['params']);
-        return DataSource::generateCriteria($this->params, $this->relationCriteria, $this);
+        $criteria = DataSource::generateCriteria($this->params, $this->relationCriteria, $this);
+
+        ##clean criteria condition
+        if (isset($criteria['condition'])) {
+            if (stripos($criteria['condition'], "and ") === 0) {
+                $criteria['condition'] = substr($criteria['condition'], 4);
+            }
+            if (stripos($criteria['condition'], " and") === strlen($criteria['condition']) - 4) {
+                $criteria['condition'] = substr($criteria['condition'], 0, strlen($criteria['condition']) - 4);
+            }
+            if (stripos($criteria['condition'], "or ") === 0) {
+                $criteria['condition'] = substr($criteria['condition'], 3);
+            }
+            if (stripos($criteria['condition'], " or") === strlen($criteria['condition']) - 3) {
+                $criteria['condition'] = substr($criteria['condition'], 0, strlen($criteria['condition']) - 3);
+            }
+        }
+        
+        return $criteria;
     }
 
     public function count($search = '', $params = []) {
@@ -651,6 +670,7 @@ class RelationField extends FormField {
         $table = $model->tableName();
 
         $criteria = $this->generateCriteria($search, $params);
+
         $rawlist = $model->currentModel($criteria);
 
 

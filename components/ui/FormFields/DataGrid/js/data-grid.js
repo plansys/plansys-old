@@ -912,7 +912,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                         $timeout(function () {
                             function countDgr() {
                                 dgrCols = [];
-                                $(".dgr").each(function () {
+                                $el.find(".dgr").each(function () {
                                     var model = $(this).attr('dgr-model');
                                     var id = $(this).attr('dgr-id');
                                     var name = $(this).attr('dgr-name');
