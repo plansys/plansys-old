@@ -397,10 +397,10 @@ class RelationField extends FormField {
         } else {
             $field = $fb->findField(['name' => $f]);
         }
-        
+
         $this->attributes = $field;
         $this->builder = $fb;
-        
+
         if (@$field['criteria']) {
             $this->relationCriteria = @$field['criteria'];
         }
@@ -628,7 +628,7 @@ class RelationField extends FormField {
                 $criteria['condition'] = substr($criteria['condition'], 0, strlen($criteria['condition']) - 3);
             }
         }
-        
+
         return $criteria;
     }
 
@@ -643,6 +643,12 @@ class RelationField extends FormField {
         $tableSchema = $model->tableSchema;
         $builder = $model->commandBuilder;
         $criteria = $this->generateCriteria($search, $params);
+
+        if ($criteria['distinct'] && strpos($criteria['select'], ',') === false) {
+            $criteria['distinct'] = false;
+            $criteria['select'] = 'COUNT(DISTINCT ' . $criteria['select'] . ')';
+        }
+
         if (array_key_exists('page', $criteria)) {
             $start = ($criteria['page'] - 1) * $criteria['pageSize'];
             $pageSize = $criteria['pageSize'];
@@ -655,6 +661,7 @@ class RelationField extends FormField {
 
         $countCommand = $builder->createCountCommand($tableSchema, new CDbCriteria($criteria));
         $count = $countCommand->queryScalar();
+
         return $count;
     }
 
