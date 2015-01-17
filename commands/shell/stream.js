@@ -36,7 +36,7 @@ if (config.email && config.email.transport) {
 }
 
 var resPool = {};
-
+var sentEmail = [];
 streamQuery = setInterval(function () {
     pool.getConnection(function (err, conn) {
         conn.query("USE " + config.db.dbname, function (err, rows) {
@@ -77,6 +77,11 @@ streamQuery = setInterval(function () {
                         if (config.email && config.email.from) {
                             for (i in rows) {
                                 var row = rows[i];
+
+                                if (sentEmail.indexOf(row.id) >= 0) {
+                                    continue;
+                                }
+
                                 if (!validator.isEmail(row.to_email)) {
                                     continue;
                                 }
@@ -99,9 +104,12 @@ streamQuery = setInterval(function () {
                                     if (error) {
                                         console.log(error);
                                     } else {
-                                        console.log('Subscriber #' + row.subscription_id + ' mail sent:' + info.response + "\nE-mail Content:" + JSON.stringify(mailOptions));
+                                        console.log('Subscriber #' + row.subscription_id + ' mail sent:'
+                                                + info.response + "\n");
                                     }
                                 });
+
+                                sentEmail.push(row.id);
                             }
                             transport.close();
                         }
@@ -114,7 +122,7 @@ streamQuery = setInterval(function () {
             });
         });
     });
-}, 1000);
+}, 2000);
 
 app.set('port', 8981);
 app.use(express.static(path.join(__dirname, 'public')));
