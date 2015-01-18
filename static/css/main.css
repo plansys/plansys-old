@@ -951,6 +951,10 @@ li:hover > .item-btn {
     margin:5px -5px;
 }
 
+#toolbar-properties div[dropdown] > .dropdown-menu {
+    max-width:270px !important;
+}
+
 /********************************* PORTLET ***********************************/
 
 .portlet-container {

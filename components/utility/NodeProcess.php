@@ -11,7 +11,7 @@ class NodeProcess extends CComponent {
 
         if (is_file($cmd)) {
             if (substr(php_uname(), 0, 7) == "Windows") {
-                exec("plansys\commands\shell\psexec.exe -d node " . $cmd . " " . $params, $output, $input);
+                exec("plansys\commands\shell\psexec.exe /accepteula -d node " . $cmd . " " . $params, $output, $input);
                 return $input;
             } else {
                 $pid = exec("nodejs " . $cmd . " > /dev/null 2>&1 & echo $!;", $output, $input);
@@ -22,10 +22,10 @@ class NodeProcess extends CComponent {
         }
     }
 
-    public function isRunning($pid = 0) {
+    public static function isRunning($pid = 0) {
         if (is_numeric($pid)) {
             if (substr(php_uname(), 0, 7) == "Windows") {
-                exec("plansys\commands\shell\pslist.exe " . $pid, $output, $input);
+                exec("plansys\commands\shell\pslist.exe /accepteula " . $pid, $output, $input);
                 return $input == 0;
             } else {
                 return (file_exists("/proc/$pid"));
@@ -33,10 +33,10 @@ class NodeProcess extends CComponent {
         }
     }
 
-    public function stop($pid) {
+    public static function stop($pid) {
         if ($pid) {
             if (substr(php_uname(), 0, 7) == "Windows") {
-                exec("plansys\commands\shell\pskill.exe " . $pid, $output, $input);
+                exec("plansys\commands\shell\pskill.exe /accepteula " . $pid, $output, $input);
                 return $input;
             } else {
                 exec("kill -9 $pid");

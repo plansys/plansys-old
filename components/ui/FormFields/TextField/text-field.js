@@ -239,7 +239,8 @@ app.directive('textField', function ($timeout, $http) {
                         e.preventDefault();
                     });
                     $el.find("input[type=text]").keydown(function (e) {
-
+                        if ($scope.autocomplete == '') return true;
+                        
                         switch (e.keyCode) {
                             case 37:
                             case 39:
