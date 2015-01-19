@@ -231,6 +231,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                         if ($scope.columns[i].name == field) {
                             var newval = '';
                             for (k in $scope.columns[i].stringAlias) {
+                                
                                 if (k.toLowerCase() == value.toLowerCase() || k.toLowerCase() == "'" + value.toLowerCase() + "'") {
                                     return $scope.columns[i].stringAlias[k];
                                 }

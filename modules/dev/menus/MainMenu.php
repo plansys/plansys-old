@@ -72,6 +72,11 @@
         'url' => '/repo/index',
     ),
     array (
+        'label' => 'Adminer',
+        'icon' => 'fa-database',
+        'url' => '/dev/default/adminer',
+    ),
+    array (
         'label' => 'Settings',
         'icon' => 'fa-sliders',
         'url' => '#',

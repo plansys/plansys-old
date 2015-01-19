@@ -10,4 +10,8 @@ class DefaultController extends Controller {
         $this->redirect(array("/{$this->module->id}/forms"));
     }
     
+    public function actionAdminer() {
+        $this->redirect('plansys/adminer.php');
+    }
+    
 }
