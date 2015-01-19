@@ -1305,7 +1305,7 @@ EOF;
         }
 
         $files[] = [
-            'module' => 'App',
+            'module' => 'app',
             'items' => $items,
             'count' => $glob['count']
         ];
