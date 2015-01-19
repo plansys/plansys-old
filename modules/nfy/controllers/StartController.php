@@ -11,7 +11,7 @@ class StartController extends Controller {
             $cmd = realpath(Yii::getPathOfAlias('webroot') . "/plansys/commands/shell/stream.js");
 
             if (substr(php_uname(), 0, 7) == "Windows") {
-                exec("plansys\commands\shell\psexec.exe -i -d node " . $cmd);
+                exec("plansys\commands\shell\psexec.exe /accepteula -i -d node " . $cmd);
             } else {
                 exec("nodejs " . $cmd . " > /dev/null &");
             }

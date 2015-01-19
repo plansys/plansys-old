@@ -25,6 +25,10 @@
                    class="input-block-level search-dropdown form-control" autocomplete="off">
 
         </div>
+        <div ng-if="filter.list.length == 0" 
+             style="text-align:center;padding:15px;font-size:12px;color:#999;">
+            &mdash; NOT FOUND &mdash;
+        </div>
         <ul class="dropdown-menu inner" style="overflow-x:hidden;max-height:240px;" role="menu">
             <li class="dropdown-item" ng-if="filter.relIncludeEmpty == 'Yes'" >
                 <a dropdown-toggle href="#" style="padding-top:6px;" ng-click="updateDropdown($event, filter, {
@@ -35,6 +39,7 @@
                 </a>
             </li>
             <hr ng-if="filter.relIncludeEmpty == 'Yes'" style="margin:0px;"/>
+
             <li ng-repeat-start="item in filter.list track by $index " 
                 ng-if="item.value != '---'" class="dropdown-item" 
                 ng-class="{'dropdown-header': isObject(item.value),
@@ -64,6 +69,7 @@
                         <div class="dropdown-menu-header-line"></div>
                         <div class="dropdown-menu-header-text">{{item.key}}</div>
                     </div>
+
                     <ul class="dropdown-menu inner" role="menu" 
                         style="display:block;border-radius:0px;">
 

@@ -96,8 +96,16 @@ class UserController extends Controller {
     }
 
     public function actionLdap() {
+
+        try {
+            $data = Yii::app()->ldap->user()->searchRaw('*');
+        } catch (Exception $ex) {
+            
+            throw new CHttpException('403', 'Gagal menyambungkan ke Server Active Directory');
+        }
+
         $this->renderForm("users.user.DevUserLdap", [
-            'data' => Yii::app()->ldap->user()->searchRaw('*')
+            'data' => $data
         ]);
     }
 
