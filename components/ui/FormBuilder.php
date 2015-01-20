@@ -1270,7 +1270,7 @@ EOF;
             if (file_exists($module_dir)) {
                 $modules = glob($module_dir . DIRECTORY_SEPARATOR . "*");
                 foreach ($modules as $m) {
-                    $module = ucfirst(str_replace($module_dir . DIRECTORY_SEPARATOR, '', $m));
+                    $module = str_replace($module_dir . DIRECTORY_SEPARATOR, '', $m);
                     $alias = "application.modules.{$module}.forms.";
                     $item_dir = $m . DIRECTORY_SEPARATOR . "forms" . DIRECTORY_SEPARATOR;
                     $glob = Helper::globRecursive($item_dir . "*.php", 0, true);
@@ -1305,7 +1305,7 @@ EOF;
         }
 
         $files[] = [
-            'module' => 'App',
+            'module' => 'app',
             'items' => $items,
             'count' => $glob['count']
         ];
@@ -1315,7 +1315,7 @@ EOF;
         if (file_exists($module_dir)) {
             $modules = glob($module_dir . DIRECTORY_SEPARATOR . "*");
             foreach ($modules as $m) {
-                $module = ucfirst(str_replace($module_dir . DIRECTORY_SEPARATOR, '', $m));
+                $module = str_replace($module_dir . DIRECTORY_SEPARATOR, '', $m);
                 $alias = "app.modules.{$module}.forms.";
                 $item_dir = $m . DIRECTORY_SEPARATOR . "forms" . DIRECTORY_SEPARATOR;
                 $glob = Helper::globRecursive($item_dir . "*.php", 0, true);

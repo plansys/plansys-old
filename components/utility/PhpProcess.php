@@ -1,29 +1,31 @@
 <?php
 
-/*
- * Run NodeJS in background 
- */
+class PhpProcess extends CComponent {
 
-class NodeProcess extends CComponent {
-
-    private static function checkNode() {
+    private static function checkPhp() {
         if (substr(php_uname(), 0, 7) == "Windows") {
-            exec("plansys\commands\shell\psexec.exe /accepteula -d node -v", $output, $input);
+            exec("plansys\commands\shell\psexec.exe /accepteula -d php -v", $output, $input);
 
             if ($input < 100) {
-                throw new CException("NodeJS is not installed. Command `node` not found");
+                throw new CException("PHP Command not found");
             }
         } else {
             
         }
+    }
+    
+    
+    public static function runAction() {
+        PhpProcess::checkPhp();
+        
     }
 
     public static function start($jsfile, $params = "") {
         $cmd = realpath(Yii::getPathOfAlias('webroot') . '/' . trim($jsfile, '/'));
 
         if (is_file($cmd)) {
-            NodeProcess::checkNode();
-
+            PhpProcess::checkPhp();
+            
             if (substr(php_uname(), 0, 7) == "Windows") {
                 exec("plansys\commands\shell\psexec.exe /accepteula -d node " . $cmd . " " . $params, $output, $input);
                 return $input;

@@ -3,6 +3,7 @@
 // This is the configuration for yiic console application.
 // Any writable CConsoleApplication properties can be configured here.
 
+require_once(dirname(__FILE__) . '/../components/utility/Helper.php');
 require_once(dirname(__FILE__) . '/../components/utility/Setting.php');
 Setting::init(__FILE__);
 $basePath = Setting::getBasePath();
@@ -26,21 +27,17 @@ return array(
         'application.components.codegen.*',
         'application.components.repo.*',
         'application.behaviors.*',
-        'ext.YiiJasper.*',
     ),
     // preloading 'log' component
     'preload' => array('log'),
     'modules' => array_merge($modules, array(
-        'gii' => array(
-            'class' => 'system.gii.GiiModule',
-            'password' => '123',
-            'ipFilters' => array('127.0.0.1', '::1'),
-        ),
         'nfy'
     )),
     'aliases' => array(
         'nfy' => realpath(__DIR__ . '/../modules/nfy'),
     ),
+    // command map
+    'commandMap' => Setting::getCommandMap($modules),
     // application components
     'components' => array(
         'db' => Setting::getDB(),

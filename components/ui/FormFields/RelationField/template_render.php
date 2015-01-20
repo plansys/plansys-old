@@ -106,7 +106,7 @@
                     <hr ng-repeat-end ng-if="item.value == '---'"/>
                     <hr ng-if="count > renderedFormList.length"/>
                     <li ng-if="count > renderedFormList.length">
-                        <a href="#" ng-click="next($event)" style="margin-left:-5px;padding-bottom:50px;"> 
+                        <a href="#" ng-click="next($event)" style="margin-left:-5px;padding-bottom:5px;"> 
                             <span ng-if="!loading"><i class="fa fa-angle-down"></i> &nbsp; Load More</span>
                             <span ng-if="loading"><i class="fa fa-refresh fa-spin"></i> &nbsp; Loading... </span>
                         </a>

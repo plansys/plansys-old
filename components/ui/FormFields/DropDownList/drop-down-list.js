@@ -100,7 +100,7 @@ app.directive('dropDownList', function ($timeout) {
 
                     var isFound = false;
                     $el.find("li").each(function () {
-                        if ($(this).find("a").attr('value').trim() == $scope.value.trim()) {
+                        if (typeof ($(this).find("a").attr('value')) != "undefined" && $(this).find("a").attr('value').trim() == $scope.value.trim()) {
                             $scope.text = $(this).find("a").text();
                             isFound = true;
                         }
@@ -109,7 +109,11 @@ app.directive('dropDownList', function ($timeout) {
                     if (!$scope.showOther && !isFound && $el.find("li:eq(0) a").attr('value')) {
                         $scope.value = $el.find("li:eq(0) a").attr('value').trim();
                         $scope.text = $el.find("li:eq(0) a").text();
+                        $timeout(function () {
+                            $el.find('.dropdown-text').html($scope.text);
+                        }, 1000);
                     }
+
 
                     $scope.toggled(false);
                 };
@@ -168,11 +172,11 @@ app.directive('dropDownList', function ($timeout) {
                         }
                     }
                 };
-                
+
                 $scope.changeOther = function () {
                     $scope.value = $scope.otherLabel;
                 };
-                
+
                 $scope.doSearch = function () {
                     $timeout(function () {
                         $el.find("li.hover").removeClass("hover");
@@ -218,7 +222,6 @@ app.directive('dropDownList', function ($timeout) {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;
                         if (typeof ctrl.$viewValue != "undefined") {
-
                             $scope.updateInternal(ctrl.$viewValue);
                         }
                     };
