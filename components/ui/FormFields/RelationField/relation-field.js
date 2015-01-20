@@ -144,7 +144,6 @@ app.directive('relationField', function ($timeout, $http) {
                             $scope.text = $scope.emptyLabel;
                         }
                     }
-                    console.log($scope.identifier, $scope.value, $scope.text, isFound);
                     $scope.toggled(false);
                 };
 

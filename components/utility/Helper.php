@@ -58,16 +58,30 @@ class Helper {
     }
 
     public static function getAlias($object) {
-        $r = new ReflectionClass($object);
-        $f = $r->getFileName();
+        if (!is_object($object) && is_file($object)) {
+            $a1 = Yii::getPathOfAlias('app');
+            $a2 = Yii::getPathOfAlias('application');
+            if (strpos($object, $a1) === 0) {
+                $alias = 'app';
+                $filepath = str_replace($a1, '', $object);
+            } else if (strpos($object, $a2) === 0) {
+                $alias = 'application';
+                $filepath = str_replace($a2, '', $object);
+            }
 
-        $path = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
-        $filepath = str_replace($path . DIRECTORY_SEPARATOR, '', $f);
-        $alias = 'app';
-        if (strlen($f) == strlen($filepath)) {
-            $path = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
+            $filepath = trim(str_replace(["/", "\\"], ".", $filepath), ".");
+        } else {
+            $r = new ReflectionClass($object);
+            $f = $r->getFileName();
+
+            $path = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
             $filepath = str_replace($path . DIRECTORY_SEPARATOR, '', $f);
-            $alias = 'application';
+            $alias = 'app';
+            if (strlen($f) == strlen($filepath)) {
+                $path = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
+                $filepath = str_replace($path . DIRECTORY_SEPARATOR, '', $f);
+                $alias = 'application';
+            }
         }
 
         return $alias . '.' . str_replace(DIRECTORY_SEPARATOR, '.', str_replace(".php", "", $filepath));
