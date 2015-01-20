@@ -2,6 +2,12 @@
 
 Yii::import("application.modules.nfy.models.NfyDbMessage");
 class NfyMessagesIndex extends NfyDbMessage {
+    public static function getSid() {
+        $sql = 'select id from p_nfy_subscriptions where subscriber_id = ' . Yii::app()->user->id;
+        $sid = Yii::app()->db->createCommand($sql)->queryScalar();
+        return $sid;
+    }
+    
     
     public function getForm() {
         return array (
@@ -101,7 +107,7 @@ inner join p_role r on p.role_id = r.id',
                     'where' => 'dataFilter1',
                     'paging' => 'dataGrid1',
                     'order' => 'dataGrid1',
-                    ':sub_id' => '@$_GET[\\\'sub_id\\\']',
+                    ':sub_id' => 'NfyMessagesIndex::getSid()',
                 ),
                 'relationTo' => 'currentModel',
                 'relationCriteria' => array (
