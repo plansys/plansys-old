@@ -23,10 +23,9 @@ class PhpProcess extends CComponent {
         if (substr(php_uname(), 0, 7) == "Windows") {
             exec("plansys\commands\shell\psexec.exe /accepteula -d plansys\yiic.php " . $cmd, $output, $input);
         } else {
-            exec("plansys\commands\shell\psexec.exe /accepteula -d ./plansys/yiic " . $cmd, $output, $input);
+            $pid = exec("php plansys/yiic " . $cmd, $output, $input);
         }
-        
-        var_dump($input, $output);
+        return implode("\n", $output);
     }
 
     public static function start($jsfile, $params = "") {
