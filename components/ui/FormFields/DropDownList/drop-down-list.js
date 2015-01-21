@@ -114,7 +114,6 @@ app.directive('dropDownList', function ($timeout) {
                         }, 1000);
                     }
 
-
                     $scope.toggled(false);
                 };
 
@@ -127,14 +126,20 @@ app.directive('dropDownList', function ($timeout) {
                     ctrl.$setViewValue($scope.value);
                 }
 
-                $scope.itemExist = function (value) {
+                $scope.itemExist = function (value, text) {
                     if (!value || value.trim() == '')
                         value = $scope.value;
+                    
+                    if (!text || text.trim() == '')
+                        text = $scope.text;
 
                     if (!value)
                         return true;
 
-                    return $el.find("li.dropdown-item a[value='" + value + "']").length != 0;
+                    var valueExist = $el.find("li.dropdown-item a[value='" + value + "']").length != 0;
+                    var textExist = $el.find("li.dropdown-item a:contains('" + text + "')").length != 0;
+
+                    return valueExist || textExist;
                 }
 
                 $scope.searchFocus = function (e) {
