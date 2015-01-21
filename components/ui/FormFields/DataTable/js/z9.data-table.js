@@ -199,7 +199,16 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             switch (c.inputMask) {
                                 case "number":
                                     colDef.type = 'numeric';
-                                    colDef.format = '0,0.00';
+
+                                    var dec = '00';
+                                    if (typeof c.options.decimal != "undefined") {
+                                        dec = "";
+                                        for (var de = 0; de < c.options.decimal * 1; de++) {
+                                            dec += "0";
+                                        }
+                                    }
+
+                                    colDef.format = '0,0.' + dec;
                                     delete(colDef.renderer);
                                     break;
                                 case "99/99/9999":
