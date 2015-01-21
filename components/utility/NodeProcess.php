@@ -14,7 +14,11 @@ class NodeProcess extends CComponent {
                 throw new CException("NodeJS is not installed. Command `node` not found");
             }
         } else {
-            
+
+            $returnVal = shell_exec("which node");
+            if (empty($returnVal)) {
+                throw new CException("NodeJS is not installed. Command `node` not found");
+            }
         }
     }
 

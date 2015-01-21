@@ -10,14 +10,23 @@ class PhpProcess extends CComponent {
                 throw new CException("PHP Command not found");
             }
         } else {
-            
+            $returnVal = shell_exec("which php");
+            if (empty($returnVal)) {
+                throw new CException("PHP Command not found");
+            }
         }
     }
-    
-    
-    public static function runAction() {
+
+    public static function yiic($cmd) {
         PhpProcess::checkPhp();
+
+        if (substr(php_uname(), 0, 7) == "Windows") {
+            exec("plansys\commands\shell\psexec.exe /accepteula -d plansys\yiic.php " . $cmd, $output, $input);
+        } else {
+            exec("plansys\commands\shell\psexec.exe /accepteula -d ./plansys/yiic " . $cmd, $output, $input);
+        }
         
+        var_dump($input, $output);
     }
 
     public static function start($jsfile, $params = "") {
@@ -25,7 +34,7 @@ class PhpProcess extends CComponent {
 
         if (is_file($cmd)) {
             PhpProcess::checkPhp();
-            
+
             if (substr(php_uname(), 0, 7) == "Windows") {
                 exec("plansys\commands\shell\psexec.exe /accepteula -d node " . $cmd . " " . $params, $output, $input);
                 return $input;
