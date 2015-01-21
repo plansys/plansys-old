@@ -2,17 +2,6 @@
 
 class ActiveRecord extends CActiveRecord {
 
-    /**
-     * @return array of used behaviors
-     */
-    public function behaviors() {
-        return [
-            'LoggableBehavior' => [
-                'class' => 'LoggableBehavior'
-            ],
-        ];
-    }
-
     private $__relations = [];
     private $__relationsObj = [];
     private $__oldRelations = [];

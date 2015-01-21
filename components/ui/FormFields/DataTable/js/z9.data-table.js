@@ -509,7 +509,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             }
                         }
                     }
-                    
+
                     loadRelation(function () {
                         if (typeof callback == "function") {
                             callback();
@@ -539,6 +539,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         });
                     }
                 }, true);
+
                 // Generate DataTable Options -- start
                 $timeout(function () {
                     evalArray($scope.gridOptions);
@@ -714,6 +715,12 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 var ch = changes[0];
                                 // afterCellEdit(value, row, col, data, ht);
                                 $scope.afterCellEdit(ch[3], ch[0], ch[1], $scope.data[ch[0]], ht);
+
+                                $timeout(function () {
+                                    angular.forEach($scope.data[ch[0]], function (val, idx) {
+                                        $scope.datasource.data[ch[0]][idx] = val;
+                                    });
+                                });
                             }
 
                             if (typeof $scope.events.afterChange == "function") {

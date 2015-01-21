@@ -128,7 +128,7 @@ class Controller extends CController {
             if (!is_file($path)) {
                 $path = Yii::getPathOfAlias("app.modules.{$module}.menus.{$menuPath}") . ".php";
             }
-            
+
             $menuModule = include($path);
 
             if (is_array($menuModule)) {
@@ -138,8 +138,8 @@ class Controller extends CController {
             }
         }
     }
-    
-    public function loadAllModel($id,$form){
+
+    public function loadAllModel($id, $form) {
         if (strpos($form, '.') > 0) {
             Yii::import($form);
             $form = Helper::explodeLast(".", $form);
@@ -155,14 +155,15 @@ class Controller extends CController {
             Yii::import($form);
             $form = Helper::explodeLast(".", $form);
         }
-        if(is_array($id)){
+        if (is_array($id)) {
             $model = $form::model($form)->findByAttributes($id);
-        }else{
+        } else {
             $model = $form::model($form)->findByPk($id);
         }
-        
+
         if ($model === null)
             throw new CHttpException(404, 'The requested page does not exist.');
         return $model;
     }
+
 }
