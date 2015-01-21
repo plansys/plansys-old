@@ -27,7 +27,7 @@
 
         var label = $(".autocompleteEditor td.current").text().trim();
         var value = $scope.lastRelList[label];
-        
+
         if ($scope.datasource.data.length != $scope.data.length) {
             var newrow = angular.copy($scope.data[row]);
             $scope.datasource.data.splice(row, 0, newrow);
@@ -40,7 +40,7 @@
     Handsontable.editors.RelationEditor = RelationEditor;
     Handsontable.editors.registerEditor('relation', RelationEditor);
 
-    /*************** DATE TIME / INPUT MASK *******************/
+    /*************** DATE TIME  *******************/
     function formatDate(val, format, $filter, td) {
         var oldval = val;
         if (typeof oldval != "string")
@@ -121,6 +121,28 @@
     }
     Handsontable.renderers.registerRenderer('datetime', dateTimeRenderer);
 
+    /*************** STRING ALIAS RENDERER *******************/
+    function stringAliasRenderer(instance, td, row, col, prop, value, cellProperties) {
+        Handsontable.TextCell.renderer.apply(this, arguments);
+        var options = instance.getSettings().columns[col];
+        var val = value;
+
+        angular.forEach(options.stringAlias, function (alias, idx) {
+            if (idx == value) {
+                val = alias;
+            }
+        });
+
+        if (typeof options.options.style == "string") {
+            $(td).attr('style', options.options.style);
+        }
+        $(td).html(val);
+
+        return td;
+    }
+    Handsontable.renderers.registerRenderer('stringalias', stringAliasRenderer);
+
+    /*************** INPUT MASK RENDERER *******************/
     var InputMaskEditor = Handsontable.editors.TextEditor.prototype.extend();
     InputMaskEditor.prototype.createElements = function () {
         Handsontable.editors.TextEditor.prototype.createElements.apply(this, arguments);

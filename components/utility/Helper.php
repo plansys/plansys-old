@@ -14,6 +14,16 @@ class Helper {
         }
     }
 
+    public static function evaluate($_expression_, $_data_ = array()) {
+        if (is_string($_expression_)) {
+            extract($_data_);
+            return eval('return ' . $_expression_ . ';');
+        } else {
+            $_data_[] = $this;
+            return call_user_func_array($_expression_, $_data_);
+        }
+    }
+
     public static function explodeFirst($delimeter, $str) {
         $a = explode($delimeter, $str);
         return array_shift($a);
@@ -102,7 +112,7 @@ class Helper {
         return $arr;
     }
 
-    // Does not support flag GLOB_BRACE  
+// Does not support flag GLOB_BRACE  
     public static function globRecursive($pattern, $flags = 0, $returnCount = false, $count = 0) {
         $files = glob($pattern, $flags);
         if ($returnCount) {
@@ -213,11 +223,11 @@ class Helper {
 
 
         return join(' ', array_map(function ($key) use ($attributes) {
-                if (is_bool($attributes[$key])) {
-                    return $attributes[$key] ? $key : '';
-                }
-                return $key . '="' . $attributes[$key] . '"';
-            }, array_keys($attributes)));
+                    if (is_bool($attributes[$key])) {
+                        return $attributes[$key] ? $key : '';
+                    }
+                    return $key . '="' . $attributes[$key] . '"';
+                }, array_keys($attributes)));
     }
 
     public static function minifyHtml($text) {

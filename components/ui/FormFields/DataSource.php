@@ -553,6 +553,10 @@ class DataSource extends FormField {
 
     public static function generateCriteria($postedParams, $criteria, $field) {
 
+        if (strpos($criteria['select'], 'php:') === 0) {
+            $criteria['select'] = Helper::evaluate(substr($criteria['select'], 4));
+        }
+        
         ## paging criteria
         if (is_array(@$postedParams['paging'])) {
             if (isset($postedParams['paging']['currentPage'])) {
@@ -573,7 +577,6 @@ class DataSource extends FormField {
 
         if (isset($criteria['condition']) && is_string($criteria['condition'])) {
             $sql = $criteria['condition'];
-
             $bracket = DataSource::generateTemplate($sql, $postedParams, $field);
 
             if ($bracket['sql'] != '') {
@@ -612,7 +615,6 @@ class DataSource extends FormField {
     public function getRelated($params = [], $isGenerate = false) {
         $postedParams = array_merge($params, $this->queryParams);
         $relChanges = $this->model->getRelChanges($this->relationTo);
-
 
         $criteria = DataSource::generateCriteria($postedParams, $this->relationCriteria, $this);
         if (@$criteria['params']) {
@@ -731,7 +733,7 @@ class DataSource extends FormField {
                 foreach ($field['filters']as $f) {
                     $dateCondition = @$f['defaultOperator'] != '' && @$f['filterType'] == 'date';
                     if (@$f['defaultValue'] != '' || $dateCondition ||
-                        @$f['defaultValueFrom'] != '' || @$f['defaultValueTo'] != ''
+                            @$f['defaultValueFrom'] != '' || @$f['defaultValueTo'] != ''
                     ) {
                         $execQuery = false;
                     }

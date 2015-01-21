@@ -194,7 +194,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         case "string":
                             colDef.renderer = "text";
                             if (typeof c.stringAlias == "object" && !$.isArray(c.stringAlias)) {
-                                colDef.renderer = "html";
+                                colDef.renderer = "stringalias";
+                                console.log(c.stringAlias);
                             }
                             switch (c.inputMask) {
                                 case "number":

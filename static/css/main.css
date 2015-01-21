@@ -1560,6 +1560,14 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     line-height:20px;
 }
 
+.data-grid-table .ngViewport .ngCellText .label {
+    margin: 1px 0px 0px 0px;
+    display: block;
+    float: left;
+    padding: 4px 5px;
+}
+
+
 .data-grid-table .ngViewport .ngCellText.editable {
     background-image:url('../img/data-grid-editable.png');
     background-repeat: no-repeat;
