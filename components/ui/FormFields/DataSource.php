@@ -553,7 +553,7 @@ class DataSource extends FormField {
 
     public static function generateCriteria($postedParams, $criteria, $field) {
 
-        if (strpos($criteria['select'], 'php:') === 0) {
+        if (isset($criteria['select']) && strpos($criteria['select'], 'php:') === 0) {
             $criteria['select'] = Helper::evaluate(substr($criteria['select'], 4));
         }
         
