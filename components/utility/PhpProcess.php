@@ -17,7 +17,7 @@ class PhpProcess extends CComponent {
         }
     }
 
-    public static function yiic($cmd) {
+    public static function yiic($cmd = "") {
         PhpProcess::checkPhp();
 
         if (substr(php_uname(), 0, 7) == "Windows") {
