@@ -9,8 +9,7 @@ var smtpTransport = require('nodemailer-smtp-transport');
 var validator = require('validator');
 var htmlToText = require('html-to-text');
 var swig = require('swig');
-var app = express
-var scheduler = rekuire('../../../app/components/scheduler.json');
+var app = express();
 var config = rekuire('../../config/settings.json');
 var pool = mysql.createPool({
     connectionLimit: 100,
