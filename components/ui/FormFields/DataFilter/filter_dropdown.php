@@ -57,9 +57,9 @@
                    ng-click="updateDropdown($event, filter, item);"
                    value="{{item.key}}">
 
-                    <label class="filter-dropdown-label">
-                        <i class="fa fa-check-square-o fa-lg fa-fw" ng-if="dropdownChecked(filter, subitem)" ></i>
-                        <i class="fa fa-square-o fa-lg fa-fw" ng-if="!dropdownChecked(filter, subitem)" ></i>
+                    <label class="filter-dropdown-label" style="margin-left:-10px;">
+                        <i class="fa fa-check-square-o fa-lg fa-fw" ng-if="dropdownChecked(filter, item)" ></i>
+                        <i class="fa fa-square-o fa-lg fa-fw" ng-if="!dropdownChecked(filter, item)" ></i>
                         {{ item.value}}
                     </label>
                 </a>

@@ -371,7 +371,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
                 $scope.dropdownChecked = function (filter, item) {
                     if (filter.valueText == 'All') {
                         return false;
-                    } else if (filter.checked.indexOf(item.key) >= 0) {
+                    } else if (!!item && !!item.key && filter.checked.indexOf(item.key) >= 0) {
                         return true;
                     } else {
                         return false;

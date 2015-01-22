@@ -117,7 +117,7 @@ class DevUserForm extends User {
         <div class=\"col-sm-8\" 
            style=\"padding-top:10px;\">
             
-           <table class=\"table\" style=\"font-size:12px;\">
+           <table class=\"table\" style=\"font-size:12px;border:1px solid #ccc;\">
                <tr>
                    <th style=\"padding:2px 5px 0px 5px;background:#ececeb;\">Role</th>
                    <th style=\"padding:2px 5px 0px 5px;background:#ececeb;text-align:center;width:100px\">Notification</th>
@@ -251,6 +251,65 @@ Isi field disamping untuk mengubah password.
                 'type' => 'SectionHeader',
             ),
             array (
+                'name' => 'dataFilter1',
+                'datasource' => 'dataSource1',
+                'filters' => array (
+                    array (
+                        'name' => 'stamp',
+                        'label' => 'Date / Time',
+                        'filterType' => 'date',
+                        'isCustom' => 'No',
+                        'options' => array (),
+                        'resetable' => 'Yes',
+                        'defaultValue' => '',
+                        'defaultValueFrom' => '',
+                        'defaultValueTo' => '',
+                        'defaultOperator' => '',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'type',
+                        'label' => 'Type',
+                        'listExpr' => '[
+\'view\' => \'View\',
+\'create\' => \'Create\',
+\'update\' => \'Update\',
+\'delete\' => \'Delete\',
+\'other\' => \'Other\' 
+]',
+                        'filterType' => 'check',
+                        'isCustom' => 'No',
+                        'options' => array (),
+                        'resetable' => 'Yes',
+                        'defaultValue' => '',
+                        'show' => true,
+                    ),
+                    array (
+                        'name' => 'description',
+                        'label' => 'Description',
+                        'filterType' => 'string',
+                        'isCustom' => 'No',
+                        'options' => array (),
+                        'resetable' => 'Yes',
+                        'defaultValue' => '',
+                        'defaultOperator' => '',
+                        'show' => true,
+                    ),
+                    array (
+                        'name' => 'pathinfo',
+                        'label' => 'Pathinfo',
+                        'filterType' => 'string',
+                        'isCustom' => 'No',
+                        'options' => array (),
+                        'resetable' => 'Yes',
+                        'defaultValue' => '',
+                        'defaultOperator' => '',
+                        'show' => false,
+                    ),
+                ),
+                'type' => 'DataFilter',
+            ),
+            array (
                 'name' => 'dataSource1',
                 'sql' => 'select id,
 stamp,
@@ -279,7 +338,7 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                     'distinct' => 'false',
                     'alias' => 't',
                     'condition' => '{user_id = :id} {AND} {[where]}',
-                    'order' => '{[order]}',
+                    'order' => '{id desc, [order]}',
                     'paging' => '{[paging]}',
                     'group' => '',
                     'having' => '',
@@ -293,101 +352,48 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                 'columns' => array (
                     array (
                         'name' => 'stamp',
-                        'label' => 'Timestamp',
+                        'label' => 'Date / Time',
                         'options' => array (
-                            'groups' => '[\\\'model_id\\\']',
+                            'width' => '140',
                         ),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
+                        'inputMask' => '99/99/9999 99:99',
+                        'stringAlias' => array (),
                         'columnType' => 'string',
                         'show' => false,
                     ),
                     array (
-                        'name' => 'action',
-                        'label' => 'action',
-                        'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
+                        'name' => 'type',
+                        'label' => 'type',
+                        'options' => array (
+                            'width' => '80',
                         ),
+                        'inputMask' => '',
+                        'stringAlias' => array (
+                            'view' => '<div class=\\\'label label-default text-center\\\' style=\\\'display:block;width:100%;\\\'> VIEW </div>',
+                        ),
+                        'columnType' => 'string',
+                        'show' => true,
+                    ),
+                    array (
+                        'name' => 'description',
+                        'label' => 'description',
+                        'options' => array (
+                            'href' => '{pathinfo}?{params}',
+                            'target' => '_blank',
+                        ),
+                        'inputMask' => '',
+                        'stringAlias' => array (),
                         'columnType' => 'string',
                         'show' => false,
                     ),
                     array (
-                        'name' => 'model',
-                        'label' => 'model',
-                        'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
+                        'name' => 'pathinfo',
+                        'label' => 'path',
+                        'options' => array (
+                            'width' => '200',
                         ),
-                        'columnType' => 'string',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'model_id',
-                        'label' => 'model_id',
-                        'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
-                        'columnType' => 'string',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'field',
-                        'label' => 'field',
-                        'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
-                        'columnType' => 'string',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'old_value',
-                        'label' => 'old_value',
-                        'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
-                        'columnType' => 'string',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'new_value',
-                        'label' => 'new_value',
-                        'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
+                        'inputMask' => '',
+                        'stringAlias' => array (),
                         'columnType' => 'string',
                         'show' => false,
                     ),

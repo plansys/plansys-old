@@ -171,6 +171,13 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                     }
                 }
 
+                $scope.generateUrlLink = function (content, opt, row) {
+                    var url = eval($scope.generateUrl(opt.href));
+                    var target = !!opt.target ? 'target="' + opt.target + '"' : '';
+
+                    return '<a href="' + url + '" ' + target + '>' + content + '</a>';
+                }
+
                 $scope.generateUrl = function (url, type) {
                     var output = '';
                     if (typeof url == "string") {
@@ -231,7 +238,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                         if ($scope.columns[i].name == field) {
                             var newval = '';
                             for (k in $scope.columns[i].stringAlias) {
-                                
+
                                 if (k.toLowerCase() == value.toLowerCase() || k.toLowerCase() == "'" + value.toLowerCase() + "'") {
                                     return $scope.columns[i].stringAlias[k];
                                 }
@@ -412,10 +419,14 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                         varDef = col.options['parse-func'] + '(row.getProperty(col.field),row)';
                     }
 
+
                     if (col.options.cellFilter) {
                         varDef += ' | ' + col.options.cellFilter;
                     }
 
+                    if (col.options.href) {
+                        varDef = 'generateUrlLink(' + varDef + ', col.colDef, row)';
+                    }
 
                     var ngIf = 'ng-if="' + emptyVal + '.indexOf(row.getProperty(col.field)) < 0 "';
                     var editableClass = $scope.getEditableClass(col);

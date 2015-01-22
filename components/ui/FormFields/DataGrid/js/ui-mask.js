@@ -369,7 +369,6 @@ app.directive('uiMask', function ($timeout, $filter) {
 
                 $timeout(function () {
                     var val = ctrl.$viewValue;
-
                     if (val) {
                         switch (attrs.uiMask) {
                             case "99/99/9999 99:99":

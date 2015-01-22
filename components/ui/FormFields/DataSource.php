@@ -357,8 +357,10 @@ class DataSource extends FormField {
             return (trim($e) != "" ? trim($e) : false);
         });
         $sql = implode(" " . $operator . " ", $andsql);
+        $sql = preg_replace("/\s+{$operator}\s+where\s+/i", " " . $operator . " ", $sql);
         $sql = preg_replace("/\s+where\s+{$operator}\s+/i", " WHERE ", $sql);
         $sql = preg_replace("/\s+where\s+where\s+/i", " WHERE ", $sql);
+
 
         return $sql;
     }
@@ -556,7 +558,7 @@ class DataSource extends FormField {
         if (isset($criteria['select']) && strpos($criteria['select'], 'php:') === 0) {
             $criteria['select'] = Helper::evaluate(substr($criteria['select'], 4));
         }
-        
+
         ## paging criteria
         if (is_array(@$postedParams['paging'])) {
             if (isset($postedParams['paging']['currentPage'])) {

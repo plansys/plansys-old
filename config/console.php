@@ -1,8 +1,5 @@
 <?php
 
-// This is the configuration for yiic console application.
-// Any writable CConsoleApplication properties can be configured here.
-
 require_once(dirname(__FILE__) . '/../components/utility/Helper.php');
 require_once(dirname(__FILE__) . '/../components/utility/Setting.php');
 Setting::init(__FILE__);

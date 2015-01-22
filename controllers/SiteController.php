@@ -12,6 +12,7 @@ class SiteController extends Controller {
         } else {
             $this->redirect(array("/" . lcfirst(strtolower(Yii::app()->user->role)) . '/default/index'));
         }
+
     }
 
     /**

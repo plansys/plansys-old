@@ -17,9 +17,19 @@ ob_start();
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
         $scope.params = <?php echo @json_encode($renderParams); ?>;
         $scope.pageUrl = "<?php echo @Yii::app()->request->url; ?>";
-        
+        $scope.pageInfo = <?php echo json_encode(AuditTrail::getPathInfo()) ?>;
+        $timeout(function () {
+            $scope.pageInfo['description'] = $scope.form.title;
+
+            if ($("[ps-action-bar] .action-bar .title").text() != '') {
+                $scope.pageInfo['description'] = $("[ps-action-bar] .action-bar .title").text();
+            }
+
+            $http.post(Yii.app.createUrl('/sys/auditTrail/track'), $scope.pageInfo);
+        }, 500);
+
         $scope.rel = {};
-        
+
 <?php if (!Yii::app()->user->isGuest): ?>
             $scope.user = <?php echo @json_encode(Yii::app()->user->info); ?>;
             if ($scope.user != null) {
