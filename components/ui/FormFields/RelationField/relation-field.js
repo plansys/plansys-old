@@ -110,7 +110,7 @@ app.directive('relationField', function ($timeout, $http) {
                     function isEmpty(a) {
                         return !a || a == '';
                     }
-                    
+
                     $scope.value = typeof value != "string" ? '' : value;
 
                     if ($scope.showOther && !$scope.itemExist()) {
@@ -293,27 +293,30 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.identifier = $el.find("data[name=identifier]").text().trim();
                 $scope.openedInField = false;
 
-                angular.forEach($scope.params, function (p, i) {
-                    var p = $scope.params[i];
-                    if (p.indexOf('js:') === 0) {
-                        var value = $scope.$eval(p.replace('js:', ''));
-                        var key = i;
 
-                        $scope.$watch(p.replace('js:', ''), function (newv, oldv) {
-                            if (newv != oldv) {
-                                for (i in $scope.params) {
-                                    var x = $scope.params[i];
-                                    if (x == p) {
-                                        $scope.paramValue[i] = newv;
+                $timeout(function () {
+                    angular.forEach($scope.params, function (p, i) {
+                        var p = $scope.params[i];
+                        if (p.indexOf('js:') === 0) {
+                            var value = $scope.$parent.$eval(p.replace('js:', ''));
+                            var key = i;
+
+                            $scope.$watch(p.replace('js:', ''), function (newv, oldv) {
+                                if (newv != oldv) {
+                                    for (i in $scope.params) {
+                                        var x = $scope.params[i];
+                                        if (x == p) {
+                                            $scope.paramValue[i] = newv;
+                                        }
                                     }
+                                    $scope.doSearch();
                                 }
-                                $scope.doSearch();
-                            }
-                        }, true);
+                            }, true);
 
-                        $scope.paramValue[key] = value;
-//                        $scope.doSearch()
-                    }
+                            $scope.paramValue[key] = value;
+
+                        }
+                    });
                 });
 
                 //if ngModel is present, use that instead of value from php
