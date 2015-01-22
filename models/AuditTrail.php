@@ -1,7 +1,7 @@
 <?php
 
-class AuditTrail extends CActiveRecord {
-    
+class AuditTrail extends ActiveRecord {
+
     public function getAction_label() {
         $r = "";
         switch ($this->action) {
@@ -17,9 +17,9 @@ class AuditTrail extends CActiveRecord {
         }
         return $r;
     }
-    
+
     public function tableName() {
         return "p_audit_trail";
-    } 
-    
+    }
+
 }

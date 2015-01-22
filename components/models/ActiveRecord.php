@@ -482,10 +482,21 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function beforeSave() {
+        ## clean primary keys
         if ($this->primaryKey == '') {
             $table = $this->getMetaData()->tableSchema;
             $primaryKey = $table->primaryKey;
             $this->$primaryKey = null;
+        }
+
+        ## clean relation columns
+        foreach ($this->getMetaData()->relations as $k => $rel) {
+            $single = get_class($rel) == 'CHasOneRelation' || get_class($rel) == 'CBelongsToRelation';
+            if ($single && is_string($rel->foreignKey)) {
+                if (!is_numeric($this[$rel->foreignKey]) && !is_null($this[$rel->foreignKey])) {
+                    $this[$rel->foreignKey] = null;
+                }
+            }
         }
 
 
@@ -854,10 +865,10 @@ class ActiveRecord extends CActiveRecord {
             unset($d['id']);
             $updatearr = [];
             for ($i = 0; $i < $columnCount; $i++) {
-                
+
                 ## cek apakah ada kolom yg dimaksud, jika ada maka
                 if (isset($columnName[$i]) && isset($d[$columnName[$i]])) {
-                    
+
                     ## jika yg kolom itu foreign key DAN kolom nya kosong, maka set NULL (karena foreign_key ga boleh string kosong)
                     if (in_array($columnName[$i], $foreignKeys) && $d[$columnName[$i]] == '') {
                         $updatearr[] = '`' . $columnName[$i] . "` = NULL";
@@ -872,7 +883,7 @@ class ActiveRecord extends CActiveRecord {
             if ($updatesql != '') {
                 $update .= "UPDATE {$table} SET {$updatesql} WHERE id='{$cond}';";
             }
-        }  
+        }
         if ($update != '') {
             $command = Yii::app()->db->createCommand($update);
             try {

@@ -50,6 +50,7 @@ class DevUserForm extends User {
                 'type' => 'HiddenField',
             ),
             array (
+                'showBorder' => 'Yes',
                 'column1' => array (
                     array (
                         'label' => 'Fullname',
@@ -112,27 +113,30 @@ class DevUserForm extends User {
                         'value' => '<div class=\"form-group form-group-sm\">
     <label 
     class=\"col-sm-4 control-label\">
-    Roles 
     </label>
-    <div class=\"col-sm-6\" 
-       style=\"padding-top:5px;\">
-       <span 
-       class=\"badge\"
-       style=\"margin-right:3px;display:inline-block;\"
-       ng-repeat=\"ur in model.roles\">
-       {{ ur.role_description }}
-       </span>
+    <div class=\"col-sm-8\" 
+       style=\"padding-top:10px;\">
+       
+       <table class=\"table\" style=\"font-size:12px;\">
+           <tr>
+               <th style=\"padding:2px 5px 0px 5px;background:#ececeb;\">Role</th>
+               <th style=\"padding:2px 5px 0px 5px;background:#ececeb;text-align:center;width:100px\">Notification</th>
+           </tr>
+           <tr ng-repeat=\"ur in model.roles\">
+               <td style=\"padding:2px 5px 0px 5px;\">{{ ur.role_description }}</td>
+               <td style=\"padding:0px;text-align:center;\">
+                   <input name=\"DevUserForm[subscriptionCategories][]\" value=\"{{ur.role_name}}\" type=\"checkbox\" ng-checked=\"ur.subscribed\">
+               </td>
+           </tr>
+       </table>
+       
     </div>
     
 </div>',
                         'type' => 'Text',
                     ),
                     array (
-                        'value' => '<div style=\"margin:-50px -20px 0px 0px;\" class=\"hide col-sm-5 pull-right info\">
-<i 
-class=\"fa fa-info-circle fa-nm fa-fw\"></i> 
-Harap hubungi administrator untuk mengubah username ataupun role.
-</div>
+                        'value' => '
 </div>',
                         'type' => 'Text',
                     ),
@@ -200,6 +204,7 @@ Harap hubungi administrator untuk mengubah username ataupun role.
                 'type' => 'SectionHeader',
             ),
             array (
+                'showBorder' => 'Yes',
                 'column1' => array (
                     array (
                         'label' => 'Password',
@@ -248,69 +253,6 @@ Isi field disamping untuk mengubah password.
                 'type' => 'SectionHeader',
             ),
             array (
-                'name' => 'dataFilter1',
-                'datasource' => 'dataSource1',
-                'filters' => array (
-                    array (
-                        'name' => 'stamp',
-                        'label' => 'Timestamp',
-                        'listExpr' => '',
-                        'filterType' => 'date',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'action',
-                        'label' => 'action',
-                        'listExpr' => 'array(
-     \'CREATE\'=>\'CREATE\',
-\'CHANGE\'=>\'CHANGE\'
-)',
-                        'filterType' => 'list',
-                        'show' => true,
-                        'list' => array (
-                            'CREATE' => 'CREATE',
-                            'CHANGE' => 'CHANGE',
-                        ),
-                    ),
-                    array (
-                        'name' => 'model',
-                        'label' => 'model',
-                        'listExpr' => '',
-                        'filterType' => 'string',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'model_id',
-                        'label' => 'model_id',
-                        'listExpr' => '',
-                        'filterType' => 'string',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'field',
-                        'label' => 'field',
-                        'listExpr' => '',
-                        'filterType' => 'string',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'old_value',
-                        'label' => 'old_value',
-                        'listExpr' => '',
-                        'filterType' => 'string',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'new_value',
-                        'label' => 'new_value',
-                        'listExpr' => '',
-                        'filterType' => 'string',
-                        'show' => false,
-                    ),
-                ),
-                'type' => 'DataFilter',
-            ),
-            array (
                 'name' => 'dataSource1',
                 'sql' => 'select id,
 stamp,
@@ -333,6 +275,18 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                 ),
                 'enablePaging' => 'Yes',
                 'pagingSQL' => 'select count(*) from (select count(1) from p_audit_trail where user_id = :id {AND [where]} group by action, model, user_id, model_id, stamp) a',
+                'relationTo' => 'auditTrail',
+                'relationCriteria' => array (
+                    'select' => '',
+                    'distinct' => 'false',
+                    'alias' => 't',
+                    'condition' => '{user_id = :id} {AND} {[where]}',
+                    'order' => '{[order]}',
+                    'paging' => '{[paging]}',
+                    'group' => '',
+                    'having' => '',
+                    'join' => '',
+                ),
                 'type' => 'DataSource',
             ),
             array (
