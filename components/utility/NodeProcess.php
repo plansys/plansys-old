@@ -32,7 +32,7 @@ class NodeProcess extends CComponent {
                 exec("plansys\commands\shell\psexec.exe /accepteula -d node " . $cmd . " " . $params, $output, $input);
                 return $input;
             } else {
-                $pid = exec("nodejs " . $cmd . " > /dev/null 2>&1 & echo $!;", $output, $input);
+                $pid = exec("nodejs " . $cmd . " " . $params . " > /dev/null 2>&1 & echo $!;", $output, $input);
                 return $pid;
             }
         } else {
