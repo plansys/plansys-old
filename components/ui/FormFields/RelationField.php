@@ -383,6 +383,41 @@ class RelationField extends FormField {
         echo json_encode($this->query(@$s, $this->params));
     }
 
+    public function actionFindId() {
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+        if (!is_array($post)) {
+            return;
+        }
+
+        extract($post);
+        $fb = FormBuilder::load($m);
+        if (isset($i)) {
+            $field = $fb->findField(['name' => $f, 'identifier' => @$i]);
+        } else {
+            $field = $fb->findField(['name' => $f]);
+        }
+
+        $this->attributes = $field;
+        $this->builder = $fb;
+
+        if (@$field['criteria']) {
+            $this->relationCriteria = @$field['criteria'];
+        }
+
+        if (is_array(@$field['params'])) {
+            foreach ($field['params'] as $k => $ff) {
+                if (substr($ff, 0, 3) == "js:" && isset($p[$k])) {
+                    $p[$k] = "'" . $p[$k] . "'";
+                }
+            }
+        }
+
+        $this->relationCriteria['condition'] = $this->idField . " = " . $v;
+        $result = $this->query($s, $p);
+        echo json_encode(@$result[0]);
+    }
+
     public function actionSearch() {
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);

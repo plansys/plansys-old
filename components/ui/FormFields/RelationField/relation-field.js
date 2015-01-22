@@ -19,7 +19,7 @@ app.directive('relationField', function ($timeout, $http) {
                             var subItem = [];
                             var rawSub = $scope.formList[key];
 
-                            if (rawSub.label) {
+                            if (rawSub.hasOwnProperty('label')) {
                                 $scope.renderedFormList.push({
                                     key: rawSub.value,
                                     value: rawSub.label
@@ -34,6 +34,7 @@ app.directive('relationField', function ($timeout, $http) {
                             $scope.renderedFormList.push({key: key, value: $scope.formList[key]});
                         }
                     }
+
                 }
 
                 $scope.fixScroll = function () {
@@ -128,9 +129,49 @@ app.directive('relationField', function ($timeout, $http) {
                     });
 
                     if (!isFound && $el.find("li:eq(0) a").attr('value')) {
-                        $scope.value = $el.find("li:eq(0) a").attr('value').trim();
-                        $scope.text = $el.find("li:eq(0) a").text();
-                        ctrl.$setViewValue($scope.value);
+                        // when current value not found in renderedFormList, then search it on server...
+                        if (!!$scope.value) {
+                            $scope.loading = true;
+                            $http.post(Yii.app.createUrl('formfield/RelationField.findId'), {
+                                's': '',
+                                'm': $scope.modelClass,
+                                'f': $scope.name,
+                                'p': $scope.paramValue,
+                                'i': $scope.identifier,
+                                'v': $scope.value
+                            }).success(function (data) {
+                                $scope.loading = false;
+                                if (data) {
+                                    var found = false;
+                                    for (var key in $scope.renderedFormList) {
+                                        var item = $scope.renderedFormList[key];
+                                        if (item.value == data.label) {
+                                            item.key = data.value;
+                                            found = true;
+                                        }
+                                    }
+
+                                    if (!found) {
+                                        $scope.renderedFormList.push({
+                                            key: data.value,
+                                            value: data.label
+                                        });
+                                    }
+
+                                    $scope.value = data.value;
+                                    $scope.text = data.label;
+                                    ctrl.$setViewValue($scope.value);
+                                } else {
+                                    $scope.value = $el.find("li:eq(0) a").attr('value').trim();
+                                    $scope.text = $el.find("li:eq(0) a").text();
+                                    ctrl.$setViewValue($scope.value);
+                                }
+                            });
+                        } else {
+                            $scope.value = $el.find("li:eq(0) a").attr('value').trim();
+                            $scope.text = $el.find("li:eq(0) a").text();
+                            ctrl.$setViewValue($scope.value);
+                        }
                     }
 
                     if ($scope.identifier != '' && $scope.text) {
