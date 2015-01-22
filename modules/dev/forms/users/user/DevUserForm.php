@@ -97,42 +97,40 @@ class DevUserForm extends User {
                         'type' => 'Text',
                     ),
                     array (
-                        'value' => '<div class=\"form-group form-group-sm\">
-    <label 
-    class=\"col-sm-4 control-label\">
-    Username 
-    </label>
-    <div class=\"col-sm-6\" 
-       style=\"padding-top:5px;\">
-       {{ model.username }}
-    </div>
-</div>',
+                        'value' => '    <div class=\"form-group form-group-sm\">
+        <label 
+        class=\"col-sm-4 control-label\">
+        Username 
+        </label>
+        <div class=\"col-sm-6\" 
+           style=\"padding-top:5px;\">
+           {{ model.username }}
+        </div>
+    </div>',
                         'type' => 'Text',
                     ),
                     array (
-                        'value' => '<div class=\"form-group form-group-sm\">
-    <label 
-    class=\"col-sm-4 control-label\">
-    </label>
-    <div class=\"col-sm-8\" 
-       style=\"padding-top:10px;\">
-       
-       <table class=\"table\" style=\"font-size:12px;\">
-           <tr>
-               <th style=\"padding:2px 5px 0px 5px;background:#ececeb;\">Role</th>
-               <th style=\"padding:2px 5px 0px 5px;background:#ececeb;text-align:center;width:100px\">Notification</th>
-           </tr>
-           <tr ng-repeat=\"ur in model.roles\">
-               <td style=\"padding:2px 5px 0px 5px;\">{{ ur.role_description }}</td>
-               <td style=\"padding:0px;text-align:center;\">
-                   <input name=\"DevUserForm[subscriptionCategories][]\" value=\"{{ur.role_name}}\" type=\"checkbox\" ng-checked=\"ur.subscribed\">
-               </td>
-           </tr>
-       </table>
-       
-    </div>
-    
-</div>',
+                        'value' => '    <div class=\"form-group form-group-sm\">
+        <label 
+        class=\"col-sm-4 control-label\">
+        </label>
+        <div class=\"col-sm-8\" 
+           style=\"padding-top:10px;\">
+            
+           <table class=\"table\" style=\"font-size:12px;\">
+               <tr>
+                   <th style=\"padding:2px 5px 0px 5px;background:#ececeb;\">Role</th>
+                   <th style=\"padding:2px 5px 0px 5px;background:#ececeb;text-align:center;width:100px\">Notification</th>
+               </tr>
+               <tr ng-repeat=\"ur in model.roles\">
+                   <td style=\"padding:2px 5px 0px 5px;\">{{ ur.role_description }}</td>
+                   <td style=\"padding:0px;text-align:center;\">
+                       <input name=\"DevUserForm[subscriptionCategories][]\" value=\"{{ur.role_name}}\" type=\"checkbox\" ng-checked=\"ur.subscribed\">
+                   </td>
+               </tr>
+           </table>
+        </div>
+    </div>',
                         'type' => 'Text',
                     ),
                     array (
