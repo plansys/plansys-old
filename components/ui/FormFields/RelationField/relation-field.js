@@ -101,11 +101,8 @@ app.directive('relationField', function ($timeout, $http) {
                     }
                 }
 
-                $scope.update = function (value, f) {
-                    $scope.updateInternal(value);
-                    $timeout(function () {
-                        ctrl.$setViewValue($scope.value);
-                    }, 0);
+                $scope.update = function (item, f) {
+                    $scope.updateInternal(item.key);
                 };
                 $scope.updateInternal = function (value) {
                     function isEmpty(a) {
@@ -241,7 +238,7 @@ app.directive('relationField', function ($timeout, $http) {
                     $scope.value = $scope.otherLabel;
                 };
 
-                $scope.doSearch = function () {
+                $scope.doSearch = function (f) {
                     $scope.loading = true;
                     $http.post(Yii.app.createUrl('formfield/RelationField.search'), {
                         's': $scope.search,
@@ -254,6 +251,10 @@ app.directive('relationField', function ($timeout, $http) {
                         $scope.count = data.count;
                         $scope.renderFormList();
                         $scope.loading = false;
+
+                        if (typeof f == "function") {
+                            f(data);
+                        }
                     });
                 };
                 $scope.next = function (e) {
@@ -350,7 +351,17 @@ app.directive('relationField', function ($timeout, $http) {
                                             $scope.paramValue[i] = newv;
                                         }
                                     }
-                                    $scope.doSearch();
+                                    $scope.doSearch(function (data) {
+                                        console.log(data);
+                                        if (data.count == 0) {
+                                            $scope.value = '';
+                                            $scope.text = '';
+                                        } else {
+                                            $scope.value = data.list[0].value;
+                                            $scope.text = data.list[0].label;
+                                        }
+                                        console.log("ASDAS", $scope.value, $scope.text);
+                                    });
                                 }
                             }, true);
 

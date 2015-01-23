@@ -413,7 +413,9 @@ class RelationField extends FormField {
             }
         }
 
-        $this->relationCriteria['condition'] = $this->idField . " = " . $v;
+        $this->relationCriteria['condition'] = $this->relationCriteria['alias'] . "." . $this->idField . " = :find_id_param_relation_field";
+        $p[':find_id_param_relation_field'] = $v;
+
         $result = $this->query($s, $p);
         echo json_encode(@$result[0]);
     }
