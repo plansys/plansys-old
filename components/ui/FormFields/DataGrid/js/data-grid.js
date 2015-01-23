@@ -415,16 +415,16 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                     if (Object.prototype.toString.call(col.stringAlias) == "[object Object]") {
                         varDef = 'stringAlias(row.getProperty(col.field),col.field)';
                     }
-                    if (col.options['parse-func']) {
+                    if (!!col.options && !!col.options['parse-func']) {
                         varDef = col.options['parse-func'] + '(row.getProperty(col.field),row)';
                     }
 
 
-                    if (col.options.cellFilter) {
+                    if (!!col.options && !!col.options.cellFilter) {
                         varDef += ' | ' + col.options.cellFilter;
                     }
 
-                    if (col.options.href) {
+                    if (!!col.options && !!col.options.href) {
                         varDef = 'generateUrlLink(' + varDef + ', col.colDef, row)';
                     }
 
