@@ -714,10 +714,7 @@ class RelationField extends FormField {
         $table = $model->tableName();
 
         $criteria = $this->generateCriteria($search, $params);
-
         $rawlist = $model->currentModel($criteria);
-
-
 
         if (!is_null($initialID) && $initialID != "") {
             $found = false;
@@ -829,7 +826,6 @@ class RelationField extends FormField {
 
             $items['Application']['app.models.' . $m] = $m;
         }
-
 
         foreach ($devItems as $k => $m) {
             $m = str_replace($devDir . DIRECTORY_SEPARATOR, "", $m);

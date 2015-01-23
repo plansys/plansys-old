@@ -352,7 +352,6 @@ app.directive('relationField', function ($timeout, $http) {
                                         }
                                     }
                                     $scope.doSearch(function (data) {
-                                        console.log(data);
                                         if (data.count == 0) {
                                             $scope.value = '';
                                             $scope.text = '';
@@ -360,7 +359,6 @@ app.directive('relationField', function ($timeout, $http) {
                                             $scope.value = data.list[0].value;
                                             $scope.text = data.list[0].label;
                                         }
-                                        console.log("ASDAS", $scope.value, $scope.text);
                                     });
                                 }
                             }, true);
