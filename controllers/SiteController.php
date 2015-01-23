@@ -12,7 +12,6 @@ class SiteController extends Controller {
         } else {
             $this->redirect(array("/" . lcfirst(strtolower(Yii::app()->user->role)) . '/default/index'));
         }
-
     }
 
     /**
@@ -90,8 +89,13 @@ class SiteController extends Controller {
 
             // validate user input and redirect to the previous page if valid
             if ($model->validate() && $model->login()) {
+
+                ## update last_login user
                 $sql = "update p_user set last_login = '" . date("Y-m-d H:i:s") . "' where id = " . Yii::app()->user->id;
                 Yii::app()->db->createCommand($sql)->execute();
+
+                ## audit trail tracker
+                AuditTrail::login();
 
                 $this->redirect(Yii::app()->user->returnUrl);
             }
@@ -105,7 +109,12 @@ class SiteController extends Controller {
      * Logs out the current user and redirect to homepage.
      */
     public function actionLogout() {
+        ## audit trail tracker
+        AuditTrail::logout();
+        
+        ## logout user
         Yii::app()->user->logout();
+
         $this->redirect(Yii::app()->homeUrl);
     }
 

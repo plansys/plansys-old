@@ -270,13 +270,7 @@ Isi field disamping untuk mengubah password.
                     array (
                         'name' => 'type',
                         'label' => 'Type',
-                        'listExpr' => '[
-\'view\' => \'View\',
-\'create\' => \'Create\',
-\'update\' => \'Update\',
-\'delete\' => \'Delete\',
-\'other\' => \'Other\' 
-]',
+                        'listExpr' => 'AuditTrail::typeDropdown()',
                         'filterType' => 'check',
                         'isCustom' => 'No',
                         'options' => array (),
@@ -293,7 +287,7 @@ Isi field disamping untuk mengubah password.
                         'resetable' => 'Yes',
                         'defaultValue' => '',
                         'defaultOperator' => '',
-                        'show' => true,
+                        'show' => false,
                     ),
                     array (
                         'name' => 'pathinfo',
@@ -370,6 +364,8 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                         'inputMask' => '',
                         'stringAlias' => array (
                             'view' => '<div class=\\\'label label-default text-center\\\' style=\\\'display:block;width:100%;\\\'> VIEW </div>',
+                            'login' => '<div class=\\\'label label-info text-center\\\' style=\\\'display:block;width:100%;\\\'> LOGIN</div>',
+                            'logout' => '<div class=\\\'label label-warning text-center\\\' style=\\\'display:block;width:100%;\\\'> LOGOUT</div>',
                         ),
                         'columnType' => 'string',
                         'show' => true,

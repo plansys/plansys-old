@@ -2,6 +2,22 @@
 
 class AuditTrail extends ActiveRecord {
 
+    public static function typeDropdown() {
+        return [
+            'general' => [
+                'view' => 'View',
+                'create' => 'Create',
+                'update' => 'Update',
+                'delete' => 'Delete',
+            ],
+            'other' => [
+                'login' => 'Login',
+                'logout' => 'Logout',
+                'other' => 'Other'
+            ]
+        ];
+    }
+
     public static function parseUrl($url) {
         if (is_string($url)) {
             $parts = parse_url($url);
@@ -66,8 +82,13 @@ class AuditTrail extends ActiveRecord {
         return (!!$savedInfo ? $savedInfo : $info);
     }
 
+    public static function logout() {
+        $ip = Yii::app()->request->getUserHostAddress();
+        AuditTrail::track("Logged out from {$ip}", "logout");
+    }
+
     public static function login() {
-        $ip = Yii::app()->request->getUserHostAddress();  
+        $ip = Yii::app()->request->getUserHostAddress();
         AuditTrail::track("Logged in from {$ip}", "login");
     }
 

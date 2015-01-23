@@ -25,9 +25,6 @@ class UserIdentity extends CUserIdentity {
         ## reset error code
         $this->errorCode = self::ERROR_NONE;
         
-        ## track in audit trail
-        AuditTrail::login();
-        
     }
 
     public function authenticate() {
@@ -48,6 +45,7 @@ class UserIdentity extends CUserIdentity {
 
         if ($record === null)
             $this->errorCode = self::ERROR_USERNAME_INVALID;
+        
         else if (trim($record->password) !== md5($this->password)) {
             if ($useLdap) {
                 $ldapSuccess = Yii::app()->ldap->authenticate($this->username, $this->password);
