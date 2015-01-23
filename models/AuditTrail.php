@@ -1,6 +1,7 @@
 <?php
 
 class AuditTrail extends ActiveRecord {
+
     public static function parseUrl($url) {
         if (is_string($url)) {
             $parts = parse_url($url);
@@ -63,6 +64,11 @@ class AuditTrail extends ActiveRecord {
         $savedInfo = @$session[$urlID];
 
         return (!!$savedInfo ? $savedInfo : $info);
+    }
+
+    public static function login() {
+        $ip = Yii::app()->request->getUserHostAddress();  
+        AuditTrail::track("Logged in from {$ip}", "login");
     }
 
     public static function view($info) {

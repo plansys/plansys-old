@@ -1548,7 +1548,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 }
 
 .data-grid-table .ngViewport .ngRow:hover {
-    background:#f5f5f5;
+    background:#ececeb;
 }
 .data-grid-table .ngViewport .ngRow.selected {
     background:#ffffcc;

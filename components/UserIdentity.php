@@ -9,17 +9,25 @@ class UserIdentity extends CUserIdentity {
     private $id;
 
     public function loggedIn($record) {
+        
+        ## set id and role
         $this->id = $record->id;
+        
+        ## set role
         $role = UserRole::model()->findByAttributes([
             'user_id' => $this->id,
             'is_default_role' => 'Yes'
         ]);
         $this->setState('fullRole', $role->role['role_name']);
-
         $rootRole = Helper::explodeFirst(".", $role->role['role_name']);
         $this->setState('role', $rootRole);
 
+        ## reset error code
         $this->errorCode = self::ERROR_NONE;
+        
+        ## track in audit trail
+        AuditTrail::login();
+        
     }
 
     public function authenticate() {
