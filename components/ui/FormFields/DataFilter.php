@@ -265,7 +265,7 @@ class DataFilter extends FormField {
                         break;
                     case "Daily":
                         if (@$filter['value'] != '') {
-                            $sql = "{$column} = DATE(:{$paramName}_{$pcolumn})";
+                            $sql = "DATE({$column}) = DATE(:{$paramName}_{$pcolumn})";
                             $param = @$filter['value'];
                         }
                         break;
@@ -298,7 +298,7 @@ class DataFilter extends FormField {
                 break;
             case "check":
                 if ($filter['value'] != '') {
-
+                    // USING LIKE...
                     $param = [];
                     $psql = [];
                     foreach ($filter['value'] as $k => $p) {

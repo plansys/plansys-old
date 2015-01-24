@@ -38,8 +38,9 @@ class DevMenuEditor extends Form {
             array (
                 'label' => 'Url',
                 'name' => 'url',
-                'layout' => 'Vertical',
                 'fieldWidth' => '12',
+                'layout' => 'Vertical',
+                'fieldHeight' => '',
                 'options' => array (
                     'ng-model' => 'active.url',
                     'ng-change' => 'save()',
@@ -50,7 +51,6 @@ class DevMenuEditor extends Form {
                     'style' => 'word-break:break-all;',
                 ),
                 'type' => 'TextArea',
-                'fieldHeight' => '',
             ),
             array (
                 'column1' => array (
@@ -93,14 +93,6 @@ class DevMenuEditor extends Form {
                     ),
                 ),
                 'type' => 'ColumnField',
-            ),
-            array (
-                'label' => 'Display Logic',
-                'fieldname' => 'visible',
-                'options' => array (
-                    'ps-valid' => 'active.visible = result;',
-                ),
-                'type' => 'ExpressionField',
             ),
         );
     }

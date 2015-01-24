@@ -92,10 +92,6 @@ class AuditTrail extends ActiveRecord {
         AuditTrail::track("Logged in from {$ip}", "login");
     }
 
-    public static function view($info) {
-        AuditTrail::track("", "view", $info);
-    }
-
     public static function track($msg, $type = "other", $info = "") {
         if (!Yii::app()->user->isGuest) {
             ## load info
@@ -107,16 +103,32 @@ class AuditTrail extends ActiveRecord {
             $lastTrail = Yii::app()->db->createCommand($sql)->queryRow();
 
             ## detect duplicate
-            $isDuplicate = $lastTrail['type'] == $type &&
-                    $lastTrail['pathinfo'] == $pathInfo['pathinfo'] &&
-                    $lastTrail['params'] == $pathInfo['params'];
+            $isDuplicate = $lastTrail['pathinfo'] == $pathInfo['pathinfo'] && $lastTrail['params'] == $pathInfo['params'];
             $lastInsertHour = round(abs(strtotime($lastTrail['stamp']) - time()) / 3600);
+            $isDifferentType = $lastTrail['type'] != $type;
 
-            ## if not duplicate OR last tracked time is more than 1 hour ago
-            if (!$isDuplicate || ($isDuplicate && $lastInsertHour > 1)) {
+            ## if not duplicate OR is different type OR last tracked time is more than 1 hour ago
+            if (!$isDuplicate || ($isDuplicate && $isDifferentType) || ($isDuplicate && $lastInsertHour > 1)) {
+
                 ## create new track
                 $at = new AuditTrail;
+
+                if ($isDuplicate) {
+                    ## skip tracking visit for same page after CRUD
+                    $isCrud = in_array($lastTrail['type'], ['create', 'update', 'delete']);
+                    if ($isCrud && $type == "visit") {
+                        return;
+                    }
+                }
+
+
                 $at->attributes = $pathInfo;
+                
+                ## remove data from visit tracker...
+                if ($type == "visit") {
+                    $at->data = "{}";
+                }
+                
                 if (is_string($msg) && $msg != "") {
                     $at->description = $msg;
                 }

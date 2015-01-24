@@ -1,4 +1,4 @@
-app.directive('linkBtn', function ($timeout, $parse, $compile) {
+app.directive('linkBtn', function ($timeout, $parse, $compile, $http) {
     return {
         scope: true,
         compile: function (element, attrs, transclude) {
@@ -59,7 +59,7 @@ app.directive('linkBtn', function ($timeout, $parse, $compile) {
                         if (href.trim().substr(0, 4) == "url:") {
                             var url = href.trim().substr(4);
                             href = eval(generateUrl(url, 'function'));
-                            
+
                             //watch URL Variables
                             for (i in urlVars) {
                                 $scope.$watch(urlVars[i], function (n) {
@@ -76,24 +76,72 @@ app.directive('linkBtn', function ($timeout, $parse, $compile) {
                     });
                 }
 
-                if (attrs.confirm) {
-                    $el.click(function (e) {
+                $scope.trackDelete = function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    
+                    function continueDefault() {
+                        if (!!attrs.submit) {
+                            submit();
+                        } else if (!!attrs.href) {
+                            location.href = $scope.url;
+                        }
+                    }
 
+                    if (!!$scope.pageInfo) {
+                        if (!!$scope.model) {
+                            $scope.pageInfo['data'] = JSON.stringify($scope.model);
+                        }
+                        $http.post(Yii.app.createUrl('/sys/auditTrail/track', {
+                            t: 'delete'
+                        }), $scope.pageInfo).success(function () {
+                            continueDefault();
+                        });
+                    } else {
+                        continueDefault();
+                    }
+                }
+
+                $scope.isDeleteButton = function (e) {
+
+                    if ($el.hasClass('btn-danger')) {
+                        if (/hapus|delete|del/ig.test($el.text())) {
+                            return true;
+                        }
+                    }
+
+
+                    return false;
+                }
+
+                $el.click(function (e) {
+                    if (attrs.confirm) {
                         e.stopPropagation();
                         if (!confirm(attrs.confirm)) {
                             return false;
                         }
-                    });
-                }
 
-                if (attrs.prompt) {
-                    $el.click(function (e) {
+                        if ($scope.isDeleteButton(e)) {
+                            $scope.trackDelete(e);
+                            return false;
+                        }
+                    } else if (attrs.prompt) {
                         e.stopPropagation();
                         if (prompt(attrs.prompt) != attrs.promptIf) {
                             return false;
                         }
-                    });
-                }
+
+                        if ($scope.isDeleteButton(e)) {
+                            $scope.trackDelete(e);
+                            return false;
+                        }
+                    } else {
+                        if ($scope.isDeleteButton(e)) {
+                            $scope.trackDelete(e);
+                            return false;
+                        }
+                    }
+                });
 
                 if (attrs.submit) {
                     var href = attrs.submit;

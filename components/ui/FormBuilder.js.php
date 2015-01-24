@@ -19,17 +19,21 @@ ob_start();
         $scope.pageUrl = "<?php echo @Yii::app()->request->url; ?>";
         $scope.pageInfo = <?php echo json_encode(AuditTrail::getPathInfo()) ?>;
         $timeout(function () {
+            // send current page title with id to tracker
             $scope.pageInfo['description'] = $scope.form.title;
-
             if ($("[ps-action-bar] .action-bar .title").text() != '') {
                 $scope.pageInfo['description'] = $("[ps-action-bar] .action-bar .title").text();
-            }
 
+                if (!!$scope.model && !!$scope.model.id) {
+                    $scope.pageInfo['description'] += " [#" + $scope.model.id + "]";
+                }
+            }
+            // track create or update in audit trail 
             $http.post(Yii.app.createUrl('/sys/auditTrail/track'), $scope.pageInfo);
-        }, 500);
+        }, 1000);
 
         $scope.rel = {};
-
+        
 <?php if (!Yii::app()->user->isGuest): ?>
             $scope.user = <?php echo @json_encode(Yii::app()->user->info); ?>;
             if ($scope.user != null) {
@@ -57,16 +61,19 @@ ob_start();
                 }
             }
 <?php endif; ?>
-
+    
 <?php if (is_object(Yii::app()->controller) && is_object(Yii::app()->controller->module)): ?>
             $scope.module = '<?= Yii::app()->controller->module->id ?>';
 <?php endif; ?>
+    
 <?php if (Yii::app()->user->hasFlash('info')): ?>
             $scope.flash = '<?= Yii::app()->user->getFlash('info'); ?>';
 <?php endif; ?>
+    
 <?php if (isset($data['validators'])): ?>
             $scope.validators = <?php echo @json_encode($data['validators']); ?>;
 <?php endif; ?>
+    
 <?php if (is_subclass_of($this->model, 'ActiveRecord') && isset($data['isNewRecord'])): ?>
             $scope.isNewRecord = <?php echo $data['isNewRecord'] ? "true" : "false" ?>;
 <?php endif; ?>
@@ -79,7 +86,7 @@ ob_start();
         });
         $scope.formSubmitting = false;
         $scope.form.submit = function (button) {
-            $timeout(function () {
+            function submit() {
                 if (typeof button != "undefined") {
                     var baseurl = button.url;
                     if (typeof button.url != 'string' || button.url.trim() == '' || button.url.trim() == '#') {
@@ -91,7 +98,24 @@ ob_start();
                     var url = Yii.app.createUrl(baseurl, urlParams);
                     $("div[ng-controller=<?= $modelClass ?>Controller] form").attr('action', url).submit();
                 }
-            }, 0);
+            }
+
+            if (!!$scope.model) {
+                // track create or update in audit trail 
+                $scope.formSubmitting = true;
+                if (!!$scope.model) {
+                    $scope.pageInfo['data'] = JSON.stringify($scope.model);
+                }
+                                
+                // send tracking information
+                $http.post(Yii.app.createUrl('/sys/auditTrail/track', {
+                    t: $scope.isNewRecord ? 'create' : 'update'
+                }), $scope.pageInfo).success(function () {
+                    submit();
+                });
+            } else {
+                submit();
+            }
         };
         $("div[ng-controller=<?= $modelClass ?>Controller] form").submit(function (e) {
             if ($scope.uploading.length > 0) {
@@ -101,8 +125,9 @@ ob_start();
                 return false;
             }
 
-            $scope.formSubmitting = true;
+            $scope.form.submit();
         });
+        
         $scope.form.canGoBack = function () {
             return (document.referrer == "" || window.history.length > 1);
         }
@@ -117,7 +142,6 @@ ob_start();
             $scope.dataGrids[$(this).attr('name')] = false;
             $scope.dataGrids.length++;
         });
-
         function inlineJS() {
             $("div[ng-controller=<?= $modelClass ?>Controller]").css('opacity', 1);
 <?= $inlineJS; ?>
