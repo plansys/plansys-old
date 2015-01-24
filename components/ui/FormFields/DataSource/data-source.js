@@ -15,6 +15,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 $scope.relationTo = $el.find("data[name=relation_to]").text().trim();
                 $scope.insertData = [];
                 $scope.updateData = [];
+                $scope.httpRequest = false;
                 $scope.loading = false;
 
                 $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text());
@@ -101,8 +102,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 $scope.shouldCount = true;
                 $scope.lastQueryFrom = "";
 
-                $scope.httpPromise = $q.defer();
-
                 $scope.queryWithoutCount = function (f) {
                     $scope.shouldCount = false;
                     $scope.query(f);
@@ -133,19 +132,19 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     var params = $scope.prepareParams();
                     $scope.loading = true;
 
-                    $scope.httpPromise.resolve();
+                    if ($scope.httpRequest) {
+                        $scope.httpRequest.resolve();
+                    }
+                    $scope.httpRequest = $q.defer();
 
-                    $http({
-                        method: "post",
-                        url: Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet),
-                        timeout: $scope.httpPromise,
-                        params: {
-                            model_id: model_id,
-                            name: $scope.name,
-                            class: $scope.class,
-                            params: params,
-                            lc: $scope.shouldCount ? 0 : $scope.totalItems
-                        }
+                    $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
+                        model_id: model_id,
+                        name: $scope.name,
+                        class: $scope.class,
+                        params: params,
+                        lc: $scope.shouldCount ? 0 : $scope.totalItems
+                    }, {
+                        timeout: $scope.httpRequest.promise
                     }).success(function (data) {
                         $scope.isDataReloaded = true;
                         $scope.data = data.data;
