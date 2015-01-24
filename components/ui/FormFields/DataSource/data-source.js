@@ -1,4 +1,4 @@
-app.directive('psDataSource', function ($timeout, $http) {
+app.directive('psDataSource', function ($timeout, $http, $q) {
     return {
         scope: true,
         compile: function (element, attrs, transclude) {
@@ -101,6 +101,8 @@ app.directive('psDataSource', function ($timeout, $http) {
                 $scope.shouldCount = true;
                 $scope.lastQueryFrom = "";
 
+                $scope.httpPromise = $q.defer();
+
                 $scope.queryWithoutCount = function (f) {
                     $scope.shouldCount = false;
                     $scope.query(f);
@@ -131,12 +133,19 @@ app.directive('psDataSource', function ($timeout, $http) {
                     var params = $scope.prepareParams();
                     $scope.loading = true;
 
-                    $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
-                        model_id: model_id,
-                        name: $scope.name,
-                        class: $scope.class,
-                        params: params,
-                        lc: $scope.shouldCount ? 0 : $scope.totalItems
+                    $scope.httpPromise.resolve();
+
+                    $http({
+                        method: "post",
+                        url: Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet),
+                        timeout: $scope.httpPromise,
+                        params: {
+                            model_id: model_id,
+                            name: $scope.name,
+                            class: $scope.class,
+                            params: params,
+                            lc: $scope.shouldCount ? 0 : $scope.totalItems
+                        }
                     }).success(function (data) {
                         $scope.isDataReloaded = true;
                         $scope.data = data.data;
