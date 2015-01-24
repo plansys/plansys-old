@@ -80,6 +80,8 @@ app.directive('linkBtn', function ($timeout, $parse, $compile, $http) {
                     e.stopPropagation();
                     e.preventDefault();
 
+                    $scope.startLoading();
+
                     function continueDefault() {
                         if (!!attrs.submit) {
                             submit();
@@ -112,7 +114,6 @@ app.directive('linkBtn', function ($timeout, $parse, $compile, $http) {
                             return true;
                         }
                     }
-
 
                     return false;
                 }

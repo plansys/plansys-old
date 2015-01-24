@@ -90,6 +90,10 @@ ob_start();
             document.title = $scope.form.title;
         });
         $scope.formSubmitting = false;
+        $scope.startLoading = function () {
+
+            $scope.formSubmitting = true;
+        }
         $scope.form.submit = function (button) {
             function submit() {
                 if (typeof button != "undefined") {
