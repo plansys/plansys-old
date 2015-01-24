@@ -69,7 +69,7 @@
 
                         <a ng-if="!isObject(item.value)"
                            dropdown-toggle href="#" 
-                           ng-click="update(item.key);"
+                           ng-click="update(item);"
                            value="{{item.key}}">
                             {{ item.value}}
                         </a>
@@ -86,7 +86,7 @@
 
                                     <a ng-if="!isObject(subitem.value)"
                                        dropdown-toggle href="#" 
-                                       ng-click="update(subitem.key);"
+                                       ng-click="update(subitem);"
                                        value="{{subitem.key}}">
                                         {{ subitem.value}}
                                     </a>

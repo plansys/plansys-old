@@ -413,7 +413,9 @@ class RelationField extends FormField {
             }
         }
 
-        $this->relationCriteria['condition'] = $this->idField . " = " . $v;
+        $this->relationCriteria['condition'] = $this->relationCriteria['alias'] . "." . $this->idField . " = :find_id_param_relation_field";
+        $p[':find_id_param_relation_field'] = $v;
+
         $result = $this->query($s, $p);
         echo json_encode(@$result[0]);
     }
@@ -712,10 +714,7 @@ class RelationField extends FormField {
         $table = $model->tableName();
 
         $criteria = $this->generateCriteria($search, $params);
-
         $rawlist = $model->currentModel($criteria);
-
-
 
         if (!is_null($initialID) && $initialID != "") {
             $found = false;
@@ -827,7 +826,6 @@ class RelationField extends FormField {
 
             $items['Application']['app.models.' . $m] = $m;
         }
-
 
         foreach ($devItems as $k => $m) {
             $m = str_replace($devDir . DIRECTORY_SEPARATOR, "", $m);
