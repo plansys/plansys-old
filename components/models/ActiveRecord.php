@@ -771,6 +771,22 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
+    public static function baseClass($object) {
+        $class = new ReflectionClass($object);
+        $lineage = array();
+        $prev = "";
+        while ($class = $class->getParentClass()) {
+            $c = $class->getName();
+
+            if ($c == "ActiveRecord" || $c == "CActiveRecord")
+                return $prev;
+
+            $prev = $c;
+        }
+
+        return false;
+    }
+
     public static function batch($model, $new, $old = [], $delete = true) {
         $deleteArr = [];
         $updateArr = [];

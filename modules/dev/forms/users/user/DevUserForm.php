@@ -265,7 +265,7 @@ Isi field disamping untuk mengubah password.
                         'defaultValueFrom' => '',
                         'defaultValueTo' => '',
                         'defaultOperator' => 'Daily',
-                        'show' => true,
+                        'show' => false,
                     ),
                     array (
                         'name' => 'type',
@@ -376,7 +376,10 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                     array (
                         'name' => 'description',
                         'label' => 'Page Title',
-                        'options' => array (),
+                        'options' => array (
+                            'href' => 'url:/sys/auditTrail/detail?id={id}',
+                            'target' => '_blank',
+                        ),
                         'inputMask' => '',
                         'stringAlias' => array (),
                         'columnType' => 'string',
@@ -386,7 +389,7 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                         'name' => 'link',
                         'label' => '',
                         'options' => array (
-                            'href' => '{pathinfo}?{params}',
+                            'href' => 'url:/{pathinfo}?{params}',
                             'target' => '_blank',
                             'width' => '35',
                         ),
@@ -406,7 +409,7 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                         'inputMask' => '',
                         'stringAlias' => array (),
                         'columnType' => 'string',
-                        'show' => false,
+                        'show' => true,
                     ),
                 ),
                 'gridOptions' => array (

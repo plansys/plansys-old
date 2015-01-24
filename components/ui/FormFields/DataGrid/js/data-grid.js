@@ -5,12 +5,16 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
             return function ($scope, $el, attrs, ctrl) {
                 var parent = $scope.$parent;
 
-                function evalArray(array) {
+                function evalArray(array, opt) {
+                    opt = $.extend({
+                        parseUrl: true
+                    }, opt);
+
                     for (i in array) {
                         if (typeof array[i] == "string") {
                             if (array[i].trim().substr(0, 3) == "js:") {
                                 eval('array[i] = ' + array[i].trim().substr(3));
-                            } else if (array[i].trim().substr(0, 4) == "url:") {
+                            } else if (opt.parseUrl && array[i].trim().substr(0, 4) == "url:") {
                                 var url = array[i].trim().substr(4);
                                 array[i] = function (row) {
                                     if (!!array['target'] && array['target'] == '_blank') {
@@ -172,9 +176,12 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                 }
 
                 $scope.generateUrlLink = function (content, opt, row) {
-                    var url = eval($scope.generateUrl(opt.href));
+                    var url = opt.href;
+                    if (opt.href.indexOf('url:') === 0) {
+                        url = $scope.$eval($scope.generateUrl(opt.href.substr(4)), {row: row});
+                    }
+                    
                     var target = !!opt.target ? 'target="' + opt.target + '"' : '';
-
                     return '<a href="' + url + '" ' + target + '>' + content + '</a>';
                 }
 
@@ -646,7 +653,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                             var c = $scope.columns[i];
 
                             // prepare columns
-                            evalArray(c.options);
+                            evalArray(c.options, {parseUrl: false});
                             switch (c.columnType) {
                                 case "string":
                                     var col = angular.extend(c.options || {}, {

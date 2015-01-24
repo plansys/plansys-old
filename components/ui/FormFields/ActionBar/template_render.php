@@ -4,10 +4,25 @@
         <div class="title-bar">
             <span class="title"><?= $this->title ?></span>
         </div>
-        <?php if ($this->form['layout']['name'] == 'full-width'): ?>
+        <?php if (Yii::app()->controller->module->id != "sys" && $this->form['layout']['name'] == 'full-width'): ?>
             <div class="print-bar">
-                <div class="btn btn-sm btn-default ac-print">
-                    <i class="fa fa-print fa-lg "></i>
+                <div class="ac-portlet-btngroup btn-group" dropdown>
+                    <button type="button" class="btn ac-portlet-button btn-sm btn-default dropdown-toggle">
+                        <i class="fa fa-bars fa-nm"></i> 
+                    </button>
+                    <ul class="ac-portlet-menu dropdown-menu pull-right" role="menu">
+                        <li>
+                            <a target="_blank" href="{{ Yii.app.createUrl('/sys/auditTrail/view', {key: pageInfo.key})}}">
+                                <i class="fa fa-newspaper-o fa-lg fa-fw" style='margin:0px 5px 0px -10px;'></i> 
+                                Audit Trail
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" dropdown-toggle class='ac-print'>
+                                <i class="fa fa-print fa-lg  fa-fw" style='margin:0px 5px 0px -10px;'></i> Print Page
+                            </a>
+                        </li> 
+                    </ul>
                 </div>
             </div>
         <?php endif; ?>

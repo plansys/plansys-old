@@ -18,9 +18,14 @@ ob_start();
         $scope.params = <?php echo @json_encode($renderParams); ?>;
         $scope.pageUrl = "<?php echo @Yii::app()->request->url; ?>";
         $scope.pageInfo = <?php echo json_encode(AuditTrail::getPathInfo()) ?>;
+        $scope.formClass = "<?php echo $modelClass; ?>";
+        $scope.modelBaseClass = "<?php echo ActiveRecord::baseClass($this->model); ?>";
+
         $timeout(function () {
             // send current page title with id to tracker
-            $scope.pageInfo['description'] = $scope.form.title;
+            $scope.pageInfo['description'] = $scope.form.title
+            $scope.pageInfo['form_class'] = $scope.formClass;
+            $scope.pageInfo['model_class'] = $scope.modelBaseClass;
             if ($("[ps-action-bar] .action-bar .title").text() != '') {
                 $scope.pageInfo['description'] = $("[ps-action-bar] .action-bar .title").text();
 
@@ -33,7 +38,7 @@ ob_start();
         }, 1000);
 
         $scope.rel = {};
-        
+
 <?php if (!Yii::app()->user->isGuest): ?>
             $scope.user = <?php echo @json_encode(Yii::app()->user->info); ?>;
             if ($scope.user != null) {
@@ -61,19 +66,19 @@ ob_start();
                 }
             }
 <?php endif; ?>
-    
+
 <?php if (is_object(Yii::app()->controller) && is_object(Yii::app()->controller->module)): ?>
             $scope.module = '<?= Yii::app()->controller->module->id ?>';
 <?php endif; ?>
-    
+
 <?php if (Yii::app()->user->hasFlash('info')): ?>
             $scope.flash = '<?= Yii::app()->user->getFlash('info'); ?>';
 <?php endif; ?>
-    
+
 <?php if (isset($data['validators'])): ?>
             $scope.validators = <?php echo @json_encode($data['validators']); ?>;
 <?php endif; ?>
-    
+
 <?php if (is_subclass_of($this->model, 'ActiveRecord') && isset($data['isNewRecord'])): ?>
             $scope.isNewRecord = <?php echo $data['isNewRecord'] ? "true" : "false" ?>;
 <?php endif; ?>
@@ -105,8 +110,11 @@ ob_start();
                 $scope.formSubmitting = true;
                 if (!!$scope.model) {
                     $scope.pageInfo['data'] = JSON.stringify($scope.model);
+                    $scope.pageInfo['form_class'] = $scope.formClass;
+                    $scope.pageInfo['model_class'] = $scope.modelBaseClass;
+                    $scope.pageInfo['model_id'] = $scope.model.id;
                 }
-                                
+
                 // send tracking information
                 $http.post(Yii.app.createUrl('/sys/auditTrail/track', {
                     t: $scope.isNewRecord ? 'create' : 'update'
@@ -127,7 +135,7 @@ ob_start();
 
             $scope.form.submit();
         });
-        
+
         $scope.form.canGoBack = function () {
             return (document.referrer == "" || window.history.length > 1);
         }

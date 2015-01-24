@@ -1,6 +1,6 @@
 <?php
 
-class AuditTrailController extends CController {
+class AuditTrailController extends Controller {
 
     public function actionTrack($t = "view") {
         $postdata = file_get_contents("php://input");
@@ -24,5 +24,15 @@ class AuditTrailController extends CController {
             }
         }
     }
+    
+    public function actionDetail($id) {
+        $model = $this->loadModel($id, 'SysAuditTrailDetail');
+        
+        $this->renderForm('SysAuditTrailDetail', $model);
+    }
 
+    public function actionView($key) {
+        $this->renderForm('SysAuditTrailIndex');
+    }
+    
 }

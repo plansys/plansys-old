@@ -25,10 +25,10 @@ class SiteController extends Controller {
                 switch ($error['code']) {
                     case 404:
                         $error = array(
-                            'code' => 'Peringatan: Halaman tidak ditemukan',
-                            'message' => 'Halaman yang anda tuju tidak dapat ditemukan. <br/>'
+                            'code' => 'Peringatan: Data / halaman tidak ditemukan',
+                            'message' => 'Data yang ingin Anda lihat tidak dapat ditemukan. <br/>'
                             . 'Mohon periksa kembali URL yang ingin anda buka.<br/><br/>'
-                            . 'Atau mungkin juga data yang ingin anda akses sudah dihapus.'
+                            . 'Atau mungkin juga data yang ingin Anda akses sudah dihapus.'
                         );
                         break;
                     default:

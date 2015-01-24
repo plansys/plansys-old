@@ -79,7 +79,7 @@ app.directive('linkBtn', function ($timeout, $parse, $compile, $http) {
                 $scope.trackDelete = function (e) {
                     e.stopPropagation();
                     e.preventDefault();
-                    
+
                     function continueDefault() {
                         if (!!attrs.submit) {
                             submit();
@@ -91,6 +91,9 @@ app.directive('linkBtn', function ($timeout, $parse, $compile, $http) {
                     if (!!$scope.pageInfo) {
                         if (!!$scope.model) {
                             $scope.pageInfo['data'] = JSON.stringify($scope.model);
+                            $scope.pageInfo['form_class'] = $scope.formClass;
+                            $scope.pageInfo['model_class'] = $scope.modelBaseClass;
+                            $scope.pageInfo['model_id'] = $scope.model.id;
                         }
                         $http.post(Yii.app.createUrl('/sys/auditTrail/track', {
                             t: 'delete'

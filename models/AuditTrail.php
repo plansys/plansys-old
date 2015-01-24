@@ -2,20 +2,58 @@
 
 class AuditTrail extends ActiveRecord {
 
-    public static function typeDropdown() {
-        return [
-            'general' => [
+    public static function queryWhere($params, $model) {
+        $sql = "{[where]} {AND} (`key` = '{$model->key}'";
+
+        if (Helper::endsWith($model->form_class, "Index")) {
+            $sql .= "{OR} (model_class = '{$model->model_class}' AND ctrl = '{$model->ctrl}' AND module = '{$model->module}'))";
+        } else {
+            $sql .= ')';
+        }
+
+        return $sql;
+    }
+
+    public static function indexQuery($params) {
+        $model = AuditTrail::model()->findByAttributes(['key' => @$_GET['key']]);
+        $where = AuditTrail::queryWhere($params, $model);
+
+        $sql = "SELECT id, stamp, type, user_id, description, url
+            FROM p_audit_trail {$where}  {id desc, [order]} {[$paging]}";
+
+        return $sql;
+    }
+
+    public static function countQuery($params) {
+        $model = AuditTrail::model()->findByAttributes(['key' => @$_GET['key']]);
+        $where = AuditTrail::queryWhere($params, $model);
+        $sql = "SELECT count(1) FROM p_audit_trail {$where}";
+        return $sql;
+    }
+
+    public static function typeDropdown($all = true) {
+        if ($all) {
+            return [
+                'general' => [
+                    'view' => 'View',
+                    'create' => 'Create',
+                    'update' => 'Update',
+                    'delete' => 'Delete',
+                ],
+                'other' => [
+                    'login' => 'Login',
+                    'logout' => 'Logout',
+                    'other' => 'Other'
+                ]
+            ];
+        } else {
+            return [
                 'view' => 'View',
                 'create' => 'Create',
                 'update' => 'Update',
                 'delete' => 'Delete',
-            ],
-            'other' => [
-                'login' => 'Login',
-                'logout' => 'Logout',
-                'other' => 'Other'
-            ]
-        ];
+            ];
+        }
     }
 
     public static function parseUrl($url) {
@@ -51,7 +89,7 @@ class AuditTrail extends ActiveRecord {
         }
         $params = http_build_query($params);
 
-        return [
+        $return = [
             'url' => $url,
             'module' => $module,
             'ctrl' => $ctrl,
@@ -59,6 +97,9 @@ class AuditTrail extends ActiveRecord {
             'params' => $params,
             'pathinfo' => "/" . ($module != '' ? $module . "/" : "") . $ctrl . "/" . $action
         ];
+
+        $return['key'] = AuditTrail::generateKey($return);
+        return $return;
     }
 
     public static function savePageInfo($info) {
@@ -98,6 +139,9 @@ class AuditTrail extends ActiveRecord {
             $pathInfo = AuditTrail::loadPageInfo($info);
             $uid = Yii::app()->user->id;
 
+            if ($pathInfo['module'] == "sys")
+                return;
+
             ## get last audit trail
             $sql = "select * from p_audit_trail where user_id = {$uid} order by id desc";
             $lastTrail = Yii::app()->db->createCommand($sql)->queryRow();
@@ -121,14 +165,13 @@ class AuditTrail extends ActiveRecord {
                     }
                 }
 
-
                 $at->attributes = $pathInfo;
-                
+
                 ## remove data from visit tracker...
                 if ($type == "visit") {
                     $at->data = "{}";
                 }
-                
+
                 if (is_string($msg) && $msg != "") {
                     $at->description = $msg;
                 }
@@ -138,6 +181,10 @@ class AuditTrail extends ActiveRecord {
                 $at->save();
             }
         }
+    }
+
+    public static function generateKey($info) {
+        return md5($info['pathinfo'] . $info['params']);
     }
 
     public function tableName() {

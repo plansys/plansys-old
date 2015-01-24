@@ -178,6 +178,13 @@ class Helper {
         return stripos($haystack, $needle, 0) === 0;
     }
 
+    public static function endsWith($haystack, $needle, $case = false) {
+        if ($case)
+            return strcasecmp(substr($haystack, strlen($haystack) - strlen($needle)), $haystack) == 0;
+        else
+            return strpos($haystack, $needle, strlen($haystack) - strlen($needle)) !== false;
+    }
+
     public static function is_assoc($arr) {
         return array_keys($arr) !== range(0, count($arr) - 1);
     }

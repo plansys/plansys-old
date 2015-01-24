@@ -554,7 +554,6 @@ class DataSource extends FormField {
     }
 
     public static function generateCriteria($postedParams, $criteria, $field) {
-
         if (isset($criteria['select']) && strpos($criteria['select'], 'php:') === 0) {
             $criteria['select'] = Helper::evaluate(substr($criteria['select'], 4));
         }
@@ -567,8 +566,12 @@ class DataSource extends FormField {
                 $criteria['page'] = 1;
             }
             $criteria['pageSize'] = $postedParams['paging']['pageSize'];
+        } else {
+            $criteria['page'] = 1;
+            $criteria['pageSize'] = 25;
         }
-
+        
+        ## order criteria
         if (isset($criteria['order']) && is_string($criteria['order'])) {
             $sql = $criteria['order'];
             $bracket = DataSource::generateTemplate($sql, $postedParams, $field);
@@ -576,7 +579,7 @@ class DataSource extends FormField {
             $criteria['order'] = str_replace("order by", "", $bracket['sql']);
         }
 
-
+        ## order criteria
         if (isset($criteria['condition']) && is_string($criteria['condition'])) {
             $sql = $criteria['condition'];
             $bracket = DataSource::generateTemplate($sql, $postedParams, $field);
@@ -617,7 +620,7 @@ class DataSource extends FormField {
     public function getRelated($params = [], $isGenerate = false) {
         $postedParams = array_merge($params, $this->queryParams);
         $relChanges = $this->model->getRelChanges($this->relationTo);
-
+        
         $criteria = DataSource::generateCriteria($postedParams, $this->relationCriteria, $this);
         if (@$criteria['params']) {
             $criteria['params'] = array_filter($criteria['params']);

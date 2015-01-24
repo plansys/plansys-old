@@ -22,9 +22,12 @@
         <!-- field -->
         <!-- date field -->
         <div ng-if="['date', 'datetime'].indexOf(fieldType) >= 0" 
-             class="date-field <?php if (!@$this->fieldOptions['disabled']): ?>input-group<?php endif; ?>">
+             class="date-field <?php if (!@$this->fieldOptions['disabled']): ?>input-group<?php endif; ?>"
+             <?php if (!!@$this->fieldOptions['disabled']): ?>style="text-align:left !important;width:90px;"<?php endif; ?>
+             >
             <!-- value -->
             <input type="text" <?= $this->expandAttributes($this->fieldOptions) ?>
+                   <?php if (!!@$this->fieldOptions['disabled']): ?>style="text-align:left !important;width:90px;color:#000;"<?php endif; ?>
                    ng-model="date" ng-change="changeDate(this)" value="<?= $this->value ?>"
                    />
 
@@ -40,7 +43,9 @@
 
         <!-- time field -->
         <div ng-if="['time', 'datetime'].indexOf(fieldType) >= 0" class="time-field">
-            <timepicker ng-model="time" ng-change="changeTime(this)" 
+            <timepicker ng-model="time" 
+                        <?php if (!!@$this->fieldOptions['disabled']): ?>readonly-input="true"<?php endif; ?> 
+                        ng-change="changeTime(this)" 
                         hour-step="1" minute-step="15" show-meridian="false"></timepicker>
         </div>
 
@@ -48,21 +53,21 @@
         <div ng-if="['monthyear'].indexOf(fieldType) >= 0"  >
             <div class="btn-group" dropdown>
                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="disabled">
-                    {{ monthList[month] }} <span class="caret"></span>
+                    {{ monthList[month]}} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" dropdown-toggle role="menu">
-                    <li ng-repeat="i in monthList"><a href="#" ng-click="changeMonth($index)">{{ i }}</a></li>
+                    <li ng-repeat="i in monthList"><a href="#" ng-click="changeMonth($index)">{{ i}}</a></li>
                 </ul>
             </div>
             <div class="btn-group" dropdown>
                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="disabled">
-                    {{ year }} <span class="caret"></span>
+                    {{ year}} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" dropdown-toggle role="menu">
-                    <li ng-repeat="i in yearList"><a href="#" ng-click="changeYear(i)">{{ i }}</a></li>
+                    <li ng-repeat="i in yearList"><a href="#" ng-click="changeYear(i)">{{ i}}</a></li>
                 </ul>
             </div>
-            
+
         </div>
 
 

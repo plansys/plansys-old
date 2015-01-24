@@ -65,6 +65,7 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
 
             $(".ac-portlet-button").click(function () {
                 var dd = $(this).parent().find('.ac-portlet-menu');
+                $el.height('500');
                 if (dd.css('position') != 'fixed') {
                     var pos = dd.offset();
                     var w = dd.width();
