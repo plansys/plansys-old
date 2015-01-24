@@ -462,7 +462,6 @@ class RelationField extends FormField {
     }
 
     public function generateCondition($search = '', &$jsparams = []) {
-
         $sql = @$this->relationCriteria['condition'] ? $this->relationCriteria['condition'] : "";
 
         preg_match_all("/\[(.*?)\]/", $sql, $blocks);
@@ -666,6 +665,17 @@ class RelationField extends FormField {
             }
         }
 
+
+        if (array_key_exists('page', $criteria)) {
+            $start = ($criteria['page'] - 1) * $criteria['pageSize'];
+            $pageSize = $criteria['pageSize'];
+            $criteria['limit'] = $pageSize;
+            $criteria['offset'] = $start;
+
+            unset($criteria['pageSize']);
+            unset($criteria['page']);
+        }
+        
         return $criteria;
     }
 
@@ -684,16 +694,6 @@ class RelationField extends FormField {
         if ($criteria['distinct'] && strpos($criteria['select'], ',') === false) {
             $criteria['distinct'] = false;
             $criteria['select'] = 'COUNT(DISTINCT ' . $criteria['select'] . ')';
-        }
-
-        if (array_key_exists('page', $criteria)) {
-            $start = ($criteria['page'] - 1) * $criteria['pageSize'];
-            $pageSize = $criteria['pageSize'];
-            $criteria['limit'] = $pageSize;
-            $criteria['offset'] = $start;
-
-            unset($criteria['pageSize']);
-            unset($criteria['page']);
         }
 
         $countCommand = $builder->createCountCommand($tableSchema, new CDbCriteria($criteria));
