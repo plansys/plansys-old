@@ -24,11 +24,18 @@ ob_start();
         // initialize pageSetting
         $timeout(function () {
             var $storage = $localStorage;
-            $storage.pageSetting = {} || $storage.pageSetting;
-            $storage.pageSetting[$scope.pageInfo.pathinfo] = {} || $storage.pageSetting[$scope.pageInfo.pathinfo];
+            $storage.pageSetting = $storage.pageSetting || {};
+            $storage.pageSetting[$scope.pageInfo.pathinfo] = $storage.pageSetting[$scope.pageInfo.pathinfo] || {};
             $scope.pageSetting = $storage.pageSetting[$scope.pageInfo.pathinfo];
         });
 
+        $scope.resetPageSetting = function () {
+            var $storage = $localStorage;
+            $storage.pageSetting = $storage.pageSetting || {};
+            $storage.pageSetting[$scope.pageInfo.pathinfo] = {};
+            $scope.pageSetting = {};
+        }
+        
         // audit trail tracker
         $timeout(function () {
             // send current page title with id to tracker

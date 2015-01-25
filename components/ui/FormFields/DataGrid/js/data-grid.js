@@ -180,7 +180,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                     if (opt.href.indexOf('url:') === 0) {
                         url = $scope.$eval($scope.generateUrl(opt.href.substr(4)), {row: row});
                     }
-                    
+
                     var target = !!opt.target ? 'target="' + opt.target + '"' : '';
                     return '<a href="' + url + '" ' + target + '>' + content + '</a>';
                 }
@@ -268,6 +268,23 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                     return value;
                 }
 
+                $scope.savePageSetting = function () {
+                    $scope.pageSetting.dataGrids = $scope.pageSetting.dataGrids || {};
+                    $scope.pageSetting.dataGrids[$scope.name] = {
+                        sort: $scope.gridOptions.sortInfo,
+                        paging: {}
+                    };
+                }
+
+                $scope.loadPageSetting = function () {
+                    if (!!$scope.pageSetting.dataGrids && !!$scope.pageSetting.dataGrids[$scope.name]) {
+                        $scope.gridOptions.sortInfo.columns = $scope.pageSetting.dataGrids[$scope.name].sort.columns;
+                        $scope.gridOptions.sortInfo.directions = $scope.pageSetting.dataGrids[$scope.name].sort.directions;
+                        $timeout(function () {
+                            $scope.gridOptions.sortInfo.fields = $scope.pageSetting.dataGrids[$scope.name].sort.fields;
+                        });
+                    }
+                }
 
                 // Generate Excel Template
                 $scope.getCols = function (return_array) {
@@ -769,6 +786,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                                         ds.lastQueryFrom = "DataGrid";
                                         ds.updateParam('order_by', order_by, 'order');
                                         ds.queryWithoutCount();
+                                        $scope.savePageSetting();
                                     }
                                 }
                             }, true);
@@ -1018,6 +1036,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                         }
                         $scope.loaded = true;
 
+                        $scope.loadPageSetting();
                     }, 0);
                 }
 
@@ -1028,6 +1047,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                 });
 
                 $scope.reset = function () {
+                    $scope.resetPageSetting();
                     location.reload();
                 }
 

@@ -48,6 +48,18 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                     }
                 }
 
+                $scope.savePageSetting = function () {
+                    $scope.pageSetting.dataFilters = $scope.pageSetting.dataFilters || {};
+                    $scope.pageSetting.dataFilters[$scope.name] = $scope.filters;
+                }
+
+                $scope.loadPageSetting = function () {
+                    if (!!$scope.pageSetting.dataFilters && !!$scope.pageSetting.dataFilters[$scope.name]) {
+                        $scope.oldFilters = angular.copy($scope.filters);
+                        $scope.filters = $scope.pageSetting.dataFilters[$scope.name];
+                    }
+                }
+
                 $scope.resetFilter = function (filter) {
                     filter.value = '';
                     if (filter.filterType == 'date') {
@@ -220,6 +232,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                             }
                         }
                     });
+
+                    $scope.savePageSetting();
                 }
 
                 /************** Filter Dropdown ***************/
@@ -291,7 +305,9 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
 
                 $scope.toggleShowFilter = function (filter) {
                     filter.show = (filter.show ? false : true);
+                    $scope.savePageSetting();
                 }
+
                 $scope.dropdownClick = function (filter, e) {
                     if (filter.searchable) {
                         $(e.target).parents("[dropdown]").find(".search-dropdown").focus();
@@ -719,6 +735,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.operators = JSON.parse($el.find("data[name=operators]").text());
                 $scope.filters = $scope.initFilters(JSON.parse($el.find("data[name=filters]").text()));
+                $scope.oldFilters = null;
                 $scope.datasource = $el.find("data[name=datasource]").text();
                 $scope.datasources = JSON.parse($el.find("data[name=datasources]").text());
                 $scope.name = $el.find("data[name=name]").text();
@@ -749,6 +766,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                     }
                     return true;
                 }
+
                 // Set Default Filters Value
                 $timeout(function () {
                     var showCount = 0;
@@ -756,13 +774,16 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                     var dataAvailable = ds && ds.data != null && ds.data.length > 0;
                     var watchDefaultValue = [];
                     var defaultValueAvailable = false;
+
+                    $scope.loadPageSetting();
+
                     for (i in $scope.filters) {
                         var f = $scope.filters[i];
                         var dateCondition = (f.filterType == 'date'
                                 && ['Daily', 'Weekly', 'Monthly', 'Yearly']
                                 .indexOf(f.defaultOperator) >= 0);
 
-                        f.show = (showCount > 5 ? false : true);
+                        f.show = (typeof f.show == "boolean" ? f.show : (showCount > 5 ? false : true));
                         if ($scope.ngIf(f)) {
                             showCount++;
                         }
@@ -802,6 +823,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                     defaultValueAvailable = true;
                                 }
                             }
+                        }
+
+                        if (JSON.stringify(f[i]) != JSON.stringify($scope.oldFilters[i])) {
+                            $scope.updateFilter(f);
                         }
                     }
 

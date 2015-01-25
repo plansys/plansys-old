@@ -163,10 +163,6 @@ class DevUserForm extends User {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '{{ model.userRoles }}',
-                        'type' => 'Text',
-                    ),
-                    array (
                         'value' => '<div ng-if=\\"module == \\\'dev\\\' && !isNewRecord\\">',
                         'type' => 'Text',
                     ),
