@@ -825,7 +825,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                             }
                         }
 
-                        if (JSON.stringify(f[i]) != JSON.stringify($scope.oldFilters[i])) {
+                        if (!!$scope.oldFilters && !!$scope.oldFilters[i] &&
+                                JSON.stringify(f[i]) != JSON.stringify($scope.oldFilters[i])) {
                             $scope.updateFilter(f);
                         }
                     }

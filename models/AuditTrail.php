@@ -19,7 +19,7 @@ class AuditTrail extends ActiveRecord {
         $where = AuditTrail::queryWhere($params, $model);
 
         $sql = "SELECT id, stamp, type, user_id, description, url
-            FROM p_audit_trail {$where}  {id desc, [order]} {[$paging]}";
+            FROM p_audit_trail {$where}  {id desc, [order]} {[paging]}";
 
         return $sql;
     }

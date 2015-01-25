@@ -24,15 +24,18 @@ class AuditTrailController extends Controller {
             }
         }
     }
-    
+
     public function actionDetail($id) {
         $model = $this->loadModel($id, 'SysAuditTrailDetail');
-        
+
         $this->renderForm('SysAuditTrailDetail', $model);
     }
 
     public function actionView($key) {
-        $this->renderForm('SysAuditTrailIndex');
+        $model = $this->loadModel(['key' => $key], 'AuditTrail');
+        $this->renderForm('SysAuditTrailIndex', [
+            'model' => $model->attributes
+        ]);
     }
-    
+
 }

@@ -150,15 +150,15 @@ class Controller extends CController {
         return $model;
     }
 
-    public function loadModel($id, $form) {
+    public function loadModel($id_or_attributes, $form) {
         if (strpos($form, '.') > 0) {
             Yii::import($form);
             $form = Helper::explodeLast(".", $form);
         }
-        if (is_array($id)) {
-            $model = $form::model($form)->findByAttributes($id);
+        if (is_array($id_or_attributes)) {
+            $model = $form::model($form)->findByAttributes($id_or_attributes);
         } else {
-            $model = $form::model($form)->findByPk($id);
+            $model = $form::model($form)->findByPk($id_or_attributes);
         }
 
         if ($model === null)

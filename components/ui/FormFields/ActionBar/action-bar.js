@@ -65,6 +65,8 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
 
             $(".ac-portlet-button").click(function () {
                 var dd = $(this).parent().find('.ac-portlet-menu');
+
+                var height = $el.height();
                 $el.height('500');
                 if (dd.css('position') != 'fixed') {
                     var pos = dd.offset();
@@ -80,6 +82,9 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                         zIndex: 110
                     });
                 }
+                $timeout(function () {
+                    $el.height(height);
+                });
             });
 
             $scope.resize = function (st) {
@@ -106,7 +111,7 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                             opacity: .999
                         });
                         dashFilter.addClass('dash-filter');
-                        height += dashFilter.height() ;
+                        height += dashFilter.height();
                         $el.addClass('filtered');
                     }
 

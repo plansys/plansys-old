@@ -361,6 +361,7 @@ class FormField extends CComponent {
      */
     public function renderScript() {
         $includeJS = $this->includeJS();
+        
         $html = [];
         if (count($includeJS) > 0) {
             foreach ($includeJS as $js) {

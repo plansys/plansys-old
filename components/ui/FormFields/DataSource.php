@@ -273,7 +273,6 @@ class DataSource extends FormField {
                 $data = $this->getRelated($this->params, $isGenerate);
             }
 
-
             echo json_encode([
                 'data' => $data['data'],
                 'count' => $data['debug']['count'],
@@ -514,7 +513,7 @@ class DataSource extends FormField {
 
         $db = Yii::app()->db;
         $template = DataSource::generateTemplate($this->sql, $params, $this, $paramDefs);
-
+        
         ## execute SQL
 
         $this->command = $db->createCommand($template['sql']);
