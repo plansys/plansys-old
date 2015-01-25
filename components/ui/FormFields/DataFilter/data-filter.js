@@ -1,4 +1,4 @@
-app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
+app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStorage) {
     return {
         scope: true,
         compile: function (element, attrs, transclude) {
@@ -233,7 +233,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http) {
                 $scope.isObject = function (input) {
                     return angular.isObject(input);
                 }
-
 
                 $scope.listSearch = function (e, filter) {
                     if (filter.filterType == "relation") {

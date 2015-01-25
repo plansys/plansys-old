@@ -85,7 +85,7 @@ app.directive('dropDownList', function ($timeout) {
                     }
                 }
 
-                $scope.update = function (value, f) {
+                $scope.update = function (value) {
                     $scope.updateInternal(value);
                     $timeout(function () {
                         ctrl.$setViewValue($scope.value);

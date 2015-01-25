@@ -104,6 +104,7 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.update = function (item, f) {
                     $scope.updateInternal(item.key);
                 };
+
                 $scope.updateInternal = function (value) {
                     function isEmpty(a) {
                         return !a || a == '';
@@ -169,6 +170,8 @@ app.directive('relationField', function ($timeout, $http) {
                             $scope.text = $el.find("li:eq(0) a").text();
                             ctrl.$setViewValue($scope.value);
                         }
+                    } else {
+                        ctrl.$setViewValue($scope.value);
                     }
 
                     if ($scope.identifier != '' && $scope.text) {

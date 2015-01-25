@@ -21,6 +21,15 @@ ob_start();
         $scope.formClass = "<?php echo $modelClass; ?>";
         $scope.modelBaseClass = "<?php echo ActiveRecord::baseClass($this->model); ?>";
 
+        // initialize pageSetting
+        $timeout(function () {
+            var $storage = $localStorage;
+            $storage.pageSetting = {} || $storage.pageSetting;
+            $storage.pageSetting[$scope.pageInfo.pathinfo] = {} || $storage.pageSetting[$scope.pageInfo.pathinfo];
+            $scope.pageSetting = $storage.pageSetting[$scope.pageInfo.pathinfo];
+        });
+
+        // audit trail tracker
         $timeout(function () {
             // send current page title with id to tracker
             $scope.pageInfo['description'] = $scope.form.title
@@ -83,8 +92,6 @@ ob_start();
             $scope.isNewRecord = <?php echo $data['isNewRecord'] ? "true" : "false" ?>;
 <?php endif; ?>
 
-        $storage = $localStorage;
-        $scope.$storage = $storage;
         document.title = $scope.form.title;
         $scope.$watch('form.title', function () {
             document.title = $scope.form.title;

@@ -46,6 +46,7 @@ class ListView extends FormField {
                     'ng-show' => 'active.fieldTemplate == \\\'form\\\'',
                     'ng-change' => 'save();',
                 ),
+                'menuPos' => 'pull-right',
                 'listExpr' => 'FormBuilder::listForm()',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',

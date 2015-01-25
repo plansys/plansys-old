@@ -75,7 +75,7 @@ class DevUserForm extends User {
                         'label' => 'User Role',
                         'name' => 'userRoles',
                         'fieldTemplate' => 'form',
-                        'templateForm' => 'application.modules.Dev.forms.users.user.DevUserRoleList',
+                        'templateForm' => 'application.modules.dev.forms.users.user.DevUserRoleList',
                         'options' => array (
                             'ng-change' => 'updateRole()',
                             'ps-after-add' => 'value.role_id = 1',
@@ -161,6 +161,10 @@ class DevUserForm extends User {
                         'name' => 'email',
                         'labelWidth' => '2',
                         'type' => 'TextField',
+                    ),
+                    array (
+                        'value' => '{{ model.userRoles }}',
+                        'type' => 'Text',
                     ),
                     array (
                         'value' => '<div ng-if=\\"module == \\\'dev\\\' && !isNewRecord\\">',
@@ -277,6 +281,19 @@ Isi field disamping untuk mengubah password.
                         'resetable' => 'Yes',
                         'defaultValue' => '',
                         'show' => false,
+                        'list' => array (
+                            'general' => array (
+                                'view' => 'View',
+                                'create' => 'Create',
+                                'update' => 'Update',
+                                'delete' => 'Delete',
+                            ),
+                            'other' => array (
+                                'login' => 'Login',
+                                'logout' => 'Logout',
+                                'other' => 'Other',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'description',

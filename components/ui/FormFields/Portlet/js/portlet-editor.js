@@ -14,7 +14,7 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
                 $scope.showBorder = $el.find("data[name=showBorder]:eq(0)").text().trim() == 'Yes';
 
                 $scope.$storage = $localStorage;
-                if (!$scope.$storage.plansysFormBuilder || !$scope.$storage.plansysFormBuilder[$scope.params.classPath]) {
+                if (!$scope.$storage.formBuilder || !$scope.$storage.formBuilder[$scope.params.classPath]) {
                     $("#must-reload").show();
                     $("#must-reload h3").html('Warning<br/><small>Dashboard Mode can only be<br/> opened through FormBuilder</small>');
                     $("#must-reload .btn").hide();
@@ -23,7 +23,7 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
 
                 if (!$scope.$parent.fields) {
                     // load fields from server fields (params.fields)
-                    $scope.$parent.fields = $scope.$storage.plansysFormBuilder[$scope.params.classPath];
+                    $scope.$parent.fields = $scope.$storage.formBuilder[$scope.params.classPath];
                     $scope.$parent.fields.length = 0;
                     $scope.params.fields.forEach(function (item) {
                         $scope.$parent.fields.push(item);
@@ -34,7 +34,7 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
 
                 $scope.searchPortlet = function (search) {
                     if (typeof search == "undefined") {
-                        search = $scope.$storage.plansysFormBuilder[$scope.params.classPath];
+                        search = $scope.$storage.formBuilder[$scope.params.classPath];
                     }
 
                     for (var i in search) {
@@ -60,7 +60,7 @@ app.directive('portlet', function ($timeout, $compile, $http, $localStorage) {
                 $scope.localPortlet = $scope.searchPortlet();
 
                 $scope.$watch('$storage', function () {
-                    if ($scope.$storage.plansysFormBuilder[$scope.params.classPath] !== $scope.fields) {
+                    if ($scope.$storage.formBuilder[$scope.params.classPath] !== $scope.fields) {
                         location.reload();
                     }
                 }, true);
