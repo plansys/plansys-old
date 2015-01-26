@@ -24,15 +24,16 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                     }
                 });
             }
-            
-            $scope.resetPage = function() {
+
+            $scope.resetPage = function () {
                 $scope.resetPageSetting();
                 location.reload();
             }
-            
+
             $scope.resetDashboard = function () {
                 if (confirm("Your dashboard will now reset, are you sure?")) {
                     delete $localStorage.portlet[$scope.pageUrl];
+                    $scope.resetPageSetting();
                     location.reload();
                 }
             }
