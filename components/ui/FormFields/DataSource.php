@@ -203,7 +203,8 @@ class DataSource extends FormField {
 
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "glyphicon glyphicon-book";
-    private $queryParams = [];
+    
+    public $queryParams = [];
 
     public function actionRelClass() {
         Yii::import($_GET['class']);
