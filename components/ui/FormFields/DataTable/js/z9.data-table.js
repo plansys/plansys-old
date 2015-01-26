@@ -301,7 +301,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 .find(".dataTable")
                                 .height($el.find(".htContainer .htCore:eq(0)").height() + 22)
                                 .css('overflow', 'visible');
-                    }, 1000);
+                    }, 0);
                 }
 
                 $scope.fixScroll = function () {
