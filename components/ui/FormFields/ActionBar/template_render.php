@@ -24,6 +24,14 @@
                                 <i class="fa fa-print fa-lg  fa-fw" style='margin:0px 5px 0px -10px;'></i> Print Page
                             </a>
                         </li> 
+                        <?php if (!Yii::app()->user->isGuest): ?>
+                        <hr/>
+                        <li>
+                            <a href="#" dropdown-toggle ng-click="resetPage()">
+                                <i class="fa fa-rotate-left  fa-fw" style='margin:0px 5px 0px -10px;'></i> Reset Page
+                            </a>
+                        </li> 
+                        <?php endif; ?>
                     </ul>
                 </div>
             </div>

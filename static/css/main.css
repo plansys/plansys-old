@@ -11,6 +11,9 @@ hr {
     width: 100%;
 }
 
+#col1 .container-fluid {
+}
+
 [ng\:cloak], [ng-cloak], .ng-cloak {
     display: none !important;
 }

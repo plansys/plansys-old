@@ -788,6 +788,80 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 $scope.updateFilter(f, null, false);
                             }
                         }
+                        
+                        $scope.datasources.map(function (dataSourceName) {
+                            var ds = parent[dataSourceName];
+                            if (ds) {
+                                ds.lastQueryFrom = "DataFilter";
+                                ds.query();
+                            }
+                        });
+                    } else {
+                        for (i in $scope.filters) {
+                            var f = $scope.filters[i];
+                            var dateCondition = (f.filterType == 'date'
+                                    && ['Daily', 'Weekly', 'Monthly', 'Yearly']
+                                    .indexOf(f.defaultOperator) >= 0);
+
+                            f.show = (typeof f.show == "boolean" ? f.show : (showCount > 5 ? false : true));
+                            if ($scope.ngIf(f)) {
+                                showCount++;
+                            }
+
+                            if (f.defaultValue && f.defaultValue != "" || dateCondition) {
+                                if ($scope.operators[f.filterType]) {
+                                    if (typeof f.defaultOperator != "undefined" && f.defaultOperator != "") {
+                                        f.operator = f.defaultOperator;
+
+                                        if (f.filterType == 'date') {
+                                            if (f.defaultOperator == 'Between'
+                                                    || f.defaultOperator == 'Not Between') {
+                                                f.from = $scope.evalValue(f.defaultValueFrom);
+                                                f.to = $scope.evalValue(f.defaultValueTo);
+                                            } else if (f.defaultOperator == 'Less Than') {
+                                                f.to = $scope.evalValue(f.defaultValueTo);
+                                            } else {
+                                                f.from = $scope.evalValue(f.defaultValue);
+                                            }
+                                        } else {
+                                            f.value = $scope.evalValue(f.defaultValue);
+                                        }
+                                    }
+
+                                    $scope.updateFilter(f, null, false);
+                                    defaultValueAvailable = true;
+                                }
+                                else {
+                                    f.value = $scope.evalValue(f.defaultValue);
+                                    if (!f.value) {
+                                        var fclone = $.extend({}, f, true);
+                                        watchDefaultValue.push({
+                                            name: f.name,
+                                            watch: fclone.defaultValue.substr(3)
+                                        });
+                                    } else {
+                                        $scope.updateFilter(f, null, false);
+                                        defaultValueAvailable = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        watchDefaultValue.map(function (item, k) {
+                            var unwatch = $scope.$parent.$watch(item.watch, function (n) {
+                                if (!n)
+                                    return;
+
+                                for (i in $scope.filters) {
+                                    if ($scope.filters[i].name == item.name) {
+                                        $scope.filters[i].value = n;
+                                        $scope.updateFilter($scope.filters[i], null);
+                                        unwatch();
+                                    }
+                                }
+                            });
+                        });
+
                         if (defaultValueAvailable) {
                             $scope.datasources.map(function (dataSourceName) {
                                 var ds = parent[dataSourceName];
@@ -797,85 +871,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 }
                             });
                         }
-
-                        return true;
-                    }
-                    for (i in $scope.filters) {
-                        var f = $scope.filters[i];
-                        var dateCondition = (f.filterType == 'date'
-                                && ['Daily', 'Weekly', 'Monthly', 'Yearly']
-                                .indexOf(f.defaultOperator) >= 0);
-
-                        f.show = (typeof f.show == "boolean" ? f.show : (showCount > 5 ? false : true));
-                        if ($scope.ngIf(f)) {
-                            showCount++;
-                        }
-
-                        if (f.defaultValue && f.defaultValue != "" || dateCondition) {
-                            if ($scope.operators[f.filterType]) {
-                                if (typeof f.defaultOperator != "undefined" && f.defaultOperator != "") {
-                                    f.operator = f.defaultOperator;
-
-                                    if (f.filterType == 'date') {
-                                        if (f.defaultOperator == 'Between'
-                                                || f.defaultOperator == 'Not Between') {
-                                            f.from = $scope.evalValue(f.defaultValueFrom);
-                                            f.to = $scope.evalValue(f.defaultValueTo);
-                                        } else if (f.defaultOperator == 'Less Than') {
-                                            f.to = $scope.evalValue(f.defaultValueTo);
-                                        } else {
-                                            f.from = $scope.evalValue(f.defaultValue);
-                                        }
-                                    } else {
-                                        f.value = $scope.evalValue(f.defaultValue);
-                                    }
-                                }
-
-                                $scope.updateFilter(f, null, false);
-                                defaultValueAvailable = true;
-                            }
-                            else {
-                                f.value = $scope.evalValue(f.defaultValue);
-                                if (!f.value) {
-                                    var fclone = $.extend({}, f, true);
-                                    watchDefaultValue.push({
-                                        name: f.name,
-                                        watch: fclone.defaultValue.substr(3)
-                                    });
-                                } else {
-                                    $scope.updateFilter(f, null, false);
-                                    defaultValueAvailable = true;
-                                }
-                            }
-                        }
-                    }
-
-                    watchDefaultValue.map(function (item, k) {
-                        var unwatch = $scope.$parent.$watch(item.watch, function (n) {
-                            if (!n)
-                                return;
-
-                            for (i in $scope.filters) {
-                                if ($scope.filters[i].name == item.name) {
-                                    $scope.filters[i].value = n;
-                                    $scope.updateFilter($scope.filters[i], null);
-                                    unwatch();
-                                }
-                            }
-                        });
-                    });
-
-                    if (defaultValueAvailable) {
-                        $scope.datasources.map(function (dataSourceName) {
-                            var ds = parent[dataSourceName];
-                            if (ds) {
-                                ds.lastQueryFrom = "DataFilter";
-                                ds.query();
-                            }
-                        });
                     }
                 });
-
             }
         }
     };
