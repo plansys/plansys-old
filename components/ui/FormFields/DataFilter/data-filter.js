@@ -53,6 +53,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                     $scope.pageSetting.dataFilters[$scope.name] = $scope.filters;
                 }
 
+                $scope.isCached = function () {
+                    return !!$scope.pageSetting.dataFilters && !!$scope.pageSetting.dataFilters[$scope.name];
+                }
+
                 $scope.loadPageSetting = function () {
                     if (!!$scope.pageSetting.dataFilters && !!$scope.pageSetting.dataFilters[$scope.name]) {
                         $scope.oldFilters = angular.copy($scope.filters);
@@ -770,12 +774,32 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 // Set Default Filters Value
                 $timeout(function () {
                     var showCount = 0;
-                    var ds = parent[$scope.datasource];
-                    var dataAvailable = ds && ds.data != null && ds.data.length > 0;
                     var watchDefaultValue = [];
                     var defaultValueAvailable = false;
-                    $scope.loadPageSetting();
+                    if ($scope.isCached()) {
+                        $scope.loadPageSetting();
 
+                        for (i in $scope.filters) {
+                            var f = $scope.filters[i];
+                            if (!!$scope.oldFilters &&
+                                    !!$scope.oldFilters[i] &&
+                                    JSON.stringify(f[i]) != JSON.stringify($scope.oldFilters[i])) {
+
+                                $scope.updateFilter(f, null, false);
+                            }
+                        }
+                        if (defaultValueAvailable) {
+                            $scope.datasources.map(function (dataSourceName) {
+                                var ds = parent[dataSourceName];
+                                if (ds) {
+                                    ds.lastQueryFrom = "DataFilter";
+                                    ds.query();
+                                }
+                            });
+                        }
+
+                        return true;
+                    }
                     for (i in $scope.filters) {
                         var f = $scope.filters[i];
                         var dateCondition = (f.filterType == 'date'
@@ -786,7 +810,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         if ($scope.ngIf(f)) {
                             showCount++;
                         }
-                        
+
                         if (f.defaultValue && f.defaultValue != "" || dateCondition) {
                             if ($scope.operators[f.filterType]) {
                                 if (typeof f.defaultOperator != "undefined" && f.defaultOperator != "") {
@@ -824,16 +848,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 }
                             }
                         }
-
-                        if (!!$scope.oldFilters && !!$scope.oldFilters[i] &&
-                                JSON.stringify(f[i]) != JSON.stringify($scope.oldFilters[i])) {
-                            $scope.updateFilter(f);
-                            console.log("ASDAS");
-                        }
                     }
 
                     watchDefaultValue.map(function (item, k) {
-                        var a = $scope.$parent.$watch(item.watch, function (n) {
+                        var unwatch = $scope.$parent.$watch(item.watch, function (n) {
                             if (!n)
                                 return;
 
@@ -841,7 +859,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 if ($scope.filters[i].name == item.name) {
                                     $scope.filters[i].value = n;
                                     $scope.updateFilter($scope.filters[i], null);
-                                    a();
+                                    unwatch();
                                 }
                             }
                         });
