@@ -290,18 +290,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 }
                 // assemble each columns -- end
 
-                $scope.fhTimer = null;
                 $scope.fixHeight = function () {
-                    if ($scope.fhTimer != null) {
-                        clearTimeout($scope.fhTimer);
-                    }
-
-                    $scope.fhTimer = setTimeout(function () {
-                        $el
-                                .find(".dataTable")
-                                .height($el.find(".htContainer .htCore:eq(0)").height() + 22)
-                                .css('overflow', 'visible');
-                    }, 0);
+                    var dt = $el.find(".dataTable");
+                    dt.css('overflow', 'visible');
                 }
 
                 $scope.fixScroll = function () {
@@ -707,7 +698,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                                 changes.map(function (c) {
                                                     if ($scope.dtGroups) {
                                                         var row = $scope.data[c[0]]['__dt_row'];
-                                                        $scope.datasource.data[row][c[1]] = c[3];
+                                                        if (!!$scope.datasource.data[row]) {
+                                                            $scope.datasource.data[row][c[1]] = c[3];
+                                                        } else {
+                                                            console.log($scope.datasource.data);
+                                                        }
                                                     } else {
                                                         if (!$scope.datasource.data[c[0]]) {
                                                             $scope.datasource.data[c[0]] = {};
