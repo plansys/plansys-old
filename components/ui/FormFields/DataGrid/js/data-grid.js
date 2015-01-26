@@ -268,21 +268,44 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                     return value;
                 }
 
+                $scope.prevPage = function () {
+                    $scope.grid.pageBackward();
+                    $scope.savePageSetting();
+                }
+
+                $scope.nextPage = function () {
+                    $scope.grid.pageForward();
+                    $scope.savePageSetting();
+                }
+
                 $scope.savePageSetting = function () {
                     $scope.pageSetting.dataGrids = $scope.pageSetting.dataGrids || {};
                     $scope.pageSetting.dataGrids[$scope.name] = {
                         sort: $scope.gridOptions.sortInfo,
-                        paging: {}
+                        paging: $scope.grid.pagingOptions
                     };
                 }
 
                 $scope.loadPageSetting = function () {
                     if (!!$scope.pageSetting.dataGrids && !!$scope.pageSetting.dataGrids[$scope.name]) {
-                        $scope.gridOptions.sortInfo.columns = $scope.pageSetting.dataGrids[$scope.name].sort.columns;
-                        $scope.gridOptions.sortInfo.directions = $scope.pageSetting.dataGrids[$scope.name].sort.directions;
-                        $timeout(function () {
-                            $scope.gridOptions.sortInfo.fields = $scope.pageSetting.dataGrids[$scope.name].sort.fields;
-                        });
+
+                        var changing = false;
+                        if (JSON.stringify($scope.gridOptions.sortInfo) != JSON.stringify($scope.pageSetting.dataGrids[$scope.name].sort)) {
+                            $scope.gridOptions.sortInfo = $scope.pageSetting.dataGrids[$scope.name].sort;
+                            $scope.updateSorting($scope.gridOptions.sortInfo, false);
+                            changing = true;
+                        }
+
+                        if (JSON.stringify($scope.gridOptions.pagingOptions) != JSON.stringify($scope.pageSetting.dataGrids[$scope.name].paging)) {
+                            $scope.gridOptions.pagingOptions = $scope.pageSetting.dataGrids[$scope.name].paging;
+                            $scope.updatePaging($scope.gridOptions.pagingOptions, false);
+                            changing = true;
+                        }
+
+                        if (changing) {
+                            $scope.datasource.query();
+                        }
+
                     }
                 }
 
@@ -508,7 +531,6 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                         var icon = "";
                         var attr = [];
 
-
                         // generate attribute
                         opt['ng-click'] = 'buttonClick(row, $event)';
                         opt.class = (opt.class || '') + ' btn ' + btnSize + ' btn-default';
@@ -722,6 +744,27 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                         }
 
                         // pagingOptions
+                        $scope.updatePaging = function (paging, executeQuery, oldpaging) {
+                            console.log($scope.executeQuery, paging);
+                            var ds = $scope.datasource;
+                            ds.updateParam('currentPage', paging.currentPage, 'paging');
+                            ds.updateParam('pageSize', paging.pageSize, 'paging');
+                            ds.updateParam('totalServerItems', paging.totalServerItems, 'paging');
+                            ds.lastQueryFrom = "DataGrid";
+
+                            if (typeof executeQuery == "undefined") {
+                                executeQuery = true;
+                            }
+                            if (executeQuery) {
+                                if (typeof oldpaging != "undefined" && paging.pageSize == oldpaging.pageSize) {
+                                    ds.queryWithoutCount();
+                                } else {
+                                    ds.query();
+                                }
+                                $scope.savePageSetting();
+                            }
+                        }
+
                         if ($scope.gridOptions['enablePaging']) {
                             $scope.gridOptions.pagingOptions = {
                                 pageSizes: [25, 50, 100, 250, 500],
@@ -732,7 +775,6 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                             var timeout = null;
                             $scope.$watch('gridOptions.pagingOptions', function (paging, oldpaging) {
                                 if (paging != oldpaging) {
-                                    var ds = $scope.datasource;
                                     var maxPage = Math.ceil($scope.datasource.totalItems / $scope.gridOptions.pagingOptions.pageSize);
 
                                     if (isNaN($scope.gridOptions.pagingOptions.currentPage) || $scope.gridOptions.pagingOptions.currentPage == '') {
@@ -743,20 +785,13 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                                         $scope.gridOptions.pagingOptions.currentPage = maxPage;
                                     }
 
-                                    if (typeof ds != "undefined") {
+                                    if (typeof $scope.datasource != "undefined") {
                                         if (timeout != null) {
                                             clearTimeout(timeout);
                                         }
                                         timeout = setTimeout(function () {
-                                            ds.updateParam('currentPage', paging.currentPage, 'paging');
-                                            ds.updateParam('pageSize', paging.pageSize, 'paging');
-                                            ds.updateParam('totalServerItems', paging.totalServerItems, 'paging');
-                                            ds.lastQueryFrom = "DataGrid";
-                                            if (paging.pageSize == oldpaging.pageSize) {
-                                                ds.queryWithoutCount();
-                                            } else {
-                                                ds.query();
-                                            }
+
+                                            $scope.updatePaging(paging, true, oldpaging);
                                         }, 100);
                                     }
                                 }
@@ -764,6 +799,31 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                         }
 
                         // sortOptions
+                        $scope.updateSorting = function (sort, executeQuery) {
+                            var ds = $scope.datasource;
+                            if (typeof ds != "undefined") {
+
+                                var order_by = [];
+                                for (i in sort.fields) {
+                                    order_by.push({
+                                        field: sort.fields[i],
+                                        direction: sort.directions[i]
+                                    });
+                                }
+
+                                ds.lastQueryFrom = "DataGrid";
+                                ds.updateParam('order_by', order_by, 'order');
+
+                                if (typeof executeQuery == "undefined") {
+                                    executeQuery = true;
+                                }
+                                if (executeQuery) {
+                                    ds.queryWithoutCount();
+                                    $scope.savePageSetting();
+                                }
+                            }
+                        }
+
                         if ($scope.gridOptions['useExternalSorting']) {
                             $scope.gridOptions.sortInfo = {
                                 columns: [],
@@ -773,21 +833,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
 
                             $scope.$watch('gridOptions.sortInfo', function (sort, oldsort) {
                                 if (sort != oldsort) {
-                                    var ds = $scope.datasource;
-                                    if (typeof ds != "undefined") {
-                                        var order_by = [];
-                                        for (i in sort.fields) {
-                                            order_by.push({
-                                                field: sort.fields[i],
-                                                direction: sort.directions[i]
-                                            });
-                                        }
-
-                                        ds.lastQueryFrom = "DataGrid";
-                                        ds.updateParam('order_by', order_by, 'order');
-                                        ds.queryWithoutCount();
-                                        $scope.savePageSetting();
-                                    }
+                                    $scope.updateSorting(sort);
                                 }
                             }, true);
                         }

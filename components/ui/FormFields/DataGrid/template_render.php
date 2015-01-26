@@ -63,15 +63,12 @@
                          <?php endif; ?>>
 
                         <div class="btn-group pull-left">
-
                             <div ng-if="gridOptions.enableImport" class="btn-group" dropdown>
                                 <button type="button" class="btn btn-default dropdown-toggle">
                                     <i class="fa {{importIcon}}"></i>
                                     <span class="caret"></span>
                                 </button>
-                                <ul class="dropdown-menu" ng-class="{
-                                        'pull-right'
-                                                : gridOptions.enablePaging}"
+                                <ul class="dropdown-menu" ng-class="{'pull-right':gridOptions.enablePaging}"
                                     style="z-index:99;" role="menu">
                                     <li style="overflow:hidden;cursor:pointer;">
                                         <a style="padding:3px 7px;" dropdown-toggle href="#">Load From
@@ -170,7 +167,7 @@
                         <div class="pull-left data-grid-page-selector">
                             <div class="input-group input-group-sm pull-left" style="display:block;">
                                 <div class="input-group-btn pull-left" style="width:24px;">
-                                    <button class="btn btn-default" ng-click="grid.pageBackward()" type="button">
+                                    <button class="btn btn-default" ng-click="prevPage();" type="button">
                                         <i class="fa fa-chevron-left"></i>
                                     </button>
                                 </div>
@@ -179,7 +176,7 @@
                                        ng-delay="500"
                                        ng-model="gridOptions.pagingOptions.currentPage" />
                                 <div class="input-group-btn pull-left" style="width:25px;">
-                                    <button class="btn btn-default" ng-click="grid.pageForward()" type="button">
+                                    <button class="btn btn-default" ng-click="nextPage();" type="button">
                                         <i class="fa fa-chevron-right"></i>
                                     </button>
                                 </div>
