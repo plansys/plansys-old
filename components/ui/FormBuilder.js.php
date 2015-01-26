@@ -20,14 +20,20 @@ ob_start();
         $scope.pageInfo = <?php echo json_encode(AuditTrail::getPathInfo()) ?>;
         $scope.formClass = "<?php echo $modelClass; ?>";
         $scope.modelBaseClass = "<?php echo ActiveRecord::baseClass($this->model); ?>";
+        $scope.lastModified = "<?php echo Helper::getLastModified($modelClass); ?>";
 
         // initialize pageSetting
         $timeout(function () {
             var $storage = $localStorage;
             $storage.pageSetting = $storage.pageSetting || {};
             $storage.pageSetting[$scope.pageInfo.pathinfo] = $storage.pageSetting[$scope.pageInfo.pathinfo] || {};
+            if ($storage.pageSetting[$scope.pageInfo.pathinfo].lastModified !== $scope.lastModified) {
+                $storage.pageSetting[$scope.pageInfo.pathinfo] = {};
+            }
             $scope.pageSetting = $storage.pageSetting[$scope.pageInfo.pathinfo];
+            $scope.pageSetting.lastModified = $scope.lastModified;
         });
+
 
         $scope.resetPageSetting = function () {
             var $storage = $localStorage;
@@ -35,7 +41,7 @@ ob_start();
             $storage.pageSetting[$scope.pageInfo.pathinfo] = {};
             $scope.pageSetting = {};
         }
-        
+
         // audit trail tracker
         $timeout(function () {
             // send current page title with id to tracker

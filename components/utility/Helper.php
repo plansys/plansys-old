@@ -14,6 +14,16 @@ class Helper {
         }
     }
 
+    public static function getLastModified($class) {
+        if (class_exists($class)) {
+            $reflector = new ReflectionClass($class);
+            $fn = $reflector->getFileName();
+            return filemtime($fn);
+        } else {
+            return 0;
+        }
+    }
+
     public static function evaluate($_expression_, $_data_ = array()) {
         if (is_string($_expression_)) {
             extract($_data_);

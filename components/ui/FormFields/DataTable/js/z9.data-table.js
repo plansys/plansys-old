@@ -102,6 +102,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     }
                 }
 
+                $scope.reset = function () {
+                    $scope.resetPageSetting();
+                    location.reload();
+                }
+
                 $scope.$timeout = $timeout;
                 // setup internal variables
                 var colHeaders = [];

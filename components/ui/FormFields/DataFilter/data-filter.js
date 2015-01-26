@@ -774,7 +774,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                     var dataAvailable = ds && ds.data != null && ds.data.length > 0;
                     var watchDefaultValue = [];
                     var defaultValueAvailable = false;
-
                     $scope.loadPageSetting();
 
                     for (i in $scope.filters) {
@@ -787,6 +786,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         if ($scope.ngIf(f)) {
                             showCount++;
                         }
+                        
                         if (f.defaultValue && f.defaultValue != "" || dateCondition) {
                             if ($scope.operators[f.filterType]) {
                                 if (typeof f.defaultOperator != "undefined" && f.defaultOperator != "") {
@@ -828,6 +828,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         if (!!$scope.oldFilters && !!$scope.oldFilters[i] &&
                                 JSON.stringify(f[i]) != JSON.stringify($scope.oldFilters[i])) {
                             $scope.updateFilter(f);
+                            console.log("ASDAS");
                         }
                     }
 
