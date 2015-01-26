@@ -51,6 +51,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 $scope.savePageSetting = function () {
                     $scope.pageSetting.dataFilters = $scope.pageSetting.dataFilters || {};
                     $scope.pageSetting.dataFilters[$scope.name] = $scope.filters;
+                    console.log($scope.filters);
                 }
 
                 $scope.isCached = function () {
@@ -259,7 +260,9 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         }
                     });
 
-                    $scope.savePageSetting();
+                    if (!!shouldExec) {
+                        $scope.savePageSetting();
+                    }
                 }
 
                 /************** Filter Dropdown ***************/
@@ -681,12 +684,13 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                             return;
 
                         if (typeof $scope.filters[idx].valueText == "string") {
-                            ret = date("Y-m-d", strtotime($scope.filters[idx].valueText));
+                            ret = date("Y-m-d", strtotime($scope.filters[idx].value.from));
                         } else {
                             ret = "";
                         }
                     });
 
+                    console.log(col, ret);
                     return ret;
                 }
 
@@ -818,6 +822,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 ds.query();
                             }
                         });
+
                     } else {
                         for (i in $scope.filters) {
                             var f = $scope.filters[i];
@@ -834,7 +839,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 if ($scope.operators[f.filterType]) {
                                     if (typeof f.defaultOperator != "undefined" && f.defaultOperator != "") {
                                         f.operator = f.defaultOperator;
-
                                         if (f.filterType == 'date') {
                                             if (f.defaultOperator == 'Between'
                                                     || f.defaultOperator == 'Not Between') {
@@ -849,7 +853,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                             f.value = $scope.evalValue(f.defaultValue);
                                         }
                                     }
-
                                     $scope.updateFilter(f, null, false);
                                     defaultValueAvailable = true;
                                 }

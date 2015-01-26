@@ -299,6 +299,8 @@ class RelationField extends FormField {
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-link";
 
+    public $queryParams;
+    
     /**
      * @return array me-return array javascript yang di-include
      */
