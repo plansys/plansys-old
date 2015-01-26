@@ -697,6 +697,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                     switch (source) {
                                         case "edit":
                                         case "paste":
+                                        case "autofill":
                                             $timeout(function () {
                                                 changes.map(function (c) {
                                                     if ($scope.dtGroups) {
@@ -742,7 +743,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                     $scope.dtGroups.calculate(changes, source, ht);
                                     ht.render();
                                 }
-
                                 $timeout(function () {
                                     $scope.edited = false;
                                 });
