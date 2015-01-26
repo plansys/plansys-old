@@ -127,6 +127,7 @@ app.directive('relationField', function ($timeout, $http) {
                     });
 
                     if (!isFound && $el.find("li:eq(0) a").attr('value')) {
+
                         // when current value not found in renderedFormList, then search it on server...
                         if (!!$scope.value) {
                             $scope.loading = true;
@@ -139,7 +140,7 @@ app.directive('relationField', function ($timeout, $http) {
                                 'v': $scope.value
                             }).success(function (data) {
                                 $scope.loading = false;
-                                if (data) {
+                                if (data != "null") {
                                     var found = false;
                                     for (var key in $scope.renderedFormList) {
                                         var item = $scope.renderedFormList[key];
@@ -155,20 +156,21 @@ app.directive('relationField', function ($timeout, $http) {
                                             value: data.label
                                         });
                                     }
-
                                     $scope.value = data.value;
                                     $scope.text = data.label;
                                     ctrl.$setViewValue($scope.value);
                                 } else {
-                                    $scope.value = $el.find("li:eq(0) a").attr('value').trim();
-                                    $scope.text = $el.find("li:eq(0) a").text();
-                                    ctrl.$setViewValue($scope.value);
+//         WARNING: kalo di uncomment, infinite loop..
+//                                    $scope.value = $el.find("li:eq(0) a").attr('value').trim();
+//                                    $scope.text = $el.find("li:eq(0) a").text();
+//                                    ctrl.$setViewValue($scope.value);
                                 }
                             });
                         } else {
-                            $scope.value = $el.find("li:eq(0) a").attr('value').trim();
-                            $scope.text = $el.find("li:eq(0) a").text();
-                            ctrl.$setViewValue($scope.value);
+//         WARNING: kalo di uncomment, infinite loop..
+//                            $scope.value = $el.find("li:eq(0) a").attr('value').trim();
+//                            $scope.text = $el.find("li:eq(0) a").text();
+//                            ctrl.$setViewValue($scope.value);
                         }
                     } else {
                         ctrl.$setViewValue($scope.value);
@@ -355,13 +357,14 @@ app.directive('relationField', function ($timeout, $http) {
                                         }
                                     }
                                     $scope.doSearch(function (data) {
-                                        if (data.count == 0) {
-                                            $scope.value = '';
-                                            $scope.text = '';
-                                        } else {
-                                            $scope.value = data.list[0].value;
-                                            $scope.text = data.list[0].label;
-                                        }
+//         WARNING: kalo di uncomment, infinite loop..
+//                                        if (data.count == 0) {
+//                                            $scope.value = '';
+//                                            $scope.text = '';
+//                                        } else {
+//                                            $scope.value = data.list[0].value;
+//                                            $scope.text = data.list[0].label;
+//                                        }
                                     });
                                 }
                             }, true);

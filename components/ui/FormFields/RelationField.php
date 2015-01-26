@@ -732,7 +732,18 @@ class RelationField extends FormField {
                 $t = $criteria['alias'];
                 $criteria['condition'] = "{$t}.{$this->idField} = '{$initialID}'";
                 $initial = $model->currentModel($criteria);
-                $rawlist = array_merge($rawlist, $initial);
+
+                if (!empty($initial)) {
+                    
+                    ## remove duplicate label
+                    foreach ($rawlist as $k => $r) {
+                        if ($r[$this->labelField] == $initial[0][$this->labelField]) {
+                            unset($rawlist[$k]);
+                        }
+                    }
+
+                    $rawlist = array_merge($rawlist, $initial);
+                }
             }
         }
 
