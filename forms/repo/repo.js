@@ -15,7 +15,6 @@ $scope.setCurrentDir($scope.params.currentDir);
 
 $scope.click = function (row) {
     $scope.selected = row.entity;
-
     clearTimeout(repoClickTimeout);
     repoClickTimeout = setTimeout(function() {
         if ($scope.selected.type == "dir") {
@@ -28,8 +27,6 @@ $scope.click = function (row) {
                         $scope.dataSource1.data = [];
                     }
                     if (data.parent != "") {
-                        console.log(data);
-                        
                         $scope.dataSource1.data.unshift({
                             name: "..",
                             path: data.parent,
