@@ -51,8 +51,10 @@ app.directive('dgAutocomplete', function ($timeout, $compile, $http, $compile) {
                 }
                 $scope.match = [];
 
-                $scope.doSearch = function () {
-                    var search = Object.getProperty($scope.$parent, attrs.ngModel);
+                $scope.doSearch = function (search) {
+                    if (typeof search == "undefined") {
+                        search = Object.getProperty($scope.$parent, attrs.ngModel);
+                    }
                     fuzzyMatch.prep(search);
                     $scope.match = [];
 
@@ -147,7 +149,7 @@ app.directive('dgAutocomplete', function ($timeout, $compile, $http, $compile) {
 
                     $timeout(function () {
 
-                        $scope.doSearch();
+                        $scope.doSearch("");
                         $compile($(".data-grid-dropdown"))($scope);
 
                         $(document).on("click.dataGridAutocomplete", function () {
