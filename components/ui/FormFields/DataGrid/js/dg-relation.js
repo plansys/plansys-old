@@ -60,9 +60,11 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                     }
                 }
 
-                $scope.doSearch = function () {
-                    var search = Object.getProperty($scope.$parent, attrs.ngModel);
-                    search = search || "";
+                $scope.doSearch = function (search) {
+
+                    if (typeof search == "undefined") {
+                        search = Object.getProperty($scope.$parent, attrs.ngModel);
+                    }
                     var parentScope = angular.element($("#" + $scope.name)[0]).scope().$parent;
                     if (!$scope.loading) {
                         $scope.loading = true;
@@ -111,15 +113,6 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                     if ($('.data-grid-dropdown li.hover').length == 0 || $scope.escaped) {
                         $(".data-grid-dropdown").remove();
                         $(document).off(".dataGridAutocomplete");
-                        $timeout(function () {
-                            if ($scope.deleteIntent) {
-                                $scope.select('', '');
-                                $scope.deleteIntent = false;
-                            } else {
-                                $scope.select($scope.original.id, $scope.original.label);
-                            }
-                            $scope.refocus();
-                        }, 100);
                     } else {
                         $timeout(function () {
                             $('.data-grid-dropdown li.hover').click();
@@ -127,6 +120,12 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                         }, 0);
                     }
 
+                    $timeout(function () {
+                        if ($scope.deleteIntent) {
+                            $scope.select('', '');
+                            $scope.deleteIntent = false;
+                        }
+                    });
 
                     $scope.escaped = true;
                 }
@@ -163,7 +162,7 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                     });
                 });
 
-                $scope.deleteIntent = true;
+                $scope.deleteIntent = false;
 
                 $el.keyup(function (e) {
                     $scope.escaped = false;
@@ -174,8 +173,9 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                         });
                     }
 
-                    $scope.deleteIntent = (e.which == 8 || e.which == 46);
-
+                    if (e.which != 13) {
+                        $scope.deleteIntent = (e.which == 8 || e.which == 46);
+                    }
                 });
 
                 $el.focus(function (e) {
@@ -191,7 +191,7 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                     $(dd).appendTo('body');
 
                     $timeout(function () {
-                        $scope.doSearch();
+                        $scope.doSearch("");
                         $compile($(".data-grid-dropdown"))($scope);
 
                         $(document).on("click.dataGridAutocomplete", function () {
