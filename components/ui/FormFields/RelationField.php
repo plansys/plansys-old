@@ -478,7 +478,7 @@ class RelationField extends FormField {
                         if (stripos($v, " as ") !== false) {
                             $t = explode(" as ", $v);
                             if (count($t) < 2) {
-                                $t = explode(" as ", $v);
+                                $t = preg_split("/ as /i", $v);
                             }
                             $als[trim($t[1])] = trim($t[0]);
                         }
@@ -675,7 +675,7 @@ class RelationField extends FormField {
             unset($criteria['pageSize']);
             unset($criteria['page']);
         }
-        
+
         return $criteria;
     }
 

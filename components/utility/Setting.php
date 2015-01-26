@@ -56,10 +56,13 @@ class Setting {
         if (!is_file(Setting::$path)) {
             $json = Setting::$default;
             $json = json_encode($json, JSON_PRETTY_PRINT);
-
             file_put_contents(Setting::$path, $json);
         }
         Setting::$data = json_decode(file_get_contents(Setting::$path), true);
+        if (!Setting::$data) {
+            echo "Failed to load [" . Setting::$path . "], invalid json file!";
+            die();
+        }
 
         ## set host
         if (!Setting::get('app.host')) {
@@ -161,7 +164,6 @@ class Setting {
         return $commands;
     }
 
-    
     public static function getControllerMap() {
         $controllers = [];
 
@@ -182,7 +184,7 @@ class Setting {
                 $controllers[$ctrl] = 'app.controllers.' . $class;
             }
         }
-        
+
         return $controllers;
     }
 
@@ -236,13 +238,13 @@ class Setting {
     public static function getDBDriverList() {
         return [
             'mysql' => 'MySQL',
-            /*
-              'pgsql' => 'PostgreSQL',
-              'sqlsrv' => 'SQL Server',
-              'sqlite' => 'SQLite',
-              'oci' => 'Oracle'
-             * 
-             */
+                /*
+                  'pgsql' => 'PostgreSQL',
+                  'sqlsrv' => 'SQL Server',
+                  'sqlite' => 'SQLite',
+                  'oci' => 'Oracle'
+                 * 
+                 */
         ];
     }
 
