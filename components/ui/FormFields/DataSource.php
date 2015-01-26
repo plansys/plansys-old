@@ -203,7 +203,6 @@ class DataSource extends FormField {
 
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "glyphicon glyphicon-book";
-    
     public $queryParams = [];
 
     public function actionRelClass() {
@@ -236,8 +235,6 @@ class DataSource extends FormField {
             $fb = FormBuilder::load($class);
             $field = $fb->findField(['name' => $post['name']]);
 
-            $this->queryParams = (is_array(@$post['params']) ? @$post['params'] : []);
-
             if ($field['fieldType'] != "php" && method_exists($class, 'model')) {
                 $fb->model = $class::model()->findByPk(@$post['model_id']);
                 if (is_null($fb->model)) {
@@ -247,6 +244,7 @@ class DataSource extends FormField {
 
             $this->attributes = $field;
             $this->builder = $fb;
+            $this->queryParams = (is_array(@$post['params']) ? @$post['params'] : []);
 
             $isGenerate = isset($post['generate']);
 
@@ -402,6 +400,7 @@ class DataSource extends FormField {
 
             $bracket = DataSource::processSQLBracket($block, $postedParams, $field);
 
+
             $renderBracket = false;
             if (isset($bracket['render'])) {
                 $renderBracket = $bracket['render'];
@@ -514,7 +513,7 @@ class DataSource extends FormField {
 
         $db = Yii::app()->db;
         $template = DataSource::generateTemplate($this->sql, $params, $this, $paramDefs);
-        
+
         ## execute SQL
 
         $this->command = $db->createCommand($template['sql']);
@@ -570,7 +569,7 @@ class DataSource extends FormField {
             $criteria['page'] = 1;
             $criteria['pageSize'] = 25;
         }
-        
+
         ## order criteria
         if (isset($criteria['order']) && is_string($criteria['order'])) {
             $sql = $criteria['order'];
@@ -583,6 +582,7 @@ class DataSource extends FormField {
         if (isset($criteria['condition']) && is_string($criteria['condition'])) {
             $sql = $criteria['condition'];
             $bracket = DataSource::generateTemplate($sql, $postedParams, $field);
+
 
             if ($bracket['sql'] != '') {
                 if (substr($bracket['sql'], 0, 5) == 'where') {
@@ -619,9 +619,11 @@ class DataSource extends FormField {
 
     public function getRelated($params = [], $isGenerate = false) {
         $postedParams = array_merge($params, $this->queryParams);
+
         $relChanges = $this->model->getRelChanges($this->relationTo);
-        
+
         $criteria = DataSource::generateCriteria($postedParams, $this->relationCriteria, $this);
+
         if (@$criteria['params']) {
             $criteria['params'] = array_filter($criteria['params']);
         }
