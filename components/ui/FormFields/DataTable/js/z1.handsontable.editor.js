@@ -111,12 +111,7 @@
     function dateTimeRenderer(instance, td, row, col, prop, value, cellProperties) {
         Handsontable.TextCell.renderer.apply(this, arguments);
         var options = instance.getSettings().columns[col];
-        var val = value;
-        var oldval = value;
-
-        val = formatDate(val, options.inputMask, options.filter, td);
-
-        $(td).html(val);
+        Handsontable.Dom.fastInnerHTML(td, formatDate(value, options.inputMask, options.filter, td));
         return td;
     }
     Handsontable.renderers.registerRenderer('datetime', dateTimeRenderer);
@@ -134,9 +129,9 @@
         });
 
         if (typeof options.options.style == "string") {
-            $(td).attr('style', options.options.style);
+            td.setAttribute('style', options.options.style);
         }
-        $(td).html(val);
+        Handsontable.Dom.fastInnerHTML(td, val);
 
         return td;
     }
@@ -207,5 +202,15 @@
     };
     Handsontable.editors.InputMaskEditor = InputMaskEditor;
     Handsontable.editors.registerEditor('mask', InputMaskEditor);
+
+    /*************** GROUPS RENDERER *******************/
+    function groupsRenderer(instance, td, row, col, prop, value, cellProperties) {
+        Handsontable.TextCell.renderer.apply(this, arguments);
+        
+        Handsontable.Dom.fastInnerHTML(td, value);
+
+        return td;
+    }
+    Handsontable.renderers.registerRenderer('groups', groupsRenderer);
 
 })(Handsontable);

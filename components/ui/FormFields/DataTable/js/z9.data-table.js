@@ -607,7 +607,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                     case 'G':
                                         cellProperties.className = 'groups';
                                         cellProperties.readOnly = true;
-                                        cellProperties.renderer = 'html';
+                                        cellProperties.renderer = 'groups';
                                         break;
                                     case 'T':
                                         var c = $scope.dtGroups.totalGroups[$scope.dtGroups.columns[col].name];

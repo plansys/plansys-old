@@ -67,13 +67,13 @@ Handsontable.DataTableGroups = function (settings) {
         calculate: function () {
             var plugin = this;
             var $scope = this.scope;
-
+            
             function span(text, col) {
                 if (i == plugin.columns[0].name || column == plugin.columns[0].name) {
 
-                    var lvstr = "&nbsp;";
+                    var lvstr = " ";
                     for (var ll = 1; ll <= calc['__dt_lvl']; ll++) {
-                        lvstr += "&nbsp;&nbsp;";
+                        lvstr += " ";
                     }
                     lvstr += '<i class="gr fa fa-angle-right fa-lg "></i> &nbsp;&nbsp;';
                     return lvstr + text;
@@ -214,11 +214,11 @@ Handsontable.DataTableGroups = function (settings) {
                     var group = item[g];
                     if (!cur.groups[group]) {
                         // add new group
-                        var lvstr = "&nbsp;";
-                        for (var ll = 0; ll <= gidx; ll++) {
-                            lvstr += "&nbsp;&nbsp;";
+                        var lvstr = "";
+                        for (var ll = 0; ll < gidx; ll++) {
+                            lvstr += "    ";
                         }
-                        lvstr += ' <i class="gr fa fa-caret-down fa-lg "></i> &nbsp;&nbsp;&nbsp;';
+                        lvstr += '◢  ';
                         var newrow = {};
                         newrow[$scope.columns[0].name] = lvstr + group;
                         newrow['__dt_flg'] = "G";
