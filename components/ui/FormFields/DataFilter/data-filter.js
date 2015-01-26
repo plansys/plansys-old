@@ -65,7 +65,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         $scope.pageSetting.dataFilters[$scope.name].forEach(function (filter) {
                             if (filter.filterType == "date") {
                                 filter.from = new Date(strtotime(filter.value.from) * 1000);
-                                
+
                                 if (!!filter.value && !!filter.value.to) {
                                     filter.to = new Date(strtotime(filter.value.to) * 1000);
                                 }
@@ -132,6 +132,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                             ds.lastQueryFrom = "DataFilter";
                             ds.query(function () {
                                 delete ds.afterQueryInternal[$scope.renderID];
+
+                                if (typeof $scope.afterQuery == 'function') {
+                                    $scope.afterQuery(ds);
+                                }
                             });
                         }
                     });
@@ -245,6 +249,11 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 ds.lastQueryFrom = "DataFilter";
                                 ds.query(function () {
                                     delete ds.afterQueryInternal[$scope.renderID];
+
+                                    if (typeof $scope.afterQuery == 'function') {
+                                        $scope.afterQuery(ds);
+                                    }
+
                                 });
                             }
                         }
