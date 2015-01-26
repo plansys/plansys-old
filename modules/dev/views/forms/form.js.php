@@ -460,6 +460,8 @@
                                 $scope.active.filters.push(filter);
                             }
                             $scope.save();
+                        } else {
+                            alert("WARNING: Filter Generator failed!\n\nYour query result is empty.\nPlease make sure your result returned more than one row.\n\n");
                         }
                     }
 
@@ -499,6 +501,8 @@
                                 $scope.active.columns.push(filter);
                             }
                             $scope.save();
+                        } else {
+                            alert("WARNING: Column Generator failed!\n\nYour query result is empty.\nPlease make sure your result returned more than one row!\n\n");
                         }
                     }
                 });
