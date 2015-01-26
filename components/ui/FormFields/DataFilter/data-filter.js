@@ -51,7 +51,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 $scope.savePageSetting = function () {
                     $scope.pageSetting.dataFilters = $scope.pageSetting.dataFilters || {};
                     $scope.pageSetting.dataFilters[$scope.name] = $scope.filters;
-                    console.log($scope.filters);
                 }
 
                 $scope.isCached = function () {
@@ -683,14 +682,13 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         if (item.filterType != 'date' && item.name != "col")
                             return;
 
-                        if (typeof $scope.filters[idx].valueText == "string") {
+                        if (typeof $scope.filters[idx].valueText == "string" || typeof $scope.filters[idx].valueText == "number") {
                             ret = date("Y-m-d", strtotime($scope.filters[idx].value.from));
                         } else {
                             ret = "";
                         }
                     });
 
-                    console.log(col, ret);
                     return ret;
                 }
 
