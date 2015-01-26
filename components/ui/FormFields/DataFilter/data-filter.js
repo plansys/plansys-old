@@ -59,8 +59,21 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
 
                 $scope.loadPageSetting = function () {
                     if (!!$scope.pageSetting.dataFilters && !!$scope.pageSetting.dataFilters[$scope.name]) {
+
                         $scope.oldFilters = angular.copy($scope.filters);
-                        $scope.filters = $scope.pageSetting.dataFilters[$scope.name];
+                        $scope.filters.length = 0;
+                        $scope.pageSetting.dataFilters[$scope.name].forEach(function (filter) {
+                            if (filter.filterType == "date") {
+                                filter.from = new Date(strtotime(filter.value.from) * 1000);
+                                
+                                if (!!filter.value && !!filter.value.to) {
+                                    filter.to = new Date(strtotime(filter.value.to) * 1000);
+                                }
+                            }
+
+                            $scope.filters.push(filter);
+                        });
+
                     }
                 }
 
@@ -788,7 +801,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 $scope.updateFilter(f, null, false);
                             }
                         }
-                        
+
                         $scope.datasources.map(function (dataSourceName) {
                             var ds = parent[dataSourceName];
                             if (ds) {
