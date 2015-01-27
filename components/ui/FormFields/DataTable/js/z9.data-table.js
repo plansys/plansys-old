@@ -663,9 +663,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             }
                             $scope.fixHeight();
                         },
-                        afterOnCellMouseDown: function (event, coords, TD) {
-                            if (typeof $scope.events.afterOnCellMouseDown == "function") {
-                                $scope.events.afterOnCellMouseDown(event, coords, TD);
+                        beforeOnCellMouseDown: function (event, coords, TD) {
+                            if (typeof $scope.events.beforeOnCellMouseDown == "function") {
+                                $scope.events.beforeOnCellMouseDown(event, coords, TD);
                             }
 
                             $scope.mouseDown = true;
@@ -674,7 +674,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             if (typeof $scope.events.afterSelection == "function") {
                                 $scope.events.afterSelection(r, c, r2, c2);
                             }
-
                             if (!$scope.mouseDown) {
                                 $scope.fixScroll();
                             }
