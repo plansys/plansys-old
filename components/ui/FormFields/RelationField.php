@@ -298,9 +298,8 @@ class RelationField extends FormField {
 
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-link";
-
     public $queryParams;
-    
+
     /**
      * @return array me-return array javascript yang di-include
      */
@@ -736,10 +735,10 @@ class RelationField extends FormField {
                 $initial = $model->currentModel($criteria);
 
                 if (!empty($initial)) {
-                    
+
                     ## remove duplicate label
                     foreach ($rawlist as $k => $r) {
-                        if ($r[$this->labelField] == $initial[0][$this->labelField]) {
+                        if (!is_null(@$r[$this->labelField]) && @$r[$this->labelField] == @$initial[0][$this->labelField]) {
                             unset($rawlist[$k]);
                         }
                     }
