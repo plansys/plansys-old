@@ -159,6 +159,11 @@ app.directive('relationField', function ($timeout, $http) {
                                     $scope.value = data.value;
                                     $scope.text = data.label;
                                     ctrl.$setViewValue($scope.value);
+
+                                    if ($scope.identifier != '' && $scope.text) {
+                                        parent.rel[$scope.identifier] = $scope.text.trim();
+                                    }
+
                                 } else {
 //         WARNING: kalo di uncomment, infinite loop..
 //                                    $scope.value = $el.find("li:eq(0) a").attr('value').trim();
@@ -179,6 +184,7 @@ app.directive('relationField', function ($timeout, $http) {
                     if ($scope.identifier != '' && $scope.text) {
                         parent.rel[$scope.identifier] = $scope.text.trim();
                     }
+
 
                     if ($scope.includeEmpty == 'Yes') {
                         if ((isEmpty($scope.value) && isEmpty($scope.text)) ||
@@ -339,7 +345,6 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.isOpen = false;
                 $scope.identifier = $el.find("data[name=identifier]").text().trim();
                 $scope.openedInField = false;
-
 
                 $timeout(function () {
                     angular.forEach($scope.params, function (p, i) {

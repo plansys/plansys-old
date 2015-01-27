@@ -40,9 +40,9 @@
                 'url' => '#',
             ),
             array (
-                'label' => 'Crud Generator',
-                'icon' => 'fa-cubes',
-                'url' => '/dev/crudGenerator/index',
+                'label' => 'Form Generator',
+                'icon' => 'fa-trello',
+                'url' => '/dev/formGenerator/index',
             ),
         ),
         'state' => 'collapsed',
