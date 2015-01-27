@@ -162,6 +162,9 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                     active = $(".action-bar:eq(0) .action-tab a").last();
                 } else {
                     $(".action-bar:eq(0) .action-tab a").each(function () {
+                        if ($($(this).attr('href')).length == 0) {
+                            return;
+                        }
                         var top = container.scrollTop() + $($(this).attr('href')).position().top;
                         if (container.scrollTop() >= top - 1) {
                             active = $(this);
