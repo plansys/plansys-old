@@ -552,7 +552,9 @@ div[ui-content] {
     margin:0px -15px 0px -15px;
 }
 
-.form-builder > form > div > ol > li > .SectionHeader {
+
+
+.SectionHeader {
     margin:0px -30px;
     border-left:0px;
     border-right:0px;
@@ -2280,8 +2282,8 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     font-size:13px;
     margin-top:6px;
     margin-bottom:4px;
-    white-space:pre;
-    word-break: break-all;
+    white-space: pre-wrap;
+    word-break: break-word;
     line-height:19px;
     border:1px solid #ececeb;border-radius:3px;padding:5px 10px;margin:0px;
 }

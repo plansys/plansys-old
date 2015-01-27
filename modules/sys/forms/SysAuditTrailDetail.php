@@ -36,8 +36,8 @@ class SysAuditTrailDetail extends AuditTrail {
                         'type' => 'LabelField',
                     ),
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'column2' => array (
@@ -82,8 +82,8 @@ class SysAuditTrailDetail extends AuditTrail {
                         'type' => 'RelationField',
                     ),
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'type' => 'ColumnField',
@@ -93,14 +93,94 @@ class SysAuditTrailDetail extends AuditTrail {
                 'type' => 'SectionHeader',
             ),
             array (
-                'value' => '<table class=\"table table-condensed\" style=\"margin-top:10px;\">
+                'value' => '<table class=\"table table-condensed table-bordered table-striped\" style=\"margin-top:10px;\">
     <tr ng-repeat=\"(key,value) in data\">
         <th style=\"width:20%\">{{key}}</th>
         <td>
             {{ value }}
         </td>
     </tr>
-</table>',
+</table>
+',
+                'type' => 'Text',
+            ),
+            array (
+                'value' => '<div ng-if=\\"isRelated\\">',
+                'type' => 'Text',
+            ),
+            array (
+                'title' => 'Relational Data',
+                'type' => 'SectionHeader',
+            ),
+            array (
+                'value' => '
+    <table class=\"table table-condensed table-striped table-bordered\" style=\"margin-top:10px;\">
+        <tr ng-repeat=\"(key,value) in relations\">
+            <th style=\"width:20%\">{{key}}</th>
+            <td> 
+                <table class=\"table table-condensed table-bordered\">
+                    <tr ng-repeat=\"(k,v) in value\">
+                        <th>{{k}}</th>
+                        <td>
+                            
+                            <div ng-if=\"isObject(v)\">
+                                <table class=\"table table-bordered\">
+                                    <tr ng-repeat=\"(h,i) in v\">
+                                        <th style=\"width:30%;padding:3px;\">{{h}}</th>
+                                        <td style=\"padding:3px;\">{{i}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div ng-if=\"!isObject(v)\">
+                                {{ v }}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+',
+                'type' => 'Text',
+            ),
+            array (
+                'value' => '<div ng-if=\\"currentModel.length > 0\\">',
+                'type' => 'Text',
+            ),
+            array (
+                'title' => 'Cached Data List',
+                'type' => 'SectionHeader',
+            ),
+            array (
+                'value' => '
+<table class=\"table table-condensed table-striped table-bordered\" style=\"margin-top:10px;\">
+    <tr ng-repeat=\"(key,value) in currentModel\">
+        <th style=\"width:30px;text-align:center;\">{{key}}</th>
+        <td> 
+            <table class=\"table table-condensed table-bordered\">
+                <tr ng-repeat=\"(k,v) in value\">
+                    <th style=\"width:20%;padding:3px;\">{{k}}</th>
+                    <td style=\"padding:3px;\">
+                        
+                        <div ng-if=\"isObject(v)\">
+                            <table class=\"table table-bordered\">
+                                <tr ng-repeat=\"(h,i) in v\">
+                                    <th style=\"width:20%;padding:3px;\">{{h}}</th>
+                                    <td style=\"padding:3px;\">{{i}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div ng-if=\"!isObject(v)\">
+                            {{ v }}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</div>',
                 'type' => 'Text',
             ),
         );
