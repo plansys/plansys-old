@@ -2281,6 +2281,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     margin-top:6px;
     margin-bottom:4px;
     white-space:pre;
+    word-break: break-all;
     line-height:19px;
     border:1px solid #ececeb;border-radius:3px;padding:5px 10px;margin:0px;
 }
