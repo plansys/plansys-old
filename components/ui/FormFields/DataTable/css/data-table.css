@@ -123,9 +123,9 @@
 }
 
 .groups {
+    cursor:default !important;
     background:#ffc !important;
     box-shadow: none !important;
-    cursor:pointer;
     text-transform: uppercase;
     color: #222;
     font-size: 11px !important;
@@ -194,4 +194,9 @@
 
 .groups.htDimmed {
     white-space:pre;
+    border-right:0px;
+}
+.groups.htDimmed:last-child {
+    white-space:pre;
+    border-right:1px solid #ddd;
 }

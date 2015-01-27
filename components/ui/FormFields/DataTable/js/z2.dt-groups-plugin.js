@@ -212,6 +212,9 @@ Handsontable.DataTableGroups = function (settings) {
                 var cur = groupTree;
                 groups.forEach(function (g, gidx) {
                     var group = item[g];
+                    if (typeof group == "undefined") { 
+                        return;
+                    }
                     if (!cur.groups[group]) {
                         // add new group
                         var lvstr = "";
@@ -234,6 +237,10 @@ Handsontable.DataTableGroups = function (settings) {
                     }
                     cur = cur.groups[group];
                 });
+
+                if (typeof cur.group == "undefined") {
+                    return;
+                }
 
                 // find new idx
                 var newidx = cur.group['__dt_idx'] + 1;
@@ -261,18 +268,18 @@ Handsontable.DataTableGroups = function (settings) {
             });
 
             // do cell Merge
-            for (var i = $scope.data.length - 1; i >= 0; i--) {
-                if (['G', 'E'].indexOf($scope.data[i]['__dt_flg']) >= 0) {
-                    cellMerge.unshift({
-                        row: i,
-                        col: 0,
-                        rowspan: 1,
-                        colspan: $scope.columns.length
-                    });
-                }
-            }
-
-            instance.mergeCells = new Handsontable.MergeCells(cellMerge);
+//            for (var i = $scope.data.length - 1; i >= 0; i--) {
+//                if (['G', 'E'].indexOf($scope.data[i]['__dt_flg']) >= 0) {
+//                    cellMerge.unshift({
+//                        row: i,
+//                        col: 0,
+//                        rowspan: 1,
+//                        colspan: $scope.columns.length
+//                    });
+//                }
+//            }
+//
+//            instance.mergeCells = new Handsontable.MergeCells(cellMerge);
             instance.render();
         },
     }, settings);
