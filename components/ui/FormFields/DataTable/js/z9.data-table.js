@@ -82,6 +82,17 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 $scope.getInstance = function () {
                     return $("#" + $scope.renderID).handsontable('getInstance');
                 }
+                $scope.loading = false;
+                $scope.$watch('datasource.loading', function (n, o) {
+                    if (n) {
+                        $scope.loading = n;
+                    } else {
+                        $timeout(function () {
+                            $scope.loading = n;
+                        }, 100);
+                    }
+                });
+
                 $scope.$container = $el.parents('.container-full');
                 $scope.contextMenu = function () {
                     if ($scope.dtGroups) {

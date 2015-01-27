@@ -14,7 +14,7 @@
     <div ng-class="{invisible: !loaded}"   
          class=" data-table-container {{ gridOptions.noReadOnlyCSS || gridOptions.readOnly ? 'no-read-only' : '' }}">
 
-        <div ng-if="loaded">
+        <div ng-if="loaded && !loading">
             <div ng-if="data.length != 0" class="data-grid-paging-shadow"
                  style="height:50px;display:none;"></div>
             <div class="data-grid-paging"
@@ -105,12 +105,12 @@
             </div>
         </div>
 
-        <div ng-if="data.length == 0"
+        <div ng-if="data.length == 0 || loading"
              style="text-align:center;padding:20px;color:#ccc;font-size:25px;">
-            &mdash; {{ !datasource.loading ? 'Data Empty' : 'Loading Data'; }} &mdash;
+            &mdash; {{ !loading ? 'Data Empty' : 'Loading Data'; }} &mdash;
         </div>
 
-        <div ng-class="{invisible: data.length == 0}"  
+        <div ng-class="{invisible: data.length == 0 || loading}"  
              id="<?= $this->renderID ?>" class="dataTable" 
              style="height:5000px;overflow:auto;"></div>
     </div>
