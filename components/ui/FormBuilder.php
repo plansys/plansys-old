@@ -89,32 +89,34 @@ class FormBuilder extends CComponent {
         }
 
         ## get method line and length
-        if (is_null(Yii::app()->session['FormBuilder_' . $originalClass])) {
-            $reflector = new ReflectionClass($class);
-            $model->sourceFile = $reflector->getFileName();
-            $model->file = file($model->sourceFile, FILE_IGNORE_NEW_LINES);
-            $methods = $reflector->getMethods();
-            foreach ($methods as $m) {
-                if ($m->class == $class) {
-                    $line = $m->getStartLine() - 1;
-                    $length = $m->getEndLine() - $line;
-                    $model->methods[$m->name] = [
-                        'line' => $line,
-                        'length' => $length
-                    ];
+        if (isset(Yii::app()->session)) {
+            if (is_null(Yii::app()->session['FormBuilder_' . $originalClass])) {
+                $reflector = new ReflectionClass($class);
+                $model->sourceFile = $reflector->getFileName();
+                $model->file = file($model->sourceFile, FILE_IGNORE_NEW_LINES);
+                $methods = $reflector->getMethods();
+                foreach ($methods as $m) {
+                    if ($m->class == $class) {
+                        $line = $m->getStartLine() - 1;
+                        $length = $m->getEndLine() - $line;
+                        $model->methods[$m->name] = [
+                            'line' => $line,
+                            'length' => $length
+                        ];
+                    }
                 }
-            }
 
-            Yii::app()->session['FormBuilder_' . $originalClass] = [
-                'sourceFile' => $model->sourceFile,
-                'file' => $model->file,
-                'methods' => $model->methods
-            ];
-        } else {
-            $s = Yii::app()->session['FormBuilder_' . $originalClass];
-            $model->sourceFile = $s['sourceFile'];
-            $model->file = $s['file'];
-            $model->methods = $s['methods'];
+                Yii::app()->session['FormBuilder_' . $originalClass] = [
+                    'sourceFile' => $model->sourceFile,
+                    'file' => $model->file,
+                    'methods' => $model->methods
+                ];
+            } else {
+                $s = Yii::app()->session['FormBuilder_' . $originalClass];
+                $model->sourceFile = $s['sourceFile'];
+                $model->file = $s['file'];
+                $model->methods = $s['methods'];
+            }
         }
         return $model;
     }
@@ -1046,7 +1048,7 @@ EOF;
             ftruncate($fp, 0); // truncate file
             $buffer = implode("\n", $file);
             //TODO: fix gigantic bug, do not allow more than 200 consecutive spaces
-            $buffer = preg_replace('/\s{200,}/',' ', $buffer); 
+            $buffer = preg_replace('/\s{200,}/', ' ', $buffer);
             fwrite($fp, $buffer);
             fflush($fp); // flush output before releasing the lock
             flock($fp, LOCK_UN); // release the lock
