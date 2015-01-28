@@ -176,7 +176,9 @@ ob_start();
         });
         function inlineJS() {
             $("div[ng-controller=<?= $modelClass ?>Controller]").css('opacity', 1);
-<?= $inlineJS; ?>
+            
+            <?= implode("\n            ", explode("\n",$inlineJS)); ?>
+    
         }
 
         // execute inline JS

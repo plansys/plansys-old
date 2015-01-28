@@ -27,10 +27,13 @@ class Repo extends Form {
             ),
             array (
                 'value' => '
-<div style=\"pointer-events: none;width:100%;position:fixed;margin-top:-35px;z-index:500;\">
+<div style=\"width:100%;position:fixed;margin-top:-35px;z-index:500;\">
     <i class=\"fa fa-lg fa-folder-open-o\"></i>
      <span ng-repeat=\"d in dirs\">
-     {{d}}
+         <a style=\"color:#000\" 
+             href=\"{{Yii.app.createUrl(\'/repo/index\', {dir: d.path})}}\">
+             {{d.name}}
+         </a>
         <i class=\"fa fa-chevron-right\"></i>
      </span>
   </div>',
