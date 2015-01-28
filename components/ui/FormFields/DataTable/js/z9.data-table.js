@@ -118,7 +118,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     location.reload();
                 }
 
-                $scope.updateCell = function() {};
+                $scope.updateCell = function () {
+                };
 
                 $scope.$timeout = $timeout;
                 // setup internal variables
@@ -128,17 +129,21 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 var renderTimeout = null;
                 var categories = [];
                 var lastCat = '';
+
                 // add columns from datasource when columns definition is empty
+                $scope.generateCols = function () {
+                    for (i in $scope.dataSource1.data[0]) {
+                        if (i == 'id')
+                            continue;
+                        $scope.columns.push({
+                            name: i,
+                            label: i
+                        });
+                    }
+                }
                 if ($scope.columns.length == 0) {
                     if ($scope.dataSource1.data && $scope.dataSource1.data.length > 0) {
-                        for (i in $scope.dataSource1.data[0]) {
-                            if (i == 'id')
-                                continue;
-                            $scope.columns.push({
-                                name: i,
-                                label: i
-                            });
-                        }
+                        $scope.generateCols();
                     }
                 }
 
@@ -515,6 +520,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 }
                 function prepareData(callback) {
                     $scope.data = angular.copy($scope.datasource.data);
+                    
+                    $scope.generateCols();
+                    
                     for (i in $scope.data) {
                         for (b in $scope.columns) {
                             if ($scope.columns[b].name &&
