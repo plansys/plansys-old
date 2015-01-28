@@ -2345,9 +2345,17 @@ ul[datepicker-popup-wrap] td .btn{
     min-width:35px !important;
     background:#fff !important;
 }
+ul[datepicker-popup-wrap] table[ng-switch-when="month"] .btn {
+    width:80px !important;
+    color:#000 !important;
+}
+ul[datepicker-popup-wrap] table[ng-switch-when="year"] td .btn {
+    width:42px !important;
+    color:#000 !important;
+}
 
 ul[datepicker-popup-wrap] td .btn.active{
-    background:#ccc !important;
+    background:#5BC0DE !important;
 }
 
 ul[datepicker-popup-wrap] table {

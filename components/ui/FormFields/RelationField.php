@@ -314,7 +314,12 @@ class RelationField extends FormField {
         if (count($post) == 0)
             die();
 
-        $fb = FormBuilder::load($post['class']);
+        $attr = [];
+        if (isset($post['model_id'])) {
+            $attr['id'] = $post['model_id'];
+        }
+
+        $fb = FormBuilder::load($post['class'], $attr);
         $ff = $fb->findField(['name' => $post['name']]);
         $this->builder = $fb;
         $return = [];
@@ -339,13 +344,21 @@ class RelationField extends FormField {
                     }
                     $ids = implode(" , ", $ids);
 
+
                     if ($this->relationCriteria['alias'] != "") {
                         $id = $this->relationCriteria['alias'] . "." . $this->idField;
                     } else {
                         $id = $this->idField;
                     }
+
                     if (@$this->relationCriteria['condition'] != "") {
-                        $this->relationCriteria['condition'] .= "{AND} ({$id} IN ({$ids}))";
+                        $c = $this->relationCriteria['condition'];
+                        if (trim(str_replace("{[search]}", "", $c)) != '') {
+                            $c = "(" . $c . ") {AND} ({$id} IN ({$ids}))";
+                        } else {
+                            $c = "({$id} IN ({$ids}))";
+                        }
+                        $this->relationCriteria['condition'] = $c;
                     } else {
                         $this->relationCriteria['condition'] = "({$id} IN ({$ids}))";
                     }

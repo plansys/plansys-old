@@ -1018,6 +1018,10 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                                     dgr['cols'] = dgr['cols'] || {};
                                     dgr['cols'][col] = dgr['cols'][col] || [];
 
+                                    if (!!$scope.model && !!$scope.model.id) {
+                                        dgr['model_id'] = $scope.model.id;
+                                    }
+
                                     if (id != "" && dgr['cols'][col].indexOf(id) < 0) {
                                         dgr['cols'][col].push(id);
                                     }
