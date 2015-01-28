@@ -2348,10 +2348,14 @@ ul[datepicker-popup-wrap] td .btn{
 ul[datepicker-popup-wrap] table[ng-switch-when="month"] .btn {
     width:80px !important;
     color:#000 !important;
+    padding-left:0px;
+    padding-right:0px;
 }
 ul[datepicker-popup-wrap] table[ng-switch-when="year"] td .btn {
     width:42px !important;
     color:#000 !important;
+    padding-left:0px;
+    padding-right:0px;
 }
 
 ul[datepicker-popup-wrap] td .btn.active{
