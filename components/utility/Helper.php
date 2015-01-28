@@ -14,6 +14,34 @@ class Helper {
         }
     }
 
+    public static function generateExcel($phpExcelObject, $filepath) {
+        $objWriter = PHPExcel_IOFactory::createWriter($phpExcelObject, 'Excel5');
+        $objWriter->save($filepath);
+    }
+
+    public static function exportExcel($data, $file) {
+
+        ## add header
+        if (count($data) > 0) {
+            array_unshift($data, $data[0]);
+            foreach ($data[0] as $k => $i) {
+                $data[0][$k] = $k;
+            }
+        }
+        
+        ## generate excel
+        Yii::import('ext.phpexcel.XPHPExcel');
+        $phpExcelObject = XPHPExcel::createPHPExcel();
+        $phpExcelObject->getActiveSheet()->fromArray($data, null, 'A1');
+        foreach (range('A', $phpExcelObject->getActiveSheet()->getHighestDataColumn()) as $col) {
+            $phpExcelObject->getActiveSheet()
+                    ->getColumnDimension($col)
+                    ->setAutoSize(true);
+        }
+
+        Helper::generateExcel($phpExcelObject, $file);
+    }
+
     public static function getLastModified($class) {
         if (class_exists($class)) {
             $reflector = new ReflectionClass($class);
