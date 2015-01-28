@@ -328,8 +328,6 @@ class RelationField extends FormField {
                 }
             }
             if (!is_null($fc)) {
-
-
                 if (count($ids) > 0) {
                     $this->modelClass = $fc['relModelClass'];
                     $this->idField = $fc['relIdField'];

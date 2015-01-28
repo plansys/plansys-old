@@ -62,13 +62,35 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
 
                         $scope.oldFilters = angular.copy($scope.filters);
                         $scope.filters.length = 0;
-                        $scope.pageSetting.dataFilters[$scope.name].forEach(function (filter) {
-                            if (filter.filterType == "date") {
-                                filter.from = new Date(strtotime(filter.value.from) * 1000);
+                        $scope.pageSetting.dataFilters[$scope.name].forEach(function (filter, k) {
+                            switch (filter.filterType) {
+                                case "dropdown":
+                                case "relation":
+                                case "checkbox":
+                                    filter.list = $scope.oldFilters[k].list;
+                                    break;
+                                case "date":
+                                    if (!filter.value.from) {
+                                        filter.from = $scope.oldFilters[k].from;
+                                    } else {
+                                        filter.from = new Date(strtotime(filter.value.from) * 1000);
+                                    }
 
-                                if (!!filter.value && !!filter.value.to) {
-                                    filter.to = new Date(strtotime(filter.value.to) * 1000);
-                                }
+                                    if (!!filter.value && !!filter.value.to) {
+                                        filter.to = new Date(strtotime(filter.value.to) * 1000);
+
+                                        if (!filter.to) {
+                                            filter.to = $scope.oldFilters[k].to;
+                                        }
+                                    }
+
+                                    if (['Between', 'Not Between'].indexOf(filter.operator) >= 0) {
+                                        if (!filter.value.from || !filter.value.to) {
+                                            $scope.resetFilter(filter);
+                                        }
+                                    }
+
+                                    break;
                             }
 
                             $scope.filters.push(filter);
@@ -201,6 +223,13 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                     if (typeof e != "undefined" && e != null &&
                             ['list', 'check', 'relation'].indexOf(filter.filterType) < 0) {
                         $scope.toggleFilterCriteria(e);
+                    }
+
+
+                    if (filter.filterType == "date" && ['Between', 'Not Between'].indexOf(filter.operator) >= 0) {
+                        if (!filter.value.from || !filter.value.to) {
+                            shouldExec = false;
+                        }
                     }
 
                     $scope.datasources.map(function (dataSourceName) {

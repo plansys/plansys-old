@@ -234,6 +234,7 @@ class DataFilter extends FormField {
                             $sql = "({$column} BETWEEN :{$paramName}_{$pcolumn}_from AND :{$paramName}_{$pcolumn}_to)";
                             $fromStartHour = date('Y-m-d 23:59:00', strtotime('-1 day', strtotime(@$filter['value']['from'])));
                             $toLastHour = date('Y-m-d 23:59:00', strtotime(@$filter['value']['to']));
+
                             $param = [
                                 ":{$paramName}_{$pcolumn}_from" => $fromStartHour,
                                 ":{$paramName}_{$pcolumn}_to" => $toLastHour,
@@ -243,12 +244,15 @@ class DataFilter extends FormField {
                     case "Not Between":
                         if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
                             $sql = "({$column} NOT BETWEEN :{$paramName}_{$pcolumn}_from AND :{$paramName}_{$pcolumn}_to)";
-
                             $toLastHour = date('Y-m-d 23:59:00', strtotime(@$filter['value']['to']));
                             $param = [
                                 ":{$paramName}_{$pcolumn}_from" => @$filter['value']['from'],
                                 ":{$paramName}_{$pcolumn}_to" => $toLastHour,
                             ];
+
+                            if (@$filter['value']['to'] == '' || @$filter['value']['from'] == '') {
+                                $sql = "1 = 1";
+                            }
                         }
                         break;
                     case "More Than":
