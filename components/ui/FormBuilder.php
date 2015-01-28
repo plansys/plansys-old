@@ -81,7 +81,19 @@ class FormBuilder extends CComponent {
         }
 
         $model = new FormBuilder();
-        $model->model = new $class;
+
+        if (!empty($attributes) && method_exists($class, 'model')) {
+            if (is_subclass_of($class, 'ActiveRecord')) {
+                $model->model = $class::model()->findByAttributes($attributes);
+
+                if (is_null($model->model)) {
+                    $model->model = new $class;
+                }
+            }
+        } else {
+            $model->model = new $class;
+        }
+
         $model->originalClass = $originalClass;
 
         if (!is_null($attributes)) {

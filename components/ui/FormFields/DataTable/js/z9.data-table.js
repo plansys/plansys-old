@@ -405,6 +405,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             if (id != "" && id != null && dgr['cols'][col].indexOf(id) < 0) {
                                 dgr['cols'][col].push(id);
                             }
+                            if (!!$scope.model && !!$scope.model.id) {
+                                dgr['model_id'] = $scope.model.id;
+                            }
+
                         }
                     }
                 }

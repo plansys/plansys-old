@@ -354,12 +354,17 @@ class DataSource extends FormField {
         $andsql = array_filter(preg_split("/\{" . $operator . "\}/i", $sql), function($e) {
             return (trim($e) != "" ? trim($e) : false);
         });
+
         $sql = implode(" " . $operator . " ", $andsql);
+
+        ## clean where where
         $sql = preg_replace("/\s+{$operator}\s+where\s+/i", " " . $operator . " ", $sql);
         $sql = preg_replace("/\s+where\s+{$operator}\s+/i", " WHERE ", $sql);
         $sql = preg_replace("/\s+where\s+where\s+/i", " WHERE ", $sql);
 
-
+        ## clean ( AND
+        $sql = preg_replace("/\s*\(\s+{$operator}\s+/i", " ( ", $sql);
+        $sql = preg_replace("/\s+{$operator}\s+\)\s+/i", " ) ", $sql);
         return $sql;
     }
 
