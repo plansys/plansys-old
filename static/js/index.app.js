@@ -117,7 +117,7 @@ app.filter('dateFormat', function (dateFilter) {
     return function (date, format) {
         if (date != "0000-00-00") {
             date = new Date(strtotime(date) * 1000);
-            
+
             var d = dateFilter(date, format);
             if (typeof d == "undefined" || d.trim() == "Jan 1, 1970" || d.indexOf('NaN') >= 0) {
                 return "";

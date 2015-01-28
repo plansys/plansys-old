@@ -641,7 +641,7 @@ class ActiveRecord extends CActiveRecord {
                 $repopath = realpath(Yii::getPathOfAlias("repo"));
                 $evalDirArr = explode("/", $evalDir);
                 foreach ($evalDirArr as $i => $j) {
-                    $evalDirArr[$i] = preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $j);
+                    $evalDirArr[$i] = preg_replace('/[\/\?\:\*\"\<\>\|\\]*/', "", $j);
                 }
                 $evalDir = implode("/", $evalDirArr);
                 $dir = $repopath . "/" . $evalDir . "/";
@@ -663,7 +663,7 @@ class ActiveRecord extends CActiveRecord {
                     $newname = $filename . "." . $ext;
                 }
 
-                $new = $dir . preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $newname);
+                $new = $dir . preg_replace('/[\/\?\:\*\"\<\>\|\\]*/', "", $newname);
                 $new = str_replace(["\n", "\r"], "", $new);
 
                 ## delete file if already exist and allowed to overwrite
@@ -734,6 +734,9 @@ class ActiveRecord extends CActiveRecord {
             if (count($attr) > 0) {
                 foreach ($post[$name . 'Insert'] as $k => $i) {
                     if (isset($i['id']) && is_numeric($i['id'])) {
+                        if (!is_array($post[$name . 'Update'])) {
+                            $post[$name . 'Update'] = [];
+                        }
                         $post[$name . 'Update'][] = $i;
                         unset($post[$name . 'Insert'][$k]);
                         continue;
@@ -745,7 +748,19 @@ class ActiveRecord extends CActiveRecord {
                         }
                     }
                 }
+            } else {
+                foreach ($post[$name . 'Insert'] as $k => $i) {
+                    if (isset($i['id']) && is_numeric($i['id'])) {
+                        if (!is_array($post[$name . 'Update'])) {
+                            $post[$name . 'Update'] = [];
+                        }
+                        $post[$name . 'Update'][] = $i;
+                        unset($post[$name . 'Insert'][$k]);
+                        continue;
+                    }
+                }
             }
+
 
             ActiveRecord::batchInsert($model, $post[$name . 'Insert']);
         }

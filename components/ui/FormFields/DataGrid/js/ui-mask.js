@@ -426,7 +426,8 @@ app.directive('uiMask', function ($timeout, $filter) {
                                         }
                                         break;
                                     case "99:99":
-                                        var time = val.split(":");
+                                        var time = val.replace(/_/ig, "0").split(":");
+                                        console.log(time);
                                         if (time.length > 1) {
                                             var dt = new Date(2014, 1, 1, time[0], time[1]);
                                             formatted = ($filter('date')(dt, 'HH:mm'));
