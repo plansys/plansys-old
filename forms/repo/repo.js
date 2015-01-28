@@ -10,6 +10,7 @@ $scope.setCurrentDir = function(dir) {
     $scope.currentDir = dir.replace(/\\/g,'/');
     $scope.dirs = $scope.currentDir.split("/");
 }
+console.log($scope.params);
 $scope.setCurrentDir($scope.params.currentDir);
 
 

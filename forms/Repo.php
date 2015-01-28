@@ -39,7 +39,7 @@ class Repo extends Form {
             array (
                 'name' => 'dataSource1',
                 'fieldType' => 'php',
-                'php' => 'RepoManager::model()->browse(RepoManager::getModuleDir())[\\\'item\\\'];',
+                'php' => 'RepoManager::model()->browse(@$_GET[\\\'currentDir\\\'])[\\\'item\\\'];',
                 'type' => 'DataSource',
             ),
             array (
