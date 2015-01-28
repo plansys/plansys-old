@@ -25,14 +25,26 @@ $scope.setCurrentDir = function (dir) {
         });
     })
 }
-console.log($scope.params);
 $scope.setCurrentDir($scope.params.currentDir);
 
+$scope.thumb = '';
 
 $scope.click = function (row) {
+
+
     $scope.selected = row.entity;
     clearTimeout(repoClickTimeout);
     repoClickTimeout = setTimeout(function () {
+
+        // get thumbnail
+        $scope.thumb = $scope.dataGrid1.stringAlias($scope.selected.type, 'type').replace('fa-nm', 'fa-99x');
+        $http.get(Yii.app.createUrl('/formfield/UploadFile.thumb', {
+            't': $scope.encode($scope.selected.path)
+        })).success(function (url) {
+            $scope.thumb = '<img src="' + url + '" />';
+        });
+
+        // change dir
         if ($scope.selected.type == "dir") {
             if ($scope.lastSelectedPath == $scope.selected.path) {
                 $scope.selected.type = "loading";
@@ -66,6 +78,7 @@ $scope.getDownloadUrl = function (item) {
         n: item.name,
         f: $scope.encode(item.path)
     });
+
     return url;
 }
 

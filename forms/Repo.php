@@ -46,7 +46,7 @@ class Repo extends Form {
                 'type' => 'DataSource',
             ),
             array (
-                'value' => '<div ng-if=\\"dataSource1.data.length\\">',
+                'value' => '<div ng-show=\\"dataSource1.data.length\\">',
                 'type' => 'Text',
             ),
             array (

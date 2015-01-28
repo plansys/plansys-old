@@ -287,7 +287,13 @@ class UploadFile extends FormField {
 //    }
 
     public function actionThumb($t) {
+
+
         $file = base64_decode($t);
+        if (!is_file($file)) {
+            $file = RepoManager::resolve($file);
+        }
+        
         $img = Yii::app()->img->load($file);
         $img->resizeToWidth(250);
 
