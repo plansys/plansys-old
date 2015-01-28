@@ -24,7 +24,7 @@ class PhpProcess extends CComponent {
         if (substr(php_uname(), 0, 7) == "Windows") {
             exec("php plansys\yiic.php " . $cmd, $output, $input);
         } else {
-            $pid = exec("php plansys/yiic " . $cmd, $output, $input);
+            $pid = exec("php plansys/yiic " . $cmd . " > /dev/null 2>&1 & echo $!;", $output, $input);
         }
         return implode("\n", $output);
     }
