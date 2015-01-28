@@ -538,26 +538,33 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     });
                 }
                 prepareData();
+
                 // watch datasource changes
-                $scope.$watch('datasource.data', function (n, o) {
-                    if (n !== o && (!$scope.edited || $scope.data.length == 0) && !$scope.loadingRelation) {
-                        $scope.loaded = true;
-                        var executeGroup = ($scope.dtGroups);
-                        if (executeGroup && $scope.dtGroups.grouped) {
-                            $scope.dtGroups.ungroup($scope.ht);
+                $scope.dsChangeTimer = null;
+                $scope.dsChange = function () {
+                    $scope.loaded = true;
+                    var executeGroup = ($scope.dtGroups);
+                    if (executeGroup && $scope.dtGroups.grouped) {
+                        $scope.dtGroups.ungroup($scope.ht);
+                    }
+
+                    prepareData(function () {
+                        if (executeGroup) {
+                            $scope.dtGroups.group($scope.ht);
+                            $scope.edited = true;
                         }
 
-                        prepareData(function () {
-                            if (executeGroup) {
-                                $scope.dtGroups.group($scope.ht);
-                                $scope.edited = true;
-                            }
-
-                            $("#" + $scope.renderID).handsontable('getInstance').loadData($scope.data);
-                            $timeout(function () {
-                                $scope.edited = false;
-                            });
+                        $("#" + $scope.renderID).handsontable('getInstance').loadData($scope.data);
+                        $timeout(function () {
+                            $scope.edited = false;
                         });
+                    });
+                }
+
+                $scope.datasource.afterQueryInternal[$scope.renderID] = $scope.dsChange;
+                $scope.$watch('datasource.data', function (n, o) {
+                    if (n !== o && (!$scope.edited || $scope.data.length == 0) && !$scope.loadingRelation) {
+                        $scope.dsChange();
                     }
                 }, true);
 

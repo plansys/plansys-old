@@ -15,7 +15,6 @@
 
         Handsontable.editors.AutocompleteEditor.prototype.open.apply(this, arguments);
     }
-
     RelationEditor.prototype.close = function () {
         var ins = this.instance;
         var s = ins.getActiveEditor();
@@ -206,7 +205,7 @@
     /*************** GROUPS RENDERER *******************/
     function groupsRenderer(instance, td, row, col, prop, value, cellProperties) {
         Handsontable.TextCell.renderer.apply(this, arguments);
-        
+
         Handsontable.Dom.fastInnerHTML(td, value);
 
         return td;
