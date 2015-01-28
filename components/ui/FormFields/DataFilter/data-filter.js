@@ -217,6 +217,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 $scope.afterQuery = function (ds) {
                 };
                 $scope.updateFilter = function (filter, e, shouldExec) {
+
                     $scope.changeValueText(filter);
 
                     shouldExec = typeof shouldExec == "undefined" ? true : shouldExec;

@@ -733,6 +733,12 @@ class ActiveRecord extends CActiveRecord {
         if (count(@$post[$name . 'Insert']) > 0) {
             if (count($attr) > 0) {
                 foreach ($post[$name . 'Insert'] as $k => $i) {
+                    if (isset($i['id']) && is_numeric($i['id'])) {
+                        $post[$name . 'Update'][] = $i;
+                        unset($post[$name . 'Insert'][$k]);
+                        continue;
+                    }
+
                     foreach ($attr as $a => $b) {
                         if (isset($post[$name . 'Insert'][$k])) {
                             $post[$name . 'Insert'][$k][$a] = $b;
