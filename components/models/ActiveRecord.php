@@ -641,7 +641,7 @@ class ActiveRecord extends CActiveRecord {
                 $repopath = realpath(Yii::getPathOfAlias("repo"));
                 $evalDirArr = explode("/", $evalDir);
                 foreach ($evalDirArr as $i => $j) {
-                    $evalDirArr[$i] = preg_replace('/[\/\?\:\*\"\<\>\|\\]*/', "", $j);
+                    $evalDirArr[$i] = preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $j);
                 }
                 $evalDir = implode("/", $evalDirArr);
                 $dir = $repopath . "/" . $evalDir . "/";
@@ -663,7 +663,7 @@ class ActiveRecord extends CActiveRecord {
                     $newname = $filename . "." . $ext;
                 }
 
-                $new = $dir . preg_replace('/[\/\?\:\*\"\<\>\|\\]*/', "", $newname);
+                $new = $dir . preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $newname);
                 $new = str_replace(["\n", "\r"], "", $new);
 
                 ## delete file if already exist and allowed to overwrite
