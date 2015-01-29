@@ -682,6 +682,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                     }
                                 }
 
+                                if (typeof $scope.updateCell == "function") {
+                                    $scope.updateCell(row, col, prop, cellProperties);
+                                }
+                                
                                 return cellProperties;
                             },
                             beforeAutofill: function (s, e, d) {
