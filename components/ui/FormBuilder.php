@@ -415,7 +415,8 @@ class FormBuilder extends CComponent {
         }
         return $processed;
     }
-
+    
+    
     /**
      * @return array me-return array module.
      */
@@ -1118,6 +1119,19 @@ EOF;
         return $ret;
     }
 
+    public static function listModule() {
+        $dir = Yii::getPathOfAlias("application.modules.{$module}") . DIRECTORY_SEPARATOR;
+        $items = glob($dir . "*", GLOB_ONLYDIR);
+        $list = [];
+
+        foreach ($items as $k => $f) {
+            $f = str_replace($dir, "", $f);
+            $list[$f] = $f;
+        }
+
+        return $list;
+    }
+    
     /**
      * @param string $module
      * @return array Fungsi ini akan me-return sebuah array list controller .
