@@ -80,13 +80,11 @@ class Repo extends Form {
                     array (
                         'name' => 'name',
                         'label' => 'File Name',
-                        'options' => array (
-                            'sortable' => 'false',
-                        ),
+                        'options' => array (),
                         'inputMask' => '',
                         'stringAlias' => array (),
                         'columnType' => 'string',
-                        'show' => false,
+                        'show' => true,
                     ),
                     array (
                         'name' => 'size',
