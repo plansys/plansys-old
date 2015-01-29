@@ -144,170 +144,167 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         });
                     }
                 }
-                if ($scope.columns.length == 0) {
-                    if ($scope.dataSource1.data && $scope.dataSource1.data.length > 0) {
-                        $scope.generateCols();
-                    }
-                }
 
                 // assemble each columns -- start
-                for (i in $scope.columns) {
-                    var c = $scope.columns[i];
-                    if (c.options && c.options.visible && c.options.visible == "false") {
-                        continue;
-                    }
-                    var colDef = {
-                        data: c.name
-                    };
-                    switch (c.columnType) {
-                        case "dropdown":
-                            $scope.relAvailable = true;
-                            colDef.type = "dropdown";
-                            if (c.listType == 'js') {
-                                c.listItem = parent.$eval(col.listExpr);
-                            }
-                            colDef.source = parent.$eval(c.listItem);
-                            break;
-                        case "relation":
-                            $scope.relAvailable = true;
-                            colDef.data = c.name + "_label";
-                            colDef.type = "autocomplete";
-                            colDef.renderer = "relation";
-                            colDef.editor = "relation";
-                            colDef.scope = $scope;
-                            colDef.source = function (query, process) {
-                                if (!$scope.triggerRelationWatch) {
-                                    return false;
+                $scope.assembleCols = function () {
+                    for (i in $scope.columns) {
+                        var c = $scope.columns[i];
+                        if (c.options && c.options.visible && c.options.visible == "false") {
+                            continue;
+                        }
+                        var colDef = {
+                            data: c.name
+                        };
+                        switch (c.columnType) {
+                            case "dropdown":
+                                $scope.relAvailable = true;
+                                colDef.type = "dropdown";
+                                if (c.listType == 'js') {
+                                    c.listItem = parent.$eval(col.listExpr);
                                 }
-
-                                var s = this.instance.getSelected();
-                                if (s) {
-                                    var row = s[0];
-                                    var col = s[1];
-                                    var opt = this.instance.getSettings().columns[col];
-                                    if (opt.columnType != "relation")
-                                        return;
-                                    for (i in opt.relParams) {
-                                        var p = opt.relParams[i];
-                                        if (p.indexOf('js:') === 0) {
-                                            var value = $scope.$eval(p.replace('js:', ''));
-                                            opt.relParams[i] = value;
-                                        }
-                                    }
-                                    var ck = {
-                                        's': query,
-                                        'm': $scope.modelClass,
-                                        'f': $scope.name,
-                                        'c': opt.name,
-                                        'p': opt.relParams
-                                    };
-                                    $http.post(Yii.app.createUrl('formfield/RelationField.dgrSearch'), ck)
-                                            .success(function (data) {
-                                                // cache query
-
-                                                var labels = [];
-                                                for (i in data) {
-                                                    labels.push(data[i].label);
-                                                    $scope.lastRelList[data[i].label.trim('"')] = data[i].value;
-                                                }
-                                                if (labels.length && labels.length > 0) {
-                                                    process(labels);
-                                                }
-                                            });
-                                }
-                            };
-                            break;
-                        case "string":
-                            colDef.renderer = "text";
-                            if (typeof c.stringAlias == "object" && !$.isArray(c.stringAlias)) {
-                                colDef.renderer = "stringalias";
-                                console.log(c.stringAlias);
-                            }
-                            switch (c.inputMask) {
-                                case "number":
-                                    colDef.type = 'numeric';
-
-                                    var dec = '00';
-                                    if (typeof c.options.decimal != "undefined") {
-                                        dec = "";
-                                        for (var de = 0; de < c.options.decimal * 1; de++) {
-                                            dec += "0";
-                                        }
+                                colDef.source = parent.$eval(c.listItem);
+                                break;
+                            case "relation":
+                                $scope.relAvailable = true;
+                                colDef.data = c.name + "_label";
+                                colDef.type = "autocomplete";
+                                colDef.renderer = "relation";
+                                colDef.editor = "relation";
+                                colDef.scope = $scope;
+                                colDef.source = function (query, process) {
+                                    if (!$scope.triggerRelationWatch) {
+                                        return false;
                                     }
 
-                                    colDef.format = '0,0.' + dec;
-                                    delete(colDef.renderer);
-                                    break;
-                                case "99/99/9999":
-                                case "99/99/9999 99:99":
-                                case "99:99":
-                                    colDef.renderer = 'datetime';
-                                    colDef.editor = 'mask';
-                                    colDef.filter = $filter;
-                                    break;
+                                    var s = this.instance.getSelected();
+                                    if (s) {
+                                        var row = s[0];
+                                        var col = s[1];
+                                        var opt = this.instance.getSettings().columns[col];
+                                        if (opt.columnType != "relation")
+                                            return;
+                                        for (i in opt.relParams) {
+                                            var p = opt.relParams[i];
+                                            if (p.indexOf('js:') === 0) {
+                                                var value = $scope.$eval(p.replace('js:', ''));
+                                                opt.relParams[i] = value;
+                                            }
+                                        }
+                                        var ck = {
+                                            's': query,
+                                            'm': $scope.modelClass,
+                                            'f': $scope.name,
+                                            'c': opt.name,
+                                            'p': opt.relParams
+                                        };
+                                        $http.post(Yii.app.createUrl('formfield/RelationField.dgrSearch'), ck)
+                                                .success(function (data) {
+                                                    // cache query
+
+                                                    var labels = [];
+                                                    for (i in data) {
+                                                        labels.push(data[i].label);
+                                                        $scope.lastRelList[data[i].label.trim('"')] = data[i].value;
+                                                    }
+                                                    if (labels.length && labels.length > 0) {
+                                                        process(labels);
+                                                    }
+                                                });
+                                    }
+                                };
+                                break;
+                            case "string":
+                                colDef.renderer = "text";
+                                if (typeof c.stringAlias == "object" && !$.isArray(c.stringAlias)) {
+                                    colDef.renderer = "stringalias";
+                                    console.log(c.stringAlias);
+                                }
+                                switch (c.inputMask) {
+                                    case "number":
+                                        colDef.type = 'numeric';
+
+                                        var dec = '00';
+                                        if (typeof c.options.decimal != "undefined") {
+                                            dec = "";
+                                            for (var de = 0; de < c.options.decimal * 1; de++) {
+                                                dec += "0";
+                                            }
+                                        }
+
+                                        colDef.format = '0,0.' + dec;
+                                        delete(colDef.renderer);
+                                        break;
+                                    case "99/99/9999":
+                                    case "99/99/9999 99:99":
+                                    case "99:99":
+                                        colDef.renderer = 'datetime';
+                                        colDef.editor = 'mask';
+                                        colDef.filter = $filter;
+                                        break;
+                                }
+                                break;
+                        }
+
+
+                        if (c.options && !!c.options.enableCellEdit) {
+                            if (c.options.enableCellEdit.trim().substr(0, 3) === "js:") {
+                                c.options.enableCellEdit = $scope.$parent.$eval(c.options.enableCellEdit.trim().substr(3));
+                            } else if (typeof c.options.enableCellEdit == "string") {
+                                c.options.enableCellEdit = $scope.$parent.$eval(c.options.enableCellEdit.trim());
                             }
-                            break;
-                    }
 
-
-                    if (c.options && !!c.options.enableCellEdit) {
-                        if (c.options.enableCellEdit.trim().substr(0, 3) === "js:") {
-                            c.options.enableCellEdit = $scope.$parent.$eval(c.options.enableCellEdit.trim().substr(3));
-                        } else if (typeof c.options.enableCellEdit == "string") {
-                            c.options.enableCellEdit = $scope.$parent.$eval(c.options.enableCellEdit.trim());
+                            if (!c.options.enableCellEdit) {
+                                colDef.readOnly = true;
+                            }
                         }
 
-                        if (!c.options.enableCellEdit) {
-                            colDef.readOnly = true;
-                        }
-                    }
+                        var col = $.extend(c, colDef);
+                        //add column
+                        columnsInternal.push(col);
+                        // add header
+                        colHeaders.push(c.label);
+                        if (c.options && c.options.category) {
+                            // add category header
+                            var cat = c.options.category || '';
+                            if (lastCat == cat) {
+                                if (categories.length == 0 && lastCat == '') {
+                                    categories.push({
+                                        title: lastCat,
+                                        span: 0
+                                    });
+                                }
 
-                    var col = $.extend(c, colDef);
-                    //add column
-                    columnsInternal.push(col);
-                    // add header
-                    colHeaders.push(c.label);
-                    if (c.options && c.options.category) {
-                        // add category header
-                        var cat = c.options.category || '';
-                        if (lastCat == cat) {
-                            if (categories.length == 0 && lastCat == '') {
+                                var idx = i;
+                                while (typeof categories[idx] == "undefined" && idx > 0) {
+                                    idx--;
+                                }
+                                if (typeof categories[idx] != "undefined") {
+                                    categories[idx].span++;
+                                }
+                            } else {
                                 categories.push({
-                                    title: lastCat,
-                                    span: 0
+                                    title: cat,
+                                    span: 1
                                 });
                             }
-
-                            var idx = i;
-                            while (typeof categories[idx] == "undefined" && idx > 0) {
-                                idx--;
-                            }
-                            if (typeof categories[idx] != "undefined") {
-                                categories[idx].span++;
-                            }
+                            lastCat = cat;
                         } else {
-                            categories.push({
-                                title: cat,
-                                span: 1
-                            });
+                            if (lastCat == '' && categories.length >= 1) {
+                                var lastSpan = categories[categories.length - 1];
+                                lastSpan.span++;
+                            } else {
+                                categories.push({
+                                    title: '',
+                                    span: 1
+                                });
+                            }
+                            lastCat = '';
                         }
-                        lastCat = cat;
-                    } else {
-                        if (lastCat == '' && categories.length >= 1) {
-                            var lastSpan = categories[categories.length - 1];
-                            lastSpan.span++;
-                        } else {
-                            categories.push({
-                                title: '',
-                                span: 1
-                            });
-                        }
-                        lastCat = '';
                     }
-                }
 
-                if (categories.length == 1) {
-                    categories.length = 0;
+                    if (categories.length == 1) {
+                        categories.length = 0;
+                    }
                 }
                 // assemble each columns -- end
 
@@ -358,6 +355,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     $scope.fixClone();
                     $scope.fixComments();
                 });
+
                 // fixHead
                 //TODO: still broken, fix this
                 var fh = {};
@@ -522,9 +520,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     function isNumber(n) {
                         return typeof n == 'number' && !isNaN(n - n);
                     }
-                    
+
                     $scope.data = angular.copy($scope.datasource.data);
-                    $scope.generateCols();
 
                     for (i in $scope.data) {
                         for (b in $scope.columns) {
@@ -575,13 +572,16 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         });
                     }
 
-                    if ($scope.datasource.data.length > 0 || $scope.columns.length > 0) {
-                        $scope.init();
-                        $timeout(function () {
+                    if ($scope.datasource.data.length > 0) {
+                        if ($scope.isColAndDataEmpty) {
+                            $scope.init();
+                            $scope.isColAndDataEmpty = false;
+                            $timeout(function () {
+                                doChange();
+                            });
+                        } else {
                             doChange();
-                        })
-                    } else {
-                        doChange();
+                        }
                     }
                 }
 
@@ -594,14 +594,24 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 }, true);
 
                 // Prepare to initialize data-table
+                $scope.isColAndDataEmpty = true;
                 $timeout(function () {
                     if ($scope.datasource.data.length > 0 || $scope.columns.length > 0) {
                         $scope.init();
+                        $scope.isColAndDataEmpty = false;
                     }
                 });
 
                 // Initialize data-table
                 $scope.init = function () {
+
+                    if ($scope.columns.length == 0 && $scope.datasource.data.length > 0) {
+                        $scope.generateCols();
+                        $scope.assembleCols();
+                    } else {
+                        $scope.assembleCols();
+                    }
+
                     $timeout(function () {
                         evalArray($scope.gridOptions);
                         // initialize data table groups
