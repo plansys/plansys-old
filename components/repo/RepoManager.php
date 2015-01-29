@@ -671,6 +671,7 @@ class RepoManager extends CComponent {
         $path = $basePath . base64_decode($path);
 
 
+
         if (is_dir($path)) {
             $base = basename($path);
             // we deliver a zip file
@@ -689,12 +690,9 @@ class RepoManager extends CComponent {
 
             // zip the stuff (dir and all in there) into the tmp_zip file
             $dir = dirname($path);
-            $command = "cd {$dir} {$delim} {$zip} -r {$tmp_zip} {$base}";
+            $command = "cd {$dir} {$delim} {$zip} -r '{$tmp_zip}' '{$base}'";
             `$command`;
 
-            // calc the length of the zip. it is needed for the progress bar of the browser
-            $filesize = filesize($tmp_zip);
-            header("Content-Length: $filesize");
             // deliver the zip file
             $fp = fopen("$tmp_zip", "r");
             echo fpassthru($fp);

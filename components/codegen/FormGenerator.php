@@ -2,8 +2,14 @@
 
 class FormGenerator extends CComponent {
 
+    public $form = "";
+
     public function steps() {
         return [];
+    }
+
+    public function generate() {
+        
     }
 
     public static function listTemplates() {
