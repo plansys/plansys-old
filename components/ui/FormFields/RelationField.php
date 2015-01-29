@@ -344,6 +344,7 @@ class RelationField extends FormField {
                     }
                     $ids = implode(" , ", $ids);
 
+                    $this->relationCriteria['nolimit'] = true;
 
                     if ($this->relationCriteria['alias'] != "") {
                         $id = $this->relationCriteria['alias'] . "." . $this->idField;
@@ -652,10 +653,15 @@ class RelationField extends FormField {
 
     public function generateCriteria($search, $params) {
         $condition = $this->generateCondition($search, $params);
-
+        $nolimit = false;
         $this->relationCriteria['condition'] = $condition["sql"];
         if (!isset($this->relationCriteria['limit']) || @$this->relationCriteria['limit'] == 30) {
-            $this->relationCriteria['limit'] = ($search == '' ? '30' : '100');
+            if (!@$this->relationCriteria['nolimit']) {
+                $this->relationCriteria['limit'] = ($search == '' ? '30' : '100');
+            } else {
+                $nolimit = true;
+                unset($this->relationCriteria['nolimit']);
+            }
         }
 
         $this->params = array_merge(is_null($this->params) ? [] : $this->params, $condition['params']);
@@ -687,7 +693,17 @@ class RelationField extends FormField {
             unset($criteria['pageSize']);
             unset($criteria['page']);
         }
-
+        
+        if ($nolimit) {
+            if (isset($criteria['limit'])) {
+                unset($criteria['limit']);
+            }
+            if (isset($criteria['offset'])) {
+                unset($criteria['offset']);
+            }
+            $criteria['nolimit'] = true;
+        }
+        
         return $criteria;
     }
 

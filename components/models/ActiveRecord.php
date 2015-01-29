@@ -206,7 +206,11 @@ class ActiveRecord extends CActiveRecord {
             $criteria['limit'] = $criteria['pageSize'];
             unset($criteria['page'], $criteria['pageSize']);
         } else if (!isset($criteria['limit'])) {
-            $criteria['limit'] = 25;
+            if (!@$criteria['nolimit']) {
+                $criteria['limit'] = 25;
+            } else {
+                unset($criteria['nolimit']);
+            }
         }
 
         if (isset($criteria['paging']))
