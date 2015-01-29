@@ -4,7 +4,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
         compile: function (element, attrs, transclude) {
             return function ($scope, $el, attrs, ctrl) {
                 var parent = $scope.$parent;
-
+                
                 function evalArray(array, opt) {
                     opt = $.extend({
                         parseUrl: true
@@ -1111,8 +1111,8 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                 $scope.loaded = false;
                 $scope.onGridLoaded = '';
                 $scope.fillColumns();
-
                 parent[$scope.name] = $scope;
+
                 parent.dataGrids[$scope.name] = true;
                 parent.dataGrids.length--;
             }
