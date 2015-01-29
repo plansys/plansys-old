@@ -9,4 +9,8 @@ class FormGeneratorController extends Controller {
         ]);
     }
 
+    public function actionWizard($id) {
+        
+    }
+
 }

@@ -2,6 +2,8 @@
 
 class GenericGenerator extends FormGenerator {
 
+    public $form = "DevGenericGenerator";
+
     public function steps() {
         return [
             's1' => [
@@ -10,7 +12,7 @@ class GenericGenerator extends FormGenerator {
                 'output' => [
                     [
                         'path' => 'app.models',
-                        'name' => '{$modelClass}.php'
+                        'name' => '{$fileModel}.php'
                     ]
                 ]
             ],
@@ -29,16 +31,12 @@ class GenericGenerator extends FormGenerator {
                 ]
             ],
             's3' => [
-                'title' => 'Generating Form',
-                'function' => 'generateForm',
+                'title' => 'Generating Controller',
+                'function' => 'generateController',
                 'output' => [
                     [
-                        'path' => 'app.modules.{$module}.forms.{$formDir}',
-                        'name' => '{$fileIndex}.php'
-                    ],
-                    [
-                        'path' => 'app.modules.{$module}.forms.{$formDir}',
-                        'name' => '{$fileForm}.php'
+                        'path' => 'app.modules.{$module}.controllers',
+                        'name' => '{$fileController}.php'
                     ]
                 ]
             ],
