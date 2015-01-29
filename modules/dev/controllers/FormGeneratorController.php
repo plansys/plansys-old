@@ -10,7 +10,7 @@ class FormGeneratorController extends Controller {
     }
 
     public function actionWizard($id) {
-        
+        Yii::import('application.components.codegen');
     }
 
 }
