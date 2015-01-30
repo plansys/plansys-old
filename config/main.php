@@ -49,7 +49,7 @@ return array(
     // application components
     'components' => array(
         'themeManager' => array(
-            'basePath' => 'app/themes'
+            'basePath' => Setting::getThemePath()
         ),
         'img' => array(
             'class' => 'application.extensions.simpleimage.CSimpleImage',

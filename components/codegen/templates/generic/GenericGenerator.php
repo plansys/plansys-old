@@ -1,7 +1,6 @@
 <?php
 
 class GenericGenerator extends FormGenerator {
-
     public $form = "DevGenericGenerator";
 
     public function steps() {

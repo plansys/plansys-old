@@ -127,6 +127,12 @@ class Setting {
         return Helper::explodeLast(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
     }
 
+    public static function getThemePath() {
+        if (Yii::getPathOfAlias(Setting::get('app.dir')) . DIRECTORY_SEPARATOR . "themes") {
+            return "app/themes";
+        }
+    }
+
     public static function getModulePath() {
         if (file_exists(Yii::getPathOfAlias('app.modules'))) {
             return Yii::getPathOfAlias('app.modules');

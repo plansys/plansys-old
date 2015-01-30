@@ -134,7 +134,12 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 var lastCat = '';
 
                 // add columns from datasource when columns definition is empty
+                $scope.colGenerated = false;
                 $scope.generateCols = function () {
+                    if ($scope.colGenerated) return;
+                    $scope.colGenerated = true;
+
+                    console.log("GEN COL", $scope.columns);
                     for (i in $scope.dataSource1.data[0]) {
                         if (i == 'id')
                             continue;
@@ -146,7 +151,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 }
 
                 // assemble each columns -- start
+                $scope.colAssembled = false;
                 $scope.assembleCols = function () {
+                    if ($scope.colAssembled) return;
+                    $scope.colAssembled = true;
+
                     for (i in $scope.columns) {
                         var c = $scope.columns[i];
                         if (c.options && c.options.visible && c.options.visible == "false") {
@@ -606,7 +615,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 $scope.init = function () {
 
                     if ($scope.columns.length == 0 && $scope.datasource.data.length > 0) {
-                        $scope.generateCols();
+                        // $scope.generateCols();
                         $scope.assembleCols();
                     } else {
                         $scope.assembleCols();
