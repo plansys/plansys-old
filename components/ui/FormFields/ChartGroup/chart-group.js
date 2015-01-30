@@ -108,13 +108,12 @@ app.directive('psChartGroup', function ($timeout) {
 
                         if ($scope.yAxisType.toLowerCase() == "double")
                             tmpData.yAxis = count;
-
-                        series.push(tmpData);
+                        
+                        series.unshift(tmpData);
                     }
 
                     count++;
                 }
-
                 chart.yAxis[0].update(yAxis[0]);
 
                 for (i in series) {
