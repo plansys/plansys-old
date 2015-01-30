@@ -760,7 +760,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 $scope.mouseDown = false;
                             },
                             afterRemoveRow: function (index, amount) {
-                                $scope.datasource.data.splice(index, amount);
                             },
                             afterChange: function (changes, source) {
                                 //watch datasource changes
