@@ -70,10 +70,14 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                     filter.list = $scope.oldFilters[k].list;
                                     break;
                                 case "date":
-                                    if (!filter.value.from) {
-                                        filter.from = $scope.oldFilters[k].from;
+                                    if (typeof filter.value == "string") {
+                                        filter.from = new Date(strtotime(filter.value) * 1000);
                                     } else {
-                                        filter.from = new Date(strtotime(filter.value.from) * 1000);
+                                        if (!filter.value.from) {
+                                            filter.from = $scope.oldFilters[k].from;
+                                        } else {
+                                            filter.from = new Date(strtotime(filter.value.from) * 1000);
+                                        }
                                     }
 
                                     if (!!filter.value && !!filter.value.to) {

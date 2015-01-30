@@ -136,7 +136,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 // add columns from datasource when columns definition is empty
                 $scope.colGenerated = false;
                 $scope.generateCols = function () {
-                    if ($scope.colGenerated) return;
+                    if ($scope.colGenerated)
+                        return;
                     $scope.colGenerated = true;
 
                     console.log("GEN COL", $scope.columns);
@@ -153,7 +154,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 // assemble each columns -- start
                 $scope.colAssembled = false;
                 $scope.assembleCols = function () {
-                    if ($scope.colAssembled) return;
+                    if ($scope.colAssembled)
+                        return;
                     $scope.colAssembled = true;
 
                     for (i in $scope.columns) {
@@ -694,7 +696,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 if (typeof $scope.updateCell == "function") {
                                     $scope.updateCell(row, col, prop, cellProperties);
                                 }
-                                
+
                                 return cellProperties;
                             },
                             beforeAutofill: function (s, e, d) {

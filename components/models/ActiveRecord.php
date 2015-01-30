@@ -73,7 +73,7 @@ class ActiveRecord extends CActiveRecord {
             return parent::__call($name, $args);
         }
     }
-    
+
     public function __set($name, $value) {
         switch (true) {
             case Helper::isLastString($name, 'PageSize'):
@@ -206,7 +206,11 @@ class ActiveRecord extends CActiveRecord {
             $criteria['limit'] = $criteria['pageSize'];
             unset($criteria['page'], $criteria['pageSize']);
         } else if (!isset($criteria['limit'])) {
-            $criteria['limit'] = 25;
+            if (!@$criteria['nolimit']) {
+                $criteria['limit'] = 25;
+            } else {
+                unset($criteria['nolimit']);
+            }
         }
 
         if (isset($criteria['paging']))
@@ -937,14 +941,13 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-
     public static function listTables() {
         $connection = Yii::app()->db;
         $dbSchema = $connection->schema;
         $tables = $dbSchema->getTables();
         return array_keys($tables);
     }
-    
+
     public static function listData($idField, $valueField, $criteria = []) {
 
         if (is_bool($criteria)) {

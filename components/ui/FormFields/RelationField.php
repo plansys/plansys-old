@@ -346,7 +346,7 @@ class RelationField extends FormField {
 
                     $this->relationCriteria['nolimit'] = true;
 
-                    if ($this->relationCriteria['alias'] != "") {
+                    if (@$this->relationCriteria['alias'] != "") {
                         $id = $this->relationCriteria['alias'] . "." . $this->idField;
                     } else {
                         $id = $this->idField;
