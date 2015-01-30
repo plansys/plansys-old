@@ -73,7 +73,7 @@ class ActiveRecord extends CActiveRecord {
             return parent::__call($name, $args);
         }
     }
-
+    
     public function __set($name, $value) {
         switch (true) {
             case Helper::isLastString($name, 'PageSize'):
@@ -206,11 +206,7 @@ class ActiveRecord extends CActiveRecord {
             $criteria['limit'] = $criteria['pageSize'];
             unset($criteria['page'], $criteria['pageSize']);
         } else if (!isset($criteria['limit'])) {
-            if (!@$criteria['nolimit']) {
-                $criteria['limit'] = 25;
-            } else {
-                unset($criteria['nolimit']);
-            }
+            $criteria['limit'] = 25;
         }
 
         if (isset($criteria['paging']))
@@ -908,14 +904,18 @@ class ActiveRecord extends CActiveRecord {
             for ($i = 0; $i < $columnCount; $i++) {
 
                 ## cek apakah ada kolom yg dimaksud, jika ada maka
-                if (isset($columnName[$i]) && isset($d[$columnName[$i]])) {
+                if (isset($columnName[$i]) && array_key_exists($columnName[$i], $d)) {
 
                     ## jika yg kolom itu foreign key DAN kolom nya kosong, maka set NULL (karena foreign_key ga boleh string kosong)
                     if (in_array($columnName[$i], $foreignKeys) && $d[$columnName[$i]] == '') {
                         $updatearr[] = '`' . $columnName[$i] . "` = NULL";
                     } else {
                         ## selain itu, hajar seperti biasa...
-                        $updatearr[] = '`' . $columnName[$i] . "` = '{$d[$columnName[$i]]}'";
+                        if (is_null($d[$columnName[$i]])) {
+                            $updatearr[] = '`' . $columnName[$i] . "` = NULL";
+                        } else {
+                            $updatearr[] = '`' . $columnName[$i] . "` = '{$d[$columnName[$i]]}'";
+                        }
                     }
                 }
             }
@@ -937,6 +937,14 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
+
+    public static function listTables() {
+        $connection = Yii::app()->db;
+        $dbSchema = $connection->schema;
+        $tables = $dbSchema->getTables();
+        return array_keys($tables);
+    }
+    
     public static function listData($idField, $valueField, $criteria = []) {
 
         if (is_bool($criteria)) {
