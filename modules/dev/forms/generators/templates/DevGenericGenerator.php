@@ -44,7 +44,23 @@ class DevGenericGenerator extends Form {
                         'label' => 'Module',
                         'name' => 'module',
                         'listExpr' => 'FormBuilder::listModule()',
+                        'searchable' => 'Yes',
                         'type' => 'DropDownList',
+                    ),
+                    array (
+                        'label' => 'Table Name',
+                        'name' => 'tableName',
+                        'listExpr' => 'ActiveRecord::listTables()',
+                        'searchable' => 'Yes',
+                        'type' => 'DropDownList',
+                    ),
+                ),
+                'column2' => array (
+                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'label' => 'Model Name',
+                        'name' => 'model',
+                        'type' => 'TextField',
                     ),
                 ),
                 'type' => 'ColumnField',

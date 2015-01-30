@@ -145,7 +145,6 @@ class FormBuilder extends CComponent {
      * @return array me-return sebuah array fields internal
      */
     public function getFieldsInternal($processExpr = true) {
-
         ## if form class does not have getFields method, then create it
         $class = get_class($this->model);
         $reflector = new ReflectionClass($class);
@@ -350,7 +349,6 @@ class FormBuilder extends CComponent {
                     $fields[$k]['column' . $i] = $this->processFieldExpr($f['column' . $i]);
                 }
             } else if (method_exists($class, 'processExpr')) {
-
                 $field = new $class;
                 $field->attributes = $f;
                 $field->builder = $this;
@@ -363,6 +361,7 @@ class FormBuilder extends CComponent {
                 }
             }
         }
+        
         return $fields;
     }
 
@@ -718,7 +717,6 @@ class FormBuilder extends CComponent {
      * @return string me-return string tag html hasil generate dari fungsi ini.
      */
     public function render($formdata = null, $options = []) {
-
         return $this->renderInternal($formdata, $options, $this, $this->fields);
     }
 
@@ -1120,7 +1118,7 @@ EOF;
     }
 
     public static function listModule() {
-        $dir = Yii::getPathOfAlias("application.modules.{$module}") . DIRECTORY_SEPARATOR;
+        $dir = Yii::getPathOfAlias("app.modules.{$module}") . DIRECTORY_SEPARATOR;
         $items = glob($dir . "*", GLOB_ONLYDIR);
         $list = [];
 

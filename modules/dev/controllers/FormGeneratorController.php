@@ -14,7 +14,6 @@ class FormGeneratorController extends Controller {
         $class = ucfirst($id) . "Generator";
         $wizard = new $class;
         
-        
         $this->renderForm($wizard->form);
     }
 

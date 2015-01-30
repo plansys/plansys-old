@@ -6,12 +6,6 @@ class DevCrudForm extends Form {
     public $model;
     public $tableName;
 
-    public static function getTables() {
-        $connection = Yii::app()->db;
-        $dbSchema = $connection->schema;
-        $tables = $dbSchema->getTables();
-        return array_keys($tables);
-    }
 
     public function getForm() {
         return array(
