@@ -80,8 +80,8 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                     var w = dd.width();
                     var h = dd.height() + 10;
                     dd.css({
-                        top: pos.top,
-                        left: pos.left + 3,
+                        top: 70,
+                        left: pos.left + 20,
                         minWidth: w + 'px',
                         width: w + 'px',
                         height: h + 'px',
@@ -95,7 +95,7 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
             });
 
             $scope.resize = function (st) {
-                var height = $el.height();
+                var height = $el.find('.action-bar').height();
                 $el.css({
                     top: $("#content").offset().top,
                     left: $el.parents('.container-full').offset().left,
