@@ -158,6 +158,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         return;
                     $scope.colAssembled = true;
 
+                    categories = [];
+                    columnsInternal = [];
+                    colHeaders = [];
                     for (i in $scope.columns) {
                         var c = $scope.columns[i];
                         if (c.options && c.options.visible && c.options.visible == "false") {
@@ -214,6 +217,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
 
                                                     var labels = [];
                                                     for (i in data) {
+                                                        if (!data[i].label)
+                                                            continue;
+
                                                         labels.push(data[i].label);
                                                         $scope.lastRelList[data[i].label.trim('"')] = data[i].value;
                                                     }
@@ -270,6 +276,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         }
 
                         var col = $.extend(c, colDef);
+
                         //add column
                         columnsInternal.push(col);
                         // add header
@@ -316,6 +323,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     if (categories.length == 1) {
                         categories.length = 0;
                     }
+                    
                 }
                 // assemble each columns -- end
 
@@ -765,6 +773,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 $scope.datasource.data.splice(index, amount);
                             },
                             afterChange: function (changes, source) {
+
                                 //watch datasource changes
                                 switch (true) {
                                     case ($scope.dtGroups && $scope.dtGroups.changed):
@@ -932,8 +941,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         $scope.columns = columnsInternal;
                         if (!!$("#" + $scope.renderID)[0]) {
                             $("#" + $scope.renderID).width($el.width());
-                            $("#" + $scope.renderID).handsontable(options);
-                            $scope.ht = $("#" + $scope.renderID).handsontable('getInstance');
+                            $scope.ht = $("#" + $scope.renderID).handsontable(options);
                         }
                     });
                 }

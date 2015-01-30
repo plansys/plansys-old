@@ -13,6 +13,7 @@
     <div class="<?= $this->fieldColClass ?>" style="padding-top:5px;">
         <!-- data -->
         <data name="model_class" class="hide"><?= @get_class($model) ?></data>
+        <data name="name" class="hide"><?= $this->name; ?></data>
         <data name="selected" class="hide"><?= json_encode($this->value); ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list); ?></data>
         <!-- /data -->

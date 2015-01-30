@@ -180,15 +180,31 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    public static function jsonToArray(&$post, $data) {
-        if (isset($post[$data . 'Insert']) && is_string($post[$data . 'Insert']))
-            $post[$data . 'Insert'] = json_decode($post[$data . 'Insert'], true);
+    public static function jsonToArray(&$post, $key, $shouldReturn = false) {
+        $new = [];
 
-        if (isset($post[$data . 'Update']) && is_string($post[$data . 'Update']))
-            $post[$data . 'Update'] = json_decode($post[$data . 'Update'], true);
+        if (isset($post[$key . 'Insert']) && is_string($post[$key . 'Insert']))
+            $new[$key . 'Insert'] = json_decode($post[$key . 'Insert'], true);
 
-        if (isset($post[$data . 'Delete']) && is_string($post[$data . 'Delete']))
-            $post[$data . 'Delete'] = json_decode($post[$data . 'Delete'], true);
+        if (isset($post[$key . 'Update']) && is_string($post[$key . 'Update']))
+            $new[$key . 'Update'] = json_decode($post[$key . 'Update'], true);
+
+        if (isset($post[$key . 'Delete']) && is_string($post[$key . 'Delete']))
+            $new[$key . 'Delete'] = json_decode($post[$key . 'Delete'], true);
+
+        if ($shouldReturn) {
+            return $new;
+        } else {
+            if (isset($new[$key . 'Update'])) {
+                $post[$key . 'Update'] = $new[$key . 'Update'];
+            }
+            if (isset($new[$key . 'Delete'])) {
+                $post[$key . 'Delete'] = $new[$key . 'Delete'];
+            }
+            if (isset($new[$key . 'Insert'])) {
+                $post[$key . 'Insert'] = $new[$key . 'Insert'];
+            }
+        }
     }
 
     public static function toArray($models = []) {
@@ -219,7 +235,7 @@ class ActiveRecord extends CActiveRecord {
         $tableSchema = $this->tableSchema;
         $builder = $this->commandBuilder;
 
-        ## find
+## find
         $cdbCriteria = new CDbCriteria($criteria);
         $command = $builder->createFindCommand($tableSchema, $cdbCriteria);
 
@@ -486,14 +502,14 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function beforeSave() {
-        ## clean primary keys
+## clean primary keys
         if ($this->primaryKey == '') {
             $table = $this->getMetaData()->tableSchema;
             $primaryKey = $table->primaryKey;
             $this->$primaryKey = null;
         }
 
-        ## clean relation columns
+## clean relation columns
         foreach ($this->getMetaData()->relations as $k => $rel) {
             $single = get_class($rel) == 'CHasOneRelation' || get_class($rel) == 'CBelongsToRelation';
             if ($single && is_string($rel->foreignKey)) {
@@ -627,7 +643,7 @@ class ActiveRecord extends CActiveRecord {
         }
 
 
-        ## handling untuk file upload
+## handling untuk file upload
         if (method_exists($this, 'getFields')) {
             $fb = FormBuilder::load(get_class($this));
             $uploadFields = $fb->findAllField(['type' => 'UploadFile']);
@@ -769,7 +785,7 @@ class ActiveRecord extends CActiveRecord {
             ActiveRecord::batchInsert($model, $post[$name . 'Insert']);
         }
 
-        ## update
+## update
         if (isset($post[$name . 'Update']) && is_string($post[$name . 'Update'])) {
             $post[$name . 'Update'] = json_decode($post[$name . 'Update'], true);
         }
@@ -787,7 +803,7 @@ class ActiveRecord extends CActiveRecord {
             ActiveRecord::batchUpdate($model, $post[$name . 'Update']);
         }
 
-        ## delete
+## delete
         if (isset($post[$name . 'Delete']) && is_string($post[$name . 'Delete'])) {
             $post[$name . 'Delete'] = json_decode($post[$name . 'Delete'], true);
         }
