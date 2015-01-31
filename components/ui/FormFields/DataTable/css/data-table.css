@@ -226,7 +226,9 @@
 .handsontable.listbox {
     border:1px solid #999;
 }
-
+.handsontable .autocompleteEditor.handsontable {
+    background:#fafafa;
+}
 .read-only .htAutocompleteArrow {
     display:none;
 }
