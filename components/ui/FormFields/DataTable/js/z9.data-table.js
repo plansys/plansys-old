@@ -793,7 +793,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                                             if (!!$scope.datasource.data[row]) {
                                                                 $scope.datasource.data[row][c[1]] = c[3];
                                                             } else {
-                                                                console.log($scope.datasource.data);
                                                             }
                                                         } else {
                                                             if (!$scope.datasource.data[c[0]]) {

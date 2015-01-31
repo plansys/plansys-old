@@ -67,7 +67,7 @@ Handsontable.DataTableGroups = function (settings) {
         calculate: function () {
             var plugin = this;
             var $scope = this.scope;
-            
+
             function span(text, col) {
                 if (i == plugin.columns[0].name || column == plugin.columns[0].name) {
 
@@ -187,7 +187,7 @@ Handsontable.DataTableGroups = function (settings) {
             this.grouped = false;
         },
         group: function (instance) {
-            if (!instance || !instance.render)
+            if (!instance || !instance.render || this.grouped)
                 return;
 
             var cols = this.columns;
@@ -199,6 +199,7 @@ Handsontable.DataTableGroups = function (settings) {
                 groups: {},
                 rows: []
             };
+
             // generate group cols
             var groups = [];
             for (i in this.groupCols) {
@@ -213,7 +214,7 @@ Handsontable.DataTableGroups = function (settings) {
                 var cur = groupTree;
                 groups.forEach(function (g, gidx) {
                     var group = item[g];
-                    if (typeof group == "undefined") { 
+                    if (typeof group == "undefined") {
                         return;
                     }
                     if (!cur.groups[group]) {
@@ -264,7 +265,7 @@ Handsontable.DataTableGroups = function (settings) {
             });
 
             $scope.data.length = 0;
-            grouped.forEach(function(item,idx) {
+            grouped.forEach(function (item, idx) {
                 $scope.data.push(item);
             });
 
@@ -281,6 +282,7 @@ Handsontable.DataTableGroups = function (settings) {
 //            }
 //
 //            instance.mergeCells = new Handsontable.MergeCells(cellMerge);
+            this.grouped = true;
             instance.render();
         },
     }, settings);
