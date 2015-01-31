@@ -661,9 +661,23 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             }
                         }
 
+
+                        var minSpareRows = $scope.gridOptions.readOnly ? 0 : (!$scope.dtGroups ? 1 : 0);
+
+                        // link Mode
+                        if (typeof $scope.gridOptions.afterSelectionChange == "function") {
+                            minSpareRows = 0;
+                            $scope.gridOptions.readOnly = true;
+                            $el.addClass('link-mode');
+                        }
+                        
+                        if ($scope.gridOptions.readOnly) {
+                            $el.addClass('read-only');
+                        }
+
                         var options = $.extend({
                             data: $scope.data,
-                            minSpareRows: $scope.gridOptions.readOnly ? 0 : (!$scope.dtGroups ? 1 : 0),
+                            minSpareRows: minSpareRows,
                             columnSorting: !$scope.dtGroups,
                             contextMenu: true,
                             scope: $scope,
@@ -752,6 +766,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                     $scope.events.beforeOnCellMouseDown(event, coords, TD);
                                 }
 
+                                if (typeof $scope.gridOptions.afterSelectionChange == "function" && $(TD).is('td')) {
+                                    $scope.gridOptions.afterSelectionChange($scope.data[coords.row]);
+                                }
+
                                 $scope.mouseDown = true;
                             },
                             afterSelection: function (r, c, r2, c2) {
@@ -767,9 +785,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                     $scope.events.afterSelectionEnd(r, c, r2, c2);
                                 }
 
-                                if (typeof $scope.gridOptions.afterSelectionChange == "function") {
-                                    $scope.gridOptions.afterSelectionChange($scope.data[r]);
-                                }
+
                                 if (!$scope.mouseDown) {
                                     $scope.fixScroll();
                                 }
@@ -793,7 +809,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                                     changes.map(function (c) {
                                                         if ($scope.dtGroups) {
                                                             var row = $scope.data[c[0]]['__dt_row'];
-                                                            console.log($scope.datasource.data[row]);
 
                                                             if (!!$scope.datasource.data[row]) {
                                                                 $scope.datasource.data[row][c[1]] = c[3];
@@ -803,7 +818,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                                             if (!$scope.datasource.data[c[0]]) {
                                                                 $scope.datasource.data[c[0]] = {};
                                                             }
-                                                            console.log($scope.datasource.data[c[0]]);
                                                             $scope.datasource.data[c[0]][c[1]] = c[3];
                                                         }
                                                     });

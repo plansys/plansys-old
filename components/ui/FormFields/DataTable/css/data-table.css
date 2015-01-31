@@ -36,13 +36,20 @@
     background: #FAFAFA;
 }
 
-.dataTable.handsontable tr td:hover, .dataTable.handsontable tr td.current {
-    background: #E8E8FF;
+
+.dataTable.handsontable tr td.current {
+    background: #fff;
+}
+.dataTable.handsontable .htCore tbody td.area {
+    background: #dce4ff;
 }
 
+.dataTable.handsontable tr td:hover {
+    background: #e8f0ff;
+}
 .dataTable.handsontable tr td.currentRow,
 .dataTable.handsontable tr td.currentCol{
-    background: #e6edf8;
+    background: #eef4ff;
 }
 
 .dataTable.handsontable > .htContainer > .wtHolder > .wtHider > .wtSpreader > .htCore  .htDimmed {
@@ -57,9 +64,6 @@
     padding-bottom: 0px !important;
 }
 
-.dataTable.handsontable .htCore tbody td.area {
-    background: #EEF4FF;
-}
 
 .handsontable tr:first-child td, .handsontable tr:first-child th {
     border-top: 1px solid #ddd;
@@ -163,20 +167,30 @@
     border-top:1px solid #ddd;
 }
 
-.no-read-only.link-url .handsontable .wtBorder {
+.link-mode .handsontable .wtBorder {
     display: none !important;
 }
-.no-read-only.link-url .dataTable.handsontable tr td:hover, .no-read-only .dataTable.handsontable tr td.current {
+.link-mode .dataTable.handsontable tr td:hover, .no-read-only .dataTable.handsontable tr td.current {
     background: transparent;
 }
-.no-read-only.link-url .dataTable.handsontable tr td:hover, .no-read-only .dataTable.handsontable tr td.current {
+.link-mode .dataTable.handsontable tr td:hover, .no-read-only .dataTable.handsontable tr td.current {
     background: transparent;
 }
-.no-read-only.link-url .dataTable.handsontable .htCore tbody td.area {
+.link-mode .dataTable.handsontable .htCore tbody td.area {
     background: transparent;
 }
-.no-read-only.link-url .dataTable.handsontable tr:hover td {
-    background:#ffc;
+.link-mode .dataTable.handsontable tr td.currentRow,
+.link-mode .dataTable.handsontable tr td.currentCol{
+    background: transparent;
+}
+.link-mode .dataTable.handsontable tr:hover td {
+    background: #ececeb;
+    cursor:pointer;
+}
+
+.link-mode .dataTable.handsontable tr td.currentRow,
+.link-mode .dataTable.handsontable tr td.current{
+    background:#ffc !important;
     cursor:pointer;
 }
 
@@ -211,4 +225,8 @@
 }
 .handsontable.listbox {
     border:1px solid #999;
+}
+
+.read-only .htAutocompleteArrow {
+    display:none;
 }
