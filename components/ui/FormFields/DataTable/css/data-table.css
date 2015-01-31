@@ -37,6 +37,11 @@
 }
 
 .dataTable.handsontable tr td:hover, .dataTable.handsontable tr td.current {
+    background: #E8E8FF;
+}
+
+.dataTable.handsontable tr td.currentRow,
+.dataTable.handsontable tr td.currentCol{
     background: #EEF;
 }
 

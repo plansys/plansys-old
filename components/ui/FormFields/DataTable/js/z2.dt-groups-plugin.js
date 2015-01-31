@@ -187,7 +187,7 @@ Handsontable.DataTableGroups = function (settings) {
             this.grouped = false;
         },
         group: function (instance) {
-            if (!instance)
+            if (!instance || !instance.render)
                 return;
 
             var cols = this.columns;
@@ -206,7 +206,8 @@ Handsontable.DataTableGroups = function (settings) {
             }
 
             // group current data
-            var ridx = 0;
+            var group_idx = 0;
+            var row_idx = 0;
             $scope.data.forEach(function (item, idx) {
                 // generate groups
                 var cur = groupTree;
@@ -225,7 +226,7 @@ Handsontable.DataTableGroups = function (settings) {
                         var newrow = {};
                         newrow[$scope.columns[0].name] = lvstr + group;
                         newrow['__dt_flg'] = "G";
-                        newrow['__dt_idx'] = ridx++;
+                        newrow['__dt_idx'] = group_idx++;
                         newrow['__dt_lvl'] = gidx;
                         grouped.push(newrow);
 
@@ -256,10 +257,10 @@ Handsontable.DataTableGroups = function (settings) {
                 // add row
                 item['__dt_flg'] = 'Z';
                 item['__dt_idx'] = newidx;
-                item['__dt_row'] = idx;
+                item['__dt_row'] = row_idx++;
                 grouped.splice(newidx, 0, item);
                 cur.rows.push(item);
-                ridx++;
+                group_idx++;
             });
 
             $scope.data.length = 0;

@@ -107,7 +107,7 @@
 
         <div ng-if="data.length == 0 || loading"
              style="text-align:center;padding:20px;color:#ccc;font-size:25px;">
-            &mdash; {{ !loading ? 'Data Empty' : 'Loading Data'; }} &mdash;
+            &mdash; {{ !loading && data.length == 0 ? 'Data Empty' : 'Loading Data'; }} &mdash;
         </div>
 
         <div ng-class="{invisible: data.length == 0 || loading}"  

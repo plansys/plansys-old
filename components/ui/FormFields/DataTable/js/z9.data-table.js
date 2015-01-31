@@ -85,13 +85,15 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 $scope.getInstance = function () {
                     return $("#" + $scope.renderID).handsontable('getInstance');
                 }
-                $scope.loading = false;
+                $scope.loading = true;
                 $scope.$watch('datasource.loading', function (n, o) {
                     if (n) {
                         $scope.loading = n;
                     } else {
                         $timeout(function () {
-                            $scope.loading = n;
+                            if ($scope.loaded) {
+                                $scope.loading = n;
+                            }
                         }, 100);
                     }
                 });
@@ -323,7 +325,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     if (categories.length == 1) {
                         categories.length = 0;
                     }
-                    
+
                 }
                 // assemble each columns -- end
 
@@ -571,36 +573,37 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 // Watch datasource changes
                 $scope.dsChangeTimer = null;
                 $scope.dsChange = function () {
+                    $scope.loading = true;
                     function doChange() {
-                        $scope.loaded = true;
                         var executeGroup = ($scope.dtGroups);
                         if (executeGroup && $scope.dtGroups.grouped) {
                             $scope.dtGroups.ungroup($scope.ht);
                         }
 
                         prepareData(function () {
+                            $scope.ht = $scope.getInstance();
                             if (executeGroup) {
-                                $scope.dtGroups.group($scope.ht);
+                                $scope.dtGroups.group($scope.ht)
                                 $scope.edited = true;
                             }
 
-                            $("#" + $scope.renderID).handsontable('getInstance').loadData($scope.data);
+                            $scope.ht.loadData($scope.data);
                             $timeout(function () {
                                 $scope.edited = false;
+                                $scope.loaded = true;
+                                $scope.loading = false;
                             });
                         });
                     }
 
-                    if ($scope.datasource.data.length > 0) {
-                        if ($scope.isColAndDataEmpty) {
-                            $scope.init();
-                            $scope.isColAndDataEmpty = false;
-                            $timeout(function () {
-                                doChange();
-                            });
-                        } else {
+                    if ($scope.datasource.data.length > 0 && $scope.isColAndDataEmpty) {
+                        $scope.init();
+                        $scope.isColAndDataEmpty = false;
+                        $timeout(function () {
                             doChange();
-                        }
+                        });
+                    } else {
+                        doChange();
                     }
                 }
 

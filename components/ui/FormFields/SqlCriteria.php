@@ -101,13 +101,23 @@ class SqlCriteria extends FormField {
             unset($criteria['paging']);
         }
 
-        if (isset($criteria['page']) && isset($criteria['pageSize'])) {
+        if (!isset($criteria['limit'])) {
+            if (isset($criteria['page']) && isset($criteria['pageSize'])) {
 
-            $criteria['limit'] = $criteria['pageSize'];
-            $criteria['offset'] = ($criteria['page'] - 1) * $criteria['pageSize'];
+                $criteria['limit'] = $criteria['pageSize'];
+                $criteria['offset'] = ($criteria['page'] - 1) * $criteria['pageSize'];
 
-            unset($criteria['pageSize'], $criteria['page']);
+                unset($criteria['pageSize'], $criteria['page']);
+            }
+        } else {
+            if (isset($criteria['page']))
+                unset($criteria['page']);
+            if (isset($criteria['pageSize']))
+                unset($criteria['pageSize']);
+            if (isset($criteria['paging']))
+                unset($criteria['paging']);
         }
+
 
         return $criteria;
     }
