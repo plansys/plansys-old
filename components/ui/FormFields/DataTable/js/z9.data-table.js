@@ -102,10 +102,37 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 $scope.$container = $el.parents('.container-full');
                 $scope.contextMenu = function () {
                     if ($scope.dtGroups) {
-                        return [
-                            'undo',
-                            'redo'
-                        ]
+                        return {
+                            callback: function (key, options) {
+                                console.log(a, b);
+                            },
+                            items: {
+//                                row_above: {
+//                                    disabled: function () {
+//                                        return $scope.data[$scope.ht.getSelected()[0]]['__dt_flg'] != 'Z';
+//                                    },
+//                                    callback: function (key, selection) {
+//                                        
+//                                        angular.copy($scope.data[selection.start.row]);
+//                                        console.log(selection.start.row);
+//                                    },
+//                                },
+//                                row_below: {
+//                                    disabled: function () {
+//                                        return $scope.data[$scope.ht.getSelected()[0]]['__dt_flg'] != 'Z';
+//                                    }
+//                                },
+                                hsep2: '---------',
+                                remove_row: {
+                                    disabled: function () {
+                                        return $scope.data[$scope.ht.getSelected()[0]]['__dt_flg'] != 'Z';
+                                    }
+                                },
+                                hsep1: '---------',
+                                undo: {},
+                                redo: {}
+                            }
+                        };
                     } else {
                         return [
                             'row_above',
@@ -143,7 +170,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         return;
                     $scope.colGenerated = true;
 
-                    console.log("GEN COL", $scope.columns);
                     for (i in $scope.dataSource1.data[0]) {
                         if (i == 'id')
                             continue;
@@ -237,7 +263,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 colDef.renderer = "text";
                                 if (typeof c.stringAlias == "object" && !$.isArray(c.stringAlias)) {
                                     colDef.renderer = "stringalias";
-                                    console.log(c.stringAlias);
                                 }
                                 switch (c.inputMask) {
                                     case "number":
@@ -586,7 +611,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         prepareData(function () {
                             $scope.ht = $scope.getInstance();
                             if (executeGroup) {
-                                $scope.dtGroups.group($scope.ht)
+                                $scope.dtGroups.group($scope.ht);
                                 $scope.edited = true;
                             }
                             if ($scope.ht) {
@@ -670,7 +695,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             $scope.gridOptions.readOnly = true;
                             $el.addClass('link-mode');
                         }
-                        
+
                         if ($scope.gridOptions.readOnly) {
                             $el.addClass('read-only');
                         }
@@ -792,7 +817,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 $scope.mouseDown = false;
                             },
                             afterRemoveRow: function (index, amount) {
+                                $scope.edited = true;
                                 $scope.datasource.data.splice(index, amount);
+
                             },
                             afterChange: function (changes, source) {
 
