@@ -790,6 +790,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                                     changes.map(function (c) {
                                                         if ($scope.dtGroups) {
                                                             var row = $scope.data[c[0]]['__dt_row'];
+                                                            console.log($scope.datasource.data[row]);
+                                                            
                                                             if (!!$scope.datasource.data[row]) {
                                                                 $scope.datasource.data[row][c[1]] = c[3];
                                                             } else {
@@ -798,6 +800,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                                             if (!$scope.datasource.data[c[0]]) {
                                                                 $scope.datasource.data[c[0]] = {};
                                                             }
+                                                            console.log($scope.datasource.data[c[0]]);
                                                             $scope.datasource.data[c[0]][c[1]] = c[3];
                                                         }
                                                     });

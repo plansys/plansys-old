@@ -42,7 +42,7 @@
 
 .dataTable.handsontable tr td.currentRow,
 .dataTable.handsontable tr td.currentCol{
-    background: #EEF;
+    background: #e6edf8;
 }
 
 .dataTable.handsontable > .htContainer > .wtHolder > .wtHider > .wtSpreader > .htCore  .htDimmed {
@@ -204,4 +204,11 @@
 .groups.htDimmed:last-child {
     white-space:pre;
     border-right:1px solid #ddd;
+}
+
+.handsontable.listbox .ht_master table {
+    border:0px;
+}
+.handsontable.listbox {
+    border:1px solid #999;
 }

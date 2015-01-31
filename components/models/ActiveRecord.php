@@ -786,6 +786,7 @@ class ActiveRecord extends CActiveRecord {
         }
 
 ## update
+        
         if (isset($post[$name . 'Update']) && is_string($post[$name . 'Update'])) {
             $post[$name . 'Update'] = json_decode($post[$name . 'Update'], true);
         }

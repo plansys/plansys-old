@@ -2,5 +2,11 @@
        id='<?= $this->renderID ?>'
        name='<?= $this->renderName ?>'
        value="<?= $this->value ?>"
-       <?= $this->expandAttributes($this->options) ?>
+       <?php
+       if (!isset($this->options['ng-value'])) {
+           $this->options['ng-value'] = "model." . $this->name;
+       }
+
+       echo $this->expandAttributes($this->options)
+       ?>
        />
