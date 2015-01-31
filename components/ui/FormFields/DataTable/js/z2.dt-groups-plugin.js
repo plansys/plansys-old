@@ -226,6 +226,7 @@ Handsontable.DataTableGroups = function (settings) {
                         lvstr += '◢  ';
                         var newrow = {};
                         newrow[$scope.columns[0].name] = lvstr + group;
+                        newrow[$scope.columns[0].name + "_label"] = lvstr + group;
                         newrow['__dt_flg'] = "G";
                         newrow['__dt_idx'] = group_idx++;
                         newrow['__dt_lvl'] = gidx;

@@ -723,6 +723,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                         case 'E':
                                             cellProperties.className = 'empty';
                                             cellProperties.readOnly = true;
+                                            cellProperties.type = "text";
                                             break;
                                         case 'G':
                                             cellProperties.className = 'groups';
