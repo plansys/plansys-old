@@ -189,7 +189,7 @@ Handsontable.DataTableGroups = function (settings) {
         group: function (instance) {
             if (!instance || !instance.render || this.grouped)
                 return;
-
+            
             var cols = this.columns;
             var $scope = this.scope;
             var $timeout = this.scope.$timeout;

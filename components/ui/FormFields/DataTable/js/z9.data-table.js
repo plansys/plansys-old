@@ -100,6 +100,25 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 });
 
                 $scope.$container = $el.parents('.container-full');
+                $scope.contextMenuShouldDisable = function () {
+                    if (!$scope.ht) {
+                        $scope.ht = $scope.getInstance();
+                    }
+                    if ($scope.ht) {
+                        var sel = $scope.ht.getSelected();
+                        var start = Math.min(sel[0], sel[2]);
+                        var end = Math.max(sel[0], sel[2]);
+                        var disabled = false;
+                        for (var i = end; i >= start; i--) {
+                            var d = $scope.data[i];
+                            if (d['__dt_flg'] != "Z") {
+                                disabled = true;
+                            }
+                        }
+                        return disabled;
+                    }
+                    return true;
+                }
                 $scope.contextMenu = function () {
                     if ($scope.dtGroups) {
                         return {
@@ -117,16 +136,29 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
 //                                        console.log(selection.start.row);
 //                                    },
 //                                },
-//                                row_below: {
-//                                    disabled: function () {
-//                                        return $scope.data[$scope.ht.getSelected()[0]]['__dt_flg'] != 'Z';
-//                                    }
-//                                },
+                                row_below: {
+                                    callback: function (key, selection) {
+                                        
+                                    },
+                                    disabled: $scope.contextMenuShouldDisable
+                                },
                                 hsep2: '---------',
                                 remove_row: {
-                                    disabled: function () {
-                                        return $scope.data[$scope.ht.getSelected()[0]]['__dt_flg'] != 'Z';
-                                    }
+                                    callback: function (key, selection) {
+                                        var start = Math.min(selection.start.row, selection.end.row);
+                                        var end = Math.max(selection.start.row, selection.end.row);
+
+                                        for (var i = end; i >= start; i--) {
+                                            var d = $scope.data[i];
+                                            if (d['__dt_flg'] == "Z") {
+                                                $scope.datasource.data.splice(d['__dt_row'], 1);
+                                                $scope.data.splice(i, 1);
+                                            }
+                                        }
+                                        $scope.ht.deselectCell();
+                                        $scope.ht.render();
+                                    },
+                                    disabled: $scope.contextMenuShouldDisable
                                 },
                                 hsep1: '---------',
                                 undo: {},
@@ -601,7 +633,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 // Watch datasource changes
                 $scope.dsChangeTimer = null;
                 $scope.dsChange = function () {
-                    $scope.loading = true;
                     function doChange() {
                         var executeGroup = ($scope.dtGroups);
                         if (executeGroup && $scope.dtGroups.grouped) {
@@ -818,9 +849,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 $scope.mouseDown = false;
                             },
                             afterRemoveRow: function (index, amount) {
-                                $scope.edited = true;
-                                $scope.datasource.data.splice(index, amount);
-
+                                if (!$scope.dtGroups) {
+                                    $scope.edited = true;
+                                    $scope.datasource.data.splice(index, amount);
+                                }
                             },
                             afterChange: function (changes, source) {
 
