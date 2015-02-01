@@ -40,161 +40,34 @@ Handsontable.DataTableGroups = function (settings) {
 
             return this;
         },
-        getTotalRow: function (grp) {
-            var $scope = this.scope;
-            if (grp.length > 0) {
-                return $scope.data[this.getTreeData(grp).total];
-            } else {
-                return $scope.data[$scope.data.length - 1];
-            }
-        },
-        getTreeData: function (grp) {
-            var cur = this.groupTree;
-            for (i in grp) {
-                if (cur[grp[i]]) {
-                    cur = cur[grp[i]];
-                } else {
-                    return false;
-                }
-            }
-
-            if (cur.items) {
-                return cur;
-            } else {
-                return false;
-            }
-        },
-        calculate: function () {
-            var plugin = this;
-            var $scope = this.scope;
-
-            function span(text, col) {
-                if (i == plugin.columns[0].name || column == plugin.columns[0].name) {
-
-                    var lvstr = " ";
-                    for (var ll = 1; ll <= calc['__dt_lvl']; ll++) {
-                        lvstr += " ";
-                    }
-                    lvstr += '<i class="gr fa fa-angle-right fa-lg "></i> &nbsp;&nbsp;';
-                    return lvstr + text;
-                }
-
-                return text;
-            }
-
-            function sum(col) {
-                if (isNaN(parseFloat(row[col]))) {
-                    return calc[col];
-                }
-
-                calc[col] += parseFloat(row[col]);
-                return calc[col] * 1;
-            }
-
-
-            for (var i in $scope.data) {
-                var row = $scope.data[i];
-                if (row['__dt_flg'] != 'T')
-                    continue;
-
-                for (var column in this.totalGroups) {
-                    row[column] = '';
-                }
-            }
-
-            //calculate each row
-            var idx = 0;
-            for (var i in $scope.data) {
-                var row = $scope.data[i];
-                var grp = angular.copy(row['__dt_grp']);
-                if (row['__dt_flg'] != 'Z')
-                    continue;
-
-
-                //calculate each level
-                for (var lv = row['__dt_lvl']; lv >= -1; lv--) {
-                    var calc = this.getTotalRow(grp);
-
-                    //calculate each column
-                    for (var column in this.totalGroups) {
-                        var formula = this.totalGroups[column];
-                        if (formula) {
-                            calc[column] = eval(formula);
-                        }
-                    }
-
-                    grp.pop();
-                }
-                idx++;
-            }
-        },
-        prepareTotalRow: function (row) {
-            var $scope = this.scope;
-            if (!!this.totalGroups) {
-                for (i in this.columns) {
-                    row[this.columns[i].name] = '';
-                }
-            }
-        },
-        reCalcAll: function () {
-            var $scope = this.scope;
-            for (i in $scope.data) {
-                var row = $scope.data[i];
-                if (row['__dt_flg'] == 'T') {
-                    this.calcTotalRow.call(this, row);
-                }
-            }
-        },
-        reCalcChanges: function (changes, source, instance) {
-            if (!this.totalGroups) {
-                return false;
-            }
-
-            var $scope = this.scope;
-            var $timeout = this.scope.$timeout;
-            switch (source) {
-                case "edit":
-                    var totalRow = null;
-                    for (var i = changes[0][0]; i < $scope.data.length; i++) {
-                        if ($scope.data[i]['__dt_flg'] == "T") {
-                            totalRow = $scope.data[i];
-                            this.calcTotalRow.call(this, totalRow, changes[0][1]);
-                            break;
-                        }
-                    }
-
-                    $timeout(function () {
-                        instance.render();
-                    });
-
-                    break;
-            }
-        },
-        ungroup: function (instance) {
+        ungroup: function (instance, shouldRender) {
             if (!instance || !this.grouped)
                 return;
 
             var $scope = this.scope;
-            instance.mergeCells = new Handsontable.MergeCells([]);
-            instance.render();
-
-            $scope.data.forEach(function (item, idx) {
+            var len = $scope.data.length;
+            for (var i = len - 1; i >= 0; i--) {
+                var item = $scope.data[i];
                 if (item['__dt_flg'] != 'Z') {
-                    $scope.data.splice(idx, i);
+                    $scope.data.splice(i, 1);
+                } else {
+                    delete item['__dt_flg'];
+                    delete item['__dt_row'];
+                    delete item['__dt_idx'];
                 }
-            });
+            }
 
+            if (typeof shouldRender == "undefined" || shouldRender) {
+                instance.render();
+            }
             this.grouped = false;
         },
         group: function (instance) {
             if (!instance || !instance.render || this.grouped)
                 return;
-            
-            var cols = this.columns;
+
             var $scope = this.scope;
-            var $timeout = this.scope.$timeout;
             var grouped = [];
-            var cellMerge = [];
             var groupTree = {
                 groups: {},
                 rows: []
@@ -270,21 +143,116 @@ Handsontable.DataTableGroups = function (settings) {
                 $scope.data.push(item);
             });
 
-            // do cell Merge
-//            for (var i = $scope.data.length - 1; i >= 0; i--) {
-//                if (['G', 'E'].indexOf($scope.data[i]['__dt_flg']) >= 0) {
-//                    cellMerge.unshift({
-//                        row: i,
-//                        col: 0,
-//                        rowspan: 1,
-//                        colspan: $scope.columns.length
-//                    });
-//                }
-//            }
-//
-//            instance.mergeCells = new Handsontable.MergeCells(cellMerge);
             this.grouped = true;
             instance.render();
         },
+        addRow: function () {
+            var gp = this;
+            var $scope = this.scope;
+            var item = {
+                '__dt_flg': 'Z',
+                '__dt_idx': $scope.data.length,
+                '__dt_row': $scope.datasource.data.length
+            };
+            gp.groupCols.forEach(function (col) {
+                item[col] = "NEW";
+            });
+            $scope.datasource.data.splice($scope.datasource.data.length, 0, item);
+            $scope.data.splice($scope.data.length, 0, item);
+        },
+        contextMenu: function () {
+            if (this.grouped)
+                return;
+
+            var gp = this;
+            var $scope = this.scope;
+            var $timeout = $scope.$timeout;
+
+            function contextMenuShouldDisable() {
+                if (!$scope.ht) {
+                    $scope.ht = $scope.getInstance();
+                }
+                if ($scope.ht) {
+                    var sel = $scope.ht.getSelected();
+                    var start = Math.min(sel[0], sel[2]);
+                    var end = Math.max(sel[0], sel[2]);
+                    var disabled = false;
+                    for (var i = end; i >= start; i--) {
+                        var d = $scope.data[i];
+                        if (d['__dt_flg'] != "Z") {
+                            disabled = true;
+                        }
+                    }
+                    return disabled;
+                }
+                return true;
+            }
+
+            return {
+                items: {
+                    insert: {
+                        name: 'Add new row',
+                        callback: function (key, selection) {
+                            gp.addRow();
+                            $scope.ht.render();
+                            $scope.ht.selectCell(
+                                    $scope.data.length - 1,
+                                    selection.start.col,
+                                    $scope.data.length - 1,
+                                    selection.end.col);
+                            $scope.fixScroll();
+                        },
+                        disabled: contextMenuShouldDisable
+                    },
+                    duplicate: {
+                        name: 'Duplicate row',
+                        callback: function (key, selection) {
+                            var start = Math.min(selection.start.row, selection.end.row);
+                            var end = Math.max(selection.start.row, selection.end.row);
+
+                            for (var i = end; i >= start; i--) {
+                                var d = angular.copy($scope.data[i]);
+                                if (d['__dt_flg'] == "Z") {
+                                    if (typeof d['id'] != "undefined") {
+                                        delete d['id'];
+                                    }
+                                    $scope.datasource.data.splice(d['__dt_row'], 0, d);
+                                    $scope.data.splice(i, 0, d);
+                                }
+                            }
+
+                            $scope.ht.selectCell(
+                                    selection.start.row + 1,
+                                    selection.start.col,
+                                    selection.start.row + 1,
+                                    selection.end.col, true);
+                            $scope.ht.render();
+                        },
+                        disabled: contextMenuShouldDisable
+                    },
+                    hsep2: '---------',
+                    remove_row: {
+                        callback: function (key, selection) {
+                            var start = Math.min(selection.start.row, selection.end.row);
+                            var end = Math.max(selection.start.row, selection.end.row);
+
+                            for (var i = end; i >= start; i--) {
+                                var d = $scope.data[i];
+                                if (d['__dt_flg'] == "Z") {
+                                    $scope.datasource.data.splice(d['__dt_row'], 1);
+                                    $scope.data.splice(i, 1);
+                                }
+                            }
+                            $scope.ht.deselectCell();
+                            $scope.ht.render();
+                        },
+                        disabled: contextMenuShouldDisable
+                    },
+                    hsep1: '---------',
+                    undo: {},
+                    redo: {}
+                }
+            }
+        }
     }, settings);
 };

@@ -100,71 +100,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 });
 
                 $scope.$container = $el.parents('.container-full');
-                $scope.contextMenuShouldDisable = function () {
-                    if (!$scope.ht) {
-                        $scope.ht = $scope.getInstance();
-                    }
-                    if ($scope.ht) {
-                        var sel = $scope.ht.getSelected();
-                        var start = Math.min(sel[0], sel[2]);
-                        var end = Math.max(sel[0], sel[2]);
-                        var disabled = false;
-                        for (var i = end; i >= start; i--) {
-                            var d = $scope.data[i];
-                            if (d['__dt_flg'] != "Z") {
-                                disabled = true;
-                            }
-                        }
-                        return disabled;
-                    }
-                    return true;
-                }
                 $scope.contextMenu = function () {
                     if ($scope.dtGroups) {
-                        return {
-                            callback: function (key, options) {
-                                console.log(a, b);
-                            },
-                            items: {
-//                                row_above: {
-//                                    disabled: function () {
-//                                        return $scope.data[$scope.ht.getSelected()[0]]['__dt_flg'] != 'Z';
-//                                    },
-//                                    callback: function (key, selection) {
-//                                        
-//                                        angular.copy($scope.data[selection.start.row]);
-//                                        console.log(selection.start.row);
-//                                    },
-//                                },
-                                row_below: {
-                                    callback: function (key, selection) {
-                                        
-                                    },
-                                    disabled: $scope.contextMenuShouldDisable
-                                },
-                                hsep2: '---------',
-                                remove_row: {
-                                    callback: function (key, selection) {
-                                        var start = Math.min(selection.start.row, selection.end.row);
-                                        var end = Math.max(selection.start.row, selection.end.row);
-
-                                        for (var i = end; i >= start; i--) {
-                                            var d = $scope.data[i];
-                                            if (d['__dt_flg'] == "Z") {
-                                                $scope.datasource.data.splice(d['__dt_row'], 1);
-                                                $scope.data.splice(i, 1);
-                                            }
-                                        }
-                                        $scope.ht.deselectCell();
-                                        $scope.ht.render();
-                                    },
-                                    disabled: $scope.contextMenuShouldDisable
-                                },
-                                hsep1: '---------',
-                                undo: {},
-                                redo: {}
-                            }
-                        };
+                        var a = $scope.dtGroups.contextMenu();
+                        return a;
                     } else {
                         return [
                             'row_above',
@@ -636,7 +575,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     function doChange() {
                         var executeGroup = ($scope.dtGroups);
                         if (executeGroup && $scope.dtGroups.grouped) {
-                            $scope.dtGroups.ungroup($scope.ht);
+                            $scope.dtGroups.ungroup($scope.ht, false);
                         }
 
                         prepareData(function () {
@@ -682,6 +621,15 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         $scope.isColAndDataEmpty = false;
                     }
                 });
+
+                $scope.addRow = function () {
+                    if (!$scope.dtGroups) {
+                        $scope.data.push({});
+                        $scope.datasource.data.push({});
+                    } else {
+                        $scope.dtGroups.addRow();
+                    }
+                }
 
                 // Initialize data-table
                 $scope.init = function () {
@@ -748,33 +696,41 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             manualColumnResize: true,
                             cells: function (row, col, prop) {
                                 var cellProperties = {};
-                                if ($scope.dtGroups && $scope.data[row] && $scope.data[row]['__dt_flg']) {
+                                if ($scope.dtGroups) {
+                                    function setDefault() {
+                                        cellProperties.className = '';
+                                        cellProperties.readOnly = !!$scope.columns[col].options.enableCellEdit;
+                                    }
 
-                                    switch ($scope.data[row]['__dt_flg']) {
-                                        case 'E':
-                                            cellProperties.className = 'empty';
-                                            cellProperties.readOnly = true;
-                                            cellProperties.type = "text";
-                                            break;
-                                        case 'G':
-                                            cellProperties.className = 'groups';
-                                            cellProperties.readOnly = true;
-                                            cellProperties.renderer = 'groups';
-                                            break;
-                                        case 'T':
-                                            var c = $scope.dtGroups.totalGroups[$scope.dtGroups.columns[col].name];
-                                            if (c.trim().substr(0, 4) != 'span') {
-                                                cellProperties.type = 'numeric';
-                                                cellProperties.format = '0,0.00';
-                                            } else {
-                                                cellProperties.renderer = 'html';
-                                            }
-                                            cellProperties.className = 'total';
-                                            cellProperties.readOnly = true;
-                                            break;
-                                        default:
-                                            cellProperties.className = '';
-                                            break;
+                                    if ($scope.data[row] && $scope.data[row]['__dt_flg']) {
+                                        switch ($scope.data[row]['__dt_flg']) {
+                                            case 'E':
+                                                cellProperties.className = 'empty';
+                                                cellProperties.readOnly = true;
+                                                cellProperties.type = "text";
+                                                break;
+                                            case 'G':
+                                                cellProperties.className = 'groups';
+                                                cellProperties.readOnly = true;
+                                                cellProperties.renderer = 'groups';
+                                                break;
+                                            case 'T':
+                                                var c = $scope.dtGroups.totalGroups[$scope.dtGroups.columns[col].name];
+                                                if (c.trim().substr(0, 4) != 'span') {
+                                                    cellProperties.type = 'numeric';
+                                                    cellProperties.format = '0,0.00';
+                                                } else {
+                                                    cellProperties.renderer = 'html';
+                                                }
+                                                cellProperties.className = 'total';
+                                                cellProperties.readOnly = true;
+                                                break;
+                                            default:
+                                                setDefault();
+                                                break;
+                                        }
+                                    } else {
+                                        setDefault();
                                     }
                                 }
 

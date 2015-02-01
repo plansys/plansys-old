@@ -107,7 +107,15 @@
 
         <div ng-if="data.length == 0 || loading"
              style="text-align:center;padding:20px;color:#ccc;font-size:25px;">
-            &mdash; {{ !loading && data.length == 0 ? 'Data Empty' : 'Loading Data'; }} &mdash;
+            <span ng-if="!(!loading && data.length == 0)">&mdash; Loading Data &mdash;</span>
+            <span ng-if="!loading && data.length == 0">
+                &mdash; Data Empty &mdash;
+                <br/>
+                <div ng-if="!gridOptions.readOnly" style="margin-top:10px;" ng-click="addRow()" class="btn btn-default btn-xs" >
+                    <i class="fa fa-plus"></i> Add new row
+                </div>
+            </span>
+
         </div>
 
         <div ng-class="{invisible: data.length == 0 || loading}"  
