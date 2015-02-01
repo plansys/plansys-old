@@ -620,8 +620,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 // Prepare to initialize data-table
                 $scope.isColAndDataEmpty = true;
                 $timeout(function () {
+                    $scope.init();
+
                     if ($scope.datasource.data.length > 0 || $scope.columns.length > 0) {
-                        $scope.init();
                         $scope.isColAndDataEmpty = false;
                     }
                 });
@@ -637,13 +638,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                 // Initialize data-table
                 $scope.init = function () {
-
                     if ($scope.columns.length == 0 && $scope.datasource.data.length > 0) {
-                        // $scope.generateCols();
-                        $scope.assembleCols();
-                    } else {
-                        $scope.assembleCols();
+                        $scope.generateCols();
                     }
+                    $scope.assembleCols();
 
                     $timeout(function () {
                         evalArray($scope.gridOptions);
@@ -761,7 +759,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                         setDefault();
                                     }
                                 }
-                                
+
                                 if (typeof $scope.updateCell == "function") {
                                     $scope.updateCell(row, col, prop, cellProperties);
                                 }
