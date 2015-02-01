@@ -118,7 +118,7 @@ class User extends ActiveRecord {
     public $roles = [''];
 
     public function getRoles($originalSorting = false) {
-                
+
         $uid = $this->id;
         if (!$uid) {
             return [$this->role];
@@ -132,6 +132,9 @@ class User extends ActiveRecord {
                 . " where p.user_id = {$uid} order by is_default_role asc";
         $roles = Yii::app()->db->createCommand($sql)->queryAll();
 
+        if (empty($roles)) {
+            return false;
+        }
         $idx = 0;
         foreach ($roles as $k => $role) {
             ## find current role index

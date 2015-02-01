@@ -111,7 +111,7 @@ class DataTable extends FormField {
 
     public function includeCSS() {
         return [
-            'css/jquery.handsontable.full.min.css',
+            'css/handsontable.full.min.css',
             'css/data-table.css',
             'css/jquery-ui-datepicker.min.css'];
     }
