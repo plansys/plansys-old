@@ -455,7 +455,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
 
                 $scope.isRelation = function (prop) {
-                    return $scope.relationColumns.indexOf(prop + $scope.relSuffix);
+                    return $scope.relationColumns.indexOf(prop.replace($scope.relSuffix, '') + $scope.relSuffix) >= 0;
                 }
                 // Load Relation -- start
                 $scope.loadRelation = function (callback, countDgr) {
@@ -702,6 +702,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 var cellProperties = {};
                                 cellProperties.$scope = $scope;
 
+
                                 if ($scope.dtGroups) {
                                     function setDefault() {
                                         cellProperties.className = '';
@@ -760,7 +761,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                         setDefault();
                                     }
                                 }
-
+                                
                                 if (typeof $scope.updateCell == "function") {
                                     $scope.updateCell(row, col, prop, cellProperties);
                                 }
@@ -836,10 +837,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 }
                             },
                             afterValidate: function (valid, value, row, prop, source) {
-                                if ($scope.isRelation(prop) && !valid) {
-
-                                }
-
                                 if (typeof $scope.events.afterValidate == "function") {
                                     $scope.events.afterValidate(valid, value, row, prop, source);
                                 }
@@ -856,8 +853,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                             case "autofill":
                                                 $timeout(function () {
                                                     changes.map(function (c) {
-                                                        console.log(c, $scope.data[c[0]]);
-
                                                         if ($scope.dtGroups) {
                                                             Handsontable.editors.RelationEditor.prototype.handleChange($scope, c);
                                                         } else {

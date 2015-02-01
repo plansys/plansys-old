@@ -243,3 +243,7 @@
 .listbox.current {
     background: #e8f0ff !important;
 }
+
+.cell-loading {
+    background:#FFC !important;
+}

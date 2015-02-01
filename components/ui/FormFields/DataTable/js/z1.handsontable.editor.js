@@ -4,7 +4,7 @@
     /*************** RELATION TYPE *******************/
     function relationRenderer(instance, td, row, col, prop, value, cellProperties) {
         Handsontable.AutocompleteCell.renderer.apply(this, arguments);
-
+        
         return td;
     }
     Handsontable.renderers.registerRenderer('relation', relationRenderer);
@@ -28,6 +28,18 @@
             var s = $scope.ht.getSelected();
             var row = s[0];
             var col = s[1];
+
+//            var start = [Math.min(s[0], s[2]), Math.min(s[1], s[3])];
+//            var end = [Math.max(s[0], s[2]), Math.max(s[1], s[3])];
+//
+//            for (var x = start[0]; x <= end[0]; x++) {
+//                for (var y = start[1]; y <= end[1]; y++) {
+//                    var cm = $scope.ht.getCellMeta(x, y);
+//                    cm.relLoading = true;
+//                }
+//            }
+//            $scope.ht.render();
+
             var opt = $scope.columns[col];
             $scope.$http.post(Yii.app.createUrl('formfield/RelationField.dgrSearch'), {
                 's': value,
@@ -52,6 +64,13 @@
                     $scope.data[originalRow][name] = '';
                     callback(false);
                 }
+//                for (var x = start[0]; x <= end[0]; x++) {
+//                    for (var y = start[1]; y <= end[1]; y++) {
+//                        var cm = $scope.ht.getCellMeta(x, y);
+//                        cm.relLoading = false;
+//                    }
+//                }
+//                $scope.ht.render();
             });
         } else {
             $scope.data[this.row][this.name] = relList[value];
