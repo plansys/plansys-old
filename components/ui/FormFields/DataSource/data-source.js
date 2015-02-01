@@ -98,6 +98,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
 
                 $scope.afterQueryInternal = {};
                 $scope.beforeQueryInternal = {};
+                $scope.beforeQuery = null;
                 $scope.afterQuery = null;
                 $scope.shouldCount = true;
                 $scope.lastQueryFrom = "";
@@ -136,6 +137,10 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         $scope.httpRequest.resolve();
                     }
                     $scope.httpRequest = $q.defer();
+
+                    if ($scope.beforeQuery != null) {
+                        $scope.beforeQuery($scope);
+                    }
 
                     $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
                         model_id: model_id,
