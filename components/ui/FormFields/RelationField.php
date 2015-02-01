@@ -570,9 +570,9 @@ class RelationField extends FormField {
 
                         foreach ($fieldArray[0] as $k => $f) {
                             if (@$x[$fieldArray[1][$k]]) {
-                                $hasil = str_replace($f, '{IFNULL(' . $x[$fieldArray[1][$k]] . ', "")}', $hasil);
+                                $hasil = str_replace($f, '{LOWER(IFNULL(' . $x[$fieldArray[1][$k]] . ', ""))}', $hasil);
                             } else {
-                                $hasil = str_replace($f, '{IFNULL(' . $fieldArray[1][$k] . ', "")}', $hasil);
+                                $hasil = str_replace($f, '{LOWER(IFNULL(' . $fieldArray[1][$k] . ', ""))}', $hasil);
                             }
                         }
 
@@ -591,9 +591,9 @@ class RelationField extends FormField {
                             $hasil = $hasil . "'";
                         }
 
-                        $sqlcond = "CONCAT(" . $hasil . ")" . ' like ' . "[{$block}]";
+                        $sqlcond = "CONCAT(" . $hasil . ")" . ' like ' . "LOWER([{$block}])";
                     } else {
-                        $sqlcond = $this->labelField . ' like ' . "[{$block}]";
+                        $sqlcond = "LOWER(" . $this->labelField . ') like ' . "LOWER([{$block}])";
                     }
 
                     $search = preg_replace('!\s+!', '%', trim($search));
@@ -693,7 +693,7 @@ class RelationField extends FormField {
             unset($criteria['pageSize']);
             unset($criteria['page']);
         }
-        
+
         if ($nolimit) {
             if (isset($criteria['limit'])) {
                 unset($criteria['limit']);
@@ -703,7 +703,7 @@ class RelationField extends FormField {
             }
             $criteria['nolimit'] = true;
         }
-        
+
         return $criteria;
     }
 

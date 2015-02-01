@@ -1,11 +1,12 @@
 Handsontable.DataTableGroups = function (settings) {
     return $.extend({
         groupCols: [],
+        groupColOpts: {},
         columns: [],
         colHeaders: [],
         scope: null,
         groupArgs: [],
-        groupTree: {},
+        groupTreeInternal: {},
         totals: [],
         grouped: false,
         totalGroups: null,
@@ -16,6 +17,8 @@ Handsontable.DataTableGroups = function (settings) {
             for (var i = this.columns.length - 1; i >= 0; i--) {
                 if (gc.indexOf(this.columns[i].name) >= 0) {
                     var c = this.columns.splice(i, 1);
+
+                    this.groupColOpts[c[0].data] = c[0];
 
                     // remove col header too (if exist)
                     if (c[0].label == this.colHeaders[i]) {
@@ -68,7 +71,7 @@ Handsontable.DataTableGroups = function (settings) {
 
             var $scope = this.scope;
             var grouped = [];
-            var groupTree = {
+            var groupTreeInternal = {
                 groups: {},
                 rows: []
             };
@@ -84,22 +87,17 @@ Handsontable.DataTableGroups = function (settings) {
             var row_idx = 0;
             $scope.data.forEach(function (item, idx) {
                 // generate groups
-                var cur = groupTree;
+                var cur = groupTreeInternal;
                 groups.forEach(function (g, gidx) {
                     var group = item[g];
                     if (typeof group == "undefined") {
                         return;
                     }
+
+                    // add new group
                     if (!cur.groups[group]) {
-                        // add new group
-                        var lvstr = "";
-                        for (var ll = 0; ll < gidx; ll++) {
-                            lvstr += "    ";
-                        }
-                        lvstr += '◢  ';
                         var newrow = {};
-                        newrow[$scope.columns[0].name] = lvstr + group;
-                        newrow[$scope.columns[0].name + "_label"] = lvstr + group;
+                        newrow[$scope.columns[0].name] = group;
                         newrow['__dt_flg'] = "G";
                         newrow['__dt_idx'] = group_idx++;
                         newrow['__dt_lvl'] = gidx;
@@ -138,6 +136,8 @@ Handsontable.DataTableGroups = function (settings) {
                 group_idx++;
             });
 
+            this.groupTree = groupTreeInternal;
+
             $scope.data.length = 0;
             grouped.forEach(function (item, idx) {
                 $scope.data.push(item);
@@ -145,6 +145,46 @@ Handsontable.DataTableGroups = function (settings) {
 
             this.grouped = true;
             instance.render();
+        },
+        flattenGroup: function (group) {
+            if (!group)
+                return[];
+
+            var rows = group.rows;
+            for (var i in group.groups) {
+                var r = this.flattenGroup(group.groups[i]);
+                rows = rows.concat(r);
+            }
+
+            return rows;
+        },
+        findRows: function (row) {
+            return this.flattenGroup(this.findGroup(row));
+        },
+        findGroup: function (row, cur) {
+            if (typeof cur == "undefined") {
+                var cur = this.groupTree;
+            }
+            var found = false;
+
+            if (cur.group && cur.group['__dt_idx'] == row['__dt_idx']) {
+                return cur;
+            }
+
+            for (var r in cur.rows) {
+                if (cur.rows[r]['__dt_idx'] == row['__dt_idx']) {
+                    return cur;
+                }
+            }
+
+            for (var i in cur.groups) {
+                var found = this.findGroup(row, cur.groups[i]);
+                if (found !== false) {
+                    return found;
+                }
+            }
+
+            return found;
         },
         addRow: function () {
             var gp = this;
@@ -188,6 +228,21 @@ Handsontable.DataTableGroups = function (settings) {
                 return true;
             }
 
+            function disableInsertMenu() {
+                var enableInsert = 0;
+                for (var i in gp.groupCols) {
+                    if (gp.groupColOpts[gp.groupCols[i]]) {
+                        if (!!gp.groupColOpts[gp.groupCols[i]].options
+                                && gp.groupColOpts[gp.groupCols[i]].options['enableCellEdit'] !== false
+                                && gp.groupColOpts[gp.groupCols[i]].options['readOnly'] !== true) {
+                            enableInsert++;
+                        }
+                    }
+                }
+
+                return (enableInsert != gp.groupCols.length) || contextMenuShouldDisable();
+            }
+
             return {
                 items: {
                     insert: {
@@ -202,7 +257,7 @@ Handsontable.DataTableGroups = function (settings) {
                                     selection.end.col);
                             $scope.fixScroll();
                         },
-                        disabled: contextMenuShouldDisable
+                        disabled: disableInsertMenu
                     },
                     duplicate: {
                         name: 'Duplicate row',
@@ -243,6 +298,7 @@ Handsontable.DataTableGroups = function (settings) {
                                     $scope.data.splice(i, 1);
                                 }
                             }
+
                             $scope.ht.deselectCell();
                             $scope.ht.render();
                         },

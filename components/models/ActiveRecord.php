@@ -224,9 +224,10 @@ class ActiveRecord extends CActiveRecord {
         } else if (!isset($criteria['limit'])) {
             if (!@$criteria['nolimit']) {
                 $criteria['limit'] = 25;
-            } else {
-                unset($criteria['nolimit']);
             }
+        }
+        if (isset($criteria['nolimit'])) {
+            unset($criteria['nolimit']);
         }
 
         if (isset($criteria['paging']))
@@ -786,7 +787,7 @@ class ActiveRecord extends CActiveRecord {
         }
 
 ## update
-        
+
         if (isset($post[$name . 'Update']) && is_string($post[$name . 'Update'])) {
             $post[$name . 'Update'] = json_decode($post[$name . 'Update'], true);
         }

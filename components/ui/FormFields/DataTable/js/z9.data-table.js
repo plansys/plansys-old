@@ -1,4 +1,4 @@
-app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
+app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
     return {
         scope: true,
         compile: function (element, attrs, transclude) {
@@ -70,17 +70,18 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 $scope.edited = false;
                 $scope.loadingRelation = false;
                 $scope.triggerRelationWatch = true;
-                $scope.relAvailable = false;
                 $scope.name = $el.find("data[name=name]").text();
                 parent[$scope.name] = $scope;
 
+                $scope.$q = $q;
+                $scope.$http = $http;
                 $scope.renderID = $el.find("data[name=render_id]").text();
                 $scope.modelClass = $el.find("data[name=model_class]").text();
                 $scope.gridOptions = JSON.parse($el.find("data[name=grid_options]").text());
                 $scope.columns = JSON.parse($el.find("data[name=columns]").text());
                 $scope.datasource = parent[$el.find("data[name=datasource]").text()];
                 $scope.data = null;
-                $scope.lastRelList = {};
+                $scope.relationColumns = [];
                 $scope.dtGroups = null;
                 $scope.getInstance = function () {
                     return $("#" + $scope.renderID).handsontable('getInstance');
@@ -153,6 +154,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
 
                 // assemble each columns -- start
                 $scope.colAssembled = false;
+                $scope.relSuffix = "_label_datatable";
                 $scope.assembleCols = function () {
                     if ($scope.colAssembled)
                         return;
@@ -171,7 +173,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         };
                         switch (c.columnType) {
                             case "dropdown":
-                                $scope.relAvailable = true;
                                 colDef.type = "dropdown";
                                 if (c.listType == 'js') {
                                     c.listItem = parent.$eval(col.listExpr);
@@ -179,56 +180,14 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 colDef.source = parent.$eval(c.listItem);
                                 break;
                             case "relation":
-                                $scope.relAvailable = true;
-                                colDef.data = c.name + "_label";
+                                colDef.data = c.name + $scope.relSuffix;
                                 colDef.type = "autocomplete";
                                 colDef.renderer = "relation";
+                                colDef.relList = {};
                                 colDef.editor = "relation";
                                 colDef.scope = $scope;
-                                colDef.source = function (query, process) {
-                                    if (!$scope.triggerRelationWatch) {
-                                        return false;
-                                    }
-
-                                    var s = this.instance.getSelected();
-                                    if (s) {
-                                        var row = s[0];
-                                        var col = s[1];
-                                        var opt = this.instance.getSettings().columns[col];
-                                        if (opt.columnType != "relation")
-                                            return;
-                                        for (i in opt.relParams) {
-                                            var p = opt.relParams[i];
-                                            if (p.indexOf('js:') === 0) {
-                                                var value = $scope.$eval(p.replace('js:', ''));
-                                                opt.relParams[i] = value;
-                                            }
-                                        }
-                                        var ck = {
-                                            's': query,
-                                            'm': $scope.modelClass,
-                                            'f': $scope.name,
-                                            'c': opt.name,
-                                            'p': opt.relParams
-                                        };
-                                        $http.post(Yii.app.createUrl('formfield/RelationField.dgrSearch'), ck)
-                                                .success(function (data) {
-                                                    // cache query
-
-                                                    var labels = [];
-                                                    for (i in data) {
-                                                        if (!data[i].label)
-                                                            continue;
-
-                                                        labels.push(data[i].label);
-                                                        $scope.lastRelList[data[i].label.trim('"')] = data[i].value;
-                                                    }
-                                                    if (labels.length && labels.length > 0) {
-                                                        process(labels);
-                                                    }
-                                                });
-                                    }
-                                };
+                                colDef.validator = Handsontable.editors.RelationEditor.prototype.checkRel;
+                                colDef.source = Handsontable.editors.RelationEditor.prototype.search;
                                 break;
                             case "string":
                                 colDef.renderer = "text";
@@ -276,10 +235,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
 
                         var col = $.extend(c, colDef);
 
-                        //add column
+                        // add columns
                         columnsInternal.push(col);
-                        // add header
                         colHeaders.push(c.label);
+
+
                         if (c.options && c.options.category) {
                             // add category header
                             var cat = c.options.category || '';
@@ -406,26 +366,30 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                 }
 
                 //relation init
-                var dgr = {};
-                var relCols = [];
-                function countDgr() {
-                    relCols = [];
+                $scope.countDgr = function () {
+                    var dgr = {};
+                    var relCols = [];
                     for (i in columnsInternal) {
                         if (columnsInternal[i].columnType == "relation") {
                             relCols.push(columnsInternal[i]);
                         }
                     }
-                    for (i in $scope.datasource.data) {
+                    if ($scope.dtGroups) {
+                        for (i in $scope.dtGroups.groupColOpts) {
+                            if ($scope.dtGroups.groupColOpts[i].columnType == "relation") {
+                                relCols.push($scope.dtGroups.groupColOpts[i]);
+                            }
+                        }
+                    }
+
+                    for (var i in $scope.datasource.data) {
                         var d = $scope.datasource.data[i];
-                        for (ir in relCols) {
+                        for (var ir in relCols) {
                             var r = relCols[ir];
-                            var model = r.relModelClass;
                             var id = d[r.name];
                             var name = $scope.name;
                             var cls = $scope.modelClass;
                             var col = r.name;
-                            var labelField = r.relLabelField;
-                            var idField = r.relIdField;
                             dgr['name'] = name;
                             dgr['class'] = cls;
                             dgr['cols'] = dgr['cols'] || {};
@@ -439,6 +403,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
 
                         }
                     }
+
+                    return {
+                        dgr: dgr,
+                        rel: relCols
+                    };
                 }
 
                 // pagingOptions
@@ -484,28 +453,63 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                     }
                 }
 
+
+                $scope.isRelation = function (prop) {
+                    return $scope.relationColumns.indexOf(prop + $scope.relSuffix);
+                }
                 // Load Relation -- start
-                function loadRelation(callback) {
+                $scope.loadRelation = function (callback, countDgr) {
                     $scope.triggerRelationWatch = false;
-                    countDgr();
+                    if (typeof countDgr == "undefined") {
+                        var countDgr = $scope.countDgr();
+                    }
+                    var relCols = countDgr.rel;
+                    var dgr = countDgr.dgr;
+
+                    relCols.forEach(function (i) {
+                        if ($scope.relationColumns.indexOf(i.name) < 0) {
+                            $scope.relationColumns.push(i.name);
+                        }
+                    });
+
                     if (relCols.length > 0 && dgr.name) {
                         $scope.loadingRelation = true;
                         var url = Yii.app.createUrl('/formfield/RelationField.dgrInit');
-                        $http.post(url, dgr).success(function (data) {
-                            for (rowIdx in $scope.data) {
+                        if ($scope.httpRelReq) {
+                            $scope.httpRelReq.resolve();
+                        }
+                        $scope.httpRelReq = $q.defer();
+                        $http.post(url, dgr, {
+                            timeout: $scope.httpRelReq.promise
+                        }).success(function (data) {
+                            for (var rowIdx in $scope.data) {
                                 var row = $scope.data[rowIdx];
-                                for (dataIdx in data) {
+                                for (var dataIdx in data) {
                                     var d = data[dataIdx];
+
+                                    if ($scope.dtGroups && $scope.dtGroups.groupCols.indexOf(dataIdx) >= 0) {
+                                        var col = $scope.dtGroups.groupCols[row['__dt_lvl']];
+                                        if (row['__dt_flg'] == "G" && dataIdx == col) {
+                                            for (var i in d) {
+                                                if (d[i].value == row[$scope.columns[0].name]) {
+                                                    row[$scope.columns[0].name] = d[i].label;
+                                                    break;
+                                                }
+                                            }
+                                            continue;
+                                        }
+                                    }
+
                                     if (row[dataIdx]) {
-                                        for (i in d) {
+                                        for (var i in d) {
                                             if (d[i].value == row[dataIdx]) {
-                                                row[dataIdx + "_label"] = d[i].label;
+                                                row[dataIdx + $scope.relSuffix] = d[i].label;
                                                 break;
                                             }
                                         }
                                     }
-                                    if (!row[dataIdx + "_label"]) {
-                                        row[dataIdx + "_label"] = '';
+                                    if (!row[dataIdx + $scope.relSuffix]) {
+                                        row[dataIdx + $scope.relSuffix] = '';
                                     }
                                 }
                             }
@@ -561,7 +565,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                         }
                     }
 
-                    loadRelation(function () {
+                    $scope.loadRelation(function () {
                         if (typeof callback == "function") {
                             callback();
                         }
@@ -696,10 +700,14 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                             manualColumnResize: true,
                             cells: function (row, col, prop) {
                                 var cellProperties = {};
+                                cellProperties.$scope = $scope;
+
                                 if ($scope.dtGroups) {
                                     function setDefault() {
                                         cellProperties.className = '';
-                                        cellProperties.readOnly = !!$scope.columns[col].options.enableCellEdit;
+                                        if (!!$scope.columns[col]) {
+                                            cellProperties.readOnly = !!$scope.columns[col].options.enableCellEdit;
+                                        }
                                     }
 
                                     if ($scope.data[row] && $scope.data[row]['__dt_flg']) {
@@ -711,8 +719,27 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                                 break;
                                             case 'G':
                                                 cellProperties.className = 'groups';
-                                                cellProperties.readOnly = true;
+                                                cellProperties.type = "text";
+
+                                                if (col > 0) {
+                                                    cellProperties.readOnly = true;
+                                                } else {
+                                                    var row = $scope.data[row];
+                                                    var colProp = $scope.dtGroups.groupCols[row['__dt_lvl']];
+
+                                                    var colDef = $scope.dtGroups.groupColOpts[colProp];
+                                                    if (typeof colDef == "undefined") {
+                                                        colDef = $scope.dtGroups.groupColOpts[colProp + $scope.relSuffix];
+                                                    }
+                                                    if (colDef) {
+                                                        $.extend(cellProperties, colDef);
+                                                    } else {
+                                                        cellProperties.readOnly = true;
+                                                    }
+                                                }
+
                                                 cellProperties.renderer = 'groups';
+
                                                 break;
                                             case 'T':
                                                 var c = $scope.dtGroups.totalGroups[$scope.dtGroups.columns[col].name];
@@ -797,8 +824,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                 if (typeof $scope.events.afterSelectionEnd == "function") {
                                     $scope.events.afterSelectionEnd(r, c, r2, c2);
                                 }
-
-
                                 if (!$scope.mouseDown) {
                                     $scope.fixScroll();
                                 }
@@ -810,8 +835,16 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                     $scope.datasource.data.splice(index, amount);
                                 }
                             },
-                            afterChange: function (changes, source) {
+                            afterValidate: function (valid, value, row, prop, source) {
+                                if ($scope.isRelation(prop) && !valid) {
 
+                                }
+
+                                if (typeof $scope.events.afterValidate == "function") {
+                                    $scope.events.afterValidate(valid, value, row, prop, source);
+                                }
+                            },
+                            afterChange: function (changes, source) {
                                 //watch datasource changes
                                 switch (true) {
                                     case ($scope.dtGroups && $scope.dtGroups.changed):
@@ -823,13 +856,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter) {
                                             case "autofill":
                                                 $timeout(function () {
                                                     changes.map(function (c) {
-                                                        if ($scope.dtGroups) {
-                                                            var row = $scope.data[c[0]]['__dt_row'];
+                                                        console.log(c, $scope.data[c[0]]);
 
-                                                            if (!!$scope.datasource.data[row]) {
-                                                                $scope.datasource.data[row][c[1]] = c[3];
-                                                            } else {
-                                                            }
+                                                        if ($scope.dtGroups) {
+                                                            Handsontable.editors.RelationEditor.prototype.handleChange($scope, c);
                                                         } else {
                                                             if (!$scope.datasource.data[c[0]]) {
                                                                 $scope.datasource.data[c[0]] = {};

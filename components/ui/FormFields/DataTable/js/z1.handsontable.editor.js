@@ -4,37 +4,141 @@
     /*************** RELATION TYPE *******************/
     function relationRenderer(instance, td, row, col, prop, value, cellProperties) {
         Handsontable.AutocompleteCell.renderer.apply(this, arguments);
+
         return td;
     }
     Handsontable.renderers.registerRenderer('relation', relationRenderer);
 
     var RelationEditor = Handsontable.editors.AutocompleteEditor.prototype.extend();
     RelationEditor.prototype.open = function () {
-        var opt = this.instance.getSettings().columns[this.instance.getActiveEditor().col];
-        opt.originalValue = this.originalValue;
-
+        this.cellProperties.opened = true;
         Handsontable.editors.AutocompleteEditor.prototype.open.apply(this, arguments);
-    }
+    };
     RelationEditor.prototype.close = function () {
-        var ins = this.instance;
-        var s = ins.getActiveEditor();
-        var colIdx = s.col;
-        var row = s.row;
-        var opt = this.instance.getSettings().columns[colIdx];
-        var col = opt.name;
-        var $scope = opt.scope;
-
-        var label = $(".autocompleteEditor td.current").text().trim();
-        var value = $scope.lastRelList[label];
-
-        if ($scope.datasource.data.length != $scope.data.length) {
-            var newrow = angular.copy($scope.data[row]);
-            $scope.datasource.data.splice(row, 0, newrow);
-        }
-        $scope.datasource.data[row][col] = value;
-
+        this.cellProperties.opened = false;
         Handsontable.editors.AutocompleteEditor.prototype.close.apply(this, arguments);
+    };
+    RelationEditor.prototype.checkRel = function (value, callback) {
+        var $scope = this.$scope;
+        var relList = this.relList;
 
+        if (typeof relList[value] == "undefined") {
+            var name = this.name;
+            var originalRow = this.row;
+            var s = $scope.ht.getSelected();
+            var row = s[0];
+            var col = s[1];
+            var opt = $scope.columns[col];
+            $scope.$http.post(Yii.app.createUrl('formfield/RelationField.dgrSearch'), {
+                's': value,
+                'm': $scope.modelClass,
+                'f': $scope.name,
+                'c': name,
+                'p': opt.relParams
+            }).success(function (data) {
+                // cache query
+                var labels = [];
+                for (i in data) {
+                    if (!data[i].label)
+                        continue;
+
+                    labels.push(data[i].label);
+                    relList[data[i].label.trim('"')] = data[i].value;
+                }
+
+                if (labels.indexOf(value) >= 0) {
+                    callback(true);
+                } else {
+                    $scope.data[originalRow][name] = '';
+                    callback(false);
+                }
+            });
+        } else {
+            $scope.data[this.row][this.name] = relList[value];
+            callback(true);
+        }
+    }
+    RelationEditor.prototype.handleChange = function ($scope, c) {
+        var row = $scope.data[c[0]];
+        switch (row['__dt_flg']) {
+            case "Z":
+                var dsrow = row['__dt_row'];
+                if (!!$scope.datasource.data[dsrow]) {
+                    $scope.datasource.data[dsrow][c[1]] = c[3];
+                }
+                break;
+            case "G":
+                var rows = $scope.dtGroups.findRows(row);
+                var col = $scope.dtGroups.groupCols[row['__dt_lvl']];
+
+                rows.forEach(function (r) {
+                    r[col] = angular.copy(row[col]);
+                    var dsrow = r['__dt_row'];
+                    $scope.datasource.data[dsrow][col] = angular.copy(row[col]);
+                });
+                break;
+        }
+    }
+    RelationEditor.prototype.search = function (query, process) {
+        if (!this.opened) {
+            process([]);
+            return;
+        }
+
+        var $scope = this.$scope;
+        var $q = $scope.$q;
+        var $http = $scope.$http;
+        if (!$scope.triggerRelationWatch) {
+            return false;
+        }
+        var relList = this.relList;
+        var s = this.instance.getSelected();
+        if (s) {
+            var row = s[0];
+            var col = s[1];
+            var opt = $scope.columns[col];
+            if ($scope.dtGroups && $scope.data[row]['__dt_flg'] == "G") {
+                var prop = $scope.dtGroups.groupCols[$scope.data[row]['__dt_lvl']];
+                opt = $scope.dtGroups.groupColOpts[prop + $scope.relSuffix];
+            }
+
+            if (opt.columnType != "relation")
+                return;
+            for (i in opt.relParams) {
+                var p = opt.relParams[i];
+                if (p.indexOf('js:') === 0) {
+                    var value = $scope.$eval(p.replace('js:', ''));
+                    opt.relParams[i] = value;
+                }
+            }
+            if ($scope.httpRequest) {
+                $scope.httpRequest.resolve();
+            }
+            $scope.httpRequest = $q.defer();
+            $http.post(Yii.app.createUrl('formfield/RelationField.dgrSearch'), {
+                's': query,
+                'm': $scope.modelClass,
+                'f': $scope.name,
+                'c': opt.name,
+                'p': opt.relParams
+            }, {
+                timeout: $scope.httpRequest.promise
+            }).success(function (data) {
+                // cache query
+                var labels = [];
+                for (i in data) {
+                    if (!data[i].label)
+                        continue;
+
+                    labels.push(data[i].label);
+                    relList[data[i].label.trim('"')] = data[i].value;
+                }
+
+                if (labels.length && labels.length > 0) {
+                    process(labels);
+                }
+            });
+        }
     }
     Handsontable.editors.RelationEditor = RelationEditor;
     Handsontable.editors.registerEditor('relation', RelationEditor);
@@ -206,7 +310,24 @@
     function groupsRenderer(instance, td, row, col, prop, value, cellProperties) {
         Handsontable.TextCell.renderer.apply(this, arguments);
 
-        Handsontable.Dom.fastInnerHTML(td, value);
+        if (value && col == 0) {
+            var row = cellProperties.$scope.data[row];
+
+            switch (row['__dt_flg']) {
+                case "Z":
+                    Handsontable.Dom.fastInnerHTML(td, value);
+                    break;
+                case "G":
+                    var gidx = row['__dt_lvl'];
+                    var lvstr = "";
+                    for (var ll = 0; ll < gidx; ll++) {
+                        lvstr += "    ";
+                    }
+                    lvstr += '◢  ';
+                    Handsontable.Dom.fastInnerHTML(td, lvstr + value);
+                    break;
+            }
+        }
 
         return td;
     }
