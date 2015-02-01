@@ -854,7 +854,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                                 $timeout(function () {
                                                     changes.map(function (c) {
                                                         if ($scope.dtGroups) {
-                                                            Handsontable.editors.RelationEditor.prototype.handleChange($scope, c);
+                                                            $scope.dtGroups.handleChange($scope, c);
                                                         } else {
                                                             if (!$scope.datasource.data[c[0]]) {
                                                                 $scope.datasource.data[c[0]] = {};

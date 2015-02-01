@@ -4,7 +4,7 @@
     /*************** RELATION TYPE *******************/
     function relationRenderer(instance, td, row, col, prop, value, cellProperties) {
         Handsontable.AutocompleteCell.renderer.apply(this, arguments);
-        
+
         return td;
     }
     Handsontable.renderers.registerRenderer('relation', relationRenderer);
@@ -75,27 +75,6 @@
         } else {
             $scope.data[this.row][this.name] = relList[value];
             callback(true);
-        }
-    }
-    RelationEditor.prototype.handleChange = function ($scope, c) {
-        var row = $scope.data[c[0]];
-        switch (row['__dt_flg']) {
-            case "Z":
-                var dsrow = row['__dt_row'];
-                if (!!$scope.datasource.data[dsrow]) {
-                    $scope.datasource.data[dsrow][c[1]] = c[3];
-                }
-                break;
-            case "G":
-                var rows = $scope.dtGroups.findRows(row);
-                var col = $scope.dtGroups.groupCols[row['__dt_lvl']];
-
-                rows.forEach(function (r) {
-                    r[col] = angular.copy(row[col]);
-                    var dsrow = r['__dt_row'];
-                    $scope.datasource.data[dsrow][col] = angular.copy(row[col]);
-                });
-                break;
         }
     }
     RelationEditor.prototype.search = function (query, process) {
@@ -332,19 +311,21 @@
         if (value && col == 0) {
             var row = cellProperties.$scope.data[row];
 
-            switch (row['__dt_flg']) {
-                case "Z":
-                    Handsontable.Dom.fastInnerHTML(td, value);
-                    break;
-                case "G":
-                    var gidx = row['__dt_lvl'];
-                    var lvstr = "";
-                    for (var ll = 0; ll < gidx; ll++) {
-                        lvstr += "    ";
-                    }
-                    lvstr += '◢  ';
-                    Handsontable.Dom.fastInnerHTML(td, lvstr + value);
-                    break;
+            if (row && !!row['__dt_flg']) {
+                switch (row['__dt_flg']) {
+                    case "Z":
+                        Handsontable.Dom.fastInnerHTML(td, value);
+                        break;
+                    case "G":
+                        var gidx = row['__dt_lvl'];
+                        var lvstr = "";
+                        for (var ll = 0; ll < gidx; ll++) {
+                            lvstr += "    ";
+                        }
+                        lvstr += '◢  ';
+                        Handsontable.Dom.fastInnerHTML(td, lvstr + value);
+                        break;
+                }
             }
         }
 

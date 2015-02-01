@@ -43,6 +43,28 @@ Handsontable.DataTableGroups = function (settings) {
 
             return this;
         },
+        handleChange: function ($scope, c) {
+            var row = $scope.data[c[0]];
+            switch (row['__dt_flg']) {
+                case "Z":
+                    var dsrow = row['__dt_row'];
+                    if (!!$scope.datasource.data[dsrow]) {
+                        $scope.datasource.data[dsrow][c[1]] = c[3];
+                    }
+                    break;
+                case "G":
+                    var rows = $scope.dtGroups.findRows(row);
+                    var col = $scope.dtGroups.groupCols[row['__dt_lvl']];
+                    var valcol = $scope.columns[0].name;
+
+                    rows.forEach(function (r) {
+                        r[col] = angular.copy(row[valcol]);
+                        var dsrow = r['__dt_row'];
+                        $scope.datasource.data[dsrow][col] = angular.copy(row[valcol]);
+                    });
+                    break;
+            }
+        },
         ungroup: function (instance, shouldRender) {
             if (!instance || !this.grouped)
                 return;
