@@ -873,6 +873,12 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     $scope.events.afterChange(changes, source, $scope.grid());
                                 }
 
+                                var ht = $("#" + $scope.renderID).handsontable('getInstance');
+                                if (typeof $scope.afterCellEdit == "function" && source == "edit") {
+                                    var ch = changes[0];
+                                    $scope.afterCellEdit(ch[3], ch[0], ch[1], $scope.data[ch[0]], ht);
+                                }
+
                                 $timeout(function () {
                                     if (false && $scope.dtGroups && !$scope.dtGroups.changed && source != 'loadData') {
                                         $scope.dtGroups.calculate(changes, source, ht);
