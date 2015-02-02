@@ -78,7 +78,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'TextField',
             ),
             array (
-                'label' => 'Custom?',
+                'label' => 'Exclude Condition',
                 'name' => 'isCustom',
                 'options' => array (
                     'ng-model' => 'value[$index].isCustom',
