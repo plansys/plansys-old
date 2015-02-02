@@ -75,6 +75,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                 $scope.$q = $q;
                 $scope.$http = $http;
+                $scope.canAddRow = true;
                 $scope.renderID = $el.find("data[name=render_id]").text();
                 $scope.modelClass = $el.find("data[name=model_class]").text();
                 $scope.gridOptions = JSON.parse($el.find("data[name=grid_options]").text());
@@ -705,7 +706,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     function setDefault() {
                                         cellProperties.className = '';
                                         if (!!$scope.columns[col]) {
-                                            cellProperties.readOnly = !!$scope.columns[col].options.enableCellEdit;
+                                            cellProperties.readOnly = !$scope.columns[col].options.enableCellEdit;
                                         }
                                     }
 

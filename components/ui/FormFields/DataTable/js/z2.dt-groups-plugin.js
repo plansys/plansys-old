@@ -12,19 +12,29 @@ Handsontable.DataTableGroups = function (settings) {
         totalGroups: null,
         prepare: function () {
             var gc = this.groupCols;
+            var $scope = this.scope;
 
             // hide grouped columns
+            var gcCount = 0;
             for (var i = this.columns.length - 1; i >= 0; i--) {
                 if (gc.indexOf(this.columns[i].name) >= 0) {
                     var c = this.columns.splice(i, 1);
 
                     this.groupColOpts[c[0].data] = c[0];
+                    gcCount++;
+                    if (c[0].options && (c[0].options.enableCellEdit === false || c[0].options.readOnly === true)) {
+                        $scope.canAddRow = false;
+                    }
 
                     // remove col header too (if exist)
                     if (c[0].label == this.colHeaders[i]) {
                         this.colHeaders.splice(i, 1);
                     }
                 }
+            }
+
+            if (gcCount != gc.length) {
+                $scope.canAddRow = false;
             }
 
             // prepare total group

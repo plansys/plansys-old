@@ -111,7 +111,8 @@
             <span ng-if="!loading && data.length == 0">
                 &mdash; Data Empty &mdash;
                 <br/>
-                <div ng-if="!gridOptions.readOnly" style="margin-top:10px;" ng-click="addRow()" class="btn btn-default btn-xs" >
+                <div ng-if="!gridOptions.readOnly && canAddRow" style="margin-top:10px;" 
+                     ng-click="addRow()" class="btn btn-default btn-xs" >
                     <i class="fa fa-plus"></i> Add new row
                 </div>
             </span>
@@ -120,6 +121,6 @@
 
         <div ng-class="{invisible: data.length == 0 || loading}"  
              id="<?= $this->renderID ?>" class="dataTable" 
-             style="height:5000px;overflow:auto;"></div>
+             style="overflow:auto;"></div>
     </div>
 </div>
