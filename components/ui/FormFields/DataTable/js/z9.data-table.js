@@ -667,8 +667,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 $scope.dtGroups.group($scope.ht);
                             }
                         }
-
-
                         var minSpareRows = $scope.gridOptions.readOnly ? 0 : (!$scope.dtGroups ? 1 : 0);
 
                         // link Mode
@@ -700,7 +698,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             cells: function (row, col, prop) {
                                 var cellProperties = {};
                                 cellProperties.$scope = $scope;
-
 
                                 if ($scope.dtGroups) {
                                     function setDefault() {

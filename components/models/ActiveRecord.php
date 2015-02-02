@@ -571,6 +571,7 @@ class ActiveRecord extends CActiveRecord {
                                         $this->__relInsert[$k][$n][$rel->foreignKey] = $this->id;
                                     }
                                 }
+                                
                                 if (count($this->__relInsert[$k]) > 0) {
                                     ActiveRecord::batchInsert($class, $this->__relInsert[$k]);
                                 }
