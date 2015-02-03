@@ -12,19 +12,29 @@ Handsontable.DataTableGroups = function (settings) {
         totalGroups: null,
         prepare: function () {
             var gc = this.groupCols;
+            var $scope = this.scope;
 
             // hide grouped columns
+            var gcCount = 0;
             for (var i = this.columns.length - 1; i >= 0; i--) {
                 if (gc.indexOf(this.columns[i].name) >= 0) {
                     var c = this.columns.splice(i, 1);
 
                     this.groupColOpts[c[0].data] = c[0];
+                    gcCount++;
+                    if (c[0].options && (c[0].options.enableCellEdit === false || c[0].options.readOnly === true)) {
+                        $scope.canAddRow = false;
+                    }
 
                     // remove col header too (if exist)
                     if (c[0].label == this.colHeaders[i]) {
                         this.colHeaders.splice(i, 1);
                     }
                 }
+            }
+
+            if (gcCount != gc.length) {
+                $scope.canAddRow = false;
             }
 
             // prepare total group
@@ -62,6 +72,11 @@ Handsontable.DataTableGroups = function (settings) {
                         var dsrow = r['__dt_row'];
                         $scope.datasource.data[dsrow][col] = angular.copy(row[valcol]);
                     });
+
+                    $scope.ht = $scope.getInstance();
+                    $scope.ungroup($scope.ht, false);
+                    $scope.group($scope.ht);
+
                     break;
             }
         },
@@ -118,6 +133,8 @@ Handsontable.DataTableGroups = function (settings) {
 
                     // add new group
                     if (!cur.groups[group]) {
+                        // add footer
+                        // add group row
                         var newrow = {};
                         newrow[$scope.columns[0].name] = group;
                         newrow['__dt_flg'] = "G";
@@ -130,6 +147,7 @@ Handsontable.DataTableGroups = function (settings) {
                             groups: {},
                             rows: []
                         };
+
                     }
                     cur = cur.groups[group];
                 });
@@ -153,6 +171,7 @@ Handsontable.DataTableGroups = function (settings) {
                 item['__dt_flg'] = 'Z';
                 item['__dt_idx'] = newidx;
                 item['__dt_row'] = row_idx++;
+                item['__dt_lvl'] = grouped[group_idx - 1]['__dt_lvl'];
                 grouped.splice(newidx, 0, item);
                 cur.rows.push(item);
                 group_idx++;

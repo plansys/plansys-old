@@ -56,9 +56,6 @@
     box-shadow: inset 0px 0px 0px 9999px rgba(0, 0, 0, .05);
 }
 
-.data-table-container.no-read-only > .dataTable.handsontable > .htContainer > .wtHolder > .wtHider > .wtSpreader > .htCore  .htDimmed{
-    box-shadow:none;
-}
 
 .handsontable .header-grouping th {
     padding-bottom: 0px !important;
@@ -158,6 +155,10 @@
     border-right:1px solid #ddd !important;
 }
 
+.handsontable td.group-text {
+    white-space:pre;
+}
+
 .gr.fa {
     position:absolute;
     margin:4px 0px 0px -5px;
@@ -182,13 +183,26 @@
     border-top:1px solid #ddd;
 }
 
+
+.read-only .htAutocompleteArrow {
+    display:none;
+}
+
+.read-only .dataTable.handsontable > .htContainer > .wtHolder > .wtHider > .wtSpreader > .htCore  .htDimmed{
+    box-shadow:none;
+}
+
+.read-only .dataTable.handsontable td{
+    cursor:default;
+}
+
 .link-mode .handsontable .wtBorder {
     display: none !important;
 }
-.link-mode .dataTable.handsontable tr td:hover, .no-read-only .dataTable.handsontable tr td.current {
+.link-mode .dataTable.handsontable tr td:hover, .read-only .dataTable.handsontable tr td.current {
     background: transparent;
 }
-.link-mode .dataTable.handsontable tr td:hover, .no-read-only .dataTable.handsontable tr td.current {
+.link-mode .dataTable.handsontable tr td:hover, .read-only .dataTable.handsontable tr td.current {
     background: transparent;
 }
 .link-mode .dataTable.handsontable .htCore tbody td.area {
@@ -235,9 +249,6 @@
 }
 .handsontable .autocompleteEditor.handsontable {
     background:#fafafa;
-}
-.read-only .htAutocompleteArrow {
-    display:none;
 }
 
 .listbox.current {

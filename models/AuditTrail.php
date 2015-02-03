@@ -177,8 +177,12 @@ class AuditTrail extends ActiveRecord {
                 }
                 $at->type = $type;
                 $at->stamp = date("Y-m-d H:i:s");
+                $at->user_id = Yii::app()->user->id;
                 
-                $at->save();
+                ## WARNING !!! skip visit tracker.. too much data..
+                if ($type != "visit") {
+                    $at->save();
+                }
             }
         }
     }

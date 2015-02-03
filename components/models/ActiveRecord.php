@@ -531,6 +531,20 @@ class ActiveRecord extends CActiveRecord {
     public function afterSave() {
         if ($this->isNewRecord) {
             $this->id = Yii::app()->db->getLastInsertID(); // this is hack
+
+            if (!Yii::app()->user->isGuest) {
+                ## update audit trail
+                $a = Yii::app()->db->createCommand("
+                update p_audit_trail set model_id = :model_id 
+                WHERE user_id = :user_id and 
+                model_class = :model_class and 
+                type = 'create' and 
+                model_id is null")->execute([
+                    'model_class' => ActiveRecord::baseClass($this),
+                    'model_id' => $this->id,
+                    'user_id' => Yii::app()->user->id
+                ]);                
+            }
         }
 
         foreach ($this->__relations as $k => $new) {
@@ -571,6 +585,7 @@ class ActiveRecord extends CActiveRecord {
                                         $this->__relInsert[$k][$n][$rel->foreignKey] = $this->id;
                                     }
                                 }
+
                                 if (count($this->__relInsert[$k]) > 0) {
                                     ActiveRecord::batchInsert($class, $this->__relInsert[$k]);
                                 }
