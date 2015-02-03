@@ -594,20 +594,23 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     $scope.loading = false;
                                 });
                             }
-                            $scope.loadRelation(function() {
+
+                            $scope.loadRelation(function () {
                                 $scope.ht.render();
                             });
                         });
                     }
 
-                    if ($scope.datasource.data.length > 0 && $scope.isColAndDataEmpty) {
-                        $scope.init();
-                        $scope.isColAndDataEmpty = false;
-                        $timeout(function () {
+                    if (!!$scope.datasource.data.length) {
+                        if ($scope.datasource.data.length > 0 && Object.keys($scope.datasource.data[0]).length > 0 && $scope.isColAndDataEmpty) {
+                            $scope.init();
+                            $scope.isColAndDataEmpty = false;
+                            $timeout(function () {
+                                doChange();
+                            });
+                        } else {
                             doChange();
-                        });
-                    } else {
-                        doChange();
+                        }
                     }
                 }
 
@@ -693,8 +696,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             autoWrapCol: true,
                             mergeCells: true,
                             comments: true,
-                            currentRowClassName: 'currentRow',
-                            currentColClassName: 'currentCol',
+                            currentRowClassName: $scope.data.length > 3 ? 'currentRow' : '',
+                            currentColClassName: columnsInternal.length > 3 ? 'currentCol' : '',
                             manualColumnResize: true,
                             cells: function (row, col, prop) {
                                 var cellProperties = {};
