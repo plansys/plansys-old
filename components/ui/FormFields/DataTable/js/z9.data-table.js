@@ -630,17 +630,21 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         });
                     }
 
-                    if (!!$scope.datasource.data.length && $scope.datasource.data.length > 0 &&
-                            Object.keys($scope.datasource.data[0]).length > 0 && $scope.notReady) {
-                        prepareData(function () {
-                            $scope.init();
-                            $scope.notReady = false;
-                            $timeout(function () {
-                                doChange();
+                    if ($scope.datasource.data) {
+                        if (!!$scope.datasource.data.length && $scope.datasource.data.length > 0 &&
+                                Object.keys($scope.datasource.data[0]).length > 0 && $scope.notReady) {
+                            prepareData(function () {
+                                $scope.init();
+                                $scope.notReady = false;
+                                $timeout(function () {
+                                    doChange();
+                                });
                             });
-                        });
+                        } else {
+                            doChange();
+                        }
                     } else {
-                        doChange();
+                        $scope.loading = false;
                     }
                 }
 
