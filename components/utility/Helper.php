@@ -14,6 +14,23 @@ class Helper {
         }
     }
 
+    public static function generateMonthInterval($start, $end) {
+        $startInt = new DateTime($start);
+        $endInt = new DateTime($end);
+        $interval = DateInterval::createFromDateString('1 month');
+        $period = new DatePeriod($startInt, $interval, $endInt);
+        return $period;
+    }
+
+    public static function generateDayInterval($start, $end) {
+        $startInt = new DateTime($start);
+        $endInt = (new DateTime($end))->modify('+1 day');
+        $interval = DateInterval::createFromDateString('1 day');
+        $period = new DatePeriod($startInt, $interval, $endInt);
+
+        return $period;
+    }
+
     public static function generateExcel($phpExcelObject, $filepath) {
         $objWriter = PHPExcel_IOFactory::createWriter($phpExcelObject, 'Excel5');
         $objWriter->save($filepath);
@@ -28,7 +45,7 @@ class Helper {
                 $data[0][$k] = $k;
             }
         }
-        
+
         ## generate excel
         Yii::import('ext.phpexcel.XPHPExcel');
         $phpExcelObject = XPHPExcel::createPHPExcel();
