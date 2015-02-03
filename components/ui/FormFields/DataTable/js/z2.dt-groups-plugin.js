@@ -74,8 +74,8 @@ Handsontable.DataTableGroups = function (settings) {
                     });
 
                     $scope.ht = $scope.getInstance();
-                    $scope.ungroup($scope.ht, false);
-                    $scope.group($scope.ht);
+                    this.ungroup($scope.ht, false);
+                    this.group($scope.ht);
 
                     break;
             }
