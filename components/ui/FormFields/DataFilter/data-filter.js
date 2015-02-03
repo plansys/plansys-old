@@ -343,6 +343,26 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                     }
                 };
 
+                $scope.relationInit = function (filter) {
+                    $scope.loading = true;
+                    $http.post(Yii.app.createUrl('formfield/DataFilter.relInit'), {
+                        'v': filter.value,
+                        'f': $scope.name,
+                        'n': filter.name,
+                        'm': $scope.modelClass
+                    }).success(function (data) {
+                        $scope.loading = false;
+                        filter.list.push({
+                            key: data[0].value,
+                            value: data[0].label
+                        });
+                        filter.dropdownText = data[0].label;
+                        filter.valueText = filter.dropdownText;
+                    });
+
+                    return false;
+                }
+
                 $scope.relationNext = function (e, filter) {
                     e.stopPropagation();
                     e.preventDefault();
@@ -520,6 +540,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                             filter.dropdownText = filter.list[i].value;
                                             break;
                                         }
+                                    }
+
+                                    if (!filter.dropdownText) {
+                                        $scope.relationInit(filter);
                                     }
                                 }
 
