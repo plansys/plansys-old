@@ -312,17 +312,22 @@ Handsontable.DataTableGroups = function (settings) {
                                     if (typeof d['id'] != "undefined") {
                                         delete d['id'];
                                     }
+                                    
+                                    
                                     $scope.datasource.data.splice(d['__dt_row'], 0, d);
                                     $scope.data.splice(i, 0, d);
                                 }
                             }
 
+                            $scope.dtGroups.ungroup($scope.ht, false);
+                            $scope.dtGroups.group($scope.ht);
+                            
                             $scope.ht.selectCell(
                                     selection.start.row + 1,
                                     selection.start.col,
                                     selection.start.row + 1,
                                     selection.end.col, true);
-                            $scope.ht.render();
+
                         },
                         disabled: contextMenuShouldDisable
                     },
@@ -340,8 +345,9 @@ Handsontable.DataTableGroups = function (settings) {
                                 }
                             }
 
+                            $scope.dtGroups.ungroup($scope.ht, false);
+                            $scope.dtGroups.group($scope.ht);
                             $scope.ht.deselectCell();
-                            $scope.ht.render();
                         },
                         disabled: contextMenuShouldDisable
                     },

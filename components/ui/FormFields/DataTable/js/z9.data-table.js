@@ -706,7 +706,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 $scope.dtGroups.group($scope.ht);
                             }
                         }
-                        
+
                         // link Mode
                         if (typeof $scope.gridOptions.afterSelectionChange == "function") {
                             minSpareRows = 0;
@@ -739,10 +739,14 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 if ($scope.dtGroups) {
                                     function setDefault() {
                                         cellProperties.className = 'group-text';
+                                        cellProperties.readOnly = false;
                                         if (!!$scope.columns[col] && typeof $scope.columns[col].options.enableCellEdit == "boolean") {
                                             cellProperties.readOnly = !$scope.columns[col].options.enableCellEdit;
                                         }
-                                        cellProperties.renderer = 'groups';
+
+                                        if (col == 0) {
+                                            cellProperties.renderer = 'groups';
+                                        }
                                     }
 
                                     if ($scope.data[row] && $scope.data[row]['__dt_flg']) {
@@ -827,14 +831,23 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 if (typeof $scope.beforeCellEdit == "function" && source == "edit") {
                                     var ht = $("#" + $scope.renderID).handsontable('getInstance');
                                     var ch = changes[0];
-                                    // beforeCellEdit(value, row, col, data, ht);
                                     $scope.beforeCellEdit(ch[3], ch[0], ch[1], $scope.data[ch[0]], ht);
                                 }
 
+                                if (typeof $scope.beforeCellEdit == "function" && source == "edit") {
+                                    var ht = $("#" + $scope.renderID).handsontable('getInstance');
+                                    var ch = changes[0];
+
+                                    if ($scope.dtGroups) {
+                                        var row = $scope.datasource.data[$scope.data[ch[0]]['__dt_row']] = $scope.data[ch[0]];
+                                        $scope.beforeCellEdit(ch[3], ch[0], ch[1], row, ht);
+                                    } else {
+                                        $scope.beforeCellEdit(ch[3], ch[0], ch[1], $scope.data[ch[0]], ht);
+                                    }
+                                }
                                 if (typeof $scope.events.beforeChange == "function") {
                                     $scope.events.beforeChange(changes, source);
                                 }
-                                $scope.fixHeight();
                             },
                             beforeOnCellMouseDown: function (event, coords, TD) {
                                 if (typeof $scope.events.beforeOnCellMouseDown == "function") {
@@ -863,6 +876,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     $scope.fixScroll();
                                 }
                                 $scope.mouseDown = false;
+
                             },
                             afterRemoveRow: function (index, amount) {
                                 if (!$scope.dtGroups) {
@@ -911,22 +925,23 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     $scope.events.afterChange(changes, source, $scope.grid());
                                 }
 
-                                var ht = $("#" + $scope.renderID).handsontable('getInstance');
                                 if (typeof $scope.afterCellEdit == "function" && source == "edit") {
+                                    var ht = $("#" + $scope.renderID).handsontable('getInstance');
                                     var ch = changes[0];
-                                    $scope.afterCellEdit(ch[3], ch[0], ch[1], $scope.data[ch[0]], ht);
+
+
+                                    if ($scope.dtGroups) {
+                                        var row = $scope.datasource.data[$scope.data[ch[0]]['__dt_row']] = $scope.data[ch[0]];
+                                        $scope.afterCellEdit(ch[3], ch[0], ch[1], row, ht);
+                                    } else {
+                                        $scope.afterCellEdit(ch[3], ch[0], ch[1], $scope.data[ch[0]], ht);
+                                    }
+
                                 }
 
                                 $timeout(function () {
-                                    if (false && $scope.dtGroups && !$scope.dtGroups.changed && source != 'loadData') {
-                                        $scope.dtGroups.calculate(changes, source, ht);
-                                        ht.render();
-                                    }
-                                    $timeout(function () {
-                                        $scope.edited = false;
-                                    });
+                                    $scope.edited = false;
                                 });
-                                $scope.fixHeight();
                             },
                             afterRender: function () {
                                 if (categories.length > 0) {
@@ -1013,6 +1028,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             contextMenu: $scope.contextMenu()
                         }, $scope.gridOptions);
                         //prepare data table groups   
+
+                        if (typeof options.colWidths == "string") {
+                            options.colWidths = $scope.$eval(options.colWidths);
+                        }
 
                         // if there is beforeGridLoaded event, call it.
                         if (typeof $scope.beforeGridLoaded == "function") {
