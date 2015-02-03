@@ -40,5 +40,5 @@
         </tr>
     </table>
     <div class="clearfix"></div>
-
+    <input type="hidden" name="<?= $this->name; ?>" ng-value="filters | json">
 </div>
