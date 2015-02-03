@@ -37,6 +37,11 @@
             var name = this.name;
             var originalRow = this.row;
             var s = $scope.ht.getSelected();
+            if (!s) {
+                callback(false);
+                return false;
+            }
+
             var row = s[0];
             var col = s[1];
 

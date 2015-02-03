@@ -460,7 +460,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 $scope.loadRelation = function (callback, countDgr) {
                     $scope.triggerRelationWatch = false;
                     if (typeof countDgr == "undefined") {
-                        var countDgr = $scope.countDgr();
+                        countDgr = $scope.countDgr();
                     }
                     var relCols = countDgr.rel;
                     var dgr = countDgr.dgr;
@@ -594,6 +594,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     $scope.loading = false;
                                 });
                             }
+                            $scope.loadRelation(function() {
+                                $scope.ht.render();
+                            });
                         });
                     }
 
