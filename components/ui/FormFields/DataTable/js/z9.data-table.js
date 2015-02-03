@@ -630,17 +630,21 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         });
                     }
 
-                    if (!!$scope.datasource.data.length && $scope.datasource.data.length > 0 &&
-                            Object.keys($scope.datasource.data[0]).length > 0 && $scope.notReady) {
-                        prepareData(function () {
-                            $scope.init();
-                            $scope.notReady = false;
-                            $timeout(function () {
-                                doChange();
+                    if ($scope.datasource.data) {
+                        if (!!$scope.datasource.data.length && $scope.datasource.data.length > 0 &&
+                                Object.keys($scope.datasource.data[0]).length > 0 && $scope.notReady) {
+                            prepareData(function () {
+                                $scope.init();
+                                $scope.notReady = false;
+                                $timeout(function () {
+                                    doChange();
+                                });
                             });
-                        });
+                        } else {
+                            doChange();
+                        }
                     } else {
-                        doChange();
+                        $scope.loading = false;
                     }
                 }
 
@@ -1058,7 +1062,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 var w = $el.find(".htCore:eq(0)").width() + 30;
                                 if (w > $('#content').width()) {
                                     $el.parent().find("> .data-filter").width(w);
+                                    $(".form-horizontal > .alert").width(w - 60);
                                 }
+
                             }, 500);
                         }
                     });
