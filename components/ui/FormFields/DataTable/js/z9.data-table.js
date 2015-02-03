@@ -90,11 +90,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 $scope.loaded = false;
                 $scope.$watch('datasource.loading', function (n, o) {
                     if (n) {
-                        $scope.loading = n;
+                        $scope.loading = true;
                     } else {
                         $timeout(function () {
                             if ($scope.loaded) {
-                                $scope.loading = n;
+                                if ($scope.datasource.data == 0) {
+                                    $scope.loading = false;
+                                }
                             }
                         }, 100);
                     }
@@ -482,6 +484,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 // Load Relation -- start
                 $scope.loadRelation = function (callback, countDgr) {
                     if ($scope.data.length == 0) {
+                        callback();
                         return;
                     }
 
@@ -620,25 +623,24 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 $scope.ht.loadData($scope.data);
                                 $timeout(function () {
                                     $scope.edited = false;
-                                    $scope.loading = false;
                                 });
                                 $scope.ht.render();
                             }
+                            $scope.loading = false;
                         });
                     }
 
-                    if (!!$scope.datasource.data.length && $scope.datasource.data.length > 0) {
-                        if (Object.keys($scope.datasource.data[0]).length > 0 && $scope.notReady) {
-                            prepareData(function () {
-                                $scope.init();
-                                $scope.notReady = false;
-                                $timeout(function () {
-                                    doChange();
-                                });
+                    if (!!$scope.datasource.data.length && $scope.datasource.data.length > 0 &&
+                            Object.keys($scope.datasource.data[0]).length > 0 && $scope.notReady) {
+                        prepareData(function () {
+                            $scope.init();
+                            $scope.notReady = false;
+                            $timeout(function () {
+                                doChange();
                             });
-                        } else {
-                            doChange();
-                        }
+                        });
+                    } else {
+                        doChange();
                     }
                 }
 
@@ -987,7 +989,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 if (typeof $scope.events.afterLoadData == "function") {
                                     $scope.events.afterLoadData();
                                 }
-
                                 //FIX HEIGHT OVERFLOW
                             },
                             beforeColumnSort: function (column, order) {
