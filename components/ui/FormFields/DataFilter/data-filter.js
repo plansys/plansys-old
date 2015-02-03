@@ -12,6 +12,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 }
             });
 
+
             return function ($scope, $el, attrs, ctrl) {
                 var parent = $scope.$parent;
 
@@ -718,7 +719,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
 
                         if (typeof $scope.filters[idx].valueText == "string" || typeof $scope.filters[idx].valueText == "number") {
                             ret = date("Y-m-d", strtotime($scope.filters[idx].value.from));
-                            if(typeof $scope.filters[idx].value.from === 'undefined'){
+                            if (typeof $scope.filters[idx].value.from === 'undefined') {
                                 ret = date("Y-m-d", strtotime($scope.filters[idx].value));
                             }
                         } else {

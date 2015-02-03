@@ -155,6 +155,10 @@
     border-right:1px solid #ddd !important;
 }
 
+.handsontable td.group-text {
+    white-space:pre;
+}
+
 .gr.fa {
     position:absolute;
     margin:4px 0px 0px -5px;

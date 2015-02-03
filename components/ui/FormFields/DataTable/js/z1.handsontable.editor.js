@@ -309,7 +309,13 @@
             if (row && !!row['__dt_flg']) {
                 switch (row['__dt_flg']) {
                     case "Z":
-                        Handsontable.Dom.fastInnerHTML(td, value);
+                        var gidx = row['__dt_lvl'];
+                        var lvstr = "";
+                        for (var ll = 0; ll < gidx; ll++) {
+                            lvstr += "    ";
+                        }
+                        lvstr += '   ';
+                        Handsontable.Dom.fastInnerHTML(td, lvstr + value);
                         break;
                     case "G":
                         var gidx = row['__dt_lvl'];

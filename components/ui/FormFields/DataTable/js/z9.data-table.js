@@ -55,7 +55,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 output = '{{' + output + '}}';
                             }
                         }
-
                     }
                     return output;
                 }
@@ -700,10 +699,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                                 if ($scope.dtGroups) {
                                     function setDefault() {
-                                        cellProperties.className = '';
+                                        cellProperties.className = 'group-text';
                                         if (!!$scope.columns[col] && typeof $scope.columns[col].options.enableCellEdit == "boolean") {
                                             cellProperties.readOnly = !$scope.columns[col].options.enableCellEdit;
                                         }
+                                        cellProperties.renderer = 'groups';
                                     }
 
                                     if ($scope.data[row] && $scope.data[row]['__dt_flg']) {
@@ -994,6 +994,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             $("#" + $scope.renderID).width($el.width());
                             $scope.ht = $("#" + $scope.renderID).handsontable(options);
                             $scope.loaded = true;
+
+                            $timeout(function () {
+                                var w = $el.find(".htCore:eq(0)").width() + 30;
+                                if (w > $('#content').width()) {
+                                    $el.parent().find("> .data-filter").width(w);
+                                }
+                            }, 500);
                         }
                     });
                 }
