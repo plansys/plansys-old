@@ -272,6 +272,11 @@ class DataSource extends FormField {
                 $data = $this->getRelated($this->params, $isGenerate);
             }
 
+            if (empty($data)) {
+                echo "{}";
+                die();
+            }
+            
             echo json_encode([
                 'data' => $data['data'],
                 'count' => $data['debug']['count'],
