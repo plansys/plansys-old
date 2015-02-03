@@ -157,7 +157,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 $scope.colAssembled = false;
                 $scope.relSuffix = "_label_datatable";
                 $scope.assembleCols = function () {
-                    if ($scope.colAssembled)
+                    if ($scope.colAssembled || $scope.columns.length == 0)
                         return;
                     $scope.colAssembled = true;
 
@@ -190,7 +190,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 colDef.validator = Handsontable.editors.RelationEditor.prototype.checkRel;
                                 colDef.source = Handsontable.editors.RelationEditor.prototype.search;
                                 break;
-                            case "string":
+                            default:
                                 colDef.renderer = "text";
                                 if (typeof c.stringAlias == "object" && !$.isArray(c.stringAlias)) {
                                     colDef.renderer = "stringalias";
@@ -220,7 +220,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 }
                                 break;
                         }
-
 
                         if (c.options && !!c.options.enableCellEdit) {
                             if (c.options.enableCellEdit.trim().substr(0, 3) === "js:") {
@@ -676,7 +675,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             $el.addClass('link-mode');
                         }
 
-                        if ($scope.gridOptions.readOnly) {
+                        if (!!$scope.gridOptions.readOnly) {
                             $el.addClass('read-only');
                         }
 

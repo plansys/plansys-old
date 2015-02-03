@@ -12,7 +12,7 @@
         </div>
     </div>
     <div ng-class="{invisible: !loaded}"   
-         class=" data-table-container {{ gridOptions.noReadOnlyCSS || gridOptions.readOnly ? 'no-read-only' : '' }}">
+         class=" data-table-container">
 
         <div ng-if="loaded && !loading">
             <div ng-if="data.length != 0" class="data-grid-paging-shadow"
