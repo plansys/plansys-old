@@ -866,17 +866,31 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     $scope.beforeCellEdit(ch[3], ch[0], ch[1], $scope.data[ch[0]], ht);
                                 }
 
-                                if (typeof $scope.beforeCellEdit == "function" && source == "edit") {
-                                    var ht = $("#" + $scope.renderID).handsontable('getInstance');
-                                    var ch = changes[0];
+                                switch (source) {
+                                    case "edit":
+                                    case "paste":
+                                    case "autofill":
+                                        $timeout(function () {
+                                            changes.map(function (c) {
+                                                if (typeof $scope.beforeCellEdit == "function") {
+                                                    if ($scope.dtGroups) {
+                                                        var row = $scope.datasource.data[$scope.data[c[0]]['__dt_row']] = $scope.data[c[0]];
+                                                        row[c[1]] = c[3];
+                                                        $scope.beforeCellEdit(c[3], c[0], c[1], row);
+                                                    } else {
+                                                        var row = $scope.datasource.data[c[0]] = $scope.data[c[0]];
+                                                        $scope.beforeCellEdit(c[3], c[0], c[1], row);
+                                                    }
+                                                }
+                                            });
 
-                                    if ($scope.dtGroups) {
-                                        var row = $scope.datasource.data[$scope.data[ch[0]]['__dt_row']] = $scope.data[ch[0]];
-                                        $scope.beforeCellEdit(ch[3], ch[0], ch[1], row, ht);
-                                    } else {
-                                        $scope.beforeCellEdit(ch[3], ch[0], ch[1], $scope.data[ch[0]], ht);
-                                    }
+                                            if (typeof $scope.beforeCellEdit == "function" && $scope.ht) {
+                                                $scope.ht.render();
+                                            }
+                                        });
+                                        break;
                                 }
+
                                 if (typeof $scope.events.beforeChange == "function") {
                                     $scope.events.beforeChange(changes, source);
                                 }
@@ -941,7 +955,21 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                                             }
                                                             $scope.datasource.data[c[0]][c[1]] = c[3];
                                                         }
+
+                                                        if (typeof $scope.afterCellEdit == "function") {
+                                                            if ($scope.dtGroups) {
+                                                                var row = $scope.datasource.data[$scope.data[[0]]['__dt_row']] = $scope.data[[0]];
+                                                                $scope.afterCellEdit([3], [0], [1], row);
+                                                            } else {
+                                                                var row = $scope.datasource.data[c[0]] = $scope.data[c[0]];
+                                                                $scope.afterCellEdit([3], [0], [1], row);
+                                                            }
+                                                        }
                                                     });
+
+                                                    if (typeof $scope.afterCellEdit == "function" && $scope.ht) {
+                                                        $scope.ht.render();
+                                                    }
                                                 });
                                                 break;
                                             case "loadData":
@@ -957,19 +985,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     $scope.events.afterChange(changes, source, $scope.grid());
                                 }
 
-                                if (typeof $scope.afterCellEdit == "function" && source == "edit") {
-                                    var ht = $("#" + $scope.renderID).handsontable('getInstance');
-                                    var ch = changes[0];
-
-
-                                    if ($scope.dtGroups) {
-                                        var row = $scope.datasource.data[$scope.data[ch[0]]['__dt_row']] = $scope.data[ch[0]];
-                                        $scope.afterCellEdit(ch[3], ch[0], ch[1], row, ht);
-                                    } else {
-                                        $scope.afterCellEdit(ch[3], ch[0], ch[1], $scope.data[ch[0]], ht);
-                                    }
-
-                                }
 
                                 $timeout(function () {
                                     $scope.edited = false;
