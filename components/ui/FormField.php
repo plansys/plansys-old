@@ -477,8 +477,8 @@ class FormField extends CComponent {
         foreach ($raw as $key => $content) {
             $keyArr = explode('.', $key);
             $key = "['" . implode("']['", $keyArr) . "']";
-
-            if ($content == 'true' || $content == 'false') {
+            
+            if ($content === 'true' || $content === 'false') {
                 $content = ($content === 'true');
             }
 
