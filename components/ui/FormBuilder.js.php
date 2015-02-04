@@ -32,6 +32,11 @@ ob_start();
             }
             $scope.pageSetting = $storage.pageSetting[$scope.pageInfo.pathinfo];
             $scope.pageSetting.lastModified = $scope.lastModified;
+
+            // reset page setting when...
+            if ($scope.form.layout == "dashboard" || $scope.pageInfo['module'] == 'sys') {
+                $scope.resetPageSetting();
+            }
         });
 
 
@@ -139,9 +144,14 @@ ob_start();
                     $scope.pageInfo['model_id'] = $scope.model.id;
                 }
 
+                var type = $scope.isNewRecord ? 'create' : 'update';
+                if ($scope.pageInfo['action'] == 'actionIndex') {
+                    type = 'update';
+                }
+
                 // send tracking information
                 $http.post(Yii.app.createUrl('/sys/auditTrail/track', {
-                    t: $scope.isNewRecord ? 'create' : 'update'
+                    t: type
                 }), $scope.pageInfo).success(function () {
                     submit();
                 });

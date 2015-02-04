@@ -158,17 +158,17 @@ class AuditTrail extends ActiveRecord {
                 $at = new AuditTrail;
 
                 if ($isDuplicate) {
-                    ## skip tracking visit for same page after CRUD
+                    ## skip tracking view for same page after CRUD
                     $isCrud = in_array($lastTrail['type'], ['create', 'update', 'delete']);
-                    if ($isCrud && $type == "visit") {
+                    if ($isCrud && $type == "view") {
                         return;
                     }
                 }
 
                 $at->attributes = $pathInfo;
 
-                ## remove data from visit tracker...
-                if ($type == "visit") {
+                ## remove data from view tracker...
+                if ($type == "view") {
                     $at->data = "{}";
                 }
 
@@ -179,8 +179,8 @@ class AuditTrail extends ActiveRecord {
                 $at->stamp = date("Y-m-d H:i:s");
                 $at->user_id = Yii::app()->user->id;
                 
-                ## WARNING !!! skip visit tracker.. too much data..
-                if ($type != "visit") {
+                ## WARNING !!! skip view tracker.. too much data..
+                if ($type != "view") {
                     $at->save();
                 }
             }

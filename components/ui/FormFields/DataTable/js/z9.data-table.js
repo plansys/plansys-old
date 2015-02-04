@@ -149,7 +149,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             continue;
                         $scope.columns.push({
                             name: i,
-                            label: i
+                            label: i,
+                            options: {}
                         });
                     }
                 }
@@ -309,6 +310,19 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                 }
                 // assemble each columns -- end
+                $scope.fowTimer = null;
+                $scope.fixOtherWidth = function () {
+                    if ($scope.fowTimer) {
+                        $timeout.cancel($scope.fowTimer);
+                    }
+                    $scope.fowTimer = $timeout(function () {
+                        var w = $el.find(".htCore:eq(0)").width() + 30;
+                        if (w > $('#content').width()) {
+                            $el.parent().find("> .data-filter").width(w);
+                            $(".form-horizontal > .alert").width(w - 60);
+                        }
+                    }, 100);
+                }
 
                 $scope.fixHeight = function () {
                     var dt = $el.find(".dataTable");
@@ -1025,6 +1039,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 });
                             },
                             modifyColWidth: function () {
+                                
+                                $scope.fixOtherWidth();
                                 $el.find('.header-grouping').remove();
                                 if (typeof $scope.events.modifyColWidth == "function") {
                                     $scope.events.modifyColWidth();
@@ -1058,14 +1074,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             $scope.ht = $("#" + $scope.renderID).handsontable(options);
                             $scope.loaded = true;
 
-                            $timeout(function () {
-                                var w = $el.find(".htCore:eq(0)").width() + 30;
-                                if (w > $('#content').width()) {
-                                    $el.parent().find("> .data-filter").width(w);
-                                    $(".form-horizontal > .alert").width(w - 60);
-                                }
-
-                            }, 500);
                         }
                     });
                 }
