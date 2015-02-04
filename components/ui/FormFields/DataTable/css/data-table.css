@@ -209,7 +209,7 @@
     background: transparent;
 }
 .link-mode .dataTable.handsontable tr td.currentRow,
-.link-mode .dataTable.handsontable tr td.currentCol, {
+.link-mode .dataTable.handsontable tr td.currentCol {
     background: transparent;
 }
 
