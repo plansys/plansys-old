@@ -776,6 +776,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                             cellProperties.readOnly = !$scope.columns[col].options.enableCellEdit;
                                         }
 
+                                        if (!!$scope.gridOptions.readOnly) {
+                                            cellProperties.readOnly = true;
+                                        }
+                                        
                                         if (col == 0) {
                                             cellProperties.renderer = 'groups';
                                         }
