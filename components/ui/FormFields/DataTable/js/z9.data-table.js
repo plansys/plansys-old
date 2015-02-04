@@ -104,20 +104,32 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                 $scope.$container = $el.parents('.container-full');
                 $scope.contextMenu = function () {
+                    var menu;
                     if ($scope.dtGroups) {
-                        var a = $scope.dtGroups.contextMenu();
-                        return a;
+                        menu = $scope.dtGroups.contextMenu();
                     } else {
-                        return [
-                            'row_above',
-                            'row_below',
-                            '---------',
-                            'remove_row',
-                            '---------',
-                            'undo',
-                            'redo'
-                        ];
+                        menu = {
+                            row_above: {},
+                            row_below: {},
+                            hsep1: '---------',
+                            remove_row: {},
+                            hsep2: '---------',
+                            undo: {},
+                            redo: {}
+                        };
                     }
+                    if (typeof $scope.gridOptions.removeMenu == "string") {
+                        $scope.gridOptions.removeMenu = $scope.$eval($scope.gridOptions.removeMenu);
+                    }
+                    if (typeof $scope.gridOptions.removeMenu == "object" && $scope.gridOptions.removeMenu.length > 0) {
+                        $scope.gridOptions.removeMenu.forEach(function (item) {
+                            if (!!menu[item]) {
+                                delete menu[item];
+                            }
+                        });
+                    }
+
+                    return menu;
                 }
 
                 $scope.reset = function () {
@@ -1039,7 +1051,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 });
                             },
                             modifyColWidth: function () {
-                                
                                 $scope.fixOtherWidth();
                                 $el.find('.header-grouping').remove();
                                 if (typeof $scope.events.modifyColWidth == "function") {

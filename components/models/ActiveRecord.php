@@ -14,6 +14,10 @@ class ActiveRecord extends CActiveRecord {
     private $__relDelete = [];
     private $__tempVar = [];
 
+    public static function execute($sql, $params = []) {
+        return Yii::app()->db->createCommand($sql)->execute($params);
+    }
+
     private function initRelation() {
         $static = !(isset($this) && get_class($this) == get_called_class());
 
@@ -543,7 +547,7 @@ class ActiveRecord extends CActiveRecord {
                     'model_class' => ActiveRecord::baseClass($this),
                     'model_id' => $this->id,
                     'user_id' => Yii::app()->user->id
-                ]);                
+                ]);
             }
         }
 
@@ -801,8 +805,7 @@ class ActiveRecord extends CActiveRecord {
             ActiveRecord::batchInsert($model, $post[$name . 'Insert']);
         }
 
-## update
-
+        ## update
         if (isset($post[$name . 'Update']) && is_string($post[$name . 'Update'])) {
             $post[$name . 'Update'] = json_decode($post[$name . 'Update'], true);
         }
@@ -820,7 +823,7 @@ class ActiveRecord extends CActiveRecord {
             ActiveRecord::batchUpdate($model, $post[$name . 'Update']);
         }
 
-## delete
+        ## delete
         if (isset($post[$name . 'Delete']) && is_string($post[$name . 'Delete'])) {
             $post[$name . 'Delete'] = json_decode($post[$name . 'Delete'], true);
         }
@@ -903,16 +906,20 @@ class ActiveRecord extends CActiveRecord {
         if (is_array($data[0])) {
             $ids = [];
             foreach ($data as $i => $j) {
-                $ids[] = $j['id'];
+                if (is_numeric(@$j['id'])) {
+                    $ids[] = $j['id'];
+                }
             }
         } else {
-            $ids = $data;
+            $ids = array_filter($data);
         }
+        
+        if (!empty($ids)) {
+            $delete = "DELETE FROM {$table} WHERE id IN (" . implode(",", $ids) . ");";
 
-        $delete = "DELETE FROM {$table} WHERE id IN (" . implode(",", $ids) . ");";
-
-        $command = Yii::app()->db->createCommand($delete);
-        $command->execute();
+            $command = Yii::app()->db->createCommand($delete);
+            $command->execute();
+        }
     }
 
     public static function batchUpdate($model, $data) {
