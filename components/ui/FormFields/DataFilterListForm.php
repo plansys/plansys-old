@@ -108,6 +108,23 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'DropDownList',
             ),
             array (
+                'label' => 'Query Operator',
+                'name' => 'queryOperator',
+                'options' => array (
+                    'ng-model' => 'value[$index].queryOperator',
+                    'ng-change' => 'updateListView()',
+                    'ng-delay' => '500',
+                    'ng-if' => 'item.filterType == \\\'check\\\'',
+                ),
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
+                ),
+                'listExpr' => '[\\\'\\\'=>\\\'Like\\\', \\\'in\\\'=>\\\'In\\\']',
+                'labelWidth' => '6',
+                'fieldWidth' => '5',
+                'type' => 'DropDownList',
+            ),
+            array (
                 'value' => '<div style=\"margin-top:15px;\">
     <hr/>
     <div style=\"background:white;margin-top:-19px;color:#aaa;padding:5px 5px 5px 3px;width:50px;margin-left:-4px;\">Default</div>
@@ -309,4 +326,6 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
     public $relIncludeEmpty = 'No';
     public $relEmptyValue = 'null';
     public $relEmptyLabel = '-- NONE --';
+    
+    public $queryOperator = "";
 }

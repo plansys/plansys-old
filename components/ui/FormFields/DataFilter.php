@@ -302,23 +302,25 @@ class DataFilter extends FormField {
                 break;
             case "check":
                 if ($filter['value'] != '') {
-                    // USING LIKE...
-                    $param = [];
-                    $psql = [];
-                    foreach ($filter['value'] as $k => $p) {
-                        $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
-                        $psql[] = "{$column} LIKE :{$paramName}_{$pcolumn}_{$k}";
+                    if (@$filter['operator'] == 'in') {
+                        // USING IN...
+                        $param = [];
+                        $psql = [];
+                        foreach ($filter['value'] as $k => $p) {
+                            $param[":{$paramName}_{$pcolumn}_{$k}"] = "{$p}";
+                            $psql[] = ":{$paramName}_{$pcolumn}_{$k}";
+                        }
+                        $sql = "{$column} IN (" . implode(", ", $psql) . ")";
+                    } else {
+                        // USING LIKE...
+                        $param = [];
+                        $psql = [];
+                        foreach ($filter['value'] as $k => $p) {
+                            $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
+                            $psql[] = "{$column} LIKE :{$paramName}_{$pcolumn}_{$k}";
+                        }
+                        $sql = "(" . implode(" OR ", $psql) . ")";
                     }
-                    $sql = "(" . implode(" OR ", $psql) . ")";
-
-                    // USING IN...
-//                    $param = [];
-//                    $psql = [];
-//                    foreach ($filter['value'] as $k => $p) {
-//                        $param[":{$paramName}_{$pcolumn}_{$k}"] = "{$p}";
-//                        $psql[] = ":{$paramName}_{$pcolumn}_{$k}";
-//                    }
-//                    $sql = "{$column} IN (" . implode(", ", $psql) . ")";
                 }
                 break;
         }
@@ -399,19 +401,19 @@ class DataFilter extends FormField {
             $rf->relationCriteria = $filter['relCriteria'];
             $rf->relationCriteria['limit'] = '20';
             $rf->relationCriteria['offset'] = 0;
-            
+
             $rf->idField = $filter['relIdField'];
             $rf->labelField = $filter['relLabelField'];
-            
+
             $rf->relationCriteria['condition'] = $rf->idField . ' = :dataFilterID';
             $rf->params[':dataFilterID'] = $post['v'];
             $rf->builder = $this->builder;
-            
+
             $rawList = $rf->query(@$post['s'], $rf->params);
             echo json_encode($rawList);
         }
     }
-    
+
     public function actionRelnext() {
 
         $postdata = file_get_contents("php://input");

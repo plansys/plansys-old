@@ -761,7 +761,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             autoWrapCol: true,
                             mergeCells: true,
                             comments: true,
-                            currentRowClassName: $scope.data.length > 3 ? 'currentRow' : '',
+                            currentRowClassName: 'currentRow',
                             currentColClassName: columnsInternal.length > 3 ? 'currentCol' : '',
                             manualColumnResize: true,
                             cells: function (row, col, prop) {
@@ -905,7 +905,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 }
 
                                 if (typeof $scope.gridOptions.afterSelectionChange == "function" && $(TD).is('td')) {
-                                    $scope.gridOptions.afterSelectionChange($scope.data[coords.row]);
+//                                    $scope.gridOptions.afterSelectionChange($scope.data[coords.row]);
                                 }
 
                                 $scope.mouseDown = true;

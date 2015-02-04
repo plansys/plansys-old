@@ -205,15 +205,21 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                     prepared.name = filter.name;
                     prepared.value = filter.value;
 
-                    if (filter.filterType == 'relation') {
-                        if (filter.relIncludeEmpty == 'Yes') {
-                            prepared.operator = 'empty';
-                            prepared.value = filter.relEmptyValue;
-                        } else {
-                            prepared.operator = '';
-                        }
+                    switch (filter.filterType) {
+                        case 'relation':
+                            if (filter.relIncludeEmpty == 'Yes') {
+                                prepared.operator = 'empty';
+                                prepared.value = filter.relEmptyValue;
+                            } else {
+                                prepared.operator = '';
+                            }
+                            break;
+                        case 'check':
+                            if (!!filter.queryOperator && filter.queryOperator == "in") {
+                                prepared.operator = 'in';
+                            }
+                            break;
                     }
-
                     return prepared;
                 }
 
