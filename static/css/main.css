@@ -194,7 +194,7 @@ pre {
     -moz-animation-duration: 1s;
     -moz-animation-iteration-count: infinite;
     -moz-animation-name: blink;
-    -moz-animation-timing-function: ease-in-out;    
+    -moz-animation-timing-function: ease-in-out;
 }
 
 .fa-nm {
@@ -282,7 +282,7 @@ i {
     color:#ccc;
 }
 
-.navbar-main .navbar-nav>li:hover>a, 
+.navbar-main .navbar-nav>li:hover>a,
 .navbar-main .navbar-nav>li:focus >a{
     color:#0a95d1;
     background:#fff;
@@ -439,7 +439,7 @@ div[ui-header] .btn, .properties-header .btn {
 
 div[ui-content] {
     overflow-y:auto;
-    overflow-x:hidden; 
+    overflow-x:hidden;
     position:absolute;
     top:28px;
     bottom:0px;
@@ -497,12 +497,12 @@ div[ui-content] {
 }
 
 .ui-layout-row > .ui-splitbar{
-    height: 1px !important; 
+    height: 1px !important;
     width: 100%;
     cursor: row-resize;
 }
 .ui-layout-column > .ui-splitbar{
-    width: 1px !important; 
+    width: 1px !important;
     height: 100%;
     cursor: col-resize;
 }
@@ -596,7 +596,7 @@ div[ui-content] {
     -webkit-user-select: none;  /* Chrome all / Safari all */
     -moz-user-select: none;     /* Firefox all */
     -ms-user-select: none;      /* IE 10+ */
-    -o-user-select: none;     
+    -o-user-select: none;
 }
 .layout-properties-btn:hover {
     opacity:1;
@@ -626,7 +626,7 @@ div[ui-content] {
     top:-20px !important;
 }
 
-.LinkButton .field-info .btn-group { 
+.LinkButton .field-info .btn-group {
     float:left !important;
 }
 
@@ -643,7 +643,7 @@ div[ui-content] {
     -webkit-user-select: none;  /* Chrome all / Safari all */
     -moz-user-select: none;     /* Firefox all */
     -ms-user-select: none;      /* IE 10+ */
-    -o-user-select: none;     
+    -o-user-select: none;
 }
 .angular-ui-tree-empty {
     position:absolute;
@@ -1094,9 +1094,6 @@ li:hover > .item-btn {
     opacity:1 !important;
 }
 
-.dashboard {
-    background:#f5f5f5;
-}
 .portlet-inner {
     cursor:default;
 }
@@ -1201,7 +1198,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 .ab-editor-link-bar {
     padding:0px 20px 7px 0px;
-    float:right;    
+    float:right;
 }
 .ab-editor-link-bar li {
     display:inline-block;
@@ -1414,9 +1411,9 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     -webkit-user-select: none;  /* Chrome all / Safari all */
     -moz-user-select: none;     /* Firefox all */
     -ms-user-select: none;      /* IE 10+ */
-    -o-user-select: none;     
+    -o-user-select: none;
 }
-.field-box table { 
+.field-box table {
     width:101%;
     margin-top:-1px;
 }
@@ -1431,7 +1428,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     overflow:hidden;
 }
 .field-box input, .field-box textarea {
-    line-height:20px; width:100%; 
+    line-height:20px; width:100%;
     outline:none !important;
     font-family: consolas, "Courier New", courier, monospace;
     font-size:12px;
@@ -1513,9 +1510,9 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     white-space: nowrap;
     width:100%;
     padding:0px !important;
-    box-shadow:0px 0px 0px 1px #ddd, 
-        inset -1px 0px 0px 0px #ddd, 
-        inset 1px 0px 0px 0px #ddd, 
+    box-shadow:0px 0px 0px 1px #ddd,
+        inset -1px 0px 0px 0px #ddd,
+        inset 1px 0px 0px 0px #ddd,
         inset 0px -1px 0px 0px #ddd;
     cursor:pointer;
 }
@@ -1844,9 +1841,9 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 .filter-reset {
     color:#666;
-    border-radius:0px 3px 3px 0px !important; 
-    border:1px solid #bbb; 
-    padding:2px 3px 2px 3px; 
+    border-radius:0px 3px 3px 0px !important;
+    border:1px solid #bbb;
+    padding:2px 3px 2px 3px;
     margin-top:4px;
 }
 
@@ -1884,7 +1881,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 .filter-dropdown-label {
     margin:0px;
     font-weight:normal;
-    cursor:pointer; 
+    cursor:pointer;
 }
 
 .filter-item-container {
@@ -1920,7 +1917,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     right:0px;
     bottom:0px;
     background:rgba(0,0,0,.4);
-    z-index: 1050; 
+    z-index: 1050;
     display: block;
 }
 
@@ -1937,10 +1934,10 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 .migration-item-head {
     padding:5px 10px;
-    cursor:pointer; 
+    cursor:pointer;
     -webkit-user-select: none;
-    -moz-user-select:none; 
-    -ms-user-select: none; 
+    -moz-user-select:none;
+    -ms-user-select: none;
     user-select:none;
 }
 
@@ -2169,7 +2166,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     padding-top:2px;
 }
 
-.nfy-sender { 
+.nfy-sender {
     color:#666;
 }
 
@@ -2249,7 +2246,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     padding:7px 10px 4px 10px;
 }
 
-.portlet .data-filter { 
+.portlet .data-filter {
     margin:0px;
     border:0px;
     background: transparent;
@@ -2888,7 +2885,7 @@ textarea.form-control {
     overflow:hidden;
 }
 
-.info { 
+.info {
     color:#999;font-size:12px;
     padding-left:20px;
 }
