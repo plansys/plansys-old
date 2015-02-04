@@ -690,7 +690,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     if ($scope.datasource.data.length > 0 || $scope.columns.length > 0) {
                         $scope.notReady = false;
                         $scope.canAddRow = true;
-                        $scope.init();
+                        prepareData(function() {
+                            $scope.init();
+                        });
                     } else {
                         $scope.loaded = true;
                         $scope.loading = false;
@@ -709,7 +711,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                 // Initialize data-table
                 $scope.init = function () {
-
                     if ($scope.columns.length == 0 && $scope.datasource.data.length > 0) {
                         $scope.generateCols();
                     }
