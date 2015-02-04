@@ -119,12 +119,14 @@ app.directive('psChartPie', function ($timeout) {
                             }
                         }
                     }
-
+                    
                     if ($scope.options == null) {
                         $scope.options = {};
                     }
-
+                    
                     $scope.options = deepExtend(defaultOptions, $scope.options);
+                    
+                    //console.log($scope.options);
 
                     if (typeof $scope.isgroup != 'undefined' && $scope.isgroup) {
                         if (typeof $scope.data[$scope.chartType] == 'undefined')
@@ -155,7 +157,7 @@ app.directive('psChartPie', function ($timeout) {
             $scope.chartName = $el.find("data[name=chartName]").text();
             $scope.series = JSON.parse($el.find("data[name=series]").text());
             $scope.options = JSON.parse($el.find("data[name=options]").text());
-
+            console.log(JSON.parse($el.find("data[name=options]").text()));
             $scope.fillSeries();
 
         }
