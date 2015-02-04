@@ -1059,13 +1059,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             beforeRender: function () {
                                 $el.find('.header-grouping').remove();
                                 var ht = $("#" + $scope.renderID).handsontable('getInstance');
-                                for (i in columnsInternal) {
-                                    var c = columnsInternal[i];
-                                    if (c.options && c.options.width) {
-                                        ht.setCellMeta(0, i, 'width', c.options.width);
-                                    }
-                                }
-
+                                
                                 if (typeof $scope.events.beforeRender == "function") {
                                     $scope.events.beforeRender();
                                 }
