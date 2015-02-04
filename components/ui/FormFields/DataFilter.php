@@ -378,6 +378,40 @@ class DataFilter extends FormField {
         return $return;
     }
 
+    public function actionRelInit() {
+
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+
+        if (count($post) == 0)
+            die();
+
+        $fb = FormBuilder::load($post['m']);
+        $ff = $fb->findField(['name' => $post['f']]);
+
+        foreach ($ff['filters'] as $filter) {
+            if ($filter['name'] != $post['n'])
+                continue;
+
+            $rf = new RelationField;
+            $rf->params = $filter['relParams'];
+            $rf->modelClass = $filter['relModelClass'];
+            $rf->relationCriteria = $filter['relCriteria'];
+            $rf->relationCriteria['limit'] = '20';
+            $rf->relationCriteria['offset'] = 0;
+            
+            $rf->idField = $filter['relIdField'];
+            $rf->labelField = $filter['relLabelField'];
+            
+            $rf->relationCriteria['condition'] = $rf->idField . ' = :dataFilterID';
+            $rf->params[':dataFilterID'] = $post['v'];
+            $rf->builder = $this->builder;
+            
+            $rawList = $rf->query(@$post['s'], $rf->params);
+            echo json_encode($rawList);
+        }
+    }
+    
     public function actionRelnext() {
 
         $postdata = file_get_contents("php://input");
