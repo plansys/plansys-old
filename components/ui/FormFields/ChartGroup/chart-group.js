@@ -3,17 +3,31 @@ app.directive('psChartGroup', function ($timeout) {
         scope: true,
         controller: function ($scope, $element) {
 
-            /*********************** DEEP EXTEND ********************************/
+            /*********************** DEEP EXTEND ********************************/ 
             var deepExtend = function (destination, source) {
                 for (var property in source) {
                     if (source[property] && source[property].constructor &&
                             source[property].constructor === Object) {
+
                         destination[property] = destination[property] || {};
                         arguments.callee(destination[property], source[property]);
                     } else {
-                        destination[property] = source[property];
+                        if (typeof source[property] != "undefined") {
+                            if (typeof source[property] == "string") {
+                                destination[property] = source[property];
+
+                                if (destination[property].substr(0, 3) == "js:") {
+                                    destination[property] = $scope.$eval(destination[property].substr(3));
+                                }
+                            } else {
+                                destination[property] = source[property];
+                            }
+                        } else {
+                            destination[property] = undefined;
+                        }
                     }
                 }
+
                 return destination;
             }
 
