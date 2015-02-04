@@ -147,7 +147,7 @@
 
 .handsontable td.htInvalid {
     color:#Fff !important;
-    background: #ff4c42!important;  
+    background: #ff4c42!important;
 }
 
 .handsontable td.groups:last-child {
@@ -209,16 +209,18 @@
     background: transparent;
 }
 .link-mode .dataTable.handsontable tr td.currentRow,
-.link-mode .dataTable.handsontable tr td.currentCol{
+.link-mode .dataTable.handsontable tr td.currentCol {
     background: transparent;
 }
+
 .link-mode .dataTable.handsontable tr:hover td {
     background: #ececeb;
     cursor:pointer;
 }
 
 .link-mode .dataTable.handsontable tr td.currentRow,
-.link-mode .dataTable.handsontable tr td.current{
+.link-mode .dataTable.handsontable tr td.current,
+.link-mode .dataTable.handsontable tr td.area{
     background:#ffc !important;
     cursor:pointer;
 }

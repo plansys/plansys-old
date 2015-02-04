@@ -690,7 +690,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     if ($scope.datasource.data.length > 0 || $scope.columns.length > 0) {
                         $scope.notReady = false;
                         $scope.canAddRow = true;
-                        $scope.init();
+                        prepareData(function() {
+                            $scope.init();
+                        });
                     } else {
                         $scope.loaded = true;
                         $scope.loading = false;
@@ -709,7 +711,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                 // Initialize data-table
                 $scope.init = function () {
-
                     if ($scope.columns.length == 0 && $scope.datasource.data.length > 0) {
                         $scope.generateCols();
                     }
@@ -750,6 +751,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             $el.addClass('read-only');
                         }
 
+                        var currentRowClassName = columnsInternal.length > 3 ? 'currentCol' : '';
+                        if (typeof $scope.gridOptions.afterSelectionChange == "function") {
+                            currentRowClassName = '';
+                        }
+
                         var options = $.extend({
                             data: $scope.data,
                             columnSorting: !$scope.dtGroups,
@@ -762,7 +768,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             mergeCells: true,
                             comments: true,
                             currentRowClassName: 'currentRow',
-                            currentColClassName: columnsInternal.length > 3 ? 'currentCol' : '',
+                            currentColClassName: currentRowClassName,
                             manualColumnResize: true,
                             cells: function (row, col, prop) {
                                 var cellProperties = {};
@@ -779,7 +785,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                         if (!!$scope.gridOptions.readOnly) {
                                             cellProperties.readOnly = true;
                                         }
-                                        
+
                                         if (col == 0) {
                                             cellProperties.renderer = 'groups';
                                         }
@@ -905,7 +911,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 }
 
                                 if (typeof $scope.gridOptions.afterSelectionChange == "function" && $(TD).is('td')) {
-//                                    $scope.gridOptions.afterSelectionChange($scope.data[coords.row]);
+                                   $scope.gridOptions.afterSelectionChange($scope.data[coords.row]);
                                 }
 
                                 $scope.mouseDown = true;
@@ -1078,7 +1084,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             },
                             contextMenu: $scope.contextMenu()
                         }, $scope.gridOptions);
-                        //prepare data table groups   
+                        //prepare data table groups
 
                         if (typeof options.colWidths == "string") {
                             options.colWidths = $scope.$eval(options.colWidths);
@@ -1090,7 +1096,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         }
                         // Generate DataTable Options -- end
 
-                        // Setup Data Watcher                    
+                        // Setup Data Watcher
                         if (options.events) {
                             $scope.events = options.events;
                         }
