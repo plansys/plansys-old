@@ -13,7 +13,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             } else if (array[i].trim().substr(0, 4) == "url:") {
                                 var url = array[i].trim().substr(4);
                                 array[i] = function (row) {
-                                    location.href = eval($scope.generateUrl(url, 'function'));
+                                    if (!!array['target'] && array['target'] == '_blank') {
+                                        window.open(eval($scope.generateUrl(url, 'function')), '_blank');
+                                    } else {
+                                        location.href = eval($scope.generateUrl(url, 'function'));
+                                    }
                                 }
                             } else {
                                 if (array[i].match(/true/i)) {
@@ -127,6 +131,19 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 delete menu[item];
                             }
                         });
+                    }
+
+                    if ($scope.gridOptions.readOnly) {
+                        delete menu['hsep1'];
+                        delete menu['hsep2'];
+                        delete menu['remove_row'];
+                        if (!$scope.dtGroups) {
+                            delete menu['row_above'];
+                            delete menu['row_below'];
+                        } else {
+                            delete menu['insert'];
+                            delete menu['duplicate'];
+                        }
                     }
 
                     return menu;
@@ -331,6 +348,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         var w = $el.find(".htCore:eq(0)").width() + 30;
                         if (w > $('#content').width()) {
                             $el.parent().find("> .data-filter").width(w);
+                            $el.parent().find("> .section-header").width(w - 40);
                             $(".form-horizontal > .alert").width(w - 60);
                         }
                     }, 100);
@@ -759,10 +777,12 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         }
 
                         // link Mode
+                        var multiSelect = true;
                         if (typeof $scope.gridOptions.afterSelectionChange == "function") {
                             minSpareRows = 0;
                             $scope.gridOptions.readOnly = true;
                             $el.addClass('link-mode');
+                            multiSelect = false;
                         }
 
                         if (!!$scope.gridOptions.readOnly) {
@@ -778,6 +798,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             data: $scope.data,
                             columnSorting: !$scope.dtGroups,
                             contextMenu: true,
+                            multiSelect: multiSelect,
+                            fillHandle: !$scope.gridOptions.readOnly,
                             scope: $scope,
                             colHeaders: colHeaders,
                             columns: columnsInternal,
@@ -1124,6 +1146,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             $scope.ht = $("#" + $scope.renderID).handsontable(options);
                             $scope.loaded = true;
                             $scope.loading = false;
+
                         }
                     });
                 }
