@@ -56,7 +56,6 @@ class Controller extends CController {
         }
 
         $layout = Layout::render($fb->form['layout']['name'], $data, $model, true);
-
         $this->renderText($layout, false);
     }
 

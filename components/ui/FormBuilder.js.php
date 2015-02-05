@@ -15,7 +15,9 @@ ob_start();
         $scope.form = <?php echo json_encode($this->form); ?>;
         $scope.model = <?php echo @json_encode($data['data']); ?>;
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
-        $scope.params = <?php echo @json_encode($renderParams); ?>;
+        $scope.renderParams = <?php echo @json_encode($renderParams); ?>;
+        $scope.getParams = <?php echo @json_encode($_GET); ?>;
+        $scope.params = $scope.renderParams.concat($scope.getParams);
         $scope.pageUrl = "<?php echo @Yii::app()->request->url; ?>";
         $scope.pageInfo = <?php echo json_encode(AuditTrail::getPathInfo()) ?>;
         $scope.formClass = "<?php echo $modelClass; ?>";
@@ -128,7 +130,7 @@ ob_start();
                     }
 
                     var parseParams = $parse(button.urlparams);
-                    var urlParams = angular.extend($scope.params, parseParams($scope));
+                    var urlParams = angular.extend($scope.getParams, parseParams($scope));
                     var url = Yii.app.createUrl(baseurl, urlParams);
                     $("div[ng-controller=<?= $modelClass ?>Controller] form").attr('action', url).submit();
                 }

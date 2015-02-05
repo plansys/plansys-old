@@ -761,7 +761,6 @@ class FormBuilder extends CComponent {
         $renderInAjax = isset($options['renderInAjax']) ? $options['renderInAjax'] : false;
         $FFRenderID = isset($options['FormFieldRenderID']) ? $options['FormFieldRenderID'] . '_' : '';
         $renderParams = isset($options['params']) ? $options['params'] : [];
-        $renderParams = array_merge($_GET, $renderParams);
 
         ## wrap form
         if ($wrapForm) {
