@@ -653,6 +653,7 @@ class RelationField extends FormField {
 
     public function generateCriteria($search, $params) {
         $condition = $this->generateCondition($search, $params);
+        
         $nolimit = false;
         $this->relationCriteria['condition'] = $condition["sql"];
         if (!isset($this->relationCriteria['limit']) || @$this->relationCriteria['limit'] == 30) {
@@ -688,7 +689,9 @@ class RelationField extends FormField {
             $start = ($criteria['page'] - 1) * $criteria['pageSize'];
             $pageSize = $criteria['pageSize'];
             $criteria['limit'] = $pageSize;
-            $criteria['offset'] = $start;
+            if (!isset($criteria['offset'])) {
+            	$criteria['offset'] = $start;
+            }
 
             unset($criteria['pageSize']);
             unset($criteria['page']);

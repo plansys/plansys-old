@@ -35,7 +35,7 @@
         if (typeof relList[value] == "undefined") {
             var name = this.name;
             var originalRow = this.row;
-            if (!$scope.ht || $scope.ht.getSelected()) {
+            if (!$scope.ht || !$scope.ht.getSelected) {
                 callback(false);
                 return false;
             }

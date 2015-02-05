@@ -424,6 +424,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             relCols.push(columnsInternal[i]);
                         }
                     }
+                    for (i in $scope.columns) {
+                        if ($scope.columns[i].columnType == "relation") {
+                            relCols.push($scope.columns[i]);
+                        }
+                    }
                     if ($scope.dtGroups) {
                         for (i in $scope.dtGroups.groupColOpts) {
                             if ($scope.dtGroups.groupColOpts[i].columnType == "relation") {
@@ -526,6 +531,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             $scope.relationColumns.push(i.name);
                         }
                     });
+
 
                     if (relCols.length > 0 && dgr.name) {
                         $scope.loadingRelation = true;
@@ -1073,7 +1079,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             beforeRender: function () {
                                 $el.find('.header-grouping').remove();
                                 var ht = $("#" + $scope.renderID).handsontable('getInstance');
-                                
+
                                 if (typeof $scope.events.beforeRender == "function") {
                                     $scope.events.beforeRender();
                                 }
