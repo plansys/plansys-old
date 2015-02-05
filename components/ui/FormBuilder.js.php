@@ -17,7 +17,7 @@ ob_start();
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
         $scope.renderParams = <?php echo @json_encode($renderParams); ?>;
         $scope.getParams = <?php echo @json_encode($_GET); ?>;
-        $scope.params = $scope.renderParams.concat($scope.getParams);
+        $scope.params = angular.extend({}, $scope.renderParams, $scope.getParams);
         $scope.pageUrl = "<?php echo @Yii::app()->request->url; ?>";
         $scope.pageInfo = <?php echo json_encode(AuditTrail::getPathInfo()) ?>;
         $scope.formClass = "<?php echo $modelClass; ?>";
