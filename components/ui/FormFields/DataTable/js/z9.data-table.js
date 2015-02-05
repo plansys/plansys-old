@@ -1144,9 +1144,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         if (!!$("#" + $scope.renderID)[0]) {
                             $("#" + $scope.renderID).width($el.width());
                             $scope.ht = $("#" + $scope.renderID).handsontable(options);
-                            $scope.loaded = true;
-                            $scope.loading = false;
 
+                            $timeout(function () {
+                                $scope.loaded = true;
+                                $scope.loading = false;
+                            });
                         }
                     });
                 }
