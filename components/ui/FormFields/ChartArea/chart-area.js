@@ -9,12 +9,26 @@ app.directive('psChartArea', function ($timeout) {
                 for (var property in source) {
                     if (source[property] && source[property].constructor &&
                             source[property].constructor === Object) {
+
                         destination[property] = destination[property] || {};
                         arguments.callee(destination[property], source[property]);
                     } else {
-                        destination[property] = isNaN(source[property]) ? source[property] : parseInt(source[property]);
+                        if (typeof source[property] != "undefined") {
+                            if (typeof source[property] == "string") {
+                                destination[property] = source[property];
+
+                                if (destination[property].substr(0, 3) == "js:") {
+                                    destination[property] = $scope.$eval(destination[property].substr(3));
+                                }
+                            } else {
+                                destination[property] = source[property];
+                            }
+                        } else {
+                            destination[property] = undefined;
+                        }
                     }
                 }
+
                 return destination;
             }
 
@@ -31,12 +45,12 @@ app.directive('psChartArea', function ($timeout) {
                         var tmp = {};
                         tmp['name'] = chartData_raw[i].label;
                         tmp['data'] = chartData_raw[i].value.map(function (e, i) {
-							var ret = e;
-							try {
-								ret = JSON.parse(e);
-							} catch(e) {
-								ret = e;
-							}
+                            var ret = e;
+                            try {
+                                ret = JSON.parse(e);
+                            } catch (e) {
+                                ret = e;
+                            }
                             return ret;
                         });
 
@@ -51,13 +65,13 @@ app.directive('psChartArea', function ($timeout) {
             }
 
 
-            $scope.$watch('datasource.data', function (n,o) {
+            $scope.$watch('datasource.data', function (n, o) {
                 if (n !== o && $scope.datasource != null) {
                     $scope.data = $scope.datasource.data;
                     $scope.fillSeries();
                 }
             }, true);
-			
+
             $scope.fillSeries = function () {
                 $timeout(function () {
                     var series = [];

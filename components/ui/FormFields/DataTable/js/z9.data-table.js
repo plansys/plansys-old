@@ -690,7 +690,18 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     if ($scope.datasource.data.length > 0 || $scope.columns.length > 0) {
                         $scope.notReady = false;
                         $scope.canAddRow = true;
-                        prepareData(function() {
+
+                        if ($scope.gridOptions.removeMenu) {
+                            if (typeof $scope.gridOptions.removeMenu == "string") {
+                                $scope.gridOptions.removeMenu = $scope.$eval($scope.gridOptions.removeMenu);
+                            }
+
+                            if ($scope.gridOptions.removeMenu.indexOf("row_above") || $scope.gridOptions.removeMenu.indexOf("row_below") || $scope.gridOptions.removeMenu.indexOf("insert") || $scope.gridOptions.removeMenu.indexOf("duplicate")) {
+                                $scope.canAddRow = false;
+                            }
+                        }
+
+                        prepareData(function () {
                             $scope.init();
                         });
                     } else {
@@ -702,8 +713,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                 $scope.addRow = function () {
                     if (!$scope.dtGroups) {
-                        $scope.data.push({});
-                        $scope.datasource.data.push({});
+                        var newRow = {};
+                        $scope.data.push(newRow);
+                        $scope.datasource.data.push(newRow);
                     } else {
                         $scope.dtGroups.addRow();
                     }
@@ -911,7 +923,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 }
 
                                 if (typeof $scope.gridOptions.afterSelectionChange == "function" && $(TD).is('td')) {
-                                   $scope.gridOptions.afterSelectionChange($scope.data[coords.row]);
+                                    if (!$scope.dtGroups || (!!$scope.dtGroups && $scope.data[coords.row]['__dt_flg'] == "Z")) {
+                                        $scope.gridOptions.afterSelectionChange($scope.data[coords.row]);
+                                    }
                                 }
 
                                 $scope.mouseDown = true;

@@ -9,12 +9,26 @@ app.directive('psChartLine', function ($timeout) {
                 for (var property in source) {
                     if (source[property] && source[property].constructor &&
                             source[property].constructor === Object) {
+
                         destination[property] = destination[property] || {};
                         arguments.callee(destination[property], source[property]);
                     } else {
-                        destination[property] = isNaN(source[property]) ? source[property] : parseInt(source[property]);
+                        if (typeof source[property] != "undefined") {
+                            if (typeof source[property] == "string") {
+                                destination[property] = source[property];
+
+                                if (destination[property].substr(0, 3) == "js:") {
+                                    destination[property] = $scope.$eval(destination[property].substr(3));
+                                }
+                            } else {
+                                destination[property] = source[property];
+                            }
+                        } else {
+                            destination[property] = undefined;
+                        }
                     }
                 }
+
                 return destination;
             }
 

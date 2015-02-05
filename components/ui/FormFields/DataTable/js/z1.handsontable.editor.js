@@ -19,7 +19,6 @@
     };
     RelationEditor.prototype.updateDS = function ($scope, row, col, value) {
         var c = [row, col, '', value];
-
         if ($scope.dtGroups) {
             $scope.dtGroups.handleChange($scope, c);
         } else {
@@ -312,7 +311,7 @@
     function groupsRenderer(instance, td, row, col, prop, value, cellProperties) {
         Handsontable.TextCell.renderer.apply(this, arguments);
 
-        if (value && col == 0) {
+        if (col == 0) {
             var row = cellProperties.$scope.data[row];
 
             if (row && !!row['__dt_flg']) {
@@ -324,7 +323,7 @@
                             lvstr += "    ";
                         }
                         lvstr += '   ';
-                        Handsontable.Dom.fastInnerHTML(td, lvstr + value);
+                        Handsontable.Dom.fastInnerHTML(td, lvstr + (value || ''));
                         break;
                     case "G":
                         var gidx = row['__dt_lvl'];
@@ -333,7 +332,7 @@
                             lvstr += "    ";
                         }
                         lvstr += '◢  ';
-                        Handsontable.Dom.fastInnerHTML(td, lvstr + value);
+                        Handsontable.Dom.fastInnerHTML(td, lvstr + (value || '<span style="opacity:.5">...</span>'));
                         break;
                 }
             }

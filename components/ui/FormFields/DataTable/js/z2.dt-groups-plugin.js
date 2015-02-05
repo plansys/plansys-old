@@ -65,12 +65,21 @@ Handsontable.DataTableGroups = function (settings) {
                 case "G":
                     var rows = $scope.dtGroups.findRows(row);
                     var col = $scope.dtGroups.groupCols[row['__dt_lvl']];
-                    var valcol = $scope.columns[0].name;
+
+                    var colDef = $scope.dtGroups.groupColOpts[col];
+                    if (!colDef) {
+                        colDef = $scope.dtGroups.groupColOpts[col + $scope.relSuffix];
+                    }
+                    if (colDef.columnType == "relation") {
+                        if (col != c[1]) {
+                            return;
+                        }
+                    }
 
                     rows.forEach(function (r) {
-                        r[col] = angular.copy(row[valcol]);
+                        r[col] = c[3];
                         var dsrow = r['__dt_row'];
-                        $scope.datasource.data[dsrow][col] = angular.copy(row[valcol]);
+                        $scope.datasource.data[dsrow][col] = c[3];
                     });
 
                     $scope.ht = $scope.getInstance();
@@ -236,10 +245,14 @@ Handsontable.DataTableGroups = function (settings) {
                 '__dt_row': $scope.datasource.data.length
             };
             gp.groupCols.forEach(function (col) {
-                item[col] = "NEW";
+                item[col] = "";
             });
+
             $scope.datasource.data.splice($scope.datasource.data.length, 0, item);
             $scope.data.splice($scope.data.length, 0, item);
+
+            this.ungroup($scope.ht, false);
+            this.group($scope.ht);
         },
         contextMenu: function () {
             if (this.grouped)
@@ -312,8 +325,8 @@ Handsontable.DataTableGroups = function (settings) {
                                     if (typeof d['id'] != "undefined") {
                                         delete d['id'];
                                     }
-                                    
-                                    
+
+
                                     $scope.datasource.data.splice(d['__dt_row'], 0, d);
                                     $scope.data.splice(i, 0, d);
                                 }
@@ -321,7 +334,7 @@ Handsontable.DataTableGroups = function (settings) {
 
                             $scope.dtGroups.ungroup($scope.ht, false);
                             $scope.dtGroups.group($scope.ht);
-                            
+
                             $scope.ht.selectCell(
                                     selection.start.row + 1,
                                     selection.start.col,
