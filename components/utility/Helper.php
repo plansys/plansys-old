@@ -823,7 +823,7 @@ class Helper {
      *                       composed url like parse_url() would return
      * @return string
      */
-    function buildUrl($url, $parts = array(), $flags = HTTP_URL_REPLACE, &$new_url = array()) {
+    public static function buildUrl($url, $parts = array(), $flags = HTTP_URL_REPLACE, &$new_url = array()) {
         is_array($url) || $url = parse_url($url);
         is_array($parts) || $parts = parse_url($parts);
 
