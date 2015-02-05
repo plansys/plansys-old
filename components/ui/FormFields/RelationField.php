@@ -390,6 +390,14 @@ class RelationField extends FormField {
                 $this->labelField = @$column['relLabelField'];
                 $this->relationCriteria = @$column['relCriteria'];
                 $this->params = is_null(@$column['relParams']) ? [] : $column['relParams'];
+
+        if (is_array(@$this->params)) {
+            foreach ($this->params as $k => $ff) {
+                if (substr($ff, 0, 3) == "js:" && isset($p[$k])) {
+                    $this->params[$k] = "'" . $p[$k] . "'";
+                }
+            }
+        }
             }
         }
         $this->builder = $fb;
