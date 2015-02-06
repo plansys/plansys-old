@@ -50,16 +50,25 @@ class WebUser extends CWebUser {
     }
 
     public function getHomeUrl() {
-        if (isset($this->info['roles'][0]['home_url'])) {
-            return $this->info['roles'][0]['home_url'];
+        if (isset($this->roleInfo['home_url'])) {
+            return $this->roleInfo['home_url'];
         } else {
             return "";
         }
     }
 
+    public function getRoleInfo() {
+        foreach ($this->info['roles'] as $k=>$i) {
+            if ($i['role_name'] == $this->fullRole) {
+                return $i;
+            }
+        }
+        return null;
+    }
+
     public function getMenuPath() {
-        if (isset($this->info['roles'][0]['menu_path'])) {
-            return $this->info['roles'][0]['menu_path'];
+        if (isset($this->roleInfo['menu_path'])) {
+            return $this->roleInfo['menu_path'];
         } else {
             return "";
         }
