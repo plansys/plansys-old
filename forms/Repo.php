@@ -84,7 +84,7 @@ class Repo extends Form {
                         'inputMask' => '',
                         'stringAlias' => array (),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                     ),
                     array (
                         'name' => 'size',

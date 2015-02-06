@@ -491,9 +491,11 @@ class RepoManager extends CComponent {
             $parent = dirname($dir);
         }
 
+
         if (!realpath($dir) && $isRelativePath) {
             $dir = getcwd() . DIRECTORY_SEPARATOR . $dir;
         }
+
 
         $list = [];
 
@@ -518,7 +520,7 @@ class RepoManager extends CComponent {
                     $size = filesize($path);
 
                     $path = $this->relativePath($dir . DIRECTORY_SEPARATOR . $entry);
-                    $path = substr($path, strlen(RepoManager::getModuleDir()));
+                    $path = substr($path, strlen($this->repoPath));
 
                     $list[] = [
                         'name' => $entry,
@@ -532,76 +534,13 @@ class RepoManager extends CComponent {
             }
             closedir($handle);
         }
-//        $list = [];
-//        foreach ($sout as $f) {
-//            if (is_array($f) && $f[0] != "total" && count($f) > 2) {
-//                $perm = array_shift($f);
-//                $size = array_shift($f);
-//                $file = implode(" ", $f);
-//
-//                if ($file == "." || $file == ".." || $file[0] == ".")
-//                    continue;
-//
-//                $new = [
-//                    'name' => $file,
-//                    'type' => $perm[0] == 'd' ? "dir" : "." . substr($file, strrpos($file, '.') + 1),
-//                    'size' => $size,
-//                    'path' => $this->relativePath($dir . DIRECTORY_SEPARATOR . $file)
-//                ];
-//
-//                if ($new['type'] == "dir") {
-//                    $new['size'] = 0;
-//                    array_unshift($list, $new);
-//                } else {
-//                    array_push($list, $new);
-//                }
-//            }
-//        }
-//        $dire = opendir($dir);
-//        while (($currentFile = readdir($dire)) !== false) {
-//            if ($currentFile == '.' or $currentFile == '..' or $currentFile[0] == '.') {
-//                continue;
-//            }
-//            $l = $dir . DIRECTORY_SEPARATOR. $currentFile;
-//            $list[] = array(
-//                'name' => $currentFile,
-//                'type' => $this->fileType($l),
-//                'size' => filesize($l),
-//                'path' => $this->relativePath($l)
-//            );
-//        }
-//        2r    th
-//        $list = array();
-//        $glob = glob($dir . DIRECTORY_SEPARATOR . '*', GLOB_NOSORT);
-//        foreach ($glob as $l) {
-//            $itemName = explode(DIRECTORY_SEPARATOR, $l);
-//            $itemName = array_pop($itemName);
-//            if (substr($itemName, -5) != '.json') {
-//                if (is_dir($l)) {
-//                    $list[] = array(
-//                        'name' => $itemName,
-//                        'type' => 'dir',
-//                        'size' => 0,
-//                        'path' => $this->relativePath($l)
-//                    );
-//                } else {
-//                    $list[] = array(
-//                        'name' => $itemName,
-//                        'type' => $this->fileType($l),
-//                        'size' => filesize($l),
-//                        'path' => $this->relativePath($l)
-//                    );
-//                }
-//            }
-//        }
+
         usort($list, ['RepoManager', 'sortItem']);
         $count = count($list);
 
-
-
         if ($originaldir != "" && $originaldir != RepoManager::getModuleDir()) {
             $parent = $this->relativePath($parent);
-            $parent = substr($parent, strlen(RepoManager::getModuleDir()));
+            $parent = substr($parent, strlen($this->repoPath));
         } else {
             $parent = "";
         }
@@ -613,6 +552,7 @@ class RepoManager extends CComponent {
             'item' => $list,
             'count' => $count,
         ];
+
 
         return $detail;
     }

@@ -293,7 +293,21 @@ class UploadFile extends FormField {
         if (!is_file($file)) {
             $file = RepoManager::resolve($file);
         }
-        
+
+        $supported_image = array(
+            'gif',
+            'jpg',
+            'jpeg',
+            'png',
+            'bmp',
+            'tga'
+        );
+        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+        if (!in_array($ext, $supported_image)) {
+            return;
+        }
+
+
         $img = Yii::app()->img->load($file);
         $img->resizeToWidth(250);
 
