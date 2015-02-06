@@ -408,7 +408,15 @@ class RepoManager extends CComponent {
         if (Yii::app()->user->isGuest) {
             return DIRECTORY_SEPARATOR;
         } else {
-            return DIRECTORY_SEPARATOR . Yii::app()->user->role;
+            $roles = Yii::app()->user->model->roles;
+
+            $path = Yii::app()->user->role;
+            foreach ($roles as $r) {
+                if (Yii::app()->user->fullRole == $r['role_name'] && $r['repo_path'] != '') {
+                    $path = $r['repo_path'];
+                }
+            }
+            return DIRECTORY_SEPARATOR . $path;
         }
     }
 

@@ -10,9 +10,11 @@ class DevRoleForm extends Role {
                 'data' => array (
                     'col1' => array (
                         'type' => 'mainform',
+                        'size' => '100',
                     ),
                 ),
             ),
+            'inlineJS' => '',
         );
     }
 
@@ -73,6 +75,12 @@ class DevRoleForm extends Role {
                     array (
                         'label' => 'Menu Path',
                         'name' => 'menu_path',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Repo Path',
+                        'name' => 'repo_path',
+                        'prefix' => 'repo/',
                         'type' => 'TextField',
                     ),
                     array (
