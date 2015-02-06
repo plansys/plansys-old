@@ -36,9 +36,9 @@ class Role extends ActiveRecord {
         $this->oldName = $this->role_name;
 
         if ($this->repo_path == "") {
-            $this->repo_path = array_shift(explode(".", Yii::app()->user->role));
+            $this->repo_path = array_shift(explode(".", $this->role_name));
         }
-        
+
         return true;
     }
 
