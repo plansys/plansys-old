@@ -25,6 +25,9 @@ class ActiveRecord extends CActiveRecord {
     public static function queryRow($sql, $params = []) {
         return Yii::app()->db->createCommand($sql)->queryRow(true, $params);
     }
+    public static function queryAll($sql, $params = []) {
+        return Yii::app()->db->createCommand($sql)->queryAll(true, $params);
+    }
 
     private function initRelation() {
         $static = !(isset($this) && get_class($this) == get_called_class());
