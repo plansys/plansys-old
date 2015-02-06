@@ -18,6 +18,14 @@ class ActiveRecord extends CActiveRecord {
         return Yii::app()->db->createCommand($sql)->execute($params);
     }
 
+    public static function queryScalar($sql, $params = []) {
+        return Yii::app()->db->createCommand($sql)->queryScalar($params);
+    }
+
+    public static function queryRow($sql, $params = []) {
+        return Yii::app()->db->createCommand($sql)->queryRow(true, $params);
+    }
+
     private function initRelation() {
         $static = !(isset($this) && get_class($this) == get_called_class());
 
@@ -913,7 +921,7 @@ class ActiveRecord extends CActiveRecord {
         } else {
             $ids = array_filter($data);
         }
-        
+
         if (!empty($ids)) {
             $delete = "DELETE FROM {$table} WHERE id IN (" . implode(",", $ids) . ");";
 
