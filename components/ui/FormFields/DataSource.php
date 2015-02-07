@@ -575,10 +575,7 @@ class DataSource extends FormField {
                 $criteria['page'] = 1;
             }
             $criteria['pageSize'] = $postedParams['paging']['pageSize'];
-        } else {
-            $criteria['page'] = 1;
-            $criteria['pageSize'] = 25;
-        }
+        } 
 
         ## order criteria
         if (isset($criteria['order']) && is_string($criteria['order'])) {
