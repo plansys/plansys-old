@@ -16,36 +16,43 @@ class Role extends ActiveRecord {
             'users' => array(self::HAS_MANY, 'User', array('user_id' => 'id'), 'through' => 'userRoles'),
         );
     }
-    
+
     public function getName() {
         return $this->role_name;
     }
-    
+
     public static function getAll() {
         $all = Role::model()->findAll();
         $result = array();
-        foreach ($all as $k=>$v) {
+        foreach ($all as $k => $v) {
             $result[$v->id] = $v->role_description;
         }
         return $result;
     }
-    
+
     private $oldName = "";
+
     public function afterFind() {
         $this->oldName = $this->role_name;
+
+        if ($this->repo_path == "") {
+            $this->repo_path = array_shift(explode(".", $this->role_name));
+        }
+
+        return true;
     }
-    
+
     public function afterSave() {
         parent::afterSave();
-        
-        
+
+
         $sql = "UPDATE p_nfy_subscription_categories "
-            . "set category = 'role_{$this->role_name}.' "
-            . "where category = 'role_{$this->oldName}.';";
+                . "set category = 'role_{$this->role_name}.' "
+                . "where category = 'role_{$this->oldName}.';";
         Yii::app()->db->createCommand($sql)->execute();
         return true;
     }
-    
+
     public static function listRole() {
         $list = CHtml::listData(Role::model()->findAll(), 'id', 'role_description');
         return $list;

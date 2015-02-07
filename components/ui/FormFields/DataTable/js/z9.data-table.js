@@ -6,7 +6,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 var parent = $scope.$parent;
 
                 function evalArray(array) {
-                    for (i in array) {
+                    for (var i in array) {
                         if (typeof array[i] == "string") {
                             if (array[i].trim().substr(0, 3) == "js:") {
                                 eval('array[i] = ' + array[i].trim().substr(3));
@@ -33,7 +33,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 $scope.generateUrl = function (url, type) {
                     var output = '';
                     if (typeof url == "string") {
-
                         var match = url.match(/{([^}]+)}/g);
                         for (i in match) {
                             var m = match[i];
@@ -160,6 +159,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 $scope.$timeout = $timeout;
                 // setup internal variables
                 var colHeaders = [];
+                var colWidths = [];
                 var columnsInternal = [];
                 var loadTimeout = null;
                 var renderTimeout = null;
@@ -195,12 +195,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     categories = [];
                     columnsInternal = [];
                     colHeaders = [];
+                    colWidths = [];
 
                     if (typeof $scope.initColumns == "function") {
                         $scope.columns = $scope.initColumns($scope.columns);
                     }
 
-                    for (i in $scope.columns) {
+                    for (var i in $scope.columns) {
                         var c = $scope.columns[i];
                         if (c.options && c.options.visible && c.options.visible == "false") {
                             continue;
@@ -292,6 +293,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         // add columns
                         columnsInternal.push(col);
                         colHeaders.push(c.label);
+                        colWidths.push(c.options.width || 70)
 
                         if (c.options && c.options.category) {
                             // add category header
@@ -754,6 +756,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                     $timeout(function () {
                         evalArray($scope.gridOptions);
+
                         // initialize data table groups
                         if ($scope.gridOptions.groups) {
                             $scope.dtGroups = new Handsontable.DataTableGroups({
@@ -776,7 +779,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             }
                         }
 
-                        // link Mode
+                        // check for link mode
                         var multiSelect = true;
                         if (typeof $scope.gridOptions.afterSelectionChange == "function") {
                             minSpareRows = 0;
@@ -784,16 +787,20 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             $el.addClass('link-mode');
                             multiSelect = false;
                         }
-
                         if (!!$scope.gridOptions.readOnly) {
                             $el.addClass('read-only');
                         }
 
+                        // set current row class name
                         var currentRowClassName = columnsInternal.length > 3 ? 'currentCol' : '';
                         if (typeof $scope.gridOptions.afterSelectionChange == "function") {
                             currentRowClassName = '';
                         }
 
+                        if (typeof $scope.gridOptions.colWidths == "string") {
+                            $scope.gridOptions.colWidths = $scope.$eval($scope.gridOptions.colWidths);
+                        }
+                        
                         var options = $.extend({
                             data: $scope.data,
                             columnSorting: !$scope.dtGroups,
@@ -803,6 +810,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             scope: $scope,
                             colHeaders: colHeaders,
                             columns: columnsInternal,
+                            colWidths: colWidths,
                             autoWrapRow: true,
                             autoWrapCol: true,
                             mergeCells: true,
@@ -1130,9 +1138,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         }, $scope.gridOptions);
                         //prepare data table groups
 
-                        if (typeof options.colWidths == "string") {
-                            options.colWidths = $scope.$eval(options.colWidths);
-                        }
 
                         // if there is beforeGridLoaded event, call it.
                         if (typeof $scope.beforeGridLoaded == "function") {

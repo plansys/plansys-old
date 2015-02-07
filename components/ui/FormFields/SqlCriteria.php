@@ -182,6 +182,7 @@ class SqlCriteria extends FormField {
 
                 $criteria = DataSource::generateCriteria($params, $criteria, $ds);
                 $criteria = SqlCriteria::convertPagingCriteria($criteria);
+
                 $criteria = new CDbCriteria($criteria);
 
                 break;
@@ -221,7 +222,6 @@ class SqlCriteria extends FormField {
                 }
             }
         }
-
         $command = $builder->createFindCommand($tableSchema, $criteria);
 
         $errMsg = '';

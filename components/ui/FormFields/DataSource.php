@@ -276,7 +276,7 @@ class DataSource extends FormField {
                 echo "{}";
                 die();
             }
-            
+
             echo json_encode([
                 'data' => $data['data'],
                 'count' => $data['debug']['count'],
@@ -575,7 +575,7 @@ class DataSource extends FormField {
                 $criteria['page'] = 1;
             }
             $criteria['pageSize'] = $postedParams['paging']['pageSize'];
-        } else {
+        } else if (@$criteria['paging'] == '{[paging]}') {
             $criteria['page'] = 1;
             $criteria['pageSize'] = 25;
         }
@@ -592,7 +592,6 @@ class DataSource extends FormField {
         if (isset($criteria['condition']) && is_string($criteria['condition'])) {
             $sql = $criteria['condition'];
             $bracket = DataSource::generateTemplate($sql, $postedParams, $field);
-
 
             if ($bracket['sql'] != '') {
                 if (substr($bracket['sql'], 0, 5) == 'where') {

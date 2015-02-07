@@ -41,7 +41,9 @@ $scope.click = function (row) {
         $http.get(Yii.app.createUrl('/formfield/UploadFile.thumb', {
             't': $scope.encode($scope.selected.path)
         })).success(function (url) {
-            $scope.thumb = '<img src="' + url + '" />';
+            if (url != "") {
+                $scope.thumb = '<img src="' + url + '" />';
+            }
         });
 
         // change dir

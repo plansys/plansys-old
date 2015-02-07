@@ -7,7 +7,6 @@ app.directive('modalDialog', function ($timeout, $compile) {
             $("body > .modal-container." + renderID).remove();
             $container = element.find(".modal-container").remove();
             $container.appendTo('body');
-
             return function ($scope, $el, attrs, ctrl) {
                 var parent = $scope.$parent;
                 $scope.name = $el.find("data[name=name]").text();
@@ -19,12 +18,17 @@ app.directive('modalDialog', function ($timeout, $compile) {
 
                 $scope.open = function () {
                     $container.show();
+                    $container.find(".modal-content").css({
+                        maxHeight: $(window).height() - 50,
+                        overflowX: 'auto'
+                    });
                 };
 
                 parent[$scope.name] = $scope;
                 $compile($container)($scope);
-                
+
                 eval($scope.inlineJS);
+
             };
 
         }

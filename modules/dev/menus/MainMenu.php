@@ -67,12 +67,7 @@
         'state' => 'collapsed',
     ),
     array (
-        'label' => 'Repository',
-        'icon' => 'fa-folder-open',
-        'url' => '/repo/index',
-    ),
-    array (
-        'label' => 'Adminer',
+        'label' => 'Database',
         'icon' => 'fa-database',
         'url' => '/dev/default/adminer',
     ),
@@ -80,5 +75,10 @@
         'label' => 'Settings',
         'icon' => 'fa-sliders',
         'url' => '#',
+    ),
+    array (
+        'label' => 'Repository',
+        'icon' => 'fa-folder-open',
+        'url' => '/repo/index',
     ),
 );

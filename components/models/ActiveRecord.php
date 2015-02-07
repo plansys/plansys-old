@@ -231,16 +231,12 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function getModelArray($criteria = []) {
-
         if (isset($criteria['page'])) {
             $criteria['offset'] = ($criteria['page'] - 1) * $criteria['pageSize'];
             $criteria['limit'] = $criteria['pageSize'];
             unset($criteria['page'], $criteria['pageSize']);
-        } else if (!isset($criteria['limit'])) {
-            if (!@$criteria['nolimit']) {
-                $criteria['limit'] = 25;
-            }
-        }
+        } 
+        
         if (isset($criteria['nolimit'])) {
             unset($criteria['nolimit']);
         }
@@ -251,7 +247,7 @@ class ActiveRecord extends CActiveRecord {
         $tableSchema = $this->tableSchema;
         $builder = $this->commandBuilder;
 
-## find
+        ## find
         $cdbCriteria = new CDbCriteria($criteria);
         $command = $builder->createFindCommand($tableSchema, $cdbCriteria);
 

@@ -1,0 +1,2 @@
+<iframe src="plansys/adminer.php?username=<?= @$_GET['u'] ?>&db=<?= @$_GET['db'] ?>&p=<?= @$_GET['p']; ?>&s<?= $_GET['s'] ?>" frameborder="0" 
+        style="position:absolute;top:0px;left:0px;right:0px;bottom:0px;width:100%;height:100%;"></iframe>
