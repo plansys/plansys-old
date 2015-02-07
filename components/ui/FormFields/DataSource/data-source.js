@@ -173,6 +173,11 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         if (typeof f == "function") {
                             f(false, data);
                         }
+                        var iframeDoc = $el.find("iframe")[0].contentWindow.document;
+                        iframeDoc.open();
+                        iframeDoc.write(data);
+                        iframeDoc.close();
+                        $el.find(".error").show();
                     });
                     $scope.shouldCount = true;
                 }

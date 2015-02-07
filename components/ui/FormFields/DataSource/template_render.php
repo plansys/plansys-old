@@ -21,4 +21,16 @@
         <data name="debug" class="hide"><?= json_encode($this->data['debug']); ?></data>
         <pre ng-bind-html="debugHTML"></pre>
     <?php endif; ?>
+    <div class="error" style="display:none;">
+        <div style="position:absolute;color:red;top:0px;padding:10px;
+             font-size:24px;left:0px;right:0px;height:50px;
+             text-align:center;
+             background:#fff;border-bottom:1px solid #ddd;">
+            <i class="fa fa-warning"></i> <?= $this->name; ?> Error
+        </div>
+        <iframe style="position:absolute;top:50px;left:0px;bottom:0px;
+                right:0px;width:100%;height:100%;
+                border:0px;z-index:999;"></iframe>
+
+    </div>
 </div>
