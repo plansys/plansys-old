@@ -77,7 +77,7 @@ return array(
         ),
         'db' => Setting::getDB(),
         'errorHandler' => array(
-            'errorAction' => 'site/error',
+            'class' => 'ErrorHandler',
         ),
         'log' => array(
             'class' => 'CLogRouter',

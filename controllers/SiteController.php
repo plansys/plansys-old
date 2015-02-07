@@ -22,6 +22,7 @@ class SiteController extends Controller {
             if (Yii::app()->request->isAjaxRequest)
                 echo $error['message'];
             else {
+                $shouldRender = false;
                 switch ($error['code']) {
                     case 404:
                         $error = array(
@@ -30,14 +31,14 @@ class SiteController extends Controller {
                             . 'Mohon periksa kembali URL yang ingin anda buka.<br/><br/>'
                             . 'Atau mungkin juga data yang ingin Anda akses sudah dihapus.'
                         );
-                        break;
-                    default:
-                        $error['code'] = "Kesalahan Sistem <small><br/>[Error: " . $error['code'] . "]</small>";
+                        $shouldRender = true;
                         break;
                 }
 
-                $this->pageTitle = $error['code'];
-                $this->render('error', $error);
+                if ($shouldRender) {
+                    $this->pageTitle = $error['code'];
+                    $this->render('error', $error);
+                }
             }
         } else {
             switch ($id) {
@@ -56,15 +57,11 @@ class SiteController extends Controller {
                         . '<br/><br/>Mohon hubungi Administrator<br/> untuk mendapatkan Role pada sistem'
                     );
                     break;
-                default:
-                    $error = array(
-                        'code' => $id,
-                        'message' => 'Anda seharusnya tidak berada disini...'
-                    );
-                    break;
             }
-            $this->pageTitle = $error['code'];
-            $this->render("error", $error);
+            if ($id != "") {
+                $this->pageTitle = $error['code'];
+                $this->render("error", $error);
+            }
         }
     }
 
@@ -111,7 +108,7 @@ class SiteController extends Controller {
     public function actionLogout() {
         ## audit trail tracker
         AuditTrail::logout();
-        
+
         ## logout user
         Yii::app()->user->logout();
 

@@ -6,7 +6,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 var parent = $scope.$parent;
 
                 function evalArray(array) {
-                    for (i in array) {
+                    for (var i in array) {
                         if (typeof array[i] == "string") {
                             if (array[i].trim().substr(0, 3) == "js:") {
                                 eval('array[i] = ' + array[i].trim().substr(3));
@@ -33,7 +33,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 $scope.generateUrl = function (url, type) {
                     var output = '';
                     if (typeof url == "string") {
-
                         var match = url.match(/{([^}]+)}/g);
                         for (i in match) {
                             var m = match[i];
@@ -799,10 +798,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         }
 
                         if (typeof $scope.gridOptions.colWidths == "string") {
-                            colWidths = $scope.$eval($scope.gridOptions.colWidths);
+                            $scope.gridOptions.colWidths = $scope.$eval($scope.gridOptions.colWidths);
                         }
-
-
+                        
                         var options = $.extend({
                             data: $scope.data,
                             columnSorting: !$scope.dtGroups,
