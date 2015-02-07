@@ -67,7 +67,7 @@
         'state' => 'collapsed',
     ),
     array (
-        'label' => 'Adminer',
+        'label' => 'Database',
         'icon' => 'fa-database',
         'url' => '/dev/default/adminer',
     ),
