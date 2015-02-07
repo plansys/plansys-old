@@ -65,11 +65,26 @@ th a[href*="&table="]  {background:url("data:image/png;base64,iVBORw0KGgoAAAANSU
     padding:8px 20px 8px 20px;
     border-bottom:1px solid #ccc;
 }
+
 #content > p:nth-child(3) a {
     font-size:13px !important;
 }
+
 #menu > p.links {
+    background:#fafafa;
+    border-right:1px solid #ccc;
     padding-bottom:8px;
+}
+
+#lang {
+    border-right:1px solid #ccc;
+    padding:.3em 0px .3em 1em;
+    margin-left:-1px;
+    width:18em;
+}
+
+#dbs {
+    border-right:1px solid #ccc;
 }
 #menu {
     margin-top:0px;
