@@ -128,7 +128,10 @@ class Controller extends CController {
                 $path = Yii::getPathOfAlias("app.modules.{$module}.menus.{$menuPath}") . ".php";
             }
 
-            $menuModule = include($path);
+            $menuModule = [];
+            if (is_file($path)) {
+                $menuModule = include($path);
+            }
 
             if (is_array($menuModule)) {
                 return array_merge($default, $menuModule);

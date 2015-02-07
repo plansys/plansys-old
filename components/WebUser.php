@@ -59,7 +59,7 @@ class WebUser extends CWebUser {
 
     public function getRoleInfo() {
         foreach ($this->info['roles'] as $k=>$i) {
-            if ($i['role_name'] == $this->fullRole) {
+            if (@$i['role_name'] == $this->fullRole) {
                 return $i;
             }
         }
