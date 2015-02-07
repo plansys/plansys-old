@@ -4,7 +4,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
         compile: function (element, attrs, transclude) {
             return function ($scope, $el, attrs, ctrl) {
                 var parent = $scope.$parent;
-                
+
                 function evalArray(array, opt) {
                     opt = $.extend({
                         parseUrl: true
@@ -226,7 +226,12 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
 
                     var editable = false;
                     if (typeof col != "undefined") {
-                        editable = col.options.enableCellEdit !== false;
+
+                        if (!!col.options && !!col.options.enableCellEdit) {
+                            editable = col.options.enableCellEdit !== false;
+                        } else {
+                            editable = true;
+                        }
                     }
 
                     return editable ? '' : 'non-editable';
