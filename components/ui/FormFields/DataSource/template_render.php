@@ -26,7 +26,7 @@
              font-size:24px;left:0px;right:0px;height:50px;
              text-align:center;
              background:#fff;border-bottom:1px solid #ddd;">
-            <i class="fa fa-warning"></i> <?= $this->name; ?> Error
+            <i class="fa fa-warning"></i> <?= $this->name; ?> Log Message
         </div>
         <iframe style="position:absolute;top:50px;left:0px;bottom:0px;
                 right:0px;width:100%;height:100%;
