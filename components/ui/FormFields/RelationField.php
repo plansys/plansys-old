@@ -966,6 +966,9 @@ class RelationField extends FormField {
         }
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        
+        $this->relationCriteria['limit'] = '20';
+        $this->relationCriteria['offset'] = '0';
         $this->query('', [], $this->value);
 
         return $this->renderInternal('template_render.php');

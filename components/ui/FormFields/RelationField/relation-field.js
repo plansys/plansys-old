@@ -256,7 +256,8 @@ app.directive('relationField', function ($timeout, $http) {
                         'm': $scope.modelClass,
                         'f': $scope.name,
                         'p': $scope.paramValue,
-                        'i': $scope.identifier
+                        'i': $scope.identifier,
+                        'start': 0
                     }).success(function (data) {
                         $scope.formList = data.list;
                         $scope.count = data.count;
