@@ -375,7 +375,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 $scope.relationNext = function (e, filter) {
                     e.stopPropagation();
                     e.preventDefault();
-
+                    console.log(filter);
                     $scope.loading = true;
                     $http.post(Yii.app.createUrl('formfield/DataFilter.relnext'), {
                         's': filter.search,
