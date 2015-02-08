@@ -33,7 +33,10 @@ class ActiveRecord extends CActiveRecord {
         $static = !(isset($this) && get_class($this) == get_called_class());
 
         if (!$static && !$this->__isRelationLoaded) {
-            $this->loadRelations();
+            $this->loadRelations(null, [
+                'page' => 1,
+                'pageSize' => $this->__defaultPageSize
+            ]);
         }
     }
 

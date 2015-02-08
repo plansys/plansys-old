@@ -155,7 +155,6 @@ class AuditTrail extends ActiveRecord {
             if (!$isDuplicate || ($isDuplicate && $isDifferentType) || ($isDuplicate && $lastInsertHour > 1)) {
 
                 ## create new track
-                $at = new AuditTrail;
 
                 if ($isDuplicate) {
                     ## skip tracking view for same page after CRUD
@@ -165,23 +164,23 @@ class AuditTrail extends ActiveRecord {
                     }
                 }
 
-                $at->attributes = $pathInfo;
-
+                $at = [];
+                
                 ## remove data from view tracker...
                 if ($type == "view") {
-                    $at->data = "{}";
+                    $at['data'] = "{}";
                 }
 
                 if (is_string($msg) && $msg != "") {
-                    $at->description = $msg;
+                    $at['description'] = $msg;
                 }
-                $at->type = $type;
-                $at->stamp = date("Y-m-d H:i:s");
-                $at->user_id = Yii::app()->user->id;
+                $at['type'] = $type;
+                $at['stamp'] = date("Y-m-d H:i:s");
+                $at['user_id'] = Yii::app()->user->id;
                 
                 ## WARNING !!! skip view tracker.. too much data..
                 if ($type != "view") {
-                    $at->save();
+                    ActiveRecord::batch('AuditTrail',[$at]);
                 }
             }
         }
