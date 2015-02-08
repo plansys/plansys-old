@@ -4,6 +4,7 @@ Handsontable.DataTableGroups = function (settings) {
         groupColOpts: {},
         columns: [],
         colHeaders: [],
+        colWidths: [],
         scope: null,
         groupArgs: [],
         groupTreeInternal: {},
@@ -20,8 +21,10 @@ Handsontable.DataTableGroups = function (settings) {
                 if (gc.indexOf(this.columns[i].name) >= 0) {
                     var c = this.columns.splice(i, 1);
 
+                    
                     this.groupColOpts[c[0].data] = c[0];
                     gcCount++;
+                    
                     if (c[0].options && (c[0].options.enableCellEdit === false || c[0].options.readOnly === true)) {
                         $scope.canAddRow = false;
                     }
@@ -30,9 +33,10 @@ Handsontable.DataTableGroups = function (settings) {
                     if (c[0].label == this.colHeaders[i]) {
                         this.colHeaders.splice(i, 1);
                     }
+                    this.colWidths.splice(i, 1);
                 }
             }
-
+            
             if (gcCount != gc.length) {
                 $scope.canAddRow = false;
             }

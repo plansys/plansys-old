@@ -763,6 +763,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 groupCols: $scope.$eval($scope.gridOptions.groups),
                                 scope: $scope,
                                 columns: columnsInternal,
+                                colWidths: colWidths,
                                 totalGroups: $scope.gridOptions.totalGroups,
                                 colHeaders: colHeaders,
                             }).prepare();
