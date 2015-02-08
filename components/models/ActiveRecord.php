@@ -35,18 +35,13 @@ class ActiveRecord extends CActiveRecord {
     private function initRelation() {
         $static = !(isset($this) && get_class($this) == get_called_class());
         if (!$static && !$this->__isRelationLoaded) {
-            ## load all relations on init
-//            $this->loadRelations(null, [
-//                'page' => 1,
-//                'pageSize' => ActiveRecord::DEFAULT_PAGE_SIZE
-//            ]);
-            
             ## define all relations BUT do not load it on init
             $relMetaData = $this->getMetaData()->relations;
             foreach ($relMetaData as $k => $r) {
                 $this->__relations[$k] = [];
             }
             $this->__relations['currentModel'] = [];
+            $this->__isRelationLoaded = true;
         }
     }
 
@@ -94,7 +89,7 @@ class ActiveRecord extends CActiveRecord {
                 }
             }
 
-            $this->loadRelations($name, @$criteria);
+            $this->loadRelation($name, @$criteria);
             $this->applyRelChange($name);
             return $this->__relations[$name];
         } else {
@@ -196,7 +191,7 @@ class ActiveRecord extends CActiveRecord {
                 return @$this->__relDelete[$name];
                 break;
             case ($name == 'currentModel' || isset($this->__relations[$name])):
-                return @$this->loadRelations($name);
+                return @$this->loadRelation($name);
                 break;
             case (isset($this->__tempVar[$name])):
                 return $this->__tempVar;
@@ -272,59 +267,60 @@ class ActiveRecord extends CActiveRecord {
         return $rawData;
     }
 
-    public function loadRelations($name = null, $criteria = []) {
+    public function loadAllRelations() {
         $relMetaData = $this->getMetaData()->relations;
-
-        foreach ($relMetaData as $k => $rel) {
-            if (!is_null($name) && $k != $name) {
-                continue;
-            }
-
-            if (!is_null($name)) {
-                if (@class_exists($rel->className)) {
-                    switch (get_class($rel)) {
-                        case 'CHasOneRelation':
-                        case 'CBelongsToRelation':
-                            if (is_string($rel->foreignKey)) {
-                                $class = $rel->className;
-                                $table = $class::model()->tableName();
-                                $this->__relationsObj[$k] = $this->getRelated($k, true, $criteria);
-                                if (isset($this->__relationsObj[$k])) {
-                                    $this->__relations[$k] = $this->__relationsObj[$k]->attributes;
-
-                                    foreach ($this->__relations[$k] as $i => $j) {
-                                        if (is_array($this->__relations[$k][$i])) {
-                                            unset($this->__relations[$k][$i]);
-                                        }
-                                    }
-                                }
-                            }
-                            break;
-                        case 'CManyManyRelation':
-                        case 'CHasManyRelation':
-                            //without through
-                            $this->__relationsObj[$k] = $this->getRelated($k, true, $criteria);
-                            if (is_array($this->__relationsObj[$k])) {
-                                $this->__relations[$k] = [];
-
-                                foreach ($this->__relationsObj[$k] as $i => $j) {
-                                    $this->__relations[$k][$i] = $j->getAttributes(true, false);
-                                }
-                            }
-                            //with through
-                            //todo..
-                            break;
-                    }
-                }
-            }
+        foreach ($relMetaData as $k => $r) {
+            $this->__relations[$k] = [];
+            $this->loadRelation($k);
         }
+    }
+
+    public function loadRelation($name, $criteria = []) {
+        if (!isset($this->__relations[$name]))
+            return [];
+
         if ($name == 'currentModel' || is_null($name)) {
             $this->__relations['currentModel'] = $this->getModelArray($criteria);
+        } else {
+            $rel = $this->getMetaData()->relations[$name];
+            if (!class_exists($rel->className))
+                return [];
+
+            switch (get_class($rel)) {
+                case 'CHasOneRelation':
+                case 'CBelongsToRelation':
+                    if (is_string($rel->foreignKey)) {
+                        $class = $rel->className;
+                        $table = $class::model()->tableName();
+                        $this->__relationsObj[$name] = $this->getRelated($name, true, $criteria);
+                        if (isset($this->__relationsObj[$name])) {
+                            $this->__relations[$name] = $this->__relationsObj[$name]->attributes;
+
+                            foreach ($this->__relations[$name] as $i => $j) {
+                                if (is_array($this->__relations[$name][$i])) {
+                                    unset($this->__relations[$name][$i]);
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case 'CManyManyRelation':
+                case 'CHasManyRelation':
+                    //without through
+                    $this->__relationsObj[$name] = $this->getRelated($name, true, $criteria);
+                    if (is_array($this->__relationsObj[$name])) {
+                        $this->__relations[$name] = [];
+
+                        foreach ($this->__relationsObj[$name] as $i => $j) {
+                            $this->__relations[$name][$i] = $j->getAttributes(true, false);
+                        }
+                    }
+                    //with through
+                    //todo..
+                    break;
+            }
         }
-
-        $this->__isRelationLoaded = true;
         $this->__oldRelations = $this->__relations;
-
         return $this->__relations[$name];
     }
 
@@ -455,14 +451,15 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    public function getAttributes($names = true, $withRelation = false) {
+    public function getAttributes($names = true, $loadRelation = false) {
         $attributes = parent::getAttributes($names);
         $attributes = array_merge($this->attributeProperties, $attributes);
-        if ($withRelation) {
-            $this->initRelation();
-            foreach ($this->__relations as $k => $r) {
-                $attributes[$k] = $this->__relations[$k];
-            }
+        if ($loadRelation) {
+            $this->loadAllRelations();
+        }
+        
+        foreach ($this->__relations as $k => $r) {
+            $attributes[$k] = $this->__relations[$k];
         }
 
         return $attributes;

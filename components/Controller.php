@@ -152,17 +152,19 @@ class Controller extends CController {
         return $model;
     }
 
-    public function loadModel($id_or_attributes, $form) {
+    public function loadModel($idOrAttributes, $form) {
         if (strpos($form, '.') > 0) {
             Yii::import($form);
             $form = Helper::explodeLast(".", $form);
         }
-        if (is_array($id_or_attributes)) {
-            $model = $form::model($form)->findByAttributes($id_or_attributes);
+        if (is_array($idOrAttributes)) {
+            $model = $form::model($form)->findByAttributes($idOrAttributes);
         } else {
-            $model = $form::model($form)->findByPk($id_or_attributes);
+            $model = $form::model($form)->findByPk($idOrAttributes);
         }
 
+        $model->loadAllRelations();
+        
         if ($model === null)
             throw new CHttpException(404, 'The requested page does not exist.');
         return $model;
