@@ -354,7 +354,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }
                     $scope.fowTimer = $timeout(function () {
                         var w = $el.find(".htCore:eq(0)").width() + 30;
-                        if (w > $('#content').width()) {
+                        var ow = $el.parent().find("> .data-filter").width();
+                        var sw = $el.parent().find("> .section-header").width();
+                        var cw = $('#content').width();
+
+                        if (w > Math.max(ow, cw, sw)) {
                             $el.parent().find("> .data-filter").width(w);
                             $el.parent().find("> .section-header").width(w - 40);
                             $(".form-horizontal > .alert").width(w - 60);
