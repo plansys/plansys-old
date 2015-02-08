@@ -294,14 +294,14 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         columnsInternal.push(col);
                         colHeaders.push(c.label);
                         colWidths.push(c.options.width || null)
-
                     }
 
                 }
 
                 $scope.assembleCategories = function () {
                     lastCat = '';
-                    columnsInternal.forEach(function (c) {
+                    var totalSpan = 0;
+                    columnsInternal.forEach(function (c, i) {
                         if (c.options && c.options.category) {
                             // add category header
                             var cat = c.options.category || '';
@@ -317,8 +317,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 while (typeof categories[idx] == "undefined" && idx > 0) {
                                     idx--;
                                 }
-
-                                if (typeof categories[idx] != "undefined") {
+                                if (typeof categories[idx] != "undefined" && categories[idx].title == cat) {
                                     categories[idx].span++;
                                 }
                             } else {
@@ -326,12 +325,12 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     title: cat,
                                     span: 1
                                 });
+                                totalSpan++;
                             }
                             lastCat = cat;
                         } else {
                             if (lastCat == '' && categories.length >= 1) {
                                 var lastSpan = categories[categories.length - 1];
-                                lastSpan.span++;
                             } else {
                                 categories.push({
                                     title: '',
@@ -571,45 +570,47 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         $http.post(url, dgr, {
                             timeout: $scope.httpRelReq.promise
                         }).success(function (data) {
-                            for (var rowIdx in $scope.data) {
-                                var row = $scope.data[rowIdx];
-                                for (var dataIdx in data) {
-                                    var d = data[dataIdx];
+                            $timeout(function () {
+                                for (var rowIdx in $scope.data) {
+                                    var row = $scope.data[rowIdx];
+                                    for (var dataIdx in data) {
+                                        var d = data[dataIdx];
 
-                                    if ($scope.dtGroups && $scope.dtGroups.groupCols.indexOf(dataIdx) >= 0) {
-                                        var col = $scope.dtGroups.groupCols[row['__dt_lvl']];
-                                        if (row['__dt_flg'] == "G" && dataIdx == col) {
+                                        if ($scope.dtGroups && $scope.dtGroups.groupCols.indexOf(dataIdx) >= 0) {
+                                            var col = $scope.dtGroups.groupCols[row['__dt_lvl']];
+                                            if (row['__dt_flg'] == "G" && dataIdx == col) {
+                                                for (var i in d) {
+                                                    if (d[i].value == row[$scope.columns[0].name]) {
+                                                        row[$scope.columns[0].name] = d[i].label;
+                                                        break;
+                                                    }
+                                                }
+                                                continue;
+                                            }
+                                        }
+
+                                        if (row[dataIdx]) {
                                             for (var i in d) {
-                                                if (d[i].value == row[$scope.columns[0].name]) {
-                                                    row[$scope.columns[0].name] = d[i].label;
+                                                if (d[i].value == row[dataIdx]) {
+                                                    row[dataIdx + $scope.relSuffix] = d[i].label;
                                                     break;
                                                 }
                                             }
-                                            continue;
+                                        }
+                                        if (!row[dataIdx + $scope.relSuffix]) {
+                                            row[dataIdx + $scope.relSuffix] = '';
                                         }
                                     }
-
-                                    if (row[dataIdx]) {
-                                        for (var i in d) {
-                                            if (d[i].value == row[dataIdx]) {
-                                                row[dataIdx + $scope.relSuffix] = d[i].label;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if (!row[dataIdx + $scope.relSuffix]) {
-                                        row[dataIdx + $scope.relSuffix] = '';
-                                    }
                                 }
-                            }
-                            $timeout(function () {
-                                $scope.triggerRelationWatch = true;
-                                if (typeof callback == "function") {
-                                    callback();
-                                }
-
                                 $timeout(function () {
-                                    $scope.loadingRelation = false;
+                                    $scope.triggerRelationWatch = true;
+                                    if (typeof callback == "function") {
+                                        callback();
+                                    }
+
+                                    $timeout(function () {
+                                        $scope.loadingRelation = false;
+                                    });
                                 });
                             });
                         });
@@ -763,7 +764,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }
                     $scope.reInitTimeout = $timeout(function () {
                         if (!isDestroyed) {
-                            $scope.getInstance().destroy();
+                            $scope.ht = $scope.getInstance();
+                            if ($scope.ht) {
+                                $scope.ht.destroy();
+                            }
                         }
                         var p = $("#" + $scope.renderID).parent();
                         $("#" + $scope.renderID).remove();
@@ -1177,11 +1181,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }, $scope.gridOptions);
 
                     // adjust width when width is not specified
-                    if (colWidths.length > 0) {
+                    if (colWidths.length > 0 && !$scope.gridOptions.colWidths) {
                         var isAllNull = true;
                         colWidths.forEach(function (i) {
-                            if (i !== null)
+                            if (i !== null) {
+                                isAllNull = false;
                                 return false;
+                            }
                         });
 
                         if (isAllNull) {
