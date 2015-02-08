@@ -324,12 +324,23 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                     if (filter.filterType == "relation") {
                         $timeout(function () {
                             $scope.loading = true;
+
+                            var params = {};
+                            for (var i in filter.relParams) {
+                                var p = filter.relParams[i];
+                                if (p.indexOf('js:') === 0) {
+                                    var value = $scope.$eval(p.replace('js:', ''));
+                                    params[i] = value;
+                                }
+                            }
+
                             $http.post(Yii.app.createUrl('formfield/DataFilter.relnext'), {
                                 's': filter.search,
                                 'f': $scope.name,
                                 'n': filter.name,
                                 'm': $scope.modelClass,
-                                'i': 0
+                                'i': 0,
+                                'p': params
                             }).success(function (data) {
                                 $scope.loading = false;
                                 filter.list.length = 0;
@@ -377,12 +388,23 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                     e.preventDefault();
                     console.log(filter);
                     $scope.loading = true;
+
+                    var params = {};
+                    for (var i in filter.relParams) {
+                        var p = filter.relParams[i];
+                        if (p.indexOf('js:') === 0) {
+                            var value = $scope.$eval(p.replace('js:', ''));
+                            params[i] = value;
+                        }
+                    }
+
                     $http.post(Yii.app.createUrl('formfield/DataFilter.relnext'), {
                         's': filter.search,
                         'f': $scope.name,
                         'n': filter.name,
                         'm': $scope.modelClass,
-                        'i': filter.list.length
+                        'i': filter.list.length,
+                        'p': params
                     }).success(function (data) {
                         $scope.loading = false;
                         if (data.list && data.list.length && data.list.length > 0) {
@@ -390,9 +412,11 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 filter.list.push(item);
                             });
                         }
+                        if (data.count) {
+                            filter.count = data.count;
+                        }
 
-
-                        if (filter.list.length > 0) {
+                        if (filter.list.length > 5) {
                             filter.searchable = true;
                         }
 

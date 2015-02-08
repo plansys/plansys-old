@@ -442,6 +442,15 @@ class DataFilter extends FormField {
             $rf->labelField = $filter['relLabelField'];
             $rf->builder = $this->builder;
 
+            $rf->params = is_null($filter['relParams']) ? [] : $filter['relParams'];
+            if (is_array($rf->params)) {
+                foreach ($rf->params as $k => $ff) {
+                    if (substr($ff, 0, 3) == "js:" && isset($post['p'][$k])) {
+                        $rf->params[$k] = "'" . @$post['p'][$k] . "'";
+                    }
+                }
+            }
+
             $list = [];
             $rawList = $rf->query(@$post['s'], $rf->params);
             foreach ($rawList as $key => $val) {
