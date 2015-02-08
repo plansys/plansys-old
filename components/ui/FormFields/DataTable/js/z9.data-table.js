@@ -1061,7 +1061,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                                                     if (typeof $scope.afterCellEdit == "function") {
                                                         if ($scope.dtGroups) {
-                                                            var row = $scope.datasource.data[$scope.data[[0]]['__dt_row']] = $scope.data[[0]];
+                                                            var row = $scope.datasource.data[$scope.data[c[0]]['__dt_row']] = $scope.data[c[0]];
                                                             $scope.afterCellEdit(c[3], c[0], c[1], row);
                                                         } else {
                                                             var row = $scope.datasource.data[c[0]] = $scope.data[c[0]];

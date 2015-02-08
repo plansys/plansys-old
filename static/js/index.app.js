@@ -765,6 +765,18 @@ function date(format, timestamp) {
     return this.date(format, timestamp)
 }
 
+//PHP str_replace implementation in JS
+function str_replace(s, r, string) {
+    if (s.constructor === Array) {
+        for (var i = 0; i < s.length; i++) {
+            string = string.replace(s[i], r[i]);
+        }
+    } else {
+        string = string.replace(s, r);
+    }
+    return string;
+}
+
 //PHP strtotime implementation in JS
 function strtotime(text, now) {
     var parsed, match, today, year, date, days, ranges, len, times, regex, i, fail = false;

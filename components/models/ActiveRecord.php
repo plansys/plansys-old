@@ -373,20 +373,26 @@ class ActiveRecord extends CActiveRecord {
 
         if (count(@$this->__relUpdate[$name]) > 0) {
             foreach ($this->__relUpdate[$name] as $k => $i) {
+                $found = false;
                 foreach ($this->__relations[$name] as $q => $r) {
                     if (isset($i['id']) && isset($r['id']) && $r['id'] == $i['id']) {
                         $this->__relations[$name][$q] = $i;
+                        $found = true;
                     }
+                }
+
+                if (!$found) {
+                    $this->__relations[$name][] = $i;
                 }
             }
         }
+
     }
 
     public function setAttributes($values, $safeOnly = false, $withRelation = true) {
 
         parent::setAttributes($values, $safeOnly);
         $this->initRelation();
-
         foreach ($this->__relations as $k => $r) {
             if ($k != 'currentModel' && isset($values[$k])) {
                 $rel = $this->getMetaData()->relations[$k];
@@ -441,6 +447,7 @@ class ActiveRecord extends CActiveRecord {
                 $this->__relDelete[$k] = $value;
             }
 
+
             $this->applyRelChange($k);
         }
 
@@ -457,7 +464,7 @@ class ActiveRecord extends CActiveRecord {
         if ($loadRelation) {
             $this->loadAllRelations();
         }
-        
+
         foreach ($this->__relations as $k => $r) {
             $attributes[$k] = $this->__relations[$k];
         }
