@@ -25,18 +25,26 @@ class ActiveRecord extends CActiveRecord {
     public static function queryRow($sql, $params = []) {
         return Yii::app()->db->createCommand($sql)->queryRow(true, $params);
     }
+
     public static function queryAll($sql, $params = []) {
         return Yii::app()->db->createCommand($sql)->queryAll(true, $params);
     }
 
     private function initRelation() {
         $static = !(isset($this) && get_class($this) == get_called_class());
-
         if (!$static && !$this->__isRelationLoaded) {
+            ## load all relations on init
             $this->loadRelations(null, [
                 'page' => 1,
                 'pageSize' => $this->__defaultPageSize
             ]);
+
+            ## define all relations BUT do not load it on init
+//            $relMetaData = $this->getMetaData()->relations;
+//            foreach ($relMetaData as $k => $r) {
+//                $this->__relations[$k] = [];
+//            }
+//            $this->__relations['currentModel'] = [];
         }
     }
 
@@ -238,8 +246,8 @@ class ActiveRecord extends CActiveRecord {
             $criteria['offset'] = ($criteria['page'] - 1) * $criteria['pageSize'];
             $criteria['limit'] = $criteria['pageSize'];
             unset($criteria['page'], $criteria['pageSize']);
-        } 
-        
+        }
+
         if (isset($criteria['nolimit'])) {
             unset($criteria['nolimit']);
         }
@@ -264,7 +272,8 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function loadRelations($name = null, $criteria = []) {
-        foreach ($this->getMetaData()->relations as $k => $rel) {
+        $relMetaData = $this->getMetaData()->relations;
+        foreach ($relMetaData as $k => $rel) {
             if (!is_null($name) && $k != $name) {
                 continue;
             }
