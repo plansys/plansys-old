@@ -391,13 +391,13 @@ class RelationField extends FormField {
                 $this->relationCriteria = @$column['relCriteria'];
                 $this->params = is_null(@$column['relParams']) ? [] : $column['relParams'];
 
-        if (is_array(@$this->params)) {
-            foreach ($this->params as $k => $ff) {
-                if (substr($ff, 0, 3) == "js:" && isset($p[$k])) {
-                    $this->params[$k] = "'" . $p[$k] . "'";
+                if (is_array(@$this->params)) {
+                    foreach ($this->params as $k => $ff) {
+                        if (substr($ff, 0, 3) == "js:" && isset($p[$k])) {
+                            $this->params[$k] = "'" . $p[$k] . "'";
+                        }
+                    }
                 }
-            }
-        }
             }
         }
         $this->builder = $fb;
@@ -462,7 +462,8 @@ class RelationField extends FormField {
         if (@$field['criteria']) {
             $this->relationCriteria = @$field['criteria'];
         }
-        $this->relationCriteria['limit'] = '20';
+        $this->relationCriteria['limit'] = ActiveRecord::DEFAULT_PAGE_SIZE;
+        $this->relationCriteria['offset'] = 0;
         if (isset($start)) {
             $this->includeEmpty = 'No';
             $this->relationCriteria['offset'] = $start;
@@ -661,17 +662,9 @@ class RelationField extends FormField {
 
     public function generateCriteria($search, $params) {
         $condition = $this->generateCondition($search, $params);
-        
+
         $nolimit = false;
         $this->relationCriteria['condition'] = $condition["sql"];
-        if (!isset($this->relationCriteria['limit']) || @$this->relationCriteria['limit'] == 30) {
-            if (!@$this->relationCriteria['nolimit']) {
-                $this->relationCriteria['limit'] = ($search == '' ? '30' : '100');
-            } else {
-                $nolimit = true;
-                unset($this->relationCriteria['nolimit']);
-            }
-        }
 
         $this->params = array_merge(is_null($this->params) ? [] : $this->params, $condition['params']);
         $criteria = DataSource::generateCriteria($this->params, $this->relationCriteria, $this);
@@ -698,7 +691,7 @@ class RelationField extends FormField {
             $pageSize = $criteria['pageSize'];
             $criteria['limit'] = $pageSize;
             if (!isset($criteria['offset'])) {
-            	$criteria['offset'] = $start;
+                $criteria['offset'] = $start;
             }
 
             unset($criteria['pageSize']);
@@ -734,6 +727,21 @@ class RelationField extends FormField {
             $criteria['distinct'] = false;
             $criteria['select'] = 'COUNT(DISTINCT ' . $criteria['select'] . ')';
         }
+        
+        if (isset($criteria['paging']))
+            unset($criteria['paging']);
+        
+        if (isset($criteria['page']))
+            unset($criteria['page']);
+        
+        if (isset($criteria['pageSize']))
+            unset($criteria['pageSize']);
+        
+        if (isset($criteria['limit']))
+            unset($criteria['limit']);
+        
+        if (isset($criteria['offset']))
+            unset($criteria['offset']);
 
         $countCommand = $builder->createCountCommand($tableSchema, new CDbCriteria($criteria));
         $count = $countCommand->queryScalar();
@@ -770,6 +778,7 @@ class RelationField extends FormField {
             if (!$found) {
                 $t = $criteria['alias'];
                 $criteria['condition'] = "{$t}.{$this->idField} = '{$initialID}'";
+
                 $initial = $model->currentModel($criteria);
 
                 if (!empty($initial)) {
@@ -966,8 +975,8 @@ class RelationField extends FormField {
         }
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
-        
-        $this->relationCriteria['limit'] = '20';
+
+        $this->relationCriteria['limit'] = ActiveRecord::DEFAULT_PAGE_SIZE;
         $this->relationCriteria['offset'] = '0';
         $this->query('', [], $this->value);
 

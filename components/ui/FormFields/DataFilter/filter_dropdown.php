@@ -27,7 +27,7 @@
         </div>
         <div ng-if="filter.list.length == 0" 
              style="text-align:center;padding:15px;font-size:12px;color:#999;">
-            &mdash; NOT FOUND &mdash;
+            &mdash; {{ loading ? 'LOADING' : 'NOT FOUND' }} &mdash;
         </div>
         <ul class="dropdown-menu inner" style="overflow-x:hidden;max-height:240px;" role="menu">
             <li class="dropdown-item" ng-if="filter.relIncludeEmpty == 'Yes'" >

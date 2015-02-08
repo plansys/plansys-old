@@ -2,6 +2,8 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
     return {
         scope: true,
         link: function ($scope, $el, attrs) {
+            $el.hide();
+            $scope.init = false;
 
             if ($localStorage.portlet == null) {
                 $localStorage.portlet = {};
@@ -96,42 +98,47 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
 
             $scope.resizeTimeout = null;
             $scope.resize = function (st) {
-                    var height = $el.height();
-                    $el.css({
-                        top: $("#content").offset().top,
-                        left: $el.parents('.container-full').offset().left,
-                        width: $('#content').width(),
-                        opacity: .999
-                    });
+                var height = $el.height();
+                $el.css({
+                    top: $("#content").offset().top,
+                    left: $el.parents('.container-full').offset().left,
+                    width: $('#content').width(),
+                    opacity: .999
+                });
 
-                    $timeout(function () {
-                        $el.css({opacity: 1});
-                    });
+                $timeout(function () {
+                    $el.css({opacity: 1});
+                });
 
-                    if ($scope.form.layout.name == 'dashboard' && $el.parent().is('form')) {
-                        var dashFilter = $el.parent().find('> [ps-data-filter]:eq(0)');
+                if ($scope.form.layout.name == 'dashboard' && $el.parent().is('form')) {
+                    var dashFilter = $el.parent().find('> [ps-data-filter]:eq(0)');
 
-                        if (dashFilter.length > 0) {
-                            dashFilter.css({
-                                top: $("#content").offset().top + height,
-                                width: $('#content').width(),
-                                position: 'fixed',
-                                opacity: .999
-                            });
-                            dashFilter.addClass('dash-filter');
-                            height += dashFilter.height();
-                            $el.addClass('filtered');
-                        }
-
+                    if (dashFilter.length > 0) {
+                        dashFilter.css({
+                            top: $("#content").offset().top + height,
+                            width: $('#content').width(),
+                            position: 'fixed',
+                            opacity: .999
+                        });
+                        dashFilter.addClass('dash-filter');
+                        height += dashFilter.height();
+                        $el.addClass('filtered');
                     }
 
-                    $el.parents('.container-full').css({
-                        'margin-top': height + 'px',
-                        'border-top': '0px'
-                    });
+                }
 
-                    $(".ac-portlet-btngroup.open").click();
-                    $(".ac-portlet-menu").removeAttr('style').css('position', 'absolute');
+                $el.parents('.container-full').css({
+                    'margin-top': height + 'px',
+                    'border-top': '0px'
+                });
+
+                $(".ac-portlet-btngroup.open").click();
+                $(".ac-portlet-menu").removeAttr('style').css('position', 'absolute');
+
+                if (!$scope.init) {
+                    $scope.init = true;
+                    $el.show();
+                }
             }
 
 

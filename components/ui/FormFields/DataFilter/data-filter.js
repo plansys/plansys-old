@@ -68,7 +68,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 case "dropdown":
                                 case "relation":
                                 case "checkbox":
-                                    filter.list = $scope.oldFilters[k].list;
+                                    filter.list = [];
+                                    filter.operatorDropdownOpen = false;
+                                    filter.initRel = false;
+
                                     break;
                                 case "date":
                                     if (typeof filter.value == "string") {
@@ -387,6 +390,12 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 filter.list.push(item);
                             });
                         }
+
+
+                        if (filter.list.length > 0) {
+                            filter.searchable = true;
+                        }
+
                     });
 
                     return false;
@@ -408,6 +417,13 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         scroll = active.position().top + 50;
                     }
                     $(e.target).parents("[dropdown]").find(".dropdown-menu").scrollTop(scroll);
+
+                    if (filter.filterType == "relation" && !filter.initRel) {
+                        filter.initRel = true;
+                        filter.count = 9999;
+                        $scope.relationNext(e, filter);
+                    }
+
                 }
 
                 $scope.generateUrl = function (url, type) {

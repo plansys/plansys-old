@@ -36,7 +36,8 @@ class Role extends ActiveRecord {
         $this->oldName = $this->role_name;
 
         if ($this->repo_path == "") {
-            $this->repo_path = array_shift(explode(".", $this->role_name));
+            $role = explode(".", $this->role_name);
+            $this->repo_path = array_shift($role);
         }
 
         return true;

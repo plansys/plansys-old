@@ -327,7 +327,6 @@ class FormBuilder extends CComponent {
      */
     public function processFieldExpr($fields) {
         foreach ($fields as $k => $f) {
-
             if (is_string($f)) {
                 $fields[$k] = stripslashes($f);
                 continue;
@@ -361,7 +360,7 @@ class FormBuilder extends CComponent {
                 }
             }
         }
-        
+
         return $fields;
     }
 
@@ -414,8 +413,7 @@ class FormBuilder extends CComponent {
         }
         return $processed;
     }
-    
-    
+
     /**
      * @return array me-return array module.
      */
@@ -1128,7 +1126,7 @@ EOF;
 
         return $list;
     }
-    
+
     /**
      * @param string $module
      * @return array Fungsi ini akan me-return sebuah array list controller .

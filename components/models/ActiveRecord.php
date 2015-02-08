@@ -6,7 +6,9 @@ class ActiveRecord extends CActiveRecord {
     private $__relationsObj = [];
     private $__oldRelations = [];
     private $__isRelationLoaded = false;
-    private $__defaultPageSize = 25;
+
+    const DEFAULT_PAGE_SIZE = 25;
+
     private $__pageSize = [];
     private $__page = [];
     private $__relInsert = [];
@@ -34,17 +36,17 @@ class ActiveRecord extends CActiveRecord {
         $static = !(isset($this) && get_class($this) == get_called_class());
         if (!$static && !$this->__isRelationLoaded) {
             ## load all relations on init
-            $this->loadRelations(null, [
-                'page' => 1,
-                'pageSize' => $this->__defaultPageSize
-            ]);
-
+//            $this->loadRelations(null, [
+//                'page' => 1,
+//                'pageSize' => ActiveRecord::DEFAULT_PAGE_SIZE
+//            ]);
+            
             ## define all relations BUT do not load it on init
-//            $relMetaData = $this->getMetaData()->relations;
-//            foreach ($relMetaData as $k => $r) {
-//                $this->__relations[$k] = [];
-//            }
-//            $this->__relations['currentModel'] = [];
+            $relMetaData = $this->getMetaData()->relations;
+            foreach ($relMetaData as $k => $r) {
+                $this->__relations[$k] = [];
+            }
+            $this->__relations['currentModel'] = [];
         }
     }
 
@@ -94,7 +96,7 @@ class ActiveRecord extends CActiveRecord {
 
             $this->loadRelations($name, @$criteria);
             $this->applyRelChange($name);
-            return $this->$name;
+            return $this->__relations[$name];
         } else {
             return parent::__call($name, $args);
         }
@@ -174,7 +176,7 @@ class ActiveRecord extends CActiveRecord {
                 if (isset($this->__pageSize[$name])) {
                     return $this->__pageSize[$name];
                 } else {
-                    return $this->__defaultPageSize;
+                    return ActiveRecord::DEFAULT_PAGE_SIZE;
                 }
                 break;
             case Helper::isLastString($name, 'CurrentPage'):
@@ -193,9 +195,8 @@ class ActiveRecord extends CActiveRecord {
                 $name = substr_replace($name, '', -6);
                 return @$this->__relDelete[$name];
                 break;
-            case ($name == 'currentModel' || isset($this->getMetaData()->relations[$name])):
-                $this->initRelation();
-                return @$this->__relations[$name];
+            case ($name == 'currentModel' || isset($this->__relations[$name])):
+                return @$this->loadRelations($name);
                 break;
             case (isset($this->__tempVar[$name])):
                 return $this->__tempVar;
@@ -273,12 +274,13 @@ class ActiveRecord extends CActiveRecord {
 
     public function loadRelations($name = null, $criteria = []) {
         $relMetaData = $this->getMetaData()->relations;
+
         foreach ($relMetaData as $k => $rel) {
             if (!is_null($name) && $k != $name) {
                 continue;
             }
 
-            if (!isset($this->__relations[$k]) || !is_null($name)) {
+            if (!is_null($name)) {
                 if (@class_exists($rel->className)) {
                     switch (get_class($rel)) {
                         case 'CHasOneRelation':
@@ -302,7 +304,6 @@ class ActiveRecord extends CActiveRecord {
                         case 'CHasManyRelation':
                             //without through
                             $this->__relationsObj[$k] = $this->getRelated($k, true, $criteria);
-
                             if (is_array($this->__relationsObj[$k])) {
                                 $this->__relations[$k] = [];
 
@@ -318,13 +319,13 @@ class ActiveRecord extends CActiveRecord {
             }
         }
         if ($name == 'currentModel' || is_null($name)) {
-
-
             $this->__relations['currentModel'] = $this->getModelArray($criteria);
         }
 
         $this->__isRelationLoaded = true;
         $this->__oldRelations = $this->__relations;
+
+        return $this->__relations[$name];
     }
 
     /**

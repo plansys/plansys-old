@@ -399,7 +399,7 @@ class DataFilter extends FormField {
             $rf->params = $filter['relParams'];
             $rf->modelClass = $filter['relModelClass'];
             $rf->relationCriteria = $filter['relCriteria'];
-            $rf->relationCriteria['limit'] = '20';
+            $rf->relationCriteria['limit'] = ActiveRecord::DEFAULT_PAGE_SIZE;
             $rf->relationCriteria['offset'] = 0;
 
             $rf->idField = $filter['relIdField'];
@@ -435,7 +435,7 @@ class DataFilter extends FormField {
             $rf->params = $filter['relParams'];
             $rf->modelClass = $filter['relModelClass'];
             $rf->relationCriteria = $filter['relCriteria'];
-            $rf->relationCriteria['limit'] = '20';
+            $rf->relationCriteria['limit'] = ActiveRecord::DEFAULT_PAGE_SIZE;
             $rf->relationCriteria['offset'] = $start;
 
             $rf->idField = $filter['relIdField'];
@@ -497,25 +497,15 @@ class DataFilter extends FormField {
                     $rf->params = $filter['relParams'];
                     $rf->modelClass = $filter['relModelClass'];
                     $rf->relationCriteria = $filter['relCriteria'];
-                    $rf->relationCriteria['limit'] = '20';
+                    $rf->relationCriteria['limit'] = ActiveRecord::DEFAULT_PAGE_SIZE;
+                    $rf->relationCriteria['offset'] = 0;
 
                     $rf->idField = $filter['relIdField'];
                     $rf->labelField = $filter['relLabelField'];
                     $rf->builder = $this->builder;
 
-                    $list = [];
-                    $rawList = $rf->query('', $rf->params);
-                    foreach ($rawList as $key => $val) {
-                        $list[] = [
-                            'key' => $val['value'],
-                            'value' => $val['label']
-                        ];
-                    }
-
-                    $count = $rf->count('', $rf->params);
-
-                    $this->filters[$k]['list'] = $list;
-                    $this->filters[$k]['count'] = $count;
+                    $this->filters[$k]['list'] = 0;
+                    $this->filters[$k]['count'] = 0;
                     break;
             }
         }

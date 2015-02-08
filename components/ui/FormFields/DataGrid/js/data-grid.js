@@ -750,7 +750,6 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
 
                         // pagingOptions
                         $scope.updatePaging = function (paging, executeQuery, oldpaging) {
-                            console.log($scope.executeQuery, paging);
                             var ds = $scope.datasource;
                             ds.updateParam('currentPage', paging.currentPage, 'paging');
                             ds.updateParam('pageSize', paging.pageSize, 'paging');
