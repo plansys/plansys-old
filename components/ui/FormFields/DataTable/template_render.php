@@ -14,7 +14,7 @@
     <div ng-class="{invisible: !loaded}"   
          class=" data-table-container">
 
-        <div ng-if="loaded && !loading">
+        <div ng-if="loaded">
             <div ng-if="data.length != 0" class="data-grid-paging-shadow"
                  style="height:50px;display:none;"></div>
             <div class="data-grid-paging"
@@ -78,7 +78,7 @@
                     <div class="pull-left data-grid-page-selector">
                         <div class="input-group input-group-sm pull-left" style="display:block;">
                             <div class="input-group-btn pull-left" style="width:24px;">
-                                <button class="btn btn-default" ng-click="grid.pageBackward()" type="button">
+                                <button class="btn btn-default" ng-click="pageBackward()" type="button">
                                     <i class="fa fa-chevron-left"></i>
                                 </button>
                             </div>
@@ -87,7 +87,7 @@
                                    ng-delay="500"
                                    ng-model="gridOptions.pagingOptions.currentPage" />
                             <div class="input-group-btn pull-left" style="width:25px;">
-                                <button class="btn btn-default" ng-click="grid.pageForward()" type="button">
+                                <button class="btn btn-default" ng-click="pageForward()" type="button">
                                     <i class="fa fa-chevron-right"></i>
                                 </button>
                             </div>
@@ -98,7 +98,14 @@
                     </div>
                     <div class="pull-left"
                          style="border-left:1px solid #ccc;margin:2px 5px;padding:3px 8px;">
-                        Total of {{ datasource.totalItems}} Record{{ datasource.totalItems >1 ? 's' :'' }}
+
+                        <div ng-if="datasource.loading">
+                            <i class="fa fa-refresh fa-spin"></i> Loading Data...
+                        </div>
+                        <div ng-if="!datasource.loading">
+                            Total of {{ datasource.totalItems | number }} Record{{ datasource.totalItems >1 ? 's' :'' }}
+                        </div>
+
                     </div>
                 </div>
                 <div class="clearfix"></div>
