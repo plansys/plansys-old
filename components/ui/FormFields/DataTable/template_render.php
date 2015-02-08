@@ -119,8 +119,7 @@
 
         </div>
 
-        <div ng-class="{invisible: data.length == 0 || loading}"  
-             id="<?= $this->renderID ?>" class="dataTable" 
+        <div id="<?= $this->renderID ?>" class="dataTable" 
              style="overflow:auto;"></div>
     </div>
 </div>

@@ -747,6 +747,24 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }
                 }
 
+                // Method for recreating Handsontable
+                $scope.reInitTimeout = false;
+                $scope.reinit = function () {
+                    if ($scope.reInitTimeout) {
+                        $timeout.cancel($scope.reInitTimeout);
+                    }
+
+                    $scope.reInitTimeout = $timeout(function () {
+                        $scope.getInstance().destroy();
+                        var p = $("#" + $scope.renderID).parent();
+                        $("#" + $scope.renderID).remove();
+                        p.append("<div id='" + $scope.renderID + "' class='dataTable' style='overflow:auto;'></div>");
+
+                        $scope.colAssembled = false;
+                        $scope.init();
+                    })
+                }
+
                 // Initialize data-table
                 $scope.init = function () {
                     if ($scope.columns.length == 0 && $scope.datasource.data.length > 0) {
@@ -754,417 +772,417 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }
                     $scope.assembleCols();
 
-                    $timeout(function () {
-                        evalArray($scope.gridOptions);
+                    evalArray($scope.gridOptions);
 
-                        // initialize data table groups
-                        if ($scope.gridOptions.groups) {
-                            $scope.dtGroups = new Handsontable.DataTableGroups({
-                                groupCols: $scope.$eval($scope.gridOptions.groups),
-                                scope: $scope,
-                                columns: columnsInternal,
-                                colWidths: colWidths,
-                                totalGroups: $scope.gridOptions.totalGroups,
-                                colHeaders: colHeaders,
-                            }).prepare();
-                            delete($scope.gridOptions.groups);
-                            if ($scope.data.length > 0) {
-                                if (!$scope.getInstance()) {
-                                    $timeout(function () {
-                                        $scope.ht = $scope.getInstance();
-                                        $scope.dtGroups.group($scope.ht);
-                                    });
-                                }
-                            } else {
-                                $scope.dtGroups.group($scope.ht);
-                            }
-                        }
-
-                        // check for link mode
-                        var multiSelect = true;
-                        if (typeof $scope.gridOptions.afterSelectionChange == "function") {
-                            minSpareRows = 0;
-                            $scope.gridOptions.readOnly = true;
-                            $el.addClass('link-mode');
-                            multiSelect = false;
-                        }
-                        if (!!$scope.gridOptions.readOnly) {
-                            $el.addClass('read-only');
-                        }
-
-                        // set current row class name
-                        var currentRowClassName = columnsInternal.length > 3 ? 'currentCol' : '';
-                        if (typeof $scope.gridOptions.afterSelectionChange == "function") {
-                            currentRowClassName = '';
-                        }
-
-                        if (typeof $scope.gridOptions.colWidths == "string") {
-                            $scope.gridOptions.colWidths = $scope.$eval($scope.gridOptions.colWidths);
-                        }
-                        
-                        var options = $.extend({
-                            data: $scope.data,
-                            columnSorting: !$scope.dtGroups,
-                            contextMenu: true,
-                            multiSelect: multiSelect,
-                            fillHandle: !$scope.gridOptions.readOnly,
+                    // initialize data table groups
+                    if ($scope.gridOptions.groups) {
+                        $scope.dtGroups = new Handsontable.DataTableGroups({
+                            groupCols: $scope.$eval($scope.gridOptions.groups),
                             scope: $scope,
-                            colHeaders: colHeaders,
                             columns: columnsInternal,
                             colWidths: colWidths,
-                            autoWrapRow: true,
-                            autoWrapCol: true,
-                            mergeCells: true,
-                            comments: true,
-                            currentRowClassName: 'currentRow',
-                            currentColClassName: currentRowClassName,
-                            manualColumnResize: true,
-                            cells: function (row, col, prop) {
-                                var cellProperties = {};
-                                cellProperties.$scope = $scope;
+                            totalGroups: $scope.gridOptions.totalGroups,
+                            colHeaders: colHeaders,
+                        }).prepare();
+                        delete($scope.gridOptions.groups);
+                        if ($scope.data.length > 0) {
+                            if (!$scope.getInstance()) {
+                                $timeout(function () {
+                                    $scope.ht = $scope.getInstance();
+                                    $scope.dtGroups.group($scope.ht);
+                                });
+                            }
+                        } else {
+                            $scope.dtGroups.group($scope.ht);
+                        }
+                    }
 
-                                if ($scope.dtGroups) {
-                                    function setDefault() {
-                                        cellProperties.className = 'group-text';
-                                        cellProperties.readOnly = false;
-                                        if (!!$scope.columns[col] && typeof $scope.columns[col].options.enableCellEdit == "boolean") {
-                                            cellProperties.readOnly = !$scope.columns[col].options.enableCellEdit;
-                                        }
+                    // check for link mode
+                    var multiSelect = true;
+                    if (typeof $scope.gridOptions.afterSelectionChange == "function") {
+                        minSpareRows = 0;
+                        $scope.gridOptions.readOnly = true;
+                        $el.addClass('link-mode');
+                        multiSelect = false;
+                    }
+                    if (!!$scope.gridOptions.readOnly) {
+                        $el.addClass('read-only');
+                    }
 
-                                        if (!!$scope.gridOptions.readOnly) {
+                    // set current row class name
+                    var currentRowClassName = columnsInternal.length > 3 ? 'currentCol' : '';
+                    if (typeof $scope.gridOptions.afterSelectionChange == "function") {
+                        currentRowClassName = '';
+                    }
+
+                    if (typeof $scope.gridOptions.colWidths == "string") {
+                        $scope.gridOptions.colWidths = $scope.$eval($scope.gridOptions.colWidths);
+                    }
+
+                    var options = $.extend({
+                        data: $scope.data,
+                        columnSorting: !$scope.dtGroups,
+                        contextMenu: true,
+                        multiSelect: multiSelect,
+                        fillHandle: !$scope.gridOptions.readOnly,
+                        scope: $scope,
+                        colHeaders: colHeaders,
+                        columns: columnsInternal,
+                        colWidths: colWidths,
+                        autoWrapRow: true,
+                        autoWrapCol: true,
+                        mergeCells: true,
+                        comments: true,
+                        currentRowClassName: 'currentRow',
+                        currentColClassName: currentRowClassName,
+                        manualColumnResize: true,
+                        cells: function (row, col, prop) {
+                            var cellProperties = {};
+                            cellProperties.$scope = $scope;
+
+                            if ($scope.dtGroups) {
+                                function setDefault() {
+                                    cellProperties.className = 'group-text';
+                                    cellProperties.readOnly = false;
+                                    if (!!$scope.columns[col] && typeof $scope.columns[col].options.enableCellEdit == "boolean") {
+                                        cellProperties.readOnly = !$scope.columns[col].options.enableCellEdit;
+                                    }
+
+                                    if (!!$scope.gridOptions.readOnly) {
+                                        cellProperties.readOnly = true;
+                                    }
+
+                                    if (col == 0) {
+                                        cellProperties.renderer = 'groups';
+                                    }
+                                }
+
+                                if ($scope.data[row] && $scope.data[row]['__dt_flg']) {
+                                    switch ($scope.data[row]['__dt_flg']) {
+                                        case 'E':
+                                            cellProperties.className = 'empty';
                                             cellProperties.readOnly = true;
-                                        }
+                                            cellProperties.type = "text";
+                                            break;
+                                        case 'G':
+                                            cellProperties.className = 'groups';
+                                            cellProperties.type = "text";
 
-                                        if (col == 0) {
-                                            cellProperties.renderer = 'groups';
-                                        }
-                                    }
-
-                                    if ($scope.data[row] && $scope.data[row]['__dt_flg']) {
-                                        switch ($scope.data[row]['__dt_flg']) {
-                                            case 'E':
-                                                cellProperties.className = 'empty';
+                                            if (col > 0) {
                                                 cellProperties.readOnly = true;
-                                                cellProperties.type = "text";
-                                                break;
-                                            case 'G':
-                                                cellProperties.className = 'groups';
-                                                cellProperties.type = "text";
+                                            } else {
+                                                var row = $scope.data[row];
+                                                var colProp = $scope.dtGroups.groupCols[row['__dt_lvl']];
 
-                                                if (col > 0) {
+                                                var colDef = $scope.dtGroups.groupColOpts[colProp];
+                                                if (typeof colDef == "undefined") {
+                                                    colDef = $scope.dtGroups.groupColOpts[colProp + $scope.relSuffix];
+                                                }
+                                                if (colDef) {
+                                                    $.extend(cellProperties, colDef);
+                                                } else {
                                                     cellProperties.readOnly = true;
-                                                } else {
-                                                    var row = $scope.data[row];
-                                                    var colProp = $scope.dtGroups.groupCols[row['__dt_lvl']];
-
-                                                    var colDef = $scope.dtGroups.groupColOpts[colProp];
-                                                    if (typeof colDef == "undefined") {
-                                                        colDef = $scope.dtGroups.groupColOpts[colProp + $scope.relSuffix];
-                                                    }
-                                                    if (colDef) {
-                                                        $.extend(cellProperties, colDef);
-                                                    } else {
-                                                        cellProperties.readOnly = true;
-                                                    }
                                                 }
+                                            }
 
-                                                cellProperties.renderer = 'groups';
+                                            cellProperties.renderer = 'groups';
 
-                                                break;
-                                            case 'T':
-                                                var c = $scope.dtGroups.totalGroups[$scope.dtGroups.columns[col].name];
-                                                if (c.trim().substr(0, 4) != 'span') {
-                                                    cellProperties.type = 'numeric';
-                                                    cellProperties.format = '0,0.00';
-                                                } else {
-                                                    cellProperties.renderer = 'html';
-                                                }
-                                                cellProperties.className = 'total';
-                                                cellProperties.readOnly = true;
-                                                break;
-                                            default:
-                                                setDefault();
-                                                break;
-                                        }
-                                    } else {
-                                        setDefault();
+                                            break;
+                                        case 'T':
+                                            var c = $scope.dtGroups.totalGroups[$scope.dtGroups.columns[col].name];
+                                            if (c.trim().substr(0, 4) != 'span') {
+                                                cellProperties.type = 'numeric';
+                                                cellProperties.format = '0,0.00';
+                                            } else {
+                                                cellProperties.renderer = 'html';
+                                            }
+                                            cellProperties.className = 'total';
+                                            cellProperties.readOnly = true;
+                                            break;
+                                        default:
+                                            setDefault();
+                                            break;
                                     }
+                                } else {
+                                    setDefault();
                                 }
+                            }
 
-                                if (typeof $scope.updateCell == "function") {
-                                    $scope.updateCell(row, col, prop, cellProperties);
-                                }
+                            if (typeof $scope.updateCell == "function") {
+                                $scope.updateCell(row, col, prop, cellProperties);
+                            }
 
-                                return cellProperties;
-                            },
-                            beforeAutofill: function (s, e, d) {
-                                if (typeof $scope.events.beforeAutofill == "function") {
-                                    return $scope.events.beforeAutofill(s, e, d);
-                                }
-                                if (s.col == e.col && d.length > 1) {
-                                    var seq = d[1][0] - d[0][0];
-                                    if (!isNaN(seq)) {
-                                        var se = (d[d.length - 1][0] * 1);
-                                        var length = Math.abs(s.row - e.row) + 1;
-                                        var last = d[d.length - 1];
-                                        d.length = 0;
-                                        for (var i = 0; i < length; i++) {
-                                            last = last * 1 + seq * 1;
-                                            d.push([last + ""]);
-                                        }
-
-                                        return d;
+                            return cellProperties;
+                        },
+                        beforeAutofill: function (s, e, d) {
+                            if (typeof $scope.events.beforeAutofill == "function") {
+                                return $scope.events.beforeAutofill(s, e, d);
+                            }
+                            if (s.col == e.col && d.length > 1) {
+                                var seq = d[1][0] - d[0][0];
+                                if (!isNaN(seq)) {
+                                    var se = (d[d.length - 1][0] * 1);
+                                    var length = Math.abs(s.row - e.row) + 1;
+                                    var last = d[d.length - 1];
+                                    d.length = 0;
+                                    for (var i = 0; i < length; i++) {
+                                        last = last * 1 + seq * 1;
+                                        d.push([last + ""]);
                                     }
-                                }
-                            },
-                            beforeChange: function (changes, source) {
-                                $scope.edited = true;
-                                if (typeof $scope.beforeCellEdit == "function" && source == "edit") {
-                                    var ht = $("#" + $scope.renderID).handsontable('getInstance');
-                                    var ch = changes[0];
-                                    $scope.beforeCellEdit(ch[3], ch[0], ch[1], $scope.data[ch[0]], ht);
-                                }
 
-                                switch (source) {
-                                    case "edit":
-                                    case "paste":
-                                    case "autofill":
-                                        $timeout(function () {
-                                            changes.map(function (c) {
-                                                if (typeof $scope.beforeCellEdit == "function") {
-                                                    if ($scope.dtGroups) {
-                                                        var row = $scope.datasource.data[$scope.data[c[0]]['__dt_row']] = $scope.data[c[0]];
-                                                        row[c[1]] = c[3];
-                                                        $scope.beforeCellEdit(c[3], c[0], c[1], row);
-                                                    } else {
-                                                        var row = $scope.datasource.data[c[0]] = $scope.data[c[0]];
-                                                        $scope.beforeCellEdit(c[3], c[0], c[1], row);
-                                                    }
-                                                }
-                                            });
+                                    return d;
+                                }
+                            }
+                        },
+                        beforeChange: function (changes, source) {
+                            $scope.edited = true;
+                            if (typeof $scope.beforeCellEdit == "function" && source == "edit") {
+                                var ht = $("#" + $scope.renderID).handsontable('getInstance');
+                                var ch = changes[0];
+                                $scope.beforeCellEdit(ch[3], ch[0], ch[1], $scope.data[ch[0]], ht);
+                            }
 
+                            switch (source) {
+                                case "edit":
+                                case "paste":
+                                case "autofill":
+                                    $timeout(function () {
+                                        changes.map(function (c) {
                                             if (typeof $scope.beforeCellEdit == "function") {
-                                                if (!$scope.ht || typeof $scope.ht.render != "function") {
-                                                    $scope.ht = $scope.getInstance();
+                                                if ($scope.dtGroups) {
+                                                    var row = $scope.datasource.data[$scope.data[c[0]]['__dt_row']] = $scope.data[c[0]];
+                                                    row[c[1]] = c[3];
+                                                    $scope.beforeCellEdit(c[3], c[0], c[1], row);
+                                                } else {
+                                                    var row = $scope.datasource.data[c[0]] = $scope.data[c[0]];
+                                                    $scope.beforeCellEdit(c[3], c[0], c[1], row);
                                                 }
-
-                                                $scope.ht.render();
                                             }
                                         });
-                                        break;
-                                }
 
-                                if (typeof $scope.events.beforeChange == "function") {
-                                    $scope.events.beforeChange(changes, source);
-                                }
-                            },
-                            beforeOnCellMouseDown: function (event, coords, TD) {
-                                if (typeof $scope.events.beforeOnCellMouseDown == "function") {
-                                    $scope.events.beforeOnCellMouseDown(event, coords, TD);
-                                }
+                                        if (typeof $scope.beforeCellEdit == "function") {
+                                            if (!$scope.ht || typeof $scope.ht.render != "function") {
+                                                $scope.ht = $scope.getInstance();
+                                            }
 
-                                if (typeof $scope.gridOptions.afterSelectionChange == "function" && $(TD).is('td')) {
-                                    if (!$scope.dtGroups || (!!$scope.dtGroups && $scope.data[coords.row]['__dt_flg'] == "Z")) {
-                                        $scope.gridOptions.afterSelectionChange($scope.data[coords.row]);
-                                    }
-                                }
+                                            $scope.ht.render();
+                                        }
+                                    });
+                                    break;
+                            }
 
-                                $scope.mouseDown = true;
-                            },
-                            afterSelection: function (r, c, r2, c2) {
-                                if (typeof $scope.events.afterSelection == "function") {
-                                    $scope.events.afterSelection(r, c, r2, c2);
-                                }
-                                if (!$scope.mouseDown) {
-                                    $scope.fixScroll();
-                                }
-                            },
-                            afterSelectionEnd: function (r, c, r2, c2) {
-                                if (typeof $scope.events.afterSelectionEnd == "function") {
-                                    $scope.events.afterSelectionEnd(r, c, r2, c2);
-                                }
-                                if (!$scope.mouseDown) {
-                                    $scope.fixScroll();
-                                }
-                                $scope.mouseDown = false;
+                            if (typeof $scope.events.beforeChange == "function") {
+                                $scope.events.beforeChange(changes, source);
+                            }
+                        },
+                        beforeOnCellMouseDown: function (event, coords, TD) {
+                            if (typeof $scope.events.beforeOnCellMouseDown == "function") {
+                                $scope.events.beforeOnCellMouseDown(event, coords, TD);
+                            }
 
-                            },
-                            afterRemoveRow: function (index, amount) {
-                                if (!$scope.dtGroups) {
-                                    $scope.edited = true;
-                                    $scope.datasource.data.splice(index, amount);
+                            if (typeof $scope.gridOptions.afterSelectionChange == "function" && $(TD).is('td')) {
+                                if (!$scope.dtGroups || (!!$scope.dtGroups && $scope.data[coords.row]['__dt_flg'] == "Z")) {
+                                    $scope.gridOptions.afterSelectionChange($scope.data[coords.row]);
                                 }
-                            },
-                            afterValidate: function (valid, value, row, prop, source) {
-                                if (typeof $scope.events.afterValidate == "function") {
-                                    $scope.events.afterValidate(valid, value, row, prop, source);
-                                }
-                            },
-                            afterChange: function (changes, source) {
-                                //watch datasource changes
-                                switch (true) {
-                                    case ($scope.dtGroups && $scope.dtGroups.changed):
-                                        break;
-                                    default:
-                                        switch (source) {
-                                            case "edit":
-                                            case "paste":
-                                            case "autofill":
-                                                $timeout(function () {
-                                                    changes.map(function (c) {
+                            }
+
+                            $scope.mouseDown = true;
+                        },
+                        afterSelection: function (r, c, r2, c2) {
+                            if (typeof $scope.events.afterSelection == "function") {
+                                $scope.events.afterSelection(r, c, r2, c2);
+                            }
+                            if (!$scope.mouseDown) {
+                                $scope.fixScroll();
+                            }
+                        },
+                        afterSelectionEnd: function (r, c, r2, c2) {
+                            if (typeof $scope.events.afterSelectionEnd == "function") {
+                                $scope.events.afterSelectionEnd(r, c, r2, c2);
+                            }
+                            if (!$scope.mouseDown) {
+                                $scope.fixScroll();
+                            }
+                            $scope.mouseDown = false;
+
+                        },
+                        afterRemoveRow: function (index, amount) {
+                            if (!$scope.dtGroups) {
+                                $scope.edited = true;
+                                $scope.datasource.data.splice(index, amount);
+                            }
+                        },
+                        afterValidate: function (valid, value, row, prop, source) {
+                            if (typeof $scope.events.afterValidate == "function") {
+                                $scope.events.afterValidate(valid, value, row, prop, source);
+                            }
+                        },
+                        afterChange: function (changes, source) {
+                            //watch datasource changes
+                            switch (true) {
+                                case ($scope.dtGroups && $scope.dtGroups.changed):
+                                    break;
+                                default:
+                                    switch (source) {
+                                        case "edit":
+                                        case "paste":
+                                        case "autofill":
+                                            $timeout(function () {
+                                                changes.map(function (c) {
+                                                    if ($scope.dtGroups) {
+                                                        $scope.dtGroups.handleChange($scope, c);
+                                                    } else {
+                                                        if (!$scope.datasource.data[c[0]]) {
+                                                            $scope.datasource.data[c[0]] = {};
+                                                        }
+                                                        $scope.datasource.data[c[0]][c[1]] = c[3];
+                                                    }
+
+                                                    if (typeof $scope.afterCellEdit == "function") {
                                                         if ($scope.dtGroups) {
-                                                            $scope.dtGroups.handleChange($scope, c);
+                                                            var row = $scope.datasource.data[$scope.data[[0]]['__dt_row']] = $scope.data[[0]];
+                                                            $scope.afterCellEdit(c[3], c[0], c[1], row);
                                                         } else {
-                                                            if (!$scope.datasource.data[c[0]]) {
-                                                                $scope.datasource.data[c[0]] = {};
-                                                            }
-                                                            $scope.datasource.data[c[0]][c[1]] = c[3];
+                                                            var row = $scope.datasource.data[c[0]] = $scope.data[c[0]];
+                                                            $scope.afterCellEdit(c[3], c[0], c[1], row);
                                                         }
-
-                                                        if (typeof $scope.afterCellEdit == "function") {
-                                                            if ($scope.dtGroups) {
-                                                                var row = $scope.datasource.data[$scope.data[[0]]['__dt_row']] = $scope.data[[0]];
-                                                                $scope.afterCellEdit(c[3], c[0], c[1], row);
-                                                            } else {
-                                                                var row = $scope.datasource.data[c[0]] = $scope.data[c[0]];
-                                                                $scope.afterCellEdit(c[3], c[0], c[1], row);
-                                                            }
-                                                        }
-                                                    });
-
-                                                    if (typeof $scope.afterCellEdit == "function" && $scope.ht) {
-                                                        if (!$scope.ht || typeof $scope.ht.render != "function") {
-                                                            $scope.ht = $scope.getInstance();
-                                                        }
-
-                                                        $scope.ht.render();
                                                     }
                                                 });
-                                                break;
-                                            case "loadData":
-                                                if (!$scope.edited) {
-                                                    $scope.datasource.data = angular.copy($scope.data);
+
+                                                if (typeof $scope.afterCellEdit == "function" && $scope.ht) {
+                                                    if (!$scope.ht || typeof $scope.ht.render != "function") {
+                                                        $scope.ht = $scope.getInstance();
+                                                    }
+
+                                                    $scope.ht.render();
                                                 }
-                                                break;
-                                        }
-                                        break;
-                                }
-
-                                if (typeof $scope.events.afterChange == "function") {
-                                    $scope.events.afterChange(changes, source, $scope.grid());
-                                }
-
-
-                                $timeout(function () {
-                                    $scope.edited = false;
-                                });
-                            },
-                            afterRender: function () {
-                                if (categories.length > 0) {
-                                    //add category header
-                                    var html = '<tr class="header-grouping">';
-                                    if (!!options.rowHeaders) {
-                                        html += '<th><div class="relative"><span class="rowHeader">&nbsp;</span></div></th>';
+                                            });
+                                            break;
+                                        case "loadData":
+                                            if (!$scope.edited) {
+                                                $scope.datasource.data = angular.copy($scope.data);
+                                            }
+                                            break;
                                     }
+                                    break;
+                            }
 
-                                    for (i in categories) {
-                                        var c = categories[i];
-                                        html += '<th colspan="' + c.span + '"><div class="relative">&nbsp;' + c.title + '&nbsp;</div></th>';
-                                    }
-                                    html += '</tr>';
-                                    $el.find('.header-grouping').remove();
-                                    $el.find('.ht_master thead').prepend(html);
-                                }
+                            if (typeof $scope.events.afterChange == "function") {
+                                $scope.events.afterChange(changes, source, $scope.grid());
+                            }
 
-                                //fix header
-                                $timeout(function () {
-                                    fh.topp.find('.wtSpreader').removeClass('wtSpreader')
-                                            .addClass('ht_top')
-                                            .addClass('handsontable')
-                                            .remove()
-                                            .insertAfter($el.find('.data-table-container'));
-                                    fh.topp = $el.find('.ht_top');
-                                    $el.find('.ht_top').remove();
-                                    $el.find('.ht_top thead').prepend(html);
-                                    fixHead();
-                                });
-                                if (typeof $scope.events.afterRender == "function") {
-                                    $scope.events.afterRender();
-                                }
-                                $scope.fixHeight();
-                            },
-                            afterLoadData: function () {
-                                $timeout(function () {
-                                    if (!$scope.gridLoaded && typeof $scope.onGridLoaded == "function") {
-                                        $scope.onGridLoaded(options);
-                                        $scope.gridLoaded = true;
-                                    }
-                                });
-                                if (typeof $scope.events.afterLoadData == "function") {
-                                    $scope.events.afterLoadData();
-                                }
-                                //FIX HEIGHT OVERFLOW
-                            },
-                            beforeColumnSort: function (column, order) {
-                                if (typeof $scope.events.beforeColumnSort == "function") {
-                                    $scope.events.beforeColumnSort(column, column);
-                                }
-                            },
-                            afterColumnSort: function (column, order) {
-                                if (typeof $scope.events.afterColumnSort == "function") {
-                                    $scope.events.afterColumnSort(column, column);
-                                }
-                            },
-                            beforeRender: function () {
-                                $el.find('.header-grouping').remove();
-                                var ht = $("#" + $scope.renderID).handsontable('getInstance');
-
-                                if (typeof $scope.events.beforeRender == "function") {
-                                    $scope.events.beforeRender();
-                                }
-
-                                $timeout.cancel(renderTimeout);
-                                renderTimeout = $timeout(function () {
-                                    $scope.loaded = true;
-                                });
-                            },
-                            modifyColWidth: function () {
-                                $scope.fixOtherWidth();
-                                $el.find('.header-grouping').remove();
-                                if (typeof $scope.events.modifyColWidth == "function") {
-                                    $scope.events.modifyColWidth();
-                                }
-                            },
-                            contextMenu: $scope.contextMenu()
-                        }, $scope.gridOptions);
-                        //prepare data table groups
-
-
-                        // if there is beforeGridLoaded event, call it.
-                        if (typeof $scope.beforeGridLoaded == "function") {
-                            $scope.beforeGridLoaded(options);
-                        }
-                        // Generate DataTable Options -- end
-
-                        // Setup Data Watcher
-                        if (options.events) {
-                            $scope.events = options.events;
-                        }
-
-                        if (!!$scope.events) {
-                            options = $.extend(options, $scope.events);
-                        }
-                        $scope.columns = columnsInternal;
-                        if (!!$("#" + $scope.renderID)[0]) {
-                            $("#" + $scope.renderID).width($el.width());
-                            $scope.ht = $("#" + $scope.renderID).handsontable(options);
 
                             $timeout(function () {
-                                $scope.loaded = true;
-                                $scope.loading = false;
+                                $scope.edited = false;
                             });
-                        }
-                    });
+                        },
+                        afterRender: function () {
+                            if (categories.length > 0) {
+                                //add category header
+                                var html = '<tr class="header-grouping">';
+                                if (!!options.rowHeaders) {
+                                    html += '<th><div class="relative"><span class="rowHeader">&nbsp;</span></div></th>';
+                                }
+
+                                for (i in categories) {
+                                    var c = categories[i];
+                                    html += '<th colspan="' + c.span + '"><div class="relative">&nbsp;' + c.title + '&nbsp;</div></th>';
+                                }
+                                html += '</tr>';
+                                $el.find('.header-grouping').remove();
+                                $el.find('.ht_master thead').prepend(html);
+                            }
+
+                            //fix header
+                            $timeout(function () {
+                                fh.topp.find('.wtSpreader').removeClass('wtSpreader')
+                                        .addClass('ht_top')
+                                        .addClass('handsontable')
+                                        .remove()
+                                        .insertAfter($el.find('.data-table-container'));
+                                fh.topp = $el.find('.ht_top');
+                                $el.find('.ht_top').remove();
+                                $el.find('.ht_top thead').prepend(html);
+                                fixHead();
+                            });
+                            if (typeof $scope.events.afterRender == "function") {
+                                $scope.events.afterRender();
+                            }
+                            $scope.fixHeight();
+                        },
+                        afterLoadData: function () {
+                            $timeout(function () {
+                                if (!$scope.gridLoaded && typeof $scope.onGridLoaded == "function") {
+                                    $scope.onGridLoaded(options);
+                                    $scope.gridLoaded = true;
+                                }
+                            });
+                            if (typeof $scope.events.afterLoadData == "function") {
+                                $scope.events.afterLoadData();
+                            }
+                            //FIX HEIGHT OVERFLOW
+                        },
+                        beforeColumnSort: function (column, order) {
+                            if (typeof $scope.events.beforeColumnSort == "function") {
+                                $scope.events.beforeColumnSort(column, column);
+                            }
+                        },
+                        afterColumnSort: function (column, order) {
+                            if (typeof $scope.events.afterColumnSort == "function") {
+                                $scope.events.afterColumnSort(column, column);
+                            }
+                        },
+                        beforeRender: function () {
+                            $el.find('.header-grouping').remove();
+                            var ht = $("#" + $scope.renderID).handsontable('getInstance');
+
+                            if (typeof $scope.events.beforeRender == "function") {
+                                $scope.events.beforeRender();
+                            }
+
+                            $timeout.cancel(renderTimeout);
+                            renderTimeout = $timeout(function () {
+                                $scope.loaded = true;
+                            });
+                        },
+                        modifyColWidth: function () {
+                            $scope.fixOtherWidth();
+                            $el.find('.header-grouping').remove();
+                            if (typeof $scope.events.modifyColWidth == "function") {
+                                $scope.events.modifyColWidth();
+                            }
+                        },
+                        contextMenu: $scope.contextMenu()
+                    }, $scope.gridOptions);
+                    //prepare data table groups
+
+
+                    // if there is beforeGridLoaded event, call it.
+                    if (typeof $scope.beforeGridLoaded == "function") {
+                        $scope.beforeGridLoaded(options);
+                    }
+                    // Generate DataTable Options -- end
+
+                    // Setup Data Watcher
+                    if (options.events) {
+                        $scope.events = options.events;
+                    }
+
+                    if (!!$scope.events) {
+                        options = $.extend(options, $scope.events);
+                    }
+                    $scope.columns = columnsInternal;
+
+                    console.log($("#" + $scope.renderID));
+                    if ($("#" + $scope.renderID).length > 0) {
+                        $("#" + $scope.renderID).width($el.width());
+                        $scope.ht = $("#" + $scope.renderID).handsontable(options);
+
+                        $timeout(function () {
+                            $scope.loaded = true;
+                            $scope.loading = false;
+                        });
+                    }
                 }
             }
         }
