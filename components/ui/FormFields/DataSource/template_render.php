@@ -24,7 +24,7 @@
     <div class="error" style="display:none;">
         <div style="position:absolute;color:red;top:0px;padding:10px;
              font-size:24px;left:0px;right:0px;height:50px;
-             text-align:center;
+             text-align:center;z-index:999
              background:#fff;border-bottom:1px solid #ddd;">
             <i class="fa fa-warning"></i> <?= $this->name; ?> Log Message
         </div>
