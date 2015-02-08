@@ -330,7 +330,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             lastCat = cat;
                         } else {
                             if (lastCat == '' && categories.length >= 1) {
-                                var lastSpan = categories[categories.length - 1];
+                                lastCat = categories[categories.length - 1];
+                                categories[categories.length - 1].span++;
                             } else {
                                 categories.push({
                                     title: '',
