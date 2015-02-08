@@ -293,7 +293,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         // add columns
                         columnsInternal.push(col);
                         colHeaders.push(c.label);
-                        colWidths.push(c.options.width || 70)
+                        colWidths.push(c.options.width || null)
 
                         if (c.options && c.options.category) {
                             // add category header
@@ -826,9 +826,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         multiSelect: multiSelect,
                         fillHandle: !$scope.gridOptions.readOnly,
                         scope: $scope,
+                        colWidths: colWidths,
                         colHeaders: colHeaders,
                         columns: columnsInternal,
-                        colWidths: colWidths,
                         autoWrapRow: true,
                         autoWrapCol: true,
                         mergeCells: true,
@@ -1154,16 +1154,27 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         },
                         contextMenu: $scope.contextMenu()
                     }, $scope.gridOptions);
-                    //prepare data table groups
+                    
+                    // adjust width when width is not specified
+                    if (colWidths.length > 0) {
+                        var isAllNull = true;
+                        colWidths.forEach(function (i) {
+                            if (i !== null)
+                                return false;
+                        });
+
+                        if (isAllNull) {
+                            delete options.colWidths;
+                        }
+                    }
 
 
                     // if there is beforeGridLoaded event, call it.
                     if (typeof $scope.beforeGridLoaded == "function") {
                         $scope.beforeGridLoaded(options);
                     }
-                    // Generate DataTable Options -- end
-
-                    // Setup Data Watcher
+                    
+                    // Setup Events Watcher
                     if (options.events) {
                         $scope.events = options.events;
                     }
@@ -1173,7 +1184,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }
                     $scope.columns = columnsInternal;
 
-                    console.log($("#" + $scope.renderID));
                     if ($("#" + $scope.renderID).length > 0) {
                         $("#" + $scope.renderID).width($el.width());
                         $scope.ht = $("#" + $scope.renderID).handsontable(options);
