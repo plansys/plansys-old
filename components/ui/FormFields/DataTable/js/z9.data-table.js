@@ -514,8 +514,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     ds.updateParam('currentPage', paging.currentPage, 'paging');
                                     ds.updateParam('pageSize', paging.pageSize, 'paging');
                                     ds.updateParam('totalServerItems', paging.totalServerItems, 'paging');
-                                    ds.query();
-                                }, 100);
+                                    ds.query(function () {
+                                    });
+                                }, 10);
                             }
                         }
                     }, true);
@@ -749,18 +750,20 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                 // Method for recreating Handsontable
                 $scope.reInitTimeout = false;
-                $scope.reinit = function () {
+                $scope.reinit = function (isDestroyed) {
                     if ($scope.reInitTimeout) {
                         $timeout.cancel($scope.reInitTimeout);
                     }
-
                     $scope.reInitTimeout = $timeout(function () {
-                        $scope.getInstance().destroy();
+                        if (!isDestroyed) {
+                            $scope.getInstance().destroy();
+                        }
                         var p = $("#" + $scope.renderID).parent();
                         $("#" + $scope.renderID).remove();
                         p.append("<div id='" + $scope.renderID + "' class='dataTable' style='overflow:auto;'></div>");
 
                         $scope.colAssembled = false;
+                        $scope.data = $scope.datasource.data;
                         $scope.init();
                     })
                 }
@@ -1154,7 +1157,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         },
                         contextMenu: $scope.contextMenu()
                     }, $scope.gridOptions);
-                    
+
                     // adjust width when width is not specified
                     if (colWidths.length > 0) {
                         var isAllNull = true;
@@ -1173,7 +1176,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     if (typeof $scope.beforeGridLoaded == "function") {
                         $scope.beforeGridLoaded(options);
                     }
-                    
+
                     // Setup Events Watcher
                     if (options.events) {
                         $scope.events = options.events;
