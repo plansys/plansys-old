@@ -771,6 +771,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                         $scope.colAssembled = false;
                         $scope.data = $scope.datasource.data;
+                        if ($scope.dtGroups && $scope.dtGroups.grouped) {
+                            $scope.dtGroups.grouped = false;
+                        }
                         $scope.init();
                     })
                 }
@@ -784,9 +787,16 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     evalArray($scope.gridOptions);
 
                     // initialize data table groups
-                    if ($scope.gridOptions.groups) {
+                    if (!!$scope.gridOptions.groups || !!$scope.dtGroups) {
+                        var groupOptions = $scope.gridOptions.groups;
+                        if (typeof $scope.gridOptions.groups == "string") {
+                            groupOptions = $scope.$eval($scope.gridOptions.groups);
+                        } else if (!!$scope.dtGroups) {
+                            groupOptions = $scope.dtGroups.groupCols;
+                        }
+
                         $scope.dtGroups = new Handsontable.DataTableGroups({
-                            groupCols: $scope.$eval($scope.gridOptions.groups),
+                            groupCols: groupOptions,
                             scope: $scope,
                             columns: columnsInternal,
                             colWidths: colWidths,
