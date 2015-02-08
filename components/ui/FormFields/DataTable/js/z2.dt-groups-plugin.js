@@ -5,6 +5,7 @@ Handsontable.DataTableGroups = function (settings) {
         columns: [],
         colHeaders: [],
         colWidths: [],
+        categories: [],
         scope: null,
         groupArgs: [],
         groupTreeInternal: {},
@@ -54,6 +55,7 @@ Handsontable.DataTableGroups = function (settings) {
                     this.totalGroups[this.columns[i].name] = text;
                 }
             }
+            
 
             return this;
         },
