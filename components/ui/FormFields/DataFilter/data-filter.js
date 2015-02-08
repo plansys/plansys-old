@@ -386,7 +386,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 $scope.relationNext = function (e, filter) {
                     e.stopPropagation();
                     e.preventDefault();
-                    console.log(filter);
                     $scope.loading = true;
 
                     var params = {};

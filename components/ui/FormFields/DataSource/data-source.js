@@ -215,6 +215,9 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 if ($scope.postData == 'Yes') {
                     $scope.original = angular.copy($scope.data);
                     $scope.$watch('data', function (newval, oldval) {
+                        if (typeof $scope.data == "undefined") {
+                            $scope.data = [];
+                        }
 
                         if (newval !== oldval && $scope.trackChanges) {
                             if ($scope.isDataReloaded) {
