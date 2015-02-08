@@ -19,7 +19,7 @@
                         <i class="fa fa-bars fa-nm"></i> 
                         <span class="caret"></span>
                     </button>
-                    <ul class="dropdown-menu" role="menu">
+                    <ul class="dropdown-menu" role="menu" style="max-height:350px;overflow-y:auto;">
                         <li ng-if="ngIf(filter)" ng-repeat="filter in filters">
                             <a href="" ng-click="toggleShowFilter(filter)">
                                 <label>
