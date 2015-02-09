@@ -359,6 +359,12 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         var sw = $el.parent().find("> .section-header").width();
                         var cw = $('#content').width();
 
+                        rowh = $el.find(".ht_master div.wtSpreader > table > thead:eq(0) > tr:eq(0) > th").height() + 2;
+                        elpos = $el.position();
+                        elpos.left += $scope.$container.scrollLeft();
+                        elpos.top += $scope.$container.scrollTop();
+                        $el.find(".dataTable.handsontable").width(w - 30);
+
                         if (w > Math.max(ow, cw, sw)) {
                             $el.parent().find("> .data-filter").width(w);
                             $el.parent().find("> .section-header").width(w - 40);
@@ -400,18 +406,52 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }
                 }
 
-                $scope.fixClone = function () {
-                    var sl = $scope.$container.scrollLeft();
-                    var st = $scope.$container.scrollTop();
-                    var rh = $el.find('.rowHeader:eq(0)');
-                    var cl = $el.find('.ht_clone_left');
-                }
                 $scope.fixComments = function () {
                     $("body > .htComments").css('margin-top', $scope.$container.scrollTop() * -1);
                 }
 
+
+                var elpos = $el.position();
+                var rowh = 0;
                 $scope.$container.on('scroll', function () {
-                    $scope.fixClone();
+                    var ctop = $("#content").offset().top;
+                    var top = $el.parents(".container-full").css('marginTop').replace('px', '') * 1 + ctop;
+                    var ct = $el.find(".ht_clone_top");
+                    var scrollTop = $(this).scrollTop();
+                    var scrollLeft = $(this).scrollLeft();
+
+                    var etop = elpos.top;
+                    if (categories.length > 0) {
+                        etop += rowh;
+                    }
+
+                    var loff = 0;
+                    if (scrollLeft > elpos.left) {
+                        loff = elpos.left;
+                    }
+
+                    if (scrollTop > etop) {
+                        if (scrollTop < etop + $el.height()) {
+                            ct.css({
+                                position: 'fixed',
+                                top: top,
+                                left: elpos.left - loff,
+                                paddingLeft: loff,
+                                width: $el.width(),
+                                height: rowh,
+                                overflowX: 'hidden',
+                                opacity: 1
+                            });
+                            ct.find(".wtHolder:eq(0)").css({
+                                marginLeft: scrollLeft * -1
+                            });
+                        } else {
+                            ct.css({opacity: 0});
+                        }
+                    } else {
+                        ct.css({opacity: 0});
+                    }
+
                     $scope.fixComments();
                 });
 
@@ -1199,7 +1239,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             delete options.colWidths;
                         }
                     }
-
 
                     // if there is beforeGridLoaded event, call it.
                     if (typeof $scope.beforeGridLoaded == "function") {

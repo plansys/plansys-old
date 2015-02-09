@@ -106,10 +106,16 @@
     font-size:13px !important;
 }
 
-.data-table-container .ht_clone_top,
 .data-table-container .ht_clone_left,
 .data-table-container .ht_clone_corner {
     display: none;
+}
+.data-table-container .ht_clone_top {
+    opacity:0;
+}
+
+.data-table-container .ht_clone_top .htCore {
+    border-bottom:1px solid #ddd;
 }
 
 [ps-data-table] .ht_top table {
