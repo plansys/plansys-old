@@ -361,7 +361,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         var sw = $el.parent().find("> .section-header").width();
                         var cw = $('#content').width();
 
-                        rowh = $el.find(".ht_master div.wtSpreader > table > thead:eq(0) > tr:eq(0) > th").height() + 2;
+                        rowh = $el.find(".ht_master div.wtSpreader > table > thead:eq(0) > tr:eq(0) > th").outerHeight() + 2;
                         elpos = $el.position();
                         elpos.left += $scope.$container.scrollLeft();
                         elpos.top += $scope.$container.scrollTop();
@@ -419,19 +419,25 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     var ctop = $("#content").offset().top;
                     var top = $el.parents(".container-full").css('marginTop').replace('px', '') * 1 + ctop;
                     var ct = $el.find(".ht_clone_top");
+                    var cl = $el.find(".ht_clone_left");
                     var scrollTop = $(this).scrollTop();
                     var scrollLeft = $(this).scrollLeft();
-
                     var etop = elpos.top;
-                    if (categories.length > 0) {
-                        etop += rowh;
-                    }
+                    var eleft = elpos.left;
 
+
+                    // Scroll Top
+                    if (categories.length > 0) {
+                        etop += rowh + 9;
+                    }
+                    if ($scope.gridOptions.enablePaging) {
+                        etop += $el.find(".data-grid-paging").outerHeight() + $el.css('paddingTop').replace('px', '') * 1;
+                        console.log(etop);
+                    }
                     var loff = 0;
                     if (scrollLeft > elpos.left) {
                         loff = elpos.left;
                     }
-
                     if (scrollTop > etop) {
                         if (scrollTop < etop + $el.height() - 30) {
                             ct.css({
@@ -452,6 +458,18 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         }
                     } else {
                         ct.css({opacity: 0});
+                    }
+
+                    // Scroll Left
+                    if (scrollLeft > eleft + cl.width()) {
+                        cl.css({
+                            position: 'fixed',
+                            top: top + etop - scrollTop,
+                            left: eleft - 15,
+                            opacity: 1
+                        });
+                    } else {
+                        cl.css({opacity: 0});
                     }
 
                     $scope.fixComments();
