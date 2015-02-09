@@ -340,7 +340,7 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.otherLabel = $el.find("data[name=other_label]").html();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.value = $el.find("data[name=value]").html().trim();
-                $scope.name = $el.find("data[name=name]").html().trim();
+                $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
                 $scope.modelField = JSON.parse($el.find("data[name=model_field]").text());
                 $scope.paramValue = {};
                 $scope.isOpen = false;

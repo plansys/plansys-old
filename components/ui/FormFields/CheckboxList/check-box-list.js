@@ -9,7 +9,7 @@ app.directive('checkBoxList', function ($timeout) {
 
             return function ($scope, $el, attrs, ctrl) {
                 // when ng-model is changed from inside directive
-                $scope.name = $el.find("data[name=name]").text();
+                $scope.name = $el.find("data[name=name]:eq(0)").text();
                 $scope.$parent[$scope.name] = $scope;
                 
                 $scope.updateItem = function (value) {

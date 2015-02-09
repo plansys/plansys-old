@@ -49,7 +49,7 @@ app.directive('textField', function ($timeout, $http) {
 
                 // set default value
                 var keytimeout = null;
-                $scope.name = $el.find("data[name=name]").html().trim();
+                $scope.name = $el.find("data[name=name]:eq(0)").html().trim();
                 $scope.value = $el.find("data[name=value]").html().trim();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.relModelClass = $el.find("data[name=rel_model_class]").html();
