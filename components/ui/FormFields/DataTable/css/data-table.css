@@ -106,11 +106,20 @@
     font-size:13px !important;
 }
 
-.data-table-container .ht_clone_left,
+
 .data-table-container .ht_clone_corner {
     display: none;
 }
+
+.data-table-container .ht_clone_left {
+    opacity:0;
+    z-index: 99;
+}
 .data-table-container .ht_clone_top {
+    opacity:0;
+    z-index: 100;
+}
+.ht_clone_left.handsontable > div > div > div.wtSpreader > table > thead > tr:first-child {
     opacity:0;
 }
 
