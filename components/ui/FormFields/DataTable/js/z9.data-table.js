@@ -431,13 +431,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }
 
                     if (scrollTop > etop) {
-                        if (scrollTop < etop + $el.height()) {
+                        if (scrollTop < etop + $el.height() - 30) {
                             ct.css({
                                 position: 'fixed',
                                 top: top,
                                 left: elpos.left - loff,
                                 paddingLeft: loff,
-                                width: $el.width(),
+                                width: $el.width() + 15,
                                 height: rowh,
                                 overflowX: 'hidden',
                                 opacity: 1
