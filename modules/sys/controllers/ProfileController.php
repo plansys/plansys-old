@@ -37,7 +37,6 @@ class ProfileController extends Controller {
                 Yii::app()->user->setState('role', $rootRole);
             }
         }
-
         $this->redirect(Yii::app()->user->returnUrl);
     }
 

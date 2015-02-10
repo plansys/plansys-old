@@ -293,7 +293,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         // add columns
                         columnsInternal.push(col);
                         colHeaders.push(c.label);
-                        colWidths.push(c.options.width || null)
+                        colWidths.push(!!c.options && !!c.options.width ? c.options.width : null);
                     }
 
                 }
@@ -932,7 +932,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 function setDefault() {
                                     cellProperties.className = 'group-text';
                                     cellProperties.readOnly = false;
-                                    if (!!$scope.columns[col] && typeof $scope.columns[col].options.enableCellEdit == "boolean") {
+                                    if (!!$scope.columns[col] && !!$scope.columns[col].options && typeof $scope.columns[col].options.enableCellEdit == "boolean") {
                                         cellProperties.readOnly = !$scope.columns[col].options.enableCellEdit;
                                     }
 

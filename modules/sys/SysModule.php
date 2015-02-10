@@ -14,9 +14,9 @@ class SysModule extends CWebModule {
 
     public function beforeControllerAction($controller, $action) {
         if (parent::beforeControllerAction($controller, $action)) {
-//            if (Yii::app()->user->role != "sys") {
-//                throw new CHttpException(403, "Anda tidak memiliki hak untuk mengakses halaman ini.");
-//            }
+            if (Yii::app()->user->isGuest) {
+                throw new CHttpException(403, "Anda tidak memiliki hak untuk mengakses halaman ini.");
+            }
 
             return true;
         } else
