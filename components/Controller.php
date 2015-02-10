@@ -163,7 +163,9 @@ class Controller extends CController {
             $model = $form::model($form)->findByPk($idOrAttributes);
         }
 
-        $model->loadAllRelations();
+        if (!is_null($model) && method_exists($model, 'loadAllRelations')) {
+            $model->loadAllRelations();
+        }
         
         if ($model === null)
             throw new CHttpException(404, 'The requested page does not exist.');

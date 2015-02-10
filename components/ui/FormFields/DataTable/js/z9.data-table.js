@@ -72,7 +72,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 $scope.edited = false;
                 $scope.loadingRelation = false;
                 $scope.triggerRelationWatch = true;
-                $scope.name = $el.find("data[name=name]").text();
+                $scope.name = $el.find("data[name=name]:eq(0)").text();
                 parent[$scope.name] = $scope;
 
                 $scope.$q = $q;
@@ -81,7 +81,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 $scope.renderID = $el.find("data[name=render_id]").text();
                 $scope.modelClass = $el.find("data[name=model_class]").text();
                 $scope.gridOptions = JSON.parse($el.find("data[name=grid_options]").text());
+                $scope.originalGridOptions = JSON.parse($el.find("data[name=grid_options]").text());
                 $scope.columns = JSON.parse($el.find("data[name=columns]").text());
+                $scope.originalColumns = JSON.parse($el.find("data[name=columns]").text());
                 $scope.datasource = parent[$el.find("data[name=datasource]").text()];
                 $scope.data = [];
                 $scope.relationColumns = [];
@@ -173,7 +175,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         return;
                     $scope.colGenerated = true;
 
-                    for (i in $scope.dataSource1.data[0]) {
+                    for (i in $scope.datasource.data[0]) {
                         if (i == 'id')
                             continue;
                         $scope.columns.push({
@@ -773,7 +775,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 }
 
                 // Hook up Data Source Watcher.
-                $scope.datasource.afterQueryInternal[$scope.renderID] = $scope.dsChange;
+                $scope.datasource.afterQueryInternal[$scope.renderID] = function () {
+                    if (!!$scope.gridOptions.forceReInit) {
+                        $scope.reinit();
+                    } else {
+                        $scope.dsChange();
+                    }
+                };
                 $scope.$watch('datasource.data', function (n, o) {
                     if (n !== o && (!$scope.edited || $scope.data.length == 0) && !$scope.loadingRelation) {
                         if (n > 0 && $scope.edited == false) {
@@ -836,6 +844,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         $("#" + $scope.renderID).remove();
                         p.append("<div id='" + $scope.renderID + "' class='dataTable' style='overflow:auto;'></div>");
 
+                        $scope.columns = angular.copy($scope.originalColumns);
+                        $scope.gridOptions = angular.copy($scope.originalGridOptions);
+                        $scope.colGenerated = false;
+                        $scope.dtGroups = null;
                         $scope.colAssembled = false;
                         $scope.data = $scope.datasource.data;
                         if ($scope.dtGroups && $scope.dtGroups.grouped) {

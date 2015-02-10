@@ -13,7 +13,7 @@ app.directive('repoBrowser', function ($timeout, $compile, $http) {
                 if ($("body > [repo-dialog] .modal-container").length == 0) {
                     $compile($("body > [repo-dialog]"))($scope.$parent);
                 }
-                $scope.name = $el.find("data[name=name]").text();
+                $scope.name = $el.find("data[name=name]:eq(0)").text();
                 $scope.renderID = $el.find("data[name=render_id]").text();
 
                 var a = setInterval(function () {
