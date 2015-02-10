@@ -72,7 +72,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 $scope.edited = false;
                 $scope.loadingRelation = false;
                 $scope.triggerRelationWatch = true;
-                $scope.name = $el.find("data[name=name]").text();
+                $scope.name = $el.find("data[name=name]:eq(0)").text();
                 parent[$scope.name] = $scope;
 
                 $scope.$q = $q;
@@ -81,7 +81,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 $scope.renderID = $el.find("data[name=render_id]").text();
                 $scope.modelClass = $el.find("data[name=model_class]").text();
                 $scope.gridOptions = JSON.parse($el.find("data[name=grid_options]").text());
+                $scope.originalGridOptions = JSON.parse($el.find("data[name=grid_options]").text());
                 $scope.columns = JSON.parse($el.find("data[name=columns]").text());
+                $scope.originalColumns = JSON.parse($el.find("data[name=columns]").text());
                 $scope.datasource = parent[$el.find("data[name=datasource]").text()];
                 $scope.data = [];
                 $scope.relationColumns = [];
@@ -173,7 +175,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         return;
                     $scope.colGenerated = true;
 
-                    for (i in $scope.dataSource1.data[0]) {
+                    for (i in $scope.datasource.data[0]) {
                         if (i == 'id')
                             continue;
                         $scope.columns.push({
@@ -359,7 +361,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         var sw = $el.parent().find("> .section-header").width();
                         var cw = $('#content').width();
 
-                        rowh = $el.find(".ht_master div.wtSpreader > table > thead:eq(0) > tr:eq(0) > th").height() + 2;
+                        rowh = $el.find(".ht_master div.wtSpreader > table > thead:eq(0) > tr:eq(0) > th").outerHeight() + 2;
                         elpos = $el.position();
                         elpos.left += $scope.$container.scrollLeft();
                         elpos.top += $scope.$container.scrollTop();
@@ -417,19 +419,25 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     var ctop = $("#content").offset().top;
                     var top = $el.parents(".container-full").css('marginTop').replace('px', '') * 1 + ctop;
                     var ct = $el.find(".ht_clone_top");
+                    var cl = $el.find(".ht_clone_left");
                     var scrollTop = $(this).scrollTop();
                     var scrollLeft = $(this).scrollLeft();
-
                     var etop = elpos.top;
-                    if (categories.length > 0) {
-                        etop += rowh;
-                    }
+                    var eleft = elpos.left;
 
+
+                    // Scroll Top
+                    if (categories.length > 0) {
+                        etop += rowh + 9;
+                    }
+                    if ($scope.gridOptions.enablePaging) {
+                        etop += $el.find(".data-grid-paging").outerHeight() + $el.css('paddingTop').replace('px', '') * 1;
+                        console.log(etop);
+                    }
                     var loff = 0;
                     if (scrollLeft > elpos.left) {
                         loff = elpos.left;
                     }
-
                     if (scrollTop > etop) {
                         if (scrollTop < etop + $el.height() - 30) {
                             ct.css({
@@ -450,6 +458,18 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         }
                     } else {
                         ct.css({opacity: 0});
+                    }
+
+                    // Scroll Left
+                    if (scrollLeft > eleft + cl.width()) {
+                        cl.css({
+                            position: 'fixed',
+                            top: top + etop - scrollTop,
+                            left: eleft - 15,
+                            opacity: 1
+                        });
+                    } else {
+                        cl.css({opacity: 0});
                     }
 
                     $scope.fixComments();
@@ -755,7 +775,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 }
 
                 // Hook up Data Source Watcher.
-                $scope.datasource.afterQueryInternal[$scope.renderID] = $scope.dsChange;
+                $scope.datasource.afterQueryInternal[$scope.renderID] = function () {
+                    if (!!$scope.gridOptions.forceReInit) {
+                        $scope.reinit();
+                    } else {
+                        $scope.dsChange();
+                    }
+                };
                 $scope.$watch('datasource.data', function (n, o) {
                     if (n !== o && (!$scope.edited || $scope.data.length == 0) && !$scope.loadingRelation) {
                         if (n > 0 && $scope.edited == false) {
@@ -818,6 +844,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         $("#" + $scope.renderID).remove();
                         p.append("<div id='" + $scope.renderID + "' class='dataTable' style='overflow:auto;'></div>");
 
+                        $scope.columns = angular.copy($scope.originalColumns);
+                        $scope.gridOptions = angular.copy($scope.originalGridOptions);
+                        $scope.colGenerated = false;
+                        $scope.dtGroups = null;
                         $scope.colAssembled = false;
                         $scope.data = $scope.datasource.data;
                         if ($scope.dtGroups && $scope.dtGroups.grouped) {

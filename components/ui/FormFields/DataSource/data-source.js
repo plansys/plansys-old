@@ -9,7 +9,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 $scope.paramsGet = JSON.parse($el.find("data[name=params_get]").text());
                 $scope.sqlParams = JSON.parse($el.find("data[name=params_default]").text());
                 $scope.totalItems = $el.find("data[name=total_item]").text();
-                $scope.name = $el.find("data[name=name]").text().trim();
+                $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
                 $scope.class = $el.find("data[name=class_alias]").text().trim();
                 $scope.postData = $el.find("data[name=post_data]").text().trim();
                 $scope.relationTo = $el.find("data[name=relation_to]").text().trim();
@@ -122,6 +122,16 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     return params;
                 }
 
+                $scope.showError = function (data) {
+                    if (typeof data == "string" && data.length > 10) {
+                        var iframeDoc = $el.find("iframe")[0].contentWindow.document;
+                        iframeDoc.open();
+                        iframeDoc.write(data);
+                        iframeDoc.close();
+                        $el.find(".error").show();
+                    }
+                }
+
                 $scope.query = function (f) {
                     var model = $scope.model || {};
                     var model_id = model.id || null;
@@ -151,35 +161,32 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     }, {
                         timeout: $scope.httpRequest.promise
                     }).success(function (data) {
-                        $scope.isDataReloaded = true;
-                        $scope.data = data.data;
-                        $scope.original = angular.copy($scope.data);
-                        $scope.totalItems = data.count * 1;
-                        $scope.setDebug(data.debug);
-                        if (typeof f == "function") {
-                            f(true, data);
-                        }
-                        $scope.loading = false;
+                        if (typeof data == "string") {
+                            $scope.showError(data);
+                        } else {
+                            $scope.isDataReloaded = true;
+                            $scope.data = data.data;
+                            $scope.original = angular.copy($scope.data);
+                            $scope.totalItems = data.count * 1;
+                            $scope.setDebug(data.debug);
+                            if (typeof f == "function") {
+                                f(true, data);
+                            }
+                            $scope.loading = false;
 
-                        for (i in $scope.afterQueryInternal) {
-                            $scope.afterQueryInternal[i]($scope);
-                        }
+                            for (i in $scope.afterQueryInternal) {
+                                $scope.afterQueryInternal[i]($scope);
+                            }
 
-                        if ($scope.afterQuery != null) {
-                            $scope.afterQuery($scope);
+                            if ($scope.afterQuery != null) {
+                                $scope.afterQuery($scope);
+                            }
                         }
-
                     }).error(function (data) {
                         if (typeof f == "function") {
                             f(false, data);
                         }
-                        if (typeof data == "string" && data.length > 10) {
-                            var iframeDoc = $el.find("iframe")[0].contentWindow.document;
-                            iframeDoc.open();
-                            iframeDoc.write(data);
-                            iframeDoc.close();
-                            $el.find(".error").show();
-                        }
+                        $scope.showError(data);
                     });
                     $scope.shouldCount = true;
                 }

@@ -93,7 +93,7 @@ app.directive('listView', function($timeout) {
                 $scope.value = JSON.parse($el.find("data[name=value]").html().trim());
                 $scope.modelClass = $el.find("data[name=model_class]").html().trim();
                 $scope.fieldTemplate = $el.find("data[name=field_template]").html().trim();
-                $scope.name = $el.find("data[name=name]").text().trim();
+                $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
                 $scope.templateAttr = JSON.parse($el.find("data[name=template_attr]").html().trim());
                 $scope.options = JSON.parse($el.find("data[name=options]").html().trim());
 

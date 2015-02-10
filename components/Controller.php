@@ -162,7 +162,8 @@ class Controller extends CController {
         } else {
             $model = $form::model($form)->findByPk($idOrAttributes);
         }
-        if(!is_null($model)){
+
+        if (!is_null($model) && method_exists($model, 'loadAllRelations')) {
             $model->loadAllRelations();
         }
         

@@ -16,7 +16,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                 $scope.json;
 
                 //default value
-                $scope.name = $el.find("data[name=name]").html().trim();
+                $scope.name = $el.find("data[name=name]:eq(0)").html().trim();
                 $scope.classAlias = $el.find("data[name=class_alias]").html().trim();
                 $scope.value = $el.find("data[name=value]").html().trim();
                 $scope.mode = $el.find("data[name=mode]").html().trim();
