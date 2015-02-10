@@ -386,7 +386,6 @@ class ActiveRecord extends CActiveRecord {
                 }
             }
         }
-
     }
 
     public function setAttributes($values, $safeOnly = false, $withRelation = true) {
@@ -942,7 +941,13 @@ class ActiveRecord extends CActiveRecord {
             $delete = "DELETE FROM {$table} WHERE id IN (" . implode(",", $ids) . ");";
 
             $command = Yii::app()->db->createCommand($delete);
-            $command->execute();
+            try {
+                $command->execute();
+            } catch (CDbException $e) {
+                if ($e->errorInfo[0] == "23000") {
+                    Yii::app()->controller->redirect(["/site/error&id=integrity"]);
+                }
+            }
         }
     }
 
