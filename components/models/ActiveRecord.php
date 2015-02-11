@@ -271,7 +271,7 @@ class ActiveRecord extends CActiveRecord {
         $relMetaData = $this->getMetaData()->relations;
         foreach ($relMetaData as $k => $r) {
             $this->__relations[$k] = [];
-            $this->loadRelation($k);
+            $this->loadRelation($k, false);
         }
     }
 
@@ -283,22 +283,34 @@ class ActiveRecord extends CActiveRecord {
             $this->__relations['currentModel'] = $this->getModelArray($criteria);
         } else {
             $rel = $this->getMetaData()->relations[$name];
-            if (!class_exists($rel->className))
+            $class = $rel->className;
+            if (!class_exists($class))
                 return [];
 
             switch (get_class($rel)) {
                 case 'CHasOneRelation':
                 case 'CBelongsToRelation':
                     if (is_string($rel->foreignKey)) {
-                        $class = $rel->className;
-                        $table = $class::model()->tableName();
-                        $this->__relationsObj[$name] = $this->getRelated($name, true, $criteria);
-                        if (isset($this->__relationsObj[$name])) {
-                            $this->__relations[$name] = $this->__relationsObj[$name]->attributes;
+                        if ($criteria === false) {
+                            if ($rel->joinType == 'LEFT OUTER JOIN') {
+                                $table = $class::model()->tableName();
+                                if(!is_null($this[$rel->foreignKey]) && $this[$rel->foreignKey] !== ''){
+                                    $this->__relations[$name] = ActiveRecord::queryRow("select * from `{$table}` where `id` = {$this[$rel->foreignKey]}");
+                                }else{
+                                    $this->__relations[$name] = [];
+                                }
+                                //var_dump($this->__relations[$name]);die();
+                            }
+                        } else {
+                            $table = $class::model()->tableName();
+                            $this->__relationsObj[$name] = $this->getRelated($name, true, $criteria);
+                            if (isset($this->__relationsObj[$name])) {
+                                $this->__relations[$name] = $this->__relationsObj[$name]->attributes;
 
-                            foreach ($this->__relations[$name] as $i => $j) {
-                                if (is_array($this->__relations[$name][$i])) {
-                                    unset($this->__relations[$name][$i]);
+                                foreach ($this->__relations[$name] as $i => $j) {
+                                    if (is_array($this->__relations[$name][$i])) {
+                                        unset($this->__relations[$name][$i]);
+                                    }
                                 }
                             }
                         }
@@ -306,13 +318,20 @@ class ActiveRecord extends CActiveRecord {
                     break;
                 case 'CManyManyRelation':
                 case 'CHasManyRelation':
-                    //without through
-                    $this->__relationsObj[$name] = $this->getRelated($name, true, $criteria);
-                    if (is_array($this->__relationsObj[$name])) {
-                        $this->__relations[$name] = [];
+                    //without Criteria
+                    if ($criteria === false) {
+                        if ($rel->joinType == 'LEFT OUTER JOIN') {
+                            $table = $class::model()->tableName();
+                            $this->__relations[$name] = ActiveRecord::queryAll("select * from `{$table}` where `{$rel->foreignKey}` = {$this->id} limit 10");
+                        }
+                    } else {
+                        $this->__relationsObj[$name] = $this->getRelated($name, true, $criteria);
+                        if (is_array($this->__relationsObj[$name])) {
+                            $this->__relations[$name] = [];
 
-                        foreach ($this->__relationsObj[$name] as $i => $j) {
-                            $this->__relations[$name][$i] = $j->getAttributes(true, false);
+                            foreach ($this->__relationsObj[$name] as $i => $j) {
+                                $this->__relations[$name][$i] = $j->getAttributes(true, false);
+                            }
                         }
                     }
                     //with through
