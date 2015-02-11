@@ -221,11 +221,11 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
 
                 if ($scope.postData == 'Yes') {
                     $scope.original = angular.copy($scope.data);
+                    
                     $scope.$watch('data', function (newval, oldval) {
                         if (typeof $scope.data == "undefined") {
                             $scope.data = [];
                         }
-
                         if (newval !== oldval && $scope.trackChanges) {
                             if ($scope.isDataReloaded) {
                                 $scope.trackChanges = false;
@@ -251,6 +251,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                         $scope.data.splice(i, 1);
                                     }
                                 }
+                                
                                 $timeout(function () {
                                     $scope.trackChanges = true;
                                     $scope.isDataReloaded = false;
@@ -265,11 +266,10 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                     var newv = newval[i];
                                     var found = false;
 
-                                    for (k in $scope.original) {
+                                    for (var k in $scope.original) {
                                         var oldv = $scope.original[k];
                                         if (newv['id'] != null && oldv['id'] == newv['id']) {
                                             found = true;
-
 
                                             var isEqual = true;
                                             for (m in oldv) {
@@ -328,7 +328,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                 }
                             }
                         }
-//                        console.log("INSERT", $scope.insertData, "UPDATE", $scope.updateData, "DELETE", $scope.deleteData);
+//                        console.log("INSERT", $scope.insertData, "UPDATE", $scope.updateData, "DELETE", $scope.deleteData, newval, oldval);
                     }, true);
                 }
 
