@@ -294,12 +294,11 @@ class ActiveRecord extends CActiveRecord {
                         if ($criteria === false) {
                             if ($rel->joinType == 'LEFT OUTER JOIN') {
                                 $table = $class::model()->tableName();
-                                if(!is_null($this[$rel->foreignKey]) && $this[$rel->foreignKey] !== ''){
+                                if (!is_null($this[$rel->foreignKey]) && $this[$rel->foreignKey] !== '') {
                                     $this->__relations[$name] = ActiveRecord::queryRow("select * from `{$table}` where `id` = {$this[$rel->foreignKey]}");
-                                }else{
+                                } else {
                                     $this->__relations[$name] = [];
                                 }
-                                //var_dump($this->__relations[$name]);die();
                             }
                         } else {
                             $table = $class::model()->tableName();
@@ -319,7 +318,7 @@ class ActiveRecord extends CActiveRecord {
                 case 'CManyManyRelation':
                 case 'CHasManyRelation':
                     //without Criteria
-                    if ($criteria === false) {
+                    if ($criteria === false && is_string($rel->foreignKey)) {
                         if ($rel->joinType == 'LEFT OUTER JOIN') {
                             $table = $class::model()->tableName();
                             $this->__relations[$name] = ActiveRecord::queryAll("select * from `{$table}` where `{$rel->foreignKey}` = {$this->id} limit 10");
