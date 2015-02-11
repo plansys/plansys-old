@@ -76,6 +76,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 parent[$scope.name] = $scope;
 
                 $scope.$q = $q;
+                $scope.checked = {};
+                $scope.checkedAll = {};
                 $scope.$http = $http;
                 $scope.canAddRow = false;
                 $scope.renderID = $el.find("data[name=render_id]").text();
@@ -204,9 +206,35 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }
                 }
 
+                $el.on('click', '.cb-head', function () {
+                    var col = $(this).attr('col');
+                    var checked = $(this).is(":checked");
+                    $scope.checked[col].length = 0;
+                    $scope.checkedAll[col] = checked;
+
+
+                    if (checked) {
+                        $scope.data.forEach(function (item) {
+                            if (!!item[col]) {
+                                $scope.checked[col].push(item[col]);
+                            }
+                        });
+                    }
+                    $scope.ht.render();
+
+                    $timeout(function () {
+                        if (checked) {
+                            $el.find(".cb-head[col=" + col + "]").attr('checked', 'checked');
+                        } else {
+                            $el.find(".cb-head[col=" + col + "]").removeAttr('checked');
+                        }
+                    });
+                });
+
                 // assemble each columns -- start
                 $scope.colAssembled = false;
                 $scope.relSuffix = "_label_datatable";
+                $scope.cbSuffix = "_val_checkbox";
                 $scope.assembleCols = function () {
                     if ($scope.colAssembled || $scope.columns.length == 0)
                         return;
@@ -236,6 +264,17 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     c.listItem = parent.$eval(col.listExpr);
                                 }
                                 colDef.source = parent.$eval(c.listItem);
+                                break;
+                            case "checkbox":
+                                colDef.data = c.name + $scope.cbSuffix;
+                                colDef.dataOri = c.name;
+                                $scope.checked[c.name] = [];
+                                colDef.checked = $scope.checked[c.name];
+                                colDef.checkedTemplate = true;
+                                colDef.uncheckedTemplate = false;
+                                colDef.renderer = "dtCheckbox";
+                                colDef.$scope = $scope;
+                                colDef.title = c.label + " <input class='cb-head' col='" + colDef.dataOri + "' type=checkbox></input>";
                                 break;
                             case "relation":
                                 colDef.data = c.name + $scope.relSuffix;
@@ -313,7 +352,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         // add columns
                         columnsInternal.push(col);
                         colHeaders.push(c.label);
-                        colWidths.push(c.options.width || null)
+                        colWidths.push(!!c.options && !!c.options.width ? c.options.width : null);
                     }
 
                 }
@@ -450,7 +489,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }
                     if ($scope.gridOptions.enablePaging) {
                         etop += $el.find(".data-grid-paging").outerHeight() + $el.css('paddingTop').replace('px', '') * 1;
-                        console.log(etop);
                     }
                     var loff = 0;
                     if (scrollLeft > elpos.left) {
@@ -949,7 +987,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         columns: columnsInternal,
                         autoWrapRow: true,
                         autoWrapCol: true,
-                        mergeCells: true,
                         comments: true,
                         currentRowClassName: 'currentRow',
                         currentColClassName: currentRowClassName,
@@ -962,7 +999,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 function setDefault() {
                                     cellProperties.className = 'group-text';
                                     cellProperties.readOnly = false;
-                                    if (!!$scope.columns[col] && typeof $scope.columns[col].options.enableCellEdit == "boolean") {
+                                    if (!!$scope.columns[col] && !!$scope.columns[col].options && typeof $scope.columns[col].options.enableCellEdit == "boolean") {
                                         cellProperties.readOnly = !$scope.columns[col].options.enableCellEdit;
                                     }
 
@@ -1100,7 +1137,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                             if (typeof $scope.gridOptions.afterSelectionChange == "function" && $(TD).is('td')) {
                                 if (!$scope.dtGroups || (!!$scope.dtGroups && $scope.data[coords.row]['__dt_flg'] == "Z")) {
-                                    $scope.gridOptions.afterSelectionChange($scope.data[coords.row]);
+                                    if ($scope.columns[coords.col].renderer.trim() != "dtCheckbox") {
+                                        $scope.gridOptions.afterSelectionChange($scope.data[coords.row]);
+                                    }
                                 }
                             }
 

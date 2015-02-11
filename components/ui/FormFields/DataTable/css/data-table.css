@@ -109,14 +109,17 @@
 
 .data-table-container .ht_clone_corner {
     display: none;
+    pointer-events: none;
 }
 
 .data-table-container .ht_clone_left {
     opacity:0;
+    pointer-events: none;
     z-index: 99;
 }
 .data-table-container .ht_clone_top {
     opacity:0;
+    pointer-events: none;
     z-index: 100;
 }
 .ht_clone_left.handsontable > div > div > div.wtSpreader > table > thead > tr:first-child {
@@ -157,17 +160,11 @@
     font-weight: bold;
 
     white-space:pre !important;
-    border-right:0px !important;
 }
 
 .handsontable td.htInvalid {
     color:#Fff !important;
     background: #ff4c42!important;
-}
-
-.handsontable td.groups:last-child {
-    white-space:pre;
-    border-right:1px solid #ddd !important;
 }
 
 .handsontable td.group-text {

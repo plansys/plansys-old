@@ -220,6 +220,49 @@
     }
     Handsontable.renderers.registerRenderer('datetime', dateTimeRenderer);
 
+    /*************** CHECKBOX RENDERER *******************/
+    function dtCheckboxRenderer(instance, td, row, col, prop, value, cellProperties) {
+        var $scope = cellProperties.$scope;
+        var originalVal = $scope.data[row][cellProperties.dataOri];
+        var checked = cellProperties.checked;
+        var eventManager = Handsontable.eventManager(instance);
+
+        if (checked.indexOf(originalVal) >= 0) {
+            value = true;
+        } else {
+            value = false;
+        }
+
+        function toggle(val) {
+            if (typeof val == "undefined") {
+                val = $scope.data[row][cellProperties.dataOri];
+            }
+            var idx = checked.indexOf(val);
+
+            if (idx >= 0) {
+                checked.splice(idx, 1);
+                instance.setDataAtRowProp(row, prop, cellProperties.uncheckedTemplate);
+            } else if (idx < 0) {
+                checked.push(originalVal);
+                instance.setDataAtRowProp(row, prop, cellProperties.checkedTemplate);
+            }
+
+            return checked.indexOf(val) >= 0;
+        }
+
+        Handsontable.renderers.CheckboxRenderer.apply(this, arguments);
+        eventManager.removeEventListener(td, 'mousedown');
+        eventManager.addEventListener(td, 'mousedown', function (e) {
+            toggle();
+
+            $scope.lastCheckBox = [row, col];
+        });
+
+        td.setAttribute("style", "cursor:default;");
+        return td;
+    }
+    Handsontable.renderers.registerRenderer('dtCheckbox', dtCheckboxRenderer);
+
     /*************** STRING ALIAS RENDERER *******************/
     function stringAliasRenderer(instance, td, row, col, prop, value, cellProperties) {
         Handsontable.TextCell.renderer.apply(this, arguments);
@@ -333,11 +376,11 @@
                         }
                         lvstr += '◢  ';
                         Handsontable.Dom.fastInnerHTML(td, lvstr + (value || '<span style="opacity:.5">...</span>'));
+                        td.setAttribute("colSpan", cellProperties.$scope.columns.length);
                         break;
                 }
             }
         }
-
         return td;
     }
     Handsontable.renderers.registerRenderer('groups', groupsRenderer);
