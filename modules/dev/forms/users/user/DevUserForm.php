@@ -78,7 +78,6 @@ class DevUserForm extends User {
                         'templateForm' => 'application.modules.dev.forms.users.user.DevUserRoleList',
                         'options' => array (
                             'ng-change' => 'updateRole()',
-                            'ps-after-add' => 'value.role_id = 1',
                         ),
                         'type' => 'ListView',
                     ),

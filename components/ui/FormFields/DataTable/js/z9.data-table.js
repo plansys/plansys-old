@@ -206,6 +206,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }
                 }
 
+                // checkbox header on click
                 $el.on('click', '.cb-head', function () {
                     var col = $(this).attr('col');
                     var checked = $(this).is(":checked");
@@ -213,13 +214,17 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     $scope.checkedAll[col] = checked;
 
 
-                    if (checked) {
-                        $scope.data.forEach(function (item) {
+                    $scope.data.forEach(function (item, i) {
+                        if (checked) {
                             if (!!item[col]) {
                                 $scope.checked[col].push(item[col]);
                             }
-                        });
-                    }
+                            $scope.ht.setDataAtRowProp(i, col, true);
+                        } else {
+                            $scope.ht.setDataAtRowProp(i, col, false);
+                        }
+                    });
+
                     $scope.ht.render();
 
                     $timeout(function () {

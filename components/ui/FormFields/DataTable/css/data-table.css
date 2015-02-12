@@ -160,12 +160,19 @@
     font-weight: bold;
 
     white-space:pre !important;
+    border-right:0px !important;
 }
 
 .handsontable td.htInvalid {
     color:#Fff !important;
     background: #ff4c42!important;
 }
+
+.handsontable td.groups:last-child {
+    white-space:pre;
+    border-right:1px solid #ddd !important;
+}
+
 
 .handsontable td.group-text {
     white-space:pre;

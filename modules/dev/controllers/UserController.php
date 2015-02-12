@@ -46,11 +46,12 @@ class UserController extends Controller {
         }
 
         if (isset($_POST["DevUserForm"])) {
-            $userRoles = $model->userRoles;
             if (!isset($_POST['DevUserForm']['subscribed']))
                 $_POST['DevUserForm']['subscribed'] = '';
-
+            
             $model->attributes = $_POST["DevUserForm"];
+            $model->resetRel('userRoles');
+            
             if ($model->save()) {
                 Yii::app()->user->setFlash('info', 'User berhasil disimpan');
             }
@@ -100,7 +101,7 @@ class UserController extends Controller {
         try {
             $data = Yii::app()->ldap->user()->searchRaw('*');
         } catch (Exception $ex) {
-            
+
             throw new CHttpException('403', 'Gagal menyambungkan ke Server Active Directory');
         }
 

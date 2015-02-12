@@ -14,6 +14,7 @@ class ActiveRecord extends CActiveRecord {
     private $__relInsert = [];
     private $__relUpdate = [];
     private $__relDelete = [];
+    private $__relReset = [];
     private $__tempVar = [];
 
     public static function execute($sql, $params = []) {
@@ -406,8 +407,60 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    public function setAttributes($values, $safeOnly = false, $withRelation = true) {
+    public function resetRel($relation, $data = null) {
+        $this->__relInsert[$relation] = [];
+        $this->__relUpdate[$relation] = [];
+        $this->__relReset[] = $relation;
 
+        if (is_null($data)) {
+            if (isset($this->__relations[$relation])) {
+                $data = $this->__relations[$relation];
+            } else {
+                $data = [];
+            }
+        }
+
+        foreach ($data as $d) {
+            if (isset($d['id']) && is_numeric($d['id'])) {
+                $this->__relUpdate[$relation][] = $d;
+            } else {
+                $this->__relInsert[$relation][] = $d;
+            }
+        }
+    }
+
+    public function setRel($relation, $data = null) {
+        if (is_null($data)) {
+            if (isset($this->__relations[$relation])) {
+                $data = $this->__relations[$relation];
+            } else {
+                $data = [];
+            }
+        }
+
+        foreach ($data as $d) {
+            if (isset($d['id']) && is_numeric($d['id'])) {
+                $found = false;
+
+                foreach ($this->__relUpdate[$relation] as $k => $u) {
+                    if ($u['id'] == $d['id']) {
+                        $found = true;
+                        break;
+                    }
+                }
+
+                if ($found) {
+                    $this->__relUpdate[$relation][$k] = $d;
+                } else {
+                    $this->__relInsert[$relation][] = $d;
+                }
+            } else {
+                $this->__relInsert[$relation][] = $d;
+            }
+        }
+    }
+
+    public function setAttributes($values, $safeOnly = false, $withRelation = true) {
         parent::setAttributes($values, $safeOnly);
         $this->initRelation();
         foreach ($this->__relations as $k => $r) {
@@ -572,12 +625,45 @@ class ActiveRecord extends CActiveRecord {
         $this->afterSave();
     }
 
+    public function deleteResetedRelations() {
+        ## delete all relation data that not included in relUpdate..
+        $rels = $this->getMetaData()->relations;
+        foreach ($this->__relReset as $r) {
+            if (!isset($rels[$r])) {
+                continue;
+            }
+            $rel = $rels[$r];
+            switch (get_class($rel)) {
+                case 'CManyManyRelation':
+                case 'CHasManyRelation':
+                    ## without through
+                    if (is_string($rel->foreignKey)) {
+                        $class = $rel->className;
+                        $tableName = $class::model()->tableName();
+
+                        $ids = [];
+                        foreach ($this->__relUpdate[$r] as $u) {
+                            $ids[] = $u['id'];
+                        }
+                        if (!empty($ids)) {
+                            $ids = implode(",", $ids);
+                            $where = "where id not in ($ids) AND {$rel->foreignKey} = {$this->id}";
+                        }
+                    }
+                    ## todo: with through
+                    else {
+                        
+                    }
+                    break;
+            }
+        }
+    }
+
     public function afterSave() {
         if ($this->isNewRecord) {
-            $this->id = Yii::app()->db->getLastInsertID(); // this is hack
-
+            $this->id = Yii::app()->db->getLastInsertID(); ## this is hack
+            ## UPDATE AUDIT TRAIL 'CREATE' ID
             if (!Yii::app()->user->isGuest) {
-                ## update audit trail
                 $a = Yii::app()->db->createCommand("
                 update p_audit_trail set model_id = :model_id 
                 WHERE user_id = :user_id and 
@@ -589,6 +675,8 @@ class ActiveRecord extends CActiveRecord {
                     'user_id' => Yii::app()->user->id
                 ]);
             }
+        } else {
+            $this->deleteResetedRelations();
         }
 
         foreach ($this->__relations as $k => $new) {
@@ -601,12 +689,11 @@ class ActiveRecord extends CActiveRecord {
                 } else {
                     $rel = $this->getMetaData()->relations[$k];
                 }
+
                 switch (get_class($rel)) {
                     case 'CHasOneRelation':
                     case 'CBelongsToRelation':
-
                         if (count(array_diff_assoc($new, $old)) > 0) {
-                            //todo..
                             $class = $rel->className;
                             $model = $class::model()->findByPk($this->{$rel->foreignKey});
                             if (is_null($model)) {
@@ -619,7 +706,7 @@ class ActiveRecord extends CActiveRecord {
                         break;
                     case 'CManyManyRelation':
                     case 'CHasManyRelation':
-                        //without through
+                        ## without through
                         if (is_string($rel->foreignKey)) {
                             $class = $rel->className;
 
@@ -633,6 +720,7 @@ class ActiveRecord extends CActiveRecord {
                                 if (count($this->__relInsert[$k]) > 0) {
                                     ActiveRecord::batchInsert($class, $this->__relInsert[$k]);
                                 }
+
                                 $this->__relInsert[$k] = [];
                             }
 
@@ -655,7 +743,9 @@ class ActiveRecord extends CActiveRecord {
                                 }
                                 $this->__relDelete[$k] = [];
                             }
-                        } elseif (is_array($rel->foreignKey)) {
+                        }
+                        ## with through
+                        elseif (is_array($rel->foreignKey)) {
                             $class = $rel->className;
 
                             if (isset($this->__relInsert[$k])) {
@@ -694,8 +784,6 @@ class ActiveRecord extends CActiveRecord {
                                 $this->__relDelete[$k] = [];
                             }
                         }
-                        //with through
-                        //todo..
                         break;
                 }
             }
@@ -703,7 +791,7 @@ class ActiveRecord extends CActiveRecord {
         }
 
 
-## handling untuk file upload
+        ## handling untuk file upload
         if (method_exists($this, 'getFields')) {
             $fb = FormBuilder::load(get_class($this));
             $uploadFields = $fb->findAllField(['type' => 'UploadFile']);
@@ -714,6 +802,7 @@ class ActiveRecord extends CActiveRecord {
                 if (@$f['name'] == '' || @$f['uploadPath'] == '') {
                     continue;
                 }
+
                 ## create directory
                 ## Jika disini gagal, berarti ada yang salah dengan format uploadPath di FormBuilder-nya
                 eval('$evalDir = "' . $f['uploadPath'] . '";');
@@ -750,7 +839,6 @@ class ActiveRecord extends CActiveRecord {
                 if (is_file($new) && $f['allowOverwrite'] == 'Yes' && is_file($old)) {
                     unlink($new);
                 }
-
 
                 if (!is_file($new) && is_file($old)) {
                     rename($old, $new);
@@ -840,8 +928,6 @@ class ActiveRecord extends CActiveRecord {
                     }
                 }
             }
-
-
             ActiveRecord::batchInsert($model, $post[$name . 'Insert']);
         }
 
