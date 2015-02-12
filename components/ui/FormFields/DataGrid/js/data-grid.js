@@ -152,6 +152,8 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
 
                     if ($btn.attr('confirm')) {
                         if (!confirm($btn.attr('confirm'))) {
+                            e.preventDefault();
+                            e.stopPropagation();
                             return false;
                         }
                     }
