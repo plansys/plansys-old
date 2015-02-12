@@ -356,8 +356,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                         // add columns
                         columnsInternal.push(col);
-                        colHeaders.push(c.label);
-                        colWidths.push(!!c.options && !!c.options.width ? c.options.width : null);
+                        colHeaders.push(c.label); 
+                        colWidths.push(!!c.options && !!c.options.width ? c.options.width : c.label.length * 11);
                     }
 
                 }
