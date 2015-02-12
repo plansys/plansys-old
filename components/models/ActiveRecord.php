@@ -548,23 +548,22 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function beforeSave() {
-## clean primary keys
+        ## clean primary keys
         if ($this->primaryKey == '') {
             $table = $this->getMetaData()->tableSchema;
             $primaryKey = $table->primaryKey;
             $this->$primaryKey = null;
         }
 
-## clean relation columns
-        foreach ($this->getMetaData()->relations as $k => $rel) {
-            $single = get_class($rel) == 'CHasOneRelation' || get_class($rel) == 'CBelongsToRelation';
-            if ($single && is_string($rel->foreignKey)) {
-                if (!is_numeric($this[$rel->foreignKey]) && !is_null($this[$rel->foreignKey])) {
-                    $this[$rel->foreignKey] = null;
+        ## clean relation columns
+        $rels = array_keys($this->getMetaData()->tableSchema->foreignKeys);
+        foreach ($rels as $k => $rel) {
+            if (is_string($rel)) {
+                if (!is_numeric($this[$rel]) && !is_null($this[$rel])) {
+                    $this[$rel] = null;
                 }
             }
         }
-
 
         return true;
     }
@@ -877,6 +876,11 @@ class ActiveRecord extends CActiveRecord {
         $class = new ReflectionClass($object);
         $lineage = array();
         $prev = "";
+        $c = $class->getParentClass()->name;
+
+        if ($c == "ActiveRecord" || $c == "CActiveRecord")
+            return get_class($object);
+
         while ($class = $class->getParentClass()) {
             $c = $class->getName();
 
