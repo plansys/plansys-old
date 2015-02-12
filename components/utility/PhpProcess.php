@@ -7,7 +7,7 @@ class PhpProcess extends CComponent {
             exec("plansys\commands\shell\psexec.exe -accepteula -d php -v", $output, $input);
 
             if ($input < 100) {
-                throw new CException("PHP Command not found");
+                throw new CException("PHP Command not found " . $input);
             }
         } else {
             $returnVal = shell_exec("which php");
@@ -18,11 +18,10 @@ class PhpProcess extends CComponent {
     }
 
     public static function yiic($cmd = "") {
-
         PhpProcess::checkPhp();
 
         if (substr(php_uname(), 0, 7) == "Windows") {
-            exec("php plansys\yiic.php " . $cmd, $output, $input);
+            exec("plansys\commands\shell\psexec.exe -accepteula -d php  plansys\yiic.php " . $cmd, $output, $input);
         } else {
             $pid = exec("php plansys/yiic " . $cmd . " > /dev/null 2>&1 & echo $!;", $output, $input);
         }

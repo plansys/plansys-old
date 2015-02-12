@@ -673,8 +673,12 @@ class FormBuilder extends CComponent {
         $modelClass = get_class($this->model);
 
         ## define formdata
-        $data = $this->defineFormData($formdata);
-
+        if (is_array($formdata)) {
+            $data = $formdata;
+        } else {
+            $data = $this->defineFormData($formdata);
+        }
+        
         $reflector = new ReflectionClass($this->model);
         $inlineJSPath = dirname($reflector->getFileName()) . DIRECTORY_SEPARATOR . @$this->form['inlineJS'];
         $inlineJS = @file_get_contents($inlineJSPath);
@@ -814,7 +818,7 @@ class FormBuilder extends CComponent {
                     foreach ($field->parseField as $i => $j) {
                         $o = $options;
                         $o['wrapForm'] = false;
-                        $field->$j = $this->renderInternal($formdata, $o, $fb, $f[$i]);
+                        $field->$j = $this->renderInternal($data, $o, $fb, $f[$i]);
                     }
                 }
 
@@ -842,7 +846,7 @@ class FormBuilder extends CComponent {
                     ob_start();
                     ?>
                     <script type="text/javascript">
-                    <?php echo $this->renderAngularController($formdata, $renderParams); ?>
+                    <?php echo $this->renderAngularController($data, $renderParams); ?>
                         registerController('<?= $modelClass ?>Controller');
                     </script>
                     <?php
@@ -854,7 +858,7 @@ class FormBuilder extends CComponent {
             } else {
                 if ($renderWithAngular) {
                     $id = "NGCTRL_{$modelClass}_" . rand(0, 1000);
-                    $angular = $this->renderAngularController($formdata, $renderParams);
+                    $angular = $this->renderAngularController($data, $renderParams);
                     Yii::app()->clientScript->registerScript($id, $angular, CClientScript::POS_END);
                     $this->renderAdditionalJS();
                 }
