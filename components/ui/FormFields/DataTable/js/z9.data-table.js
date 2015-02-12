@@ -128,7 +128,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     if (typeof $scope.gridOptions.removeMenu == "string") {
                         $scope.gridOptions.removeMenu = $scope.$eval($scope.gridOptions.removeMenu);
                     }
-                    if (typeof $scope.gridOptions.removeMenu == "object" && $scope.gridOptions.removeMenu.length > 0) {
+                    if (typeof $scope.gridOptions.removeMenu == "object" &&
+                            $scope.gridOptions.removeMenu.length > 0) {
                         $scope.gridOptions.removeMenu.forEach(function (item) {
                             if (!!menu[item]) {
                                 delete menu[item];
@@ -136,16 +137,33 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         });
                     }
 
+                    var addMenu = [];
+                    if (typeof $scope.gridOptions.addMenu == "string") {
+                        addMenu = $scope.$eval($scope.gridOptions.addMenu);
+                        delete $scope.gridOptions.addMenu;
+                    }
+
                     if ($scope.gridOptions.readOnly) {
-                        delete menu['hsep1'];
-                        delete menu['hsep2'];
-                        delete menu['remove_row'];
+                        if (addMenu.indexOf('hsep1') < 0)
+                            delete menu['hsep1'];
+
+                        if (addMenu.indexOf('hsep2') < 0)
+                            delete menu['hsep2'];
+
+                        if (addMenu.indexOf('remove_row') < 0)
+                            delete menu['remove_row'];
                         if (!$scope.dtGroups) {
-                            delete menu['row_above'];
-                            delete menu['row_below'];
+                            if (addMenu.indexOf('row_above') < 0)
+                                delete menu['row_above'];
+
+                            if (addMenu.indexOf('row_below') < 0)
+                                delete menu['row_below'];
                         } else {
-                            delete menu['insert'];
-                            delete menu['duplicate'];
+                            if (addMenu.indexOf('insert') < 0)
+                                delete menu['insert'];
+
+                            if (addMenu.indexOf('duplicate') < 0)
+                                delete menu['duplicate'];
                         }
                     }
 

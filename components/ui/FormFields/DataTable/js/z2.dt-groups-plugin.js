@@ -306,76 +306,74 @@ Handsontable.DataTableGroups = function (settings) {
             }
 
             return {
-                items: {
-                    insert: {
-                        name: 'Add new row',
-                        callback: function (key, selection) {
-                            gp.addRow();
-                            $scope.ht.render();
-                            $scope.ht.selectCell(
-                                    $scope.data.length - 1,
-                                    selection.start.col,
-                                    $scope.data.length - 1,
-                                    selection.end.col);
-                            $scope.fixScroll();
-                        },
-                        disabled: disableInsertMenu
+                insert: {
+                    name: 'Add new row',
+                    callback: function (key, selection) {
+                        gp.addRow();
+                        $scope.ht.render();
+                        $scope.ht.selectCell(
+                                $scope.data.length - 1,
+                                selection.start.col,
+                                $scope.data.length - 1,
+                                selection.end.col);
+                        $scope.fixScroll();
                     },
-                    duplicate: {
-                        name: 'Duplicate row',
-                        callback: function (key, selection) {
-                            var start = Math.min(selection.start.row, selection.end.row);
-                            var end = Math.max(selection.start.row, selection.end.row);
+                    disabled: disableInsertMenu
+                },
+                duplicate: {
+                    name: 'Duplicate row',
+                    callback: function (key, selection) {
+                        var start = Math.min(selection.start.row, selection.end.row);
+                        var end = Math.max(selection.start.row, selection.end.row);
 
-                            for (var i = end; i >= start; i--) {
-                                var d = angular.copy($scope.data[i]);
-                                if (d['__dt_flg'] == "Z") {
-                                    if (typeof d['id'] != "undefined") {
-                                        delete d['id'];
-                                    }
-
-
-                                    $scope.datasource.data.splice(d['__dt_row'], 0, d);
-                                    $scope.data.splice(i, 0, d);
+                        for (var i = end; i >= start; i--) {
+                            var d = angular.copy($scope.data[i]);
+                            if (d['__dt_flg'] == "Z") {
+                                if (typeof d['id'] != "undefined") {
+                                    delete d['id'];
                                 }
+
+
+                                $scope.datasource.data.splice(d['__dt_row'], 0, d);
+                                $scope.data.splice(i, 0, d);
                             }
+                        }
 
-                            $scope.dtGroups.ungroup($scope.ht, false);
-                            $scope.dtGroups.group($scope.ht);
+                        $scope.dtGroups.ungroup($scope.ht, false);
+                        $scope.dtGroups.group($scope.ht);
 
-                            $scope.ht.selectCell(
-                                    selection.start.row + 1,
-                                    selection.start.col,
-                                    selection.start.row + 1,
-                                    selection.end.col, true);
+                        $scope.ht.selectCell(
+                                selection.start.row + 1,
+                                selection.start.col,
+                                selection.start.row + 1,
+                                selection.end.col, true);
 
-                        },
-                        disabled: contextMenuShouldDisable
                     },
-                    hsep2: '---------',
-                    remove_row: {
-                        callback: function (key, selection) {
-                            var start = Math.min(selection.start.row, selection.end.row);
-                            var end = Math.max(selection.start.row, selection.end.row);
+                    disabled: contextMenuShouldDisable
+                },
+                hsep2: '---------',
+                remove_row: {
+                    callback: function (key, selection) {
+                        var start = Math.min(selection.start.row, selection.end.row);
+                        var end = Math.max(selection.start.row, selection.end.row);
 
-                            for (var i = end; i >= start; i--) {
-                                var d = $scope.data[i];
-                                if (d['__dt_flg'] == "Z") {
-                                    $scope.datasource.data.splice(d['__dt_row'], 1);
-                                    $scope.data.splice(i, 1);
-                                }
+                        for (var i = end; i >= start; i--) {
+                            var d = $scope.data[i];
+                            if (d['__dt_flg'] == "Z") {
+                                $scope.datasource.data.splice(d['__dt_row'], 1);
+                                $scope.data.splice(i, 1);
                             }
+                        }
 
-                            $scope.dtGroups.ungroup($scope.ht, false);
-                            $scope.dtGroups.group($scope.ht);
-                            $scope.ht.deselectCell();
-                        },
-                        disabled: contextMenuShouldDisable
+                        $scope.dtGroups.ungroup($scope.ht, false);
+                        $scope.dtGroups.group($scope.ht);
+                        $scope.ht.deselectCell();
                     },
-                    hsep1: '---------',
-                    undo: {},
-                    redo: {}
-                }
+                    disabled: contextMenuShouldDisable
+                },
+                hsep1: '---------',
+                undo: {},
+                redo: {}
             }
         }
     }, settings);
