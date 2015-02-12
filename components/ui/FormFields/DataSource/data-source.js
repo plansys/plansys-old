@@ -221,12 +221,13 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
 
                 if ($scope.postData == 'Yes') {
                     $scope.original = angular.copy($scope.data);
-                    
+
                     $scope.$watch('data', function (newval, oldval) {
                         if (typeof $scope.data == "undefined") {
                             $scope.data = [];
                         }
                         if (newval !== oldval && $scope.trackChanges) {
+                            console.log($scope.isDataReloaded);
                             if ($scope.isDataReloaded) {
                                 $scope.trackChanges = false;
 
@@ -251,7 +252,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                         $scope.data.splice(i, 1);
                                     }
                                 }
-                                
+
                                 $timeout(function () {
                                     $scope.trackChanges = true;
                                     $scope.isDataReloaded = false;
@@ -272,17 +273,16 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                             found = true;
 
                                             var isEqual = true;
-                                            for (m in oldv) {
+                                            for (var m in oldv) {
                                                 if ($scope.untrackColumns.indexOf(m) >= 0)
                                                     continue;
 
-                                                for (n in newv) {
-                                                    if ($scope.untrackColumns.indexOf(n) >= 0)
-                                                        continue;
-
-                                                    if (!!newv[m] && oldv[m] !== newv[m]) {
-                                                        isEqual = false;
-                                                    }
+                                                if (typeof newv[m] == "undefined") {
+                                                    isEqual = false;
+                                                } else if (!!newv[m] && oldv[m] !== newv[m]) {
+                                                    isEqual = false;
+                                                } else if (!newv[m] && !!oldv[m]) {
+                                                    isEqual = false;
                                                 }
                                             }
 
@@ -291,7 +291,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                             }
                                         }
                                     }
-
                                     if (!found) {
                                         var isEmpty = true;
                                         for (x in newv) {
@@ -328,7 +327,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                 }
                             }
                         }
-//                        console.log("INSERT", $scope.insertData, "UPDATE", $scope.updateData, "DELETE", $scope.deleteData, newval, oldval);
+                        console.log("INSERT", $scope.insertData, "UPDATE", $scope.updateData, "DELETE", $scope.deleteData);
                     }, true);
                 }
 

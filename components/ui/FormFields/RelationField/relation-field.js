@@ -140,7 +140,6 @@ app.directive('relationField', function ($timeout, $http) {
                                 'v': $scope.value
                             }).success(function (data) {
                                 $scope.loading = false;
-                                console.log($scope.name, $scope.identifier, $scope.value);
                                 
                                 if (data != "null") {
                                     var found = false;

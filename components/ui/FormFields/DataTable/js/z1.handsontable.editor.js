@@ -378,8 +378,12 @@
                             lvstr += "    ";
                         }
                         lvstr += '◢  ';
-                        Handsontable.Dom.fastInnerHTML(td, lvstr + (value || '<span style="opacity:.5">...</span>'));
-                        td.setAttribute("colSpan", cellProperties.$scope.columns.length);
+                        
+                        var html = "<div style='position:absolute;'>";
+                        html += lvstr + (value || '<span style="opacity:.5">...</span>');
+                        html += "</div>"
+
+                        Handsontable.Dom.fastInnerHTML(td, html);
                         break;
                 }
             }
