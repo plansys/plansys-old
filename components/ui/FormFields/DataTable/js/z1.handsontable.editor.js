@@ -223,7 +223,10 @@
     /*************** CHECKBOX RENDERER *******************/
     function dtCheckboxRenderer(instance, td, row, col, prop, value, cellProperties) {
         var $scope = cellProperties.$scope;
-        var originalVal = $scope.data[row][cellProperties.dataOri];
+        var originalVal = false;
+        if (typeof $scope.data[row] != "undefined") {
+            originalVal = $scope.data[row][cellProperties.dataOri];
+        }
         var checked = cellProperties.checked;
         var eventManager = Handsontable.eventManager(instance);
 
