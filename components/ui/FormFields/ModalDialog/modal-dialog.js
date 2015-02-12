@@ -20,7 +20,7 @@ app.directive('modalDialog', function ($timeout, $compile) {
                     $container.show();
                     $container.find(".modal-content").css({
                         maxHeight: $(window).height() - 50,
-                        overflowX: 'auto'
+                        overflowX: $container.find(".modal-content").height() > $(window).height() ? 'auto' : 'visible'
                     });
                 };
 
