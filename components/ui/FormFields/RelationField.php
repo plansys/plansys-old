@@ -437,8 +437,9 @@ class RelationField extends FormField {
         $this->relationCriteria['condition'] = $this->relationCriteria['alias'] . "." . $this->idField . " = :find_id_param_relation_field";
         $p[':find_id_param_relation_field'] = $v;
 
+
         $result = $this->query($s, $p);
-        echo json_encode(@$result[0]);
+        echo json_encode(@$result[count($result) - 1]);
     }
 
     public function actionSearch() {
@@ -727,19 +728,19 @@ class RelationField extends FormField {
             $criteria['distinct'] = false;
             $criteria['select'] = 'COUNT(DISTINCT ' . $criteria['select'] . ')';
         }
-        
+
         if (isset($criteria['paging']))
             unset($criteria['paging']);
-        
+
         if (isset($criteria['page']))
             unset($criteria['page']);
-        
+
         if (isset($criteria['pageSize']))
             unset($criteria['pageSize']);
-        
+
         if (isset($criteria['limit']))
             unset($criteria['limit']);
-        
+
         if (isset($criteria['offset']))
             unset($criteria['offset']);
 
