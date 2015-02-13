@@ -278,6 +278,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 colDef.checkedTemplate = true;
                                 colDef.uncheckedTemplate = false;
                                 colDef.renderer = "dtCheckbox";
+                                if (!!c.options && !c.options.width) {
+                                    c.options.width = 30;
+                                }
                                 colDef.$scope = $scope;
                                 colDef.title = c.label + " <input class='cb-head' col='" + colDef.dataOri + "' type=checkbox></input>";
                                 break;
@@ -356,7 +359,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                         // add columns
                         columnsInternal.push(col);
-                        colHeaders.push(c.label); 
+                        colHeaders.push(c.label);
                         colWidths.push(!!c.options && !!c.options.width ? c.options.width : c.label.length * 11);
                     }
 
