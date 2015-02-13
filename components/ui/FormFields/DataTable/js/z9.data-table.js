@@ -77,6 +77,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                 $scope.$q = $q;
                 $scope.checked = {};
+                $scope.checkedGroup = {};
                 $scope.$http = $http;
                 $scope.canAddRow = false;
                 $scope.renderID = $el.find("data[name=render_id]").text();
@@ -263,7 +264,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                     for (var i in $scope.columns) {
                         var c = $scope.columns[i];
-                        if (c.options && c.options.visible && c.options.visible == "false") {
+                        if (typeof c == "undefined" || (!!c.options && c.options.visible && c.options.visible == "false")) {
                             continue;
                         }
                         var colDef = {
@@ -288,7 +289,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 colDef.data = c.name + $scope.cbSuffix;
                                 colDef.dataOri = c.name;
                                 $scope.checked[c.name] = [];
+                                $scope.checkedGroup[c.name] = [];
                                 colDef.checked = $scope.checked[c.name];
+                                colDef.checkedGroup = $scope.checkedGroup[c.name];
                                 colDef.checkedTemplate = true;
                                 colDef.uncheckedTemplate = false;
                                 colDef.renderer = "dtCheckbox";
@@ -378,9 +381,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         // add columns
                         columnsInternal.push(col);
                         colHeaders.push(c.label);
-                        colWidths.push(!!c.options && !!c.options.width ? c.options.width : Math.min(4, c.label.length) * 11);
+                        colWidths.push(!!c.options && !!c.options.width ? c.options.width : Math.max(4, c.label.length) * 10);
                     }
-
                 }
 
                 $scope.assembleCategories = function () {
@@ -862,7 +864,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     } else {
                         $scope.dsChange();
                     }
-                };
+                }; 
                 $scope.$watch('datasource.data', function (n, o) {
                     if (n !== o && (!$scope.edited || $scope.data.length == 0) && !$scope.loadingRelation) {
                         if (n > 0 && $scope.edited == false) {
@@ -1390,7 +1392,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             delete options.colWidths;
                         }
                     }
-
+                    
                     // if there is beforeGridLoaded event, call it.
                     if (typeof $scope.beforeGridLoaded == "function") {
                         $scope.beforeGridLoaded(options);

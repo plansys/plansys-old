@@ -11,7 +11,7 @@ app.directive('checkBoxList', function ($timeout) {
                 // when ng-model is changed from inside directive
                 $scope.name = $el.find("data[name=name]:eq(0)").text();
                 $scope.$parent[$scope.name] = $scope;
-                
+
                 $scope.updateItem = function (value) {
                     $scope.updateItemInternal(value);
                     if (typeof ctrl != 'undefined' && value) {
@@ -67,23 +67,19 @@ app.directive('checkBoxList', function ($timeout) {
                     $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
                     $scope.selected = JSON.parse($el.find("data[name=selected]").text());
                     $scope.modelClass = $el.find("data[name=model_class]").html();
+
+                    if (attrs.ngModel) {
+                        $scope.selected = $scope.$eval(attrs.ngModel);
+                    }
+
                     if (typeof $scope.selected == "string") {
                         $scope.selected = $scope.selected.split(',').map(function (item) {
                             return(item.trim());
                         });
                     }
                     $scope.selectedText = $scope.selected.join(',');
-                });
 
-                //if ngModel is present, use that instead of value from php
-//                if (attrs.ngModel) {
-//                    $timeout(function () {
-//                        var ngModelValue = $scope.$eval(attrs.ngModel);
-//                        if (typeof ngModelValue != "undefined") {
-//                            $scope.updateItemInternal(ngModelValue);
-//                        }
-//                    }, 0);
-//                }
+                });
             }
         }
     };

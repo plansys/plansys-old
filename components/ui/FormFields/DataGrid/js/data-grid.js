@@ -247,6 +247,9 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                 }
 
                 $scope.stringAlias = function (value, field) {
+                    if (!value)
+                        return "";
+
                     var wildCard = false;
                     for (i in $scope.columns) {
                         if ($scope.columns[i].name == field) {

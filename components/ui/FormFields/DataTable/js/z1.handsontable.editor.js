@@ -222,7 +222,6 @@
 
     /*************** CHECKBOX RENDERER *******************/
     function dtCheckboxRenderer(instance, td, row, col, prop, value, cellProperties) {
-
         var $scope = cellProperties.$scope;
 
         if (cellProperties.isGroup) {
@@ -237,6 +236,7 @@
             originalVal = $scope.data[row][cellProperties.dataOri];
         }
         var checked = cellProperties.checked;
+        var checkedGroup = cellProperties.checkedGroup;
         var eventManager = Handsontable.eventManager(instance);
 
         if (!cellProperties.isGroup) {
@@ -246,14 +246,17 @@
                 value = false;
             }
         } else {
-            value = false;
+            if (checkedGroup.indexOf(row) >= 0) {
+                value = true;
+            } else {
+                value = false;
+            }
         }
 
         function toggle(el) {
             if (!cellProperties.isGroup) {
                 var val = $scope.data[row][cellProperties.dataOri];
                 var idx = checked.indexOf(val);
-
                 if (idx >= 0) {
                     checked.splice(idx, 1);
                     instance.setDataAtRowProp(row, prop, cellProperties.uncheckedTemplate);
@@ -261,10 +264,14 @@
                     checked.push(originalVal);
                     instance.setDataAtRowProp(row, prop, cellProperties.checkedTemplate);
                 }
-
                 return checked.indexOf(val) >= 0;
             } else {
-                $scope.massCheck($scope.dtGroups.findRows($scope.data[row]), prop, true);
+                var idx = checkedGroup.indexOf(row);
+                if (idx >= 0) {
+                    checkedGroup.splice(idx, 1);
+                } else if (idx < 0) {
+                    checked.push(row);
+                }
             }
         }
 
