@@ -222,7 +222,15 @@
 
     /*************** CHECKBOX RENDERER *******************/
     function dtCheckboxRenderer(instance, td, row, col, prop, value, cellProperties) {
+
         var $scope = cellProperties.$scope;
+        if (cellProperties.isGroup) {
+            td.className = ' groups';
+        }
+
+        if (prop == $scope.cbSuffix)
+            return td;
+
         var originalVal = false;
         if (typeof $scope.data[row] != "undefined") {
             originalVal = $scope.data[row][cellProperties.dataOri];
@@ -230,34 +238,40 @@
         var checked = cellProperties.checked;
         var eventManager = Handsontable.eventManager(instance);
 
-        if (checked.indexOf(originalVal) >= 0) {
-            value = true;
+        if (!cellProperties.isGroup) {
+            if (checked.indexOf(originalVal) >= 0) {
+                value = true;
+            } else {
+                value = false;
+            }
         } else {
             value = false;
         }
 
-        function toggle(val) {
-            if (typeof val == "undefined") {
-                val = $scope.data[row][cellProperties.dataOri];
-            }
-            var idx = checked.indexOf(val);
+        function toggle(el) {
+            if (!cellProperties.isGroup) {
+                var val = $scope.data[row][cellProperties.dataOri];
+                var idx = checked.indexOf(val);
 
-            if (idx >= 0) {
-                checked.splice(idx, 1);
-                instance.setDataAtRowProp(row, prop, cellProperties.uncheckedTemplate);
-            } else if (idx < 0) {
-                checked.push(originalVal);
-                instance.setDataAtRowProp(row, prop, cellProperties.checkedTemplate);
-            }
+                if (idx >= 0) {
+                    checked.splice(idx, 1);
+                    instance.setDataAtRowProp(row, prop, cellProperties.uncheckedTemplate);
+                } else if (idx < 0) {
+                    checked.push(originalVal);
+                    instance.setDataAtRowProp(row, prop, cellProperties.checkedTemplate);
+                }
 
-            return checked.indexOf(val) >= 0;
+                return checked.indexOf(val) >= 0;
+            } else {
+                console.log(row, prop);
+                $scope.massCheck($scope.dtGroups.findRows($scope.data[row]), prop, true);
+            }
         }
 
         Handsontable.renderers.CheckboxRenderer.apply(this, arguments);
         eventManager.removeEventListener(td, 'mousedown');
         eventManager.addEventListener(td, 'mousedown', function (e) {
-            toggle();
-
+            toggle(this);
             $scope.lastCheckBox = [row, col];
         });
 
@@ -378,7 +392,7 @@
                             lvstr += "    ";
                         }
                         lvstr += '◢  ';
-                        
+
                         var html = "<div style='position:absolute;'>";
                         html += lvstr + (value || '<span style="opacity:.5">...</span>');
                         html += "</div>"

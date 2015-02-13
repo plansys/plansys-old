@@ -63,11 +63,12 @@ Handsontable.DataTableGroups = function (settings) {
         },
         handleChange: function ($scope, c) {
             var row = $scope.data[c[0]];
+
             switch (row['__dt_flg']) {
                 case "Z":
                     var dsrow = row['__dt_row'];
                     if (!!$scope.datasource.data[dsrow]) {
-                        $scope.datasource.data[dsrow][c[1]] = c[3];
+                        $scope.datasource.data[dsrow][c[1]] = $scope.resolveChangedValue(c[0], c[1], c[3]);
                     }
                     break;
                 case "G":
@@ -87,7 +88,7 @@ Handsontable.DataTableGroups = function (settings) {
                     rows.forEach(function (r) {
                         r[col] = c[3];
                         var dsrow = r['__dt_row'];
-                        $scope.datasource.data[dsrow][col] = c[3];
+                        $scope.datasource.data[dsrow][col] = $scope.resolveChangedValue(c[0], col, c[3]);
                     });
 
                     $scope.ht = $scope.getInstance();

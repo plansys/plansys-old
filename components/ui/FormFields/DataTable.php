@@ -123,10 +123,13 @@ class DataTable extends FormField {
                     $list = '[]';
                     if (@$c['listType'] == 'php') {
                         $list = $this->evaluate(@$c['listExpr'], true);
+
+                        if (Helper::is_assoc($list)) {
+                            $this->columns[$k]['listValues'] = json_encode(array_keys($list));
+                        }
                         $list = json_encode(array_values($list));
                     }
-                    
-                    
+
                     $this->columns[$k]['listItem'] = $list;
                     break;
                 case 'string':

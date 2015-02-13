@@ -227,7 +227,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                             $scope.data = [];
                         }
                         if (newval !== oldval && $scope.trackChanges) {
-                            console.log($scope.isDataReloaded);
                             if ($scope.isDataReloaded) {
                                 $scope.trackChanges = false;
 
@@ -327,7 +326,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                 }
                             }
                         }
-                        console.log("INSERT", $scope.insertData, "UPDATE", $scope.updateData, "DELETE", $scope.deleteData);
+//                        console.log("INSERT", $scope.insertData, "UPDATE", $scope.updateData, "DELETE", $scope.deleteData);
                     }, true);
                 }
 

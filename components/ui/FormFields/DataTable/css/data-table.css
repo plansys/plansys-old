@@ -122,6 +122,10 @@
     pointer-events: none;
     z-index: 100;
 }
+.data-table-container .ht_clone_top .cb-head {
+    display:none;
+}
+
 .ht_clone_left.handsontable > div > div > div.wtSpreader > table > thead > tr:first-child {
     opacity:0;
 }

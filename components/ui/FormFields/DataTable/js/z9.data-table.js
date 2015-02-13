@@ -77,7 +77,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                 $scope.$q = $q;
                 $scope.checked = {};
-                $scope.checkedAll = {};
                 $scope.$http = $http;
                 $scope.canAddRow = false;
                 $scope.renderID = $el.find("data[name=render_id]").text();
@@ -207,33 +206,41 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 }
 
                 // checkbox header on click
-                $el.on('click', '.cb-head', function () {
-                    var col = $(this).attr('col');
-                    var checked = $(this).is(":checked");
+                $scope.massCheck = function (data, col, checked) {
+                    if (typeof $scope.checked[col] == "undefined") {
+                        $scope.checked[col] = [];
+                    }
+
+                    var changes = [];
                     $scope.checked[col].length = 0;
-                    $scope.checkedAll[col] = checked;
 
-
-                    $scope.data.forEach(function (item, i) {
+                    data.forEach(function (item, i) {
                         if (checked) {
                             if (!!item[col]) {
                                 $scope.checked[col].push(item[col]);
                             }
-                            $scope.ht.setDataAtRowProp(i, col, true);
-                        } else {
-                            $scope.ht.setDataAtRowProp(i, col, false);
                         }
+                        changes.push([i, col + $scope.cbSuffix, !checked, checked]);
                     });
 
-                    $scope.ht.render();
+                    $scope.ht = $scope.getInstance();
+                    Handsontable.hooks.run($scope.ht, 'beforeChange', 'paste', changes);
+                    Handsontable.hooks.run($scope.ht, 'afterChange', 'paste', changes);
 
                     $timeout(function () {
-                        if (checked) {
-                            $el.find(".cb-head[col=" + col + "]").attr('checked', 'checked');
-                        } else {
-                            $el.find(".cb-head[col=" + col + "]").removeAttr('checked');
+                        $scope.ht.render();
+                        if (!!col) {
+                            if (checked) {
+                                $el.find(".cb-head[col=" + col + "]").attr('checked', 'checked');
+                            } else {
+                                $el.find(".cb-head[col=" + col + "]").removeAttr('checked');
+                            }
                         }
                     });
+                }
+
+                $el.on('click', '.cb-head', function () {
+                    $scope.massCheck($scope.data, $(this).attr('col'), $(this).is(":checked"));
                 });
 
                 // assemble each columns -- start
@@ -266,11 +273,18 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             case "dropdown":
                                 colDef.type = "dropdown";
                                 if (c.listType == 'js') {
-                                    c.listItem = parent.$eval(col.listExpr);
+                                    c.listItem = parent.$eval(c.listExpr);
                                 }
                                 colDef.source = parent.$eval(c.listItem);
+                                if (typeof c.listValues != 'undefined') {
+                                    colDef.sourceValues = parent.$eval(c.listValues);
+                                }
                                 break;
                             case "checkbox":
+                                if (!!c.options) {
+                                    c.options = {};
+                                }
+
                                 colDef.data = c.name + $scope.cbSuffix;
                                 colDef.dataOri = c.name;
                                 $scope.checked[c.name] = [];
@@ -278,11 +292,15 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 colDef.checkedTemplate = true;
                                 colDef.uncheckedTemplate = false;
                                 colDef.renderer = "dtCheckbox";
-                                if (!!c.options && !c.options.width) {
+                                if (!c.options.width) {
                                     c.options.width = 30;
                                 }
+                                c.options.enableCellEdit = false;
                                 colDef.$scope = $scope;
-                                colDef.title = c.label + " <input class='cb-head' col='" + colDef.dataOri + "' type=checkbox></input>";
+
+                                if (c.name != '') {
+                                    colDef.title = c.label + " <input class='cb-head' col='" + colDef.dataOri + "' type=checkbox></input>";
+                                }
                                 break;
                             case "relation":
                                 colDef.data = c.name + $scope.relSuffix;
@@ -360,7 +378,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         // add columns
                         columnsInternal.push(col);
                         colHeaders.push(c.label);
-                        colWidths.push(!!c.options && !!c.options.width ? c.options.width : c.label.length * 11);
+                        colWidths.push(!!c.options && !!c.options.width ? c.options.width : Math.min(4, c.label.length) * 11);
                     }
 
                 }
@@ -413,8 +431,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }
                 }
 
-
-                // assemble each columns -- end
                 $scope.fowTimer = null;
                 $scope.fixOtherWidth = function () {
                     if ($scope.fowTimer) {
@@ -512,7 +528,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 width: $el.width() + 15,
                                 height: rowh,
                                 overflowX: 'hidden',
-                                opacity: 1
+                                opacity: .85
                             });
                             ct.find(".wtHolder:eq(0)").css({
                                 marginLeft: scrollLeft * -1
@@ -664,11 +680,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }
                 }
 
-
-                $scope.isRelation = function (prop) {
-                    return $scope.relationColumns.indexOf(prop.replace($scope.relSuffix, '') + $scope.relSuffix) >= 0;
+                // detect if colname is a relation
+                $scope.isRelation = function (colname) {
+                    return $scope.relationColumns.indexOf(colname.replace($scope.relSuffix, '') + $scope.relSuffix) >= 0;
                 }
-                // Load Relation -- start
+
+
+                // Load Relation 
                 $scope.loadRelation = function (callback, countDgr) {
                     if ($scope.data.length == 0) {
                         callback();
@@ -756,7 +774,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         });
                     }
                 }
-                // Load Relation -- end
 
                 // Prepare Data
                 function prepareData(callback) {
@@ -881,6 +898,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }
                 });
 
+                // add new row to data 
                 $scope.addRow = function () {
                     if (!$scope.dtGroups) {
                         var newRow = {};
@@ -919,6 +937,47 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         }
                         $scope.init();
                     })
+                }
+
+                // get colDef by colname
+                $scope.getColDef = function (colname) {
+                    var colDef = null;
+                    columnsInternal.forEach(function (item) {
+                        if (item.name == colname) {
+                            colDef = item;
+                        }
+                    });
+
+                    if ($scope.dtGroups) {
+                        if (!!$scope.dtGroups.groupColOpts[colname]) {
+                            colDef = $scope.dtGroups.groupColOpts[colname];
+                        }
+                    }
+                    return colDef;
+                }
+
+                // resolve changed value based on colDef
+                $scope.resolveChangedValue = function (row, col, val) {
+                    var colDef = $scope.getColDef(col);
+                    if (!!colDef && colDef.columnType == "dropdown" && !!colDef.sourceValues) {
+                        var idx = colDef.source.indexOf(val);
+                        if (idx >= 0 && !!colDef.sourceValues[idx]) {
+                            return colDef.sourceValues[idx];
+                        }
+                    }
+                    return val;
+                }
+
+                // handle each changes
+                $scope.handleChange = function (c) {
+                    if ($scope.dtGroups) {
+                        $scope.dtGroups.handleChange($scope, c);
+                    } else {
+                        if (!$scope.datasource.data[c[0]]) {
+                            $scope.datasource.data[c[0]] = {};
+                        }
+                        $scope.datasource.data[c[0]][c[1]] = $scope.resolveChangedValue(c[0], c[1], c[3]);
+                    }
                 }
 
                 // Initialize data-table
@@ -1010,15 +1069,14 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     if (!!$scope.columns[col] && !!$scope.columns[col].options && typeof $scope.columns[col].options.enableCellEdit == "boolean") {
                                         cellProperties.readOnly = !$scope.columns[col].options.enableCellEdit;
                                     }
-
                                     if (!!$scope.gridOptions.readOnly) {
                                         cellProperties.readOnly = true;
                                     }
-
                                     if (col == 0) {
                                         cellProperties.renderer = 'groups';
                                     }
                                 }
+
 
                                 if ($scope.data[row] && $scope.data[row]['__dt_flg']) {
                                     switch ($scope.data[row]['__dt_flg']) {
@@ -1049,7 +1107,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                             }
 
                                             cellProperties.renderer = 'groups';
-
+                                            if (prop.substr($scope.cbSuffix.length * -1) == $scope.cbSuffix) {
+                                                cellProperties.isGroup = true;
+                                                cellProperties.renderer = 'dtCheckbox';
+                                            }
                                             break;
                                         case 'T':
                                             var c = $scope.dtGroups.totalGroups[$scope.dtGroups.columns[col].name];
@@ -1145,7 +1206,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                             if (typeof $scope.gridOptions.afterSelectionChange == "function" && $(TD).is('td')) {
                                 if (!$scope.dtGroups || (!!$scope.dtGroups && $scope.data[coords.row]['__dt_flg'] == "Z")) {
-                                    if ($scope.columns[coords.col].renderer.trim() != "dtCheckbox") {
+                                    if (typeof $scope.columns[coords.col].renderer != "undefined" &&
+                                            $scope.columns[coords.col].renderer.trim() != "dtCheckbox") {
                                         $scope.gridOptions.afterSelectionChange($scope.data[coords.row]);
                                     }
                                 }
@@ -1183,6 +1245,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             }
                         },
                         afterChange: function (changes, source) {
+//                            console.log(changes, source);
                             //watch datasource changes
                             switch (true) {
                                 case ($scope.dtGroups && $scope.dtGroups.changed):
@@ -1194,14 +1257,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                         case "autofill":
                                             $timeout(function () {
                                                 changes.map(function (c) {
-                                                    if ($scope.dtGroups) {
-                                                        $scope.dtGroups.handleChange($scope, c);
-                                                    } else {
-                                                        if (!$scope.datasource.data[c[0]]) {
-                                                            $scope.datasource.data[c[0]] = {};
-                                                        }
-                                                        $scope.datasource.data[c[0]][c[1]] = c[3];
-                                                    }
+                                                    $scope.handleChange(c);
 
                                                     if (typeof $scope.afterCellEdit == "function") {
                                                         if ($scope.dtGroups) {
