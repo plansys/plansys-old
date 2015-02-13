@@ -224,6 +224,7 @@
     function dtCheckboxRenderer(instance, td, row, col, prop, value, cellProperties) {
 
         var $scope = cellProperties.$scope;
+
         if (cellProperties.isGroup) {
             td.className = ' groups';
         }
@@ -263,7 +264,6 @@
 
                 return checked.indexOf(val) >= 0;
             } else {
-                console.log(row, prop);
                 $scope.massCheck($scope.dtGroups.findRows($scope.data[row]), prop, true);
             }
         }

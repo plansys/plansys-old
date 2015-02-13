@@ -99,21 +99,19 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function __set($name, $value) {
+        $this->initRelation();
         switch (true) {
             case Helper::isLastString($name, 'PageSize'):
                 $name = substr_replace($name, '', -8);
                 $this->__pageSize[$name] = $value;
                 break;
             case Helper::isLastString($name, 'Insert'):
-                $this->initRelation();
-
                 $name = substr_replace($name, '', -6);
                 if (isset($this->__relations[$name])) {
                     $this->__relInsert[$name] = $value;
                 }
                 break;
             case Helper::isLastString($name, 'Update'):
-                $this->initRelation();
                 $name = substr_replace($name, '', -6);
 
                 if (isset($this->__relations[$name])) {
@@ -121,12 +119,13 @@ class ActiveRecord extends CActiveRecord {
                 }
                 break;
             case Helper::isLastString($name, 'Delete'):
-                $this->initRelation();
-
                 $name = substr_replace($name, '', -6);
                 if (isset($this->__relations[$name])) {
                     $this->__relDelete[$name] = $value;
                 }
+                break;
+            case isset($this->__relations[$name]):
+                $this->__relations[$name] = $value;
                 break;
             default:
                 try {

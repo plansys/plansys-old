@@ -284,3 +284,7 @@
 .cell-loading {
     background:#FFC !important;
 }
+.cb-head {
+    float:left;
+    margin-left:4px !important;
+}
