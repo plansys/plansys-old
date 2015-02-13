@@ -1,6 +1,5 @@
 <div oc-lazy-load="[
-     {files:['<?= Yii::app()->controller->staticUrl('/js/lib/highcharts/highcharts.js') ?>',
-             '<?= Yii::app()->controller->staticUrl('/js/lib/highcharts/modules/exporting.js') ?>']}
+     {files:['<?= Yii::app()->controller->staticUrl('/js/lib/highcharts/highcharts.js') ?>']}
      ]">
     <div ps-chart-group id="<?= $this->name ?>" class="col-md-12" >
 
