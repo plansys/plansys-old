@@ -170,7 +170,7 @@
         } else {
             val = "";
         }
-
+        
         switch (format) {
             case "99/99/9999":
                 if (val != "") {

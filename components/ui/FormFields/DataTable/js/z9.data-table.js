@@ -399,7 +399,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         // add columns
                         columnsInternal.push(col);
                         colHeaders.push(c.label);
-                        colWidths.push(!!c.options && !!c.options.width ? c.options.width : Math.max(4, c.label.length) * 10);
+                        colWidths.push(!!c.options && !!c.options.width ? c.options.width : Math.max(5, c.label.length) * 10);
                     }
                 }
 

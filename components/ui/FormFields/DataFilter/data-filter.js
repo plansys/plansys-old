@@ -991,7 +991,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 }
                             });
                         });
-
+                        
                         if (defaultValueAvailable) {
                             $scope.datasources.map(function (dataSourceName) {
                                 var ds = parent[dataSourceName];

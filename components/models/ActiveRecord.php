@@ -279,6 +279,10 @@ class ActiveRecord extends CActiveRecord {
         if (!isset($this->__relations[$name]))
             return [];
 
+        if (!$criteria) {
+            $criteria = [];
+        }
+
         if ($name == 'currentModel' || is_null($name)) {
             $this->__relations['currentModel'] = $this->getModelArray($criteria);
         } else {
@@ -318,13 +322,14 @@ class ActiveRecord extends CActiveRecord {
                 case 'CManyManyRelation':
                 case 'CHasManyRelation':
                     //without Criteria
-                    if ($criteria === false && is_string($rel->foreignKey)) {
+                    if ($criteria === false && is_string($rel->foreignKey) && is_numeric($this->id)) {
                         if ($rel->joinType == 'LEFT OUTER JOIN') {
                             $table = $class::model()->tableName();
                             $this->__relations[$name] = ActiveRecord::queryAll("select * from `{$table}` where `{$rel->foreignKey}` = {$this->id} limit 10");
                         }
                     } else {
-                        $this->__relationsObj[$name] = $this->getRelated($name, true, $criteria);
+                        $this->__relationsObj[$name] = $this->getRelated($name, true, []);
+                        
                         if (is_array($this->__relationsObj[$name])) {
                             $this->__relations[$name] = [];
 
@@ -651,7 +656,7 @@ class ActiveRecord extends CActiveRecord {
                     }
                     ## todo: with through
                     else {
-                        
+                                
                     }
                     break;
             }
