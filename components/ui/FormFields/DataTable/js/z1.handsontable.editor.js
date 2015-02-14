@@ -214,6 +214,8 @@
     function dateTimeRenderer(instance, td, row, col, prop, value, cellProperties) {
         Handsontable.TextCell.renderer.apply(this, arguments);
         var options = instance.getSettings().columns[col];
+
+        console.log(value);
         Handsontable.Dom.fastInnerHTML(td, formatDate(value, options.inputMask, options.filter, td));
         return td;
     }
