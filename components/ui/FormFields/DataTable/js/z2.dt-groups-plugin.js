@@ -8,7 +8,7 @@ Handsontable.DataTableGroups = function (settings) {
         categories: [],
         scope: null,
         groupArgs: [],
-        groupTreeInternal: {},
+        groupTree: {},
         totals: [],
         grouped: false,
         totalGroups: null,
@@ -205,20 +205,37 @@ Handsontable.DataTableGroups = function (settings) {
             this.grouped = true;
             instance.render();
         },
-        flattenGroup: function (group) {
+        flattenRows: function (group) {
             if (!group)
                 return[];
 
             var rows = group.rows;
             for (var i in group.groups) {
-                var r = this.flattenGroup(group.groups[i]);
+                var r = this.flattenRows(group.groups[i]);
+                rows = rows.concat(r);
+            }
+
+            return rows;
+        },
+        flattenGroups: function(group) {
+            if (!group)
+                return[];
+
+            var rows = [group.group];
+            for (var i in group.groups) {
+                var r = this.flattenGroups(group.groups[i]);
                 rows = rows.concat(r);
             }
 
             return rows;
         },
         findRows: function (row) {
-            return this.flattenGroup(this.findGroup(row));
+            var arr = this.flattenRows(this.findGroup(row));
+            return $.grep(arr,function(n){ return(n) });
+        },
+        findGroupFlatten: function (row) {
+            var arr = this.flattenGroups(this.findGroup(row));
+            return $.grep(arr,function(n){ return(n) });
         },
         findGroup: function (row, cur) {
             if (typeof cur == "undefined") {
@@ -226,24 +243,27 @@ Handsontable.DataTableGroups = function (settings) {
             }
             var found = false;
 
-            if (cur.group && cur.group['__dt_idx'] == row['__dt_idx']) {
+            if (typeof row == "undefined") {
                 return cur;
-            }
-
-            for (var r in cur.rows) {
-                if (cur.rows[r]['__dt_idx'] == row['__dt_idx']) {
+            } else {
+                if (cur.group && cur.group['__dt_idx'] == row['__dt_idx']) {
                     return cur;
                 }
-            }
-
-            for (var i in cur.groups) {
-                var found = this.findGroup(row, cur.groups[i]);
-                if (found !== false) {
-                    return found;
+                for (var r in cur.rows) {
+                    if (cur.rows[r]['__dt_idx'] == row['__dt_idx']) {
+                        return cur;
+                    }
                 }
-            }
 
-            return found;
+                for (var i in cur.groups) {
+                    var found = this.findGroup(row, cur.groups[i]);
+                    if (found !== false) {
+                        return found;
+                    }
+                }
+    
+                return found;
+            }
         },
         addRow: function () {
             var gp = this;

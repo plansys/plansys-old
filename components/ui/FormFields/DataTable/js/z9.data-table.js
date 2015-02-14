@@ -212,18 +212,36 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         $scope.checked[col] = [];
                     }
 
+                    var grs = $scope.dtGroups.findGroupFlatten();
                     var changes = [];
                     $scope.checked[col].length = 0;
 
+                    if ($scope.dtGroups) {
+                        var cg = $scope.checkedGroup[col];
+                        cg.length  = 0;
+
+                        grs.forEach(function(item, i) {
+                            var gidx = cg.indexOf(item['__dt_idx']);
+                            if (checked) {
+                                if (gidx < 0) {
+                                    cg.push(item['__dt_idx']);
+                                }
+                            } 
+                        });
+                    }
+                    
                     data.forEach(function (item, i) {
                         if (checked) {
                             if (!!item[col]) {
                                 $scope.checked[col].push(item[col]);
                             }
                         }
+                        
                         changes.push([i, col + $scope.cbSuffix, !checked, checked]);
                     });
-
+                    
+                    console.log($scope.checked);
+                    
                     $scope.ht = $scope.getInstance();
                     Handsontable.hooks.run($scope.ht, 'beforeChange', 'paste', changes);
                     Handsontable.hooks.run($scope.ht, 'afterChange', 'paste', changes);
@@ -1247,7 +1265,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             }
                         },
                         afterChange: function (changes, source) {
-//                            console.log(changes, source);
                             //watch datasource changes
                             switch (true) {
                                 case ($scope.dtGroups && $scope.dtGroups.changed):

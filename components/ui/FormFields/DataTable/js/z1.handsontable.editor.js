@@ -1,4 +1,3 @@
-
 (function (Handsontable) {
 
     /*************** RELATION TYPE *******************/
@@ -60,10 +59,10 @@
                 var labels = [];
                 for (i in data) {
                     if (!data[i].label)
-                        continue;
+                continue;
 
-                    labels.push(data[i].label);
-                    relList[data[i].label.trim('"')] = data[i].value;
+            labels.push(data[i].label);
+            relList[data[i].label.trim('"')] = data[i].value;
                 }
 
                 if (labels.indexOf(value) >= 0) {
@@ -129,10 +128,10 @@
                 var labels = [];
                 for (i in data) {
                     if (!data[i].label)
-                        continue;
+                continue;
 
-                    labels.push(data[i].label);
-                    relList[data[i].label.trim('"')] = data[i].value;
+            labels.push(data[i].label);
+            relList[data[i].label.trim('"')] = data[i].value;
                 }
 
                 if (labels.length && labels.length > 0) {
@@ -187,27 +186,27 @@
                 }
                 break;
             case "99/99/9999 99:99":
-                if (val != "") {
-                    val = ($filter('date')(val, 'dd/MM/yyyy HH:mm'));
-                } else {
+                                if (val != "") {
+                                    val = ($filter('date')(val, 'dd/MM/yyyy HH:mm'));
+                                } else {
 
-                    if (td) {
-                        val = "dd/mm/yyyy hh:mm";
-                        $(td).css("color", "#999");
-                    }
-                }
-                break;
+                                    if (td) {
+                                        val = "dd/mm/yyyy hh:mm";
+                                        $(td).css("color", "#999");
+                                    }
+                                }
+                                break;
             case "99:99":
-                if (val != "") {
-                    val = ($filter('date')(val, 'HH:mm'));
-                } else {
+                     if (val != "") {
+                         val = ($filter('date')(val, 'HH:mm'));
+                     } else {
 
-                    if (td) {
-                        val = "hh:mm";
-                        $(td).css("color", "#999");
-                    }
-                }
-                break;
+                         if (td) {
+                             val = "hh:mm";
+                             $(td).css("color", "#999");
+                         }
+                     }
+                     break;
         }
         return val;
     }
@@ -246,7 +245,7 @@
                 value = false;
             }
         } else {
-            if (checkedGroup.indexOf(row) >= 0) {
+            if (checkedGroup.indexOf(cellProperties.row) >= 0) {
                 value = true;
             } else {
                 value = false;
@@ -254,7 +253,7 @@
         }
 
         function toggle(el) {
-            if (!cellProperties.isGroup) {
+            if (!$(el).hasClass('groups')) {
                 var val = $scope.data[row][cellProperties.dataOri];
                 var idx = checked.indexOf(val);
                 if (idx >= 0) {
@@ -266,20 +265,57 @@
                 }
                 return checked.indexOf(val) >= 0;
             } else {
-                var idx = checkedGroup.indexOf(row);
-                if (idx >= 0) {
-                    checkedGroup.splice(idx, 1);
-                } else if (idx < 0) {
-                    checked.push(row);
-                }
+                var idx = checkedGroup.indexOf(cellProperties.row); 
+                var rows = $scope.dtGroups.findRows(cellProperties.$scope.data[cellProperties.row]);
+                var groups = $scope.dtGroups.findGroupFlatten(cellProperties.$scope.data[cellProperties.row]);
+                var col = prop.substr(0, prop.length - $scope.cbSuffix.length);
+                var changes = [];
+                var val = idx >= 0;
+               
+                groups.forEach(function(item, i) {
+                    var gidx = checkedGroup.indexOf(item['__dt_idx']);
+                    if (!val) {
+                        if (gidx < 0) {
+                            checkedGroup.push(item['__dt_idx']);
+                        }
+                    } else {
+                        if (gidx >= 0) {
+                            checkedGroup.splice(gidx, 1);
+                        }
+                    }
+                });
+
+                rows.forEach(function (item, i) {
+                    if (!val) {
+                        if (!!item[col]) {
+                            checked.push(item[col]);
+                        }
+                    } else {
+                        var checkedIdx = checked.indexOf(item[col]);
+                        if (checkedIdx >= 0) {
+                            checked.splice(checkedIdx, 1);
+                        }
+                    }
+                    changes.push([i, col + $scope.cbSuffix, !val, val]);
+                });
+
+                checked = checked.filter(function (e, i, arr) {
+                    return checked.lastIndexOf(e) === i;
+                });
+
+                $scope.ht = $scope.getInstance();
+                Handsontable.hooks.run($scope.ht, 'beforeChange', 'paste', changes);
+                Handsontable.hooks.run($scope.ht, 'afterChange', 'paste', changes);
+                $scope.ht.render(); 
+                return checkedGroup.indexOf(cellProperties.row);           
             }
+
         }
 
         Handsontable.renderers.CheckboxRenderer.apply(this, arguments);
         eventManager.removeEventListener(td, 'mousedown');
         eventManager.addEventListener(td, 'mousedown', function (e) {
             toggle(this);
-            $scope.lastCheckBox = [row, col];
         });
 
         td.setAttribute("style", "cursor:default;");
@@ -330,11 +366,11 @@
         this.TEXTAREA_PARENT.appendChild(this.TEXTAREA);
 
         $(this.TEXTAREA)
-                .bind('focus', function () {
-                    var val = $(this).val();
-                    $(this).val(formatDate(val, options.inputMask, options.filter));
-                    $(this).mask(options.inputMask);
-                })
+            .bind('focus', function () {
+                var val = $(this).val();
+                $(this).val(formatDate(val, options.inputMask, options.filter));
+                $(this).mask(options.inputMask);
+            })
 
     };
 
@@ -357,17 +393,17 @@
                 instance.setDataAtCell(row, col, $filter('date')(d, 'yyyy-MM-dd HH:mm'));
                 break;
             case "99/99/9999 99:99":
-                var t = val.split(/[\/ :]/);
-                var d = new Date(t[2], t[1] - 1, t[0], t[3], t[4]);
-                instance.setDataAtCell(row, col, $filter('date')(d, 'yyyy-MM-dd HH:mm'));
-                break;
+                                var t = val.split(/[\/ :]/);
+                                var d = new Date(t[2], t[1] - 1, t[0], t[3], t[4]);
+                                instance.setDataAtCell(row, col, $filter('date')(d, 'yyyy-MM-dd HH:mm'));
+                                break;
             case "99:99":
-                var t = val.split(/[\/ :]/);
-                var d = new Date();
-                d.setHours(t[0]);
-                d.setMinutes(t[1]);
-                instance.setDataAtCell(row, col, $filter('date')(d, 'yyyy-MM-dd HH:mm'));
-                break;
+                     var t = val.split(/[\/ :]/);
+                     var d = new Date();
+                     d.setHours(t[0]);
+                     d.setMinutes(t[1]);
+                     instance.setDataAtCell(row, col, $filter('date')(d, 'yyyy-MM-dd HH:mm'));
+                     break;
         }
 
     };
@@ -404,7 +440,7 @@
                         html += lvstr + (value || '<span style="opacity:.5">...</span>');
                         html += "</div>"
 
-                        Handsontable.Dom.fastInnerHTML(td, html);
+                            Handsontable.Dom.fastInnerHTML(td, html);
                         break;
                 }
             }
