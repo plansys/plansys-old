@@ -1,4 +1,3 @@
-
 app.directive('relationField', function ($timeout, $http) {
     return {
         require: '?ngModel',
@@ -126,6 +125,7 @@ app.directive('relationField', function ($timeout, $http) {
                         }
                     });
 
+
                     if (!isFound && $el.find("li:eq(0) a").attr('value')) {
 
                         // when current value not found in renderedFormList, then search it on server...
@@ -140,7 +140,7 @@ app.directive('relationField', function ($timeout, $http) {
                                 'v': $scope.value
                             }).success(function (data) {
                                 $scope.loading = false;
-                                
+
                                 if (data != "null") {
                                     var found = false;
                                     for (var key in $scope.renderedFormList) {
@@ -189,7 +189,7 @@ app.directive('relationField', function ($timeout, $http) {
 
                     if ($scope.includeEmpty == 'Yes') {
                         if ((isEmpty($scope.value) && isEmpty($scope.text)) ||
-                                $scope.value == $scope.emptyValue) {
+                            $scope.value == $scope.emptyValue) {
                             $scope.value = $scope.emptyValue;
                             $scope.text = $scope.emptyLabel;
                         }
@@ -302,6 +302,7 @@ app.directive('relationField', function ($timeout, $http) {
                             $scope.formList = $scope.$eval(attrs.psList);
                         }, 0);
                     }
+
                     $scope.$watch(attrs.psList, changeFieldList);
                 }
 
@@ -354,9 +355,18 @@ app.directive('relationField', function ($timeout, $http) {
                         if (p.indexOf('js:') === 0) {
                             var value = $scope.$parent.$eval(p.replace('js:', ''));
                             var key = i;
+                            var searchTimeout = null;
+                            $scope.paramValue[key] = value;
+
+                            searchTimeout = $timeout(function () {
+                                $scope.doSearch();
+                            }, 1000);
 
                             $scope.$watch(p.replace('js:', ''), function (newv, oldv) {
                                 if (newv != oldv) {
+                                    if (searchTimeout) {
+                                        $timeout.cancel(searchTimeout);
+                                    }
                                     for (i in $scope.params) {
                                         var x = $scope.params[i];
                                         if (x == p) {
@@ -376,7 +386,6 @@ app.directive('relationField', function ($timeout, $http) {
                                 }
                             }, true);
 
-                            $scope.paramValue[key] = value;
 
                         }
                     });

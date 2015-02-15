@@ -24,6 +24,7 @@ ob_start();
         $scope.modelBaseClass = "<?php echo ActiveRecord::baseClass($this->model); ?>";
         $scope.lastModified = "<?php echo Helper::getLastModified($modelClass); ?>";
 
+
         // initialize pageSetting
         $timeout(function () {
             var $storage = $localStorage;

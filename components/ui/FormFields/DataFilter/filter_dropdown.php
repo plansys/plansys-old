@@ -1,4 +1,4 @@
-<div class="btn-group" dropdown ng-click="dropdownClick(filter, $event)" 
+<div class="btn-group" dropdown ng-click="dropdownClick(filter, $event)"
      style="margin-right:7px;"
      is-open="filter.operatorDropdownOpen">
 
@@ -10,8 +10,8 @@
     </button>
     <button type="button" ng-click="resetFilter(filter);"
             ng-show="filter.valueText != 'All' && filter.resetable == 'Yes'"
-            class="btn btn-inverse btn-sm filter-reset" >
-        <i class="fa fa-times fa-nm" ></i>
+            class="btn btn-inverse btn-sm filter-reset">
+        <i class="fa fa-times fa-nm"></i>
     </button>
     <!-- dropdown item -->
     <div class="dropdown-menu open" style="font-size:13px;">
@@ -25,12 +25,12 @@
                    class="input-block-level search-dropdown form-control" autocomplete="off">
 
         </div>
-        <div ng-if="filter.list.length == 0" 
+        <div ng-if="filter.list.length == 0 && !loading"
              style="text-align:center;padding:15px;font-size:12px;color:#999;">
-            &mdash; {{ loading ? 'LOADING' : 'NOT FOUND' }} &mdash;
+            &mdash; NOT FOUND &mdash;
         </div>
-        <ul class="dropdown-menu inner" style="overflow-x:hidden;max-height:240px;" role="menu">
-            <li class="dropdown-item" ng-if="filter.relIncludeEmpty == 'Yes'" >
+        <ul class="dropdown-menu inner data-filter-dropdown" style="overflow-x:hidden;max-height:240px;" role="menu">
+            <li class="dropdown-item" ng-if="filter.relIncludeEmpty == 'Yes'">
                 <a dropdown-toggle href="#" style="padding-top:6px;" ng-click="updateDropdown($event, filter, {
                         key: filter.relEmptyValue,
                         value: filter.relEmptyLabel
@@ -40,8 +40,8 @@
             </li>
             <hr ng-if="filter.relIncludeEmpty == 'Yes'" style="margin:0px;"/>
 
-            <li ng-repeat-start="item in filter.list track by $index " 
-                ng-if="item.value != '---'" class="dropdown-item" 
+            <li ng-repeat-start="item in filter.list track by $index "
+                ng-if="item.value != '---'" class="dropdown-item"
                 ng-class="{'dropdown-header': isObject(item.value),
                                     'hover': item.key == filter.value}"
                 ng-show="listFound(item.value + ' ' + item.key, filter)">
@@ -53,13 +53,13 @@
                     {{ item.value}}
                 </a>
 
-                <a ng-if="!isObject(item.value) && filter.filterType == 'check'" href="#" 
+                <a ng-if="!isObject(item.value) && filter.filterType == 'check'" href="#"
                    ng-click="updateDropdown($event, filter, item);"
                    value="{{item.key}}">
 
                     <label class="filter-dropdown-label" style="margin-left:-10px;">
-                        <i class="fa fa-check-square-o fa-lg fa-fw" ng-if="dropdownChecked(filter, item)" ></i>
-                        <i class="fa fa-square-o fa-lg fa-fw" ng-if="!dropdownChecked(filter, item)" ></i>
+                        <i class="fa fa-check-square-o fa-lg fa-fw" ng-if="dropdownChecked(filter, item)"></i>
+                        <i class="fa fa-square-o fa-lg fa-fw" ng-if="!dropdownChecked(filter, item)"></i>
                         {{ item.value}}
                     </label>
                 </a>
@@ -70,10 +70,10 @@
                         <div class="dropdown-menu-header-text">{{item.key}}</div>
                     </div>
 
-                    <ul class="dropdown-menu inner" role="menu" 
+                    <ul class="dropdown-menu inner" role="menu"
                         style="display:block;border-radius:0px;">
 
-                        <li ng-repeat-start="subitem in item.value track by $index " 
+                        <li ng-repeat-start="subitem in item.value track by $index "
                             ng-if="subitem.value != '---'"
                             ng-class="{'hover': subitem.key == filter.value}"
                             ng-show="listFound(subitem.value + ' ' + subitem.key, filter)">
@@ -84,13 +84,14 @@
                                 {{ subitem.value}}
                             </a>
 
-                            <a ng-if="!isObject(subitem.value) && filter.filterType == 'check'" href="#" 
+                            <a ng-if="!isObject(subitem.value) && filter.filterType == 'check'" href="#"
                                ng-click="updateDropdown($event, filter, subitem);"
                                value="{{subitem.key}}">
 
                                 <label class="filter-dropdown-label" style="margin-left:-10px;">
-                                    <i class="fa fa-check-square-o fa-lg fa-fw" ng-if="dropdownChecked(filter, subitem)" ></i>
-                                    <i class="fa fa-square-o fa-lg fa-fw" ng-if="!dropdownChecked(filter, subitem)" ></i>
+                                    <i class="fa fa-check-square-o fa-lg fa-fw"
+                                       ng-if="dropdownChecked(filter, subitem)"></i>
+                                    <i class="fa fa-square-o fa-lg fa-fw" ng-if="!dropdownChecked(filter, subitem)"></i>
                                     {{ subitem.value}}
                                 </label>
                             </a>
@@ -103,7 +104,7 @@
             <hr ng-repeat-end ng-if="item.value == '---'"/>
             <hr ng-if="filter.filterType == 'relation' && filter.count > filter.list.length"/>
             <li ng-if="filter.filterType == 'relation' && filter.count > filter.list.length">
-                <a href="#" ng-click="relationNext($event, filter)" style="margin-left:-5px;"> 
+                <a href="#" ng-click="relationNext($event, filter)" style="margin-left:-5px;">
                     <span ng-if="!loading"><i class="fa fa-angle-down"></i> &nbsp; Load More</span>
                     <span ng-if="loading"><i class="fa fa-refresh fa-spin"></i> &nbsp; Loading... </span>
                 </a>
