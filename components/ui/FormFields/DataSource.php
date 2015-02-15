@@ -580,8 +580,8 @@ class DataSource extends FormField {
                 $criteria['page'] = 1;
             }
             $criteria['pageSize'] = $postedParams['paging']['pageSize'];
-        } 
-        
+        }
+
         ## order criteria
         if (isset($criteria['order']) && is_string($criteria['order'])) {
             $sql = $criteria['order'];
@@ -770,7 +770,7 @@ class DataSource extends FormField {
                 'rel' => ''
             ];
         }
-        
+
         return $this->renderInternal('template_render.php');
     }
 

@@ -5,6 +5,7 @@
         Handsontable.AutocompleteCell.renderer.apply(this, arguments);
         return td;
     }
+
     Handsontable.renderers.registerRenderer('relation', relationRenderer);
 
     var RelationEditor = Handsontable.editors.AutocompleteEditor.prototype.extend();
@@ -59,10 +60,10 @@
                 var labels = [];
                 for (i in data) {
                     if (!data[i].label)
-                continue;
+                        continue;
 
-            labels.push(data[i].label);
-            relList[data[i].label.trim('"')] = data[i].value;
+                    labels.push(data[i].label);
+                    relList[data[i].label.trim('"')] = data[i].value;
                 }
 
                 if (labels.indexOf(value) >= 0) {
@@ -128,10 +129,10 @@
                 var labels = [];
                 for (i in data) {
                     if (!data[i].label)
-                continue;
+                        continue;
 
-            labels.push(data[i].label);
-            relList[data[i].label.trim('"')] = data[i].value;
+                    labels.push(data[i].label);
+                    relList[data[i].label.trim('"')] = data[i].value;
                 }
 
                 if (labels.length && labels.length > 0) {
@@ -170,7 +171,7 @@
         } else {
             val = "";
         }
-        
+
         switch (format) {
             case "99/99/9999":
                 if (val != "") {
@@ -186,27 +187,27 @@
                 }
                 break;
             case "99/99/9999 99:99":
-                                if (val != "") {
-                                    val = ($filter('date')(val, 'dd/MM/yyyy HH:mm'));
-                                } else {
+                if (val != "") {
+                    val = ($filter('date')(val, 'dd/MM/yyyy HH:mm'));
+                } else {
 
-                                    if (td) {
-                                        val = "dd/mm/yyyy hh:mm";
-                                        $(td).css("color", "#999");
-                                    }
-                                }
-                                break;
+                    if (td) {
+                        val = "dd/mm/yyyy hh:mm";
+                        $(td).css("color", "#999");
+                    }
+                }
+                break;
             case "99:99":
-                     if (val != "") {
-                         val = ($filter('date')(val, 'HH:mm'));
-                     } else {
+                if (val != "") {
+                    val = ($filter('date')(val, 'HH:mm'));
+                } else {
 
-                         if (td) {
-                             val = "hh:mm";
-                             $(td).css("color", "#999");
-                         }
-                     }
-                     break;
+                    if (td) {
+                        val = "hh:mm";
+                        $(td).css("color", "#999");
+                    }
+                }
+                break;
         }
         return val;
     }
@@ -215,10 +216,11 @@
         Handsontable.TextCell.renderer.apply(this, arguments);
         var options = instance.getSettings().columns[col];
 
-        console.log(value);
+        value = cellProperties.$scope.formatDateToSql(value, options.inputMask);
         Handsontable.Dom.fastInnerHTML(td, formatDate(value, options.inputMask, options.filter, td));
         return td;
     }
+
     Handsontable.renderers.registerRenderer('datetime', dateTimeRenderer);
 
     /*************** CHECKBOX RENDERER *******************/
@@ -267,14 +269,14 @@
                 }
                 return checked.indexOf(val) >= 0;
             } else {
-                var idx = checkedGroup.indexOf(cellProperties.row); 
+                var idx = checkedGroup.indexOf(cellProperties.row);
                 var rows = $scope.dtGroups.findRows(cellProperties.$scope.data[cellProperties.row]);
                 var groups = $scope.dtGroups.findGroupFlatten(cellProperties.$scope.data[cellProperties.row]);
                 var col = prop.substr(0, prop.length - $scope.cbSuffix.length);
                 var changes = [];
                 var val = idx >= 0;
-               
-                groups.forEach(function(item, i) {
+
+                groups.forEach(function (item, i) {
                     var gidx = checkedGroup.indexOf(item['__dt_idx']);
                     if (!val) {
                         if (gidx < 0) {
@@ -308,8 +310,8 @@
                 $scope.ht = $scope.getInstance();
                 Handsontable.hooks.run($scope.ht, 'beforeChange', 'paste', changes);
                 Handsontable.hooks.run($scope.ht, 'afterChange', 'paste', changes);
-                $scope.ht.render(); 
-                return checkedGroup.indexOf(cellProperties.row);           
+                $scope.ht.render();
+                return checkedGroup.indexOf(cellProperties.row);
             }
 
         }
@@ -323,6 +325,7 @@
         td.setAttribute("style", "cursor:default;");
         return td;
     }
+
     Handsontable.renderers.registerRenderer('dtCheckbox', dtCheckboxRenderer);
 
     /*************** STRING ALIAS RENDERER *******************/
@@ -344,6 +347,7 @@
 
         return td;
     }
+
     Handsontable.renderers.registerRenderer('stringalias', stringAliasRenderer);
 
     /*************** INPUT MASK RENDERER *******************/
@@ -395,17 +399,17 @@
                 instance.setDataAtCell(row, col, $filter('date')(d, 'yyyy-MM-dd HH:mm'));
                 break;
             case "99/99/9999 99:99":
-                                var t = val.split(/[\/ :]/);
-                                var d = new Date(t[2], t[1] - 1, t[0], t[3], t[4]);
-                                instance.setDataAtCell(row, col, $filter('date')(d, 'yyyy-MM-dd HH:mm'));
-                                break;
+                var t = val.split(/[\/ :]/);
+                var d = new Date(t[2], t[1] - 1, t[0], t[3], t[4]);
+                instance.setDataAtCell(row, col, $filter('date')(d, 'yyyy-MM-dd HH:mm'));
+                break;
             case "99:99":
-                     var t = val.split(/[\/ :]/);
-                     var d = new Date();
-                     d.setHours(t[0]);
-                     d.setMinutes(t[1]);
-                     instance.setDataAtCell(row, col, $filter('date')(d, 'yyyy-MM-dd HH:mm'));
-                     break;
+                var t = val.split(/[\/ :]/);
+                var d = new Date();
+                d.setHours(t[0]);
+                d.setMinutes(t[1]);
+                instance.setDataAtCell(row, col, $filter('date')(d, 'yyyy-MM-dd HH:mm'));
+                break;
         }
 
     };
@@ -442,13 +446,14 @@
                         html += lvstr + (value || '<span style="opacity:.5">...</span>');
                         html += "</div>"
 
-                            Handsontable.Dom.fastInnerHTML(td, html);
+                        Handsontable.Dom.fastInnerHTML(td, html);
                         break;
                 }
             }
         }
         return td;
     }
+
     Handsontable.renderers.registerRenderer('groups', groupsRenderer);
 
 })(Handsontable);

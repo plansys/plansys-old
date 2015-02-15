@@ -286,7 +286,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             continue;
                         }
                         var colDef = {
-                            data: c.name
+                            data: c.name,
+                            $scope: $scope
                         };
                         switch (c.columnType) {
                             case "dropdown":
@@ -317,7 +318,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     c.options.width = 30;
                                 }
                                 c.options.enableCellEdit = false;
-                                colDef.$scope = $scope;
 
                                 if (c.name != '') {
                                     colDef.title = c.label + " <input class='cb-head' col='" + colDef.dataOri + "' type=checkbox></input>";
@@ -583,8 +583,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         container: $el.parents('.container-full'),
                         dgcontainer: $el.find(".data-table-container"),
                         topp: $el.find('.data-table-container .ht_clone_top'),
-                        form: $el.parents("form"),
-                    }
+                        form: $el.parents("form")
+                    };
+
                     if (!!fh.form.position()) {
                         fh.formTopPos = Math.abs(fh.form.position().top - fh.form.offset().top);
                         fh.formTop = fh.form.offset().top;
@@ -976,12 +977,37 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 }
 
                 // resolve changed value based on colDef
+                $scope.formatDateToSql = function (val, format) {
+                    var ts = strtotime(val);
+                    if (!!ts && ['0000-00-00', '0000-00-00 00:00', '00:00'].indexOf(val.trim()) < 0) {
+                        console.log(val, ts);
+                        switch (format) {
+                            case "99/99/9999":
+                                return date("Y-m-d", ts);
+                                break;
+                            case "99/99/9999 99:99":
+                                return date("Y-m-d H:i", ts);
+                                break;
+                        }
+                    }
+
+                    return val;
+                }
+
                 $scope.resolveChangedValue = function (row, col, val) {
                     var colDef = $scope.getColDef(col);
-                    if (!!colDef && colDef.columnType == "dropdown" && !!colDef.sourceValues) {
-                        var idx = colDef.source.indexOf(val);
-                        if (idx >= 0 && !!colDef.sourceValues[idx]) {
-                            return colDef.sourceValues[idx];
+                    if (!!colDef) {
+                        switch (true) {
+                            case colDef.columnType == "dropdown" && !!colDef.sourceValues:
+                                var idx = colDef.source.indexOf(val);
+                                if (idx >= 0 && !!colDef.sourceValues[idx]) {
+                                    return colDef.sourceValues[idx];
+                                }
+                                break;
+                            case colDef.renderer == "datetime":
+                                return $scope.formatDateToSql(val, colDef.inputMask);
+                                break;
+
                         }
                     }
                     return val;
@@ -1023,7 +1049,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             columns: columnsInternal,
                             colWidths: colWidths,
                             totalGroups: $scope.gridOptions.totalGroups,
-                            colHeaders: colHeaders,
+                            colHeaders: colHeaders
                         }).prepare();
                         delete($scope.gridOptions.groups);
                         if ($scope.data.length > 0) {
