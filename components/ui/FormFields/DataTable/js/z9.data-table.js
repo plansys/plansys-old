@@ -129,7 +129,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         $scope.gridOptions.removeMenu = $scope.$eval($scope.gridOptions.removeMenu);
                     }
                     if (typeof $scope.gridOptions.removeMenu == "object" &&
-                            $scope.gridOptions.removeMenu.length > 0) {
+                        $scope.gridOptions.removeMenu.length > 0) {
                         $scope.gridOptions.removeMenu.forEach(function (item) {
                             if (!!menu[item]) {
                                 delete menu[item];
@@ -218,30 +218,30 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                     if ($scope.dtGroups) {
                         var cg = $scope.checkedGroup[col];
-                        cg.length  = 0;
+                        cg.length = 0;
 
-                        grs.forEach(function(item, i) {
+                        grs.forEach(function (item, i) {
                             var gidx = cg.indexOf(item['__dt_idx']);
                             if (checked) {
                                 if (gidx < 0) {
                                     cg.push(item['__dt_idx']);
                                 }
-                            } 
+                            }
                         });
                     }
-                    
+
                     data.forEach(function (item, i) {
                         if (checked) {
                             if (!!item[col]) {
                                 $scope.checked[col].push(item[col]);
                             }
                         }
-                        
+
                         changes.push([i, col + $scope.cbSuffix, !checked, checked]);
                     });
-                    
+
                     console.log($scope.checked);
-                    
+
                     $scope.ht = $scope.getInstance();
                     Handsontable.hooks.run($scope.ht, 'beforeChange', 'paste', changes);
                     Handsontable.hooks.run($scope.ht, 'afterChange', 'paste', changes);
@@ -597,8 +597,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         }
 
                         fh.topp.css('top', fh.formTop)
-                                .css('left', fh.dgcontainer.offset().left)
-                                .height(70);
+                            .css('left', fh.dgcontainer.offset().left)
+                            .height(70);
                     } else {
                         if ($el.hasClass('fixed')) {
                             $el.removeClass('fixed');
@@ -805,10 +805,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                     for (i in $scope.data) {
                         for (b in $scope.columns) {
-                            if ($scope.columns[b].name &&
-                                    !isNumber($scope.data[i][$scope.columns[b].name]) &&
-                                    !$scope.data[i][$scope.columns[b].name]
-                                    ) {
+                            if ($scope.columns[b].name && !isNumber($scope.data[i][$scope.columns[b].name]) && !$scope.data[i][$scope.columns[b].name]
+                            ) {
                                 $scope.data[i][$scope.columns[b].name] = '';
                             }
                         }
@@ -827,6 +825,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         }
                     });
                 }
+
                 if ($scope.datasource.data > 0) {
                     prepareData();
                 }
@@ -859,7 +858,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                     if ($scope.datasource.data) {
                         if (!!$scope.datasource.data.length && $scope.datasource.data.length > 0 &&
-                                Object.keys($scope.datasource.data[0]).length > 0 && $scope.notReady) {
+                            Object.keys($scope.datasource.data[0]).length > 0 && $scope.notReady) {
                             prepareData(function () {
                                 $scope.init();
                                 $scope.notReady = false;
@@ -882,7 +881,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     } else {
                         $scope.dsChange();
                     }
-                }; 
+                };
                 $scope.$watch('datasource.data', function (n, o) {
                     if (n !== o && (!$scope.edited || $scope.data.length == 0) && !$scope.loadingRelation) {
                         if (n > 0 && $scope.edited == false) {
@@ -1001,6 +1000,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 }
 
                 // Initialize data-table
+                $scope.initTimeout = false;
                 $scope.init = function () {
                     if ($scope.columns.length == 0 && $scope.datasource.data.length > 0) {
                         $scope.generateCols();
@@ -1227,7 +1227,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             if (typeof $scope.gridOptions.afterSelectionChange == "function" && $(TD).is('td')) {
                                 if (!$scope.dtGroups || (!!$scope.dtGroups && $scope.data[coords.row]['__dt_flg'] == "Z")) {
                                     if (typeof $scope.columns[coords.col].renderer != "undefined" &&
-                                            $scope.columns[coords.col].renderer.trim() != "dtCheckbox") {
+                                        $scope.columns[coords.col].renderer.trim() != "dtCheckbox") {
                                         $scope.gridOptions.afterSelectionChange($scope.data[coords.row]);
                                     }
                                 }
@@ -1336,10 +1336,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             //fix header
                             $timeout(function () {
                                 fh.topp.find('.wtSpreader').removeClass('wtSpreader')
-                                        .addClass('ht_top')
-                                        .addClass('handsontable')
-                                        .remove()
-                                        .insertAfter($el.find('.data-table-container'));
+                                    .addClass('ht_top')
+                                    .addClass('handsontable')
+                                    .remove()
+                                    .insertAfter($el.find('.data-table-container'));
                                 fh.topp = $el.find('.ht_top');
                                 $el.find('.ht_top').remove();
                                 $el.find('.ht_top thead').prepend(html);
@@ -1409,7 +1409,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             delete options.colWidths;
                         }
                     }
-                    
+
                     // if there is beforeGridLoaded event, call it.
                     if (typeof $scope.beforeGridLoaded == "function") {
                         $scope.beforeGridLoaded(options);
@@ -1429,7 +1429,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         $("#" + $scope.renderID).width($el.width());
                         $scope.ht = $("#" + $scope.renderID).handsontable(options);
 
-                        $timeout(function () {
+                        if ($scope.initTimeout) {
+                            $timeout.cancel($scope.initTimeout);
+                        }
+
+                        $scope.initTimeout = $timeout(function () {
                             $scope.loaded = true;
                             $scope.loading = false;
                         });
