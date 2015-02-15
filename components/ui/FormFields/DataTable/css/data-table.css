@@ -122,7 +122,7 @@
     pointer-events: none;
     z-index: 100;
 }
-.data-table-container .ht_clone_top .cb-head {
+.data-table-container .ht_clone_top .cbHead {
     display:none;
 }
 
@@ -284,7 +284,16 @@
 .cell-loading {
     background:#FFC !important;
 }
-.cb-head {
+.cbHead {
+    margin:4px -4px -4px 4px !important;
     float:left;
-    margin-left:4px !important;
+}
+
+.cbCell {
+    cursor:default;
+    text-align:center;
+}
+.cbCell input {
+    float:none;
+    pointer-events: none;
 }

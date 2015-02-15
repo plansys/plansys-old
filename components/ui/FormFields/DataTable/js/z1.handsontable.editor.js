@@ -226,9 +226,9 @@
     /*************** CHECKBOX RENDERER *******************/
     function dtCheckboxRenderer(instance, td, row, col, prop, value, cellProperties) {
         var $scope = cellProperties.$scope;
-
+        td.className = 'cbCell ';
         if (cellProperties.isGroup) {
-            td.className = ' groups';
+            td.className += ' groups';
         }
 
         if (prop == $scope.cbSuffix)
@@ -238,47 +238,89 @@
         if (typeof $scope.data[row] != "undefined") {
             originalVal = $scope.data[row][cellProperties.dataOri];
         }
+
         var checked = cellProperties.checked;
+        var checkedRow = cellProperties.checkedRow;
         var checkedGroup = cellProperties.checkedGroup;
         var eventManager = Handsontable.eventManager(instance);
 
         if (!cellProperties.isGroup) {
-            if (checked.indexOf(originalVal) >= 0) {
-                value = true;
+            if (checkedRow.indexOf(cellProperties.row) >= 0) {
+                value = cellProperties.checkedTemplate;
             } else {
-                value = false;
+                if (originalVal == cellProperties.checkedTemplate && !cellProperties.init) {
+                    checkedRow.push(row);
+                    if (checked.indexOf(originalVal) < 0) {
+                        checked.push(originalVal);
+                    }
+                    value = cellProperties.checkedTemplate;
+                    cellProperties.init = true;
+                } else {
+                    value = cellProperties.uncheckedTemplate;
+                }
             }
         } else {
             if (checkedGroup.indexOf(cellProperties.row) >= 0) {
-                value = true;
+                value = cellProperties.checkedTemplate;
             } else {
-                value = false;
+                value = cellProperties.uncheckedTemplate;
             }
         }
 
-        function toggle(el) {
+        function toggle(el, ischecked) {
+            cellProperties.init = true;
             if (!$(el).hasClass('groups')) {
                 var val = $scope.data[row][cellProperties.dataOri];
-                var idx = checked.indexOf(val);
+                var vidx = checked.indexOf(originalVal);
+                var idx = checkedRow.indexOf(cellProperties.row);
+                var result = null;
                 if (idx >= 0) {
-                    checked.splice(idx, 1);
-                    instance.setDataAtRowProp(row, prop, cellProperties.uncheckedTemplate);
+                    checkedRow.splice(idx, 1);
+                    if (vidx >= 0) {
+                        var shouldSplice = true;
+                        for (cr in checkedRow) {
+                            if ($scope.data[cr][cellProperties.dataOri] == originalVal) {
+                                shouldSplice = false;
+                            }
+                        }
+
+                        if (shouldSplice) {
+                            checked.splice(vidx, 1);
+                        }
+                    }
+                    result = cellProperties.uncheckedTemplate;
+
                 } else if (idx < 0) {
-                    checked.push(originalVal);
-                    instance.setDataAtRowProp(row, prop, cellProperties.checkedTemplate);
+                    if (vidx < 0) {
+                        if (cellProperties.changeValue) {
+                            if (checked.indexOf(cellProperties.checkedTemplate) < 0) {
+                                checked.push(cellProperties.checkedTemplate);
+                            }
+                        } else {
+                            checked.push(originalVal);
+                        }
+                    }
+                    checkedRow.push(cellProperties.row);
+                    result = cellProperties.checkedTemplate;
                 }
-                return checked.indexOf(val) >= 0;
+
+                instance.setDataAtRowProp(row, prop, result);
+
+                if (cellProperties.changeValue) {
+                    instance.setDataAtRowProp(row, cellProperties.dataOri, result);
+                }
+
+                return checkedRow.indexOf(val) >= 0;
             } else {
                 var idx = checkedGroup.indexOf(cellProperties.row);
                 var rows = $scope.dtGroups.findRows(cellProperties.$scope.data[cellProperties.row]);
                 var groups = $scope.dtGroups.findGroupFlatten(cellProperties.$scope.data[cellProperties.row]);
                 var col = prop.substr(0, prop.length - $scope.cbSuffix.length);
                 var changes = [];
-                var val = idx >= 0;
 
                 groups.forEach(function (item, i) {
                     var gidx = checkedGroup.indexOf(item['__dt_idx']);
-                    if (!val) {
+                    if (ischecked) {
                         if (gidx < 0) {
                             checkedGroup.push(item['__dt_idx']);
                         }
@@ -290,22 +332,50 @@
                 });
 
                 rows.forEach(function (item, i) {
-                    if (!val) {
-                        if (!!item[col]) {
-                            checked.push(item[col]);
+                    if (ischecked) {
+                        if (checked.indexOf(item[col]) < 0) {
+                            if (cellProperties.changeValue) {
+                                if (checked.indexOf(cellProperties.checkedTemplate) < 0) {
+                                    checked.push(cellProperties.checkedTemplate);
+                                }
+                            } else {
+                                checked.push(item[col]);
+                            }
+                        }
+                        if (checkedRow.indexOf(item['__dt_idx']) < 0) {
+                            checkedRow.push(item['__dt_idx']);
                         }
                     } else {
+                        var checkedVidx = checkedRow.indexOf(item['__dt_idx']);
+                        if (checkedVidx >= 0) {
+                            checkedRow.splice(checkedVidx, 1);
+                        }
+
                         var checkedIdx = checked.indexOf(item[col]);
                         if (checkedIdx >= 0) {
                             checked.splice(checkedIdx, 1);
                         }
                     }
-                    changes.push([i, col + $scope.cbSuffix, !val, val]);
+
+                    var newval = ischecked ? cellProperties.checkedTemplate : cellProperties.uncheckedTemplate;
+                    var oldval = !ischecked ? cellProperties.checkedTemplate : cellProperties.uncheckedTemplate;
+
+                    changes.push([i, col + $scope.cbSuffix, oldval, newval]);
+                    if (cellProperties.changeValue) {
+                        if (item['__dt_flg'] == 'Z') {
+                            rows[i][col] = newval;
+                            rows[i][col + $scope.cbSuffix] = newval;
+                        }
+                        changes.push([i, col, oldval, newval]);
+                    }
                 });
 
-                checked = checked.filter(function (e, i, arr) {
-                    return checked.lastIndexOf(e) === i;
-                });
+                for (cr in checkedRow) {
+                    var item = $scope.data[cr];
+                    if (checked.indexOf(item[col]) < 0 && item['__dt_flg'] == "Z") {
+                        checked.push(item[col]);
+                    }
+                }
 
                 $scope.ht = $scope.getInstance();
                 Handsontable.hooks.run($scope.ht, 'beforeChange', 'paste', changes);
@@ -319,10 +389,9 @@
         Handsontable.renderers.CheckboxRenderer.apply(this, arguments);
         eventManager.removeEventListener(td, 'mousedown');
         eventManager.addEventListener(td, 'mousedown', function (e) {
-            toggle(this);
+            toggle(this, !$(this).find("input").is(":checked"));
         });
 
-        td.setAttribute("style", "cursor:default;");
         return td;
     }
 
@@ -456,4 +525,5 @@
 
     Handsontable.renderers.registerRenderer('groups', groupsRenderer);
 
-})(Handsontable);
+})
+(Handsontable);

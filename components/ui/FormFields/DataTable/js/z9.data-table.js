@@ -77,6 +77,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                 $scope.$q = $q;
                 $scope.checked = {};
+                $scope.checkedRow = {};
                 $scope.checkedGroup = {};
                 $scope.$http = $http;
                 $scope.canAddRow = false;
@@ -207,40 +208,60 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 }
 
                 // checkbox header on click
-                $scope.massCheck = function (data, col, checked) {
-                    if (typeof $scope.checked[col] == "undefined") {
-                        $scope.checked[col] = [];
+                $scope.massCheck = function (data, col, ischecked) {
+                    if (typeof $scope.checkedRow[col] == "undefined") {
+                        $scope.checkedRow[col] = [];
                     }
-
-                    var grs = $scope.dtGroups.findGroupFlatten();
+                    var colDef = $scope.getColDef(col + $scope.cbSuffix);
                     var changes = [];
+
                     $scope.checked[col].length = 0;
+                    $scope.checkedRow[col].length = 0;
 
                     if ($scope.dtGroups) {
+                        var grs = $scope.dtGroups.findGroupFlatten();
                         var cg = $scope.checkedGroup[col];
                         cg.length = 0;
 
                         grs.forEach(function (item, i) {
                             var gidx = cg.indexOf(item['__dt_idx']);
-                            if (checked) {
+                            if (ischecked) {
                                 if (gidx < 0) {
                                     cg.push(item['__dt_idx']);
                                 }
                             }
                         });
                     }
+                    console.log(ischecked);
 
                     data.forEach(function (item, i) {
-                        if (checked) {
-                            if (!!item[col]) {
-                                $scope.checked[col].push(item[col]);
+                        var shouldChecked = (!$scope.dtGroups || (!!$scope.dtGroups && item['__dt_flg'] == "Z"));
+                        if (ischecked && shouldChecked) {
+                            if ($scope.checked[col].indexOf(item[col]) < 0) {
+                                if (colDef.changeValue) {
+                                    if ($scope.checked[col].indexOf(colDef.checkedTemplate) < 0) {
+                                        $scope.checked[col].push(colDef.checkedTemplate);
+                                    }
+                                } else {
+                                    $scope.checked[col].push(item[col]);
+                                }
                             }
+                            $scope.checkedRow[col].push(i);
                         }
 
-                        changes.push([i, col + $scope.cbSuffix, !checked, checked]);
-                    });
+                        var newval = ischecked ? colDef.checkedTemplate : colDef.uncheckedTemplate;
+                        var oldval = !ischecked ? colDef.checkedTemplate : colDef.uncheckedTemplate;
 
-                    console.log($scope.checked);
+                        changes.push([i, col + $scope.cbSuffix, oldval, newval]);
+
+                        if (colDef.changeValue) {
+                            if (shouldChecked) {
+                                data[i][col] = newval;
+                                data[i][col + $scope.cbSuffix] = newval;
+                            }
+                            changes.push([i, col, oldval, newval]);
+                        }
+                    });
 
                     $scope.ht = $scope.getInstance();
                     Handsontable.hooks.run($scope.ht, 'beforeChange', 'paste', changes);
@@ -249,16 +270,16 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     $timeout(function () {
                         $scope.ht.render();
                         if (!!col) {
-                            if (checked) {
-                                $el.find(".cb-head[col=" + col + "]").attr('checked', 'checked');
+                            if (ischecked) {
+                                $el.find(".cbHead[col=" + col + "]").attr('checked', 'checked');
                             } else {
-                                $el.find(".cb-head[col=" + col + "]").removeAttr('checked');
+                                $el.find(".cbHead[col=" + col + "]").removeAttr('checked');
                             }
                         }
                     });
                 }
 
-                $el.on('click', '.cb-head', function () {
+                $el.on('click', '.cbHead', function () {
                     $scope.massCheck($scope.data, $(this).attr('col'), $(this).is(":checked"));
                 });
 
@@ -301,26 +322,47 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 }
                                 break;
                             case "checkbox":
-                                if (!!c.options) {
-                                    c.options = {};
-                                }
-
                                 colDef.data = c.name + $scope.cbSuffix;
                                 colDef.dataOri = c.name;
+
                                 $scope.checked[c.name] = [];
-                                $scope.checkedGroup[c.name] = [];
                                 colDef.checked = $scope.checked[c.name];
+
+                                $scope.checkedRow[c.name] = [];
+                                colDef.checkedRow = $scope.checkedRow[c.name];
+
+                                $scope.checkedGroup[c.name] = [];
                                 colDef.checkedGroup = $scope.checkedGroup[c.name];
+
                                 colDef.checkedTemplate = true;
-                                colDef.uncheckedTemplate = false;
-                                colDef.renderer = "dtCheckbox";
-                                if (!c.options.width) {
-                                    c.options.width = 30;
+                                if (typeof c.options.checkedTemplate != "undefined") {
+                                    colDef.checkedTemplate = c.options.checkedTemplate;
                                 }
-                                c.options.enableCellEdit = false;
+
+                                colDef.uncheckedTemplate = false;
+                                if (typeof c.options.uncheckedTemplate != "undefined") {
+                                    colDef.uncheckedTemplate = c.options.uncheckedTemplate;
+                                }
+
+                                colDef.changeValue = false;
+                                if (c.options.changeValue == 'true') {
+                                    colDef.changeValue = true;
+                                }
+
+                                colDef.renderer = "dtCheckbox";
+                                c.options.enableCellEdit = 'false';
+
+                                var cbHead = 'cbHead';
+                                if (!c.options.width) {
+                                    if (c.label != "") {
+                                        c.options.width = (c.label.length * 11) + 20;
+                                    } else {
+                                        c.options.width = 30;
+                                    }
+                                }
 
                                 if (c.name != '') {
-                                    colDef.title = c.label + " <input class='cb-head' col='" + colDef.dataOri + "' type=checkbox></input>";
+                                    colDef.title = c.label + " <input class='" + cbHead + "' col='" + colDef.dataOri + "' type=checkbox></input>";
                                 }
                                 break;
                             case "relation":
@@ -963,7 +1005,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 $scope.getColDef = function (colname) {
                     var colDef = null;
                     columnsInternal.forEach(function (item) {
-                        if (item.name == colname) {
+                        if (item.data == colname) {
                             colDef = item;
                         }
                     });
@@ -980,7 +1022,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 $scope.formatDateToSql = function (val, format) {
                     var ts = strtotime(val);
                     if (!!ts && ['0000-00-00', '0000-00-00 00:00', '00:00'].indexOf(val.trim()) < 0) {
-                        console.log(val, ts);
                         switch (format) {
                             case "99/99/9999":
                                 return date("Y-m-d", ts);
@@ -1122,7 +1163,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                         cellProperties.renderer = 'groups';
                                     }
                                 }
-
 
                                 if ($scope.data[row] && $scope.data[row]['__dt_flg']) {
                                     switch ($scope.data[row]['__dt_flg']) {
