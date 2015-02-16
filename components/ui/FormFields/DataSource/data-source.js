@@ -227,6 +227,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                             $scope.data = [];
                         }
                         if (newval !== oldval && $scope.trackChanges) {
+                            //console.log($scope.isDataReloaded);
                             if ($scope.isDataReloaded) {
                                 $scope.trackChanges = false;
 

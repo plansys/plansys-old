@@ -33,6 +33,11 @@ class ActiveRecord extends CActiveRecord
         return Yii::app()->db->createCommand($sql)->queryRow(true, $params);
     }
 
+    public static function queryColumn($sql, $params = [])
+    {
+        return Yii::app()->db->createCommand($sql)->queryColumn($params);
+    }
+
     public static function queryAll($sql, $params = [])
     {
         return Yii::app()->db->createCommand($sql)->queryAll(true, $params);

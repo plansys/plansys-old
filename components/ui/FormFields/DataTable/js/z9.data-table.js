@@ -232,7 +232,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             }
                         });
                     }
-                    console.log(ischecked);
 
                     data.forEach(function (item, i) {
                         var shouldChecked = (!$scope.dtGroups || (!!$scope.dtGroups && item['__dt_flg'] == "Z"));

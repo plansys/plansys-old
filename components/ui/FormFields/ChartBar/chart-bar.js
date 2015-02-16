@@ -136,7 +136,7 @@ app.directive('psChartBar', function ($timeout) {
                     $scope.options = deepExtend(defaultOptions, $scope.options);
 
                     var chart = new Highcharts.Chart($scope.options);
-
+                    console.log(chart.xAxis[0].categories);
                     chart.setTitle({text: $scope.chartTitle});
                     chart.xAxis[0].setCategories(xAxis);
 

@@ -354,7 +354,6 @@ Handsontable.DataTableGroups = function (settings) {
                                     delete d['id'];
                                 }
 
-
                                 $scope.datasource.data.splice(d['__dt_row'], 0, d);
                                 $scope.data.splice(i, 0, d);
                             }
