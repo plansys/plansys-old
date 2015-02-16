@@ -9,11 +9,16 @@ class AdminerLogin {
                 $_SESSION['db_password'] = @$_GET['p'];
             }
 
-            if (!isset($_SESSION['db_password'])) {
+            if (@$_GET['s']) {
+                $_SESSION['db_host'] = @$_GET['s'];
+            }
+
+            if (!isset($_SESSION['db_password']) || !isset($_SESSION['db_host'])) {
                 return null;
             }
 
-            return [@$_GET['s'], @$_GET['username'], $_SESSION['db_password'], @$_GET['db']];
+
+            return [$_SESSION['db_host'], @$_GET['username'], $_SESSION['db_password'], @$_GET['db']];
         } else {
             return null;
         }
