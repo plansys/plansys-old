@@ -1158,7 +1158,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     if (!!$scope.gridOptions.readOnly) {
                                         cellProperties.readOnly = true;
                                     }
-                                    if (col == 0) {
+                                    if (col == 0 && $scope.data[row]['__dt_flg'] == "G") {
                                         cellProperties.renderer = 'groups';
                                     }
                                 }
