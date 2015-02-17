@@ -254,7 +254,7 @@ class ActiveRecord extends CActiveRecord
         return $result;
     }
 
-    public function getRelatedArray($criteria = [])
+    public function getModelArray($criteria = [])
     {
         if (isset($criteria['page'])) {
             $criteria['offset'] = ($criteria['page'] - 1) * $criteria['pageSize'];
@@ -287,13 +287,10 @@ class ActiveRecord extends CActiveRecord
 
     public function loadAllRelations()
     {
-
         $relMetaData = $this->getMetaData()->relations;
         foreach ($relMetaData as $k => $r) {
             $this->__relations[$k] = [];
-
             $this->loadRelation($k, false);
-
         }
     }
 
@@ -307,7 +304,7 @@ class ActiveRecord extends CActiveRecord
         }
 
         if ($name == 'currentModel' || is_null($name)) {
-            $this->__relations['currentModel'] = $this->getRelatedArray($criteria);
+            $this->__relations['currentModel'] = $this->getModelArray($criteria);
         } else {
             $rel = $this->getMetaData()->relations[$name];
             $class = $rel->className;
@@ -345,14 +342,12 @@ class ActiveRecord extends CActiveRecord
                 case 'CManyManyRelation':
                 case 'CHasManyRelation':
                     //without Criteria
-
                     if ($criteria === false && is_string($rel->foreignKey) && is_numeric($this->id)) {
                         if ($rel->joinType == 'LEFT OUTER JOIN') {
                             $table = $class::model()->tableName();
                             $this->__relations[$name] = ActiveRecord::queryAll("select * from `{$table}` where `{$rel->foreignKey}` = {$this->id} limit 10");
                         }
                     } else {
-
                         $this->__relationsObj[$name] = $this->getRelated($name, true, $criteria);
 
                         if (is_array($this->__relationsObj[$name])) {
@@ -563,11 +558,13 @@ class ActiveRecord extends CActiveRecord
         }
     }
 
-    public function getAttributes($names = true)
+    public function getAttributes($names = true, $loadRelation = false)
     {
-
         $attributes = parent::getAttributes($names);
         $attributes = array_merge($this->attributeProperties, $attributes);
+        if ($loadRelation) {
+            $this->loadAllRelations();
+        }
 
         foreach ($this->__relations as $k => $r) {
             $attributes[$k] = $this->__relations[$k];
