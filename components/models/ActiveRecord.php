@@ -240,14 +240,9 @@ class ActiveRecord extends CActiveRecord {
         return $result;
     }
 
-<<<<<<< HEAD
     public function getRelatedArray($criteria = [], $rel = null) {
 
         ## clean criteria array
-=======
-    public function getRelatedArray($criteria = [])
-    {
->>>>>>> dac9400ee2c5c4d38fcdabe1d50431680918036d
         if (isset($criteria['page'])) {
             $criteria['offset'] = ($criteria['page'] - 1) * $criteria['pageSize'];
             $criteria['limit'] = $criteria['pageSize'];
@@ -277,19 +272,11 @@ class ActiveRecord extends CActiveRecord {
         return $rawData;
     }
 
-<<<<<<< HEAD
     public function loadAllRelations() {
-=======
-    public function loadAllRelations()
-    {
-
->>>>>>> dac9400ee2c5c4d38fcdabe1d50431680918036d
         $relMetaData = $this->getMetaData()->relations;
         foreach ($relMetaData as $k => $r) {
             $this->__relations[$k] = [];
-
             $this->loadRelation($k, false);
-
         }
     }
 
@@ -340,18 +327,12 @@ class ActiveRecord extends CActiveRecord {
                 case 'CManyManyRelation':
                 case 'CHasManyRelation':
                     //without Criteria
-<<<<<<< HEAD
                     if (($criteria === false || empty($criteria)) && is_string($rel->foreignKey) && is_numeric($this->id)) {
-=======
-
-                    if ($criteria === false && is_string($rel->foreignKey) && is_numeric($this->id)) {
->>>>>>> dac9400ee2c5c4d38fcdabe1d50431680918036d
                         if ($rel->joinType == 'LEFT OUTER JOIN') {
                             $table = $class::model()->tableName();
                             $this->__relations[$name] = ActiveRecord::queryAll("select * from `{$table}` where `{$rel->foreignKey}` = {$this->id} limit 10");
                         }
                     } else {
-
                         $this->__relationsObj[$name] = $this->getRelated($name, true, $criteria);
 
                         if (is_array($this->__relationsObj[$name])) {
@@ -556,15 +537,12 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-<<<<<<< HEAD
     public function getAttributes($names = true, $loadRelation = false) {
-=======
-    public function getAttributes($names = true)
-    {
-
->>>>>>> dac9400ee2c5c4d38fcdabe1d50431680918036d
         $attributes = parent::getAttributes($names);
         $attributes = array_merge($this->attributeProperties, $attributes);
+        if ($loadRelation) {
+            $this->loadAllRelations();
+        }
 
         foreach ($this->__relations as $k => $r) {
             $attributes[$k] = $this->__relations[$k];
