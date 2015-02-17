@@ -153,9 +153,7 @@ class AuditTrail extends ActiveRecord {
 
             ## if not duplicate OR is different type OR last tracked time is more than 1 hour ago
             if (!$isDuplicate || ($isDuplicate && $isDifferentType) || ($isDuplicate && $lastInsertHour > 1)) {
-
                 ## create new track
-
                 if ($isDuplicate) {
                     ## skip tracking view for same page after CRUD
                     $isCrud = in_array($lastTrail['type'], ['create', 'update', 'delete']);
@@ -164,7 +162,7 @@ class AuditTrail extends ActiveRecord {
                     }
                 }
 
-                $at = [];
+                $at = $pathInfo;
                 
                 ## remove data from view tracker...
                 if ($type == "view") {
