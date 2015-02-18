@@ -1291,8 +1291,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                             if (typeof $scope.gridOptions.afterSelectionChange == "function" && $(TD).is('td')) {
                                 if (!$scope.dtGroups || (!!$scope.dtGroups && $scope.data[coords.row]['__dt_flg'] == "Z")) {
-                                    if (typeof $scope.columns[coords.col].renderer != "undefined" &&
-                                        $scope.columns[coords.col].renderer.trim() != "dtCheckbox") {
+                                    if (typeof $scope.columns[coords.col].columnType != "checkbox") {
                                         $scope.gridOptions.afterSelectionChange($scope.data[coords.row]);
                                     }
                                 }
