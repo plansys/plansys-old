@@ -193,8 +193,11 @@ class ActiveRecord extends CActiveRecord {
                 $name = substr_replace($name, '', -6);
                 return @$this->__relDelete[$name];
                 break;
-            case ($name == 'currentModel' || isset($this->__relations[$name])):
-                return @$this->loadRelation($name);
+            case ($name == 'currentModel'):
+                return $this->loadRelation($name);
+                break;
+            case (isset($this->__relations[$name])):
+                return $this->__relations[$name];
                 break;
             case (isset($this->__tempVar[$name])):
                 return $this->__tempVar;
@@ -575,12 +578,9 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    public function getAttributes($names = true, $loadRelation = false) {
+    public function getAttributes($names = true) {
         $attributes = parent::getAttributes($names);
         $attributes = array_merge($this->attributeProperties, $attributes);
-        if ($loadRelation) {
-            $this->loadAllRelations();
-        }
 
         foreach ($this->__relations as $k => $r) {
             $attributes[$k] = $this->__relations[$k];
@@ -647,26 +647,30 @@ class ActiveRecord extends CActiveRecord {
         return $attributes;
     }
 
-    public function beforeSave() {
-        ## clean primary keys
-        if ($this->primaryKey == '') {
-            $table = $this->getMetaData()->tableSchema;
-            $primaryKey = $table->primaryKey;
-            $this->$primaryKey = null;
-        }
-
-        ## clean relation columns
-        $rels = array_keys($this->getMetaData()->tableSchema->foreignKeys);
-        foreach ($rels as $k => $rel) {
-            if (is_string($rel)) {
-                if (!is_numeric($this[$rel]) && !is_null($this[$rel])) {
-                    $this[$rel] = null;
-                }
-            }
-        }
-
-        return true;
+    public function getRels() {
+        return $this->__relations;
     }
+
+//    public function beforeSave() {
+//        ## clean primary keys
+//        if ($this->primaryKey == '') {
+//            $table = $this->getMetaData()->tableSchema;
+//            $primaryKey = $table->primaryKey;
+//            $this->$primaryKey = null;
+//        }
+//
+//        ## clean relation columns
+//        $rels = array_keys($this->getMetaData()->tableSchema->foreignKeys);
+//        foreach ($rels as $k => $rel) {
+//            if (is_string($rel)) {
+//                if (!is_numeric($this[$rel]) && !is_null($this[$rel])) {
+//                    $this[$rel] = null;
+//                }
+//            }
+//        }
+//
+//        return true;
+//    }
 
     public function saveModelArray() {
         $this->afterSave();
@@ -1156,7 +1160,6 @@ class ActiveRecord extends CActiveRecord {
             try {
                 $command->execute();
             } catch (Exception $e) {
-                echo $update;
                 var_dump($data);
                 die();
             }

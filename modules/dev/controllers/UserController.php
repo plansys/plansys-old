@@ -48,10 +48,10 @@ class UserController extends Controller {
         if (isset($_POST["DevUserForm"])) {
             if (!isset($_POST['DevUserForm']['subscribed']))
                 $_POST['DevUserForm']['subscribed'] = '';
-            
+
             $model->attributes = $_POST["DevUserForm"];
             $model->resetRel('userRoles');
-            
+
             if ($model->save()) {
                 Yii::app()->user->setFlash('info', 'User berhasil disimpan');
             }
@@ -76,6 +76,8 @@ class UserController extends Controller {
                 $model->fullname = $_GET['f'];
                 $model->useLdap = true;
             }
+
+            $model->resetRel('userRoles', $model->userRoles);
 
             if ($model->save()) {
                 $model->subscribed = "on";
