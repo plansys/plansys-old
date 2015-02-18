@@ -72,7 +72,6 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                 });
             });
 
-            var height = $el.height();
             $(".ac-portlet-button").click(function () {
                 var dd = $(this).parent().find('.ac-portlet-menu');
                 $el.height('500');
@@ -94,6 +93,7 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
 
             $scope.resizeTimeout = null;
             $scope.resize = function (st) {
+                var height = $el.height();
                 $el.css({
                     top: $("#content").offset().top,
                     left: $el.parents('.container-full').offset().left,
@@ -119,7 +119,6 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                         height += dashFilter.height();
                         $el.addClass('filtered');
                     }
-
                 }
 
                 $el.parents('.container-full').css({
@@ -144,7 +143,7 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
             // add action tab link
             $(".section-header").each(function () {
                 $('<a href="#' + $(this).attr('scrollTo') + '">' + $(this).text() + '</a>')
-                        .insertBefore(".action-bar:eq(0) .action-tab .clearfix");
+                    .insertBefore(".action-bar:eq(0) .action-tab .clearfix");
             })
 
             // on action tab click
