@@ -1163,12 +1163,12 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     if (!!$scope.gridOptions.readOnly) {
                                         cellProperties.readOnly = true;
                                     }
-                                    if (col == 0 && $scope.data[row]['__dt_flg'] == "G") {
+                                    if (col == 0 && !!$scope.data[row] && $scope.data[row]['__dt_flg'] == "G") {
                                         cellProperties.renderer = 'groups';
                                     }
                                 }
 
-                                if ($scope.data[row] && $scope.data[row]['__dt_flg']) {
+                                if (!!$scope.data[row] && $scope.data[row]['__dt_flg']) {
                                     switch ($scope.data[row]['__dt_flg']) {
                                         case 'E':
                                             cellProperties.className = 'empty';
