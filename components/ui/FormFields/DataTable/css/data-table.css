@@ -297,3 +297,17 @@
     float:none;
     pointer-events: none;
 }
+
+.cbCell.cbGroupOnly {
+    pointer-events:none;
+}
+.cbCell.cbGroupOnly input {
+    opacity:.4;
+}
+.cbCell.groups.cbGroupOnly {
+    pointer-events: auto;
+}
+.cbCell.groups.cbGroupOnly input {
+    display:block;
+    opacity:1;
+}

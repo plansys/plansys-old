@@ -6,9 +6,15 @@ if (count(@$renderParams['errors']) > 0) {
         $data['errors'] = $renderParams['errors'];
     }
 }
+if (Yii::app()->user->hasFlash('error')) {
+    $errors = Yii::app()->user->getFlash('error');
+    if (!is_array($errors)) {
+        $errors = [$errors];
+    }
+    $data['errors'] = ['id' => $errors];
+}
 ob_start();
 ?>
-
     <script type="text/javascript">
         <?php ob_start(); ?>
         app.controller("<?= $modelClass ?>Controller", function ($scope, $parse, $timeout, $http, $localStorage, $filter) {

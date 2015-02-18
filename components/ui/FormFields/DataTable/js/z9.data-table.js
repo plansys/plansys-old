@@ -343,6 +343,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     colDef.uncheckedTemplate = c.options.uncheckedTemplate;
                                 }
 
+                                colDef.groupOnly = false;
+                                if (typeof c.options.groupOnly != "undefined") {
+                                    colDef.groupOnly = $scope.$eval(c.options.groupOnly);
+                                }
+
                                 colDef.changeValue = false;
                                 if (c.options.changeValue == 'true') {
                                     colDef.changeValue = true;
@@ -1158,12 +1163,12 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     if (!!$scope.gridOptions.readOnly) {
                                         cellProperties.readOnly = true;
                                     }
-                                    if (col == 0 && $scope.data[row]['__dt_flg'] == "G") {
+                                    if (col == 0 && !!$scope.data[row] && $scope.data[row]['__dt_flg'] == "G") {
                                         cellProperties.renderer = 'groups';
                                     }
                                 }
 
-                                if ($scope.data[row] && $scope.data[row]['__dt_flg']) {
+                                if (!!$scope.data[row] && $scope.data[row]['__dt_flg']) {
                                     switch ($scope.data[row]['__dt_flg']) {
                                         case 'E':
                                             cellProperties.className = 'empty';
@@ -1291,8 +1296,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                             if (typeof $scope.gridOptions.afterSelectionChange == "function" && $(TD).is('td')) {
                                 if (!$scope.dtGroups || (!!$scope.dtGroups && $scope.data[coords.row]['__dt_flg'] == "Z")) {
-                                    if (typeof $scope.columns[coords.col].renderer != "undefined" &&
-                                        $scope.columns[coords.col].renderer.trim() != "dtCheckbox") {
+                                    if (typeof $scope.columns[coords.col].columnType != "checkbox") {
                                         $scope.gridOptions.afterSelectionChange($scope.data[coords.row]);
                                     }
                                 }
