@@ -149,7 +149,11 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     $scope.httpRequest = $q.defer();
 
                     if ($scope.beforeQuery != null) {
-                        $scope.beforeQuery($scope);
+                        var shouldContinue = $scope.beforeQuery($scope);
+
+                        if (shouldContinue === false) {
+                            return false;
+                        }
                     }
 
                     $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
@@ -248,7 +252,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                         continue;
 
                                     if ($scope.deleteData != null &&
-                                            $scope.deleteData.indexOf($scope.data[i].id) >= 0) {
+                                        $scope.deleteData.indexOf($scope.data[i].id) >= 0) {
                                         $scope.data.splice(i, 1);
                                     }
                                 }
