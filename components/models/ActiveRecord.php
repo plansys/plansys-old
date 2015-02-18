@@ -205,7 +205,41 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    public static function jsonToArray(&$post, $key, $shouldReturn = false) {
+    public static function flattenPost(&$post, $key, $shouldReturn = false) {
+        $new = [];
+        if (is_array($post[$key . 'Insert']) && is_array($post[$key . 'Update'])) {
+            $new = array_merge($post[$key . 'Insert'], $post[$key . 'Insert']);
+        } else if (is_array($post[$key . 'Insert'])) {
+            $new = $post[$key . 'Insert'];
+        } else if (is_array($post[$key . 'Update'])) {
+            $new = $post[$key . 'Update'];
+        }
+
+        if (is_array($post[$key . 'Delete'])) {
+            foreach ($new as $k => $n) {
+                if (isset($n['id']) && in_array($n['id'], $post[$key . 'Delete'])) {
+                    unset($new[$k]);
+                }
+            }
+        }
+
+        if ($shouldReturn) {
+            return $new;
+        } else {
+            if (is_array($post[$key . 'Insert'])) {
+                unset($post[$key . 'Insert']);
+            }
+            if (is_array($post[$key . 'Update'])) {
+                unset($post[$key . 'Update']);
+            }
+            if (is_array($post[$key . 'Delete'])) {
+                unset($post[$key . 'Delete']);
+            }
+            $post[$key] = $new;
+        }
+    }
+
+    public static function jsonToArray(&$post, $key, $shouldReturn = false, $flattenPost = false) {
         $new = [];
 
         if (isset($post[$key . 'Insert']) && is_string($post[$key . 'Insert']))
@@ -218,7 +252,7 @@ class ActiveRecord extends CActiveRecord {
             $new[$key . 'Delete'] = json_decode($post[$key . 'Delete'], true);
 
         if ($shouldReturn) {
-            return $new;
+            return $flattenPost ? ActiveRecord::flattenPost($new, $key, true) : $new;
         } else {
             if (isset($new[$key . 'Update'])) {
                 $post[$key . 'Update'] = $new[$key . 'Update'];
@@ -228,6 +262,10 @@ class ActiveRecord extends CActiveRecord {
             }
             if (isset($new[$key . 'Insert'])) {
                 $post[$key . 'Insert'] = $new[$key . 'Insert'];
+            }
+
+            if ($flattenPost) {
+                ActiveRecord::flattenPost($post, $key);
             }
         }
     }
