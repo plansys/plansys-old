@@ -906,7 +906,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 $timeout(function () {
                     var showCount = 0;
                     var watchDefaultValue = [];
-                    var defaultValueAvailable = false;
                     if ($scope.isCached()) {
                         $scope.loadPageSetting();
 
@@ -959,19 +958,19 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                         }
                                     }
                                     $scope.updateFilter(f, null, false);
-                                    defaultValueAvailable = true;
                                 }
                                 else {
                                     f.value = $scope.evalValue(f.defaultValue);
+                                    console.log(f.value);
                                     if (!f.value) {
                                         var fclone = $.extend({}, f, true);
                                         watchDefaultValue.push({
                                             name: f.name,
                                             watch: fclone.defaultValue.substr(3)
                                         });
+
                                     } else {
                                         $scope.updateFilter(f, null, false);
-                                        defaultValueAvailable = true;
                                     }
                                 }
                             }
@@ -992,15 +991,13 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                             });
                         });
                         
-                        if (defaultValueAvailable) {
-                            $scope.datasources.map(function (dataSourceName) {
-                                var ds = parent[dataSourceName];
-                                if (ds) {
-                                    ds.lastQueryFrom = "DataFilter";
-                                    ds.query();
-                                }
-                            });
-                        }
+                        $scope.datasources.map(function (dataSourceName) {
+                            var ds = parent[dataSourceName];
+                            if (ds) {
+                                ds.lastQueryFrom = "DataFilter";
+                                ds.query();
+                            }
+                        });      
                     }
                 });
             }
