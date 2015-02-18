@@ -231,6 +231,10 @@
             td.className += ' groups';
         }
 
+        if (cellProperties.groupOnly) {
+            td.className += ' cbGroupOnly';
+        }
+
         if (prop == $scope.cbSuffix)
             return td;
 

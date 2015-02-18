@@ -208,7 +208,7 @@ class ActiveRecord extends CActiveRecord {
     public static function flattenPost(&$post, $key, $shouldReturn = false) {
         $new = [];
         if (is_array($post[$key . 'Insert']) && is_array($post[$key . 'Update'])) {
-            $new = array_merge($post[$key . 'Insert'], $post[$key . 'Insert']);
+            $new = array_merge($post[$key . 'Insert'], $post[$key . 'Update']);
         } else if (is_array($post[$key . 'Insert'])) {
             $new = $post[$key . 'Insert'];
         } else if (is_array($post[$key . 'Update'])) {

@@ -343,6 +343,11 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     colDef.uncheckedTemplate = c.options.uncheckedTemplate;
                                 }
 
+                                colDef.groupOnly = false;
+                                if (typeof c.options.groupOnly != "undefined") {
+                                    colDef.groupOnly = $scope.$eval(c.options.groupOnly);
+                                }
+
                                 colDef.changeValue = false;
                                 if (c.options.changeValue == 'true') {
                                     colDef.changeValue = true;
