@@ -108,6 +108,7 @@ class DataGrid extends FormField {
             $params = ['order_by' => []];
         }
 
+
         $tmpl = preg_replace("/order\s+by/i", "", $template);
         $rawOrder = explode(",", trim(str_replace("[order]", "", $tmpl)));
         foreach ($rawOrder as $o) {
@@ -148,12 +149,13 @@ class DataGrid extends FormField {
             }
         }
 
+
         $query = '';
         if (count($sql) > 0) {
             if ($template == '' || trim($template) == '[order]') {
                 $query = "order by " . implode(" , ", $sql);
             } else {
-                if (stripos("order by", $template) !== false) {
+                if ($template != "[order]") {
                     $query = str_replace("[order]", implode(" , ", $sql), $template);
                 } else {
                     $query = "order by " . array_pop($sql);

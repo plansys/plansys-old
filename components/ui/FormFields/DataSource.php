@@ -316,6 +316,7 @@ class DataSource extends FormField {
                     break;
             }
 
+
             if (isset($fieldSql)) {
                 $template = $field->evaluate($fieldSql, true, [
                     'paramName' => $param,
@@ -356,7 +357,7 @@ class DataSource extends FormField {
     }
 
     public static function concatSql($sql, $operator) {
-        $andsql = array_filter(preg_split("/\{" . $operator . "\}/i", $sql), function($e) {
+        $andsql = array_filter(preg_split("/\{" . $operator . "\}/i", $sql), function ($e) {
             return (trim($e) != "" ? trim($e) : false);
         });
 
@@ -748,10 +749,10 @@ class DataSource extends FormField {
         if (isset($this->params['where'])) {
             $field = $this->builder->findField(['name' => $this->params['where']]);
             if ($field) {
-                foreach ($field['filters']as $f) {
+                foreach ($field['filters'] as $f) {
                     $dateCondition = @$f['defaultOperator'] != '' && @$f['filterType'] == 'date';
                     if (@$f['defaultValue'] != '' || $dateCondition ||
-                            @$f['defaultValueFrom'] != '' || @$f['defaultValueTo'] != ''
+                        @$f['defaultValueFrom'] != '' || @$f['defaultValueTo'] != ''
                     ) {
                         $execQuery = false;
                     }
