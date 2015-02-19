@@ -1235,7 +1235,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         },
                         beforeAutofill: function (s, e, d) {
                             if (typeof $scope.events.beforeAutofill == "function") {
-                                return $scope.events.beforeAutofill(s, e, d);
+                                $scope.events.beforeAutofill(s, e, d);
                             }
                             if (s.col == e.col && d.length > 1) {
                                 var seq = d[1][0] - d[0][0];
@@ -1250,6 +1250,20 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     }
 
                                     return d;
+                                }
+                            }
+                        },
+                        beforeKeyDown: function (e) {
+                            if (typeof $scope.events.beforeKeyDown == "function") {
+                                $scope.events.beforeKeyDown(e);
+                            }
+
+                            if (!!$scope.dtGroups) {
+                                var selection = $scope.ht.getSelected();
+                                if ($scope.data[selection[0]]['__dt_flg'] == "G") {
+                                    if (e.keyCode === 13) {
+                                        $scope.ht.selectCell(selection[0] + 1, selection[1]);
+                                    }
                                 }
                             }
                         },
