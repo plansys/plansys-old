@@ -396,7 +396,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                             params[i] = value;
                         }
                     }
-
                     $http.post(Yii.app.createUrl('formfield/DataFilter.relnext'), {
                         's': filter.search,
                         'f': $scope.name,
@@ -405,6 +404,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         'i': filter.list.length,
                         'p': params
                     }).success(function (data) {
+
                         $scope.loading = false;
                         if (data.list && data.list.length && data.list.length > 0) {
                             data.list.forEach(function (item) {
@@ -444,6 +444,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                     if (filter.filterType == "relation" && !filter.initRel) {
                         filter.initRel = true;
                         filter.count = 9999;
+                        filter.list = [];
                         $scope.relationNext(e, filter);
                     }
 
@@ -989,14 +990,14 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 }
                             });
                         });
-                        
+
                         $scope.datasources.map(function (dataSourceName) {
                             var ds = parent[dataSourceName];
                             if (ds) {
                                 ds.lastQueryFrom = "DataFilter";
                                 ds.query();
                             }
-                        });      
+                        });
                     }
                 });
             }
