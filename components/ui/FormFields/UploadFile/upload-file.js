@@ -290,6 +290,8 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     }
                 };
 
+                $scope.checkFile();
+
                 if ($scope.options['ps-mode']) {
                     $scope.mode = $scope.$parent[$scope.options['ps-mode']];
                     $scope.$watch('$parent.' + $scope.options['ps-mode'], function (n, o) {
