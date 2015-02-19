@@ -670,6 +670,33 @@ class ActiveRecord extends CActiveRecord {
 //        return true;
 //    }
 
+
+    public function save($runValidation = true, $attributes = null) {
+        if (!$runValidation || $this->validate($attributes)) {
+            try {
+                return $this->getIsNewRecord() ? $this->insert($attributes) : $this->update($attributes);
+            } catch (CDbException $e) {
+                if (@$e->errorInfo[1] == 1452) {
+                    preg_match("/FOREIGN\sKEY\s\(\`(.*)\`\)\sREFERENCES/", $e->errorInfo[2], $match);
+                    $attribute = explode("`", $match[1]);
+                    $attribute = @$attribute[0];
+
+                    if ($this->hasAttribute($attribute)) {
+                        $message = Yii::t('yii', '{attribute} cannot be blank.');
+                        $message = strtr($message, array(
+                            '{attribute}' => $this->getAttributeLabel($attribute),
+                        ));
+                        $this->addError($attribute, $message);
+                    }
+                } else {
+                    throw $e;
+                }
+            }
+        } else {
+            return false;
+        }
+    }
+
     public function saveModelArray() {
         $this->afterSave();
     }
