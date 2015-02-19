@@ -495,25 +495,25 @@
 
         if (col == 0) {
             var row = cellProperties.$scope.data[row];
-
+            var whitespace = "    ";
             if (row && !!row['__dt_flg']) {
                 switch (row['__dt_flg']) {
                     case "Z":
                         var gidx = row['__dt_lvl'];
                         var lvstr = "";
                         for (var ll = 0; ll < gidx; ll++) {
-                            lvstr += "    ";
+                            lvstr += whitespace;
                         }
-                        lvstr += '   ';
+                        lvstr += whitespace;
                         Handsontable.Dom.fastInnerHTML(td, lvstr + (value || ''));
                         break;
                     case "G":
                         var gidx = row['__dt_lvl'];
                         var lvstr = "";
                         for (var ll = 0; ll < gidx; ll++) {
-                            lvstr += "    ";
+                            lvstr += whitespace;
                         }
-                        lvstr += '◢  ';
+                        lvstr += '<span class="groupsArrow"></span>  ';
 
                         var html = "<div style='position:absolute;'>";
                         html += lvstr + (value || '<span style="opacity:.5">...</span>');

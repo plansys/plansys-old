@@ -19,8 +19,11 @@
     text-align: left;
     min-height: 20px;
     font-weight: bold;
+    cursor:default;
 }
-
+.handsontable table .header-grouping th .relative {
+    text-align:center;
+}
 .handsontable table th .relative .columnSorting {
     display: block;
     cursor: pointer;
@@ -197,12 +200,22 @@
     box-shadow: none !important;
     text-transform: uppercase;
     color: #6F6F6F;
-    font-size: 12px;
+    font-size: 11px;
     line-height: 20px;
     font-weight: bold;
+    cursor:pointer !important;
 
     white-space: pre !important;
     border-right: 0px !important;
+}
+
+.handsontable td .groupsArrow {
+    width: 0;
+    height: 0;
+    display:inline-block;
+    border-style: solid;
+    border-width: 0 0 9px 9px;
+    border-color: transparent transparent #555 transparent;
 }
 
 .handsontable td.htInvalid {
@@ -282,7 +295,7 @@
 }
 
 .link-mode .dataTable.handsontable tr td.currentRow,
-.link-mode .dataTable.handsontable tr td.current,
+.link-mode .dataTable.handsontable tr td.highlight,
 .link-mode .dataTable.handsontable tr td.area {
     background: #ffc !important;
     cursor: pointer;
@@ -324,7 +337,7 @@
 }
 
 .cbHead {
-    margin: 4px -4px -4px 4px !important;
+    margin: 4px -4px -4px 0px !important;
     float: left;
 }
 

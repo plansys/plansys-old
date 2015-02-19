@@ -961,7 +961,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 }
                                 else {
                                     f.value = $scope.evalValue(f.defaultValue);
-                                    console.log(f.value);
                                     if (!f.value) {
                                         var fclone = $.extend({}, f, true);
                                         watchDefaultValue.push({

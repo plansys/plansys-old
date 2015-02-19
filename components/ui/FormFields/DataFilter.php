@@ -156,7 +156,7 @@ class DataFilter extends FormField {
         $pcolumn = preg_replace('/[^\da-z]/i', '_', $column);
 
         ## quote field if it is containing illegal char
-        if (!preg_match("^[a-zA-Z_][a-zA-Z0-9_]*$", $field)) {
+        if (!preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", str_replace(".", "", $column))) {
             $column = "`{$column}`";
         }
 
