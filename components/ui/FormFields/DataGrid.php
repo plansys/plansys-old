@@ -140,7 +140,7 @@ class DataGrid extends FormField {
                 $direction = $o['direction'] == 'asc' ? 'asc' : 'desc';
                 $field = preg_replace("[^a-zA-Z0-9]", "", $o['field']);
 
-                $sql[] = "{$field} {$direction}";
+                $sql[] = "`{$field}` {$direction}";
             }
         }
 
