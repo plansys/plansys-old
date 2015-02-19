@@ -959,7 +959,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         $scope.loading = false;
                         $scope.canAddRow = false;
                     }
-                }, 2000);
+                });
 
                 // add new row to data 
                 $scope.addRow = function () {
@@ -989,15 +989,16 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         $("#" + $scope.renderID).remove();
                         p.append("<div id='" + $scope.renderID + "' class='dataTable' style='overflow:auto;'></div>");
 
+                        if ($scope.dtGroups && $scope.dtGroups.grouped) {
+                            $scope.dtGroups.ungroup($scope.ht, false);
+                            $scope.dtGroups.grouped = false;
+                        }
                         $scope.columns = angular.copy($scope.originalColumns);
                         $scope.gridOptions = angular.copy($scope.originalGridOptions);
                         $scope.colGenerated = false;
                         $scope.dtGroups = null;
                         $scope.colAssembled = false;
                         $scope.data = $scope.datasource.data;
-                        if ($scope.dtGroups && $scope.dtGroups.grouped) {
-                            $scope.dtGroups.grouped = false;
-                        }
                         $scope.init();
                     });
                 }
