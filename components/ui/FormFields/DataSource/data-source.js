@@ -190,13 +190,13 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     }, {
                         timeout: $scope.httpRequest.promise
                     })
-                        .success(executeSuccess)
-                        .error(function (data) {
-                            if (typeof f == "function") {
-                                f(false, data);
-                            }
-                            $scope.showError(data);
-                        });
+                            .success(executeSuccess)
+                            .error(function (data) {
+                                if (typeof f == "function") {
+                                    f(false, data);
+                                }
+                                $scope.showError(data);
+                            });
                     $scope.shouldCount = true;
                 }
 
@@ -257,7 +257,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                         continue;
 
                                     if ($scope.deleteData != null &&
-                                        $scope.deleteData.indexOf($scope.data[i].id) >= 0) {
+                                            $scope.deleteData.indexOf($scope.data[i].id) >= 0) {
                                         $scope.data.splice(i, 1);
                                     }
                                 }
@@ -331,7 +331,9 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                             $scope.deleteData = [];
                                         }
 
-                                        $scope.deleteData.push(del['id']);
+                                        if (angular.isNumber(del['id'])) {
+                                            $scope.deleteData.push(del['id']);
+                                        }
                                     }
                                 }
                             }
