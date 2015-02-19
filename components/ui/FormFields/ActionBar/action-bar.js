@@ -72,8 +72,11 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                 });
             });
 
+            $scope.originalHeight = $el.height();
+
             $(".ac-portlet-button").click(function () {
                 var dd = $(this).parent().find('.ac-portlet-menu');
+                $scope.originalHeight = $el.height();
                 $el.height('500');
                 if (dd.css('position') != 'fixed') {
                     var pos = dd.offset();
@@ -89,11 +92,12 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                         zIndex: 110
                     });
                 }
+                $el.height($scope.originalHeight);
             });
 
             $scope.resizeTimeout = null;
             $scope.resize = function (st) {
-                var height = $el.height();
+                var height = $scope.originalHeight;
                 $el.css({
                     top: $("#content").offset().top,
                     left: $el.parents('.container-full').offset().left,
