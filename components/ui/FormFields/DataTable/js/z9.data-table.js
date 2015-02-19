@@ -755,6 +755,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                 // Load Relation 
                 $scope.loadRelation = function (callback, countDgr) {
+
                     if ($scope.data.length == 0) {
                         callback();
                         return;
@@ -784,6 +785,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         $http.post(url, dgr, {
                             timeout: $scope.httpRelReq.promise
                         }).success(function (data) {
+
                             for (var rowIdx in $scope.data) {
                                 var row = $scope.data[rowIdx];
                                 for (var dataIdx in data) {
@@ -841,7 +843,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                 }
 
                 // Prepare Data
-                function prepareData(callback) {
+                function prepareData(prepareDataCallback) {
                     function isNumber(n) {
                         return typeof n == 'number' && !isNaN(n - n);
                     }
@@ -863,10 +865,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             }
                         }
                     }
-
                     $scope.loadRelation(function () {
-                        if (typeof callback == "function") {
-                            callback();
+                        if (typeof prepareDataCallback == "function") {
+                            prepareDataCallback();
                         }
                     });
                 }
@@ -951,14 +952,17 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 $scope.canAddRow = false;
                             }
                         }
-                        prepareData(function () {
-                            $scope.init();
-                        });
+
+                        if ($scope.datasource.data.length > 0) {
+                            prepareData();
+                        }
+                        $scope.init();
                     } else {
                         $scope.loaded = true;
                         $scope.loading = false;
                         $scope.canAddRow = false;
                     }
+
                 });
 
                 // add new row to data 
