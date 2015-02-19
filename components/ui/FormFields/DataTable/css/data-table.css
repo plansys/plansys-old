@@ -14,10 +14,48 @@
     text-transform: uppercase;
     color: #5E5E5E;
     font-size: 11px;
-    padding: 4px 4px;
+    padding: 4px 4px 4px 8px;
     line-height: 20px;
-    min-height:20px;
+    text-align: left;
+    min-height: 20px;
     font-weight: bold;
+    cursor:default;
+}
+.handsontable table .header-grouping th .relative {
+    text-align:center;
+}
+.handsontable table th .relative .columnSorting {
+    display: block;
+    cursor: pointer;
+}
+
+.handsontable table th .relative .columnSorting {
+    display: block;
+    cursor: pointer;
+}
+
+.handsontable table th .sortArrow {
+    right: 5px;
+    top: 50%;
+    left: auto;
+    position: absolute;
+    border-color: gray transparent;
+    border-style: solid;
+    height: 0;
+    width: 0;
+    margin: -2px 0px 0px 0px;
+}
+
+.handsontable table th .sortArrow.asc {
+    border-width: 0 4px 4px 4px;
+}
+
+.handsontable table th .sortArrow.desc {
+    border-width: 4px 4px 0 4px;
+}
+
+.handsontable table th .relative .columnSorting:hover {
+    text-decoration: none;
 }
 
 .handsontable td, .handsontable th {
@@ -36,10 +74,10 @@
     background: #FAFAFA;
 }
 
-
 .dataTable.handsontable tr td.current {
     background: #fff;
 }
+
 .dataTable.handsontable .htCore tbody td.area {
     background: #dce4ff;
 }
@@ -47,20 +85,19 @@
 .dataTable.handsontable tr td:hover {
     background: #e8f0ff;
 }
+
 .dataTable.handsontable tr td.currentRow,
-.dataTable.handsontable tr td.currentCol{
+.dataTable.handsontable tr td.currentCol {
     background: #eef4ff;
 }
 
-.dataTable.handsontable > .htContainer > .wtHolder > .wtHider > .wtSpreader > .htCore  .htDimmed {
+.dataTable.handsontable > .htContainer > .wtHolder > .wtHider > .wtSpreader > .htCore .htDimmed {
     box-shadow: inset 0px 0px 0px 9999px rgba(0, 0, 0, .05);
 }
-
 
 .handsontable .header-grouping th {
     padding-bottom: 0px !important;
 }
-
 
 .handsontable tr:first-child td, .handsontable tr:first-child th {
     border-top: 1px solid #ddd;
@@ -79,15 +116,18 @@
     margin-top: -5px;
     padding-right: 0px;
 }
+
 .handsontable.listbox .ht_master table {
-    display:table;
+    display: table;
 }
+
 .handsontable .handsontable table {
     box-shadow: none;
 }
+
 .wtHolder tbody th {
-    height:0px !important;
-    padding:0px !important;
+    height: 0px !important;
+    padding: 0px !important;
 }
 
 .handsontable.listbox .wtHider {
@@ -103,9 +143,8 @@
     min-height: 23px !important;
     line-height: 24px !important;
     padding: 0px 0px 0px 6px;
-    font-size:13px !important;
+    font-size: 13px !important;
 }
-
 
 .data-table-container .ht_clone_corner {
     display: none;
@@ -113,25 +152,27 @@
 }
 
 .data-table-container .ht_clone_left {
-    opacity:0;
+    opacity: 0;
     pointer-events: none;
     z-index: 99;
 }
+
 .data-table-container .ht_clone_top {
-    opacity:0;
+    opacity: 0;
     pointer-events: none;
     z-index: 100;
 }
+
 .data-table-container .ht_clone_top .cbHead {
-    display:none;
+    display: none;
 }
 
 .ht_clone_left.handsontable > div > div > div.wtSpreader > table > thead > tr:first-child {
-    opacity:0;
+    opacity: 0;
 }
 
 .data-table-container .ht_clone_top .htCore {
-    border-bottom:1px solid #ddd;
+    border-bottom: 1px solid #ddd;
 }
 
 [ps-data-table] .ht_top table {
@@ -149,88 +190,100 @@
 }
 
 [ps-data-table] {
-    padding-top:12px;
-    padding-bottom:12px;
+    padding-top: 12px;
+    padding-bottom: 12px;
 }
 
 .handsontable td.groups {
-    cursor:default !important;
-    background:#ffc !important;
+    cursor: default !important;
+    background: #ffc !important;
     box-shadow: none !important;
     text-transform: uppercase;
     color: #6F6F6F;
-    font-size: 12px ;
+    font-size: 11px;
     line-height: 20px;
     font-weight: bold;
+    cursor:pointer !important;
 
-    white-space:pre !important;
-    border-right:0px !important;
+    white-space: pre !important;
+    border-right: 0px !important;
+}
+
+.handsontable td .groupsArrow {
+    width: 0;
+    height: 0;
+    display:inline-block;
+    border-style: solid;
+    border-width: 0 0 9px 9px;
+    border-color: transparent transparent #555 transparent;
 }
 
 .handsontable td.htInvalid {
-    color:#Fff !important;
-    background: #ff4c42!important;
+    color: #Fff !important;
+    background: #ff4c42 !important;
 }
 
 .handsontable td.groups:last-child {
-    white-space:pre;
-    border-right:1px solid #ddd !important;
+    white-space: pre;
+    border-right: 1px solid #ddd !important;
 }
 
-
 .handsontable td.group-text {
-    white-space:pre;
+    white-space: pre;
 }
 
 .gr.fa {
-    position:absolute;
-    margin:4px 0px 0px -5px;
-    width:20px;
-    color:black;
+    position: absolute;
+    margin: 4px 0px 0px -5px;
+    width: 20px;
+    color: black;
 }
 
 .empty {
-    background:#fff !important;
+    background: #fff !important;
     box-shadow: none !important;
-    cursor:default;
-    border:0px;
+    cursor: default;
+    border: 0px;
 }
 
 .total {
-    background:#efefef !important;
+    background: #efefef !important;
     box-shadow: none !important;
-    cursor:default;
-    color:#555 !important;
-    font-size:12px !important;
-    font-weight:bold;
-    border-top:1px solid #ddd;
+    cursor: default;
+    color: #555 !important;
+    font-size: 12px !important;
+    font-weight: bold;
+    border-top: 1px solid #ddd;
 }
-
 
 .read-only .htAutocompleteArrow {
-    display:none;
+    display: none;
 }
 
-.read-only .dataTable.handsontable > .htContainer > .wtHolder > .wtHider > .wtSpreader > .htCore  .htDimmed{
-    box-shadow:none;
+.read-only .dataTable.handsontable > .htContainer > .wtHolder > .wtHider > .wtSpreader > .htCore .htDimmed {
+    box-shadow: none;
 }
 
-.read-only .dataTable.handsontable td{
-    cursor:default;
+.read-only .dataTable.handsontable td {
+    cursor: default;
 }
 
 .link-mode .handsontable .wtBorder {
     display: none !important;
 }
+
 .link-mode .dataTable.handsontable tr td:hover, .read-only .dataTable.handsontable tr td.current {
     background: transparent;
 }
+
 .link-mode .dataTable.handsontable tr td:hover, .read-only .dataTable.handsontable tr td.current {
     background: transparent;
 }
+
 .link-mode .dataTable.handsontable .htCore tbody td.area {
     background: transparent;
 }
+
 .link-mode .dataTable.handsontable tr td.currentRow,
 .link-mode .dataTable.handsontable tr td.currentCol {
     background: transparent;
@@ -238,23 +291,16 @@
 
 .link-mode .dataTable.handsontable tr:hover td {
     background: #ececeb;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 .link-mode .dataTable.handsontable tr td.currentRow,
-.link-mode .dataTable.handsontable tr td.current,
-.link-mode .dataTable.handsontable tr td.area{
-    background:#ffc !important;
-    cursor:pointer;
+.link-mode .dataTable.handsontable tr td.highlight,
+.link-mode .dataTable.handsontable tr td.area {
+    background: #ffc !important;
+    cursor: pointer;
 }
 
-.handsontable th.currentRow .relative{
-    background: #d6e1f6 !important;
-}
-
-.handsontable th.currentCol .relative  {
-    background: #d6e1f6;
-}
 .handsontable .header-grouping th.currentCol .relative {
     background-color: #f2f2f2;
     background-image: -moz-linear-gradient(top, #f5f5f5, #eeeeee);
@@ -265,16 +311,21 @@
     background-repeat: repeat-x;
 }
 
+.handsontable th.currentRow .relative {
+    background: #d6e1f6 !important;
+}
 
 .handsontable.listbox .ht_master table {
-    border:0px;
+    border: 0px;
 }
+
 .handsontable.listbox {
-    border:1px solid #999;
+    border: 1px solid #999;
 }
+
 .handsontable .autocompleteEditor.handsontable {
-    background:#fafafa;
-    min-height:55px;
+    background: #fafafa;
+    min-height: 55px;
 }
 
 .listbox.current {
@@ -282,32 +333,37 @@
 }
 
 .cell-loading {
-    background:#FFC !important;
+    background: #FFC !important;
 }
+
 .cbHead {
-    margin:4px -4px -4px 4px !important;
-    float:left;
+    margin: 4px -4px -4px 0px !important;
+    float: left;
 }
 
 .cbCell {
-    cursor:default;
-    text-align:center;
+    cursor: default;
+    text-align: center;
 }
+
 .cbCell input {
-    float:none;
+    float: none;
     pointer-events: none;
 }
 
 .cbCell.cbGroupOnly {
-    pointer-events:none;
+    pointer-events: none;
 }
+
 .cbCell.cbGroupOnly input {
-    opacity:.4;
+    opacity: .4;
 }
+
 .cbCell.groups.cbGroupOnly {
     pointer-events: auto;
 }
+
 .cbCell.groups.cbGroupOnly input {
-    display:block;
-    opacity:1;
+    display: block;
+    opacity: 1;
 }

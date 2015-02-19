@@ -139,7 +139,9 @@ class DataGrid extends FormField {
             foreach ($params['order_by'] as $k => $o) {
                 $direction = $o['direction'] == 'asc' ? 'asc' : 'desc';
                 $field = preg_replace("[^a-zA-Z0-9]", "", $o['field']);
-                if (strpos($field, " ") !== false) {
+
+                ## quote field if it is containing illegal char
+                if (!preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", str_replace(".", "", $field))) {
                     $field = "`{$field}`";
                 }
                 $sql[] = "{$field} {$direction}";
@@ -191,10 +193,10 @@ class DataGrid extends FormField {
             $template = [
                 'sql' => "limit {$from},{$pageSize}",
                 'params' => [
-                //                    'limit' => $pageSize,
-                //                    'offset' => $from,
-                //                    'page' => $currentPage,
-                //                    'pageSize' => $pageSize
+                    //                    'limit' => $pageSize,
+                    //                    'offset' => $from,
+                    //                    'page' => $currentPage,
+                    //                    'pageSize' => $pageSize
                 ],
                 'render' => true
             ];
@@ -295,7 +297,7 @@ class DataGrid extends FormField {
         $originName = $actualName;
         $extension = pathinfo($name, PATHINFO_EXTENSION);
         while (file_exists($tmpdir . DIRECTORY_SEPARATOR . $actualName . '.' . $extension)) {
-            $actualName = (string) $originName . '_' . $i;
+            $actualName = (string)$originName . '_' . $i;
             $name = $actualName . '.' . $extension;
             $i++;
         }
