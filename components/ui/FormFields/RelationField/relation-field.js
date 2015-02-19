@@ -126,7 +126,7 @@ app.directive('relationField', function ($timeout, $http) {
                     });
 
 
-                    if (!isFound && $el.find("li:eq(0) a").attr('value')) {
+                    if (!isFound &&  typeof $el.find("li:eq(0) a").attr('value') != "undefined") {
 
                         // when current value not found in renderedFormList, then search it on server...
                         if (!!$scope.value) {
