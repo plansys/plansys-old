@@ -77,7 +77,9 @@ app.directive('checkBoxList', function ($timeout) {
                             return(item.trim());
                         });
                     }
-                    $scope.selectedText = $scope.selected.join(',');
+                    if($scope.selected !== null){
+                        $scope.selectedText = $scope.selected.join(',');
+                    }
 
                 });
             }

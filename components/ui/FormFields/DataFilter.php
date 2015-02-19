@@ -155,6 +155,10 @@ class DataFilter extends FormField {
         $param = "";
         $pcolumn = preg_replace('/[^\da-z]/i', '_', $column);
 
+        if (strpos($column, " ") !== false) {
+            $column = "`{$column}`";
+        }
+
         switch ($filter['type']) {
             case "string":
                 if ($filter['value'] != "" || $filter['operator'] == 'Is Empty') {

@@ -439,13 +439,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 colDef.readOnly = true;
                             }
                         }
-
                         var col = $.extend(c, colDef);
-
                         // add columns
                         columnsInternal.push(col);
-                        colHeaders.push(c.label);
-                        colWidths.push(!!c.options && !!c.options.width ? c.options.width : Math.max(5, c.label.length) * 10);
+                        if(typeof c.label != 'undefined'){
+                            colHeaders.push(c.label);
+                            colWidths.push(!!c.options && !!c.options.width ? c.options.width : Math.max(5, c.label.length) * 10);
+                        }
                     }
                 }
 

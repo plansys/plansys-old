@@ -139,7 +139,9 @@ class DataGrid extends FormField {
             foreach ($params['order_by'] as $k => $o) {
                 $direction = $o['direction'] == 'asc' ? 'asc' : 'desc';
                 $field = preg_replace("[^a-zA-Z0-9]", "", $o['field']);
-
+                if (strpos($field, " ") !== false) {
+                    $field = "`{$field}`";
+                }
                 $sql[] = "{$field} {$direction}";
             }
         }
