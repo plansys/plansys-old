@@ -148,19 +148,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     }
                     $scope.httpRequest = $q.defer();
 
-                    if ($scope.beforeQuery != null) {
-                        $scope.beforeQuery($scope);
-                    }
-
-                    $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
-                        model_id: model_id,
-                        name: $scope.name,
-                        class: $scope.class,
-                        params: params,
-                        lc: $scope.shouldCount ? 0 : $scope.totalItems
-                    }, {
-                        timeout: $scope.httpRequest.promise
-                    }).success(function (data) {
+                    var executeSuccess = function (data) {
                         if (typeof data == "string") {
                             $scope.showError(data);
                         } else {
@@ -182,12 +170,33 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                 $scope.afterQuery($scope);
                             }
                         }
-                    }).error(function (data) {
-                        if (typeof f == "function") {
-                            f(false, data);
+                    }
+
+                    if ($scope.beforeQuery != null) {
+                        var shouldContinue = $scope.beforeQuery($scope);
+
+                        if (shouldContinue === false) {
+                            executeSuccess($scope.data);
+                            return false;
                         }
-                        $scope.showError(data);
-                    });
+                    }
+
+                    $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
+                        model_id: model_id,
+                        name: $scope.name,
+                        class: $scope.class,
+                        params: params,
+                        lc: $scope.shouldCount ? 0 : $scope.totalItems
+                    }, {
+                        timeout: $scope.httpRequest.promise
+                    })
+                        .success(executeSuccess)
+                        .error(function (data) {
+                            if (typeof f == "function") {
+                                f(false, data);
+                            }
+                            $scope.showError(data);
+                        });
                     $scope.shouldCount = true;
                 }
 
@@ -248,7 +257,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                         continue;
 
                                     if ($scope.deleteData != null &&
-                                            $scope.deleteData.indexOf($scope.data[i].id) >= 0) {
+                                        $scope.deleteData.indexOf($scope.data[i].id) >= 0) {
                                         $scope.data.splice(i, 1);
                                     }
                                 }

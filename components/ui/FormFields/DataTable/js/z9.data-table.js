@@ -1163,8 +1163,15 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     if (!!$scope.gridOptions.readOnly) {
                                         cellProperties.readOnly = true;
                                     }
-                                    if (col == 0 && !!$scope.data[row] && $scope.data[row]['__dt_flg'] == "G") {
-                                        cellProperties.renderer = 'groups';
+                                    if (col == 0) {
+                                        if (!!$scope.data[row] && $scope.data[row]['__dt_flg'] == "G") {
+                                            cellProperties.renderer = 'groups';
+                                        } else {
+                                            var coldef = $scope.getColDef(prop);
+                                            if (coldef.renderer && coldef.renderer == 'text') {
+                                                cellProperties.renderer = 'groups';
+                                            }
+                                        }
                                     }
                                 }
 
