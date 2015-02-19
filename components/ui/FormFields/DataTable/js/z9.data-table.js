@@ -442,7 +442,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         var col = $.extend(c, colDef);
                         // add columns
                         columnsInternal.push(col);
-                        if(typeof c.label != 'undefined'){
+                        if (typeof c.label != 'undefined') {
                             colHeaders.push(c.label);
                             colWidths.push(!!c.options && !!c.options.width ? c.options.width : Math.max(5, c.label.length) * 10);
                         }
@@ -1392,6 +1392,15 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 $scope.edited = false;
                             });
                         },
+                        afterColumnSort: function (col, order) {
+                            $el.find(".sortArrow").remove();
+                            $el.find(".handsontable.dataTable .htCore > thead > tr:last-child > th:eq(" + col + ") .relative")
+                                .prepend("<div class='sortArrow " + (order ? "asc" : "desc") + "'></div>");
+
+                            if (typeof $scope.events.afterColumnSort == "function") {
+                                $scope.events.afterColumnSort(column, column);
+                            }
+                        },
                         afterRender: function () {
                             if (categories.length > 0) {
                                 //add category header
@@ -1441,11 +1450,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         beforeColumnSort: function (column, order) {
                             if (typeof $scope.events.beforeColumnSort == "function") {
                                 $scope.events.beforeColumnSort(column, column);
-                            }
-                        },
-                        afterColumnSort: function (column, order) {
-                            if (typeof $scope.events.afterColumnSort == "function") {
-                                $scope.events.afterColumnSort(column, column);
                             }
                         },
                         beforeRender: function () {
