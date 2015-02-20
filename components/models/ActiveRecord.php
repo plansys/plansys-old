@@ -196,6 +196,9 @@ class ActiveRecord extends CActiveRecord {
                 return $this->loadRelation($name);
                 break;
             case (isset($this->__relations[$name])):
+                if (empty($this->__relations[$name])) {
+                    $this->loadRelation($name);
+                }
                 return $this->__relations[$name];
                 break;
             case (isset($this->__tempVar[$name])):
