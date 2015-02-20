@@ -149,16 +149,14 @@ class DataGrid extends FormField {
             }
         }
 
-
         $query = '';
         if (count($sql) > 0) {
             if ($template == '' || trim($template) == '[order]') {
                 $query = "order by " . implode(" , ", $sql);
             } else {
-                if ($template != "[order]") {
-                    $query = str_replace("[order]", implode(" , ", $sql), $template);
-                } else {
-                    $query = "order by " . array_pop($sql);
+                $query = str_replace("[order]", implode(" , ", $sql), $template);
+                if (strpos($query, "order by") === false) {
+                    $query = " order by " . $query;
                 }
             }
         } else if (count(@$paramOptions) > 0) {
