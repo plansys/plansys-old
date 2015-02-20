@@ -3,6 +3,7 @@
     /*************** RELATION TYPE *******************/
     function relationRenderer(instance, td, row, col, prop, value, cellProperties) {
         Handsontable.AutocompleteCell.renderer.apply(this, arguments);
+        console.log(td, prop, value, cellProperties.$scope.data[row])
         return td;
     }
 

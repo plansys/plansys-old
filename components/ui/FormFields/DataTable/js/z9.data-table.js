@@ -755,7 +755,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                 // Load Relation 
                 $scope.loadRelation = function (callback, countDgr) {
-
                     if ($scope.data.length == 0) {
                         callback();
                         return;
@@ -817,6 +816,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     }
                                 }
                             }
+
                             $timeout(function () {
                                 $scope.triggerRelationWatch = true;
                                 if (typeof callback == "function") {
@@ -865,6 +865,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             }
                         }
                     }
+
                     $scope.loadRelation(function () {
                         if (typeof prepareDataCallback == "function") {
                             prepareDataCallback();
@@ -1003,6 +1004,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         $scope.dtGroups = null;
                         $scope.colAssembled = false;
                         $scope.data = $scope.datasource.data;
+                        if ($scope.datasource.data.length > 0) {
+                            prepareData();
+                        }
                         $scope.init();
                     });
                 }
