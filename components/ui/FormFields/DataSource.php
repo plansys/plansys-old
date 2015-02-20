@@ -296,7 +296,7 @@ class DataSource extends FormField {
             $paramOptions = explode("|", $param);
             $param = array_shift($paramOptions);
 
-            if ($param != "order" && (!isset($field->params[$param]) && !isset($field->queryParams[$param]))) {
+            if (($param != "order" && $param != "!order") && (!isset($field->params[$param]) && !isset($field->queryParams[$param]))) {
                 $sql = str_replace("[{$param}]", "", $sql);
                 $parsed[$param] = "";
                 continue;
@@ -307,7 +307,12 @@ class DataSource extends FormField {
                     $fieldSql = 'DataFilter::generateParams($paramName, $params, $template, $paramOptions)';
                     break;
                 case "order":
+                case "!order":
                 case "paging":
+                    if ($param == "!order") {
+                        $param = "order";
+                    }
+
                     $fieldSql = 'DataGrid::generateParams($paramName, $params, $template, $paramOptions)';
                     break;
                 default:

@@ -108,9 +108,16 @@ class DataGrid extends FormField {
             $params = ['order_by' => []];
         }
 
-
         $tmpl = preg_replace("/order\s+by/i", "", $template);
-        $rawOrder = explode(",", trim(str_replace("[order]", "", $tmpl)));
+
+        if (strpos($tmpl, "[order]") !== false) {
+            $syntax = "order";
+            $rawOrder = explode(",", trim(str_replace("[order]", "", $tmpl)));
+        } else if (strpos($tmpl, "[!order]") !== false) {
+            $syntax = "!order";
+            $rawOrder = explode(",", trim(str_replace("[!order]", "", $tmpl)));
+        }
+
         foreach ($rawOrder as $o) {
             $o = trim(preg_replace('!\s+!', ' ', $o));
             $o = explode(" ", $o);
@@ -150,17 +157,19 @@ class DataGrid extends FormField {
         }
 
         $query = '';
+        $addSql = ($syntax == "!order" ? "" : "order by ");
+
         if (count($sql) > 0) {
-            if ($template == '' || trim($template) == '[order]') {
-                $query = "order by " . implode(" , ", $sql);
+            if ($template == '' || trim($template) == $syntax) {
+                $query = $addSql . implode(" , ", $sql);
             } else {
-                $query = str_replace("[order]", implode(" , ", $sql), $template);
+                $query = str_replace("[" . $syntax . "]", implode(" , ", $sql), $tmpl);
                 if (strpos($query, "order by") === false) {
-                    $query = " order by " . $query;
+                    $query = $addSql . $query;
                 }
             }
         } else if (count(@$paramOptions) > 0) {
-            $query = "order by " . @$paramOptions[0];
+            $query = $addSql . @$paramOptions[0];
         }
 
         return [
@@ -207,9 +216,12 @@ class DataGrid extends FormField {
     public static function generateParams($paramName, $params, $template, $paramOptions = []) {
         switch ($paramName) {
             case "order":
+            case "!order":
                 return DataGrid::generateOrderParams($params, $template, $paramOptions);
+                break;
             case "paging":
                 return DataGrid::generatePagingParams($params, $paramOptions);
+                break;
         }
     }
 
