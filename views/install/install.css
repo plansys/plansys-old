@@ -1,0 +1,12 @@
+
+.install-pane {
+    width:700px;
+    margin:60px auto;
+    border-radius:10px;
+    min-height: 250px;
+}
+
+
+#content {
+    background-color:#fafafa !important;
+}
