@@ -18,7 +18,8 @@ class Setting {
             'path' => 'repo'
         ],
         'app' => [
-            'dir' => 'app'
+            'dir' => 'app',
+            'mode' => 'development'
         ],
     ];
 
@@ -48,6 +49,16 @@ class Setting {
         }
     }
 
+    private static function arrayMergeRecursiveReplace($paArray1, $paArray2) {
+        if (!is_array($paArray1) or ! is_array($paArray2)) {
+            return $paArray2;
+        }
+        foreach ($paArray2 AS $sKey2 => $sValue2) {
+            $paArray1[$sKey2] = Setting::arrayMergeRecursiveReplace(@$paArray1[$sKey2], $sValue2);
+        }
+        return $paArray1;
+    }
+
     public static function init($configfile) {
         date_default_timezone_set("Asia/Jakarta");
         $bp = Setting::setupBasePath($configfile);
@@ -58,7 +69,11 @@ class Setting {
             $json = json_encode($json, JSON_PRETTY_PRINT);
             file_put_contents(Setting::$path, $json);
         }
-        Setting::$data = json_decode(file_get_contents(Setting::$path), true);
+
+        ## set default data value
+        $setting = json_decode(file_get_contents(Setting::$path), true);
+        Setting::$data = Setting::arrayMergeRecursiveReplace(Setting::$default, $setting);
+
         if (!Setting::$data) {
             echo "Failed to load [" . Setting::$path . "], invalid json file!";
             die();
@@ -71,7 +86,12 @@ class Setting {
             Setting::set('app.host', $protocol . $_SERVER['HTTP_HOST'] . $port);
         }
 
-        ## set path
+        ## set debug
+        defined('YII_DEBUG') or define('YII_DEBUG', true);
+        defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL', 3);
+    }
+
+    public static function initPath() {
         Yii::setPathOfAlias('app', Setting::getAppPath());
         Yii::setPathOfAlias('application', Setting::getApplicationPath());
         Yii::setPathOfAlias('repo', Setting::get('repo.path'));
@@ -107,6 +127,30 @@ class Setting {
         $arr = $value;
     }
 
+    public static function plansysInstalled() {
+        require_once("Installer.php");
+        return Installer::plansysInstalled();
+    }
+
+    public static function finalizeConfig($config) {
+        ## check if plansys is installed or not
+        if (!Setting::plansysInstalled()) {
+            $config = Installer::init($config);
+        } else {
+            $config['curl'] = array(
+                'class' => 'ext.curl.Curl',
+                'options' => array(CURLOPT_HEADER => true),
+            );
+            $config['theme'] = 'default';
+            $config['themeManager'] = array(
+                'basePath' => Setting::getThemePath()
+            );
+        }
+
+        ## return config
+        return $config;
+    }
+
     public static function getBasePath() {
         return Setting::$basePath;
     }
@@ -139,6 +183,14 @@ class Setting {
         } else {
             return Yii::getPathOfAlias('application.modules');
         }
+    }
+
+    public static function getRuntimePath() {
+        return Setting::getRootPath() . DIRECTORY_SEPARATOR . "assets" . DIRECTORY_SEPARATOR . "runtime";
+    }
+
+    public static function getAssetPath() {
+        return Setting::getRootPath() . DIRECTORY_SEPARATOR . "assets";
     }
 
     public static function getCommandMap($modules = null) {
@@ -249,7 +301,7 @@ class Setting {
                   'sqlsrv' => 'SQL Server',
                   'sqlite' => 'SQLite',
                   'oci' => 'Oracle'
-                 * 
+                 *
                  */
         ];
     }

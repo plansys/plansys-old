@@ -1,16 +1,15 @@
 <?php
 
 ## Setting initialization
-Setting::init(__FILE__);
+Setting::initPath();
 $basePath = Setting::getBasePath();
 $modules = Setting::getModules();
 
-return array(
+## define config
+$config = array(
     'basePath' => $basePath,
     'name' => (!Setting::get('app.name') ? "Plansys" : Setting::get('app.name')),
-    // preloading 'log' component
     'preload' => array('log', 'EJSUrlManager'),
-    // autoloading model and component classes
     'import' => array(
         'app.models.*',
         'application.models.*',
@@ -28,28 +27,22 @@ return array(
         'application.behaviors.*',
         'ext.YiiJasper.*',
     ),
+    'runtimePath' => Setting::getRuntimePath(),
     'sourceLanguage' => 'en_us',
     'language' => 'id',
     'modulePath' => Setting::getModulePath(),
     'controllerMap' => Setting::getControllerMap(),
     'modules' => array_merge($modules, array(
-        'gii' => array(
-            'class' => 'system.gii.GiiModule',
-            'password' => '123',
-            'ipFilters' => array('127.0.0.1', '::1'),
-        ),
         'nfy' => array(
             'class' => 'nfy.NfyModule'
         )
     )),
     'aliases' => array(
-        'nfy' => realpath(__DIR__ . '/../modules/nfy'),
+        'nfy' => Setting::getBasePath() . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'nfy',
     ),
-    'theme' => 'default',
-    // application components
     'components' => array(
-        'themeManager' => array(
-            'basePath' => Setting::getThemePath()
+        'assetManager' => array(
+            'basePath' => Setting::getAssetPath()
         ),
         'img' => array(
             'class' => 'application.extensions.simpleimage.CSimpleImage',
@@ -66,12 +59,7 @@ return array(
         'EJSUrlManager' => array(
             'class' => 'ext.JSUrlManager.EJSUrlManager'
         ),
-        'curl' => array(
-            'class' => 'ext.curl.Curl',
-            'options' => array(CURLOPT_HEADER => true),
-        ),
         'user' => array(
-// enable cookie-based authentication
             'allowAutoLogin' => true,
             'class' => 'WebUser',
         ),
@@ -102,10 +90,8 @@ return array(
             )
         )
     ),
-    // application-level parameters that can be accessed
-// using Yii::app()->params['paramName']
-    'params' => array(
-// this is used in contact page
-        'adminEmail' => 'webmaster@example.com',
-    ),
+    'params' => array(),
 );
+
+return Setting::finalizeConfig($config);
+

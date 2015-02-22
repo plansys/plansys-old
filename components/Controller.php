@@ -17,8 +17,12 @@ class Controller extends CController {
     }
 
     public function staticUrl($path) {
-        $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
-        $static = "/" . array_pop($dir) . "/static";
+        $static = "/static";
+        if (substr(Yii::app()->baseUrl, -7) != "plansys") {
+            $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
+            $static = "/" . array_pop($dir) . "/static";
+        }
+
         return $this->url($static . $path);
     }
 
@@ -60,6 +64,14 @@ class Controller extends CController {
     }
 
     public function getMainMenu() {
+        if (!Setting::plansysInstalled()) {
+            return [
+                [
+                    'label' => 'Plansys Installer'
+                ]
+            ];
+        }
+
         $name = "";
         if (!Yii::app()->user->isGuest) {
             $name = Yii::app()->user->model->fullname;
@@ -166,7 +178,7 @@ class Controller extends CController {
         if (!is_null($model) && method_exists($model, 'loadAllRelations')) {
             $model->loadAllRelations();
         }
-        
+
         if ($model === null)
             throw new CHttpException(404, 'The requested page does not exist.');
         return $model;
