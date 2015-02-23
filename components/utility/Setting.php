@@ -155,7 +155,6 @@ class Setting {
             return Installer::checkInstall();
         } else {
             return Installer::checkInstall("Checking Directory Permission");
-            return true;
         }
     }
 
