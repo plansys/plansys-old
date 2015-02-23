@@ -27,7 +27,7 @@ pre {
     position:absolute;
     top:28px;
     left:0px;
-    right:26px;
+    right:0px;
     bottom:0px;
     background:white;
 }
@@ -309,6 +309,29 @@ i {
 .navbar-nav > .no-menu.dropdown-submenu > a  {
     padding-right:10px !important;
 }
+
+.nav > li > a:hover,
+.nav > li > a:focus {
+    text-decoration: none;
+    background-color: rgba(255,255,255,.2);
+}
+.nav > li.disabled > a {
+    color: #777;
+}
+.nav > li.disabled > a:hover,
+.nav > li.disabled > a:focus {
+    color: #777;
+    text-decoration: none;
+    cursor: not-allowed;
+    background-color: transparent;
+}
+
+.nav .open > a,
+.nav .open > a:hover,
+.nav .open > a:focus {
+    background-color: rgba(255,255,255,.2);
+}
+
 .dropdown-submenu:hover > .dropdown-menu {
     display:block;
 }

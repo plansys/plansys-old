@@ -18,12 +18,15 @@ class Setting {
             'path' => 'repo'
         ],
         'app' => [
-            'dir' => 'app'
+            'dir' => 'app',
+            'mode' => 'development'
         ],
     ];
+    private static $_isInstalled = null;
 
-    private static function setupBasePath($configfile) {
-        $basePath = dirname($configfile);
+    private static function setupBasePath($configFile) {
+        $configFile = str_replace("/", DIRECTORY_SEPARATOR, $configFile);
+        $basePath = dirname($configFile);
         $basePath = explode(DIRECTORY_SEPARATOR, $basePath);
 
         array_pop($basePath);
@@ -48,7 +51,17 @@ class Setting {
         }
     }
 
-    public static function init($configfile) {
+    private static function arrayMergeRecursiveReplace($paArray1, $paArray2) {
+        if (!is_array($paArray1) or ! is_array($paArray2)) {
+            return $paArray2;
+        }
+        foreach ($paArray2 AS $sKey2 => $sValue2) {
+            $paArray1[$sKey2] = Setting::arrayMergeRecursiveReplace(@$paArray1[$sKey2], $sValue2);
+        }
+        return $paArray1;
+    }
+
+    public static function init($configfile, $installed = null) {
         date_default_timezone_set("Asia/Jakarta");
         $bp = Setting::setupBasePath($configfile);
         Setting::$path = $bp . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
@@ -58,7 +71,11 @@ class Setting {
             $json = json_encode($json, JSON_PRETTY_PRINT);
             file_put_contents(Setting::$path, $json);
         }
-        Setting::$data = json_decode(file_get_contents(Setting::$path), true);
+
+        ## set default data value
+        $setting = json_decode(file_get_contents(Setting::$path), true);
+        Setting::$data = Setting::arrayMergeRecursiveReplace(Setting::$default, $setting);
+
         if (!Setting::$data) {
             echo "Failed to load [" . Setting::$path . "], invalid json file!";
             die();
@@ -71,7 +88,15 @@ class Setting {
             Setting::set('app.host', $protocol . $_SERVER['HTTP_HOST'] . $port);
         }
 
-        ## set path
+        ## set debug
+        Setting::$_isInstalled = $installed;
+        if (Setting::get('app.mode') != 'production') {
+            defined('YII_DEBUG') or define('YII_DEBUG', true);
+            defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL', 3);
+        }
+    }
+
+    public static function initPath() {
         Yii::setPathOfAlias('app', Setting::getAppPath());
         Yii::setPathOfAlias('application', Setting::getApplicationPath());
         Yii::setPathOfAlias('repo', Setting::get('repo.path'));
@@ -107,6 +132,52 @@ class Setting {
         $arr = $value;
     }
 
+    public static function checkPath($path) {
+        if (!is_dir($path)) {
+            if (!@mkdir($path)) {
+                $error = error_get_last();
+                $message = Yii::t('plansys', "Failed to create directory '{path}' because : {error}");
+                $message = strtr($message, [
+                    '{path}' => $path,
+                    '{error}' => $error['message']
+                ]);
+
+                return $message;
+            }
+        }
+        return true;
+    }
+
+    public static function isInstalled() {
+        require_once("Installer.php");
+        if (Setting::$_isInstalled !== true) {
+            return Installer::checkInstall();
+        } else {
+            return Installer::checkInstall("Checking Directory Permission");
+        }
+    }
+
+    public static function finalizeConfig($config) {
+        ## check if plansys is installed or not
+        if (!Setting::isInstalled()) {
+            $config = Installer::init($config);
+        } else {
+            $config['components']['curl'] = array(
+                'class' => 'ext.curl.Curl',
+                'options' => array(CURLOPT_HEADER => true),
+            );
+
+            if (Setting::getThemePath() != "") {
+                $config['components']['themeManager'] = array(
+                    'basePath' => Setting::getThemePath()
+                );
+            }
+            $config['theme'] = 'default';
+        }
+        ## return config
+        return $config;
+    }
+
     public static function getBasePath() {
         return Setting::$basePath;
     }
@@ -128,9 +199,12 @@ class Setting {
     }
 
     public static function getThemePath() {
-        if (Yii::getPathOfAlias(Setting::get('app.dir')) . DIRECTORY_SEPARATOR . "themes") {
-            return "app/themes";
+        $themePath = Yii::getPathOfAlias(Setting::get('app.dir')) . DIRECTORY_SEPARATOR . "themes";
+
+        if (is_dir($themePath)) {
+            return Setting::get('app.dir') . "/themes";
         }
+        return "";
     }
 
     public static function getModulePath() {
@@ -139,6 +213,14 @@ class Setting {
         } else {
             return Yii::getPathOfAlias('application.modules');
         }
+    }
+
+    public static function getRuntimePath() {
+        return Setting::getRootPath() . DIRECTORY_SEPARATOR . "assets" . DIRECTORY_SEPARATOR . "runtime";
+    }
+
+    public static function getAssetPath() {
+        return Setting::getRootPath() . DIRECTORY_SEPARATOR . "assets";
     }
 
     public static function getCommandMap($modules = null) {
@@ -244,13 +326,13 @@ class Setting {
     public static function getDBDriverList() {
         return [
             'mysql' => 'MySQL',
-                /*
-                  'pgsql' => 'PostgreSQL',
-                  'sqlsrv' => 'SQL Server',
-                  'sqlite' => 'SQLite',
-                  'oci' => 'Oracle'
-                 * 
-                 */
+            /*
+              'pgsql' => 'PostgreSQL',
+              'sqlsrv' => 'SQL Server',
+              'sqlite' => 'SQLite',
+              'oci' => 'Oracle'
+             *
+             */
         ];
     }
 

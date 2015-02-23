@@ -14,6 +14,7 @@ class Helper {
         }
     }
 
+
     public static function timeToHour($time) {
         return strtotime('1970-01-01 ' . $time . 'GMT') / 3600;
     }
@@ -60,8 +61,8 @@ class Helper {
         $phpExcelObject->getActiveSheet()->fromArray($data, null, 'A1');
         foreach (range('A', $phpExcelObject->getActiveSheet()->getHighestDataColumn()) as $col) {
             $phpExcelObject->getActiveSheet()
-                    ->getColumnDimension($col)
-                    ->setAutoSize(true);
+                ->getColumnDimension($col)
+                ->setAutoSize(true);
         }
 
         Helper::generateExcel($phpExcelObject, $file);
@@ -98,11 +99,11 @@ class Helper {
     }
 
     /**
-     * Recursive function to get an associative array of class properties by property name => ReflectionProperty() object 
-     * including inherited ones from extended classes 
-     * @param string $className Class name 
-     * @param string $types Any combination of <b>public, private, protected, static</b> 
-     * @return array 
+     * Recursive function to get an associative array of class properties by property name => ReflectionProperty() object
+     * including inherited ones from extended classes
+     * @param string $className Class name
+     * @param string $types Any combination of <b>public, private, protected, static</b>
+     * @return array
      */
     public static function getClassProperties($className, $types = 'public') {
         $ref = new ReflectionClass($className);
@@ -111,13 +112,13 @@ class Helper {
         foreach ($props as $prop) {
             $f = $prop->getName();
 
-            if ($prop->isPublic() and ( stripos($types, 'public') === FALSE))
+            if ($prop->isPublic() and (stripos($types, 'public') === FALSE))
                 continue;
-            if ($prop->isPrivate() and ( stripos($types, 'private') === FALSE))
+            if ($prop->isPrivate() and (stripos($types, 'private') === FALSE))
                 continue;
-            if ($prop->isProtected() and ( stripos($types, 'protected') === FALSE))
+            if ($prop->isProtected() and (stripos($types, 'protected') === FALSE))
                 continue;
-            if ($prop->isStatic() and ( stripos($types, 'static') === FALSE))
+            if ($prop->isStatic() and (stripos($types, 'static') === FALSE))
                 continue;
 
             $props_arr[$f] = $prop;
@@ -293,11 +294,11 @@ class Helper {
 
 
         return join(' ', array_map(function ($key) use ($attributes) {
-                    if (is_bool($attributes[$key])) {
-                        return $attributes[$key] ? $key : '';
-                    }
-                    return $key . '="' . $attributes[$key] . '"';
-                }, array_keys($attributes)));
+            if (is_bool($attributes[$key])) {
+                return $attributes[$key] ? $key : '';
+            }
+            return $key . '="' . $attributes[$key] . '"';
+        }, array_keys($attributes)));
     }
 
     public static function minifyHtml($text) {
@@ -822,10 +823,10 @@ class Helper {
      * The parts of the second URL will be merged into the first according to
      * the flags argument.
      *
-     * @param mixed $url     (part(s) of) an URL in form of a string or
+     * @param mixed $url (part(s) of) an URL in form of a string or
      *                       associative array like parse_url() returns
-     * @param mixed $parts   same as the first argument
-     * @param int   $flags   a bitmask of binary or'ed HTTP_URL constants;
+     * @param mixed $parts same as the first argument
+     * @param int $flags a bitmask of binary or'ed HTTP_URL constants;
      *                       HTTP_URL_REPLACE is the default
      * @param array $new_url if set, it will be filled with the parts of the
      *                       composed url like parse_url() would return
@@ -864,8 +865,8 @@ class Helper {
             if (isset($parts['path']) && ($flags & HTTP_URL_JOIN_PATH)) {
                 if (isset($url['path']) && substr($parts['path'], 0, 1) !== '/') {
                     $url['path'] = rtrim(
-                                    str_replace(basename($url['path']), '', $url['path']), '/'
-                            ) . '/' . ltrim($parts['path'], '/');
+                            str_replace(basename($url['path']), '', $url['path']), '/'
+                        ) . '/' . ltrim($parts['path'], '/');
                 } else {
                     $url['path'] = $parts['path'];
                 }
@@ -877,9 +878,9 @@ class Helper {
                     parse_str($parts['query'], $parts_query);
 
                     $url['query'] = http_build_query(
-                            array_replace_recursive(
-                                    $url_query, $parts_query
-                            )
+                        array_replace_recursive(
+                            $url_query, $parts_query
+                        )
                     );
                 } else {
                     $url['query'] = $parts['query'];

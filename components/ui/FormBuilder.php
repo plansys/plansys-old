@@ -1237,7 +1237,7 @@ EOF;
     public static function listFile($formatRecursive = true) {
         $files = [];
 
-        $devMode = (bool) Setting::get('app.devMode');
+        $devMode = (bool) Setting::get('app.mode') == "development";
 
         $func = function($m, $module = "", $aliaspath = "", $path) {
             return [
