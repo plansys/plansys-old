@@ -76,55 +76,55 @@ class Installer {
                 [
                     'title' => 'Checking PHP Version ( > 5.5.0 )',
                     'check' => function() {
-                        return version_compare(PHP_VERSION, "5.5.0", ">")
+                        return version_compare(PHP_VERSION, "5.5.0", ">");
                     }
                 ],
                 [
                     'title' => 'Reflection Extension',
                     'check' => function() {
-                        return class_exists('Reflection', false)
+                        return class_exists('Reflection', false);
                     }
                 ],
                 [
                     'title' => 'PCRE Extension',
                     'check' => function() {
-                        return extension_loaded("pcre")
+                        return extension_loaded("pcre");
                     }
                 ],
                 [
                     'title' => 'SPL extension',
                     'check' => function() {
-                        return extension_loaded("SPL")
+                        return extension_loaded("SPL");
                     }
                 ],
                 [
                     'title' => 'DOM extension',
                     'check' => function() {
-                        return extension_loaded("DOMDocument")
+                        return extension_loaded("DOMDocument");
                     }
                 ],
                 [
                     'title' => 'PDO extension',
                     'check' => function() {
-                        return extension_loaded("pdo")
+                        return extension_loaded("pdo");
                     }
                 ],
                 [
                     'title' => 'PDO MySQL extension',
                     'check' => function() {
-                        return extension_loaded("pdo_mysql")
+                        return extension_loaded("pdo_mysql");
                     }
                 ],
                 [
                     'title' => 'Mcrypt extension',
                     'check' => function() {
-                        return extension_loaded("mcrypt")
+                        return extension_loaded("mcrypt");
                     }
                 ],
                 [
                     'title' => 'SOAP extension',
                     'check' => function() {
-                        return extension_loaded("soap")
+                        return extension_loaded("soap");
                     }
                 ],
                 [
@@ -149,13 +149,13 @@ class Installer {
                 [
                     'title' => 'Ctype extension',
                     'check' => function() {
-                        return extension_loaded("ctype")
+                        return extension_loaded("ctype");
                     }
                 ],
                 [
                     'title' => 'Fileinfo extension',
                     'check' => function() {
-                        return extension_loaded("fileinfo")
+                        return extension_loaded("fileinfo");
                     }
                 ]
             ],
