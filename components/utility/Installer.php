@@ -15,37 +15,37 @@ class Installer {
         Installer::$_errorList[$group][$idx] = $error;
     }
 
-    public static function getCheckList() {
-        return [
+    public static function getCheckList($checkGroup = "") {
+        $checkLists = [
             "Checking Directory Permission" => [
                 [
                     "title" => "Checking base directory permissions",
                     "check" => function() {
-                        return Installer::checkPath(Setting::getBasePath());
+                        return Setting::checkPath(Setting::getBasePath());
                     }
                 ],
                 [
                     "title" => "Checking app directory permissions",
                     "check" => function() {
-                        return Installer::checkPath(Setting::getAppPath());
+                        return Setting::checkPath(Setting::getAppPath());
                     }
                 ],
                 [
                     "title" => "Checking assets directory permissions",
                     "check" => function() {
-                        return Installer::checkPath(Setting::getAssetPath());
+                        return Setting::checkPath(Setting::getAssetPath());
                     }
                 ],
                 [
                     "title" => "Checking runtime directory permissions",
                     "check" => function() {
-                        return Installer::checkPath(Setting::getRuntimePath());
+                        return Setting::checkPath(Setting::getRuntimePath());
                     }
                 ],
                 [
                     "title" => "Checking repository directory permissions",
                     "check" => function() {
-                        return Installer::checkPath(Setting::get('repo.path'));
+                        return Setting::checkPath(Setting::get('repo.path'));
                     }
                 ]
             ],
@@ -58,27 +58,17 @@ class Installer {
                 ]
             ]
         ];
-    }
 
-    public static function checkPath($path) {
-        if (!is_dir($path)) {
-            if (!@mkdir($path)) {
-                $error = error_get_last();
-                $message = Yii::t('plansys', "Failed to create directory '{path}' because : {error}");
-                $message = strtr($message, [
-                    '{path}' => $path,
-                    '{error}' => $error['message']
-                ]);
-
-                return $message;
-            }
+        if ($checkGroup == "") {
+            return $checkLists;
+        } else {
+            return [$checkGroup => $checkLists[$checkGroup]];
         }
-        return true;
     }
 
-    public static function isInstalled() {  
-        
-        $checkList = Installer::getCheckList();
+    public static function checkInstall($checkGroup = "") {
+        $checkList = Installer::getCheckList($checkGroup);
+
         foreach ($checkList as $group => $groupItem) {
             foreach ($groupItem as $i => $c) {
                 $check = $c['check']();
@@ -95,7 +85,7 @@ class Installer {
     public static function init($config) {
         $config['defaultController'] = "install";
         $config['components']['db'] = [];
-        
+
         return $config;
     }
 

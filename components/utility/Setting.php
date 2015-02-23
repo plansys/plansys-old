@@ -90,8 +90,11 @@ class Setting {
 
         ## set debug
         Setting::$_isInstalled = $installed;
-        defined('YII_DEBUG') or define('YII_DEBUG', true);
-        defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL', 3);
+
+        if (Setting::get('app.mode') != 'production') {
+            defined('YII_DEBUG') or define('YII_DEBUG', true);
+            defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL', 3);
+        }
     }
 
     public static function initPath() {
@@ -130,11 +133,28 @@ class Setting {
         $arr = $value;
     }
 
+    public static function checkPath($path) {
+        if (!is_dir($path)) {
+            if (!@mkdir($path)) {
+                $error = error_get_last();
+                $message = Yii::t('plansys', "Failed to create directory '{path}' because : {error}");
+                $message = strtr($message, [
+                    '{path}' => $path,
+                    '{error}' => $error['message']
+                ]);
+
+                return $message;
+            }
+        }
+        return true;
+    }
+
     public static function isInstalled() {
+        require_once("Installer.php");
         if (Setting::$_isInstalled !== true) {
-            require_once("Installer.php");
-            return Installer::isInstalled();
+            return Installer::checkInstall();
         } else {
+            return Installer::checkInstall("Checking Directory Permission");
             return true;
         }
     }
