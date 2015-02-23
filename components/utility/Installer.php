@@ -53,7 +53,7 @@ class Installer {
                 [
                     "title" => "Checking Database Connection",
                     "check" => function() {
-                        return "error";
+                        return true;
                     }
                 ]
             ]
@@ -76,7 +76,7 @@ class Installer {
         return true;
     }
 
-    public static function plansysInstalled() {
+    public static function plansysInstalled() {   
         $checkList = Installer::getCheckList();
         foreach ($checkList as $group => $groupItem) {
             foreach ($groupItem as $i => $c) {

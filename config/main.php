@@ -93,5 +93,6 @@ $config = array(
     'params' => array(),
 );
 
-return Setting::finalizeConfig($config);
+$config = Setting::finalizeConfig($config);
 
+return $config;

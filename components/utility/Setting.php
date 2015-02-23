@@ -23,8 +23,9 @@ class Setting {
         ],
     ];
 
-    private static function setupBasePath($configfile) {
-        $basePath = dirname($configfile);
+    private static function setupBasePath($configFile) {
+        $configFile = str_replace("/", DIRECTORY_SEPARATOR, $configFile);
+        $basePath = dirname($configFile);
         $basePath = explode(DIRECTORY_SEPARATOR, $basePath);
 
         array_pop($basePath);
@@ -137,16 +138,18 @@ class Setting {
         if (!Setting::plansysInstalled()) {
             $config = Installer::init($config);
         } else {
-            $config['curl'] = array(
+            $config['components']['curl'] = array(
                 'class' => 'ext.curl.Curl',
                 'options' => array(CURLOPT_HEADER => true),
             );
-            $config['theme'] = 'default';
-            $config['themeManager'] = array(
-                'basePath' => Setting::getThemePath()
-            );
-        }
 
+            if (Setting::getThemePath() != "") {
+                $config['components']['themeManager'] = array(
+                    'basePath' => Setting::getThemePath()
+                );
+            }
+            $config['theme'] = 'default';
+        }
         ## return config
         return $config;
     }
@@ -172,9 +175,12 @@ class Setting {
     }
 
     public static function getThemePath() {
-        if (Yii::getPathOfAlias(Setting::get('app.dir')) . DIRECTORY_SEPARATOR . "themes") {
-            return "app/themes";
+        $themePath = Yii::getPathOfAlias(Setting::get('app.dir')) . DIRECTORY_SEPARATOR . "themes";
+
+        if (is_dir($themePath)) {
+            return Setting::get('app.dir') . "/themes";
         }
+        return "";
     }
 
     public static function getModulePath() {
@@ -296,13 +302,13 @@ class Setting {
     public static function getDBDriverList() {
         return [
             'mysql' => 'MySQL',
-                /*
-                  'pgsql' => 'PostgreSQL',
-                  'sqlsrv' => 'SQL Server',
-                  'sqlite' => 'SQLite',
-                  'oci' => 'Oracle'
-                 *
-                 */
+            /*
+              'pgsql' => 'PostgreSQL',
+              'sqlsrv' => 'SQL Server',
+              'sqlite' => 'SQLite',
+              'oci' => 'Oracle'
+             *
+             */
         ];
     }
 
