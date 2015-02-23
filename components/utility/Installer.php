@@ -76,7 +76,8 @@ class Installer {
         return true;
     }
 
-    public static function plansysInstalled() {   
+    public static function isInstalled() {  
+        
         $checkList = Installer::getCheckList();
         foreach ($checkList as $group => $groupItem) {
             foreach ($groupItem as $i => $c) {

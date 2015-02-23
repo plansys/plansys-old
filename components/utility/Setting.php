@@ -22,6 +22,7 @@ class Setting {
             'mode' => 'development'
         ],
     ];
+    private static $_isInstalled = null;
 
     private static function setupBasePath($configFile) {
         $configFile = str_replace("/", DIRECTORY_SEPARATOR, $configFile);
@@ -60,7 +61,7 @@ class Setting {
         return $paArray1;
     }
 
-    public static function init($configfile) {
+    public static function init($configfile, $installed = null) {
         date_default_timezone_set("Asia/Jakarta");
         $bp = Setting::setupBasePath($configfile);
         Setting::$path = $bp . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
@@ -88,6 +89,7 @@ class Setting {
         }
 
         ## set debug
+        Setting::$_isInstalled = $installed;
         defined('YII_DEBUG') or define('YII_DEBUG', true);
         defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL', 3);
     }
@@ -128,14 +130,18 @@ class Setting {
         $arr = $value;
     }
 
-    public static function plansysInstalled() {
-        require_once("Installer.php");
-        return Installer::plansysInstalled();
+    public static function isInstalled() {
+        if (Setting::$_isInstalled !== true) {
+            require_once("Installer.php");
+            return Installer::isInstalled();
+        } else {
+            return true;
+        }
     }
 
     public static function finalizeConfig($config) {
         ## check if plansys is installed or not
-        if (!Setting::plansysInstalled()) {
+        if (!Setting::isInstalled()) {
             $config = Installer::init($config);
         } else {
             $config['components']['curl'] = array(

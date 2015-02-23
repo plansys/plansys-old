@@ -64,7 +64,7 @@ class Controller extends CController {
     }
 
     public function getMainMenu() {
-        if (!Setting::plansysInstalled()) {
+        if (!Setting::isInstalled()) {
             return [
                 [
                     'label' => 'Plansys Installer'
