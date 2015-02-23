@@ -100,7 +100,7 @@ class Installer {
                 [
                     'title' => 'DOM extension',
                     'check' => function() {
-                        return extension_loaded("DOMDocument");
+                        return class_exists("DOMDocument", false);
                     }
                 ],
                 [
@@ -119,12 +119,6 @@ class Installer {
                     'title' => 'Mcrypt extension',
                     'check' => function() {
                         return extension_loaded("mcrypt");
-                    }
-                ],
-                [
-                    'title' => 'SOAP extension',
-                    'check' => function() {
-                        return extension_loaded("soap");
                     }
                 ],
                 [
@@ -184,6 +178,9 @@ class Installer {
                 $check = $c['check']();
                 if ($check !== true) {
                     Installer::setError($group, $i, $check);
+
+                    var_dump($group, $i, $check);
+                    die();
                     return false;
                 }
             }

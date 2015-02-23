@@ -11,7 +11,7 @@ class InstallController extends Controller {
     public function accessRules() {
         return array(
             array('allow',
-                'expression' => '!Setting::plansysInstalled()',
+                'expression' => '!Setting::isInstalled()',
             ),
             array('deny'),
         );
