@@ -64,6 +64,6 @@ $config = array(
 );
 
 
-$config = Setting::finalizeConfig($config);
+$config = Setting::finalizeConfig($config, "console");
 
 return $config;

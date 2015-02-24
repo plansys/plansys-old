@@ -148,7 +148,7 @@ class Setting {
         return true;
     }
 
-    public static function finalizeConfig($config) {
+    public static function finalizeConfig($config, $type = "main") {
         ## check if plansys is installed or not
         if (Setting::$mode == "init") {
             require_once("Installer.php");
@@ -159,7 +159,8 @@ class Setting {
                 'options' => array(CURLOPT_HEADER => true),
             );
 
-            if (Setting::getThemePath() != "") {
+
+            if ($type == "main" && Setting::getThemePath() != "") {
                 $config['components']['themeManager'] = array(
                     'basePath' => Setting::getThemePath()
                 );
