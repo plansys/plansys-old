@@ -15,6 +15,20 @@ class Installer {
         Installer::$_errorList[$group][$idx] = $error;
     }
 
+    public static function getError($group, $idx = -1) {
+        if (!isset(Installer::$_errorList[$group])) {
+            return false;
+        } else {
+            if ($idx == -1) {
+                return true;
+            } else if (isset(Installer::$_errorList[$group][$idx])) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     public static function checkServerVar() {
 
         $vars = array('HTTP_HOST', 'SERVER_NAME', 'SERVER_PORT', 'SCRIPT_NAME', 'SCRIPT_FILENAME', 'PHP_SELF', 'HTTP_ACCEPT', 'HTTP_USER_AGENT');
@@ -122,7 +136,7 @@ class Installer {
                     }
                 ],
                 [
-                    'title' => 'GD extension with<br />FreeType support<br />or ImageMagick<br />extension with<br />PNG support',
+                    'title' => 'GD extension with FreeType support<br />or ImageMagick extension with <br/> PNG support',
                     'check' => function() {
                         if (extension_loaded('imagick')) {
                             $imagick = new Imagick();
@@ -145,22 +159,8 @@ class Installer {
                     'check' => function() {
                         return extension_loaded("ctype");
                     }
-                ],
-                [
-                    'title' => 'Fileinfo extension',
-                    'check' => function() {
-                        return extension_loaded("fileinfo");
-                    }
                 ]
             ],
-            "Checking Database" => [
-                [
-                    "title" => "Checking Database Connection",
-                    "check" => function() {
-                        return true;
-                    }
-                ]
-            ]
         ];
 
         if ($checkGroup == "") {
@@ -172,26 +172,74 @@ class Installer {
 
     public static function checkInstall($checkGroup = "") {
         $checkList = Installer::getCheckList($checkGroup);
-
+        $success = false;
         foreach ($checkList as $group => $groupItem) {
             foreach ($groupItem as $i => $c) {
                 $check = $c['check']();
                 if ($check !== true) {
                     Installer::setError($group, $i, $check);
-
-                    var_dump($group, $i, $check);
-                    die();
-                    return false;
+                    $success = false;
                 }
             }
         }
 
-        return true;
+        return $success;
+    }
+
+    private static function fullPath() {
+        $s = &$_SERVER;
+        $ssl = (!empty($s['HTTPS']) && $s['HTTPS'] == 'on') ? true : false;
+        $sp = strtolower($s['SERVER_PROTOCOL']);
+        $protocol = substr($sp, 0, strpos($sp, '/')) . (($ssl) ? 's' : '');
+        $port = $s['SERVER_PORT'];
+        $port = ((!$ssl && $port == '80') || ($ssl && $port == '443')) ? '' : ':' . $port;
+        $host = isset($s['HTTP_X_FORWARDED_HOST']) ? $s['HTTP_X_FORWARDED_HOST'] : (isset($s['HTTP_HOST']) ? $s['HTTP_HOST'] : null);
+        $host = isset($host) ? $host : $s['SERVER_NAME'] . $port;
+        $uri = $protocol . '://' . $host . $s['REQUEST_URI'];
+        $segments = explode('?', $uri, 2);
+        $url = $segments[0];
+        return $url;
+    }
+
+    public static function redirError($msg) {
+        header("Location: " . Installer::fullPath() . "?r=install/index&msg=" . $msg);
+    }
+
+    public static function createIndexFile() {
+        $path = Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "index.php";
+        $file = file_get_contents($path);
+        $file = str_replace(['$mode = "init"'], ['$mode = "install"'], $file);
+        if (!is_file($path)) {
+            return file_put_contents(Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php", $file);
+        } else {
+            $oldpath = Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php";
+            $oldfile = file_get_contents($oldpath);
+            if ($oldfile != $file) {
+                return file_put_contents($oldpath, $file);
+            } else {
+                return true;
+            }
+        }
     }
 
     public static function init($config) {
         $config['defaultController'] = "install";
         $config['components']['db'] = [];
+
+        $config['runtimePath'] = Setting::getRuntimePath();
+        $config['components']['assetManager']['basePath'] = Setting::getAssetPath();
+
+        if (Setting::$mode == "init") {
+            if (!Installer::createIndexFile()) {
+                if (!isset($_GET['msg'])) {
+                    Installer::redirError(Yii::t("plansys", "Failed to write in '" . Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php" . "'"));
+                    return $config;
+                }
+            } else {
+                $url = explode("/plansys", Installer::fullPath());
+                header("Location: " . $url[0] . "/index.php?r=install/index");
+            }
+        }
 
         return $config;
     }

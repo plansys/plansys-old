@@ -22,7 +22,7 @@ class Setting {
             'mode' => 'development'
         ],
     ];
-    private static $_isInstalled = null;
+    public static $mode = null;
 
     private static function setupBasePath($configFile) {
         $configFile = str_replace("/", DIRECTORY_SEPARATOR, $configFile);
@@ -61,7 +61,7 @@ class Setting {
         return $paArray1;
     }
 
-    public static function init($configfile, $installed = null) {
+    public static function init($configfile, $mode = "running") {
         date_default_timezone_set("Asia/Jakarta");
         $bp = Setting::setupBasePath($configfile);
         Setting::$path = $bp . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
@@ -89,7 +89,7 @@ class Setting {
         }
 
         ## set debug
-        Setting::$_isInstalled = $installed;
+        Setting::$mode = $mode;
         if (Setting::get('app.mode') != 'production') {
             defined('YII_DEBUG') or define('YII_DEBUG', true);
             defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL', 3);
@@ -148,18 +148,10 @@ class Setting {
         return true;
     }
 
-    public static function isInstalled() {
-        require_once("Installer.php");
-        if (Setting::$_isInstalled !== true) {
-            return Installer::checkInstall();
-        } else {
-            return Installer::checkInstall("Checking Directory Permission");
-        }
-    }
-
     public static function finalizeConfig($config) {
         ## check if plansys is installed or not
-        if (!Setting::isInstalled()) {
+        if (Setting::$mode == "init") {
+            require_once("Installer.php");
             $config = Installer::init($config);
         } else {
             $config['components']['curl'] = array(
@@ -171,10 +163,11 @@ class Setting {
                 $config['components']['themeManager'] = array(
                     'basePath' => Setting::getThemePath()
                 );
+                $config['theme'] = 'default';
             }
-            $config['theme'] = 'default';
         }
-        ## return config
+
+
         return $config;
     }
 

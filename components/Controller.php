@@ -64,7 +64,11 @@ class Controller extends CController {
     }
 
     public function getMainMenu() {
-        if (!Setting::isInstalled()) {
+        if (Setting::$mode == "init") {
+            if ($this->id != "install" || $this->action->id != "index") {
+                $this->redirect(["/install/index"]);
+            }
+
             return [
                 [
                     'label' => 'Plansys Installer'
