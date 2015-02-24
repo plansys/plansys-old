@@ -20,10 +20,14 @@ class InstallController extends Controller {
     public function beforeAction($action) {
         parent::beforeAction($action);
 
-        $baseUrl = Yii::app()->baseUrl;
         $cs = Yii::app()->getClientScript();
-        $root = Setting::$mode != "init" ? Setting::getRootPath() : Setting::getApplicationPath();
+        $root = Yii::app()->basePath;
         $path = str_replace([$root, "\\"], ["", "/"], $this->getViewPath());
+
+
+        if (Setting::$mode != "init") {
+            $path = "/plansys" . $path;
+        }
         $cs->registerCssFile(Yii::app()->baseUrl . $path . '/install.css');
 
         return true;
