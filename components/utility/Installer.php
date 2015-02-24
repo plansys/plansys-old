@@ -15,8 +15,10 @@ class Installer {
         Installer::$_errorList[$group][$idx] = $error;
     }
 
-    public static function getError($group, $idx = -1) {
-        if (!isset(Installer::$_errorList[$group])) {
+    public static function getError($group = "", $idx = -1) {
+        if ($group == "") {
+            return Installer::$_errorList;
+        } else if (!isset(Installer::$_errorList[$group])) {
             return false;
         } else {
             if ($idx == -1) {
@@ -30,24 +32,27 @@ class Installer {
     }
 
     public static function checkServerVar() {
-
         $vars = array('HTTP_HOST', 'SERVER_NAME', 'SERVER_PORT', 'SCRIPT_NAME', 'SCRIPT_FILENAME', 'PHP_SELF', 'HTTP_ACCEPT', 'HTTP_USER_AGENT');
         $missing = array();
         foreach ($vars as $var) {
             if (!isset($_SERVER[$var]))
                 $missing[] = $var;
         }
-        if (!empty($missing))
-            return t('yii', '$_SERVER does not have {vars}.', array('{vars}' => implode(', ', $missing)));
+        if (!empty($missing)) {
+            return Yii::t('yii', '$_SERVER does not have {vars}.', array('{vars}' => implode(', ', $missing)));
+        }
 
-        if (realpath($_SERVER["SCRIPT_FILENAME"]) !== realpath(__FILE__))
-            return t('yii', '$_SERVER["SCRIPT_FILENAME"] must be the same as the entry script file path.');
+        if (realpath($_SERVER["SCRIPT_FILENAME"]) !== realpath(__FILE__)) {
+            return Yii::t('yii', '$_SERVER["SCRIPT_FILENAME"] must be the same as the entry script file path.');
+        }
 
-        if (!isset($_SERVER["REQUEST_URI"]) && isset($_SERVER["QUERY_STRING"]))
-            return t('yii', 'Either $_SERVER["REQUEST_URI"] or $_SERVER["QUERY_STRING"] must exist.');
+        if (!isset($_SERVER["REQUEST_URI"]) && isset($_SERVER["QUERY_STRING"])) {
+            return Yii::t('yii', 'Either $_SERVER["REQUEST_URI"] or $_SERVER["QUERY_STRING"] must exist.');
+        }
 
-        if (!isset($_SERVER["PATH_INFO"]) && strpos($_SERVER["PHP_SELF"], $_SERVER["SCRIPT_NAME"]) !== 0)
-            return t('yii', 'Unable to determine URL path info. Please make sure $_SERVER["PATH_INFO"] (or $_SERVER["PHP_SELF"] and $_SERVER["SCRIPT_NAME"]) contains proper value.');
+        if (!isset($_SERVER["PATH_INFO"]) && strpos($_SERVER["PHP_SELF"], $_SERVER["SCRIPT_NAME"]) !== 0) {
+            return Yii::t('yii', 'Unable to determine URL path info. Please make sure $_SERVER["PATH_INFO"] (or $_SERVER["PHP_SELF"] and $_SERVER["SCRIPT_NAME"]) contains proper value.');
+        }
 
         return '';
     }
@@ -56,31 +61,37 @@ class Installer {
         $checkLists = [
             "Checking Directory Permission" => [
                 [
-                    "title" => "Checking base directory permissions",
+                    "title" => 'Checking base directory permissions<br/><i class="fa fa-folder-open"></i> ' . Setting::getBasePath(),
                     "check" => function() {
                         return Setting::checkPath(Setting::getBasePath());
                     }
                 ],
                 [
-                    "title" => "Checking app directory permissions",
+                    "title" => 'Checking app directory permissions<br/><i class="fa fa-folder-open"></i> ' . Setting::getAppPath(),
                     "check" => function() {
                         return Setting::checkPath(Setting::getAppPath());
                     }
                 ],
                 [
-                    "title" => "Checking assets directory permissions",
+                    "title" => 'Checking assets directory permissions<br/><i class="fa fa-folder-open"></i> ' . Setting::getAssetPath(),
                     "check" => function() {
                         return Setting::checkPath(Setting::getAssetPath());
                     }
                 ],
                 [
-                    "title" => "Checking runtime directory permissions",
+                    "title" => 'Checking runtime directory permissions<br/><i class="fa fa-folder-open"></i> ' . Setting::getRuntimePath(),
+                    "check" => function() {
+                        return false;
+                    }
+                ],
+                [
+                    "title" => 'Checking runtime directory permissions<br/><i class="fa fa-folder-open"></i> ' . Setting::getRuntimePath(),
                     "check" => function() {
                         return Setting::checkPath(Setting::getRuntimePath());
                     }
                 ],
                 [
-                    "title" => "Checking repository directory permissions",
+                    "title" => 'Checking repository directory permissions<br/><i class="fa fa-folder-open"></i> ' . Setting::get('repo.path'),
                     "check" => function() {
                         return Setting::checkPath(Setting::get('repo.path'));
                     }

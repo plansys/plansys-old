@@ -8,7 +8,7 @@
             <?php foreach (Installer::getCheckList() as $group => $item): ?>
                 <tr class="<?= Installer::getError($group) ? 'danger' : 'success'; ?>">
                     <td>
-                        <a href="#" ><?= $group ?> 
+                        <a href="#" ><b><?= $group ?></b>
                             <div class="sub <?= Installer::getError($group) ? 'error' : ''; ?>" >
                                 <table class="table table-condensed">
                                     <?php foreach ($item as $k => $i): ?>
@@ -30,6 +30,17 @@
             <?php endforeach; ?>
         </table>
 
+        <?php if (empty(Installer::getError())): ?>
+            <div class="install-passed"><?= Yii::t("plansys", "All Requirement Passed"); ?></div>
+
+            <a href="#" class="btn btn-success">
+                <?= Yii::t("plansys", "Next Step"); ?><i class="fa fa-chevron-right"></i>
+            </a>
+        <?php else: ?>
+            <div class="install-failed">
+                <?= Yii::t("plansys", "Please fix error(s) above to continue ..."); ?>
+            </div>
+        <?php endif; ?>
     <?php else: ?>
         <br/><br/>
         <div class="alert alert-danger install-error">

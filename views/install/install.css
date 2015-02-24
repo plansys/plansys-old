@@ -7,6 +7,7 @@ body, #content {
     width:700px;
     margin:60px auto;
     border-radius:10px;
+    text-align:center;
     min-height: 250px;
 }
 
@@ -19,6 +20,7 @@ body, #content {
 .install-check {
     width:300px !important;
     margin:20px auto;
+    text-align:left;
 }
 
 .install-check .danger td {
@@ -44,6 +46,19 @@ body, #content {
 .install-status {
     width:30px;
     text-align:center;
+}
+
+.install-passed {
+    font-weight:bold;
+    font-style: italic;
+    color:green;
+    margin-bottom:10px;
+}
+.install-failed {
+    font-weight:bold;
+    font-style: italic;
+    color:red;
+    margin-bottom:10px;
 }
 
 .install-check .sub {
