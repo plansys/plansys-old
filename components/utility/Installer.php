@@ -24,7 +24,7 @@ class Installer {
             if ($idx == -1) {
                 return true;
             } else if (isset(Installer::$_errorList[$group][$idx])) {
-                return true;
+                return Installer::$_errorList[$group][$idx];
             } else {
                 return false;
             }
@@ -39,61 +39,58 @@ class Installer {
                 $missing[] = $var;
         }
         if (!empty($missing)) {
-            return Yii::t('yii', '$_SERVER does not have {vars}.', array('{vars}' => implode(', ', $missing)));
+            return Setting::t('$_SERVER does not have {vars}.', array('{vars}' => implode(', ', $missing)));
         }
 
-        if (realpath($_SERVER["SCRIPT_FILENAME"]) !== realpath(__FILE__)) {
-            return Yii::t('yii', '$_SERVER["SCRIPT_FILENAME"] must be the same as the entry script file path.');
+        if (realpath($_SERVER["SCRIPT_FILENAME"]) !== realpath(Setting::$entryScript)) {
+            return Setting::t('$_SERVER["SCRIPT_FILENAME"] <br/> `{s}`<br/><br/> must be the same as the entry script file path `{r}`.', [
+                '{s}' => realpath($_SERVER["SCRIPT_FILENAME"]),
+                '{r}' => realpath(__FILE__)
+            ]);
         }
 
         if (!isset($_SERVER["REQUEST_URI"]) && isset($_SERVER["QUERY_STRING"])) {
-            return Yii::t('yii', 'Either $_SERVER["REQUEST_URI"] or $_SERVER["QUERY_STRING"] must exist.');
+            return Setting::t('Either $_SERVER["REQUEST_URI"] or $_SERVER["QUERY_STRING"] must exist.');
         }
 
         if (!isset($_SERVER["PATH_INFO"]) && strpos($_SERVER["PHP_SELF"], $_SERVER["SCRIPT_NAME"]) !== 0) {
-            return Yii::t('yii', 'Unable to determine URL path info. Please make sure $_SERVER["PATH_INFO"] (or $_SERVER["PHP_SELF"] and $_SERVER["SCRIPT_NAME"]) contains proper value.');
+            return Setting::t('Unable to determine URL path info. Please make sure $_SERVER["PATH_INFO"] (or $_SERVER["PHP_SELF"] and $_SERVER["SCRIPT_NAME"]) contains proper value.');
         }
 
-        return '';
+        return true;
     }
 
     public static function getCheckList($checkGroup = "") {
         $checkLists = [
             "Checking Directory Permission" => [
                 [
-                    "title" => 'Checking base directory permissions<br/><i class="fa fa-folder-open"></i> ' . Setting::getBasePath(),
+                    "title" => 'Checking base directory permissions',
                     "check" => function() {
-                        return Setting::checkPath(Setting::getBasePath());
+                        return Setting::checkPath(Setting::getBasePath(), true);
                     }
                 ],
                 [
-                    "title" => 'Checking app directory permissions<br/><i class="fa fa-folder-open"></i> ' . Setting::getAppPath(),
+                    "title" => 'Checking app directory permissions' ,
                     "check" => function() {
                         return Setting::checkPath(Setting::getAppPath());
                     }
                 ],
                 [
-                    "title" => 'Checking assets directory permissions<br/><i class="fa fa-folder-open"></i> ' . Setting::getAssetPath(),
+                    "title" => 'Checking assets directory permissions',
                     "check" => function() {
-                        return Setting::checkPath(Setting::getAssetPath());
+                        return Setting::checkPath(Setting::getAssetPath(), true);
                     }
                 ],
                 [
-                    "title" => 'Checking runtime directory permissions<br/><i class="fa fa-folder-open"></i> ' . Setting::getRuntimePath(),
+                    "title" => 'Checking runtime directory permissions',
                     "check" => function() {
-                        return false;
+                        return Setting::checkPath(Setting::getRuntimePath(), true);
                     }
                 ],
                 [
-                    "title" => 'Checking runtime directory permissions<br/><i class="fa fa-folder-open"></i> ' . Setting::getRuntimePath(),
+                    "title" => 'Checking repository directory permissions' ,
                     "check" => function() {
-                        return Setting::checkPath(Setting::getRuntimePath());
-                    }
-                ],
-                [
-                    "title" => 'Checking repository directory permissions<br/><i class="fa fa-folder-open"></i> ' . Setting::get('repo.path'),
-                    "check" => function() {
-                        return Setting::checkPath(Setting::get('repo.path'));
+                        return Setting::checkPath(Setting::get('repo.path'), true);
                     }
                 ]
             ],
@@ -170,6 +167,12 @@ class Installer {
                     'check' => function() {
                         return extension_loaded("ctype");
                     }
+                ],
+                [
+                    'title' => 'Checking Server variables',
+                    'check' => function() {
+                        return Installer::checkServerVar();
+                    }
                 ]
             ],
         ];
@@ -197,36 +200,17 @@ class Installer {
         return $success;
     }
 
-    private static function fullPath() {
-        $s = &$_SERVER;
-        $ssl = (!empty($s['HTTPS']) && $s['HTTPS'] == 'on') ? true : false;
-        $sp = strtolower($s['SERVER_PROTOCOL']);
-        $protocol = substr($sp, 0, strpos($sp, '/')) . (($ssl) ? 's' : '');
-        $port = $s['SERVER_PORT'];
-        $port = ((!$ssl && $port == '80') || ($ssl && $port == '443')) ? '' : ':' . $port;
-        $host = isset($s['HTTP_X_FORWARDED_HOST']) ? $s['HTTP_X_FORWARDED_HOST'] : (isset($s['HTTP_HOST']) ? $s['HTTP_HOST'] : null);
-        $host = isset($host) ? $host : $s['SERVER_NAME'] . $port;
-        $uri = $protocol . '://' . $host . $s['REQUEST_URI'];
-        $segments = explode('?', $uri, 2);
-        $url = $segments[0];
-        return $url;
-    }
-
-    public static function redirError($msg) {
-        header("Location: " . Installer::fullPath() . "?r=install/index&msg=" . $msg);
-    }
-
     public static function createIndexFile() {
         $path = Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "index.php";
         $file = file_get_contents($path);
         $file = str_replace(['$mode = "init"'], ['$mode = "install"'], $file);
         if (!is_file($path)) {
-            return file_put_contents(Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php", $file);
+            return @file_put_contents(Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php", $file);
         } else {
             $oldpath = Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php";
-            $oldfile = file_get_contents($oldpath);
+            $oldfile = @file_get_contents($oldpath);
             if ($oldfile != $file) {
-                return file_put_contents($oldpath, $file);
+                return @file_put_contents($oldpath, $file);
             } else {
                 return true;
             }
@@ -234,21 +218,24 @@ class Installer {
     }
 
     public static function init($config) {
+        ## we hare to make sure the error page is shown
+        ## so we need to strip yii unneeded config to make sure it is running
+
         $config['defaultController'] = "install";
         $config['components']['db'] = [];
-
-        $config['runtimePath'] = Setting::getRuntimePath();
-        $config['components']['assetManager']['basePath'] = Setting::getAssetPath();
+        $config['components']['errorHandler'] = ['errorAction' => 'install/error'];
+        
+        Installer::checkInstall();
 
         if (Setting::$mode == "init") {
             if (!Installer::createIndexFile()) {
-                if (!isset($_GET['msg'])) {
-                    Installer::redirError(Yii::t("plansys", "Failed to write in '" . Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php" . "'"));
-                    return $config;
-                }
+                Setting::redirError("Failed to write in '{path}'", [
+                    'path' => Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php"
+                ]);
+                return $config;
             } else {
-                $url = explode("/plansys", Installer::fullPath());
-                header("Location: " . $url[0] . "/index.php?r=install/index");
+                $url = explode("/plansys", Setting::fullPath());
+//                header("Location: " . $url[0] . "/index.php?r=install/index");
             }
         }
 

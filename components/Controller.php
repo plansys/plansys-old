@@ -162,9 +162,12 @@ class Controller extends CController {
             Yii::import($form);
             $form = Helper::explodeLast(".", $form);
         }
+        
         $model = $form::model($form)->findAllByAttributes($id);
-        if (empty($model))
+        if (empty($model)) {
             throw new CHttpException(404, 'The requested page does not exist.');
+        }
+        
         return $model;
     }
 
@@ -183,8 +186,9 @@ class Controller extends CController {
             $model->loadAllRelations();
         }
 
-        if ($model === null)
+        if ($model === null) {
             throw new CHttpException(404, 'The requested page does not exist.');
+        }
         return $model;
     }
 

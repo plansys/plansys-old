@@ -23,6 +23,7 @@ class Setting {
         ],
     ];
     public static $mode = null;
+    public static $entryScript = "";
 
     private static function setupBasePath($configFile) {
         $configFile = str_replace("/", DIRECTORY_SEPARATOR, $configFile);
@@ -36,6 +37,21 @@ class Setting {
         Setting::$rootPath = implode(DIRECTORY_SEPARATOR, $basePath);
 
         return Setting::$basePath;
+    }
+
+    public static function fullPath() {
+        $s = &$_SERVER;
+        $ssl = (!empty($s['HTTPS']) && $s['HTTPS'] == 'on') ? true : false;
+        $sp = strtolower($s['SERVER_PROTOCOL']);
+        $protocol = substr($sp, 0, strpos($sp, '/')) . (($ssl) ? 's' : '');
+        $port = $s['SERVER_PORT'];
+        $port = ((!$ssl && $port == '80') || ($ssl && $port == '443')) ? '' : ':' . $port;
+        $host = isset($s['HTTP_X_FORWARDED_HOST']) ? $s['HTTP_X_FORWARDED_HOST'] : (isset($s['HTTP_HOST']) ? $s['HTTP_HOST'] : null);
+        $host = isset($host) ? $host : $s['SERVER_NAME'] . $port;
+        $uri = $protocol . '://' . $host . $s['REQUEST_URI'];
+        $segments = explode('?', $uri, 2);
+        $url = $segments[0];
+        return $url;
     }
 
     public static function getLDAP() {
@@ -61,7 +77,9 @@ class Setting {
         return $paArray1;
     }
 
-    public static function init($configfile, $mode = "running") {
+    public static function init($configfile, $mode = "running", $entryScript = "") {
+        require_once("Installer.php");
+
         date_default_timezone_set("Asia/Jakarta");
         $bp = Setting::setupBasePath($configfile);
         Setting::$path = $bp . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
@@ -69,17 +87,25 @@ class Setting {
         if (!is_file(Setting::$path)) {
             $json = Setting::$default;
             $json = json_encode($json, JSON_PRETTY_PRINT);
-            file_put_contents(Setting::$path, $json);
+            $result = @file_put_contents(Setting::$path, $json);
         }
+        $file = @file_get_contents(Setting::$path);
+
+        ## set entry script
+        Setting::$entryScript = realpath($entryScript == "" ? $_SERVER["SCRIPT_FILENAME"] : $entryScript);
 
         ## set default data value
-        $setting = json_decode(file_get_contents(Setting::$path), true);
-        Setting::$data = Setting::arrayMergeRecursiveReplace(Setting::$default, $setting);
+        if (!$file || (isset($result) && !$result)) {
+            Setting::$data = Setting::$default;
 
-        if (!Setting::$data) {
-            echo "Failed to load [" . Setting::$path . "], invalid json file!";
-            die();
+            Setting::redirError("Failed to write in '{path}'", [
+                "path" => (isset($result) && !$result) ? $result : $file
+            ]);
+        } else {
+            $setting = json_decode($file, true);
+            Setting::$data = Setting::arrayMergeRecursiveReplace(Setting::$default, $setting);
         }
+
 
         ## set host
         if (!Setting::get('app.host')) {
@@ -117,9 +143,61 @@ class Setting {
         return $arr;
     }
 
+    public static function redirError($msg, $params = array()) {
+        if (!isset($_SESSION['msg']) && @$_GET['r'] != 'install/index') {
+            $_SESSION['msg'] = Setting::t($msg, $params);
+            header("Location: " . Setting::fullPath() . "?r=install/index");
+            die();
+        }
+    }
+
+    function getPreferredLanguage() {
+        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) && ($n = preg_match_all('/([\w\-]+)\s*(;\s*q\s*=\s*(\d*\.\d*))?/', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches)) > 0) {
+            $languages = array();
+            for ($i = 0; $i < $n; ++$i)
+                $languages[$matches[1][$i]] = empty($matches[3][$i]) ? 1.0 : floatval($matches[3][$i]);
+            arsort($languages);
+            foreach ($languages as $language => $pref) {
+                $lang = strtolower(str_replace('-', '_', $language));
+                if (preg_match("/^en\_?/", $lang))
+                    return false;
+                if (!is_file($viewFile = dirname(__FILE__) . "/views/$lang/index.php"))
+                    $lang = false;
+                else
+                    break;
+            }
+            return $lang;
+        }
+        return false;
+    }
+
+    function t($message, $params = array()) {
+        static $messages;
+
+        if ($messages === null) {
+            $messages = array();
+            if (($lang = Setting::getPreferredLanguage()) !== false) {
+                $file = dirname(__FILE__) . "/messages/$lang/yii.php";
+                if (is_file($file)) {
+                    $messages = include($file);
+                }
+            }
+        }
+        if (empty($message)) {
+            return $message;
+        }
+        if (isset($messages[$message]) && $messages[$message] !== '') {
+            $message = $messages[$message];
+        }
+        return $params !== array() ? strtr($message, $params) : $message;
+    }
+
     public static function set($key, $value) {
         Setting::setInternal(Setting::$data, $key, $value);
-        file_put_contents(Setting::$path, json_encode(Setting::$data, JSON_PRETTY_PRINT));
+        $result = @file_put_contents(Setting::$path, json_encode(Setting::$data, JSON_PRETTY_PRINT));
+        if (!$result) {
+            
+        }
     }
 
     private static function setInternal(&$arr, $path, $value) {
@@ -132,14 +210,25 @@ class Setting {
         $arr = $value;
     }
 
-    public static function checkPath($path) {
+    public static function checkPath($path, $writable = false) {
         if (!is_dir($path)) {
             if (!@mkdir($path)) {
                 $error = error_get_last();
-                $message = Yii::t('plansys', "Failed to create directory '{path}' because : {error}");
+                $message = Setting::t("Failed to create directory '{path}' because : {error}");
                 $message = strtr($message, [
                     '{path}' => $path,
                     '{error}' => $error['message']
+                ]);
+
+                return $message;
+            }
+        } 
+        
+        if ($writable) {
+            if (!is_writable($path)) {
+                $message = Setting::t("Failed to write in <br/>'{path}' ");
+                $message = strtr($message, [
+                    '{path}' => $path
                 ]);
 
                 return $message;
@@ -159,7 +248,6 @@ class Setting {
                 'options' => array(CURLOPT_HEADER => true),
             );
 
-
             if ($type == "main" && Setting::getThemePath() != "") {
                 $config['components']['themeManager'] = array(
                     'basePath' => Setting::getThemePath()
@@ -167,7 +255,6 @@ class Setting {
                 $config['theme'] = 'default';
             }
         }
-
 
         return $config;
     }
@@ -320,13 +407,10 @@ class Setting {
     public static function getDBDriverList() {
         return [
             'mysql' => 'MySQL',
-            /*
-              'pgsql' => 'PostgreSQL',
-              'sqlsrv' => 'SQL Server',
-              'sqlite' => 'SQLite',
-              'oci' => 'Oracle'
-             *
-             */
+//                  'pgsql' => 'PostgreSQL',
+//                  'sqlsrv' => 'SQL Server',
+//                  'sqlite' => 'SQLite',
+//                  'oci' => 'Oracle'
         ];
     }
 

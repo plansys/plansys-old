@@ -2,8 +2,6 @@
 
 class InstallController extends Controller {
 
-    public $layout = "//install/_layout";
-
     public function filters() {
         return array('accessControl');
     }
@@ -34,7 +32,6 @@ class InstallController extends Controller {
     }
 
     public function actionIndex() {
-        Installer::checkInstall();
         $this->render("index");
     }
 

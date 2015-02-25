@@ -22,10 +22,15 @@ body, #content {
     margin:20px auto;
     text-align:left;
 }
-
+.install-check.error {
+    width:500px !important;
+}
+.install-check td a {
+    font-size:14px;
+}
 .install-check .danger td {
     color:red;
-    border-color:#fff;
+    border-color:#fafafa;
 }
 .install-check .danger td a {
     color:red !important;
@@ -35,7 +40,7 @@ body, #content {
 
 .install-check .success td{
     color:green;
-    border-color:#fff;
+    border-color:#fafafa;
 }
 .install-check .success td a {
     color:green !important;
@@ -72,6 +77,10 @@ body, #content {
     padding-left:20px;
     border-top:1px solid #fff;
 }
+.install-check .sub td {
+    word-break: break-all;
+}
+
 .install-check .sub.error ,
 .install-check a:focus .sub {
     display:block;
