@@ -211,11 +211,7 @@ pre {
 
 .login.form {
     width:300px;
-    position:absolute;
-    left:50%;
-    top:43%;
-    margin-top:-130px;
-    margin-left:-150px;
+    margin:12% auto;
     box-shadow:0px 0px 30px #aaa;
     padding:0px 20px 20px 20px;
     border-radius:6px;

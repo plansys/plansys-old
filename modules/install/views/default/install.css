@@ -98,11 +98,9 @@ body, #content {
 }
 
 .install-error-head {
-    background:#fff;
+    background:rgba(255,255,255,.7);
     margin:-15px -15px 10px -15px;
     border-radius:5px 5px 0px 0px;
     padding:5px;
-    color:#23297a;
     font-size:12px;
-    border-bottom:1px solid #ac2a2a;
 }

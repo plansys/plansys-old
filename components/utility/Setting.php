@@ -22,6 +22,7 @@ class Setting {
             'mode' => 'development'
         ],
     ];
+    
     public static $mode = null;
     public static $entryScript = "";
 
@@ -144,11 +145,13 @@ class Setting {
     }
 
     public static function redirError($msg, $params = array()) {
-        if (!isset($_SESSION['msg']) && @$_GET['r'] != 'install/index') {
-            $_SESSION['msg'] = Setting::t($msg, $params);
-            header("Location: " . Setting::fullPath() . "?r=install/index");
+
+        if (@$_GET['r'] != "install/default/index") {
+            header("Location: " . Setting::fullPath() . "?r=install/default/index");
             die();
         }
+
+        $_GET['msg'] = Setting::t($msg, $params);
     }
 
     function getPreferredLanguage() {
@@ -214,7 +217,7 @@ class Setting {
         if (!is_dir($path)) {
             if (!@mkdir($path)) {
                 $error = error_get_last();
-                $message = Setting::t("Failed to create directory '{path}' because : {error}");
+                $message = Setting::t("Failed to create directory <br/>'{path}'<br/>because: {error}");
                 $message = strtr($message, [
                     '{path}' => $path,
                     '{error}' => $error['message']
@@ -222,13 +225,14 @@ class Setting {
 
                 return $message;
             }
-        } 
-        
+        }
+
         if ($writable) {
             if (!is_writable($path)) {
-                $message = Setting::t("Failed to write in <br/>'{path}' ");
+                $message = Setting::t("Failed to write in <br/>'{path}'<br/>because: {error}");
                 $message = strtr($message, [
-                    '{path}' => $path
+                    '{path}' => $path,
+                    '{error}' => 'Permission Denied'
                 ]);
 
                 return $message;
@@ -239,7 +243,7 @@ class Setting {
 
     public static function finalizeConfig($config, $type = "main") {
         ## check if plansys is installed or not
-        if (Setting::$mode == "init") {
+        if (Setting::$mode == "init" || Setting::$mode == "install") {
             require_once("Installer.php");
             $config = Installer::init($config);
         } else {

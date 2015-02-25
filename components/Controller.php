@@ -66,7 +66,7 @@ class Controller extends CController {
     public function getMainMenu() {
         if (Setting::$mode == "init") {
             if ($this->id != "install" || $this->action->id != "index") {
-                $this->redirect(["/install/index"]);
+                $this->redirect(["/install/default/index"]);
             }
 
             return [
@@ -169,6 +169,20 @@ class Controller extends CController {
         }
         
         return $model;
+    }
+    
+    public function beforeAction($action) {
+        
+        ## when mode is init or install then redirect to installation mode
+        if (Setting::$mode == "init" || Setting::$mode == "install") {
+            if ($this->id != "default") {
+                $this->redirect(['/install/default/index']);
+            }
+        }
+        
+        parent::beforeAction($action);
+        
+        return true;
     }
 
     public function loadModel($idOrAttributes, $form) {

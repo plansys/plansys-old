@@ -1,21 +1,13 @@
 <?php
 
-class InstallController extends Controller {
-
-    public function filters() {
-        return array('accessControl');
-    }
-
-    public function accessRules() {
-        return array(
-            array('allow',
-                'expression' => 'in_array(Setting::$mode, ["install","init"])',
-            ),
-            array('deny'),
-        );
-    }
+class DefaultController extends Controller {
 
     public function beforeAction($action) {
+        if (!in_array(Setting::$mode, ["install", "init"])) {
+            $this->redirect(['/site/login']);
+            die();
+        }
+
         parent::beforeAction($action);
 
         $cs = Yii::app()->getClientScript();
@@ -32,7 +24,13 @@ class InstallController extends Controller {
     }
 
     public function actionIndex() {
-        $this->render("index");
+        $content = $this->renderPartial('index', [], true);
+        $html = $this->renderPartial('_layout', [
+            'content' => $content,
+            'moduleUrl' => str_replace("static", "modules/install/views/default/", $this->staticUrl(""))
+                ], true);
+
+        echo $html;
     }
 
 }
