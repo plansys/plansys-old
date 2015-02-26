@@ -23,6 +23,7 @@ class InstallUserForm extends Form {
                     ),
                 ),
             ),
+            'inlineJS' => '',
         );
     }
 
