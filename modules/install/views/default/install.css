@@ -7,6 +7,7 @@ body, #content {
     width:700px;
     margin:60px auto;
     border-radius:10px;
+    text-align:center;
     min-height: 250px;
 }
 
@@ -19,11 +20,17 @@ body, #content {
 .install-check {
     width:300px !important;
     margin:20px auto;
+    text-align:left;
 }
-
+.install-check.error {
+    width:500px !important;
+}
+.install-check td a {
+    font-size:14px;
+}
 .install-check .danger td {
     color:red;
-    border-color:#fff;
+    border-color:#fafafa;
 }
 .install-check .danger td a {
     color:red !important;
@@ -33,7 +40,7 @@ body, #content {
 
 .install-check .success td{
     color:green;
-    border-color:#fff;
+    border-color:#fafafa;
 }
 .install-check .success td a {
     color:green !important;
@@ -44,6 +51,19 @@ body, #content {
 .install-status {
     width:30px;
     text-align:center;
+}
+
+.install-passed {
+    font-weight:bold;
+    font-style: italic;
+    color:green;
+    margin-bottom:10px;
+}
+.install-failed {
+    font-weight:bold;
+    font-style: italic;
+    color:red;
+    margin-bottom:10px;
 }
 
 .install-check .sub {
@@ -57,6 +77,10 @@ body, #content {
     padding-left:20px;
     border-top:1px solid #fff;
 }
+.install-check .sub td {
+    word-break: break-all;
+}
+
 .install-check .sub.error ,
 .install-check a:focus .sub {
     display:block;
@@ -74,11 +98,9 @@ body, #content {
 }
 
 .install-error-head {
-    background:#fff;
+    background:rgba(255,255,255,.7);
     margin:-15px -15px 10px -15px;
     border-radius:5px 5px 0px 0px;
     padding:5px;
-    color:#23297a;
     font-size:12px;
-    border-bottom:1px solid #ac2a2a;
 }

@@ -583,11 +583,13 @@ class CController extends CBaseController
 	 */
 	public function getViewFile($viewName)
 	{
+            
 		if(($theme=Yii::app()->getTheme())!==null && ($viewFile=$theme->getViewFile($this,$viewName))!==false)
 			return $viewFile;
 		$moduleViewPath=$basePath=Yii::app()->getViewPath();
 		if(($module=$this->getModule())!==null)
 			$moduleViewPath=$module->getViewPath();
+                
 		return $this->resolveViewFile($viewName,$this->getViewPath(),$basePath,$moduleViewPath);
 	}
 
@@ -780,6 +782,7 @@ class CController extends CBaseController
 		if($this->beforeRender($view))
 		{
 			$output=$this->renderPartial($view,$data,true);
+                        
 			if(($layoutFile=$this->getLayoutFile($this->layout))!==false)
 				$output=$this->renderFile($layoutFile,array('content'=>$output),true);
 

@@ -9,20 +9,22 @@ class Installer {
     }
 
     public static function setError($group, $idx, $error) {
-        if (isset(Installer::$_errorList[$group])) {
+        if (!isset(Installer::$_errorList[$group])) {
             Installer::$_errorList[$group] = [];
         }
         Installer::$_errorList[$group][$idx] = $error;
     }
 
-    public static function getError($group, $idx = -1) {
-        if (!isset(Installer::$_errorList[$group])) {
+    public static function getError($group = "", $idx = -1) {
+        if ($group == "") {
+            return Installer::$_errorList;
+        } else if (!isset(Installer::$_errorList[$group])) {
             return false;
         } else {
             if ($idx == -1) {
                 return true;
             } else if (isset(Installer::$_errorList[$group][$idx])) {
-                return true;
+                return Installer::$_errorList[$group][$idx];
             } else {
                 return false;
             }
@@ -30,59 +32,70 @@ class Installer {
     }
 
     public static function checkServerVar() {
-
         $vars = array('HTTP_HOST', 'SERVER_NAME', 'SERVER_PORT', 'SCRIPT_NAME', 'SCRIPT_FILENAME', 'PHP_SELF', 'HTTP_ACCEPT', 'HTTP_USER_AGENT');
         $missing = array();
         foreach ($vars as $var) {
             if (!isset($_SERVER[$var]))
                 $missing[] = $var;
         }
-        if (!empty($missing))
-            return t('yii', '$_SERVER does not have {vars}.', array('{vars}' => implode(', ', $missing)));
+        if (!empty($missing)) {
+            return Setting::t('$_SERVER does not have {vars}.', array('{vars}' => implode(', ', $missing)));
+        }
 
-        if (realpath($_SERVER["SCRIPT_FILENAME"]) !== realpath(__FILE__))
-            return t('yii', '$_SERVER["SCRIPT_FILENAME"] must be the same as the entry script file path.');
+        if (realpath($_SERVER["SCRIPT_FILENAME"]) !== realpath(Setting::$entryScript)) {
+            return Setting::t('$_SERVER["SCRIPT_FILENAME"] <br/> `{s}`<br/><br/> must be the same as the entry script file path `{r}`.', [
+                        '{s}' => realpath($_SERVER["SCRIPT_FILENAME"]),
+                        '{r}' => realpath(__FILE__)
+            ]);
+        }
 
-        if (!isset($_SERVER["REQUEST_URI"]) && isset($_SERVER["QUERY_STRING"]))
-            return t('yii', 'Either $_SERVER["REQUEST_URI"] or $_SERVER["QUERY_STRING"] must exist.');
+        if (!isset($_SERVER["REQUEST_URI"]) && isset($_SERVER["QUERY_STRING"])) {
+            return Setting::t('Either $_SERVER["REQUEST_URI"] or $_SERVER["QUERY_STRING"] must exist.');
+        }
 
-        if (!isset($_SERVER["PATH_INFO"]) && strpos($_SERVER["PHP_SELF"], $_SERVER["SCRIPT_NAME"]) !== 0)
-            return t('yii', 'Unable to determine URL path info. Please make sure $_SERVER["PATH_INFO"] (or $_SERVER["PHP_SELF"] and $_SERVER["SCRIPT_NAME"]) contains proper value.');
+        if (!isset($_SERVER["PATH_INFO"]) && strpos($_SERVER["PHP_SELF"], $_SERVER["SCRIPT_NAME"]) !== 0) {
+            return Setting::t('Unable to determine URL path info. Please make sure $_SERVER["PATH_INFO"] (or $_SERVER["PHP_SELF"] and $_SERVER["SCRIPT_NAME"]) contains proper value.');
+        }
 
-        return '';
+        return true;
     }
 
     public static function getCheckList($checkGroup = "") {
         $checkLists = [
             "Checking Directory Permission" => [
                 [
-                    "title" => "Checking base directory permissions",
+                    "title" => 'Checking base directory permissions',
                     "check" => function() {
-                        return Setting::checkPath(Setting::getBasePath());
+                        return Setting::checkPath(Setting::getBasePath(), true);
                     }
                 ],
                 [
-                    "title" => "Checking app directory permissions",
+                    "title" => 'Checking app directory permissions',
                     "check" => function() {
                         return Setting::checkPath(Setting::getAppPath());
                     }
                 ],
                 [
-                    "title" => "Checking assets directory permissions",
+                    "title" => 'Checking assets directory permissions',
                     "check" => function() {
-                        return Setting::checkPath(Setting::getAssetPath());
+                        return Setting::checkPath(Setting::getAssetPath(), true);
                     }
                 ],
                 [
-                    "title" => "Checking runtime directory permissions",
+                    "title" => 'Checking runtime directory permissions',
                     "check" => function() {
-                        return Setting::checkPath(Setting::getRuntimePath());
+                        return Setting::checkPath(Setting::getRuntimePath(), true);
                     }
                 ],
                 [
-                    "title" => "Checking repository directory permissions",
+                    "title" => 'Checking repository directory permissions',
                     "check" => function() {
-                        return Setting::checkPath(Setting::get('repo.path'));
+                        $repo = Setting::get('repo.path');
+                        if (!is_dir($repo)) {
+                            @mkdir($repo, 0777, true);
+                        }
+
+                        return Setting::checkPath(realpath($repo), true);
                     }
                 ]
             ],
@@ -90,49 +103,66 @@ class Installer {
                 [
                     'title' => 'Checking PHP Version ( > 5.5.0 )',
                     'check' => function() {
-                        return version_compare(PHP_VERSION, "5.5.0", ">");
+                        $result = version_compare(PHP_VERSION, "5.5.0", ">");
+                        $msg = "Current PHP version is:" . PHP_VERSION;
+                        return $result !== true ? $msg : true;
                     }
                 ],
                 [
                     'title' => 'Reflection Extension',
                     'check' => function() {
-                        return class_exists('Reflection', false);
+                        $result = class_exists('Reflection', false);
+                        $msg = "Reflection class does not exists!";
+                        return $result !== true ? $msg : true;
                     }
                 ],
                 [
                     'title' => 'PCRE Extension',
                     'check' => function() {
-                        return extension_loaded("pcre");
+                        $result = extension_loaded("pcre");
+                        $msg = "Extension \"pcre\" is not loaded";
+                        return $result !== true ? $msg : true;
                     }
                 ],
                 [
                     'title' => 'SPL extension',
                     'check' => function() {
-                        return extension_loaded("SPL");
+                        $result = extension_loaded("SPL");
+                        $msg = "Extension \"SPL\" is not loaded";
+                        return $result !== true ? $msg : true;
                     }
                 ],
                 [
                     'title' => 'DOM extension',
                     'check' => function() {
-                        return class_exists("DOMDocument", false);
+                        $result = class_exists("DOMDocument", false);
+
+                        $msg = "DomDocument class does not exists!";
+                        return $result !== true ? $msg : true;
                     }
                 ],
                 [
                     'title' => 'PDO extension',
                     'check' => function() {
-                        return extension_loaded("pdo");
+                        $result = extension_loaded("pdo");
+                        $msg = "Extension \"pdo\" is not loaded";
+                        return $result !== true ? $msg : true;
                     }
                 ],
                 [
                     'title' => 'PDO MySQL extension',
                     'check' => function() {
-                        return extension_loaded("pdo_mysql");
+                        $result = extension_loaded("pdo_mysql");
+                        $msg = "Extension \"pdo_mysql\" is not loaded";
+                        return $result !== true ? $msg : true;
                     }
                 ],
                 [
                     'title' => 'Mcrypt extension',
                     'check' => function() {
-                        return extension_loaded("mcrypt");
+                        $result = extension_loaded("mcrypt");
+                        $msg = "Extension \"mcrypt\" is not loaded";
+                        return $result !== true ? $msg : true;
                     }
                 ],
                 [
@@ -149,15 +179,24 @@ class Installer {
                         elseif (isset($gdInfo)) {
                             if ($gdInfo['FreeType Support'])
                                 return true;
-                            return false;
+
+                            return "GD Extension is loaded but no Freetype support";
                         }
-                        return false;
+                        return "GD Extension / ImageMagick is not loaded";
                     }
                 ],
                 [
                     'title' => 'Ctype extension',
                     'check' => function() {
-                        return extension_loaded("ctype");
+                        $result = extension_loaded("ctype");
+                        $msg = "Extension \"ctype\" is not loaded";
+                        return $result !== true ? $msg : true;
+                    }
+                ],
+                [
+                    'title' => 'Checking Server variables',
+                    'check' => function() {
+                        return Installer::checkServerVar();
                     }
                 ]
             ],
@@ -186,36 +225,24 @@ class Installer {
         return $success;
     }
 
-    private static function fullPath() {
-        $s = &$_SERVER;
-        $ssl = (!empty($s['HTTPS']) && $s['HTTPS'] == 'on') ? true : false;
-        $sp = strtolower($s['SERVER_PROTOCOL']);
-        $protocol = substr($sp, 0, strpos($sp, '/')) . (($ssl) ? 's' : '');
-        $port = $s['SERVER_PORT'];
-        $port = ((!$ssl && $port == '80') || ($ssl && $port == '443')) ? '' : ':' . $port;
-        $host = isset($s['HTTP_X_FORWARDED_HOST']) ? $s['HTTP_X_FORWARDED_HOST'] : (isset($s['HTTP_HOST']) ? $s['HTTP_HOST'] : null);
-        $host = isset($host) ? $host : $s['SERVER_NAME'] . $port;
-        $uri = $protocol . '://' . $host . $s['REQUEST_URI'];
-        $segments = explode('?', $uri, 2);
-        $url = $segments[0];
-        return $url;
-    }
-
-    public static function redirError($msg) {
-        header("Location: " . Installer::fullPath() . "?r=install/index&msg=" . $msg);
-    }
-
-    public static function createIndexFile() {
+    public static function createIndexFile($mode = "install") {
         $path = Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "index.php";
         $file = file_get_contents($path);
-        $file = str_replace(['$mode = "init"'], ['$mode = "install"'], $file);
+
+        $file = str_replace([
+            '$mode = "init"',
+            '$mode = "install"',
+            '$mode = "running"'
+                ], '$mode = "' . $mode . '"', $file);
+
+
         if (!is_file($path)) {
-            return file_put_contents(Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php", $file);
+            return @file_put_contents(Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php", $file);
         } else {
             $oldpath = Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php";
-            $oldfile = file_get_contents($oldpath);
+            $oldfile = @file_get_contents($oldpath);
             if ($oldfile != $file) {
-                return file_put_contents($oldpath, $file);
+                return @file_put_contents($oldpath, $file);
             } else {
                 return true;
             }
@@ -223,25 +250,192 @@ class Installer {
     }
 
     public static function init($config) {
-        $config['defaultController'] = "install";
-        $config['components']['db'] = [];
+        ## we hare to make sure the error page is shown
+        ## so we need to strip yii unneeded config to make sure it is running
 
-        $config['runtimePath'] = Setting::getRuntimePath();
-        $config['components']['assetManager']['basePath'] = Setting::getAssetPath();
+        $config['defaultController'] = "install";
+        $config['components']['errorHandler'] = ['errorAction' => 'install/default/index'];
+
+        Installer::checkInstall();
 
         if (Setting::$mode == "init") {
+            $url = explode("/plansys", Setting::fullPath());
+            if (is_file(Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php")) {
+                header("Location: " . $url[0] . "/index.php");
+                die();
+            }
+
             if (!Installer::createIndexFile()) {
-                if (!isset($_GET['msg'])) {
-                    Installer::redirError(Yii::t("plansys", "Failed to write in '" . Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php" . "'"));
-                    return $config;
-                }
+                Setting::redirError("Failed to write in \"{path}\" <br/> Permission denied", [
+                    '{path}' => Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php"
+                ]);
+                return $config;
             } else {
-                $url = explode("/plansys", Installer::fullPath());
-                header("Location: " . $url[0] . "/index.php?r=install/index");
+                header("Location: " . $url[0] . "/index.php?r=install/default/index");
+                die();
             }
         }
 
+
         return $config;
+    }
+
+    public static function resetDB() {
+        $sql = <<<EOF
+                
+SET NAMES utf8;
+SET time_zone = '+00:00';
+SET foreign_key_checks = 0;
+SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
+
+DROP TABLE IF EXISTS `p_audit_trail`;
+CREATE TABLE `p_audit_trail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `url` text COLLATE utf8_unicode_ci NOT NULL,
+  `description` text COLLATE utf8_unicode_ci NOT NULL,
+  `pathinfo` text COLLATE utf8_unicode_ci NOT NULL,
+  `module` text COLLATE utf8_unicode_ci NOT NULL,
+  `ctrl` text COLLATE utf8_unicode_ci NOT NULL,
+  `action` text COLLATE utf8_unicode_ci NOT NULL,
+  `params` text COLLATE utf8_unicode_ci NOT NULL,
+  `data` text COLLATE utf8_unicode_ci NOT NULL,
+  `stamp` datetime NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `key` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `form_class` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `model_class` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `model_id` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `p_audit_trail_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `p_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+DROP TABLE IF EXISTS `p_nfy_messages`;
+CREATE TABLE `p_nfy_messages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `queue_id` varchar(255) NOT NULL,
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `sender_id` int(11) DEFAULT NULL,
+  `message_id` int(11) DEFAULT NULL,
+  `subscription_id` int(11) DEFAULT NULL,
+  `status` int(11) NOT NULL,
+  `timeout` int(11) DEFAULT NULL,
+  `reserved_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `deleted_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `read_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `sent_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `mimetype` varchar(255) NOT NULL DEFAULT 'text/json',
+  `body` text,
+  `identifier` varbinary(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `{{nfy_messages}}_queue_id_idx` (`queue_id`),
+  KEY `{{nfy_messages}}_sender_id_idx` (`sender_id`),
+  KEY `{{nfy_messages}}_message_id_idx` (`message_id`),
+  KEY `{{nfy_messages}}_status_idx` (`status`),
+  KEY `{{nfy_messages}}_reserved_on_idx` (`reserved_on`),
+  KEY `{{nfy_messages}}_subscription_id_idx` (`subscription_id`),
+  CONSTRAINT `p_nfy_messages_ibfk_2` FOREIGN KEY (`subscription_id`) REFERENCES `p_nfy_subscriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `p_nfy_subscriptions`;
+CREATE TABLE `p_nfy_subscriptions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `queue_id` varchar(255) NOT NULL,
+  `label` varchar(255) DEFAULT NULL,
+  `subscriber_id` int(11) NOT NULL,
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `{{nfy_subscriptions}}_queue_id_subscriber_id_idx` (`queue_id`,`subscriber_id`),
+  KEY `{{nfy_subscriptions}}_queue_id_idx` (`queue_id`),
+  KEY `{{nfy_subscriptions}}_subscriber_id_idx` (`subscriber_id`),
+  KEY `{{nfy_subscriptions}}_is_deleted_idx` (`is_deleted`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `p_nfy_subscription_categories`;
+CREATE TABLE `p_nfy_subscription_categories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `subscription_id` int(11) NOT NULL,
+  `category` varchar(255) NOT NULL,
+  `is_exception` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `{{nfy_subscription_categories}}_subscription_id_category_idx` (`subscription_id`,`category`),
+  KEY `{{nfy_subscription_categories}}_subscription_id_idx` (`subscription_id`),
+  CONSTRAINT `p_nfy_subscription_categories_ibfk_2` FOREIGN KEY (`subscription_id`) REFERENCES `p_nfy_subscriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `p_role`;
+CREATE TABLE `p_role` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `role_name` varchar(255) NOT NULL,
+  `role_description` varchar(255) NOT NULL,
+  `menu_path` varchar(255) NOT NULL,
+  `home_url` varchar(255) NOT NULL,
+  `repo_path` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `p_todo`;
+CREATE TABLE `p_todo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(30) NOT NULL DEFAULT 'todo',
+  `note` text NOT NULL,
+  `options` text NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `status` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `p_todo_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `p_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `p_user`;
+CREATE TABLE `p_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `nip` varchar(255) NOT NULL COMMENT 'NIP',
+  `fullname` varchar(255) NOT NULL COMMENT 'Fullname',
+  `email` varchar(255) NOT NULL COMMENT 'E-Mail',
+  `phone` varchar(255) DEFAULT NULL COMMENT 'Phone',
+  `username` varchar(255) NOT NULL COMMENT 'Username',
+  `password` varchar(255) NOT NULL COMMENT 'Password',
+  `last_login` datetime NOT NULL,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `p_user_role`;
+CREATE TABLE `p_user_role` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `user_id` int(11) DEFAULT NULL COMMENT 'User ID',
+  `role_id` int(11) DEFAULT NULL,
+  `is_default_role` enum('Yes','No') NOT NULL DEFAULT 'No',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `role_id` (`role_id`),
+  CONSTRAINT `p_user_role_ibfk_5` FOREIGN KEY (`role_id`) REFERENCES `p_role` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `p_user_role_ibfk_7` FOREIGN KEY (`user_id`) REFERENCES `p_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `p_role` (`id`, `role_name`, `role_description`, `menu_path`, `home_url`, `repo_path`) VALUES
+(1,	'dev',	'IT - Developer',	'',	'',	'');
+
+INSERT INTO `p_user_role` (`id`, `user_id`, `role_id`, `is_default_role`) VALUES
+(1,	1,	1,	'Yes');
+
+INSERT INTO `p_user` (`id`, `nip`, `fullname`, `email`, `phone`, `username`, `password`, `last_login`, `is_deleted`) VALUES
+(1,	'-',	'Developer',	'-',	'-',	'dev',	md5('dev'),	now(),	0);
+
+                
+EOF;
+        Yii::import('application.components.model.*');
+        ActiveRecord::execute($sql);
     }
 
 }

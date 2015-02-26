@@ -1237,7 +1237,7 @@ EOF;
     public static function listFile($formatRecursive = true) {
         $files = [];
 
-        $devMode = (bool) Setting::get('app.mode') == "development";
+        $devMode = (bool) Setting::get('app.mode') === "plansys";
 
         $func = function($m, $module = "", $aliaspath = "", $path) {
             return [
@@ -1296,6 +1296,7 @@ EOF;
             $module_dir = Yii::getPathOfAlias('application.modules');
             if (file_exists($module_dir)) {
                 $modules = glob($module_dir . DIRECTORY_SEPARATOR . "*");
+                
                 foreach ($modules as $m) {
                     $module = str_replace($module_dir . DIRECTORY_SEPARATOR, '', $m);
                     $alias = "application.modules.{$module}.forms.";

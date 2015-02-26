@@ -41,6 +41,7 @@ class Controller extends CController {
             'wrapForm' => true,
             'action' => $this->action->id,
         ];
+        
 
         if (is_array($model)) {
             $params = $model;
@@ -48,7 +49,7 @@ class Controller extends CController {
         }
         $options['params'] = $params;
 
-        $renderOptions = array_merge($renderOptions, $options);
+        $renderOptions = array_merge($renderOptions, $options); 
         $mainform = $fb->render($model, $renderOptions);
 
         $data = $fb->form['layout']['data'];
@@ -60,13 +61,14 @@ class Controller extends CController {
         }
 
         $layout = Layout::render($fb->form['layout']['name'], $data, $model, true);
+        
         $this->renderText($layout, false);
     }
 
     public function getMainMenu() {
-        if (Setting::$mode == "init") {
-            if ($this->id != "install" || $this->action->id != "index") {
-                $this->redirect(["/install/index"]);
+        if (Setting::$mode == "init" || Setting::$mode == "install") {
+            if ($this->module->id != "install") {
+                $this->redirect(["/install/default/index"]);
             }
 
             return [
@@ -162,10 +164,27 @@ class Controller extends CController {
             Yii::import($form);
             $form = Helper::explodeLast(".", $form);
         }
+        
         $model = $form::model($form)->findAllByAttributes($id);
-        if (empty($model))
+        if (empty($model)) {
             throw new CHttpException(404, 'The requested page does not exist.');
+        }
+        
         return $model;
+    }
+    
+    public function beforeAction($action) {
+        
+        ## when mode is init or install then redirect to installation mode
+        if (Setting::$mode == "init" || Setting::$mode == "install") {
+            if ($this->id != "default") {
+                $this->redirect(['/install/default/index']);
+            }
+        }
+        
+        parent::beforeAction($action);
+        
+        return true;
     }
 
     public function loadModel($idOrAttributes, $form) {
@@ -183,8 +202,9 @@ class Controller extends CController {
             $model->loadAllRelations();
         }
 
-        if ($model === null)
+        if ($model === null) {
             throw new CHttpException(404, 'The requested page does not exist.');
+        }
         return $model;
     }
 
