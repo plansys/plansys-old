@@ -315,6 +315,7 @@ class DevUserIndex extends User {
                     'enablePaging' => 'true',
                     'afterSelectionChange' => 'url:/dev/user/update?id={id}',
                     'enableColumnResize' => 'true',
+                    'fullWidth' => 'true',
                 ),
                 'type' => 'DataTable',
             ),
