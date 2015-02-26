@@ -1237,8 +1237,8 @@ EOF;
     public static function listFile($formatRecursive = true) {
         $files = [];
 
-        $devMode = (bool) Setting::get('app.mode') == "development";
-        
+        $devMode = (bool) Setting::get('app.mode') === "plansys";
+
         $func = function($m, $module = "", $aliaspath = "", $path) {
             return [
                 'name' => str_replace($module, '', $m),
