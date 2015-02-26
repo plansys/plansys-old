@@ -127,7 +127,7 @@
         </div>
 
         <div ng-class="{invisible: data.length == 0 || loading}" style="margin-bottom:40px;">
-            <div id="<?= $this->renderID ?>" class="dataTable" 
+            <div id="<?= $this->renderID ?>" class="dataTable <?= @$this->gridOptions['fullWidth'] == 'true' ? 'full-width' : '' ?>" 
                  style="overflow:auto;"></div>
 
 

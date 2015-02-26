@@ -4,12 +4,13 @@
     <div ui-layout options="{ flow : 'column'}">
         <div size='20%' min-size="200px" class="sidebar">
             <div ui-header style="padding-left:5px;">
-
                 <div ng-if="loading" style="float:right;margin-right:4px;">
                     Loading... 
                 </div>
+                <div ng-if="!loading" class="btn btn-default btn-xs pull-right" style="margin:4px 4px 0px 0px;">
+                    <i class="fa fa-plus"></i> New
+                </div>
                 <i class="fa fa-file-text-o fa-nm"></i>&nbsp; Forms
-
             </div>
             <div ui-content oc-lazy-load="{name: 'ui.tree', files: ['<?= $this->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
                 <script type="text/ng-template" id="FormTree"><?php include('form_dir.php'); ?></script>
@@ -36,10 +37,10 @@
     </div>
 </div>
 <script type="text/javascript">
-    app.controller("PageController", function ($scope, $http, $localStorage, $timeout) {
+    app.controller("PageController", function($scope, $http, $localStorage, $timeout) {
         $scope.list = <?= $this->actionFormList() ?>;
         $scope.active = null;
-        $scope.select = function (scope, item) {
+        $scope.select = function(scope, item) {
             $scope.active = scope.$modelValue;
             if (!!$scope.active && $scope.active.alias != null) {
                 $("iframe").addClass('invisible');
@@ -49,7 +50,7 @@
             if (item && item.items && item.items.length > 0 && item.items[0].name == "Loading...") {
                 $http.get(Yii.app.createUrl('/dev/forms/formList', {
                     m: item.module
-                })).success(function (d) {
+                })).success(function(d) {
                     item.items = d;
                 });
                 $storage.formBuilder.selected = {
@@ -58,7 +59,7 @@
             }
         };
         $scope.init = false;
-        $scope.is_selected = function (item) {
+        $scope.is_selected = function(item) {
             var s = $storage.formBuilder.selected;
             var m = item.$modelValue;
             if (!!s && !!m && !$scope.active && m.module == s.module) {
@@ -76,14 +77,14 @@
         $scope.loading = false;
         $storage = $localStorage;
         $storage.formBuilder = $storage.formBuilder || {};
-        
-        $timeout(function () {
+
+        $timeout(function() {
             $("[ui-tree-handle].active").click();
         }, 100);
     });
 
-    $(document).ready(function () {
-        $('iframe').on('load', function () {
+    $(document).ready(function() {
+        $('iframe').on('load', function() {
             $('iframe').removeClass('invisible');
             $('.loading').addClass('invisible');
         });

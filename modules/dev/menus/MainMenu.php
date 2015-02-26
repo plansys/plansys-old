@@ -25,8 +25,13 @@
                 'url' => '#',
             ),
             array (
-                'label' => 'Controller Manager',
-                'icon' => 'fa-paper-plane',
+                'label' => 'Module Generator',
+                'icon' => 'fa-empire',
+                'url' => '#',
+            ),
+            array (
+                'label' => 'Controller Generator',
+                'icon' => 'fa-cubes',
                 'url' => '/dev/controllerGenerator/index',
             ),
             array (
