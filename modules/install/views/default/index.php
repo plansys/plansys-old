@@ -2,7 +2,7 @@
     <div class="install-pane-head">
         <img src="<?= $this->staticUrl("/img/logo.png"); ?>" alt="Logo Plansys" />
     </div>
-
+    
     <?php if (!isset($msg)): ?>
         <table class="table table-bordered table-condensed install-check <?= empty(Installer::getError()) ? '' : 'error' ?>">
             <?php foreach (Installer::getCheckList() as $group => $item): ?>
@@ -41,7 +41,7 @@
         <?php if (empty(Installer::getError())): ?>
             <div class="install-passed"><?= Setting::t("All Requirement Passed"); ?></div>
 
-            <a href="#" class="btn btn-success">
+            <a href="<?= Yii::app()->controller->createUrl('/install/default/db'); ?>" class="btn btn-success">
                 <?= Setting::t("Next step"); ?> <i class="fa fa-arrow-right"></i>
             </a>
         <?php else: ?>

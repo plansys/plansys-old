@@ -41,6 +41,7 @@ class Controller extends CController {
             'wrapForm' => true,
             'action' => $this->action->id,
         ];
+        
 
         if (is_array($model)) {
             $params = $model;
@@ -48,7 +49,7 @@ class Controller extends CController {
         }
         $options['params'] = $params;
 
-        $renderOptions = array_merge($renderOptions, $options);
+        $renderOptions = array_merge($renderOptions, $options); 
         $mainform = $fb->render($model, $renderOptions);
 
         $data = $fb->form['layout']['data'];
@@ -60,12 +61,13 @@ class Controller extends CController {
         }
 
         $layout = Layout::render($fb->form['layout']['name'], $data, $model, true);
+        
         $this->renderText($layout, false);
     }
 
     public function getMainMenu() {
-        if (Setting::$mode == "init") {
-            if ($this->id != "install" || $this->action->id != "index") {
+        if (Setting::$mode == "init" || Setting::$mode == "install") {
+            if ($this->module->id != "install") {
                 $this->redirect(["/install/default/index"]);
             }
 

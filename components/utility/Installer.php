@@ -225,10 +225,17 @@ class Installer {
         return $success;
     }
 
-    public static function createIndexFile() {
+    public static function createIndexFile($mode = "install") {
         $path = Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "index.php";
         $file = file_get_contents($path);
-        $file = str_replace(['$mode = "init"'], ['$mode = "install"'], $file);
+
+        $file = str_replace([
+            '$mode = "init"',
+            '$mode = "install"',
+            '$mode = "running"'
+                ], '$mode = "' . $mode . '"', $file);
+
+
         if (!is_file($path)) {
             return @file_put_contents(Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php", $file);
         } else {
@@ -247,25 +254,188 @@ class Installer {
         ## so we need to strip yii unneeded config to make sure it is running
 
         $config['defaultController'] = "install";
-        $config['components']['db'] = [];
         $config['components']['errorHandler'] = ['errorAction' => 'install/default/index'];
 
         Installer::checkInstall();
 
         if (Setting::$mode == "init") {
+            $url = explode("/plansys", Setting::fullPath());
+            if (is_file(Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php")) {
+                header("Location: " . $url[0] . "/index.php");
+                die();
+            }
+
             if (!Installer::createIndexFile()) {
                 Setting::redirError("Failed to write in \"{path}\" <br/> Permission denied", [
                     '{path}' => Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php"
                 ]);
                 return $config;
             } else {
-                $url = explode("/plansys", Setting::fullPath());
                 header("Location: " . $url[0] . "/index.php?r=install/default/index");
                 die();
             }
         }
 
+
         return $config;
+    }
+
+    public static function resetDB() {
+        $sql = <<<EOF
+                
+SET NAMES utf8;
+SET time_zone = '+00:00';
+SET foreign_key_checks = 0;
+SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
+
+DROP TABLE IF EXISTS `p_audit_trail`;
+CREATE TABLE `p_audit_trail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `url` text COLLATE utf8_unicode_ci NOT NULL,
+  `description` text COLLATE utf8_unicode_ci NOT NULL,
+  `pathinfo` text COLLATE utf8_unicode_ci NOT NULL,
+  `module` text COLLATE utf8_unicode_ci NOT NULL,
+  `ctrl` text COLLATE utf8_unicode_ci NOT NULL,
+  `action` text COLLATE utf8_unicode_ci NOT NULL,
+  `params` text COLLATE utf8_unicode_ci NOT NULL,
+  `data` text COLLATE utf8_unicode_ci NOT NULL,
+  `stamp` datetime NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `key` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `form_class` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `model_class` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `model_id` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `p_audit_trail_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `p_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+DROP TABLE IF EXISTS `p_nfy_messages`;
+CREATE TABLE `p_nfy_messages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `queue_id` varchar(255) NOT NULL,
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `sender_id` int(11) DEFAULT NULL,
+  `message_id` int(11) DEFAULT NULL,
+  `subscription_id` int(11) DEFAULT NULL,
+  `status` int(11) NOT NULL,
+  `timeout` int(11) DEFAULT NULL,
+  `reserved_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `deleted_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `read_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `sent_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `mimetype` varchar(255) NOT NULL DEFAULT 'text/json',
+  `body` text,
+  `identifier` varbinary(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `{{nfy_messages}}_queue_id_idx` (`queue_id`),
+  KEY `{{nfy_messages}}_sender_id_idx` (`sender_id`),
+  KEY `{{nfy_messages}}_message_id_idx` (`message_id`),
+  KEY `{{nfy_messages}}_status_idx` (`status`),
+  KEY `{{nfy_messages}}_reserved_on_idx` (`reserved_on`),
+  KEY `{{nfy_messages}}_subscription_id_idx` (`subscription_id`),
+  CONSTRAINT `p_nfy_messages_ibfk_2` FOREIGN KEY (`subscription_id`) REFERENCES `p_nfy_subscriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `p_nfy_subscriptions`;
+CREATE TABLE `p_nfy_subscriptions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `queue_id` varchar(255) NOT NULL,
+  `label` varchar(255) DEFAULT NULL,
+  `subscriber_id` int(11) NOT NULL,
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `{{nfy_subscriptions}}_queue_id_subscriber_id_idx` (`queue_id`,`subscriber_id`),
+  KEY `{{nfy_subscriptions}}_queue_id_idx` (`queue_id`),
+  KEY `{{nfy_subscriptions}}_subscriber_id_idx` (`subscriber_id`),
+  KEY `{{nfy_subscriptions}}_is_deleted_idx` (`is_deleted`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `p_nfy_subscription_categories`;
+CREATE TABLE `p_nfy_subscription_categories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `subscription_id` int(11) NOT NULL,
+  `category` varchar(255) NOT NULL,
+  `is_exception` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `{{nfy_subscription_categories}}_subscription_id_category_idx` (`subscription_id`,`category`),
+  KEY `{{nfy_subscription_categories}}_subscription_id_idx` (`subscription_id`),
+  CONSTRAINT `p_nfy_subscription_categories_ibfk_2` FOREIGN KEY (`subscription_id`) REFERENCES `p_nfy_subscriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `p_role`;
+CREATE TABLE `p_role` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `role_name` varchar(255) NOT NULL,
+  `role_description` varchar(255) NOT NULL,
+  `menu_path` varchar(255) NOT NULL,
+  `home_url` varchar(255) NOT NULL,
+  `repo_path` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `p_todo`;
+CREATE TABLE `p_todo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(30) NOT NULL DEFAULT 'todo',
+  `note` text NOT NULL,
+  `options` text NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `status` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `p_todo_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `p_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `p_user`;
+CREATE TABLE `p_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `nip` varchar(255) NOT NULL COMMENT 'NIP',
+  `fullname` varchar(255) NOT NULL COMMENT 'Fullname',
+  `email` varchar(255) NOT NULL COMMENT 'E-Mail',
+  `phone` varchar(255) DEFAULT NULL COMMENT 'Phone',
+  `username` varchar(255) NOT NULL COMMENT 'Username',
+  `password` varchar(255) NOT NULL COMMENT 'Password',
+  `last_login` datetime NOT NULL,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `p_user_role`;
+CREATE TABLE `p_user_role` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `user_id` int(11) DEFAULT NULL COMMENT 'User ID',
+  `role_id` int(11) DEFAULT NULL,
+  `is_default_role` enum('Yes','No') NOT NULL DEFAULT 'No',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `role_id` (`role_id`),
+  CONSTRAINT `p_user_role_ibfk_5` FOREIGN KEY (`role_id`) REFERENCES `p_role` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `p_user_role_ibfk_7` FOREIGN KEY (`user_id`) REFERENCES `p_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `p_role` (`id`, `role_name`, `role_description`, `menu_path`, `home_url`, `repo_path`) VALUES
+(1,	'dev',	'IT - Developer',	'',	'',	'');
+
+INSERT INTO `p_user_role` (`id`, `user_id`, `role_id`, `is_default_role`) VALUES
+(1,	1,	1,	'Yes');
+
+INSERT INTO `p_user` (`id`, `nip`, `fullname`, `email`, `phone`, `username`, `password`, `last_login`, `is_deleted`) VALUES
+(1,	'-',	'Developer',	'-',	'-',	'dev',	md5('dev'),	now(),	0);
+
+                
+EOF;
+        Yii::import('application.components.model.*');
+        ActiveRecord::execute($sql);
     }
 
 }

@@ -2946,6 +2946,7 @@ textarea.form-control {
 }
 
 label.input-group {
+    font-size:13px;
     font-weight:normal;
 }
 

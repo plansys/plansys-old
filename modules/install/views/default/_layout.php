@@ -6,7 +6,7 @@
         <link rel="stylesheet" type="text/css" href="<?= $this->staticUrl('/css/non-responsive.css'); ?>"  />
         <link rel="stylesheet" type="text/css" href="<?= $this->staticUrl('/css/font-awesome.min.css'); ?>"  />
         <link rel="stylesheet" type="text/css" href="<?= $this->staticUrl('/css/main.css'); ?>"  />
-        <link rel="stylesheet" type="text/css" href="<?= $moduleUrl . "install.css"; ?>"  />
+        <link rel="stylesheet" type="text/css" href="<?= $this->moduleUrl . "install.css"; ?>"  />
         <title>Plansys Installer</title>
     </head>
     <body>

@@ -35,7 +35,7 @@ class DefaultController extends Controller
 
             $params = implode("&", $params);
         } else {
-            $_GET['s'] = $db['server'] . ":3306";
+            $_GET['s'] = $db['host'];
             $_GET['u'] = $db['username'];
             $_GET['p'] = $db['password'];
             $_GET['db'] = $db['dbname'];
