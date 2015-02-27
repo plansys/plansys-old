@@ -27,9 +27,9 @@ class DevGeneratorIndex extends Form {
             array (
                 'value' => '<div class=\"col-sm-2\"></div>
 <div class=\"col-sm-8\" style=\"padding-top:40px;\">
-    <div class=\"panel panel-default\">
-      <div class=\"panel-heading\">
-          <i class=\"fa fa-lg fa-trello\" style=\"margin:0px 5px 0px -5px;\"></i> 
+  <div class=\"panel panel-default\">
+     <div class=\"panel-heading\">
+       <i class=\"fa fa-lg fa-trello\" style=\"margin:0px 5px 0px -5px;\"></i> 
           Choose form template
       </div>  
       <div class=\"panel-body\">
@@ -43,7 +43,7 @@ class DevGeneratorIndex extends Form {
                 </div>
             </div>
       </div>
-    </div>
+  </div>
 </div>
 <div class=\"col-sm-2\"></div>',
                 'type' => 'Text',
