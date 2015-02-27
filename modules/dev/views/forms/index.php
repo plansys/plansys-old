@@ -36,6 +36,7 @@
         </div>
     </div>
 </div>
+<script src="<?= Asset::publish(Yii::getPathOfAlias('application.components.ui.MenuTree.ng-menutree') . ".js"); ?>"></script>
 <script type="text/javascript">
     app.controller("PageController", function($scope, $http, $localStorage, $timeout) {
         $scope.list = <?= $this->actionFormList() ?>;
