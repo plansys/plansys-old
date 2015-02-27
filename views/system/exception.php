@@ -7,8 +7,13 @@ if (Setting::$mode == "init" || Setting::$mode == "install") {
     
     $controller = new DefaultController("default", $module);
     $controller->action = $controller->createAction("index");
+
+    if (strpos($data['msg'], 'Application Runtime Path') === 0) {
+        $msg = null;
+    }
+
     $controller->action->runWithParams([
-        'msg' => $data['message']
+        'msg' => $msg
     ]);
 } else {
     include(Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "framework" . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "exception.php");
