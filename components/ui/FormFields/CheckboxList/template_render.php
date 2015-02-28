@@ -37,11 +37,9 @@
         <!-- /field -->
 
         <!-- error -->
-        <?php if (count(@$errors) > 0): ?>
-            <div class="alert error alert-danger">
-                <?= $errors[0] ?>
-            </div>
-        <?php endif ?>
+        <div ng-if="errors[name]" class="alert error alert-danger">
+            {{ errors[name][0] }}
+        </div>
         <!-- /error -->
     </div>
 </div>
