@@ -60,6 +60,8 @@ class DevUserIndex extends User {
                         'relModelClass' => 'application.models.Role',
                         'relIdField' => 'role_description',
                         'relLabelField' => 'role_description',
+                        'list' => 0,
+                        'count' => 0,
                     ),
                     array (
                         'name' => 'username',
@@ -200,22 +202,10 @@ class DevUserIndex extends User {
                         'name' => 'nip',
                         'label' => 'nip',
                         'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
-                        'listType' => 'php',
-                        'listExpr' => '',
-                        'listMustChoose' => 'No',
-                        'relCondition' => '',
-                        'relModelClass' => '',
-                        'relIdField' => '',
-                        'relLabelField' => '',
                         'columnType' => 'string',
                         'show' => false,
+                        'inputMask' => '',
+                        'stringAlias' => array (),
                     ),
                     array (
                         'name' => 'username',
@@ -325,8 +315,9 @@ class DevUserIndex extends User {
                     'enablePaging' => 'true',
                     'afterSelectionChange' => 'url:/dev/user/update?id={id}',
                     'enableColumnResize' => 'true',
+                    'fullWidth' => 'true',
                 ),
-                'type' => 'DataGrid',
+                'type' => 'DataTable',
             ),
         );
     }

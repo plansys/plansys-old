@@ -1236,8 +1236,8 @@ EOF;
      */
     public static function listFile($formatRecursive = true) {
         $files = [];
-
-        $devMode = (bool) Setting::get('app.mode') === "plansys";
+        
+        $devMode = Setting::get('app.mode') === "plansys";
 
         $func = function($m, $module = "", $aliaspath = "", $path) {
             return [

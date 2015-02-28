@@ -7,18 +7,21 @@
 class MenuTree extends CComponent {
 
     public static function listAllFile() {
-        ## dev
-        $dir = Yii::getPathOfAlias('application.modules');
-        $modules = glob($dir . DIRECTORY_SEPARATOR . "*");
         $files = [];
-        foreach ($modules as $m) {
-            $module = ucfirst(str_replace($dir . DIRECTORY_SEPARATOR, '', $m));
-            $items = MenuTree::listFile($module);
-            if (count($items) > 0) {
-                $files[] = [
-                    'module' => $module,
-                    'items' => $items
-                ];
+        
+        ## dev
+        if (Setting::get('app.mode') == "plansys") {
+            $dir = Yii::getPathOfAlias('application.modules');
+            $modules = glob($dir . DIRECTORY_SEPARATOR . "*");
+            foreach ($modules as $m) {
+                $module = ucfirst(str_replace($dir . DIRECTORY_SEPARATOR, '', $m));
+                $items = MenuTree::listFile($module);
+                if (count($items) > 0) {
+                    $files[] = [
+                        'module' => $module,
+                        'items' => $items
+                    ];
+                }
             }
         }
 
@@ -166,7 +169,7 @@ class MenuTree extends CComponent {
             'list' => $this->list,
             'class' => $this->class,
             'options' => $this->options,
-            ], true);
+                ], true);
 
         return str_replace(["<script>", "</script>"], "", $script);
     }
@@ -183,12 +186,12 @@ class MenuTree extends CComponent {
         }
 
         return $ctrl->renderPartial("//layouts/menu", [
-                'class' => $this->class,
-                'classpath' => $this->classpath,
-                'title' => $this->title,
-                'options' => $this->options,
-                'script' => $script,
-                ], true);
+                    'class' => $this->class,
+                    'classpath' => $this->classpath,
+                    'title' => $this->title,
+                    'options' => $this->options,
+                    'script' => $script,
+                        ], true);
     }
 
 }

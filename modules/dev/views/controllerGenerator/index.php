@@ -12,7 +12,6 @@
                         <li ng-repeat="item in list track by $index" collapsed="true" ui-tree-node>
                             <div ui-tree-handle ng-click="toggle(this);
                                             select(this);"  ng-class="is_selected(this)">
-
                                 <div class="ui-tree-handle-info">
                                     {{item.items.length}} controller{{item.items.length > 1 ? 's' : ''}}
                                 </div>
@@ -21,8 +20,7 @@
                                     <i ng-show="this.collapsed" class="fa fa-caret-right"></i>
                                     <i ng-show="!this.collapsed" class="fa fa-caret-down"></i>
                                 </span>
-                                {{item.module}}
-
+                                {{item.type == 'dev' ? 'Plansys:' : ''}} {{item.module}}
                             </div>
                             <ol ui-tree-nodes="" ng-model="item.items">
                                 <li ng-repeat="subItem in item.items" ui-tree-node class='menu-list-item'>
@@ -41,7 +39,6 @@
                                             {{formatName(subItem.name)}}
                                         </span>
                                     </a>
-
                                 </li>
                             </ol>
                         </li>

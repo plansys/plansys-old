@@ -235,6 +235,8 @@ class Installer {
             '$mode = "running"'
                 ], '$mode = "' . $mode . '"', $file);
 
+        
+        Setting::$mode = $mode;
 
         if (!is_file($path)) {
             return @file_put_contents(Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php", $file);

@@ -3,8 +3,7 @@
 class DevModule extends CWebModule {
 
     public function init() {
-        // import the module-level models and components
-        $this->setImport(array(
+        $import = array(
             'application.models.*',
             'application.modules.dev.controllers.*',
             'application.modules.dev.forms.*',
@@ -14,7 +13,14 @@ class DevModule extends CWebModule {
             'application.modules.dev.forms.users.user.*',
             'application.modules.dev.forms.users.role.*',
             'application.modules.dev.components.*',
-        ));
+        );
+
+        if (is_dir(Yii::getPathOfAlias('app.modules.dev.forms.users.user.*'))) {
+            $import[] = 'app.modules.dev.forms.users.user.*';
+        }
+
+        // import the module-level models and components
+        $this->setImport($import);
     }
 
     public function beforeControllerAction($controller, $action) {

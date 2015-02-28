@@ -11,19 +11,26 @@ class ModelGenerator extends CodeGenerator {
         $appItems = glob($appDir . DIRECTORY_SEPARATOR . "*");
 
         $items = [];
-        foreach ($devItems as $k => $m) {
-            $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
-            $m = str_replace('.php', "", $m);
+        $models = [];
+        if (Setting::get('app.mode') == "plansys") {
+            foreach ($devItems as $k => $m) {
+                $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
+                $m = str_replace('.php', "", $m);
 
-            $devItems[$k] = [
-                'name' => $m,
-                'class' => 'application.models.' . $m,
-                'class_path' => 'application.models',
-                'exist' => (class_exists($m)) ? 'yes' : 'no',
-                'type' => 'dev'
+                $devItems[$k] = [
+                    'name' => $m,
+                    'class' => 'application.models.' . $m,
+                    'class_path' => 'application.models',
+                    'exist' => (class_exists($m)) ? 'yes' : 'no',
+                    'type' => 'dev'
+                ];
+            }
+
+            $models[] = [
+                'name' => 'Plansys',
+                'items' => $devItems,
             ];
         }
-
         foreach ($appItems as $k => $m) {
             $m = str_replace($appDir . DIRECTORY_SEPARATOR, "", $m);
             $m = str_replace('.php', "", $m);
@@ -36,15 +43,9 @@ class ModelGenerator extends CodeGenerator {
                 'type' => 'app'
             ];
         }
-        $models = [
-            [
-                'name' => 'Plansys',
-                'items' => $devItems,
-            ],
-            [
-                'name' => 'Application',
-                'items' => $appItems,
-            ]
+        $models[] = [
+            'name' => 'Application',
+            'items' => $appItems,
         ];
         return $models;
     }

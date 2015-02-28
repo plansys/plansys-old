@@ -368,3 +368,8 @@
     display: block;
     opacity: 1;
 }
+
+.full-width.dataTable,
+.full-width .ht_master {
+    width:100% !important;
+}

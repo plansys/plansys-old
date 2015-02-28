@@ -144,7 +144,7 @@ class DevUserForm extends User {
                 ),
                 'column2' => array (
                     array (
-                        'label' => 'NIK',
+                        'label' => 'NIP',
                         'name' => 'nip',
                         'labelWidth' => '2',
                         'type' => 'TextField',

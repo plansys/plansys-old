@@ -34,9 +34,20 @@ class DefaultController extends Controller {
         echo $html;
     }
 
+    public function actionFinish() {
+        if (isset($_GET['s'])) {
+            echo Setting::$mode;
+            die();
+        }
+        
+        
+        $this->renderForm('InstallFinishForm');
+    }
+
     public function actionUser() {
         $model = new InstallUserForm;
         $error = false;
+        $success = 'n';
         $model->fullname = "Developer";
         $model->username = "dev";
 
@@ -60,12 +71,13 @@ class DefaultController extends Controller {
                 ");
 
                 Installer::createIndexFile("running");
-                $this->redirect(['/']);
+                $this->redirect(['/install/default/finish']);
             }
         }
 
         $this->renderForm('InstallUserForm', $model, [
-            'error' => $error
+            'error' => $error,
+            'success' => $success
         ]);
     }
 
@@ -103,7 +115,7 @@ class DefaultController extends Controller {
                         $this->redirect(['/install/default/user']);
                     } else {
                         Installer::createIndexFile("running");
-                        $this->redirect(['/']);
+                        $this->redirect(['/install/default/finish']);
                     }
                 }
             }

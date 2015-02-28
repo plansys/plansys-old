@@ -13,7 +13,7 @@ class FormGeneratorController extends Controller {
         Yii::import('application.components.codegen.templates.' . $id . '.*');
         $class = ucfirst($id) . "Generator";
         $wizard = new $class;
-        
+
         $this->renderForm($wizard->form);
     }
 
