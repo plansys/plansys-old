@@ -342,7 +342,7 @@ class FormField extends CComponent {
                     }
                 } else {
                     Yii::app()->clientScript->registerScriptFile(
-                            Asset::publish($jspath, true), CClientScript::POS_END
+                            Asset::publish($jspath), CClientScript::POS_END
                     );
                 }
             }
@@ -352,7 +352,7 @@ class FormField extends CComponent {
         foreach ($includeCSS as $css) {
             $class = get_class($this);
             $csspath = Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css;
-            Yii::app()->clientScript->registerCSSFile(Asset::publish($csspath, true), 'ALL');
+            Yii::app()->clientScript->registerCSSFile(Asset::publish($csspath), 'ALL');
         }
     }
 
@@ -385,9 +385,7 @@ class FormField extends CComponent {
         if (count($includeCSS) > 0) {
             foreach ($includeCSS as $css) {
                 $class = get_class($this);
-                $html[] = Asset::publish(
-                                Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css, true
-                );
+                $html[] = Asset::publish(Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css);
             }
         }
         return $html;

@@ -2,9 +2,11 @@
      ng-click="toggle(this);select(this, item);"
      ng-class="isSelected(this)">
     <div style="margin:-1px 0px;padding:1px 0px;" context-menu="formTreeOpen(this, $event, item)" data-target="FormTreeMenu">
+        <!--
         <div class="ui-tree-handle-info" ng-if="!isNaN(item.count)">
-            <!--{{item.count ? item.count : item.items.length }} form{{item.items.length > 1 ? 's' : ''}}-->
+            {{item.count ? item.count : item.items.length }} form{{item.items.length > 1 ? 's' : ''}}
         </div>
+        -->
 
         <i ng-show="this.collapsed" class="fa fa-caret-right"></i>
         <i ng-show="!this.collapsed" class="fa fa-caret-down"></i>

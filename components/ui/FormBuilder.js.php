@@ -30,7 +30,6 @@ ob_start();
         $scope.modelBaseClass = "<?php echo ActiveRecord::baseClass($this->model); ?>";
         $scope.lastModified = "<?php echo Helper::getLastModified($modelClass); ?>";
 
-        console.log($scope.errors);
 
         // initialize pageSetting
         $timeout(function () {

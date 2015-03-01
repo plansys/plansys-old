@@ -8,7 +8,7 @@
                 </div>
                 <div ng-if='list.parent != ""' ng-click='browse(list.parent)' class="btn btn-xs btn-success" style="margin-top:0px;">
                     Up<i class="fa fa-nm fa-level-up"></i>
-                </div>
+                </div>
             </div>
             <div ui-content oc-lazy-load="{name: 'ui.tree', files: ['<?= $this->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
                 <div ui-tree data-drag-enabled="false">
@@ -169,7 +169,7 @@
 </script>
 <?php
 
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.

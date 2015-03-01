@@ -83,9 +83,7 @@ class Widget extends CApplicationComponent {
         if (count($includeJS) > 0) {
             foreach ($includeJS as $js) {
                 $class = get_class($this);
-                $html[] = Asset::publish(
-                    Yii::getPathOfAlias("application.components.ui.Widgets.{$class}") . '/' . $js, true
-                );
+                $html[] = Asset::publish(Yii::getPathOfAlias("application.components.ui.Widgets.{$class}") . '/' . $js);
             }
         }
         return $html;
