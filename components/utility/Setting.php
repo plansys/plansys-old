@@ -305,6 +305,10 @@ class Setting {
         return Setting::getRootPath() . DIRECTORY_SEPARATOR . "assets" . DIRECTORY_SEPARATOR . "runtime";
     }
 
+    public static function getConfigPath() {
+        return Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "config";
+    }
+
     public static function getAssetPath() {
         return Setting::getRootPath() . DIRECTORY_SEPARATOR . "assets";
     }

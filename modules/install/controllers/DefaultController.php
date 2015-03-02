@@ -1,8 +1,10 @@
 <?php
 
-class DefaultController extends Controller {
+class DefaultController extends Controller
+{
 
-    public function beforeAction($action) {
+    public function beforeAction($action)
+    {
         if (!in_array(Setting::$mode, ["install", "init"])) {
             $this->redirect(['/site/login']);
             die();
@@ -22,29 +24,33 @@ class DefaultController extends Controller {
         return true;
     }
 
-    public function getModuleUrl() {
+    public function getModuleUrl()
+    {
         return str_replace("static", "modules/install/views/default/", $this->staticUrl(""));
     }
 
-    public function actionIndex($msg = null) {
+    public function actionIndex($msg = null)
+    {
         $content = $this->renderPartial('index', [
             'msg' => $msg
-                ], true);
+        ], true);
         $html = $this->renderPartial('_layout', ['content' => $content], true);
         echo $html;
     }
 
-    public function actionFinish() {
+    public function actionFinish()
+    {
         if (isset($_GET['s'])) {
             echo Setting::$mode;
             die();
         }
-        
-        
+
+
         $this->renderForm('InstallFinishForm');
     }
 
-    public function actionUser() {
+    public function actionUser()
+    {
         $model = new InstallUserForm;
         $error = false;
         $success = 'n';
@@ -81,7 +87,8 @@ class DefaultController extends Controller {
         ]);
     }
 
-    public function actionDb() {
+    public function actionDb()
+    {
         $model = new InstallDbForm();
         $model->host = Setting::get('db.host');
         $model->username = Setting::get('db.username');
@@ -93,14 +100,14 @@ class DefaultController extends Controller {
             $model->attributes = $_POST['InstallDbForm'];
 
             if ($model->validate()) {
-                $mysqlConnection = @mysql_connect($model->host, $model->username, $model->password);
-                if (!$mysqlConnection) {
-                    $error = "Mysql connection failed, please your credential:";
-                } else {
-                    $result = mysql_select_db($model->dbname, $mysqlConnection);
-                    if (!$result) {
-                        $error = "Failed to select database: \"{$model->dbname}\"";
-                    }
+                $error = false;
+                try {
+                    $dbh = new pdo("mysql:host={$model->host};dbname={$model->dbname}",
+                        $model->username,
+                        $model->password,
+                        array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+                } catch (PDOException $ex) {
+                    $error = $ex->getMessage();
                 }
 
                 if (!$error) {

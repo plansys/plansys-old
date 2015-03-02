@@ -88,6 +88,12 @@ class Installer {
                     }
                 ],
                 [
+                    "title" => 'Checking config directory permissions',
+                    "check" => function() {
+                        return Setting::checkPath(Setting::getConfigPath(), true);
+                    }
+                ],
+                [
                     "title" => 'Checking repository directory permissions',
                     "check" => function() {
                         $repo = Setting::get('repo.path');
