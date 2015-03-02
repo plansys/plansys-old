@@ -1,6 +1,6 @@
 <?php 
 
- $mode = "custom"; 
+ $mode = 'normal'; 
 
  return array (
     array (

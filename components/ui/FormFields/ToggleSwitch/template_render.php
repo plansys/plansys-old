@@ -23,11 +23,11 @@
                 <input type="checkbox" <?= $this->expandAttributes($this->fieldOptions) ?>
                        ng-model="value" ng-change="update()" ui-switch checked/>
             </div>
-            <div ng-if="value"
+            <div ng-if="value" ng-click="switch()"
                  class="label label-success switchery-label <?= $this->switcheryLabelClass; ?>">
                 <?= $this->onLabel; ?>
             </div>
-            <div ng-if="!value"
+            <div ng-if="!value" ng-click="switch()"
                  class="label label-default switchery-label <?= $this->switcheryLabelClass; ?>">
                 <?= $this->offLabel; ?>
             </div>

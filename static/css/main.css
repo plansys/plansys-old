@@ -2485,7 +2485,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 
 .toggle-switchery {
     float: left;
-    margin-top:-2px;
+    margin-top: -2px;
 }
 
 .switchery-label {
@@ -2493,6 +2493,16 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     padding: 3px 7px 2px 7px;
     margin: 6px 7px;
     font-size: 11px;
+}
+
+.switchery-label {
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .switchery-label.label-success {
@@ -2508,7 +2518,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     background: none;
     font-weight: bold;
     font-size: 12px;
-    margin:0px;
+    margin: 0px;
 }
 
 .switchery-label.label-success.switchery-label-small {
@@ -3202,9 +3212,11 @@ div[icon-picker] .popover-content {
 .action-list {
     margin: 8px;
 }
-.column-field{
-    width:100%;
+
+.column-field {
+    width: 100%;
 }
+
 .column-field td {
     padding: 25px 50px 25px 25px;
 }

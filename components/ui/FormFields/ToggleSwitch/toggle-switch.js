@@ -28,6 +28,11 @@ app.directive('toggleSwitch', function ($timeout) {
                     };
                 }
 
+                $scope.switch = function() {
+                    $scope.value = !$scope.value;
+                    $scope.update();
+                }
+
                 // set default value
                 $scope.value = $el.find("data[name=value]").html().trim();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
