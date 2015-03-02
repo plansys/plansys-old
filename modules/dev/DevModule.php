@@ -12,6 +12,7 @@ class DevModule extends CWebModule {
             'application.modules.dev.forms.generators.templates.*',
             'application.modules.dev.forms.users.user.*',
             'application.modules.dev.forms.users.role.*',
+            'application.modules.dev.forms.settings.*',
             'application.modules.dev.components.*',
         );
 

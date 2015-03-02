@@ -79,7 +79,7 @@
     array (
         'label' => 'Settings',
         'icon' => 'fa-sliders',
-        'url' => '#',
+        'url' => '/dev/settings/index',
     ),
     array (
         'label' => 'Repository',

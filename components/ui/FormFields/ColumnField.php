@@ -8,14 +8,14 @@ class ColumnField extends FormField {
      * @return array me-return array property ColumnField.
      */
     public function getFieldProperties() {
-        return  [
-             [
+        return array (
+            array (
                 'label' => 'Total Columns',
                 'name' => 'totalColumns',
-                'options' =>  [
+                'options' => array (
                     'ng-change' => 'save()',
                     'ng-model' => 'active.totalColumns',
-                ],
+                ),
                 'listExpr' => 'array(
    \'1\'=>\'1 Column\',
    \'2\'=>\'2 Columns\',
@@ -25,23 +25,28 @@ class ColumnField extends FormField {
 )',
                 'fieldWidth' => '5',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Show Border',
                 'name' => 'showBorder',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.showBorder',
                     'ng-change' => 'save();relayout();',
-                ],
+                ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ],
-             [
-                'type' => 'Text',
+            ),
+            array (
                 'value' => '<hr/>',
-            ],
-        ];
+                'type' => 'Text',
+            ),
+            array (
+                'label' => 'Options',
+                'name' => 'options',
+                'type' => 'KeyValueGrid',
+            ),
+        );
     }
 	
     /** @var integer $totalColumns */
@@ -97,6 +102,8 @@ class ColumnField extends FormField {
 	
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-columns";
+    
+    public $options = [];
 	
     /**
      * @return integer me-return width dari column yang akan dirender.
@@ -130,6 +137,8 @@ class ColumnField extends FormField {
      * @return mixed me-return sebuah field ColumnField dari hasil render 
      */
     public function render() {
+        
+        $this->addClass('column-field', 'options');
         return $this->renderInternal('template_render.php');
     }
 
