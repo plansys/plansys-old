@@ -22,7 +22,7 @@ class Setting {
             'mode' => 'development'
         ],
     ];
-    
+
     public static $mode = null;
     public static $entryScript = "";
 
@@ -69,7 +69,7 @@ class Setting {
     }
 
     private static function arrayMergeRecursiveReplace($paArray1, $paArray2) {
-        if (!is_array($paArray1) or ! is_array($paArray2)) {
+        if (!is_array($paArray1) or !is_array($paArray2)) {
             return $paArray2;
         }
         foreach ($paArray2 AS $sKey2 => $sValue2) {
@@ -199,7 +199,7 @@ class Setting {
         Setting::setInternal(Setting::$data, $key, $value);
         $result = @file_put_contents(Setting::$path, json_encode(Setting::$data, JSON_PRETTY_PRINT));
         if (!$result) {
-            
+
         }
     }
 
@@ -215,7 +215,7 @@ class Setting {
 
     public static function checkPath($path, $writable = false) {
         if (!is_dir($path)) {
-            if (!@mkdir($path)) {
+            if (!@mkdir($path, 0775)) {
                 $error = error_get_last();
                 $message = Setting::t("Failed to create directory <br/>'{path}'<br/>because: {error}");
                 $message = strtr($message, [
@@ -259,8 +259,8 @@ class Setting {
                 $config['theme'] = 'default';
             }
         }
-        
-        
+
+
         return $config;
     }
 
