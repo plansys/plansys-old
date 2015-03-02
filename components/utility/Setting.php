@@ -381,6 +381,10 @@ class Setting {
 
         foreach ($appModules as $key => $module) {
             $m = Setting::explodeLast(DIRECTORY_SEPARATOR, $module);
+
+            if (!is_file(ucfirst($m) . 'Module.php'))
+                continue;
+
             $return[$m] = [
                 'class' => 'app.modules.' . $m . '.' . ucfirst($m) . 'Module'
             ];
