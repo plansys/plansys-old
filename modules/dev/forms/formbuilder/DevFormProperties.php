@@ -40,7 +40,7 @@ class DevFormProperties extends Form {
             array (
                 'label' => 'Form Layout',
                 'name' => 'layoutName',
-                'listExpr' => 'array(\\\'full-width\\\',\\\'dashboard\\\')',
+                'listExpr' => 'Layout::listLayout()',
                 'iconTemplate' => '<img src=\\"{plansys_url}/static/img/columns/{icon}.png\\" />',
                 'fieldWidth' => '150',
                 'options' => array (

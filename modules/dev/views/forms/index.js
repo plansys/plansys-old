@@ -17,10 +17,12 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
     $scope.addForm = function () {
 
     };
-    $scope.executeMenu = function (func) {
-        $timeout(function () {
-            func($scope.menuSelect);
-        });
+    $scope.executeMenu = function (e, func) {
+        if (typeof func == "function") {
+            $timeout(function () {
+                func($scope.menuSelect);
+            });
+        }
     }
     $scope.formTreeOpen = function (sel, e, item) {
         $scope.menuSelect = sel.$modelValue;
@@ -106,6 +108,21 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                 break;
             case "form":
                 $scope.formTreeMenu = [
+                    {
+                        icon: "fa fa-fw fa-sign-in",
+                        label: "Open New Tab",
+                        click: function (item) {
+                            window.open(
+                                Yii.app.createUrl('/dev/forms/update', {
+                                    'class': item.alias
+                                }),
+                                '_blank'
+                            );
+                        }
+                    },
+                    {
+                        hr: true
+                    },
                     {
                         icon: "fa fa-fw fa-pencil",
                         label: "Rename",

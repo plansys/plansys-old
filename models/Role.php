@@ -5,6 +5,7 @@ class Role extends ActiveRecord {
     public function rules() {
         return array(
             array('role_name, role_description', 'required'),
+            array('role_name', 'unique'),
             array('menu_path, home_url', 'safe'),
             array('role_name, role_description', 'length', 'max' => 255),
         );
@@ -32,6 +33,11 @@ class Role extends ActiveRecord {
 
     private $oldName = "";
 
+    public function getRootRole() {
+        return Helper::explodeFirst(".", $this->role_name);
+    }
+
+
     public function afterFind() {
         $this->oldName = $this->role_name;
 
@@ -48,8 +54,8 @@ class Role extends ActiveRecord {
 
 
         $sql = "UPDATE p_nfy_subscription_categories "
-                . "set category = 'role_{$this->role_name}.' "
-                . "where category = 'role_{$this->oldName}.';";
+            . "set category = 'role_{$this->role_name}.' "
+            . "where category = 'role_{$this->oldName}.';";
         Yii::app()->db->createCommand($sql)->execute();
         return true;
     }

@@ -48,9 +48,7 @@ Finalizing Installation
                 'type' => 'Text',
             ),
             array (
-                'value' => '
-    
-</div>',
+                'value' => '</div>',
                 'type' => 'Text',
             ),
         );

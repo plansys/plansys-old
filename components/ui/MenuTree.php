@@ -8,7 +8,7 @@ class MenuTree extends CComponent {
 
     public static function listAllFile() {
         $files = [];
-        
+
         ## dev
         if (Setting::get('app.mode') == "plansys") {
             $dir = Yii::getPathOfAlias('application.modules');
@@ -41,6 +41,17 @@ class MenuTree extends CComponent {
         return $files;
     }
 
+    public static function getMenuMode($alias) {
+        $path = Asset::resolveAlias($alias . ".php");
+
+        include($path);
+        if (!isset($mode)) {
+            $mode = 'normal';
+        }
+
+        return $mode;
+    }
+
     public static function listFile($module) {
         $path = "application.modules." . lcfirst($module) . ".menus";
         $dir = Yii::getPathOfAlias($path);
@@ -65,15 +76,24 @@ class MenuTree extends CComponent {
         return $items;
     }
 
-    public static function listHtml($module, $includeEmpty = true) {
+    public static function listDropdown($module, $includeEmpty = true, $withClass = true) {
         $raw = MenuTree::listFile($module);
         $list = [];
-        foreach ($raw as $r) {
-            $list[$r['class']] = $r['name'];
+        if ($includeEmpty) {
+            if ($includeEmpty !== true) {
+                $list[''] = $includeEmpty;
+            } else {
+                $list[''] = "-- Empty --";
+            }
+            $list['---'] = '---';
         }
 
-        if ($includeEmpty) {
-            $list[''] = "-- Empty --";
+        foreach ($raw as $r) {
+            if ($withClass) {
+                $list[$r['class']] = $r['name'];
+            } else {
+                $list[$r['name']] = $r['name'];
+            }
         }
 
         return $list;
@@ -169,7 +189,7 @@ class MenuTree extends CComponent {
             'list' => $this->list,
             'class' => $this->class,
             'options' => $this->options,
-                ], true);
+        ], true);
 
         return str_replace(["<script>", "</script>"], "", $script);
     }
@@ -186,12 +206,12 @@ class MenuTree extends CComponent {
         }
 
         return $ctrl->renderPartial("//layouts/menu", [
-                    'class' => $this->class,
-                    'classpath' => $this->classpath,
-                    'title' => $this->title,
-                    'options' => $this->options,
-                    'script' => $script,
-                        ], true);
+            'class' => $this->class,
+            'classpath' => $this->classpath,
+            'title' => $this->title,
+            'options' => $this->options,
+            'script' => $script,
+        ], true);
     }
 
 }

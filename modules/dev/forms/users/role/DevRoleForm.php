@@ -23,7 +23,7 @@ class DevRoleForm extends Role {
             array (
                 'linkBar' => array (
                     array (
-                        'label' => 'Cancel',
+                        'label' => 'Kembali',
                         'url' => '/dev/user/roles',
                         'options' => array (
                             'href' => 'url:/dev/user/roles',
@@ -31,10 +31,26 @@ class DevRoleForm extends Role {
                         'type' => 'LinkButton',
                     ),
                     array (
-                        'label' => 'Save',
+                        'label' => 'Simpan',
                         'buttonType' => 'success',
                         'options' => array (
                             'ng-click' => 'form.submit(this)',
+                        ),
+                        'type' => 'LinkButton',
+                    ),
+                    array (
+                        'renderInEditor' => 'Yes',
+                        'value' => '<div class=\\"separator\\"></div>',
+                        'type' => 'Text',
+                    ),
+                    array (
+                        'label' => 'Hapus',
+                        'buttonType' => 'danger',
+                        'options' => array (
+                            'href' => 'url:/dev/user/roledel?id={model.id}',
+                            'ng-if' => '!isNewRecord && module == \\\'dev\\\'',
+                            'prompt' => 'Ketik \\\'DELETE\\\' (tanpa kutip) untuk menghapus role ini',
+                            'prompt-if' => 'DELETE',
                         ),
                         'type' => 'LinkButton',
                     ),
@@ -51,13 +67,11 @@ class DevRoleForm extends Role {
                     array (
                         'label' => 'Role Name',
                         'name' => 'role_name',
-                        'autocomplete' => 'rel',
                         'type' => 'TextField',
                     ),
                     array (
                         'label' => 'Role Description',
                         'name' => 'role_description',
-                        'autocomplete' => 'rel',
                         'type' => 'TextField',
                     ),
                     array (
@@ -73,9 +87,13 @@ class DevRoleForm extends Role {
                         'type' => 'TextField',
                     ),
                     array (
-                        'label' => 'Menu Path',
+                        'label' => 'Menu Tree',
                         'name' => 'menu_path',
-                        'type' => 'TextField',
+                        'options' => array (
+                            'ng-if' => '!isNewRecord',
+                        ),
+                        'listExpr' => 'MenuTree::listDropdown($model->rootRole,\\\'Default\\\',true);',
+                        'type' => 'DropDownList',
                     ),
                     array (
                         'label' => 'Repo Path',

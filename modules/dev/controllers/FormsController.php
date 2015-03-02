@@ -12,13 +12,13 @@ class FormsController extends Controller {
             if ($type == "AR") {
                 FormsController::$modelFieldList = $data;
                 $rel = isset($data['Relations']) ? $data['Relations'] : array();
-                         
+
                 FormsController::$relFieldList = array_merge(array(
                     '' => '-- None --',
                     '---' => '---',
                     'currentModel' => 'Current Model',
                     '--' => '---',
-                        ), $rel);
+                ), $rel);
             } else {
                 foreach ($data as $name => $field) {
                     FormsController::$modelFieldList[$name] = $name;
@@ -32,8 +32,8 @@ class FormsController extends Controller {
         FormField::$inEditor = false;
         $fbp = FormBuilder::load($field['type']);
         return $fbp->render($field, array(
-                    'wrapForm' => false,
-                    'FormFieldRenderID' => $this->countRenderID++
+            'wrapForm' => false,
+            'FormFieldRenderID' => $this->countRenderID++
         ));
     }
 
@@ -97,12 +97,13 @@ class FormsController extends Controller {
         }
         foreach ($toolbarData as $k => $f) {
             $ff = new $f['type'];
-            $scripts = $ff->renderScript();
+            $scripts = array_merge($ff->renderScript(), $ff->renderPropertiesScript());
+
             foreach ($scripts as $script) {
                 $ext = Helper::explodeLast(".", $script);
                 if ($ext == "js") {
                     Yii::app()->clientScript->registerScriptFile($script, CClientScript::POS_END);
-                } else {
+                } else if ($ext == "css") {
                     Yii::app()->clientScript->registerCSSFile($script, CClientScript::POS_BEGIN);
                 }
             }
@@ -221,14 +222,14 @@ class FormsController extends Controller {
 
         $this->layout = "//layouts/blank";
         $fb = FormBuilder::load($class);
+
         $classPath = $class;
         $class = Helper::explodeLast(".", $class);
-
 
         if (is_subclass_of($fb->model, 'ActiveRecord')) {
             $formType = "ActiveRecord";
             FormsController::setModelFieldList($class::model()->attributesList, "AR", $class);
-            
+
         } else if (is_subclass_of($fb->model, 'FormField')) {
             $formType = "FormField";
             $mf = new $class;
@@ -242,8 +243,6 @@ class FormsController extends Controller {
         $fieldData = $fb->fields;
         FormsController::$modelField = $fieldData;
         $toolbar = $this->renderAllToolbar($formType);
-
-
         Yii::import('application.modules.' . $fb->module . '.controllers.*');
 
         $this->render('form', array(

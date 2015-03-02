@@ -13,12 +13,13 @@ class MenusController extends Controller {
         $properties = FormBuilder::load('DevMenuEditor');
 
         if ($this->beginCache('DevMenuProperties', array(
-                    'dependency' => new CFileCacheDependency(
-                            Yii::getPathOfAlias('application.modules.dev.forms.DevMenuEditor') . ".php"
-            )))) {
+            'dependency' => new CFileCacheDependency(
+                Yii::getPathOfAlias('application.modules.dev.forms.DevMenuEditor') . ".php"
+            )))
+        ) {
             echo $properties->render();
             $this->endCache();
-        } 
+        }
     }
 
     public function actionSave($class) {
@@ -27,13 +28,27 @@ class MenusController extends Controller {
 
         if (isset($post['list'])) {
             MenuTree::cleanMenuItems($post['list']);
-            $code = "<?php \n\n return " . FormBuilder::formatCode($post['list'], '') . ";";
-            file_put_contents(Yii::getPathOfAlias($class) . ".php", $code);
+            $mode = !!@$post['mode'] ? $post['mode'] : 'normal';
+            if ($mode == 'normal') {
+                $code = "<?php \n\n \$mode = '{$mode}'; \n\n return " . FormBuilder::formatCode($post['list'], '') . ";";
+                file_put_contents(Yii::getPathOfAlias($class) . ".php", $code);
+            }
         }
     }
 
-    public function actionRename() {
+    public function actionSwitchMode($path, $mode) {
+        $filename = Yii::getPathOfAlias($path) . ".php";
+        if (is_file($filename)) {
+            $file = file_get_contents($filename);
+            $file = preg_replace('/\$mode\s+=\s+[\'\"].*[\'\"]\s*\;/', '$mode = "' . $mode . '";', $file, 1);
 
+            file_put_contents($filename, $file);
+            echo $file;
+        }
+    }
+
+
+    public function actionRename() {
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
 
@@ -74,22 +89,28 @@ class MenusController extends Controller {
         $this->render('empty');
     }
 
+    public function actionGetCode($path) {
+        echo file_get_contents(Yii::getPathOfAlias($path) . ".php");
+    }
+
     public function actionUpdate($class) {
         $this->layout = "//layouts/blank";
 
         $list = include(Yii::getPathOfAlias($class) . ".php");
         MenuTree::fillMenuItems($list);
-
         $path = $class;
         $class_path = explode(".", $class);
         $class = $class_path[count($class_path) - 1];
         $properties = FormBuilder::load('DevMenuEditor');
         $properties->registerScript();
 
+        Asset::registerJS('application.static.js.lib.ace');
+
         $this->render('form', array(
             'list' => $list,
             'class' => $class,
-            'path' => $path
+            'path' => $path,
+            'mode' => MenuTree::getMenuMode($path)
         ));
     }
 

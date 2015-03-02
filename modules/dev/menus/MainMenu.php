@@ -1,5 +1,7 @@
 <?php 
 
+ $mode = "custom"; 
+
  return array (
     array (
         'label' => 'Builder',
@@ -15,7 +17,7 @@
                 'url' => '#',
             ),
             array (
-                'label' => 'Menu Editor',
+                'label' => 'MenuTree Editor',
                 'icon' => 'fa-sitemap',
                 'url' => '/dev/menus/index',
             ),
@@ -72,11 +74,6 @@
         'state' => 'collapsed',
     ),
     array (
-        'label' => 'Database',
-        'icon' => 'fa-database',
-        'url' => '/dev/default/adminer',
-    ),
-    array (
         'label' => 'Settings',
         'icon' => 'fa-sliders',
         'url' => '#',
@@ -85,5 +82,10 @@
         'label' => 'Repository',
         'icon' => 'fa-folder-open',
         'url' => '/repo/index',
+    ),
+    array (
+        'label' => 'Database',
+        'icon' => 'fa-database',
+        'url' => '/dev/default/adminer',
     ),
 );
