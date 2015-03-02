@@ -3202,7 +3202,9 @@ div[icon-picker] .popover-content {
 .action-list {
     margin: 8px;
 }
-
+.column-field{
+    width:100%;
+}
 .column-field td {
     padding: 25px 50px 25px 25px;
 }
