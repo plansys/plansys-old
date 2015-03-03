@@ -26,27 +26,24 @@ app.directive('uiSwitch', ['$window', '$timeout', '$log', '$parse',
             }
             catch (e) {
             }
+
             $timeout(function () {
                 var switcher = new $window.Switchery(elem[0], options);
                 var element = switcher.element;
                 element.checked = scope.initValue;
                 switcher.setPosition(false);
 
+                scope.$watch('initValue', function (n) {
+                    if (typeof n == "boolean") {
+                        element.checked = n;
+                        switcher.setPosition(false);
+                    }
+                });
+
                 element.addEventListener('change', function (evt) {
-                    var shouldContinue = true;
-                    if (!!attrs.confirm) {
-                        shouldContinue = confirm(attrs.confirm);
-
-                        if (!shouldContinue) {
-                            switcher.setPosition(true);
-                        }
-                    }
-
-                    if (shouldContinue) {
-                        scope.$apply(function () {
-                            ngModel.$setViewValue(element.checked);
-                        })
-                    }
+                    scope.$apply(function () {
+                        ngModel.$setViewValue(element.checked);
+                    });
                 })
             }, 0);
         }

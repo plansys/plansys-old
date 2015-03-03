@@ -38,10 +38,15 @@
                     'onLabel'  => 'Normal Menu',
                     'options'  => [
                         'style'     => 'float:right;width:145px;',
-                        'ng-change' => 'switchMode()'
+                        'ng-change' => 'switchMode()',
+                        'ng-show'   => "codeValid"
                     ]
                 ]);
                 ?>
+                <div ng-if="!codeValid" style="float:right;margin:2px 10px;color:red;">
+                    <i class="fa fa-warning"></i> Code Error
+                </div>
+
             </div>
             <div ui-content style="padding:3px 20px;">
                 <div ng-if="mode == 'normal'">
@@ -75,7 +80,6 @@
 </div>
 <script type="text/javascript">
     app.controller("PageController", ["$scope", "$http", "$timeout", function ($scope, $http, $timeout) {
-            $scope.list = <?php echo CJSON::encode($list); ?>;
             $scope.isLoading = true;
             $scope.listOptions = {
                 dropped: function (e) {
@@ -89,18 +93,22 @@
                     return true;
                 }
             };
-            $scope.mode = "<?= $mode; ?>";
             $scope.model = {
-                mode: $scope.mode == 'normal'
+                mode: true
             };
+            $scope.mode = null;
             $scope.code = null;
+            $scope.list = null;
+            $scope.codeValid = true;
+            $scope.switchModeTimeout = null;
             $scope.switchMode = function () {
                 var mode = $scope.mode;
-                if ($scope.mode == "normal") {
-                    mode = "custom";
-                } else {
+                if ($scope.model.mode) {
                     mode = "normal";
+                } else {
+                    mode = "custom";
                 }
+
                 $http.get(Yii.app.createUrl('/dev/menus/switchMode', {
                     path: '<?= $path ?>',
                     mode: mode
@@ -109,9 +117,10 @@
                         $scope.mode = mode;
                         $("#code-editor").html(data);
                         $scope.renderMode($scope.mode);
-                    });
+                    }, 300);
                 });
             };
+
             $scope.renderMode = function (mode) {
                 switch (mode) {
                     case "normal":
@@ -126,8 +135,15 @@
                             $http.get(Yii.app.createUrl('/dev/menus/getList', {
                                 path: '<?= $path ?>'
                             })).success(function (data) {
-                                $scope.list = data;
-                                setCustomList();
+                                if (typeof data == "string") {
+                                    $scope.codeValid = false;
+                                    $scope.model.mode = false;
+                                    $scope.mode = "custom";
+                                    $scope.renderMode("custom");
+                                } else if (typeof data == "object") {
+                                    $scope.list = data;
+                                    setCustomList();
+                                }
                             });
                         } else {
                             setCustomList();
@@ -155,7 +171,23 @@
                         break;
                 }
             };
-            $scope.renderMode($scope.mode);
+
+            // check code for error
+            $("#menu-drag-drop").width('0%').hide();
+            $("#menu-pane").width('100%').css('left', 0);
+            $(".ui-splitbar").hide();
+            $http.get(Yii.app.createUrl('/dev/menus/getMode', {
+                path: '<?= $path ?>'
+            })).success(function (data) {
+                $scope.codeValid = data != '';
+                $scope.mode = data != '' ? data : '';
+                if ($scope.mode == 'custom') {
+                    $scope.model.mode = false;
+                }
+                $scope.renderMode($scope.mode);
+            });
+
+
             $scope.activeTree = null;
             $scope.active = null;
             $scope.saving = false;
@@ -236,12 +268,12 @@
                         'items': []
                     });
                 }
-                $scope.save();
+                $scope.save($scope.list);
             }
             $scope.remove = function (item) {
                 item.remove();
                 $scope.active = null;
-                $scope.save();
+                $scope.save($scope.list);
             }
 
             $scope.saveSource = function (code) {
@@ -253,6 +285,7 @@
                     $http.post('<?php echo $this->createUrl("saveSource", array('class' => $path)); ?>',
                             {code: code})
                             .success(function (data, status) {
+                                $scope.codeValid = data != '';
                                 $scope.saving = false;
                             })
                             .error(function (data, status) {
@@ -261,7 +294,6 @@
                 }
             }
             $scope.save = function (list) {
-            console.log(list);
                 if (!$scope.rendering) {
                     $scope.saving = true;
                     $scope.code = null;

@@ -56,7 +56,10 @@ class DevGenericGenerator extends Form {
                     ),
                 ),
                 'column2' => array (
-                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
                     array (
                         'label' => 'Model Name',
                         'name' => 'model',

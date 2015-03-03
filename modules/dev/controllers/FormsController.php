@@ -216,6 +216,7 @@ class FormsController extends Controller {
     }
 
     public function actionUpdate($class) {
+        
         FormField::$inEditor = true;
         $class = FormBuilder::classPath($class);
         Yii::app()->session['FormBuilder_' . $class] = null;
@@ -245,14 +246,15 @@ class FormsController extends Controller {
         $toolbar = $this->renderAllToolbar($formType);
         Yii::import('application.modules.' . $fb->module . '.controllers.*');
 
-        $this->render('form', array(
+        
+        echo $this->render('form', array(
             'fb' => $fb,
             'class' => $class,
             'classPath' => $classPath,
             'formType' => $formType,
             'toolbarData' => @$toolbar['data'],
             'fieldData' => $fieldData,
-        ));
+        ),true);
     }
 
 }

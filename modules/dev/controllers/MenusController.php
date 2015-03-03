@@ -28,7 +28,7 @@ class MenusController extends Controller {
         $file     = Yii::getPathOfAlias($class) . ".php";
         if (isset($post['code']) && is_file($file)) {
             $success = file_put_contents($file, $post['code']);
-            echo $post['code'];
+            echo MenuTree::getMenuMode($class);
         }
     }
 
@@ -37,9 +37,8 @@ class MenusController extends Controller {
         $post     = CJSON::decode($postdata);
 
         if (isset($post['list'])) {
-            
             MenuTree::cleanMenuItems($post['list']);
-            $code = "<?php \n\n \$mode = 'normal'; \n\n return " . FormBuilder::formatCode($post['list'], '') . ";";
+            $code = "<?php \n\n\$mode = 'normal'; \n\nreturn " . FormBuilder::formatCode($post['list'], '') . ";";
             file_put_contents(Yii::getPathOfAlias($class) . ".php", $code);
         }
     }
@@ -96,32 +95,37 @@ class MenusController extends Controller {
         $this->render('empty');
     }
 
+    public function actionGetMode($path) {
+        $mode = MenuTree::getMenuMode($path);
+
+        echo $mode;
+    }
+
     public function actionGetCode($path) {
         echo file_get_contents(Yii::getPathOfAlias($path) . ".php");
     }
 
     public function actionGetList($path) {
-        echo json_encode(include(Yii::getPathOfAlias($path) . ".php"));
+        $list = include(Yii::getPathOfAlias($path) . ".php");
+        MenuTree::fillMenuItems($list);
+        echo json_encode($list);
     }
 
     public function actionUpdate($class) {
         $this->layout = "//layouts/blank";
 
-        $list       = include(Yii::getPathOfAlias($class) . ".php");
-        MenuTree::fillMenuItems($list);
-        $path       = $class;
+        $path = $class;
+
         $class_path = explode(".", $class);
         $class      = $class_path[count($class_path) - 1];
         $properties = FormBuilder::load('DevMenuEditor');
-        $properties->registerScript();
 
+        $properties->registerScript();
         Asset::registerJS('application.static.js.lib.ace');
 
         $this->render('form', array(
-            'list'  => $list,
             'class' => $class,
-            'path'  => $path,
-            'mode'  => MenuTree::getMenuMode($path)
+            'path'  => $path
         ));
     }
 

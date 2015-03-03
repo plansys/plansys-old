@@ -30,7 +30,7 @@ class DevMenuEditor extends Form {
                 'layout' => 'Vertical',
                 'options' => array (
                     'ng-model' => 'active.label',
-                    'ng-change' => 'save()',
+                    'ng-change' => 'save(list)',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextArea',
@@ -43,7 +43,7 @@ class DevMenuEditor extends Form {
                 'fieldHeight' => '',
                 'options' => array (
                     'ng-model' => 'active.url',
-                    'ng-change' => 'save()',
+                    'ng-change' => 'save(list)',
                     'ng-delay' => '500',
                 ),
                 'fieldOptions' => array (
@@ -59,7 +59,7 @@ class DevMenuEditor extends Form {
                         'name' => 'Drop Down List',
                         'options' => array (
                             'ng-model' => 'active.state',
-                            'ng-change' => 'save()',
+                            'ng-change' => 'save(list)',
                             'ng-show' => 'active.items.length > 0',
                         ),
                         'listExpr' => 'array(
@@ -77,7 +77,7 @@ class DevMenuEditor extends Form {
                         'fieldWidth' => '400',
                         'options' => array (
                             'ng-model' => 'active.icon',
-                            'ng-change' => 'save()',
+                            'ng-change' => 'save(list)',
                         ),
                         'type' => 'IconPicker',
                     ),

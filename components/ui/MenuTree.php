@@ -44,7 +44,9 @@ class MenuTree extends CComponent {
     public static function getMenuMode($alias) {
         $path = Asset::resolveAlias($alias . ".php");
 
-        include($path);
+        ob_start();
+        @include($path);
+        ob_get_clean();
         if (!isset($mode)) {
             $mode = 'normal';
         }

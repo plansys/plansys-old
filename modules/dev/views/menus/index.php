@@ -23,7 +23,8 @@
                 <div ui-tree data-drag-enabled="false">
                     <ol ui-tree-nodes="" ng-model="list">
                         <li ng-repeat="item in list track by $index" ui-tree-node>
-                            <div ui-tree-handle ng-click="toggle(this);select(this);"  ng-class="is_selected(this)">
+                            <div ui-tree-handle ng-click="toggle(this);
+                                            select(this);"  ng-class="is_selected(this)">
 
                                 <div class="ui-tree-handle-info">
                                     {{item.items.length}} form{{item.items.length > 1 ? 's' : ''}}
@@ -49,7 +50,7 @@
                                     <a target="iframe" 
                                        href="<?php echo $this->createUrl('update', array('class' => '')); ?>{{subItem.class}}"
                                        ui-tree-handle ng-click="select(this)" ng-class="is_selected(this)">
-                                        <i class="fa {{subItem.name == 'MainMenu' ? 'fa-sitemap' : 'fa-book'}} fa-nm"></i>
+                                        <i class="fa fa-sitemap fa-nm" style="{{subItem.name == 'MainMenu' ? 'color:orange;' : ''}}"></i>
                                         <span>{{subItem.name}}</span>
                                     </a>
 
