@@ -19,6 +19,15 @@ class DevSettings extends Form {
     #Email's Settings
     public $emailService;
     public $emailSender;
+    public $emailUser;
+    public $emailPass;
+    public $emailHost;
+    public $emailPort;
+    public $emailAccessKeyId;
+    public $emailSecretAccessKey;
+    public $emailSessionToken;
+    public $emailRegion;
+    public $emailRateLimit;
     
     #LDAP's Settings
     public $ldapEnable;
@@ -26,7 +35,7 @@ class DevSettings extends Form {
     public $ldapDomainControllers;
     public $ldapAccountSuffix;
     public $ldapBaseDn;
-    public $ldapUsename;
+    public $ldapUsername;
     public $ldapPassword;
     
     #Notification's Settings
@@ -39,6 +48,68 @@ class DevSettings extends Form {
     #Audit Trail's Settings
     public $auditEnable;
     public $auditTrack;
+    
+    public function loadSettings(){
+        
+        //include Yii::getPathOfAlias('application.modules.dev.forms.settings.DevSettingsEmailSmtp').".php";
+        #App
+        $this->appName = Setting::get('app.name');
+        $this->appDir = Setting::get('app.dir');
+        $this->appMode = Setting::get('app.mode');
+        $this->appHost = Setting::get('app.host');
+        $this->appPassEncrypt = Setting::get('app.passEncrypt');
+        
+        #Database
+        $this->dbSys = Setting::get('db.driver');
+        $this->dbName = Setting::get('db.dbname');
+        $this->dbPass = Setting::get('db.password');
+        $this->dbPort = Setting::get('db.port');
+        $this->dbServer = Setting::get('db.server');
+        $this->dbUser = Setting::get('db.username');
+        
+        #Repo
+        $this->repoPath = Setting::get('repo.path');
+        
+        #Notif
+        $this->notifEnable = Setting::get('notif.enable');
+        $this->notifWithEmail = Setting::get('notif.email');
+        
+        #Audit Trail 
+        $this->auditEnable = Setting::get("auditTrail.enable");
+        $this->auditTrack = Setting::get("auditTrail.track");
+        
+        #Email
+        $this->emailService = Setting::get("email.service");
+        if(is_null($this->emailService) || $this->emailService == ''){
+            $this->emailService = 'smtp';
+        }
+        
+        if($this->emailService == 'ses'){
+            $this->emailAccessKeyId = Setting::get("email.transport.auth.accessKeyId");
+            $this->emailSecretAccessKey = Setting::get("email.transport.auth.secretAccessKey");
+            $this->emailRateLimit = Setting::get("email.transport.auth.rateLimit");
+            $this->emailRegion = Setting::get("email.transport.auth.region");
+        }else{
+            $this->emailUser = Setting::get("email.transport.auth.user");
+            $this->emailPass = Setting::get("email.transport.auth.pass");
+        }
+        
+        if($this->emailService == 'smtp'){
+            $this->emailHost = Setting::get("email.transport.host");
+            $this->emailPort = Setting::get("email.transport.port");
+        }
+        
+        $this->emailSender = Setting::get("email.from");
+        
+        #LDAP
+        $this->ldapEnable = Setting::get("ldap.enable");
+        $this->ldapAdPort = Setting::get("ldap.ad_port");
+        $this->ldapAccountSuffix = Setting::get("ldap.account_suffix");
+        $this->ldapBaseDn = Setting::get("ldap.base_dn");
+        $this->ldapDomainControllers = Setting::get("ldap.domain_controllers");
+        $this->ldapPassword = Setting::get("ldap.admin_password");
+        $this->ldapUsername = Setting::get("ldap.admin_username");
+    }
     
     public function getForm() {
         return array (
@@ -82,6 +153,11 @@ class DevSettings extends Form {
                     array (
                         'label' => 'Application Directory',
                         'name' => 'appDir',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Application Host',
+                        'name' => 'appHost',
                         'type' => 'TextField',
                     ),
                     array (
@@ -167,6 +243,7 @@ class DevSettings extends Form {
                     array (
                         'label' => 'Password',
                         'name' => 'dbPass',
+                        'fieldType' => 'password',
                         'type' => 'TextField',
                     ),
                     array (
@@ -198,8 +275,8 @@ class DevSettings extends Form {
                         'type' => 'LinkButton',
                     ),
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'column2' => array (
@@ -230,8 +307,8 @@ class DevSettings extends Form {
                         'type' => 'LinkButton',
                     ),
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'type' => 'ColumnField',
@@ -265,14 +342,14 @@ class DevSettings extends Form {
                         'type' => 'CheckboxList',
                     ),
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'column2' => array (
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'type' => 'ColumnField',
@@ -324,31 +401,74 @@ class DevSettings extends Form {
                 ),
                 'column2' => array (
                     array (
-                        'name' => 'subForm1',
-                        'subForm' => 'application.modules.dev.forms.settings.DevSettingsEmailSmtp',
-                        'options' => array (
-                            'ng-if' => 'model.emailService == \\\'smtp\\\'',
-                        ),
-                        'type' => 'SubForm',
-                    ),
-                    array (
-                        'name' => 'subForm2',
-                        'subForm' => 'application.modules.dev.forms.settings.DevSettingsEmailGmail',
-                        'options' => array (
-                            'ng-if' => 'model.emailService == \\\'gmail\\\'',
-                        ),
-                        'type' => 'SubForm',
-                    ),
-                    array (
-                        'name' => 'subForm3',
-                        'subForm' => 'application.modules.dev.forms.settings.DevSettingsEmailSes',
-                        'options' => array (
-                            'ng-if' => 'model.emailService == \\\'ses\\\'',
-                        ),
-                        'type' => 'SubForm',
-                    ),
-                    array (
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
+                    ),
+                    array (
+                        'renderInEditor' => 'Yes',
+                        'value' => '<div ng-if = \\"model.emailService == \\\'smtp\\\' || model.emailService == \\\'gmail\\\'\\">',
+                        'type' => 'Text',
+                    ),
+                    array (
+                        'label' => 'Username',
+                        'name' => 'emailUser',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Password',
+                        'name' => 'emailPass',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'renderInEditor' => 'Yes',
+                        'value' => '</div>
+<div ng-if = \"model.emailService == \'smtp\'\">',
+                        'type' => 'Text',
+                    ),
+                    array (
+                        'label' => 'Host',
+                        'name' => 'emailHost',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Port',
+                        'name' => 'emailPort',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'renderInEditor' => 'Yes',
+                        'value' => '</div>
+<div ng-if = \"model.emailService == \'ses\'\">',
+                        'type' => 'Text',
+                    ),
+                    array (
+                        'label' => 'Access Key ID',
+                        'name' => 'emailAccessKeyId',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Secret Access Key',
+                        'name' => 'emailSecretAccessKey',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Rate Limit',
+                        'name' => 'emailRateLimit',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Region',
+                        'name' => 'emailRegion',
+                        'list' => array (
+                            'us-east-1' => 'us-east-1',
+                            'us-west-2' => 'us-west-2',
+                            'eu-west-1' => 'eu-west-1',
+                        ),
+                        'type' => 'DropDownList',
+                    ),
+                    array (
+                        'renderInEditor' => 'Yes',
+                        'value' => '</div>',
                         'type' => 'Text',
                     ),
                 ),
@@ -406,12 +526,13 @@ class DevSettings extends Form {
                     ),
                     array (
                         'label' => 'Username',
-                        'name' => 'ldapUsename',
+                        'name' => 'ldapUsername',
                         'type' => 'TextField',
                     ),
                     array (
                         'label' => 'Password',
                         'name' => 'ldapPassword',
+                        'fieldType' => 'password',
                         'type' => 'TextField',
                     ),
                 ),
