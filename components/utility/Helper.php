@@ -31,6 +31,15 @@ class Helper {
         return $period;
     }
 
+    public static function replaceOnce($search, $replace, $subject) {
+        $pos = strpos($subject, $search);
+        if ($pos !== false) {
+            return substr_replace($subject, $replace, $pos, strlen($search));
+        } else {
+            return $subject;
+        }
+    }
+
     public static function generateDayInterval($start, $end) {
         $startInt = new DateTime($start);
         $endInt = (new DateTime($end))->modify('+1 day');
@@ -83,7 +92,6 @@ class Helper {
             extract($_data_);
             return eval('return ' . $_expression_ . ';');
         } else {
-            $_data_[] = $this;
             return call_user_func_array($_expression_, $_data_);
         }
     }
@@ -273,14 +281,14 @@ class Helper {
     }
 
     public static function classAlias($class, $withWebroot = true) {
-
         $reflector = new ReflectionClass($class);
 
         $wr = $withWebroot ? "webroot" : '';
 
         $fn = $reflector->getFileName();
         $webroot = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('webroot'));
-        $alias = str_replace(DIRECTORY_SEPARATOR, ".", str_replace(".php", "", str_replace($webroot, $wr, $fn)));
+        $alias = str_replace(DIRECTORY_SEPARATOR, ".", str_replace(".php", "", str_ireplace($webroot, $wr, $fn)));
+
         return trim($alias, ".");
     }
 

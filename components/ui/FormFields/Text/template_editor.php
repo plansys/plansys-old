@@ -1,5 +1,5 @@
 <span ng-if="field.renderInEditor == 'Yes'" dynamic="field.value"></span>
-<div ng-if="!field.renderInEditor || field.renderInEditor == 'No'" 
+<div ng-if="!field.renderInEditor || field.renderInEditor == 'No'"
      class="text-editor-container">
     <div class="text-editor-preview">{{ field.value}}</div>
     <div class="text-editor-more">

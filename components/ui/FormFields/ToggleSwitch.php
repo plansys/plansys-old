@@ -10,115 +10,138 @@ class ToggleSwitch extends FormField {
      * @return array me-return array property TextField.
      */
     public function getFieldProperties() {
-        return  [
-             [
+        return array (
+            array (
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ],
-                'list' =>  [],
+                ),
+                'list' => array (),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Label',
                 'name' => 'label',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
+                ),
                 'type' => 'TextField',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
-                ],
+                ),
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ],
-             [
-                'column1' =>  [
-                     [
+            ),
+            array (
+                'value' => '<hr/>',
+                'type' => 'Text',
+            ),
+            array (
+                'label' => 'Size',
+                'name' => 'size',
+                'list' => array (
+                    'normal' => 'Normal',
+                    'small' => 'Small',
+                ),
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'ON Label',
+                'name' => 'onLabel',
+                'type' => 'TextField',
+            ),
+            array (
+                'label' => 'OFF Label',
+                'name' => 'offLabel',
+                'type' => 'TextField',
+            ),
+            array (
+                'column1' => array (
+                    array (
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' =>  [
+                        'options' => array (
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                             'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
-                        ],
+                        ),
                         'type' => 'TextField',
-                    ],
-                     [
-                        'type' => 'Text',
+                    ),
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                    ],
-                ],
-                'column2' =>  [
-                     [
+                        'type' => 'Text',
+                    ),
+                ),
+                'column2' => array (
+                    array (
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => 12,
                         'fieldWidth' => '11',
-                        'options' =>  [
+                        'options' => array (
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                        ],
+                        ),
                         'type' => 'TextField',
-                    ],
-                     [
-                        'type' => 'Text',
+                    ),
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                    ],
-                ],
-                'column3' =>  [
-                     [
                         'type' => 'Text',
+                    ),
+                ),
+                'column3' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                    ],
-                ],
-                'column4' =>  [
-                     [
                         'type' => 'Text',
+                    ),
+                ),
+                'column4' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                    ],
-                ],
+                        'type' => 'Text',
+                    ),
+                ),
                 'type' => 'ColumnField',
-            ],
-             [
-                'type' => 'Text',
+            ),
+            array (
                 'value' => '<hr/>',
-            ],
-             [
+                'type' => 'Text',
+            ),
+            array (
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
-            ],
-        ];
+            ),
+        );
     }
 
     /** @var string $label */
@@ -139,6 +162,8 @@ class ToggleSwitch extends FormField {
     /** @var integer $fieldWidth */
     public $fieldWidth = 8;
 
+    public $onLabel = "ON";
+    public $offLabel = "OFF";
 
     /** @var array $options */
     public $options = [];
@@ -157,6 +182,8 @@ class ToggleSwitch extends FormField {
 
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-toggle-on";
+
+    public $size = "normal";
 
     /**
      * @return array me-return array javascript yang di-include
@@ -202,6 +229,10 @@ class ToggleSwitch extends FormField {
         return $class;
     }
 
+    public function getSwitcheryLabelClass() {
+        return $this->size == "small" ? "switchery-label-small" : "";
+    }
+
     /**
      * getFieldColClass
      * Fungsi ini untuk menetukan width field
@@ -224,6 +255,10 @@ class ToggleSwitch extends FormField {
         $this->fieldOptions['id'] = $this->renderID;
         $this->fieldOptions['name'] = $this->renderName;
         $this->addClass('form-control', 'fieldOptions');
+
+        if ($this->size == "small") {
+            $this->addClass('small', 'fieldOptions');
+        }
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
 

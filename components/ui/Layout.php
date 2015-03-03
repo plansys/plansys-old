@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Layout
  * @author rizky
@@ -35,7 +36,7 @@ class Layout extends CComponent {
                         if (@$section['class'] == "") {
                             continue;
                         }
-                        
+
                         $fb = FormBuilder::load(@$section['class']);
                         if ($fb != null) {
                             $data[$k]['content'] = $fb->render($model, [
@@ -46,8 +47,16 @@ class Layout extends CComponent {
                 }
             }
         }
-        
+
         return Yii::app()->controller->renderPartial($formpath . $layout, $data, $return);
+    }
+
+    public static function listLayout() {
+        return [
+            'full-width' => 'full-width',
+            'dashboard' => 'dashboard',
+            '2-cols' => '2-cols'
+        ];
     }
 
     public static function defaultSection($layout) {
@@ -58,7 +67,7 @@ class Layout extends CComponent {
             '3-cols' => 'col1',
             '2-rows' => 'row1'
         ];
-        
+
         return @$section[$layout];
     }
 

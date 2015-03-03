@@ -43,6 +43,7 @@ class Text extends FormField {
                 ),
                 'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'fieldWidth' => '3',
+                'labelWidth' => '5',
                 'type' => 'DropDownList',
             ),
             array(
@@ -83,8 +84,8 @@ style=\"width:100%;height:300px;margin-bottom:-250px;font-size:13px;position: re
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-font";
 
-    public function includeJS() {
-        return ['js'];
+    public function includePropertiesJS() {
+        return ['application.static.js.lib.ace'];
     }
 
     /**

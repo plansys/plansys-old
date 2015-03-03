@@ -10,14 +10,14 @@ class FormBuilder extends CComponent {
     public $model = null;
 
     /**
-     * @var array $_buildRenderID 
-     * @access private	
+     * @var array $_buildRenderID
+     * @access private
      */
     private static $_buildRenderID = [];
 
     /**
      * @var integer $countRenderID
-     * @access private	
+     * @access private
      */
     private $countRenderID = 1;
     private $methods = [];
@@ -46,16 +46,15 @@ class FormBuilder extends CComponent {
     }
 
     /**
-     * load 
+     * load
      * Fungsi ini digunakan untuk me-load FormBuilder
      * @param array $class
-     * @param array $attributes
-     * @return mixed me-return null jika class tidak ada, jika ada maka me-return array $model 
+     * @param array $findByAttributes
+     * @return mixed me-return null jika class tidak ada, jika ada maka me-return array $model
      */
-    public static function load($class, $attributes = null) {
+    public static function load($class, $findByAttributes = []) {
         if (!is_string($class))
             return null;
-
 
         $originalClass = $class;
         if (strpos($class, ".") !== false) {
@@ -76,15 +75,16 @@ class FormBuilder extends CComponent {
             }
 
             if (!class_exists($class)) {
+                throw new CException ("Class \"{$class}\" does not exists");
                 return null;
             }
         }
 
         $model = new FormBuilder();
 
-        if (!empty($attributes) && method_exists($class, 'model')) {
+        if (!empty($findByAttributes) && method_exists($class, 'model')) {
             if (is_subclass_of($class, 'ActiveRecord')) {
-                $model->model = $class::model()->findByAttributes($attributes);
+                $model->model = $class::model()->findByAttributes($findByAttributes);
 
                 if (is_null($model->model)) {
                     $model->model = new $class;
@@ -96,8 +96,8 @@ class FormBuilder extends CComponent {
 
         $model->originalClass = $originalClass;
 
-        if (!is_null($attributes)) {
-            $model->model->attributes = $attributes;
+        if (!is_null($findByAttributes)) {
+            $model->model->attributes = $findByAttributes;
         }
 
         ## get method line and length
@@ -379,7 +379,7 @@ class FormBuilder extends CComponent {
 
     /**
      * Fungsi ini akan mem-format, membenahi, dan mengevaluasi setiap field yang ada di dalam $fields
-     * 
+     *
      * @param mixed $fields parameter dapat berupa array atau jika bukan array maka akan diubah menjadi array pada prosesnya
      * @return array me-return sebuah array fields hasil parseFields
      */
@@ -575,9 +575,9 @@ class FormBuilder extends CComponent {
     /**
      * build
      * Fungsi ini berfungsi untuk menentukan ID render dan merender-nya
-     * @param array $class
+     * @param string $class name
      * @param array $attributes
-     * @return array me-return array field 
+     * @return array me-return array field
      */
     public static function build($class, $attributes, $model = null) {
         $field = new $class;
@@ -631,6 +631,7 @@ class FormBuilder extends CComponent {
                 $field->registerScript();
             }
         }
+
     }
 
     /**
@@ -678,7 +679,7 @@ class FormBuilder extends CComponent {
         } else {
             $data = $this->defineFormData($formdata);
         }
-        
+
         $reflector = new ReflectionClass($this->model);
         $inlineJSPath = dirname($reflector->getFileName()) . DIRECTORY_SEPARATOR . @$this->form['inlineJS'];
         $inlineJS = @file_get_contents($inlineJSPath);
@@ -715,7 +716,7 @@ class FormBuilder extends CComponent {
      * render
      * Fungsi ini untuk me-render Form Builder sesuai dengan $formdata
      * @param array $formdata
-     * @param array $options 
+     * @param array $options
      * @return string me-return string tag html hasil generate dari fungsi ini.
      */
     public function render($formdata = null, $options = []) {
@@ -744,9 +745,9 @@ class FormBuilder extends CComponent {
      * me-render field dan atribut-nya dalam form builder
      * @param array $formdata
      * @param array $options
-     * @param array $fb 
+     * @param array $fb
      * @param array $fields
-     * @return string me-return string berupa tag html 
+     * @return string me-return string berupa tag html
      */
     private function renderInternal($formdata = null, $options = [], $fb, $fields) {
         $html = "";
@@ -754,7 +755,6 @@ class FormBuilder extends CComponent {
         $form = $fb->form;
         $moduleName = $fb->module;
         $modelClass = get_class($fb->model);
-
 
         ## setup default options
         $wrapForm = isset($options['wrapForm']) ? $options['wrapForm'] : true;
@@ -846,7 +846,7 @@ class FormBuilder extends CComponent {
                     ob_start();
                     ?>
                     <script type="text/javascript">
-                    <?php echo $this->renderAngularController($data, $renderParams); ?>
+                        <?php echo $this->renderAngularController($data, $renderParams); ?>
                         registerController('<?= $modelClass ?>Controller');
                     </script>
                     <?php
@@ -873,7 +873,7 @@ class FormBuilder extends CComponent {
      * Fungsi ini untuk format code dan pengecekan code sesuai dengan pattern atau tidak
      * @param array $fields
      * @param array $indent
-     * @return 
+     * @return
      */
     public static function formatCode($fields, $indent = "        ") {
 
@@ -1236,10 +1236,10 @@ EOF;
      */
     public static function listFile($formatRecursive = true) {
         $files = [];
-        
+
         $devMode = Setting::get('app.mode') === "plansys";
 
-        $func = function($m, $module = "", $aliaspath = "", $path) {
+        $func = function ($m, $module = "", $aliaspath = "", $path) {
             return [
                 'name' => str_replace($module, '', $m),
                 'class' => $m,
@@ -1296,7 +1296,7 @@ EOF;
             $module_dir = Yii::getPathOfAlias('application.modules');
             if (file_exists($module_dir)) {
                 $modules = glob($module_dir . DIRECTORY_SEPARATOR . "*");
-                
+
                 foreach ($modules as $m) {
                     $module = str_replace($module_dir . DIRECTORY_SEPARATOR, '', $m);
                     $alias = "application.modules.{$module}.forms.";

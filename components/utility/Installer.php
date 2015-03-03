@@ -88,6 +88,12 @@ class Installer {
                     }
                 ],
                 [
+                    "title" => 'Checking config directory permissions',
+                    "check" => function() {
+                        return Setting::checkPath(Setting::getConfigPath(), true);
+                    }
+                ],
+                [
                     "title" => 'Checking repository directory permissions',
                     "check" => function() {
                         $repo = Setting::get('repo.path');
@@ -162,6 +168,14 @@ class Installer {
                     'check' => function() {
                         $result = extension_loaded("mcrypt");
                         $msg = "Extension \"mcrypt\" is not loaded";
+                        return $result !== true ? $msg : true;
+                    }
+                ],
+                [
+                    'title' => 'CURL extension',
+                    'check' => function() {
+                        $result = extension_loaded("curl");
+                        $msg = "Extension \"curl\" is not loaded";
                         return $result !== true ? $msg : true;
                     }
                 ],
@@ -294,15 +308,15 @@ DROP TABLE IF EXISTS `p_audit_trail`;
 CREATE TABLE `p_audit_trail` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `url` text COLLATE utf8_unicode_ci NOT NULL,
-  `description` text COLLATE utf8_unicode_ci NOT NULL,
-  `pathinfo` text COLLATE utf8_unicode_ci NOT NULL,
-  `module` text COLLATE utf8_unicode_ci NOT NULL,
-  `ctrl` text COLLATE utf8_unicode_ci NOT NULL,
-  `action` text COLLATE utf8_unicode_ci NOT NULL,
-  `params` text COLLATE utf8_unicode_ci NOT NULL,
-  `data` text COLLATE utf8_unicode_ci NOT NULL,
-  `stamp` datetime NOT NULL,
+  `url` text COLLATE utf8_unicode_ci,
+  `description` text COLLATE utf8_unicode_ci,
+  `pathinfo` text COLLATE utf8_unicode_ci,
+  `module` text COLLATE utf8_unicode_ci,
+  `ctrl` text COLLATE utf8_unicode_ci,
+  `action` text COLLATE utf8_unicode_ci,
+  `params` text COLLATE utf8_unicode_ci,
+  `data` text COLLATE utf8_unicode_ci,
+  `stamp` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
   `user_id` int(11) DEFAULT NULL,
   `key` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `form_class` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,

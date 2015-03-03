@@ -2465,11 +2465,68 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     width: 25px;
 }
 
+.small + .switchery {
+    height: 15px;
+    width: 25px;
+}
+
+.small + .switchery > small {
+    height: 16px;
+    width: 16px;
+}
+
+.toggle-switch-field {
+    white-space: nowrap;
+}
+
+.toggle-switch-field > div {
+    display: inline-block !important;
+}
+
+.toggle-switchery {
+    float: left;
+    margin-top: -2px;
+}
+
 .switchery-label {
     border-radius: 10px;
-    margin: 6px 10px;
-    padding: 3px 7px;
-    float: left;
+    padding: 3px 7px 2px 7px;
+    margin: 6px 7px;
+    font-size: 11px;
+}
+
+.switchery-label {
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.switchery-label.label-success {
+    background: #67C03D;
+}
+
+.switchery-label.label-default {
+    background: #aaa;
+}
+
+.switchery-label.switchery-label-small {
+    padding: 8px 0px 0px 6px;
+    background: none;
+    font-weight: bold;
+    font-size: 12px;
+    margin: 0px;
+}
+
+.switchery-label.label-success.switchery-label-small {
+    color: #67C03D;
+}
+
+.switchery-label.label-default.switchery-label-small {
+    color: #999;
 }
 
 ul[datepicker-popup-wrap] td {
@@ -3155,9 +3212,11 @@ div[icon-picker] .popover-content {
 .action-list {
     margin: 8px;
 }
-.column-field{
-    width:100%;
+
+.column-field {
+    width: 100%;
 }
+
 .column-field td {
     padding: 25px 50px 25px 25px;
 }

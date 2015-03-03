@@ -31,13 +31,26 @@ app.directive('uiSwitch', ['$window', '$timeout', '$log', '$parse',
                 var element = switcher.element;
                 element.checked = scope.initValue;
                 switcher.setPosition(false);
+
                 element.addEventListener('change', function (evt) {
-                    scope.$apply(function () {
-                        ngModel.$setViewValue(element.checked);
-                    })
+                    var shouldContinue = true;
+                    if (!!attrs.confirm) {
+                        shouldContinue = confirm(attrs.confirm);
+
+                        if (!shouldContinue) {
+                            switcher.setPosition(true);
+                        }
+                    }
+
+                    if (shouldContinue) {
+                        scope.$apply(function () {
+                            ngModel.$setViewValue(element.checked);
+                        })
+                    }
                 })
             }, 0);
         }
+
         return {
             require: 'ngModel',
             restrict: 'AE',

@@ -1,5 +1,7 @@
 <?php 
 
+ $mode = 'normal'; 
+
  return array (
     array (
         'label' => 'Builder',
@@ -15,7 +17,7 @@
                 'url' => '#',
             ),
             array (
-                'label' => 'Menu Editor',
+                'label' => 'MenuTree Editor',
                 'icon' => 'fa-sitemap',
                 'url' => '/dev/menus/index',
             ),
