@@ -31,12 +31,12 @@
                 {{ mode == 'normal' ? 'Properties' : '<?= $class ?> Source'}}
                 <?php
                 echo FormBuilder::build('ToggleSwitch', [
-                    'name' => 'mode',
-                    'size' => 'small',
+                    'name'     => 'mode',
+                    'size'     => 'small',
                     'offLabel' => 'Custom Script',
-                    'onLabel' => 'Normal Menu',
-                    'options' => [
-                        'style' => 'float:right;width:145px;',
+                    'onLabel'  => 'Normal Menu',
+                    'options'  => [
+                        'style'     => 'float:right;width:145px;',
                         'ng-change' => 'switchMode()'
                     ]
                 ]);
@@ -56,15 +56,15 @@
                          style="position:absolute;top:0px;bottom:0px;left:0px;right:0px;"
                          ng-model="code"
                          ui-ace="{
-                        useWrapMode : true,
-                        showGutter: true,
-                        theme: 'monokai',
-                        mode: 'php',
-                        require: ['ace/ext/emmet'],
-                        advanced: {
-                        enableEmmet: true,
-                        }
-                    }"></div>
+                         useWrapMode : true,
+                         showGutter: true,
+                         theme: 'monokai',
+                         mode: 'php',
+                         require: ['ace/ext/emmet'],
+                         advanced: {
+                         enableEmmet: true,
+                         }
+                         }"></div>
                 </div>
             </div>
         </div>
@@ -72,171 +72,177 @@
 </div>
 <script type="text/javascript">
     app.controller("PageController", ["$scope", "$http", "$timeout", function ($scope, $http, $timeout) {
-        $scope.list = <?php echo CJSON::encode($list); ?>;
-        $scope.isDragged = false;
-        $scope.isLoading = true;
-        $scope.listOptions = {
-            dragStop: function (node) {
-                if ($scope.isDragged) {
-                    $scope.save();
-                    $scope.isDragged = false;
+            $scope.list = <?php echo CJSON::encode($list); ?>;
+            $scope.isLoading = true;
+            $scope.listOptions = {
+                dropped: function (e) {
+                    if (e.source.index != e.dest.index || e.source.nodesScope.$id != e.dest.nodesScope.$id) {
+                        $scope.rendering = false;
+                        $scope.save();
+                    }
+                },
+                beforeDrag: function (node) {
+                    $scope.select(node.$handleScope);
+                    return true;
                 }
-            },
-            dragStart: function (node) {
-                $scope.isDragged = true;
-            },
-            beforeDrag: function (node) {
-                $scope.select(node.$handleScope);
-                return true;
-            }
-        };
-        $scope.mode = "<?= $mode; ?>";
-        $scope.model = {
-            mode: $scope.mode == 'normal'
-        };
-        $scope.code = null;
-        $scope.switchMode = function () {
-            var mode = $scope.mode;
-            if ($scope.mode == "normal") {
-                mode = "custom";
-            } else {
-                mode = "normal";
-            }
-            $http.get(Yii.app.createUrl('/dev/menus/switchMode', {
-                path: '<?= $path ?>',
-                mode: mode
-            })).success(function (data) {
-                $timeout(function () {
-                    $scope.mode = mode;
-                    $("#code-editor").html(data);
-                    $scope.renderMode($scope.mode);
+            };
+            $scope.mode = "<?= $mode; ?>";
+            $scope.model = {
+                mode: $scope.mode == 'normal'
+            };
+            $scope.code = null;
+            $scope.switchMode = function () {
+                var mode = $scope.mode;
+                if ($scope.mode == "normal") {
+                    mode = "custom";
+                } else {
+                    mode = "normal";
+                }
+                $http.get(Yii.app.createUrl('/dev/menus/switchMode', {
+                    path: '<?= $path ?>',
+                    mode: mode
+                })).success(function (data) {
+                    $timeout(function () {
+                        $scope.mode = mode;
+                        $("#code-editor").html(data);
+                        $scope.renderMode($scope.mode);
+                    });
                 });
-            });
-        };
-        $scope.renderMode = function (mode) {
-            switch (mode) {
-                case "normal":
-                    $("#menu-drag-drop").width('40%').show();
-                    $("#menu-pane").width('60%').css('left', '40%');
-                    $(".ui-splitbar").show();
-                    break;
-                case "custom":
-                    var setCustomMode = function () {
-                        $("#menu-drag-drop").width('0%').hide();
-                        $("#menu-pane").width('100%').css('left', 0);
-                        $(".ui-splitbar").hide();
-                    };
+            };
+            $scope.renderMode = function (mode) {
+                switch (mode) {
+                    case "normal":
+                        $("#menu-drag-drop").width('40%').show();
+                        $("#menu-pane").width('60%').css('left', '40%');
+                        $(".ui-splitbar").show();
+                        break;
+                    case "custom":
+                        var setCustomMode = function () {
+                            $("#menu-drag-drop").width('0%').hide();
+                            $("#menu-pane").width('100%').css('left', 0);
+                            $(".ui-splitbar").hide();
+                        };
 
-                    if ($scope.code == null) {
-                        $http.get(Yii.app.createUrl('/dev/menus/getCode', {
-                            path: '<?= $path ?>'
-                        })).success(function (data) {
-                            $scope.code = data;
+                        if ($scope.code == null) {
+                            $http.get(Yii.app.createUrl('/dev/menus/getCode', {
+                                path: '<?= $path ?>'
+                            })).success(function (data) {
+                                $scope.code = data;
+                                setCustomMode();
+                            });
+                        } else {
                             setCustomMode();
-                        });
-                    } else {
-                        setCustomMode();
+                        }
+
+                        break;
+                }
+            };
+            $scope.renderMode($scope.mode);
+            $scope.activeTree = null;
+            $scope.active = null;
+            $scope.saving = false;
+            $scope.selecting = false;
+            $scope.rendering = false;
+            $scope.select = function (item) {
+                $scope.selecting = true;
+                $scope.active = null;
+                $scope.rendering = true;
+
+                $timeout(function () {
+                    $scope.active = item.$modelValue;
+                    if (typeof $scope.active.state == "undefined") {
+                        $scope.active.state = "";
                     }
 
-                    break;
-            }
-        };
-        $scope.renderMode($scope.mode);
+                    $scope.activeTree = item;
+                    console.log("ASDSA", $scope.activeTree);
+                });
 
-        $scope.activeTree = null;
-        $scope.active = null;
-        $scope.saving = false;
-        $scope.selecting = false;
-        $scope.select = function (item) {
-            $scope.selecting = true;
-            $scope.active = null;
-            $timeout(function () {
-                $scope.active = item.$modelValue;
-                if (typeof $scope.active.state == "undefined") {
-                    $scope.active.state = "";
+                $timeout(function () {
+                    $scope.rendering = false;
+                }, 1000);
+            };
+            $scope.iconAvailable = function (item) {
+                if (typeof item.icon == "undefined")
+                    return false;
+                else
+                    return (item.icon != '');
+            }
+            $scope.isCollapsed = function (item) {
+                return item.state == 'collapsed' ? true : false;
+            }
+            $scope.isSelected = function (item) {
+                if (item.$modelValue === $scope.active) {
+                    return "active";
+                } else {
+                    return "";
+                }
+            };
+
+            $scope.findParent = function (find, menus) {
+                if (typeof menus == "undefined") {
+                    menus = $scope.list;
                 }
 
-                $scope.activeTree = item;
-                $('#DevMenuEditor\\[label\\]').focus().select();
-            }, 0);
-        };
-        $scope.iconAvailable = function (item) {
-            if (typeof item.icon == "undefined")
+                for (i in menus) {
+                    if (!menus[i].$$hashKey)
+                        continue;
+
+                    if (menus[i].$$hashKey == find.$$hashKey) {
+                        return {items: menus, index: i};
+                    }
+
+                    if (menus[i].items && menus[i].items.length > 0) {
+                        var result = $scope.findParent(find, menus[i].items);
+                        if (result != false) {
+                            return result;
+                        }
+                    }
+                }
                 return false;
-            else
-                return (item.icon != '');
-        }
-        $scope.isCollapsed = function (item) {
-            return item.state == 'collapsed' ? true : false;
-        }
-        $scope.isSelected = function (item) {
-            if (item.$modelValue === $scope.active) {
-                return "active";
-            } else {
-                return "";
-            }
-        };
-
-        $scope.findParent = function (find, menus) {
-            if (typeof menus == "undefined") {
-                menus = $scope.list;
             }
 
-            for (i in menus) {
-                if (!menus[i].$$hashKey)
-                    continue;
-
-                if (menus[i].$$hashKey == find.$$hashKey) {
-                    return {items: menus, index: i};
+            $scope.new = function () {
+                if ($scope.active) {
+                    var parent = $scope.findParent($scope.active);
+                    parent.items.splice(parent.index == 0 ? 1 : parent.index + 1, 0, {
+                        'label': 'New Menu',
+                        'icon': '',
+                        'url': '#',
+                        'items': [],
+                    });
+                } else {
+                    $scope.list.push({
+                        'label': 'New Menu',
+                        'icon': '',
+                        'url': '#',
+                        'items': []
+                    });
+                }
+                $scope.save();
+            }
+            $scope.remove = function (item) {
+                item.remove();
+                $scope.active = null;
+                $scope.save();
+            }
+            $scope.save = function () {
+                if ($scope.rendering) {
+                    return
                 }
 
-                if (menus[i].items && menus[i].items.length > 0) {
-                    var result = $scope.findParent(find, menus[i].items);
-                    if (result != false) {
-                        return result;
-                    }
-                }
+                $scope.saving = true;
+                $http.post('<?php echo $this->createUrl("save", array('class' => $path)); ?>',
+                        {list: $scope.list})
+                        .success(function (data, status) {
+                            $scope.code = null;
+                            $scope.saving = false;
+                        })
+                        .error(function (data, status) {
+                            $scope.code = null;
+                            $scope.saving = false;
+                        });
             }
-            return false;
         }
-
-        $scope.new = function () {
-            if ($scope.active) {
-                var parent = $scope.findParent($scope.active);
-                parent.items.splice(parent.index == 0 ? 1 : parent.index + 1, 0, {
-                    'label': 'New Menu',
-                    'icon': '',
-                    'url': '#',
-                    'items': [],
-                });
-            } else {
-                $scope.list.push({
-                    'label': 'New Menu',
-                    'icon': '',
-                    'url': '#',
-                    'items': []
-                });
-            }
-            $scope.save();
-        }
-        $scope.remove = function (item) {
-            item.remove();
-            $scope.active = null;
-            $scope.save();
-        }
-        $scope.save = function () {
-            $scope.saving = true;
-            $http.post('<?php echo $this->createUrl("save", array('class' => $path)); ?>',
-                {list: $scope.list})
-                .success(function (data, status) {
-                    $scope.code = null;
-                    $scope.saving = false;
-                })
-                .error(function (data, status) {
-                    $scope.code = null;
-                    $scope.saving = false;
-                });
-        }
-    }
     ]);
 </script>
