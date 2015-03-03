@@ -1,10 +1,8 @@
 <?php
 
-class DefaultController extends Controller
-{
+class DefaultController extends Controller {
 
-    public function beforeAction($action)
-    {
+    public function beforeAction($action) {
         if (!in_array(Setting::$mode, ["install", "init"])) {
             $this->redirect(['/site/login']);
             die();
@@ -12,7 +10,7 @@ class DefaultController extends Controller
 
         parent::beforeAction($action);
 
-        $cs = Yii::app()->getClientScript();
+        $cs   = Yii::app()->getClientScript();
         $root = Yii::app()->basePath;
         $path = str_replace([$root, "\\"], ["", "/"], $this->getViewPath());
 
@@ -24,22 +22,19 @@ class DefaultController extends Controller
         return true;
     }
 
-    public function getModuleUrl()
-    {
+    public function getModuleUrl() {
         return str_replace("static", "modules/install/views/default/", $this->staticUrl(""));
     }
 
-    public function actionIndex($msg = null)
-    {
+    public function actionIndex($msg = null) {
         $content = $this->renderPartial('index', [
             'msg' => $msg
-        ], true);
-        $html = $this->renderPartial('_layout', ['content' => $content], true);
+                ], true);
+        $html    = $this->renderPartial('_layout', ['content' => $content], true);
         echo $html;
     }
 
-    public function actionFinish()
-    {
+    public function actionFinish() {
         if (isset($_GET['s'])) {
             echo Setting::$mode;
             die();
@@ -49,11 +44,10 @@ class DefaultController extends Controller
         $this->renderForm('InstallFinishForm');
     }
 
-    public function actionUser()
-    {
-        $model = new InstallUserForm;
-        $error = false;
-        $success = 'n';
+    public function actionUser() {
+        $model           = new InstallUserForm;
+        $error           = false;
+        $success         = 'n';
         $model->fullname = "Developer";
         $model->username = "dev";
 
@@ -82,44 +76,47 @@ class DefaultController extends Controller
         }
 
         $this->renderForm('InstallUserForm', $model, [
-            'error' => $error,
+            'error'   => $error,
             'success' => $success
         ]);
     }
 
-    public function actionDb()
-    {
-        $model = new InstallDbForm();
-        $model->host = Setting::get('db.host');
+    public function actionResetdb() {
+        Installer::resetDB();
+        $this->redirect(['/install/default/user']);
+    }
+
+    public function actionDb() {
+        $model           = new InstallDbForm();
+        $model->host     = Setting::get('db.host');
         $model->username = Setting::get('db.username');
         $model->password = Setting::get('db.password');
-        $model->dbname = Setting::get('db.dbname');
-        $error = false;
+        $model->dbname   = Setting::get('db.dbname');
+        $error           = false;
+        $mode            = "init";
 
         if (isset($_POST['InstallDbForm'])) {
             $model->attributes = $_POST['InstallDbForm'];
 
             if ($model->validate()) {
                 $error = false;
+
                 try {
-                    $dbh = new pdo("mysql:host={$model->host};dbname={$model->dbname}",
-                        $model->username,
-                        $model->password,
-                        array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+                    $dbh = new pdo("mysql:host={$model->host};dbname={$model->dbname}", $model->username, $model->password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
                 } catch (PDOException $ex) {
                     $error = $ex->getMessage();
                 }
 
                 if (!$error) {
-                    Setting::set('db.host', $model->host);
-                    Setting::set('db.username', $model->username);
-                    Setting::set('db.password', $model->password);
-                    Setting::set('db.dbname', $model->dbname);
+                    Setting::set('db.host', $model->host, false);
+                    Setting::set('db.username', $model->username, false);
+                    Setting::set('db.password', $model->password, false);
+                    Setting::set('db.dbname', $model->dbname, false);
+                    Setting::write();
 
                     if ($model->resetdb == "yes") {
                         Installer::createIndexFile("install");
-                        Installer::resetDB();
-                        $this->redirect(['/install/default/user']);
+                        $this->redirect(['/install/default/resetdb']);
                     } else {
                         Installer::createIndexFile("running");
                         $this->redirect(['/install/default/finish']);
@@ -129,7 +126,8 @@ class DefaultController extends Controller
         }
 
         $this->renderForm('InstallDbForm', $model, [
-            'error' => $error
+            'error' => $error,
+            'mode'  => $mode
         ]);
     }
 

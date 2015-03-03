@@ -39,5 +39,5 @@
     </div>
 </div>
 <script>var actionFormList = <?= $this->actionFormList() ?>;</script>
-<script src="<?= Asset::publish('application.components.ui.MenuTree.ng-menutree.js', true); ?>"></script>
+<script src="<?= Asset::publish('application.components.ui.MenuTree.ng-contextmenu.js', true); ?>"></script>
 <script src="<?= Asset::publish('application.modules.dev.views.forms.index.js', true); ?>"></script>

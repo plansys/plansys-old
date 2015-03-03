@@ -12,6 +12,12 @@ if (Setting::$mode == "init" || Setting::$mode == "install") {
         $msg = null;
     }
 
+    var_dump($data);
+    die();
+    
+    echo "ASDASD";
+    die();
+    
     $controller->action->runWithParams([
         'msg' => $msg
     ]);

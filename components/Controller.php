@@ -19,7 +19,7 @@ class Controller extends CController {
     public function staticUrl($path) {
         $static = "/static";
         if (substr(Yii::app()->baseUrl, -7) != "plansys") {
-            $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
+            $dir    = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
             $static = "/" . array_pop($dir) . "/static";
         }
 
@@ -27,30 +27,30 @@ class Controller extends CController {
     }
 
     public function staticAppUrl($path) {
-        $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
+        $dir    = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
         $static = "/" . array_pop($dir) . "/static";
         return $this->url($static . $path);
     }
 
     public function renderForm($class, $model = null, $params = [], $options = []) {
-        $fb = FormBuilder::load($class);
+        $fb              = FormBuilder::load($class);
         $this->pageTitle = $fb->form['title'];
-        $this->layout = '//layouts/form';
+        $this->layout    = '//layouts/form';
 
         $renderOptions = [
             'wrapForm' => true,
-            'action' => $this->action->id,
+            'action'   => $this->action->id,
         ];
-        
+
 
         if (is_array($model)) {
             $params = $model;
-            $model = null;
+            $model  = null;
         }
         $options['params'] = $params;
 
-        $renderOptions = array_merge($renderOptions, $options); 
-        $mainform = $fb->render($model, $renderOptions);
+        $renderOptions = array_merge($renderOptions, $options);
+        $mainform      = $fb->render($model, $renderOptions);
 
         $data = $fb->form['layout']['data'];
 
@@ -61,7 +61,7 @@ class Controller extends CController {
         }
 
         $layout = Layout::render($fb->form['layout']['name'], $data, $model, true);
-        
+
         $this->renderText($layout, false);
     }
 
@@ -86,14 +86,14 @@ class Controller extends CController {
         $userItems = [
             [
                 'label' => 'Edit Profile',
-                'url' => ['/sys/profile/index'],
+                'url'   => ['/sys/profile/index'],
             ],
             [
                 'label' => '---',
             ],
             [
                 'label' => 'Logout',
-                'url' => ['/site/logout'],
+                'url'   => ['/site/logout'],
             ]
         ];
 
@@ -108,7 +108,7 @@ class Controller extends CController {
 
                     array_push($roleItems, [
                         'label' => '&nbsp; <i class="fa ' . $rc . '"></i> &nbsp;' . $r['role_description'],
-                        'url' => ['/sys/profile/changeUser', 'id' => $r['id']]
+                        'url'   => ['/sys/profile/changeUser', 'id' => $r['id']]
                     ]);
                 }
                 array_unshift($userItems, [
@@ -120,24 +120,24 @@ class Controller extends CController {
 
         $default = [
             [
-                'label' => 'Login',
-                'url' => ['/site/login'],
+                'label'   => 'Login',
+                'url'     => ['/site/login'],
                 'visible' => Yii::app()->user->isGuest
             ],
             [
-                'label' => ucfirst($name),
-                'url' => '#',
-                'items' => $userItems,
+                'label'       => ucfirst($name),
+                'url'         => '#',
+                'items'       => $userItems,
                 'itemOptions' => [
                     'style' => 'border-right:1px solid rgba(0,0,0,.1)'
                 ],
-                'visible' => !Yii::app()->user->isGuest
+                'visible'     => !Yii::app()->user->isGuest
             ],
         ];
         if (Yii::app()->user->isGuest) {
             return $default;
         } else {
-            $module = Yii::app()->user->role;
+            $module   = Yii::app()->user->role;
             $menuPath = Yii::app()->user->menuPath;
             $menuPath = $menuPath == '' ? 'MainMenu' : $menuPath;
 
@@ -164,26 +164,26 @@ class Controller extends CController {
             Yii::import($form);
             $form = Helper::explodeLast(".", $form);
         }
-        
+
         $model = $form::model($form)->findAllByAttributes($id);
         if (empty($model)) {
             throw new CHttpException(404, 'The requested page does not exist.');
         }
-        
+
         return $model;
     }
-    
+
     public function beforeAction($action) {
-        
         ## when mode is init or install then redirect to installation mode
         if (Setting::$mode == "init" || Setting::$mode == "install") {
             if ($this->id != "default") {
                 $this->redirect(['/install/default/index']);
+                return false;
             }
         }
-        
+
         parent::beforeAction($action);
-        
+
         return true;
     }
 
