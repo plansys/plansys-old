@@ -3,7 +3,7 @@
 class SettingsController extends Controller {
     public function actionIndex() {
        $model = new DevSettings;
-       //$model->auditTrack = "view";
+       $model->loadSettings();
        $this->renderForm("DevSettings",$model);
     }
 }
