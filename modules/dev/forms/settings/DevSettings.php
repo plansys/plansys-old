@@ -19,15 +19,6 @@ class DevSettings extends Form {
     #Email's Settings
     public $emailService;
     public $emailSender;
-    public $emailUser;
-    public $emailPass;
-    public $emailHost;
-    public $emailPort;
-    public $emailAccessKeyId;
-    public $emailSecretAccessKey;
-    public $emailSessionToken;
-    public $emailRegion;
-    public $emailRateLimit;
     
     #LDAP's Settings
     public $ldapEnable;
@@ -50,8 +41,6 @@ class DevSettings extends Form {
     public $auditTrack;
     
     public function loadSettings(){
-        
-        //include Yii::getPathOfAlias('application.modules.dev.forms.settings.DevSettingsEmailSmtp').".php";
         #App
         $this->appName = Setting::get('app.name');
         $this->appDir = Setting::get('app.dir');
@@ -98,7 +87,6 @@ class DevSettings extends Form {
             $this->emailHost = Setting::get("email.transport.host");
             $this->emailPort = Setting::get("email.transport.port");
         }
-        
         $this->emailSender = Setting::get("email.from");
         
         #LDAP
@@ -109,6 +97,10 @@ class DevSettings extends Form {
         $this->ldapDomainControllers = Setting::get("ldap.domain_controllers");
         $this->ldapPassword = Setting::get("ldap.admin_password");
         $this->ldapUsername = Setting::get("ldap.admin_username");
+    }
+    
+    public function setSettings(){
+        
     }
     
     public function getForm() {
@@ -387,6 +379,7 @@ class DevSettings extends Form {
                         'type' => 'TextField',
                     ),
                     array (
+                        'renderInEditor' => 'Yes',
                         'value' => '<div class=\"col-sm-6\" 
      style=\"float:right;margin:-5px 0px 0px 0px;padding:0px;text-align:right;color:#999;font-size:12px;width:60%\">
       <i class=\"fa fa-info-circle\"></i> 
@@ -401,74 +394,30 @@ class DevSettings extends Form {
                 ),
                 'column2' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
-                        'type' => 'Text',
-                    ),
-                    array (
-                        'renderInEditor' => 'Yes',
-                        'value' => '<div ng-if = \\"model.emailService == \\\'smtp\\\' || model.emailService == \\\'gmail\\\'\\">',
-                        'type' => 'Text',
-                    ),
-                    array (
-                        'label' => 'Username',
-                        'name' => 'emailUser',
-                        'type' => 'TextField',
-                    ),
-                    array (
-                        'label' => 'Password',
-                        'name' => 'emailPass',
-                        'type' => 'TextField',
-                    ),
-                    array (
-                        'renderInEditor' => 'Yes',
-                        'value' => '</div>
-<div ng-if = \"model.emailService == \'smtp\'\">',
-                        'type' => 'Text',
-                    ),
-                    array (
-                        'label' => 'Host',
-                        'name' => 'emailHost',
-                        'type' => 'TextField',
-                    ),
-                    array (
-                        'label' => 'Port',
-                        'name' => 'emailPort',
-                        'type' => 'TextField',
-                    ),
-                    array (
-                        'renderInEditor' => 'Yes',
-                        'value' => '</div>
-<div ng-if = \"model.emailService == \'ses\'\">',
-                        'type' => 'Text',
-                    ),
-                    array (
-                        'label' => 'Access Key ID',
-                        'name' => 'emailAccessKeyId',
-                        'type' => 'TextField',
-                    ),
-                    array (
-                        'label' => 'Secret Access Key',
-                        'name' => 'emailSecretAccessKey',
-                        'type' => 'TextField',
-                    ),
-                    array (
-                        'label' => 'Rate Limit',
-                        'name' => 'emailRateLimit',
-                        'type' => 'TextField',
-                    ),
-                    array (
-                        'label' => 'Region',
-                        'name' => 'emailRegion',
-                        'list' => array (
-                            'us-east-1' => 'us-east-1',
-                            'us-west-2' => 'us-west-2',
-                            'eu-west-1' => 'eu-west-1',
+                        'name' => 'subForm1',
+                        'subForm' => 'application.modules.dev.forms.settings.DevSettingsEmailSmtp',
+                        'options' => array (
+                            'ng-if' => 'model.emailService == \\\'smtp\\\'',
                         ),
-                        'type' => 'DropDownList',
+                        'type' => 'SubForm',
                     ),
                     array (
-                        'renderInEditor' => 'Yes',
-                        'value' => '</div>',
+                        'name' => 'subForm2',
+                        'subForm' => 'application.modules.dev.forms.settings.DevSettingsEmailGmail',
+                        'options' => array (
+                            'ng-if' => 'model.emailService == \\\'gmail\\\'',
+                        ),
+                        'type' => 'SubForm',
+                    ),
+                    array (
+                        'name' => 'subForm3',
+                        'options' => array (
+                            'ng-if' => 'model.emailService == \\\'ses\\\'',
+                        ),
+                        'type' => 'SubForm',
+                    ),
+                    array (
+                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),

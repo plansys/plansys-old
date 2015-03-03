@@ -1,19 +1,44 @@
 <?php
+
 /**
  * Class Form
  * @author rizky
  */
 class Form extends CFormModel {
-    
+
+    private $__tempVar = [];
+
+    public function __get($name) {
+        switch (true) {
+            case (isset($this->__tempVar[$name])):
+                return $this->__tempVar;
+                break;
+            default:
+                return parent::__get($name);
+                break;
+        }
+    }
+
+    public function __set($name, $value) {
+        try {
+            parent::__set($name, $value);
+        } catch (Exception $e) {
+            $this->__tempVar[$name] = $value;
+        }
+    }
+
     /**
      * getAttributes
      * Fungsi ini digunakan untuk mendapatkan attributes field dan me-returnnya
      * @return array me-return array atribut field
      */
-    public function getAttributes($names = NULL) { 
+    public function getAttributes($names = NULL) {
         $reflect = new ReflectionClass($this);
         $props = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
         $result = [];
+        foreach ($this->__tempVar as $k => $p) {
+            $result[$k] = $p;
+        }
         foreach ($props as $k => $p) {
             if (!$p->isStatic()) {
                 $name = $p->getName();
