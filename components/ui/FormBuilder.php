@@ -756,7 +756,6 @@ class FormBuilder extends CComponent {
         $moduleName = $fb->module;
         $modelClass = get_class($fb->model);
 
-
         ## setup default options
         $wrapForm = isset($options['wrapForm']) ? $options['wrapForm'] : true;
         $action = isset($options['action']) ? $options['action'] : 'create';

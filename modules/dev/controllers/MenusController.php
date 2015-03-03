@@ -13,8 +13,8 @@ class MenusController extends Controller {
         $properties = FormBuilder::load('DevMenuEditor');
 
         if ($this->beginCache('DevMenuProperties', array(
-            'dependency' => new CFileCacheDependency(
-                Yii::getPathOfAlias('application.modules.dev.forms.DevMenuEditor') . ".php"
+                    'dependency' => new CFileCacheDependency(
+                            Yii::getPathOfAlias('application.modules.dev.forms.DevMenuEditor') . ".php"
             )))
         ) {
             echo $properties->render();
@@ -22,17 +22,25 @@ class MenusController extends Controller {
         }
     }
 
+    public function actionSaveSource($class) {
+        $postdata = file_get_contents("php://input");
+        $post     = CJSON::decode($postdata);
+        $file     = Yii::getPathOfAlias($class) . ".php";
+        if (isset($post['code']) && is_file($file)) {
+            $success = file_put_contents($file, $post['code']);
+            echo $post['code'];
+        }
+    }
+
     public function actionSave($class) {
         $postdata = file_get_contents("php://input");
-        $post = CJSON::decode($postdata);
+        $post     = CJSON::decode($postdata);
 
         if (isset($post['list'])) {
+            
             MenuTree::cleanMenuItems($post['list']);
-            $mode = !!@$post['mode'] ? $post['mode'] : 'normal';
-            if ($mode == 'normal') {
-                $code = "<?php \n\n \$mode = '{$mode}'; \n\n return " . FormBuilder::formatCode($post['list'], '') . ";";
-                file_put_contents(Yii::getPathOfAlias($class) . ".php", $code);
-            }
+            $code = "<?php \n\n \$mode = 'normal'; \n\n return " . FormBuilder::formatCode($post['list'], '') . ";";
+            file_put_contents(Yii::getPathOfAlias($class) . ".php", $code);
         }
     }
 
@@ -47,20 +55,19 @@ class MenusController extends Controller {
         }
     }
 
-
     public function actionRename() {
         $postdata = file_get_contents("php://input");
-        $post = CJSON::decode($postdata);
+        $post     = CJSON::decode($postdata);
 
         $from = @$post['from'];
-        $to = @$post['to'];
+        $to   = @$post['to'];
 
         if (!is_null($from) && !is_null($to)) {
             $path = explode(".", $from);
             array_pop($path);
             $path = implode(".", $path);
-            $f = Yii::getPathOfAlias($from) . ".php";
-            $t = Yii::getPathOfAlias($path . "." . $to) . ".php";
+            $f    = Yii::getPathOfAlias($from) . ".php";
+            $t    = Yii::getPathOfAlias($path . "." . $to) . ".php";
 
             if (file_exists($f)) {
                 rename($f, $t);
@@ -72,7 +79,7 @@ class MenusController extends Controller {
 
     public function actionDelete() {
         $postdata = file_get_contents("php://input");
-        $post = CJSON::decode($postdata);
+        $post     = CJSON::decode($postdata);
 
         $item = @$post['item'];
 
@@ -93,24 +100,28 @@ class MenusController extends Controller {
         echo file_get_contents(Yii::getPathOfAlias($path) . ".php");
     }
 
+    public function actionGetList($path) {
+        echo json_encode(include(Yii::getPathOfAlias($path) . ".php"));
+    }
+
     public function actionUpdate($class) {
         $this->layout = "//layouts/blank";
 
-        $list = include(Yii::getPathOfAlias($class) . ".php");
+        $list       = include(Yii::getPathOfAlias($class) . ".php");
         MenuTree::fillMenuItems($list);
-        $path = $class;
+        $path       = $class;
         $class_path = explode(".", $class);
-        $class = $class_path[count($class_path) - 1];
+        $class      = $class_path[count($class_path) - 1];
         $properties = FormBuilder::load('DevMenuEditor');
         $properties->registerScript();
 
         Asset::registerJS('application.static.js.lib.ace');
 
         $this->render('form', array(
-            'list' => $list,
+            'list'  => $list,
             'class' => $class,
-            'path' => $path,
-            'mode' => MenuTree::getMenuMode($path)
+            'path'  => $path,
+            'mode'  => MenuTree::getMenuMode($path)
         ));
     }
 

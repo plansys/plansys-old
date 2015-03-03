@@ -28,11 +28,6 @@ app.directive('uiSwitch', ['$window', '$timeout', '$log', '$parse',
             }
             $timeout(function () {
                 var switcher = new $window.Switchery(elem[0], options);
-
-                ngModel.$render = function () {
-                    console.log(switcher.setPosition(true));
-                };
-
                 var element = switcher.element;
                 element.checked = scope.initValue;
                 switcher.setPosition(false);

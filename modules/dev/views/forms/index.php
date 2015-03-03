@@ -9,7 +9,7 @@
             </div>
             <div ui-content>
                 <div
-                    oc-lazy-load="{name: 'ng-context-menu', files: ['<?= Asset::publish('application.components.ui.MenuTree.ng-menutree.js', true); ?>']}">
+                    oc-lazy-load="{name: 'ng-context-menu', files: ['<?= Asset::publish('application.components.ui.MenuTree.ng-contextmenu.js', true); ?>']}">
                     <div
                         oc-lazy-load="{name: 'ui.tree', files: ['<?= $this->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
                         <script type="text/ng-template" id="FormTree"><?php include('form_dir.php'); ?></script>
@@ -39,5 +39,4 @@
     </div>
 </div>
 <script>var actionFormList = <?= $this->actionFormList() ?>;</script>
-<script src="<?= Asset::publish('application.components.ui.MenuTree.ng-contextmenu.js', true); ?>"></script>
 <script src="<?= Asset::publish('application.modules.dev.views.forms.index.js', true); ?>"></script>

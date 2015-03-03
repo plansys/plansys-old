@@ -12,12 +12,12 @@
                         New
                     </div>
                 </div>
-                <?php echo $class; ?><span ng-show='saving'>(Saving...)</span>
+                <?php echo $class; ?> <span ng-show='saving'>(Saving...)</span>
             </div>
             <div ui-content>
                 <script type="text/ng-template" id="FormTree"><?php include('form_menu.php'); ?></script>
-                <div oc-lazy-load="{name: 'ui.tree', files: ['<?= $this->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
-                    <div ui-tree="listOptions" class="menu-editor">
+                <div ng-if="!isLoading" oc-lazy-load="{name: 'ui.tree', files: ['<?= $this->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
+                    <div  ui-tree="listOptions" class="menu-editor">
                         <ol ui-tree-nodes ng-model="list">
                             <li data-collapsed="isCollapsed(item)" ng-repeat="item in list" ui-tree-node
                                 ng-include="'FormTree'"></li>
@@ -28,7 +28,8 @@
         </div>
         <div id="menu-pane" size='60%' min-size="300px">
             <div ui-header>
-                {{ mode == 'normal' ? 'Properties' : '<?= $class ?> Source'}}
+                {{ mode == 'normal' ? 'Properties' : '<?= $class ?>'}}
+                <span ng-if="mode == 'custom'" ng-show='saving'>(Saving...)</span>
                 <?php
                 echo FormBuilder::build('ToggleSwitch', [
                     'name'     => 'mode',
@@ -55,6 +56,8 @@
                     <div id="code-editor"
                          style="position:absolute;top:0px;bottom:0px;left:0px;right:0px;"
                          ng-model="code"
+                         ng-change="saveSource(code)"
+                         ng-delay="500"
                          ui-ace="{
                          useWrapMode : true,
                          showGutter: true,
@@ -78,7 +81,7 @@
                 dropped: function (e) {
                     if (e.source.index != e.dest.index || e.source.nodesScope.$id != e.dest.nodesScope.$id) {
                         $scope.rendering = false;
-                        $scope.save();
+                        $scope.save($scope.list);
                     }
                 },
                 beforeDrag: function (node) {
@@ -112,11 +115,26 @@
             $scope.renderMode = function (mode) {
                 switch (mode) {
                     case "normal":
-                        $("#menu-drag-drop").width('40%').show();
-                        $("#menu-pane").width('60%').css('left', '40%');
-                        $(".ui-splitbar").show();
+                        $scope.code = null;
+                        var setCustomList = function () {
+                            $("#menu-drag-drop").width('40%').show();
+                            $("#menu-pane").width('60%').css('left', '40%');
+                            $(".ui-splitbar").show();
+                        }
+
+                        if ($scope.list == null) {
+                            $http.get(Yii.app.createUrl('/dev/menus/getList', {
+                                path: '<?= $path ?>'
+                            })).success(function (data) {
+                                $scope.list = data;
+                                setCustomList();
+                            });
+                        } else {
+                            setCustomList();
+                        }
                         break;
                     case "custom":
+                        $scope.list = null;
                         var setCustomMode = function () {
                             $("#menu-drag-drop").width('0%').hide();
                             $("#menu-pane").width('100%').css('left', 0);
@@ -155,12 +173,11 @@
                     }
 
                     $scope.activeTree = item;
-                    console.log("ASDSA", $scope.activeTree);
                 });
 
                 $timeout(function () {
                     $scope.rendering = false;
-                }, 1000);
+                }, 500);
             };
             $scope.iconAvailable = function (item) {
                 if (typeof item.icon == "undefined")
@@ -226,22 +243,37 @@
                 $scope.active = null;
                 $scope.save();
             }
-            $scope.save = function () {
-                if ($scope.rendering) {
-                    return
-                }
 
-                $scope.saving = true;
-                $http.post('<?php echo $this->createUrl("save", array('class' => $path)); ?>',
-                        {list: $scope.list})
-                        .success(function (data, status) {
-                            $scope.code = null;
-                            $scope.saving = false;
-                        })
-                        .error(function (data, status) {
-                            $scope.code = null;
-                            $scope.saving = false;
-                        });
+            $scope.saveSource = function (code) {
+                if (!$scope.rendering) {
+                    $scope.saving = true;
+                    $scope.list = null;
+                    $scope.activeTree = null;
+                    $scope.active = null;
+                    $http.post('<?php echo $this->createUrl("saveSource", array('class' => $path)); ?>',
+                            {code: code})
+                            .success(function (data, status) {
+                                $scope.saving = false;
+                            })
+                            .error(function (data, status) {
+                                $scope.saving = false;
+                            });
+                }
+            }
+            $scope.save = function (list) {
+            console.log(list);
+                if (!$scope.rendering) {
+                    $scope.saving = true;
+                    $scope.code = null;
+                    $http.post('<?php echo $this->createUrl("save", array('class' => $path)); ?>',
+                            {list: list})
+                            .success(function (data, status) {
+                                $scope.saving = false;
+                            })
+                            .error(function (data, status) {
+                                $scope.saving = false;
+                            });
+                }
             }
         }
     ]);

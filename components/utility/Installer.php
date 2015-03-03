@@ -172,6 +172,14 @@ class Installer {
                     }
                 ],
                 [
+                    'title' => 'CURL extension',
+                    'check' => function() {
+                        $result = extension_loaded("curl");
+                        $msg = "Extension \"curl\" is not loaded";
+                        return $result !== true ? $msg : true;
+                    }
+                ],
+                [
                     'title' => 'GD extension with FreeType support<br />or ImageMagick extension with <br/> PNG support',
                     'check' => function() {
                         if (extension_loaded('imagick')) {

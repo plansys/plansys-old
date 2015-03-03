@@ -11,30 +11,30 @@ class MenuTree extends CComponent {
 
         ## dev
         if (Setting::get('app.mode') == "plansys") {
-            $dir = Yii::getPathOfAlias('application.modules');
+            $dir     = Yii::getPathOfAlias('application.modules');
             $modules = glob($dir . DIRECTORY_SEPARATOR . "*");
             foreach ($modules as $m) {
                 $module = ucfirst(str_replace($dir . DIRECTORY_SEPARATOR, '', $m));
-                $items = MenuTree::listFile($module);
+                $items  = MenuTree::listFile($module);
                 if (count($items) > 0) {
                     $files[] = [
                         'module' => $module,
-                        'items' => $items
+                        'items'  => $items
                     ];
                 }
             }
         }
 
         ## app
-        $dir = Yii::getPathOfAlias('app.modules');
+        $dir     = Yii::getPathOfAlias('app.modules');
         $modules = glob($dir . DIRECTORY_SEPARATOR . "*");
         foreach ($modules as $m) {
             $module = ucfirst(str_replace($dir . DIRECTORY_SEPARATOR, '', $m));
-            $items = MenuTree::listFile($module);
+            $items  = MenuTree::listFile($module);
             if (count($items) > 0) {
                 $files[] = [
                     'module' => $module,
-                    'items' => $items
+                    'items'  => $items
                 ];
             }
         }
@@ -54,11 +54,11 @@ class MenuTree extends CComponent {
 
     public static function listFile($module) {
         $path = "application.modules." . lcfirst($module) . ".menus";
-        $dir = Yii::getPathOfAlias($path);
+        $dir  = Yii::getPathOfAlias($path);
 
         if (!is_dir($dir)) {
             $path = "app.modules." . lcfirst($module) . ".menus";
-            $dir = Yii::getPathOfAlias($path);
+            $dir  = Yii::getPathOfAlias($path);
         }
 
         $items = glob($dir . DIRECTORY_SEPARATOR . "*");
@@ -67,9 +67,9 @@ class MenuTree extends CComponent {
             $m = str_replace('.php', "", $m);
 
             $items[$k] = [
-                'name' => $m,
-                'module' => $module,
-                'class' => $path . '.' . $m,
+                'name'       => $m,
+                'module'     => $module,
+                'class'      => $path . '.' . $m,
                 'class_path' => $path
             ];
         }
@@ -77,7 +77,7 @@ class MenuTree extends CComponent {
     }
 
     public static function listDropdown($module, $includeEmpty = true, $withClass = true) {
-        $raw = MenuTree::listFile($module);
+        $raw  = MenuTree::listFile($module);
         $list = [];
         if ($includeEmpty) {
             if ($includeEmpty !== true) {
@@ -157,7 +157,7 @@ class MenuTree extends CComponent {
             if (isset($v['items'])) {
                 MenuTree::cleanMenuItems($list[$k]['items']);
             }
-            if (count($list[$k]['items']) == 0) {
+            if (isset($list[$k]['items']) && empty($list[$k]['items'])) {
                 unset($list[$k]['items']);
             }
             if (@$list[$k]['state'] == "") {
@@ -166,30 +166,30 @@ class MenuTree extends CComponent {
         }
     }
 
-    public $title = "";
-    public $list = "";
-    public $class = "";
+    public $title     = "";
+    public $list      = "";
+    public $class     = "";
     public $classpath = "";
-    public $options = "";
+    public $options   = "";
 
     public static function load($classpath, $options = null) {
         $mt = new MenuTree;
 
-        $mt->title = @$options['title'];
-        $mt->options = @$options['options'];
+        $mt->title     = @$options['title'];
+        $mt->options   = @$options['options'];
         $mt->classpath = $classpath;
-        $mt->class = Helper::explodeLast(".", $classpath);
-        $mt->list = include(Yii::getPathOfAlias($classpath) . ".php");
+        $mt->class     = Helper::explodeLast(".", $classpath);
+        $mt->list      = include(Yii::getPathOfAlias($classpath) . ".php");
         MenuTree::fillMenuItems($mt->list);
         return $mt;
     }
 
     public function renderScript() {
         $script = Yii::app()->controller->renderPartial('//layouts/menu_js', [
-            'list' => $this->list,
-            'class' => $this->class,
+            'list'    => $this->list,
+            'class'   => $this->class,
             'options' => $this->options,
-        ], true);
+                ], true);
 
         return str_replace(["<script>", "</script>"], "", $script);
     }
@@ -198,7 +198,7 @@ class MenuTree extends CComponent {
         $ctrl = Yii::app()->controller;
 
         if ($registerScript) {
-            $id = "NGCTRLMENUTREE_{$this->class}_" . rand(0, 1000);
+            $id     = "NGCTRLMENUTREE_{$this->class}_" . rand(0, 1000);
             Yii::app()->clientScript->registerScript($id, $this->renderScript(), CClientScript::POS_END);
             $script = false;
         } else {
@@ -206,12 +206,12 @@ class MenuTree extends CComponent {
         }
 
         return $ctrl->renderPartial("//layouts/menu", [
-            'class' => $this->class,
-            'classpath' => $this->classpath,
-            'title' => $this->title,
-            'options' => $this->options,
-            'script' => $script,
-        ], true);
+                    'class'     => $this->class,
+                    'classpath' => $this->classpath,
+                    'title'     => $this->title,
+                    'options'   => $this->options,
+                    'script'    => $script,
+                        ], true);
     }
 
 }
