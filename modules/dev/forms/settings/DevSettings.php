@@ -1,6 +1,7 @@
 <?php
 
 class DevSettings extends Form {
+    public $errors;
     #Application's Setting
     public $appName;
     public $appMode;
@@ -10,11 +11,10 @@ class DevSettings extends Form {
     
     #DB's Settings
     public $dbSys;
-    public $dbServer;
+    public $dbHost;
     public $dbUser;
     public $dbPass;
     public $dbName;
-    public $dbPort;
     
     #Email's Settings
     public $emailService;
@@ -50,7 +50,7 @@ class DevSettings extends Form {
         $this->dbSys = Setting::get('db.driver');
         $this->dbName = Setting::get('db.dbname');
         $this->dbPass = Setting::get('db.password');
-        $this->dbServer = Setting::get('db.host');
+        $this->dbHost = Setting::get('db.host');
         $this->dbUser = Setting::get('db.username');
         
         #Repo
@@ -107,7 +107,7 @@ class DevSettings extends Form {
         Setting::set('db.driver',$data['dbSys'],false);
         Setting::set('db.dbname',$data['dbName'],false);
         Setting::set('db.password',$data['dbPass'],false);
-        Setting::set('db.host',$data['dbServer'],false);
+        Setting::set('db.host',$data['dbHost'],false);
         Setting::set('db.username',$data['dbUser'],false);
         
         #Repo
@@ -226,6 +226,10 @@ class DevSettings extends Form {
                 'type' => 'Text',
             ),
             array (
+                'name' => 'errors',
+                'type' => 'HiddenField',
+            ),
+            array (
                 'showBorder' => 'Yes',
                 'column1' => array (
                     array (
@@ -272,11 +276,22 @@ class DevSettings extends Form {
                 'type' => 'SectionHeader',
             ),
             array (
+                'renderInEditor' => 'Yes',
+                'value' => '<i class=\"fa fa-warning fa-fw\" style=\"color:red;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'dbSys\']) != \'undefined\' && !loading.db\"></i>
+
+<i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'dbSys\']) == \'undefined\' && !loading.db\"></i>
+
+
+<i class=\"fa fa-spin fa-refresh\" style=\"float:right;margin:-21px -5px 0px 0px;\" ng-if=\"!!loading.db\"></i>',
+                'type' => 'Text',
+            ),
+            array (
                 'label' => 'Check Database',
                 'icon' => 'database',
                 'buttonSize' => 'btn-xs',
                 'options' => array (
-                    'style' => 'float:right;margin:-25px 0px 0px 0px;',
+                    'style' => 'float:right;margin:-25px 25px 0px 0px;',
+                    'ng-click' => 'checkDb()',
                 ),
                 'type' => 'LinkButton',
             ),
@@ -302,7 +317,7 @@ class DevSettings extends Form {
                 'column2' => array (
                     array (
                         'label' => 'Host',
-                        'name' => 'dbServer',
+                        'name' => 'dbHost',
                         'type' => 'TextField',
                     ),
                     array (

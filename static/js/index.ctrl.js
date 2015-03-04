@@ -4,7 +4,16 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
     $scope.console = console;
     $scope.Yii = Yii;
     $scope.title = $("title").text();
-
+    $scope.typeof = function (val) {
+        return typeof val;
+    }
+    $scope.objectSize= function(val){
+        if( val == null || typeof val != 'object'){
+            return 0;
+        }else{
+            return Object.keys(val).length;
+        }
+    }
     $storage = $localStorage;
     $scope.$storage = $storage;
 
