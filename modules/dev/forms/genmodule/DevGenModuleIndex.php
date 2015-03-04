@@ -15,7 +15,7 @@ class DevGenModuleIndex extends Form {
                         'name' => 'col1',
                         'file' => 'application.modules.dev.menus.GenModule',
                         'title' => 'Manteb',
-                        'icon' => 'fa-arrow-circle-left',
+                        'icon' => 'fa-angle-right',
                     ),
                 ),
             ),
