@@ -24,20 +24,20 @@
             <div ng-if="value != null" oc-lazy-load="{name: 'ui.tree', files: ['<?= Yii::app()->controller->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
                 <div ui-tree="uiTreeOptions">
                     <ol ui-tree-nodes ng-model="value">
-                        <li ui-tree-node ng-repeat="item in value" class="list-view-item">
+                        <li ui-tree-node ng-repeat="(key, item) in value track by $index" class="list-view-item">
                             <div style="float:right;margin-top:7px;">
                                 <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
                                     <i class="fa fa-times"></i>
                                 </div>
                             </div>
-                            <div ui-tree-handle class="list-view-item-move " style="float:left;padding-top:7px;">
+                            <div ui-tree-handle class="list-view-item-move " style="display:none;float:left;padding-top:7px;">
                                 <i class="fa fa-arrows"></i>
                             </div>
                             <div class='list-view-item-container'>
-                                <input class="list-view-item-text form-control" 
-                                       ng-change="updateListView()"
-                                       ng-delay="500"
-                                       ng-model="value[$index]" type="text" />
+                                <input class="list-view-item-text form-control"
+                                       ng-model="item"
+                                       ng-change="value[$index] = item"
+                                       type="text" />
                             </div>
                         </li>
                     </ol>
@@ -71,10 +71,11 @@
                 Loading ListView...
             </div>
         <?php endif; ?>
-
-        <div ng-repeat="(key,val) in value">
-            <div ng-repeat="(k,v) in val">
-                <input name="<?= $this->renderName ?>[{{key}}][{{k}}]" type="hidden" value='{{v}}' />
+        
+        <div ng-repeat="(key,val) in value track by $index">
+            <input name="<?= $this->renderName ?>[{{key}}]" ng-if="typeof(val)=='string'" type="hidden" value='{{val}}' />
+            <div ng-repeat="(k,v) in val  track by $index" ng-if="typeof(val)=='object'">
+               <input name="[{{key}}][{{k}}]" type="hidden" value='{{v}}' />
             </div>
         </div>
         <input ng-if="value.length == 0" name="<?= $this->renderName ?>" type="hidden" value='' />

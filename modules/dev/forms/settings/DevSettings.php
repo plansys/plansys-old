@@ -43,17 +43,14 @@ class DevSettings extends Form {
     public function loadSettings(){
         #App
         $this->appName = Setting::get('app.name');
-        $this->appDir = Setting::get('app.dir');
         $this->appMode = Setting::get('app.mode');
-        $this->appHost = Setting::get('app.host');
         $this->appPassEncrypt = Setting::get('app.passEncrypt');
         
         #Database
         $this->dbSys = Setting::get('db.driver');
         $this->dbName = Setting::get('db.dbname');
         $this->dbPass = Setting::get('db.password');
-        $this->dbPort = Setting::get('db.port');
-        $this->dbServer = Setting::get('db.server');
+        $this->dbServer = Setting::get('db.host');
         $this->dbUser = Setting::get('db.username');
         
         #Repo
@@ -100,7 +97,94 @@ class DevSettings extends Form {
     }
     
     public function setSettings(){
+        $data = $this->attributes;
+        #App
+        Setting::set('app.name',$data['appName'],false);
+        Setting::set('app.mode',$data['appMode'],false);        
+        Setting::set('app.passEncrypt',$data['appPassEncrypt'],false);
         
+        #Database
+        Setting::set('db.driver',$data['dbSys'],false);
+        Setting::set('db.dbname',$data['dbName'],false);
+        Setting::set('db.password',$data['dbPass'],false);
+        Setting::set('db.host',$data['dbServer'],false);
+        Setting::set('db.username',$data['dbUser'],false);
+        
+        #Repo
+        Setting::set('repo.path',$data['repoPath'],false);
+        
+        #Notif
+        $enableNotif = true;
+        $enableNotifEmail = true;
+        if($data['notifEnable'] != 'on'){
+            $enableNotif = false;
+            $data['notifWithEmail'] = false;
+        }
+        if($data['notifWithEmail'] != 'on'){
+            $enableNotifEmail = false;
+        }
+        Setting::set('notif.enable',$enableNotif,false); 
+        Setting::set('notif.email',$enableNotifEmail,false);
+        
+        #Audit Trail 
+        $enableAudit = true;
+        if($data['auditEnable'] != 'on'){
+            $enableAudit = false;
+        }
+        Setting::set("auditTrail.enable",$enableAudit,false);
+        if($enableAudit){
+            Setting::set("auditTrail.track",$data['auditTrack'],false);
+        }else{
+            Setting::set("auditTrail.track",null,false);
+        }
+        
+        #Email
+        Setting::remove("email");
+        if($data['emailService'] == 'ses'){
+            Setting::set("email.transport.auth.accessKeyId",$data['emailAccessKeyId'],false);
+            Setting::set("email.transport.auth.secretAccessKey",$data['emailSecretAccessKey'],false);
+            Setting::set("email.transport.auth.rateLimit",$data['emailRateLimit'],false);
+            Setting::set("email.transport.auth.region",$data['emailRegion'],false);
+        }elseif($data['emailService'] == 'gmail'){
+            Setting::set("email.transport.auth.user",$data['emailUser'],false);
+            Setting::set("email.transport.auth.pass",$data['emailPass'],false);
+        }
+        elseif($data['emailService'] == 'smtp'){
+            Setting::set("email.transport.auth.user",$data['emailUser'],false);
+            Setting::set("email.transport.auth.pass",$data['emailPass'],false);
+            Setting::set("email.transport.host",$data['emailHost'],false);
+            Setting::set("email.transport.port",$data['emailPort'],false);
+        }
+        
+        if($data['emailService'] != 'none'){
+            Setting::set("email.from",$data['emailSender'],false);
+        }else{
+            Setting::set("email.from",null,false);
+        }
+        
+        if($data['emailService'] == 'smtp' || $data['emailService'] == 'none'){
+            Setting::set("email.service",null,false);
+        }else{
+            Setting::set("email.service",$data['emailService'],false);
+        }
+        
+        
+        #LDAP
+        if($data['ldapEnable'] == 'on'){
+            Setting::set("ldap.enable",true,false);
+            Setting::set("ldap.ad_port",$data['ldapAdPort'],false);
+            Setting::set("ldap.account_suffix",$data['ldapAccountSuffix'],false);
+            Setting::set("ldap.base_dn",$data['ldapBaseDn'],false);
+            Setting::set("ldap.domain_controllers",$data['ldapDomainControllers'],false);
+            Setting::set("ldap.admin_password",$data['ldapPassword'],false);
+            Setting::set("ldap.admin_username",$data['ldapUsername'],false);
+        }else{
+            Setting::remove("ldap");
+            Setting::set("ldap.enable",false,false);
+        }
+        
+        Setting::write();
+        return true;
     }
     
     public function getForm() {
@@ -111,9 +195,11 @@ class DevSettings extends Form {
                 'data' => array (
                     'col1' => array (
                         'type' => 'mainform',
+                        'size' => '100',
                     ),
                 ),
             ),
+            'inlineJS' => '/js/form.js',
         );
     }
 
@@ -122,8 +208,9 @@ class DevSettings extends Form {
             array (
                 'linkBar' => array (
                     array (
-                        'label' => 'Save',
+                        'label' => 'Save Settings',
                         'buttonType' => 'success',
+                        'icon' => 'check',
                         'options' => array (
                             'ng-click' => 'form.submit(this)',
                         ),
@@ -135,22 +222,27 @@ class DevSettings extends Form {
                 'type' => 'ActionBar',
             ),
             array (
+                'value' => '<div style=\\"margin:20px auto;width:900px;border:1px solid #ddd;border-radius:5px;padding:0px 15px;box-shadow:0px 0px 10px 0px #ddd;\\">',
+                'type' => 'Text',
+            ),
+            array (
                 'showBorder' => 'Yes',
                 'column1' => array (
                     array (
-                        'label' => 'Application Name',
+                        'label' => 'App Name',
                         'name' => 'appName',
                         'type' => 'TextField',
                     ),
                     array (
-                        'label' => 'Application Directory',
-                        'name' => 'appDir',
-                        'type' => 'TextField',
-                    ),
-                    array (
-                        'label' => 'Application Host',
-                        'name' => 'appHost',
-                        'type' => 'TextField',
+                        'label' => 'App Mode',
+                        'name' => 'appMode',
+                        'list' => array (
+                            'development' => 'Development',
+                            'production' => 'Production',
+                            '---' => '---',
+                            'plansys' => 'Plansys Dev',
+                        ),
+                        'type' => 'DropDownList',
                     ),
                     array (
                         'value' => '<column-placeholder></column-placeholder>',
@@ -158,15 +250,6 @@ class DevSettings extends Form {
                     ),
                 ),
                 'column2' => array (
-                    array (
-                        'label' => 'Mode',
-                        'name' => 'appMode',
-                        'list' => array (
-                            'development' => 'Development',
-                            'production' => 'Production',
-                        ),
-                        'type' => 'DropDownList',
-                    ),
                     array (
                         'label' => 'Password Encryption',
                         'name' => 'appPassEncrypt',
@@ -189,8 +272,8 @@ class DevSettings extends Form {
                 'type' => 'SectionHeader',
             ),
             array (
-                'label' => 'Test Database',
-                'icon' => 'link',
+                'label' => 'Check Database',
+                'icon' => 'database',
                 'buttonSize' => 'btn-xs',
                 'options' => array (
                     'style' => 'float:right;margin:-25px 0px 0px 0px;',
@@ -212,20 +295,23 @@ class DevSettings extends Form {
                         'type' => 'TextField',
                     ),
                     array (
-                        'label' => 'Port',
-                        'name' => 'dbPort',
-                        'type' => 'TextField',
-                    ),
-                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),
                 'column2' => array (
                     array (
-                        'label' => 'Server',
+                        'label' => 'Host',
                         'name' => 'dbServer',
                         'type' => 'TextField',
+                    ),
+                    array (
+                        'renderInEditor' => 'Yes',
+                        'value' => '<div ng-if = \"model.emailService != \'none\'\" class=\"col-sm-12\" 
+     style=\"margin:-5px 0px 8px 0px;padding:0px;text-align:right;color:#999;font-size:12px\">
+    e.g. localhost:3306
+</div>',
+                        'type' => 'Text',
                     ),
                     array (
                         'label' => 'Username',
@@ -258,8 +344,8 @@ class DevSettings extends Form {
                         'type' => 'TextField',
                     ),
                     array (
-                        'label' => 'Test Repo',
-                        'icon' => 'link',
+                        'label' => 'Check Repository',
+                        'icon' => 'folder-open',
                         'buttonSize' => 'btn-xs',
                         'options' => array (
                             'style' => 'float:right;margin:0px 0px 0px 0px;',
@@ -275,23 +361,30 @@ class DevSettings extends Form {
                     array (
                         'label' => 'Enable Notification',
                         'name' => 'notifEnable',
+                        'labelWidth' => '6',
+                        'fieldWidth' => '6',
+                        'options' => array (
+                            'ng-change' => 'changeEnableNotif()',
+                        ),
                         'type' => 'ToggleSwitch',
                     ),
                     array (
                         'label' => 'Enable Email Notification',
                         'name' => 'notifWithEmail',
+                        'labelWidth' => '6',
+                        'fieldWidth' => '6',
                         'options' => array (
                             'ng-if' => '!!model.notifEnable',
                         ),
                         'type' => 'ToggleSwitch',
                     ),
                     array (
-                        'value' => '<div class=\\"col-sm-4\\"></div>',
+                        'value' => '<div class=\\"col-sm-6\\"></div>',
                         'type' => 'Text',
                     ),
                     array (
                         'label' => 'Test Notification',
-                        'icon' => 'link',
+                        'icon' => 'newspaper-o',
                         'buttonSize' => 'btn-xs',
                         'options' => array (
                             'ng-if' => '!!model.notifEnable',
@@ -351,8 +444,8 @@ class DevSettings extends Form {
                 'type' => 'SectionHeader',
             ),
             array (
-                'label' => 'Test Email',
-                'icon' => 'link',
+                'label' => 'Send Test Email',
+                'icon' => 'envelope',
                 'buttonSize' => 'btn-xs',
                 'options' => array (
                     'style' => 'float:right;margin:-25px 0px 0px 0px;',
@@ -370,17 +463,22 @@ class DevSettings extends Form {
                             'gmail' => 'GMail',
                             'ses' => 'Amazon SES',
                             'smtp' => 'SMTP',
+                            '---' => '---',
+                            'none' => 'NONE',
                         ),
                         'type' => 'DropDownList',
                     ),
                     array (
                         'label' => 'Sender',
                         'name' => 'emailSender',
+                        'options' => array (
+                            'ng-if' => 'model.emailService != \\\'none\\\'',
+                        ),
                         'type' => 'TextField',
                     ),
                     array (
                         'renderInEditor' => 'Yes',
-                        'value' => '<div class=\"col-sm-6\" 
+                        'value' => '<div ng-if = \"model.emailService != \'none\'\" class=\"col-sm-6\" 
      style=\"float:right;margin:-5px 0px 0px 0px;padding:0px;text-align:right;color:#999;font-size:12px;width:60%\">
       <i class=\"fa fa-info-circle\"></i> 
     Sender Name < sender@server.com >
@@ -428,8 +526,8 @@ class DevSettings extends Form {
                 'type' => 'SectionHeader',
             ),
             array (
-                'label' => 'Test LDAP',
-                'icon' => 'link',
+                'label' => 'Check LDAP',
+                'icon' => 'user',
                 'buttonSize' => 'btn-xs',
                 'options' => array (
                     'style' => 'float:right;margin:-25px 0px 0px 0px;',
@@ -501,6 +599,10 @@ class DevSettings extends Form {
                     'ng-if' => '!!model.ldapEnable',
                 ),
                 'type' => 'ColumnField',
+            ),
+            array (
+                'value' => '</div>',
+                'type' => 'Text',
             ),
         );
     }

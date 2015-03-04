@@ -213,6 +213,25 @@ class Setting {
             Setting::write();
         }
     }
+    
+    public static function remove($key, $flushSetting = true){
+        $keys = explode('.', $key);
+        
+        $arr = &Setting::$data;
+        while ($k   = array_shift($keys)) {
+            $arr = &$arr[$k];
+            $length = count($keys);
+            
+            if($length == 1){
+                unset($arr[$keys[0]]);
+                break;
+            }
+        }
+        
+        if ($flushSetting) {
+            Setting::write();
+        }
+    }
 
     private static function setInternal(&$arr, $path, $value) {
         $keys = explode('.', $path);

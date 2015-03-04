@@ -1,29 +1,34 @@
-app.directive('listView', function($timeout) {
+app.directive('listView', function ($timeout) {
     return {
         require: '?ngModel',
         scope: true,
-        compile: function(element, attrs, transclude) {
+        compile: function (element, attrs, transclude) {
             if (attrs.ngModel && !attrs.ngDelay) {
                 attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
             }
 
-            return function($scope, $el, attrs, ctrl) {
+            return function ($scope, $el, attrs, ctrl) {
                 var parent = $scope.$parent;
+                
                 // when ng-model is changed from inside directive
-                $scope.updateListView = function() {
+                $scope.updateListView = function () {
                     if (typeof ctrl != 'undefined') {
-                        $timeout(function() {
+                        $timeout(function () {
                             ctrl.$setViewValue(angular.copy($scope.value));
-                        }, 0);
+                        });
                     }
                 };
 
-                $scope.removeItem = function(index) {
+                $scope.typeof = function(val) {
+                    return typeof val;
+                }
+
+                $scope.removeItem = function (index) {
                     $scope.value.splice(index, 1);
                     $scope.updateListView();
                 }
 
-                $scope.addItem = function(e) {
+                $scope.addItem = function (e) {
                     e.preventDefault();
                     e.stopPropagation();
 
@@ -45,7 +50,7 @@ app.directive('listView', function($timeout) {
                     $scope.value.push(value);
 
                     var valueID = $scope.value.length - 1;
-                    $timeout(function() {
+                    $timeout(function () {
                         //after add
                         var afterAdd = $scope.options['ps-after-add'] || '';
                         value = $scope.value[valueID];
@@ -53,7 +58,7 @@ app.directive('listView', function($timeout) {
                             eval(afterAdd);
                         }
 
-                        $timeout(function() {
+                        $timeout(function () {
                             $el.find('.list-view-item-text').last().focus();
                         }, 0);
                     }, 0);
@@ -61,14 +66,14 @@ app.directive('listView', function($timeout) {
 
 
                 $scope.uiTreeOptions = {
-                    dragStop: function(scope) {
+                    dragStop: function (scope) {
                         $scope.updateListView();
                     }
                 };
 
                 // when ng-model is changed from outside directive
                 if (typeof ctrl != 'undefined') {
-                    ctrl.$render = function() {
+                    ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;
 
@@ -76,15 +81,15 @@ app.directive('listView', function($timeout) {
                             $scope.loading = true;
                             $scope.value = ctrl.$viewValue;
 
-                            $timeout(function() {
+                            $timeout(function () {
                                 $scope.loading = false;
                             }, 0);
                         }
                     };
                 }
 
-                $scope.showListForm = function() {
-                    $timeout(function() {
+                $scope.showListForm = function () {
+                    $timeout(function () {
                         $el.find('.list-view-form li').show();
                     }, 0);
                 }
@@ -99,7 +104,7 @@ app.directive('listView', function($timeout) {
 
                 // if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {
-                    $timeout(function() {
+                    $timeout(function () {
                         var ngModelValue = $scope.$eval(attrs.ngModel);
                         if (typeof ngModelValue != "undefined") {
                             $scope.value = ngModelValue;

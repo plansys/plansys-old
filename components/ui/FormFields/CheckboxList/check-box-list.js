@@ -23,7 +23,6 @@ app.directive('checkBoxList', function ($timeout) {
 
                 $scope.updateItemInternal = function (value) {
                     if (typeof value != 'undefined') {
-                        console.log(value, $scope.selected);
                         if($scope.selected == null){
                             $scope.selected = [];
                         }
