@@ -233,6 +233,7 @@ app.directive('dropDownList', function ($timeout) {
                 }
 
                 // set default value
+                $scope.name = $el.find("data[name=name]:eq(0)").html().trim();
                 $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
                 $scope.renderedFormList = [];
                 $scope.renderFormList();
