@@ -12,6 +12,7 @@
                         New
                     </div>
                 </div>
+                <i ng-if="mode == 'normal'" class="fa fa-sitemap" style="float:left;margin:6px 7px 0px  -10px;"></i> 
                 <?php echo $class; ?> <span ng-show='saving'>(Saving...)</span>
             </div>
             <div ui-content>
@@ -28,8 +29,14 @@
         </div>
         <div id="menu-pane" size='60%' min-size="300px">
             <div ui-header>
+                <i ng-if="mode == 'custom'" class="fa fa-sitemap" style="float:left;margin:6px 7px 0px  -7px;"></i> 
                 {{ mode == 'normal' ? 'Properties' : '<?= $class ?>'}}
-                <span ng-if="mode == 'custom'" ng-show='saving'>(Saving...)</span>
+                <span style="color:black;font-size:11px;" ng-if="mode == 'custom'" ng-show='saving'>
+                    &nbsp; &nbsp; <span style="border:1px solid black;padding:0px 4px;border-radius:2px;"><i class="fa fa-check"></i> Saving ...</span>
+                </span>
+                <span style="color:green;font-size:11px;display:none;" class="saved">
+                    &nbsp; &nbsp; <span style="border:1px solid green;padding:0px 4px;border-radius:2px;"><i class="fa fa-check"></i> Saved</span>
+                </span>
                 <?php
                 echo FormBuilder::build('ToggleSwitch', [
                     'name'     => 'mode',
@@ -37,14 +44,17 @@
                     'offLabel' => 'Custom Script',
                     'onLabel'  => 'Normal Menu',
                     'options'  => [
-                        'style'     => 'float:right;width:145px;',
+                        'style'     => 'float:right;width:140px;',
                         'ng-change' => 'switchMode()',
-                        'ng-show'   => "codeValid"
+                        'ng-show'   => "codeValid && !modeLocked"
                     ]
                 ]);
                 ?>
-                <div ng-if="!codeValid" style="float:right;margin:2px 10px;color:red;">
-                    <i class="fa fa-warning"></i> Code Error
+                <div ng-if="!codeValid" style="float:right;margin:0px 10px;color:red;">
+                    <i class="fa fa-warning fa-fw"></i> Invalid Code
+                </div>
+                <div ng-if="modeLocked && codeValid" style="float:right;margin:0px 10px;color:#555;" tooltip="MANTA">
+                    <i class="fa fa-lock fa-fw"></i> Custom Mode
                 </div>
 
             </div>
@@ -98,6 +108,7 @@
             };
             $scope.mode = null;
             $scope.code = null;
+            $scope.modeLocked = false;
             $scope.list = null;
             $scope.codeValid = true;
             $scope.switchModeTimeout = null;
@@ -162,7 +173,12 @@
                                 path: '<?= $path ?>'
                             })).success(function (data) {
                                 $scope.code = data;
-                                setCustomMode();
+                                $http.get(Yii.app.createUrl('/dev/menus/getModeLocked', {
+                                    path: '<?= $path ?>'
+                                })).success(function (res) {
+                                    $scope.modeLocked = (res == "locked");
+                                    setCustomMode();
+                                });
                             });
                         } else {
                             setCustomMode();
@@ -185,8 +201,12 @@
                     $scope.model.mode = false;
                 }
                 $scope.renderMode($scope.mode);
+            }).error(function () {
+                $scope.codeValid = false;
+                $scope.mode = 'custom';
+                $scope.model.mode = false;
+                $scope.renderMode($scope.mode);
             });
-
 
             $scope.activeTree = null;
             $scope.active = null;
@@ -249,7 +269,7 @@
                     }
                 }
                 return false;
-            }
+            };
 
             $scope.new = function () {
                 if ($scope.active) {
@@ -269,12 +289,13 @@
                     });
                 }
                 $scope.save($scope.list);
-            }
+            };
+
             $scope.remove = function (item) {
                 item.remove();
                 $scope.active = null;
                 $scope.save($scope.list);
-            }
+            };
 
             $scope.saveSource = function (code) {
                 if (!$scope.rendering) {
@@ -282,17 +303,25 @@
                     $scope.list = null;
                     $scope.activeTree = null;
                     $scope.active = null;
+
+                    $(".saved").hide().finish();
                     $http.post('<?php echo $this->createUrl("saveSource", array('class' => $path)); ?>',
                             {code: code})
                             .success(function (data, status) {
-                                $scope.codeValid = data != '';
+                                $scope.modeLocked = (data == "locked");
+
+                                $scope.codeValid = true;
                                 $scope.saving = false;
+                                $(".saved").show().fadeOut(3000);
                             })
                             .error(function (data, status) {
+                                $scope.codeValid = false;
                                 $scope.saving = false;
+
+                                $(".saved").show().fadeOut(3000);
                             });
                 }
-            }
+            };
             $scope.save = function (list) {
                 if (!$scope.rendering) {
                     $scope.saving = true;
@@ -306,7 +335,7 @@
                                 $scope.saving = false;
                             });
                 }
-            }
+            };
         }
     ]);
 </script>

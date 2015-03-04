@@ -71,6 +71,20 @@ class DevFormLayoutProperties extends Form {
                 'type' => 'TextField',
             ),
             array (
+                'label' => 'Icon',
+                'listExpr' => 'Helper::iconList()',
+                'renderEmpty' => 'Yes',
+                'iconTemplate' => '<i class=\\"fa fa-fw fa-lg {icon}\\"></i>',
+                'fieldWidth' => '180',
+                'options' => array (
+                    'ng-model' => 'layout.icon',
+                    'ng-change' => 'changeLayoutProperties()',
+                    'ng-delay' => '500',
+                    'ng-show' => 'layout.type == \\\'menu\\\'',
+                ),
+                'type' => 'IconPicker',
+            ),
+            array (
                 'label' => 'Sub Form',
                 'options' => array (
                     'ng-model' => 'layout.class',
