@@ -12,7 +12,7 @@
                     oc-lazy-load="{name: 'ng-context-menu', files: ['<?= Asset::publish('application.components.ui.MenuTree.ng-contextmenu.js', true); ?>']}">
                     <div
                         oc-lazy-load="{name: 'ui.tree', files: ['<?= $this->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
-                        <script type="text/ng-template" id="FormTree"><?php include('form_dir.php'); ?></script>
+                        <script type="text/ng-template" id="FormTree"><?php include('form_menutree.php'); ?></script>
                         <div ui-tree="treeOptions" data-drag-enabled="false">
                             <ol ui-tree-nodes="" ng-model="list">
                                 <li ng-repeat="item in list" ui-tree-node collapsed="true"

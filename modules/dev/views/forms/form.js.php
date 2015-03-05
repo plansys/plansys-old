@@ -97,7 +97,7 @@
             });
         };
         $scope.mustReload = false;
-        $scope.saveForm = function (force_reload) {
+        $scope.saveForm = function () {
             if ($scope.layout != null) {
                 var name = $scope.layout.name;
                 $scope.form.layout.data[name] = $scope.layout;
@@ -114,7 +114,6 @@
                         $scope.updateRenderBuilder();
                         if (data == 'FAILED') {
                             $scope.mustReload = true;
-                            location.reload();
                         }
                     })
                     .error(function (data, status) {
@@ -169,7 +168,7 @@
         });
         /*********************** LAYOUT ********************************/
         $scope.layout = null;
-        $scope.selectLayout = function (layout) {
+        $scope.selectLayout = function (layout, func) {
             $scope.tabs.properties = true;
             $scope.active = null;
             $(".form-field.active").removeClass("active");
@@ -191,6 +190,10 @@
                 $scope.layout.name = layout;
                 if ($scope.layout.sizetype == null) {
                     $scope.layout.sizetype = "%";
+                }
+
+                if (typeof func == "function") {
+                    func();
                 }
             }, 0);
         }
@@ -230,6 +233,40 @@
 
             $scope.saveForm(true);
         };
+
+        $scope.changeMenuTreeFile = function () {
+            var file =this.value;
+            $http.get(Yii.app.createUrl('/dev/menus/getOptions', {
+                path: file
+            })).success(function (data) {
+                $scope.selectLayout($scope.layout.name, function () {
+                    for (i in $scope.layout) {
+                        if (["type", "name", "file"].indexOf(i) >= 0)
+                            continue;
+
+                        if (!!data.layout && !!data.layout[i]) {
+                            $scope.layout[i] = data.layout[i];
+                        } else {
+                            switch (i) {
+                                case 'size':
+                                    $scope.layout[i] = '200';
+                                    break;
+                                case 'sizetype':
+                                    $scope.layout[i] = 'px';
+                                    break;
+                                default:
+                                    $scope.layout[i] = '';
+                            }
+                        }
+                    }
+                    $scope.layout.file = file;
+                    $scope.changeLayoutProperties();
+                });
+            }).error(function () {
+                alert("This menu can not be read (PHP Error)");
+            });
+
+        }
         $scope.changeLayoutProperties = function () {
             $scope.saveForm();
         };

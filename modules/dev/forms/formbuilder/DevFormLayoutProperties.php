@@ -54,14 +54,14 @@ class DevFormLayoutProperties extends Form {
                 'label' => 'Menu Tree',
                 'options' => array (
                     'ng-model' => 'layout.file',
-                    'ng-change' => 'changeLayoutProperties()',
+                    'ng-change' => 'changeMenuTreeFile()',
                     'ng-show' => 'layout.type == \\\'menu\\\'',
                 ),
                 'listExpr' => 'MenuTree::listDropdown($model->module)',
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'Header',
+                'label' => 'Title',
                 'options' => array (
                     'ng-model' => 'layout.title',
                     'ng-change' => 'changeLayoutProperties()',

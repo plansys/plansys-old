@@ -594,11 +594,11 @@ div[ui-content] {
 }
 
 .form-builder-layout.ui-layout-column > .ui-splitbar {
-    width: 5px !important;
+    width: 1px !important;
 }
 
 .form-builder-layout.ui-layout-row > .ui-splitbar {
-    height: 5px !important;
+    height: 1px !important;
 }
 
 .form-builder-layout form {

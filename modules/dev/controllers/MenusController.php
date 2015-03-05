@@ -111,9 +111,13 @@ class MenusController extends Controller {
         echo MenuTree::isModeLocked($path) ? "locked" : "unlocked";
     }
 
+    public function actionGetOptions($path) {
+        $options = MenuTree::getOptions($path);
+        echo json_encode($options);
+    }
+
     public function actionGetMode($path) {
         $options = MenuTree::getOptions($path);
-
         echo $options['mode'];
     }
 

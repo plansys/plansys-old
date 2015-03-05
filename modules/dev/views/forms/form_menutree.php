@@ -28,8 +28,9 @@
 </a>
 <div class="dropdown menu-tree" id="FormTreeMenu">
     <ul class="dropdown-menu" role="menu">
-        <li ng-repeat-start="menu in formTreeMenu" ng-if="!menu.hr">
+        <li ng-repeat-start="menu in formTreeMenu track by $index" ng-if="!menu.hr">
             <a class="pointer" role="menuitem"
+               oncontextmenu="return false"
                ng-click="executeMenu($event, menu.click)">
                 <i class="{{menu.icon}}"></i> {{ menu.label }}
             </a>

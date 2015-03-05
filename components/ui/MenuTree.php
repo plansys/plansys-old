@@ -131,6 +131,11 @@ class MenuTree extends CComponent {
         }
     }
 
+    public static function writeOptions($alias, $options) {
+        $path = Asset::resolveAlias($alias . ".php");
+        file_put_contents($path, MenuTree::setOptions($alias, $options));
+    }
+
     public static function getOptions($alias) {
         $path = Asset::resolveAlias($alias . ".php");
 
@@ -263,14 +268,15 @@ class MenuTree extends CComponent {
 
     public $title     = "";
     public $list      = "";
+    public $icon      = "";
     public $class     = "";
     public $classpath = "";
     public $options   = "";
 
     public static function load($classpath, $options = null) {
-        $mt = new MenuTree;
-
+        $mt            = new MenuTree;
         $mt->title     = @$options['title'];
+        $mt->icon      = @$options['icon'];
         $mt->options   = @$options['options'];
         $mt->classpath = $classpath;
         $mt->class     = Helper::explodeLast(".", $classpath);
@@ -304,6 +310,7 @@ class MenuTree extends CComponent {
                     'class'     => $this->class,
                     'classpath' => $this->classpath,
                     'title'     => $this->title,
+                    'icon'      => $this->icon,
                     'options'   => $this->options,
                     'script'    => $script,
                         ], true);
