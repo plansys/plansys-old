@@ -38,10 +38,57 @@ $scope.checkDb = function () {
     })
 }
 
+$scope.checkNotif = function(){
+    $scope.loading['notif'] = true;
+    $http.get(Yii.app.createUrl("/dev/settings/notif")
+    ).success(function (data) {
+        if (data !== 'null') {
+            if (!$scope.errors) {
+                $scope.errors = {};
+            }
+            $scope.errors['notifEnable'] = [data];
+        } else {
+            if ($scope.errors != null && typeof $scope.errors['notifEnable'] != 'undefined') {
+                delete($scope.errors['notifEnable']);
+            }
+        }
+        $scope.model.errors = JSON.stringify($scope.errors);
+        delete $scope.loading['notif'];
+    })
+}
+
+$scope.checkRepo = function () {
+    $scope.loading['repo'] = true;
+    $http({
+        method: "post",
+        url: Yii.app.createUrl("/dev/settings/repo"),
+        data: {
+            'path': $scope.model.repoPath
+        }
+    }).success(function (data) {
+        if (data !== 'null') {
+            if (!$scope.errors) {
+                $scope.errors = {};
+            }
+            $scope.errors['repoPath'] = [data];
+        } else {
+            if ($scope.errors != null && typeof $scope.errors['repoPath'] != 'undefined') {
+                delete($scope.errors['repoPath']);
+            }
+        }
+        $scope.model.errors = JSON.stringify($scope.errors);
+        delete $scope.loading['repo'];
+    })
+}
+
 var tempSubmit = $scope.form.submit;
+
 $scope.form.submit = function (that) {
     $scope.formSubmitting = true;
     $scope.checkDb();
+    $scope.checkRepo();
+    $scope.checkNotif();
+    
     var unwatch = $scope.$watch('loading', function () {
         if ($scope.objectSize($scope.loading) == 0) {
             $scope.formSubmitting = false;

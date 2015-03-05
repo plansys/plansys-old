@@ -30,7 +30,33 @@ class SettingsController extends Controller {
             
         }
         echo json_encode($error);
+    }
+    
+    public function actionRepo(){
+        $postdata = file_get_contents("php://input");
+        $post     = CJSON::decode($postdata);
         
+        $error = null;
+        if (!empty($post)) {
+            $rp = $post['path'];
+            $rrp = str_replace("\\", "/", realpath($rp));
+            
+            $path = Setting::checkPath($rrp, true);
+            if($path !== true){
+                $error = $path;
+            }
+        }
+        echo json_encode($error);
+    }
+    
+    public function actionNotif(){
+        $error = null;
+        try {
+            NodeProcess::checkNode();
+        } catch (CException $ex) {
+            $error = $ex->getMessage();
+        }
+        
+        echo json_encode($error);
     }
 }
-

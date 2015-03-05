@@ -290,7 +290,6 @@ class Setting {
             }
         }
 
-
         return $config;
     }
 

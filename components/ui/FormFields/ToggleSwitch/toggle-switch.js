@@ -35,6 +35,7 @@ app.directive('toggleSwitch', function ($timeout) {
 
                 // set default value
                 $scope.value = $el.find("data[name=value]").html().trim();
+                $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.options = JSON.parse($el.find("data[name=options]").text());
 
