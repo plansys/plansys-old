@@ -6,7 +6,7 @@
 
 class NodeProcess extends CComponent {
 
-    private static function checkNode() {
+    public static function checkNode() {
         if (substr(php_uname(), 0, 7) == "Windows") {
             exec("plansys\commands\shell\psexec.exe -accepteula -d node -v", $output, $input);
 
