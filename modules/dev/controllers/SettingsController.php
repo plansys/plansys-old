@@ -59,4 +59,18 @@ class SettingsController extends Controller {
         
         echo json_encode($error);
     }
+    
+    public function actionTes(){
+        $result = Yii::app()->ldap->user()->searchRaw("*");
+    }
+    
+    public function actionLdap(){
+        $error = null;
+        try {
+            $result = Yii::app()->ldap->user()->searchRaw("*");
+        } catch (CException $ex) {
+            $error = "No LDAP support for PHP";
+        }
+        echo json_encode($error);
+    }
 }

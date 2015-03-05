@@ -563,12 +563,23 @@ class DevSettings extends Form {
                 'type' => 'SectionHeader',
             ),
             array (
+                'renderInEditor' => 'Yes',
+                'value' => '<i class=\"fa fa-warning fa-fw\" style=\"color:red;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'ldapEnable\']) != \'undefined\' && !loading.ldap\"></i>
+
+<i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'ldapEnable\']) == \'undefined\' && !loading.ldap\"></i>
+
+
+<i class=\"fa fa-spin fa-refresh\" style=\"float:right;margin:-21px -5px 0px 0px;\" ng-if=\"!!loading.ldap\"></i>',
+                'type' => 'Text',
+            ),
+            array (
                 'label' => 'Check LDAP',
                 'icon' => 'user',
                 'buttonSize' => 'btn-xs',
                 'options' => array (
-                    'style' => 'float:right;margin:-25px 0px 0px 0px;',
+                    'style' => 'float:right;margin:-25px 25px 0px 0px;',
                     'ng-if' => '!!model.ldapEnable',
+                    'ng-click' => 'checkLdap()',
                 ),
                 'type' => 'LinkButton',
             ),
