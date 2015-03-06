@@ -110,10 +110,10 @@ $scope.form.submit = function (that) {
     $scope.formSubmitting = true;
     $scope.checkDb();
     $scope.checkRepo();
-    if($scope.model.ldapEnable === true){
+    if($scope.model.ldapEnable == true){
         $scope.checkLdap();
     }
-    if($scope.model.notifEnable === true){
+    if($scope.model.notifEnable == true){
         $scope.checkNotif();
     }
     

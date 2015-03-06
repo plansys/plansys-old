@@ -139,7 +139,7 @@ class DevSettings extends Form {
         }
         
         #Email
-        Setting::remove("email");
+        Setting::remove("email.transport");
         if($data['emailService'] == 'ses'){
             Setting::set("email.transport.auth.accessKeyId",$data['emailAccessKeyId'],false);
             Setting::set("email.transport.auth.secretAccessKey",$data['emailSecretAccessKey'],false);
@@ -170,7 +170,7 @@ class DevSettings extends Form {
         
         
         #LDAP
-        if($data['ldapEnable'] == 'on'){
+        if($data['ldapEnable'] === 'on'){
             Setting::set("ldap.enable",true,false);
             Setting::set("ldap.ad_port",$data['ldapAdPort'],false);
             Setting::set("ldap.account_suffix",$data['ldapAccountSuffix'],false);
@@ -179,7 +179,12 @@ class DevSettings extends Form {
             Setting::set("ldap.admin_password",$data['ldapPassword'],false);
             Setting::set("ldap.admin_username",$data['ldapUsername'],false);
         }else{
-            Setting::remove("ldap");
+            Setting::remove("ldap.ad_port");
+            Setting::remove("ldap.account_suffix");
+            Setting::remove("ldap.base_dn");
+            Setting::remove("ldap.domain_controllers");
+            Setting::remove("ldap.admin_password");
+            Setting::remove("ldap.admin_username");
             Setting::set("ldap.enable",false,false);
         }
         
