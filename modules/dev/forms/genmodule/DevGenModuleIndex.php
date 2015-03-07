@@ -4,7 +4,7 @@ class DevGenModuleIndex extends Form {
 
     public function getForm() {
         return array (
-            'title' => 'Daftar Gen Module ',
+            'title' => 'Generate Module',
             'layout' => array (
                 'name' => '2-cols',
                 'data' => array (
@@ -13,8 +13,8 @@ class DevGenModuleIndex extends Form {
                         'sizetype' => 'px',
                         'type' => 'menu',
                         'name' => 'col1',
-                        'file' => 'application.modules.dev.menus.MainMenu',
-                        'title' => '',
+                        'file' => 'application.modules.dev.menus.GenModule',
+                        'title' => 'Module',
                         'icon' => '',
                     ),
                     '' => array (

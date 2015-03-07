@@ -286,7 +286,7 @@ class MenuTree extends CComponent {
     }
 
     public function renderScript() {
-        $script = Yii::app()->controller->renderPartial('//layouts/menu_js', [
+        $script = Yii::app()->controller->renderPartial('//layouts/menu.js', [
             'list'    => $this->list,
             'class'   => $this->class,
             'options' => $this->options,
