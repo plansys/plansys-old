@@ -1617,9 +1617,9 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     width: 100%;
     padding: 0px !important;
     box-shadow: 0px 0px 0px 1px #ddd,
-    inset -1px 0px 0px 0px #ddd,
-    inset 1px 0px 0px 0px #ddd,
-    inset 0px -1px 0px 0px #ddd;
+        inset -1px 0px 0px 0px #ddd,
+        inset 1px 0px 0px 0px #ddd,
+        inset 0px -1px 0px 0px #ddd;
     cursor: pointer;
 }
 
@@ -2473,6 +2473,12 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 .small + .switchery > small {
     height: 16px;
     width: 16px;
+}
+
+[toggle-switch] .error {
+    border:0px;
+    border-radius:3px;
+    margin-top:5px;
 }
 
 .toggle-switch-field {
