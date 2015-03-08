@@ -31,6 +31,14 @@
             $scope.isSelected = function (item) {
                 return angular.equals(item, $scope.active) ? 'active' : '';
             };
+
+            function inlineJS() {
+<?= $inlineJS ?>
+
+
+            }
+            
+            inlineJS();
         }
     ]);
 </script>

@@ -140,7 +140,9 @@
             }
 
             $scope.saving = true;
-            $http.post('<?php echo $this->createUrl("save", array('class' => $classPath)); ?>', {form: $scope.form})
+
+            var url = '<?= $this->createUrl("save", ['class' => $classPath, 'timestamp' => $fb->timestamp]); ?>';
+            $http.post(url, {form: $scope.form})
                     .success(function (data, status) {
                         $scope.saving = false;
                         $scope.updateRenderBuilder();
@@ -733,12 +735,9 @@
         $scope.save = function () {
             $scope.detectEmptyPlaceholder();
             $scope.saving = true;
-            $http.post('<?=
-$this->createUrl("save", [
-    'class'     => $classPath,
-    'timestamp' => $fb->timestamp
-]);
-?>', {fields: $scope.fields})
+            
+            var url = '<?= $this->createUrl("save", ['class' => $classPath, 'timestamp' => $fb->timestamp]); ?>';
+            $http.post(url, {fields: $scope.fields})
                     .success(function (data, status) {
                         $scope.saving = false;
                         $scope.detectDuplicate();

@@ -24,27 +24,29 @@ class DevGenModule extends Form {
     }
 
     public function getForm() {
-        return array(
-            'title'  => 'Generate Module',
-            'layout' => array(
+        return array (
+            'title' => 'Generate Module',
+            'layout' => array (
                 'name' => '2-cols',
-                'data' => array(
-                    'col1' => array(
-                        'size'     => '200',
+                'data' => array (
+                    'col1' => array (
+                        'size' => '200',
                         'sizetype' => 'px',
-                        'type'     => 'menu',
-                        'name'     => 'col1',
-                        'file'     => 'application.modules.dev.menus.GenModule',
-                        'title'    => 'test',
-                        'icon'     => 'fa-empire',
+                        'type' => 'menu',
+                        'name' => 'col1',
+                        'file' => 'application.modules.dev.menus.GenModule',
+                        'title' => 'Module',
+                        'icon' => 'fa-empire',
+                        'inlineJS' => 'GenModule.js',
                     ),
-                    'col2' => array(
-                        'type'     => 'mainform',
-                        'name'     => 'col2',
+                    'col2' => array (
+                        'type' => 'mainform',
+                        'name' => 'col2',
                         'sizetype' => '%',
                     ),
                 ),
             ),
+            'inlineJS' => '',
         );
     }
 

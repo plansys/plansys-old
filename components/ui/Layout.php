@@ -28,7 +28,8 @@ class Layout extends CComponent {
                             'title'    => @$section['title'],
                             'icon'     => @$section['icon'],
                             'sections' => $sections,
-                            'options'  => @$section['menuOptions']
+                            'options'  => @$section['menuOptions'],
+                            'inlineJS' => @$section['inlineJS']
                         ];
 
                         $mt = MenuTree::load($section['file'], $options);

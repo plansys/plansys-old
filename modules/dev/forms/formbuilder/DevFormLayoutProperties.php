@@ -99,6 +99,20 @@ class DevFormLayoutProperties extends Form {
                 'type' => 'Text',
             ),
             array (
+                'label' => 'Inline JS File',
+                'options' => array (
+                    'ng-model' => 'layout.inlineJS',
+                    'ng-change' => 'changeLayoutProperties()',
+                    'ng-delay' => '500',
+                    'ng-show' => 'layout.type == \\\'menu\\\'',
+                ),
+                'type' => 'TextField',
+            ),
+            array (
+                'value' => '<hr ng-show=\\"layout.type == \\\'menu\\\'\\"/>',
+                'type' => 'Text',
+            ),
+            array (
                 'label' => 'Menu Options',
                 'show' => 'Show',
                 'options' => array (
