@@ -281,7 +281,6 @@ class DevSettings extends Form {
                 'type' => 'SectionHeader',
             ),
             array (
-                'renderInEditor' => 'Yes',
                 'value' => '<i class=\"fa fa-warning fa-fw\" style=\"color:red;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'dbSys\']) != \'undefined\' && !loading.db\"></i>
 
 <i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'dbSys\']) == \'undefined\' && !loading.db\"></i>
@@ -364,7 +363,6 @@ class DevSettings extends Form {
                         'type' => 'TextField',
                     ),
                     array (
-                        'renderInEditor' => 'Yes',
                         'value' => '<i class=\"fa fa-warning fa-fw\" style=\"color:red;float:right;margin:2px 0px 0px 0px;\" ng-if=\"typeof(errors[\'repoPath\']) != \'undefined\' && !loading.repo\"></i>
 
 <i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;float:right;margin:2px 0px 0px 0px;\" ng-if=\"typeof(errors[\'repoPath\']) == \'undefined\' && !loading.repo\"></i>
@@ -414,7 +412,6 @@ class DevSettings extends Form {
                         'type' => 'Text',
                     ),
                     array (
-                        'renderInEditor' => 'Yes',
                         'value' => '<i class=\"fa fa-warning fa-fw\" style=\"color:red;float:right;margin:5px 22px 0px 0px;\" ng-if=\"typeof(errors[\'notifEnable\']) != \'undefined\' && !loading.notif\"></i>
 
 <i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;float:right;margin:5px 22px 0px 0px;\" ng-if=\"typeof(errors[\'notifEnable\']) == \'undefined\' && !loading.notif\"></i>
@@ -568,7 +565,6 @@ class DevSettings extends Form {
                 'type' => 'SectionHeader',
             ),
             array (
-                'renderInEditor' => 'Yes',
                 'value' => '<i class=\"fa fa-warning fa-fw\" style=\"color:red;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'ldapEnable\']) != \'undefined\' && !loading.ldap\"></i>
 
 <i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'ldapEnable\']) == \'undefined\' && !loading.ldap\"></i>

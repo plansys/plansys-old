@@ -27,7 +27,7 @@
             <div class="loading invisible">
                 <span>
                     <b>
-                        Loading {{active.name}}...
+                        <i class="fa fa-refresh fa-spin"></i>  Loading {{active.name}}...
                     </b>
                 </span>
             </div>
