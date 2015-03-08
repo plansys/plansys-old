@@ -12,7 +12,7 @@
             id="<?= $class ?>MenuTreeLoop"><?php include('menu_layout.php'); ?></script>
             <div ui-tree data-drag-enabled="false">
                 <ol ui-tree-nodes ng-model="list" >
-                    <li data-collapsed="isCollapsed(item)" 
+                    <li data-collapsed="item.state == 'collapsed'" 
                         ng-repeat="item in list" 
                         ui-tree-node ng-include="'<?= $class ?>MenuTreeLoop'"></li>
                 </ol>

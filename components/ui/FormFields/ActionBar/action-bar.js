@@ -101,10 +101,12 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
             $scope.resizeTimeout = null;
             $scope.resize = function (st) {
                 var height = $scope.originalHeight;
+                var $container = $el.parents('.container-fluid').parent();
+                var woffset = $container.hasClass('container-full') ? 0 : 1;
                 $el.css({
-                    top: $("#content").offset().top,
-                    left: $el.parents('.container-full').offset().left,
-                    width: $('#content').width(),
+                    top: $container.offset().top,
+                    left: $container.offset().left + woffset,
+                    width: $container.width() - woffset,
                     opacity: .999
                 });
 
@@ -128,8 +130,8 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                     }
                 }
 
-                $el.parents('.container-full').css({
-                    'margin-top': height + 'px',
+                $container.css({
+                    'padding-top': height + 'px',
                     'border-top': '0px'
                 });
 
@@ -150,7 +152,7 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
             // add action tab link
             $(".section-header").each(function () {
                 $('<a href="#' + $(this).attr('scrollTo') + '">' + $(this).text() + '</a>')
-                    .insertBefore(".action-bar:eq(0) .action-tab .clearfix");
+                        .insertBefore(".action-bar:eq(0) .action-tab .clearfix");
             })
 
             // on action tab click

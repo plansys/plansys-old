@@ -50,6 +50,28 @@ class DevFormProperties extends Form {
                 'type' => 'IconPicker',
             ),
             array (
+                'value' => '{{ layout | json }}
+
+<div ng-if=\"form.layout.data.length >= 1\" 
+     class=\"row\">
+    <div class=\"col-sm-4\"></div>
+    <div class=\"col-sm-6\">
+        <table class=\"table table-condensed\">
+            <tr ng-repeat=\"col in form.layout.data\">
+                <td>{{ col.name }}</td>
+                <td>
+                    <div class=\"btn\">
+                        Minimize
+                    </div>
+                    
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>',
+                'type' => 'Text',
+            ),
+            array (
                 'label' => 'Inline JS File',
                 'name' => 'inlineScript',
                 'options' => array (

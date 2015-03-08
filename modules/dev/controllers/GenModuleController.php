@@ -2,6 +2,6 @@
 
 class GenModuleController extends Controller {
     public function actionIndex() {
-        $this->renderForm('DevGenModuleIndex');
+        $this->renderForm('DevGenModule');
     }
 }

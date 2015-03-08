@@ -770,7 +770,7 @@ div[ui-content] {
 .angular-ui-tree-handle {
     cursor: pointer;
     display: block;
-    text-decoration: none;
+    text-decoration: none !important;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -789,7 +789,6 @@ div[ui-content] {
 
 .angular-ui-tree-handle:hover {
     background: #efefef;
-    text-decoration: none;
 }
 
 .angular-ui-tree-handle.active {
@@ -857,6 +856,61 @@ li:hover > .item-btn {
     position: fixed;
     z-index: 155;
     cursor: pointer;
+}
+
+/************************** TAB PANE *********************************/
+
+.tab-set {
+    margin:0px -15px;
+}
+
+.tab-set .tab-pane {
+    padding:0px;
+}
+
+.tab-set .nav-tabs {
+    font-weight: bold;
+    font-size: 11px;
+    padding-left: 10px;
+    height: 28px;
+    line-height: 28px;
+    font-weight: bold;
+    background: #ffffff; /* Old browsers */
+    background: -moz-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #fafafa)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #ffffff 0%, #fafafa 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#fafafa', GradientType=0); /* IE6-9 */
+
+    border-bottom: 1px solid #ccc;
+}
+
+.tab-set .nav-tabs > li > a {
+    padding: 4px 8px 3px 8px;
+    border-radius: 3px 3px 0px 0px;
+    color: #888;
+    border: 1px solid #dedede !important;
+    border-bottom: 0px !important;
+    margin-top: 5px;
+    cursor: pointer;
+
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    
+}
+
+.tab-set .nav-tabs > li.active > a {
+    border: 1px solid #ccc !important;
+    border-bottom: 0px !important;
+    color: #000;
+    background: rgba(255, 255, 255, 1);
 }
 
 /************************** FORM BUILDER *****************************/

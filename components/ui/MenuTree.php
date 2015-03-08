@@ -204,17 +204,30 @@ class MenuTree extends CComponent {
             $list = [];
         }
 
+        $markCollapsed = 'collapsed';
+
         foreach ($list as $k => $v) {
             if (isset($v['url']) && is_string($v['url'])) {
+                $v['url'] = str_replace("index.php?", "!@#$%^&*()~~~", $v['url']);
+
                 $list[$k]['url'] = str_replace('?', '&', $v['url']);
+                $list[$k]['url'] = str_replace("!@#$%^&*()~~~", "index.php?", $list[$k]['url']);
             }
+
 
             if (!isset($v['items'])) {
                 $list[$k]['items'] = [];
             } else {
-                MenuTree::fillMenuItems($list[$k]['items']);
+                $list[$k]['state'] = MenuTree::fillMenuItems($list[$k]['items']);
+                $markCollapsed     = $list[$k]['state'];
+            }
+
+            if (isset($v['active']) && $v['active']) {
+                $markCollapsed = '';
             }
         }
+
+        return $markCollapsed;
     }
 
     public static function formatMenuItems(&$list, $recursed = false) {
@@ -272,24 +285,29 @@ class MenuTree extends CComponent {
     public $class     = "";
     public $classpath = "";
     public $options   = "";
+    public $sections  = [];
 
     public static function load($classpath, $options = null) {
         $mt            = new MenuTree;
         $mt->title     = @$options['title'];
         $mt->icon      = @$options['icon'];
         $mt->options   = @$options['options'];
+        $mt->sections  = !is_array(@$options['sections']) ? [] : @$options['sections'];
         $mt->classpath = $classpath;
         $mt->class     = Helper::explodeLast(".", $classpath);
         $mt->list      = include(Yii::getPathOfAlias($classpath) . ".php");
         MenuTree::fillMenuItems($mt->list);
+//        print_r($mt->list);
+//        die();
         return $mt;
     }
 
     public function renderScript() {
         $script = Yii::app()->controller->renderPartial('//layouts/menu.js', [
-            'list'    => $this->list,
-            'class'   => $this->class,
-            'options' => $this->options,
+            'list'     => $this->list,
+            'class'    => $this->class,
+            'options'  => $this->options,
+            'sections' => $this->sections
                 ], true);
 
         return str_replace(["<script>", "</script>"], "", $script);

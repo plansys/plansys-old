@@ -7,18 +7,23 @@ class ModuleGenerator extends CodeGenerator {
     public static function listModuleForMenuTree() {
         $list    = [];
         $devMode = Setting::get('app.mode') === "plansys";
-
         if ($devMode) {
             $dir         = Yii::getPathOfAlias("application.modules") . DIRECTORY_SEPARATOR;
             $items       = glob($dir . "*", GLOB_ONLYDIR);
             $plansysList = [];
             foreach ($items as $k => $f) {
-                $f               = str_replace($dir, "", $f);
-                $plansysList[$f] = [
-                    'label' => $f,
-                    'icon'  => 'fa-empire',
-                    'url'   => ''
-                ];
+                $label     = str_replace($dir, "", $f);
+                $classPath = $f . DIRECTORY_SEPARATOR . ucfirst($label) . 'Module.php';
+                if (is_file($classPath)) {
+                    $plansysList[$label] = [
+                        'label'  => $label,
+                        'icon'   => 'fa-empire',
+                        'active' => @$_GET['active'] == 'plansys.' . $label,
+                        'url'    => Yii::app()->controller->createUrl('/dev/genModule/index', [
+                            'active' => 'plansys.' . $label
+                        ])
+                    ];
+                }
             }
 
             $list[] = [
@@ -31,18 +36,26 @@ class ModuleGenerator extends CodeGenerator {
         $items   = glob($dir . "*", GLOB_ONLYDIR);
         $appList = [];
         foreach ($items as $k => $f) {
-            $f           = str_replace($dir, "", $f);
-            $appList[$f] = [
-                'label' => $f,
-                'icon'  => 'fa-empire',
-                'url'   => ''
-            ];
+            $label     = str_replace($dir, "", $f);
+            $classPath = $f . DIRECTORY_SEPARATOR . ucfirst($label) . 'Module.php';
+            if (is_file($classPath)) {
+
+                $appList[$label] = [
+                    'label'  => $label,
+                    'icon'   => 'fa-empire',
+                    'active' => @$_GET['active'] == 'app.' . $label,
+                    'url'    => Yii::app()->controller->createUrl('/dev/genModule/index', [
+                        'active' => 'app.' . $label
+                    ])
+                ];
+            }
         }
 
         $list[] = [
             'label' => 'App',
             'items' => $appList
         ];
+
 
         return $list;
     }
