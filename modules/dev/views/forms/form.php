@@ -4,7 +4,7 @@
 
     <div id="must-reload">
         <h3>Source file has changed</h3>
-        <div class="btn btn-success" onclick="location.reload()"><i class="fa fa-refresh"></i> Refresh Form</div>
+        <div class="btn btn-success" onclick="location.reload()"><i class="fa fa-refresh"></i> Refreshing Form...</div>
     </div>
     <div ui-layout class="sub" ng-class="{fbmin:minimized}" options="{ flow : 'column' }">
         <div class="fb1" size='69%' min-size="300px" >

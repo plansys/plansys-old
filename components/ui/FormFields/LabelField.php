@@ -18,13 +18,14 @@ class LabelField extends FormField {
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                    'ng-if' => 'active.js == \\\'\\\'',
+                    'ng-if' => 'active.js == \\\'\\\' || !active.js',
                 ),
                 'type' => 'DropDownList',
             ),
             array (
                 'label' => 'JS:',
                 'name' => 'js',
+                'fieldHeight' => '0',
                 'options' => array (
                     'ng-model' => 'active.js',
                     'ng-change' => 'active.name=\\\'\\\';save()',
@@ -34,7 +35,6 @@ class LabelField extends FormField {
                     'auto-grow' => '',
                 ),
                 'type' => 'TextArea',
-                'fieldHeight' => '0',
             ),
             array (
                 'label' => 'Label',

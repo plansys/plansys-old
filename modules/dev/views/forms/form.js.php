@@ -59,6 +59,38 @@
             }
             return a;
         };
+
+        var vis = (function () {
+            var stateKey,
+                    eventKey,
+                    keys = {
+                        hidden: "visibilitychange",
+                        webkitHidden: "webkitvisibilitychange",
+                        mozHidden: "mozvisibilitychange",
+                        msHidden: "msvisibilitychange"
+                    };
+            for (stateKey in keys) {
+                if (stateKey in document) {
+                    eventKey = keys[stateKey];
+                    break;
+                }
+            }
+            return function (c) {
+                if (c)
+                    document.addEventListener(eventKey, c);
+                return !document[stateKey];
+            }
+        })();
+
+        vis(function () {
+            if (vis()) {
+                console.log("reloading...");
+                $scope.save();
+            } else {
+                console.log("tab is invisible - has blur");
+            }
+        });
+
         $scope.inEditor = true;
         $scope.classPath = '<?= $classPath; ?>';
         $scope.fieldMatch = function (scope) {
@@ -114,6 +146,8 @@
                         $scope.updateRenderBuilder();
                         if (data == 'FAILED') {
                             $scope.mustReload = true;
+                            $("#must-reload").show();
+                            location.reload();
                         }
                     })
                     .error(function (data, status) {
@@ -235,7 +269,7 @@
         };
 
         $scope.changeMenuTreeFile = function () {
-            var file =this.value;
+            var file = this.value;
             $http.get(Yii.app.createUrl('/dev/menus/getOptions', {
                 path: file
             })).success(function (data) {
@@ -699,12 +733,18 @@
         $scope.save = function () {
             $scope.detectEmptyPlaceholder();
             $scope.saving = true;
-            $http.post('<?= $this->createUrl("save", array('class' => $classPath)); ?>', {fields: $scope.fields})
+            $http.post('<?=
+$this->createUrl("save", [
+    'class'     => $classPath,
+    'timestamp' => $fb->timestamp
+]);
+?>', {fields: $scope.fields})
                     .success(function (data, status) {
                         $scope.saving = false;
                         $scope.detectDuplicate();
                         if (data == 'FAILED') {
                             $scope.mustReload = true;
+                            $("#must-reload").show();
                             location.reload();
                         }
                     })

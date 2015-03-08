@@ -9,6 +9,9 @@ class FormBuilder extends CComponent {
     /** @var model $model */
     public $model = null;
 
+    /** @var $timestamp sebagai penanda kapan form ini terakhir diedit */
+    public $timestamp;
+
     /**
      * @var array $_buildRenderID
      * @access private
@@ -45,6 +48,20 @@ class FormBuilder extends CComponent {
         return $classFile == "" ? $class : $classFile;
     }
 
+    public static function resetSession($class) {
+        Yii::app()->session['FormBuilder_' . $class] = null;
+    }
+
+    public function resetTimestamp() {
+        $this->timestamp = time();
+        if (isset(Yii::app()->session['FormBuilder_' . $this->originalClass])) {
+            $session = Yii::app()->session['FormBuilder_' . $this->originalClass];
+            $session['timestamp'] = $this->timestamp;
+
+            Yii::app()->session['FormBuilder_' . $this->originalClass] = $session;
+        }
+    }
+
     /**
      * load
      * Fungsi ini digunakan untuk me-load FormBuilder
@@ -75,7 +92,7 @@ class FormBuilder extends CComponent {
             }
 
             if (!class_exists($class)) {
-                throw new CException ("Class \"{$class}\" does not exists");
+                throw new CException("Class \"{$class}\" does not exists");
                 return null;
             }
         }
@@ -112,7 +129,7 @@ class FormBuilder extends CComponent {
                         $line = $m->getStartLine() - 1;
                         $length = $m->getEndLine() - $line;
                         $model->methods[$m->name] = [
-                            'line' => $line,
+                            'line'   => $line,
                             'length' => $length
                         ];
                     }
@@ -120,14 +137,18 @@ class FormBuilder extends CComponent {
 
                 Yii::app()->session['FormBuilder_' . $originalClass] = [
                     'sourceFile' => $model->sourceFile,
-                    'file' => $model->file,
-                    'methods' => $model->methods
+                    'file'       => $model->file,
+                    'methods'    => $model->methods
                 ];
             } else {
                 $s = Yii::app()->session['FormBuilder_' . $originalClass];
+
                 $model->sourceFile = $s['sourceFile'];
                 $model->file = $s['file'];
                 $model->methods = $s['methods'];
+                if (isset($s['timestamp'])) {
+                    $model->timestamp = $s['timestamp'];
+                }
             }
         }
         return $model;
@@ -406,7 +427,7 @@ class FormBuilder extends CComponent {
             } else {
                 $value = $f;
                 $processed[$k] = [
-                    'type' => 'Text',
+                    'type'  => 'Text',
                     'value' => str_replace("\'", "'", $value)
                 ];
             }
@@ -532,7 +553,7 @@ class FormBuilder extends CComponent {
             }
 
             $defaultFields = [
-                'title' => $title,
+                'title'  => $title,
                 'layout' => [
                     'name' => 'full-width',
                     'data' => [
@@ -631,7 +652,6 @@ class FormBuilder extends CComponent {
                 $field->registerScript();
             }
         }
-
     }
 
     /**
@@ -755,7 +775,7 @@ class FormBuilder extends CComponent {
         $form = $fb->form;
         $moduleName = $fb->module;
         $modelClass = get_class($fb->model);
-        
+
         ## setup default options
         $wrapForm = isset($options['wrapForm']) ? $options['wrapForm'] : true;
         $action = isset($options['action']) ? $options['action'] : 'create';
@@ -773,8 +793,8 @@ class FormBuilder extends CComponent {
             $formDefaultAttr = [
                 'action' => $url,
                 'method' => 'POST',
-                'class' => 'form-horizontal ' . @$formOptions['class'],
-                'role' => 'form',
+                'class'  => 'form-horizontal ' . @$formOptions['class'],
+                'role'   => 'form',
             ];
 
             $formAttr = array_merge($formOptions, $formDefaultAttr);
@@ -846,7 +866,7 @@ class FormBuilder extends CComponent {
                     ob_start();
                     ?>
                     <script type="text/javascript">
-                        <?php echo $this->renderAngularController($data, $renderParams); ?>
+                    <?php echo $this->renderAngularController($data, $renderParams); ?>
                         registerController('<?= $modelClass ?>Controller');
                     </script>
                     <?php
@@ -885,7 +905,7 @@ class FormBuilder extends CComponent {
 
         ## replace unwanted formatting
         $replace = [
-            "  " => '    ',
+            "  "    => '    ',
             "=> \n" => "=>"
         ];
         $fields = str_replace(array_keys($replace), $replace, $fields);
@@ -991,11 +1011,11 @@ class FormBuilder extends CComponent {
             }
         }
         return [
-            'file' => $this->file,
-            'length' => $length,
-            'line' => $line,
+            'file'       => $this->file,
+            'length'     => $length,
+            'line'       => $line,
             'sourceFile' => $this->sourceFile,
-            'isNewFunc' => $isNewFunc
+            'isNewFunc'  => $isNewFunc
         ];
     }
 
@@ -1064,15 +1084,13 @@ EOF;
             fwrite($fp, $buffer);
             fflush($fp); // flush output before releasing the lock
             flock($fp, LOCK_UN); // release the lock
-            //print_r(Yii::app()->session['FormBuilder_' . $this->originalClass]['methods']);
 
             Yii::app()->session['FormBuilder_' . $this->originalClass] = [
                 'sourceFile' => $this->sourceFile,
-                'file' => $file,
-                'methods' => $this->methods
+                'file'       => $file,
+                'methods'    => $this->methods,
+                'timestamp'  => $this->timestamp
             ];
-
-            //print_r(Yii::app()->session['FormBuilder_' . $this->originalClass]['methods']);
         } else {
             echo "ERROR: Couldn't lock source file '{$sourceFile}'!";
             die();
@@ -1198,8 +1216,8 @@ EOF;
                     if (!isset($curpath[$s])) {
                         $curpath[$s] = [
                             'items' => [],
-                            'name' => ucfirst($s),
-                            'id' => $id++
+                            'name'  => ucfirst($s),
+                            'id'    => $id++
                         ];
                     }
                     $curpath = &$curpath[$s]['items'];
@@ -1228,7 +1246,7 @@ EOF;
 
         $func = function ($m, $module = "", $aliaspath = "", $path) {
             return [
-                'name' => str_replace($module, '', $m),
+                'name'  => str_replace($module, '', $m),
                 'class' => $m,
                 'alias' => $aliaspath . "." . $m,
                 'items' => []
@@ -1251,8 +1269,8 @@ EOF;
 
             $files[] = [
                 'module' => 'Plansys: Fields',
-                'items' => $items,
-                'count' => $count
+                'items'  => $items,
+                'count'  => $count
             ];
 
             ##  add files in Root Form dir
@@ -1274,8 +1292,8 @@ EOF;
 
             $files[] = [
                 'module' => 'Plansys: Forms',
-                'count' => $glob['count'],
-                'items' => $items
+                'count'  => $glob['count'],
+                'items'  => $items
             ];
 
 
@@ -1295,8 +1313,8 @@ EOF;
                     if (count($items) > 0) {
                         $files[] = [
                             'module' => 'Plansys: ' . $module,
-                            'items' => $items,
-                            'count' => $glob['count']
+                            'items'  => $items,
+                            'count'  => $glob['count']
                         ];
                     }
                 }
@@ -1321,8 +1339,8 @@ EOF;
 
         $files[] = [
             'module' => 'app',
-            'items' => $items,
-            'count' => $glob['count']
+            'items'  => $items,
+            'count'  => $glob['count']
         ];
 
         ## add files in App Modules Dir
@@ -1340,8 +1358,8 @@ EOF;
                 if (count($items) > 0) {
                     $files[] = [
                         'module' => $module,
-                        'items' => $items,
-                        'count' => $glob['count']
+                        'items'  => $items,
+                        'count'  => $glob['count']
                     ];
                 }
             }
