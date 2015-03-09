@@ -310,12 +310,14 @@ class MenuTree extends CComponent {
     }
 
     public function renderScript() {
-        $inlineJSPath = dirname(Yii::getPathOfAlias($this->classpath)) . DIRECTORY_SEPARATOR . $this->inlineJS;
         $inlineJS = '';
-        if (is_file($inlineJSPath)) {
-            $tab = '                ';
-            $inlineJS = file($inlineJSPath);
-            $inlineJS = $tab . implode($tab, $inlineJS);
+        if (is_string($this->inlineJS) && $this->inlineJS != '') {
+            $inlineJSPath = dirname(Yii::getPathOfAlias($this->classpath)) . DIRECTORY_SEPARATOR . $this->inlineJS;
+            if (is_file($inlineJSPath)) {
+                $tab = '                ';
+                $inlineJS = file($inlineJSPath);
+                $inlineJS = $tab . implode($tab, $inlineJS);
+            }
         }
 
         $script = Yii::app()->controller->renderPartial('//layouts/menu.js', [

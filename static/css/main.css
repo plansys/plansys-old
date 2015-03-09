@@ -242,6 +242,10 @@ i {
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
 }
 
+.table {
+    font-size:13px;
+}
+
 /************************************ NAVBAR ***************************************/
 
 .navbar-main {
@@ -865,7 +869,7 @@ li:hover > .item-btn {
 }
 
 .tab-set .tab-pane {
-    padding:0px;
+    padding:0px 15px;
 }
 
 .tab-set .nav-tabs {

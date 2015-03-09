@@ -3,6 +3,7 @@
 class ModuleGenerator extends CodeGenerator {
 
     protected $basePath = "app.modules";
+    protected $baseClass = "WebModule";
 
     public static function listModuleForMenuTree() {
         $list = [];
@@ -17,6 +18,7 @@ class ModuleGenerator extends CodeGenerator {
                 if (is_file($classPath)) {
                     $plansysList[$label] = [
                         'label'  => $label,
+                        'module' => 'plansys',
                         'icon'   => 'fa-empire',
                         'active' => @$_GET['active'] == 'plansys.' . $label,
                         'url'    => Yii::app()->controller->createUrl('/dev/genModule/index', [
@@ -27,8 +29,9 @@ class ModuleGenerator extends CodeGenerator {
             }
 
             $list[] = [
-                'label' => 'Plansys',
-                'items' => $plansysList
+                'label'  => 'Plansys',
+                'module' => 'plansys',
+                'items'  => $plansysList
             ];
         }
 
@@ -42,6 +45,7 @@ class ModuleGenerator extends CodeGenerator {
 
                 $appList[$label] = [
                     'label'  => $label,
+                    'module' => 'app',
                     'icon'   => 'fa-empire',
                     'active' => @$_GET['active'] == 'app.' . $label,
                     'url'    => Yii::app()->controller->createUrl('/dev/genModule/index', [
@@ -52,67 +56,49 @@ class ModuleGenerator extends CodeGenerator {
         }
 
         $list[] = [
-            'label' => 'App',
-            'items' => $appList
-        ];
-
-        $i = 0;
-        $dirs = [];
-        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator('.'));
-        foreach ($iterator as $k => $item) {
-            $label = $item->getFilename();
-            $path = $item->getPath();
-
-            if ($item->isDir()) {
-                $dirs[$label] = [
-                    'label'  => $label,
-                    'active' => @$_GET['active'] == 'dir.' . $label,
-                    'url'    => Yii::app()->controller->createUrl('/dev/genModule/index', [
-                        'active' => 'dir.' . $label
-                    ])
-                ];
-            }
-            
-            $i++;
-        }
-
-        $list[] = [
-            'label' => 'dir',
-            'items' => $dirs
+            'label'  => 'App',
+            'module' => 'app',
+            'items'  => $appList
         ];
         return $list;
     }
 
-    public function load($class) {
-        $module = strtolower(str_replace("Module", "", $class));
-        $this->basePath .= "." . $module;
-        parent::load($class);
+    public static function init($classAlias) {
+        $m = new ModuleGenerator;
+        $path = explode('.', $classAlias);
+        $class = ucfirst(array_pop($path));
+
+        $path[count($path) - 1] = lcfirst($path[count($path) - 1]);
+        $m->basePath = implode(".", $path);
+
+        if (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $class)) {
+            $m->load($class);
+            return $m;
+        } else {
+            return null;
+        }
     }
 
-    public function addFormPath($class) {
-        $line = "'" . $this->basePath . ".forms." . $class . ".*',";
+    public function getControllers() {
+        $dir = Yii::getPathOfAlias($this->basePath) . DIRECTORY_SEPARATOR . "controllers";
+        if (!is_dir($dir))
+            return [];
 
-        $f = $this->getFunctionBody('init');
-        $alreadyAdded = false;
-        foreach ($f as $k => $l) {
-            if (strpos($l, $line) !== false) {
-                $alreadyAdded = true;
-                break;
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+        $controllers = [];
+        foreach ($iterator as $path => $item) {
+            if ($item->isFile()) {
+                $file = $item->getFilename();
+                $class = basename($item->getFilename(), ".php");
+                $controllers[] = [
+                    'file'  => $file,
+                    'class' => $class,
+                    'alias' => $this->basePath . '.controllers.' . $class,
+                    'path'  => $path
+                ];
             }
         }
-        if (!$alreadyAdded) {
-            foreach ($f as $k => $l) {
-                if (strpos($l, 'app.models.*') !== false) {
-                    array_splice($f, $k + 1, 0, "\t\t\t" . $line);
-                    break;
-                }
-            }
-
-            array_pop($f);
-            array_shift($f);
-
-            $this->updateFunction('init', implode("\n", $f));
-        }
+        return $controllers;
     }
 
 }

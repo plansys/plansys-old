@@ -846,6 +846,7 @@ class FormBuilder extends CComponent {
                 }
 
                 $field->formProperties = $form;
+                $field->renderParams = $renderParams;
 
                 ## assign field render id
                 $field->renderID = $modelClass . '_' . $FFRenderID . $this->countRenderID++;

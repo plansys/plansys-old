@@ -7,12 +7,16 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
     $scope.typeof = function (val) {
         return typeof val;
     }
-    $scope.objectSize= function(val){
-        if( val == null || typeof val != 'object'){
+    $scope.objectSize = function (val) {
+        if (val == null || typeof val != 'object') {
             return 0;
-        }else{
+        } else {
             return Object.keys(val).length;
         }
+    }
+
+    $scope.isArray = function (val) {
+        return Object.prototype.toString.call(val) === '[object Array]';
     }
     $storage = $localStorage;
     $scope.$storage = $storage;

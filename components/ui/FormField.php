@@ -37,6 +37,10 @@ class FormField extends CComponent {
     /** @var array $parseField */
     public $parseField = []; // list of form fields to be parsed array('from'=>'to')
 
+    
+    /** @var array $renderParams, additional parameter yang akan di render melalui renderForm*/
+    public $renderParams = [];
+    
     /** @var string $renderID */
     public $renderID = ""; //to distinguish one field to another, will be filled when rendering, -NOT- in editor
 

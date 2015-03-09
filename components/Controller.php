@@ -42,7 +42,6 @@ class Controller extends CController {
             'action'   => $this->action->id,
         ];
 
-
         if (is_array($model)) {
             $params = $model;
             $model  = null;

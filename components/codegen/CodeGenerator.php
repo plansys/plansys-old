@@ -5,6 +5,7 @@ abstract class CodeGenerator extends CComponent {
     public $class;
     protected $baseClass = "CComponent";
     protected $basePath = "application.components";
+    protected $baseDir = '';
     protected $classPath;
     protected $filePath;
     protected $file;
@@ -18,7 +19,14 @@ abstract class CodeGenerator extends CComponent {
         $this->class = $class;
         $this->classPath = $this->basePath . "." . $class;
         $this->filePath = Yii::getPathOfAlias($this->classPath) . ".php";
+        $this->baseDir = Yii::getPathOfAlias($this->basePath);
 
+        ## create directory
+        if (!is_dir($this->baseDir)) {
+            mkdir($this->baseDir, 0777, true);
+        }
+
+        ## create file
         if (!is_file($this->filePath) || trim(file_get_contents($this->filePath)) == "") {
             file_put_contents($this->filePath, "<?php\n
 class {$class} extends {$this->baseClass} {\n \n}
@@ -41,7 +49,7 @@ class {$class} extends {$this->baseClass} {\n \n}
                 $line = $m->getStartLine() - 1;
                 $length = $m->getEndLine() - $line;
                 $this->methods[$m->name] = [
-                    'line' => $line,
+                    'line'   => $line,
                     'length' => $length
                 ];
             }
@@ -256,7 +264,7 @@ class {$class} extends {$this->baseClass} {\n \n}
 
         $default = [
             'visibility' => 'public',
-            'params' => []
+            'params'     => []
         ];
         $options = array_merge($default, $options);
         $params = implode(",", $options['params']);
@@ -285,7 +293,7 @@ EOF;
 
 
         $this->methods[$name] = [
-            'line' => $line,
+            'line'   => $line,
             'length' => $newlength
         ];
 

@@ -1,5 +1,5 @@
 
-<div context-menu="openContextMenu(item, $event)" data-target="ContextMenu<?= $class ?>">
+<div context-menu="openContextMenu(item, $event, this)" context-menu-disabled="isContextMenuDisabled(item)" data-target="ContextMenu<?= $class ?>">
     <a href="{{ getUrl(item)}}" 
        target="{{ getTarget(item)}}"
        ng-click="select(item)" 
@@ -17,16 +17,19 @@
     </a>
 </div>
 
-<div class="dropdown menu-tree" id="ContextMenu<?= $class ?>">
+<div class="dropdown menu-tree" oncontextmenu="return false" id="ContextMenu<?= $class ?>">
     <ul class="dropdown-menu" role="menu">
-        <li ng-repeat-start="menu in contextMenu track by $index" ng-if="!menu.hr">
+        <li ng-repeat-start="menu in contextMenu track by $index" ng-if="menu.visible && !menu.hr">
             <a class="pointer" role="menuitem"
-               oncontextmenu="return false"
-               ng-click="executeMenu($event, menu.click)">
+               ng-click="executeMenu(menu.click, item, $event)">
                 <i class="{{menu.icon}}"></i> {{ menu.label}}
             </a>
         </li>
-        <hr ng-if="menu.hr" ng-repeat-end/>
+        <hr ng-if="menu.visible && !!menu.hr" ng-repeat-end/>
+        <li ng-if="contextMenuDisabled" 
+            style="padding:20px 0px;text-align:center;font-size:11px;color:#999;">
+            ~ Menu Disabled ~
+        </li>
     </ul>
 </div>
 
