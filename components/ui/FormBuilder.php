@@ -702,10 +702,13 @@ class FormBuilder extends CComponent {
 
         $reflector = new ReflectionClass($this->model);
         $inlineJSPath = dirname($reflector->getFileName()) . DIRECTORY_SEPARATOR . @$this->form['inlineJS'];
-
-        $tab = '            ';
-        $inlineJS = file($inlineJSPath);
-        $inlineJS = $tab . implode($tab, $inlineJS);
+        if(isset($this->form['inlineJS'])){
+            $tab = '            ';
+            $inlineJS = file($inlineJSPath);
+            $inlineJS = $tab . implode($tab, $inlineJS);
+        }else{
+            $inlineJS = '';
+        }
 
         $script = include("FormBuilder.js.php");
         return $script;

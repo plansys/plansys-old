@@ -4,7 +4,7 @@ class DevFormProperties extends Form {
     public $title;
     public $layoutName;
     public $options = array();
-    public $inlineScript = "";
+    public $inlineJS = "";
     public $includeJS = array();
     public $includeCSS = array();
     
@@ -51,7 +51,7 @@ class DevFormProperties extends Form {
             ),
             array (
                 'label' => 'Inline JS File',
-                'name' => 'inlineScript',
+                'name' => 'inlineJS',
                 'options' => array (
                     'ng-model' => '$parent.form.inlineJS',
                     'ng-change' => 'saveForm();',
