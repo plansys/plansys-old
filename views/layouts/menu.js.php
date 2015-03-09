@@ -7,12 +7,24 @@
             $scope.selecting = false;
             $scope.targetSection = null;
             $scope.targetHTML = '';
+            $scope.contextMenu = [];
+            $scope.contextMenuActive = null;
+
             $scope.select = function (item) {
                 this.toggle();
                 item.state = '';
                 $scope.selecting = true;
                 $scope.active = item;
             };
+            $scope.openContextMenu = function (item, e) {
+                item.state = '';
+
+                $(".menu-sel").removeClass("active").removeClass(".menu-sel");
+                $(e.target).parent().addClass("menu-sel active");
+
+                $scope.contextMenuActive = item;
+            }
+
             $scope.getUrl = function (item) {
                 return item.url || '#';
             };
@@ -37,7 +49,7 @@
 
 
             }
-            
+
             inlineJS();
         }
     ]);

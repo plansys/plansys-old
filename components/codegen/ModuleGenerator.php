@@ -5,14 +5,14 @@ class ModuleGenerator extends CodeGenerator {
     protected $basePath = "app.modules";
 
     public static function listModuleForMenuTree() {
-        $list    = [];
+        $list = [];
         $devMode = Setting::get('app.mode') === "plansys";
         if ($devMode) {
-            $dir         = Yii::getPathOfAlias("application.modules") . DIRECTORY_SEPARATOR;
-            $items       = glob($dir . "*", GLOB_ONLYDIR);
+            $dir = Yii::getPathOfAlias("application.modules") . DIRECTORY_SEPARATOR;
+            $items = glob($dir . "*", GLOB_ONLYDIR);
             $plansysList = [];
             foreach ($items as $k => $f) {
-                $label     = str_replace($dir, "", $f);
+                $label = str_replace($dir, "", $f);
                 $classPath = $f . DIRECTORY_SEPARATOR . ucfirst($label) . 'Module.php';
                 if (is_file($classPath)) {
                     $plansysList[$label] = [
@@ -32,11 +32,11 @@ class ModuleGenerator extends CodeGenerator {
             ];
         }
 
-        $dir     = Yii::getPathOfAlias("app.modules") . DIRECTORY_SEPARATOR;
-        $items   = glob($dir . "*", GLOB_ONLYDIR);
+        $dir = Yii::getPathOfAlias("app.modules") . DIRECTORY_SEPARATOR;
+        $items = glob($dir . "*", GLOB_ONLYDIR);
         $appList = [];
         foreach ($items as $k => $f) {
-            $label     = str_replace($dir, "", $f);
+            $label = str_replace($dir, "", $f);
             $classPath = $f . DIRECTORY_SEPARATOR . ucfirst($label) . 'Module.php';
             if (is_file($classPath)) {
 
@@ -56,7 +56,30 @@ class ModuleGenerator extends CodeGenerator {
             'items' => $appList
         ];
 
+        $i = 0;
+        $dirs = [];
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator('.'));
+        foreach ($iterator as $k => $item) {
+            $label = $item->getFilename();
+            $path = $item->getPath();
 
+            if ($item->isDir()) {
+                $dirs[$label] = [
+                    'label'  => $label,
+                    'active' => @$_GET['active'] == 'dir.' . $label,
+                    'url'    => Yii::app()->controller->createUrl('/dev/genModule/index', [
+                        'active' => 'dir.' . $label
+                    ])
+                ];
+            }
+            
+            $i++;
+        }
+
+        $list[] = [
+            'label' => 'dir',
+            'items' => $dirs
+        ];
         return $list;
     }
 
@@ -69,7 +92,7 @@ class ModuleGenerator extends CodeGenerator {
     public function addFormPath($class) {
         $line = "'" . $this->basePath . ".forms." . $class . ".*',";
 
-        $f            = $this->getFunctionBody('init');
+        $f = $this->getFunctionBody('init');
         $alreadyAdded = false;
         foreach ($f as $k => $l) {
             if (strpos($l, $line) !== false) {

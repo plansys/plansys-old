@@ -5,8 +5,8 @@ class Setting {
     private static $data;
     public static $basePath;
     public static $rootPath;
-    public static $path        = "";
-    public static $default     = [
+    public static $path = "";
+    public static $default = [
         'db'   => [
             'driver'   => 'mysql',
             'host'     => 'localhost',
@@ -22,13 +22,13 @@ class Setting {
             'mode' => 'development'
         ],
     ];
-    public static $mode        = null;
+    public static $mode = null;
     public static $entryScript = "";
 
     private static function setupBasePath($configFile) {
         $configFile = str_replace("/", DIRECTORY_SEPARATOR, $configFile);
-        $basePath   = dirname($configFile);
-        $basePath   = explode(DIRECTORY_SEPARATOR, $basePath);
+        $basePath = dirname($configFile);
+        $basePath = explode(DIRECTORY_SEPARATOR, $basePath);
 
         array_pop($basePath);
         Setting::$basePath = implode(DIRECTORY_SEPARATOR, $basePath);
@@ -40,17 +40,17 @@ class Setting {
     }
 
     public static function fullPath() {
-        $s        = &$_SERVER;
-        $ssl      = (!empty($s['HTTPS']) && $s['HTTPS'] == 'on') ? true : false;
-        $sp       = strtolower($s['SERVER_PROTOCOL']);
+        $s = &$_SERVER;
+        $ssl = (!empty($s['HTTPS']) && $s['HTTPS'] == 'on') ? true : false;
+        $sp = strtolower($s['SERVER_PROTOCOL']);
         $protocol = substr($sp, 0, strpos($sp, '/')) . (($ssl) ? 's' : '');
-        $port     = $s['SERVER_PORT'];
-        $port     = ((!$ssl && $port == '80') || ($ssl && $port == '443')) ? '' : ':' . $port;
-        $host     = isset($s['HTTP_X_FORWARDED_HOST']) ? $s['HTTP_X_FORWARDED_HOST'] : (isset($s['HTTP_HOST']) ? $s['HTTP_HOST'] : null);
-        $host     = isset($host) ? $host : $s['SERVER_NAME'] . $port;
-        $uri      = $protocol . '://' . $host . $s['REQUEST_URI'];
+        $port = $s['SERVER_PORT'];
+        $port = ((!$ssl && $port == '80') || ($ssl && $port == '443')) ? '' : ':' . $port;
+        $host = isset($s['HTTP_X_FORWARDED_HOST']) ? $s['HTTP_X_FORWARDED_HOST'] : (isset($s['HTTP_HOST']) ? $s['HTTP_HOST'] : null);
+        $host = isset($host) ? $host : $s['SERVER_NAME'] . $port;
+        $uri = $protocol . '://' . $host . $s['REQUEST_URI'];
         $segments = explode('?', $uri, 2);
-        $url      = $segments[0];
+        $url = $segments[0];
         return $url;
     }
 
@@ -81,14 +81,14 @@ class Setting {
         require_once("Installer.php");
 
         date_default_timezone_set("Asia/Jakarta");
-        $bp            = Setting::setupBasePath($configfile);
+        $bp = Setting::setupBasePath($configfile);
         Setting::$path = $bp . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
 
         if (!is_file(Setting::$path)) {
-            $json   = Setting::$default;
-            $json   = json_encode($json, JSON_PRETTY_PRINT);
+            $json = Setting::$default;
+            $json = json_encode($json, JSON_PRETTY_PRINT);
             $result = @file_put_contents(Setting::$path, $json);
-            
+
             require_once("Installer.php");
             Installer::createIndexFile("install");
             Setting::$mode = "install";
@@ -106,7 +106,7 @@ class Setting {
                 "path" => (isset($result) && !$result) ? $result : $file
             ]);
         } else {
-            $setting       = json_decode($file, true);
+            $setting = json_decode($file, true);
             Setting::$data = Setting::arrayMergeRecursiveReplace(Setting::$default, $setting);
         }
 
@@ -114,7 +114,7 @@ class Setting {
         ## set host
         if (!Setting::get('app.host')) {
             $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-            $port     = $_SERVER['SERVER_PORT'] == 443 || $_SERVER['SERVER_PORT'] == 80 ? "" : ":" . $_SERVER['SERVER_PORT'];
+            $port = $_SERVER['SERVER_PORT'] == 443 || $_SERVER['SERVER_PORT'] == 80 ? "" : ":" . $_SERVER['SERVER_PORT'];
             Setting::set('app.host', $protocol . $_SERVER['HTTP_HOST'] . $port);
         }
 
@@ -140,7 +140,7 @@ class Setting {
         $keys = explode('.', $key);
 
         $arr = Setting::$data;
-        while ($k   = array_shift($keys)) {
+        while ($k = array_shift($keys)) {
             $arr = &$arr[$k];
         }
 
@@ -163,16 +163,16 @@ class Setting {
 
     function getPreferredLanguage() {
         if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) && ($n = preg_match_all('/([\w\-]+)\s*(;\s*q\s*=\s*(\d*\.\d*))?/', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches)) > 0) {
-            $languages                  = array();
+            $languages = array();
             for ($i = 0; $i < $n; ++$i)
                 $languages[$matches[1][$i]] = empty($matches[3][$i]) ? 1.0 : floatval($matches[3][$i]);
             arsort($languages);
             foreach ($languages as $language => $pref) {
-                $lang     = strtolower(str_replace('-', '_', $language));
+                $lang = strtolower(str_replace('-', '_', $language));
                 if (preg_match("/^en\_?/", $lang))
                     return false;
                 if (!is_file($viewFile = dirname(__FILE__) . "/views/$lang/index.php"))
-                    $lang     = false;
+                    $lang = false;
                 else
                     break;
             }
@@ -186,7 +186,7 @@ class Setting {
 
         if ($messages === null) {
             $messages = array();
-            if (($lang     = Setting::getPreferredLanguage()) !== false) {
+            if (($lang = Setting::getPreferredLanguage()) !== false) {
                 $file = dirname(__FILE__) . "/messages/$lang/yii.php";
                 if (is_file($file)) {
                     $messages = include($file);
@@ -213,21 +213,21 @@ class Setting {
             Setting::write();
         }
     }
-    
-    public static function remove($key, $flushSetting = true){
+
+    public static function remove($key, $flushSetting = true) {
         $keys = explode('.', $key);
-        
+
         $arr = &Setting::$data;
-        while ($k   = array_shift($keys)) {
+        while ($k = array_shift($keys)) {
             $arr = &$arr[$k];
             $length = count($keys);
-            
-            if($length == 1){
+
+            if ($length == 1) {
                 unset($arr[$keys[0]]);
                 break;
             }
         }
-        
+
         if ($flushSetting) {
             Setting::write();
         }
@@ -246,7 +246,7 @@ class Setting {
     public static function checkPath($path, $writable = false) {
         if (!is_dir($path)) {
             if (!@mkdir($path, 0775)) {
-                $error   = error_get_last();
+                $error = error_get_last();
                 $message = Setting::t("Failed to create directory <br/>'{path}'<br/>because: {error}");
                 $message = strtr($message, [
                     '{path}'  => $path,
@@ -286,7 +286,7 @@ class Setting {
                 $config['components']['themeManager'] = array(
                     'basePath' => Setting::getThemePath()
                 );
-                $config['theme']                      = 'default';
+                $config['theme'] = 'default';
             }
         }
 
@@ -344,22 +344,22 @@ class Setting {
 
     public static function getCommandMap($modules = null) {
         $commands = [];
-        $modules  = is_null($modules) ? Setting::getModules() : $modules;
+        $modules = is_null($modules) ? Setting::getModules() : $modules;
 
         foreach ($modules as $m) {
             $moduleClass = explode(".", $m['class']);
             array_pop($moduleClass);
-            $moduleName  = array_pop($moduleClass);
+            $moduleName = array_pop($moduleClass);
             array_push($moduleClass, $moduleName);
-            $modulePath  = implode(".", $moduleClass);
+            $modulePath = implode(".", $moduleClass);
 
             $path = Yii::getPathOfAlias($modulePath . ".commands");
             if (is_dir($path)) {
                 $cmds = glob($path . DIRECTORY_SEPARATOR . "*.php");
                 foreach ($cmds as $c) {
-                    $dir  = explode(DIRECTORY_SEPARATOR, $c);
+                    $dir = explode(DIRECTORY_SEPARATOR, $c);
                     $file = array_pop($dir);
-                    $cmd  = lcfirst(str_replace("Command.php", "", $file));
+                    $cmd = lcfirst(str_replace("Command.php", "", $file));
 
                     $commands[$moduleName . "." . $cmd] = [
                         'class' => Helper::getAlias($c)
@@ -379,7 +379,7 @@ class Setting {
             $gls = glob(Yii::getPathOfAlias('app.controllers') . DIRECTORY_SEPARATOR . "*.php");
             foreach ($gls as $g) {
                 $class = str_replace(".php", "", basename($g));
-                $ctrl  = lcfirst(str_replace("Controller", "", $class));
+                $ctrl = lcfirst(str_replace("Controller", "", $class));
 
                 if (substr($class, 0, 3) == "App") {
                     $extendClass = substr($class, 3);
@@ -401,12 +401,12 @@ class Setting {
     }
 
     public static function getModules() {
-        $modules    = glob(Setting::getBasePath() . DIRECTORY_SEPARATOR . "modules" . DIRECTORY_SEPARATOR . "*");
+        $modules = glob(Setting::getBasePath() . DIRECTORY_SEPARATOR . "modules" . DIRECTORY_SEPARATOR . "*");
         $appModules = glob(Setting::getAppPath() . DIRECTORY_SEPARATOR . "modules" . DIRECTORY_SEPARATOR . "*");
 
         $return = [];
         foreach ($modules as $key => $module) {
-            $m          = Setting::explodeLast(DIRECTORY_SEPARATOR, $module);
+            $m = Setting::explodeLast(DIRECTORY_SEPARATOR, $module);
             $return[$m] = [
                 'class' => 'application.modules.' . $m . '.' . ucfirst($m) . 'Module'
             ];
@@ -415,13 +415,14 @@ class Setting {
         foreach ($appModules as $key => $module) {
             $m = Setting::explodeLast(DIRECTORY_SEPARATOR, $module);
 
-            if (!is_file(ucfirst($m) . 'Module.php'))
+            if (!is_file($module . DIRECTORY_SEPARATOR . ucfirst($m) . 'Module.php'))
                 continue;
 
             $return[$m] = [
                 'class' => 'app.modules.' . $m . '.' . ucfirst($m) . 'Module'
             ];
         }
+
         return $return;
     }
 

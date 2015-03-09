@@ -387,7 +387,7 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                     ),
                     array (
                         'name' => 'description',
-                        'label' => 'Page Title',
+                        'label' => 'Description',
                         'options' => array (
                             'href' => 'url:/sys/auditTrail/detail?id={id}',
                             'target' => '_blank',
@@ -421,7 +421,7 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                         'inputMask' => '',
                         'stringAlias' => array (),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                     ),
                 ),
                 'gridOptions' => array (

@@ -164,14 +164,21 @@ class MenuTree extends CComponent {
         $items = glob($dir . DIRECTORY_SEPARATOR . "*");
         foreach ($items as $k => $m) {
             $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
-            $m = str_replace('.php', "", $m);
+            $ext = explode(".", $m);
+            $ext = $ext[count($ext) - 1];
 
-            $items[$k] = [
-                'name'       => $m,
-                'module'     => $module,
-                'class'      => $path . '.' . $m,
-                'class_path' => $path
-            ];
+            if ($ext == "php") {
+                $m = str_replace('.php', "", $m);
+
+                $items[$k] = [
+                    'name'       => $m,
+                    'module'     => $module,
+                    'class'      => $path . '.' . $m,
+                    'class_path' => $path
+                ];
+            } else {
+                unset($items[$k]);
+            }
         }
         return $items;
     }
