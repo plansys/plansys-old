@@ -3311,7 +3311,7 @@ div[icon-picker] .popover-content {
     width: 100%;
 }
 
-.column-field td {
+.column-field > tbody > tr > td {
     padding: 25px 50px 25px 25px;
 }
 

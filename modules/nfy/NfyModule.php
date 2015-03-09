@@ -41,6 +41,7 @@ class NfyModule extends CWebModule {
         // import the module-level controllers and forms
         $this->setImport(array(
             'application.modules.nfy.controllers.*',
+            'application.modules.nfy.forms.*',
             'application.modules.nfy.components.*',
             'application.modules.nfy.models.*'
         ));

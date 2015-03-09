@@ -4,6 +4,10 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
     $scope.console = console;
     $scope.Yii = Yii;
     $scope.title = $("title").text();
+    $storage = $localStorage;
+    $scope.$storage = $storage;
+
+    /*********************** JS Helper Function ********************************/
     $scope.typeof = function (val) {
         return typeof val;
     }
@@ -14,13 +18,11 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
             return Object.keys(val).length;
         }
     }
-
     $scope.isArray = function (val) {
         return Object.prototype.toString.call(val) === '[object Array]';
     }
-    $storage = $localStorage;
-    $scope.$storage = $storage;
 
+    /************************ ACE Editor Config ********************************/
     $scope.aceConfig = function (options) {
         var ret = $.extend({
             useWrapMode: true,
@@ -35,6 +37,7 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
         return ret;
     }
 
+    /************************** Plansys Widget *********************************/
     if (!$storage.widget) {
         $storage.widget = {};
     }

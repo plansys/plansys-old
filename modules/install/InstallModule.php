@@ -8,5 +8,6 @@ class InstallModule extends CWebModule {
             'application.modules.install.controllers.*',
             'application.modules.install.forms.*'
         ));
+
     }
 }

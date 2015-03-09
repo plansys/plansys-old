@@ -28,14 +28,20 @@ $scope.contextMenu = [
         }
     },
     {
-        hr: true
+        hr: true,
+        visible: function (item) {
+            return !!item.$parent;
+        },
     },
     {
         icon: "fa fa-fw fa-trash",
         label: "Delete Module",
+        visible: function (item) {
+            return !!item.$parent;
+        },
         click: function (item, e) {
-            if (confirm('All [' + item.label + '] module files will be deleted\nAre you really sure?\n\nTHIS CANNOT BE UNDONE')) {
-                if (prompt('WARNING: THIS OPERATION CANNOT BE UNDONE\n\nType "DELETE" to delete [' + item.label + '] module') == "DELETE") {
+            if (confirm('All ' + item.label.toUpperCase() + ' module files will be deleted\nAre you really sure?\n\nTHIS CANNOT BE UNDONE')) {
+                if (prompt('WARNING: THIS OPERATION CANNOT BE UNDONE\n\nType "DELETE" to delete ' + item.label.toUpperCase() + ' module') == "DELETE") {
                     $http.get(Yii.app.createUrl('/dev/genModule/delete', {
                         name: item.label,
                         module: item.module

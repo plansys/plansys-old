@@ -67,7 +67,7 @@ class ModuleGenerator extends CodeGenerator {
         $module = ModuleGenerator::init($classAlias);
     }
 
-    public static function init($classAlias) {
+    public static function init($classAlias, $mode = 'load') {
         $m = new ModuleGenerator;
         $path = explode('.', $classAlias);
         $class = ucfirst(array_pop($path));
@@ -77,6 +77,18 @@ class ModuleGenerator extends CodeGenerator {
 
         if (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $class)) {
             $m->load($class);
+
+            if ($mode == 'create') {
+                if (!is_dir($m->baseDir . DIRECTORY_SEPARATOR . 'controllers')) {
+                    mkdir($m->baseDir . DIRECTORY_SEPARATOR . 'controllers');
+                }
+
+                if (!is_dir($m->baseDir . DIRECTORY_SEPARATOR . 'forms')) {
+                    mkdir($m->baseDir . DIRECTORY_SEPARATOR . 'forms');
+                }
+
+                $m->generateImport(true);
+            }
             return $m;
         } else {
             return null;

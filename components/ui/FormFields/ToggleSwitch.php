@@ -52,6 +52,10 @@ class ToggleSwitch extends FormField {
             array (
                 'label' => 'Size',
                 'name' => 'size',
+                'options' => array (
+                    'ng-model' => 'active.size',
+                    'ng-change' => 'save();',
+                ),
                 'list' => array (
                     'normal' => 'Normal',
                     'small' => 'Small',
@@ -61,11 +65,21 @@ class ToggleSwitch extends FormField {
             array (
                 'label' => 'ON Label',
                 'name' => 'onLabel',
+                'options' => array (
+                    'ng-model' => 'active.onLabel',
+                    'ng-change' => 'save();',
+                    'ng-delay' => '500',
+                ),
                 'type' => 'TextField',
             ),
             array (
                 'label' => 'OFF Label',
                 'name' => 'offLabel',
+                'options' => array (
+                    'ng-model' => 'active.offLabel',
+                    'ng-change' => 'save();',
+                    'ng-delay' => '500',
+                ),
                 'type' => 'TextField',
             ),
             array (
