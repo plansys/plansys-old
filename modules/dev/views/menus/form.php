@@ -73,16 +73,7 @@
                          ng-model="code"
                          ng-change="saveSource(code)"
                          ng-delay="500"
-                         ui-ace="{
-                         useWrapMode : true,
-                         showGutter: true,
-                         theme: 'monokai',
-                         mode: 'php',
-                         require: ['ace/ext/emmet'],
-                         advanced: {
-                         enableEmmet: true,
-                         }
-                         }"></div>
+                         ui-ace="aceConfig()"></div>
                 </div>
             </div>
         </div>

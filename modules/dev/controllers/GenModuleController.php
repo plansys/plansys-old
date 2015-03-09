@@ -11,6 +11,7 @@ class GenModuleController extends Controller {
                 $model = new DevGenModule;
             }
         }
+        Asset::registerJS('application.static.js.lib.ace');
 
         $this->renderForm('DevGenModule', $model, [
             'module'      => $model,
@@ -18,9 +19,25 @@ class GenModuleController extends Controller {
         ]);
     }
 
+    public function actionSaveImport($active) {
+        $postdata = file_get_contents("php://input");
+        $post = json_decode($postdata, true);
+
+        $model = new DevGenModule;
+        $model->load($active);
+        $model->module->updateImport($post['code']);
+    }
+
+    public function actionGenImport($active) {
+        $model = new DevGenModule;
+        $model->load($active);
+        $model->module->generateImport(true);
+        $this->redirect(['/dev/genModule/index', 'active' => $active]);
+    }
+
     public function actionDelete($name, $module) {
         $model = new DevGenModule;
-        $model->load($module . "." . $name);
+        $model->load($module . '.' . ucfirst($name));
         $model->delete();
 
         echo json_encode([
@@ -30,7 +47,7 @@ class GenModuleController extends Controller {
 
     public function actionNew($name, $module) {
         $model = new DevGenModule;
-        $model->create($module . '.' . $name);
+        $model->create(lcfirst($module) . '.' . ucfirst($name));
 
         if (is_null($model->module)) {
             echo json_encode([

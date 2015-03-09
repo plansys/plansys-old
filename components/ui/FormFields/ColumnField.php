@@ -44,6 +44,7 @@ class ColumnField extends FormField {
             array (
                 'label' => 'Options',
                 'name' => 'options',
+                'show' => 'Show',
                 'type' => 'KeyValueGrid',
             ),
         );

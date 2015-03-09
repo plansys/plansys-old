@@ -624,6 +624,16 @@ div[ui-content] {
     margin: 0px -15px 0px -15px;
 }
 
+.column-field .section-header {
+    margin:-25px -50px 25px -25px;
+}
+.column-field td:first-child .section-header {
+    margin-left:-40px;
+}
+.column-field td:last-child .section-header {
+    margin-right:-65px;
+}
+
 .SectionHeader {
     margin: 0px -30px;
     border-left: 0px;
@@ -3222,6 +3232,10 @@ label.input-group {
 input[type=file] {
     height: auto !important;
     padding: 4px !important;
+}
+
+.input-sm, .form-horizontal .form-group-sm .form-control {
+    font-size:13px;
 }
 
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {

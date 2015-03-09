@@ -63,6 +63,10 @@ class ModuleGenerator extends CodeGenerator {
         return $list;
     }
 
+    public static function create($classAlias) {
+        $module = ModuleGenerator::init($classAlias);
+    }
+
     public static function init($classAlias) {
         $m = new ModuleGenerator;
         $path = explode('.', $classAlias);
@@ -99,6 +103,59 @@ class ModuleGenerator extends CodeGenerator {
             }
         }
         return $controllers;
+    }
+
+    public function getAliasArray($dirs = [], $options = [
+        'append'  => '',
+        'prepend' => ''
+    ]) {
+        $result = [];
+        foreach ($dirs as $dir) {
+            $path = $this->baseDir . DIRECTORY_SEPARATOR . $dir;
+            if (is_dir($path)) {
+                $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
+                foreach ($iterator as $p => $i) {
+                    if ($i->isDir() && $i->getFilename() != '..') {
+                        $str = substr(str_replace([$path, '/', '\\'], [$this->basePath . ".{$dir}", '.', '.'], $p), 0, -2);
+                        $str = @$options['prepend'] . $str . @$options['append'];
+                        $result[] = $str;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    public function listImport() {
+        $imports = $this->getFunctionBody('init');
+        array_pop($imports);
+        array_shift($imports);
+        return implode("\n", $imports);
+    }
+
+    public function updateImport($code) {
+        $this->updateFunction('init', $code);
+    }
+
+    public function generateImport($executeImport = false) {
+        $importedFolders = ['controllers', 'forms', 'components', 'models', 'consoles'];
+        $space = "            ";
+        $imports = $space . implode(",\n{$space}", $this->getAliasArray($importedFolders, [
+                            'append'  => '.*\'',
+                            'prepend' => '\''
+        ]));
+        $source = <<<EOF
+        // import the module-level controllers and forms
+        \$this->setImport(array(
+{$imports}
+        ));
+EOF;
+
+        if ($executeImport) {
+            $this->updateFunction('init', $source);
+        }
+
+        return $source;
     }
 
 }

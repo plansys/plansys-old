@@ -21,6 +21,20 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
     $storage = $localStorage;
     $scope.$storage = $storage;
 
+    $scope.aceConfig = function (options) {
+        var ret = $.extend({
+            useWrapMode: true,
+            showGutter: true,
+            theme: 'monokai',
+            mode: 'php',
+            require: ['ace/ext/emmet'],
+            advanced: {
+                enableEmmet: true,
+            }
+        }, options);
+        return ret;
+    }
+
     if (!$storage.widget) {
         $storage.widget = {};
     }

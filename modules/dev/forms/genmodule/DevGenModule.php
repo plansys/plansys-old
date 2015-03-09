@@ -7,13 +7,14 @@ class DevGenModule extends Form {
     public $path;
     public $classPath;
     public $module;
+    public $imports = [];
     public $error = '';
 
     public function create($module) {
         $m = explode(".", $module);
         if (count($m) == 2) {
-            $name = $m[1];
-            $class = ucfirst($m[1]) . "Module";
+            $name = lcfirst($m[1]);
+            $class = ucfirst($name) . "Module";
             $basePath = $m[0] == "app" ? Setting::getAppPath() : Setting::getApplicationPath();
             $alias = ($m[0] == "app" ? 'app' : 'application') . ".modules.{$name}.{$class}";
             $path = $basePath . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . $name;
@@ -24,8 +25,9 @@ class DevGenModule extends Form {
             $this->path = $path;
             $this->classPath = $classPath;
 
-            if (!class_exists($class)) {
+            if (!is_file($this->classPath)) {
                 $this->module = ModuleGenerator::init($alias);
+                $this->imports = $this->module->listImport();
                 if (is_null($this->module)) {
                     $this->error = 'Failed to create module
 Invalid Class Name "' . $name . '"';
@@ -49,8 +51,8 @@ Module "' . $name . '" already exist';
     public function load($module) {
         $m = explode(".", $module);
         if (count($m) == 2 && $m[1] != '') {
-            $name = $m[1];
-            $class = ucfirst($m[1]) . "Module";
+            $name = lcfirst($m[1]);
+            $class = ucfirst($name) . "Module";
             $basePath = $m[0] == "app" ? Setting::getAppPath() : Setting::getApplicationPath();
             $alias = ($m[0] == "app" ? 'app' : 'application') . ".modules.{$name}.{$class}";
             $path = $basePath . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . $name;
@@ -63,6 +65,7 @@ Module "' . $name . '" already exist';
 
             if (is_file($this->classPath)) {
                 $this->module = ModuleGenerator::init($alias);
+                $this->imports = $this->module->listImport();
             } else {
                 $this->module = null;
             }
@@ -78,106 +81,174 @@ Module "' . $name . '" already exist';
     }
 
     public function getForm() {
-        return array(
-            'title'     => 'Generate Module',
-            'layout'    => array(
+        return array (
+            'title' => 'Generate Module',
+            'layout' => array (
                 'name' => '2-cols',
-                'data' => array(
-                    'col1' => array(
-                        'size'        => '200',
-                        'sizetype'    => 'px',
-                        'type'        => 'menu',
-                        'name'        => 'col1',
-                        'file'        => 'application.modules.dev.menus.GenModule',
-                        'title'       => 'Module',
-                        'icon'        => 'fa-empire',
-                        'inlineJS'    => 'GenModule.js',
-                        'menuOptions' => array(),
+                'data' => array (
+                    'col1' => array (
+                        'size' => '200',
+                        'sizetype' => 'px',
+                        'type' => 'menu',
+                        'name' => 'col1',
+                        'file' => 'application.modules.dev.menus.GenModule',
+                        'title' => 'Module',
+                        'icon' => 'fa-empire',
+                        'inlineJS' => 'GenModule.js',
+                        'menuOptions' => array (),
                     ),
-                    'col2' => array(
-                        'type'     => 'mainform',
-                        'name'     => 'col2',
+                    'col2' => array (
+                        'type' => 'mainform',
+                        'name' => 'col2',
                         'sizetype' => '%',
                     ),
                 ),
             ),
-            'inlineJS'  => '',
-            'includeJS' => array(),
+            'inlineJS' => 'GenModule.js',
+            'includeJS' => array (),
         );
     }
 
     public function getFields() {
-        return array(
-            array(
+        return array (
+            array (
+                'value' => '<!-- EMPTY MODULE -->
+<div ng-if=\'!model.name\'>
+    <div class=\"empty-box-container\">
+        <div class=\"message\">
+            Please select item on right sidebar
+        </div>
+    </div>
+
+</div>',
+                'type' => 'Text',
+            ),
+            array (
                 'value' => '<!-- MODULE INFO TAB -->
-<tabset class=\'tab-set\'>
+<tabset class=\'tab-set\' ng-if=\'model.name\'>
 <tab heading=\"Module Info\">',
-                'type'  => 'Text',
+                'type' => 'Text',
             ),
-            array(
-                'showBorder' => 'Yes',
-                'column1'    => array(
-                    array(
+            array (
+                'column1' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                        'type'  => 'Text',
+                        'type' => 'Text',
                     ),
-                    array(
+                    array (
                         'label' => 'Module Name',
-                        'name'  => 'name',
-                        'type'  => 'LabelField',
+                        'name' => 'name',
+                        'type' => 'LabelField',
                     ),
-                    array(
+                    array (
                         'label' => 'Module Alias',
-                        'name'  => 'alias',
-                        'type'  => 'LabelField',
+                        'name' => 'alias',
+                        'type' => 'LabelField',
                     ),
                 ),
-                'column2'    => array(
-                    array(
+                'column2' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                        'type'  => 'Text',
+                        'type' => 'Text',
                     ),
-                    array(
+                    array (
                         'label' => 'Class Path',
-                        'name'  => 'classPath',
-                        'type'  => 'LabelField',
+                        'name' => 'classPath',
+                        'labelOptions' => array (
+                            'style' => 'text-align:left;',
+                        ),
+                        'type' => 'LabelField',
                     ),
-                    array(
+                    array (
                         'label' => 'Module Directory',
-                        'name'  => 'path',
-                        'type'  => 'LabelField',
+                        'name' => 'path',
+                        'labelOptions' => array (
+                            'style' => 'text-align:left;',
+                        ),
+                        'type' => 'LabelField',
                     ),
                 ),
-                'type'       => 'ColumnField',
+                'type' => 'ColumnField',
             ),
-            array(
-                'title' => 'Controllers',
-                'type'  => 'SectionHeader',
-            ),
-            array(
-                'column1' => array(
-                    '<column-placeholder></column-placeholder>',
-                    array(
+            array (
+                'showBorder' => 'Yes',
+                'column1' => array (
+                    array (
+                        'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
+                    ),
+                    array (
+                        'title' => '<i class=\\\'fa fa-empire\\\'></i> Import Initialization <span ng-bind-html=\\\'importStatus\\\'></span>',
+                        'type' => 'SectionHeader',
+                    ),
+                    array (
+                        'label' => 'Generate Import',
+                        'buttonType' => 'success',
+                        'icon' => 'refresh',
+                        'buttonSize' => 'btn-xs',
+                        'options' => array (
+                            'style' => 'float:right;
+margin:-50px -45px 0px 0px;',
+                            'href' => 'url:/dev/genModule/genImport?active={params.active}',
+                            'confirm' => 'WARNING: Current code will be REPLACED. Are you sure?',
+                        ),
+                        'type' => 'LinkButton',
+                    ),
+                    array (
+                        'value' => '
+<div style=\'margin:-25px -50px -25px -40px;\'>
+    <div id=\"import-editor\"
+     style=\"width:100%;
+     height:400px;\"
+     ng-model=\"model.imports\"
+     ng-change=\"saveImport()\"
+     ng-delay=\"500\"
+     ui-ace=\"aceConfig({inline:true})\"></div>
+</div>',
+                        'type' => 'Text',
+                    ),
+                ),
+                'column2' => array (
+                    array (
+                        'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
+                    ),
+                    array (
+                        'title' => '<i class=\\\'fa fa-cubes\\\'></i> Controllers',
+                        'type' => 'SectionHeader',
+                    ),
+                    array (
+                        'label' => 'Add New Controller',
+                        'buttonType' => 'success',
+                        'icon' => 'plus-circle',
+                        'buttonSize' => 'btn-xs',
+                        'options' => array (
+                            'style' => 'float:right;
+margin:-50px -45px 0px 0px;',
+                        ),
+                        'type' => 'LinkButton',
+                    ),
+                    array (
                         'value' => '    <table class=\"table table-condensed table-bordered table-small\">
         
         <tr ng-repeat=\"c in params.controllers track by $index\">
             <td>{{ c.class }}</td>
         </tr>
     </table>',
-                        'type'  => 'Text',
+                        'type' => 'Text',
                     ),
                 ),
-                'type'    => 'ColumnField',
+                'type' => 'ColumnField',
             ),
-            array(
+            array (
                 'value' => '<!-- ACCESS CONTROL TAB -->
 </tab><tab heading=\"Access Control\">',
-                'type'  => 'Text',
+                'type' => 'Text',
             ),
-            array(
+            array (
                 'value' => '<!-- TAB CLOSER -->
 </tab></tabset>',
-                'type'  => 'Text',
+                'type' => 'Text',
             ),
         );
     }

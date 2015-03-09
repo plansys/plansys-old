@@ -38,10 +38,11 @@ class NfyModule extends CWebModule {
     }
 
     public function init() {
+        // import the module-level controllers and forms
         $this->setImport(array(
-            'nfy.models.*',
-            'nfy.console.*',
-            'nfy.components.*',
+            'application.modules.nfy.controllers.*',
+            'application.modules.nfy.components.*',
+            'application.modules.nfy.models.*'
         ));
     }
 

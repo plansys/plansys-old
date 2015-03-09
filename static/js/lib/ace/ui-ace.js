@@ -72,7 +72,11 @@ if (typeof app != "undefined") {
                     acee.setTheme('ace/theme/' + opts.theme);
                 }
                 if (angular.isString(opts.mode)) {
-                    session.setMode('ace/mode/' + opts.mode);
+                    var mode = {path: 'ace/mode/' + opts.mode};
+                    if (angular.isDefined(opts.inline)) {
+                        mode['inline'] = opts.inline;
+                    }
+                    session.setMode(mode);
                 }
                 // Advanced options
                 if (angular.isDefined(opts.firstLineNumber)) {

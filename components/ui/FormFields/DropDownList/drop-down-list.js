@@ -92,7 +92,8 @@ app.directive('dropDownList', function ($timeout) {
                     }, 0);
                 };
                 $scope.updateInternal = function (value) {
-                    $scope.value = typeof value != "string" ? '' : value;
+                    $scope.value = ['number', 'string'].indexOf(typeof value) < 0 ? '' : value + '';
+
                     if ($scope.showOther && !$scope.itemExist()) {
                         $scope.value = $el.find("li a").attr('value');
                         $scope.value = value;
@@ -129,7 +130,7 @@ app.directive('dropDownList', function ($timeout) {
                 $scope.itemExist = function (value, text) {
                     if (!value || value.trim() == '')
                         value = $scope.value;
-                    
+
                     if (!text || text.trim() == '')
                         text = $scope.text;
 

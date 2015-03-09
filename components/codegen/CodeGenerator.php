@@ -38,25 +38,60 @@ class {$class} extends {$this->baseClass} {\n \n}
             }
         }
 
-        $this->file = file($this->filePath, FILE_IGNORE_NEW_LINES);
 
         ## get method line and length
-        Yii::import($this->classPath);
-        $reflector = new ReflectionClass($this->class);
-        $methods = $reflector->getMethods();
-        foreach ($methods as $m) {
-            if ($m->class == $this->class) {
-                $line = $m->getStartLine() - 1;
-                $length = $m->getEndLine() - $line;
-                $this->methods[$m->name] = [
-                    'line'   => $line,
-                    'length' => $length
-                ];
+        if (!$this->checkSession()) {
+            Yii::import($this->classPath);
+
+            $this->file = file($this->filePath, FILE_IGNORE_NEW_LINES);
+            $reflector = new ReflectionClass($this->class);
+            $methods = $reflector->getMethods();
+
+            foreach ($methods as $m) {
+                if ($m->class == $this->class) {
+                    $line = $m->getStartLine() - 1;
+                    $length = $m->getEndLine() - $line;
+                    $this->methods[$m->name] = [
+                        'line'   => $line,
+                        'length' => $length
+                    ];
+                }
             }
+
+            $this->updateSession();
+        } else {
+            $this->loadSession();
         }
 
         $this->save();
         return $this;
+    }
+
+    protected function updateSession() {
+        Yii::app()->session['CODEGEN_' . $this->classPath] = [
+            'methods'   => $this->methods,
+            'file'      => $this->file,
+            'timestamp' => filemtime($this->filePath)
+        ];
+    }
+
+    protected function checkSession() {
+        $session = Yii::app()->session['CODEGEN_' . $this->classPath];
+        if (is_null($session)) {
+            return false;
+        }
+
+        if (@$session['timestamp'] != filemtime($this->filePath)) {
+            return false;
+        }
+        return true;
+    }
+
+    protected function loadSession() {
+        $session = Yii::app()->session['CODEGEN_' . $this->classPath];
+        $this->methods = $session['methods'];
+        $this->file = $session['file'];
+        return $session;
     }
 
     protected function prepareLineForProperty() {
@@ -105,6 +140,8 @@ class {$class} extends {$this->baseClass} {\n \n}
                 $this->methods[$k]['line'] += 1;
             }
         }
+
+        $this->updateSession();
 
         return $line;
     }
@@ -236,11 +273,14 @@ class {$class} extends {$this->baseClass} {\n \n}
                 $newMethod[$k] = $m;
             }
             $this->methods = $newMethod;
+
+            $this->updateSession();
             $this->save();
         }
     }
 
     protected function updateFunction($name, $body, $options = []) {
+
         $isNewFunc = false;
         ## get first line of the class       
         if (!isset($this->methods[$name])) {
@@ -277,7 +317,6 @@ EOF;
 
         array_splice($this->file, $line, $length, explode("\n", $func));
 
-
         ## adjust other methods line and length
         $newlength = count(explode("\n", $func));
 
@@ -296,6 +335,7 @@ EOF;
             'line'   => $line,
             'length' => $newlength
         ];
+        $this->updateSession();
 
         $this->save();
     }
