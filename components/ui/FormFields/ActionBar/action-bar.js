@@ -104,7 +104,7 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                 var $container = $el.parents('.container-fluid').parent();
                 var woffset = $container.hasClass('container-full') ? 0 : 1;
                 $el.css({
-                    top: $container.offset().top,
+                    top: $container.offset().top - $container.css('marginTop').replace('px', '') * 1,
                     left: $container.offset().left + woffset,
                     width: $container.width() - woffset,
                     opacity: .999
@@ -131,7 +131,7 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                 }
 
                 $container.css({
-                    'padding-top': height + 'px',
+                    'margin-top': height + 'px',
                     'border-top': '0px'
                 });
 
