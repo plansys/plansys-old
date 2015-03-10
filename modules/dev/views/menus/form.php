@@ -95,7 +95,7 @@
                 }
             };
             $scope.model = {
-                mode: true
+                mode: 'Normal Menu'
             };
             $scope.mode = null;
             $scope.code = null;
@@ -105,7 +105,7 @@
             $scope.switchModeTimeout = null;
             $scope.switchMode = function () {
                 var mode = $scope.mode;
-                if ($scope.model.mode) {
+                if ($scope.model.mode == 'Normal Menu') {
                     mode = "normal";
                 } else {
                     mode = "custom";
@@ -139,7 +139,7 @@
                             })).success(function (data) {
                                 if (typeof data == "string") {
                                     $scope.codeValid = false;
-                                    $scope.model.mode = false;
+                                    $scope.model.mode = 'Custom Script';
                                     $scope.mode = "custom";
                                     $scope.renderMode("custom");
                                 } else if (typeof data == "object") {
@@ -188,14 +188,12 @@
             })).success(function (data) {
                 $scope.codeValid = data != '';
                 $scope.mode = data != '' ? data : '';
-                if ($scope.mode == 'custom') {
-                    $scope.model.mode = false;
-                }
+                $scope.model.mode = $scope.mode == 'custom' ? 'Custom Script' : 'Normal Menu';
                 $scope.renderMode($scope.mode);
             }).error(function () {
                 $scope.codeValid = false;
                 $scope.mode = 'custom';
-                $scope.model.mode = false;
+                $scope.model.mode = 'Custom Script';
                 $scope.renderMode($scope.mode);
             });
 
