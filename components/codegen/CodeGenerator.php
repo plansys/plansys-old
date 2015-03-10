@@ -52,7 +52,7 @@ class {$class} extends {$this->baseClass} {\n \n}
                     $line = $m->getStartLine() - 1;
                     $length = $m->getEndLine() - $line;
                     $this->methods[$m->name] = [
-                        'line'   => $line,
+                        'line' => $line,
                         'length' => $length
                     ];
                 }
@@ -69,8 +69,8 @@ class {$class} extends {$this->baseClass} {\n \n}
 
     protected function updateSession() {
         Yii::app()->session['CODEGEN_' . $this->classPath] = [
-            'methods'   => $this->methods,
-            'file'      => $this->file,
+            'methods' => $this->methods,
+            'file' => $this->file,
             'timestamp' => filemtime($this->filePath)
         ];
     }
@@ -120,6 +120,47 @@ class {$class} extends {$this->baseClass} {\n \n}
             }
         }
         return $line;
+    }
+
+    public static function formatCode($fields, $indent = "        ") {
+        ## get fields
+        $fields = var_export($fields, true);
+
+        ## strip numerical array keys
+        $fields = preg_replace("/[0-9]+\s*\=\> /i", '', $fields);
+
+        ## replace unwanted formatting
+        $replace = [
+            "  " => '    ',
+            "=> \n" => "=>"
+        ];
+        $fields = str_replace(array_keys($replace), $replace, $fields);
+        $replace = [
+            "=>        array (" => '=> array (',
+        ];
+        $fields = str_replace(array_keys($replace), $replace, $fields);
+        $fields = explode("\n", $fields);
+
+        ## indent each line
+        $count = count($fields);
+        foreach ($fields as $k => $f) {
+            if ($k == 0)
+                continue;
+
+            $fields[$k] = $indent . $f;
+            if ($k > 0 && $k < $count - 1) {
+                if (trim($f) == "") {
+                    unset($fields[$k]);
+                }
+            }
+        }
+        $fields = implode("\n", $fields);
+
+        ## remove unwanted formattings
+        $fields = preg_replace('/array\s*\([\n\r\s]*\),/', 'array (),', $fields);
+        $fields = preg_replace('/=>\s*array \(/', '=> array (', $fields);
+
+        return $fields;
     }
 
     protected function prepareLineForMethod() {
@@ -304,7 +345,7 @@ class {$class} extends {$this->baseClass} {\n \n}
 
         $default = [
             'visibility' => 'public',
-            'params'     => []
+            'params' => []
         ];
         $options = array_merge($default, $options);
         $params = implode(",", $options['params']);
@@ -332,7 +373,7 @@ EOF;
 
 
         $this->methods[$name] = [
-            'line'   => $line,
+            'line' => $line,
             'length' => $newlength
         ];
         $this->updateSession();
