@@ -3,7 +3,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
         scope: true,
         compile: function (element, attrs, transclude) {
             return function ($scope, $el, attrs, ctrl) {
-                var parent = $scope.$parent;
+                var parent = $scope.getParent($scope);
 
                 function evalArray(array) {
                     for (var i in array) {
@@ -176,9 +176,6 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     location.reload();
                 }
 
-                $scope.updateCell = function () {
-                };
-
                 $scope.$timeout = $timeout;
                 // setup internal variables
                 var colHeaders = [];
@@ -312,12 +309,18 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         switch (c.columnType) {
                             case "dropdown":
                                 colDef.type = "dropdown";
+                                colDef.renderer = 'dtDropdown';
+                                colDef.editor = 'dtDropdown';
+
                                 if (c.listType == 'js') {
                                     c.listItem = parent.$eval(c.listExpr);
                                 }
                                 colDef.source = parent.$eval(c.listItem);
                                 if (typeof c.listValues != 'undefined') {
                                     colDef.sourceValues = parent.$eval(c.listValues);
+                                }
+                                if (c.listMustChoose == 'Yes' && colDef.source.length > 0) {
+                                    colDef.defaultValue = colDef.sourceValues[0];
                                 }
                                 break;
                             case "checkbox":
@@ -430,9 +433,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
 
                         if (c.options && !!c.options.enableCellEdit) {
                             if (c.options.enableCellEdit.trim().substr(0, 3) === "js:") {
-                                c.options.enableCellEdit = $scope.$parent.$eval(c.options.enableCellEdit.trim().substr(3));
+                                c.options.enableCellEdit = parent.$eval(c.options.enableCellEdit.trim().substr(3));
                             } else if (typeof c.options.enableCellEdit == "string") {
-                                c.options.enableCellEdit = $scope.$parent.$eval(c.options.enableCellEdit.trim());
+                                c.options.enableCellEdit = parent.$eval(c.options.enableCellEdit.trim());
                             }
 
                             if (!c.options.enableCellEdit) {
@@ -526,13 +529,12 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }, 100);
                 }
 
-                if (typeof $scope.gridOptions['fullWidth'] != "undefined" && $scope.gridOptions['fullWidth'] == "true") {
+
+                $scope.isFullWidth = typeof $scope.gridOptions['fullWidth'] != "undefined" && $scope.gridOptions['fullWidth'] == "true";
+                if ($scope.isFullWidth) {
                     $(window).resize(function () {
                         $el.find('.htCore').width($el.width());
                     }).resize();
-                } else {
-                    $scope.resize = function () {
-                    }
                 }
 
                 $scope.fixHeight = function () {
@@ -765,6 +767,17 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     return $scope.relationColumns.indexOf(colname.replace($scope.relSuffix, '') + $scope.relSuffix) >= 0;
                 }
 
+                $scope.updateDSCell = function (row, prop, value) {
+                    var c = [row, prop, '', value];
+                    if ($scope.dtGroups) {
+                        $scope.dtGroups.handleChange($scope, c);
+                    } else {
+                        if (!$scope.datasource.data[c[0]]) {
+                            $scope.datasource.data[c[0]] = {};
+                        }
+                        $scope.datasource.data[c[0]][c[1]] = c[3];
+                    }
+                }
 
                 // Load Relation 
                 $scope.loadRelation = function (callback, countDgr) {
@@ -1547,6 +1560,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         $scope.initTimeout = $timeout(function () {
                             $scope.loaded = true;
                             $scope.loading = false;
+
+                            if ($scope.isFullWidth) {
+                                $(window).resize();
+                            }
                         });
                     }
                 }

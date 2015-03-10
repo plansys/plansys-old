@@ -24,7 +24,7 @@ class DefaultController extends Controller
         $params = [];
         if (count($_GET) > 1) {
             if (!isset($_GET['s'])) {
-                $_GET['s'] = $db['server'] . ":3306";
+                $_GET['s'] = $db['host'] . ":3306";
             }
 
             foreach ($_GET as $g => $i) {

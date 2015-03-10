@@ -3,7 +3,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
         scope: true,
         compile: function (element, attrs, transclude) {
             return function ($scope, $el, attrs, ctrl) {
-                var parent = $scope.$parent;
+                var parent = $scope.getParent($scope);
 
                 $scope.params = JSON.parse($el.find("data[name=params]").text());
                 $scope.paramsGet = JSON.parse($el.find("data[name=params_get]").text());
@@ -223,6 +223,9 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     $scope.data = [];
                 } else {
                     $scope.data = JSON.parse($el.find("data[name=data]").text());
+                    if (!$scope.isArray($scope.data)) {
+                        $scope.data = [];
+                    }
                 }
 
                 $scope.isDataReloaded = false;

@@ -19,6 +19,15 @@ class GenModuleController extends Controller {
         ]);
     }
 
+    public function actionSaveAc($active) {
+        $postdata = file_get_contents("php://input");
+        $post = json_decode($postdata, true);
+
+        $model = new DevGenModule;
+        $model->load($active);
+        $model->module->updateAccessControl($post);
+    }
+
     public function actionSaveImport($active) {
         $postdata = file_get_contents("php://input");
         $post = json_decode($postdata, true);

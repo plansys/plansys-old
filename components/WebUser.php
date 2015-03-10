@@ -48,6 +48,10 @@ class WebUser extends CWebUser {
     public function getRole() {
         return $this->getState('role');
     }
+    
+    public function getRoleId() {
+        return $this->getState('roleId');
+    }
 
     public function getHomeUrl() {
         if (isset($this->roleInfo['home_url'])) {

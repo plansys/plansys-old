@@ -107,7 +107,7 @@ class Controller extends CController {
 
                     array_push($roleItems, [
                         'label' => '&nbsp; <i class="fa ' . $rc . '"></i> &nbsp;' . $r['role_description'],
-                        'url'   => ['/sys/profile/changeUser', 'id' => $r['id']]
+                        'url'   => ['/sys/profile/changeRole', 'id' => $r['id']]
                     ]);
                 }
                 array_unshift($userItems, [

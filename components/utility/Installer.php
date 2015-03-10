@@ -249,7 +249,7 @@ class Installer {
             '$mode = "running"'
                 ], '$mode = "' . $mode . '"', $file);
 
-        
+
         Setting::$mode = $mode;
 
         if (!is_file($path)) {
@@ -420,7 +420,7 @@ CREATE TABLE `p_user` (
   `phone` varchar(255) DEFAULT NULL COMMENT 'Phone',
   `username` varchar(255) NOT NULL COMMENT 'Username',
   `password` varchar(255) NOT NULL COMMENT 'Password',
-  `last_login` datetime NOT NULL,
+  `last_login` datetime DEFAULT NULL,
   `is_deleted` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

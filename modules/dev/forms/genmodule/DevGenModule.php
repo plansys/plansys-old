@@ -120,8 +120,20 @@ Module "' . $name . '" already exist';
     }
 
     public function getFields() {
-        return array(
-            array(
+        return array (
+            array (
+                'name' => 'userAccessDs',
+                'fieldType' => 'php',
+                'php' => '$model->getUserAccess();',
+                'type' => 'DataSource',
+            ),
+            array (
+                'name' => 'roleAccessDs',
+                'fieldType' => 'php',
+                'php' => '$model->getRoleAccess();',
+                'type' => 'DataSource',
+            ),
+            array (
                 'value' => '<!-- EMPTY MODULE -->
 <div ng-if=\'!model.name\'>
     <div class=\"empty-box-container\">
@@ -133,46 +145,46 @@ Module "' . $name . '" already exist';
 </div>',
                 'type' => 'Text',
             ),
-            array(
+            array (
                 'value' => '<!------------------------- MODULE INFO TAB ----------------------------->
 <tabset class=\'tab-set\' ng-if=\'model.name\'>
 <tab heading=\"Module Info\" select=\'setTab(1)\'>',
                 'type' => 'Text',
             ),
-            array(
-                'column1' => array(
-                    array(
+            array (
+                'column1' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
-                    array(
+                    array (
                         'label' => 'Module Name',
                         'name' => 'name',
                         'type' => 'LabelField',
                     ),
-                    array(
+                    array (
                         'label' => 'Module Alias',
                         'name' => 'alias',
                         'type' => 'LabelField',
                     ),
                 ),
-                'column2' => array(
-                    array(
+                'column2' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
-                    array(
+                    array (
                         'label' => 'Class Path',
                         'name' => 'classPath',
-                        'labelOptions' => array(
+                        'labelOptions' => array (
                             'style' => 'text-align:left;',
                         ),
                         'type' => 'LabelField',
                     ),
-                    array(
+                    array (
                         'label' => 'Module Directory',
                         'name' => 'path',
-                        'labelOptions' => array(
+                        'labelOptions' => array (
                             'style' => 'text-align:left;',
                         ),
                         'type' => 'LabelField',
@@ -180,23 +192,23 @@ Module "' . $name . '" already exist';
                 ),
                 'type' => 'ColumnField',
             ),
-            array(
+            array (
                 'showBorder' => 'Yes',
-                'column1' => array(
-                    array(
+                'column1' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
-                    array(
+                    array (
                         'title' => '<i class=\\\'fa fa-empire\\\'></i> Import Initialization <span ng-bind-html=\\\'importStatus\\\'></span>',
                         'type' => 'SectionHeader',
                     ),
-                    array(
+                    array (
                         'label' => 'Generate Import',
                         'buttonType' => 'success',
                         'icon' => 'refresh',
                         'buttonSize' => 'btn-xs',
-                        'options' => array(
+                        'options' => array (
                             'style' => 'float:right;
 margin:-50px -45px 0px 0px;',
                             'href' => 'url:/dev/genModule/genImport?active={params.active}',
@@ -204,7 +216,7 @@ margin:-50px -45px 0px 0px;',
                         ),
                         'type' => 'LinkButton',
                     ),
-                    array(
+                    array (
                         'value' => '
 <div style=\'margin:-25px -50px -25px -40px;\'>
     <div id=\"import-editor\"
@@ -218,27 +230,27 @@ margin:-50px -45px 0px 0px;',
                         'type' => 'Text',
                     ),
                 ),
-                'column2' => array(
-                    array(
+                'column2' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
-                    array(
+                    array (
                         'title' => '<i class=\\\'fa fa-cubes\\\'></i> Controllers',
                         'type' => 'SectionHeader',
                     ),
-                    array(
+                    array (
                         'label' => 'Add New Controller',
                         'buttonType' => 'success',
                         'icon' => 'plus-circle',
                         'buttonSize' => 'btn-xs',
-                        'options' => array(
+                        'options' => array (
                             'style' => 'float:right;
 margin:-50px -45px 0px 0px;',
                         ),
                         'type' => 'LinkButton',
                     ),
-                    array(
+                    array (
                         'value' => '<table class=\"table table-condensed table-bordered table-small\">
     
     <tr ng-repeat=\"c in params.controllers track by $index\">
@@ -250,46 +262,42 @@ margin:-50px -45px 0px 0px;',
                 ),
                 'type' => 'ColumnField',
             ),
-            array(
+            array (
                 'value' => '<!--------------------- ACCESS CONTROL TAB ---------------------------->
-</tab><tab heading=\"Access Control\"  active=\"activeTab\"  select=\'setTab(2)\'>',
+</tab><tab  active=\"activeTab\"  select=\'setTab(2)\'>
+<tab-heading>
+Access Control <span ng-bind-html=\'acStatus\'></span>
+</tab-heading>',
                 'type' => 'Text',
             ),
-            array(
-                'name' => 'roleAccessDs',
-                'fieldType' => 'php',
-                'php' => '$model->getRoleAccess();',
-                'type' => 'DataSource',
-            ),
-            array(
-                'name' => 'userAccessDs',
-                'fieldType' => 'php',
-                'php' => '$model->getUserAccess();',
-                'postData' => 'No',
-                'type' => 'DataSource',
-            ),
-            array(
-                'column1' => array(
-                    array(
+            array (
+                'column1' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
-                    array(
+                    array (
                         'label' => 'Access Control type',
                         'name' => 'accessType',
                         'onLabel' => 'DEFAULT',
                         'offLabel' => 'CUSTOM',
+                        'options' => array (
+                            'ng-change' => 'saveAC();',
+                        ),
                         'type' => 'ToggleSwitch',
                     ),
                 ),
-                'column2' => array(
-                    array(
+                'column2' => array (
+                    array (
                         'label' => 'Default Access Rule',
                         'name' => 'defaultRule',
-                        'labelOptions' => array(
+                        'options' => array (
+                            'ng-change' => 'saveAC();',
+                        ),
+                        'labelOptions' => array (
                             'style' => 'text-align:left;',
                         ),
-                        'list' => array(
+                        'list' => array (
                             'deny' => 'Deny',
                             'allow' => 'Allow',
                         ),
@@ -297,38 +305,44 @@ margin:-50px -45px 0px 0px;',
                         'fieldWidth' => '4',
                         'type' => 'DropDownList',
                     ),
-                    array(
+                    array (
+                        'value' => '<div class=\'info\'>
+    <i class=\"fa fa-info-circle\"></i>
+    This value will be used when no matching rule</div>',
+                        'type' => 'Text',
+                    ),
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
                 ),
                 'type' => 'ColumnField',
             ),
-            array(
+            array (
                 'showBorder' => 'Yes',
-                'column1' => array(
-                    array(
+                'column1' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
-                    array(
+                    array (
                         'title' => '<i class=\\\'fa fa-user-md\\\'></i> Role Access',
                         'type' => 'SectionHeader',
                     ),
-                    array(
+                    array (
                         'name' => 'roleAccess',
                         'datasource' => 'roleAccessDs',
-                        'columns' => array(
-                            array(
+                        'columns' => array (
+                            array (
                                 'name' => 'role',
                                 'label' => 'Role',
-                                'options' => array(
+                                'options' => array (
                                     'width' => '250',
                                 ),
                                 'columnType' => 'relation',
                                 'show' => false,
-                                'relParams' => array(),
-                                'relCriteria' => array(
+                                'relParams' => array (),
+                                'relCriteria' => array (
                                     'select' => '',
                                     'distinct' => 'false',
                                     'alias' => 't',
@@ -342,48 +356,48 @@ margin:-50px -45px 0px 0px;',
                                 'relIdField' => 'id',
                                 'relLabelField' => 'role_name',
                             ),
-                            array(
+                            array (
                                 'name' => 'access',
                                 'label' => 'Access',
-                                'options' => array(
+                                'options' => array (
                                     'width' => '70',
                                 ),
                                 'columnType' => 'dropdown',
                                 'show' => false,
                                 'listType' => 'php',
                                 'listExpr' => '[\\\'deny\\\'=>\\\'Deny\\\', \\\'allow\\\'=>\\\'Allow\\\']',
-                                'listMustChoose' => 'No',
+                                'listMustChoose' => 'Yes',
                             ),
                         ),
-                        'gridOptions' => array(
+                        'gridOptions' => array (
                             'minSpareRows' => '1',
                         ),
                         'type' => 'DataTable',
                     ),
                 ),
-                'column2' => array(
-                    array(
+                'column2' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
                     ),
-                    array(
+                    array (
                         'title' => '<i class=\\\'fa fa-user\\\'></i> User Access',
                         'type' => 'SectionHeader',
                     ),
-                    array(
+                    array (
                         'name' => 'userAccess',
                         'datasource' => 'userAccessDs',
-                        'columns' => array(
-                            array(
+                        'columns' => array (
+                            array (
                                 'name' => 'user',
                                 'label' => 'user',
-                                'options' => array(
+                                'options' => array (
                                     'width' => '250',
                                 ),
                                 'columnType' => 'relation',
                                 'show' => false,
-                                'relParams' => array(),
-                                'relCriteria' => array(
+                                'relParams' => array (),
+                                'relCriteria' => array (
                                     'select' => '',
                                     'distinct' => 'false',
                                     'alias' => 't',
@@ -397,20 +411,20 @@ margin:-50px -45px 0px 0px;',
                                 'relIdField' => 'id',
                                 'relLabelField' => 'username',
                             ),
-                            array(
+                            array (
                                 'name' => 'access',
                                 'label' => 'access',
-                                'options' => array(
+                                'options' => array (
                                     'width' => '70',
                                 ),
                                 'columnType' => 'dropdown',
-                                'show' => false,
+                                'show' => true,
                                 'listType' => 'php',
                                 'listExpr' => '[\\\'deny\\\'=>\\\'Deny\\\', \\\'allow\\\'=>\\\'Allow\\\']',
-                                'listMustChoose' => 'No',
+                                'listMustChoose' => 'Yes',
                             ),
                         ),
-                        'gridOptions' => array(
+                        'gridOptions' => array (
                             'minSpareRows' => '1',
                         ),
                         'type' => 'DataTable',
@@ -418,11 +432,11 @@ margin:-50px -45px 0px 0px;',
                 ),
                 'type' => 'ColumnField',
             ),
-            array(
+            array (
                 'value' => '<hr style=\\"margin:0px -15px;\\"/>',
                 'type' => 'Text',
             ),
-            array(
+            array (
                 'value' => '<!-- TAB CLOSER -->
 </tab></tabset>',
                 'type' => 'Text',

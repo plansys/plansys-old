@@ -44,7 +44,7 @@ class NfyModule extends CWebModule {
             'application.modules.nfy.forms.*',
             'application.modules.nfy.components.*',
             'application.modules.nfy.models.*'
-        ));
+        )); 
     }
 
 }

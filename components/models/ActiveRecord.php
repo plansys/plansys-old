@@ -55,7 +55,7 @@ class ActiveRecord extends CActiveRecord {
         $start = ($page - 1) * $pageSize;
 
         return [
-            'limit' => $pageSize,
+            'limit'  => $pageSize,
             'offset' => $start
         ];
     }
@@ -706,24 +706,23 @@ class ActiveRecord extends CActiveRecord {
                             ));
                             $this->addError($attribute, $message);
                         }
-                    break;
+                        break;
                     case (@$e->errorInfo[1] == 1062):
                         $rawColName = explode("' for key '", $e->errorInfo[2]);
                         $value = str_replace("Duplicate entry '", "", $rawColName[0]);
-                        $attribute = trim($rawColName[1],"'");
+                        $attribute = trim($rawColName[1], "'");
 
                         if ($this->hasAttribute($attribute)) {
                             $message = Yii::t('yii', '{attribute} "{value}" has already been taken.');
                             $message = strtr($message, array(
                                 '{attribute}' => $this->getAttributeLabel($attribute),
-                                '{value}' => $value
+                                '{value}'     => $value
                             ));
                             $this->addError($attribute, $message);
                         }
-                    break;
-                        throw $e;
+                        break;
                     default:
-
+                        throw $e;
                 }
             }
         } else {
@@ -761,7 +760,7 @@ class ActiveRecord extends CActiveRecord {
                         }
                     } ## todo: with through
                     else {
-
+                        
                     }
                     break;
             }
@@ -780,8 +779,8 @@ class ActiveRecord extends CActiveRecord {
                 type = 'create' and 
                 model_id is null")->execute([
                     'model_class' => ActiveRecord::baseClass($this),
-                    'model_id' => $this->id,
-                    'user_id' => Yii::app()->user->id
+                    'model_id'    => $this->id,
+                    'user_id'     => Yii::app()->user->id
                 ]);
             }
         } else {
@@ -987,8 +986,8 @@ class ActiveRecord extends CActiveRecord {
             }
 
             $array[] = [
-                'name' => $f,
-                'type' => $type,
+                'name'  => $f,
+                'type'  => $type,
                 'label' => $this->getAttributeLabel($f)
             ];
         }

@@ -9,7 +9,7 @@ app.directive('repoBrowser', function ($timeout, $compile, $http) {
             }
 
             return function ($scope, $el, attrs, ctrl) {
-                var parent = $scope.$parent;
+                var parent = $scope.getParent($scope);
                 if ($("body > [repo-dialog] .modal-container").length == 0) {
                     $compile($("body > [repo-dialog]"))($scope.$parent);
                 }

@@ -8,9 +8,11 @@ app.directive('checkBoxList', function ($timeout) {
             }
 
             return function ($scope, $el, attrs, ctrl) {
+                var parent = $scope.getParent($scope);
+
                 // when ng-model is changed from inside directive
                 $scope.name = $el.find("data[name=name]:eq(0)").text();
-                $scope.$parent[$scope.name] = $scope;
+                parent[$scope.name] = $scope;
 
                 $scope.updateItem = function (value) {
                     $scope.updateItemInternal(value);
@@ -23,7 +25,7 @@ app.directive('checkBoxList', function ($timeout) {
 
                 $scope.updateItemInternal = function (value) {
                     if (typeof value != 'undefined') {
-                        if($scope.selected == null){
+                        if ($scope.selected == null) {
                             $scope.selected = [];
                         }
                         var ar = $scope.selected;
@@ -79,7 +81,7 @@ app.directive('checkBoxList', function ($timeout) {
                             return(item.trim());
                         });
                     }
-                    if($scope.selected !== null){
+                    if ($scope.selected !== null) {
                         $scope.selectedText = $scope.selected.join(',');
                     }
 

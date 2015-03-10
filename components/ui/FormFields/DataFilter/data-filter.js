@@ -14,7 +14,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
 
 
             return function ($scope, $el, attrs, ctrl) {
-                var parent = $scope.$parent;
+                var parent = $scope.getParent($scope);
 
                 /************* All Filter **************/
                 $scope.toggleFilterCriteria = function (e) {

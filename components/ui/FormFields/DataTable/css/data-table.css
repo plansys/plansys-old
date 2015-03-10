@@ -320,13 +320,16 @@
     border: 0px;
 }
 
-.handsontable.listbox {
-    border: 1px solid #999;
-}
 
 .handsontable .autocompleteEditor.handsontable {
-    background: #fafafa;
-    min-height: 55px;
+    background: #ddd;
+    padding-right: 0px;
+    border: 1px solid #ddd;
+    overflow: hidden !important;
+}
+.handsontable .autocompleteEditor.handsontable:hover {
+    padding-right: 17px;
+    overflow: auto !important;
 }
 
 .listbox.current {

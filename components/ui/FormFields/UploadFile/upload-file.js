@@ -303,7 +303,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     }, true);
                 }
 
-                var parent = $scope.$parent;
+                var parent = $scope.getParent($scope);
                 parent[$scope.name] = $scope;
             };
         }

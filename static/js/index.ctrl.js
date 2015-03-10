@@ -21,6 +21,13 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
     $scope.isArray = function (val) {
         return Object.prototype.toString.call(val) === '[object Array]';
     }
+    $scope.getParent = function (s) {
+        var parent = s.$parent;
+        while (!parent.hasOwnProperty('Yii') && !!parent.$parent) {
+            parent = parent.$parent;
+        }
+        return parent;
+    }
 
     /************************ ACE Editor Config ********************************/
     $scope.aceConfig = function (options) {

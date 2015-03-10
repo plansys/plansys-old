@@ -49,7 +49,6 @@ class UserController extends Controller {
         $this->redirect(['/dev/user/roles']);
     }
 
-
     public function actionUpdate($id) {
         $model = $this->loadModel($id, "DevUserForm");
         if ($model->is_deleted) {

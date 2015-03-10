@@ -3,7 +3,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
         scope: true,
         compile: function (element, attrs, transclude) {
             return function ($scope, $el, attrs, ctrl) {
-                var parent = $scope.$parent;
+                var parent = $scope.getParent($scope);
 
                 function evalArray(array, opt) {
                     opt = $.extend({
