@@ -17,11 +17,11 @@ class ModuleGenerator extends CodeGenerator {
                 $classPath = $f . DIRECTORY_SEPARATOR . ucfirst($label) . 'Module.php';
                 if (is_file($classPath)) {
                     $plansysList[$label] = [
-                        'label'  => $label,
+                        'label' => $label,
                         'module' => 'plansys',
-                        'icon'   => 'fa-empire',
+                        'icon' => 'fa-empire',
                         'active' => @$_GET['active'] == 'plansys.' . $label,
-                        'url'    => Yii::app()->controller->createUrl('/dev/genModule/index', [
+                        'url' => Yii::app()->controller->createUrl('/dev/genModule/index', [
                             'active' => 'plansys.' . $label
                         ])
                     ];
@@ -29,9 +29,9 @@ class ModuleGenerator extends CodeGenerator {
             }
 
             $list[] = [
-                'label'  => 'Plansys',
+                'label' => 'Plansys',
                 'module' => 'plansys',
-                'items'  => $plansysList
+                'items' => $plansysList
             ];
         }
 
@@ -44,11 +44,11 @@ class ModuleGenerator extends CodeGenerator {
             if (is_file($classPath)) {
 
                 $appList[$label] = [
-                    'label'  => $label,
+                    'label' => $label,
                     'module' => 'app',
-                    'icon'   => 'fa-empire',
+                    'icon' => 'fa-empire',
                     'active' => @$_GET['active'] == 'app.' . $label,
-                    'url'    => Yii::app()->controller->createUrl('/dev/genModule/index', [
+                    'url' => Yii::app()->controller->createUrl('/dev/genModule/index', [
                         'active' => 'app.' . $label
                     ])
                 ];
@@ -56,9 +56,9 @@ class ModuleGenerator extends CodeGenerator {
         }
 
         $list[] = [
-            'label'  => 'App',
+            'label' => 'App',
             'module' => 'app',
-            'items'  => $appList
+            'items' => $appList
         ];
         return $list;
     }
@@ -107,18 +107,26 @@ class ModuleGenerator extends CodeGenerator {
                 $file = $item->getFilename();
                 $class = basename($item->getFilename(), ".php");
                 $controllers[] = [
-                    'file'  => $file,
+                    'file' => $file,
                     'class' => $class,
                     'alias' => $this->basePath . '.controllers.' . $class,
-                    'path'  => $path
+                    'path' => $path
                 ];
             }
         }
         return $controllers;
     }
 
+    public function getUserAccess() {
+        
+    }
+
+    public function getRoleAccess() {
+        
+    }
+
     public function getAliasArray($dirs = [], $options = [
-        'append'  => '',
+        'append' => '',
         'prepend' => ''
     ]) {
         $result = [];
@@ -153,7 +161,7 @@ class ModuleGenerator extends CodeGenerator {
         $importedFolders = ['controllers', 'forms', 'components', 'models', 'consoles'];
         $space = "            ";
         $imports = $space . implode(",\n{$space}", $this->getAliasArray($importedFolders, [
-                            'append'  => '.*\'',
+                            'append' => '.*\'',
                             'prepend' => '\''
         ]));
         $source = <<<EOF
