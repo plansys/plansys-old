@@ -16,6 +16,8 @@
         <data name="value" class="hide"><?= $this->value ?></data>
         <data name="model_class" class="hide"><?= @get_class($model) ?></data>
         <data name="options" class="hide"><?= @json_encode($this->options) ?></data>
+        <data name="on_label" class="hide"><?= $this->onLabel ?></data>
+        <data name="off_label" class="hide"><?= $this->offLabel ?></data>
         <!-- /data -->
 
         <!-- field -->
@@ -23,6 +25,7 @@
             <div class="toggle-switchery">
                 <input type="checkbox" <?= $this->expandAttributes($this->fieldOptions) ?>
                        ng-model="value" ng-change="update()" ui-switch checked/>
+                <input type="hidden" name="<?= $this->renderName ?>" value="{{ value ? onLabel : offLabel }}" />
             </div>
             <div ng-if="value" ng-click="switch()"
                  class="label label-success switchery-label <?= $this->switcheryLabelClass; ?>">

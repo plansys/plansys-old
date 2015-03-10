@@ -267,7 +267,6 @@ class ToggleSwitch extends FormField {
         $this->addClass($this->errorClass, 'options');
 
         $this->fieldOptions['id'] = $this->renderID;
-        $this->fieldOptions['name'] = $this->renderName;
         $this->addClass('form-control', 'fieldOptions');
 
         if ($this->size == "small") {

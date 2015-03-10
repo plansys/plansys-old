@@ -9,6 +9,9 @@ class DevGenModule extends Form {
     public $module;
     public $imports = [];
     public $error = '';
+    
+    public $defaultRule = 'deny';
+    public $accessType = 'DEFAULT';
 
     public function create($module) {
         $m = explode(".", $module);
@@ -248,27 +251,25 @@ margin:-50px -45px 0px 0px;',
             array (
                 'name' => 'roleAccessDs',
                 'fieldType' => 'php',
-                'php' => '[
-];',
+                'php' => '$model->module->getRoleAccess();',
                 'type' => 'DataSource',
             ),
             array (
                 'name' => 'userAccessDs',
                 'fieldType' => 'php',
-                'php' => '[
-];',
+                'php' => '$model->module->getUserAccess();',
                 'postData' => 'No',
                 'type' => 'DataSource',
             ),
             array (
                 'column1' => array (
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                     array (
                         'label' => 'Access Control type',
-                        'name' => 'toggleSwitch1',
+                        'name' => 'accessType',
                         'onLabel' => 'DEFAULT',
                         'offLabel' => 'CUSTOM',
                         'type' => 'ToggleSwitch',
@@ -277,21 +278,21 @@ margin:-50px -45px 0px 0px;',
                 'column2' => array (
                     array (
                         'label' => 'Default Access Rule',
-                        'name' => 'toggleSwitch1',
-                        'labelWidth' => '3',
-                        'fieldWidth' => '4',
+                        'name' => 'defaultRule',
                         'labelOptions' => array (
                             'style' => 'text-align:left;',
                         ),
-                        'type' => 'DropDownList',
                         'list' => array (
                             'deny' => 'Deny',
                             'allow' => 'Allow',
                         ),
+                        'labelWidth' => '3',
+                        'fieldWidth' => '4',
+                        'type' => 'DropDownList',
                     ),
                     array (
-                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                        'type' => 'Text',
                     ),
                 ),
                 'type' => 'ColumnField',

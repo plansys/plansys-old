@@ -11,7 +11,11 @@ app.directive('toggleSwitch', function ($timeout) {
                 // when ng-model is changed from inside directive
                 $scope.update = function () {
                     if (typeof ctrl != 'undefined') {
-                        ctrl.$setViewValue($scope.value);
+                        if ($scope.value === true || $scope.value == $scope.onLabel) {
+                            ctrl.$setViewValue(true);
+                        } else {
+                            ctrl.$setViewValue(false);
+                        }
                     }
                 };
 
@@ -28,15 +32,17 @@ app.directive('toggleSwitch', function ($timeout) {
                     };
                 }
 
-                $scope.switch = function() {
+                $scope.switch = function () {
                     $scope.value = !$scope.value;
                     $scope.update();
-                }
+                };
 
                 // set default value
                 $scope.value = $el.find("data[name=value]").html().trim();
                 $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
+                $scope.onLabel = $el.find("data[name=on_label]").html();
+                $scope.offLabel = $el.find("data[name=off_label]").html();
                 $scope.options = JSON.parse($el.find("data[name=options]").text());
 
                 // if ngModel is present, use that instead of value from php
