@@ -23,18 +23,10 @@ class InstallModule extends CWebModule {
         $roleId = Yii::app()->user->roleId;
         $userId = Yii::app()->user->id;
         
-        if (in_array($roleId, $rolesRule['deny'])) {
-            $allowed = false;
-        }
-        if (in_array($roleId, $rolesRule['allow'])) {
-            $allowed = true;
-        }
-        if (in_array($userId, $usersRule['deny'])) {
-            $allowed = false;
-        }
-        if (in_array($userId, $usersRule['allow'])) {
-            $allowed = true;
-        }
+        if (in_array($roleId, $rolesRule["deny"]))  { $allowed = false; }
+        if (in_array($roleId, $rolesRule["allow"])) { $allowed = true; }
+        if (in_array($userId, $usersRule["deny"]))  { $allowed = false; }
+        if (in_array($userId, $usersRule["allow"])) { $allowed = true;}
 
         if (!$allowed) {
             throw new CHttpException(403);

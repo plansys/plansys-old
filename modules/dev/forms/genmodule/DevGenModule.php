@@ -1,6 +1,7 @@
 <?php
 
 class DevGenModule extends Form {
+    ## MODULE INFO VARS
 
     public $name;
     public $alias;
@@ -9,8 +10,12 @@ class DevGenModule extends Form {
     public $module;
     public $imports = [];
     public $error = '';
-    public $defaultRule = 'deny';
+
+    ## ACCESS CONTROL VARS
     public $accessType = 'DEFAULT';
+    public $defaultRule = 'deny';
+    public $rolesRule = [];
+    public $usersRule = [];
 
     public function create($module) {
         $m = explode(".", $module);
@@ -42,14 +47,6 @@ Module "' . $name . '" already exist';
         }
     }
 
-    public function getUserAccess() {
-        
-    }
-
-    public function getRoleAccess() {
-        
-    }
-
     public function delete() {
         $dirPath = $this->path;
         foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dirPath, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $path) {
@@ -75,6 +72,10 @@ Module "' . $name . '" already exist';
 
             if (is_file($this->classPath)) {
                 $this->module = ModuleGenerator::init($alias, 'load');
+                $this->accessType = $this->module->accessType != 'CUSTOM' ? 'DEFAULT' : 'CUSTOM';
+                $this->defaultRule = $this->module->defaultRule;
+                $this->rolesRule = $this->module->rolesRule;
+                $this->usersRule = $this->module->usersRule;
                 $this->imports = $this->module->listImport();
             } else {
                 $this->module = null;
@@ -92,47 +93,35 @@ Module "' . $name . '" already exist';
 
     public function getForm() {
         return array(
-            'title' => 'Generate Module',
-            'layout' => array(
+            'title'     => 'Generate Module',
+            'layout'    => array(
                 'name' => '2-cols',
                 'data' => array(
                     'col1' => array(
-                        'size' => '200',
-                        'sizetype' => 'px',
-                        'type' => 'menu',
-                        'name' => 'col1',
-                        'file' => 'application.modules.dev.menus.GenModule',
-                        'title' => 'Module',
-                        'icon' => 'fa-empire',
-                        'inlineJS' => 'GenModule.js',
+                        'size'        => '200',
+                        'sizetype'    => 'px',
+                        'type'        => 'menu',
+                        'name'        => 'col1',
+                        'file'        => 'application.modules.dev.menus.GenModule',
+                        'title'       => 'Module',
+                        'icon'        => 'fa-empire',
+                        'inlineJS'    => 'GenModule.js',
                         'menuOptions' => array(),
                     ),
                     'col2' => array(
-                        'type' => 'mainform',
-                        'name' => 'col2',
+                        'type'     => 'mainform',
+                        'name'     => 'col2',
                         'sizetype' => '%',
                     ),
                 ),
             ),
-            'inlineJS' => 'GenModule.js',
+            'inlineJS'  => 'GenModule.js',
             'includeJS' => array(),
         );
     }
 
     public function getFields() {
         return array (
-            array (
-                'name' => 'userAccessDs',
-                'fieldType' => 'php',
-                'php' => '$model->getUserAccess();',
-                'type' => 'DataSource',
-            ),
-            array (
-                'name' => 'roleAccessDs',
-                'fieldType' => 'php',
-                'php' => '$model->getRoleAccess();',
-                'type' => 'DataSource',
-            ),
             array (
                 'value' => '<!-- EMPTY MODULE -->
 <div ng-if=\'!model.name\'>
@@ -330,6 +319,13 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                         'type' => 'SectionHeader',
                     ),
                     array (
+                        'name' => 'roleAccessDs',
+                        'fieldType' => 'php',
+                        'php' => '$model->rolesRule',
+                        'postData' => 'No',
+                        'type' => 'DataSource',
+                    ),
+                    array (
                         'name' => 'roleAccess',
                         'datasource' => 'roleAccessDs',
                         'columns' => array (
@@ -385,6 +381,13 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                         'type' => 'SectionHeader',
                     ),
                     array (
+                        'name' => 'userAccessDs',
+                        'fieldType' => 'php',
+                        'php' => '$model->usersRule',
+                        'postData' => 'No',
+                        'type' => 'DataSource',
+                    ),
+                    array (
                         'name' => 'userAccess',
                         'datasource' => 'userAccessDs',
                         'columns' => array (
@@ -418,7 +421,7 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                                     'width' => '70',
                                 ),
                                 'columnType' => 'dropdown',
-                                'show' => true,
+                                'show' => false,
                                 'listType' => 'php',
                                 'listExpr' => '[\\\'deny\\\'=>\\\'Deny\\\', \\\'allow\\\'=>\\\'Allow\\\']',
                                 'listMustChoose' => 'Yes',

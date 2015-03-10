@@ -4,7 +4,7 @@
     <?php if ($this->label != ""): ?>
         <label <?= $this->expandAttributes($this->labelOptions) ?>
             class="<?= $this->labelClass ?>" for="<?= $this->renderID; ?>">
-            <?= $this->label ?>
+                <?= $this->label ?>
         </label>
     <?php endif; ?>
     <!-- /label -->
@@ -24,23 +24,23 @@
         <div class="toggle-switch-field">
             <div class="toggle-switchery">
                 <input type="checkbox" <?= $this->expandAttributes($this->fieldOptions) ?>
-                       ng-model="value" ng-change="update()" ui-switch checked/>
-                <input type="hidden" name="<?= $this->renderName ?>" value="{{ value ? onLabel : offLabel }}" />
+                       ng-model="valueCheckbox" ng-change="update()" ui-switch checked/>
+                <input type="hidden" name="<?= $this->renderName ?>" value="{{ value}}" />
             </div>
-            <div ng-if="value" ng-click="switch()"
+            <div ng-if="valueCheckbox" ng-click="switch ()"
                  class="label label-success switchery-label <?= $this->switcheryLabelClass; ?>">
-                <?= $this->onLabel; ?>
+                     <?= $this->onLabel; ?>
             </div>
-            <div ng-if="!value" ng-click="switch()"
+            <div ng-if="!valueCheckbox" ng-click="switch ()"
                  class="label label-default switchery-label <?= $this->switcheryLabelClass; ?>">
-                <?= $this->offLabel; ?>
+                     <?= $this->offLabel; ?>
             </div>
         </div>
         <!-- /field -->
-        
+
         <!-- error -->
         <div ng-if="errors[name]" class="alert error alert-danger">
-            {{ errors[name][0] }}
+            {{ errors[name][0]}}
         </div>
         <!-- /error -->
     </div>

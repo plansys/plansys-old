@@ -52,7 +52,7 @@ class {$class} extends {$this->baseClass} {\n \n}
                     $line = $m->getStartLine() - 1;
                     $length = $m->getEndLine() - $line;
                     $this->methods[$m->name] = [
-                        'line' => $line,
+                        'line'   => $line,
                         'length' => $length
                     ];
                 }
@@ -67,11 +67,11 @@ class {$class} extends {$this->baseClass} {\n \n}
         return $this;
     }
 
-    protected function updateSession() {
+    protected function updateSession($timestamp = null) {
         Yii::app()->session['CODEGEN_' . $this->classPath] = [
-            'methods' => $this->methods,
-            'file' => $this->file,
-            'timestamp' => filemtime($this->filePath)
+            'methods'   => $this->methods,
+            'file'      => $this->file,
+            'timestamp' => is_null($timestamp) ? filemtime($this->filePath) : $timestamp
         ];
     }
 
@@ -81,7 +81,7 @@ class {$class} extends {$this->baseClass} {\n \n}
             return false;
         }
 
-        if (@$session['timestamp'] != filemtime($this->filePath)) {
+        if (@$session['timestamp'] != filemtime($this->filePath) && @$session['timestamp'] != 'JUSTWRITTEN') {
             return false;
         }
         return true;
@@ -91,6 +91,8 @@ class {$class} extends {$this->baseClass} {\n \n}
         $session = Yii::app()->session['CODEGEN_' . $this->classPath];
         $this->methods = $session['methods'];
         $this->file = $session['file'];
+        $session['timestamp'] = filemtime($this->filePath);
+
         return $session;
     }
 
@@ -122,6 +124,32 @@ class {$class} extends {$this->baseClass} {\n \n}
         return $line;
     }
 
+    public static function varExport($var, $indent = "        ") {
+        switch (gettype($var)) {
+            case "string":
+                return '"' . addcslashes($var, "\\\$\"\r\n\t\v\f") . '"';
+            case "array":
+                $indexed = array_keys($var) === range(0, count($var) - 1);
+                $r = [];
+                foreach ($var as $key => $value) {
+                    $r[] = "$indent    "
+                            . ($indexed ? "" : CodeGenerator::varExport($key) . " => ")
+                            . CodeGenerator::varExport($value, "$indent    ");
+                }
+                $fields = implode(",\n", $r);
+
+                if ($fields == '') {
+                    return '[]';
+                } else {
+                    return "[\n" . $fields . "\n" . $indent . "]";
+                }
+            case "boolean":
+                return $var ? "TRUE" : "FALSE";
+            default:
+                return var_export($var, TRUE);
+        }
+    }
+
     public static function formatCode($fields, $indent = "        ") {
         ## get fields
         $fields = var_export($fields, true);
@@ -131,12 +159,12 @@ class {$class} extends {$this->baseClass} {\n \n}
 
         ## replace unwanted formatting
         $replace = [
-            "  " => '    ',
+            "  "    => '    ',
             "=> \n" => "=>"
         ];
         $fields = str_replace(array_keys($replace), $replace, $fields);
         $replace = [
-            "=>        array (" => '=> array (',
+            "=>        [" => '=> [',
         ];
         $fields = str_replace(array_keys($replace), $replace, $fields);
         $fields = explode("\n", $fields);
@@ -157,8 +185,8 @@ class {$class} extends {$this->baseClass} {\n \n}
         $fields = implode("\n", $fields);
 
         ## remove unwanted formattings
-        $fields = preg_replace('/array\s*\([\n\r\s]*\),/', 'array (),', $fields);
-        $fields = preg_replace('/=>\s*array \(/', '=> array (', $fields);
+        $fields = preg_replace('/\[[\n\r\s]*\\],/', '[],', $fields);
+        $fields = preg_replace('/=>\s*[/', '=> [', $fields);
 
         return $fields;
     }
@@ -345,7 +373,7 @@ class {$class} extends {$this->baseClass} {\n \n}
 
         $default = [
             'visibility' => 'public',
-            'params' => []
+            'params'     => []
         ];
         $options = array_merge($default, $options);
         $params = implode(",", $options['params']);
@@ -373,10 +401,10 @@ EOF;
 
 
         $this->methods[$name] = [
-            'line' => $line,
+            'line'   => $line,
             'length' => $newlength
         ];
-        $this->updateSession();
+        $this->updateSession('JUSTWRITTEN');
 
         $this->save();
     }

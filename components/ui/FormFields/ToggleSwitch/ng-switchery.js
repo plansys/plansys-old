@@ -32,7 +32,7 @@ app.directive('uiSwitch', ['$window', '$timeout', '$log', '$parse',
                 var element = switcher.element;
                 element.checked = scope.initValue;
                 switcher.setPosition(false);
-
+                
                 scope.$watch('initValue', function (n) {
                     if (typeof n == "boolean") {
                         element.checked = n;

@@ -59,7 +59,6 @@
             }
             return a;
         };
-
         var vis = (function () {
             var stateKey,
                     eventKey,
@@ -81,7 +80,6 @@
                 return !document[stateKey];
             }
         })();
-
         vis(function () {
             if (vis()) {
                 console.log("reloading...");
@@ -90,7 +88,6 @@
                 console.log("tab is invisible - has blur");
             }
         });
-
         $scope.inEditor = true;
         $scope.classPath = '<?= $classPath; ?>';
         $scope.fieldMatch = function (scope) {
@@ -140,7 +137,6 @@
             }
 
             $scope.saving = true;
-
             var url = '<?= $this->createUrl("save", ['class' => $classPath, 'timestamp' => $fb->timestamp]); ?>';
             $http.post(url, {form: $scope.form})
                     .success(function (data, status) {
@@ -269,7 +265,6 @@
 
             $scope.saveForm(true);
         };
-
         $scope.changeMenuTreeFile = function () {
             var file = this.value;
             $http.get(Yii.app.createUrl('/dev/menus/getOptions', {
@@ -279,7 +274,6 @@
                     for (i in $scope.layout) {
                         if (["type", "name", "file"].indexOf(i) >= 0)
                             continue;
-
                         if (!!data.layout && !!data.layout[i]) {
                             $scope.layout[i] = data.layout[i];
                         } else {
@@ -301,7 +295,6 @@
             }).error(function () {
                 alert("This menu can not be read (PHP Error)");
             });
-
         }
         $scope.changeLayoutProperties = function () {
             $scope.saveForm();
@@ -323,7 +316,6 @@
         $scope.dataSourceList = {};
         $scope.toolbarSettings = <?php echo json_encode(FormField::settings($formType)); ?>;
         $scope.form = <?php echo json_encode($fb->form); ?>;
-
         /*********************** FIELD LOCAL STORAGE SYNC *****************/
         $scope.$storage = $localStorage;
         $scope.storageWatch = null;
@@ -591,12 +583,24 @@
                 '': '-- EMPTY --',
                 '---': '---'
             };
-            for (i in $scope.fields) {
-                if ($scope.fields[i].type == 'DataSource') {
-                    length++;
-                    dslist[$scope.fields[i].name] = $scope.fields[i].name;
+
+            function recurseFields(f) {
+                for (i in f) {
+                    var x = f[i];
+                    if (typeof f[i] != 'object')
+                        continue;
+
+                    if (f[i].type == 'DataSource') {
+                        dslist[f[i].name] = f[i].name;
+                    }
+
+                    for (k in f[i].parseField) {
+                        recurseFields(x[k]);
+                    }
                 }
             }
+
+            recurseFields($scope.fields);
 
             $scope.dataSourceList = dslist;
         }
@@ -735,7 +739,6 @@
         $scope.save = function () {
             $scope.detectEmptyPlaceholder();
             $scope.saving = true;
-            
             var url = '<?= $this->createUrl("save", ['class' => $classPath, 'timestamp' => $fb->timestamp]); ?>';
             $http.post(url, {fields: $scope.fields})
                     .success(function (data, status) {

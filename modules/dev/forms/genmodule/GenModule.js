@@ -25,26 +25,28 @@ if ($storage['genModule']) {
     $scope.activeTab = $storage['genModule'].activeTab == 2;
 }
 
-$scope.acStatus = '';
-$scope.saveAC = function () {
-    $scope.acStatus = '<span id="ac-status" style="font-size:11px;float:right;margin-left:10px;"><i class="fa fa-spin fa-refresh"></i> Saving...</span>'
+$timeout(function () {
+    $scope.acStatus = '';
+    $scope.saveAC = function () {
+        $scope.acStatus = '<span id="ac-status" style="font-size:11px;float:right;margin-left:10px;"><i class="fa fa-spin fa-refresh"></i> Saving...</span>'
 
-    $http.post(Yii.app.createUrl('/dev/genModule/saveAc', {active: $scope.params.active}), {
-        defaultRule: $scope.model.defaultRule,
-        accessType: $scope.model.accessType,
-        roles: $scope.roleAccessDs.data,
-        users: $scope.userAccessDs.data
-    }).success(function (data) {
-        $scope.acStatus = '<span id="ac-status" style="font-size:11px;color:green;float:right;margin-left:10px;"><i class="fa fa-check"></i> Saved</span>'
-        $timeout(function () {
-            $("#ac-status").fadeOut(4000);
-        })
-    });
-}
+        $http.post(Yii.app.createUrl('/dev/genModule/saveAc', {active: $scope.params.active}), {
+            defaultRule: $scope.model.defaultRule,
+            accessType: $scope.model.accessType,
+            roles: $scope.roleAccessDs.data,
+            users: $scope.userAccessDs.data
+        }).success(function (data) {
+            $scope.acStatus = '<span id="ac-status" style="font-size:11px;color:green;float:right;margin-left:10px;"><i class="fa fa-check"></i> Saved</span>'
+            $timeout(function () {
+                $("#ac-status").fadeOut(4000);
+            })
+        });
+    }
 
-$scope.roleAccess.afterCellEdit = function () {
-    $scope.saveAC();
-}
-$scope.userAccess.afterCellEdit = function () {
-    $scope.saveAC();
-}
+    $scope.roleAccess.afterCellEdit = function () {
+        $scope.saveAC();
+    }
+    $scope.userAccess.afterCellEdit = function () {
+        $scope.saveAC();
+    }
+});

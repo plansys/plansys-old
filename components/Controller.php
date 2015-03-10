@@ -48,6 +48,7 @@ class Controller extends CController {
         }
         $options['params'] = $params;
 
+        $fb->model = $model;
         $renderOptions = array_merge($renderOptions, $options);
         $mainform      = $fb->render($model, $renderOptions);
 
@@ -60,7 +61,6 @@ class Controller extends CController {
         }
 
         $layout = Layout::render($fb->form['layout']['name'], $data, $model, true);
-
         $this->renderText($layout, false);
     }
 

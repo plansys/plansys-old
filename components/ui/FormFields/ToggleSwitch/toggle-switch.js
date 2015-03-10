@@ -10,13 +10,18 @@ app.directive('toggleSwitch', function ($timeout) {
             return function ($scope, $el, attrs, ctrl) {
                 // when ng-model is changed from inside directive
                 $scope.update = function () {
-                    if (typeof ctrl != 'undefined') {
-                        if ($scope.value === true || $scope.value == $scope.onLabel) {
-                            ctrl.$setViewValue(true);
-                        } else {
-                            ctrl.$setViewValue(false);
+                    $timeout(function () {
+                        if (typeof ctrl != 'undefined') {
+                            if ($scope.valueCheckbox === true) {
+                                $scope.valueCheckbox = true;
+                                $scope.value = $scope.onLabel;
+                            } else {
+                                $scope.valueCheckbox = false;
+                                $scope.value = $scope.offLabel;
+                            }
+                            ctrl.$setViewValue($scope.value);
                         }
-                    }
+                    });
                 };
 
                 // when ng-model is changed from outside directive
@@ -26,24 +31,25 @@ app.directive('toggleSwitch', function ($timeout) {
                             return;
 
                         if (typeof ctrl.$viewValue != "undefined") {
-                            $scope.value = ctrl.$viewValue;
+                            $scope.valueCheckbox = ctrl.$viewValue == $scope.onLabel;
                             $scope.update();
                         }
                     };
                 }
 
                 $scope.switch = function () {
-                    $scope.value = !$scope.value;
+                    $scope.valueCheckbox = !$scope.valueCheckbox;
                     $scope.update();
                 };
 
                 // set default value
-                $scope.value = $el.find("data[name=value]").html().trim();
                 $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
+                $scope.options = JSON.parse($el.find("data[name=options]").text());
                 $scope.onLabel = $el.find("data[name=on_label]").html();
                 $scope.offLabel = $el.find("data[name=off_label]").html();
-                $scope.options = JSON.parse($el.find("data[name=options]").text());
+                $scope.value = $el.find("data[name=value]").html().trim();
+                $scope.valueCheckbox = $scope.value == $scope.onLabel;
 
                 // if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {
@@ -52,7 +58,7 @@ app.directive('toggleSwitch', function ($timeout) {
                         if (typeof ngModelValue != "undefined") {
                             $scope.value = ngModelValue;
                         }
-                    }, 0);
+                    });
                 }
             }
         }

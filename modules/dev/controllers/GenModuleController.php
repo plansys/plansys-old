@@ -12,7 +12,7 @@ class GenModuleController extends Controller {
             }
         }
         Asset::registerJS('application.static.js.lib.ace');
-
+        
         $this->renderForm('DevGenModule', $model, [
             'module'      => $model,
             'controllers' => $model->getControllers()
