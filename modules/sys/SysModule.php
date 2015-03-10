@@ -10,15 +10,43 @@ class SysModule extends CWebModule {
         ));
     }
 
-    public function beforeControllerAction($controller, $action) {
-        if (parent::beforeControllerAction($controller, $action)) {
-            if (Yii::app()->user->isGuest) {
-                throw new CHttpException(403, "Anda tidak memiliki hak untuk mengakses halaman ini.");
-            }
-
-            return true;
-        } else
-            return false;
+    public function beforeControllerAction($controller,$action) {
+        ####### GENERATED CODE - DO NOT EDIT #######
+        $mode = "DEFAULT";
+        $defaultRule = "deny";
+        $rolesRule = [
+            "deny" => [],
+            "allow" => []
+        ];
+        $usersRule = [
+            "deny" => [],
+            "allow" => []
+        ];
+        ####### END OF PLANSYS GENERATED CODE ######
+        
+        parent::beforeControllerAction($controller, $action);
+        $allowed = ($defaultRule == "allow");
+        $roleId = Yii::app()->user->roleId;
+        $userId = Yii::app()->user->id;
+        
+        if (in_array($roleId, $rolesRule["deny"]))  { 
+            $allowed = false; 
+        }
+        if (in_array($roleId, $rolesRule["allow"])) { 
+            $allowed = true; 
+        }
+        if (in_array($userId, $usersRule["deny"]))  { 
+            $allowed = false; 
+        }
+        if (in_array($userId, $usersRule["allow"])) { 
+            $allowed = true;
+        }
+        
+        if (!$allowed) {
+            throw new CHttpException(403);
+        }
+        
+        return true;
     }
 
 }
