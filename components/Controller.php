@@ -19,7 +19,7 @@ class Controller extends CController {
     public function staticUrl($path) {
         $static = "/static";
         if (substr(Yii::app()->baseUrl, -7) != "plansys") {
-            $dir    = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
+            $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
             $static = "/" . array_pop($dir) . "/static";
         }
 
@@ -27,15 +27,15 @@ class Controller extends CController {
     }
 
     public function staticAppUrl($path) {
-        $dir    = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
+        $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
         $static = "/" . array_pop($dir) . "/static";
         return $this->url($static . $path);
     }
 
     public function renderForm($class, $model = null, $params = [], $options = []) {
-        $fb              = FormBuilder::load($class);
+        $fb = FormBuilder::load($class);
         $this->pageTitle = $fb->form['title'];
-        $this->layout    = '//layouts/form';
+        $this->layout = '//layouts/form';
 
         $renderOptions = [
             'wrapForm' => true,
@@ -44,13 +44,17 @@ class Controller extends CController {
 
         if (is_array($model)) {
             $params = $model;
-            $model  = null;
+            $model = null;
         }
+
+        if (is_object($model)) {
+            $fb->model = $model;
+        }
+
         $options['params'] = $params;
 
-        $fb->model = $model;
         $renderOptions = array_merge($renderOptions, $options);
-        $mainform      = $fb->render($model, $renderOptions);
+        $mainform = $fb->render($model, $renderOptions);
 
         $data = $fb->form['layout']['data'];
 
@@ -136,7 +140,7 @@ class Controller extends CController {
         if (Yii::app()->user->isGuest) {
             return $default;
         } else {
-            $module   = Yii::app()->user->role;
+            $module = Yii::app()->user->role;
             $menuPath = Yii::app()->user->menuPath;
             $menuPath = $menuPath == '' ? 'MainMenu' : $menuPath;
 

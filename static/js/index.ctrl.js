@@ -23,7 +23,7 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
     }
     $scope.getParent = function (s) {
         var parent = s.$parent;
-        while (!parent.hasOwnProperty('Yii') && !!parent.$parent) {
+        while (!parent.hasOwnProperty('modelBaseClass') && !!parent.$parent) {
             parent = parent.$parent;
         }
         return parent;
