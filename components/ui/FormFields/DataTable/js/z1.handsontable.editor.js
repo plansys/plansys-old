@@ -67,6 +67,7 @@
     var RelationEditor = Handsontable.editors.AutocompleteEditor.prototype.extend();
     RelationEditor.prototype.open = function () {
         this.cellProperties.opened = true;
+        this.TEXTAREA.value = '';
         Handsontable.editors.AutocompleteEditor.prototype.open.apply(this, arguments);
     };
     RelationEditor.prototype.close = function () {
