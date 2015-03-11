@@ -523,9 +523,9 @@ class FormBuilder extends CComponent {
         $this->tidyRecursive($fields, $multiline);
 
         if (is_subclass_of($this->model, 'FormField')) {
-            $this->updateFunctionBody('getFieldProperties', $fields, "", $multiline);
+            return $this->updateFunctionBody('getFieldProperties', $fields, "", $multiline);
         } else {
-            $this->updateFunctionBody('getFields', $fields, "", $multiline);
+            return $this->updateFunctionBody('getFields', $fields, "", $multiline);
         }
     }
 
@@ -590,7 +590,7 @@ class FormBuilder extends CComponent {
                 }
             }
         }
-        $this->updateFunctionBody('getForm', $form);
+        return $this->updateFunctionBody('getForm', $form);
     }
 
     /**
@@ -1081,7 +1081,11 @@ EOF;
 
         $this->file = $file;
 
-        $fp = fopen($sourceFile, 'r+');
+        $fp = @fopen($sourceFile, 'r+');
+        if (!$fp) {
+            return false;
+        }
+        
         ## write new function to sourceFile
         if (flock($fp, LOCK_EX)) { // acquire an exclusive lock
             ftruncate($fp, 0); // truncate file
@@ -1098,6 +1102,8 @@ EOF;
                 'methods'    => $this->methods,
                 'timestamp'  => $this->timestamp
             ];
+            
+            return true;
         } else {
             echo "ERROR: Couldn't lock source file '{$sourceFile}'!";
             die();

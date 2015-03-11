@@ -3,18 +3,20 @@
 class GenModuleController extends Controller {
 
     public function actionIndex() {
+
         $model = new DevGenModule;
 
         if (isset($_GET['active'])) {
             $model->load($_GET['active']);
+            $model->checkSync();
             if (is_null($model->module)) {
                 $model = new DevGenModule;
             }
         }
         Asset::registerJS('application.static.js.lib.ace');
-        
+
         $this->renderForm('DevGenModule', $model, [
-            'module'      => $model,
+            'module' => $model,
             'controllers' => $model->getControllers()
         ]);
     }
@@ -26,6 +28,11 @@ class GenModuleController extends Controller {
         $model = new DevGenModule;
         $model->load($active);
         $model->module->updateAccessControl($post);
+        if ($model->accessType == 'DEFAULT' && $model->module->accessType == 'CUSTOM') {
+            echo json_encode([
+                'acSource' => $model->module->acSource
+            ]);
+        }
     }
 
     public function actionSaveImport($active) {
@@ -35,6 +42,8 @@ class GenModuleController extends Controller {
         $model = new DevGenModule;
         $model->load($active);
         $model->module->updateImport($post['code']);
+        
+        echo json_encode($model->checkSync());
     }
 
     public function actionGenImport($active) {
@@ -61,12 +70,12 @@ class GenModuleController extends Controller {
         if (is_null($model->module)) {
             echo json_encode([
                 'success' => false,
-                'error'   => $model->error
+                'error' => $model->error
             ]);
         } else {
             echo json_encode([
                 'success' => true,
-                'alias'   => $module . '.' . $name
+                'alias' => $module . '.' . $name
             ]);
         }
     }

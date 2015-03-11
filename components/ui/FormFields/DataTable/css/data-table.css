@@ -323,12 +323,12 @@
 
 .handsontable .autocompleteEditor.handsontable {
     background: #ddd;
-    padding-right: 0px;
+    padding-right: 0px !important;
     border: 1px solid #ddd;
     overflow: hidden !important;
 }
 .handsontable .autocompleteEditor.handsontable:hover {
-    padding-right: 17px;
+    padding-right: 17px !important;
     overflow: auto !important;
 }
 

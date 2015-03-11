@@ -203,7 +203,6 @@ class FormsController extends Controller {
             $postdata = file_get_contents("php://input");
             $post = CJSON::decode($postdata);
             $session = Yii::app()->session['FormBuilder_' . $class];
-            var_dump($session);
             $fb = FormBuilder::load($class);
 
             if (isset($post['fields'])) {
@@ -213,7 +212,9 @@ class FormsController extends Controller {
                 }
 
                 //save posted fields
-                $fb->fields = $post['fields'];
+                if (!$fb->setFields($post['fields'])) {
+                    echo "FAILED: PERMISSION DENIED";
+                }
             } else if (isset($post['form'])) {
                 if (is_array($post['form']['layout']['data'])) {
 
@@ -228,7 +229,9 @@ class FormsController extends Controller {
                 }
 
                 //save posted form
-                $fb->form = $post['form'];
+                if (!$fb->setForm($post['form'])) {
+                    echo "FAILED: PERMISSION DENIED";
+                }
             }
         } else {
             echo "FAILED";

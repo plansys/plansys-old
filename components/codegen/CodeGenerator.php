@@ -12,6 +12,9 @@ abstract class CodeGenerator extends CComponent {
     protected $methods = [];
 
     public function load($class) {
+        Yii::setPathOfAlias('gii', Yii::getPathOfAlias('application.framework.gii'));
+        Yii::import('gii.components.*');
+        
         if (!is_string($class)) {
             throw new Exception("\$class parameter should be string");
         }
@@ -52,7 +55,7 @@ class {$class} extends {$this->baseClass} {\n \n}
                     $line = $m->getStartLine() - 1;
                     $length = $m->getEndLine() - $line;
                     $this->methods[$m->name] = [
-                        'line'   => $line,
+                        'line' => $line,
                         'length' => $length
                     ];
                 }
@@ -69,8 +72,8 @@ class {$class} extends {$this->baseClass} {\n \n}
 
     protected function updateSession($timestamp = null) {
         Yii::app()->session['CODEGEN_' . $this->classPath] = [
-            'methods'   => $this->methods,
-            'file'      => $this->file,
+            'methods' => $this->methods,
+            'file' => $this->file,
             'timestamp' => is_null($timestamp) ? filemtime($this->filePath) : $timestamp
         ];
     }
@@ -150,45 +153,58 @@ class {$class} extends {$this->baseClass} {\n \n}
         }
     }
 
-    public static function formatCode($fields, $indent = "        ") {
-        ## get fields
-        $fields = var_export($fields, true);
+    public function varToString($var, $indent = "        ") {
+        if (is_array($var)) {
+            array_pop($var);
+            array_shift($var);
+            $var = $this->removeIndent($var, $indent);
+            $var = implode("\n", $var);
+        }
 
-        ## strip numerical array keys
-        $fields = preg_replace("/[0-9]+\s*\=\> /i", '', $fields);
+        return $var;
+    }
 
-        ## replace unwanted formatting
-        $replace = [
-            "  "    => '    ',
-            "=> \n" => "=>"
-        ];
-        $fields = str_replace(array_keys($replace), $replace, $fields);
-        $replace = [
-            "=>        [" => '=> [',
-        ];
-        $fields = str_replace(array_keys($replace), $replace, $fields);
-        $fields = explode("\n", $fields);
+    public function removeIndent($code, $indent = "        ") {
+        $mode = "array";
+        if (is_string($code)) {
+            $code = explode("\n", $code);
+            $mode = "string";
+        }
 
-        ## indent each line
-        $count = count($fields);
-        foreach ($fields as $k => $f) {
-            if ($k == 0)
-                continue;
-
-            $fields[$k] = $indent . $f;
-            if ($k > 0 && $k < $count - 1) {
-                if (trim($f) == "") {
-                    unset($fields[$k]);
+        if (is_array($code)) {
+            $lenIndent = strlen($indent);
+            foreach ($code as $k => $c) {
+                if (substr($c, 0, $lenIndent) == $indent) {
+                    $code[$k] = substr($c, $lenIndent);
                 }
             }
+
+            if ($mode == "string") {
+                $code = implode("\n", $code);
+            }
         }
-        $fields = implode("\n", $fields);
 
-        ## remove unwanted formattings
-        $fields = preg_replace('/\[[\n\r\s]*\\],/', '[],', $fields);
-        $fields = preg_replace('/=>\s*[/', '=> [', $fields);
+        return $code;
+    }
 
-        return $fields;
+    public function addIndent($code, $indent = "        ") {
+        $mode = "array";
+        if (is_string($code)) {
+            $code = explode("\n", $code);
+            $mode = "string";
+        }
+
+        if (is_array($code)) {
+            foreach ($code as $k => $c) {
+                $code[$k] = $indent . rtrim($c);
+            }
+
+            if ($mode == "string") {
+                $code = implode("\n", $code);
+            }
+        }
+
+        return $code;
     }
 
     protected function prepareLineForMethod() {
@@ -373,7 +389,7 @@ class {$class} extends {$this->baseClass} {\n \n}
 
         $default = [
             'visibility' => 'public',
-            'params'     => []
+            'params' => []
         ];
         $options = array_merge($default, $options);
         $params = implode(",", $options['params']);
@@ -401,7 +417,7 @@ EOF;
 
 
         $this->methods[$name] = [
-            'line'   => $line,
+            'line' => $line,
             'length' => $newlength
         ];
         $this->updateSession('JUSTWRITTEN');

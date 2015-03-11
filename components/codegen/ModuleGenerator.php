@@ -8,6 +8,7 @@ class ModuleGenerator extends CodeGenerator {
     public $accessType = '';
     public $rolesRule = [];
     public $usersRule = [];
+    public $acSource = '';
 
     public static function listModuleForMenuTree() {
         $list = [];
@@ -21,11 +22,11 @@ class ModuleGenerator extends CodeGenerator {
                 $classPath = $f . DIRECTORY_SEPARATOR . ucfirst($label) . 'Module.php';
                 if (is_file($classPath)) {
                     $plansysList[$label] = [
-                        'label'  => $label,
+                        'label' => $label,
                         'module' => 'plansys',
-                        'icon'   => 'fa-empire',
+                        'icon' => 'fa-empire',
                         'active' => @$_GET['active'] == 'plansys.' . $label,
-                        'url'    => Yii::app()->controller->createUrl('/dev/genModule/index', [
+                        'url' => Yii::app()->controller->createUrl('/dev/genModule/index', [
                             'active' => 'plansys.' . $label
                         ])
                     ];
@@ -33,9 +34,9 @@ class ModuleGenerator extends CodeGenerator {
             }
 
             $list[] = [
-                'label'  => 'Plansys',
+                'label' => 'Plansys',
                 'module' => 'plansys',
-                'items'  => $plansysList
+                'items' => $plansysList
             ];
         }
 
@@ -48,11 +49,11 @@ class ModuleGenerator extends CodeGenerator {
             if (is_file($classPath)) {
 
                 $appList[$label] = [
-                    'label'  => $label,
+                    'label' => $label,
                     'module' => 'app',
-                    'icon'   => 'fa-empire',
+                    'icon' => 'fa-empire',
                     'active' => @$_GET['active'] == 'app.' . $label,
-                    'url'    => Yii::app()->controller->createUrl('/dev/genModule/index', [
+                    'url' => Yii::app()->controller->createUrl('/dev/genModule/index', [
                         'active' => 'app.' . $label
                     ])
                 ];
@@ -60,9 +61,9 @@ class ModuleGenerator extends CodeGenerator {
         }
 
         $list[] = [
-            'label'  => 'App',
+            'label' => 'App',
             'module' => 'app',
-            'items'  => $appList
+            'items' => $appList
         ];
         return $list;
     }
@@ -92,8 +93,15 @@ class ModuleGenerator extends CodeGenerator {
                 }
 
                 $m->generateImport(true);
+                $m->updateAccessControl([
+                    'accessType' => 'DEFAULT',
+                    'defaultRule' => 'deny',
+                    'roles' => [],
+                    'users' => []
+                ]);
+            } else {
+                $m->loadAccessControl();
             }
-            $m->loadAccessControl();
             return $m;
         } else {
             return null;
@@ -102,7 +110,7 @@ class ModuleGenerator extends CodeGenerator {
 
     private function expandAccessControlArray($array, $key) {
         $prepared = [
-            'deny'  => [],
+            'deny' => [],
             'allow' => []
         ];
 
@@ -130,22 +138,58 @@ class ModuleGenerator extends CodeGenerator {
         foreach ($array['allow'] as $d) {
             $result[] = [
                 $key . "" => $d,
-                'access'  => 'allow'
+                'access' => 'allow'
             ];
         }
         foreach ($array['deny'] as $d) {
             $result[] = [
                 $key . "" => $d,
-                'access'  => 'deny'
+                'access' => 'deny'
             ];
         }
         return $result;
     }
 
+    public function checkAccessType() {
+        $func = $this->getFunctionBody('accessControl');
+        if (empty($func)) {
+            return "DEFAULT";
+        } else {
+            $startLine = false;
+            $lineLength = false;
+            foreach ($func as $k => $f) {
+                $tf = trim($f);
+                if (!$startLine) {
+                    if (substr($tf, 0, 10) == substr(ModuleGenerator::GEN_COMMENT_START, 0, 10)) {
+                        $startLine = $k + 1;
+                    }
+                } else if ($startLine && !$lineLength) {
+                    if (substr($tf, 0, 10) == substr(ModuleGenerator::GEN_COMMENT_END, 0, 10)) {
+                        $lineLength = $k - $startLine;
+                    }
+                }
+            }
+            if (!!$startLine && !!$lineLength) {
+                $func = array_splice($func, $startLine, $lineLength);
+                $func = implode("\n", $func);
+                eval($func);
+                if (isset($accessType)) {
+                    return $accessType;
+                } else {
+                    return "CUSTOM";
+                }
+            } else {
+                return "CUSTOM";
+            }
+        }
+    }
+
     public function loadAccessControl() {
         $startLine = false;
         $lineLength = false;
-        $func = $this->getFunctionBody('beforeControllerAction');
+        $func = $this->getFunctionBody('accessControl');
+        $this->acSource = $this->varToString($func);
+
         foreach ($func as $k => $f) {
             $tf = trim($f);
             if (!$startLine) {
@@ -158,27 +202,28 @@ class ModuleGenerator extends CodeGenerator {
                 }
             }
         }
-        $func = array_splice($func, $startLine, $lineLength);
-        $func = implode("\n", $func);
-        eval($func);
 
-        if (isset($mode, $defaultRule, $rolesRule, $usersRule)) {
-            $this->defaultRule = $defaultRule;
-            $this->accessType = $mode;
-            $this->rolesRule = $this->flattenAccessControlArray($rolesRule, 'role');
-            $this->usersRule = $this->flattenAccessControlArray($usersRule, 'user');
+        if (!!$startLine && !!$lineLength) {
+            $func = array_splice($func, $startLine, $lineLength);
+            $func = implode("\n", $func);
+            eval($func);
+
+            if (isset($accessType, $defaultRule, $rolesRule, $usersRule)) {
+                $this->defaultRule = $defaultRule;
+                $this->accessType = $accessType;
+                $this->rolesRule = $this->flattenAccessControlArray($rolesRule, 'role');
+                $this->usersRule = $this->flattenAccessControlArray($usersRule, 'user');
+            }
         }
-
-        return [];
     }
 
-    CONST GEN_COMMENT_START = "####### GENERATED CODE - DO NOT EDIT #######";
-    CONST GEN_COMMENT_END = "####### END OF PLANSYS GENERATED CODE ######";
+    CONST GEN_COMMENT_START = "####### PLANSYS GENERATED CODE: START #######";
+    CONST GEN_COMMENT_END   = "####### PLANSYS GENERATED CODE:  END  #######";
 
     public function updateAccessControl($post) {
         $code = [];
         $accessType = $post['accessType'];
-        if ($accessType) {
+        if ($accessType == 'DEFAULT') {
             ## PREPARE VARS
             $defaultRule = $post['defaultRule'] != 'allow' ? 'deny' : 'allow';
             $roles = $this->expandAccessControlArray($post['roles'], 'role');
@@ -188,7 +233,7 @@ class ModuleGenerator extends CodeGenerator {
 
             ## PREPARE GENERATED VARS
             $code[] = ModuleGenerator::GEN_COMMENT_START;
-            $code[] = '$mode = "DEFAULT";';
+            $code[] = '$accessType = "' . $accessType . '";';
             $code[] = '$defaultRule = "' . $defaultRule . '";';
             $code[] = '$rolesRule = ' . $rolesCode . ';';
             $code[] = '$usersRule = ' . $usersCode . ';';
@@ -196,7 +241,6 @@ class ModuleGenerator extends CodeGenerator {
             $code[] = '';
 
             ## START ACTUAL CODE
-            $code[] = 'parent::beforeControllerAction($controller, $action);';
             $code[] = '$allowed = ($defaultRule == "allow");';
             $code[] = '$roleId = Yii::app()->user->roleId;';
             $code[] = '$userId = Yii::app()->user->id;';
@@ -217,22 +261,34 @@ class ModuleGenerator extends CodeGenerator {
             $code[] = 'if (!$allowed) {';
             $code[] = '    throw new CHttpException(403);';
             $code[] = '}';
-            $code[] = '';
-            $code[] = 'return true;';
+
+            $space = '        ';
+            $code = $space . implode("\n{$space}", $code);
+
+            $this->accessType = 'DEFAULT';
+            $this->defaultRule = $defaultRule;
+            $this->rolesRule = $post['roles'];
+            $this->usersRule = $post['users'];
+            $this->acSource = $code;
         } else {
-            
+            $code = explode("\n", $post['code']);
+            if ($code[1] == '$accessType = "DEFAULT";') {
+                $code[1] = '$accessType = "CUSTOM";';
+            }
+            $code = implode("\n", $code);
+            $this->accessType = "CUSTOM";
+            $this->acSource = $code;
+
+            $code = $this->addIndent($post['code']);
         }
 
-        $space = '        ';
-        $code = $space . implode("\n{$space}", $code);
-
-        $this->updateFunction('beforeControllerAction', $code, [
+        $this->updateFunction('accessControl', $code, [
             'params' => ['$controller', '$action']
         ]);
     }
 
     public function updateImport($code) {
-        $this->updateFunction('init', $code);
+        $this->updateFunction('init', $this->addIndent($code));
     }
 
     public function getControllers() {
@@ -247,10 +303,10 @@ class ModuleGenerator extends CodeGenerator {
                 $file = $item->getFilename();
                 $class = basename($item->getFilename(), ".php");
                 $controllers[] = [
-                    'file'  => $file,
+                    'file' => $file,
                     'class' => $class,
                     'alias' => $this->basePath . '.controllers.' . $class,
-                    'path'  => $path
+                    'path' => $path
                 ];
             }
         }
@@ -258,7 +314,7 @@ class ModuleGenerator extends CodeGenerator {
     }
 
     public function getAliasArray($dirs = [], $options = [
-        'append'  => '',
+        'append' => '',
         'prepend' => ''
     ]) {
         $result = [];
@@ -278,18 +334,16 @@ class ModuleGenerator extends CodeGenerator {
         return $result;
     }
 
-    public function listImport() {
+    public function loadImport() {
         $imports = $this->getFunctionBody('init');
-        array_pop($imports);
-        array_shift($imports);
-        return implode("\n", $imports);
+        return $this->varToString($imports);
     }
 
     public function generateImport($executeImport = false) {
         $importedFolders = ['controllers', 'forms', 'components', 'models', 'consoles'];
         $space = "            ";
         $imports = $space . implode(",\n{$space}", $this->getAliasArray($importedFolders, [
-                            'append'  => '.*\'',
+                            'append' => '.*\'',
                             'prepend' => '\''
         ]));
         $source = <<<EOF

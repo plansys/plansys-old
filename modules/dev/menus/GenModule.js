@@ -31,7 +31,7 @@ $scope.contextMenu = [
         hr: true,
         visible: function (item) {
             return !!item.$parent;
-        },
+        }
     },
     {
         icon: "fa fa-fw fa-trash",

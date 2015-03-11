@@ -146,7 +146,10 @@
                             $scope.mustReload = true;
                             $("#must-reload").show();
                             location.reload();
+                        } else if (data == 'FAILED: PERMISSION DENIED') {
+                            alert('ERROR: Failed to write file\nReason: Permission Denied');
                         }
+
                     })
                     .error(function (data, status) {
                         $scope.saving = false;
@@ -625,6 +628,9 @@
             }
         }
         $scope.generateIdentity = function (field) {
+            if (field.renderID == '')
+                return '';
+
             if (!!field.name) {
                 var name = $scope.formatName(field.name);
                 switch (field.type) {
@@ -637,14 +643,14 @@
                 }
             }
         }
-
         $scope.detectDuplicate = function () {
             $(".duplicate").addClass('ng-hide').each(function () {
                 if ($(this).attr('fname') == '')
                     return;
+                
                 var name = ".d-" + $scope.formatName($(this).attr('fname'));
                 var $name = $(name);
-                if (name.trim() != ".d-" && name.indexOf("text/") != 0) {
+                if (name.trim() != ".d-") {
                     if ($name.length > 1) {
                         $(this).removeClass('ng-hide');
                     }
@@ -748,6 +754,8 @@
                             $scope.mustReload = true;
                             $("#must-reload").show();
                             location.reload();
+                        } else if (data == 'FAILED: PERMISSION DENIED') {
+                            alert('ERROR: Failed to write file\nReason: Permission Denied');
                         }
                     })
                     .error(function (data, status) {
