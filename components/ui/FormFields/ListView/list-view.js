@@ -9,7 +9,8 @@ app.directive('listView', function ($timeout) {
 
             return function ($scope, $el, attrs, ctrl) {
                 var parent = $scope.getParent($scope);
-                
+                $scope.parent = parent;
+
                 // when ng-model is changed from inside directive
                 $scope.updateListView = function () {
                     if (typeof ctrl != 'undefined') {
@@ -19,13 +20,32 @@ app.directive('listView', function ($timeout) {
                     }
                 };
 
-                $scope.typeof = function(val) {
-                    return typeof val;
+                $scope.showUndoDelete = false;
+                $scope.deleted = {
+                    idx: -1,
+                    data: null
+                };
+                $scope.undo = function () {
+                    if (!!$scope.deleted.data) {
+                        console.log($scope.deleted);
+                        $scope.value.splice($scope.deleted.idx, 0, $scope.deleted.data);
+                        $scope.deleted = {
+                            idx: -1,
+                            data: null
+                        };
+                        $scope.updateListView();
+                        $scope.showUndoDelete = false;
+                    }
                 }
 
                 $scope.removeItem = function (index) {
-                    $scope.value.splice(index, 1);
+                    var d = $scope.value.splice(index, 1);
+                    $scope.deleted = {
+                        idx: index,
+                        data: d[0]
+                    };
                     $scope.updateListView();
+                    $scope.showUndoDelete = true;
                 }
 
                 $scope.addItem = function (e) {
@@ -101,6 +121,14 @@ app.directive('listView', function ($timeout) {
                 $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
                 $scope.templateAttr = JSON.parse($el.find("data[name=template_attr]").html().trim());
                 $scope.options = JSON.parse($el.find("data[name=options]").html().trim());
+
+                $timeout(function () {
+                    $scope.$watch('value', function (n, o) {
+                        if (n !== o) {
+                            ctrl.$setViewValue($scope.value);
+                        }
+                    }, true);
+                });
 
                 // if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {

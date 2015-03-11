@@ -33,11 +33,9 @@ class GenModuleController extends Controller {
         $model = new DevGenModule;
         $model->load($active);
         $model->module->updateAccessControl($post);
-        if ($model->accessType == 'DEFAULT' && $model->module->accessType == 'CUSTOM') {
-            echo json_encode([
-                'acSource' => $model->module->acSource
-            ]);
-        }
+        echo json_encode([
+            'acSource' => $model->module->removeIndent($model->module->acSource)
+        ]);
     }
 
     public function actionSaveImport($active) {

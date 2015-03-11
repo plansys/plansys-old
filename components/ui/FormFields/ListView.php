@@ -25,15 +25,15 @@ class ListView extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'Field Template',
+                'label' => 'List Type',
                 'name' => 'fieldTemplate',
                 'options' => array (
                     'ng-model' => 'active.fieldTemplate',
                     'ng-change' => 'save();',
                 ),
                 'list' => array (
-                    'default' => 'Default',
-                    'form' => 'Form',
+                    'default' => 'Single Field',
+                    'form' => 'SubForm',
                 ),
                 'otherLabel' => 'Other...',
                 'type' => 'DropDownList',
@@ -60,14 +60,6 @@ class ListView extends FormField {
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
-            ),
-            array (
-                'value' => '<div ng-show=\"active.fieldTemplate == \'form\'\" class=\"well well-sm\">
-Use this code to access current item: <br/> 
-<code>ng-model = value[$index]</code><br/>
-    <code> ng-change = updateListView() </code> 
-</div>',
-                'type' => 'Text',
             ),
             array (
                 'label' => 'Label',

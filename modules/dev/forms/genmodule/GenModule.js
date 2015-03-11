@@ -54,9 +54,10 @@ $timeout(function () {
             post = {
                 accessType: $scope.model.accessType,
                 defaultRule: $scope.model.defaultRule,
-                roles: !!$scope.roleAccessDs ? $scope.roleAccessDs.data : [],
+                roles: $scope.model.rolesRule,
                 users: !!$scope.userAccessDs ? $scope.userAccessDs.data : []
             };
+            console.log($scope.model.rolesRule);
         }
 
         $http.post(Yii.app.createUrl('/dev/genModule/saveAc', {active: $scope.params.active}), post).success(function (data) {
@@ -72,10 +73,6 @@ $timeout(function () {
         });
     }
     if ($scope.roleAccess) {
-        $scope.roleAccess.afterCellEdit = function () {
-            $scope.saveAC();
-        };
-
         $scope.userAccess.afterCellEdit = function () {
             $scope.saveAC();
         };

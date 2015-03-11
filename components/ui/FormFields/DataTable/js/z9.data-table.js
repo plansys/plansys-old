@@ -316,8 +316,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     c.listItem = parent.$eval(c.listExpr);
                                 }
                                 colDef.source = parent.$eval(c.listItem);
+                                colDef.source = $.map(colDef.source, $.trim);
                                 if (typeof c.listValues != 'undefined') {
                                     colDef.sourceValues = parent.$eval(c.listValues);
+                                    colDef.sourceValues = $.map(colDef.sourceValues, $.trim);
                                 }
                                 if (c.listMustChoose == 'Yes' && colDef.source.length > 0) {
                                     colDef.defaultValue = colDef.sourceValues[0];

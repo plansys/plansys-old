@@ -12,6 +12,10 @@
             }
         }
 
+        if (typeof value == 'string') {
+            value = value.trim();
+        }
+
         var idx = cp.sourceValues.indexOf(value);
         if (idx < 0) {
             idx = cp.source.indexOf(value);
@@ -43,7 +47,7 @@
             idx = cp.source.indexOf(value);
             if (idx >= 0) {
                 value = cp.sourceValues[idx];
-                $scope.updateDSCell(row, prop, value);
+                $scope.updateDSCell(this.row, this.prop, value);
             }
         }
         value = cp.source[idx];

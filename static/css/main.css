@@ -1314,6 +1314,10 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     z-index: 1;
     margin-top: 2px;
 }
+.list-view-item-remove:hover {
+    background:#ececeb;
+    color:red;
+}
 
 .list-view-item-move {
     opacity: .5;
@@ -1330,11 +1334,16 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 .list-view-item-container {
     margin-right: 22px;
     margin-left: 22px;
-    padding: 4px 4px 4px 4px;
+    padding: 4px 4px 0px 4px;
     border-left: 1px solid #ececeb;
     border-right: 1px solid #ececeb;
     background: white;
     min-height: 25px;
+    opacity:0;
+}
+
+[list-view] .list-view-item-container {
+    opacity:1;
 }
 
 .list-view-item-container td {

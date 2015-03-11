@@ -370,59 +370,12 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                         'type' => 'SectionHeader',
                     ),
                     array (
-                        'name' => 'roleAccessDs',
-                        'fieldType' => 'php',
-                        'php' => '$model->rolesRule',
-                        'postData' => 'No',
-                        'type' => 'DataSource',
-                    ),
-                    array (
-                        'name' => 'roleAccess',
-                        'datasource' => 'roleAccessDs',
-                        'columns' => array (
-                            array (
-                                'name' => 'role',
-                                'label' => 'Role',
-                                'options' => array (
-                                    'width' => '250',
-                                ),
-                                'columnType' => 'relation',
-                                'show' => false,
-                                'relParams' => array (),
-                                'relCriteria' => array (
-                                    'select' => '',
-                                    'distinct' => 'false',
-                                    'alias' => 't',
-                                    'condition' => '{[search]}',
-                                    'order' => '',
-                                    'group' => '',
-                                    'having' => '',
-                                    'join' => '',
-                                ),
-                                'relModelClass' => 'application.models.Role',
-                                'relIdField' => 'id',
-                                'relLabelField' => 'role_name',
-                            ),
-                            array (
-                                'name' => 'access',
-                                'label' => 'Access',
-                                'options' => array (
-                                    'width' => '70',
-                                ),
-                                'columnType' => 'dropdown',
-                                'show' => true,
-                                'listType' => 'php',
-                                'listExpr' => '[
-\'allow\' => \'Allow\',
-\'deny\' => \' Deny\'
- ]',
-                                'listMustChoose' => 'Yes',
-                            ),
-                        ),
-                        'gridOptions' => array (
-                            'minSpareRows' => '1',
-                        ),
-                        'type' => 'DataTable',
+                        'name' => 'rolesRule',
+                        'fieldTemplate' => 'form',
+                        'templateForm' => 'application.modules.dev.forms.genmodule.DevGenModuleAccess',
+                        'labelWidth' => '0',
+                        'fieldWidth' => '12',
+                        'type' => 'ListView',
                     ),
                 ),
                 'column2' => array (
