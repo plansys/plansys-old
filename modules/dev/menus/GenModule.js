@@ -28,6 +28,31 @@ $scope.contextMenu = [
         }
     },
     {
+        icon: "fa fa-fw fa-edit",
+        label: "Rename Module",
+        visible: function (item) {
+            return !!item.$parent;
+        },
+        click: function (item, e) {
+            var name = prompt('Please enter new module name:', item.label);
+            if (!!name) {
+                $http.get(Yii.app.createUrl('/dev/genModule/rename', {
+                    f: item.module + "." + item.label,
+                    t: item.module + "." + name
+                })).success(function (status) {
+                    if (status != "SUCCESS") {
+                        alert(status);
+                    } else {
+                        location.href = Yii.app.createUrl('/dev/genModule/index', {
+                            active: item.module + "." + name,
+                            gi: 1
+                        });
+                    }
+                });
+            }
+        }
+    },
+    {
         hr: true,
         visible: function (item) {
             return !!item.$parent;

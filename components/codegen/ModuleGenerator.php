@@ -71,7 +71,7 @@ class ModuleGenerator extends CodeGenerator {
     public static function create($classAlias) {
         $module = ModuleGenerator::init($classAlias);
     }
-
+    
     public static function init($classAlias, $mode = 'load') {
         $m = new ModuleGenerator;
         $path = explode('.', $classAlias);
@@ -80,7 +80,7 @@ class ModuleGenerator extends CodeGenerator {
         $path[count($path) - 1] = lcfirst($path[count($path) - 1]);
         $m->basePath = implode(".", $path);
 
-        if (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $class)) {
+        if (Helper::isValidVar($class)) {
             $m->load($class);
 
             if ($mode == 'create') {

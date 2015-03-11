@@ -14,6 +14,10 @@ class Helper {
         }
     }
 
+    public static function isValidVar($var) {
+        return preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $var);
+    }
+
     public static function timeToHour($time) {
         return strtotime('1970-01-01 ' . $time . 'GMT') / 3600;
     }
@@ -24,9 +28,9 @@ class Helper {
 
     public static function generateMonthInterval($start, $end) {
         $startInt = new DateTime($start);
-        $endInt   = new DateTime($end);
+        $endInt = new DateTime($end);
         $interval = DateInterval::createFromDateString('1 month');
-        $period   = new DatePeriod($startInt, $interval, $endInt);
+        $period = new DatePeriod($startInt, $interval, $endInt);
         return $period;
     }
 
@@ -41,9 +45,9 @@ class Helper {
 
     public static function generateDayInterval($start, $end) {
         $startInt = new DateTime($start);
-        $endInt   = (new DateTime($end))->modify('+1 day');
+        $endInt = (new DateTime($end))->modify('+1 day');
         $interval = DateInterval::createFromDateString('1 day');
-        $period   = new DatePeriod($startInt, $interval, $endInt);
+        $period = new DatePeriod($startInt, $interval, $endInt);
 
         return $period;
     }
@@ -79,7 +83,7 @@ class Helper {
     public static function getLastModified($class) {
         if (class_exists($class)) {
             $reflector = new ReflectionClass($class);
-            $fn        = $reflector->getFileName();
+            $fn = $reflector->getFileName();
             return filemtime($fn);
         } else {
             return 0;
@@ -113,8 +117,8 @@ class Helper {
      * @return array
      */
     public static function getClassProperties($className, $types = 'public') {
-        $ref       = new ReflectionClass($className);
-        $props     = $ref->getProperties();
+        $ref = new ReflectionClass($className);
+        $props = $ref->getProperties();
         $props_arr = [];
         foreach ($props as $prop) {
             $f = $prop->getName();
@@ -133,7 +137,7 @@ class Helper {
         if ($parentClass = $ref->getParentClass()) {
             $parent_props_arr = Helper::getClassProperties($parentClass->getName()); //RECURSION 
             if (count($parent_props_arr) > 0)
-                $props_arr        = array_merge($parent_props_arr, $props_arr);
+                $props_arr = array_merge($parent_props_arr, $props_arr);
         }
         return $props_arr;
     }
@@ -143,10 +147,10 @@ class Helper {
             $a1 = Yii::getPathOfAlias('app');
             $a2 = Yii::getPathOfAlias('application');
             if (strpos($object, $a1) === 0) {
-                $alias    = 'app';
+                $alias = 'app';
                 $filepath = str_replace($a1, '', $object);
             } else if (strpos($object, $a2) === 0) {
-                $alias    = 'application';
+                $alias = 'application';
                 $filepath = str_replace($a2, '', $object);
             }
 
@@ -155,13 +159,13 @@ class Helper {
             $r = new ReflectionClass($object);
             $f = $r->getFileName();
 
-            $path     = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
+            $path = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
             $filepath = str_replace($path . DIRECTORY_SEPARATOR, '', $f);
-            $alias    = 'app';
+            $alias = 'app';
             if (strlen($f) == strlen($filepath)) {
-                $path     = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
+                $path = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
                 $filepath = str_replace($path . DIRECTORY_SEPARATOR, '', $f);
-                $alias    = 'application';
+                $alias = 'application';
             }
         }
 
@@ -175,7 +179,7 @@ class Helper {
                 if (array_values($val) === $val) {
                     $arr[$key] = Helper::arrayValuesRecursive($val);
                 } else if (count(@$arr[$key]['items']) > 0) {
-                    $flatten            = array_values($val['items']);
+                    $flatten = array_values($val['items']);
                     $arr[$key]['items'] = Helper::arrayValuesRecursive($flatten);
                 }
             }
@@ -284,9 +288,9 @@ class Helper {
 
         $wr = $withWebroot ? "webroot" : '';
 
-        $fn      = $reflector->getFileName();
+        $fn = $reflector->getFileName();
         $webroot = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('webroot'));
-        $alias   = str_replace(DIRECTORY_SEPARATOR, ".", str_replace(".php", "", str_ireplace($webroot, $wr, $fn)));
+        $alias = str_replace(DIRECTORY_SEPARATOR, ".", str_replace(".php", "", str_ireplace($webroot, $wr, $fn)));
 
         return trim($alias, ".");
     }
@@ -310,7 +314,7 @@ class Helper {
 
     public static function minifyHtml($text) {
 
-        $re   = '%# Collapse whitespace everywhere but in blacklisted elements.
+        $re = '%# Collapse whitespace everywhere but in blacklisted elements.
         (?>             # Match all whitespans other than single space.
           [^\S ]\s*     # Either one [\t\r\n\f\v] and zero or more ws,
         | \s{2,}        # or two or more consecutive-any-whitespace.
@@ -840,10 +844,10 @@ class Helper {
      * @return string
      */
     public static function buildUrl($url, $parts = array(), $flags = HTTP_URL_REPLACE, &$new_url = array()) {
-        is_array($url) || $url   = parse_url($url);
+        is_array($url) || $url = parse_url($url);
         is_array($parts) || $parts = parse_url($parts);
 
-        isset($url['query']) && is_string($url['query']) || $url['query']   = null;
+        isset($url['query']) && is_string($url['query']) || $url['query'] = null;
         isset($parts['query']) && is_string($parts['query']) || $parts['query'] = null;
 
         $keys = array('user', 'pass', 'port', 'path', 'query', 'fragment');
