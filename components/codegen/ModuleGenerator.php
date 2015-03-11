@@ -272,7 +272,7 @@ class ModuleGenerator extends CodeGenerator {
             $this->acSource = $code;
         } else {
             $code = explode("\n", $post['code']);
-            if ($code[1] == '$accessType = "DEFAULT";') {
+            if (count($code) > 1 && $code[1] == '$accessType = "DEFAULT";') {
                 $code[1] = '$accessType = "CUSTOM";';
             }
             $code = implode("\n", $code);

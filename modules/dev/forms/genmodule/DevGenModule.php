@@ -159,8 +159,8 @@ Module "' . $name . '" already exist';
     }
 
     public function getFields() {
-        return array(
-            array(
+        return array (
+            array (
                 'value' => '<!-- EMPTY MODULE -->
 <div ng-if=\'!model.name\'>
     <div class=\"empty-box-container\">
@@ -170,80 +170,80 @@ Module "' . $name . '" already exist';
     </div>
 
 </div>',
-                'type'  => 'Text',
+                'type' => 'Text',
             ),
-            array(
+            array (
                 'value' => '<!------------------------- MODULE INFO TAB ------------------------>
 <tabset class=\'tab-set\' ng-if=\'model.name\'>
 <tab heading=\"Module Info\" select=\'setTab(1)\'>',
-                'type'  => 'Text',
+                'type' => 'Text',
             ),
-            array(
-                'column1' => array(
-                    array(
+            array (
+                'column1' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                        'type'  => 'Text',
+                        'type' => 'Text',
                     ),
-                    array(
+                    array (
                         'label' => 'Module Name',
-                        'name'  => 'name',
-                        'type'  => 'LabelField',
+                        'name' => 'name',
+                        'type' => 'LabelField',
                     ),
-                    array(
+                    array (
                         'label' => 'Module Alias',
-                        'name'  => 'alias',
-                        'type'  => 'LabelField',
+                        'name' => 'alias',
+                        'type' => 'LabelField',
                     ),
                 ),
-                'column2' => array(
-                    array(
+                'column2' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                        'type'  => 'Text',
+                        'type' => 'Text',
                     ),
-                    array(
-                        'label'        => 'Class Path',
-                        'name'         => 'classPath',
-                        'labelOptions' => array(
+                    array (
+                        'label' => 'Class Path',
+                        'name' => 'classPath',
+                        'labelOptions' => array (
                             'style' => 'text-align:left;',
                         ),
-                        'type'         => 'LabelField',
+                        'type' => 'LabelField',
                     ),
-                    array(
-                        'label'        => 'Module Directory',
-                        'name'         => 'path',
-                        'labelOptions' => array(
+                    array (
+                        'label' => 'Module Directory',
+                        'name' => 'path',
+                        'labelOptions' => array (
                             'style' => 'text-align:left;',
                         ),
-                        'type'         => 'LabelField',
+                        'type' => 'LabelField',
                     ),
                 ),
-                'type'    => 'ColumnField',
+                'type' => 'ColumnField',
             ),
-            array(
+            array (
                 'showBorder' => 'Yes',
-                'column1'    => array(
-                    array(
+                'column1' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                        'type'  => 'Text',
+                        'type' => 'Text',
                     ),
-                    array(
+                    array (
                         'title' => '<i class=\\\'fa fa-empire\\\'></i> Import Initialization <span ng-bind-html=\\\'importStatus\\\'></span>',
-                        'type'  => 'SectionHeader',
+                        'type' => 'SectionHeader',
                     ),
-                    array(
-                        'label'      => 'Generate Import',
+                    array (
+                        'label' => 'Generate Import',
                         'buttonType' => 'success',
-                        'icon'       => 'refresh',
+                        'icon' => 'refresh',
                         'buttonSize' => 'btn-xs',
-                        'options'    => array(
-                            'style'   => 'float:right;
+                        'options' => array (
+                            'style' => 'float:right;
 margin:-50px -45px 0px 0px;',
-                            'href'    => 'url:/dev/genModule/genImport?active={params.active}',
+                            'href' => 'url:/dev/genModule/genImport?active={params.active}',
                             'confirm' => 'WARNING: Current code will be REPLACED. Are you sure?',
                         ),
-                        'type'       => 'LinkButton',
+                        'type' => 'LinkButton',
                     ),
-                    array(
+                    array (
                         'value' => '
 <div style=\'margin:-25px -50px -25px -40px;\'>
     <div class=\"source-editor\"
@@ -254,252 +254,258 @@ margin:-50px -45px 0px 0px;',
      ng-delay=\"500\"
      ui-ace=\"aceConfig({inline:true})\"></div>
 </div>',
-                        'type'  => 'Text',
+                        'type' => 'Text',
                     ),
                 ),
-                'column2'    => array(
-                    array(
+                'column2' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                        'type'  => 'Text',
+                        'type' => 'Text',
                     ),
-                    array(
+                    array (
                         'title' => '<i class=\\\'fa fa-cubes\\\'></i> Controllers',
-                        'type'  => 'SectionHeader',
+                        'type' => 'SectionHeader',
                     ),
-                    array(
-                        'label'      => 'Add New Controller',
+                    array (
+                        'label' => 'Add New Controller',
                         'buttonType' => 'success',
-                        'icon'       => 'plus-circle',
+                        'icon' => 'plus-circle',
                         'buttonSize' => 'btn-xs',
-                        'options'    => array(
+                        'options' => array (
                             'style' => 'float:right;
 margin:-50px -45px 0px 0px;',
                         ),
-                        'type'       => 'LinkButton',
+                        'type' => 'LinkButton',
                     ),
-                    array(
+                    array (
                         'value' => '<table class=\"table table-condensed table-bordered table-small\">
     
     <tr ng-repeat=\"c in params.controllers track by $index\">
         <td>{{ c.class }}</td>
     </tr>
 </table>',
-                        'type'  => 'Text',
+                        'type' => 'Text',
                     ),
                 ),
-                'type'       => 'ColumnField',
+                'type' => 'ColumnField',
             ),
-            array(
+            array (
                 'value' => '<!--------------------- ACCESS CONTROL TAB ------------------------->
 </tab><tab active=\"activeTab\"  select=\'setTab(2)\'>
 <tab-heading>
 Access Control <span ng-bind-html=\'acStatus\'></span>
 </tab-heading>',
-                'type'  => 'Text',
+                'type' => 'Text',
             ),
-            array(
-                'column1' => array(
-                    array(
+            array (
+                'column1' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                        'type'  => 'Text',
+                        'type' => 'Text',
                     ),
-                    array(
-                        'label'    => 'Access Control type',
-                        'name'     => 'accessType',
-                        'onLabel'  => 'DEFAULT',
+                    array (
+                        'label' => 'Access Control type',
+                        'name' => 'accessType',
+                        'onLabel' => 'DEFAULT',
                         'offLabel' => 'CUSTOM',
-                        'options'  => array(
+                        'options' => array (
                             'ng-change' => 'saveAC();',
                         ),
-                        'type'     => 'ToggleSwitch',
+                        'type' => 'ToggleSwitch',
                     ),
                 ),
-                'column2' => array(
-                    array(
+                'column2' => array (
+                    array (
                         'value' => '<div ng-if=\\"model.accessType == \\\'DEFAULT\\\'\\">',
-                        'type'  => 'Text',
+                        'type' => 'Text',
                     ),
-                    array(
-                        'label'        => 'Default Access Rule',
-                        'name'         => 'defaultRule',
-                        'options'      => array(
+                    array (
+                        'label' => 'Default Access Rule',
+                        'name' => 'defaultRule',
+                        'options' => array (
                             'ng-change' => 'saveAC();',
                         ),
-                        'labelOptions' => array(
+                        'labelOptions' => array (
                             'style' => 'text-align:left;',
                         ),
-                        'list'         => array(
-                            'deny'  => 'Deny',
+                        'list' => array (
+                            'deny' => 'Deny',
                             'allow' => 'Allow',
                         ),
-                        'labelWidth'   => '3',
-                        'fieldWidth'   => '4',
-                        'type'         => 'DropDownList',
+                        'labelWidth' => '3',
+                        'fieldWidth' => '4',
+                        'type' => 'DropDownList',
                     ),
-                    array(
+                    array (
                         'value' => '<div class=\'info\'>
     <i class=\"fa fa-info-circle\"></i>
     This value will be used when no matching rule</div>',
-                        'type'  => 'Text',
+                        'type' => 'Text',
                     ),
-                    array(
+                    array (
                         'value' => '</div>',
-                        'type'  => 'Text',
+                        'type' => 'Text',
                     ),
-                    array(
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                        'type'  => 'Text',
+                        'type' => 'Text',
                     ),
                 ),
-                'type'    => 'ColumnField',
+                'type' => 'ColumnField',
             ),
-            array(
+            array (
                 'value' => '<!-- DEFAULT ACCESS TYPE -->
 <div ng-if=\"model.accessType == \'DEFAULT\'\">',
-                'type'  => 'Text',
+                'type' => 'Text',
             ),
-            array(
+            array (
                 'showBorder' => 'Yes',
-                'column1'    => array(
-                    array(
+                'column1' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                        'type'  => 'Text',
+                        'type' => 'Text',
                     ),
-                    array(
+                    array (
                         'title' => '<i class=\\\'fa fa-user-md\\\'></i> Role Access',
-                        'type'  => 'SectionHeader',
+                        'type' => 'SectionHeader',
                     ),
-                    array(
-                        'name'      => 'roleAccessDs',
+                    array (
+                        'name' => 'roleAccessDs',
                         'fieldType' => 'php',
-                        'php'       => '$model->rolesRule',
-                        'postData'  => 'No',
-                        'type'      => 'DataSource',
+                        'php' => '$model->rolesRule',
+                        'postData' => 'No',
+                        'type' => 'DataSource',
                     ),
-                    array(
-                        'name'        => 'roleAccess',
-                        'datasource'  => 'roleAccessDs',
-                        'columns'     => array(
-                            array(
-                                'name'          => 'role',
-                                'label'         => 'Role',
-                                'options'       => array(
+                    array (
+                        'name' => 'roleAccess',
+                        'datasource' => 'roleAccessDs',
+                        'columns' => array (
+                            array (
+                                'name' => 'role',
+                                'label' => 'Role',
+                                'options' => array (
                                     'width' => '250',
                                 ),
-                                'columnType'    => 'relation',
-                                'show'          => false,
-                                'relParams'     => array(),
-                                'relCriteria'   => array(
-                                    'select'    => '',
-                                    'distinct'  => 'false',
-                                    'alias'     => 't',
+                                'columnType' => 'relation',
+                                'show' => false,
+                                'relParams' => array (),
+                                'relCriteria' => array (
+                                    'select' => '',
+                                    'distinct' => 'false',
+                                    'alias' => 't',
                                     'condition' => '{[search]}',
-                                    'order'     => '',
-                                    'group'     => '',
-                                    'having'    => '',
-                                    'join'      => '',
+                                    'order' => '',
+                                    'group' => '',
+                                    'having' => '',
+                                    'join' => '',
                                 ),
                                 'relModelClass' => 'application.models.Role',
-                                'relIdField'    => 'id',
+                                'relIdField' => 'id',
                                 'relLabelField' => 'role_name',
                             ),
-                            array(
-                                'name'           => 'access',
-                                'label'          => 'Access',
-                                'options'        => array(
+                            array (
+                                'name' => 'access',
+                                'label' => 'Access',
+                                'options' => array (
                                     'width' => '70',
                                 ),
-                                'columnType'     => 'dropdown',
-                                'show'           => false,
-                                'listType'       => 'php',
-                                'listExpr'       => '[\\\'deny\\\'=>\\\'Deny\\\', \\\'allow\\\'=>\\\'Allow\\\']',
+                                'columnType' => 'dropdown',
+                                'show' => true,
+                                'listType' => 'php',
+                                'listExpr' => '[
+\'allow\' => \'Allow\',
+\'deny\' => \' Deny\'
+ ]',
                                 'listMustChoose' => 'Yes',
                             ),
                         ),
-                        'gridOptions' => array(
+                        'gridOptions' => array (
                             'minSpareRows' => '1',
                         ),
-                        'type'        => 'DataTable',
+                        'type' => 'DataTable',
                     ),
                 ),
-                'column2'    => array(
-                    array(
+                'column2' => array (
+                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                        'type'  => 'Text',
+                        'type' => 'Text',
                     ),
-                    array(
+                    array (
                         'title' => '<i class=\\\'fa fa-user\\\'></i> User Access',
-                        'type'  => 'SectionHeader',
+                        'type' => 'SectionHeader',
                     ),
-                    array(
-                        'name'      => 'userAccessDs',
+                    array (
+                        'name' => 'userAccessDs',
                         'fieldType' => 'php',
-                        'php'       => '$model->usersRule',
-                        'postData'  => 'No',
-                        'type'      => 'DataSource',
+                        'php' => '$model->usersRule',
+                        'postData' => 'No',
+                        'type' => 'DataSource',
                     ),
-                    array(
-                        'name'        => 'userAccess',
-                        'datasource'  => 'userAccessDs',
-                        'columns'     => array(
-                            array(
-                                'name'          => 'user',
-                                'label'         => 'user',
-                                'options'       => array(
+                    array (
+                        'name' => 'userAccess',
+                        'datasource' => 'userAccessDs',
+                        'columns' => array (
+                            array (
+                                'name' => 'user',
+                                'label' => 'user',
+                                'options' => array (
                                     'width' => '250',
                                 ),
-                                'columnType'    => 'relation',
-                                'show'          => false,
-                                'relParams'     => array(),
-                                'relCriteria'   => array(
-                                    'select'    => '',
-                                    'distinct'  => 'false',
-                                    'alias'     => 't',
+                                'columnType' => 'relation',
+                                'show' => false,
+                                'relParams' => array (),
+                                'relCriteria' => array (
+                                    'select' => '',
+                                    'distinct' => 'false',
+                                    'alias' => 't',
                                     'condition' => '{[search]}',
-                                    'order'     => '',
-                                    'group'     => '',
-                                    'having'    => '',
-                                    'join'      => '',
+                                    'order' => '',
+                                    'group' => '',
+                                    'having' => '',
+                                    'join' => '',
                                 ),
                                 'relModelClass' => 'application.models.User',
-                                'relIdField'    => 'id',
+                                'relIdField' => 'id',
                                 'relLabelField' => 'username',
                             ),
-                            array(
-                                'name'           => 'access',
-                                'label'          => 'access',
-                                'options'        => array(
+                            array (
+                                'name' => 'access',
+                                'label' => 'access',
+                                'options' => array (
                                     'width' => '70',
                                 ),
-                                'columnType'     => 'dropdown',
-                                'show'           => false,
-                                'listType'       => 'php',
-                                'listExpr'       => '[\\\'deny\\\'=>\\\'Deny\\\', \\\'allow\\\'=>\\\'Allow\\\']',
+                                'columnType' => 'dropdown',
+                                'show' => true,
+                                'listType' => 'php',
+                                'listExpr' => '[
+\'allow\' => \'Allow\',
+\'deny\' => \' Deny\'
+]',
                                 'listMustChoose' => 'Yes',
                             ),
                         ),
-                        'gridOptions' => array(
+                        'gridOptions' => array (
                             'minSpareRows' => '1',
                         ),
-                        'type'        => 'DataTable',
+                        'type' => 'DataTable',
                     ),
                 ),
-                'type'       => 'ColumnField',
+                'type' => 'ColumnField',
             ),
-            array(
+            array (
                 'value' => '<hr style=\\"margin:0px -15px;\\"/>',
-                'type'  => 'Text',
+                'type' => 'Text',
             ),
-            array(
+            array (
                 'value' => '<!-- CUSTOM ACCESS TYPE -->
 </div><div ng-if=\"model.accessType == \'CUSTOM\'\">',
-                'type'  => 'Text',
+                'type' => 'Text',
             ),
-            array(
+            array (
                 'title' => 'Access Control Function',
-                'type'  => 'SectionHeader',
+                'type' => 'SectionHeader',
             ),
-            array(
+            array (
                 'value' => '
 <div style=\'margin:0px -15px;\'>
     <div class=\"source-editor\"
@@ -510,12 +516,12 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
      ng-delay=\"500\"
      ui-ace=\"aceConfig({inline:true})\"></div>
 </div>',
-                'type'  => 'Text',
+                'type' => 'Text',
             ),
-            array(
+            array (
                 'value' => '<!-- TAB CLOSER -->
 </div></tab></tabset>',
-                'type'  => 'Text',
+                'type' => 'Text',
             ),
         );
     }

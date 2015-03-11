@@ -21,6 +21,8 @@ abstract class CodeGenerator extends CComponent {
 
         $this->class = $class;
         $this->classPath = $this->basePath . "." . $class;
+        Yii::import($this->classPath);
+        
         $this->filePath = Yii::getPathOfAlias($this->classPath) . ".php";
         $this->baseDir = Yii::getPathOfAlias($this->basePath);
 

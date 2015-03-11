@@ -16,7 +16,9 @@ class SysModule extends CWebModule {
         $defaultRule = "deny";
         $rolesRule = [
             "deny" => [],
-            "allow" => []
+            "allow" => [
+                "1"
+            ]
         ];
         $usersRule = [
             "deny" => [],
