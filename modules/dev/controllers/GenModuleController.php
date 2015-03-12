@@ -34,7 +34,7 @@ class GenModuleController extends Controller {
         $model->load($active);
         $model->module->updateAccessControl($post);
         echo json_encode([
-            'acSource' => $model->module->removeIndent($model->module->acSource)
+            'acSource' => $model->module->acSource
         ]);
     }
 

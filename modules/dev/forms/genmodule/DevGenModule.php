@@ -373,8 +373,12 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                         'name' => 'rolesRule',
                         'fieldTemplate' => 'form',
                         'templateForm' => 'application.modules.dev.forms.genmodule.DevGenModuleAccess',
+                        'layout' => 'Vertical',
                         'labelWidth' => '0',
                         'fieldWidth' => '12',
+                        'options' => array (
+                            'ng-change' => 'saveAC(\\\'sad\\\');',
+                        ),
                         'type' => 'ListView',
                     ),
                 ),

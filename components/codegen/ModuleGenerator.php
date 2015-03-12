@@ -22,11 +22,11 @@ class ModuleGenerator extends CodeGenerator {
                 $classPath = $f . DIRECTORY_SEPARATOR . ucfirst($label) . 'Module.php';
                 if (is_file($classPath)) {
                     $plansysList[$label] = [
-                        'label' => $label,
+                        'label'  => $label,
                         'module' => 'plansys',
-                        'icon' => 'fa-empire',
+                        'icon'   => 'fa-empire',
                         'active' => @$_GET['active'] == 'plansys.' . $label,
-                        'url' => Yii::app()->controller->createUrl('/dev/genModule/index', [
+                        'url'    => Yii::app()->controller->createUrl('/dev/genModule/index', [
                             'active' => 'plansys.' . $label
                         ])
                     ];
@@ -34,9 +34,9 @@ class ModuleGenerator extends CodeGenerator {
             }
 
             $list[] = [
-                'label' => 'Plansys',
+                'label'  => 'Plansys',
                 'module' => 'plansys',
-                'items' => $plansysList
+                'items'  => $plansysList
             ];
         }
 
@@ -49,11 +49,11 @@ class ModuleGenerator extends CodeGenerator {
             if (is_file($classPath)) {
 
                 $appList[$label] = [
-                    'label' => $label,
+                    'label'  => $label,
                     'module' => 'app',
-                    'icon' => 'fa-empire',
+                    'icon'   => 'fa-empire',
                     'active' => @$_GET['active'] == 'app.' . $label,
-                    'url' => Yii::app()->controller->createUrl('/dev/genModule/index', [
+                    'url'    => Yii::app()->controller->createUrl('/dev/genModule/index', [
                         'active' => 'app.' . $label
                     ])
                 ];
@@ -61,9 +61,9 @@ class ModuleGenerator extends CodeGenerator {
         }
 
         $list[] = [
-            'label' => 'App',
+            'label'  => 'App',
             'module' => 'app',
-            'items' => $appList
+            'items'  => $appList
         ];
         return $list;
     }
@@ -71,7 +71,7 @@ class ModuleGenerator extends CodeGenerator {
     public static function create($classAlias) {
         $module = ModuleGenerator::init($classAlias);
     }
-    
+
     public static function init($classAlias, $mode = 'load') {
         $m = new ModuleGenerator;
         $path = explode('.', $classAlias);
@@ -94,10 +94,10 @@ class ModuleGenerator extends CodeGenerator {
 
                 $m->generateImport(true);
                 $m->updateAccessControl([
-                    'accessType' => 'DEFAULT',
+                    'accessType'  => 'DEFAULT',
                     'defaultRule' => 'deny',
-                    'roles' => [],
-                    'users' => []
+                    'roles'       => [],
+                    'users'       => []
                 ]);
             } else {
                 $m->loadAccessControl();
@@ -110,7 +110,7 @@ class ModuleGenerator extends CodeGenerator {
 
     private function expandAccessControlArray($array, $key) {
         $prepared = [
-            'deny' => [],
+            'deny'  => [],
             'allow' => []
         ];
 
@@ -138,13 +138,13 @@ class ModuleGenerator extends CodeGenerator {
         foreach ($array['allow'] as $d) {
             $result[] = [
                 $key . "" => $d,
-                'access' => 'allow'
+                'access'  => 'allow'
             ];
         }
         foreach ($array['deny'] as $d) {
             $result[] = [
                 $key . "" => $d,
-                'access' => 'deny'
+                'access'  => 'deny'
             ];
         }
         return $result;
@@ -189,7 +189,6 @@ class ModuleGenerator extends CodeGenerator {
         $lineLength = false;
         $func = $this->getFunctionBody('accessControl');
         $this->acSource = $this->varToString($func);
-
         foreach ($func as $k => $f) {
             $tf = trim($f);
             if (!$startLine) {
@@ -218,7 +217,7 @@ class ModuleGenerator extends CodeGenerator {
     }
 
     CONST GEN_COMMENT_START = "####### PLANSYS GENERATED CODE: START #######";
-    CONST GEN_COMMENT_END   = "####### PLANSYS GENERATED CODE:  END  #######";
+    CONST GEN_COMMENT_END = "####### PLANSYS GENERATED CODE:  END  #######";
 
     public function updateAccessControl($post) {
         $code = [];
@@ -269,19 +268,18 @@ class ModuleGenerator extends CodeGenerator {
             $this->defaultRule = $defaultRule;
             $this->rolesRule = $post['roles'];
             $this->usersRule = $post['users'];
-            $this->acSource = $code;
+            $this->acSource = $this->removeIndent($code);
         } else {
             $code = explode("\n", $post['code']);
-            if (count($code) > 1 && $code[1] == '$accessType = "DEFAULT";') {
+            if (count($code) > 1 && trim($code[1]) == '$accessType = "DEFAULT";') {
                 $code[1] = '$accessType = "CUSTOM";';
             }
             $code = implode("\n", $code);
             $this->accessType = "CUSTOM";
             $this->acSource = $code;
+            $code = $this->addIndent($code);
 
-            $code = $this->addIndent($post['code']);
         }
-
         $this->updateFunction('accessControl', $code, [
             'params' => ['$controller', '$action']
         ]);
@@ -303,10 +301,10 @@ class ModuleGenerator extends CodeGenerator {
                 $file = $item->getFilename();
                 $class = basename($item->getFilename(), ".php");
                 $controllers[] = [
-                    'file' => $file,
+                    'file'  => $file,
                     'class' => $class,
                     'alias' => $this->basePath . '.controllers.' . $class,
-                    'path' => $path
+                    'path'  => $path
                 ];
             }
         }
@@ -314,7 +312,7 @@ class ModuleGenerator extends CodeGenerator {
     }
 
     public function getAliasArray($dirs = [], $options = [
-        'append' => '',
+        'append'  => '',
         'prepend' => ''
     ]) {
         $result = [];
@@ -343,7 +341,7 @@ class ModuleGenerator extends CodeGenerator {
         $importedFolders = ['controllers', 'forms', 'components', 'models', 'consoles'];
         $space = "            ";
         $imports = $space . implode(",\n{$space}", $this->getAliasArray($importedFolders, [
-                            'append' => '.*\'',
+                            'append'  => '.*\'',
                             'prepend' => '\''
         ]));
         $source = <<<EOF

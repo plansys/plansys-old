@@ -385,14 +385,15 @@ CREATE TABLE `p_nfy_subscription_categories` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
+
 DROP TABLE IF EXISTS `p_role`;
 CREATE TABLE `p_role` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `role_name` varchar(255) NOT NULL,
   `role_description` varchar(255) NOT NULL,
-  `menu_path` varchar(255) NOT NULL,
-  `home_url` varchar(255) NOT NULL,
-  `repo_path` varchar(255) NOT NULL,
+  `menu_path` varchar(255) DEFAULT NULL,
+  `home_url` varchar(255) DEFAULT NULL,
+  `repo_path` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

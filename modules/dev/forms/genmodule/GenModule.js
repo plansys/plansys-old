@@ -39,6 +39,18 @@ if ($scope.params.tab) {
     $scope.activeTab = $scope.params.tab;
 }
 
+$scope.uniqueArray = function (array, key) {
+    var f = [];
+    var arr = array.filter(function (n) {
+        if (typeof n[key] != 'string' && typeof n[key] != 'number') {
+            n[key] = '';
+        }
+
+        return (f.indexOf(n[key]) < 0 && f.push(n[key]));
+    });
+    return arr;
+}
+
 $timeout(function () {
     $scope.acStatus = '';
     $scope.saveAC = function () {
@@ -51,13 +63,14 @@ $timeout(function () {
                 code: $scope.model.acSource
             };
         } else {
+            $scope.model.rolesRule = $scope.uniqueArray($scope.model.rolesRule, 'role');
+
             post = {
                 accessType: $scope.model.accessType,
                 defaultRule: $scope.model.defaultRule,
                 roles: $scope.model.rolesRule,
                 users: !!$scope.userAccessDs ? $scope.userAccessDs.data : []
             };
-            console.log($scope.model.rolesRule);
         }
 
         $http.post(Yii.app.createUrl('/dev/genModule/saveAc', {active: $scope.params.active}), post).success(function (data) {

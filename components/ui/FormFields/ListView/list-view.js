@@ -10,13 +10,17 @@ app.directive('listView', function ($timeout) {
             return function ($scope, $el, attrs, ctrl) {
                 var parent = $scope.getParent($scope);
                 $scope.parent = parent;
+                $scope.itemChanging = false;
 
                 // when ng-model is changed from inside directive
+
                 $scope.updateListView = function () {
                     if (typeof ctrl != 'undefined') {
+                        $scope.itemChanging = true;
+                        ctrl.$setViewValue(angular.copy($scope.value));
                         $timeout(function () {
-                            ctrl.$setViewValue(angular.copy($scope.value));
-                        });
+                            $scope.itemChanging = false;
+                        }, 1000);
                     }
                 };
 
@@ -27,7 +31,6 @@ app.directive('listView', function ($timeout) {
                 };
                 $scope.undo = function () {
                     if (!!$scope.deleted.data) {
-                        console.log($scope.deleted);
                         $scope.value.splice($scope.deleted.idx, 0, $scope.deleted.data);
                         $scope.deleted = {
                             idx: -1,
@@ -49,9 +52,9 @@ app.directive('listView', function ($timeout) {
                 }
 
                 $scope.addItem = function (e) {
+
                     e.preventDefault();
                     e.stopPropagation();
-
                     if ($scope.value == null || typeof $scope.value == "undefined" || $scope.value == "") {
                         $scope.value = [];
                     }
@@ -68,6 +71,7 @@ app.directive('listView', function ($timeout) {
                         eval(beforeAdd);
                     }
                     $scope.value.push(value);
+                    $scope.updateListView();
 
                     var valueID = $scope.value.length - 1;
                     $timeout(function () {
@@ -100,7 +104,6 @@ app.directive('listView', function ($timeout) {
                         if (typeof ctrl.$viewValue != "undefined") {
                             $scope.loading = true;
                             $scope.value = ctrl.$viewValue;
-
                             $timeout(function () {
                                 $scope.loading = false;
                             }, 0);
@@ -111,7 +114,7 @@ app.directive('listView', function ($timeout) {
                 $scope.showListForm = function () {
                     $timeout(function () {
                         $el.find('.list-view-form li').show();
-                    }, 0);
+                    });
                 }
 
                 // set default value
@@ -122,12 +125,19 @@ app.directive('listView', function ($timeout) {
                 $scope.templateAttr = JSON.parse($el.find("data[name=template_attr]").html().trim());
                 $scope.options = JSON.parse($el.find("data[name=options]").html().trim());
 
+                // change Watchers
                 $timeout(function () {
-                    $scope.$watch('value', function (n, o) {
-                        if (n !== o) {
-                            ctrl.$setViewValue($scope.value);
-                        }
-                    }, true);
+                    if (!!$scope.options['ng-change']) {
+                        $scope.stopWatchChanges = $scope.$watch('value', function (n, o) {
+                            if (n !== o) {
+                                if ($scope.itemChanging) {
+                                    ctrl.$viewValue = $scope.value;
+                                } else {
+                                    ctrl.$setViewValue(angular.copy($scope.value));
+                                }
+                            }
+                        }, true);
+                    }
                 });
 
                 // if ngModel is present, use that instead of value from php

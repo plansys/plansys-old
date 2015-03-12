@@ -14,7 +14,7 @@ abstract class CodeGenerator extends CComponent {
     public function load($class) {
         Yii::setPathOfAlias('gii', Yii::getPathOfAlias('application.framework.gii'));
         Yii::import('gii.components.*');
-        
+
         if (!is_string($class)) {
             throw new Exception("\$class parameter should be string");
         }
@@ -22,7 +22,7 @@ abstract class CodeGenerator extends CComponent {
         $this->class = $class;
         $this->classPath = $this->basePath . "." . $class;
         Yii::import($this->classPath);
-        
+
         $this->filePath = Yii::getPathOfAlias($this->classPath) . ".php";
         $this->baseDir = Yii::getPathOfAlias($this->basePath);
 
@@ -57,7 +57,7 @@ class {$class} extends {$this->baseClass} {\n \n}
                     $line = $m->getStartLine() - 1;
                     $length = $m->getEndLine() - $line;
                     $this->methods[$m->name] = [
-                        'line' => $line,
+                        'line'   => $line,
                         'length' => $length
                     ];
                 }
@@ -74,8 +74,8 @@ class {$class} extends {$this->baseClass} {\n \n}
 
     protected function updateSession($timestamp = null) {
         Yii::app()->session['CODEGEN_' . $this->classPath] = [
-            'methods' => $this->methods,
-            'file' => $this->file,
+            'methods'   => $this->methods,
+            'file'      => $this->file,
             'timestamp' => is_null($timestamp) ? filemtime($this->filePath) : $timestamp
         ];
     }
@@ -391,7 +391,7 @@ class {$class} extends {$this->baseClass} {\n \n}
 
         $default = [
             'visibility' => 'public',
-            'params' => []
+            'params'     => []
         ];
         $options = array_merge($default, $options);
         $params = implode(",", $options['params']);
@@ -419,11 +419,10 @@ EOF;
 
 
         $this->methods[$name] = [
-            'line' => $line,
+            'line'   => $line,
             'length' => $newlength
         ];
         $this->updateSession('JUSTWRITTEN');
-
         $this->save();
     }
 
