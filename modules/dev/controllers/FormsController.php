@@ -28,6 +28,45 @@ class FormsController extends Controller {
         }
     }
 
+    public function actionAddForm($c, $e, $p, $m) {
+        if (class_exists($e)) {
+            if (Helper::isValidVar($c)) {
+                $extends = $e;
+                $dir = Yii::getPathOfAlias($p);
+                $class = ucfirst($c);
+                if (strpos(ucfirst($m), $c) !== 0) {
+                    $class = ucfirst($m) . ucfirst($c);
+                }
+                $path = $dir . DIRECTORY_SEPARATOR . $class . ".php";
+                if (!is_file($path)) {
+                    $source = <<<EOF
+<?php
+                            
+class {$class} extends {$extends} {
+
+}
+EOF;
+                    file_put_contents($path, $source);
+
+                    echo json_encode([
+                        "success" => true,
+                        "class"   => $class
+                    ]);
+                }
+            } else {
+                echo json_encode([
+                    "success" => false,
+                    "error"   => "ERROR: Invalid class name ({$c})"
+                ]);
+            }
+        } else {
+            echo json_encode([
+                "success" => false,
+                "error"   => "ERROR: Class {$e} not found!"
+            ]);
+        }
+    }
+
     public function renderPropertiesForm($field) {
         FormField::$inEditor = false;
         $fbp = FormBuilder::load($field['type']);
@@ -124,6 +163,7 @@ class FormsController extends Controller {
                 array_push($return, [
                     'module' => $l['module'],
                     'count'  => $l['count'],
+                    'alias'  => $l['alias'],
                     'items'  => [
                         [
                             'name'  => 'Loading...',

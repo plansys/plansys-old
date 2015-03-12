@@ -702,11 +702,11 @@ class FormBuilder extends CComponent {
 
         $reflector = new ReflectionClass($this->model);
         $inlineJSPath = dirname($reflector->getFileName()) . DIRECTORY_SEPARATOR . @$this->form['inlineJS'];
-        if(isset($this->form['inlineJS'])){
+        if (isset($this->form['inlineJS'])) {
             $tab = '            ';
             $inlineJS = file($inlineJSPath);
             $inlineJS = $tab . implode($tab, $inlineJS);
-        }else{
+        } else {
             $inlineJS = '';
         }
 
@@ -1085,7 +1085,7 @@ EOF;
         if (!$fp) {
             return false;
         }
-        
+
         ## write new function to sourceFile
         if (flock($fp, LOCK_EX)) { // acquire an exclusive lock
             ftruncate($fp, 0); // truncate file
@@ -1102,7 +1102,7 @@ EOF;
                 'methods'    => $this->methods,
                 'timestamp'  => $this->timestamp
             ];
-            
+
             return true;
         } else {
             echo "ERROR: Couldn't lock source file '{$sourceFile}'!";
@@ -1229,6 +1229,7 @@ EOF;
                     if (!isset($curpath[$s])) {
                         $curpath[$s] = [
                             'items' => [],
+                            'alias' => $newAlias,
                             'name'  => ucfirst($s),
                             'id'    => $id++
                         ];
@@ -1283,6 +1284,7 @@ EOF;
             $files[] = [
                 'module' => 'Plansys: Fields',
                 'items'  => $items,
+                'alias'  => "application.components.ui.FormFields",
                 'count'  => $count
             ];
 
@@ -1305,6 +1307,7 @@ EOF;
 
             $files[] = [
                 'module' => 'Plansys: Forms',
+                'alias'  => "application.forms",
                 'count'  => $glob['count'],
                 'items'  => $items
             ];
@@ -1326,6 +1329,7 @@ EOF;
                     if (count($items) > 0) {
                         $files[] = [
                             'module' => 'Plansys: ' . $module,
+                            'alias'  => $alias,
                             'items'  => $items,
                             'count'  => $glob['count']
                         ];
@@ -1352,6 +1356,7 @@ EOF;
 
         $files[] = [
             'module' => 'app',
+            'alias'  => 'app.forms',
             'items'  => $items,
             'count'  => $glob['count']
         ];
@@ -1368,13 +1373,12 @@ EOF;
                 $items = $glob['files'];
                 $items = FormBuilder::formatGlob($items, $item_dir, $module, $func, $alias, $formatRecursive);
 
-                if (count($items) > 0) {
-                    $files[] = [
-                        'module' => $module,
-                        'items'  => $items,
-                        'count'  => $glob['count']
-                    ];
-                }
+                $files[] = [
+                    'module' => $module,
+                    'alias'  => $alias,
+                    'items'  => $items,
+                    'count'  => $glob['count']
+                ];
             }
         }
 

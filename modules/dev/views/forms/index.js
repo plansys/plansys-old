@@ -14,8 +14,30 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
 
         return "form";
     };
-    $scope.addForm = function () {
-
+    $scope.addForm = function (classname, extendsname, item) {
+        if (!!classname && !!extendsname) {
+            var module = item.module.replace('Plansys: ', '');
+            $http.get(Yii.app.createUrl('/dev/forms/addForm', {
+                c: classname,
+                e: extendsname,
+                p: item.alias,
+                m: module
+            })).success(function (data) {
+                if (data) {
+                    if (data.success) {
+                        item.items.push({
+                            name: data.class,
+                            class: data.class,
+                            alias: item.alias + data.class,
+                            items: []
+                        });
+                    } else {
+                        alert(data.error);
+                    }
+                    return;
+                }
+            });
+        }
     };
     $scope.executeMenu = function (e, func) {
         if (typeof func == "function") {
@@ -28,7 +50,6 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
         $scope.menuSelect = sel.$modelValue;
         $(".menu-sel").removeClass("active").removeClass(".menu-sel");
         $(e.target).parent().addClass("menu-sel active");
-
         var type = $scope.getType(sel.$modelValue);
         switch (type) {
             case "module":
@@ -37,8 +58,11 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         icon: "fa fa-fw fa-file-text-o",
                         label: "New Form",
                         click: function (item) {
-                            var newname = prompt("Enter new form name:");
-                            $scope.addForm(newname, item);
+                            var classname = prompt("Enter new form class name:");
+                            if (!!classname) {
+                                var extendsname = prompt("Enter model class name:");
+                                $scope.addForm(classname, extendsname, item);
+                            }
                         }
                     },
                     {
@@ -60,8 +84,11 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         icon: "fa fa-fw fa-file-text-o",
                         label: "New Form",
                         click: function (item) {
-                            var newname = prompt("Enter new form name:");
-                            $scope.addForm(newname, item);
+                            var classname = prompt("Enter new form class name:");
+                            if (!!classname) {
+                                var extendsname = prompt("Enter model class name:");
+                                $scope.addForm(classname, extendsname, item);
+                            }
                         }
                     },
                     {
@@ -113,11 +140,11 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         label: "Open New Tab",
                         click: function (item) {
                             window.open(
-                                Yii.app.createUrl('/dev/forms/update', {
-                                    'class': item.alias
-                                }),
-                                '_blank'
-                            );
+                                    Yii.app.createUrl('/dev/forms/update', {
+                                        'class': item.alias
+                                    }),
+                                    '_blank'
+                                    );
                         }
                     },
                     {
