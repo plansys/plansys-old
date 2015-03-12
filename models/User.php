@@ -49,7 +49,7 @@ class User extends ActiveRecord {
         if (!$this->isNewRecord) {
             Yii::app()->nfy->unsubscribe($this->id, null, true);
         }
-        if ($this->subscribed === "on" || $this->isNewRecord) {
+        if ($this->subscribed === "on" || $this->subscribed === "ON" || $this->isNewRecord) {
             $roles = array();
             $sql = 'select DISTINCT role_name from p_user_role p '
                     . ' inner join p_role r on p.role_id = r.id '

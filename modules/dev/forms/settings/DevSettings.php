@@ -96,8 +96,7 @@ class DevSettings extends Form {
         $this->ldapUsername = Setting::get("ldap.admin_username");
     }
     
-    public function setSettings(){
-        $data = $this->attributes;
+    public function setSettings($data){
         #App
         Setting::set('app.name',$data['appName'],false);
         Setting::set('app.mode',$data['appMode'],false);        
@@ -116,11 +115,11 @@ class DevSettings extends Form {
         #Notif
         $enableNotif = true;
         $enableNotifEmail = true;
-        if($data['notifEnable'] != 'on'){
+        if($data['notifEnable'] != 'ON'){
             $enableNotif = false;
             $data['notifWithEmail'] = false;
         }
-        if($data['notifWithEmail'] != 'on'){
+        if($data['notifWithEmail'] != 'ON'){
             $enableNotifEmail = false;
         }
         Setting::set('notif.enable',$enableNotif,false); 
@@ -128,7 +127,7 @@ class DevSettings extends Form {
         
         #Audit Trail 
         $enableAudit = true;
-        if($data['auditEnable'] != 'on'){
+        if($data['auditEnable'] != 'ON'){
             $enableAudit = false;
         }
         Setting::set("auditTrail.enable",$enableAudit,false);
@@ -170,7 +169,7 @@ class DevSettings extends Form {
         
         
         #LDAP
-        if($data['ldapEnable'] === 'on'){
+        if($data['ldapEnable'] === 'ON'){
             Setting::set("ldap.enable",true,false);
             Setting::set("ldap.ad_port",$data['ldapAdPort'],false);
             Setting::set("ldap.account_suffix",$data['ldapAccountSuffix'],false);

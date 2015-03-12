@@ -29,6 +29,7 @@ class DevSettingsEmailSmtp extends Form{
             array (
                 'label' => 'Password',
                 'name' => 'emailPass',
+                'fieldType' => 'password',
                 'type' => 'TextField',
             ),
             array (
