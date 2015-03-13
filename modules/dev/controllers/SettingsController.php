@@ -4,16 +4,33 @@ class SettingsController extends Controller {
     public function actionIndex() {
        $model = new DevSettings;
        $model->loadSettings();
-       if(isset($_POST["DevSettings"])){   
+       if(isset($_POST["DevSettings"])){
            if($_POST["DevSettings"]["emailService"] !== 'none'){
                $emailSub = "DevSettingsEmail".ucfirst($_POST["DevSettings"]["emailService"]); 
-               $_POST["DevSettings"] = array_merge($_POST["DevSettings"], $_POST[$emailSub]);
+               $_POST['DevSettings'] = array_merge($_POST['DevSettings'], $_POST[$emailSub]);
            }
-           $model->attributes = $_POST["DevSettings"];
-           $model->setSettings();
+           $settings = $model->attributes;
+           foreach($settings as $k=>$set){
+               if(isset($_POST["DevSettings"][$k])){
+                   $settings[$k] = $_POST["DevSettings"][$k];
+               }
+           }
+           
+           $model->setSettings($settings);
            Yii::app()->user->setFlash('info', 'Data Berhasil Disimpan');
        }
        $this->renderForm("DevSettings",$model);
+    }
+    
+    public function actionTes(){
+        Yii::app()->nfy->send(array(
+            'url' => Yii::app()->controller->createUrl('/dev/forms/index'),
+            'message' => "Tes Kirim Notif",
+            'notes' => "Tes kirim notif pake stream.js",
+            'to' => array(
+                'role' => 'dev'
+            )
+        ));
     }
     
     public function actionDb() {
@@ -58,10 +75,6 @@ class SettingsController extends Controller {
         }
         
         echo json_encode($error);
-    }
-    
-    public function actionTes(){
-        $result = Yii::app()->ldap->user()->searchRaw("*");
     }
     
     public function actionLdap(){
