@@ -11,49 +11,31 @@
 
     <div class="<?= $this->fieldColClass ?>" style="padding-top:5px;">
         <!-- data -->
+        <data name="name" class="hide"><?= $this->name; ?></data>
         <data name="value" class="hide" ><?= $this->value ?></data>
         <data name="model_class" class="hide"><?= @get_class($model) ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
         <!-- /data -->
 
         <!-- field -->
-        <?php if ($this->itemLayout == "ButtonGroup") { ?>
-            <div class="btn-group">
-            <?php } ?>
+        <span ng-repeat="(val, text) in formList track by $index">
+            <label <?= $this->expandAttributes($this->fieldOptions) ?>>
+                <input type="radio" id="<?= $this->renderID ?>_{{val}}"
+                       ng-checked="value == val"
+                       ng-click="update(val)"
+                       /> {{ text}}
+            </label>
+        </span>
+        <input type="hidden" name="<?= $this->renderName ?>" value="{{ value}}" />
 
-            <?php
-            if (is_array($this->list)) {
-                foreach ($this->list as $value => $text):
-                    ?>
-                    <?php if ($this->itemLayout == "ButtonGroup"): ?>
-                        <label class="radio-btn btn btn-sm btn-default" id="<?= $this->renderID ?>_<?= $value ?>" 
-                               btn-radio="'<?= $value; ?>'" value="<?= $value; ?>" 
-                               uncheckable ng-model="value"><?= $text; ?></label>
-                    <?php else: ?>
-                        <label class="radio-btn input-group <?= $this->itemLayout == "Horizontal" ? 'inline' : '' ?>">
-                            <input type="radio" id="<?= $this->renderID ?>_<?= $value ?>"
-                                   name="<?= $this->renderName ?>" value="<?= $value; ?>" <?= $this->checked($value); ?>
-                                   /> <?= $text ?>
-                        </label>
-                    <?php endif; ?>
-                    <?php
-                endforeach;
-            }
-            ?>
-
-            <?php if ($this->itemLayout == "ButtonGroup") { ?>
-            </div>
-        <?php } ?>   
-
-        <input type="text" class="invisible"
-               ng-model="value" id="<?= $this->renderID ?>"
-               name="<?= $this->renderName ?>" value='<?= $this->value ?>'/>
         <!-- /field -->
 
         <!-- error -->
+        <div class="clearfix"></div>
         <div ng-if="errors[name]" class="alert error alert-danger">
-            {{ errors[name][0] }}
+            {{ errors[name][0]}}
         </div>
         <!-- /error -->
+
     </div>
 </div>

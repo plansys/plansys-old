@@ -32,7 +32,90 @@ class Controller extends CController {
         return $this->url($static . $path);
     }
 
+    public function isPosted($class) {
+        $valid = true;
+        $args = func_get_args();
+        foreach ($args as $c) {
+            if (is_object($c)) {
+                $c = get_class($c);
+            }
+
+            if (null === $this->getPost($c)) {
+                $valid = false;
+                break;
+            }
+        }
+
+        return $valid;
+    }
+
+    public function getPost($class) {
+        if (isset($this->module)) {
+            $module = $this->module->id;
+            if (substr($class, 0, strlen($module)) != $module) {
+                $class = ucfirst($module) . ucfirst($class);
+            }
+        }
+
+        return @$_POST[$class];
+    }
+
+    public function prepareFormName($class, $module = null) {
+        if (isset($module)) {
+            if (is_string($module)) {
+                $moduleList = Setting::getModules();
+                if (isset($moduleList[$module])) {
+                    $moduleAlias = $moduleList[$module]['class'];
+                    $moduleClass = Helper::explodeLast(".", $moduleAlias);
+                    Yii::import($moduleAlias);
+
+                    if (@class_exists($moduleClass)) {
+                        $module = new $moduleClass($module, null);
+                    }
+                }
+            }
+
+            if (!is_object($module)) {
+                $module = null;
+            }
+        }
+
+        if (!isset($module)) {
+            if (isset($this->module)) {
+                $module = $this->module;
+            }
+        }
+
+        if (strpos($class, '.') > 0) {
+            $className = Helper::explodeLast(".", $class);
+            if (!class_exists($className, false)) {
+                try {
+                    Yii::import($class);
+                } catch (CException $e) {
+                    if ($module) {
+                        $moduleAlias = Helper::getAlias($module->basePath);
+                        Yii::import($moduleAlias . ".forms." . $class);
+                    }
+                }
+            }
+
+            $class = $className;
+        } else {
+            if (isset($module)) {
+                $module = $module->id;
+                if (stripos($class, $module) !== 0) {
+                    if (!@class_exists($class)) {
+                        $class = ucfirst($module) . ucfirst($class);
+                    }
+                }
+            }
+        }
+
+        return $class;
+    }
+
     public function renderForm($class, $model = null, $params = [], $options = []) {
+        $class = $this->prepareFormName($class);
         $fb = FormBuilder::load($class);
         $this->pageTitle = $fb->form['title'];
         $this->layout = '//layouts/form';
@@ -162,18 +245,57 @@ class Controller extends CController {
         }
     }
 
-    public function loadAllModel($id, $form) {
-        if (strpos($form, '.') > 0) {
-            Yii::import($form);
-            $form = Helper::explodeLast(".", $form);
+    public function newModel($class) {
+        $class = $this->prepareFormName($class);
+        return new $class;
+    }
+
+    public function loadAllModel($class, $attr) {
+        ## kalo ternyata $form dan $attr kebalik
+        if (is_string($attr)) {
+            $temp = $attr;
+            $attr = $class;
+            $class = $temp;
         }
 
-        $model = $form::model($form)->findAllByAttributes($id);
+        ## proses load model
+        $class = $this->prepareFormName($class);
+        $model = $class::model($class)->findAllByAttributes($attr);
         if (empty($model)) {
             throw new CHttpException(404, 'The requested page does not exist.');
         }
 
         return $model;
+    }
+
+    public function loadModel($class, $attr) {
+        ## kalo ternyata $form dan $attr kebalik
+        if (is_array($class) || is_numeric($class)) {
+            $temp = $attr;
+            $attr = $class;
+            $class = $temp;
+        }
+
+        ## proses load model
+        $class = $this->prepareFormName($class);
+        if (is_array($attr)) {
+            $model = $class::model($class)->findByAttributes($attr);
+        } else {
+            $model = $class::model($class)->findByPk($attr);
+        }
+
+        if (!is_null($model) && method_exists($model, 'loadAllRelations')) {
+            $model->loadAllRelations();
+        }
+
+        if ($model === null) {
+            throw new CHttpException(404, 'The requested page does not exist.');
+        }
+        return $model;
+    }
+
+    public function setInfo($info) {
+        Yii::app()->user->setFlash('info', $info);
     }
 
     public function beforeAction($action) {
@@ -186,29 +308,7 @@ class Controller extends CController {
         }
 
         parent::beforeAction($action);
-
         return true;
-    }
-
-    public function loadModel($idOrAttributes, $form) {
-        if (strpos($form, '.') > 0) {
-            Yii::import($form);
-            $form = Helper::explodeLast(".", $form);
-        }
-        if (is_array($idOrAttributes)) {
-            $model = $form::model($form)->findByAttributes($idOrAttributes);
-        } else {
-            $model = $form::model($form)->findByPk($idOrAttributes);
-        }
-
-        if (!is_null($model) && method_exists($model, 'loadAllRelations')) {
-            $model->loadAllRelations();
-        }
-
-        if ($model === null) {
-            throw new CHttpException(404, 'The requested page does not exist.');
-        }
-        return $model;
     }
 
 }

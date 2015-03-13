@@ -82,8 +82,7 @@ class DevUserForm extends User {
                         'type' => 'ListView',
                     ),
                     array (
-                        'value' => '<div class=\"col-sm-6\" 
-     style=\"float:right;margin:-25px 0px 0px 0px;padding:0px;text-align:right;color:#999;font-size:12px;\">
+                        'value' => '<div style=\"float:right;margin:-25px 0px 0px 0px;padding:0px;text-align:right;color:#999;font-size:12px;\">
       <i class=\"fa fa-info-circle\"></i> 
      Geser role ke atas 
          untuk menjadikan default

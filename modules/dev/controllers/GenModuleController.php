@@ -67,35 +67,14 @@ class GenModuleController extends Controller {
     }
 
     public function actionRename($f, $t) {
-        $from = DevGenModule::parseModule($f);
-        $to = DevGenModule::parseModule($t);
-
-        if (empty($from)) {
-            echo "ERROR: INVALID SOURCE NAME";
+        try {
+            $result = ModuleGenerator::rename($f, $t);
+        } catch (CException $ex) {
+            echo "ERROR: " . strtoupper($ex->getMessage());
             die();
         }
 
-        if (empty($to)) {
-            echo "ERROR: INVALID DESTINATION NAME";
-            die();
-        }
-
-        if (is_dir($from['path']) && is_file($from['classPath'])) {
-            if (!is_file($to['classPath'])) {
-                $file = file_get_contents($from['classPath']);
-                $file = preg_replace('/class\s+' . $from['class'] . '/', 'class ' . $to['class'], $file, 1);
-                file_put_contents($from['classPath'], $file);
-
-                rename($from['classPath'], $from['path'] . DIRECTORY_SEPARATOR . $to['class'] . ".php");
-                rename($from['path'], $to['path']);
-
-                echo "SUCCESS";
-            } else {
-                echo "ERROR: DESTINATION MODULE ALREADY EXIST";
-            }
-        } else {
-            echo "ERROR: INVALID SOURCE MODULE";
-        }
+        echo "SUCCESS";
     }
 
     public function actionNew($name, $module) {

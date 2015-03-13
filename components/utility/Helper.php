@@ -143,7 +143,7 @@ class Helper {
     }
 
     public static function getAlias($object) {
-        if (!is_object($object) && is_file($object)) {
+        if (!is_object($object) && (is_file($object) || is_dir($object))) {
             $a1 = Yii::getPathOfAlias('app');
             $a2 = Yii::getPathOfAlias('application');
             if (strpos($object, $a1) === 0) {

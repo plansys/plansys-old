@@ -64,6 +64,7 @@ style=\"width:100%;height:300px;margin-bottom:-250px;position: relative !importa
 
     public $renderInEditor = 'No';
     public $display = 'block';
+    public $type = 'Text';
 
     /** @var string $value */
     public $value;
@@ -77,7 +78,7 @@ style=\"width:100%;height:300px;margin-bottom:-250px;position: relative !importa
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-font";
 
-    public function includePropertiesJS() {
+    public function includeEditorJS() {
         return ['application.static.js.lib.ace'];
     }
 

@@ -31,73 +31,73 @@ class DataTable extends FormField {
      * @return array me-return array property DataTable.
      */
     public function getFieldProperties() {
-        return array (
-            array (
-                'label' => 'Data Filter Name',
-                'name' => 'name',
+        return array(
+            array(
+                'label'      => 'Data Filter Name',
+                'name'       => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array (
-                    'ng-model' => 'active.name',
+                'options'    => array(
+                    'ng-model'  => 'active.name',
                     'ng-change' => 'changeActiveName()',
-                    'ng-delay' => '500',
+                    'ng-delay'  => '500',
                 ),
-                'type' => 'TextField',
+                'type'       => 'TextField',
             ),
-            array (
-                'label' => 'Data Source Name',
-                'name' => 'datasource',
-                'options' => array (
-                    'ng-model' => 'active.datasource',
+            array(
+                'label'      => 'Data Source Name',
+                'name'       => 'datasource',
+                'options'    => array(
+                    'ng-model'  => 'active.datasource',
                     'ng-change' => 'save()',
-                    'ng-delay' => '500',
-                    'ps-list' => 'dataSourceList',
+                    'ng-delay'  => '500',
+                    'ps-list'   => 'dataSourceList',
                 ),
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'type' => 'DropDownList',
+                'type'       => 'DropDownList',
             ),
-            array (
-                'label' => 'Generate Columns',
+            array(
+                'label'      => 'Generate Columns',
                 'buttonType' => 'success',
-                'icon' => 'magic',
+                'icon'       => 'magic',
                 'buttonSize' => 'btn-xs',
-                'options' => array (
-                    'style' => 'float:right;margin:0px 0px 5px 0px',
-                    'ng-show' => 'active.datasource != \\\'\\\'',
+                'options'    => array(
+                    'style'    => 'float:right;margin:0px 0px 5px 0px',
+                    'ng-show'  => 'active.datasource != \\\'\\\'',
                     'ng-click' => 'generateColumns()',
                 ),
-                'type' => 'LinkButton',
+                'type'       => 'LinkButton',
             ),
-            array (
+            array(
                 'value' => '<div class=\\"clearfix\\"></div>',
-                'type' => 'Text',
+                'type'  => 'Text',
             ),
-            array (
+            array(
                 'label' => 'DataTable Options',
-                'name' => 'gridOptions',
-                'show' => 'Show',
-                'type' => 'KeyValueGrid',
+                'name'  => 'gridOptions',
+                'show'  => 'Show',
+                'type'  => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'title' => 'Columns',
-                'type' => 'SectionHeader',
+                'type'  => 'SectionHeader',
             ),
-            array (
+            array(
                 'value' => '<div style=\\"margin-top:5px\\"></div>',
-                'type' => 'Text',
+                'type'  => 'Text',
             ),
-            array (
-                'name' => 'columns',
+            array(
+                'name'          => 'columns',
                 'fieldTemplate' => 'form',
-                'templateForm' => 'application.components.ui.FormFields.DataTableListForm',
-                'labelWidth' => '0',
-                'fieldWidth' => '12',
-                'options' => array (
-                    'ng-model' => 'active.columns',
+                'templateForm'  => 'application.components.ui.FormFields.DataTableListForm',
+                'labelWidth'    => '0',
+                'fieldWidth'    => '12',
+                'options'       => array(
+                    'ng-model'  => 'active.columns',
                     'ng-change' => 'save()',
                 ),
-                'type' => 'ListView',
+                'type'          => 'ListView',
             ),
         );
     }
@@ -114,6 +114,21 @@ class DataTable extends FormField {
             'css/handsontable.full.min.css',
             'css/data-table.css',
             'css/jquery-ui-datepicker.min.css'];
+    }
+
+    public function actionResizeCol($col, $name, $size, $alias) {
+        $fb = FormBuilder::load($alias);
+        $field = $fb->findField(['name' => $name]);
+
+        if (isset($field) && isset($field['columns'][$col])) {
+            if (!isset($field['columns'][$col]['options'])) {
+                $field['columns'][$col]['options'] = [];
+            }
+            $field['columns'][$col]['options']['width'] = $size;
+        }
+
+        $fields = $fb->updateField(['name' => $name], $field);
+        $fb->setFields($fields);
     }
 
     public function render() {

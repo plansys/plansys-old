@@ -54,7 +54,7 @@
                  oc-lazy-load="{name: 'ui.tree', files: ['<?= Yii::app()->controller->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
                 <div ui-tree="uiTreeOptions">
                     <ol ui-tree-nodes ng-model="value">
-                        <li ui-tree-node ng-init="model = value[$index]; model.$parent = parent.model;" ng-repeat="item in value" class="list-view-item">
+                        <li ui-tree-node ng-init="model = value[$index]; " ng-repeat="item in value" class="list-view-item">
                             <div style="float:right;">
                                 <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
                                     <i class="fa fa-times"></i>
@@ -81,7 +81,7 @@
         <div ng-repeat="(key,val) in value track by $index">
             <input name="<?= $this->renderName ?>[{{key}}]" ng-if="typeof (val) == 'string'" type="hidden" value='{{val}}' />
             <div ng-repeat="(k,v) in val  track by $index" ng-if="typeof (val) == 'object'">
-                <input name="[{{key}}][{{k}}]" type="hidden" value='{{v}}' />
+                <input name="<?= $this->renderName ?>[{{key}}][{{k}}]" type="hidden" value='{{v}}' />
             </div>
         </div>
         <input ng-if="value.length == 0" name="<?= $this->renderName ?>" type="hidden" value='' />

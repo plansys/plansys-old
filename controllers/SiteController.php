@@ -25,17 +25,23 @@ class SiteController extends Controller {
                 $shouldRender = false;
                 switch ($error['code']) {
                     case 403:
-                        $error        = array(
-                            'code'    => 'Peringatan: Tidak Ada Hak Akses (403)',
-                            'message' => $error['message']
+                        $msg = 'Anda tidak memiliki hak akses terhadap URL ini. <br/>'
+                                . 'Mohon segera alihkan tujuan anda ke halaman lain. <br/>';
+                        if (isset($error['message']) && trim($error['message']) != '') {
+                            $msg = $error['message'];
+                        }
+
+                        $error = array(
+                            'code'    => 'Peringatan: Tidak ada akses',
+                            'message' => $msg
                         );
                         $shouldRender = true;
                         break;
                     case 404:
-                        $error        = array(
+                        $error = array(
                             'code'    => 'Peringatan: Data / halaman tidak ditemukan',
                             'message' => 'Data yang ingin Anda lihat tidak dapat ditemukan. <br/>'
-                            . 'Mohon periksa kembali URL yang ingin anda buka.<br/><br/>'
+                            . 'Mohon periksa kembali URL yang ingin Anda buka.<br/><br/>'
                             . 'Atau mungkin juga data yang ingin Anda akses sudah dihapus.'
                         );
                         $shouldRender = true;
@@ -43,7 +49,7 @@ class SiteController extends Controller {
                 }
 
                 if ($shouldRender) {
-                    $this->pageTitle  = $error['code'];
+                    $this->pageTitle = $error['code'];
                     $_GET['rendered'] = true;
                     $this->render('error', $error);
                 }
@@ -67,7 +73,7 @@ class SiteController extends Controller {
                     break;
             }
             if ($id != "") {
-                $this->pageTitle  = $error['code'];
+                $this->pageTitle = $error['code'];
                 $_GET['rendered'] = true;
                 $this->render("error", $error);
             }

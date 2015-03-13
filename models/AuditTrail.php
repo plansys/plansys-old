@@ -35,20 +35,20 @@ class AuditTrail extends ActiveRecord {
         if ($all) {
             return [
                 'general' => [
-                    'view' => 'View',
+                    'view'   => 'View',
                     'create' => 'Create',
                     'update' => 'Update',
                     'delete' => 'Delete',
                 ],
-                'other' => [
-                    'login' => 'Login',
+                'other'   => [
+                    'login'  => 'Login',
                     'logout' => 'Logout',
-                    'other' => 'Other'
+                    'other'  => 'Other'
                 ]
             ];
         } else {
             return [
-                'view' => 'View',
+                'view'   => 'View',
                 'create' => 'Create',
                 'update' => 'Update',
                 'delete' => 'Delete',
@@ -90,11 +90,11 @@ class AuditTrail extends ActiveRecord {
         $params = http_build_query($params);
 
         $return = [
-            'url' => $url,
-            'module' => $module,
-            'ctrl' => $ctrl,
-            'action' => $action,
-            'params' => $params,
+            'url'      => $url,
+            'module'   => $module,
+            'ctrl'     => $ctrl,
+            'action'   => $action,
+            'params'   => $params,
             'pathinfo' => "/" . ($module != '' ? $module . "/" : "") . $ctrl . "/" . $action
         ];
 
@@ -163,7 +163,7 @@ class AuditTrail extends ActiveRecord {
                 }
 
                 $at = $pathInfo;
-                
+
                 ## remove data from view tracker...
                 if ($type == "view") {
                     $at['data'] = "{}";
@@ -175,11 +175,8 @@ class AuditTrail extends ActiveRecord {
                 $at['type'] = $type;
                 $at['stamp'] = date("Y-m-d H:i:s");
                 $at['user_id'] = Yii::app()->user->id;
-                
-                ## WARNING !!! skip view tracker.. too much data..
-                if ($type != "view") {
-                    ActiveRecord::batch('AuditTrail',[$at]);
-                }
+
+                ActiveRecord::batch('AuditTrail', [$at]);
             }
         }
     }

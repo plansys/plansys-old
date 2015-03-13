@@ -28,15 +28,32 @@ class FormsController extends Controller {
         }
     }
 
+    public function actionDelForm($p) {
+        $file = Yii::getPathOfAlias($p) . ".php";
+        if (is_file($file)) {
+            @unlink($file);
+        }
+    }
+
+    public function actionAddFolder($n, $p) {
+        $dir = Yii::getPathOfAlias($p);
+        if (is_dir($dir) && Helper::isValidVar($c)) {
+            if (!@mkdir($dir . DIRECTORY_SEPARATOR . $n)) {
+                echo "SUCCESS";
+            } else {
+                echo "ERROR: Failed to create folder (permission denied)";
+            }
+        } else {
+            echo "ERROR: Folder name is not valid";
+        }
+    }
+
     public function actionAddForm($c, $e, $p, $m) {
-        if (class_exists($e)) {
+        if (@class_exists($e)) {
+            $class = $this->prepareFormName($c, $m);
             if (Helper::isValidVar($c)) {
                 $extends = $e;
                 $dir = Yii::getPathOfAlias($p);
-                $class = ucfirst($c);
-                if (strpos(ucfirst($m), $c) !== 0) {
-                    $class = ucfirst($m) . ucfirst($c);
-                }
                 $path = $dir . DIRECTORY_SEPARATOR . $class . ".php";
                 if (!is_file($path)) {
                     $source = <<<EOF
@@ -56,7 +73,7 @@ EOF;
             } else {
                 echo json_encode([
                     "success" => false,
-                    "error"   => "ERROR: Invalid class name ({$c})"
+                    "error"   => "ERROR: Class {$class} already exists"
                 ]);
             }
         } else {
@@ -136,7 +153,7 @@ EOF;
         }
         foreach ($toolbarData as $k => $f) {
             $ff = new $f['type'];
-            $scripts = array_merge($ff->renderScript(), $ff->renderPropertiesScript());
+            $scripts = array_merge($ff->renderScript(), $ff->renderEditorScript());
 
             foreach ($scripts as $script) {
                 $ext = Helper::explodeLast(".", $script);

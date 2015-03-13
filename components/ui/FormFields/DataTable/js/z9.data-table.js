@@ -1486,9 +1486,9 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             }
                             //FIX HEIGHT OVERFLOW
                         },
-                        beforeColumnSort: function (column, order) {
+                        beforeColumnSort: function (col, order) {
                             if (typeof $scope.events.beforeColumnSort == "function") {
-                                $scope.events.beforeColumnSort(column, column);
+                                $scope.events.beforeColumnSort(col, order);
                             }
                         },
                         afterColumnSort: function (col, order) {
@@ -1497,7 +1497,23 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                     .prepend("<div class='sortArrow " + (order ? "asc" : "desc") + "'></div>");
 
                             if (typeof $scope.events.afterColumnSort == "function") {
-                                $scope.events.afterColumnSort(column, column);
+                                $scope.events.afterColumnSort(col, order);
+                            }
+                        },
+                        afterColumnResize: function (col, size) {
+                            if ($scope.user.full_role == 'dev') {
+                                $http.get(Yii.app.createUrl('/formfield/DataTable.resizeCol', {
+                                    col: col,
+                                    name: $scope.name,
+                                    size: size,
+                                    alias: $scope.modelClass
+                                })).success(function (data) {
+                                    console.log(data)
+                                });
+                            }
+
+                            if (typeof $scope.events.afterColumnResize == "function") {
+                                $scope.events.afterColumnResize(col, siz);
                             }
                         },
                         beforeRender: function () {

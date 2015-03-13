@@ -14,6 +14,18 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
 
         return "form";
     };
+    $scope.delForm = function (sel, item) {
+        $http.get(Yii.app.createUrl('/dev/forms/delForm', {
+            p: item.alias,
+        })).success(function (data) {
+            if (!!data) {
+                alert(data);
+            } else {
+                console.log(sel);
+                sel.remove();
+            }
+        });
+    };
     $scope.addForm = function (classname, extendsname, item) {
         if (!!classname && !!extendsname) {
             var module = item.module.replace('Plansys: ', '');
@@ -36,7 +48,27 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                     }
                     return;
                 }
-            });
+            })
+        }
+    };
+    $scope.addFolder = function (foldername, item) {
+        if (!!foldername) {
+            $http.get(Yii.app.createUrl('/dev/forms/addFolder', {
+                n: foldername,
+                p: item.alias
+            })).success(function (data) {
+                if (data == "SUCCESS") {
+                    item.items.push({
+                        name: data.class,
+                        class: data.class,
+                        alias: item.alias + data.class,
+                        items: []
+                    });
+                    return;
+                } else {
+                    alert(data);
+                }
+            })
         }
     };
     $scope.executeMenu = function (e, func) {
@@ -47,6 +79,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
         }
     }
     $scope.formTreeOpen = function (sel, e, item) {
+        console.log(item);
         $scope.menuSelect = sel.$modelValue;
         $(".menu-sel").removeClass("active").removeClass(".menu-sel");
         $(e.target).parent().addClass("menu-sel active");
@@ -123,7 +156,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         label: "Delete",
                         click: function (item) {
                             if (confirm("Delete folder \"" + item.name + "\".\nAll forms and folder under it will also be deleted.\nAre you sure?")) {
-                                return true;
+                                return;
                             }
                         }
                     }
@@ -172,7 +205,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         label: "Delete",
                         click: function (item) {
                             if (confirm("Delete form \"" + item.name + "\" ?")) {
-                                return true;
+                                $scope.delForm(sel, item);
                             }
                         }
                     }

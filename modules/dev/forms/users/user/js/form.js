@@ -3,7 +3,7 @@ $scope.updateRole = function () {
         var roles = [];
         for (i in $scope.userRoles.value) {
             var c = $scope.userRoles.value[i];
-            if (c.role_id != null && roles.indexOf(c.role_id) < 0) {
+            if (roles.indexOf(c.role_id) < 0) {
                 roles.push(c.role_id);
             } else {
                 $scope.userRoles.value.splice(i, 1);

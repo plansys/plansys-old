@@ -17,6 +17,7 @@ class Asset extends CComponent {
         } else {
             $path = Yii::getPathOfAlias($path);
         }
+        
         return $path;
     }
 

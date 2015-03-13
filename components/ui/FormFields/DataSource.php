@@ -668,7 +668,7 @@ class DataSource extends FormField {
             $criteriaCount = $criteria;
             $criteriaCount['select'] = 'count(1) as id';
             $rawCount = $this->model->getRelated($this->relationTo, true, $criteriaCount);
-            if (!is_array($rawCount)) {
+            if (!is_array($rawCount) && !is_null($rawCount)) {
                 throw New Exception('Relation defintion is wrong! check your relations() function in model');
             }
 

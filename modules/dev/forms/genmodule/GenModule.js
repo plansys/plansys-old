@@ -85,6 +85,7 @@ $timeout(function () {
             }
         });
     }
+    
     if ($scope.roleAccess) {
         $scope.userAccess.afterCellEdit = function () {
             $scope.saveAC();

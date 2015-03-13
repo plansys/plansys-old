@@ -10,114 +10,114 @@ class CheckboxList extends FormField {
      * @return array me-return array property Checkbox.
      */
     public function getFieldProperties() {
-        return  [
-             [
+        return array (
+            array (
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ],
-                'list' =>  [],
+                ),
+                'list' => array (),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Label',
                 'name' => 'label',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
+                ),
                 'type' => 'TextField',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                     'ng-delay' => '500',
-                ],
+                ),
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Item Layout',
                 'name' => 'itemLayout',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.itemLayout',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
+                ),
                 'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Label Width',
                 'name' => 'labelWidth',
                 'fieldWidth' => '4',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.labelWidth',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                     'ng-disabled' => 'active.layout == \\\'Vertical\\\';',
-                ],
+                ),
                 'type' => 'TextField',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Convert List to String ?',
                 'name' => 'convertToString',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => 'active.convertToString',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
+                ),
                 'listExpr' => 'array(\\"Yes\\",\\"No\\")',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
-            ],
-             [
+            ),
+            array (
                 'label' => 'CheckBox Item',
                 'name' => 'list',
                 'show' => 'Show',
-                'options' =>  [
+                'options' => array (
                     'ng-hide' => 'active.listExpr != \\\'\\\' || active.options[\\\'ps-list\\\'] != null',
-                ],
+                ),
                 'allowSpaceOnKey' => 'Yes',
                 'type' => 'KeyValueGrid',
-            ],
-             [
+            ),
+            array (
                 'label' => 'List Expression',
                 'fieldname' => 'listExpr',
-                'options' =>  [
+                'options' => array (
                     'ng-hide' => 'active.options[\\\'ps-list\\\'] != null',
                     'ps-valid' => 'active.list = result;save();',
-                ],
+                ),
                 'desc' => '<i class=\\"fa fa-warning\\"></i> WARNING: Using List Expression will replace <i>CheckBox Item</i>with expression result',
                 'type' => 'ExpressionField',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
-            ],
-        ];
+            ),
+        );
     }
 
     /** @var string $label */

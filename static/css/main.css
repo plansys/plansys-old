@@ -2552,7 +2552,8 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     width: 16px;
 }
 
-[toggle-switch] .error {
+[toggle-switch] .error,
+[radio-button-list] .error {
     border:0px;
     border-radius:3px;
     margin-top:5px;

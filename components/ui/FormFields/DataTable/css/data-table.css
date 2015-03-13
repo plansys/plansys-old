@@ -202,7 +202,6 @@
     text-transform: uppercase;
     color: #6F6F6F;
     font-size: 11px;
-    line-height: 20px;
     font-weight: bold;
     cursor:pointer !important;
 
@@ -229,7 +228,7 @@
     border-right: 1px solid #ddd !important;
 }
 
-.handsontable td.group-text {
+.handsontable td.single-line {
     white-space: pre;
 }
 

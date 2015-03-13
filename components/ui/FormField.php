@@ -37,10 +37,9 @@ class FormField extends CComponent {
     /** @var array $parseField */
     public $parseField = []; // list of form fields to be parsed array('from'=>'to')
 
-    
-    /** @var array $renderParams, additional parameter yang akan di render melalui renderForm*/
+    /** @var array $renderParams, additional parameter yang akan di render melalui renderForm */
     public $renderParams = [];
-    
+
     /** @var string $renderID */
     public $renderID = ""; //to distinguish one field to another, will be filled when rendering, -NOT- in editor
 
@@ -161,7 +160,7 @@ class FormField extends CComponent {
             extract($_data_);
             $default = ini_get('display_errors');
             ini_set('display_errors', 'On');
-            $return  = eval('return ' . $_expression_ . ';');
+            $return = eval('return ' . $_expression_ . ';');
             ini_set('display_errors', $default);
             return $return;
         } else {
@@ -263,11 +262,11 @@ class FormField extends CComponent {
      */
     public function getAttributes() {
         $reflect = new ReflectionClass($this);
-        $props   = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
-        $result  = [];
+        $props = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
+        $result = [];
         foreach ($props as $k => $p) {
             if (!$p->isStatic()) {
-                $name          = $p->getName();
+                $name = $p->getName();
                 $result[$name] = $this->$name;
             }
         }
@@ -308,7 +307,7 @@ class FormField extends CComponent {
      * @return array Fungsi ini akan me-return array yang berisi default atribut field.
      */
     public function getDefaultFields() {
-        $fields  = $this->attributes;
+        $fields = $this->attributes;
         $exclude = [
             'data',
             'id'
@@ -333,27 +332,36 @@ class FormField extends CComponent {
      */
     public static function renderTemplate($file) {
         $reflector = new ReflectionClass(get_called_class());
-        $path      = str_replace(".php", DIRECTORY_SEPARATOR . $file, $reflector->getFileName());
+        $path = str_replace(".php", DIRECTORY_SEPARATOR . $file, $reflector->getFileName());
         return file_get_contents($path);
     }
 
-    public function includePropertiesJS() {
+    public function includeEditorJS() {
         return [];
     }
 
-    public function includePropertiesCSS() {
+    public function includeEditorCSS() {
         return [];
     }
 
-    public function renderPropertiesScript() {
-        $html      = [];
-        $includeJS = $this->includePropertiesJS();
+    public function renderEditorScript() {
+        $html = [];
+        $includeJS = $this->includeEditorJS();
         if (!empty($includeJS)) {
             foreach ($includeJS as $js) {
-                $jspath = realpath(Asset::resolveAlias($js));
+                $jspath = Asset::resolveAlias($js);
+                
+                if (!$jspath) {
+                    $class = get_class($this);
+                    $jspath = realpath(Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js);
+                } else {
+                    if (!is_dir($jspath)) {
+                        $jspath = realpath($js);
+                    }
+                }
 
                 if (is_dir($jspath)) {
-                    $path  = Asset::publish($jspath);
+                    $path = Asset::publish($jspath);
                     $files = glob($jspath . "/*");
 
                     foreach ($files as $p) {
@@ -361,7 +369,7 @@ class FormField extends CComponent {
                             continue;
                         }
 
-                        $p      = str_replace($jspath, '', realpath($p));
+                        $p = str_replace($jspath, '', realpath($p));
                         $html[] = $path . str_replace("\\", "/", $p);
                     }
                 } else if (is_file($jspath)) {
@@ -370,13 +378,19 @@ class FormField extends CComponent {
             }
         }
 
-        $includeCSS = $this->includePropertiesCSS();
+        $includeCSS = $this->includeEditorCSS();
         if (!empty($includeCSS)) {
             foreach ($includeCSS as $css) {
-                $csspath = realpath(Asset::resolveAlias($js));
+                $csspath = Asset::resolveAlias($css);
+                if (!$csspath) {
+                    $class = get_class($this);
+                    $csspath = realpath(Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css);
+                } else {
+                    $csspath = realpath($css);
+                }
 
                 if (is_dir($csspath)) {
-                    $path  = Asset::publish($csspath);
+                    $path = Asset::publish($csspath);
                     $files = glob($csspath . "/*");
 
                     foreach ($files as $p) {
@@ -384,7 +398,7 @@ class FormField extends CComponent {
                             continue;
                         }
 
-                        $p      = str_replace($csspath, '', realpath($p));
+                        $p = str_replace($csspath, '', realpath($p));
                         $html[] = $path . str_replace("\\", "/", $p);
                     }
                 } else if (is_file($csspath)) {
@@ -403,11 +417,11 @@ class FormField extends CComponent {
         $includeJS = $this->includeJS();
         if (count($includeJS) > 0) {
             foreach ($includeJS as $js) {
-                $class  = get_class($this);
+                $class = get_class($this);
                 $jspath = realpath(Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js);
 
                 if (is_dir($jspath)) {
-                    $path  = Asset::publish($jspath);
+                    $path = Asset::publish($jspath);
                     $files = glob($jspath . "/*");
 
                     foreach ($files as $p) {
@@ -428,7 +442,7 @@ class FormField extends CComponent {
 
         $includeCSS = $this->includeCSS();
         foreach ($includeCSS as $css) {
-            $class   = get_class($this);
+            $class = get_class($this);
             $csspath = Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css;
             Yii::app()->clientScript->registerCSSFile(Asset::publish($csspath), 'ALL');
         }
@@ -443,14 +457,14 @@ class FormField extends CComponent {
         $html = [];
         if (count($includeJS) > 0) {
             foreach ($includeJS as $js) {
-                $class  = get_class($this);
+                $class = get_class($this);
                 $jspath = realpath(Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js);
 
                 if (is_dir($jspath)) {
-                    $path  = Asset::publish($jspath);
+                    $path = Asset::publish($jspath);
                     $files = glob($jspath . "/*");
                     foreach ($files as $p) {
-                        $p      = str_replace($jspath, '', realpath($p));
+                        $p = str_replace($jspath, '', realpath($p));
                         $html[] = $path . str_replace("\\", "/", $p);
                     }
                 } else {
@@ -462,7 +476,7 @@ class FormField extends CComponent {
         $includeCSS = $this->includeCSS();
         if (count($includeCSS) > 0) {
             foreach ($includeCSS as $css) {
-                $class  = get_class($this);
+                $class = get_class($this);
                 $html[] = Asset::publish(Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css);
             }
         }
@@ -476,7 +490,7 @@ class FormField extends CComponent {
     public function renderInternal($file, $attr = []) {
 
         $reflector = new ReflectionClass($this);
-        $path      = str_replace(".php", DIRECTORY_SEPARATOR . $file, $reflector->getFileName());
+        $path = str_replace(".php", DIRECTORY_SEPARATOR . $file, $reflector->getFileName());
 
         $attributes = $attr + [
             'field'  => $this->attributes,
@@ -502,11 +516,11 @@ class FormField extends CComponent {
      * @return null Fungsi ini untuk menambahkan class.
      */
     public function addClass($class, $fieldName = "options") {
-        $opt              = $this->$fieldName;
-        $array            = explode(" ", @$opt['class']);
-        $array            = array_unique(array_filter($array));
+        $opt = $this->$fieldName;
+        $array = explode(" ", @$opt['class']);
+        $array = array_unique(array_filter($array));
         array_push($array, $class);
-        $opt['class']     = implode(" ", $array);
+        $opt['class'] = implode(" ", $array);
         $this->$fieldName = $opt;
     }
 
@@ -521,8 +535,8 @@ class FormField extends CComponent {
         $keys = array_keys($this->$fieldName);
 
         if (!in_array($key, $keys)) {
-            $a                = $this->$fieldName;
-            $a[$key]          = $value;
+            $a = $this->$fieldName;
+            $a[$key] = $value;
             $this->$fieldName = $a;
         }
     }
@@ -552,7 +566,7 @@ class FormField extends CComponent {
         $list = [];
         foreach ($raw as $key => $content) {
             $keyArr = explode('.', $key);
-            $key    = "['" . implode("']['", $keyArr) . "']";
+            $key = "['" . implode("']['", $keyArr) . "']";
 
             if ($content === 'true' || $content === 'false') {
                 $content = ($content === 'true');
@@ -569,7 +583,7 @@ class FormField extends CComponent {
      */
     public static function all() {
         $ffdir = Yii::getPathOfAlias('application.components.ui.FormFields') . DIRECTORY_SEPARATOR;
-        $dir   = glob($ffdir . "*.php");
+        $dir = glob($ffdir . "*.php");
 
         $return = [];
         foreach ($dir as $k => $d) {
@@ -577,8 +591,8 @@ class FormField extends CComponent {
             $class = str_replace(".php", "", $class);
 
             if (property_exists($class, 'toolbarName')) {
-                $a             = new $class;
-                $array         = $a->attributes;
+                $a = new $class;
+                $array = $a->attributes;
                 $array['name'] = $class::$toolbarName;
                 if (isset($array['label'])) {
                     $array['label'] = $class::$toolbarName;
@@ -619,8 +633,8 @@ class FormField extends CComponent {
      * @return array me-return array atribut formfield
      */
     public static function settings($formType) {
-        $ffdir  = Yii::getPathOfAlias('application.components.ui.FormFields') . DIRECTORY_SEPARATOR;
-        $dir    = glob($ffdir . "*.php");
+        $ffdir = Yii::getPathOfAlias('application.components.ui.FormFields') . DIRECTORY_SEPARATOR;
+        $dir = glob($ffdir . "*.php");
         $result = [
             'icon'     => [],
             'category' => []
@@ -630,7 +644,7 @@ class FormField extends CComponent {
             $class = str_replace(".php", "", $class);
 
             if (property_exists($class, 'toolbarIcon') && property_exists($class, 'category')) {
-                $result['icon'][$class]     = $class::$toolbarIcon;
+                $result['icon'][$class] = $class::$toolbarIcon;
                 $result['category'][$class] = $class::$category;
             }
         }

@@ -67,30 +67,6 @@ Module "' . $name . '" already exist';
         rmdir($dirPath);
     }
 
-    public static function parseModule($module) {
-        $m = explode(".", $module);
-        if (count($m) == 2 && $m[1] != '') {
-            $name = lcfirst($m[1]);
-            $class = ucfirst($name) . "Module";
-            $basePath = $m[0] == "app" ? Setting::getAppPath() : Setting::getApplicationPath();
-            $alias = ($m[0] == "app" ? 'app' : 'application') . ".modules.{$name}.{$class}";
-            $path = $basePath . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . $name;
-            $classPath = $path . DIRECTORY_SEPARATOR . $class . ".php";
-
-            if (!Helper::isValidVar($class)) {
-                return [];
-            }
-
-            return [
-                'name'      => $name,
-                'class'     => $class,
-                'alias'     => $alias,
-                'path'      => $path,
-                'classPath' => $classPath
-            ];
-        }
-        return [];
-    }
 
     public function load($module) {
         $m = explode(".", $module);

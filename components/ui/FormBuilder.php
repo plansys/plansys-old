@@ -251,7 +251,7 @@ class FormBuilder extends CComponent {
         return $results;
     }
 
-    public function updateField($attributes, $values, &$fields = null, $level = 0) {
+    public function updateField($findAttr, $values, &$fields = null, $level = 0) {
         if ($fields == null) {
             $fields = $this->getFields();
         }
@@ -264,17 +264,17 @@ class FormBuilder extends CComponent {
             foreach ($f as $key => $value) {
                 if (isset($f['name'])) {
                     if (!is_array($value)) {
-                        foreach ($attributes as $attrKey => $attrVal) {
+                        foreach ($findAttr as $attrKey => $attrVal) {
                             if ($key == $attrKey && $value == $attrVal) {
                                 $valid++;
                             }
                         }
                     } else if (is_array($value) && count($value) > 0) {
-                        $fields[$k][$key] = $this->updatefield($attributes, $values, $value, $level);
+                        $fields[$k][$key] = $this->updatefield($findAttr, $values, $value, $level);
                     }
                 }
             }
-            if ($valid == count($attributes)) {
+            if ($valid == count($findAttr)) {
                 foreach ($values as $vk => $val) {
                     $fields[$k][$vk] = $val;
                 }

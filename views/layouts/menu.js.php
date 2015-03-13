@@ -71,6 +71,7 @@
                     $scope.originalContextMenu = angular.copy($scope.contextMenu);
                 }
 
+                item.$tree = itemTree;
                 if (itemTree.$parentNodeScope != null) {
                     item.$parent = itemTree.$parentNodeScope.$modelValue;
                 }

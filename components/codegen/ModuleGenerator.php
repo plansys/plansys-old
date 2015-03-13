@@ -278,7 +278,6 @@ class ModuleGenerator extends CodeGenerator {
             $this->accessType = "CUSTOM";
             $this->acSource = $code;
             $code = $this->addIndent($code);
-
         }
         $this->updateFunction('accessControl', $code, [
             'params' => ['$controller', '$action']
@@ -356,6 +355,89 @@ EOF;
         }
 
         return $source;
+    }
+
+    public static function parseModule($module) {
+        $m = explode(".", $module);
+        if (count($m) == 2 && $m[1] != '') {
+            $name = lcfirst($m[1]);
+            $class = ucfirst($name) . "Module";
+            $basePath = $m[0] == "app" ? Setting::getAppPath() : Setting::getApplicationPath();
+            $alias = ($m[0] == "app" ? 'app' : 'application') . ".modules.{$name}.{$class}";
+            $path = $basePath . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . $name;
+            $classPath = $path . DIRECTORY_SEPARATOR . $class . ".php";
+
+            if (!Helper::isValidVar($class)) {
+                return [];
+            }
+
+            return [
+                'name'      => $name,
+                'class'     => $class,
+                'alias'     => $alias,
+                'path'      => $path,
+                'classPath' => $classPath
+            ];
+        }
+        return [];
+    }
+
+    public static function rename($from, $to) {
+        $from = ModuleGenerator::parseModule($from);
+        $to = ModuleGenerator::parseModule($to);
+
+        if (empty($from)) {
+            throw new CException("Invalid source name.");
+            return false;
+        }
+
+        if (empty($to)) {
+            throw new CException("Invalid destination name.");
+            return false;
+        }
+
+        if (is_dir($from['path']) && is_file($from['classPath'])) {
+            if (!is_file($to['classPath'])) {
+                ## rename module class
+                $file = file_get_contents($from['classPath']);
+                $file = preg_replace('/class\s+' . $from['class'] . '/', 'class ' . $to['class'], $file, 1);
+                file_put_contents($from['classPath'], $file);
+
+                ## rename directory
+                rename($from['classPath'], $from['path'] . DIRECTORY_SEPARATOR . $to['class'] . ".php");
+                rename($from['path'], $to['path']);
+                
+                ## rename forms
+                $formsDir = $to['path'] . DIRECTORY_SEPARATOR . 'forms';
+                $forms = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($formsDir));
+                foreach ($forms as $d) {
+                    if ($d->isFile() && $d->getExtension() == "php") {
+
+                        ## determine old and new file
+                        $oldClass = substr($d->getFilename(), 0, -4);
+                        $newClass = ucfirst($to['name']) . substr($oldClass, strlen($from['name']));
+                        $oldFilePath = $d->getRealPath();
+                        $newFilePath = $d->getPath() . DIRECTORY_SEPARATOR . $newClass . ".php";
+
+                        ## change class name inside file
+                        $file = file_get_contents($d->getRealPath());
+                        $file = preg_replace('/class\s*' . $oldClass . '/', 'class ' . $newClass, $file, 1);
+                        file_put_contents($oldFilePath, $file);
+
+                        ## rename file
+                        rename($oldFilePath, $newFilePath);
+                    }
+                }
+                
+                return $to;
+            } else {
+                throw new CException("Destination module already exist.");
+                return false;
+            }
+        } else {
+            throw new CException("Invalid source name.");
+            return false;
+        }
     }
 
 }

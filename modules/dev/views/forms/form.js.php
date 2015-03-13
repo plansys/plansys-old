@@ -51,7 +51,18 @@
         }
     })(jQuery);
 
+    var editor = {};
+
     app.controller("PageController", function ($scope, $http, $timeout, $window, $compile, $localStorage) {
+        editor.$scope = $scope;
+        editor.$http = $http;
+        editor.$timeout = $timeout;
+        editor.$window = $window;
+        editor.$compile = $compile;
+        editor.$localStorage = $localStorage;
+
+
+        $scope.editor = null;
         $scope.getNumber = function (num) {
             a = [];
             for (i = 1; i <= num; i++) {
@@ -91,14 +102,22 @@
         $scope.inEditor = true;
         $scope.classPath = '<?= $classPath; ?>';
         $scope.fieldMatch = function (scope) {
+
             if (scope == null)
                 return false;
             if ($scope.active == null)
                 return false;
             if (scope.modelClass == null)
                 return false;
+
+            if (scope.modelClass.indexOf(".") >= 0) {
+                scope.modelClass = scope.modelClass.split(".").pop();
+            }
+
+
             if ($scope.active.type != scope.modelClass)
                 return false;
+
             return true;
         }
         /*********************** TOOLBAR TABS ***********************/
@@ -628,12 +647,16 @@
             }
         }
         $scope.generateIdentity = function (field) {
-            if (field.renderID == '')
-                return '';
-
             if (!!field.name) {
                 var name = $scope.formatName(field.name);
                 switch (field.type) {
+                    case "SectionHeader":
+                    case "Text":
+                    case "ColumnField":
+                    case "SubForm":
+                    case "ModalDialog":
+                        return "";
+                        break;
                     case "RelationField":
                         return name + field.identifier;
                         break;
@@ -647,7 +670,7 @@
             $(".duplicate").addClass('ng-hide').each(function () {
                 if ($(this).attr('fname') == '')
                     return;
-                
+
                 var name = ".d-" + $scope.formatName($(this).attr('fname'));
                 var $name = $(name);
                 if (name.trim() != ".d-") {
@@ -782,6 +805,11 @@
                     $scope.inEditor = true;
                     $scope.activeTree = item;
                     $scope.active = item.$modelValue;
+                    if (!!editor[$scope.active.type]) {
+                        $scope.editor = editor[$scope.active.type];
+                    } else {
+                        $scope.editor = null;
+                    }
                     $scope.tabs.properties = true;
                     switch (item.$modelValue.type) {
                         case 'DataFilter':
@@ -809,6 +837,7 @@
         }
         $scope.unselect = function () {
             $scope.active = null;
+            $scope.editor = null;
         };
         $scope.unselectViaJquery = function () {
             $scope.$apply(function () {

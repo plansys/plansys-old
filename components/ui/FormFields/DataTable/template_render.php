@@ -13,7 +13,6 @@
     </div>
     <div ng-class="{invisible: !loaded}"   
          class=" data-table-container">
-
         <div ng-if="loaded">
             <div ng-if="data.length != 0" class="data-grid-paging-shadow"
                  style="height:50px;display:none;"></div>
