@@ -47,7 +47,7 @@
     </div>
     <div class="form-field-content"
          ng-include="Yii.app.createUrl('dev/forms/renderTemplate', {class: field.type})"
-         onload="relayout(field.type)"></div>
+         onload="relayout(field)"></div>
 
     <div class="clearfix"></div>
 </div>

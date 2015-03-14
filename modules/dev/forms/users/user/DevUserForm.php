@@ -27,8 +27,8 @@ class DevUserForm extends User {
                     ),
                     array (
                         'renderInEditor' => 'Yes',
-                        'value' => '<div ng-if=\\"!isNewRecord && module == \\\'dev\\\'\\" class=\\"separator\\"></div>',
                         'type' => 'Text',
+                        'value' => '<div ng-if=\\"!isNewRecord && module == \\\'dev\\\'\\" class=\\"separator\\"></div>',
                     ),
                     array (
                         'label' => 'Hapus',
@@ -63,8 +63,8 @@ class DevUserForm extends User {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<div ng-show=\\"module == \\\'dev\\\'\\">',
                         'type' => 'Text',
+                        'value' => '<div ng-show=\\"module == \\\'dev\\\'\\">',
                     ),
                     array (
                         'label' => 'Username',
@@ -82,19 +82,20 @@ class DevUserForm extends User {
                         'type' => 'ListView',
                     ),
                     array (
+                        'type' => 'Text',
                         'value' => '<div style=\"float:right;margin:-25px 0px 0px 0px;padding:0px;text-align:right;color:#999;font-size:12px;\">
       <i class=\"fa fa-info-circle\"></i> 
      Geser role ke atas 
          untuk menjadikan default
 </div>',
-                        'type' => 'Text',
                     ),
                     array (
+                        'type' => 'Text',
                         'value' => '</div>
 <div ng-if=\"module != \'dev\'\">',
-                        'type' => 'Text',
                     ),
                     array (
+                        'type' => 'Text',
                         'value' => '    <div class=\"form-group form-group-sm\">
         <label 
         class=\"col-sm-4 control-label\">
@@ -105,9 +106,9 @@ class DevUserForm extends User {
            {{ model.username }}
         </div>
     </div>',
-                        'type' => 'Text',
                     ),
                     array (
+                        'type' => 'Text',
                         'value' => '    <div class=\"form-group form-group-sm\">
         <label 
         class=\"col-sm-4 control-label\">
@@ -129,16 +130,15 @@ class DevUserForm extends User {
            </table>
         </div>
     </div>',
-                        'type' => 'Text',
                     ),
                     array (
+                        'type' => 'Text',
                         'value' => '
 </div>',
-                        'type' => 'Text',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column2' => array (
@@ -161,8 +161,8 @@ class DevUserForm extends User {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<div ng-if=\\"module == \\\'dev\\\' && !isNewRecord\\">',
                         'type' => 'Text',
+                        'value' => '<div ng-if=\\"module == \\\'dev\\\' && !isNewRecord\\">',
                     ),
                     array (
                         'label' => 'LDAP User',
@@ -180,20 +180,22 @@ class DevUserForm extends User {
                         'type' => 'ToggleSwitch',
                     ),
                     array (
-                        'value' => '</div>',
                         'type' => 'Text',
+                        'value' => '</div>',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<div ng-if=\"!params.ldap && (!model.useLdap || (model.useLdap && model.password != \'\'))\">
 ',
-                'type' => 'Text',
             ),
             array (
                 'title' => '{{ isNewRecord ? \\"\\" : \\"Ubah \\"}} Password',
@@ -221,28 +223,30 @@ class DevUserForm extends User {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column2' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
+                        'type' => 'Text',
                         'value' => '<div class=\"info\" ng-if=\"!isNewRecord\"><i class=\"fa fa-info-circle fa-nm fa-fw\"></i>&nbsp; 
 Isi field disamping untuk mengubah password. 
 <br/>Jika tidak ingin dirubah, kosongkan saja.
 </div>',
-                        'type' => 'Text',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
-                'value' => '</div>',
                 'type' => 'Text',
+                'value' => '</div>',
             ),
             array (
                 'title' => 'Audit Trail',

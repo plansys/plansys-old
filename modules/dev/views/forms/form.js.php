@@ -688,18 +688,9 @@
                 }
             }, 10);
         }
-        $scope.refreshColumnPlaceholder = function () {
-            $(".cpl").each(function () {
-                if ($(this).parent().find("li").length == 1) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-        };
-        $scope.relayout = function (type) {
-            if (type == "ColumnField") {
-                $scope.refreshColumnPlaceholder();
+        $scope.relayout = function (field) {
+            if (!!editor && !!editor[field.type] && typeof editor[field.type].onLoad == 'function') {
+                editor[field.type].onLoad(field);
             }
             $scope.detectDuplicate();
         }
@@ -743,7 +734,7 @@
                 }
                 $scope.save();
                 $timeout(function () {
-                    $scope.refreshColumnPlaceholder();
+                    editor.ColumnField.refreshColumnPlaceholder();
                 }, 10);
             }
         };
