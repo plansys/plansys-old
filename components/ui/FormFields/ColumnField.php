@@ -10,15 +10,15 @@ class ColumnField extends FormField {
      * @return array me-return array property ColumnField.
      */
     public function getFieldProperties() {
-        return array (
-            array (
-                'label' => 'Total Columns',
-                'name' => 'totalColumns',
-                'options' => array (
+        return array(
+            array(
+                'label'      => 'Total Columns',
+                'name'       => 'totalColumns',
+                'options'    => array(
                     'ng-change' => 'editor.changeTC();',
-                    'ng-model' => 'active.totalColumns',
+                    'ng-model'  => 'active.totalColumns',
                 ),
-                'listExpr' => 'array(
+                'listExpr'   => 'array(
    \'1\'=>\'1 Column\',
    \'2\'=>\'2 Columns\',
    \'3\'=>\'3 Columns\',
@@ -26,92 +26,92 @@ class ColumnField extends FormField {
    \'5\'=>\'5 Columns\'
 )',
                 'fieldWidth' => '5',
-                'type' => 'DropDownList',
+                'type'       => 'DropDownList',
             ),
-            array (
-                'label' => 'Show Border',
-                'name' => 'showBorder',
-                'options' => array (
-                    'ng-model' => 'active.showBorder',
+            array(
+                'label'      => 'Show Border',
+                'name'       => 'showBorder',
+                'options'    => array(
+                    'ng-model'  => 'active.showBorder',
                     'ng-change' => 'save();relayout();',
                 ),
-                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
+                'listExpr'   => 'array(\\\'Yes\\\',\\\'No\\\')',
                 'fieldWidth' => '4',
-                'type' => 'DropDownList',
+                'type'       => 'DropDownList',
             ),
-            array (
-                'type' => 'Text',
+            array(
+                'type'  => 'Text',
                 'value' => '<hr/>',
             ),
-            array (
-                'label' => 'Width Column 1',
-                'name' => 'w1',
+            array(
+                'label'      => 'Width Column 1',
+                'name'       => 'w1',
                 'fieldWidth' => '4',
-                'options' => array (
-                    'ng-if' => 'active.totalColumns >= 1',
-                    'ng-model' => 'active.w1',
+                'options'    => array(
+                    'ng-if'     => 'active.totalColumns >= 1',
+                    'ng-model'  => 'active.w1',
                     'ng-change' => 'save()',
-                    'ng-delay' => '500',
+                    'ng-delay'  => '500',
                 ),
-                'type' => 'TextField',
+                'type'       => 'TextField',
             ),
-            array (
-                'label' => 'Width Column 2',
-                'name' => 'w2',
+            array(
+                'label'      => 'Width Column 2',
+                'name'       => 'w2',
                 'fieldWidth' => '4',
-                'options' => array (
-                    'ng-if' => 'active.totalColumns >= 2',
-                    'ng-model' => 'active.w2',
+                'options'    => array(
+                    'ng-if'     => 'active.totalColumns >= 2',
+                    'ng-model'  => 'active.w2',
                     'ng-change' => 'save()',
-                    'ng-delay' => '500',
+                    'ng-delay'  => '500',
                 ),
-                'type' => 'TextField',
+                'type'       => 'TextField',
             ),
-            array (
-                'label' => 'Width Column 3',
-                'name' => 'w3',
+            array(
+                'label'      => 'Width Column 3',
+                'name'       => 'w3',
                 'fieldWidth' => '4',
-                'options' => array (
-                    'ng-if' => 'active.totalColumns >= 3',
-                    'ng-model' => 'active.w3',
+                'options'    => array(
+                    'ng-if'     => 'active.totalColumns >= 3',
+                    'ng-model'  => 'active.w3',
                     'ng-change' => 'save()',
-                    'ng-delay' => '500',
+                    'ng-delay'  => '500',
                 ),
-                'type' => 'TextField',
+                'type'       => 'TextField',
             ),
-            array (
-                'label' => 'Width Column 4',
-                'name' => 'w4',
+            array(
+                'label'      => 'Width Column 4',
+                'name'       => 'w4',
                 'fieldWidth' => '4',
-                'options' => array (
-                    'ng-if' => 'active.totalColumns >= 4',
-                    'ng-model' => 'active.w4',
+                'options'    => array(
+                    'ng-if'     => 'active.totalColumns >= 4',
+                    'ng-model'  => 'active.w4',
                     'ng-change' => 'save()',
-                    'ng-delay' => '500',
+                    'ng-delay'  => '500',
                 ),
-                'type' => 'TextField',
+                'type'       => 'TextField',
             ),
-            array (
-                'label' => 'Width Column 5',
-                'name' => 'w5',
+            array(
+                'label'      => 'Width Column 5',
+                'name'       => 'w5',
                 'fieldWidth' => '4',
-                'options' => array (
-                    'ng-if' => 'active.totalColumns >= 5',
-                    'ng-model' => 'active.w5',
+                'options'    => array(
+                    'ng-if'     => 'active.totalColumns >= 5',
+                    'ng-model'  => 'active.w5',
                     'ng-change' => 'save()',
-                    'ng-delay' => '500',
+                    'ng-delay'  => '500',
                 ),
-                'type' => 'TextField',
+                'type'       => 'TextField',
             ),
-            array (
-                'type' => 'Text',
+            array(
+                'type'  => 'Text',
                 'value' => '<hr/>',
             ),
-            array (
+            array(
                 'label' => 'Options',
-                'name' => 'options',
-                'show' => 'Show',
-                'type' => 'KeyValueGrid',
+                'name'  => 'options',
+                'show'  => 'Show',
+                'type'  => 'KeyValueGrid',
             ),
         );
     }
@@ -212,6 +212,11 @@ class ColumnField extends FormField {
      * @return mixed me-return sebuah field ColumnField dari hasil render 
      */
     public function render() {
+
+        $defaultWidth = round(100 / $this->totalColumns);
+        for ($i = 1; $i <= $this->totalColumns; $i++) {
+            $this->{'w' . $i} = !isset($this->{'w' . $i}) ? $defaultWidth . "%" : $this->{'w' . $i};
+        }
 
         $this->addClass('column-field', 'options');
         return $this->renderInternal('template_render.php');

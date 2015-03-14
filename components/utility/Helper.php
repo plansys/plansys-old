@@ -34,6 +34,16 @@ class Helper {
         return $period;
     }
 
+    public static function GetStringBetween($string, $start, $finish) {
+        $string = " " . $string;
+        $position = strpos($string, $start);
+        if ($position == 0)
+            return "";
+        $position += strlen($start);
+        $length = strpos($string, $finish, $position) - $position;
+        return substr($string, $position, $length);
+    }
+
     public static function replaceOnce($search, $replace, $subject) {
         $pos = strpos($subject, $search);
         if ($pos !== false) {

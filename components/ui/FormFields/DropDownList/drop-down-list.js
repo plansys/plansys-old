@@ -282,7 +282,7 @@ app.directive('dropDownList', function ($timeout) {
                     if (attrs.searchable) {
                         $scope.searchable = $scope.$parent.$eval(attrs.searchable);
                     }
-                }, 0);
+                });
             }
         }
     };

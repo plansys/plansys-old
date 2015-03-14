@@ -1342,7 +1342,7 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     opacity:0;
 }
 
-[list-view] .list-view-item-container {
+div[list-view] .list-view-item-container {
     opacity:1;
 }
 
@@ -1350,11 +1350,25 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     padding: 0px !important;
 }
 
+.list-view-item-container .column-field > tbody > tr > td {
+    padding-left:4px !important;
+}
+.list-view-item-container .column-field > tbody > tr > td:first-child {
+    padding-left:0px !important;
+}
 .list-view-add {
     color: #888;
     margin: 6px 0px;
     font-size: 13px;
     padding: 3px 10px;
+}
+
+.list-view-item-container.unsorted {
+    margin-left:-1px;
+}
+
+div[list-view].flat .angular-ui-tree-nodes > li {
+    border-radius:0px;margin:-6px 0px 5px 0px;
 }
 
 /********************************* ACTION BAR **********************************/

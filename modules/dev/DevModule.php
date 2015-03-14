@@ -2,6 +2,10 @@
 
 class DevModule extends CWebModule {
 
+    public function accessControl($controller,$action) {
+        
+    }
+
     public function init() {
         $import = array(
             'application.models.*',

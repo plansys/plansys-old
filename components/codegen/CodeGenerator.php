@@ -2,6 +2,8 @@
 
 abstract class CodeGenerator extends CComponent {
 
+    const MARK_EXECUTE = "#$%~||~%$#";
+
     public $class;
     protected $baseClass = "CComponent";
     protected $basePath = "application.components";
@@ -102,7 +104,6 @@ class {$class} extends {$this->baseClass} {\n \n}
     }
 
     protected function prepareLineForProperty() {
-
         ## get first line of the class
         $reflector = new ReflectionClass($this->class);
         $line = $reflector->getStartLine();
@@ -129,10 +130,19 @@ class {$class} extends {$this->baseClass} {\n \n}
         return $line;
     }
 
+    protected function markExecute($code) {
+        return CodeGenerator::MARK_EXECUTE . trim($code);
+    }
+
     public static function varExport($var, $indent = "        ") {
         switch (gettype($var)) {
             case "string":
-                return '"' . addcslashes($var, "\\\$\"\r\n\t\v\f") . '"';
+                if (strpos($var, CodeGenerator::MARK_EXECUTE) === 0) {
+                    $var = substr($var, strlen(CodeGenerator::MARK_EXECUTE));
+                    return $var;
+                } else {
+                    return '"' . addcslashes($var, "\\\$\"\r\n\t\v\f") . '"';
+                }
             case "array":
                 $indexed = array_keys($var) === range(0, count($var) - 1);
                 $r = [];

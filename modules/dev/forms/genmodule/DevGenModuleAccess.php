@@ -5,6 +5,8 @@ class DevGenModuleAccess extends Form {
     public $user;
     public $role;
     public $access;
+    public $func;
+    public $customMode = 'redirect';
 
     public function getForm() {
         return array (
@@ -60,7 +62,8 @@ class DevGenModuleAccess extends Form {
                         'list' => array (
                             'deny' => 'Deny',
                             'allow' => 'Allow',
-                            'custom' => 'Custom',
+                            '---' => '---',
+                            'custom' => 'Custom Action',
                         ),
                         'labelWidth' => '0',
                         'fieldWidth' => '12',
@@ -71,12 +74,43 @@ class DevGenModuleAccess extends Form {
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'w1' => '25%',
-                'w2' => '75%',
+                'w1' => '75%',
+                'w2' => '25%',
                 'w3' => '25%',
                 'w4' => '25%',
                 'w5' => '20%',
                 'type' => 'ColumnField',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<div ng-if=\"model.access == \'custom\'\" style=\'margin:0px 0px 5px 0px;\'>
+
+    <div ng-if=\"model.customMode == \'custom\'\" style=\'float:right;margin:6px 0px 0px 0px;text-align:right;\'>
+        Variable: 
+        <span class=\"badge badge-default\">$controller</span>
+        <span class=\"badge badge-default\">$action</span>
+        <span class=\"badge badge-default\">$this</span>
+    </div>',
+            ),
+            array (
+                'name' => 'customMode',
+                'list' => array (
+                    'redirect' => 'Redirect',
+                    'custom' => 'Custom Code',
+                ),
+                'labelWidth' => '0',
+                'fieldWidth' => '3',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '
+    <div ng-if=\"model.customMode == \'custom\'\" class=\"custom-editor\"
+     style=\"width:100%;
+     height:100px;border-radius:4px;\"
+     ng-model=\"model.func\"
+     ui-ace=\"aceConfig({inline:true, advanced:{showPrintMargin: false}})\"></div>
+</div>',
             ),
         );
     }

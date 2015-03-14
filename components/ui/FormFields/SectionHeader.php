@@ -8,20 +8,23 @@ class SectionHeader extends FormField {
      * @return array me-return array property SectionHeader.
      */
     public function getFieldProperties() {
-        return  [
-             [
+        return array (
+            array (
                 'label' => 'Title',
                 'name' => 'title',
-                'layout' => 'Vertical',
                 'fieldWidth' => '12',
-                'options' =>  [
+                'layout' => 'Vertical',
+                'options' => array (
                     'ng-model' => 'active.title',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
-                'type' => 'TextField',
-            ],
-        ];
+                ),
+                'fieldOptions' => array (
+                    'auto-grow' => 'true',
+                ),
+                'type' => 'TextArea',
+            ),
+        );
     }
 
     /** @var string $title */

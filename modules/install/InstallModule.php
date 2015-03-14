@@ -2,6 +2,10 @@
 
 class InstallModule extends CWebModule {
 
+    public function accessControl($controller,$action) {
+        
+    }
+
     public function beforeControllerAction($controller, $action) {
         ####### GENERATED CODE - DO NOT EDIT #######
         $mode = "default";

@@ -39,17 +39,6 @@ if ($scope.params.tab) {
     $scope.activeTab = $scope.params.tab;
 }
 
-$scope.uniqueArray = function (array, key) {
-    var f = [];
-    var arr = array.filter(function (n) {
-        if (typeof n[key] != 'string' && typeof n[key] != 'number') {
-            n[key] = '';
-        }
-
-        return (f.indexOf(n[key]) < 0 && f.push(n[key]));
-    });
-    return arr;
-}
 
 $timeout(function () {
     $scope.acStatus = '';
@@ -63,13 +52,11 @@ $timeout(function () {
                 code: $scope.model.acSource
             };
         } else {
-            $scope.model.rolesRule = $scope.uniqueArray($scope.model.rolesRule, 'role');
-
             post = {
                 accessType: $scope.model.accessType,
                 defaultRule: $scope.model.defaultRule,
                 roles: $scope.model.rolesRule,
-                users: !!$scope.userAccessDs ? $scope.userAccessDs.data : []
+                users: $scope.model.usersRule,
             };
         }
 
@@ -86,9 +73,4 @@ $timeout(function () {
         });
     }
     
-    if ($scope.roleAccess) {
-        $scope.userAccess.afterCellEdit = function () {
-            $scope.saveAC();
-        };
-    }
 });

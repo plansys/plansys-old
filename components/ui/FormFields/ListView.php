@@ -52,6 +52,69 @@ class ListView extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
+                'type' => 'Text',
+                'value' => '<div ng-show=\\"active.fieldTemplate == \\\'default\\\'\\">',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<div style=\\\'margin:10px 0px 10px 10px;border:1px solid #ccc;padding:5px 5px 0px 5px;border-radius:4px;\\\'>',
+            ),
+            array (
+                'label' => 'Field Type',
+                'name' => 'singleView',
+                'listExpr' => '[\\\'TextField\\\',\\\'DropDownList\\\']',
+                'fieldWidth' => '5',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Edit',
+                'icon' => 'pencil',
+                'buttonSize' => 'btn-xs',
+                'options' => array (
+                    'style' => 'float:right;margin-top:-32px;',
+                    'ng-click' => 'active.edited = !active.edited',
+                ),
+                'type' => 'LinkButton',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '        <div ng-if=\\\'active.edited\\\' style=\\\'border-top:1px solid #ccc;margin:0px -5px;padding:5px 5px 0px 5px;\\\'>',
+            ),
+            array (
+                'name' => 'singleViewOption',
+                'mode' => 'single',
+                'subForm' => 'application.components.ui.FormFields.TextField',
+                'options' => array (
+                    'ng-if' => 'active.singleView == \\\'TextField\\\'',
+                ),
+                'type' => 'SubForm',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '    </div>
+</div>',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '</div><div ng-show=\\"active.fieldTemplate == \\\'form\\\' && active.templateForm != \\\'\\\'\\">',
+            ),
+            array (
+                'label' => 'Edit Subform',
+                'icon' => 'sign-in',
+                'buttonSize' => 'btn-xs',
+                'options' => array (
+                    'style' => 'float:right;margin:0px 0px 5px 0px;',
+                    'href' => 'url:/dev/forms/update?class={active.templateForm}',
+                    'target' => '_blank',
+                ),
+                'type' => 'LinkButton',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<div class=\"clearfix\"></div>
+<hr/></div>',
+            ),
+            array (
                 'label' => 'Inline JS',
                 'name' => 'inlineJS',
                 'options' => array (
@@ -60,6 +123,20 @@ class ListView extends FormField {
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
+            ),
+            array (
+                'label' => 'Sortable',
+                'name' => 'sortable',
+                'options' => array (
+                    'ng-model' => 'active.sortable',
+                    'ng-change' => 'save();',
+                ),
+                'list' => array (
+                    'yes' => 'Yes',
+                    'No' => 'No',
+                ),
+                'fieldWidth' => '5',
+                'type' => 'DropDownList',
             ),
             array (
                 'label' => 'Label',
@@ -99,8 +176,8 @@ class ListView extends FormField {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column2' => array (
@@ -118,27 +195,27 @@ class ListView extends FormField {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column3' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column4' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'type' => 'ColumnField',
             ),
             array (
-                'value' => '<hr/>',
                 'type' => 'Text',
+                'value' => '<hr/>',
             ),
             array (
                 'label' => 'Options',
@@ -181,7 +258,6 @@ class ListView extends FormField {
 
     /** @var integer $labelWidth */
     public $labelWidth = 4;
-    
     public $inlineJS = '';
 
     /** @var integer $fieldWidth */
@@ -205,6 +281,10 @@ class ListView extends FormField {
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "glyphicon glyphicon-align-justify";
 
+    public $sortable = 'yes';
+    public $singleView = 'TextField';
+    public $singleViewOption = [];
+    
     /**
      * @return array me-return array javascript yang di-include
      */
@@ -267,9 +347,10 @@ class ListView extends FormField {
         $this->addClass($this->layoutClass, 'options');
         $this->addClass($this->errorClass, 'options');
 
-        $this->fieldOptions['id'] = $this->name;
-        $this->fieldOptions['name'] = $this->name;
-        $this->addClass('form-control', 'fieldOptions');
+        $this->fieldOptions['ui-tree-node'] = '';
+        $this->fieldOptions['ng-repeat'] = 'item in value';
+        $this->fieldOptions['ng-init'] = 'model = value[$index];';
+        $this->addClass('list-view-item', 'fieldOptions');
 
         Yii::import(FormBuilder::classPath($this->templateForm));
         $class = Helper::explodeLast(".", $this->templateForm);
@@ -278,31 +359,31 @@ class ListView extends FormField {
         if ($this->fieldTemplate == "form" && class_exists($class)) {
             $fb = FormBuilder::load($class);
             $model = new $class;
-            
+
             if ($this->value == "") {
                 $this->value = [];
             }
-            
+
             $this->templateAttributes = $model->attributes;
             $this->renderTemplateForm = $fb->render($this->templateAttributes, ['wrapForm' => false]);
         }
-        
+
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
-        
+
         $jspath = explode(".", FormBuilder::classPath($this->templateForm));
         array_pop($jspath);
         $jspath = implode(".", $jspath);
-        
+
         $inlineJS = str_replace("/", DIRECTORY_SEPARATOR, trim($this->inlineJS, "/"));
         $inlineJS = Yii::getPathOfAlias($jspath) . DIRECTORY_SEPARATOR . $inlineJS;
-        
+
         if (is_file($inlineJS)) {
             $inlineJS = file_get_contents($inlineJS);
         } else {
             $inlineJS = '';
         }
-        
-        return $this->renderInternal('template_render.php', ['inlineJS'=>$inlineJS]);
+
+        return $this->renderInternal('template_render.php', ['inlineJS' => $inlineJS]);
     }
 
 }

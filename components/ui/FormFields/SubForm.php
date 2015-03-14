@@ -7,6 +7,7 @@
 class SubForm extends FormField {
 
     public $name = '';
+    public $mode = 'multi';
     public $subForm = '';
     public $options = '';
     public $inlineJS = '';
@@ -23,14 +24,42 @@ class SubForm extends FormField {
     public function getFieldProperties() {
         return array (
             array (
+                'label' => 'Mode',
+                'name' => 'mode',
+                'options' => array (
+                    'ng-model' => 'active.mode',
+                    'ng-change' => 'save()',
+                ),
+                'defaultType' => 'first',
+                'list' => array (
+                    'single' => 'Single Field',
+                    'multi' => 'Multi Field',
+                ),
+                'type' => 'DropDownList',
+            ),
+            array (
                 'label' => 'SubForm Name',
                 'name' => 'name',
                 'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
+                    'ng-if' => 'active.mode == \\\'multi\\\'',
                 ),
                 'type' => 'TextField',
+            ),
+            array (
+                'label' => 'Field Name',
+                'name' => 'name',
+                'options' => array (
+                    'ng-model' => 'active.name',
+                    'ng-change' => 'changeActiveName()',
+                    'ps-list' => 'modelFieldList',
+                    'ng-if' => 'active.mode == \\\'single\\\'',
+                ),
+                'searchable' => 'Yes',
+                'showOther' => 'Yes',
+                'type' => 'DropDownList',
             ),
             array (
                 'label' => 'SubForm',

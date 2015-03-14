@@ -93,10 +93,10 @@
         })();
         vis(function () {
             if (vis()) {
-                console.log("reloading...");
+                console.log("tab activated.");
                 $scope.save();
             } else {
-                console.log("tab is invisible - has blur");
+                console.log("tab inactive.");
             }
         });
         $scope.inEditor = true;
@@ -827,6 +827,10 @@
                                 $scope.setTickSeries();
                             }
                             break;
+                    }
+
+                    if ($scope.editor != null && typeof $scope.editor.onSelect == 'function') {
+                        $scope.editor.onSelect($scope.active);
                     }
 
                 });

@@ -27,7 +27,7 @@
         </button>
         <?php if ($this->fieldTemplate == "default"): ?>
             <div ng-if="value != null" oc-lazy-load="{name: 'ui.tree', files: ['<?= Yii::app()->controller->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
-                <div ui-tree="uiTreeOptions">
+                <div ui-tree="uiTreeOptions" ng-init="this.name = 'asdasd'">
                     <ol ui-tree-nodes ng-model="value">
                         <li ui-tree-node ng-repeat="(key, item) in value track by $index" class="list-view-item">
                             <div style="float:right;margin-top:7px;">
@@ -35,9 +35,11 @@
                                     <i class="fa fa-times"></i>
                                 </div>
                             </div>
-                            <div ui-tree-handle class="list-view-item-move " style="display:none;float:left;padding-top:7px;">
-                                <i class="fa fa-arrows"></i>
-                            </div>
+                            <?php if ($this->sortable == 'yes'): ?>
+                                <div ui-tree-handle class="list-view-item-move " style="display:none;float:left;padding-top:7px;">
+                                    <i class="fa fa-arrows"></i>
+                                </div>
+                            <?php endif ?>
                             <div class='list-view-item-container'>
                                 <input class="list-view-item-text form-control"
                                        ng-model="item"
@@ -54,16 +56,19 @@
                  oc-lazy-load="{name: 'ui.tree', files: ['<?= Yii::app()->controller->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
                 <div ui-tree="uiTreeOptions">
                     <ol ui-tree-nodes ng-model="value">
-                        <li ui-tree-node ng-init="model = value[$index]; " ng-repeat="item in value" class="list-view-item">
+                        <li <?= $this->expandAttributes($this->fieldOptions) ?>>
                             <div style="float:right;">
                                 <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
                                     <i class="fa fa-times"></i>
                                 </div>
                             </div>
-                            <div ui-tree-handle class="list-view-item-move " style="float:left;">
+
+                            <div ui-tree-handle class="list-view-item-move " 
+                                 style="float:left;<?php if ($this->sortable == 'No'): ?>display:none !important;<?php endif ?>">
                                 <i class="fa fa-arrows"></i>
                             </div>
-                            <div class='list-view-item-container'>
+
+                            <div class='list-view-item-container <?php if ($this->sortable == 'No'): ?>unsorted<?php endif ?>' >
                                 <?= $this->renderTemplateForm; ?>
                                 <div class="clearfix"></div>
                             </div>
@@ -107,11 +112,11 @@
         <!-- /error -->
     </div>
     <script type="text/javascript">
-                app.controller("ListViewController", function ($scope, $parse, $timeout, $http, $localStorage) {
-                $timeout(function () {
+        app.controller("ListViewController", function ($scope, $parse, $timeout, $http, $localStorage) {
+            $timeout(function () {
 <?= $inlineJS ?>
-                });
-                });
-                registerController("ListViewController");
+            });
+        });
+        registerController("ListViewController");
     </script>
 </div>

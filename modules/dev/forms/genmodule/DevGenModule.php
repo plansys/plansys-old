@@ -137,6 +137,7 @@ Module "' . $name . '" already exist';
     public function getFields() {
         return array (
             array (
+                'type' => 'Text',
                 'value' => '<!-- EMPTY MODULE -->
 <div ng-if=\'!model.name\'>
     <div class=\"empty-box-container\">
@@ -146,19 +147,18 @@ Module "' . $name . '" already exist';
     </div>
 
 </div>',
-                'type' => 'Text',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<!------------------------- MODULE INFO TAB ------------------------>
 <tabset class=\'tab-set\' ng-if=\'model.name\'>
 <tab heading=\"Module Info\" select=\'setTab(1)\'>',
-                'type' => 'Text',
             ),
             array (
                 'column1' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
                         'label' => 'Module Name',
@@ -173,8 +173,8 @@ Module "' . $name . '" already exist';
                 ),
                 'column2' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
                         'label' => 'Class Path',
@@ -199,8 +199,8 @@ Module "' . $name . '" already exist';
                 'showBorder' => 'Yes',
                 'column1' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
                         'title' => '<i class=\\\'fa fa-empire\\\'></i> Import Initialization <span ng-bind-html=\\\'importStatus\\\'></span>',
@@ -220,6 +220,7 @@ margin:-50px -45px 0px 0px;',
                         'type' => 'LinkButton',
                     ),
                     array (
+                        'type' => 'Text',
                         'value' => '
 <div style=\'margin:-25px -50px -25px -40px;\'>
     <div class=\"source-editor\"
@@ -230,13 +231,12 @@ margin:-50px -45px 0px 0px;',
      ng-delay=\"500\"
      ui-ace=\"aceConfig({inline:true})\"></div>
 </div>',
-                        'type' => 'Text',
                     ),
                 ),
                 'column2' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
                         'title' => '<i class=\\\'fa fa-cubes\\\'></i> Controllers',
@@ -254,30 +254,30 @@ margin:-50px -45px 0px 0px;',
                         'type' => 'LinkButton',
                     ),
                     array (
+                        'type' => 'Text',
                         'value' => '<table class=\"table table-condensed table-bordered table-small\">
     
     <tr ng-repeat=\"c in params.controllers track by $index\">
         <td>{{ c.class }}</td>
     </tr>
 </table>',
-                        'type' => 'Text',
                     ),
                 ),
                 'type' => 'ColumnField',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<!--------------------- ACCESS CONTROL TAB ------------------------->
 </tab><tab active=\"activeTab\"  select=\'setTab(2)\'>
 <tab-heading>
 Access Control <span ng-bind-html=\'acStatus\'></span>
 </tab-heading>',
-                'type' => 'Text',
             ),
             array (
                 'column1' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
                         'label' => 'Access Control type',
@@ -292,8 +292,8 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                 ),
                 'column2' => array (
                     array (
-                        'value' => '<div ng-if=\\"model.accessType == \\\'DEFAULT\\\'\\">',
                         'type' => 'Text',
+                        'value' => '<div ng-if=\\"model.accessType == \\\'DEFAULT\\\'\\">',
                     ),
                     array (
                         'label' => 'Default Access Rule',
@@ -313,33 +313,33 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                         'type' => 'DropDownList',
                     ),
                     array (
+                        'type' => 'Text',
                         'value' => '<div class=\'info\'>
     <i class=\"fa fa-info-circle\"></i>
     This value will be used when no matching rule</div>',
-                        'type' => 'Text',
                     ),
                     array (
+                        'type' => 'Text',
                         'value' => '</div>',
-                        'type' => 'Text',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'type' => 'ColumnField',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<!-- DEFAULT ACCESS TYPE -->
 <div ng-if=\"model.accessType == \'DEFAULT\'\">',
-                'type' => 'Text',
             ),
             array (
                 'showBorder' => 'Yes',
                 'column1' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
                         'title' => '<i class=\\\'fa fa-user-md\\\'></i> Role Access',
@@ -353,92 +353,61 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                         'labelWidth' => '0',
                         'fieldWidth' => '12',
                         'options' => array (
-                            'ng-change' => 'saveAC(\\\'sad\\\');',
+                            'ng-change' => 'saveAC();',
+                            'unique' => '[\\\'role\\\', \\\'access\\\']',
+                            'class' => 'flat',
+                            'ng-delay' => '500',
                         ),
+                        'sortable' => 'No',
                         'type' => 'ListView',
                     ),
                 ),
                 'column2' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
                         'title' => '<i class=\\\'fa fa-user\\\'></i> User Access',
                         'type' => 'SectionHeader',
                     ),
                     array (
-                        'name' => 'userAccessDs',
-                        'fieldType' => 'php',
-                        'php' => '$model->usersRule',
-                        'postData' => 'No',
-                        'type' => 'DataSource',
-                    ),
-                    array (
-                        'name' => 'userAccess',
-                        'datasource' => 'userAccessDs',
-                        'columns' => array (
-                            array (
-                                'name' => 'user',
-                                'label' => 'user',
-                                'options' => array (
-                                    'width' => '250',
-                                ),
-                                'columnType' => 'relation',
-                                'show' => false,
-                                'relParams' => array (),
-                                'relCriteria' => array (
-                                    'select' => '',
-                                    'distinct' => 'false',
-                                    'alias' => 't',
-                                    'condition' => '{[search]}',
-                                    'order' => '',
-                                    'group' => '',
-                                    'having' => '',
-                                    'join' => '',
-                                ),
-                                'relModelClass' => 'application.models.User',
-                                'relIdField' => 'id',
-                                'relLabelField' => 'username',
-                            ),
-                            array (
-                                'name' => 'access',
-                                'label' => 'access',
-                                'options' => array (
-                                    'width' => '70',
-                                ),
-                                'columnType' => 'dropdown',
-                                'show' => true,
-                                'listType' => 'php',
-                                'listExpr' => '[
-\'allow\' => \'Allow\',
-\'deny\' => \' Deny\'
-]',
-                                'listMustChoose' => 'Yes',
-                            ),
+                        'name' => 'usersRule',
+                        'fieldTemplate' => 'form',
+                        'templateForm' => 'application.modules.dev.forms.genmodule.DevGenModuleAccess',
+                        'layout' => 'Vertical',
+                        'labelWidth' => '0',
+                        'fieldWidth' => '12',
+                        'options' => array (
+                            'ng-change' => 'saveAC();',
+                            'unique' => '[\\\'user\\\', \\\'access\\\']',
+                            'class' => 'flat',
+                            'ng-delay' => '500',
                         ),
-                        'gridOptions' => array (
-                            'minSpareRows' => '1',
-                        ),
-                        'type' => 'DataTable',
+                        'sortable' => 'No',
+                        'type' => 'ListView',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
+                'w3' => '33%',
                 'type' => 'ColumnField',
             ),
             array (
-                'value' => '<hr style=\\"margin:0px -15px;\\"/>',
                 'type' => 'Text',
+                'value' => '<hr style=\\"margin:0px -15px;\\"/>',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<!-- CUSTOM ACCESS TYPE -->
 </div><div ng-if=\"model.accessType == \'CUSTOM\'\">',
-                'type' => 'Text',
             ),
             array (
                 'title' => 'Access Control Function',
                 'type' => 'SectionHeader',
             ),
             array (
+                'type' => 'Text',
                 'value' => '
 <div style=\'margin:0px -15px;\'>
     <div class=\"source-editor\"
@@ -449,12 +418,11 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
      ng-delay=\"500\"
      ui-ace=\"aceConfig({inline:true})\"></div>
 </div>',
-                'type' => 'Text',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<!-- TAB CLOSER -->
 </div></tab></tabset>',
-                'type' => 'Text',
             ),
         );
     }

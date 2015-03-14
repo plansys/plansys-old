@@ -10,7 +10,9 @@
                 </div>
             </div>
             <div class='list-view-item-container' style="opacity:1;">
-                <div style="height:31px;"></div>
+                <div style="line-height:35px;text-align:center;font-size:12px;color:#999;">
+                    <i class="fa fa-list"></i> List View
+                </div>
             </div>
         </div>
         <div class="btn list-view-add btn-default btn-sm"><i class="fa fa-nm fa-plus"></i> <b>Add</b></div>

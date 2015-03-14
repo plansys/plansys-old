@@ -108,12 +108,22 @@ class ModuleGenerator extends CodeGenerator {
         }
     }
 
+    private function customFuncStart($key, $v) {
+        $marker = strtoupper($key . ':' . $v);
+        return '### FUNCTION ' . $marker . ' START [:.v.:]';
+    }
+
+    private function customFuncEnd($key, $v) {
+        $marker = strtoupper($key . ':' . $v);
+        return '### FUNCTION ' . $marker . '  END  [:.^.:]';
+    }
+
     private function expandAccessControlArray($array, $key) {
         $prepared = [
-            'deny'  => [],
-            'allow' => []
+            'deny'   => [],
+            'allow'  => [],
+            'custom' => []
         ];
-
         $inserted = [];
 
         foreach ($array as $a) {
@@ -121,9 +131,23 @@ class ModuleGenerator extends CodeGenerator {
                 continue;
 
             $access = strtolower($a['access']);
-
             if (!in_array($a[$key], $prepared[$access])) {
-                $prepared[$access][] = $a[$key];
+                switch ($access) {
+                    case "deny":
+                    case "allow":
+                        $prepared[$access][] = $a[$key];
+                        break;
+                    case "custom":
+                        $code = trim($this->addIndent($a['func'], '                '));
+                        $prepared[$access][$a[$key]] = $this->markExecute('
+                function($controller, $action) {
+                ' . $this->customFuncStart($key, $a[$key]) . '
+                ' . $code . ' 
+                ' . $this->customFuncEnd($key, $a[$key]) . ' 
+                }
+');
+                        break;
+                }
             }
             $inserted[] = $a[$key];
         }
@@ -133,7 +157,7 @@ class ModuleGenerator extends CodeGenerator {
         return $prepared;
     }
 
-    private function flattenAccessControlArray($array, $key) {
+    private function flattenAccessControlArray($array, $key, $func) {
         $result = [];
         foreach ($array['allow'] as $d) {
             $result[] = [
@@ -147,6 +171,18 @@ class ModuleGenerator extends CodeGenerator {
                 'access'  => 'deny'
             ];
         }
+        if (is_array(@$array['custom'])) {
+            foreach ($array['custom'] as $k => $d) {
+                $code = Helper::GetStringBetween($func, $this->customFuncStart($key, $k), $this->customFuncEnd($key, $k));
+                $result[] = [
+                    $key         => $k . '',
+                    'func'       => trim($code),
+                    'access'     => 'custom',
+                    'customMode' => 'custom'
+                ];
+            }
+        }
+
         return $result;
     }
 
@@ -160,11 +196,11 @@ class ModuleGenerator extends CodeGenerator {
             foreach ($func as $k => $f) {
                 $tf = trim($f);
                 if (!$startLine) {
-                    if (substr($tf, 0, 10) == substr(ModuleGenerator::GEN_COMMENT_START, 0, 10)) {
+                    if ($tf == ModuleGenerator::GEN_COMMENT_START) {
                         $startLine = $k + 1;
                     }
                 } else if ($startLine && !$lineLength) {
-                    if (substr($tf, 0, 10) == substr(ModuleGenerator::GEN_COMMENT_END, 0, 10)) {
+                    if ($tf == ModuleGenerator::GEN_COMMENT_END) {
                         $lineLength = $k - $startLine;
                     }
                 }
@@ -172,7 +208,10 @@ class ModuleGenerator extends CodeGenerator {
             if (!!$startLine && !!$lineLength) {
                 $func = array_splice($func, $startLine, $lineLength);
                 $func = implode("\n", $func);
+                ob_start();
                 eval($func);
+                ob_get_clean();
+
                 if (isset($accessType)) {
                     return $accessType;
                 } else {
@@ -210,8 +249,8 @@ class ModuleGenerator extends CodeGenerator {
             if (isset($accessType, $defaultRule, $rolesRule, $usersRule)) {
                 $this->defaultRule = $defaultRule;
                 $this->accessType = $accessType;
-                $this->rolesRule = $this->flattenAccessControlArray($rolesRule, 'role');
-                $this->usersRule = $this->flattenAccessControlArray($usersRule, 'user');
+                $this->rolesRule = $this->flattenAccessControlArray($rolesRule, 'role', $func);
+                $this->usersRule = $this->flattenAccessControlArray($usersRule, 'user', $func);
             }
         }
     }
@@ -232,10 +271,12 @@ class ModuleGenerator extends CodeGenerator {
 
             ## PREPARE GENERATED VARS
             $code[] = ModuleGenerator::GEN_COMMENT_START;
+            $code[] = '#######    DO NOT EDIT CODE BELOW     #######';
             $code[] = '$accessType = "' . $accessType . '";';
             $code[] = '$defaultRule = "' . $defaultRule . '";';
             $code[] = '$rolesRule = ' . $rolesCode . ';';
             $code[] = '$usersRule = ' . $usersCode . ';';
+            $code[] = '#######    DO NOT EDIT CODE ABOVE     #######';
             $code[] = ModuleGenerator::GEN_COMMENT_END;
             $code[] = '';
 
@@ -250,11 +291,17 @@ class ModuleGenerator extends CodeGenerator {
             $code[] = 'if (in_array($roleId, $rolesRule["allow"])) { ';
             $code[] = '    $allowed = true; ';
             $code[] = '}';
+            $code[] = 'if (array_key_exists($roleId, $rolesRule["custom"])) { ';
+            $code[] = '    call_user_func($rolesRule["custom"][$roleId], $controller, $action); ';
+            $code[] = '}';
             $code[] = 'if (in_array($userId, $usersRule["deny"]))  { ';
             $code[] = '    $allowed = false; ';
             $code[] = '}';
             $code[] = 'if (in_array($userId, $usersRule["allow"])) { ';
             $code[] = '    $allowed = true;';
+            $code[] = '}';
+            $code[] = 'if (array_key_exists($userId, $usersRule["custom"])) { ';
+            $code[] = '    call_user_func($usersRule["custom"][$userId], $controller, $action); ';
             $code[] = '}';
             $code[] = '';
             $code[] = 'if (!$allowed) {';
@@ -406,7 +453,7 @@ EOF;
                 ## rename directory
                 rename($from['classPath'], $from['path'] . DIRECTORY_SEPARATOR . $to['class'] . ".php");
                 rename($from['path'], $to['path']);
-                
+
                 ## rename forms
                 $formsDir = $to['path'] . DIRECTORY_SEPARATOR . 'forms';
                 $forms = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($formsDir));
@@ -428,7 +475,7 @@ EOF;
                         rename($oldFilePath, $newFilePath);
                     }
                 }
-                
+
                 return $to;
             } else {
                 throw new CException("Destination module already exist.");
