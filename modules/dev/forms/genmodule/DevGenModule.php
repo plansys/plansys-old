@@ -193,6 +193,8 @@ Module "' . $name . '" already exist';
                         'type' => 'LabelField',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
@@ -263,6 +265,8 @@ margin:-50px -45px 0px 0px;',
 </table>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
@@ -327,6 +331,8 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (

@@ -9,7 +9,9 @@ class SubForm extends FormField {
     public $name = '';
     public $mode = 'multi';
     public $subForm = '';
-    public $options = '';
+    public $options = [];
+    public $value = [];
+    public $templateAttributes = [];
     public $inlineJS = '';
 
     /** @var string $toolbarName */
@@ -22,25 +24,25 @@ class SubForm extends FormField {
     public static $toolbarIcon = "fa fa-file-text-o fa-nm";
 
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Mode',
                 'name' => 'mode',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.mode',
                     'ng-change' => 'save()',
                 ),
                 'defaultType' => 'first',
-                'list' => array (
+                'list' => array(
                     'single' => 'Single Field',
                     'multi' => 'Multi Field',
                 ),
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'SubForm Name',
                 'name' => 'name',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -48,10 +50,10 @@ class SubForm extends FormField {
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
@@ -61,10 +63,10 @@ class SubForm extends FormField {
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'SubForm',
                 'name' => 'subForm',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.subForm',
                     'ng-change' => 'save()',
                 ),
@@ -73,17 +75,17 @@ class SubForm extends FormField {
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Inline JS',
                 'name' => 'inlineJS',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.inlineJS',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
@@ -106,27 +108,35 @@ class SubForm extends FormField {
 
     public function getRenderUrl() {
         return Yii::app()->controller->createUrl('/formfield/SubForm.render', [
-                'name' => $this->name,
-                'class' => $this->subForm,
-                'js' => $this->inlineJS
+                    'name' => $this->name,
+                    'mode' => $this->mode,
+                    'class' => $this->subForm,
+                    'js' => $this->inlineJS
         ]);
     }
 
-    public function actionRender($name, $class, $js) {
-        $this->name = $name;
-        $this->subForm = $class;
-        $this->inlineJS = $js;
+    public function includeJS() {
+        return ['sub-form.js'];
+    }
+
+    public function renderHtml() {
+        Yii::import($this->subForm);
+        $class = $this->subFormClass;
+        $model = new $class;
         
-        
-        ## render
-        Yii::import($class);
-        $fb = FormBuilder::load($this->subFormClass);
+        $fb = FormBuilder::load($class);
+        $this->templateAttributes = $model->attributes;
 
         $html = '<div ng-controller="' . $this->ctrlName . 'Controller">';
         $html .= $fb->render(null, [
             'wrapForm' => false
         ]);
 
+        $html .= '</div>';
+        return $html;
+    }
+
+    public function renderInternalScript() {
         $jspath = explode(".", $this->subForm);
         array_pop($jspath);
         $jspath = implode(".", $jspath);
@@ -138,24 +148,9 @@ class SubForm extends FormField {
         } else {
             $inlineJS = '';
         }
-        
-        $html .= '</div>';
+
         $controller = include("SubForm/controller.js.php");
-        $html .= '<script>' . $controller . '</script>';
-        echo $html;
-    }
-
-    public function render() {
-        Yii::import($this->subForm);
-
-        if ($this->subFormClass == get_class($this)) {
-            return '<center><i class="fa fa-warning"></i> Error Rendering SubForm: Subform can not be the same as its parent</center>';
-        } else {
-            $attrs = is_array($this->options) ? $this->expandAttributes($this->options) : '';
-            
-            $html = '<div ' . $attrs . ' ng-include="\'' . $this->renderUrl . '\'"></div>';
-            return $html;
-        }
+        return '<script>' . $controller . '</script>';
     }
 
 }

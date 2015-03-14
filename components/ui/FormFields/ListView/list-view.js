@@ -28,7 +28,7 @@ app.directive('listView', function ($timeout) {
                         $scope.showUndoDelete = false;
                         ctrl.$setViewValue(angular.copy($scope.value));
                     });
-                }
+                };
 
                 $scope.processValue = function (func) {
                     if (typeof $scope.options['unique'] == "string") {
@@ -74,13 +74,14 @@ app.directive('listView', function ($timeout) {
                             func();
                         }
                     }
-                }
+                };
 
                 $scope.showUndoDelete = false;
                 $scope.deleted = {
                     idx: -1,
                     data: null
                 };
+                
                 $scope.undo = function () {
                     if (!!$scope.deleted.data) {
                         $scope.value.splice($scope.deleted.idx, 0, $scope.deleted.data);
@@ -91,7 +92,7 @@ app.directive('listView', function ($timeout) {
                         $scope.updateListView();
                         $scope.showUndoDelete = false;
                     }
-                }
+                };
 
                 $scope.removeItem = function (index) {
                     var d = $scope.value.splice(index, 1);
@@ -101,7 +102,7 @@ app.directive('listView', function ($timeout) {
                     };
                     $scope.updateListView();
                     $scope.showUndoDelete = true;
-                }
+                };
 
                 $scope.addItem = function (e) {
                     e.preventDefault();
@@ -139,8 +140,7 @@ app.directive('listView', function ($timeout) {
                             }
                         }, 10);
                     });
-                }
-
+                };
 
                 $scope.uiTreeOptions = {
                     dragStop: function (scope) {

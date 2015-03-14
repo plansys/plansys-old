@@ -86,6 +86,7 @@ class ListView extends FormField {
                 'subForm' => 'application.components.ui.FormFields.TextField',
                 'options' => array (
                     'ng-if' => 'active.singleView == \\\'TextField\\\'',
+                    'ng-model' => 'active.singleViewOption',
                 ),
                 'type' => 'SubForm',
             ),
@@ -211,6 +212,8 @@ class ListView extends FormField {
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (

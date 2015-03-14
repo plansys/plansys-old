@@ -54,6 +54,8 @@ Search menggunakan kotak disamping, gunakan * (bintang) sebagai Wildcard<Br/> &n
 </div>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (

@@ -40,8 +40,8 @@ class DevRoleForm extends Role {
                     ),
                     array (
                         'renderInEditor' => 'Yes',
-                        'value' => '<div class=\\"separator\\"></div>',
                         'type' => 'Text',
+                        'value' => '<div class=\\"separator\\"></div>',
                     ),
                     array (
                         'label' => 'Hapus',
@@ -75,8 +75,8 @@ class DevRoleForm extends Role {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column2' => array (
@@ -102,15 +102,17 @@ class DevRoleForm extends Role {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
-                'value' => '<div ng-if=\\"!isNewRecord\\">',
                 'type' => 'Text',
+                'value' => '<div ng-if=\\"!isNewRecord\\">',
             ),
             array (
                 'title' => 'User List',
@@ -281,8 +283,8 @@ class DevRoleForm extends Role {
                 'type' => 'DataGrid',
             ),
             array (
-                'value' => '</div>',
                 'type' => 'Text',
+                'value' => '</div>',
             ),
         );
     }
