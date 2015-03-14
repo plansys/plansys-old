@@ -26,7 +26,17 @@ app.directive('listView', function ($timeout) {
                 $scope.setViewValue = function () {
                     $scope.processValue(function () {
                         $scope.showUndoDelete = false;
-                        ctrl.$setViewValue(angular.copy($scope.value));
+
+                        var value = angular.copy($scope.value);
+                        if ($scope.fieldTemplate == "default") {
+                            var newVal = [];
+                            for (i in value) {
+                                newVal.push(value[i].val);
+                            }
+                            value = newVal;
+                        }
+
+                        ctrl.$setViewValue(value);
                     });
                 };
 
@@ -81,7 +91,7 @@ app.directive('listView', function ($timeout) {
                     idx: -1,
                     data: null
                 };
-                
+
                 $scope.undo = function () {
                     if (!!$scope.deleted.data) {
                         $scope.value.splice($scope.deleted.idx, 0, $scope.deleted.data);
@@ -111,11 +121,7 @@ app.directive('listView', function ($timeout) {
                         $scope.value = [];
                     }
 
-                    if ($scope.fieldTemplate == "default") {
-                        var value = '';
-                    } else if ($scope.fieldTemplate == "form") {
-                        var value = angular.extend({}, $scope.templateAttr);
-                    }
+                    var value = angular.extend({}, $scope.templateAttr);
 
                     //before add
                     var beforeAdd = $scope.options['ps-before-add'] || '';
@@ -155,6 +161,8 @@ app.directive('listView', function ($timeout) {
                     }
                 };
 
+                var lastId = 0;
+
                 // when ng-model is changed from outside directive
                 if (typeof ctrl != 'undefined') {
                     ctrl.$render = function () {
@@ -163,7 +171,21 @@ app.directive('listView', function ($timeout) {
 
                         if (typeof ctrl.$viewValue != "undefined") {
                             $scope.loading = true;
-                            $scope.value = ctrl.$viewValue;
+
+                            var value = ctrl.$viewValue;
+                            if ($scope.fieldTemplate == "default") {
+                                var newVal = [];
+                                for (i in value) {
+                                    newVal.push({val: value[i]});
+                                }
+                                value = newVal;
+                            }
+
+                            for (i in value) {
+                                value[i].$$id = lastId++;
+                            }
+
+                            $scope.value = value;
                             $timeout(function () {
                                 $scope.loading = false;
                             }, 0);
@@ -190,9 +212,7 @@ app.directive('listView', function ($timeout) {
                     if (!!$scope.options['ng-change']) {
                         $scope.stopWatchChanges = $scope.$watch('value', function (n, o) {
                             if (n !== o) {
-                                if ($scope.itemChanging) {
-                                    ctrl.$viewValue = $scope.value;
-                                } else {
+                                if (!$scope.itemChanging) {
                                     $scope.setViewValue();
                                 }
                             }
@@ -205,6 +225,18 @@ app.directive('listView', function ($timeout) {
                     $timeout(function () {
                         var ngModelValue = $scope.$eval(attrs.ngModel);
                         if (typeof ngModelValue != "undefined") {
+                            if ($scope.fieldTemplate == "default") {
+                                var newVal = [];
+                                for (i in ngModelValue) {
+                                    newVal.push({val: ngModelValue[i]});
+                                }
+                                ngModelValue = newVal;
+                            }
+
+                            for (i in ngModelValue) {
+                                ngModelValue[i].$$id = lastId++;
+                            }
+
                             $scope.value = ngModelValue;
                         }
                         if (!$scope.inEditor) {

@@ -60,9 +60,8 @@
         editor.$window = $window;
         editor.$compile = $compile;
         editor.$localStorage = $localStorage;
-
-
-        $scope.editor = null;
+        $scope.editor = editor;
+        $scope.activeEditor = null;
         $scope.getNumber = function (num) {
             a = [];
             for (i = 1; i <= num; i++) {
@@ -797,9 +796,9 @@
                     $scope.activeTree = item;
                     $scope.active = item.$modelValue;
                     if (!!editor[$scope.active.type]) {
-                        $scope.editor = editor[$scope.active.type];
+                        $scope.activeEditor = editor[$scope.active.type];
                     } else {
-                        $scope.editor = null;
+                        $scope.activeEditor = null;
                     }
                     $scope.tabs.properties = true;
                     switch (item.$modelValue.type) {
@@ -820,8 +819,8 @@
                             break;
                     }
 
-                    if ($scope.editor != null && typeof $scope.editor.onSelect == 'function') {
-                        $scope.editor.onSelect($scope.active);
+                    if ($scope.activeEditor != null && typeof $scope.activeEditor.onSelect == 'function') {
+                        $scope.activeEditor.onSelect($scope.active);
                     }
 
                 });
@@ -832,7 +831,7 @@
         }
         $scope.unselect = function () {
             $scope.active = null;
-            $scope.editor = null;
+            $scope.activeEditor = null;
         };
         $scope.unselectViaJquery = function () {
             $scope.$apply(function () {

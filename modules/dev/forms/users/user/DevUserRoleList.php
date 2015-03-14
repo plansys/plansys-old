@@ -4,11 +4,11 @@ class DevUserRoleList extends UserRole  {
     public function getFields() {
         return array (
             array (
+                'type' => 'Text',
                 'value' => '<div 
 ng-if=\"item.is_default_role ==\'Yes\'\"
-style=\"position:absolute;top:5px;right:30px;z-index:99;pointer-events:none;\"
+style=\"position:absolute;top:10px;right:35px;z-index:99;pointer-events:none;\"
 class=\"label label-success\">DEFAULT</div>',
-                'type' => 'Text',
             ),
             array (
                 'name' => 'role_id',
@@ -25,7 +25,6 @@ class=\"label label-success\">DEFAULT</div>',
                 'options' => array (
                     'ng-model' => 'value[$index].role_id',
                     'ng-change' => 'updateListView();',
-                    'style' => 'margin:-5px -20px;',
                 ),
                 'listExpr' => 'Role::listRole()',
                 'labelWidth' => '0',

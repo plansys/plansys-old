@@ -1,13 +1,14 @@
 <?php
 
 class DevFormProperties extends Form {
+
     public $title;
     public $layoutName;
     public $options = array();
     public $inlineJS = "";
     public $includeJS = array();
     public $includeCSS = array();
-    
+
     public function getForm() {
         return array (
             'title' => 'FormProperties',
@@ -21,10 +22,12 @@ class DevFormProperties extends Form {
                 ),
             ),
             'includeJS' => array (
+                'asfga',
+                'asf',
             ),
         );
     }
-    
+
     public function getFields() {
         return array (
             array (
@@ -65,6 +68,19 @@ class DevFormProperties extends Form {
                 'options' => array (
                     'ng-model' => '$parent.form.includeJS',
                     'ng-change' => 'saveForm()',
+                    'class' => 'flat',
+                    'unique' => 'true',
+                ),
+                'singleView' => 'DropDownList',
+                'singleViewOption' => array (
+                    'name' => 'val',
+                    'fieldType' => 'text',
+                    'labelWidth' => 0,
+                    'fieldWidth' => 12,
+                    'fieldOptions' => array (
+                        'ng-delay' => 500,
+                    ),
+                    'list' => array (),
                 ),
                 'type' => 'ListView',
             ),
@@ -79,5 +95,4 @@ class DevFormProperties extends Form {
             ),
         );
     }
-    
 }

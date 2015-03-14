@@ -62,6 +62,10 @@ class ListView extends FormField {
             array (
                 'label' => 'Field Type',
                 'name' => 'singleView',
+                'options' => array (
+                    'ng-change' => 'activeEditor.fieldTypeChange(active)',
+                    'ng-model' => 'active.singleView',
+                ),
                 'listExpr' => '[\\\'TextField\\\',\\\'DropDownList\\\']',
                 'fieldWidth' => '5',
                 'type' => 'DropDownList',
@@ -72,13 +76,16 @@ class ListView extends FormField {
                 'buttonSize' => 'btn-xs',
                 'options' => array (
                     'style' => 'float:right;margin-top:-32px;',
-                    'ng-click' => 'active.edited = !active.edited',
+                    'ng-click' => 'activeEditor.toggleEdit(active)',
                 ),
                 'type' => 'LinkButton',
             ),
             array (
                 'type' => 'Text',
-                'value' => '        <div ng-if=\\\'active.edited\\\' style=\\\'border-top:1px solid #ccc;margin:0px -5px;padding:5px 5px 0px 5px;\\\'>',
+                'value' => '    <div 
+    ng-if=\'active.edited\' 
+    class=\'list-view-single-edit\'
+    style=\'border-top:1px solid #ccc;margin:0px -5px;padding:5px 5px 0px 5px;\'>',
             ),
             array (
                 'name' => 'singleViewOption',
@@ -86,6 +93,16 @@ class ListView extends FormField {
                 'subForm' => 'application.components.ui.FormFields.TextField',
                 'options' => array (
                     'ng-if' => 'active.singleView == \\\'TextField\\\'',
+                    'ng-model' => 'active.singleViewOption',
+                ),
+                'type' => 'SubForm',
+            ),
+            array (
+                'name' => 'singleViewOption',
+                'mode' => 'single',
+                'subForm' => 'application.components.ui.FormFields.DropDownList',
+                'options' => array (
+                    'ng-if' => 'active.singleView == \\\'DropDownList\\\'',
                     'ng-model' => 'active.singleViewOption',
                 ),
                 'type' => 'SubForm',
@@ -172,7 +189,6 @@ class ListView extends FormField {
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                            'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
                         ),
                         'type' => 'TextField',
                     ),
@@ -283,11 +299,10 @@ class ListView extends FormField {
 
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "glyphicon glyphicon-align-justify";
-
     public $sortable = 'yes';
     public $singleView = 'TextField';
-    public $singleViewOption = [];
-    
+    public $singleViewOption = null;
+
     /**
      * @return array me-return array javascript yang di-include
      */
@@ -340,13 +355,17 @@ class ListView extends FormField {
     protected $renderTemplateForm;
     protected $templateAttributes = [];
 
+    public function includeEditorJS() {
+        return ['list-view-editor.js'];
+    }
+
     /**
      * render
      * Fungsi ini untuk me-render field dan atributnya
      * @return mixed me-return sebuah field dan atribut checkboxlist dari hasil render
      */
     public function render() {
-        $this->addClass('form-group form-group-sm', 'options');
+        $this->addClass('form-group form-group-sm flat', 'options');
         $this->addClass($this->layoutClass, 'options');
         $this->addClass($this->errorClass, 'options');
 
@@ -358,8 +377,7 @@ class ListView extends FormField {
         Yii::import(FormBuilder::classPath($this->templateForm));
         $class = Helper::explodeLast(".", $this->templateForm);
 
-
-        if ($this->fieldTemplate == "form" && class_exists($class)) {
+        if ($this->fieldTemplate == 'form' && class_exists($class)) {
             $fb = FormBuilder::load($class);
             $model = new $class;
 
@@ -369,6 +387,15 @@ class ListView extends FormField {
 
             $this->templateAttributes = $model->attributes;
             $this->renderTemplateForm = $fb->render($this->templateAttributes, ['wrapForm' => false]);
+        } else if ($this->fieldTemplate == 'default') {
+            $field = new $this->singleView;
+            $field->attributes = $this->singleViewOption;
+            $field->renderID = $this->name . rand(0, 10000);
+            $field->builder = $this->builder;
+            $field->formProperties = $this->formProperties;
+
+            $this->templateAttributes = ['val' => ''];
+            $this->renderTemplateForm = $field->render();
         }
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);

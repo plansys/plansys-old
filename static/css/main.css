@@ -1370,6 +1370,9 @@ div[list-view] .list-view-item-container {
 div[list-view].flat .angular-ui-tree-nodes > li {
     border-radius:0px;margin:-6px 0px 5px 0px;
 }
+div[list-view].flat .angular-ui-tree-nodes > li:first-child {
+    margin:0px 0px 5px 0px;
+}
 
 /********************************* ACTION BAR **********************************/
 .field-move-left, .field-move-right {
