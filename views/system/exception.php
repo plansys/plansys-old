@@ -5,19 +5,21 @@ if (Setting::$mode == "init" || Setting::$mode == "install") {
     Yii::import("application.modules.install.controllers.*");
     $module = new InstallModule("install", null);
 
-    $controller         = new DefaultController("default", $module);
+    $controller = new DefaultController("default", $module);
     $controller->action = $controller->createAction("index");
 
-    if (strpos($data['msg'], 'Application Runtime Path') === 0) {
+    $msg = @$data['message'];
+    if (strpos(@$data['message'], 'Application Runtime Path') === 0) {
         $msg = null;
     }
-
+    var_dump($data);
+    die();
     $controller->action->runWithParams([
         'msg' => $msg
     ]);
 } else {
     Yii::import("application.controllers.*");
-    $controller         = new SiteController("site");
+    $controller = new SiteController("site");
     $controller->action = $controller->createAction("error");
     $controller->action->run();
 
