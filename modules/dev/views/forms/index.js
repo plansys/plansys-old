@@ -65,7 +65,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
     $scope.addFolder = function (foldername, item) {
         if (!!foldername) {
             $http.get(Yii.app.createUrl('/dev/forms/addFolder', {
-                n: foldername,
+                n: foldername.toLowerCase(),
                 p: item.alias
             })).success(function (data) {
                 if (data) {
