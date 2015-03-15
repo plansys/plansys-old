@@ -1,5 +1,5 @@
 <div ng-controller="PageController" ng-cloak>
-    <div ui-layout class="sub" options="{ flow : 'column' }">
+    <div ui-layout class="sub" options="{ flow : 'column',dividerSize:1}">
         <div ui-layout-container id="menu-drag-drop" size='40%' min-size="300px">
             <div ui-header>
                 <div class="pull-right ">

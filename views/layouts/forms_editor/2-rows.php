@@ -1,4 +1,4 @@
-<div ui-layout options="{flow: 'row'}" 
+<div ui-layout options="{flow: 'row',dividerSize:1}" 
      <?php if (@$editor): ?>class="form-builder-layout"<?php endif; ?>>
     <div id='row1' ng-class="{active: layout.name == 'row1'}"
          size="<?= @$row1['size'] . @$row1['sizetype'] ?>">

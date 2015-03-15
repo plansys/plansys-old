@@ -5,22 +5,22 @@ class DataFilterListForm extends Form {
     public function getFields() {
         return array (
             array (
+                'type' => 'Text',
                 'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
 <div class=\"label data-filter-name pull-right\"> {{value[$index].filterType}}</div>
 
 {{value[$index].label}} 
 <div class=\"clearfix\"></div>
 </div>',
-                'type' => 'Text',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<hr ng-show=\"value[$index].show\"
 style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
-                'type' => 'Text',
             ),
             array (
-                'value' => '<div ng-if=\\"value[$index].show\\">',
                 'type' => 'Text',
+                'value' => '<div ng-if=\\"value[$index].show\\">',
             ),
             array (
                 'label' => 'Type',
@@ -125,11 +125,11 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'DropDownList',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<div style=\"margin-top:15px;\">
     <hr/>
     <div style=\"background:white;margin-top:-19px;color:#aaa;padding:5px 5px 5px 3px;width:50px;margin-left:-4px;\">Default</div>
 </div>',
-                'type' => 'Text',
             ),
             array (
                 'label' => 'Operator',
@@ -262,12 +262,12 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'SubForm',
             ),
             array (
-                'value' => '<div style=\\"margin-bottom:-3px;\\"></div>',
                 'type' => 'Text',
+                'value' => '<div style=\\"margin-bottom:-3px;\\"></div>',
             ),
             array (
-                'value' => '</div>',
                 'type' => 'Text',
+                'value' => '</div>',
             ),
         );
     }

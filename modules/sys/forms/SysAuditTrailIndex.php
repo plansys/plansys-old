@@ -139,6 +139,18 @@ class SysAuditTrailIndex extends AuditTrail {
                         ),
                     ),
                     array (
+                        'columnType' => 'string',
+                        'options' => array (
+                            'href' => 'url:/sys/auditTrail/detail?id={id}',
+                            'target' => '_blank',
+                        ),
+                        'name' => 'description',
+                        'label' => 'Page Title',
+                        'show' => false,
+                        'inputMask' => '',
+                        'stringAlias' => array (),
+                    ),
+                    array (
                         'relModelClass' => 'application.models.User',
                         'relIdField' => 'id',
                         'relParams' => array (),
@@ -160,18 +172,6 @@ class SysAuditTrailIndex extends AuditTrail {
                         'options' => array (
                             'width' => '100px',
                         ),
-                    ),
-                    array (
-                        'columnType' => 'string',
-                        'options' => array (
-                            'href' => 'url:/sys/auditTrail/detail?id={id}',
-                            'target' => '_blank',
-                        ),
-                        'name' => 'description',
-                        'label' => 'Page Title',
-                        'show' => false,
-                        'inputMask' => '',
-                        'stringAlias' => array (),
                     ),
                 ),
                 'gridOptions' => array (

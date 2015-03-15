@@ -711,8 +711,9 @@ div[ui-content] {
     justify-content: center;
 
     right: auto;
+    width:4px !important;
     position: absolute;
-    z-index: 1010;
+    z-index: 100;
     overflow:visible !important;
 }
 
@@ -726,7 +727,8 @@ div[ui-content] {
     border-bottom:1px solid #ddd;
 }
 .ui-layout-column > .ui-splitbar{
-    width: 8px; height: 100%;
+    width: 8px; 
+    height: 100%;
     cursor: col-resize;
     -webkit-flex-direction: column;
     flex-direction: column;
