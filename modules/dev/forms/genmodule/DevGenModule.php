@@ -272,7 +272,7 @@ margin:-50px -45px 0px 0px;',
             array (
                 'type' => 'Text',
                 'value' => '<!--------------------- ACCESS CONTROL TAB ------------------------->
-</tab><tab active=\"activeTab\"  select=\'setTab(2)\'>
+</tab><tab select=\'setTab(2)\'>
 <tab-heading>
 Access Control <span ng-bind-html=\'acStatus\'></span>
 </tab-heading>',
@@ -365,6 +365,15 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                             'ng-delay' => '500',
                         ),
                         'sortable' => 'No',
+                        'singleViewOption' => array (
+                            'name' => 'val',
+                            'fieldType' => 'text',
+                            'labelWidth' => 0,
+                            'fieldWidth' => 12,
+                            'fieldOptions' => array (
+                                'ng-delay' => 500,
+                            ),
+                        ),
                         'type' => 'ListView',
                     ),
                 ),
@@ -391,6 +400,15 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                             'ng-delay' => '500',
                         ),
                         'sortable' => 'No',
+                        'singleViewOption' => array (
+                            'name' => 'val',
+                            'fieldType' => 'text',
+                            'labelWidth' => 0,
+                            'fieldWidth' => 12,
+                            'fieldOptions' => array (
+                                'ng-delay' => 500,
+                            ),
+                        ),
                         'type' => 'ListView',
                     ),
                 ),

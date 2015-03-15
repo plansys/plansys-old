@@ -1,6 +1,6 @@
 
 <script>
-    app.controller("<?= $class ?>MenuTree", ["$scope", "$http", "$timeout", "$templateCache", function ($scope, $http, $timeout, $templateCache) {
+    app.controller("<?= $class ?>MenuTree", ["$scope", "$compile", "$http", "$location", "$timeout", "$templateCache", function ($scope, $compile, $http, $location, $timeout, $templateCache) {
             $scope.list = <?= json_encode($list); ?>;
             $scope.active = null;
             $scope.sections = <?= json_encode($sections); ?>;
@@ -60,11 +60,59 @@
                 }
             };
 
-            $scope.select = function (item) {
+            $scope.UpdateQueryString = function (key, value, url) {
+                if (!url)
+                    url = window.location.href;
+                var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"),
+                        hash;
+
+                if (re.test(url)) {
+                    if (typeof value !== 'undefined' && value !== null)
+                        return url.replace(re, '$1' + key + "=" + value + '$2$3');
+                    else {
+                        hash = url.split('#');
+                        url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
+                        if (typeof hash[1] !== 'undefined' && hash[1] !== null)
+                            url += '#' + hash[1];
+                        return url;
+                    }
+                }
+                else {
+                    if (typeof value !== 'undefined' && value !== null) {
+                        var separator = url.indexOf('?') !== -1 ? '&' : '?';
+                        hash = url.split('#');
+                        url = hash[0] + separator + key + '=' + value;
+                        if (typeof hash[1] !== 'undefined' && hash[1] !== null)
+                            url += '#' + hash[1];
+                        return url;
+                    }
+                    else
+                        return url;
+                }
+            };
+
+            $scope.select = function (item, e) {
                 this.toggle();
                 item.state = '';
                 $scope.selecting = true;
                 $scope.active = item;
+
+                if (!!$scope.sections[item.target] && !!e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!!item.url && !!item.target) {
+                        var url = $scope.UpdateQueryString('render_section', item.target, item.url);
+                        $http.get(url).success(function (data) {
+                            var html = $(data).find('#' + item.target + ':eq(0)').html();
+                            var controller = angular.element("#" + item.target + ':eq(0) [ng-controller]:eq(0)');
+                            var scope = controller.scope();
+                            angular.element("#" + item.target + ':eq(0)').html(html);
+                            $compile("#" + item.target + ':eq(0)  > div')(scope);
+//                            
+                            history.pushState(null,'',item.url);
+                        });
+                    }
+                }
             };
             $scope.openContextMenu = function (item, e, itemTree) {
                 if ($scope.originalContextMenu == null) {
@@ -88,8 +136,7 @@
                 $(".menu-sel").removeClass("active").removeClass(".menu-sel");
                 $(e.target).parent().addClass("menu-sel active");
                 $scope.contextMenuActive = item;
-            }
-
+            };
 
             /******************* MENU TREE SECTION ********************/
             $scope.getUrl = function (item) {

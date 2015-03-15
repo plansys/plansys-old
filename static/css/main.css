@@ -538,35 +538,7 @@ div[ui-content] {
     background-position: 0 -546px;
 }
 
-.stretch {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: auto;
-}
 
-.ui-splitbar {
-    display: block;
-    background-color: #ccc;
-    right: auto;
-    position: absolute;
-    z-index: 4;
-    border: 0px;
-}
-
-.ui-layout-row > .ui-splitbar {
-    height: 1px !important;
-    width: 100%;
-    cursor: row-resize;
-}
-
-.ui-layout-column > .ui-splitbar {
-    width: 1px !important;
-    height: 100%;
-    cursor: col-resize;
-}
 
 .fbmin .ui-splitbar {
     display: none !important;
@@ -715,6 +687,74 @@ div[ui-content] {
 .LinkButton .field-info .field-info-text {
     display: none;
 }
+
+/**
+  UI.Layout CSS
+*************************************/
+.stretch {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Can be changed by hand ;)*/
+    overflow: auto;
+}
+
+.ui-splitbar{
+    display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
+    display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
+    display: -ms-flexbox;      /* TWEENER - IE 10 */
+    display: -webkit-flex;     /* NEW - Chrome */
+    display: flex;             /* NEW, Spec - Opera 12.1, Firefox 20+ */
+    -webkit-justify-content: center;
+    justify-content: center;
+
+    right: auto;
+    position: absolute;
+    z-index: 1010;
+    overflow:visible !important;
+}
+
+
+.ui-layout-row > .ui-splitbar{
+    height: 8px; width: 100%;
+    cursor: row-resize;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    border-bottom:1px solid #ddd;
+}
+.ui-layout-column > .ui-splitbar{
+    width: 8px; height: 100%;
+    cursor: col-resize;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    border-left:1px solid #ddd;
+}
+
+.ui-layout-column > .ui-splitbar > a,
+.ui-layout-row > .ui-splitbar > a {
+    color: #ccc;
+    cursor: pointer;
+    font-size: 9px;
+    width:14px !important;
+    display:block;
+    background: #fff;
+    text-align:center;
+    border:1px solid #ccc;
+}
+.ui-layout-column > .ui-splitbar > a {
+    padding:3px 0px;
+    margin-top:-1px;
+    margin-left:-7px;
+}
+.ui-splitbar > a:hover {
+    opacity:1;
+    background:#ccc;
+    color:#fff;
+}
+
 
 /******************************** TREE  *********************************/
 

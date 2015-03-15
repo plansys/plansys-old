@@ -2,10 +2,10 @@
 <div context-menu="openContextMenu(item, $event, this)" context-menu-disabled="isContextMenuDisabled(item)" data-target="ContextMenu<?= $class ?>">
     <a href="{{ getUrl(item)}}" 
        target="{{ getTarget(item)}}"
-       ng-click="select(item)" 
+       ng-click="select(item, $event)" 
        class="angular-ui-tree-handle"
        ui-tree-handle ng-class="isSelected(item)">
-        <div ng-show="item.items" class="pull-left" 
+        <div ng-show="objectSize(item.items) > 0" class="pull-left" 
              style="width:20px;text-align:center;cursor:pointer;">
             <i ng-show="item.state == 'collapsed'" class="fa fa-caret-right"></i>
             <i ng-show="item.state != 'collapsed'" class="fa fa-caret-down"></i>

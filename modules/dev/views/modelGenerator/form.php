@@ -1,6 +1,6 @@
 <div ng-controller="PageController" ng-cloak>
     <div ui-layout class="sub" options="{ flow : 'column' }">
-        <div>
+        <div ui-layout-container >
             <div ui-header>
                 <?php echo $modelDetail['modelClass']; ?><br> 
             </div>

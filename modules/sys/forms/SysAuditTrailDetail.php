@@ -36,8 +36,8 @@ class SysAuditTrailDetail extends AuditTrail {
                         'type' => 'LabelField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column2' => array (
@@ -82,10 +82,12 @@ class SysAuditTrailDetail extends AuditTrail {
                         'type' => 'RelationField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
@@ -93,6 +95,7 @@ class SysAuditTrailDetail extends AuditTrail {
                 'type' => 'SectionHeader',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<table class=\"table table-condensed table-bordered table-striped\" style=\"margin-top:10px;\">
     <tr ng-repeat=\"(key,value) in data\">
         <th style=\"width:20%\">{{key}}</th>
@@ -102,17 +105,17 @@ class SysAuditTrailDetail extends AuditTrail {
     </tr>
 </table>
 ',
-                'type' => 'Text',
             ),
             array (
-                'value' => '<div ng-if=\\"isRelated\\">',
                 'type' => 'Text',
+                'value' => '<div ng-if=\\"isRelated\\">',
             ),
             array (
                 'title' => 'Relational Data',
                 'type' => 'SectionHeader',
             ),
             array (
+                'type' => 'Text',
                 'value' => '
     <table class=\"table table-condensed table-striped table-bordered\" style=\"margin-top:10px;\">
         <tr ng-repeat=\"(key,value) in relations\">
@@ -142,17 +145,17 @@ class SysAuditTrailDetail extends AuditTrail {
     </table>
 </div>
 ',
-                'type' => 'Text',
             ),
             array (
-                'value' => '<div ng-if=\\"currentModel.length > 0\\">',
                 'type' => 'Text',
+                'value' => '<div ng-if=\\"currentModel.length > 0\\">',
             ),
             array (
                 'title' => 'Cached Data List',
                 'type' => 'SectionHeader',
             ),
             array (
+                'type' => 'Text',
                 'value' => '
 <table class=\"table table-condensed table-striped table-bordered\" style=\"margin-top:10px;\">
     <tr ng-repeat=\"(key,value) in currentModel\">
@@ -181,7 +184,6 @@ class SysAuditTrailDetail extends AuditTrail {
     </tr>
 </table>
 </div>',
-                'type' => 'Text',
             ),
         );
     }

@@ -786,7 +786,7 @@ class FormBuilder extends CComponent {
         $wrapForm = isset($options['wrapForm']) ? $options['wrapForm'] : true;
         $action = isset($options['action']) ? $options['action'] : 'create';
         $renderWithAngular = isset($options['renderWithAngular']) ? $options['renderWithAngular'] : true;
-        $renderInAjax = isset($options['renderInAjax']) ? $options['renderInAjax'] : false;
+        $renderInAjax = isset($options['renderInAjax']) ? $options['renderInAjax'] : true;
         $FFRenderID = isset($options['FormFieldRenderID']) ? $options['FormFieldRenderID'] . '_' : '';
         $renderParams = isset($options['params']) ? $options['params'] : [];
 
@@ -833,7 +833,6 @@ class FormBuilder extends CComponent {
                         $field->errors = $data['errors'][$f['name']];
                     }
                 }
-
 
                 ## assign builder reference to this object
                 $field->builder = $this;

@@ -1,6 +1,6 @@
 <div ng-controller="PageController" ng-cloak>
     <div ui-layout class="sub" options="{ flow : 'column' }">
-        <div size='60%' min-size="300px">
+        <div ui-layout-container size='60%' min-size="300px">
             <div ui-header>
                 <?php echo $controller; ?><br> 
             </div>
@@ -57,7 +57,7 @@
                 </div>
             </div>
         </div>
-        <div size='40%' min-size="300px">
+        <div ui-layout-container size='40%' min-size="300px">
             <div ui-header>Properties</div>
             <div ui-content style="padding:3px 20px;">
                 <div ng-show="active == null">

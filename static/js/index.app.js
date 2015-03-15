@@ -58,7 +58,16 @@ var app = angular.module("main", [
     'ngStorage',
     'oc.lazyLoad'
 ]);
-app.config(function ($sceProvider, $controllerProvider) {
+app.config(function ($sceProvider, $controllerProvider, $provide) {
+    $provide.decorator('$browser', ['$delegate', function ($delegate) {
+            $delegate.onUrlChange = function () {
+            };
+            $delegate.url = function () {
+                return "";
+            };
+            return $delegate;
+        }
+    ]);
     controllerProvider = $controllerProvider;
     $sceProvider.enabled(false);
 });

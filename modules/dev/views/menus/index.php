@@ -1,8 +1,8 @@
 
 
 <div ng-controller="PageController">
-    <div ui-layout options="{ flow : 'column'}">
-        <div size='17%' min-size="150px" class="sidebar">
+    <div ui-layout options="{ flow : 'column',dividerSize:1}">
+        <div ui-layout-container size='17%' min-size="150px" class="sidebar">
             <div ui-header>
                 <!-- Prefered way to add/delete menu is by directly editing the file
                 <div class="pull-right">
@@ -69,7 +69,7 @@
                 </div>
             </div>
         </div>
-        <div style="overflow:hidden;border:0px;">
+        <div ui-layout-container style="overflow:hidden;border:0px;">
             <iframe src="<?php echo $this->createUrl('empty'); ?>" scrolling="no" seamless="seamless" name="iframe" frameborder="0" style="width:100%;height:100%;overflow:hidden;">
 
             </iframe>

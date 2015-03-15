@@ -122,8 +122,11 @@ class SubForm extends FormField {
     public function renderHtml() {
         Yii::import($this->subForm);
         $class = $this->subFormClass;
+        if (!class_exists($class)) {
+            return '';
+        }
         $model = new $class;
-        
+
         $fb = FormBuilder::load($class);
         $this->templateAttributes = $model->attributes;
 

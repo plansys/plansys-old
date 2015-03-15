@@ -100,49 +100,50 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
 
             $scope.resizeTimeout = null;
             $scope.resize = function (st) {
-                var height = $scope.originalHeight;
-                var $container = $el.parents('.container-fluid').parent();
-                var woffset = $container.hasClass('container-full') ? 0 : 1;
-                $el.css({
-                    top: $container.offset().top - $container.css('marginTop').replace('px', '') * 1,
-                    left: $container.offset().left + woffset,
-                    width: $container.width() - woffset,
-                    opacity: .999
-                });
-
                 $timeout(function () {
-                    $el.css({opacity: 1});
-                });
+                    var height = $scope.originalHeight;
+                    var $container = $el.parents('.container-fluid').parent();
+                    var woffset = $container.hasClass('container-full') ? 0 : 1;
+                    $el.css({
+                        top: $container.offset().top - $container.css('marginTop').replace('px', '') * 1,
+                        left: $container.offset().left + woffset,
+                        width: $container.width() - woffset
+                    });
 
-                if ($scope.form.layout.name == 'dashboard' && $el.parent().is('form')) {
-                    var dashFilter = $el.parent().find('> [ps-data-filter]:eq(0)');
+                    $timeout(function () {
+                        $el.css({opacity: 1});
+                    });
 
-                    if (dashFilter.length > 0) {
-                        dashFilter.css({
-                            top: $("#content").offset().top + height,
-                            width: $('#content').width(),
-                            position: 'fixed',
-                            opacity: .999
-                        });
-                        dashFilter.addClass('dash-filter');
-                        height += dashFilter.height();
-                        $el.addClass('filtered');
+                    if ($scope.form.layout.name == 'dashboard' && $el.parent().is('form')) {
+                        var dashFilter = $el.parent().find('> [ps-data-filter]:eq(0)');
+
+                        if (dashFilter.length > 0) {
+                            dashFilter.css({
+                                top: $("#content").offset().top + height,
+                                width: $('#content').width(),
+                                position: 'fixed',
+                                opacity: .999
+                            });
+                            dashFilter.addClass('dash-filter');
+                            height += dashFilter.height();
+                            $el.addClass('filtered');
+                        }
                     }
-                }
 
-                $container.css({
-                    'margin-top': height + 'px',
-                    'border-top': '0px'
+                    $container.css({
+                        'margin-top': height + 'px',
+                        'border-top': '0px'
+                    });
+
+                    $(".ac-portlet-btngroup.open").click();
+                    $(".ac-portlet-menu").removeAttr('style').css('position', 'absolute');
+
+                    if (!$scope.init) {
+                        $scope.init = true;
+                        $el.show();
+                    }
                 });
-
-                $(".ac-portlet-btngroup.open").click();
-                $(".ac-portlet-menu").removeAttr('style').css('position', 'absolute');
-
-                if (!$scope.init) {
-                    $scope.init = true;
-                    $el.show();
-                }
-            }
+            };
 
 
             $(window).resize(function () {

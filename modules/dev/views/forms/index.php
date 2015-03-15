@@ -1,6 +1,6 @@
 <div ng-controller="PageController">
-    <div ui-layout options="{ flow : 'column'}">
-        <div size='20%' min-size="200px" class="sidebar">
+    <div ui-layout options="{ flow : 'column',dividerSize:1}">
+        <div ui-layout-container size='20%' min-size="200px" class="sidebar">
             <div ui-header style="padding-left:5px;">
                 <div ng-if="loading" style="float:right;margin-right:4px;">
                     Loading...
@@ -25,7 +25,7 @@
                 </div>
             </div>
         </div>
-        <div style="padding:0px 0px 0px 1px;overflow:hidden;border:0px;">
+        <div ui-layout-container style="padding:0px 0px 0px 1px;overflow:hidden;border:0px;">
             <div class="loading invisible">
                 <span>
                     <b>

@@ -1,6 +1,6 @@
 <div ng-controller="PageController" ng-cloak>
     <div ui-layout class="sub" options="{ flow : 'column' }">
-        <div id="menu-drag-drop" size='40%' min-size="300px">
+        <div ui-layout-container id="menu-drag-drop" size='40%' min-size="300px">
             <div ui-header>
                 <div class="pull-right ">
                     <div ng-show="active != null;" ng-click="remove(activeTree)" class="btn btn-xs btn-danger">
@@ -27,7 +27,7 @@
                 </div>
             </div>
         </div>
-        <div id="menu-pane" size='60%' min-size="300px">
+        <div ui-layout-container  id="menu-pane" size='60%' min-size="300px">
             <div ui-header>
                 <i ng-if="mode == 'custom'" class="fa fa-sitemap" style="float:left;margin:6px 7px 0px  -7px;"></i> 
                 {{ mode == 'normal' ? 'Properties' : '<?= $class ?>'}}

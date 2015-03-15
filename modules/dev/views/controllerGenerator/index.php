@@ -1,7 +1,7 @@
 
 <div ng-controller="PageController">
-    <div ui-layout options="{ flow : 'column'}">
-        <div size='17%' min-size="150px" class="sidebar">
+    <div ui-layout options="{ flow : 'column',dividerSize:1}">
+        <div ui-layout-container size='17%' min-size="150px" class="sidebar">
             <div ui-header>
                 <span ng-show='!saving'>Controllers</span>
                 <span ng-show='saving'>Saving...</span>
@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        <div style="overflow:hidden;border:0px;">
+        <div ui-layout-container style="overflow:hidden;border:0px;">
             <iframe src="<?php echo $this->createUrl('empty'); ?>" scrolling="no" seamless="seamless" name="iframe" frameborder="0" style="width:100%;height:100%;overflow:hidden;">
 
             </iframe>

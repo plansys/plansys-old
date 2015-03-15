@@ -6,8 +6,8 @@
         <h3>Source file has changed</h3>
         <div class="btn btn-success" onclick="location.reload()"><i class="fa fa-refresh fa-spin"></i> Refreshing Form...</div>
     </div>
-    <div ui-layout class="sub" ng-class="{fbmin:minimized}" options="{ flow : 'column' }">
-        <div class="fb1" size='69%' min-size="300px" >
+    <div ui-layout class="sub" ng-class="{fbmin:minimized}" options="{ flow : 'column' ,dividerSize:1}">
+        <div ui-layout-container class="fb1" size='69%' min-size="300px" >
             <!-- form-builder-content -->
             <div class="form-builder-saving">
                 <span ng-show='saving'> 
@@ -25,7 +25,7 @@
             <!-- /form-builder-content -->
         </div>
 
-        <div class="fb2" min-size="250px">
+        <div ui-layout-container class="fb2" min-size="250px">
             <div class="ov btn" ng-click="maximize()">
                 <div class="i fa fa-arrow-left" style="color:white;margin:-12px;"></div>
             </div>
