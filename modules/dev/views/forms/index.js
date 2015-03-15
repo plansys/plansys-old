@@ -4,11 +4,11 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
 
     $scope.menuSelect = null;
     $scope.getType = function (sel) {
-        if (!!sel.module) {
+        if (typeof sel.count != 'undefined') {
             return "module";
         }
 
-        if (!!sel.items.length) {
+        if (!sel.class) {
             return "dir";
         }
 
@@ -21,7 +21,17 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
             if (!!data) {
                 alert(data);
             } else {
-                console.log(sel);
+                sel.remove();
+            }
+        });
+    };
+    $scope.delFolder = function (sel, item) {
+        $http.get(Yii.app.createUrl('/dev/forms/delFolder', {
+            p: item.alias,
+        })).success(function (data) {
+            if (!!data) {
+                alert(data);
+            } else {
                 sel.remove();
             }
         });
@@ -40,6 +50,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         item.items.push({
                             name: data.class,
                             class: data.class,
+                            module: item.module,
                             alias: item.alias + data.class,
                             items: []
                         });
@@ -57,16 +68,19 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                 n: foldername,
                 p: item.alias
             })).success(function (data) {
-                if (data == "SUCCESS") {
-                    item.items.push({
-                        name: data.class,
-                        class: data.class,
-                        alias: item.alias + data.class,
-                        items: []
-                    });
+                if (data) {
+                    if (data.success) {
+                        item.items.push({
+                            alias: data.alias,
+                            name: data.name,
+                            module: item.module,
+                            id: data.id,
+                            items: []
+                        });
+                    } else {
+                        alert(data);
+                    }
                     return;
-                } else {
-                    alert(data);
                 }
             })
         }
@@ -158,7 +172,9 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         label: "Delete",
                         click: function (item) {
                             if (confirm("Delete folder \"" + item.name + "\".\nAll forms and folder under it will also be deleted.\nAre you sure?")) {
-                                return;
+                                if (prompt("Type 'DELETE' to execute deleting this folder:") == 'DELETE') {
+                                    $scope.delFolder(sel, item);
+                                }
                             }
                         }
                     }
@@ -207,7 +223,9 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         label: "Delete",
                         click: function (item) {
                             if (confirm("Delete form \"" + item.name + "\" ?")) {
-                                $scope.delForm(sel, item);
+                                if (prompt("Type 'DELETE' to execute deleting this form:") == 'DELETE') {
+                                    $scope.delForm(sel, item);
+                                }
                             }
                         }
                     }

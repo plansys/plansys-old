@@ -20,7 +20,7 @@ angular.module('ui.layout', [])
                 ctrl.sizeProperties = !ctrl.isUsingColumnFlow ?
                         {sizeProperty: 'height', offsetSize: 'offsetHeight', offsetPos: 'top', flowProperty: 'top', oppositeFlowProperty: 'bottom', mouseProperty: 'clientY', flowPropertyPosition: 'y'} :
                         {sizeProperty: 'width', offsetSize: 'offsetWidth', offsetPos: 'left', flowProperty: 'left', oppositeFlowProperty: 'right', mouseProperty: 'clientX', flowPropertyPosition: 'x'};
-                
+
                 $element
                         // Force the layout to fill the parent space
                         // fix no height layout...
@@ -628,6 +628,18 @@ angular.module('ui.layout', [])
                             e.preventDefault();
                             e.stopPropagation();
 
+                            // iframe fix
+                            $('<div class="ui-layout-iframeFix" style="background: #fff;cursor: col-resize !important;"></div>')
+                                    .css({
+                                        top: '0px',
+                                        bottom: '0px',
+                                        left: '0px',
+                                        right: '0px',
+                                        position: "absolute", opacity: "0.001", zIndex: 99
+                                    })
+                                    .css($(this).offset())
+                                    .appendTo("body");
+
                             htmlElement.on('mousemove touchmove', function (event) {
                                 scope.$apply(angular.bind(ctrl, ctrl.mouseMoveHandler, event));
                             });
@@ -637,6 +649,11 @@ angular.module('ui.layout', [])
                         htmlElement.on('mouseup touchend', function (event) {
                             scope.$apply(angular.bind(ctrl, ctrl.mouseUpHandler, event));
                             htmlElement.off('mousemove touchmove');
+                            
+                            // iframe fix
+                            $("div.ui-layout-iframeFix").each(function() {
+                                this.parentNode.removeChild(this);
+                            });
                         });
 
                         scope.$watch('splitbar.size', function (newValue) {

@@ -28,6 +28,16 @@ class FormsController extends Controller {
         }
     }
 
+    public function actionDelFolder($p) {
+        $dir = Yii::getPathOfAlias($p);
+        if (is_dir($dir)) {
+            foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $path) {
+                $path->isDir() && !$path->isLink() ? rmdir($path->getPathname()) : unlink($path->getPathname());
+            }
+            rmdir($dir);
+        }
+    }
+
     public function actionDelForm($p) {
         $file = Yii::getPathOfAlias($p) . ".php";
         if (is_file($file)) {
@@ -39,13 +49,24 @@ class FormsController extends Controller {
         $dir = Yii::getPathOfAlias($p);
         if (is_dir($dir) && Helper::isValidVar($n)) {
             $dirname = $dir . DIRECTORY_SEPARATOR . $n;
-            if (!@mkdir($dirname)) {
-                echo "SUCCESS";
+            if (!!@mkdir($dirname)) {
+                echo json_encode([
+                    "success" => true,
+                    "id"      => time(),
+                    "name"    => ucfirst($n),
+                    "alias"   => Helper::getAlias($dirname) . "."
+                ]);
             } else {
-                echo "ERROR: Failed to create folder (permission denied).\n" . $dirname;
+                echo json_encode([
+                    "success" => false,
+                    "error"   => "ERROR: Failed to create folder (permission denied).\n" . $dirname
+                ]);
             }
         } else {
-            echo "ERROR: Folder name is not valid";
+            echo json_encode([
+                "success" => false,
+                "error"   => "ERROR: Folder name is not valid"
+            ]);
         }
     }
 

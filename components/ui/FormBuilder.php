@@ -1203,10 +1203,21 @@ EOF;
     private static function formatGlob($items, $item_dir, $module, $func, $alias, $format = true, $return = []) {
         $subdir_val = [];
         $id = 0;
+
         foreach ($items as $k => $i) {
             $item = [];
             $i = realpath($i);
-            $file_dir = dirname($i) . DIRECTORY_SEPARATOR;
+            if (substr($i, strlen($i) - 4) != ".php") {
+                $file_dir = $i . DIRECTORY_SEPARATOR;
+                if (is_dir($file_dir)) {
+                    $is_dir = true;
+                } else {
+                    continue;
+                }
+            } else {
+                $file_dir = dirname($i) . DIRECTORY_SEPARATOR;
+                $is_dir = false;
+            }
             $subdir = trim(str_replace(DIRECTORY_SEPARATOR, '.', str_replace($item_dir, '', $file_dir)), '.');
 
             $item = str_replace($file_dir, "", $i);
@@ -1215,21 +1226,20 @@ EOF;
             $item = $func($item, $module, $newAlias, $i);
             $item['id'] = $id++;
 
-
             if ($subdir == '' || !$format) {
                 $return[$k] = $item;
             } else {
                 $subarr = explode(".", $subdir);
-
                 $curpath = &$return;
                 foreach ($subarr as $s) {
                     $id++;
                     if (!isset($curpath[$s])) {
                         $curpath[$s] = [
-                            'items' => [],
-                            'alias' => $newAlias,
-                            'name'  => ucfirst($s),
-                            'id'    => $id++
+                            'items'  => [],
+                            'alias'  => $newAlias,
+                            'module' => $module,
+                            'name'   => ucfirst($s),
+                            'id'     => $id++
                         ];
                     }
                     $curpath = &$curpath[$s]['items'];
@@ -1238,10 +1248,13 @@ EOF;
                 if (!isset($subdir_val[$subdir]))
                     $subdir_val[$subdir] = [];
 
-                $subdir_val[$subdir][] = $item;
+                if (!$is_dir) {
+                    $subdir_val[$subdir][] = $item;
+                }
                 $curpath = $subdir_val[$subdir];
             }
         }
+
         $return = Helper::arrayValuesRecursive($return);
         return $return;
     }
@@ -1258,10 +1271,11 @@ EOF;
 
         $func = function ($m, $module = "", $aliaspath = "", $path) {
             return [
-                'name'  => str_replace($module, '', $m),
-                'class' => $m,
-                'alias' => $aliaspath . "." . $m,
-                'items' => []
+                'name'   => str_replace($module, '', $m),
+                'class'  => $m,
+                'module' => $module,
+                'alias'  => $aliaspath . "." . $m,
+                'items'  => []
             ];
         };
 
@@ -1272,25 +1286,23 @@ EOF;
             $count = 0;
             foreach ($items as $k => $f) {
                 $items[$k] = str_replace($forms_dir, "", $f);
-                $items[$k] = str_replace('.php', "", $items[$k]);
+                $items[$k] = str_replace('*.php', "", $items[$k]);
                 if (!is_null($func)) {
                     $items[$k] = $func($items[$k], "", "application.components.ui.FormFields", $f);
                     $count++;
                 }
             }
-
             $files[] = [
-                'module' => 'Plansys: Fields',
+                'module' => 'Plansys: fields',
                 'items'  => $items,
                 'alias'  => "application.components.ui.FormFields",
                 'count'  => $count
             ];
 
-            ##  add files in Root Form dir
+            ## add files in Root Form dir
             $forms_dir = Yii::getPathOfAlias("application.forms") . DIRECTORY_SEPARATOR;
             $glob = Helper::globRecursive($forms_dir . "*.php", 0, true);
             $items = $glob['files'];
-
             foreach ($items as $k => $f) {
                 $f = realpath($f);
                 $file_dir = dirname($f) . DIRECTORY_SEPARATOR;
@@ -1302,13 +1314,13 @@ EOF;
                     $items[$k] = $func($items[$k], "", $alias, $f);
                 }
             }
-
             $files[] = [
-                'module' => 'Plansys: Forms',
+                'module' => 'Plansys: forms',
                 'alias'  => "application.forms",
                 'count'  => $glob['count'],
                 'items'  => $items
             ];
+
 
 
             ## add files in Plansys Modules Dir
@@ -1320,7 +1332,8 @@ EOF;
                     $module = str_replace($module_dir . DIRECTORY_SEPARATOR, '', $m);
                     $alias = "application.modules.{$module}.forms.";
                     $item_dir = $m . DIRECTORY_SEPARATOR . "forms" . DIRECTORY_SEPARATOR;
-                    $glob = Helper::globRecursive($item_dir . "*[.php]", 0, true);
+                    $glob = Helper::globRecursive($item_dir . "*", 0, true);
+
                     $items = $glob['files'];
                     $items = FormBuilder::formatGlob($items, $item_dir, $module, $func, $alias, $formatRecursive);
 

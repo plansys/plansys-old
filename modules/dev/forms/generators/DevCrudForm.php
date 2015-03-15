@@ -95,6 +95,8 @@ Status: <b>{{status}}</b>
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (

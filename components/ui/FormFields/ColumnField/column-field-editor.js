@@ -1,5 +1,5 @@
 editor.ColumnField = {
-    calculateWidth: function (item) { 
+    calculateWidth: function (item) {
         var w = (100 / item.totalColumns).toFixed(0);
         for (var i = 1; i <= item.totalColumns; i++) {
             item['w' + i] = w + '%';
@@ -19,15 +19,17 @@ editor.ColumnField = {
     },
     onLoad: function (item) {
         this.onSelect(item);
-        this.refreshColumnPlaceholder();
+        this.refreshColumnPlaceholder(item);
     },
     refreshColumnPlaceholder: function () {
-        $(".cpl").each(function () {
-            if ($(this).parent().find("li").length == 1) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
+        editor.$timeout(function () {
+            $(".cpl").each(function () {
+                if ($(this).parent().find("li").length == 1) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
         });
     }
 };

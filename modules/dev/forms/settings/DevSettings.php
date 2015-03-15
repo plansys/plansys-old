@@ -226,8 +226,8 @@ class DevSettings extends Form {
                 'type' => 'ActionBar',
             ),
             array (
-                'value' => '<div style=\\"margin:20px auto;width:900px;border:1px solid #ddd;border-radius:5px;padding:0px 15px;box-shadow:0px 0px 10px 0px #ddd;\\">',
                 'type' => 'Text',
+                'value' => '<div style=\\"margin:20px auto;width:900px;border:1px solid #ddd;border-radius:5px;padding:0px 15px;box-shadow:0px 0px 10px 0px #ddd;\\">',
             ),
             array (
                 'name' => 'errors',
@@ -253,8 +253,8 @@ class DevSettings extends Form {
                         'type' => 'DropDownList',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column2' => array (
@@ -269,10 +269,12 @@ class DevSettings extends Form {
                         'type' => 'DropDownList',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
@@ -280,13 +282,13 @@ class DevSettings extends Form {
                 'type' => 'SectionHeader',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<i class=\"fa fa-warning fa-fw\" style=\"color:red;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'dbSys\']) != \'undefined\' && !loading.db\"></i>
 
 <i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'dbSys\']) == \'undefined\' && !loading.db\"></i>
 
 
 <i class=\"fa fa-spin fa-refresh\" style=\"float:right;margin:-21px -5px 0px 0px;\" ng-if=\"!!loading.db\"></i>',
-                'type' => 'Text',
             ),
             array (
                 'label' => 'Check Database',
@@ -313,8 +315,8 @@ class DevSettings extends Form {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column2' => array (
@@ -325,11 +327,11 @@ class DevSettings extends Form {
                     ),
                     array (
                         'renderInEditor' => 'Yes',
+                        'type' => 'Text',
                         'value' => '<div ng-if = \"model.emailService != \'none\'\" class=\"col-sm-12\" 
      style=\"margin:-5px 0px 8px 0px;padding:0px;text-align:right;color:#999;font-size:12px\">
     e.g. localhost:3306
 </div>',
-                        'type' => 'Text',
                     ),
                     array (
                         'label' => 'Username',
@@ -343,49 +345,79 @@ class DevSettings extends Form {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
-            ),
-            array (
-                'title' => 'Repository & Notification',
-                'type' => 'SectionHeader',
             ),
             array (
                 'showBorder' => 'Yes',
                 'column1' => array (
                     array (
-                        'label' => 'Repo Path',
-                        'name' => 'repoPath',
-                        'type' => 'TextField',
-                    ),
-                    array (
-                        'value' => '<i class=\"fa fa-warning fa-fw\" style=\"color:red;float:right;margin:2px 0px 0px 0px;\" ng-if=\"typeof(errors[\'repoPath\']) != \'undefined\' && !loading.repo\"></i>
-
-<i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;float:right;margin:2px 0px 0px 0px;\" ng-if=\"typeof(errors[\'repoPath\']) == \'undefined\' && !loading.repo\"></i>
-
-
-<i class=\"fa fa-spin fa-refresh\" style=\"float:right;margin:2px 0px 0px 0px;\" ng-if=\"!!loading.repo\"></i>',
-                        'type' => 'Text',
+                        'title' => 'Repository',
+                        'type' => 'SectionHeader',
                     ),
                     array (
                         'label' => 'Check Repository',
                         'icon' => 'folder-open',
                         'buttonSize' => 'btn-xs',
                         'options' => array (
-                            'style' => 'float:right;margin:0px 10px 0px 0px;',
+                            'style' => 'float:right;margin:-50px -15px 0px 0px;',
                             'ng-click' => 'checkRepo()',
                         ),
                         'type' => 'LinkButton',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<div style=\"float:right;margin:-50px -40px 0px 0px;\">
+    <i class=\"fa fa-warning fa-fw\" style=\"color:red;\"
+    ng-if=\"typeof(errors[\'repoPath\']) != \'undefined\' && !loading.repo\"></i>
+    
+    <i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;\" ng-if=\"typeof(errors[\'repoPath\']) == \'undefined\' && !loading.repo\"></i>
+    
+    <i class=\"fa fa-spin fa-refresh\" ng-if=\"!!loading.repo\"></i>
+</div>',
+                    ),
+                    array (
+                        'label' => 'Repo Path',
+                        'name' => 'repoPath',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column2' => array (
+                    array (
+                        'title' => 'Notification',
+                        'type' => 'SectionHeader',
+                    ),
+                    array (
+                        'type' => 'Text',
+                        'value' => '<div style=\"float:right;margin:-50px -55px 0px 0px;\">
+<i class=\"fa fa-warning fa-fw\" style=\"color:red;\" ng-if=\"typeof(errors[\'notifEnable\']) != \'undefined\' && !loading.notif\"></i>
+
+<i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;\" ng-if=\"typeof(errors[\'notifEnable\']) == \'undefined\' &&  model.notifEnable == \"ON\" && !loading.notif\"></i>
+
+
+<i class=\"fa fa-spin fa-refresh\" ng-if=\"!!loading.notif\"></i>
+</div>',
+                    ),
+                    array (
+                        'label' => 'Test Notification',
+                        'icon' => 'newspaper-o',
+                        'buttonSize' => 'btn-xs',
+                        'options' => array (
+                            'ng-if' => '!!model.notifEnable',
+                            'ng-click' => 'checkNotif()',
+                            'style' => 'float:right;margin:-50px -25px 0px 0px;',
+                        ),
+                        'type' => 'LinkButton',
+                    ),
                     array (
                         'label' => 'Enable Notification',
                         'name' => 'notifEnable',
@@ -407,33 +439,16 @@ class DevSettings extends Form {
                         'type' => 'ToggleSwitch',
                     ),
                     array (
-                        'value' => '<div class=\\"col-sm-6\\"></div>',
                         'type' => 'Text',
+                        'value' => '{{}}',
                     ),
                     array (
-                        'value' => '<i class=\"fa fa-warning fa-fw\" style=\"color:red;float:right;margin:5px 22px 0px 0px;\" ng-if=\"typeof(errors[\'notifEnable\']) != \'undefined\' && !loading.notif\"></i>
-
-<i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;float:right;margin:5px 22px 0px 0px;\" ng-if=\"typeof(errors[\'notifEnable\']) == \'undefined\' && !loading.notif\"></i>
-
-
-<i class=\"fa fa-spin fa-refresh\" style=\"float:right;margin:5px 22px 0px 0px;\" ng-if=\"!!loading.notif\"></i>',
                         'type' => 'Text',
-                    ),
-                    array (
-                        'label' => 'Test Notification',
-                        'icon' => 'newspaper-o',
-                        'buttonSize' => 'btn-xs',
-                        'options' => array (
-                            'ng-if' => '!!model.notifEnable',
-                            'ng-click' => 'checkNotif()',
-                        ),
-                        'type' => 'LinkButton',
-                    ),
-                    array (
                         'value' => '<column-placeholder></column-placeholder>',
-                        'type' => 'Text',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
@@ -441,6 +456,7 @@ class DevSettings extends Form {
                 'type' => 'SectionHeader',
             ),
             array (
+                'totalColumns' => '3',
                 'column1' => array (
                     array (
                         'label' => 'Enable Audit Trail',
@@ -450,6 +466,12 @@ class DevSettings extends Form {
                         ),
                         'type' => 'ToggleSwitch',
                     ),
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
+                ),
+                'column2' => array (
                     array (
                         'label' => 'Track Operation(s)',
                         'name' => 'auditTrack',
@@ -465,16 +487,12 @@ class DevSettings extends Form {
                         'type' => 'CheckboxList',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'column2' => array (
-                    array (
-                        'value' => '<column-placeholder></column-placeholder>',
-                        'type' => 'Text',
-                    ),
-                ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
@@ -482,11 +500,11 @@ class DevSettings extends Form {
                 'type' => 'SectionHeader',
             ),
             array (
-                'label' => 'Send Test Email',
+                'label' => 'Test Email',
                 'icon' => 'envelope',
                 'buttonSize' => 'btn-xs',
                 'options' => array (
-                    'style' => 'float:right;margin:-25px 0px 0px 0px;',
+                    'style' => 'float:right;margin:-25px 25px 0px 0px;',
                 ),
                 'type' => 'LinkButton',
             ),
@@ -516,16 +534,16 @@ class DevSettings extends Form {
                     ),
                     array (
                         'renderInEditor' => 'Yes',
+                        'type' => 'Text',
                         'value' => '<div ng-if = \"model.emailService != \'none\'\" class=\"col-sm-6\" 
      style=\"float:right;margin:-5px 0px 0px 0px;padding:0px;text-align:right;color:#999;font-size:12px;width:65%\">
       <i class=\"fa fa-info-circle\"></i> 
     Sender Name < sender@server.com >
 </div>',
-                        'type' => 'Text',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column2' => array (
@@ -553,10 +571,12 @@ class DevSettings extends Form {
                         'type' => 'SubForm',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
@@ -564,13 +584,13 @@ class DevSettings extends Form {
                 'type' => 'SectionHeader',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<i class=\"fa fa-warning fa-fw\" style=\"color:red;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'ldapEnable\']) != \'undefined\' && !loading.ldap\"></i>
 
 <i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'ldapEnable\']) == \'undefined\' && !loading.ldap\"></i>
 
 
 <i class=\"fa fa-spin fa-refresh\" style=\"float:right;margin:-21px -5px 0px 0px;\" ng-if=\"!!loading.ldap\"></i>',
-                'type' => 'Text',
             ),
             array (
                 'label' => 'Check LDAP',
@@ -591,18 +611,20 @@ class DevSettings extends Form {
                         'type' => 'ToggleSwitch',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
                 'showBorder' => 'Yes',
                 'column1' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
                         'label' => 'AD Port',
@@ -633,15 +655,26 @@ class DevSettings extends Form {
                 ),
                 'column2' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
                         'label' => 'Domain Controllers',
                         'name' => 'ldapDomainControllers',
+                        'singleViewOption' => array (
+                            'name' => 'val',
+                            'fieldType' => 'text',
+                            'labelWidth' => 0,
+                            'fieldWidth' => 12,
+                            'fieldOptions' => array (
+                                'ng-delay' => 500,
+                            ),
+                        ),
                         'type' => 'ListView',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'options' => array (
                     'style' => 'margin-top : -45px;',
                     'ng-if' => '!!model.ldapEnable',
@@ -649,8 +682,8 @@ class DevSettings extends Form {
                 'type' => 'ColumnField',
             ),
             array (
-                'value' => '</div>',
                 'type' => 'Text',
+                'value' => '</div>',
             ),
         );
     }

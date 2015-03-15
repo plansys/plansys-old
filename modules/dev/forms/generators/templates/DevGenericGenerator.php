@@ -23,6 +23,7 @@ class DevGenericGenerator extends Form {
     public function getFields() {
         return array (
             array (
+                'type' => 'Text',
                 'value' => '
 <div class=\"col-sm-2\"></div>
 <div class=\"col-sm-8\" style=\"padding-top:40px;\">
@@ -32,20 +33,19 @@ class DevGenericGenerator extends Form {
           Generic CRUD Form
       </div> 
       <div class=\"panel-body\" style=\"padding:0px;\">',
-                'type' => 'Text',
             ),
             array (
                 'column1' => array (
-                    array (
-                        'value' => '<column-placeholder></column-placeholder>',
-                        'type' => 'Text',
-                    ),
                     array (
                         'label' => 'Module',
                         'name' => 'module',
                         'listExpr' => 'FormBuilder::listModule()',
                         'searchable' => 'Yes',
                         'type' => 'DropDownList',
+                    ),
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
                         'label' => 'Table Name',
@@ -66,15 +66,17 @@ class DevGenericGenerator extends Form {
                         'type' => 'TextField',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
+                'type' => 'Text',
                 'value' => '      </div>
     </div>
 </div>
 <div class=\"col-sm-2\"></div>
 ',
-                'type' => 'Text',
             ),
         );
     }

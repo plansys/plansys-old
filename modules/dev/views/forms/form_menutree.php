@@ -1,5 +1,6 @@
 <div ng-if='!item.class' class="sidebar-tree" ui-tree-handle
-     ng-click="toggle(this);select(this, item);"
+     ng-click="toggle(this);
+             select(this, item);"
      ng-class="isSelected(this)">
     <div style="margin:-1px 0px;padding:1px 0px;" context-menu="formTreeOpen(this, $event, item)"
          data-target="FormTreeMenu">
@@ -12,8 +13,8 @@
         <i ng-show="this.collapsed" class="fa fa-caret-right"></i>
         <i ng-show="!this.collapsed" class="fa fa-caret-down"></i>
 
-        {{item.module}}
-        {{item.name}}
+        {{ getType(item) == "module" ? item.module : ''}}
+        {{item.name}} 
     </div>
 </div>
 
@@ -22,7 +23,7 @@
    ui-tree-handle ng-click="select(this)" ng-class="isSelected(this)">
     <div style="margin:-1px 0px;padding:1px 0px;" context-menu="formTreeOpen(this, $event, item)"
          data-target="FormTreeMenu">
-        <i ng-show="!this.collapsed" class="fa fa-file-text-o fa-nm"></i>
+        <i class="fa fa-file-text-o fa-nm"></i>
         {{item.name}}
     </div>
 </a>
@@ -32,7 +33,7 @@
             <a class="pointer" role="menuitem"
                oncontextmenu="return false"
                ng-click="executeMenu($event, menu.click)">
-                <i class="{{menu.icon}}"></i> {{ menu.label }}
+                <i class="{{menu.icon}}"></i> {{ menu.label}}
             </a>
         </li>
         <hr ng-if="menu.hr" ng-repeat-end/>
