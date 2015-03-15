@@ -92,6 +92,8 @@
             };
 
             $scope.select = function (item, e) {
+                $scope.closeContextMenu();
+                
                 this.toggle();
                 item.state = '';
                 $scope.selecting = true;
@@ -108,12 +110,18 @@
                             var scope = controller.scope();
                             angular.element("#" + item.target + ':eq(0)').html(html);
                             $compile("#" + item.target + ':eq(0)  > div')(scope);
-//                            
-                            history.pushState(null,'',item.url);
+                            history.pushState(null, '', item.url);
                         });
                     }
                 }
             };
+
+            $scope.closeContextMenu = function () {
+                $(".menu-sel").removeClass("active").removeClass(".menu-sel");
+                $("#ContextMenu<?= $class ?>").removeClass('open');
+                return false;
+            }
+
             $scope.openContextMenu = function (item, e, itemTree) {
                 if ($scope.originalContextMenu == null) {
                     $scope.originalContextMenu = angular.copy($scope.contextMenu);

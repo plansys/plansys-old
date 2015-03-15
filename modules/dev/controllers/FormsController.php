@@ -37,11 +37,12 @@ class FormsController extends Controller {
 
     public function actionAddFolder($n, $p) {
         $dir = Yii::getPathOfAlias($p);
-        if (is_dir($dir) && Helper::isValidVar($c)) {
-            if (!@mkdir($dir . DIRECTORY_SEPARATOR . $n)) {
+        if (is_dir($dir) && Helper::isValidVar($n)) {
+            $dirname = $dir . DIRECTORY_SEPARATOR . $n;
+            if (!@mkdir($dirname)) {
                 echo "SUCCESS";
             } else {
-                echo "ERROR: Failed to create folder (permission denied)";
+                echo "ERROR: Failed to create folder (permission denied).\n" . $dirname;
             }
         } else {
             echo "ERROR: Folder name is not valid";

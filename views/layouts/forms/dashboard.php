@@ -1,5 +1,5 @@
 <div ui-layout options="{flow: 'column',dividerSize:1}" class='dashboard'>
-    <div ui-layout-container id='col1' class="container-full">
+    <div ui-layout-container id='col1' size="100%" class="container-full">
         
         <div class="dashboard-mode" style="display:none;position:absolute;right:0px;font-size:11px;font-weight:bold;color:#999;padding:5px;">
             <i class="fa fa-desktop"></i> Dashboard Mode

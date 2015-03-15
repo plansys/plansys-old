@@ -1,13 +1,10 @@
-
-
 <div ng-controller="PageController" ng-cloak >
-
     <div id="must-reload">
         <h3>Source file has changed</h3>
         <div class="btn btn-success" onclick="location.reload()"><i class="fa fa-refresh fa-spin"></i> Refreshing Form...</div>
     </div>
-    <div ui-layout class="sub" ng-class="{fbmin:minimized}" options="{ flow : 'column' ,dividerSize:1}">
-        <div ui-layout-container class="fb1" size='69%' min-size="300px" >
+    <div ui-layout class="sub" options="{ flow : 'column', dividerSize:1}">
+        <div ui-layout-container size='69%'>
             <!-- form-builder-content -->
             <div class="form-builder-saving">
                 <span ng-show='saving'> 
@@ -25,17 +22,9 @@
             <!-- /form-builder-content -->
         </div>
 
-        <div ui-layout-container class="fb2" min-size="250px">
-            <div class="ov btn" ng-click="maximize()">
-                <div class="i fa fa-arrow-left" style="color:white;margin:-12px;"></div>
-            </div>
+        <div ui-layout-container min-size="250px">
             <!-- form-builder-toolbar -->
             <tabset class="toolbar">
-                <div ng-show="!layoutChanging" 
-                     ng-click="minimize();"
-                     class="pull-right btn btn-xs" style="margin:2px;">
-                    <i class="fa fa-arrow-right fa-nm"></i>
-                </div>
                 <tab ng-click="tabs.toolbar = true" active="tabs.toolbar" 
                      ng-controller="ToolbarController">
                     <tab-heading>

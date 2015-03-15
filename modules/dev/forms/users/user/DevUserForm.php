@@ -79,6 +79,15 @@ class DevUserForm extends User {
                         'options' => array (
                             'ng-change' => 'updateRole()',
                         ),
+                        'singleViewOption' => array (
+                            'name' => 'val',
+                            'fieldType' => 'text',
+                            'labelWidth' => 0,
+                            'fieldWidth' => 12,
+                            'fieldOptions' => array (
+                                'ng-delay' => 500,
+                            ),
+                        ),
                         'type' => 'ListView',
                     ),
                     array (

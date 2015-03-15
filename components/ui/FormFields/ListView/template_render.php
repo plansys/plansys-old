@@ -25,6 +25,11 @@
                 class="btn list-view-add btn-default btn-sm">
             <i class="fa fa-nm fa-plus"></i> <b>Add</b>
         </button>
+        <button type="button" ng-click="undo()" ng-if="value.length > 5 && showUndoDelete"
+                style="margin:0px;"
+                class="btn list-view-add btn-default btn-sm">
+            <i class="fa fa-nm fa-undo"></i> <b>Undo Delete</b>
+        </button>
         <div ng-if="!loading && value != null"
              class="list-view-form"
              oc-lazy-load="{name: 'ui.tree', files: ['<?= Yii::app()->controller->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">

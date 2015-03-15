@@ -1320,7 +1320,7 @@ EOF;
                     $module = str_replace($module_dir . DIRECTORY_SEPARATOR, '', $m);
                     $alias = "application.modules.{$module}.forms.";
                     $item_dir = $m . DIRECTORY_SEPARATOR . "forms" . DIRECTORY_SEPARATOR;
-                    $glob = Helper::globRecursive($item_dir . "*.php", 0, true);
+                    $glob = Helper::globRecursive($item_dir . "*[.php]", 0, true);
                     $items = $glob['files'];
                     $items = FormBuilder::formatGlob($items, $item_dir, $module, $func, $alias, $formatRecursive);
 

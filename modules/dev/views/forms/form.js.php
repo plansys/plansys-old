@@ -698,18 +698,6 @@
         $scope.prepareCloneField = function (scope) {
             $scope.isCloning = true;
         }
-        $scope.minimized = false;
-        $scope.minimize = function () {
-            $scope.minimized = true;
-            var l = $(".fb1").parent().width() - 30;
-            $(".fb1").width(l);
-            $(".fb2").width(30).css('left', l);
-        }
-        $scope.maximize = function () {
-            $scope.minimized = false;
-            $(".fb1").width("69%");
-            $(".fb2").width("31%").css("left", "69%");
-        }
         $scope.cancelCloneField = function () {
             $timeout(function () {
                 if (!$scope.isCloneDragging) {
@@ -859,7 +847,6 @@
             }
             $scope.save();
         }
-
         $timeout(function () {
             $(document).trigger('formBuilderInit');
             $scope.detectEmptyPlaceholder();

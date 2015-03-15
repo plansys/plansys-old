@@ -102,7 +102,8 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         icon: "fa fa-fw fa-folder-o",
                         label: "New Folder",
                         click: function (item) {
-                            var newname = prompt("Enter new folder name:");
+                            var foldername = prompt("Enter new folder name:");
+                            $scope.addFolder(foldername, item);
                         }
                     }
                 ];
@@ -128,7 +129,8 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         icon: "fa fa-fw fa-folder-o",
                         label: "New Folder",
                         click: function (item) {
-                            var newname = prompt("Enter new folder name:");
+                            var foldername = prompt("Enter new folder name:");
+                            $scope.addFolder(foldername, item);
                         }
                     },
                     {
