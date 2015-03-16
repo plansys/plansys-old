@@ -288,7 +288,7 @@
         };
         $scope.changeMenuTreeFile = function () {
             var file = this.value;
-            $http.get(Yii.app.createUrl('/dev/menus/getOptions', {
+            $http.get(Yii.app.createUrl('/dev/genMenu/getOptions', {
                 path: file
             })).success(function (data) {
                 $scope.selectLayout($scope.layout.name, function () {
@@ -688,7 +688,7 @@
             }, 10);
         }
         $scope.relayout = function (field) {
-            if (!!editor && !!editor[field.type] && typeof editor[field.type].onLoad == 'function') {
+            if (!!field && !!editor && !!editor[field.type] && typeof editor[field.type].onLoad == 'function') {
                 editor[field.type].onLoad(field);
             }
             $scope.detectDuplicate();

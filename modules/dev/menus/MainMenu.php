@@ -33,7 +33,7 @@ return array (
             array (
                 'label' => 'MenuTree Editor',
                 'icon' => 'fa-sitemap',
-                'url' => '/dev/menus/index',
+                'url' => '/dev/genMenu/index',
             ),
             array (
                 'label' => '---',

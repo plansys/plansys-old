@@ -1238,7 +1238,7 @@ EOF;
                             'items'  => [],
                             'alias'  => $newAlias,
                             'module' => $module,
-                            'name'   => ucfirst($s),
+                            'name'   => $s,
                             'id'     => $id++
                         ];
                     }

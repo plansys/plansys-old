@@ -7,10 +7,10 @@ class GenModuleController extends Controller {
 
         if (isset($_GET['active'])) {
             $model->load($_GET['active']);
-            $model->checkSync();
             if (is_null($model->module)) {
                 $model = new DevGenModule;
             } else {
+                $model->checkSync();
                 if (isset($_GET['gi'])) {
                     $model->module->generateImport(true);
                     $model->imports = $model->module->loadImport();

@@ -65,7 +65,7 @@
                     </div>
                     <div ng-show="active != null"
                          onload="isLoading = false"
-                         ng-include="Yii.app.createUrl('dev/menus/renderProperties')"></div>
+                         ng-include="Yii.app.createUrl('/dev/genMenu/renderProperties')"></div>
                 </div>
                 <div ng-if="mode == 'custom'">
                     <div id="code-editor"
@@ -111,7 +111,7 @@
                     mode = "custom";
                 }
 
-                $http.get(Yii.app.createUrl('/dev/menus/switchMode', {
+                $http.get(Yii.app.createUrl('/dev/genMenu/switchMode', {
                     path: '<?= $path ?>',
                     mode: mode
                 })).success(function (data) {
@@ -134,7 +134,7 @@
                         }
 
                         if ($scope.list == null) {
-                            $http.get(Yii.app.createUrl('/dev/menus/getList', {
+                            $http.get(Yii.app.createUrl('/dev/genMenu/getList', {
                                 path: '<?= $path ?>'
                             })).success(function (data) {
                                 if (typeof data == "string") {
@@ -160,11 +160,11 @@
                         };
 
                         if ($scope.code == null) {
-                            $http.get(Yii.app.createUrl('/dev/menus/getCode', {
+                            $http.get(Yii.app.createUrl('/dev/genMenu/getCode', {
                                 path: '<?= $path ?>'
                             })).success(function (data) {
                                 $scope.code = data;
-                                $http.get(Yii.app.createUrl('/dev/menus/getModeLocked', {
+                                $http.get(Yii.app.createUrl('/dev/genMenu/getModeLocked', {
                                     path: '<?= $path ?>'
                                 })).success(function (res) {
                                     $scope.modeLocked = (res == "locked");
@@ -183,7 +183,7 @@
             $("#menu-drag-drop").width('0%').hide();
             $("#menu-pane").width('100%').css('left', 0);
             $(".ui-splitbar").hide();
-            $http.get(Yii.app.createUrl('/dev/menus/getMode', {
+            $http.get(Yii.app.createUrl('/dev/genMenu/getMode', {
                 path: '<?= $path ?>'
             })).success(function (data) {
                 $scope.codeValid = data != '';

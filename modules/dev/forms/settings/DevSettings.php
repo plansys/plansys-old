@@ -456,11 +456,13 @@ class DevSettings extends Form {
                 'type' => 'SectionHeader',
             ),
             array (
-                'totalColumns' => '3',
+                'showBorder' => 'Yes',
                 'column1' => array (
                     array (
                         'label' => 'Enable Audit Trail',
                         'name' => 'auditEnable',
+                        'labelWidth' => '5',
+                        'fieldWidth' => '7',
                         'options' => array (
                             'ng-change' => 'changeEnableAudit()',
                         ),
@@ -481,6 +483,7 @@ class DevSettings extends Form {
                             'delete' => 'Delete',
                             'login' => 'Login/Logout',
                         ),
+                        'labelWidth' => '5',
                         'options' => array (
                             'ng-if' => '!!model.auditEnable',
                         ),
@@ -493,6 +496,7 @@ class DevSettings extends Form {
                 ),
                 'w1' => '50%',
                 'w2' => '50%',
+                'w3' => '33%',
                 'type' => 'ColumnField',
             ),
             array (
@@ -525,7 +529,7 @@ class DevSettings extends Form {
                         'type' => 'DropDownList',
                     ),
                     array (
-                        'label' => 'Sender',
+                        'label' => 'Sender E-mail',
                         'name' => 'emailSender',
                         'options' => array (
                             'ng-if' => 'model.emailService != \\\'none\\\'',
@@ -538,7 +542,7 @@ class DevSettings extends Form {
                         'value' => '<div ng-if = \"model.emailService != \'none\'\" class=\"col-sm-6\" 
      style=\"float:right;margin:-5px 0px 0px 0px;padding:0px;text-align:right;color:#999;font-size:12px;width:65%\">
       <i class=\"fa fa-info-circle\"></i> 
-    Sender Name < sender@server.com >
+    Sender Email &lt;sender@server.com&gt;
 </div>',
                     ),
                     array (

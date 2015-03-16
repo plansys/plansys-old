@@ -6,7 +6,7 @@ editor.ColumnField = {
         }
     },
     changeTC: function () {
-        this.calculateWidth();
+        this.calculateWidth(editor.$scope.active);
         editor.$scope.save(editor.$scope.active);
     },
     onSelect: function (item) {

@@ -93,7 +93,6 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
         }
     }
     $scope.formTreeOpen = function (sel, e, item) {
-        console.log(item);
         $scope.menuSelect = sel.$modelValue;
         $(".menu-sel").removeClass("active").removeClass(".menu-sel");
         $(e.target).parent().addClass("menu-sel active");

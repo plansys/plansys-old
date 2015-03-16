@@ -104,14 +104,11 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                     var height = $scope.originalHeight;
                     var $container = $el.parents('.container-fluid').parent();
                     var woffset = $container.hasClass('container-full') ? 0 : 1;
+                    
                     $el.css({
                         top: $container.offset().top - $container.css('marginTop').replace('px', '') * 1,
                         left: $container.offset().left + woffset,
                         width: $container.width() - woffset
-                    });
-
-                    $timeout(function () {
-                        $el.css({opacity: 1});
                     });
 
                     if ($scope.form.layout.name == 'dashboard' && $el.parent().is('form')) {
@@ -142,7 +139,7 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                         $scope.init = true;
                         $el.show();
                     }
-                });
+                }, 100);
             };
 
 

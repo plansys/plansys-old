@@ -1,6 +1,6 @@
 <?php
 
-class MenusController extends Controller {
+class GenMenuController extends Controller {
 
     public function actionIndex() {
         $menus = MenuTree::listAllFile();
@@ -22,10 +22,74 @@ class MenusController extends Controller {
         }
     }
 
+    public function actionDelMenu($p) {
+        $file = Yii::getPathOfAlias($p) . ".php";
+        if (is_file($file)) {
+            @unlink($file);
+        }
+    }
+
+    public function actionAddMenu($n, $m, $p) {
+        if (Helper::isValidVar($n)) {
+            $n = ucfirst($n);
+            $module = ucfirst($m . "Module");
+
+            Yii::import($p . "." . $module);
+            if (!class_exists($module)) {
+                echo json_encode([
+                    'success' => false,
+                    'error'   => "ERROR: Invalid Module Name"
+                ]);
+                die();
+            }
+
+            $ref = new ReflectionClass($module);
+            $path = dirname($ref->getFileName()) . DIRECTORY_SEPARATOR . "menus" . DIRECTORY_SEPARATOR;
+            $filePath = $path . $n . ".php";
+
+            if (!is_dir($path)) {
+                if (!@mkdir($path)) {
+                    echo json_encode([
+                        'success' => false,
+                        'error'   => "ERROR: Failed to craete menus directory (permission denied)\n" . $path
+                    ]);
+                }
+                die();
+            }
+
+            if (!@file_put_contents($filePath, "<?php\n\n")) {
+                echo json_encode([
+                    'success' => false,
+                    'error'   => "ERROR: Failed to write menu file (permission denied)\n" . $filePath
+                ]);
+                die();
+            }
+
+            echo json_encode([
+                'success' => true,
+                'time'    => time(),
+                'item'    => [
+                    'label'     => $n,
+                    'module'    => $m,
+                    'icon'      => 'fa fa-sitemap',
+                    'class'     => Helper::getAlias($filePath),
+                    'classPath' => Helper::getAlias($path)
+                ]
+            ]);
+            die();
+        } else {
+            echo json_encode([
+                'success' => false,
+                'error'   => "ERROR: Invalid Menu Name"
+            ]);
+            die();
+        }
+    }
+
     public function actionSaveSource($class) {
         $postdata = file_get_contents("php://input");
-        $post     = CJSON::decode($postdata);
-        $file     = Yii::getPathOfAlias($class) . ".php";
+        $post = CJSON::decode($postdata);
+        $file = Yii::getPathOfAlias($class) . ".php";
         if (isset($post['code']) && is_file($file)) {
             file_put_contents($file, $post['code']);
             ob_start();
@@ -38,7 +102,7 @@ class MenusController extends Controller {
 
     public function actionSave($class) {
         $postdata = file_get_contents("php://input");
-        $post     = CJSON::decode($postdata);
+        $post = CJSON::decode($postdata);
 
         if (isset($post['list'])) {
             MenuTree::cleanMenuItems($post['list']);
@@ -58,9 +122,9 @@ class MenusController extends Controller {
         $filename = Yii::getPathOfAlias($path) . ".php";
         if (is_file($filename)) {
 
-            $options         = MenuTree::getOptions($path);
+            $options = MenuTree::getOptions($path);
             $options['mode'] = $mode;
-            $code            = MenuTree::setOptions($path, $options);
+            $code = MenuTree::setOptions($path, $options);
 
             file_put_contents($filename, $code);
         }
@@ -68,17 +132,17 @@ class MenusController extends Controller {
 
     public function actionRename() {
         $postdata = file_get_contents("php://input");
-        $post     = CJSON::decode($postdata);
+        $post = CJSON::decode($postdata);
 
         $from = @$post['from'];
-        $to   = @$post['to'];
+        $to = @$post['to'];
 
         if (!is_null($from) && !is_null($to)) {
             $path = explode(".", $from);
             array_pop($path);
             $path = implode(".", $path);
-            $f    = Yii::getPathOfAlias($from) . ".php";
-            $t    = Yii::getPathOfAlias($path . "." . $to) . ".php";
+            $f = Yii::getPathOfAlias($from) . ".php";
+            $t = Yii::getPathOfAlias($path . "." . $to) . ".php";
 
             if (file_exists($f)) {
                 rename($f, $t);
@@ -90,7 +154,7 @@ class MenusController extends Controller {
 
     public function actionDelete() {
         $postdata = file_get_contents("php://input");
-        $post     = CJSON::decode($postdata);
+        $post = CJSON::decode($postdata);
 
         $item = @$post['item'];
 
@@ -137,7 +201,7 @@ class MenusController extends Controller {
         $path = $class;
 
         $class_path = explode(".", $class);
-        $class      = $class_path[count($class_path) - 1];
+        $class = $class_path[count($class_path) - 1];
         $properties = FormBuilder::load('DevMenuEditor');
 
         $properties->registerScript();
