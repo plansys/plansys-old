@@ -22,17 +22,6 @@ class SettingsController extends Controller {
        $this->renderForm("DevSettings",$model);
     }
     
-    public function actionTes(){
-        Yii::app()->nfy->send(array(
-            'url' => Yii::app()->controller->createUrl('/dev/forms/index'),
-            'message' => "Tes Kirim Notif",
-            'notes' => "Tes kirim notif pake stream.js",
-            'to' => array(
-                'role' => 'dev'
-            )
-        ));
-    }
-    
     public function actionDb() {
         $postdata = file_get_contents("php://input");
         $post     = CJSON::decode($postdata);
@@ -85,5 +74,65 @@ class SettingsController extends Controller {
             $error = "No LDAP support for PHP";
         }
         echo json_encode($error);
+    }
+
+    public  function actionEmail(){
+        $postdata = file_get_contents("php://input");
+        $post     = CJSON::decode($postdata);
+        if (!empty($post)) {
+            Email::initalSetting();
+            touch(Email::$path.DIRECTORY_SEPARATOR.'email.lock');
+            $this->setEmailSettings($post);
+            
+            Email::sendTestMail();
+        }
+        echo true;
+    }
+    
+    public function actionCheckMail(){
+        Email::initalSetting();
+        $i = 0;
+        while(file_exists(Email::$path.DIRECTORY_SEPARATOR.'email.lock') && $i = 10){
+            sleep(1);
+            $i++;
+        }
+        
+        $error = null;
+        $errorLog = file(Email::$errorLog);
+        if(!empty($errorLog) || file_exists(Email::$path.DIRECTORY_SEPARATOR.'email.lock')){
+            $error = "Failed to send Email";
+        }
+        echo json_encode($error);
+    }
+    
+    public function setEmailSettings($data){
+        Email::remove("email.transport");
+        if($data['emailService'] == 'ses'){
+            Email::set("email.transport.auth.accessKeyId",$data['emailAccessKeyId']);
+            Email::set("email.transport.auth.secretAccessKey",$data['emailSecretAccessKey']);
+            Email::set("email.transport.auth.rateLimit",$data['emailRateLimit']);
+            Email::set("email.transport.auth.region",$data['emailRegion']);
+        }elseif($data['emailService'] == 'gmail'){
+            Email::set("email.transport.auth.user",$data['emailUser']);
+            Email::set("email.transport.auth.pass",$data['emailPass']);
+        }
+        elseif($data['emailService'] == 'smtp'){
+            Email::set("email.transport.auth.user",$data['emailUser']);
+            Email::set("email.transport.auth.pass",$data['emailPass']);
+            Email::set("email.transport.host",$data['emailHost']);
+            Email::set("email.transport.port",$data['emailPort']);
+        }
+        
+        if($data['emailService'] != 'none'){
+            Email::set("email.from",$data['emailSender']);
+        }else{
+            Email::set("email.from",null);
+        }
+        
+        if($data['emailService'] == 'smtp' || $data['emailService'] == 'none'){
+            Email::set("email.transport.service",null);
+        }else{
+            Email::set("email.transport.service",$data['emailService']);
+        }
     }
 }

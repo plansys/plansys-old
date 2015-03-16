@@ -65,7 +65,8 @@ class DevSettings extends Form {
         $this->auditTrack = Setting::get("auditTrail.track");
         
         #Email
-        $this->emailService = Setting::get("email.service");
+        Email::initalSetting(true,true);
+        $this->emailService = Setting::get("email.transport.service");
         if(is_null($this->emailService) || $this->emailService == ''){
             $this->emailService = 'smtp';
         }
@@ -162,9 +163,9 @@ class DevSettings extends Form {
         }
         
         if($data['emailService'] == 'smtp' || $data['emailService'] == 'none'){
-            Setting::set("email.service",null,false);
+            Setting::set("email.transport.service",null,false);
         }else{
-            Setting::set("email.service",$data['emailService'],false);
+            Setting::set("email.transport.service",$data['emailService'],false);
         }
         
         
@@ -512,11 +513,23 @@ class DevSettings extends Form {
                 'type' => 'SectionHeader',
             ),
             array (
-                'label' => 'Test Email',
+                'renderInEditor' => 'Yes',
+                'value' => '<i class=\"fa fa-warning fa-fw\" style=\"color:red;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'emailService\']) != \'undefined\' && !loading.email\"></i>
+
+<i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'emailService\']) == \'undefined\' && !loading.email\"></i>
+
+
+<i class=\"fa fa-spin fa-refresh\" style=\"float:right;margin:-21px -5px 0px 0px;\" ng-if=\"!!loading.email\"></i>',
+                'type' => 'Text',
+            ),
+            array (
+                'label' => 'Send Test Email',
                 'icon' => 'envelope',
                 'buttonSize' => 'btn-xs',
                 'options' => array (
                     'style' => 'float:right;margin:-25px 25px 0px 0px;',
+                    'ng-if' => 'model.emailService!=\\\'none\\\'',
+                    'ng-click' => 'sendEmail()',
                 ),
                 'type' => 'LinkButton',
             ),

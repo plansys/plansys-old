@@ -27,6 +27,35 @@ $scope.checkLdap = function(){
     });
 }
 
+$scope.sendEmail = function(){
+    $scope.loading['email'] = true;
+    $http({
+       method : "POST",
+       url : Yii.app.createUrl('/dev/settings/email'),
+       data : $scope.model,
+    }).success(function (data) {
+        $scope.checkEmail();
+    });
+}
+
+$scope.checkEmail = function(){
+    $http.get(Yii.app.createUrl('/dev/settings/checkMail')
+    ).success(function (data) {
+        if (data !== 'null') {
+            if (!$scope.errors) {
+                $scope.errors = {};
+            }
+            $scope.errors['emailService'] = [data];
+        } else {
+            if ($scope.errors != null && typeof $scope.errors['emailService'] != 'undefined') {
+                delete($scope.errors['emailService']);
+            }
+        }
+        $scope.model.errors = JSON.stringify($scope.errors);
+        delete $scope.loading['email'];
+    });
+}
+
 $scope.checkDb = function () {
     $scope.loading['db'] = true;
     $http({
@@ -115,6 +144,9 @@ $scope.form.submit = function (that) {
     }
     if($scope.model.notifEnable == true){
         $scope.checkNotif();
+    }
+    if($scope.model.emailService != 'none'){
+        $scope.sendEmail();
     }
     
     var unwatch = $scope.$watch('loading', function () {
