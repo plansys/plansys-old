@@ -175,7 +175,6 @@ class FormField extends CComponent {
      * @return array Fungsi ini digunakan untuk evaluate expression dan akan me-return hasil dalam bentuk pesan error.
      */
     public function evaluate($expr, $return = false, $variables = []) {
-        $error_level = error_reporting(0);
 
         if (!isset($this->builder->model)) {
             $result = $this->evaluateExpression($expr, $variables);
@@ -185,7 +184,6 @@ class FormField extends CComponent {
             ]));
         }
 
-        error_reporting($error_level);
         if ($return) {
             return $result;
         } else {

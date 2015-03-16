@@ -46,14 +46,14 @@ return array (
                 'url' => '/dev/genModule/index',
             ),
             array (
-                'label' => 'Model Generator',
-                'icon' => 'fa-cube',
-                'url' => '/dev/genModel/index',
-            ),
-            array (
                 'label' => 'Controller Generator',
                 'icon' => 'fa-cubes',
                 'url' => '/dev/controllerGenerator/index',
+            ),
+            array (
+                'label' => 'Model Generator',
+                'icon' => 'fa-cube',
+                'url' => '/dev/modelGenerator/index',
             ),
             array (
                 'label' => '---',

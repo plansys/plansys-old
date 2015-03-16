@@ -315,7 +315,7 @@ app.directive('relationField', function ($timeout, $http) {
                     });
                 }, true);
 
-                if (typeof ctrl != 'undefined') {
+                if (!!ctrl) {
                     ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;

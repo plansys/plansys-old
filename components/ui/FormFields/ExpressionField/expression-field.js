@@ -13,7 +13,7 @@ app.directive('expressionField', function($timeout, $http) {
                 $scope.applyValue = function(result, execute_action) {
                     execute_action = typeof execute_action != "undefined" ? execute_action : true;
 
-                    if (typeof ctrl != 'undefined') {
+                    if (!!ctrl) {
                         $timeout(function() {
                             ctrl.$setViewValue($scope.value);
                             if (typeof attrs.ngChange == "undefined" && $scope.$parent.save) {
@@ -50,7 +50,7 @@ app.directive('expressionField', function($timeout, $http) {
                 };
 
                 // when ng-model is changed from outside directive  
-                if (typeof ctrl != 'undefined') {
+                if (!!ctrl) {
                     ctrl.$render = function() {
 
                         if (typeof ctrl.$viewValue != 'undefined') {

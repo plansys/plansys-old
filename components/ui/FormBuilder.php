@@ -747,6 +747,7 @@ class FormBuilder extends CComponent {
      */
     public function render($formdata = null, $options = []) {
         return $this->renderInternal($formdata, $options, $this, $this->fields);
+
     }
 
     private function defineFormData($formdata) {
@@ -1185,6 +1186,7 @@ EOF;
             $list[$m['module']] = [];
             foreach ($m['items'] as $file) {
                 $f = &$file;
+
                 while (!isset($f['alias'])) {
                     $f = array_pop($f);
                 }
@@ -1227,7 +1229,9 @@ EOF;
             $item['id'] = $id++;
 
             if ($subdir == '' || !$format) {
-                $return[$k] = $item;
+                if (!$is_dir) {
+                    $return[$k] = $item;
+                }
             } else {
                 $subarr = explode(".", $subdir);
                 $curpath = &$return;

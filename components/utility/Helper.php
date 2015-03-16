@@ -114,8 +114,11 @@ class Helper {
         return array_shift($a);
     }
 
-    public static function explodeLast($delimeter, $str) {
+    public static function explodeLast($delimeter, $str, $howMany = 1) {
         $a = explode($delimeter, $str);
+        for ($i = 1; $i < $howMany; $i++) {
+            array_pop($a);
+        }
         return end($a);
     }
 

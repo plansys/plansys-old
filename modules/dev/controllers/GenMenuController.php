@@ -26,24 +26,31 @@ class GenMenuController extends Controller {
         $old = Yii::getPathOfAlias($p) . ".php";
         $new = dirname(Yii::getPathOfAlias($p)) . DIRECTORY_SEPARATOR . $n . ".php";
         if (is_file($old) && Helper::isValidVar($n)) {
-            if (!@rename($old, $new)) {
-                echo json_encode([
-                    'success' => false,
-                    'error'   => "ERROR: Failed to rename (permission denied)"
-                ]);
+            if (!is_file($new)) {
+                if (!@rename($old, $new)) {
+                    echo json_encode([
+                        'success' => false,
+                        'error'   => "ERROR: Failed to rename (permission denied)"
+                    ]);
+                } else {
+                    echo json_encode([
+                        'success' => true,
+                        'item'    => [
+                            'label' => $n,
+                            'class' => Helper::getAlias($new),
+                        ]
+                    ]);
+                }
             } else {
                 echo json_encode([
-                    'success' => true,
-                    'item'    => [
-                        'label' => $n,
-                        'class' => Helper::getAlias($new),
-                    ]
+                    'success' => false,
+                    'error'   => "ERROR: Menu already exists"
                 ]);
             }
         } else {
             echo json_encode([
                 'success' => false,
-                'error'   => "ERROR: Invalid Menu Name"
+                'error'   => "ERROR: Invalid menu name"
             ]);
             die();
         }
@@ -74,36 +81,43 @@ class GenMenuController extends Controller {
             $path = dirname($ref->getFileName()) . DIRECTORY_SEPARATOR . "menus" . DIRECTORY_SEPARATOR;
             $filePath = $path . $n . ".php";
 
-            if (!is_dir($path)) {
-                if (!@mkdir($path)) {
+            if (!is_file($filePath)) {
+                if (!is_dir($path)) {
+                    if (!@mkdir($path)) {
+                        echo json_encode([
+                            'success' => false,
+                            'error'   => "ERROR: Failed to craete menus directory (permission denied)\n" . $path
+                        ]);
+                    }
+                    die();
+                }
+
+                if (!@file_put_contents($filePath, "<?php\n\n")) {
                     echo json_encode([
                         'success' => false,
-                        'error'   => "ERROR: Failed to craete menus directory (permission denied)\n" . $path
+                        'error'   => "ERROR: Failed to write menu file (permission denied)\n" . $filePath
                     ]);
+                    die();
                 }
-                die();
-            }
 
-            if (!@file_put_contents($filePath, "<?php\n\n")) {
                 echo json_encode([
-                    'success' => false,
-                    'error'   => "ERROR: Failed to write menu file (permission denied)\n" . $filePath
+                    'success' => true,
+                    'time'    => time(),
+                    'item'    => [
+                        'label'     => $n,
+                        'module'    => $m,
+                        'icon'      => 'fa fa-sitemap',
+                        'class'     => Helper::getAlias($filePath),
+                        'classPath' => Helper::getAlias($path)
+                    ]
                 ]);
                 die();
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'error'   => "ERROR: Menu already exists"
+                ]);
             }
-
-            echo json_encode([
-                'success' => true,
-                'time'    => time(),
-                'item'    => [
-                    'label'     => $n,
-                    'module'    => $m,
-                    'icon'      => 'fa fa-sitemap',
-                    'class'     => Helper::getAlias($filePath),
-                    'classPath' => Helper::getAlias($path)
-                ]
-            ]);
-            die();
         } else {
             echo json_encode([
                 'success' => false,

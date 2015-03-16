@@ -1510,6 +1510,16 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
     margin: 2px;
 }
 
+.link-btn {
+    display:inline-block;
+    opacity: 0;
+    margin: 3px 4px;
+}
+
+.btn-position-right  {
+    float:right;
+    margin:0px 0px 0px 5px;
+}
 /********************************* TEXT / HTML ********************************/
 
 .text-editor-builder {
@@ -2657,7 +2667,7 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
 }
 
 .switchery-label.switchery-label-small {
-    padding: 8px 0px 0px 6px;
+    padding: 0px 0px 0px 6px;
     background: none;
     font-weight: bold;
     font-size: 12px;
@@ -2886,11 +2896,6 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
     margin: 0px -1px 0px 0px;
 }
 
-.link-btn {
-    display: inline-block;
-    opacity: 0;
-    margin: 3px 4px;
-}
 
 .btn-default {
     background-color: rgb(247, 247, 247);

@@ -319,6 +319,8 @@ EOF;
 
     public function actionUpdate($class) {
         FormField::$inEditor = true;
+        $isPHP = Helper::explodeLast(".", $class);
+        $class = $isPHP == "php" ? substr($class, 0, -4) : $class;
         $class = FormBuilder::classPath($class);
         $this->layout = "//layouts/blank";
 
@@ -331,6 +333,7 @@ EOF;
 
         $classPath = $class;
         $class = Helper::explodeLast(".", $class);
+
 
         if (is_subclass_of($fb->model, 'ActiveRecord')) {
             $formType = "ActiveRecord";

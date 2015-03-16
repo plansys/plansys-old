@@ -83,7 +83,7 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
 
                 // when ng-model is changed from inside directive
                 $scope.update = function () {
-                    if (typeof ctrl != 'undefined') {
+                    if (!!ctrl) {
                         $timeout(function () {
                             ctrl.$setViewValue($scope.value);
                             clearTimeout(sctimer);
@@ -95,7 +95,7 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
                 };
 
                 // when ng-model is changed from outside directive
-                if (typeof ctrl != 'undefined') {
+                if (!!ctrl) {
                     ctrl.$render = function () {
                         if (typeof ctrl.$viewValue != "undefined") {
                             $scope.value = ctrl.$viewValue;

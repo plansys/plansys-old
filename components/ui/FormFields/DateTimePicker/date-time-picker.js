@@ -25,7 +25,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                             break;
                     }
 
-                    if (typeof ctrl != 'undefined') {
+                    if (!!ctrl) {
                         $el.find('ul[datepicker-popup-wrap]').hide();
                         $timeout(function () {
                             ctrl.$setViewValue($scope.value);
@@ -171,7 +171,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                 }
 
                 // when ng-model is changed from outside directive
-                if (typeof ctrl != 'undefined') {
+                if (!!ctrl) {
                     ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;

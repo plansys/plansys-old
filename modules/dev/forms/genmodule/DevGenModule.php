@@ -2,7 +2,6 @@
 
 class DevGenModule extends Form {
     ## MODULE INFO VARS
-
     public $name;
     public $alias;
     public $path;

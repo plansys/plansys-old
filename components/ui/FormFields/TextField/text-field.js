@@ -10,7 +10,7 @@ app.directive('textField', function ($timeout, $http) {
             return function ($scope, $el, attrs, ctrl) {
                 // when ng-model is changed from inside directive
                 $scope.update = function () {
-                    if (typeof ctrl != 'undefined') {
+                    if (!!ctrl) {
                         $timeout(function () {
                             ctrl.$setViewValue($scope.value);
                         }, 0);
@@ -18,7 +18,7 @@ app.directive('textField', function ($timeout, $http) {
                 };
 
                 // when ng-model is changed from outside directive
-                if (typeof ctrl != 'undefined') {
+                if (!!ctrl) {
                     ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;

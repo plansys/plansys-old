@@ -4,11 +4,15 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
 
     $scope.menuSelect = null;
     $scope.getIcon = function (item) {
-        if (item.name.lastIndexOf('Index') == item.name.length - 5) {
-            return 'fa-file-text-o';
+        if (item.name.lastIndexOf('Index') == item.name.length - 5 && item.name.length > 5) {
+            return 'fa-file-text-o ';
         }
-        if (item.name.lastIndexOf('Form') == item.name.length - 4) {
+        if (item.name.lastIndexOf('Form') == item.name.length - 4 && item.name.length > 4) {
             return 'fa-file-powerpoint-o';
+        }
+
+        if (item.name.lastIndexOf('Dashboard') == item.name.length - 9 && item.name.length > 9) {
+            return 'fa-file-image-o';
         }
 
 
@@ -63,7 +67,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                             name: data.class,
                             class: data.class,
                             module: item.module,
-                            alias: item.alias + data.class,
+                            alias: item.alias.replace(/^\./, "") + "." + data.class,
                             items: []
                         });
                     } else {
@@ -249,7 +253,8 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
     $scope.select = function (scope, item) {
         $(".menu-sel").removeClass("active").removeClass(".menu-sel");
         $scope.active = scope.$modelValue;
-        if (!!$scope.active && $scope.active.alias != null) {
+
+        if (!!$scope.active && $scope.getType($scope.active) == 'form') {
             $("iframe").addClass('invisible');
             $(".loading").removeClass('invisible');
             $('.loading').removeAttr('style');

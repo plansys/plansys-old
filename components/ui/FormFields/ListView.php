@@ -25,6 +25,16 @@ class ListView extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
+                'label' => 'Label',
+                'name' => 'label',
+                'options' => array (
+                    'ng-model' => 'active.label',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                ),
+                'type' => 'TextField',
+            ),
+            array (
                 'label' => 'List Type',
                 'name' => 'fieldTemplate',
                 'options' => array (
@@ -32,7 +42,7 @@ class ListView extends FormField {
                     'ng-change' => 'save();',
                 ),
                 'list' => array (
-                    'default' => 'Single Field',
+                    'default' => 'FormField',
                     'form' => 'SubForm',
                 ),
                 'otherLabel' => 'Other...',
@@ -155,16 +165,6 @@ class ListView extends FormField {
                 ),
                 'fieldWidth' => '5',
                 'type' => 'DropDownList',
-            ),
-            array (
-                'label' => 'Label',
-                'name' => 'label',
-                'options' => array (
-                    'ng-model' => 'active.label',
-                    'ng-change' => 'save()',
-                    'ng-delay' => '500',
-                ),
-                'type' => 'TextField',
             ),
             array (
                 'label' => 'Layout',
@@ -387,6 +387,7 @@ class ListView extends FormField {
 
             $this->templateAttributes = $model->attributes;
             $this->renderTemplateForm = $fb->render($this->templateAttributes, ['wrapForm' => false]);
+            
         } else if ($this->fieldTemplate == 'default') {
             $field = new $this->singleView;
             $field->attributes = $this->singleViewOption;

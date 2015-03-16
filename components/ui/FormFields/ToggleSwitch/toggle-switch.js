@@ -11,7 +11,7 @@ app.directive('toggleSwitch', function ($timeout) {
                 // when ng-model is changed from inside directive
                 $scope.update = function () {
                     $timeout(function () {
-                        if (typeof ctrl != 'undefined') {
+                        if (!!ctrl) {
                             if ($scope.valueCheckbox === true) {
                                 $scope.valueCheckbox = true;
                                 $scope.value = $scope.onLabel;
@@ -25,7 +25,7 @@ app.directive('toggleSwitch', function ($timeout) {
                 };
 
                 // when ng-model is changed from outside directive
-                if (typeof ctrl != 'undefined') {
+                if (!!ctrl) {
                     ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;

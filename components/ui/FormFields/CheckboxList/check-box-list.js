@@ -51,7 +51,7 @@ app.directive('checkBoxList', function ($timeout) {
                     $scope.$watch(attrs.psList, changeFieldList);
                 }
 
-                if (typeof ctrl != 'undefined') {
+                if (!!ctrl) {
                     ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;

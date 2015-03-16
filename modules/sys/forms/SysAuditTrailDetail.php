@@ -62,7 +62,7 @@ class SysAuditTrailDetail extends AuditTrail {
                         'type' => 'LabelField',
                     ),
                     array (
-                        'label' => 'Stamp',
+                        'label' => 'Timestamp',
                         'name' => 'stamp',
                         'fieldType' => 'datetime',
                         'fieldOptions' => array (

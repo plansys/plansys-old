@@ -223,7 +223,7 @@ app.directive('dropDownList', function ($timeout) {
                     });
                 }, true);
 
-                if (typeof ctrl != 'undefined') {
+                if (!!ctrl) {
                     ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;

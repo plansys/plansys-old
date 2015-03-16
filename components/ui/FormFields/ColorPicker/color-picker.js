@@ -9,7 +9,7 @@ app.directive('colorPicker', function ($timeout) {
             return function ($scope, $el, attrs, ctrl) {
                 // when ng-model is changed from inside directive
                 $scope.update = function () {
-                    if (typeof ctrl != 'undefined') {
+                    if (!!ctrl) {
                         $timeout(function () {
                             ctrl.$setViewValue($scope.color.toLowerCase());
                         }, 0);

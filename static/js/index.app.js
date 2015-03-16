@@ -78,6 +78,13 @@ app.filter('capitalize', function () {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
 });
+app.filter('ucfirst', function () {
+    return function (input, arg) {
+        return input.replace(/(?:^|\s)\S/g, function (a) {
+            return a.toUpperCase();
+        });
+    };
+});
 app.filter('fileSize', function () {
     return function (size, precision) {
 

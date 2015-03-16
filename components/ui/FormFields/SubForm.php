@@ -24,25 +24,25 @@ class SubForm extends FormField {
     public static $toolbarIcon = "fa fa-file-text-o fa-nm";
 
     public function getFieldProperties() {
-        return array(
-            array(
+        return array (
+            array (
                 'label' => 'Mode',
                 'name' => 'mode',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.mode',
                     'ng-change' => 'save()',
                 ),
                 'defaultType' => 'first',
-                'list' => array(
+                'list' => array (
                     'single' => 'Single Field',
                     'multi' => 'Multi Field',
                 ),
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'SubForm Name',
                 'name' => 'name',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -50,10 +50,10 @@ class SubForm extends FormField {
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
@@ -63,10 +63,10 @@ class SubForm extends FormField {
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'SubForm',
                 'name' => 'subForm',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.subForm',
                     'ng-change' => 'save()',
                 ),
@@ -75,17 +75,17 @@ class SubForm extends FormField {
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Inline JS',
                 'name' => 'inlineJS',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.inlineJS',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',

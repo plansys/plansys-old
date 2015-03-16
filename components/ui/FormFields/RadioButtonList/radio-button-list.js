@@ -13,7 +13,7 @@ app.directive('radioButtonList', function ($timeout) {
                 // when ng-model is changed from inside directive
                 $scope.update = function (val) {
                     $scope.value = val;
-                    if (typeof ctrl != 'undefined') {
+                    if (!!ctrl) {
                         ctrl.$setViewValue($scope.value);
                     }
                 }
@@ -29,7 +29,7 @@ app.directive('radioButtonList', function ($timeout) {
                     $scope.$watch(attrs.psList, changeFieldList);
                 }
 
-                if (typeof ctrl != 'undefined') {
+                if (!!ctrl) {
                     ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;

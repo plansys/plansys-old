@@ -20,15 +20,16 @@ class InstallFinishForm extends Form {
     public function getFields() {
         return array (
             array (
+                'type' => 'Text',
                 'value' => '<div class=\"install-pane\" style=\"width:350px;\">
     <div class=\"install-pane-head\">
         <img src=\"<?= Yii::app()->controller->staticUrl(\"/img/logo.png\"); ?>\" alt=\"Logo Plansys\" />
     </div>
     ',
-                'type' => 'Text',
             ),
             array (
                 'renderInEditor' => 'Yes',
+                'type' => 'Text',
                 'value' => '
 
 <br/><hr style=\"border-top:1px solid #ccc;margin-bottom:10px;\"/>
@@ -45,11 +46,10 @@ Finalizing Installation
     You will be redirected when it\'s finished
 </div>
 </center>',
-                'type' => 'Text',
             ),
             array (
-                'value' => '</div>',
                 'type' => 'Text',
+                'value' => '</div>',
             ),
         );
     }
