@@ -3,6 +3,18 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
     $scope.active = null;
 
     $scope.menuSelect = null;
+    $scope.getIcon = function (item) {
+        if (item.name.lastIndexOf('Index') == item.name.length - 5) {
+            return 'fa-file-text-o';
+        }
+        if (item.name.lastIndexOf('Form') == item.name.length - 4) {
+            return 'fa-file-powerpoint-o';
+        }
+
+
+        return 'fa-file-o';
+    }
+
     $scope.getType = function (sel) {
         if (typeof sel.count != 'undefined') {
             return "module";

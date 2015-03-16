@@ -401,7 +401,7 @@ class DevSettings extends Form {
                         'value' => '<div style=\"float:right;margin:-50px -55px 0px 0px;\">
 <i class=\"fa fa-warning fa-fw\" style=\"color:red;\" ng-if=\"typeof(errors[\'notifEnable\']) != \'undefined\' && !loading.notif\"></i>
 
-<i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;\" ng-if=\"typeof(errors[\'notifEnable\']) == \'undefined\' &&  model.notifEnable == \"ON\" && !loading.notif\"></i>
+<i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;\" ng-if=\"typeof(errors[\'notifEnable\']) == \'undefined\' &&  model.notifEnable == \'ON\' && !loading.notif\"></i>
 
 
 <i class=\"fa fa-spin fa-refresh\" ng-if=\"!!loading.notif\"></i>
@@ -452,6 +452,10 @@ class DevSettings extends Form {
                 'type' => 'ColumnField',
             ),
             array (
+                'type' => 'Text',
+                'value' => '<div ng-if=\\"false\\">',
+            ),
+            array (
                 'title' => 'Audit Trails',
                 'type' => 'SectionHeader',
             ),
@@ -498,6 +502,10 @@ class DevSettings extends Form {
                 'w2' => '50%',
                 'w3' => '33%',
                 'type' => 'ColumnField',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '</div>',
             ),
             array (
                 'title' => 'Email Settings',

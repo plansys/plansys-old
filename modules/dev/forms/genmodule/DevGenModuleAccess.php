@@ -60,8 +60,8 @@ class DevGenModuleAccess extends Form {
                         'name' => 'access',
                         'defaultType' => 'first',
                         'list' => array (
-                            'deny' => 'Deny',
                             'allow' => 'Allow',
+                            'deny' => 'Deny',
                             '---' => '---',
                             'custom' => 'Custom Action',
                         ),
@@ -99,7 +99,7 @@ class DevGenModuleAccess extends Form {
                     'custom' => 'Custom Code',
                 ),
                 'labelWidth' => '0',
-                'fieldWidth' => '3',
+                'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
             array (

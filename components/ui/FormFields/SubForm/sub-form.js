@@ -20,7 +20,7 @@ app.directive('subForm', function ($timeout) {
                 $scope.options = JSON.parse($el.find("data[name=options]").html().trim());
 
                 // when ng-model is changed from outside directive
-                if (typeof ctrl != 'undefined') {
+                if (!!ctrl) {
                     ctrl.$ctrlView = $scope.$eval(attrs.ngModel);
                     ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))

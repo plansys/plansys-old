@@ -10,7 +10,6 @@
             {{item.count ? item.count : item.items.length }} form{{item.items.length > 1 ? 's' : ''}}
         </div>
         -->
-
         <i ng-show="this.collapsed" class="fa fa-caret-right"></i>
         <i ng-show="!this.collapsed" class="fa fa-caret-down"></i>
 
@@ -25,7 +24,7 @@
     <div style="margin:-1px 0px;padding:1px 0px;" 
          context-menu="formTreeOpen(this, $event, item)"
          data-target="FormTreeMenu">
-        <i class="fa fa-file-text-o fa-nm"></i>
+        <i class="fa {{ getIcon(item) }} fa-nm"></i>
         {{item.name}}
     </div>
 </a>

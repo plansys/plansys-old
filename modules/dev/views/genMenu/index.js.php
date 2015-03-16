@@ -30,6 +30,19 @@
                             label: "Rename",
                             click: function (item) {
                                 var name = prompt("Enter new menu name:", item.label);
+                                if (!!name) {
+                                    $http.get(Yii.app.createUrl("/dev/genMenu/renameMenu", {
+                                        n: name,
+                                        p: item.class
+                                    })).success(function (data) {
+                                        if (data.success) {
+                                            item.class = data.item.class;
+                                            item.label = data.item.label;
+                                        } else {
+                                            alert(data.error);
+                                        }
+                                    });
+                                }
                             }
                         },
                         {
@@ -85,6 +98,7 @@
                 item.toggle(item);
             }
             $scope.select = function (item) {
+                $(".menu-sel").removeClass("active").removeClass(".menu-sel");
                 $scope.activeTree = item;
                 $scope.active = item.$modelValue;
             };

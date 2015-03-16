@@ -25,6 +25,7 @@ class DevGeneratorIndex extends Form {
                 'type' => 'ActionBar',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<div class=\"col-sm-2\"></div>
 <div class=\"col-sm-8\" style=\"padding-top:40px;\">
   <div class=\"panel panel-default\">
@@ -46,7 +47,6 @@ class DevGeneratorIndex extends Form {
   </div>
 </div>
 <div class=\"col-sm-2\"></div>',
-                'type' => 'Text',
             ),
         );
     }

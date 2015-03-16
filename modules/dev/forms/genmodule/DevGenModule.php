@@ -312,7 +312,6 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                             'deny' => 'Deny',
                             'allow' => 'Allow',
                         ),
-                        'labelWidth' => '3',
                         'fieldWidth' => '4',
                         'type' => 'DropDownList',
                     ),

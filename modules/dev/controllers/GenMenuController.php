@@ -22,6 +22,33 @@ class GenMenuController extends Controller {
         }
     }
 
+    public function actionRenameMenu($n, $p) {
+        $old = Yii::getPathOfAlias($p) . ".php";
+        $new = dirname(Yii::getPathOfAlias($p)) . DIRECTORY_SEPARATOR . $n . ".php";
+        if (is_file($old) && Helper::isValidVar($n)) {
+            if (!@rename($old, $new)) {
+                echo json_encode([
+                    'success' => false,
+                    'error'   => "ERROR: Failed to rename (permission denied)"
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => true,
+                    'item'    => [
+                        'label' => $n,
+                        'class' => Helper::getAlias($new),
+                    ]
+                ]);
+            }
+        } else {
+            echo json_encode([
+                'success' => false,
+                'error'   => "ERROR: Invalid Menu Name"
+            ]);
+            die();
+        }
+    }
+
     public function actionDelMenu($p) {
         $file = Yii::getPathOfAlias($p) . ".php";
         if (is_file($file)) {

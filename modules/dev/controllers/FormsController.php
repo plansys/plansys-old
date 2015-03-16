@@ -53,7 +53,7 @@ class FormsController extends Controller {
                 echo json_encode([
                     "success" => true,
                     "id"      => time(),
-                    "name"    => ucfirst($n),
+                    "name"    => $n,
                     "alias"   => Helper::getAlias($dirname) . "."
                 ]);
             } else {
