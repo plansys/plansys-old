@@ -57,44 +57,71 @@ class DevSettings extends Form {
         $this->repoPath = Setting::get('repo.path');
         
         #Notif
-        $this->notifEnable = Setting::get('notif.enable');
-        $this->notifWithEmail = Setting::get('notif.email');
+        if(Setting::get('notif.enable') == true){
+            $this->notifEnable = "ON";
+        }else{
+            $this->notifEnable = "OFF";
+        }
+        
+        if(Setting::get('notif.enable') == true && Setting::get('notif.email') == true){
+            $this->notifWithEmail = "ON";
+        }else{
+            $this->notifWithEmail = "OFF";
+        }
         
         #Audit Trail 
-        $this->auditEnable = Setting::get("auditTrail.enable");
-        $this->auditTrack = Setting::get("auditTrail.track");
+        if(Setting::get("auditTrail.enable")== true){
+            $this->auditEnable = "ON";
+        }else{
+            $this->auditEnable = "OFF";
+        }
+        
+        if($this->auditEnable == "ON"){
+            $this->auditTrack = Setting::get("auditTrail.track");
+        }else{
+            $this->auditTrack = null;
+        }
         
         #Email
         Email::initalSetting(true,true);
         $this->emailService = Setting::get("email.transport.service");
-        if(is_null($this->emailService) || $this->emailService == ''){
-            $this->emailService = 'smtp';
+        if($this->emailService != 'none'){
+            if(is_null($this->emailService) || $this->emailService == ''){
+                $this->emailService = 'smtp';
+            }
+
+            if($this->emailService == 'ses'){
+                $this->emailAccessKeyId = Setting::get("email.transport.auth.accessKeyId");
+                $this->emailSecretAccessKey = Setting::get("email.transport.auth.secretAccessKey");
+                $this->emailRateLimit = Setting::get("email.transport.auth.rateLimit");
+                $this->emailRegion = Setting::get("email.transport.auth.region");
+            }else{
+                $this->emailUser = Setting::get("email.transport.auth.user");
+                $this->emailPass = Setting::get("email.transport.auth.pass");
+            }
+
+            if($this->emailService == 'smtp'){
+                $this->emailHost = Setting::get("email.transport.host");
+                $this->emailPort = Setting::get("email.transport.port");
+            }
+            $this->emailSender = Setting::get("email.from");
         }
-        
-        if($this->emailService == 'ses'){
-            $this->emailAccessKeyId = Setting::get("email.transport.auth.accessKeyId");
-            $this->emailSecretAccessKey = Setting::get("email.transport.auth.secretAccessKey");
-            $this->emailRateLimit = Setting::get("email.transport.auth.rateLimit");
-            $this->emailRegion = Setting::get("email.transport.auth.region");
-        }else{
-            $this->emailUser = Setting::get("email.transport.auth.user");
-            $this->emailPass = Setting::get("email.transport.auth.pass");
-        }
-        
-        if($this->emailService == 'smtp'){
-            $this->emailHost = Setting::get("email.transport.host");
-            $this->emailPort = Setting::get("email.transport.port");
-        }
-        $this->emailSender = Setting::get("email.from");
         
         #LDAP
-        $this->ldapEnable = Setting::get("ldap.enable");
-        $this->ldapAdPort = Setting::get("ldap.ad_port");
-        $this->ldapAccountSuffix = Setting::get("ldap.account_suffix");
-        $this->ldapBaseDn = Setting::get("ldap.base_dn");
-        $this->ldapDomainControllers = Setting::get("ldap.domain_controllers");
-        $this->ldapPassword = Setting::get("ldap.admin_password");
-        $this->ldapUsername = Setting::get("ldap.admin_username");
+        if(Setting::get("ldap.enable") == true){
+            $this->ldapEnable = "ON";
+        }else{
+            $this->ldapEnable = "OFF";
+        }
+        
+        if($this->ldapEnable == "ON"){
+            $this->ldapAdPort = Setting::get("ldap.ad_port");
+            $this->ldapAccountSuffix = Setting::get("ldap.account_suffix");
+            $this->ldapBaseDn = Setting::get("ldap.base_dn");
+            $this->ldapDomainControllers = Setting::get("ldap.domain_controllers");
+            $this->ldapPassword = Setting::get("ldap.admin_password");
+            $this->ldapUsername = Setting::get("ldap.admin_username");
+        }
     }
     
     public function setSettings($data){
@@ -162,8 +189,10 @@ class DevSettings extends Form {
             Setting::set("email.from",null,false);
         }
         
-        if($data['emailService'] == 'smtp' || $data['emailService'] == 'none'){
+        if($data['emailService'] == 'smtp'){
             Setting::set("email.transport.service",null,false);
+        }elseif($data['emailService'] == 'none'){
+            Setting::set("email.transport.service",'none',false);
         }else{
             Setting::set("email.transport.service",$data['emailService'],false);
         }
@@ -243,6 +272,15 @@ class DevSettings extends Form {
                         'type' => 'TextField',
                     ),
                     array (
+                        'renderInEditor' => 'Yes',
+                        'value' => '<div ng-if = \"model.emailService != \'none\'\" class=\"col-sm-6\" 
+     style=\"float:right;margin:-5px 0px 0px 0px;padding:0px;text-align:right;color:#999;font-size:12px;width:65%\">
+      <i class=\"fa fa-info-circle\"></i> 
+    Changing App Name, will make you logged out automatically
+</div><br>',
+                        'type' => 'Text',
+                    ),
+                    array (
                         'label' => 'App Mode',
                         'name' => 'appMode',
                         'list' => array (
@@ -283,6 +321,7 @@ class DevSettings extends Form {
                 'type' => 'SectionHeader',
             ),
             array (
+                'renderInEditor' => 'Yes',
                 'type' => 'Text',
                 'value' => '<i class=\"fa fa-warning fa-fw\" style=\"color:red;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'dbSys\']) != \'undefined\' && !loading.db\"></i>
 
@@ -372,6 +411,7 @@ class DevSettings extends Form {
                         'type' => 'LinkButton',
                     ),
                     array (
+                        'renderInEditor' => 'Yes',
                         'type' => 'Text',
                         'value' => '<div style=\"float:right;margin:-50px -40px 0px 0px;\">
     <i class=\"fa fa-warning fa-fw\" style=\"color:red;\"
@@ -398,14 +438,15 @@ class DevSettings extends Form {
                         'type' => 'SectionHeader',
                     ),
                     array (
+                        'renderInEditor' => 'Yes',
                         'type' => 'Text',
                         'value' => '<div style=\"float:right;margin:-50px -55px 0px 0px;\">
-<i class=\"fa fa-warning fa-fw\" style=\"color:red;\" ng-if=\"typeof(errors[\'notifEnable\']) != \'undefined\' && !loading.notif\"></i>
+<i class=\"fa fa-warning fa-fw\" style=\"color:red;\" ng-if=\"typeof(errors[\'notifEnable\']) != \'undefined\' && !loading.notif  && model.notifEnable==\'ON\'\"></i>
 
-<i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;\" ng-if=\"typeof(errors[\'notifEnable\']) == \'undefined\' &&  model.notifEnable == \'ON\' && !loading.notif\"></i>
+<i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;\" ng-if=\"typeof(errors[\'notifEnable\']) == \'undefined\' &&  model.notifEnable == \'ON\' && !loading.notif  && model.notifEnable==\'ON\'\"></i>
 
 
-<i class=\"fa fa-spin fa-refresh\" ng-if=\"!!loading.notif\"></i>
+<i class=\"fa fa-spin fa-refresh\" ng-if=\"!!loading.notif  && model.notifEnable==\'ON\'\"></i>
 </div>',
                     ),
                     array (
@@ -413,7 +454,7 @@ class DevSettings extends Form {
                         'icon' => 'newspaper-o',
                         'buttonSize' => 'btn-xs',
                         'options' => array (
-                            'ng-if' => '!!model.notifEnable',
+                            'ng-if' => 'model.notifEnable == \\\'ON\\\'',
                             'ng-click' => 'checkNotif()',
                             'style' => 'float:right;margin:-50px -25px 0px 0px;',
                         ),
@@ -435,13 +476,9 @@ class DevSettings extends Form {
                         'labelWidth' => '6',
                         'fieldWidth' => '6',
                         'options' => array (
-                            'ng-if' => '!!model.notifEnable',
+                            'ng-if' => 'model.notifEnable==\\\'ON\\\'',
                         ),
                         'type' => 'ToggleSwitch',
-                    ),
-                    array (
-                        'type' => 'Text',
-                        'value' => '{{}}',
                     ),
                     array (
                         'type' => 'Text',
@@ -490,7 +527,7 @@ class DevSettings extends Form {
                         ),
                         'labelWidth' => '5',
                         'options' => array (
-                            'ng-if' => '!!model.auditEnable',
+                            'ng-if' => 'model.auditEnable== \\\'ON\\\'',
                         ),
                         'type' => 'CheckboxList',
                     ),
@@ -515,12 +552,12 @@ class DevSettings extends Form {
             array (
                 'renderInEditor' => 'Yes',
                 'type' => 'Text',
-                'value' => '<i class=\"fa fa-warning fa-fw\" style=\"color:red;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'emailService\']) != \'undefined\' && !loading.email\"></i>
+                'value' => '<i class=\"fa fa-warning fa-fw\" style=\"color:red;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'emailService\']) != \'undefined\' && !loading.email  && model.emailService!=\'none\'\"></i>
 
-<i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'emailService\']) == \'undefined\' && !loading.email\"></i>
+<i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'emailService\']) == \'undefined\' && !loading.email  && model.emailService!=\'none\'\"></i>
 
 
-<i class=\"fa fa-spin fa-refresh\" style=\"float:right;margin:-21px -5px 0px 0px;\" ng-if=\"!!loading.email\"></i>',
+<i class=\"fa fa-spin fa-refresh\" style=\"float:right;margin:-21px -5px 0px 0px;\" ng-if=\"!!loading.email  && model.emailService!=\'none\'\"></i>',
             ),
             array (
                 'label' => 'Send Test Email',
@@ -609,13 +646,14 @@ class DevSettings extends Form {
                 'type' => 'SectionHeader',
             ),
             array (
+                'renderInEditor' => 'Yes',
                 'type' => 'Text',
-                'value' => '<i class=\"fa fa-warning fa-fw\" style=\"color:red;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'ldapEnable\']) != \'undefined\' && !loading.ldap\"></i>
+                'value' => '<i class=\"fa fa-warning fa-fw\" style=\"color:red;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'ldapEnable\']) != \'undefined\' && !loading.ldap && model.ldapEnable==\'ON\'\"></i>
 
-<i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'ldapEnable\']) == \'undefined\' && !loading.ldap\"></i>
+<i class=\"fa fa-check fa-fw\" style=\"color:#67C03D;float:right;margin:-21px -5px 0px 0px;\" ng-if=\"typeof(errors[\'ldapEnable\']) == \'undefined\' && !loading.ldap && model.ldapEnable==\'ON\'\"></i>
 
 
-<i class=\"fa fa-spin fa-refresh\" style=\"float:right;margin:-21px -5px 0px 0px;\" ng-if=\"!!loading.ldap\"></i>',
+<i class=\"fa fa-spin fa-refresh\" style=\"float:right;margin:-21px -5px 0px 0px;\" ng-if=\"!!loading.ldap && model.ldapEnable==\'ON\'\"></i>',
             ),
             array (
                 'label' => 'Check LDAP',
@@ -623,7 +661,7 @@ class DevSettings extends Form {
                 'buttonSize' => 'btn-xs',
                 'options' => array (
                     'style' => 'float:right;margin:-25px 25px 0px 0px;',
-                    'ng-if' => '!!model.ldapEnable',
+                    'ng-if' => 'model.ldapEnable==\\\'ON\\\'',
                     'ng-click' => 'checkLdap()',
                 ),
                 'type' => 'LinkButton',
@@ -702,7 +740,7 @@ class DevSettings extends Form {
                 'w2' => '50%',
                 'options' => array (
                     'style' => 'margin-top : -45px;',
-                    'ng-if' => '!!model.ldapEnable',
+                    'ng-if' => 'model.ldapEnable==\\\'ON\\\'',
                 ),
                 'type' => 'ColumnField',
             ),

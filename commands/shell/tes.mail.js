@@ -10,7 +10,7 @@ var errorLog = process.argv[2]+'/error.log';
 var flag = process.argv[2]+'/email.lock';
 transporter.sendMail({
     from: config.email.from,
-    to: 'tesMail@mailinator.com',
+    to: 'tesMailPlansys@mailinator.com',
     subject: 'hello',
     text: 'hello world!'
 },function(err, result){

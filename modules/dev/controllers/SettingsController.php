@@ -18,6 +18,7 @@ class SettingsController extends Controller {
            
            $model->setSettings($settings);
            Yii::app()->user->setFlash('info', 'Data Berhasil Disimpan');
+           $this->redirect(array('index'));
        }
        $this->renderForm("DevSettings",$model);
     }
