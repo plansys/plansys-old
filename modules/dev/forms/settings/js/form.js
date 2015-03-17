@@ -129,14 +129,7 @@ $scope.checkRepo = function () {
     });
 }
 
-var tempSubmit = $scope.form.submit;
-
 $scope.validate = function(){
-    
-}
-
-$scope.form.submit = function (that) {
-    $scope.formSubmitting = true;
     $scope.checkDb();
     $scope.checkRepo();
     if($scope.model.ldapEnable == true){
@@ -148,6 +141,13 @@ $scope.form.submit = function (that) {
     if($scope.model.emailService != 'none'){
         $scope.sendEmail();
     }
+}
+
+$scope.validate();
+var tempSubmit = $scope.form.submit;
+$scope.form.submit = function (that) {
+    $scope.formSubmitting = true;
+    $scope.validate();
     
     var unwatch = $scope.$watch('loading', function () {
         if ($scope.objectSize($scope.loading) == 0) {

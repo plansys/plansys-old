@@ -1174,10 +1174,10 @@ EOF;
      * @param string $module
      * @return array Fungsi ini akan me-return sebuah array list form .
      */
-    public static function listForm($module = null, $useAlias = true, $excludeModule = true) {
+    public static function listForm($module = null, $useAlias = true, $excludeModule = true, $excludeExtension = true) {
         $list = [];
         $list[''] = '-- NONE --';
-        $modules = FormBuilder::listFile(false);
+        $modules = FormBuilder::listFile(false, $excludeExtension);
         foreach ($modules as $m) {
             if (!is_null($module) && strtolower($m['module']) != strtolower($module))
                 continue;
@@ -1272,12 +1272,13 @@ EOF;
      * @param string $func
      * @return array me-return sebuah array list file .
      */
-    public static function listFile($formatRecursive = true) {
+    public static function listFile($formatRecursive = true, $excludeExtension = true) {
         $files = [];
 
         $devMode = Setting::get('app.mode') === "plansys";
 
         $func = function ($m, $module = "", $aliaspath = "", $path) {
+            $m = str_replace(".php", "", $m);
             return [
                 'name' => str_replace($module, '', $m),
                 'class' => $m,

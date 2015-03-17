@@ -37,10 +37,6 @@ class DefaultController extends Controller {
 			echo Setting::$mode;
 			die();
 		}
-
-		$this->renderForm('InstallFinishForm');
-	}
-
 	public function actionUser() {
 		$model = new InstallUserForm;
 		$error = false;
