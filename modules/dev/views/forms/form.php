@@ -7,9 +7,9 @@
         <div ui-layout-container size='69%'>
             <!-- form-builder-content -->
             <div class="form-builder-saving">
-                <span ng-show='saving'> 
+                <span ng-show='saving'>
                     <i class="fa fa-refresh fa-spin"></i>
-                    Saving... 
+                    Saving...
                 </span>
                 <span ng-show='!saving && layoutChanging'>
                     <i class="fa fa-refresh fa-spin"></i>
@@ -17,7 +17,7 @@
                 </span>
             </div>
             <script type="text/ng-template" id="FormTree"><?php include('form_fields.php'); ?></script>
-            <div id="render-builder"> 
+            <div id="render-builder">
             </div>
             <!-- /form-builder-content -->
         </div>
@@ -25,7 +25,7 @@
         <div ui-layout-container min-size="250px">
             <!-- form-builder-toolbar -->
             <tabset class="toolbar">
-                <tab ng-click="tabs.toolbar = true" active="tabs.toolbar" 
+                <tab ng-click="tabs.toolbar = true" active="tabs.toolbar"
                      ng-controller="ToolbarController">
                     <tab-heading>
                         <i class="fa fa-bars"></i> Toolbar
@@ -38,7 +38,7 @@
                     </tab-heading>
                     <div style="{{ (active ? 'top:50px;' : '')}}" class="properties-body form-builder-properties">
                         <div ng-if="active" class="properties-header">
-                            <div class='btn btn-danger btn-xs pull-right' 
+                            <div class='btn btn-danger btn-xs pull-right'
                                  ng-click='deleteField()'>
                                 <i class='fa fa-times'></i>
                                 Delete
@@ -53,17 +53,18 @@
                                 </button>
                                 <ul class="dropdown-menu" style="min-width:160px;max-height:200px;" role="menu">
                                     <li ng-repeat="(name, icon) in toolbarSettings['icon']">
-                                        <a href="#" dropdown-toggle value="{{name}}" 
+                                        <a href="#" dropdown-toggle value="{{name}}"
                                            ng-click="active.type = name;
                                                            save();">
-                                            <i class="{{icon}}"></i> {{name}}
+                                            <i style="width:20px;margin-left:-5px;"
+                                               class="{{icon}}"></i> {{name}}
                                         </a>
                                     </li>
                                 </ul>
                             </div>
                         </div>
 
-                        <form class="form-horizontal" role="form" 
+                        <form class="form-horizontal" role="form"
                               ng-if="active == null && layout == null">
                                   <?php
                                   if ($formType == "ActiveRecord" || $formType == "Form"):
@@ -74,7 +75,7 @@
                                   ?>
                         </form>
 
-                        <form class="form-horizontal" role="form" 
+                        <form class="form-horizontal" role="form"
                               ng-if=" active == null && layout != null">
                                   <?php
                                   if ($formType == "ActiveRecord" || $formType == "Form"):
@@ -88,7 +89,7 @@
 
                         <div ui-content style="margin-top:3px;"
                              ng-if="active != null">
-                            <form id="toolbar-properties" 
+                            <form id="toolbar-properties"
                                   class="form-horizontal" role="form"
                                   ng-if="!typeChanging && active != null"
                                   ng-include="Yii.app.createUrl('dev/forms/renderProperties', {

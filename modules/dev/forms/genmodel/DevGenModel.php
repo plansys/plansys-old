@@ -156,11 +156,12 @@ margin:-25px 0px 0px 0px;',
                 'type' => 'ColumnField',
             ),
             array (
-                'type' => 'ExampleField',
-            ),
-            array (
                 'title' => '<i class=\\"fa fa-shield\\"></i> Validation Rules',
                 'type' => 'SectionHeader',
+            ),
+            array (
+                'type' => 'TagField',
+                'name' => 'tagField1',
             ),
             array (
                 'name' => 'rules',
@@ -168,6 +169,9 @@ margin:-25px 0px 0px 0px;',
                 'templateForm' => 'application.modules.dev.forms.genmodel.DevGenModelRules',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
+                'options' => array (
+                    'style' => 'margin-top:10px;',
+                ),
                 'singleViewOption' => array (
                     'name' => 'val',
                     'fieldType' => 'text',

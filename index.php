@@ -8,9 +8,9 @@ $mode = "init";
 $root = $mode != "init" ? dirname(__FILE__) . '/plansys' : dirname(__FILE__);
 
 ## Define core lib path
-$yii = $root . '/framework/yii.php';
-$config = $root . '/config/main.php';
-$setting = $root . '/components/utility/Setting.php';
+$yii      = $root . '/framework/yii.php';
+$config   = $root . '/config/main.php';
+$setting  = $root . '/components/utility/Setting.php';
 $composer = require ($root . '/vendor/autoload.php');
 
 ## Initialize settings

@@ -41,7 +41,6 @@ class DefaultController extends Controller {
             die();
         }
 
-
         $this->renderForm('InstallFinishForm');
     }
 
