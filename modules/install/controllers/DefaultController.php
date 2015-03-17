@@ -28,8 +28,6 @@ class DefaultController extends Controller {
     }
 
     public function actionIndex($msg = null) {
-      throw new CException("ASDSA");
-      die();
         $content = $this->renderPartial('index', [
             'msg' => $msg
                 ], true);
