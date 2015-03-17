@@ -4,11 +4,12 @@ class TagField extends FormField {
 
     public $type = 'TagField';
     public $name = '';
-    public $value = '';       
+    public $value = '';
     public $mode = 'normal';
-    public $label ='';
-    public $layout='Vertical';
+    public $label = '';
+    public $layout = 'Vertical';
     public $labelWidth = 4;
+    public $fieldWidth = 8;
     public $options = [];
     public $labelOptions = [];
     public $fieldOptions = [];
@@ -17,37 +18,36 @@ class TagField extends FormField {
     public static $category = "User Interface";
     public static $toolbarIcon = "fa fa-tags";
 
-   
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
                 ),
                 'menuPos' => 'pull-right',
-                'list' => array (),
+                'list' => array(),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                 ),
@@ -55,15 +55,15 @@ class TagField extends FormField {
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array (
-                'column1' => array (
-                    array (
+            array(
+                'column1' => array(
+                    array(
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
@@ -71,38 +71,38 @@ class TagField extends FormField {
                         ),
                         'type' => 'TextField',
                     ),
-                    array (
+                    array(
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'column2' => array (
-                    array (
+                'column2' => array(
+                    array(
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => 12,
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                         ),
                         'type' => 'TextField',
                     ),
-                    array (
+                    array(
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'column3' => array (
-                    array (
+                'column3' => array(
+                    array(
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'column4' => array (
-                    array (
+                'column4' => array(
+                    array(
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
@@ -111,18 +111,18 @@ class TagField extends FormField {
                 'w2' => '50%',
                 'type' => 'ColumnField',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '<hr/>',
             ),
-            array (
+            array(
                 'label' => 'Mode',
                 'name' => 'mode',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.fieldType',
                     'ng-change' => 'save();',
                 ),
-                'list' => array (
+                'list' => array(
                     'normal' => 'Normal',
                     'rel' => 'Relation',
                 ),
@@ -130,43 +130,43 @@ class TagField extends FormField {
                 'otherLabel' => 'Other...',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '<div ng-if=\"active.mode == \'rel\'\">
 <hr/>',
             ),
-            array (
+            array(
                 'name' => 'TypeRelation',
                 'subForm' => 'application.components.ui.FormFields.TextFieldRelation',
                 'type' => 'SubForm',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '</div>
 <div ng-if=\"active.mode == \'normal\'\">
 <hr/>',
             ),
-            array (
+            array(
                 'label' => 'PHP Expression',
                 'fieldname' => 'acPHP',
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '</div>
 <hr/>',
             ),
-            array (
+            array(
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',

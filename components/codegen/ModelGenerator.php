@@ -28,6 +28,26 @@ class ModelGenerator extends CodeGenerator {
         }
     }
 
+    public function getRelations() {
+        $relations = [];
+        return $relations;
+    }
+
+    public function getModel() {
+        $class = $this->class;
+        return $class::model();
+    }
+
+    public function getRules() {
+        $rules = [];
+
+        if(method_exists($this->model, 'rules')) {
+            $rules = $this->model->rules();   
+        }
+        
+        return $rules;
+    }
+
     public static function listMenuTree() {
         $dir = Yii::getPathOfAlias("application.models");
         $appDir = Yii::getPathOfAlias("app.models");

@@ -8,6 +8,7 @@ class DevGenModel extends Form {
     public $path;
     public $classPath;
     public $rules;
+    public $relations;
 
     ## GENERATOR VARS
     public $generator;
@@ -33,6 +34,8 @@ class DevGenModel extends Form {
 
             if (is_file($this->classPath)) {
                 $this->generator = ModelGenerator::init($alias, 'load');
+                $this->rules = $this->generator->getRules();
+                $this->relations = $this->generator->getRelations();
             } else {
                 $this->generator = null;
             }
@@ -65,8 +68,8 @@ class DevGenModel extends Form {
     }
 
     public function getFields() {
-        return array(
-            array(
+        return array (
+            array (
                 'type' => 'Text',
                 'value' => '<!-- EMPTY MODULE -->
 <div ng-if=\'!model.name\'>
@@ -77,7 +80,7 @@ class DevGenModel extends Form {
     </div>
 </div>',
             ),
-            array(
+            array (
                 'type' => 'Text',
                 'value' => '
 <tabset class=\'tab-set\' ng-if=\'model.name\'>
@@ -89,62 +92,62 @@ class DevGenModel extends Form {
     <div style=\'padding:0px 0px;\'>
         ',
             ),
-            array(
+            array (
                 'name' => 'mode',
                 'labelWidth' => '0',
                 'fieldWidth' => '0',
                 'onLabel' => 'Normal',
                 'offLabel' => 'Custom',
-                'options' => array(
+                'options' => array (
                     'style' => 'float:right;
 margin:-25px 0px 0px 0px;',
                 ),
                 'size' => 'small',
                 'type' => 'ToggleSwitch',
             ),
-            array(
+            array (
                 'showBorder' => 'Yes',
-                'column1' => array(
-                    array(
+                'column1' => array (
+                    array (
                         'label' => 'Model Name',
                         'name' => 'name',
                         'type' => 'LabelField',
                     ),
-                    array(
+                    array (
                         'label' => 'Table Name',
                         'js' => 'model.generator.tableName',
                         'type' => 'LabelField',
                     ),
-                    array(
+                    array (
                         'label' => 'Edit DB Table',
                         'icon' => 'sign-in',
                         'position' => 'right',
                         'buttonSize' => 'btn-xs',
                         'type' => 'LinkButton',
                     ),
-                    array(
+                    array (
                         'label' => 'Change Table',
                         'icon' => 'pencil',
                         'position' => 'right',
                         'buttonSize' => 'btn-xs',
                         'type' => 'LinkButton',
                     ),
-                    array(
+                    array (
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'column2' => array(
-                    array(
+                'column2' => array (
+                    array (
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
-                    array(
+                    array (
                         'label' => 'Model Alias',
                         'name' => 'alias',
                         'type' => 'LabelField',
                     ),
-                    array(
+                    array (
                         'label' => 'Extends From',
                         'js' => 'model.generator.extendsFrom',
                         'type' => 'LabelField',
@@ -154,31 +157,42 @@ margin:-25px 0px 0px 0px;',
                 'w2' => '50%',
                 'type' => 'ColumnField',
             ),
-            array(
-                'title' => '<i class=\\"fa fa-shield\\"></i> Validation Rules',
-                'type' => 'SectionHeader',
-            ),
-            array(
-                'name' => 'rules',
-                'fieldTemplate' => 'form',
-                'templateForm' => 'application.modules.dev.forms.genmodel.DevGenModelRules',
-                'labelWidth' => '0',
-                'fieldWidth' => '12',
-                'options' => array(
-                    'style' => 'margin-top:10px;',
-                ),
-                'singleViewOption' => array(
-                    'name' => 'val',
-                    'fieldType' => 'text',
-                    'labelWidth' => 0,
-                    'fieldWidth' => 12,
-                    'fieldOptions' => array(
-                        'ng-delay' => 500,
+            array (
+                'column1' => array (
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
+                    array (
+                        'title' => '<i class=\\"fa fa-shield\\"></i> Validation Rules',
+                        'type' => 'SectionHeader',
+                    ),
+                    array (
+                        'name' => 'rules',
+                        'fieldTemplate' => 'form',
+                        'templateForm' => 'application.modules.dev.forms.genmodel.DevGenModelRules',
+                        'labelWidth' => '0',
+                        'fieldWidth' => '12',
+                        'options' => array (
+                            'style' => 'margin:-10px -45px 0px -35px;',
+                        ),
+                        'singleViewOption' => array (
+                            'name' => 'val',
+                            'fieldType' => 'text',
+                            'labelWidth' => 0,
+                            'fieldWidth' => 12,
+                            'fieldOptions' => array (
+                                'ng-delay' => 500,
+                            ),
+                        ),
+                        'type' => 'ListView',
                     ),
                 ),
-                'type' => 'ListView',
+                'w1' => '50%',
+                'w2' => '50%',
+                'type' => 'ColumnField',
             ),
-            array(
+            array (
                 'type' => 'Text',
                 'value' => '    </div>
 </tab>

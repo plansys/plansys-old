@@ -23,17 +23,18 @@ class DevGenModelRules extends Form {
     public function getFields() {
         return array (
             array (
-                'label' => 'Fields',
+                'type' => 'TagField',
                 'name' => 'fields',
-                'layout' => 'Vertical',
-                'fieldWidth' => '12',
-                'autocomplete' => 'php',
-                'acMode' => 'comma',
-                'acPHP' => 'ModelGenerator::getFields();',
-                'type' => 'TextField',
+                'label' => 'Fields',
             ),
             array (
                 'column1' => array (
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
+                ),
+                'column2' => array (
                     array (
                         'label' => 'Rule',
                         'name' => 'rule',
@@ -44,8 +45,8 @@ class DevGenModelRules extends Form {
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'w1' => '20%',
-                'w2' => '50%',
+                'w1' => '70%',
+                'w2' => '30%',
                 'type' => 'ColumnField',
             ),
         );
