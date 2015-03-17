@@ -161,7 +161,7 @@ class Setting {
         $_GET['msg'] = Setting::t($msg, $params);
     }
 
-    function getPreferredLanguage() {
+    public static function getPreferredLanguage() {
         if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) && ($n = preg_match_all('/([\w\-]+)\s*(;\s*q\s*=\s*(\d*\.\d*))?/', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches)) > 0) {
             $languages = array();
             for ($i = 0; $i < $n; ++$i)

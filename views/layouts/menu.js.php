@@ -1,9 +1,9 @@
 
 <script>
-    app.controller("<?= $class ?>MenuTree", ["$scope", "$compile", "$http", "$location", "$timeout", "$templateCache", function ($scope, $compile, $http, $location, $timeout, $templateCache) {
-            $scope.list = <?= json_encode($list); ?>;
+    app.controller("<?php echo $class ?>MenuTree", ["$scope", "$compile", "$http", "$location", "$timeout", "$templateCache", function ($scope, $compile, $http, $location, $timeout, $templateCache) {
+            $scope.list = <?php echo json_encode($list); ?>;
             $scope.active = null;
-            $scope.sections = <?= json_encode($sections); ?>;
+            $scope.sections = <?php echo json_encode($sections); ?>;
             $scope.selecting = false;
             $scope.targetSection = null;
             $scope.targetHTML = '';
@@ -103,22 +103,31 @@
                     e.preventDefault();
                     e.stopPropagation();
                     if (!!item.url && !!item.target) {
+                        var controller = angular.element("#" + item.target + ':eq(0) [ng-controller]:eq(0)');
+                        var scope = controller.scope();
+                        if (!!scope) {
                         var url = $scope.UpdateQueryString('render_section', item.target, item.url);
+
+                        var loadingHtml = '<div class="loading"><span><b> ';
+                        loadingHtml += '<i class="fa fa-refresh fa-spin"></i>  Loading ';
+                        loadingHtml += item.label;
+                        loadingHtml += '... </b> </span> </div>';
+                        angular.element("#" + item.target + ':eq(0)').html(loadingHtml);
+
                         $http.get(url).success(function (data) {
                             var html = $(data).find('#' + item.target + ':eq(0)').html();
-                            var controller = angular.element("#" + item.target + ':eq(0) [ng-controller]:eq(0)');
-                            var scope = controller.scope();
                             angular.element("#" + item.target + ':eq(0)').html(html);
                             $compile("#" + item.target + ':eq(0)  > div')(scope);
                             history.pushState(null, '', item.url);
                         });
+                    }
                     }
                 }
             };
 
             $scope.closeContextMenu = function () {
                 $(".menu-sel").removeClass("active").removeClass(".menu-sel");
-                $("#ContextMenu<?= $class ?>").removeClass('open');
+                $("#ContextMenu<?php echo $class ?>").removeClass('open');
                 return false;
             }
 
@@ -168,7 +177,7 @@
 
 
             /******************* INLINEJS SECTION ********************/
-<?= $inlineJS ?>
+<?php echo $inlineJS ?>
 
 
         }

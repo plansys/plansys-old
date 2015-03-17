@@ -156,9 +156,6 @@ margin:-25px 0px 0px 0px;',
                 'type' => 'ColumnField',
             ),
             array (
-                'type' => 'ExampleField',
-            ),
-            array (
                 'title' => '<i class=\\"fa fa-shield\\"></i> Validation Rules',
                 'type' => 'SectionHeader',
             ),
