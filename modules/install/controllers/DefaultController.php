@@ -37,6 +37,8 @@ class DefaultController extends Controller {
 			echo Setting::$mode;
 			die();
 		}
+	}
+		
 	public function actionUser() {
 		$model = new InstallUserForm;
 		$error = false;
