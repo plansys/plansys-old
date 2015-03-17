@@ -1267,7 +1267,7 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function getDefaultFields() {
-        return ActiveRecordForm::generateFields($this);
+        return ActiveRecordDefaultField::generateFields($this);
     }
 
 }

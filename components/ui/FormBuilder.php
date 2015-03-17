@@ -93,7 +93,6 @@ class FormBuilder extends CComponent {
 
             if (!class_exists($class)) {
                 throw new CException("Class \"{$class}\" does not exists");
-                return null;
             }
         }
 
@@ -129,7 +128,7 @@ class FormBuilder extends CComponent {
                         $line = $m->getStartLine() - 1;
                         $length = $m->getEndLine() - $line;
                         $model->methods[$m->name] = [
-                            'line'   => $line,
+                            'line' => $line,
                             'length' => $length
                         ];
                     }
@@ -137,8 +136,8 @@ class FormBuilder extends CComponent {
 
                 Yii::app()->session['FormBuilder_' . $originalClass] = [
                     'sourceFile' => $model->sourceFile,
-                    'file'       => $model->file,
-                    'methods'    => $model->methods
+                    'file' => $model->file,
+                    'methods' => $model->methods
                 ];
             } else {
                 $s = Yii::app()->session['FormBuilder_' . $originalClass];
@@ -177,8 +176,14 @@ class FormBuilder extends CComponent {
 
         if (!$reflector->hasMethod($functionName)) {
             $this->model = new $class;
-            $fields = $this->model->defaultFields;
-            $this->fields = $fields;
+            
+            if (is_subclass_of($this->model, 'FormField')) {
+                $fields = [];
+                $this->fields = [];
+            } else {
+                $fields = $this->model->defaultFields;
+                $this->fields = $fields;
+            }
         } else {
             $fields = $this->model->$functionName();
         }
@@ -427,7 +432,7 @@ class FormBuilder extends CComponent {
             } else {
                 $value = $f;
                 $processed[$k] = [
-                    'type'  => 'Text',
+                    'type' => 'Text',
                     'value' => str_replace("\'", "'", $value)
                 ];
             }
@@ -553,7 +558,7 @@ class FormBuilder extends CComponent {
             }
 
             $defaultFields = [
-                'title'  => $title,
+                'title' => $title,
                 'layout' => [
                     'name' => 'full-width',
                     'data' => [
@@ -747,7 +752,6 @@ class FormBuilder extends CComponent {
      */
     public function render($formdata = null, $options = []) {
         return $this->renderInternal($formdata, $options, $this, $this->fields);
-
     }
 
     private function defineFormData($formdata) {
@@ -800,8 +804,8 @@ class FormBuilder extends CComponent {
             $formDefaultAttr = [
                 'action' => $url,
                 'method' => 'POST',
-                'class'  => 'form-horizontal ' . @$formOptions['class'],
-                'role'   => 'form',
+                'class' => 'form-horizontal ' . @$formOptions['class'],
+                'role' => 'form',
             ];
 
             $formAttr = array_merge($formOptions, $formDefaultAttr);
@@ -911,7 +915,7 @@ class FormBuilder extends CComponent {
 
         ## replace unwanted formatting
         $replace = [
-            "  "    => '    ',
+            "  " => '    ',
             "=> \n" => "=>"
         ];
         $fields = str_replace(array_keys($replace), $replace, $fields);
@@ -1017,11 +1021,11 @@ class FormBuilder extends CComponent {
             }
         }
         return [
-            'file'       => $this->file,
-            'length'     => $length,
-            'line'       => $line,
+            'file' => $this->file,
+            'length' => $length,
+            'line' => $line,
             'sourceFile' => $this->sourceFile,
-            'isNewFunc'  => $isNewFunc
+            'isNewFunc' => $isNewFunc
         ];
     }
 
@@ -1097,9 +1101,9 @@ EOF;
 
             Yii::app()->session['FormBuilder_' . $this->originalClass] = [
                 'sourceFile' => $this->sourceFile,
-                'file'       => $file,
-                'methods'    => $this->methods,
-                'timestamp'  => $this->timestamp
+                'file' => $file,
+                'methods' => $this->methods,
+                'timestamp' => $this->timestamp
             ];
 
             return true;
@@ -1239,11 +1243,11 @@ EOF;
                     $id++;
                     if (!isset($curpath[$s])) {
                         $curpath[$s] = [
-                            'items'  => [],
-                            'alias'  => $newAlias,
+                            'items' => [],
+                            'alias' => $newAlias,
                             'module' => $module,
-                            'name'   => $s,
-                            'id'     => $id++
+                            'name' => $s,
+                            'id' => $id++
                         ];
                     }
                     $curpath = &$curpath[$s]['items'];
@@ -1275,11 +1279,11 @@ EOF;
 
         $func = function ($m, $module = "", $aliaspath = "", $path) {
             return [
-                'name'   => str_replace($module, '', $m),
-                'class'  => $m,
+                'name' => str_replace($module, '', $m),
+                'class' => $m,
                 'module' => $module,
-                'alias'  => $aliaspath . "." . $m,
-                'items'  => []
+                'alias' => $aliaspath . "." . $m,
+                'items' => []
             ];
         };
 
@@ -1298,9 +1302,9 @@ EOF;
             }
             $files[] = [
                 'module' => 'Plansys: fields',
-                'items'  => $items,
-                'alias'  => "application.components.ui.FormFields",
-                'count'  => $count
+                'items' => $items,
+                'alias' => "application.components.ui.FormFields",
+                'count' => $count
             ];
 
             ## add files in Root Form dir
@@ -1320,9 +1324,9 @@ EOF;
             }
             $files[] = [
                 'module' => 'Plansys: forms',
-                'alias'  => "application.forms",
-                'count'  => $glob['count'],
-                'items'  => $items
+                'alias' => "application.forms",
+                'count' => $glob['count'],
+                'items' => $items
             ];
 
 
@@ -1344,9 +1348,9 @@ EOF;
                     if (count($items) > 0) {
                         $files[] = [
                             'module' => 'Plansys: ' . $module,
-                            'alias'  => $alias,
-                            'items'  => $items,
-                            'count'  => $glob['count']
+                            'alias' => $alias,
+                            'items' => $items,
+                            'count' => $glob['count']
                         ];
                     }
                 }
@@ -1371,9 +1375,9 @@ EOF;
 
         $files[] = [
             'module' => 'app',
-            'alias'  => 'app.forms',
-            'items'  => $items,
-            'count'  => $glob['count']
+            'alias' => 'app.forms',
+            'items' => $items,
+            'count' => $glob['count']
         ];
 
         ## add files in App Modules Dir
@@ -1390,9 +1394,9 @@ EOF;
 
                 $files[] = [
                     'module' => $module,
-                    'alias'  => $alias,
-                    'items'  => $items,
-                    'count'  => $glob['count']
+                    'alias' => $alias,
+                    'items' => $items,
+                    'count' => $glob['count']
                 ];
             }
         }
