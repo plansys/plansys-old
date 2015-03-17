@@ -181,7 +181,7 @@ class Setting {
         return false;
     }
 
-    function t($message, $params = array()) {
+    public static function t($message, $params = array()) {
         static $messages;
 
         if ($messages === null) {
