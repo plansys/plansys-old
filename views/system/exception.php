@@ -1,6 +1,7 @@
 <?php
 
 if (Setting::$mode == "init" || Setting::$mode == "install") {
+
     Yii::import("application.modules.install.*");
     Yii::import("application.modules.install.controllers.*");
     $module = new InstallModule("install", null);
@@ -12,8 +13,7 @@ if (Setting::$mode == "init" || Setting::$mode == "install") {
     if (strpos(@$data['message'], 'Application Runtime Path') === 0) {
         $msg = null;
     }
-    var_dump($data);
-    die();
+
     $controller->action->runWithParams([
         'msg' => $msg
     ]);

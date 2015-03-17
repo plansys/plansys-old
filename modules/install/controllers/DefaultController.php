@@ -3,6 +3,7 @@
 class DefaultController extends Controller {
 
     public function beforeAction($action) {
+
         if (!in_array(Setting::$mode, ["install", "init"])) {
             $this->redirect(['/site/login']);
             die();
@@ -27,6 +28,8 @@ class DefaultController extends Controller {
     }
 
     public function actionIndex($msg = null) {
+      throw new CException("ASDSA");
+      die();
         $content = $this->renderPartial('index', [
             'msg' => $msg
                 ], true);
@@ -51,6 +54,7 @@ class DefaultController extends Controller {
         $model->fullname = "Developer";
         $model->username = "dev";
 
+
         if (isset($_POST['InstallUserForm'])) {
             $model->attributes = $_POST['InstallUserForm'];
             if ($model->validate()) {
@@ -61,8 +65,8 @@ class DefaultController extends Controller {
                     `id` = '1',
                     `nip` = '-',
                     `fullname` = '{$model->fullname}',
-                    `email` = '-',
                     `phone` = '-',
+                    `email` = '-',
                     `username` = '{$model->username}',
                     `password` = md5('{$model->password}'),
                     `last_login` = '2015-02-26 07:06:32',

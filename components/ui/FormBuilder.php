@@ -702,7 +702,7 @@ class FormBuilder extends CComponent {
 
         $reflector = new ReflectionClass($this->model);
         $inlineJSPath = dirname($reflector->getFileName()) . DIRECTORY_SEPARATOR . @$this->form['inlineJS'];
-        if (isset($this->form['inlineJS'])) {
+        if (isset($this->form['inlineJS']) && is_file($inlineJSPath)) {
             $tab = '            ';
             $inlineJS = file($inlineJSPath);
             $inlineJS = $tab . implode($tab, $inlineJS);
@@ -994,7 +994,7 @@ class FormBuilder extends CComponent {
 
     private function getLineOfClass($class, $name) {
         $isNewFunc = false;
-        ## get first line of the class       
+        ## get first line of the class
         if (!isset($this->methods[$name])) {
             $line = $this->prepareLineForMethod();
             $length = 0;
@@ -1061,7 +1061,7 @@ EOF;
             $func = $fields;
         }
 
-        ## put function to class 
+        ## put function to class
         array_splice($file, $line, $length, explode("\n", $func));
 
         ## adjust other methods line and length

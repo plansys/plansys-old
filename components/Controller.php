@@ -115,6 +115,7 @@ class Controller extends CController {
     }
 
     public function renderForm($class, $model = null, $params = [], $options = []) {
+
         $class = $this->prepareFormName($class);
         $fb = FormBuilder::load($class);
         $this->pageTitle = $fb->form['title'];
