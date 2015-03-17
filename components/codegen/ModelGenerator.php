@@ -82,7 +82,7 @@ class ModelGenerator extends CodeGenerator {
             ];
         }
         $models[] = [
-            'label' => 'Application',
+            'label' => 'App',
             'items' => $appItems,
         ];
         return $models;
