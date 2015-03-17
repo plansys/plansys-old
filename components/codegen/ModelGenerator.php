@@ -17,10 +17,10 @@ class ModelGenerator extends CodeGenerator {
             $m->load($class);
 
             if ($mode == 'create') {
-                
+
             } else {
                 $m->extendsFrom = get_parent_class($class);
-                $m->tableName = $class::tableName();
+                $m->tableName = $class::model()->tableName();
             }
             return $m;
         } else {
@@ -43,17 +43,17 @@ class ModelGenerator extends CodeGenerator {
                 $m = str_replace('.php', "", $m);
 
                 $devItems[$k] = [
-                    'label'      => $m,
-                    'icon'       => 'fa fa-cube',
-                    'class'      => 'application.models.' . $m,
+                    'label' => $m,
+                    'icon' => 'fa fa-cube',
+                    'class' => 'application.models.' . $m,
                     'class_path' => 'application.models',
-                    'exist'      => (class_exists($m)) ? 'yes' : 'no',
-                    'type'       => 'dev',
-                    'active'     => @$_GET['active'] == 'plansys.' . $m,
-                    'url'        => Yii::app()->controller->createUrl('/dev/genModel/index', [
-                        'active' => 'plansys.' . $m
+                    'exist' => (class_exists($m)) ? 'yes' : 'no',
+                    'type' => 'dev',
+                    'active' => @$_GET['active'] == 'plansys.' . $m,
+                    'url' => Yii::app()->controller->createUrl('/dev/genModel/index', [
+                        'active' => 'plansys.' . $m,
                     ]),
-                    'target'     => 'col2'
+                    'target' => 'col2',
                 ];
             }
 
@@ -68,17 +68,17 @@ class ModelGenerator extends CodeGenerator {
             $m = str_replace('.php', "", $m);
 
             $appItems[$k] = [
-                'label'      => $m,
-                'icon'       => 'fa fa-cube',
-                'class'      => 'app.models.' . $m,
+                'label' => $m,
+                'icon' => 'fa fa-cube',
+                'class' => 'app.models.' . $m,
                 'class_path' => 'app.models',
-                'exist'      => (class_exists($m)) ? 'yes' : 'no',
-                'type'       => 'app',
-                'active'     => @$_GET['active'] == 'app.' . $m,
-                'url'        => Yii::app()->controller->createUrl('/dev/genModel/index', [
-                    'active' => 'app.' . $m
+                'exist' => (class_exists($m)) ? 'yes' : 'no',
+                'type' => 'app',
+                'active' => @$_GET['active'] == 'app.' . $m,
+                'url' => Yii::app()->controller->createUrl('/dev/genModel/index', [
+                    'active' => 'app.' . $m,
                 ]),
-                'target'     => 'col2'
+                'target' => 'col2',
             ];
         }
         $models[] = [

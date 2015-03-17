@@ -31,7 +31,6 @@ class DevGenModel extends Form {
             $this->path = $path;
             $this->classPath = $classPath;
 
-
             if (is_file($this->classPath)) {
                 $this->generator = ModelGenerator::init($alias, 'load');
             } else {
@@ -42,23 +41,23 @@ class DevGenModel extends Form {
 
     public function getForm() {
         return array(
-            'title'  => 'Generate Model',
+            'title' => 'Generate Model',
             'layout' => array(
                 'name' => '2-cols',
                 'data' => array(
                     'col1' => array(
-                        'size'     => '200',
+                        'size' => '200',
                         'sizetype' => 'px',
-                        'type'     => 'menu',
-                        'name'     => 'col1',
-                        'file'     => 'application.modules.dev.menus.GenModel',
-                        'title'    => 'Model',
-                        'icon'     => 'fa-cube',
+                        'type' => 'menu',
+                        'name' => 'col1',
+                        'file' => 'application.modules.dev.menus.GenModel',
+                        'title' => 'Model',
+                        'icon' => 'fa-cube',
                     ),
                     'col2' => array(
-                        'size'     => '',
+                        'size' => '',
                         'sizetype' => '',
-                        'type'     => 'mainform',
+                        'type' => 'mainform',
                     ),
                 ),
             ),
@@ -66,8 +65,8 @@ class DevGenModel extends Form {
     }
 
     public function getFields() {
-        return array (
-            array (
+        return array(
+            array(
                 'type' => 'Text',
                 'value' => '<!-- EMPTY MODULE -->
 <div ng-if=\'!model.name\'>
@@ -78,7 +77,7 @@ class DevGenModel extends Form {
     </div>
 </div>',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '
 <tabset class=\'tab-set\' ng-if=\'model.name\'>
@@ -90,62 +89,62 @@ class DevGenModel extends Form {
     <div style=\'padding:0px 0px;\'>
         ',
             ),
-            array (
+            array(
                 'name' => 'mode',
                 'labelWidth' => '0',
                 'fieldWidth' => '0',
                 'onLabel' => 'Normal',
                 'offLabel' => 'Custom',
-                'options' => array (
+                'options' => array(
                     'style' => 'float:right;
 margin:-25px 0px 0px 0px;',
                 ),
                 'size' => 'small',
                 'type' => 'ToggleSwitch',
             ),
-            array (
+            array(
                 'showBorder' => 'Yes',
-                'column1' => array (
-                    array (
+                'column1' => array(
+                    array(
                         'label' => 'Model Name',
                         'name' => 'name',
                         'type' => 'LabelField',
                     ),
-                    array (
+                    array(
                         'label' => 'Table Name',
                         'js' => 'model.generator.tableName',
                         'type' => 'LabelField',
                     ),
-                    array (
+                    array(
                         'label' => 'Edit DB Table',
                         'icon' => 'sign-in',
                         'position' => 'right',
                         'buttonSize' => 'btn-xs',
                         'type' => 'LinkButton',
                     ),
-                    array (
+                    array(
                         'label' => 'Change Table',
                         'icon' => 'pencil',
                         'position' => 'right',
                         'buttonSize' => 'btn-xs',
                         'type' => 'LinkButton',
                     ),
-                    array (
+                    array(
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'column2' => array (
-                    array (
+                'column2' => array(
+                    array(
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
-                    array (
+                    array(
                         'label' => 'Model Alias',
                         'name' => 'alias',
                         'type' => 'LabelField',
                     ),
-                    array (
+                    array(
                         'label' => 'Extends From',
                         'js' => 'model.generator.extendsFrom',
                         'type' => 'LabelField',
@@ -155,35 +154,31 @@ margin:-25px 0px 0px 0px;',
                 'w2' => '50%',
                 'type' => 'ColumnField',
             ),
-            array (
+            array(
                 'title' => '<i class=\\"fa fa-shield\\"></i> Validation Rules',
                 'type' => 'SectionHeader',
             ),
-            array (
-                'type' => 'TagField',
-                'name' => 'tagField1',
-            ),
-            array (
+            array(
                 'name' => 'rules',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.modules.dev.forms.genmodel.DevGenModelRules',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
-                'options' => array (
+                'options' => array(
                     'style' => 'margin-top:10px;',
                 ),
-                'singleViewOption' => array (
+                'singleViewOption' => array(
                     'name' => 'val',
                     'fieldType' => 'text',
                     'labelWidth' => 0,
                     'fieldWidth' => 12,
-                    'fieldOptions' => array (
+                    'fieldOptions' => array(
                         'ng-delay' => 500,
                     ),
                 ),
                 'type' => 'ListView',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '    </div>
 </tab>
