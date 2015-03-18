@@ -81,13 +81,22 @@ class SettingsController extends Controller {
         $postdata = file_get_contents("php://input");
         $post     = CJSON::decode($postdata);
         if (!empty($post)) {
-            Email::initalSetting();
-            touch(Email::$path.DIRECTORY_SEPARATOR.'email.lock');
-            $this->setEmailSettings($post);
+            $error = null;
+            try {
+                NodeProcess::checkNode();
+            } catch (CException $ex) {
+                $error = $ex->getMessage();
+            }
             
-            Email::sendTestMail();
+            if(is_null($error)){
+                Email::initalSetting();
+                touch(Email::$path.DIRECTORY_SEPARATOR.'email.lock');
+                $this->setEmailSettings($post);
+
+                Email::sendTestMail();
+            }
+            echo json_encode($error);
         }
-        echo true;
     }
     
     public function actionCheckMail(){
