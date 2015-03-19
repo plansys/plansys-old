@@ -172,28 +172,32 @@ streamQuery = setInterval(function () {
     pool.getConnection(function (err, conn) { 
         conn.query("USE " + config.db.dbname, function (err, rows) {
             // notif
-            var notif = 'select u.email as to_email, u.fullname as to_name, "notification" AS template ,a.* from \
-                        ((SELECT t.*, "Notification" as sender_name, "SYSTEM" as sender_role FROM p_nfy_messages t \
-                        WHERE sender_id = 0 AND status = 0 AND subscription_id is not null)  \
-                        UNION \
-                        (SELECT t.*, p.fullname as sender_name, r.role_name as sender_role FROM p_nfy_messages t \
-                        inner join p_user p      on t.sender_id = p.id \
-                        inner join p_user_role q on q.user_id = p.id \
-                        inner join p_role r      on q.role_id = r.id \
-                        WHERE sender_id <> 0 AND status = 0 AND subscription_id is not null) \
-                        ) a \
-                        inner join p_nfy_subscriptions p on p.id = a.subscription_id \
-                        inner join p_user u on p.subscriber_id = u.id';
+            if(!!config.notif.email){
+                var notif = 'select u.email as to_email, u.fullname as to_name, "notification" AS template ,a.* from \
+                            ((SELECT t.*, "Notification" as sender_name, "SYSTEM" as sender_role FROM p_nfy_messages t \
+                            WHERE sender_id = 0 AND status = 0 AND subscription_id is not null)  \
+                            UNION \
+                            (SELECT t.*, p.fullname as sender_name, r.role_name as sender_role FROM p_nfy_messages t \
+                            inner join p_user p      on t.sender_id = p.id \
+                            inner join p_user_role q on q.user_id = p.id \
+                            inner join p_role r      on q.role_id = r.id \
+                            WHERE sender_id <> 0 AND status = 0 AND subscription_id is not null) \
+                            ) a \
+                            inner join p_nfy_subscriptions p on p.id = a.subscription_id \
+                            inner join p_user u on p.subscriber_id = u.id';
 
-            conn.query(notif, function(err, rows) {
-                updateEmail(err,rows,conn,'notif');
-            });
+                conn.query(notif, function(err, rows) {
+                    updateEmail(err,rows,conn,'notif');
+                });
+            }
             
             // email
-            var email  = "SELECT * FROM p_email_queue WHERE status = 0"
-            conn.query(email, function(err, rows) {
-                updateEmail(err,rows,conn,'email');
-            });
+            if(config.email.transport.service != 'none'){
+                var email  = "SELECT * FROM p_email_queue WHERE status = 0"
+                conn.query(email, function(err, rows) {
+                    updateEmail(err,rows,conn,'email');
+                });
+            }
         });
     });
 }, 2000);
