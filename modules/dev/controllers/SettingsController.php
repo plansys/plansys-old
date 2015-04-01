@@ -145,4 +145,19 @@ class SettingsController extends Controller {
             Email::set("email.transport.service",$data['emailService']);
         }
     }
+    
+    public function actionTeskirim(){
+        Email::sendMail('1,teguh@andromedia.co.id', 'Coba Kirim Lagi', 'Coba Kirim Email pake class Email');
+        Yii::app()->nfy->send(array(
+            'url' => Yii::app()->controller
+                    ->createUrl('/dev/forms/index'),
+            'message' =>"Tes kirim Notif",
+            'notes' => "Tes Notif",
+            'to' => array(
+                'role' => 'dev'
+            )
+        ));
+        
+        echo 'Oke';
+    }
 }

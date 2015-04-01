@@ -106,6 +106,47 @@ class Email extends ActiveRecord {
             'user' => array(self::BELONGS_TO, 'User', 'user_id'),
         );
     }
+    
+    public static function sendMail($to, $subject, $body, $template = 'default'){
+        $toAddress = Email::setToAddress($to);
+        
+        $emails = [];
+        foreach($toAddress as $add){
+            $emails[] = [
+                'user_id' => Yii::app()->user->id,
+                'email' => $add,
+                'subject' => $subject,
+                'content' => $body,
+                'template' => $template
+            ];
+        }
+        
+        ActiveRecord::batchInsert('Email', $emails);
+        return true;
+    }
+    
+    public static function setToAddress($to){
+        $toArr = explode(',', $to);
+        
+        $idArr = [];
+        $mailArr = [];
+        
+        foreach($toArr as $t){
+            if(is_numeric($t)){
+                $idArr[]=(int)$t;
+            }
+            if(filter_var($t, FILTER_VALIDATE_EMAIL)){ 
+                $mailArr[]=$t;
+            }
+        }
+        $ids = implode(',', $idArr);
+        $user = Yii::app()->db->createCommand("SELECT email FROM p_user WHERE id IN ({$ids})")->queryAll();
+        foreach($user as $u){
+            $mailArr[]=$u['email'];
+        }
+        
+        return $mailArr;
+    }
 
     public function tableName() {
         return 'p_email_queue';
