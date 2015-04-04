@@ -273,7 +273,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                 $scope.insertData = [];
                                 $scope.updateData = [];
                                 $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text());
-
+                                
                                 // find newly inserted data or updated data
                                 for (i in newval) {
                                     var newv = newval[i];
@@ -328,13 +328,13 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                             found = true;
                                         }
                                     }
-
+                                    
                                     if (!found) {
                                         if ($scope.deleteData == null || !!!$scope.deleteData || typeof $scope.deleteData != 'object') {
                                             $scope.deleteData = [];
                                         }
-
-                                        if (angular.isNumber(del['id'])) {
+                                        
+                                        if (angular.isNumber(del['id']*1) && del['id']*1 > 0) {
                                             $scope.deleteData.push(del['id']);
                                         }
                                     }

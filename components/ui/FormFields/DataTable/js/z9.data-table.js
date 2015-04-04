@@ -1379,8 +1379,8 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         },
                         afterRemoveRow: function (index, amount) {
                             if (!$scope.dtGroups) {
-                                $scope.edited = true;
-                                $scope.datasource.data.splice(index, amount);
+                               $scope.edited = true;
+                               $scope.datasource.data.splice(index, amount);
                             }
 
                             if (typeof $scope.events.afterRemoveRow == "function") {
@@ -1563,6 +1563,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }
 
                     // Setup Events Watcher
+                    /*
                     if (options.events) {
                         $scope.events = options.events;
                     }
@@ -1570,6 +1571,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     if (!!$scope.events) {
                         options = $.extend(options, $scope.events);
                     }
+                    */
                     $scope.columns = columnsInternal;
                     if ($("#" + $scope.renderID).length > 0) {
                         $("#" + $scope.renderID).width($el.width());
