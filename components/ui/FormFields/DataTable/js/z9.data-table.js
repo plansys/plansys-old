@@ -1382,6 +1382,10 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                                 $scope.edited = true;
                                 $scope.datasource.data.splice(index, amount);
                             }
+
+                            if (typeof $scope.events.afterRemoveRow == "function") {
+                                $scope.events.afterRemoveRow(index, amount);
+                            }
                         },
                         afterValidate: function (valid, value, row, prop, source) {
                             if (typeof $scope.events.afterValidate == "function") {

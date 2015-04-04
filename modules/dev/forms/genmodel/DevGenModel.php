@@ -42,28 +42,60 @@ class DevGenModel extends Form {
         }
     }
 
+    public function create($module) {
+        $m = explode(".", $module);
+        if (count($m) == 2) {
+            $name = $m[1];
+            $class = ucfirst($name);
+            $basePath = $m[0] == "app" ? Setting::getAppPath() : Setting::getApplicationPath();
+            $alias = ($m[0] == "app" ? 'app' : 'application') . ".models.{$class}";
+            $path = $basePath . DIRECTORY_SEPARATOR . 'models';
+            $classPath = $path . DIRECTORY_SEPARATOR . $class . ".php";
+
+            $this->name = $name;
+            $this->alias = $alias;
+            $this->path = $path;
+            $this->classPath = $classPath;
+
+            if (!is_file($this->classPath)) {
+                $this->generator = ModelGenerator::init($alias, 'create');
+                if (is_null($this->module)) {
+                    $this->error = 'Failed to create module
+Invalid Class Name "' . $name . '"';
+                } else {
+                    $this->imports = $this->module->loadImport();
+                }
+            } else {
+                $this->error = 'Failed to create model
+Model "' . $name . '" already exist';
+            }
+        }
+    }
+
     public function getForm() {
         return array(
-            'title' => 'Generate Model',
-            'layout' => array(
+            'title'    => 'Generate Model',
+            'layout'   => array(
                 'name' => '2-cols',
                 'data' => array(
                     'col1' => array(
-                        'size' => '200',
+                        'size'     => '200',
                         'sizetype' => 'px',
-                        'type' => 'menu',
-                        'name' => 'col1',
-                        'file' => 'application.modules.dev.menus.GenModel',
-                        'title' => 'Model',
-                        'icon' => 'fa-cube',
+                        'type'     => 'menu',
+                        'name'     => 'col1',
+                        'file'     => 'application.modules.dev.menus.GenModel',
+                        'title'    => 'Model',
+                        'icon'     => 'fa-cube',
+                        'inlineJS' => 'GenModel.js',
                     ),
                     'col2' => array(
-                        'size' => '',
+                        'size'     => '',
                         'sizetype' => '',
-                        'type' => 'mainform',
+                        'type'     => 'mainform',
                     ),
                 ),
             ),
+            'inlineJS' => 'GenModel.js',
         );
     }
 
@@ -119,17 +151,32 @@ margin:-25px 0px 0px 0px;',
                         'type' => 'LabelField',
                     ),
                     array (
-                        'label' => 'Edit DB Table',
-                        'icon' => 'sign-in',
+                        'label' => 'Rename Table',
+                        'icon' => 'pencil',
                         'position' => 'right',
                         'buttonSize' => 'btn-xs',
                         'type' => 'LinkButton',
                     ),
                     array (
-                        'label' => 'Change Table',
-                        'icon' => 'pencil',
+                        'label' => 'Alter Table',
+                        'icon' => 'sign-in',
                         'position' => 'right',
                         'buttonSize' => 'btn-xs',
+                        'options' => array (
+                            'href' => 'url:{params.alterurl}',
+                            'target' => '_blank',
+                        ),
+                        'type' => 'LinkButton',
+                    ),
+                    array (
+                        'label' => 'Select Table',
+                        'icon' => 'sign-in',
+                        'position' => 'right',
+                        'buttonSize' => 'btn-xs',
+                        'options' => array (
+                            'href' => 'url:{params.selecturl}',
+                            'target' => '_blank',
+                        ),
                         'type' => 'LinkButton',
                     ),
                     array (
@@ -158,6 +205,7 @@ margin:-25px 0px 0px 0px;',
                 'type' => 'ColumnField',
             ),
             array (
+                'showBorder' => 'Yes',
                 'column1' => array (
                     array (
                         'type' => 'Text',

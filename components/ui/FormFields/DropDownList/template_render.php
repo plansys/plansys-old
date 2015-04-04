@@ -21,7 +21,7 @@
         <data name="default_value" class="hide"><?= $this->defaultValue ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
         <!-- /data -->
-
+        
         <!-- field -->
         <div class="<?= $this->fieldClass ?>" 
              ng-keydown="dropdownKeypress($event)"

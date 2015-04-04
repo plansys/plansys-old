@@ -2,6 +2,8 @@
 
 class ActiveRecord extends CActiveRecord {
 
+    public $parent; ## used by listview to store parent model
+    
     private $__relations = [];
     private $__relationsObj = [];
     private $__isRelationLoaded = false;
@@ -15,7 +17,7 @@ class ActiveRecord extends CActiveRecord {
     private $__relDelete = [];
     private $__relReset = [];
     private $__tempVar = [];
-
+    
     public static function execute($sql, $params = []) {
         return Yii::app()->db->createCommand($sql)->execute($params);
     }
@@ -322,6 +324,7 @@ class ActiveRecord extends CActiveRecord {
             $this->loadRelation($k, false);
         }
     }
+    
 
     public function loadRelation($name, $criteria = []) {
         if (!isset($this->__relations[$name]))
@@ -1270,4 +1273,6 @@ class ActiveRecord extends CActiveRecord {
         return ActiveRecordDefaultField::generateFields($this);
     }
 
+    
+    
 }

@@ -93,7 +93,7 @@
 
             $scope.select = function (item, e) {
                 $scope.closeContextMenu();
-                
+
                 this.toggle();
                 item.state = '';
                 $scope.selecting = true;
@@ -106,21 +106,25 @@
                         var controller = angular.element("#" + item.target + ':eq(0) [ng-controller]:eq(0)');
                         var scope = controller.scope();
                         if (!!scope) {
-                        var url = $scope.UpdateQueryString('render_section', item.target, item.url);
+                            // sementara di-redirect biasa dulu, ga usah pake ajax
+                            location.href = item.url;
 
-                        var loadingHtml = '<div class="loading"><span><b> ';
-                        loadingHtml += '<i class="fa fa-refresh fa-spin"></i>  Loading ';
-                        loadingHtml += item.label;
-                        loadingHtml += '... </b> </span> </div>';
-                        angular.element("#" + item.target + ':eq(0)').html(loadingHtml);
-
-                        $http.get(url).success(function (data) {
-                            var html = $(data).find('#' + item.target + ':eq(0)').html();
-                            angular.element("#" + item.target + ':eq(0)').html(html);
-                            $compile("#" + item.target + ':eq(0)  > div')(scope);
-                            history.pushState(null, '', item.url);
-                        });
-                    }
+//                          TODO: find performance degradation bug...
+//                          
+//                            var url = $scope.UpdateQueryString('render_section', item.target, item.url);
+//
+//                            var loadingHtml = '<div class="loading"><span><b> ';
+//                            loadingHtml += '<i class="fa fa-refresh fa-spin"></i>  Loading ';
+//                            loadingHtml += item.label;
+//                            loadingHtml += '... </b> </span> </div>';
+//                            angular.element("#" + item.target + ':eq(0)').html(loadingHtml);
+//                            $http.get(url).success(function (data) {
+//                                var html = $(data).find('#' + item.target + ':eq(0)').html();
+//                                angular.element("#" + item.target + ':eq(0)').html(html);
+//                                $compile("#" + item.target + ':eq(0)  > div')(scope);
+//                                history.pushState(null, '', item.url);
+//                            });
+                        }
                     }
                 }
             };

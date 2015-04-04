@@ -182,7 +182,7 @@ EOF;
                 if ($ext == "js") {
                     Yii::app()->clientScript->registerScriptFile($script, CClientScript::POS_END);
                 } else if ($ext == "css") {
-                    Yii::app()->clientScript->registerCSSFile($script, CClientScript::POS_BEGIN);
+                    Yii::app()->clientScript->registerCSSFile($script);
                 }
             }
         }

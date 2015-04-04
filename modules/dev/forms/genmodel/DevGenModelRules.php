@@ -23,12 +23,20 @@ class DevGenModelRules extends Form {
     public function getFields() {
         return array (
             array (
-                'type' => 'TagField',
-                'name' => 'fields',
-                'label' => 'Fields',
-            ),
-            array (
                 'column1' => array (
+                    array (
+                        'type' => 'TagField',
+                        'name' => 'fields',
+                        'dropdown' => 'normal',
+                        'fieldWidth' => '12',
+                        'options' => array (
+                            'ng-change' => 'saveRules()',
+                        ),
+                        'fieldOptions' => array (
+                            'disabled' => 'disabled',
+                        ),
+                        'drPHP' => 'ModelGenerator::getFields($model->parent->name);',
+                    ),
                     array (
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
@@ -36,8 +44,10 @@ class DevGenModelRules extends Form {
                 ),
                 'column2' => array (
                     array (
-                        'label' => 'Rule',
                         'name' => 'rule',
+                        'listExpr' => 'ModelGenerator::getRuleList()',
+                        'layout' => 'Vertical',
+                        'fieldWidth' => '12',
                         'type' => 'DropDownList',
                     ),
                     array (
@@ -51,5 +61,4 @@ class DevGenModelRules extends Form {
             ),
         );
     }
-
 }

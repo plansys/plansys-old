@@ -247,6 +247,7 @@ app.directive('dropDownList', function ($timeout) {
                 $scope.defaultValue = $el.find("data[name=default_value]").html().trim();
                 $scope.defaultType = $el.find("data[name=default_type]").html().trim();
                 $scope.isOpen = false;
+                $scope.text = "";
                 $scope.openedInField = false;
 
                 $scope.search = "";

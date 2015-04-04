@@ -11,7 +11,8 @@
             <i ng-show="item.state != 'collapsed'" class="fa fa-caret-down"></i>
         </div>
         <div>
-            <i ng-if="iconAvailable(item)"  class="fa fa-fw {{item.icon}}"></i><span ng-bind-html="item.label"></span>
+            <i style="pointer-events: none" ng-if="iconAvailable(item)"  class="fa fa-fw {{item.icon}}"></i>
+            <span style="pointer-events: none" ng-bind-html="item.label"></span>
         </div>
         <div ng-if="item.active" ng-init="select(item)"></div>
     </a>
