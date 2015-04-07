@@ -273,12 +273,12 @@ class DevSettings extends Form {
                     ),
                     array (
                         'renderInEditor' => 'Yes',
+                        'type' => 'Text',
                         'value' => '<div ng-if = \"model.emailService != \'none\'\" class=\"col-sm-6\" 
      style=\"float:right;margin:-5px 0px 0px 0px;padding:0px;text-align:right;color:#999;font-size:12px;width:65%\">
       <i class=\"fa fa-info-circle\"></i> 
     Changing App Name, will make you logged out automatically
 </div><br>',
-                        'type' => 'Text',
                     ),
                     array (
                         'label' => 'App Mode',

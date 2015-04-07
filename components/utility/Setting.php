@@ -22,6 +22,11 @@ class Setting
             'dir'  => 'app',
             'mode' => 'development'
         ],
+        'email' => [
+            'transport' => [
+                'service' => 'none'
+            ],
+        ],
     ];
     public static $mode = null;
     public static $entryScript = "";
