@@ -10,7 +10,7 @@ class SettingsController extends Controller {
                $_POST['DevSettings'] = array_merge($_POST['DevSettings'], $_POST[$emailSub]);
            }
            $settings = $model->attributes;
-           foreach($settings as $k=>$set){
+           foreach($_POST['DevSettings'] as $k=>$set){
                if(isset($_POST["DevSettings"][$k])){
                    $settings[$k] = $_POST["DevSettings"][$k];
                }
