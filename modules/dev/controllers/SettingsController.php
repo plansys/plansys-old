@@ -18,6 +18,7 @@ class SettingsController extends Controller {
            
            $model->setSettings($settings);
            Yii::app()->user->setFlash('info', 'Data Berhasil Disimpan');
+           $this->resetNode();
            $this->redirect(array('index'));
        }
        $this->renderForm("DevSettings",$model);
@@ -115,6 +116,16 @@ class SettingsController extends Controller {
         echo json_encode($error);
     }
     
+    public function resetNode(){
+        $pids = Setting::get("nodejs.pid");
+        
+        if(!is_null($pids) && !empty($pids)){
+            foreach($pids as $pid){
+                NodeProcess::stop($pid);
+            }
+        }
+    }
+    
     public function setEmailSettings($data){
         Email::remove("email.transport");
         if($data['emailService'] == 'ses'){
@@ -147,7 +158,8 @@ class SettingsController extends Controller {
     }
     
     public function actionTeskirim(){
-        Email::sendMail('1,teguh@andromedia.co.id', 'Coba Kirim Lagi', 'Coba Kirim Email pake class Email');
+        Email::sendMail('1,teguh@andromedia.co.id', 'Coba Kirim PHP', 'Ini tes kirim pake PHP');
+        /*
         Yii::app()->nfy->send(array(
             'url' => Yii::app()->controller
                     ->createUrl('/dev/forms/index'),
@@ -157,6 +169,8 @@ class SettingsController extends Controller {
                 'role' => 'dev'
             )
         ));
+         * 
+         */
         
         echo 'Oke';
     }

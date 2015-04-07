@@ -82,16 +82,11 @@ var sendEmail = function(err,rows,conn){
                 from: row.sender+ ' <'+row.email_sender+'>', // sender address
                 to: row.email, // list of receivers
                 subject: row.subject, // Subject line,
-                body: row.content,
-                appName: config.app.name
+                html: row.body,
+                text: htmlToText.fromString(row.body, {
+                        wordwrap: 130
+                      })
             };
-            
-            var template = 'plansys/static/email/' + row.template+'.twig';
-            var mailTemplate = swig.compileFile(path.resolve(__dirname, "../../../" + template));
-            mailOptions.html = mailTemplate(mailOptions);
-            mailOptions.text = htmlToText.fromString(mailOptions.html, {
-                wordwrap: 130
-            });
 
             transport.sendMail(mailOptions, function (error, info) {
                 if (error) {

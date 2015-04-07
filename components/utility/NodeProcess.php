@@ -27,14 +27,15 @@ class NodeProcess extends CComponent {
 
         if (is_file($cmd)) {
             NodeProcess::checkNode();
-
+            $pid = null;
             if (substr(php_uname(), 0, 7) == "Windows") {
                 exec("plansys\commands\shell\psexec.exe -accepteula -d node " . $cmd . " " . $params, $output, $input);
-                return $input;
+                $pid = $input;
             } else {
                 $pid = exec("nodejs " . $cmd . " " . $params . " > /dev/null 2>&1 & echo $!;", $output, $input);
-                return $pid;
             }
+            NodeProcess::addPid($pid);
+            return $pid;
         } else {
             throw new CException("File Not Found " . $cmd);
         }
@@ -55,10 +56,35 @@ class NodeProcess extends CComponent {
         if ($pid) {
             if (substr(php_uname(), 0, 7) == "Windows") {
                 exec("plansys\commands\shell\pskill.exe -accepteula " . $pid, $output, $input);
+                NodeProcess::removePid($pid);
                 return $input;
             } else {
                 exec("kill -9 $pid");
+                NodeProcess::removePid($pid);
             }
+        }
+    }
+    
+    public static function addPid($pid){
+        $pids = Setting::get('nodejs.pid');
+            
+        if(is_null($pids)){
+            $pids = [];
+        }
+        
+        $pids[]=$pid;
+        $pids = array_unique($pids);
+        Setting::set('nodejs.pid', $pids);
+    }
+    
+    public static function removePid($pid){
+        $pids = Setting::get('nodejs.pid');
+        if(!is_null($pids) && in_array($pid, $pids)){
+            if(($key = array_search($pid, $pids)) !== false) {
+                unset($pids[$key]);
+            }
+            $pids = array_unique($pids);
+            Setting::set('nodejs.pid', $pids);
         }
     }
 

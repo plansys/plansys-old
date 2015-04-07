@@ -107,8 +107,10 @@ class Email extends ActiveRecord {
         );
     }
     
-    public static function sendMail($to, $subject, $body, $template = 'default'){
+    public static function sendMail($to, $subject, $content, $template = 'default',$params = []){
         $toAddress = Email::setToAddress($to);
+        
+        $body = Email::setTemplate($template, $content, $params);
         
         $emails = [];
         foreach($toAddress as $add){
@@ -116,7 +118,8 @@ class Email extends ActiveRecord {
                 'user_id' => Yii::app()->user->id,
                 'email' => $add,
                 'subject' => $subject,
-                'content' => $body,
+                'content' => $content,
+                'body' => $body,
                 'template' => $template
             ];
         }
@@ -146,6 +149,21 @@ class Email extends ActiveRecord {
         }
         
         return $mailArr;
+    }
+    
+    public static function setTemplate($template,$content,$params = []){
+        $ds = DIRECTORY_SEPARATOR;
+        if(!empty($params)){
+            extract($params, EXTR_PREFIX_SAME);
+        }
+        
+        $appName = Setting::get("app.name");
+        ob_start();
+        include(Setting::$basePath.$ds.'static'.$ds.'email'.$ds.$template.'.php');
+        $body = ob_get_contents();
+        ob_end_clean();
+        
+        return $body;
     }
 
     public function tableName() {
