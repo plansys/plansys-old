@@ -143,9 +143,11 @@ class Email extends ActiveRecord {
             }
         }
         $ids = implode(',', $idArr);
-        $user = Yii::app()->db->createCommand("SELECT email FROM p_user WHERE id IN ({$ids})")->queryAll();
-        foreach($user as $u){
-            $mailArr[]=$u['email'];
+        if(!empty($ids)){
+            $user = Yii::app()->db->createCommand("SELECT email FROM p_user WHERE id IN ({$ids})")->queryAll();
+            foreach($user as $u){
+                $mailArr[]=$u['email'];
+            }
         }
         
         return $mailArr;

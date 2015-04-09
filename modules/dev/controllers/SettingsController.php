@@ -158,8 +158,8 @@ class SettingsController extends Controller {
     }
     
     public function actionTeskirim(){
-        Email::sendMail('1,teguh@andromedia.co.id', 'Coba Kirim PHP', 'Ini tes kirim pake PHP');
-        /*
+        Email::sendMail('teguh@andromedia.co.id', 'Coba Kirim PHP', 'Ini tes kirim pake PHP');
+
         Yii::app()->nfy->send(array(
             'url' => Yii::app()->controller
                     ->createUrl('/dev/forms/index'),
@@ -169,8 +169,6 @@ class SettingsController extends Controller {
                 'role' => 'dev'
             )
         ));
-         * 
-         */
         
         echo 'Oke';
     }

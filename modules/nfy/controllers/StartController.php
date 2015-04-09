@@ -8,8 +8,9 @@ class StartController extends Controller {
             echo "Port 8981 already used";
             fclose($connection);
         } else {
-            //$cmd = realpath(Yii::getPathOfAlias('webroot') . "/plansys/commands/shell/stream.js");
             /*
+            $cmd = realpath(Yii::getPathOfAlias('webroot') . "/plansys/commands/shell/stream.js");
+            
             if (substr(php_uname(), 0, 7) == "Windows") {
                 exec("plansys\commands\shell\psexec.exe -accepteula -i -d node " . $cmd);
             } else {
