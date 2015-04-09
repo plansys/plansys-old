@@ -22,10 +22,17 @@ class Setting
             'dir'  => 'app',
             'mode' => 'development'
         ],
+        'notif' => [
+            'enable' => true,
+            'email' => true
+        ],
         'email' => [
             'transport' => [
                 'service' => 'none'
             ],
+        ],
+        'ldap' => [
+            'enable' => false
         ],
     ];
     public static $mode = null;
