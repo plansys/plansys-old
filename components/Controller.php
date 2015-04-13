@@ -114,7 +114,7 @@ class Controller extends CController {
         return $class;
     }
     
-    public function renderReport($class,$model){
+    public function renderReport($class,$model = null){
         $class = $this->prepareFormName($class);
         
         $report = new Report;
