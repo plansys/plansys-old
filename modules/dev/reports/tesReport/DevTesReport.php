@@ -1,3 +1,3 @@
 <?php
 echo "abc";
-var_dump($model);die();
+var_dump($model);

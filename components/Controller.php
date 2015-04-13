@@ -11,6 +11,7 @@ class Controller extends CController {
      * meaning using a single column layout. See 'protected/views/layouts/column1.php'.
      */
     public $layout = '//layouts/main';
+    public $reportLayout = '//layouts/report';
 
     public function url($path) {
         return Yii::app()->request->baseUrl . $path;
@@ -114,13 +115,24 @@ class Controller extends CController {
         return $class;
     }
     
-    public function renderReport($class,$model = null){
-        $class = $this->prepareFormName($class);
-        
+    public function renderReport($file,$data = null,$return = false){
+        $file = $this->prepareFormName($file);
         $report = new Report;
-        $report->render($class,$model);
-    }
+        
+        $output = $report->load($file,$data);   
+        
+        if(($layoutFile=$this->getLayoutFile($this->reportLayout))!==false){
+            $output=$this->renderFile($layoutFile,array('content'=>$output),true);
+        }
+        
+        $output=$this->processOutput($output);
 
+        if($return)
+            return $output;
+        else
+            echo $output;
+    }
+    
     public function renderForm($class, $model = null, $params = [], $options = []) {
 
         $class = $this->prepareFormName($class);
