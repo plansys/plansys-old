@@ -95,7 +95,6 @@ class FormBuilder extends CComponent {
                 throw new CException("Class \"{$class}\" does not exists");
             }
         }
-
         $model = new FormBuilder();
 
         if (!empty($findByAttributes) && method_exists($class, 'model')) {
@@ -109,7 +108,7 @@ class FormBuilder extends CComponent {
         } else {
             $model->model = new $class;
         }
-
+    
         $model->originalClass = $originalClass;
 
         if (!is_null($findByAttributes)) {

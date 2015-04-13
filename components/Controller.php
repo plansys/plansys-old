@@ -113,6 +113,13 @@ class Controller extends CController {
 
         return $class;
     }
+    
+    public function renderReport($class,$model){
+        $class = $this->prepareFormName($class);
+        
+        $report = new Report;
+        $report->render($class,$model);
+    }
 
     public function renderForm($class, $model = null, $params = [], $options = []) {
 
