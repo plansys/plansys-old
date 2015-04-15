@@ -1,42 +1,48 @@
 <?php
+
 class Report extends CComponent {
-    public function getReportFile($reportFile){
-        $ds = DIRECTORY_SEPARATOR;
-        
-        if($this->getModule()!== null){
-            $controller = Yii::app()->controller->id;
-            $basePath = Yii::app()->controller->module->basePath;
-            $filePath = $basePath.$ds."reports".$ds.$controller.$ds.$reportFile.".php";
-            
-            if(is_file($filePath)){
-                return $filePath;
-            }else{
-                return false;
-            }
-        }else{
-            return false;
-        }
-        
+
+    public $filePath;
+
+    public function getModule() {
+        return Yii::app()->controller->module;
     }
-    
-    public function getModule(){
-	return Yii::app()->controller->module;
-    }
-    
-    public function load($file,$_data = null){
-        if(is_array($_data))
-            extract($_data,EXTR_PREFIX_SAME,'data');
+
+    public function load($file, $_data = null) {
+        $this->filePath = $file;
+        if (is_array($_data))
+            extract($_data, EXTR_PREFIX_SAME, 'data');
         else
-            $data=$_data;
-        $reportFile = $this->getReportFile($file);
-        if($reportFile){
-            ob_start();
-            ob_implicit_flush(false);
-            require($reportFile);
-            return ob_get_clean();            
-        }else{
-            throw new CException(Yii::t('yii','{controller} cannot find the requested report "{view}".',
-				array('{controller}'=>get_class(Yii::app()->controller), '{view}'=>$file)));
+            $data           = $_data;
+
+        ob_start();
+        ob_implicit_flush(false);
+        require($file);
+        return ob_get_clean();
+    }
+
+    public function getLocation($alias) {
+        return Helper::explodeFirst('.', $alias);
+    }
+
+    public static function createPdf($html) {
+        $html2pdf = Yii::app()->ePdf->HTML2PDF();
+        $html2pdf->WriteHTML($html);
+        $html2pdf->Output();
+    }
+
+    public function staticUrl($path = '') {
+        $plansysPath = Yii::getPathOfAlias('application');
+        $appPath     = Yii::getPathOfAlias('app');
+        $baseUrl     = Yii::app()->baseUrl;
+
+        if (strpos($this->filePath, $appPath) === 0) {
+            return Yii::app()->request->hostInfo . $baseUrl . '/app/static' . $path;
+        } else if (strpos($this->filePath, $plansysPath) === 0) {
+            return Yii::app()->request->hostInfo . $baseUrl . '/plansys/static' . $path;
+        } else {
+            return "";
         }
     }
+
 }

@@ -1,8 +1,9 @@
 <?php
 
 class TesReportController extends Controller {
-    public function actionIndex(){
+
+    public function actionIndex() {
         $model = User::model()->findByPk(1);
-        $this->renderReport('DevTesReport',array('model'=>$model));
+        $this->renderReport('tesReport/DevTesReport', array('model' => $model));
     }
 }
