@@ -175,7 +175,7 @@ class DevUserIndex extends User {
                     'paging' => '{[paging]}',
                     'group' => '',
                     'having' => '',
-                    'join' => 'left outer join 
+                    'join' => 'inner join 
    p_user_role p on u.id = p.user_id 
    and p.is_default_role = \'Yes\' 
  left outer join 
@@ -210,7 +210,7 @@ class DevUserIndex extends User {
                         'label' => 'fullname',
                         'options' => array (),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                         'inputMask' => '',
                         'stringAlias' => array (),
                     ),
@@ -219,7 +219,7 @@ class DevUserIndex extends User {
                         'label' => 'email',
                         'options' => array (),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                         'inputMask' => '',
                         'stringAlias' => array (),
                     ),
