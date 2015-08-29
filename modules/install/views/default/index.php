@@ -4,7 +4,7 @@
     </div>
     
     <?php if (!isset($msg)): ?>
-        <table class="table table-bordered table-condensed install-check <?= empty(Installer::getError()) ? '' : 'error' ?>">
+        <table class="table table-bordered table-condensed install-check <?= !(Installer::getError()) ? '' : 'error' ?>">
             <?php foreach (Installer::getCheckList() as $group => $item): ?>
                 <tr class="<?= Installer::getError($group) ? 'danger' : 'success'; ?>">
                     <td>
@@ -38,7 +38,7 @@
             <?php endforeach; ?>
         </table>
 
-        <?php if (empty(Installer::getError())): ?>
+        <?php if (!(Installer::getError())): ?>
             <div class="install-passed"><?= Setting::t("All Requirement Passed"); ?></div>
 
             <a href="<?= Yii::app()->controller->createUrl('/install/default/db'); ?>" class="btn btn-success">

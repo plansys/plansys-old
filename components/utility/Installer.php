@@ -280,9 +280,9 @@ class Installer {
         Installer::checkInstall();
 
         if (Setting::$mode == "init") {
-            $url = explode("/plansys", Setting::fullPath());
+            $url = preg_replace('/\/?plansys\/?$/', '', Setting::fullPath());
             if (is_file(Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php")) {
-                header("Location: " . $url[0] . "/index.php");
+                header("Location: " . $url . "/index.php");
                 die();
             }
 
@@ -292,7 +292,7 @@ class Installer {
                 ]);
                 return $config;
             } else {
-                header("Location: " . $url[0] . "/index.php?r=install/default/index");
+                header("Location: " . $url . "/index.php?r=install/default/index");
                 die();
             }
         }
