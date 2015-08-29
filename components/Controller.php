@@ -23,7 +23,9 @@ class Controller extends CController {
             $dir    = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
             $static = "/" . array_pop($dir) . "/static";
         }
-
+        if( Setting::$mode == "install") {
+            $static = '/plansys' . $static;
+        }
         return $this->url($static . $path);
     }
 
