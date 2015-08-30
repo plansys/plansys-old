@@ -19,11 +19,10 @@ class Controller extends CController {
 
     public function staticUrl($path = '') {
         $static = "/static";
-        if (substr(Yii::app()->baseUrl, -7) != "plansys") {
-            $dir    = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
-            $static = "/" . array_pop($dir) . "/static";
-        }
-
+         
+        $dir    = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
+        $static = "/" . array_pop($dir) . "/static";
+        
         return $this->url($static . $path);
     }
 
