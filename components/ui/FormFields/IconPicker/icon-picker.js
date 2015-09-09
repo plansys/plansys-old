@@ -38,7 +38,7 @@ app.directive('iconPicker', function($timeout) {
                     $scope.value = value;
                     $scope.is_open = false;
 
-                    if (typeof ctrl != 'undefined') {
+                    if (!!ctrl) {
                         $timeout(function() {
                             ctrl.$setViewValue($scope.value);
                         }, 0);
@@ -46,7 +46,7 @@ app.directive('iconPicker', function($timeout) {
                 }
 
                 // when ng-model is changed from outside directive
-                if (typeof ctrl != 'undefined') {
+                if (!!ctrl) {
                     if (!$scope.inEditor) {
                         //watch ng-model for change
                         $scope.$watch(attrs.ngModel, function() {

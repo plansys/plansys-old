@@ -25,15 +25,25 @@ class ListView extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'Field Template',
+                'label' => 'Label',
+                'name' => 'label',
+                'options' => array (
+                    'ng-model' => 'active.label',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                ),
+                'type' => 'TextField',
+            ),
+            array (
+                'label' => 'List Type',
                 'name' => 'fieldTemplate',
                 'options' => array (
                     'ng-model' => 'active.fieldTemplate',
                     'ng-change' => 'save();',
                 ),
                 'list' => array (
-                    'default' => 'Default',
-                    'form' => 'Form',
+                    'default' => 'FormField',
+                    'form' => 'SubForm',
                 ),
                 'otherLabel' => 'Other...',
                 'type' => 'DropDownList',
@@ -52,6 +62,87 @@ class ListView extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
+                'type' => 'Text',
+                'value' => '<div ng-show=\\"active.fieldTemplate == \\\'default\\\'\\">',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<div style=\\\'margin:10px 0px 10px 10px;border:1px solid #ccc;padding:5px 5px 0px 5px;border-radius:4px;\\\'>',
+            ),
+            array (
+                'label' => 'Field Type',
+                'name' => 'singleView',
+                'options' => array (
+                    'ng-change' => 'activeEditor.fieldTypeChange(active)',
+                    'ng-model' => 'active.singleView',
+                ),
+                'listExpr' => '[\\\'TextField\\\',\\\'DropDownList\\\']',
+                'fieldWidth' => '5',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Edit',
+                'icon' => 'pencil',
+                'buttonSize' => 'btn-xs',
+                'options' => array (
+                    'style' => 'float:right;margin-top:-32px;',
+                    'ng-click' => 'activeEditor.toggleEdit(active)',
+                ),
+                'type' => 'LinkButton',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '    <div 
+    ng-if=\'active.edited\' 
+    class=\'list-view-single-edit\'
+    style=\'border-top:1px solid #ccc;margin:0px -5px;padding:5px 5px 0px 5px;\'>',
+            ),
+            array (
+                'name' => 'singleViewOption',
+                'mode' => 'single',
+                'subForm' => 'application.components.ui.FormFields.TextField',
+                'options' => array (
+                    'ng-if' => 'active.singleView == \\\'TextField\\\'',
+                    'ng-model' => 'active.singleViewOption',
+                ),
+                'type' => 'SubForm',
+            ),
+            array (
+                'name' => 'singleViewOption',
+                'mode' => 'single',
+                'subForm' => 'application.components.ui.FormFields.DropDownList',
+                'options' => array (
+                    'ng-if' => 'active.singleView == \\\'DropDownList\\\'',
+                    'ng-model' => 'active.singleViewOption',
+                ),
+                'type' => 'SubForm',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '    </div>
+</div>',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '</div><div ng-show=\\"active.fieldTemplate == \\\'form\\\' && active.templateForm != \\\'\\\'\\">',
+            ),
+            array (
+                'label' => 'Edit Subform',
+                'icon' => 'sign-in',
+                'buttonSize' => 'btn-xs',
+                'options' => array (
+                    'style' => 'float:right;margin:0px 0px 5px 0px;',
+                    'href' => 'url:/dev/forms/update?class={active.templateForm}',
+                    'target' => '_blank',
+                ),
+                'type' => 'LinkButton',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<div class=\"clearfix\"></div>
+<hr/></div>',
+            ),
+            array (
                 'label' => 'Inline JS',
                 'name' => 'inlineJS',
                 'options' => array (
@@ -62,22 +153,18 @@ class ListView extends FormField {
                 'type' => 'TextField',
             ),
             array (
-                'value' => '<div ng-show=\"active.fieldTemplate == \'form\'\" class=\"well well-sm\">
-Use this code to access current item: <br/> 
-<code>ng-model = value[$index]</code><br/>
-    <code> ng-change = updateListView() </code> 
-</div>',
-                'type' => 'Text',
-            ),
-            array (
-                'label' => 'Label',
-                'name' => 'label',
+                'label' => 'Sortable',
+                'name' => 'sortable',
                 'options' => array (
-                    'ng-model' => 'active.label',
-                    'ng-change' => 'save()',
-                    'ng-delay' => '500',
+                    'ng-model' => 'active.sortable',
+                    'ng-change' => 'save();',
                 ),
-                'type' => 'TextField',
+                'list' => array (
+                    'yes' => 'Yes',
+                    'No' => 'No',
+                ),
+                'fieldWidth' => '5',
+                'type' => 'DropDownList',
             ),
             array (
                 'label' => 'Layout',
@@ -102,13 +189,12 @@ Use this code to access current item: <br/>
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                            'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
                         ),
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column2' => array (
@@ -126,27 +212,29 @@ Use this code to access current item: <br/>
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column3' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column4' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
-                'value' => '<hr/>',
                 'type' => 'Text',
+                'value' => '<hr/>',
             ),
             array (
                 'label' => 'Options',
@@ -189,7 +277,6 @@ Use this code to access current item: <br/>
 
     /** @var integer $labelWidth */
     public $labelWidth = 4;
-    
     public $inlineJS = '';
 
     /** @var integer $fieldWidth */
@@ -212,6 +299,9 @@ Use this code to access current item: <br/>
 
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "glyphicon glyphicon-align-justify";
+    public $sortable = 'yes';
+    public $singleView = 'TextField';
+    public $singleViewOption = null;
 
     /**
      * @return array me-return array javascript yang di-include
@@ -265,52 +355,68 @@ Use this code to access current item: <br/>
     protected $renderTemplateForm;
     protected $templateAttributes = [];
 
+    public function includeEditorJS() {
+        return ['list-view-editor.js'];
+    }
+
     /**
      * render
      * Fungsi ini untuk me-render field dan atributnya
      * @return mixed me-return sebuah field dan atribut checkboxlist dari hasil render
      */
     public function render() {
-        $this->addClass('form-group form-group-sm', 'options');
+        $this->addClass('form-group form-group-sm flat', 'options');
         $this->addClass($this->layoutClass, 'options');
         $this->addClass($this->errorClass, 'options');
 
-        $this->fieldOptions['id'] = $this->name;
-        $this->fieldOptions['name'] = $this->name;
-        $this->addClass('form-control', 'fieldOptions');
-
+        $this->fieldOptions['ui-tree-node'] = '';
+        $this->fieldOptions['ng-repeat'] = 'item in value';
+        $this->fieldOptions['ng-init'] = 'model = value[$index];';
+        $this->addClass('list-view-item', 'fieldOptions');
+        
         Yii::import(FormBuilder::classPath($this->templateForm));
         $class = Helper::explodeLast(".", $this->templateForm);
 
-
-        if ($this->fieldTemplate == "form" && class_exists($class)) {
+        if ($this->fieldTemplate == 'form' && class_exists($class)) {
             $fb = FormBuilder::load($class);
             $model = new $class;
-            
+            $model->parent = $this->model;
+
             if ($this->value == "") {
                 $this->value = [];
             }
-            
+
             $this->templateAttributes = $model->attributes;
-            $this->renderTemplateForm = $fb->render($this->templateAttributes, ['wrapForm' => false]);
+            $fb->model = $model;
+            $this->renderTemplateForm = $fb->render($model, ['wrapForm' => false]);
+            
+        } else if ($this->fieldTemplate == 'default') {
+            $field = new $this->singleView;
+            $field->attributes = $this->singleViewOption;
+            $field->renderID = $this->name . rand(0, 10000);
+            $field->builder = $this->builder;
+            $field->formProperties = $this->formProperties;
+
+            $this->templateAttributes = ['val' => ''];
+            $this->renderTemplateForm = $field->render();
         }
-        
+
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
-        
+
         $jspath = explode(".", FormBuilder::classPath($this->templateForm));
         array_pop($jspath);
         $jspath = implode(".", $jspath);
-        
+
         $inlineJS = str_replace("/", DIRECTORY_SEPARATOR, trim($this->inlineJS, "/"));
         $inlineJS = Yii::getPathOfAlias($jspath) . DIRECTORY_SEPARATOR . $inlineJS;
-        
+
         if (is_file($inlineJS)) {
             $inlineJS = file_get_contents($inlineJS);
         } else {
             $inlineJS = '';
         }
-        
-        return $this->renderInternal('template_render.php', ['inlineJS'=>$inlineJS]);
+
+        return $this->renderInternal('template_render.php', ['inlineJS' => $inlineJS]);
     }
 
 }

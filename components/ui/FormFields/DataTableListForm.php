@@ -43,7 +43,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'Name',
+                'label' => 'Col. Name',
                 'name' => 'name',
                 'labelWidth' => '3',
                 'fieldWidth' => '9',

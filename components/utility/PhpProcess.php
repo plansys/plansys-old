@@ -28,8 +28,8 @@ class PhpProcess extends CComponent {
         return implode("\n", $output);
     }
 
-    public static function start($jsfile, $params = "") {
-        $cmd = realpath(Yii::getPathOfAlias('webroot') . '/' . trim($jsfile, '/'));
+    public static function start($file, $params = "") {
+        $cmd = realpath(Yii::getPathOfAlias('webroot') . '/' . trim($file, '/'));
 
         if (is_file($cmd)) {
             PhpProcess::checkPhp();

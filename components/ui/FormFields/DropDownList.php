@@ -163,15 +163,6 @@ class DropDownList extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'Default Value Expression',
-                'fieldname' => 'defaultValue',
-                'language' => 'js',
-                'options' => array (
-                    'ng-if' => 'false',
-                ),
-                'type' => 'ExpressionField',
-            ),
-            array (
                 'value' => '<hr/>',
                 'type' => 'Text',
             ),
@@ -180,7 +171,7 @@ class DropDownList extends FormField {
                 'name' => 'list',
                 'show' => 'Show',
                 'options' => array (
-                    'ng-hide' => 'active.listExpr != \\\'\\\' || active.options[\\\'ps-list\\\'] != null',
+                    'ng-hide' => '(typeof(active.listExpr) != \\\'undefined\\\' && active.listExpr != \\\'\\\') || active.options[\\\'ps-list\\\'] != null',
                 ),
                 'allowEmptyKey' => 'Yes',
                 'allowSpaceOnKey' => 'Yes',
@@ -225,12 +216,9 @@ class DropDownList extends FormField {
 
     /** @var array $options */
     public $options = [];
-    
     public $menuPos = '';
-    
-    public $defaultType = '';
+    public $defaultType  = '';
     public $defaultValue = '';
-    
 
     /** @var array $fieldOptions */
     public $fieldOptions = [];
@@ -282,13 +270,13 @@ class DropDownList extends FormField {
      * @return array me-return array hasil proses expression.
      */
     public function processExpr() {
-
+        
         if ($this->listExpr != "") {
             if (FormField::$inEditor) {
                 $this->list = '';
                 return ['list' => ''];
             }
-
+        
             ## evaluate expression
             $this->list = $this->evaluate($this->listExpr, true);
 

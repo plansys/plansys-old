@@ -75,11 +75,11 @@
         <!-- /field -->
 
         <!-- error -->
-        <?php if (count(@$errors) > 0): ?>
-            <div class="alert error alert-danger" style="border-top:0px;border-radius:4px;margin-top:1px;">
-                <?= $errors[0] ?>
-            </div>
-        <?php endif ?>
+        <div ng-if="errors[name]"
+             style="border-top:0px;border-radius:4px;margin-top:1px;"
+             class="alert error alert-danger">
+            {{ errors[name][0] }}
+        </div>
         <!-- /error -->
         <div class="clearfix"></div>
     </div>

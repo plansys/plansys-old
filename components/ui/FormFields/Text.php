@@ -13,63 +13,58 @@ class Text extends FormField {
         return array(
             array(
                 'value' => '<div style=\\"width:70px;\\" class=\\"pull-right\\">',
-                'type' => 'Text',
+                'type'  => 'Text',
             ),
             array(
-                'name' => 'display',
-                'options' => array(
-                    'ng-model' => 'active.display',
+                'name'       => 'display',
+                'options'    => array(
+                    'ng-model'  => 'active.display',
                     'ng-change' => 'save()',
                 ),
-                'menuPos' => 'pull-right',
-                'listExpr' => '[\\\'block\\\',\\\'inline\\\']',
+                'menuPos'    => 'pull-right',
+                'listExpr'   => '[\\\'block\\\',\\\'inline\\\']',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
-                'type' => 'DropDownList',
+                'type'       => 'DropDownList',
             ),
             array(
                 'value' => '</div>',
-                'type' => 'Text',
+                'type'  => 'Text',
             ),
             array(
-                'label' => 'Render In Editor',
-                'name' => 'renderInEditor',
-                'options' => array(
-                    'ng-model' => 'active.renderInEditor',
+                'label'        => 'Render In Editor',
+                'name'         => 'renderInEditor',
+                'options'      => array(
+                    'ng-model'  => 'active.renderInEditor',
                     'ng-change' => 'save()',
                 ),
                 'labelOptions' => array(
                     'style' => 'text-align:left;',
                 ),
-                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
-                'fieldWidth' => '3',
-                'type' => 'DropDownList',
+                'listExpr'     => 'array(\\\'Yes\\\',\\\'No\\\')',
+                'fieldWidth'   => '3',
+                'labelWidth'   => '5',
+                'type'         => 'DropDownList',
             ),
             array(
                 'value' => '<div class=\"text-editor-builder\">
-  <div class=\"text-editor\" ui-ace=\"{
-  useWrapMode : true,
-  showGutter: true,
-  theme: \'monokai\',
+  <div class=\"text-editor\" ui-ace=\"aceConfig({
   mode: \'html\',
-  onLoad: aceLoaded,
-  require: [\'ace/ext/emmet\'],
-  advanced: {
-      enableEmmet: true,
-  }
-}\" 
+  onLoad: aceLoaded
+})\" 
 ng-change=\"save()\" ng-delay=\"500\"
-style=\"width:100%;height:300px;margin-bottom:-250px;font-size:13px;position: relative !important;\" ng-model=\"active.value\">
+style=\"width:100%;height:300px;margin-bottom:-250px;position: relative !important;\" ng-model=\"active.value\">
     </div>
 </div>
 ',
-                'type' => 'Text',
+                'type'  => 'Text',
             ),
         );
     }
 
     public $renderInEditor = 'No';
     public $display = 'block';
+    public $type = 'Text';
 
     /** @var string $value */
     public $value;
@@ -83,8 +78,8 @@ style=\"width:100%;height:300px;margin-bottom:-250px;font-size:13px;position: re
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-font";
 
-    public function includeJS() {
-        return ['js'];
+    public function includeEditorJS() {
+        return ['application.static.js.lib.ace'];
     }
 
     /**
@@ -93,11 +88,17 @@ style=\"width:100%;height:300px;margin-bottom:-250px;font-size:13px;position: re
     public function render() {
         $attributes = [
             'field' => $this->attributes,
-            'form' => $this->formProperties,
+            'form'  => $this->formProperties,
         ];
 
         ob_start();
         if (strpos($this->value, "<?") !== false) {
+            $model = $this->model;
+            $controller = Yii::app()->controller;
+
+            $attrs = $this->renderParams;
+            extract($attrs);
+
             eval('?>' . $this->value);
         } else {
             echo $this->value;

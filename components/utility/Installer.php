@@ -57,6 +57,11 @@ class Installer {
             return Setting::t('Unable to determine URL path info. Please make sure $_SERVER["PATH_INFO"] (or $_SERVER["PHP_SELF"] and $_SERVER["SCRIPT_NAME"]) contains proper value.');
         }
 
+        if (version_compare(PHP_VERSION, '5.6.6') >= 0 && ini_get("always_populate_raw_post_data") != -1) {
+          ## see http://stackoverflow.com/questions/26261001/warning-about-http-raw-post-data-being-deprecated
+          return Setting::t("Please set 'always_populate_raw_post_data' to '-1' in php.ini and restart your server.");
+        }
+
         return true;
     }
 
@@ -85,6 +90,12 @@ class Installer {
                     "title" => 'Checking runtime directory permissions',
                     "check" => function() {
                         return Setting::checkPath(Setting::getRuntimePath(), true);
+                    }
+                ],
+                [
+                    "title" => 'Checking config directory permissions',
+                    "check" => function() {
+                        return Setting::checkPath(Setting::getConfigPath(), true);
                     }
                 ],
                 [
@@ -166,6 +177,14 @@ class Installer {
                     }
                 ],
                 [
+                    'title' => 'CURL extension',
+                    'check' => function() {
+                        $result = extension_loaded("curl");
+                        $msg = "Extension \"curl\" is not loaded";
+                        return $result !== true ? $msg : true;
+                    }
+                ],
+                [
                     'title' => 'GD extension with FreeType support<br />or ImageMagick extension with <br/> PNG support',
                     'check' => function() {
                         if (extension_loaded('imagick')) {
@@ -236,6 +255,8 @@ class Installer {
                 ], '$mode = "' . $mode . '"', $file);
 
 
+        Setting::$mode = $mode;
+
         if (!is_file($path)) {
             return @file_put_contents(Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php", $file);
         } else {
@@ -259,9 +280,9 @@ class Installer {
         Installer::checkInstall();
 
         if (Setting::$mode == "init") {
-            $url = explode("/plansys", Setting::fullPath());
+            $url = preg_replace('/\/?plansys\/?$/', '', Setting::fullPath());
             if (is_file(Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php")) {
-                header("Location: " . $url[0] . "/index.php");
+                header("Location: " . $url . "/index.php");
                 die();
             }
 
@@ -271,7 +292,7 @@ class Installer {
                 ]);
                 return $config;
             } else {
-                header("Location: " . $url[0] . "/index.php?r=install/default/index");
+                header("Location: " . $url . "/index.php?r=install/default/index");
                 die();
             }
         }
@@ -282,7 +303,6 @@ class Installer {
 
     public static function resetDB() {
         $sql = <<<EOF
-                
 SET NAMES utf8;
 SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
@@ -292,15 +312,15 @@ DROP TABLE IF EXISTS `p_audit_trail`;
 CREATE TABLE `p_audit_trail` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `url` text COLLATE utf8_unicode_ci NOT NULL,
-  `description` text COLLATE utf8_unicode_ci NOT NULL,
-  `pathinfo` text COLLATE utf8_unicode_ci NOT NULL,
-  `module` text COLLATE utf8_unicode_ci NOT NULL,
-  `ctrl` text COLLATE utf8_unicode_ci NOT NULL,
-  `action` text COLLATE utf8_unicode_ci NOT NULL,
-  `params` text COLLATE utf8_unicode_ci NOT NULL,
-  `data` text COLLATE utf8_unicode_ci NOT NULL,
-  `stamp` datetime NOT NULL,
+  `url` text COLLATE utf8_unicode_ci,
+  `description` text COLLATE utf8_unicode_ci,
+  `pathinfo` text COLLATE utf8_unicode_ci,
+  `module` text COLLATE utf8_unicode_ci,
+  `ctrl` text COLLATE utf8_unicode_ci,
+  `action` text COLLATE utf8_unicode_ci,
+  `params` text COLLATE utf8_unicode_ci,
+  `data` text COLLATE utf8_unicode_ci,
+  `stamp` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
   `user_id` int(11) DEFAULT NULL,
   `key` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `form_class` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -312,6 +332,21 @@ CREATE TABLE `p_audit_trail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
+DROP TABLE IF EXISTS `p_email_queue`;
+CREATE TABLE `p_email_queue` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `subject` varchar(255) DEFAULT NULL,
+  `content` text,
+  `body` text,
+  `template` varchar(255) DEFAULT NULL,
+  `status` int(1) DEFAULT '0' COMMENT '1,0',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `p_email_queue_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `p_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;                
+                
 DROP TABLE IF EXISTS `p_nfy_messages`;
 CREATE TABLE `p_nfy_messages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -369,14 +404,15 @@ CREATE TABLE `p_nfy_subscription_categories` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
+
 DROP TABLE IF EXISTS `p_role`;
 CREATE TABLE `p_role` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `role_name` varchar(255) NOT NULL,
   `role_description` varchar(255) NOT NULL,
-  `menu_path` varchar(255) NOT NULL,
-  `home_url` varchar(255) NOT NULL,
-  `repo_path` varchar(255) NOT NULL,
+  `menu_path` varchar(255) DEFAULT NULL,
+  `home_url` varchar(255) DEFAULT NULL,
+  `repo_path` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -404,7 +440,7 @@ CREATE TABLE `p_user` (
   `phone` varchar(255) DEFAULT NULL COMMENT 'Phone',
   `username` varchar(255) NOT NULL COMMENT 'Username',
   `password` varchar(255) NOT NULL COMMENT 'Password',
-  `last_login` datetime NOT NULL,
+  `last_login` datetime DEFAULT NULL,
   `is_deleted` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -206,7 +206,6 @@
     text-transform: uppercase;
     color: #6F6F6F;
     font-size: 11px;
-    line-height: 20px;
     font-weight: bold;
     cursor:pointer !important;
 
@@ -233,7 +232,7 @@
     border-right: 1px solid #ddd !important;
 }
 
-.handsontable td.group-text {
+.handsontable td.single-line {
     white-space: pre;
 }
 
@@ -324,13 +323,16 @@
     border: 0px;
 }
 
-.handsontable.listbox {
-    border: 1px solid #999;
-}
 
 .handsontable .autocompleteEditor.handsontable {
-    background: #fafafa;
-    min-height: 55px;
+    background: #ddd;
+    padding-right: 0px !important;
+    border: 1px solid #ddd;
+    overflow: hidden !important;
+}
+.handsontable .autocompleteEditor.handsontable:hover {
+    padding-right: 17px !important;
+    overflow: auto !important;
 }
 
 .listbox.current {
@@ -371,4 +373,9 @@
 .cbCell.groups.cbGroupOnly input {
     display: block;
     opacity: 1;
+}
+
+.full-width.dataTable,
+.full-width .ht_master {
+    width:100% !important;
 }

@@ -11,20 +11,22 @@
             <div class='field-select btn btn-default btn-sm'>
                 <span ng-switch on="field.type">
                     <i ng-switch-when="ColumnField" class="fa fa-columns"></i>
+                    <span ng-switch-when="LinkButton"></span> 
                     <i ng-switch-default class="fa fa-hand-o-up"></i>
                 </span>
                 <span class="field-info-text" ng-switch on="field.type">
                     <span ng-switch-when="ColumnField"> 
                         Select Columns
                     </span>
+                    <span ng-switch-when="LinkButton"><b>Select</b></span> 
                     <span ng-switch-default>
                         {{field.type}}
                     </span>
                 </span>
             </div>
             <div ui-tree-handle class='field-move btn btn-default btn-sm'>
-                <i class='fa fa-arrows'></i>
-                <span class="field-info-text">Move</span> 
+                <i class='fa fa-arrows' style="margin:0px;"></i>
+                <span class="field-info-text" style="display:none;"></span> 
             </div>
             <div ng-click="moveToPrev(this)"  class='field-move-left btn btn-default btn-sm'>
                 <i class='fa fa-chevron-left'></i>
@@ -47,7 +49,7 @@
     </div>
     <div class="form-field-content"
          ng-include="Yii.app.createUrl('dev/forms/renderTemplate', {class: field.type})"
-         onload="relayout(field.type)"></div>
+         onload="relayout(field)"></div>
 
     <div class="clearfix"></div>
 </div>

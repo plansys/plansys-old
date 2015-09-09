@@ -13,7 +13,6 @@
     </div>
     <div ng-class="{invisible: !loaded}"   
          class=" data-table-container">
-
         <div ng-if="loaded">
             <div ng-if="data.length != 0" class="data-grid-paging-shadow"
                  style="height:50px;display:none;"></div>
@@ -127,7 +126,7 @@
         </div>
 
         <div ng-class="{invisible: data.length == 0 || loading}" style="margin-bottom:40px;">
-            <div id="<?= $this->renderID ?>" class="dataTable" 
+            <div id="<?= $this->renderID ?>" class="dataTable <?= @$this->gridOptions['fullWidth'] == 'true' ? 'full-width' : '' ?>" 
                  style="overflow:auto;"></div>
 
 

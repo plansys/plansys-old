@@ -4,20 +4,22 @@ class ControllerGenerator extends CodeGenerator {
 
     //Helper UI
     public static function listAllFile() {
-        $dir= Yii::getPathOfAlias('application.modules');
+        $dir = Yii::getPathOfAlias('application.modules');
         $appDir = Yii::getPathofAlias('app.modules');
         $modules = glob($dir . DIRECTORY_SEPARATOR . "*");
         $appModules = glob($appDir . DIRECTORY_SEPARATOR . "*");
-        
+
         $files = [];
-        foreach ($modules as $m) {
-            $module = ucfirst(str_replace($dir . DIRECTORY_SEPARATOR, '', $m));
-            $items = ControllerGenerator::listFile($module, 'dev');
-            $files[] = [
-                'module' => $module,
-                'items' => $items,
-                'type' => 'dev'
-            ];
+        if (Setting::get('app.mode') == "plansys") {
+            foreach ($modules as $m) {
+                $module = ucfirst(str_replace($dir . DIRECTORY_SEPARATOR, '', $m));
+                $items = ControllerGenerator::listFile($module, 'dev');
+                $files[] = [
+                    'module' => $module,
+                    'items' => $items,
+                    'type' => 'dev'
+                ];
+            }
         }
         foreach ($appModules as $m) {
             $module = ucfirst(str_replace($appDir . DIRECTORY_SEPARATOR, '', $m));
@@ -30,18 +32,18 @@ class ControllerGenerator extends CodeGenerator {
         }
         return $files;
     }
-    
-    public static function listFile($module, $type) {     
-        if($type == 'dev'){
+
+    public static function listFile($module, $type) {
+        if ($type == 'dev') {
             Yii::import('application.modules.' . lcfirst($module) . '.controllers.*');
             $dir = Yii::getPathOfAlias("application.modules.{$module}.controllers");
             $path = 'application.modules.';
-        }else{
+        } else {
             Yii::import('app.modules.' . lcfirst($module) . '.controllers.*');
             $dir = Yii::getPathOfAlias("app.modules.{$module}.controllers");
             $path = 'app.modules.';
         }
-        
+
         $items = glob($dir . DIRECTORY_SEPARATOR . "*");
 
         foreach ($items as $k => $m) {
@@ -51,11 +53,11 @@ class ControllerGenerator extends CodeGenerator {
             if (!class_exists($m)) {
                 $exist = 'no';
             }
-            
+
             $items[$k] = [
                 'name' => $m,
                 'module' => $module,
-                'class' =>  $path. lcfirst($module) . '.controllers.' . $m,
+                'class' => $path . lcfirst($module) . '.controllers.' . $m,
                 'class_path' => $path . lcfirst($module) . '.controllers.',
                 'exist' => $exist,
             ];
@@ -125,10 +127,12 @@ class ControllerGenerator extends CodeGenerator {
 
     public static function controllerPath($class, $type) {
         $classPath = Yii::getPathOfAlias($class);
-        if($type == 'dev') $basePath = Yii::getPathOfAlias('application');
-        else $basePath = Yii::getPathOfAlias('app');
-        $classPath = str_replace($basePath, '' , $classPath);
-        $classPath = $classPath .'.php';
+        if ($type == 'dev')
+            $basePath = Yii::getPathOfAlias('application');
+        else
+            $basePath = Yii::getPathOfAlias('app');
+        $classPath = str_replace($basePath, '', $classPath);
+        $classPath = $classPath . '.php';
         return $classPath;
     }
 
@@ -158,7 +162,7 @@ class ControllerGenerator extends CodeGenerator {
         $this->renderForm("' . $modelClass . '");';
         $this->updateFunction($actionName, $body, ['params' => $params]);
     }
-    
+
     public function addActionIndexWithPost($actionName, $modelClass = null, $params) {
         $body = '
         $model = new ' . $modelClass . ';
@@ -172,7 +176,6 @@ class ControllerGenerator extends CodeGenerator {
         $this->renderForm("' . $modelClass . '",$model);';
         $this->updateFunction($actionName, $body, ['params' => $params]);
     }
-
 
     public function addActionCreate($actionName, $modelClass = null, $params) {
         $body = '
@@ -221,8 +224,8 @@ class ControllerGenerator extends CodeGenerator {
     }
 
     public function __construct($module, $class, $type = null) {
-        if($type != 'dev'){
-            $this->basePath = "app.modules.{module}.Controllers"; 
+        if ($type != 'dev') {
+            $this->basePath = "app.modules.{module}.Controllers";
         }
         $this->basePath = str_replace('{module}', $module, $this->basePath);
         $this->load($class);

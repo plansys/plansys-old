@@ -63,18 +63,78 @@
     Handsontable.editors.registerEditor('dtDropdown', DropdownEditor);
     
 
+    /*************** DROPDOWN TYPE *******************/
+    function dropdownRenderer(instance, td, row, col, prop, value, cellProperties) {
+        var $scope = cellProperties.$scope;
+        var cp = $scope.columns[col];
+
+        if (!!cp.defaultValue) {
+            if (!value) {
+                value = cp.defaultValue;
+                $scope.updateDSCell(row, prop, value);
+            }
+        }
+
+        if (typeof value == 'string') {
+            value = value.trim();
+        }
+
+        var idx = cp.sourceValues.indexOf(value);
+        if (idx < 0) {
+            idx = cp.source.indexOf(value);
+            if (idx >= 0) {
+                value = cp.sourceValues[idx];
+                $scope.updateDSCell(row, prop, value);
+            }
+        }
+        value = cp.source[idx];
+
+        Handsontable.AutocompleteCell.renderer.apply(this, arguments);
+        return td;
+    }
+    Handsontable.renderers.registerRenderer('dtDropdown', dropdownRenderer);
+
+
+    var DropdownEditor = Handsontable.editors.AutocompleteEditor.prototype.extend();
+    DropdownEditor.prototype.prepare = function () {
+        Handsontable.editors.AutocompleteEditor.prototype.prepare.apply(this, arguments);
+        this.cellProperties.filter = false;
+        this.cellProperties.strict = true;
+    };
+    DropdownEditor.prototype.open = function () {
+        var $scope = this.cellProperties.$scope;
+        var cp = $scope.columns[this.col];
+        var value = $scope.data[this.row][this.prop];
+        var idx = cp.sourceValues.indexOf(value);
+        if (idx < 0) {
+            idx = cp.source.indexOf(value);
+            if (idx >= 0) {
+                value = cp.sourceValues[idx];
+                $scope.updateDSCell(this.row, this.prop, value);
+            }
+        }
+        value = cp.source[idx];
+        this.TEXTAREA.value = (!!value) ? value : '';
+        this.cellProperties.opened = true;
+        Handsontable.editors.AutocompleteEditor.prototype.open.apply(this, arguments);
+    };
+    DropdownEditor.prototype.close = function () {
+        this.cellProperties.opened = false;
+        Handsontable.editors.AutocompleteEditor.prototype.close.apply(this, arguments);
+    };
+    Handsontable.editors.dtDropdownEditor = DropdownEditor;
+    Handsontable.editors.registerEditor('dtDropdown', DropdownEditor);
     /*************** RELATION TYPE *******************/
     function relationRenderer(instance, td, row, col, prop, value, cellProperties) {
         Handsontable.AutocompleteCell.renderer.apply(this, arguments);
-        console.log(td, prop, value, cellProperties.$scope.data[row])
         return td;
     }
-
     Handsontable.renderers.registerRenderer('relation', relationRenderer);
 
     var RelationEditor = Handsontable.editors.AutocompleteEditor.prototype.extend();
     RelationEditor.prototype.open = function () {
         this.cellProperties.opened = true;
+        this.TEXTAREA.value = '';
         Handsontable.editors.AutocompleteEditor.prototype.open.apply(this, arguments);
     };
     RelationEditor.prototype.close = function () {
@@ -509,11 +569,11 @@
         this.TEXTAREA_PARENT.appendChild(this.TEXTAREA);
 
         $(this.TEXTAREA)
-            .bind('focus', function () {
-                var val = $(this).val();
-                $(this).val(formatDate(val, options.inputMask, options.filter));
-                $(this).mask(options.inputMask);
-            })
+                .bind('focus', function () {
+                    var val = $(this).val();
+                    $(this).val(formatDate(val, options.inputMask, options.filter));
+                    $(this).mask(options.inputMask);
+                })
 
     };
 
@@ -594,4 +654,4 @@
     Handsontable.renderers.registerRenderer('groups', groupsRenderer);
 
 })
-(Handsontable);
+        (Handsontable);

@@ -10,26 +10,19 @@ class DevFormLayoutProperties extends Form {
     public function getFields() {
         return array (
             array (
+                'label' => 'Layout Type',
                 'name' => 'layoutType',
-                'list' => array (
-                    'mainform' => 'Main Form',
-                    'menu' => 'Menu Tree',
-                    'form' => 'Sub Form',
-                    '' => 'None',
-                ),
-                'layout' => 'Vertical',
-                'itemLayout' => 'ButtonGroup',
-                'labelWidth' => '3',
                 'options' => array (
                     'ng-model' => 'layout.type',
                     'ng-change' => 'changeLayoutSectionType()',
-                    'style' => 'text-align:center;margin-top:-6px;',
                 ),
-                'type' => 'RadioButtonList',
-            ),
-            array (
-                'value' => '<hr/>',
-                'type' => 'Text',
+                'list' => array (
+                    'mainform' => 'Main Form',
+                    'menu' => 'Menu Tree',
+                    '' => 'None',
+                ),
+                'fieldWidth' => '5',
+                'type' => 'DropDownList',
             ),
             array (
                 'label' => 'Size',
@@ -47,21 +40,21 @@ class DevFormLayoutProperties extends Form {
                 'type' => 'TextField',
             ),
             array (
-                'value' => '<div class=\\"clearfix\\"></div><hr/>',
                 'type' => 'Text',
+                'value' => '<div class=\\"clearfix\\"></div><hr/>',
             ),
             array (
                 'label' => 'Menu Tree',
                 'options' => array (
                     'ng-model' => 'layout.file',
-                    'ng-change' => 'changeLayoutProperties()',
+                    'ng-change' => 'changeMenuTreeFile()',
                     'ng-show' => 'layout.type == \\\'menu\\\'',
                 ),
-                'listExpr' => 'MenuTree::listHtml($model->module)',
+                'listExpr' => 'MenuTree::listDropdown($model->module)',
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'Header',
+                'label' => 'Title',
                 'options' => array (
                     'ng-model' => 'layout.title',
                     'ng-change' => 'changeLayoutProperties()',
@@ -71,18 +64,36 @@ class DevFormLayoutProperties extends Form {
                 'type' => 'TextField',
             ),
             array (
-                'label' => 'Sub Form',
+                'label' => 'Icon',
+                'listExpr' => 'Helper::iconList()',
+                'renderEmpty' => 'Yes',
+                'iconTemplate' => '<i class=\\"fa fa-fw fa-lg {icon}\\"></i>',
+                'fieldWidth' => '180',
                 'options' => array (
-                    'ng-model' => 'layout.class',
+                    'ng-model' => 'layout.icon',
                     'ng-change' => 'changeLayoutProperties()',
-                    'ng-show' => 'layout.type == \\\'form\\\'',
+                    'ng-delay' => '500',
+                    'ng-show' => 'layout.type == \\\'menu\\\'',
                 ),
-                'listExpr' => 'FormBuilder::listForm($model->module)',
-                'type' => 'DropDownList',
+                'type' => 'IconPicker',
             ),
             array (
-                'value' => '<hr ng-show=\\"layout.type == \\\'menu\\\'\\"/>',
                 'type' => 'Text',
+                'value' => '<hr ng-show=\\"layout.type == \\\'menu\\\'\\"/>',
+            ),
+            array (
+                'label' => 'Inline JS File',
+                'options' => array (
+                    'ng-model' => 'layout.inlineJS',
+                    'ng-change' => 'changeLayoutProperties()',
+                    'ng-delay' => '500',
+                    'ng-show' => 'layout.type == \\\'menu\\\'',
+                ),
+                'type' => 'TextField',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<hr ng-show=\\"layout.type == \\\'menu\\\'\\"/>',
             ),
             array (
                 'label' => 'Menu Options',

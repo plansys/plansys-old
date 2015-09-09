@@ -1,4 +1,3 @@
-    
 <div toggle-switch <?= $this->expandAttributes($this->options) ?>>
 
     <!-- label -->
@@ -13,25 +12,36 @@
     <div class="<?= $this->fieldColClass ?>">
 
         <!-- data -->
+        <data name="name" class="hide" ><?= $this->name ?></data>
         <data name="value" class="hide"><?= $this->value ?></data>
         <data name="model_class" class="hide"><?= @get_class($model) ?></data>
+        <data name="options" class="hide"><?= @json_encode($this->options) ?></data>
+        <data name="on_label" class="hide"><?= $this->onLabel ?></data>
+        <data name="off_label" class="hide"><?= $this->offLabel ?></data>
         <!-- /data -->
 
         <!-- field -->
-        <div style="float:left;">
-            <input type="checkbox" <?= $this->expandAttributes($this->fieldOptions) ?>
-                   ng-model="value" ng-change="update()" ui-switch checked />
+        <div class="toggle-switch-field">
+            <div class="toggle-switchery">
+                <input type="checkbox" <?= $this->expandAttributes($this->fieldOptions) ?>
+                       ng-model="valueCheckbox" ng-change="update()" ui-switch checked/>
+                <input type="hidden" name="<?= $this->renderName ?>" value="{{ value}}" />
+            </div>
+            <div ng-if="valueCheckbox" ng-click="switch ()"
+                 class="label label-success switchery-label <?= $this->switcheryLabelClass; ?>">
+                     <?= $this->onLabel; ?>
+            </div>
+            <div ng-if="!valueCheckbox" ng-click="switch ()"
+                 class="label label-default switchery-label <?= $this->switcheryLabelClass; ?>">
+                     <?= $this->offLabel; ?>
+            </div>
         </div>
-        <div ng-if="value" class="label label-success switchery-label" style="background:#aad596;">ON</div>
-        <div ng-if="!value" class="label label-default switchery-label" style="background:#ccc;">OFF</div>
         <!-- /field -->
 
         <!-- error -->
-        <?php if (count(@$errors) > 0): ?>
-            <div class="alert error alert-danger">
-                <?= $errors[0] ?>
-            </div>
-        <?php endif ?>
+        <div ng-if="errors[name]" class="alert error alert-danger">
+            {{ errors[name][0]}}
+        </div>
         <!-- /error -->
     </div>
 </div>

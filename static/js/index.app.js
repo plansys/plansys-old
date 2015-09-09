@@ -58,7 +58,16 @@ var app = angular.module("main", [
     'ngStorage',
     'oc.lazyLoad'
 ]);
-app.config(function ($sceProvider, $controllerProvider) {
+app.config(function ($sceProvider, $controllerProvider, $provide) {
+    $provide.decorator('$browser', ['$delegate', function ($delegate) {
+            $delegate.onUrlChange = function () {
+            };
+            $delegate.url = function () {
+                return "";
+            };
+            return $delegate;
+        }
+    ]);
     controllerProvider = $controllerProvider;
     $sceProvider.enabled(false);
 });
@@ -68,6 +77,13 @@ app.filter('capitalize', function () {
             input = input.toLowerCase();
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
+});
+app.filter('ucfirst', function () {
+    return function (input, arg) {
+        return input.replace(/(?:^|\s)\S/g, function (a) {
+            return a.toUpperCase();
+        });
+    };
 });
 app.filter('fileSize', function () {
     return function (size, precision) {

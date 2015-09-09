@@ -11,6 +11,7 @@
 
     <div class="<?= $this->fieldColClass ?>">
         <!-- data -->
+        <data name="name" class="hide" ><?= $this->name ?></data>
         <data name="value" class="hide" ><?= $this->value ?></data>
         <data name="searchable" class="hide" ><?= $this->searchable ?></data>
         <data name="show_other" class="hide" ><?= $this->showOther ?></data>
@@ -20,7 +21,7 @@
         <data name="default_value" class="hide"><?= $this->defaultValue ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
         <!-- /data -->
-
+        
         <!-- field -->
         <div class="<?= $this->fieldClass ?>" 
              ng-keydown="dropdownKeypress($event)"
@@ -115,11 +116,9 @@
         <!-- /field -->
 
         <!-- error -->
-        <?php if (count(@$errors) > 0): ?>
-            <div class="alert error alert-danger">
-                <?= $errors[0] ?>
-            </div>
-        <?php endif ?>
+        <div ng-if="errors[name]" class="alert error alert-danger">
+            {{ errors[name][0] }}
+        </div>
         <!-- /error -->
     </div>
 </div>

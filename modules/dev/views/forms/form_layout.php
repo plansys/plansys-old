@@ -12,7 +12,7 @@ FormField::$inEditor = false;
     Form Layout <span class="label label-default">{{layout.name | uppercase }}</span>
 </div>
 
-<div ui-content style="padding:6px 5px 0px 10px;">
+<div ui-content style="padding:6px 0px 0px 0px;">
     <?php
     $fpl = FormBuilder::load('DevFormLayoutProperties', array(
         'module' => $fb->module

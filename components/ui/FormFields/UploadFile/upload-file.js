@@ -62,7 +62,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                 }
 
                 // when ng-model is changed from outside directive
-                if (typeof ctrl != 'undefined') {
+                if (!!ctrl) {
                     ctrl.$render = function () {
                         if (typeof ctrl.$viewValue != "undefined") {
                             if (ctrl.$viewValue != null && ctrl.$viewValue != '') {
@@ -303,7 +303,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     }, true);
                 }
 
-                var parent = $scope.$parent;
+                var parent = $scope.getParent($scope);
                 parent[$scope.name] = $scope;
             };
         }

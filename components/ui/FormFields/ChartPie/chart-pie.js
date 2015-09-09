@@ -2,7 +2,7 @@ app.directive('psChartPie', function ($timeout) {
     return {
         scope: true,
         link: function ($scope, $el, attrs) {
-            var parent = $scope.$parent;
+            var parent = $scope.getParent($scope);
 
             /*********************** DEEP EXTEND ********************************/
             var deepExtend = function (destination, source) {

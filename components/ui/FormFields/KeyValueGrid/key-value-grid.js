@@ -14,7 +14,7 @@ app.directive('keyValueGrid', function ($timeout) {
                     $scope.value = cleanJSON($scope.value);
                     $scope.json = prettifyJSON(unformatJSON($scope.value, false));
 
-                    if (typeof ctrl != 'undefined') {
+                    if (!!ctrl) {
                         $timeout(function () {
                             ctrl.$setViewValue(unformatJSON($scope.value, true));
 
@@ -35,7 +35,7 @@ app.directive('keyValueGrid', function ($timeout) {
 
                     if ($scope.json_error == '') {
                         $scope.value = formatJSON(JSON.parse($scope.json));
-                        if (typeof ctrl != 'undefined') {
+                        if (!!ctrl) {
                             $timeout(function () {
                                 ctrl.$setViewValue(unformatJSON($scope.value, true));
                                 $scope.$parent.save();
@@ -146,7 +146,7 @@ app.directive('keyValueGrid', function ($timeout) {
 
 
                 // when ng-model is changed from outside directive
-                if (typeof ctrl != 'undefined') {
+                if (!!ctrl) {
                     ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;

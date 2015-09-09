@@ -2,8 +2,7 @@
 
 Yii::import('nfy.NfyModule');
 
-class NfyCommand extends CConsoleCommand
-{
+class NfyCommand extends CConsoleCommand{
     /**
      * nfy.queue.read
      *       |
@@ -33,8 +32,7 @@ class NfyCommand extends CConsoleCommand
         );
     }
 
-    public function getTemplateAuthItemDescriptions()
-    {
+    public function getTemplateAuthItemDescriptions(){
         return array(
             'nfy.queue.read'              => Yii::t('NfyModule.auth', 'Read any queue'),
             'nfy.queue.read.subscribed'   => Yii::t('NfyModule.auth', 'Read subscribed queue'),
@@ -47,9 +45,8 @@ class NfyCommand extends CConsoleCommand
         );
     }
 
-    public function actionCreateAuthItems()
-    {
-		$auth = Yii::app()->authManager;
+    public function actionCreateAuthItems(){
+	$auth = Yii::app()->authManager;
 
         $newAuthItems = array();
         $descriptions = $this->getTemplateAuthItemDescriptions();
@@ -67,51 +64,47 @@ class NfyCommand extends CConsoleCommand
                 $auth->addItemChild($template['name'], $template['child']);
             }
         }
-	}
+    }
 
-    public function actionRemoveAuthItems()
-    {
-		$auth = Yii::app()->authManager;
+    public function actionRemoveAuthItems(){
+	$auth = Yii::app()->authManager;
 
         foreach($this->getTemplateAuthItems() as $template) {
             $auth->removeAuthItem($template['name']);
         }
     }
 
-	/**
-	 * @param string $queue name of the queue component
-	 * @param string $message
-	 */
-	public function actionSend($queue, $message)
-	{
-		$q = Yii::app()->getComponent($queue);
-		if ($q === null) {
-			throw new CException('Queue not found.');
-		}
-		$q->send($message);
+    /**
+     * @param string $queue name of the queue component
+     * @param string $message
+     */
+    public function actionSend($queue, $message){
+	$q = Yii::app()->getComponent($queue);
+	if ($q === null) {
+            throw new CException('Queue not found.');
 	}
+	$q->send($message);
+    }
 
-	/**
-	 * @param string $queue name of the queue component
-	 */
-	public function actionReceive($queue, $limit=-1)
-	{
-		$q = Yii::app()->getComponent($queue);
-		if ($q === null) {
-			throw new CException('Queue not found.');
-		}
-		var_dump($q->receive(null, $limit));
+    /**
+     * @param string $queue name of the queue component
+     */
+    public function actionReceive($queue, $limit=-1){
+	$q = Yii::app()->getComponent($queue);
+	if ($q === null) {
+            throw new CException('Queue not found.');
 	}
+        var_dump($q->receive(null, $limit));
+    }
 
-	/**
-	 * @param string $queue name of the queue component
-	 */
-	public function actionPeek($queue, $limit=-1)
-	{
-		$q = Yii::app()->getComponent($queue);
-		if ($q === null) {
-			throw new CException('Queue not found.');
-		}
-		var_dump($q->peek(null, $limit));
+    /**
+     * @param string $queue name of the queue component
+    */
+    public function actionPeek($queue, $limit=-1){
+	$q = Yii::app()->getComponent($queue);
+	if ($q === null) {
+            throw new CException('Queue not found.');
 	}
+        var_dump($q->peek(null, $limit));
+    }
 }

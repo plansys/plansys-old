@@ -70,12 +70,13 @@ class DevCrudForm extends Form {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column2' => array (
                     array (
+                        'type' => 'Text',
                         'value' => '<br/>
 Status: <b>{{status}}</b>
 
@@ -84,17 +85,18 @@ Status: <b>{{status}}</b>
     <span class=\"sr-only\">{{progress}}% Complete</span>
   </div>
 </div>',
-                        'type' => 'Text',
                     ),
                     array (
+                        'type' => 'Text',
                         'value' => '<pre ng-if=\\"!error\\" style=\\"margin-top:10px;\\"ng-bind-html=\\"result\\"></pre>',
-                        'type' => 'Text',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
@@ -102,8 +104,8 @@ Status: <b>{{status}}</b>
                 'type' => 'SectionHeader',
             ),
             array (
-                'value' => '<div style=\\"margin-top:10px;\\"ng-bind-html=\\"result\\"></div>',
                 'type' => 'Text',
+                'value' => '<div style=\\"margin-top:10px;\\"ng-bind-html=\\"result\\"></div>',
             ),
         );
     }

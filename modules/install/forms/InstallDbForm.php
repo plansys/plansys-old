@@ -10,7 +10,7 @@ class InstallDbForm extends Form {
 
     public function rules() {
         return [
-            ['host, username, password, dbname', 'required']
+            ['host, username, dbname', 'required']
         ];
     }
 
@@ -30,8 +30,9 @@ class InstallDbForm extends Form {
     }
 
     public function getFields() {
-        return array(
-            array(
+        return array (
+            array (
+                'type' => 'Text',
                 'value' => '<div class=\"install-pane\" style=\"width:350px;\">
     <div class=\"install-pane-head\">
         <img src=\"<?= Yii::app()->controller->staticUrl(\"/img/logo.png\"); ?>\" alt=\"Logo Plansys\" />
@@ -41,9 +42,8 @@ class InstallDbForm extends Form {
     
     <div ng-if=\"params.error\" style=\"margin-top:15px;\" class=\"alert alert-danger\">{{params.error}}</div>
     ',
-                'type' => 'Text',
             ),
-            array(
+            array (
                 'label' => 'Host:',
                 'name' => 'host',
                 'layout' => 'Vertical',
@@ -51,7 +51,7 @@ class InstallDbForm extends Form {
                 'fieldWidth' => '12',
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Username:',
                 'name' => 'username',
                 'layout' => 'Vertical',
@@ -59,7 +59,7 @@ class InstallDbForm extends Form {
                 'fieldWidth' => '12',
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Password:',
                 'name' => 'password',
                 'fieldType' => 'password',
@@ -67,41 +67,41 @@ class InstallDbForm extends Form {
                 'fieldWidth' => '12',
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Database name:',
                 'name' => 'dbname',
                 'layout' => 'Vertical',
                 'fieldWidth' => '12',
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'name' => 'resetdb',
-                'list' => array(
+                'list' => array (
                     'yes' => 'Reset Plansys table',
                 ),
                 'labelWidth' => '0',
-                'labelOptions' => array(
+                'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
                 'type' => 'CheckboxList',
             ),
-            array(
+            array (
+                'type' => 'Text',
                 'value' => '<div class=\"info text-left\" style=\"margin:-20px 0px 0px -3px\">
     only tables with prefix p_ (e.g. p_user, p_role, etc)<br/> that will be reset.
 </div>
 
 <br/>',
-                'type' => 'Text',
             ),
-            array(
+            array (
                 'label' => 'Next Step',
                 'buttonType' => 'success',
                 'buttonSize' => '',
                 'type' => 'SubmitButton',
             ),
-            array(
-                'value' => '</div>',
+            array (
                 'type' => 'Text',
+                'value' => '</div>',
             ),
         );
     }

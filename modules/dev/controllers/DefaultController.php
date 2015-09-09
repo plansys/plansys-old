@@ -1,21 +1,17 @@
 <?php
 
-class DefaultController extends Controller
-{
+class DefaultController extends Controller {
 
-    public function actionNew()
-    {
+    public function actionNew() {
 
         $this->renderForm("");
     }
 
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $this->redirect(array("/{$this->module->id}/forms"));
     }
 
-    public function actionAdminer()
-    {
+    public function actionAdminer() {
         if (Yii::app()->user->isGuest) {
             throw new CHttpException(404);
         }
@@ -24,7 +20,7 @@ class DefaultController extends Controller
         $params = [];
         if (count($_GET) > 1) {
             if (!isset($_GET['s'])) {
-                $_GET['s'] = $db['server'] . ":3306";
+                $_GET['s'] = $db['host'] . ":3306";
             }
 
             foreach ($_GET as $g => $i) {
@@ -33,6 +29,7 @@ class DefaultController extends Controller
                 }
             }
 
+            $params[] = 'p=' . $db['password'];
             $params = implode("&", $params);
         } else {
             $_GET['s'] = $db['host'];

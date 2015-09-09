@@ -12,12 +12,12 @@ class FormsController extends Controller {
             if ($type == "AR") {
                 FormsController::$modelFieldList = $data;
                 $rel = isset($data['Relations']) ? $data['Relations'] : array();
-                         
+
                 FormsController::$relFieldList = array_merge(array(
-                    '' => '-- None --',
-                    '---' => '---',
+                    ''             => '-- None --',
+                    '---'          => '---',
                     'currentModel' => 'Current Model',
-                    '--' => '---',
+                    '--'           => '---',
                         ), $rel);
             } else {
                 foreach ($data as $name => $field) {
@@ -28,11 +28,89 @@ class FormsController extends Controller {
         }
     }
 
+    public function actionDelFolder($p) {
+        $dir = Yii::getPathOfAlias($p);
+        if (is_dir($dir)) {
+            foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $path) {
+                $path->isDir() && !$path->isLink() ? rmdir($path->getPathname()) : unlink($path->getPathname());
+            }
+            rmdir($dir);
+        }
+    }
+
+    public function actionDelForm($p) {
+        $file = Yii::getPathOfAlias($p) . ".php";
+        if (is_file($file)) {
+            @unlink($file);
+        }
+    }
+
+    public function actionAddFolder($n, $p) {
+        $dir = Yii::getPathOfAlias($p);
+        if (is_dir($dir) && Helper::isValidVar($n)) {
+            $dirname = $dir . DIRECTORY_SEPARATOR . $n;
+            if (!!@mkdir($dirname)) {
+                echo json_encode([
+                    "success" => true,
+                    "id"      => time(),
+                    "name"    => $n,
+                    "alias"   => Helper::getAlias($dirname) . "."
+                ]);
+            } else {
+                echo json_encode([
+                    "success" => false,
+                    "error"   => "ERROR: Failed to create folder (permission denied).\n" . $dirname
+                ]);
+            }
+        } else {
+            echo json_encode([
+                "success" => false,
+                "error"   => "ERROR: Folder name is not valid"
+            ]);
+        }
+    }
+
+    public function actionAddForm($c, $e, $p, $m) {
+        if (@class_exists($e)) {
+            $class = $this->prepareFormName($c, $m);
+            if (Helper::isValidVar($c)) {
+                $extends = $e;
+                $dir = Yii::getPathOfAlias($p);
+                $path = $dir . DIRECTORY_SEPARATOR . $class . ".php";
+                if (!is_file($path)) {
+                    $source = <<<EOF
+<?php
+                            
+class {$class} extends {$extends} {
+
+}
+EOF;
+                    file_put_contents($path, $source);
+
+                    echo json_encode([
+                        "success" => true,
+                        "class"   => $class
+                    ]);
+                }
+            } else {
+                echo json_encode([
+                    "success" => false,
+                    "error"   => "ERROR: Class {$class} already exists"
+                ]);
+            }
+        } else {
+            echo json_encode([
+                "success" => false,
+                "error"   => "ERROR: Class {$e} not found!"
+            ]);
+        }
+    }
+
     public function renderPropertiesForm($field) {
         FormField::$inEditor = false;
         $fbp = FormBuilder::load($field['type']);
         return $fbp->render($field, array(
-                    'wrapForm' => false,
+                    'wrapForm'          => false,
                     'FormFieldRenderID' => $this->countRenderID++
         ));
     }
@@ -97,13 +175,14 @@ class FormsController extends Controller {
         }
         foreach ($toolbarData as $k => $f) {
             $ff = new $f['type'];
-            $scripts = $ff->renderScript();
+            $scripts = array_merge($ff->renderScript(), $ff->renderEditorScript());
+
             foreach ($scripts as $script) {
                 $ext = Helper::explodeLast(".", $script);
                 if ($ext == "js") {
                     Yii::app()->clientScript->registerScriptFile($script, CClientScript::POS_END);
-                } else {
-                    Yii::app()->clientScript->registerCSSFile($script, CClientScript::POS_BEGIN);
+                } else if ($ext == "css") {
+                    Yii::app()->clientScript->registerCSSFile($script);
                 }
             }
         }
@@ -122,10 +201,11 @@ class FormsController extends Controller {
             foreach ($list as $k => $l) {
                 array_push($return, [
                     'module' => $l['module'],
-                    'count' => $l['count'],
-                    'items' => [
+                    'count'  => $l['count'],
+                    'alias'  => $l['alias'],
+                    'items'  => [
                         [
-                            'name' => 'Loading...',
+                            'name'  => 'Loading...',
                             'items' => []
                         ]
                     ]
@@ -173,11 +253,11 @@ class FormsController extends Controller {
 
         $this->renderForm($f, [
             'classPath' => $classPath,
-            'fields' => $fb->fields
+            'fields'    => $fb->fields
         ]);
     }
 
-    public function actionSave($class) {
+    public function actionSave($class, $timestamp) {
         FormField::$inEditor = true;
 
         $class = FormBuilder::classPath($class);
@@ -185,16 +265,23 @@ class FormsController extends Controller {
         $file = file(Yii::getPathOfAlias($class) . ".php", FILE_IGNORE_NEW_LINES);
 
         $changed = false;
-        foreach ($file as $k => $f) {
-            if (trim($file[$k]) != trim(@$session['file'][$k])) {
-                $changed = true;
+
+        if ($timestamp != @$session['timestamp']) {
+            $changed = true;
+        }
+
+        if (!$changed) {
+            foreach ($file as $k => $f) {
+                if (trim($file[$k]) != trim(@$session['file'][$k])) {
+                    $changed = true;
+                }
             }
         }
 
         if (!$changed) {
             $postdata = file_get_contents("php://input");
             $post = CJSON::decode($postdata);
-
+            $session = Yii::app()->session['FormBuilder_' . $class];
             $fb = FormBuilder::load($class);
 
             if (isset($post['fields'])) {
@@ -202,12 +289,28 @@ class FormsController extends Controller {
                     Yii::app()->cache->delete('toolbarData');
                     Yii::app()->cache->delete('toolbarHtml');
                 }
+
                 //save posted fields
-                $fb->fields = $post['fields'];
-            }
-            if (isset($post['form'])) {
+                if (!$fb->setFields($post['fields'])) {
+                    echo "FAILED: PERMISSION DENIED";
+                }
+            } else if (isset($post['form'])) {
+                if (is_array($post['form']['layout']['data'])) {
+
+                    ## save menutree to menutree file
+                    foreach ($post['form']['layout']['data'] as $d) {
+                        if (@$d['type'] == "menu" && !!@$d['file']) {
+                            $menuOptions = MenuTree::getOptions($d['file']);
+                            $menuOptions['layout'] = $d;
+                            MenuTree::writeOptions($d['file'], $menuOptions);
+                        }
+                    }
+                }
+
                 //save posted form
-                $fb->form = $post['form'];
+                if (!$fb->setForm($post['form'])) {
+                    echo "FAILED: PERMISSION DENIED";
+                }
             }
         } else {
             echo "FAILED";
@@ -216,11 +319,18 @@ class FormsController extends Controller {
 
     public function actionUpdate($class) {
         FormField::$inEditor = true;
+        $isPHP = Helper::explodeLast(".", $class);
+        $class = $isPHP == "php" ? substr($class, 0, -4) : $class;
         $class = FormBuilder::classPath($class);
-        Yii::app()->session['FormBuilder_' . $class] = null;
-
         $this->layout = "//layouts/blank";
+
+        ## reset form builder session
+        FormBuilder::resetSession($class);
+
+        ## load form builder class and session
         $fb = FormBuilder::load($class);
+        $fb->resetTimestamp();
+
         $classPath = $class;
         $class = Helper::explodeLast(".", $class);
 
@@ -228,7 +338,6 @@ class FormsController extends Controller {
         if (is_subclass_of($fb->model, 'ActiveRecord')) {
             $formType = "ActiveRecord";
             FormsController::setModelFieldList($class::model()->attributesList, "AR", $class);
-            
         } else if (is_subclass_of($fb->model, 'FormField')) {
             $formType = "FormField";
             $mf = new $class;
@@ -242,18 +351,17 @@ class FormsController extends Controller {
         $fieldData = $fb->fields;
         FormsController::$modelField = $fieldData;
         $toolbar = $this->renderAllToolbar($formType);
-
-
         Yii::import('application.modules.' . $fb->module . '.controllers.*');
 
-        $this->render('form', array(
-            'fb' => $fb,
-            'class' => $class,
-            'classPath' => $classPath,
-            'formType' => $formType,
+
+        echo $this->render('form', array(
+            'fb'          => $fb,
+            'class'       => $class,
+            'classPath'   => $classPath,
+            'formType'    => $formType,
             'toolbarData' => @$toolbar['data'],
-            'fieldData' => $fieldData,
-        ));
+            'fieldData'   => $fieldData,
+                ), true);
     }
 
 }

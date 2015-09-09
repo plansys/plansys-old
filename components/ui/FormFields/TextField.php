@@ -78,8 +78,8 @@ class TextField extends FormField {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column2' => array (
@@ -97,27 +97,29 @@ class TextField extends FormField {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column3' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column4' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
-                'value' => '<hr/>',
                 'type' => 'Text',
+                'value' => '<hr/>',
             ),
             array (
                 'label' => 'Auto Complete',
@@ -141,9 +143,9 @@ class TextField extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<div ng-if=\"active.autocomplete == \'rel\'\">
 <hr/>',
-                'type' => 'Text',
             ),
             array (
                 'name' => 'TypeRelation',
@@ -151,10 +153,10 @@ class TextField extends FormField {
                 'type' => 'SubForm',
             ),
             array (
+                'type' => 'Text',
                 'value' => '</div>
 <div ng-if=\"active.autocomplete == \'php\'\">
 <hr/>',
-                'type' => 'Text',
             ),
             array (
                 'label' => 'PHP Expression',
@@ -162,9 +164,9 @@ class TextField extends FormField {
                 'type' => 'ExpressionField',
             ),
             array (
+                'type' => 'Text',
                 'value' => '</div>
 <hr/>',
-                'type' => 'Text',
             ),
             array (
                 'column1' => array (
@@ -181,8 +183,8 @@ class TextField extends FormField {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column2' => array (
@@ -199,10 +201,12 @@ class TextField extends FormField {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
@@ -274,14 +278,14 @@ class TextField extends FormField {
     public $modelClass = '';
     public $params = [];
     public $criteria = [
-        'select' => '',
-        'distinct' => 'true',
-        'alias' => 't',
+        'select'    => '',
+        'distinct'  => 'true',
+        'alias'     => 't',
         'condition' => '{[search]}',
-        'order' => '',
-        'group' => '',
-        'having' => '',
-        'join' => ''
+        'order'     => '',
+        'group'     => '',
+        'having'    => '',
+        'join'      => ''
     ];
     public $idField = '';
     public $labelField = '';

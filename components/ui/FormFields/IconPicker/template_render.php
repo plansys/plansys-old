@@ -27,15 +27,15 @@
         </div>
 
         <div class="popover" ng-class="{show: is_open}">
-            <div class="popover-header" style="font-size:11px;padding:3px;border-bottom:1px solid #ececeb;">
+            <div class="popover-header" style="font-size:11px;padding:3px;border-bottom:1px solid #ececeb;width:<?= $this->fieldWidth ?>px;">
                 <div ng-click="is_open = false" class="btn-popover-close btn btn-xs btn-default"
                      style="padding:0px 3px;line-height:14px;font-size:11px;position:absolute;top:4px;right:4px;">
                     <i class="fa fa-times"></i> Close
                 </div>
                 <input class="popover-search"
                        ng-model="search"
-                       placeholder="&#xF002; Search ..."
-                       style="font-size:11px;border:0px;width:100%;outline:0px;font-family:Arial, FontAwesome;"
+                       placeholder=" Search ..."
+                       style="font-size:11px;border:0px;width:100%;outline:0px;font-family:FontAwesome;"
                        type="text" value="" />
 
             </div>
@@ -61,11 +61,9 @@
         <!-- /field -->
 
         <!-- error -->
-        <?php if (count(@$errors) > 0): ?>
-            <div class="alert error alert-danger">
-                <?= $errors[0] ?>
-            </div>
-        <?php endif ?>
+        <div ng-if="errors[name]" class="alert error alert-danger">
+            {{ errors[name][0] }}
+        </div>
         <!-- /error -->
     </div>
 </div>

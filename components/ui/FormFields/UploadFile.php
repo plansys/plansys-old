@@ -308,7 +308,7 @@ class UploadFile extends FormField {
         }
 
 
-        $img = Yii::app()->img->load($file);
+        $img = Yii::app()->img->init($file);
         $img->resizeToWidth(250);
 
         $dir = Yii::getPathOfAlias('webroot.assets.thumb.' . date('Y-m-d'));

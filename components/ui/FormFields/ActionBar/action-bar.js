@@ -73,41 +73,51 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
             });
 
             $scope.originalHeight = $el.height();
-
             $(".ac-portlet-button").click(function () {
                 var dd = $(this).parent().find('.ac-portlet-menu');
-                $scope.originalHeight = $el.height();
                 $el.height('500');
                 if (dd.css('position') != 'fixed') {
                     var pos = dd.offset();
                     var w = dd.width();
                     var h = dd.height() + 10;
                     dd.css({
-                        top: 70,
-                        left: pos.left + 20,
+                        top: 65,
+                        left: pos.left + 3,
                         minWidth: w + 'px',
                         width: w + 'px',
                         height: h + 'px',
                         position: 'fixed',
-                        zIndex: 110
+                        zIndex: 999
                     });
                 }
+            });
+
+            $(".ac-portlet-menu, .ac-portlet-button").hover(function () {
+                $el.height(500);
+            }, function () {
                 $el.height($scope.originalHeight);
             });
 
             $scope.resizeTimeout = null;
             $scope.resize = function (st) {
                 var height = $scope.originalHeight;
-                $el.css({
-                    top: $("#content").offset().top,
-                    left: $el.parents('.container-full').offset().left,
-                    width: $('#content').width(),
-                    opacity: .999
-                });
+                var $container = $el.parents('.container-fluid').parent();
 
-                $timeout(function () {
-                    $el.css({opacity: 1});
+                $el.css({
+                    top: $container.offset().top - $container.css('marginTop').replace('px', '') * 1,
+                    left: $container.offset().left,
+                    width: $container.width()
                 });
+                
+                $timeout(function () {
+                    var woffset = $container.hasClass('container-full') ? 0 : 1;
+
+                    $el.css({
+                        top: $container.offset().top - $container.css('marginTop').replace('px', '') * 1,
+                        left: $container.offset().left + woffset,
+                        width: $container.width() - woffset
+                    });
+                }, 150);
 
                 if ($scope.form.layout.name == 'dashboard' && $el.parent().is('form')) {
                     var dashFilter = $el.parent().find('> [ps-data-filter]:eq(0)');
@@ -125,7 +135,7 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                     }
                 }
 
-                $el.parents('.container-full').css({
+                $container.css({
                     'margin-top': height + 'px',
                     'border-top': '0px'
                 });
@@ -137,7 +147,8 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                     $scope.init = true;
                     $el.show();
                 }
-            }
+
+            };
 
 
             $(window).resize(function () {
@@ -147,7 +158,7 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
             // add action tab link
             $(".section-header").each(function () {
                 $('<a href="#' + $(this).attr('scrollTo') + '">' + $(this).text() + '</a>')
-                    .insertBefore(".action-bar:eq(0) .action-tab .clearfix");
+                        .insertBefore(".action-bar:eq(0) .action-tab .clearfix");
             })
 
             // on action tab click

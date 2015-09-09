@@ -2,23 +2,38 @@
 
 abstract class CodeGenerator extends CComponent {
 
+    const MARK_EXECUTE = "#$%~||~%$#";
+
     public $class;
     protected $baseClass = "CComponent";
     protected $basePath = "application.components";
+    protected $baseDir = '';
     protected $classPath;
     protected $filePath;
     protected $file;
     protected $methods = [];
 
     public function load($class) {
+        Yii::setPathOfAlias('gii', Yii::getPathOfAlias('application.framework.gii'));
+        Yii::import('gii.components.*');
+
         if (!is_string($class)) {
             throw new Exception("\$class parameter should be string");
         }
 
         $this->class = $class;
         $this->classPath = $this->basePath . "." . $class;
-        $this->filePath = Yii::getPathOfAlias($this->classPath) . ".php";
+        Yii::import($this->classPath);
 
+        $this->filePath = Yii::getPathOfAlias($this->classPath) . ".php";
+        $this->baseDir = Yii::getPathOfAlias($this->basePath);
+
+        ## create directory
+        if (!is_dir($this->baseDir)) {
+            mkdir($this->baseDir, 0777, true);
+        }
+
+        ## create file
         if (!is_file($this->filePath) || trim(file_get_contents($this->filePath)) == "") {
             file_put_contents($this->filePath, "<?php\n
 class {$class} extends {$this->baseClass} {\n \n}
@@ -30,29 +45,65 @@ class {$class} extends {$this->baseClass} {\n \n}
             }
         }
 
-        $this->file = file($this->filePath, FILE_IGNORE_NEW_LINES);
 
         ## get method line and length
-        Yii::import($this->classPath);
-        $reflector = new ReflectionClass($this->class);
-        $methods = $reflector->getMethods();
-        foreach ($methods as $m) {
-            if ($m->class == $this->class) {
-                $line = $m->getStartLine() - 1;
-                $length = $m->getEndLine() - $line;
-                $this->methods[$m->name] = [
-                    'line' => $line,
-                    'length' => $length
-                ];
+        if (!$this->checkSession()) {
+            Yii::import($this->classPath);
+
+            $this->file = file($this->filePath, FILE_IGNORE_NEW_LINES);
+            $reflector = new ReflectionClass($this->class);
+            $methods = $reflector->getMethods();
+
+            foreach ($methods as $m) {
+                if ($m->class == $this->class) {
+                    $line = $m->getStartLine() - 1;
+                    $length = $m->getEndLine() - $line;
+                    $this->methods[$m->name] = [
+                        'line'   => $line,
+                        'length' => $length
+                    ];
+                }
             }
+
+            $this->updateSession();
+        } else {
+            $this->loadSession();
         }
 
         $this->save();
         return $this;
     }
 
-    protected function prepareLineForProperty() {
+    protected function updateSession($timestamp = null) {
+        Yii::app()->session['CODEGEN_' . $this->classPath] = [
+            'methods'   => $this->methods,
+            'file'      => $this->file,
+            'timestamp' => is_null($timestamp) ? filemtime($this->filePath) : $timestamp
+        ];
+    }
 
+    protected function checkSession() {
+        $session = Yii::app()->session['CODEGEN_' . $this->classPath];
+        if (is_null($session)) {
+            return false;
+        }
+
+        if (@$session['timestamp'] != filemtime($this->filePath) && @$session['timestamp'] != 'JUSTWRITTEN') {
+            return false;
+        }
+        return true;
+    }
+
+    protected function loadSession() {
+        $session = Yii::app()->session['CODEGEN_' . $this->classPath];
+        $this->methods = $session['methods'];
+        $this->file = $session['file'];
+        $session['timestamp'] = filemtime($this->filePath);
+
+        return $session;
+    }
+
+    protected function prepareLineForProperty() {
         ## get first line of the class
         $reflector = new ReflectionClass($this->class);
         $line = $reflector->getStartLine();
@@ -79,6 +130,95 @@ class {$class} extends {$this->baseClass} {\n \n}
         return $line;
     }
 
+    protected function markExecute($code) {
+        return CodeGenerator::MARK_EXECUTE . trim($code);
+    }
+
+    public static function varExport($var, $indent = "        ") {
+        switch (gettype($var)) {
+            case "string":
+                if (strpos($var, CodeGenerator::MARK_EXECUTE) === 0) {
+                    $var = substr($var, strlen(CodeGenerator::MARK_EXECUTE));
+                    return $var;
+                } else {
+                    return '"' . addcslashes($var, "\\\$\"\r\n\t\v\f") . '"';
+                }
+            case "array":
+                $indexed = array_keys($var) === range(0, count($var) - 1);
+                $r = [];
+                foreach ($var as $key => $value) {
+                    $r[] = "$indent    "
+                            . ($indexed ? "" : CodeGenerator::varExport($key) . " => ")
+                            . CodeGenerator::varExport($value, "$indent    ");
+                }
+                $fields = implode(",\n", $r);
+
+                if ($fields == '') {
+                    return '[]';
+                } else {
+                    return "[\n" . $fields . "\n" . $indent . "]";
+                }
+            case "boolean":
+                return $var ? "TRUE" : "FALSE";
+            default:
+                return var_export($var, TRUE);
+        }
+    }
+
+    public function varToString($var, $indent = "        ") {
+        if (is_array($var)) {
+            array_pop($var);
+            array_shift($var);
+            $var = $this->removeIndent($var, $indent);
+            $var = implode("\n", $var);
+        }
+
+        return $var;
+    }
+
+    public function removeIndent($code, $indent = "        ") {
+        $mode = "array";
+        if (is_string($code)) {
+            $code = explode("\n", $code);
+            $mode = "string";
+        }
+
+        if (is_array($code)) {
+            $lenIndent = strlen($indent);
+            foreach ($code as $k => $c) {
+                if (substr($c, 0, $lenIndent) == $indent) {
+                    $code[$k] = substr($c, $lenIndent);
+                }
+            }
+
+            if ($mode == "string") {
+                $code = implode("\n", $code);
+            }
+        }
+
+        return $code;
+    }
+
+    public function addIndent($code, $indent = "        ") {
+        $mode = "array";
+        if (is_string($code)) {
+            $code = explode("\n", $code);
+            $mode = "string";
+        }
+
+        if (is_array($code)) {
+            foreach ($code as $k => $c) {
+                $code[$k] = $indent . rtrim($c);
+            }
+
+            if ($mode == "string") {
+                $code = implode("\n", $code);
+            }
+        }
+
+        return $code;
+    }
+
     protected function prepareLineForMethod() {
         $first_line = $this->prepareLineForProperty();
 
@@ -97,6 +237,8 @@ class {$class} extends {$this->baseClass} {\n \n}
                 $this->methods[$k]['line'] += 1;
             }
         }
+
+        $this->updateSession();
 
         return $line;
     }
@@ -228,11 +370,14 @@ class {$class} extends {$this->baseClass} {\n \n}
                 $newMethod[$k] = $m;
             }
             $this->methods = $newMethod;
+
+            $this->updateSession();
             $this->save();
         }
     }
 
     protected function updateFunction($name, $body, $options = []) {
+
         $isNewFunc = false;
         ## get first line of the class       
         if (!isset($this->methods[$name])) {
@@ -256,7 +401,7 @@ class {$class} extends {$this->baseClass} {\n \n}
 
         $default = [
             'visibility' => 'public',
-            'params' => []
+            'params'     => []
         ];
         $options = array_merge($default, $options);
         $params = implode(",", $options['params']);
@@ -268,7 +413,6 @@ class {$class} extends {$this->baseClass} {\n \n}
 EOF;
 
         array_splice($this->file, $line, $length, explode("\n", $func));
-
 
         ## adjust other methods line and length
         $newlength = count(explode("\n", $func));
@@ -285,10 +429,10 @@ EOF;
 
 
         $this->methods[$name] = [
-            'line' => $line,
+            'line'   => $line,
             'length' => $newlength
         ];
-
+        $this->updateSession('JUSTWRITTEN');
         $this->save();
     }
 

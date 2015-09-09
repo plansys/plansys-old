@@ -33,16 +33,22 @@ class NfyModule extends CWebModule {
     /**
      * @inheritdoc
      */
+    public function accessControl($controller,$action) {
+        
+    }
+
     public function getVersion() {
         return '0.9';
     }
 
     public function init() {
+        // import the module-level controllers and forms
         $this->setImport(array(
-            'nfy.models.*',
-            'nfy.console.*',
-            'nfy.components.*',
-        ));
+            'application.modules.nfy.controllers.*',
+            'application.modules.nfy.forms.*',
+            'application.modules.nfy.components.*',
+            'application.modules.nfy.models.*'
+        )); 
     }
 
 }

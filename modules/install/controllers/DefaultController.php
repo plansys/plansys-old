@@ -3,6 +3,7 @@
 class DefaultController extends Controller {
 
     public function beforeAction($action) {
+
         if (!in_array(Setting::$mode, ["install", "init"])) {
             $this->redirect(['/site/login']);
             die();
@@ -27,16 +28,24 @@ class DefaultController extends Controller {
     }
 
     public function actionIndex($msg = null) {
-        $content = $this->renderPartial('index', [
-            'msg' => $msg
-                ], true);
+        $content = $this->renderPartial('index', ['msg' => $msg], true);
         $html = $this->renderPartial('_layout', ['content' => $content], true);
         echo $html;
+    }
+
+    public function actionFinish() {
+        if (isset($_GET['s'])) {
+            echo Setting::$mode;
+            die();
+        }
+
+        $this->renderForm('InstallFinishForm');
     }
 
     public function actionUser() {
         $model = new InstallUserForm;
         $error = false;
+        $success = 'n';
         $model->fullname = "Developer";
         $model->username = "dev";
 
@@ -50,8 +59,8 @@ class DefaultController extends Controller {
                     `id` = '1',
                     `nip` = '-',
                     `fullname` = '{$model->fullname}',
-                    `email` = '-',
                     `phone` = '-',
+                    `email` = '-',
                     `username` = '{$model->username}',
                     `password` = md5('{$model->password}'),
                     `last_login` = '2015-02-26 07:06:32',
@@ -60,13 +69,16 @@ class DefaultController extends Controller {
                 ");
 
                 Installer::createIndexFile("running");
-                $this->redirect(['/']);
+                $this->redirect(['/install/default/finish']);
             }
         }
 
-        $this->renderForm('InstallUserForm', $model, [
-            'error' => $error
-        ]);
+        $this->renderForm('InstallUserForm', $model, ['error' => $error, 'success' => $success]);
+    }
+
+    public function actionResetdb() {
+        Installer::resetDB();
+        $this->redirect(['/install/default/user']);
     }
 
     public function actionDb() {
@@ -76,42 +88,41 @@ class DefaultController extends Controller {
         $model->password = Setting::get('db.password');
         $model->dbname = Setting::get('db.dbname');
         $error = false;
+        $mode = "init";
 
         if (isset($_POST['InstallDbForm'])) {
             $model->attributes = $_POST['InstallDbForm'];
 
             if ($model->validate()) {
-                $mysqlConnection = @mysql_connect($model->host, $model->username, $model->password);
-                if (!$mysqlConnection) {
-                    $error = "Mysql connection failed, please your credential:";
-                } else {
-                    $result = mysql_select_db($model->dbname, $mysqlConnection);
-                    if (!$result) {
-                        $error = "Failed to select database: \"{$model->dbname}\"";
-                    }
+                $error = false;
+
+                try {
+                    $dbh = new pdo("mysql:host={$model->host};dbname={$model->dbname}", $model->username, $model->password, array(
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    ));
+                } catch (PDOException $ex) {
+                    $error = $ex->getMessage();
                 }
 
                 if (!$error) {
-                    Setting::set('db.host', $model->host);
-                    Setting::set('db.username', $model->username);
-                    Setting::set('db.password', $model->password);
-                    Setting::set('db.dbname', $model->dbname);
+                    Setting::set('db.host', $model->host, false);
+                    Setting::set('db.username', $model->username, false);
+                    Setting::set('db.password', $model->password, false);
+                    Setting::set('db.dbname', $model->dbname, false);
+                    Setting::write();
 
                     if ($model->resetdb == "yes") {
                         Installer::createIndexFile("install");
-                        Installer::resetDB();
-                        $this->redirect(['/install/default/user']);
+                        $this->redirect(['/install/default/resetdb']);
                     } else {
                         Installer::createIndexFile("running");
-                        $this->redirect(['/']);
+                        $this->redirect(['/install/default/finish']);
                     }
                 }
             }
         }
 
-        $this->renderForm('InstallDbForm', $model, [
-            'error' => $error
-        ]);
+        $this->renderForm('InstallDbForm', $model, ['error' => $error, 'mode' => $mode]);
     }
 
 }

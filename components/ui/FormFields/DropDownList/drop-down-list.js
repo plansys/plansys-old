@@ -92,7 +92,8 @@ app.directive('dropDownList', function ($timeout) {
                     }, 0);
                 };
                 $scope.updateInternal = function (value) {
-                    $scope.value = typeof value != "string" ? '' : value;
+                    $scope.value = ['number', 'string'].indexOf(typeof value) < 0 ? '' : value + '';
+
                     if ($scope.showOther && !$scope.itemExist()) {
                         $scope.value = $el.find("li a").attr('value');
                         $scope.value = value;
@@ -129,7 +130,7 @@ app.directive('dropDownList', function ($timeout) {
                 $scope.itemExist = function (value, text) {
                     if (!value || value.trim() == '')
                         value = $scope.value;
-                    
+
                     if (!text || text.trim() == '')
                         text = $scope.text;
 
@@ -222,7 +223,7 @@ app.directive('dropDownList', function ($timeout) {
                     });
                 }, true);
 
-                if (typeof ctrl != 'undefined') {
+                if (!!ctrl) {
                     ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;
@@ -233,6 +234,7 @@ app.directive('dropDownList', function ($timeout) {
                 }
 
                 // set default value
+                $scope.name = $el.find("data[name=name]:eq(0)").html().trim();
                 $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
                 $scope.renderedFormList = [];
                 $scope.renderFormList();
@@ -245,6 +247,7 @@ app.directive('dropDownList', function ($timeout) {
                 $scope.defaultValue = $el.find("data[name=default_value]").html().trim();
                 $scope.defaultType = $el.find("data[name=default_type]").html().trim();
                 $scope.isOpen = false;
+                $scope.text = "";
                 $scope.openedInField = false;
 
                 $scope.search = "";
@@ -280,7 +283,7 @@ app.directive('dropDownList', function ($timeout) {
                     if (attrs.searchable) {
                         $scope.searchable = $scope.$parent.$eval(attrs.searchable);
                     }
-                }, 0);
+                });
             }
         }
     };

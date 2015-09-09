@@ -8,7 +8,7 @@ app.directive('modalDialog', function ($timeout, $compile) {
             $container = element.find(".modal-container").remove();
             $container.appendTo('body');
             return function ($scope, $el, attrs, ctrl) {
-                var parent = $scope.$parent;
+                var parent = $scope.getParent($scope);
                 $scope.name = $el.find("data[name=name]:eq(0)").text();
                 $scope.renderID = $el.find("data[name=render_id]").text();
 

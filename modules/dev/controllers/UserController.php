@@ -8,7 +8,8 @@ class UserController extends Controller {
         if (isset($_POST["DevRoleForm"])) {
             $model->attributes = $_POST["DevRoleForm"];
             if ($model->save()) {
-                $this->redirect(array("roles"));
+                Yii::app()->user->setFlash('info', 'Role berhasil dibuat');
+                $this->redirect(array("/dev/user/role", 'id' => $model->id));
             }
         }
         $this->renderForm("DevRoleForm", $model);
@@ -19,6 +20,7 @@ class UserController extends Controller {
         if (isset($_POST["DevRoleForm"])) {
             $model->attributes = $_POST["DevRoleForm"];
             if ($model->save()) {
+                Yii::app()->user->setFlash('info', 'Role berhasil disimpan');
                 $this->redirect(array("roles"));
             }
         }
@@ -37,6 +39,14 @@ class UserController extends Controller {
         Yii::app()->nfy->unsubscribe($user->id, null, true);
         Yii::app()->user->setFlash('info', 'User berhasil dihapus');
         $this->redirect(['/dev/user/index']);
+    }
+
+    public function actionRoleDel($id) {
+        $role = $this->loadModel($id, "DevRoleForm");
+        $role->delete();
+
+        Yii::app()->user->setFlash('info', 'Role berhasil dihapus');
+        $this->redirect(['/dev/user/roles']);
     }
 
     public function actionUpdate($id) {

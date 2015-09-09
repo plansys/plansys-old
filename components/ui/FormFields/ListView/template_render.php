@@ -20,60 +20,51 @@
         <data name="options" class="hide"><?= json_encode($this->options) ?></data>
         <!-- /data -->
         <!-- field -->
-        <?php if ($this->fieldTemplate == "default"): ?>
-            <div ng-if="value != null" oc-lazy-load="{name: 'ui.tree', files: ['<?= Yii::app()->controller->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
-                <div ui-tree="uiTreeOptions">
-                    <ol ui-tree-nodes ng-model="value">
-                        <li ui-tree-node ng-repeat="item in value" class="list-view-item">
-                            <div style="float:right;margin-top:7px;">
-                                <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
-                                    <i class="fa fa-times"></i>
-                                </div>
+        <button type="button" ng-if="value.length > 5" ng-click="addItem($event)" 
+                style="margin:0px 0px 5px 0px;"
+                class="btn list-view-add btn-default btn-sm">
+            <i class="fa fa-nm fa-plus"></i> <b>Add</b>
+        </button>
+        <button type="button" ng-click="undo()" ng-if="value.length > 5 && showUndoDelete"
+                style="margin:0px;"
+                class="btn list-view-add btn-default btn-sm">
+            <i class="fa fa-nm fa-undo"></i> <b>Undo Delete</b>
+        </button>
+        <div ng-if="!loading && value != null"
+             class="list-view-form"
+             oc-lazy-load="{name: 'ui.tree', files: ['<?= Yii::app()->controller->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
+           
+            <div ui-tree="uiTreeOptions">
+                <ol ui-tree-nodes ng-model="value">
+                    <li <?= $this->expandAttributes($this->fieldOptions) ?>>
+                        <div style="float:right;">
+                            <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
+                                <i class="fa fa-times"></i>
                             </div>
-                            <div ui-tree-handle class="list-view-item-move " style="float:left;padding-top:7px;">
-                                <i class="fa fa-arrows"></i>
-                            </div>
-                            <div class='list-view-item-container'>
-                                <input class="list-view-item-text form-control" 
-                                       ng-change="updateListView()"
-                                       ng-delay="500"
-                                       ng-model="value[$index]" type="text" />
-                            </div>
-                        </li>
-                    </ol>
-                </div>
-            </div>
-        <?php elseif ($this->fieldTemplate == "form"): ?>
-            <div ng-if="!loading && value != null"
-                 class="list-view-form"
-                 oc-lazy-load="{name: 'ui.tree', files: ['<?= Yii::app()->controller->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
-                <div ui-tree="uiTreeOptions">
-                    <ol ui-tree-nodes ng-model="value">
-                        <li ui-tree-node ng-repeat="item in value" class="list-view-item">
-                            <div style="float:right;">
-                                <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
-                                    <i class="fa fa-times"></i>
-                                </div>
-                            </div>
-                            <div ui-tree-handle class="list-view-item-move " style="float:left;">
-                                <i class="fa fa-arrows"></i>
-                            </div>
-                            <div class='list-view-item-container'>
-                                <?= $this->renderTemplateForm; ?>
-                            </div>
-                        </li>
-                    </ol>
-                </div>
-            </div>
+                        </div>
 
-            <div ng-show="loading" class="list-view-loading">
-                <i class="fa fa-link"></i>
-                Loading ListView...
-            </div>
-        <?php endif; ?>
+                        <div ui-tree-handle class="list-view-item-move " 
+                             style="float:left;<?php if ($this->sortable == 'No'): ?>display:none !important;<?php endif ?>">
+                            <i class="fa fa-arrows"></i>
+                        </div>
 
-        <div ng-repeat="(key,val) in value">
-            <div ng-repeat="(k,v) in val">
+                        <div class='list-view-item-container <?php if ($this->sortable == 'No'): ?>unsorted<?php endif ?>' >
+                            <?= $this->renderTemplateForm; ?>
+                            <div class="clearfix"></div>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <div ng-show="loading" class="list-view-loading">
+            <i class="fa fa-link"></i>
+            Loading ListView...
+        </div> 
+
+        <div ng-repeat="(key,val) in value track by $index">
+            <input name="<?= $this->renderName ?>[{{key}}]" ng-if="typeof (val) == 'string'" type="hidden" value='{{val}}' />
+            <div ng-repeat="(k,v) in val  track by $index" ng-if="typeof (val) == 'object'">
                 <input name="<?= $this->renderName ?>[{{key}}][{{k}}]" type="hidden" value='{{v}}' />
             </div>
         </div>
@@ -83,6 +74,11 @@
                 style="margin:0px;"
                 class="btn list-view-add btn-default btn-sm">
             <i class="fa fa-nm fa-plus"></i> <b>Add</b>
+        </button>
+        <button type="button" ng-click="undo()" ng-if="showUndoDelete"
+                style="margin:0px;"
+                class="btn list-view-add btn-default btn-sm">
+            <i class="fa fa-nm fa-undo"></i> <b>Undo Delete</b>
         </button>
         <!-- /field -->
 
@@ -95,11 +91,11 @@
         <!-- /error -->
     </div>
     <script type="text/javascript">
-        app.controller("ListViewController", function ($scope, $parse, $timeout, $http, $localStorage) {
-            $timeout(function () {
+                app.controller("ListViewController", function ($scope, $parse, $timeout, $http, $localStorage) {
+                $timeout(function () {
 <?= $inlineJS ?>
-            });
-        });
-        registerController("ListViewController");
+                });
+                });
+                registerController("ListViewController");
     </script>
 </div>

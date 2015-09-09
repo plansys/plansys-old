@@ -10,58 +10,189 @@ class Controller extends CController {
      * @var string the default layout for the controller view. Defaults to '//layouts/column1',
      * meaning using a single column layout. See 'protected/views/layouts/column1.php'.
      */
-    public $layout = '//layouts/main';
+    public $layout       = '//layouts/main';
+    public $reportLayout = '//layouts/report';
 
     public function url($path) {
         return Yii::app()->request->baseUrl . $path;
     }
 
-    public function staticUrl($path) {
+    public function staticUrl($path = '') {
         $static = "/static";
-        if (substr(Yii::app()->baseUrl, -7) != "plansys") {
-            $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
-            $static = "/" . array_pop($dir) . "/static";
-        }
-
+         
+        $dir    = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
+        $static = "/" . array_pop($dir) . "/static";
+        
         return $this->url($static . $path);
     }
 
     public function staticAppUrl($path) {
-        $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
+        $dir    = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
         $static = "/" . array_pop($dir) . "/static";
         return $this->url($static . $path);
     }
 
+    public function isPosted($class) {
+        $valid = true;
+        $args  = func_get_args();
+        foreach ($args as $c) {
+            if (is_object($c)) {
+                $c = get_class($c);
+            }
+
+            if (null === $this->getPost($c)) {
+                $valid = false;
+                break;
+            }
+        }
+
+        return $valid;
+    }
+
+    public function getPost($class) {
+        if (isset($this->module)) {
+            $module = $this->module->id;
+            if (substr($class, 0, strlen($module)) != $module) {
+                $class = ucfirst($module) . ucfirst($class);
+            }
+        }
+
+        return @$_POST[$class];
+    }
+
+    public function prepareFormName($class, $module = null) {
+        if (isset($module)) {
+            if (is_string($module)) {
+                $moduleList = Setting::getModules();
+                if (isset($moduleList[$module])) {
+                    $moduleAlias = $moduleList[$module]['class'];
+                    $moduleClass = Helper::explodeLast(".", $moduleAlias);
+                    Yii::import($moduleAlias);
+
+                    if (@class_exists($moduleClass)) {
+                        $module = new $moduleClass($module, null);
+                    }
+                }
+            }
+
+            if (!is_object($module)) {
+                $module = null;
+            }
+        }
+
+        if (!isset($module)) {
+            if (isset($this->module)) {
+                $module = $this->module;
+            }
+        }
+
+        if (strpos($class, '.') > 0) {
+            $className = Helper::explodeLast(".", $class);
+            if (!class_exists($className, false)) {
+                try {
+                    Yii::import($class);
+                } catch (CException $e) {
+                    if ($module) {
+                        $moduleAlias = Helper::getAlias($module->basePath);
+                        Yii::import($moduleAlias . ".forms." . $class);
+                    }
+                }
+            }
+
+            $class = $className;
+        } else {
+            if (isset($module)) {
+                $module = $module->id;
+                if (stripos($class, $module) !== 0) {
+                    if (!@class_exists($class)) {
+                        $class = ucfirst($module) . ucfirst($class);
+                    }
+                }
+            }
+        }
+
+        return $class;
+    }
+
+    public function renderReport($file, $data = null, $return = false) {
+        $report = new Report;
+
+        $filePath = $this->getReportFile($file);
+        
+        $output   = $report->load($filePath, $data);
+
+        if (($layoutFile = $this->getLayoutFile($this->reportLayout)) !== false) {
+            $output = $this->renderFile($layoutFile, array('content' => $output), true);
+        }
+
+        $output = $this->processOutput($output);
+        
+        $report->createPdf($output);
+    }
+   
+    public function getReportFile($reportFile) {
+        $ds = DIRECTORY_SEPARATOR;
+        if (strpos($reportFile, '.')) {
+            $filePath  = Yii::getPathOfAlias($reportFile) . '.php';
+        } else {
+            if ($this->getModule() !== null) {
+                $basePath   = $this->module->basePath;
+                $filePath   = $basePath . $ds . "reports" . $ds . $reportFile . ".php";
+            } else {
+                $alias       = Helper::getAlias($this);
+                $location    = Helper::explodeFirst('.', $alias);
+                $reportAlias = $location . '.reports';
+                $filePath  = Yii::getPathOfAlias($reportAlias) . $ds . $reportFile . '.php';
+            }
+        }
+        if (is_file($filePath)) {
+            return $filePath;
+        } else {
+            throw new CException(Yii::t('yii','{controller} cannot find the requested report "{view}".',
+				array('{controller}'=>get_class($this), '{view}'=>$reportFile)));
+        }
+    }
+
     public function renderForm($class, $model = null, $params = [], $options = []) {
-        $fb = FormBuilder::load($class);
+
+        $class           = $this->prepareFormName($class);
+        $fb              = FormBuilder::load($class);
         $this->pageTitle = $fb->form['title'];
-        $this->layout = '//layouts/form';
+        $this->layout    = '//layouts/form';
 
         $renderOptions = [
             'wrapForm' => true,
             'action' => $this->action->id,
         ];
-        
 
         if (is_array($model)) {
             $params = $model;
-            $model = null;
+            $model  = null;
         }
+
+        if (is_object($model)) {
+            $fb->model = $model;
+        }
+
         $options['params'] = $params;
 
-        $renderOptions = array_merge($renderOptions, $options); 
-        $mainform = $fb->render($model, $renderOptions);
+        $renderOptions = array_merge($renderOptions, $options);
+        $mainform      = $fb->render($model, $renderOptions);
 
         $data = $fb->form['layout']['data'];
+
+        $renderSection = @$_GET['render_section'];
 
         foreach ($data as $k => $d) {
             if ($d['type'] == "mainform") {
                 $data[$k]['content'] = $mainform;
             }
+            if (isset($data[$renderSection]) && $k != $renderSection) {
+                unset($data[$k]);
+            }
         }
 
         $layout = Layout::render($fb->form['layout']['name'], $data, $model, true);
-        
         $this->renderText($layout, false);
     }
 
@@ -108,7 +239,7 @@ class Controller extends CController {
 
                     array_push($roleItems, [
                         'label' => '&nbsp; <i class="fa ' . $rc . '"></i> &nbsp;' . $r['role_description'],
-                        'url' => ['/sys/profile/changeUser', 'id' => $r['id']]
+                        'url' => ['/sys/profile/changeRole', 'id' => $r['id']]
                     ]);
                 }
                 array_unshift($userItems, [
@@ -137,7 +268,7 @@ class Controller extends CController {
         if (Yii::app()->user->isGuest) {
             return $default;
         } else {
-            $module = Yii::app()->user->role;
+            $module   = Yii::app()->user->role;
             $menuPath = Yii::app()->user->menuPath;
             $menuPath = $menuPath == '' ? 'MainMenu' : $menuPath;
 
@@ -159,43 +290,43 @@ class Controller extends CController {
         }
     }
 
-    public function loadAllModel($id, $form) {
-        if (strpos($form, '.') > 0) {
-            Yii::import($form);
-            $form = Helper::explodeLast(".", $form);
+    public function newModel($class) {
+        $class = $this->prepareFormName($class);
+        return new $class;
+    }
+
+    public function loadAllModel($class, $attr) {
+        ## kalo ternyata $form dan $attr kebalik
+        if (is_string($attr)) {
+            $temp  = $attr;
+            $attr  = $class;
+            $class = $temp;
         }
-        
-        $model = $form::model($form)->findAllByAttributes($id);
+
+        ## proses load model
+        $class = $this->prepareFormName($class);
+        $model = $class::model($class)->findAllByAttributes($attr);
         if (empty($model)) {
             throw new CHttpException(404, 'The requested page does not exist.');
         }
-        
+
         return $model;
     }
-    
-    public function beforeAction($action) {
-        
-        ## when mode is init or install then redirect to installation mode
-        if (Setting::$mode == "init" || Setting::$mode == "install") {
-            if ($this->id != "default") {
-                $this->redirect(['/install/default/index']);
-            }
-        }
-        
-        parent::beforeAction($action);
-        
-        return true;
-    }
 
-    public function loadModel($idOrAttributes, $form) {
-        if (strpos($form, '.') > 0) {
-            Yii::import($form);
-            $form = Helper::explodeLast(".", $form);
+    public function loadModel($class, $attr) {
+        ## kalo ternyata $form dan $attr kebalik
+        if (is_array($class) || is_numeric($class)) {
+            $temp  = $attr;
+            $attr  = $class;
+            $class = $temp;
         }
-        if (is_array($idOrAttributes)) {
-            $model = $form::model($form)->findByAttributes($idOrAttributes);
+
+        ## proses load model
+        $class = $this->prepareFormName($class);
+        if (is_array($attr)) {
+            $model = $class::model($class)->findByAttributes($attr);
         } else {
-            $model = $form::model($form)->findByPk($idOrAttributes);
+            $model = $class::model($class)->findByPk($attr);
         }
 
         if (!is_null($model) && method_exists($model, 'loadAllRelations')) {
@@ -206,6 +337,23 @@ class Controller extends CController {
             throw new CHttpException(404, 'The requested page does not exist.');
         }
         return $model;
+    }
+
+    public function setInfo($info) {
+        Yii::app()->user->setFlash('info', $info);
+    }
+
+    public function beforeAction($action) {
+        ## when mode is init or install then redirect to installation mode
+        if (Setting::$mode == "init" || Setting::$mode == "install") {
+            if ($this->id != "default") {
+                $this->redirect(['/install/default/index']);
+                return false;
+            }
+        }
+
+        parent::beforeAction($action);
+        return true;
     }
 
 }

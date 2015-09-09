@@ -51,7 +51,17 @@
         }
     })(jQuery);
 
+    var editor = {};
+
     app.controller("PageController", function ($scope, $http, $timeout, $window, $compile, $localStorage) {
+        editor.$scope = $scope;
+        editor.$http = $http;
+        editor.$timeout = $timeout;
+        editor.$window = $window;
+        editor.$compile = $compile;
+        editor.$localStorage = $localStorage;
+        $scope.editor = editor;
+        $scope.activeEditor = null;
         $scope.getNumber = function (num) {
             a = [];
             for (i = 1; i <= num; i++) {
@@ -59,17 +69,54 @@
             }
             return a;
         };
+        var vis = (function () {
+            var stateKey,
+                    eventKey,
+                    keys = {
+                        hidden: "visibilitychange",
+                        webkitHidden: "webkitvisibilitychange",
+                        mozHidden: "mozvisibilitychange",
+                        msHidden: "msvisibilitychange"
+                    };
+            for (stateKey in keys) {
+                if (stateKey in document) {
+                    eventKey = keys[stateKey];
+                    break;
+                }
+            }
+            return function (c) {
+                if (c)
+                    document.addEventListener(eventKey, c);
+                return !document[stateKey];
+            }
+        })();
+        vis(function () {
+            if (vis()) {
+                console.log("tab activated.");
+                $scope.save();
+            } else {
+                console.log("tab inactive.");
+            }
+        });
         $scope.inEditor = true;
         $scope.classPath = '<?= $classPath; ?>';
         $scope.fieldMatch = function (scope) {
+
             if (scope == null)
                 return false;
             if ($scope.active == null)
                 return false;
             if (scope.modelClass == null)
                 return false;
+
+            if (scope.modelClass.indexOf(".") >= 0) {
+                scope.modelClass = scope.modelClass.split(".").pop();
+            }
+
+
             if ($scope.active.type != scope.modelClass)
                 return false;
+
             return true;
         }
         /*********************** TOOLBAR TABS ***********************/
@@ -97,7 +144,7 @@
             });
         };
         $scope.mustReload = false;
-        $scope.saveForm = function (force_reload) {
+        $scope.saveForm = function () {
             if ($scope.layout != null) {
                 var name = $scope.layout.name;
                 $scope.form.layout.data[name] = $scope.layout;
@@ -108,14 +155,19 @@
             }
 
             $scope.saving = true;
-            $http.post('<?php echo $this->createUrl("save", array('class' => $classPath)); ?>', {form: $scope.form})
+            var url = '<?= $this->createUrl("save", ['class' => $classPath, 'timestamp' => $fb->timestamp]); ?>';
+            $http.post(url, {form: $scope.form})
                     .success(function (data, status) {
                         $scope.saving = false;
                         $scope.updateRenderBuilder();
                         if (data == 'FAILED') {
                             $scope.mustReload = true;
+                            $("#must-reload").show();
                             location.reload();
+                        } else if (data == 'FAILED: PERMISSION DENIED') {
+                            alert('ERROR: Failed to write file\nReason: Permission Denied');
                         }
+
                     })
                     .error(function (data, status) {
                         $scope.saving = false;
@@ -169,7 +221,7 @@
         });
         /*********************** LAYOUT ********************************/
         $scope.layout = null;
-        $scope.selectLayout = function (layout) {
+        $scope.selectLayout = function (layout, func) {
             $scope.tabs.properties = true;
             $scope.active = null;
             $(".form-field.active").removeClass("active");
@@ -191,6 +243,10 @@
                 $scope.layout.name = layout;
                 if ($scope.layout.sizetype == null) {
                     $scope.layout.sizetype = "%";
+                }
+
+                if (typeof func == "function") {
+                    func();
                 }
             }, 0);
         }
@@ -230,6 +286,37 @@
 
             $scope.saveForm(true);
         };
+        $scope.changeMenuTreeFile = function () {
+            var file = this.value;
+            $http.get(Yii.app.createUrl('/dev/genMenu/getOptions', {
+                path: file
+            })).success(function (data) {
+                $scope.selectLayout($scope.layout.name, function () {
+                    for (i in $scope.layout) {
+                        if (["type", "name", "file"].indexOf(i) >= 0)
+                            continue;
+                        if (!!data.layout && !!data.layout[i]) {
+                            $scope.layout[i] = data.layout[i];
+                        } else {
+                            switch (i) {
+                                case 'size':
+                                    $scope.layout[i] = '200';
+                                    break;
+                                case 'sizetype':
+                                    $scope.layout[i] = 'px';
+                                    break;
+                                default:
+                                    $scope.layout[i] = '';
+                            }
+                        }
+                    }
+                    $scope.layout.file = file;
+                    $scope.changeLayoutProperties();
+                });
+            }).error(function () {
+                alert("This menu can not be read (PHP Error)");
+            });
+        }
         $scope.changeLayoutProperties = function () {
             $scope.saveForm();
         };
@@ -250,7 +337,6 @@
         $scope.dataSourceList = {};
         $scope.toolbarSettings = <?php echo json_encode(FormField::settings($formType)); ?>;
         $scope.form = <?php echo json_encode($fb->form); ?>;
-
         /*********************** FIELD LOCAL STORAGE SYNC *****************/
         $scope.$storage = $localStorage;
         $scope.storageWatch = null;
@@ -518,12 +604,24 @@
                 '': '-- EMPTY --',
                 '---': '---'
             };
-            for (i in $scope.fields) {
-                if ($scope.fields[i].type == 'DataSource') {
-                    length++;
-                    dslist[$scope.fields[i].name] = $scope.fields[i].name;
+
+            function recurseFields(f) {
+                for (i in f) {
+                    var x = f[i];
+                    if (typeof f[i] != 'object')
+                        continue;
+
+                    if (f[i].type == 'DataSource') {
+                        dslist[f[i].name] = f[i].name;
+                    }
+
+                    for (k in f[i].parseField) {
+                        recurseFields(x[k]);
+                    }
                 }
             }
+
+            recurseFields($scope.fields);
 
             $scope.dataSourceList = dslist;
         }
@@ -551,6 +649,13 @@
             if (!!field.name) {
                 var name = $scope.formatName(field.name);
                 switch (field.type) {
+                    case "SectionHeader":
+                    case "Text":
+                    case "ColumnField":
+                    case "SubForm":
+                    case "ModalDialog":
+                        return "";
+                        break;
                     case "RelationField":
                         return name + field.identifier;
                         break;
@@ -560,14 +665,14 @@
                 }
             }
         }
-
         $scope.detectDuplicate = function () {
             $(".duplicate").addClass('ng-hide').each(function () {
                 if ($(this).attr('fname') == '')
                     return;
+
                 var name = ".d-" + $scope.formatName($(this).attr('fname'));
                 var $name = $(name);
-                if (name.trim() != ".d-" && name.indexOf("text/") != 0) {
+                if (name.trim() != ".d-") {
                     if ($name.length > 1) {
                         $(this).removeClass('ng-hide');
                     }
@@ -582,18 +687,9 @@
                 }
             }, 10);
         }
-        $scope.refreshColumnPlaceholder = function () {
-            $(".cpl").each(function () {
-                if ($(this).parent().find("li").length == 1) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-        };
-        $scope.relayout = function (type) {
-            if (type == "ColumnField") {
-                $scope.refreshColumnPlaceholder();
+        $scope.relayout = function (field) {
+            if (!!field && !!editor && !!editor[field.type] && typeof editor[field.type].onLoad == 'function') {
+                editor[field.type].onLoad(field);
             }
             $scope.detectDuplicate();
         }
@@ -601,18 +697,6 @@
         $scope.isCloneDragging = false;
         $scope.prepareCloneField = function (scope) {
             $scope.isCloning = true;
-        }
-        $scope.minimized = false;
-        $scope.minimize = function () {
-            $scope.minimized = true;
-            var l = $(".fb1").parent().width() - 30;
-            $(".fb1").width(l);
-            $(".fb2").width(30).css('left', l);
-        }
-        $scope.maximize = function () {
-            $scope.minimized = false;
-            $(".fb1").width("69%");
-            $(".fb2").width("31%").css("left", "69%");
         }
         $scope.cancelCloneField = function () {
             $timeout(function () {
@@ -637,7 +721,7 @@
                 }
                 $scope.save();
                 $timeout(function () {
-                    $scope.refreshColumnPlaceholder();
+                    editor.ColumnField.refreshColumnPlaceholder();
                 }, 10);
             }
         };
@@ -662,13 +746,17 @@
         $scope.save = function () {
             $scope.detectEmptyPlaceholder();
             $scope.saving = true;
-            $http.post('<?= $this->createUrl("save", array('class' => $classPath)); ?>', {fields: $scope.fields})
+            var url = '<?= $this->createUrl("save", ['class' => $classPath, 'timestamp' => $fb->timestamp]); ?>';
+            $http.post(url, {fields: $scope.fields})
                     .success(function (data, status) {
                         $scope.saving = false;
                         $scope.detectDuplicate();
                         if (data == 'FAILED') {
                             $scope.mustReload = true;
+                            $("#must-reload").show();
                             location.reload();
+                        } else if (data == 'FAILED: PERMISSION DENIED') {
+                            alert('ERROR: Failed to write file\nReason: Permission Denied');
                         }
                     })
                     .error(function (data, status) {
@@ -695,6 +783,11 @@
                     $scope.inEditor = true;
                     $scope.activeTree = item;
                     $scope.active = item.$modelValue;
+                    if (!!editor[$scope.active.type]) {
+                        $scope.activeEditor = editor[$scope.active.type];
+                    } else {
+                        $scope.activeEditor = null;
+                    }
                     $scope.tabs.properties = true;
                     switch (item.$modelValue.type) {
                         case 'DataFilter':
@@ -714,6 +807,10 @@
                             break;
                     }
 
+                    if ($scope.activeEditor != null && typeof $scope.activeEditor.onSelect == 'function') {
+                        $scope.activeEditor.onSelect($scope.active);
+                    }
+
                 });
             }, 10);
         };
@@ -722,6 +819,7 @@
         }
         $scope.unselect = function () {
             $scope.active = null;
+            $scope.activeEditor = null;
         };
         $scope.unselectViaJquery = function () {
             $scope.$apply(function () {
@@ -749,7 +847,6 @@
             }
             $scope.save();
         }
-
         $timeout(function () {
             $(document).trigger('formBuilderInit');
             $scope.detectEmptyPlaceholder();

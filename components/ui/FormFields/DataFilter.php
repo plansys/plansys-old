@@ -76,71 +76,71 @@ class DataFilter extends FormField {
      * @return array me-return array property DataFilter.
      */
     public function getFieldProperties() {
-        return [
-            [
+        return array (
+            array (
                 'label' => 'Data Filter Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
-                ],
+                ),
                 'type' => 'TextField',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Data Source Name',
                 'name' => 'datasource',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.datasource',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                     'ps-list' => 'dataSourceList',
-                ],
+                ),
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Generate Filters',
                 'buttonType' => 'success',
                 'icon' => 'magic',
                 'buttonSize' => 'btn-xs',
-                'options' => [
+                'options' => array (
                     'style' => 'float:right;margin:0px 0px 5px 0px',
                     'ng-show' => 'active.datasource != \\\'\\\'',
                     'ng-click' => 'generateFilters()',
-                ],
+                ),
                 'type' => 'LinkButton',
-            ],
-            [
+            ),
+            array (
                 'value' => '<div class=\\"clearfix\\"></div>',
                 'type' => 'Text',
-            ],
-            [
+            ),
+            array (
                 'title' => 'Filters',
                 'type' => 'SectionHeader',
-            ],
-            [
+            ),
+            array (
                 'value' => '<div style=\\"margin-top:5px;\\"></div>',
                 'type' => 'Text',
-            ],
-            [
+            ),
+            array (
                 'name' => 'filters',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.DataFilterListForm',
                 'labelWidth' => '0',
                 'inlineJS' => 'DataFilter/inlinejs/dfr-init.js',
                 'fieldWidth' => '12',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.filters',
                     'ng-change' => 'save()',
                     'ps-after-add' => 'value.show = true;',
-                ],
+                ),
                 'type' => 'ListView',
-            ],
-        ];
+            ),
+        );
     }
 
     /**

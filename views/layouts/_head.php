@@ -11,7 +11,7 @@
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/lib/ngStorage.js'));
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/index.app.js'));
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/index.ctrl.js'));
-    
+
     Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/bootstrap.min.css'));
     Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/non-responsive.css'));
     Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/font-awesome.min.css'));

@@ -23,7 +23,7 @@ class DevRoleForm extends Role {
             array (
                 'linkBar' => array (
                     array (
-                        'label' => 'Cancel',
+                        'label' => 'Kembali',
                         'url' => '/dev/user/roles',
                         'options' => array (
                             'href' => 'url:/dev/user/roles',
@@ -31,10 +31,26 @@ class DevRoleForm extends Role {
                         'type' => 'LinkButton',
                     ),
                     array (
-                        'label' => 'Save',
+                        'label' => 'Simpan',
                         'buttonType' => 'success',
                         'options' => array (
                             'ng-click' => 'form.submit(this)',
+                        ),
+                        'type' => 'LinkButton',
+                    ),
+                    array (
+                        'renderInEditor' => 'Yes',
+                        'type' => 'Text',
+                        'value' => '<div class=\\"separator\\"></div>',
+                    ),
+                    array (
+                        'label' => 'Hapus',
+                        'buttonType' => 'danger',
+                        'options' => array (
+                            'href' => 'url:/dev/user/roledel?id={model.id}',
+                            'ng-if' => '!isNewRecord && module == \\\'dev\\\'',
+                            'prompt' => 'Ketik \\\'DELETE\\\' (tanpa kutip) untuk menghapus role ini',
+                            'prompt-if' => 'DELETE',
                         ),
                         'type' => 'LinkButton',
                     ),
@@ -51,18 +67,16 @@ class DevRoleForm extends Role {
                     array (
                         'label' => 'Role Name',
                         'name' => 'role_name',
-                        'autocomplete' => 'rel',
                         'type' => 'TextField',
                     ),
                     array (
                         'label' => 'Role Description',
                         'name' => 'role_description',
-                        'autocomplete' => 'rel',
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column2' => array (
@@ -73,9 +87,13 @@ class DevRoleForm extends Role {
                         'type' => 'TextField',
                     ),
                     array (
-                        'label' => 'Menu Path',
+                        'label' => 'Menu Tree',
                         'name' => 'menu_path',
-                        'type' => 'TextField',
+                        'options' => array (
+                            'ng-if' => '!isNewRecord',
+                        ),
+                        'listExpr' => 'MenuTree::listDropdown($model->rootRole,\\\'Default\\\',true);',
+                        'type' => 'DropDownList',
                     ),
                     array (
                         'label' => 'Repo Path',
@@ -84,15 +102,17 @@ class DevRoleForm extends Role {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
             array (
-                'value' => '<div ng-if=\\"!isNewRecord\\">',
                 'type' => 'Text',
+                'value' => '<div ng-if=\\"!isNewRecord\\">',
             ),
             array (
                 'title' => 'User List',
@@ -263,8 +283,8 @@ class DevRoleForm extends Role {
                 'type' => 'DataGrid',
             ),
             array (
-                'value' => '</div>',
                 'type' => 'Text',
+                'value' => '</div>',
             ),
         );
     }

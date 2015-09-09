@@ -8,7 +8,7 @@ app.directive('relationField', function ($timeout, $http) {
             }
 
             return function ($scope, $el, attrs, ctrl) {
-                var parent = $scope.$parent;
+                var parent = $scope.getParent($scope);
 
                 // when ng-model is changed from inside directive
                 $scope.renderFormList = function () {
@@ -315,7 +315,7 @@ app.directive('relationField', function ($timeout, $http) {
                     });
                 }, true);
 
-                if (typeof ctrl != 'undefined') {
+                if (!!ctrl) {
                     ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;

@@ -72,172 +72,19 @@ class SysAuditTrailIndex extends AuditTrail {
                         'options' => array (
                             'width' => '150px',
                         ),
-                        'list' => array (
-                            array (
-                                'key' => '1',
-                                'value' => 'Developer',
-                            ),
-                            array (
-                                'key' => '3',
-                                'value' => 'Ukur',
-                            ),
-                            array (
-                                'key' => '4',
-                                'value' => 'OE',
-                            ),
-                            array (
-                                'key' => '5',
-                                'value' => 'User Lab',
-                            ),
-                            array (
-                                'key' => '6',
-                                'value' => 'User PDE',
-                            ),
-                            array (
-                                'key' => '43',
-                                'value' => 'Geo RK Darat',
-                            ),
-                            array (
-                                'key' => '44',
-                                'value' => 'Geo Bore Log',
-                            ),
-                            array (
-                                'key' => '45',
-                                'value' => 'Geo geofisika',
-                            ),
-                            array (
-                                'key' => '46',
-                                'value' => 'Geo Kabid Darat',
-                            ),
-                            array (
-                                'key' => '47',
-                                'value' => 'Geo Kabid Laut',
-                            ),
-                            array (
-                                'key' => '48',
-                                'value' => 'Geo - RK Laut',
-                            ),
-                            array (
-                                'key' => '49',
-                                'value' => 'Geo Taksasi',
-                            ),
-                            array (
-                                'key' => '50',
-                                'value' => 'User AEOP',
-                            ),
-                            array (
-                                'key' => '51',
-                                'value' => 'K3LH - Cuaca',
-                            ),
-                            array (
-                                'key' => '52',
-                                'value' => 'K3LH - Reklamasi',
-                            ),
-                            array (
-                                'key' => '53',
-                                'value' => 'POP GT',
-                            ),
-                            array (
-                                'key' => '54',
-                                'value' => 'POP Perizinan',
-                            ),
-                            array (
-                                'key' => '55',
-                                'value' => 'POP PT',
-                            ),
-                            array (
-                                'key' => '56',
-                                'value' => 'ULB',
-                            ),
-                            array (
-                                'key' => '57',
-                                'value' => 'User UNMET',
-                            ),
-                            array (
-                                'key' => '58',
-                                'value' => 'User UTD',
-                            ),
-                            array (
-                                'key' => '125',
-                                'value' => 'Satrio Gahara',
-                            ),
-                            array (
-                                'key' => '126',
-                                'value' => 'Angga Widya Yogatama',
-                            ),
-                            array (
-                                'key' => '127',
-                                'value' => 'Satyogroho D.A',
-                            ),
-                            array (
-                                'key' => '128',
-                                'value' => 'Sofyan Darnis',
-                            ),
-                        ),
-                        'count' => '94',
+                        'list' => 0,
+                        'count' => 0,
                     ),
                     array (
                         'name' => 'description',
                         'label' => 'Page Title',
-                        'listExpr' => '',
                         'filterType' => 'string',
                         'isCustom' => 'No',
                         'options' => array (),
                         'resetable' => 'Yes',
                         'defaultValue' => '',
-                        'defaultValueFrom' => '',
-                        'defaultValueTo' => '',
                         'defaultOperator' => '',
-                        'typeOptions' => array (
-                            'string' => array (
-                                'defaultOperator',
-                                'defaultValue',
-                            ),
-                            'number' => array (
-                                'defaultOperator',
-                                'defaultValue',
-                            ),
-                            'date' => array (
-                                'defaultOperator',
-                                'defaultValue',
-                                'defaultValueFrom',
-                                'defaultValueTo',
-                            ),
-                            'list' => array (
-                                'defaultValue',
-                                'listExpr',
-                            ),
-                            'check' => array (
-                                'defaultValue',
-                                'listExpr',
-                            ),
-                            'relation' => array (
-                                'defaultValue',
-                                'relParams',
-                                'relCriteria',
-                                'relModelClass',
-                                'relIdField',
-                                'relLabelField',
-                            ),
-                        ),
-                        'relParams' => array (),
-                        'relCriteria' => array (
-                            'select' => '',
-                            'distinct' => 'false',
-                            'alias' => 't',
-                            'condition' => '{[search]}',
-                            'order' => '',
-                            'group' => '',
-                            'having' => '',
-                            'join' => '',
-                        ),
-                        'relModelClass' => '',
-                        'relIdField' => '',
-                        'relLabelField' => '',
-                        'relIncludeEmpty' => 'No',
-                        'relEmptyValue' => 'null',
-                        'relEmptyLabel' => '-- NONE --',
-                        'show' => true,
+                        'show' => false,
                     ),
                 ),
                 'type' => 'DataFilter',
@@ -300,6 +147,18 @@ class SysAuditTrailIndex extends AuditTrail {
                         ),
                     ),
                     array (
+                        'columnType' => 'string',
+                        'options' => array (
+                            'href' => 'url:/sys/auditTrail/detail?id={id}',
+                            'target' => '_blank',
+                        ),
+                        'name' => 'description',
+                        'label' => 'Page Title',
+                        'show' => false,
+                        'inputMask' => '',
+                        'stringAlias' => array (),
+                    ),
+                    array (
                         'relModelClass' => 'application.models.User',
                         'relIdField' => 'id',
                         'relParams' => array (),
@@ -321,18 +180,6 @@ class SysAuditTrailIndex extends AuditTrail {
                         'options' => array (
                             'width' => '100px',
                         ),
-                    ),
-                    array (
-                        'columnType' => 'string',
-                        'options' => array (
-                            'href' => 'url:/sys/auditTrail/detail?id={id}',
-                            'target' => '_blank',
-                        ),
-                        'name' => 'description',
-                        'label' => 'Page Title',
-                        'show' => false,
-                        'inputMask' => '',
-                        'stringAlias' => array (),
                     ),
                 ),
                 'gridOptions' => array (

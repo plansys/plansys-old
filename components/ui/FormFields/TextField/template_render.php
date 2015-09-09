@@ -31,7 +31,7 @@
                     <?php if (@$this->fieldOptions['disabled']): ?>
                               style="background:#fff;border:1px solid #ececeb; border-right:0px;"
                           <?php endif; ?>>
-                        <?= $this->prefix ?>
+                              <?= $this->prefix ?>
                     </span>
                 <?php endif; ?>
 
@@ -74,11 +74,9 @@
 
 
         <!-- error -->
-        <?php if (count(@$errors) > 0): ?>
-            <div class="alert error alert-danger">
-                <?= $errors[0] ?>
-            </div>
-        <?php endif ?>
+        <div ng-if="errors[name]" class="alert error alert-danger">
+            {{ errors[name][0]}}
+        </div>
         <!-- /error -->
     </div>
 </div>

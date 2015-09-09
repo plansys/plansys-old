@@ -49,6 +49,10 @@ class WebUser extends CWebUser {
         return $this->getState('role');
     }
 
+    public function getRoleId() {
+        return $this->getState('roleId');
+    }
+
     public function getHomeUrl() {
         if (isset($this->roleInfo['home_url'])) {
             return $this->roleInfo['home_url'];
@@ -58,7 +62,7 @@ class WebUser extends CWebUser {
     }
 
     public function getRoleInfo() {
-        foreach ($this->info['roles'] as $k=>$i) {
+        foreach ($this->info['roles'] as $k => $i) {
             if (@$i['role_name'] == $this->fullRole) {
                 return $i;
             }
@@ -83,6 +87,11 @@ class WebUser extends CWebUser {
     }
 
     public function getInfo() {
+        
+        if (Setting::$mode == "init" || Setting::$mode == "install") {
+            return "{}";
+        }
+        
         if (Yii::app()->user->isGuest) {
             return "{}";
         }
