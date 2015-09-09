@@ -780,6 +780,8 @@ class ActiveRecord extends CActiveRecord {
             switch (get_class($rel)) {
                 case 'CHasOneRelation':
                 case 'CBelongsToRelation':
+                    //TODO
+                    /*
                     if (!empty($new)) {
                         $class = $rel->className;
                         $model = $class::model()->findByPk($this->{$rel->foreignKey});
@@ -789,8 +791,8 @@ class ActiveRecord extends CActiveRecord {
                         $model->attributes = $new;
                         $model->{$rel->foreignKey} = $this->id;
                         $model->save();
-                        break;
-                    }
+                    }*/
+                    break;
                 case 'CManyManyRelation':
                 case 'CHasManyRelation':
 

@@ -312,12 +312,20 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         switch (c.columnType) {
                             case "dropdown":
                                 colDef.type = "dropdown";
+                                colDef.renderer = 'dtDropdown';
+                                colDef.editor = 'dtDropdown';
+
                                 if (c.listType == 'js') {
                                     c.listItem = parent.$eval(c.listExpr);
                                 }
                                 colDef.source = parent.$eval(c.listItem);
+                                colDef.source = $.map(colDef.source, $.trim);
                                 if (typeof c.listValues != 'undefined') {
                                     colDef.sourceValues = parent.$eval(c.listValues);
+                                    colDef.sourceValues = $.map(colDef.sourceValues, $.trim);
+                                }
+                                if (c.listMustChoose == 'Yes' && colDef.source.length > 0) {
+                                    colDef.defaultValue = colDef.sourceValues[0];
                                 }
                                 break;
                             case "checkbox":
@@ -1102,6 +1110,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                             totalGroups: $scope.gridOptions.totalGroups,
                             colHeaders: colHeaders
                         }).prepare();
+                        
                         delete($scope.gridOptions.groups);
                         if ($scope.data.length > 0) {
                             if (!$scope.getInstance()) {
@@ -1351,9 +1360,13 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                         },
                         afterRemoveRow: function (index, amount) {
                             if (!$scope.dtGroups) {
-                                $scope.edited = true;
-                                $scope.datasource.data.splice(index, amount);
+                               $scope.edited = true;
+                               $scope.datasource.data.splice(index, amount);
                             }
+                            
+                           if (typeof $scope.events.afterRemoveRow == "function") {
+                               $scope.events.afterRemoveRow(index, amount);
+                           }
                         },
                         afterValidate: function (valid, value, row, prop, source) {
                             if (typeof $scope.events.afterValidate == "function") {
@@ -1515,6 +1528,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     }
 
                     // Setup Events Watcher
+                    /*
                     if (options.events) {
                         $scope.events = options.events;
                     }
@@ -1522,6 +1536,7 @@ app.directive('psDataTable', function ($timeout, $http, $compile, $filter, $q) {
                     if (!!$scope.events) {
                         options = $.extend(options, $scope.events);
                     }
+                    */
                     $scope.columns = columnsInternal;
                     if ($("#" + $scope.renderID).length > 0) {
                         $("#" + $scope.renderID).width($el.width());

@@ -86,6 +86,7 @@ app.directive('psChartBar', function ($timeout) {
 
                         var result = [];
                         result[0] = [];
+
                         for (var i in filtered) {
                             var series = {};
                             series.label = i;
@@ -93,10 +94,12 @@ app.directive('psChartBar', function ($timeout) {
                             result[0][i] = series;
                         }
 
+
                         var chartData_raw = result[0];
                         var formatChart = formatChartData(chartData_raw);
                         var chartData = formatChart[0];
                         var xAxis = formatChart[1];
+                        console.log(series, xAxis);
 
                         if ($scope.series != null) {
                             for (i in $scope.series) {

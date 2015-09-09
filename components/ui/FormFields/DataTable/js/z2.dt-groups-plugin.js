@@ -297,16 +297,20 @@ Handsontable.DataTableGroups = function (settings) {
                 }
                 if ($scope.ht) {
                     var sel = $scope.ht.getSelected();
-                    var start = Math.min(sel[0], sel[2]);
-                    var end = Math.max(sel[0], sel[2]);
-                    var disabled = false;
-                    for (var i = end; i >= start; i--) {
-                        var d = $scope.data[i];
-                        if (d['__dt_flg'] != "Z") {
-                            disabled = true;
+                    if (sel) {
+                        var start = Math.min(sel[0], sel[2]);
+                        var end = Math.max(sel[0], sel[2]);
+                        var disabled = false;
+                        for (var i = end; i >= start; i--) {
+                            var d = $scope.data[i];
+                            if (d['__dt_flg'] != "Z") {
+                                disabled = true;
+                            }
                         }
+                        return disabled;
+                    } else {
+                        return false;
                     }
-                    return disabled;
                 }
                 return true;
             }

@@ -331,7 +331,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                             $scope.deleteData = [];
                                         }
 
-                                        if (angular.isNumber(del['id'])) {
+                                        if (angular.isNumber(del['id']*1) && del['id']*1 > 0) {
                                             $scope.deleteData.push(del['id']);
                                         }
                                     }
