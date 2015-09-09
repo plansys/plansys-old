@@ -18,8 +18,6 @@ ob_start();
 <script type="text/javascript">
 <?php ob_start(); ?>
     app.controller("<?= $modelClass ?>Controller", function ($scope, $parse, $timeout, $http, $localStorage, $filter) {
-        $("#tag-field-container").remove();
-        
         $scope.form = <?php echo json_encode($this->form); ?>;
         $scope.model = <?php echo @json_encode($data['data']); ?>;
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
@@ -31,6 +29,7 @@ ob_start();
         $scope.formClass = "<?php echo $modelClass; ?>";
         $scope.modelBaseClass = "<?php echo ActiveRecord::baseClass($this->model); ?>";
         $scope.lastModified = "<?php echo Helper::getLastModified($modelClass); ?>";
+
 
         // initialize pageSetting
         $timeout(function () {
@@ -154,7 +153,7 @@ ob_start();
                     // track create or update in audit trail
                     $scope.formSubmitting = true;
                     if (!!$scope.model) {
-                        $scope.pageInfo['data'] = JSON.stringify($scope.model);
+                        //$scope.pageInfo['data'] = JSON.stringify($scope.model);
                         $scope.pageInfo['form_class'] = $scope.formClass;
                         $scope.pageInfo['model_class'] = $scope.modelBaseClass;
                         $scope.pageInfo['model_id'] = $scope.model.id;
@@ -203,7 +202,9 @@ ob_start();
         });
         function inlineJS() {
             $("div[ng-controller=<?= $modelClass ?>Controller]").css('opacity', 1);
-<?= $inlineJS; ?>
+<?= implode("\n            ", explode("\n", $inlineJS)); ?>
+
+
         }
 
         // execute inline JS

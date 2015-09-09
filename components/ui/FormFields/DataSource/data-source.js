@@ -3,7 +3,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
         scope: true,
         compile: function (element, attrs, transclude) {
             return function ($scope, $el, attrs, ctrl) {
-                var parent = $scope.getParent($scope);
+                var parent = $scope.$parent;
 
                 $scope.params = JSON.parse($el.find("data[name=params]").text());
                 $scope.paramsGet = JSON.parse($el.find("data[name=params_get]").text());
@@ -223,9 +223,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     $scope.data = [];
                 } else {
                     $scope.data = JSON.parse($el.find("data[name=data]").text());
-                    if (!$scope.isArray($scope.data)) {
-                        $scope.data = [];
-                    }
                 }
 
                 $scope.isDataReloaded = false;
@@ -273,7 +270,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                 $scope.insertData = [];
                                 $scope.updateData = [];
                                 $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text());
-                                
+
                                 // find newly inserted data or updated data
                                 for (i in newval) {
                                     var newv = newval[i];
@@ -328,12 +325,12 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                             found = true;
                                         }
                                     }
-                                    
+
                                     if (!found) {
                                         if ($scope.deleteData == null || !!!$scope.deleteData || typeof $scope.deleteData != 'object') {
                                             $scope.deleteData = [];
                                         }
-                                        
+
                                         if (angular.isNumber(del['id']*1) && del['id']*1 > 0) {
                                             $scope.deleteData.push(del['id']);
                                         }
