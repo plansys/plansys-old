@@ -190,7 +190,9 @@ class DevUserIndex extends User {
                     array (
                         'name' => 'nip',
                         'label' => 'nip',
-                        'options' => array (),
+                        'options' => array (
+                            'width' => '244',
+                        ),
                         'columnType' => 'string',
                         'show' => false,
                         'inputMask' => '',
@@ -199,7 +201,9 @@ class DevUserIndex extends User {
                     array (
                         'name' => 'username',
                         'label' => 'username',
-                        'options' => array (),
+                        'options' => array (
+                            'width' => '275',
+                        ),
                         'columnType' => 'string',
                         'show' => false,
                         'inputMask' => '',

@@ -5,21 +5,24 @@ class DataGridListForm extends Form {
     public function getFields() {
         return array (
             array (
+                'type' => 'Text',
                 'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
 <div class=\"label data-filter-name pull-right\"> 
 {{value[$index].columnType}}</div>
 {{value[$index].label}} 
 <div class=\"clearfix\"></div>
 </div>',
-                'type' => 'Text',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<hr ng-if=\"value[$index].show\"
 style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
-                'type' => 'Text',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<div ng-if=\\"value[$index].show\\">',
+            ),
+            array (
                 'type' => 'Text',
             ),
             array (
@@ -123,12 +126,12 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'KeyValueGrid',
             ),
             array (
-                'value' => '<div style=\\"margin-bottom:-3px;\\"></div>',
                 'type' => 'Text',
+                'value' => '<div style=\\"margin-bottom:-3px;\\"></div>',
             ),
             array (
-                'value' => '</div>',
                 'type' => 'Text',
+                'value' => '</div>',
             ),
         );
     }
