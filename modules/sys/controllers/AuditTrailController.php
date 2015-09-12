@@ -4,8 +4,10 @@ class AuditTrailController extends Controller {
 
     public function actionTrack($t = "view") {
         $postdata = file_get_contents("php://input");
-        $path = CJSON::decode($postdata);
-        
+        $path = json_decode($postdata, false);
+        if ($path['module'] == 'dev')
+            return;
+
         if (!empty($path)) {
             AuditTrail::savePageInfo($path);
             switch ($t) {

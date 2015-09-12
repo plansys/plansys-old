@@ -95,9 +95,11 @@ class DefaultController extends Controller {
 
             if ($model->validate()) {
                 $error = false;
-
+                        
+                        
                 try {
-                    $dbh = new pdo("mysql:host={$model->host};dbname={$model->dbname}", $model->username, $model->password, array(
+                    $dbh = new pdo("mysql:host={$model->host};dbname={$model->dbname}", 
+                        $model->username, $model->password, array(
                         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     ));
                 } catch (PDOException $ex) {

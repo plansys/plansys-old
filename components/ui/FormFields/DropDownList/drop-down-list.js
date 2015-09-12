@@ -8,6 +8,7 @@ app.directive('dropDownList', function ($timeout) {
             }
 
             return function ($scope, $el, attrs, ctrl) {
+                $scope.lastFocus = 'search';
                 // when ng-model is changed from inside directive
                 $scope.renderFormList = function () {
                     $scope.renderedFormList = [];
@@ -89,15 +90,12 @@ app.directive('dropDownList', function ($timeout) {
                     $scope.updateInternal(value);
                     $timeout(function () {
                         ctrl.$setViewValue($scope.value);
+                        $scope.lastFocus = 'search';
                     }, 0);
                 };
+
                 $scope.updateInternal = function (value) {
                     $scope.value = ['number', 'string'].indexOf(typeof value) < 0 ? '' : value + '';
-
-                    if ($scope.showOther && !$scope.itemExist()) {
-                        $scope.value = $el.find("li a").attr('value');
-                        $scope.value = value;
-                    }
 
                     var isFound = false;
                     $el.find("li").each(function () {
@@ -115,6 +113,15 @@ app.directive('dropDownList', function ($timeout) {
                         }, 1000);
                     }
 
+                    $timeout(function () {
+                        if ($scope.showOther && !isFound && !$scope.formList[value]) {
+                            $scope.valueOther = value;
+                            $scope.text = value;
+                            $el.find("li.hover").removeClass("hover");
+                            $el.find("li.dropdown-other").addClass("hover");
+                        }
+                    }, 100);
+
                     $scope.toggled(false);
                 };
 
@@ -122,9 +129,38 @@ app.directive('dropDownList', function ($timeout) {
                     return text.trim();
                 }
 
+                $scope.selectOther = function () {
+                    if ($scope.valueOther != '') {
+                        $scope.value = $scope.valueOther;
+                        $scope.text = $scope.valueOther;
+                        $el.find("li.hover").removeClass("hover");
+                        $el.find("li.dropdown-other").addClass("hover");
+                    }
+                }
+
                 $scope.updateOther = function (value) {
-                    $scope.updateInternal(value);
+                    $scope.valueOther = value;
+                    $scope.value = value;
+                    $scope.text = value;
                     ctrl.$setViewValue($scope.value);
+                    $timeout(function () {
+                        if ($scope.itemExist()) {
+                            $scope.valueOther = '';
+                            $scope.updateInternal($scope.value);
+
+                            $el.find("li.hover").removeClass("hover")
+                            $el.find("li a[value='" + $scope.value + "']").focus().parent().addClass('hover');
+                        } else {
+                            $el.find("li.hover").removeClass("hover");
+                            $el.find("li.dropdown-other").addClass("hover");
+                        }
+
+                        $scope.text = $scope.value;
+                        if ($scope.valueOther != $scope.value) {
+                            $scope.valueOther = $scope.value;
+                            $el.find(".dropdown-other-type").val($scope.value);
+                        }
+                    });
                 }
 
                 $scope.itemExist = function (value, text) {
@@ -143,8 +179,9 @@ app.directive('dropDownList', function ($timeout) {
                     return valueExist || textExist;
                 }
 
-                $scope.searchFocus = function (e) {
+                $scope.textFieldFocus = function (e, lastFocus) {
                     e.stopPropagation();
+                    $scope.lastFocus = lastFocus;
                     var watch = $scope.$watch('isOpen', function (n) {
                         if (n === false) {
                             $scope.isOpen = true;
@@ -164,9 +201,19 @@ app.directive('dropDownList', function ($timeout) {
                             $el.find("li a").blur();
                             $el.find(".dropdown-menu").scrollTop(0);
                         }
-                        if ($scope.searchable) {
+                        if ($scope.searchable && $scope.lastFocus == 'search') {
                             $timeout(function () {
                                 $el.find('.search-dropdown').focus();
+                            }, 0);
+                        }
+                        if ($scope.lastFocus == 'other') {
+                            $timeout(function () {
+                                $el.find('.dropdown-other-type').focus();
+
+                                if (!$scope.itemExist()) {
+                                    $el.find("li.hover").removeClass("hover");
+                                    $el.find("li.dropdown-other").addClass("hover");
+                                }
                             }, 0);
                         }
                     } else if ($scope.openedInField) {
@@ -239,6 +286,7 @@ app.directive('dropDownList', function ($timeout) {
                 $scope.renderedFormList = [];
                 $scope.renderFormList();
 
+                $scope.valueOther = '';
                 $scope.searchable = $el.find("data[name=searchable]").text().trim() == "Yes" ? true : false;
                 $scope.showOther = $el.find("data[name=show_other]").text().trim() == "Yes" ? true : false;
                 $scope.otherLabel = $el.find("data[name=other_label]").html();

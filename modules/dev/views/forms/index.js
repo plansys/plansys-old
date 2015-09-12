@@ -78,6 +78,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
             })
         }
     };
+
     $scope.addFolder = function (foldername, item) {
         if (!!foldername) {
             $http.get(Yii.app.createUrl('/dev/forms/addFolder', {
@@ -108,6 +109,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
             });
         }
     }
+    window.activeScope = $scope;
     $scope.formTreeOpen = function (sel, e, item) {
         $scope.menuSelect = sel.$modelValue;
         $(".menu-sel").removeClass("active").removeClass(".menu-sel");
@@ -120,11 +122,8 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         icon: "fa fa-fw fa-file-text-o",
                         label: "New Form",
                         click: function (item) {
-                            var classname = prompt("Enter new form class name:");
-                            if (!!classname) {
-                                var extendsname = prompt("Enter model class name:");
-                                $scope.addForm(classname, extendsname, item);
-                            }
+                            $scope.activeItem = item;
+                            PopupCenter(Yii.app.createUrl('/dev/forms/newForm'), "Create New Form", '400', '500');
                         }
                     },
                     {
@@ -147,11 +146,8 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         icon: "fa fa-fw fa-file-text-o",
                         label: "New Form",
                         click: function (item) {
-                            var classname = prompt("Enter new form class name:");
-                            if (!!classname) {
-                                var extendsname = prompt("Enter model class name:");
-                                $scope.addForm(classname, extendsname, item);
-                            }
+                            $scope.activeItem = item;
+                            PopupCenter(Yii.app.createUrl('/dev/forms/newForm'), "Create New Form", '400', '500');
                         }
                     },
                     {
@@ -297,7 +293,6 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
 
     $scope.treeOptions = {
         accept: function (sourceNodeScope, destNodesScope, destIndex) {
-            console.log(sourceNodeScope, destNodesScope);
             return true;
         }
     };
@@ -305,6 +300,24 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
     $timeout(function () {
         $("[ui-tree-handle].active").click();
     }, 100);
+
+    function PopupCenter(url, title, w, h) {
+        // Fixes dual-screen position                         Most browsers      Firefox
+        var dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : screen.left;
+        var dualScreenTop = window.screenTop != undefined ? window.screenTop : screen.top;
+
+        width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+        height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+
+        var left = ((width / 2) - (w / 2)) + dualScreenLeft;
+        var top = ((height / 2) - (h / 2)) + dualScreenTop;
+        var newWindow = window.open(url, title, 'scrollbars=yes, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
+
+        // Puts focus on the newWindow
+        if (window.focus) {
+            newWindow.focus();
+        }
+    }
 });
 
 $(document).ready(function () {

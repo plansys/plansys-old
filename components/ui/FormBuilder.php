@@ -816,7 +816,7 @@ class FormBuilder extends CComponent {
 
         ## define formdata
         $data = $this->defineFormData($formdata);
-
+        
         ## render semua html
         foreach ($fields as $k => $f) {
             if (is_array($f)) {

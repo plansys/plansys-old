@@ -23,8 +23,8 @@ class KeyValueGrid extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
-                'value' => '<hr/>',
                 'type' => 'Text',
+                'value' => '<hr/>',
             ),
             array (
                 'label' => 'Label',

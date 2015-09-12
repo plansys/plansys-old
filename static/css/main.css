@@ -2050,7 +2050,8 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
     font-size: 13px;
 }
 
-.data-grid-dropdown li.hover > a {
+.data-grid-dropdown li.hover > a, 
+.data-grid-dropdown li.dropdown-other.hover{
     background: #f5f5f5;
 }
 
@@ -3160,7 +3161,8 @@ div[dropdown] .dropdown-menu-submenu li a {
     background: #f5f5f5;
 }
 
-.dropdown-menu li.hover > a {
+.dropdown-menu li.hover > a,
+.dropdown-menu li.dropdown-other.hover {
     background: #f5f5f5;
 }
 
@@ -3198,7 +3200,22 @@ div[dropdown] > .dropdown-menu > .dropdown-menu.inner {
 }
 
 div[dropdown] .dropdown-other {
-    padding-bottom: 5px;
+    padding: 0px;
+
+}
+
+div[dropdown] .dropdown-other-icon {
+    color: #999;
+    margin: -21px 0px 0px 10px;
+    float: left;
+}
+
+div[dropdown] .dropdown-other-type {
+    background: transparent;
+    border: 0px;
+    box-shadow: none;
+    padding: 0px 0px 0px 30px !important;
+    margin-top: -5px;
 }
 
 div[dropdown] .btn-dropdown-field {

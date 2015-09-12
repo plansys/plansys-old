@@ -59,8 +59,8 @@ class DropDownList extends FormField {
                 'totalColumns' => '4',
                 'column1' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column2' => array (
@@ -79,8 +79,8 @@ class DropDownList extends FormField {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'column3' => array (
@@ -98,15 +98,19 @@ class DropDownList extends FormField {
                         'type' => 'TextField',
                     ),
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '25%',
+                'w2' => '25%',
+                'w3' => '25%',
+                'w4' => '25%',
                 'type' => 'ColumnField',
             ),
             array (
-                'value' => '<hr/>',
                 'type' => 'Text',
+                'value' => '<hr/>',
             ),
             array (
                 'label' => 'Searchable',
@@ -146,8 +150,8 @@ class DropDownList extends FormField {
                 'type' => 'TextField',
             ),
             array (
-                'value' => '<hr/>',
                 'type' => 'Text',
+                'value' => '<hr/>',
             ),
             array (
                 'label' => 'Default Value',
@@ -163,8 +167,8 @@ class DropDownList extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
-                'value' => '<hr/>',
                 'type' => 'Text',
+                'value' => '<hr/>',
             ),
             array (
                 'label' => 'DropDown Item',

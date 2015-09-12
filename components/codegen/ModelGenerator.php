@@ -7,25 +7,25 @@ class ModelGenerator extends CodeGenerator {
 
     public static function getRuleList() {
         return [
-            'required'  => 'Required',
-            'email'     => 'Email',
-            'boolean'   => 'Boolean',
-            'compare'   => 'Compare',
-            'date'      => 'Date',
-            'default'   => 'Default',
-            'exist'     => 'Exist',
-            'file'      => 'File',
-            'in'        => 'Range',
-            'length'    => 'Length',
+            'required' => 'Required',
+            'email' => 'Email',
+            'boolean' => 'Boolean',
+            'compare' => 'Compare',
+            'date' => 'Date',
+            'default' => 'Default',
+            'exist' => 'Exist',
+            'file' => 'File',
+            'in' => 'Range',
+            'length' => 'Length',
             'numerical' => 'Number',
-            'match'     => 'Regex Match',
-            'unique'    => 'Unique',
-            'url'       => 'Url',
-            '---1'      => '---',
-            'safe'      => 'Safe',
-            'unsafe'    => 'Unsafe',
-            '---'       => '---',
-            'custom'    => 'Custom'
+            'match' => 'Regex Match',
+            'unique' => 'Unique',
+            'url' => 'Url',
+            '---1' => '---',
+            'safe' => 'Safe',
+            'unsafe' => 'Unsafe',
+            '---' => '---',
+            'custom' => 'Custom'
         ];
     }
 
@@ -87,14 +87,46 @@ EOF;
                 $rule = array_shift($r);
 
                 $rules[] = [
-                    'fields'  => $fields,
-                    'rule'    => $rule,
+                    'fields' => $fields,
+                    'rule' => $rule,
                     'options' => $r
                 ];
             }
         }
 
         return $rules;
+    }
+
+    public static function listModels() {
+        $dir = Yii::getPathOfAlias("application.models");
+        $appDir = Yii::getPathOfAlias("app.models");
+
+        $devItems = glob($dir . DIRECTORY_SEPARATOR . "*");
+        $appItems = glob($appDir . DIRECTORY_SEPARATOR . "*");
+        $models = [];
+        
+        $items = [];
+        foreach ($appItems as $k => $m) {
+            $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
+            $m = str_replace('.php', "", $m);
+
+            $items[$m] = $m;
+        }
+        $models['App Model'] = $items;
+
+        if (Setting::get('app.mode') == "plansys") {
+            $items = [];
+            foreach ($devItems as $k => $m) {
+                $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
+                $m = str_replace('.php', "", $m);
+
+                $items[$m] = $m;
+            }
+            
+            $models['Plansys Model'] = $items;
+        }
+
+        return $models;
     }
 
     public static function listMenuTree() {
@@ -112,23 +144,23 @@ EOF;
                 $m = str_replace('.php', "", $m);
 
                 $devItems[$k] = [
-                    'type'       => 'plansys',
-                    'label'      => $m,
-                    'icon'       => 'fa fa-cube',
-                    'class'      => 'application.models.' . $m,
+                    'type' => 'plansys',
+                    'label' => $m,
+                    'icon' => 'fa fa-cube',
+                    'class' => 'application.models.' . $m,
                     'class_path' => 'application.models',
-                    'exist'      => (class_exists($m)) ? 'yes' : 'no',
-                    'type'       => 'dev',
-                    'active'     => @$_GET['active'] == 'plansys.' . $m,
-                    'url'        => Yii::app()->controller->createUrl('/dev/genModel/index', [
+                    'exist' => (class_exists($m)) ? 'yes' : 'no',
+                    'type' => 'dev',
+                    'active' => @$_GET['active'] == 'plansys.' . $m,
+                    'url' => Yii::app()->controller->createUrl('/dev/genModel/index', [
                         'active' => 'plansys.' . $m,
                     ]),
-                    'target'     => 'col2',
+                    'target' => 'col2',
                 ];
             }
 
             $models[] = [
-                'type'  => 'plansys',
+                'type' => 'plansys',
                 'label' => 'Plansys',
                 'items' => $devItems,
             ];
@@ -139,22 +171,22 @@ EOF;
             $m = str_replace('.php', "", $m);
 
             $appItems[$k] = [
-                'type'       => 'app',
-                'label'      => $m,
-                'icon'       => 'fa fa-cube',
-                'class'      => 'app.models.' . $m,
+                'type' => 'app',
+                'label' => $m,
+                'icon' => 'fa fa-cube',
+                'class' => 'app.models.' . $m,
                 'class_path' => 'app.models',
-                'exist'      => (class_exists($m)) ? 'yes' : 'no',
-                'type'       => 'app',
-                'active'     => @$_GET['active'] == 'app.' . $m,
-                'url'        => Yii::app()->controller->createUrl('/dev/genModel/index', [
+                'exist' => (class_exists($m)) ? 'yes' : 'no',
+                'type' => 'app',
+                'active' => @$_GET['active'] == 'app.' . $m,
+                'url' => Yii::app()->controller->createUrl('/dev/genModel/index', [
                     'active' => 'app.' . $m,
                 ]),
-                'target'     => 'col2',
+                'target' => 'col2',
             ];
         }
         $models[] = [
-            'type'  => 'app',
+            'type' => 'app',
             'label' => 'App',
             'items' => $appItems,
         ];

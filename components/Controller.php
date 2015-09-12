@@ -10,7 +10,7 @@ class Controller extends CController {
      * @var string the default layout for the controller view. Defaults to '//layouts/column1',
      * meaning using a single column layout. See 'protected/views/layouts/column1.php'.
      */
-    public $layout       = '//layouts/main';
+    public $layout = '//layouts/main';
     public $reportLayout = '//layouts/report';
 
     public function url($path) {
@@ -19,22 +19,22 @@ class Controller extends CController {
 
     public function staticUrl($path = '') {
         $static = "/static";
-         
-        $dir    = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
+
+        $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
         $static = "/" . array_pop($dir) . "/static";
-        
+
         return $this->url($static . $path);
     }
 
     public function staticAppUrl($path) {
-        $dir    = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
+        $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
         $static = "/" . array_pop($dir) . "/static";
         return $this->url($static . $path);
     }
 
     public function isPosted($class) {
         $valid = true;
-        $args  = func_get_args();
+        $args = func_get_args();
         foreach ($args as $c) {
             if (is_object($c)) {
                 $c = get_class($c);
@@ -78,9 +78,7 @@ class Controller extends CController {
             if (!is_object($module)) {
                 $module = null;
             }
-        }
-
-        if (!isset($module)) {
+        } else if(!isset($module)) {
             if (isset($this->module)) {
                 $module = $this->module;
             }
@@ -118,57 +116,58 @@ class Controller extends CController {
         $report = new Report;
 
         $filePath = $this->getReportFile($file);
-        
-        $output   = $report->load($filePath, $data);
+
+        $output = $report->load($filePath, $data);
 
         if (($layoutFile = $this->getLayoutFile($this->reportLayout)) !== false) {
             $output = $this->renderFile($layoutFile, array('content' => $output), true);
         }
 
         $output = $this->processOutput($output);
-        
+
         $report->createPdf($output);
     }
-   
+
     public function getReportFile($reportFile) {
         $ds = DIRECTORY_SEPARATOR;
         if (strpos($reportFile, '.')) {
-            $filePath  = Yii::getPathOfAlias($reportFile) . '.php';
+            $filePath = Yii::getPathOfAlias($reportFile) . '.php';
         } else {
             if ($this->getModule() !== null) {
-                $basePath   = $this->module->basePath;
-                $filePath   = $basePath . $ds . "reports" . $ds . $reportFile . ".php";
+                $basePath = $this->module->basePath;
+                $filePath = $basePath . $ds . "reports" . $ds . $reportFile . ".php";
             } else {
-                $alias       = Helper::getAlias($this);
-                $location    = Helper::explodeFirst('.', $alias);
+                $alias = Helper::getAlias($this);
+                $location = Helper::explodeFirst('.', $alias);
                 $reportAlias = $location . '.reports';
-                $filePath  = Yii::getPathOfAlias($reportAlias) . $ds . $reportFile . '.php';
+                $filePath = Yii::getPathOfAlias($reportAlias) . $ds . $reportFile . '.php';
             }
         }
         if (is_file($filePath)) {
             return $filePath;
         } else {
-            throw new CException(Yii::t('yii','{controller} cannot find the requested report "{view}".',
-				array('{controller}'=>get_class($this), '{view}'=>$reportFile)));
+            throw new CException(Yii::t('yii', '{controller} cannot find the requested report "{view}".', array('{controller}' => get_class($this), '{view}' => $reportFile)));
         }
     }
 
     public function renderForm($class, $model = null, $params = [], $options = []) {
 
-        $class           = $this->prepareFormName($class);
-        $fb              = FormBuilder::load($class);
-        $this->pageTitle = $fb->form['title'];
-        $this->layout    = '//layouts/form';
+        if (is_array($model)) {
+            $options = $params;
+            $params = $model;
+            $model = null;
+        }
 
+        $class = $this->prepareFormName($class);
+        $fb = FormBuilder::load($class);
+        
+        $this->pageTitle = $fb->form['title'];
+        $this->layout = isset($options['layout']) ? $options['layout'] : '//layouts/form';
+        
         $renderOptions = [
             'wrapForm' => true,
             'action' => $this->action->id,
         ];
-
-        if (is_array($model)) {
-            $params = $model;
-            $model  = null;
-        }
 
         if (is_object($model)) {
             $fb->model = $model;
@@ -177,7 +176,7 @@ class Controller extends CController {
         $options['params'] = $params;
 
         $renderOptions = array_merge($renderOptions, $options);
-        $mainform      = $fb->render($model, $renderOptions);
+        $mainform = $fb->render($model, $renderOptions);
 
         $data = $fb->form['layout']['data'];
 
@@ -268,7 +267,7 @@ class Controller extends CController {
         if (Yii::app()->user->isGuest) {
             return $default;
         } else {
-            $module   = Yii::app()->user->role;
+            $module = Yii::app()->user->role;
             $menuPath = Yii::app()->user->menuPath;
             $menuPath = $menuPath == '' ? 'MainMenu' : $menuPath;
 
@@ -298,8 +297,8 @@ class Controller extends CController {
     public function loadAllModel($class, $attr) {
         ## kalo ternyata $form dan $attr kebalik
         if (is_string($attr)) {
-            $temp  = $attr;
-            $attr  = $class;
+            $temp = $attr;
+            $attr = $class;
             $class = $temp;
         }
 
@@ -316,8 +315,8 @@ class Controller extends CController {
     public function loadModel($class, $attr) {
         ## kalo ternyata $form dan $attr kebalik
         if (is_array($class) || is_numeric($class)) {
-            $temp  = $attr;
-            $attr  = $class;
+            $temp = $attr;
+            $attr = $class;
             $class = $temp;
         }
 

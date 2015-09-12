@@ -21,7 +21,7 @@
         <data name="default_value" class="hide"><?= $this->defaultValue ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
         <!-- /data -->
-        
+
         <!-- field -->
         <div class="<?= $this->fieldClass ?>" 
              ng-keydown="dropdownKeypress($event)"
@@ -29,25 +29,15 @@
              dropdown on-toggle="toggled(open)">
 
             <!-- default button -->
-            <button 
-                ng-if="!showOther || (showOther && itemExist())" type="button" 
-                <?= $this->expandAttributes($this->fieldOptions) ?>
-                <?php if (@$this->fieldOptions['disabled']): ?>style="opacity:1;background:#fff;border:1px solid #ececeb;"<?php endif; ?> 
-                >
+            <button type="button" 
+            <?= $this->expandAttributes($this->fieldOptions) ?>
+                    <?php if (@$this->fieldOptions['disabled']): ?>style="opacity:1;background:#fff;border:1px solid #ececeb;"<?php endif; ?> 
+                    >
                 <span <?php if (@$this->fieldOptions['disabled']): ?>style="display:none"<?php endif; ?> 
                                                                      class="caret pull-right"></span>
                 <span class="dropdown-text" ng-bind-html="text"></span>
             </button>
 
-            <!-- typeable button -->
-            <button ng-if="showOther && !itemExist()" tabindex="1" type="button" 
-                    style="padding:2px 0px 8px 0px;width:30px; text-align:center;"
-                    class="split-button <?= @$this->fieldOptions['class'] ?>">
-                <span class="caret" style="float:none;"></span>
-            </button>
-            <input ng-if="showOther && !itemExist()" type="text"
-                   ng-model="value" ng-change="updateOther(value)" ng-delay="500"
-                   class="form-control dropdown-other-type">
             <!-- dropdown item -->
             <div class="dropdown-menu open <?= $this->menuPos; ?>">
                 <div class="search" ng-show="searchable">
@@ -55,7 +45,7 @@
                            ng-model="search"
                            ng-change="doSearch()"
                            placeholder="Search ..."
-                           ng-mouseup="searchFocus($event, filter)"
+                           ng-mouseup="textFieldFocus($event, 'search')"
                            class="input-block-level search-dropdown form-control" 
                            autocomplete="off">
                 </div>
@@ -100,12 +90,15 @@
                         </div>
                     </li>
                     <hr ng-repeat-end ng-if="item.value == '---'"/>
-                    <hr ng-if="showOther != '' && value != ''"/>
-                    <li class="dropdown-other" ng-if="showOther != '' && value != ''">
-                        <a dropdown-toggle href="#" ng-click="update(otherLabel);" 
-                           value="{{itemExist() ? otherLabel : value}}">
-                            {{ itemExist() ? otherLabel : value}}
-                        </a>                        
+                    <hr ng-if="!!showOther"/>
+                    <li class="dropdown-other" ng-if="!!showOther">
+                        <input type="text" ng-model="valueOther" 
+                               placeholder="{{otherLabel}}" 
+                               ng-mouseup="textFieldFocus($event, 'other')"
+                               ng-click="selectOther()"
+                               ng-change="updateOther(valueOther)" ng-delay="500"
+                               class="form-control dropdown-other-type">
+                        <i class="fa fa-pencil dropdown-other-icon"></i>
                     </li>
                 </ul>
             </div>
@@ -117,7 +110,7 @@
 
         <!-- error -->
         <div ng-if="errors[name]" class="alert error alert-danger">
-            {{ errors[name][0] }}
+            {{ errors[name][0]}}
         </div>
         <!-- /error -->
     </div>
