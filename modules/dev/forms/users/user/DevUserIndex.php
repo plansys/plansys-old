@@ -190,9 +190,7 @@ class DevUserIndex extends User {
                     array (
                         'name' => 'nip',
                         'label' => 'nip',
-                        'options' => array (
-                            'width' => '244',
-                        ),
+                        'options' => array (),
                         'columnType' => 'string',
                         'show' => false,
                         'inputMask' => '',
@@ -201,9 +199,7 @@ class DevUserIndex extends User {
                     array (
                         'name' => 'username',
                         'label' => 'username',
-                        'options' => array (
-                            'width' => '275',
-                        ),
+                        'options' => array (),
                         'columnType' => 'string',
                         'show' => false,
                         'inputMask' => '',
@@ -266,14 +262,14 @@ class DevUserIndex extends User {
             ),
         );
     }
-    
+
     public function getForm() {
-        return array (
+        return array(
             'title' => 'User List',
-            'layout' => array (
+            'layout' => array(
                 'name' => 'full-width',
-                'data' => array (
-                    'col1' => array (
+                'data' => array(
+                    'col1' => array(
                         'type' => 'mainform',
                         'size' => '100',
                     ),
@@ -282,5 +278,5 @@ class DevUserIndex extends User {
             'inlineJS' => 'js/index.js',
         );
     }
-    
+
 }

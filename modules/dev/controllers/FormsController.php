@@ -48,7 +48,7 @@ class FormsController extends Controller {
     public function actionNewForm() {
         $model = new DevFormNewForm;
 
-        $this->renderForm("DevFormNewForm", $model, ['prefix' => 'Mantab BRO'], [
+        $this->renderForm("DevFormNewForm", $model, ['prefix' => 'JS ERROR!'], [
             'layout' => '//layouts/blank'
         ]);
     }
@@ -197,12 +197,10 @@ EOF;
 
             foreach ($scripts as $script) {
                 $ext = Helper::explodeLast(".", $script);
-                $asset = Yii::app()->getBaseUrl(true) . '/plansys/asset.php?e=' . Setting::getRootPath() . '&p=' . $script;
-
                 if ($ext == "js") {
-                    Yii::app()->clientScript->registerScriptFile($asset, CClientScript::POS_END);
+                    Yii::app()->clientScript->registerScriptFile($script, CClientScript::POS_END);
                 } else if ($ext == "css") {
-                    Yii::app()->clientScript->registerCSSFile($asset);
+                    Yii::app()->clientScript->registerCSSFile($script);
                 }
             }
         }
@@ -353,7 +351,6 @@ EOF;
 
         $classPath = $class;
         $class = Helper::explodeLast(".", $class);
-
 
         if (is_subclass_of($fb->model, 'ActiveRecord')) {
             $formType = "ActiveRecord";

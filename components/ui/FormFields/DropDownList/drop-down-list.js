@@ -160,6 +160,10 @@ app.directive('dropDownList', function ($timeout) {
                             $scope.valueOther = $scope.value;
                             $el.find(".dropdown-other-type").val($scope.value);
                         }
+
+                        if ($scope.valueOther == '') {
+                            $el.find(".dropdown-other-type").focus();
+                        }
                     });
                 }
 

@@ -12,8 +12,8 @@ function generateClassPrefix(s) {
         parts = parts.splice(2);
         var module = parts.shift();
         parts = parts.splice(2);
-        parts.unshift(module)
-        parts = parts.join(".").join(" ").trim().replace(/\s+/g, '.');
+        parts.unshift(module);
+        parts = parts.join(" ").trim().replace(/\s+/g, '.');
     }
 
     var result = parts.replace(/(\.\w)/g, function (m) {

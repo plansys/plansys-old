@@ -1,0 +1,6 @@
+{
+    "require": {
+        "nikic/php-parser": "^1.4",
+        "raveren/kint": "^1.0"
+    }
+}

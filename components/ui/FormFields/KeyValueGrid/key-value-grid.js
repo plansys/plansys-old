@@ -169,7 +169,6 @@ app.directive('keyValueGrid', function ($timeout) {
                 $scope.mode = "grid";
                 $scope.json_error = "";
                 $scope.value = formatJSON(JSON.parse($el.find("data[name='value']:eq(0)").text().trim()));
-
                 $scope.json = prettifyJSON(unformatJSON($scope.value, false));
 
                 // if ngModel is present, use that instead of value from php

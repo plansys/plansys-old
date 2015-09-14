@@ -4,7 +4,7 @@ class AuditTrailController extends Controller {
 
     public function actionTrack($t = "view") {
         $postdata = file_get_contents("php://input");
-        $path = json_decode($postdata, false);
+        $path = json_decode($postdata, true);
         if ($path['module'] == 'dev')
             return;
 
