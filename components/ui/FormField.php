@@ -158,9 +158,12 @@ class FormField extends CComponent {
     public function evaluateExpression($_expression_, $_data_ = array()) {
         if (is_string($_expression_)) {
             extract($_data_);
+
             $return = '';
-            if (@runkit_lint('return ' . $_expression_ . ';')) {
-                $return = eval('return ' . $_expression_ . ';');
+            try {
+                $return = @eval('return ' . $_expression_ . ';');
+            } catch(Exception $e){
+
             }
             return $return;
         } else {

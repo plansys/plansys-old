@@ -7,5 +7,4 @@ $baseDir = dirname($vendorDir);
 
 return array(
     $vendorDir . '/nikic/php-parser/lib/bootstrap.php',
-    $vendorDir . '/raveren/kint/Kint.class.php',
 );
