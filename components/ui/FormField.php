@@ -158,10 +158,10 @@ class FormField extends CComponent {
     public function evaluateExpression($_expression_, $_data_ = array()) {
         if (is_string($_expression_)) {
             extract($_data_);
-            $default = ini_get('display_errors');
-            ini_set('display_errors', 'On');
-            $return = eval('return ' . $_expression_ . ';');
-            ini_set('display_errors', $default);
+            $return = '';
+            if (@runkit_lint('return ' . $_expression_ . ';')) {
+                $return = eval('return ' . $_expression_ . ';');
+            }
             return $return;
         } else {
             $_data_[] = $this;
