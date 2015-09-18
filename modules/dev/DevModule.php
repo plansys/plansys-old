@@ -2,8 +2,11 @@
 
 class DevModule extends CWebModule {
 
-    public function accessControl($controller,$action) {
-        
+    public $newFileMode = 0666;
+    public $newDirMode  = 0777;
+
+    public function accessControl($controller, $action) {
+
     }
 
     public function init() {

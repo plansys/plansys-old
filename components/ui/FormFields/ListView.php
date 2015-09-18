@@ -77,7 +77,7 @@ class ListView extends FormField {
                     'ng-model' => 'active.singleView',
                 ),
                 'listExpr' => '[\\\'TextField\\\',\\\'DropDownList\\\']',
-                'fieldWidth' => '5',
+                'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
             array (

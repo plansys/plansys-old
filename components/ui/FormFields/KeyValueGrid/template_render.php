@@ -33,6 +33,7 @@
             </div>
         </div>
     </div>
+
     <div ng-hide='!show || mode != "grid"'>
         <table>
             <tbody>
