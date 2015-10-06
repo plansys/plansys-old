@@ -20,27 +20,27 @@ class SqlCriteriaForm extends Form {
     }
 
     public function getFields() {
-        return  [
-             [
+        return array (
+            array (
+                'type' => 'Text',
                 'value' => '<pre ng-style=\\"{borderColor: (isError ? \\\'red\\\' : \\\'#ccc\\\')}\\">{{previewSQL}}</pre>',
+            ),
+            array (
                 'type' => 'Text',
-            ],
-             [
                 'value' => '<div class=\\"alert alert-danger\\" style=\\"padding:5px;font-size:12px;\\" ng-if=\\"isError\\"> {{ errorMsg}}</div>',
-                'type' => 'Text',
-            ],
-             [
+            ),
+            array (
                 'label' => 'Criteria',
                 'name' => 'relCriteria',
                 'show' => 'Show',
-                'options' =>  [
+                'options' => array (
                     'ng-model' => '$parent.value',
                     'ng-change' => 'update()',
-                ],
+                ),
                 'allowDoubleQuote' => 'Yes',
                 'type' => 'KeyValueGrid',
-            ],
-        ];
+            ),
+        );
     }
 
 }

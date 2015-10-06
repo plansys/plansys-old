@@ -324,7 +324,7 @@ class DataFilter extends FormField {
                             $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
                             $psql[] = "{$column} LIKE :{$paramName}_{$pcolumn}_{$k}";
                         }
-                        $sql = "(" . implode(" OR ", $psql) . ")";
+                        $sql = "(" . implode(" AND ", $psql) . ")";
                     }
                 }
                 break;

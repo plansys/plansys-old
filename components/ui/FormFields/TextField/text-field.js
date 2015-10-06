@@ -55,7 +55,6 @@ app.directive('textField', function ($timeout, $http) {
                 $scope.relModelClass = $el.find("data[name=rel_model_class]").html();
                 $scope.autocomplete = $el.find("data[name=autocomplete]").html();
                 $scope.acMode = $el.find("data[name=ac_mode]").html();
-                $scope.params = JSON.parse($el.find("data[name=params]").text());
                 $scope.paramValue = {};
                 $scope.showDropdown = false;
                 if ($scope.autocomplete == 'php') {
@@ -66,6 +65,7 @@ app.directive('textField', function ($timeout, $http) {
                     $scope.list = [];
                 }
 
+                
                 for (i in $scope.params) {
                     var p = $scope.params[i];
                     if (p.indexOf('js:') === 0) {

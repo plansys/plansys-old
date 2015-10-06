@@ -210,6 +210,10 @@ class RelationField extends FormField {
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '25%',
+                'w2' => '25%',
+                'w3' => '25%',
+                'w4' => '25%',
                 'type' => 'ColumnField',
             ),
             array (

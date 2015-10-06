@@ -93,8 +93,7 @@ app.filter('fileSize', function () {
         }
         if (size == 0 || size == null) {
             return "";
-        }
-        else if (!isNaN(size)) {
+        } else if (!isNaN(size)) {
             var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
             var posttxt = 0;
 
@@ -791,6 +790,24 @@ function str_replace(s, r, string) {
         string = string.replace(s, r);
     }
     return string;
+}
+
+function PopupCenter(url, title, w, h) {
+    // Fixes dual-screen position                         Most browsers      Firefox
+    var dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : screen.left;
+    var dualScreenTop = window.screenTop != undefined ? window.screenTop : screen.top;
+
+    width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+    height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+
+    var left = ((width / 2) - (w / 2)) + dualScreenLeft;
+    var top = ((height / 2) - (h / 2)) + dualScreenTop;
+    var newWindow = window.open(url, title, 'scrollbars=yes, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
+
+    // Puts focus on the newWindow
+    if (window.focus) {
+        newWindow.focus();
+    }
 }
 
 //PHP strtotime implementation in JS

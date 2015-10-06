@@ -106,6 +106,67 @@ class Email extends ActiveRecord {
             'user' => array(self::BELONGS_TO, 'User', 'user_id'),
         );
     }
+    
+    public static function sendMail($to, $subject, $content, $template = 'default',$params = []){
+        $toAddress = Email::setToAddress($to);
+        
+        $body = Email::setTemplate($template, $content, $params);
+        
+        $emails = [];
+        foreach($toAddress as $add){
+            $emails[] = [
+                'user_id' => Yii::app()->user->id,
+                'email' => $add,
+                'subject' => $subject,
+                'content' => $content,
+                'body' => $body,
+                'template' => $template
+            ];
+        }
+        
+        ActiveRecord::batchInsert('Email', $emails);
+        return true;
+    }
+    
+    public static function setToAddress($to){
+        $toArr = explode(',', $to);
+        
+        $idArr = [];
+        $mailArr = [];
+        
+        foreach($toArr as $t){
+            if(is_numeric($t)){
+                $idArr[]=(int)$t;
+            }
+            if(filter_var($t, FILTER_VALIDATE_EMAIL)){ 
+                $mailArr[]=$t;
+            }
+        }
+        $ids = implode(',', $idArr);
+        if(!empty($ids)){
+            $user = Yii::app()->db->createCommand("SELECT email FROM p_user WHERE id IN ({$ids})")->queryAll();
+            foreach($user as $u){
+                $mailArr[]=$u['email'];
+            }
+        }
+        
+        return $mailArr;
+    }
+    
+    public static function setTemplate($template,$content,$params = []){
+        $ds = DIRECTORY_SEPARATOR;
+        if(!empty($params)){
+            extract($params, EXTR_PREFIX_SAME);
+        }
+        
+        $appName = Setting::get("app.name");
+        ob_start();
+        include(Setting::$basePath.$ds.'static'.$ds.'email'.$ds.$template.'.php');
+        $body = ob_get_contents();
+        ob_end_clean();
+        
+        return $body;
+    }
 
     public function tableName() {
         return 'p_email_queue';

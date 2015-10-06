@@ -130,6 +130,10 @@
     padding: 0px !important;
 }
 
+.wtHolder {
+    height: auto !important;
+}
+
 .handsontable.listbox .wtHider {
     padding-bottom: 0px !important;
 }

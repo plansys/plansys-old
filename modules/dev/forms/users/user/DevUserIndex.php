@@ -175,7 +175,7 @@ class DevUserIndex extends User {
                     'paging' => '{[paging]}',
                     'group' => '',
                     'having' => '',
-                    'join' => 'left outer join 
+                    'join' => 'inner join 
    p_user_role p on u.id = p.user_id 
    and p.is_default_role = \'Yes\' 
  left outer join 
@@ -210,7 +210,7 @@ class DevUserIndex extends User {
                         'label' => 'fullname',
                         'options' => array (),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                         'inputMask' => '',
                         'stringAlias' => array (),
                     ),
@@ -219,7 +219,7 @@ class DevUserIndex extends User {
                         'label' => 'email',
                         'options' => array (),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                         'inputMask' => '',
                         'stringAlias' => array (),
                     ),
@@ -262,14 +262,14 @@ class DevUserIndex extends User {
             ),
         );
     }
-    
+
     public function getForm() {
-        return array (
+        return array(
             'title' => 'User List',
-            'layout' => array (
+            'layout' => array(
                 'name' => 'full-width',
-                'data' => array (
-                    'col1' => array (
+                'data' => array(
+                    'col1' => array(
                         'type' => 'mainform',
                         'size' => '100',
                     ),
@@ -278,5 +278,5 @@ class DevUserIndex extends User {
             'inlineJS' => 'js/index.js',
         );
     }
-    
+
 }

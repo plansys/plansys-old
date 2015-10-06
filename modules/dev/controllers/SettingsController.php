@@ -10,7 +10,7 @@ class SettingsController extends Controller {
                $_POST['DevSettings'] = array_merge($_POST['DevSettings'], $_POST[$emailSub]);
            }
            $settings = $model->attributes;
-           foreach($settings as $k=>$set){
+           foreach($_POST['DevSettings'] as $k=>$set){
                if(isset($_POST["DevSettings"][$k])){
                    $settings[$k] = $_POST["DevSettings"][$k];
                }
@@ -18,6 +18,7 @@ class SettingsController extends Controller {
            
            $model->setSettings($settings);
            Yii::app()->user->setFlash('info', 'Data Berhasil Disimpan');
+           $this->resetNode();
            $this->redirect(array('index'));
        }
        $this->renderForm("DevSettings",$model);
@@ -81,13 +82,22 @@ class SettingsController extends Controller {
         $postdata = file_get_contents("php://input");
         $post     = CJSON::decode($postdata);
         if (!empty($post)) {
-            Email::initalSetting();
-            touch(Email::$path.DIRECTORY_SEPARATOR.'email.lock');
-            $this->setEmailSettings($post);
+            $error = null;
+            try {
+                NodeProcess::checkNode();
+            } catch (CException $ex) {
+                $error = $ex->getMessage();
+            }
             
-            Email::sendTestMail();
+            if(is_null($error)){
+                Email::initalSetting();
+                touch(Email::$path.DIRECTORY_SEPARATOR.'email.lock');
+                $this->setEmailSettings($post);
+
+                Email::sendTestMail();
+            }
+            echo json_encode($error);
         }
-        echo true;
     }
     
     public function actionCheckMail(){
@@ -104,6 +114,16 @@ class SettingsController extends Controller {
             $error = "Failed to send Email";
         }
         echo json_encode($error);
+    }
+    
+    public function resetNode(){
+        $pids = Setting::get("nodejs.pid");
+        
+        if(!is_null($pids) && !empty($pids)){
+            foreach($pids as $pid){
+                NodeProcess::stop($pid);
+            }
+        }
     }
     
     public function setEmailSettings($data){
@@ -135,5 +155,21 @@ class SettingsController extends Controller {
         }else{
             Email::set("email.transport.service",$data['emailService']);
         }
+    }
+    
+    public function actionTeskirim(){
+        Email::sendMail('teguh@andromedia.co.id', 'Coba Kirim PHP', 'Ini tes kirim pake PHP');
+
+        Yii::app()->nfy->send(array(
+            'url' => Yii::app()->controller
+                    ->createUrl('/dev/forms/index'),
+            'message' =>"Tes kirim Notif",
+            'notes' => "Tes Notif",
+            'to' => array(
+                'role' => 'dev'
+            )
+        ));
+        
+        echo 'Oke';
     }
 }

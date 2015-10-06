@@ -34,7 +34,20 @@ $scope.sendEmail = function(){
        url : Yii.app.createUrl('/dev/settings/email'),
        data : $scope.model,
     }).success(function (data) {
-        $scope.checkEmail();
+        if (data !== 'null') {
+            if (!$scope.errors) {
+                $scope.errors = {};
+            }
+            $scope.errors['emailService'] = [data];
+            $scope.model.errors = JSON.stringify($scope.errors);
+            delete $scope.loading['email'];
+        } else {
+            if ($scope.errors != null && typeof $scope.errors['emailService'] != 'undefined') {
+                delete($scope.errors['emailService']);
+            }
+            $scope.model.errors = JSON.stringify($scope.errors);
+            $scope.checkEmail();
+        }
     });
 }
 

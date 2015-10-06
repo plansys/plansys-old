@@ -55,7 +55,7 @@ class ActiveRecord extends CActiveRecord {
         $start = ($page - 1) * $pageSize;
 
         return [
-            'limit'  => $pageSize,
+            'limit' => $pageSize,
             'offset' => $start
         ];
     }
@@ -692,37 +692,20 @@ class ActiveRecord extends CActiveRecord {
             try {
                 return $this->getIsNewRecord() ? $this->insert($attributes) : $this->update($attributes);
             } catch (CDbException $e) {
+                if (@$e->errorInfo[1] == 1452) {
+                    preg_match("/FOREIGN\sKEY\s\(\`(.*)\`\)\sREFERENCES/", $e->errorInfo[2], $match);
+                    $attribute = explode("`", $match[1]);
+                    $attribute = @$attribute[0];
 
-                switch (true) {
-                    case (@$e->errorInfo[1] == 1452) :
-                        preg_match("/FOREIGN\sKEY\s\(\`(.*)\`\)\sREFERENCES/", $e->errorInfo[2], $match);
-                        $attribute = explode("`", $match[1]);
-                        $attribute = @$attribute[0];
-
-                        if ($this->hasAttribute($attribute)) {
-                            $message = Yii::t('yii', '{attribute} cannot be blank.');
-                            $message = strtr($message, array(
-                                '{attribute}' => $this->getAttributeLabel($attribute),
-                            ));
-                            $this->addError($attribute, $message);
-                        }
-                        break;
-                    case (@$e->errorInfo[1] == 1062):
-                        $rawColName = explode("' for key '", $e->errorInfo[2]);
-                        $value = str_replace("Duplicate entry '", "", $rawColName[0]);
-                        $attribute = trim($rawColName[1], "'");
-
-                        if ($this->hasAttribute($attribute)) {
-                            $message = Yii::t('yii', '{attribute} "{value}" has already been taken.');
-                            $message = strtr($message, array(
-                                '{attribute}' => $this->getAttributeLabel($attribute),
-                                '{value}'     => $value
-                            ));
-                            $this->addError($attribute, $message);
-                        }
-                        break;
-                    default:
-                        throw $e;
+                    if ($this->hasAttribute($attribute)) {
+                        $message = Yii::t('yii', '{attribute} cannot be blank.');
+                        $message = strtr($message, array(
+                            '{attribute}' => $this->getAttributeLabel($attribute),
+                        ));
+                        $this->addError($attribute, $message);
+                    }
+                } else {
+                    throw $e;
                 }
             }
         } else {
@@ -760,7 +743,7 @@ class ActiveRecord extends CActiveRecord {
                         }
                     } ## todo: with through
                     else {
-                        
+
                     }
                     break;
             }
@@ -779,8 +762,8 @@ class ActiveRecord extends CActiveRecord {
                 type = 'create' and 
                 model_id is null")->execute([
                     'model_class' => ActiveRecord::baseClass($this),
-                    'model_id'    => $this->id,
-                    'user_id'     => Yii::app()->user->id
+                    'model_id' => $this->id,
+                    'user_id' => Yii::app()->user->id
                 ]);
             }
         } else {
@@ -797,6 +780,8 @@ class ActiveRecord extends CActiveRecord {
             switch (get_class($rel)) {
                 case 'CHasOneRelation':
                 case 'CBelongsToRelation':
+                    //TODO
+                    /*
                     if (!empty($new)) {
                         $class = $rel->className;
                         $model = $class::model()->findByPk($this->{$rel->foreignKey});
@@ -806,8 +791,8 @@ class ActiveRecord extends CActiveRecord {
                         $model->attributes = $new;
                         $model->{$rel->foreignKey} = $this->id;
                         $model->save();
-                        break;
-                    }
+                    }*/
+                    break;
                 case 'CManyManyRelation':
                 case 'CHasManyRelation':
 
@@ -986,8 +971,8 @@ class ActiveRecord extends CActiveRecord {
             }
 
             $array[] = [
-                'name'  => $f,
-                'type'  => $type,
+                'name' => $f,
+                'type' => $type,
                 'label' => $this->getAttributeLabel($f)
             ];
         }
@@ -1267,7 +1252,7 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function getDefaultFields() {
-        return ActiveRecordDefaultField::generateFields($this);
+        return ActiveRecordForm::generateFields($this);
     }
 
 }

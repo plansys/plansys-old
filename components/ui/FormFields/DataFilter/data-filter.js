@@ -574,6 +574,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
 
                     if (filter.operator == 'Is Empty') {
                         filter.valueText = 'Is Empty';
+                        filter.value = '- Empty -';
                     } else if (filter.value == '' && (dateCondition || filter.filterType != "date")) {
                         filter.valueText = 'All';
                     } else {

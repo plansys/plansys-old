@@ -18,9 +18,10 @@ class ModelGeneratorController extends Controller {
         $properties = FormBuilder::load('DevModelEditor');
 
         if ($this->beginCache('DevModelProperties', array(
-                'dependency' => new CFileCacheDependency(
-                    Yii::getPathOfAlias('application.modules.dev.forms.DevModelEditor') . ".php"
-            )))) {
+            'dependency' => new CFileCacheDependency(
+                Yii::getPathOfAlias('application.modules.dev.forms.DevModelEditor') . ".php"
+            )))
+        ) {
             echo $properties->render();
             $this->endCache();
         }
@@ -28,9 +29,9 @@ class ModelGeneratorController extends Controller {
 
     public function actionUpdate($class, $type) {
         $this->layout = "//layouts/blank";
-        $className = Helper::explodeLast('.', $class);
-        $model = new ModelGenerator($className, $type);
-        $modelDetail = $model->modelInfo;
+        $className    = Helper::explodeLast('.', $class);
+        $model        = new ModelGenerator($className, $type);
+        $modelDetail  = $model->modelInfo;
 
         $this->render('form', array(
             'class' => $class,

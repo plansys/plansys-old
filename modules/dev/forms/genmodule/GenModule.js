@@ -39,7 +39,6 @@ if ($scope.params.tab) {
     $scope.activeTab = $scope.params.tab;
 }
 
-
 $timeout(function () {
     $scope.acStatus = '';
     $scope.saveAC = function () {

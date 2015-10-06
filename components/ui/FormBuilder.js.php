@@ -152,7 +152,7 @@ ob_start();
                     // track create or update in audit trail
                     $scope.formSubmitting = true;
                     if (!!$scope.model) {
-                        $scope.pageInfo['data'] = JSON.stringify($scope.model);
+                        //$scope.pageInfo['data'] = JSON.stringify($scope.model);
                         $scope.pageInfo['form_class'] = $scope.formClass;
                         $scope.pageInfo['model_class'] = $scope.modelBaseClass;
                         $scope.pageInfo['model_id'] = $scope.model.id;
@@ -201,7 +201,7 @@ ob_start();
         });
         function inlineJS() {
             $("div[ng-controller=<?= $modelClass ?>Controller]").css('opacity', 1);
-<?= $inlineJS; ?>
+<?= implode("\n            ", explode("\n", $inlineJS)); ?>
 
 
         }

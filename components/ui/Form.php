@@ -6,6 +6,7 @@
  */
 class Form extends CFormModel {
 
+    public $parent; ## used by listview to store parent model
     private $__tempVar = [];
 
     public function __get($name) {
@@ -76,8 +77,8 @@ class Form extends CFormModel {
         $array = [];
         foreach ($fields as $k => $f) {
             $array[] = [
-                'name' => $k,
-                'type' => 'TextField',
+                'name'  => $k,
+                'type'  => 'TextField',
                 'label' => ucfirst($k)
             ];
         }

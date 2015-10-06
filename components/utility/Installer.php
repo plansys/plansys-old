@@ -280,9 +280,9 @@ class Installer {
         Installer::checkInstall();
 
         if (Setting::$mode == "init") {
-            $url = explode("/plansys", Setting::fullPath());
+            $url = preg_replace('/\/?plansys\/?$/', '', Setting::fullPath());
             if (is_file(Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php")) {
-                header("Location: " . $url[0] . "/index.php");
+                header("Location: " . $url . "/index.php");
                 die();
             }
 
@@ -292,7 +292,7 @@ class Installer {
                 ]);
                 return $config;
             } else {
-                header("Location: " . $url[0] . "/index.php?r=install/default/index");
+                header("Location: " . $url . "/index.php?r=install/default/index");
                 die();
             }
         }
@@ -332,6 +332,21 @@ CREATE TABLE `p_audit_trail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
+DROP TABLE IF EXISTS `p_email_queue`;
+CREATE TABLE `p_email_queue` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `subject` varchar(255) DEFAULT NULL,
+  `content` text,
+  `body` text,
+  `template` varchar(255) DEFAULT NULL,
+  `status` int(1) DEFAULT '0' COMMENT '1,0',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `p_email_queue_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `p_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;                
+                
 DROP TABLE IF EXISTS `p_nfy_messages`;
 CREATE TABLE `p_nfy_messages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

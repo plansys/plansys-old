@@ -1,61 +1,107 @@
 <?php
 
-class ModelGenerator extends CodeGenerator {
+class ModelGenerator extends CComponent {
 
-    public $extendsFrom;
-    public $tableName;
+    public static function create($tableName, $modelName, $module) {
+        Yii::import("application.framework.gii.*");
+        Yii::import("application.framework.gii.generators.model.ModelCode");
+        $mc            = new ModelCode();
+        $mc->modelPath = $module . ".models";
+        $mc->template  = 'model.php';
 
-    public static function init($classAlias, $mode = 'load') {
-        $path = explode('.', $classAlias);
-        $class = ucfirst(array_pop($path));
-        $path[count($path) - 1] = lcfirst($path[count($path) - 1]);
+        $mc->tableName  = $tableName;
+        $mc->modelClass = $modelName;
+        $mc->prepare();
+        $mc->save();
+    }
 
-        $m = new ModelGenerator;
-        $m->basePath = implode(".", $path);
+    public static function getRuleList() {
+        return [
+            'required' => 'Required',
+            'email' => 'Email',
+            'boolean' => 'Boolean',
+            'compare' => 'Compare',
+            'date' => 'Date',
+            'default' => 'Default',
+            'exist' => 'Exist',
+            'file' => 'File',
+            'in' => 'Range',
+            'length' => 'Length',
+            'numerical' => 'Number',
+            'match' => 'Regex Match',
+            'unique' => 'Unique',
+            'url' => 'Url',
+            '---1' => '---',
+            'safe' => 'Safe',
+            'unsafe' => 'Unsafe',
+            '---' => '---',
+            'custom' => 'Custom'
+        ];
+    }
 
-        if (Helper::isValidVar($class)) {
-            $m->load($class);
-
-            if ($mode == 'create') {
-
+    public static function listTables() {
+        $rawTables     = Yii::app()->db->createCommand("show tables")->queryColumn();
+        $appTables     = [];
+        $plansysTables = [];
+        foreach ($rawTables as $key => $value) {
+            if (strpos($value, "p_") === 0) {
+                $plansysTables[$value] = $value;
             } else {
-                $m->extendsFrom = get_parent_class($class);
-                $m->tableName = $class::model()->tableName();
+                $appTables[$value] = $value;
             }
-            return $m;
-        } else {
-            return null;
         }
-    }
 
-    public function getRelations() {
-        $relations = [];
-        return $relations;
-    }
+        $tables = [
+            "App Tables" => $appTables,
+        ];
 
-    public function getModel() {
-        $class = $this->class;
-        return $class::model();
-    }
-
-    public function getRules() {
-        $rules = [];
-
-        if(method_exists($this->model, 'rules')) {
-            $rules = $this->model->rules();   
+        if (Setting::get('app.mode') == "plansys") {
+            $tables["Plansys Tables"] = $plansysTables;
         }
-        
-        return $rules;
+
+        return $tables;
+    }
+
+    public static function listModels() {
+        $dir    = Yii::getPathOfAlias("application.models");
+        $appDir = Yii::getPathOfAlias("app.models");
+
+        $devItems = glob($dir . DIRECTORY_SEPARATOR . "*");
+        $appItems = glob($appDir . DIRECTORY_SEPARATOR . "*");
+        $models   = [];
+
+        $items = [];
+        foreach ($appItems as $k => $m) {
+            $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
+            $m = str_replace('.php', "", $m);
+
+            $items[$m] = $m;
+        }
+        $models['App Model'] = $items;
+
+        if (Setting::get('app.mode') == "plansys") {
+            $items = [];
+            foreach ($devItems as $k => $m) {
+                $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
+                $m = str_replace('.php', "", $m);
+
+                $items[$m] = $m;
+            }
+
+            $models['Plansys Model'] = $items;
+        }
+
+        return $models;
     }
 
     public static function listMenuTree() {
-        $dir = Yii::getPathOfAlias("application.models");
+        $dir    = Yii::getPathOfAlias("application.models");
         $appDir = Yii::getPathOfAlias("app.models");
 
         $devItems = glob($dir . DIRECTORY_SEPARATOR . "*");
         $appItems = glob($appDir . DIRECTORY_SEPARATOR . "*");
 
-        $items = [];
+        $items  = [];
         $models = [];
         if (Setting::get('app.mode') == "plansys") {
             foreach ($devItems as $k => $m) {
@@ -63,6 +109,7 @@ class ModelGenerator extends CodeGenerator {
                 $m = str_replace('.php', "", $m);
 
                 $devItems[$k] = [
+                    'type' => 'plansys',
                     'label' => $m,
                     'icon' => 'fa fa-cube',
                     'class' => 'application.models.' . $m,
@@ -78,6 +125,7 @@ class ModelGenerator extends CodeGenerator {
             }
 
             $models[] = [
+                'type' => 'plansys',
                 'label' => 'Plansys',
                 'items' => $devItems,
             ];
@@ -88,6 +136,7 @@ class ModelGenerator extends CodeGenerator {
             $m = str_replace('.php', "", $m);
 
             $appItems[$k] = [
+                'type' => 'app',
                 'label' => $m,
                 'icon' => 'fa fa-cube',
                 'class' => 'app.models.' . $m,
@@ -102,14 +151,17 @@ class ModelGenerator extends CodeGenerator {
             ];
         }
         $models[] = [
+            'type' => 'app',
             'label' => 'App',
             'items' => $appItems,
         ];
         return $models;
     }
 
-    public static function getFields() {
-        return [];
+    public static function getFields($modelClass) {
+        if (class_exists($modelClass) && method_exists($modelClass, 'model')) {
+            return $modelClass::model()->getTableSchema()->getColumnNames();
+        }
     }
 
 }

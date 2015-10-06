@@ -61,7 +61,7 @@
             <i class="fa fa-link"></i>
             Loading ListView...
         </div> 
-
+        
         <div ng-repeat="(key,val) in value track by $index">
             <input name="<?= $this->renderName ?>[{{key}}]" ng-if="typeof (val) == 'string'" type="hidden" value='{{val}}' />
             <div ng-repeat="(k,v) in val  track by $index" ng-if="typeof (val) == 'object'">

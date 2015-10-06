@@ -110,7 +110,7 @@ app.directive('listView', function ($timeout) {
                         idx: index,
                         data: d[0]
                     };
-                    $scope.updateListView();
+                    ctrl.$setViewValue(angular.copy($scope.value));
                     $scope.showUndoDelete = true;
                 };
 

@@ -77,7 +77,7 @@ class ListView extends FormField {
                     'ng-model' => 'active.singleView',
                 ),
                 'listExpr' => '[\\\'TextField\\\',\\\'DropDownList\\\']',
-                'fieldWidth' => '5',
+                'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
             array (
@@ -373,20 +373,22 @@ class ListView extends FormField {
         $this->fieldOptions['ng-repeat'] = 'item in value';
         $this->fieldOptions['ng-init'] = 'model = value[$index];';
         $this->addClass('list-view-item', 'fieldOptions');
-
+        
         Yii::import(FormBuilder::classPath($this->templateForm));
         $class = Helper::explodeLast(".", $this->templateForm);
 
         if ($this->fieldTemplate == 'form' && class_exists($class)) {
             $fb = FormBuilder::load($class);
             $model = new $class;
+            $model->parent = $this->model;
 
             if ($this->value == "") {
                 $this->value = [];
             }
 
             $this->templateAttributes = $model->attributes;
-            $this->renderTemplateForm = $fb->render($this->templateAttributes, ['wrapForm' => false]);
+            $fb->model = $model;
+            $this->renderTemplateForm = $fb->render($model, ['wrapForm' => false]);
             
         } else if ($this->fieldTemplate == 'default') {
             $field = new $this->singleView;

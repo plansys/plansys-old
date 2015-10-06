@@ -158,10 +158,13 @@ class FormField extends CComponent {
     public function evaluateExpression($_expression_, $_data_ = array()) {
         if (is_string($_expression_)) {
             extract($_data_);
-            $default = ini_get('display_errors');
-            ini_set('display_errors', 'On');
-            $return = eval('return ' . $_expression_ . ';');
-            ini_set('display_errors', $default);
+
+            $return = '';
+            try {
+                $return = @eval('return ' . $_expression_ . ';');
+            } catch(Exception $e){
+
+            }
             return $return;
         } else {
             $_data_[] = $this;
@@ -348,7 +351,7 @@ class FormField extends CComponent {
         if (!empty($includeJS)) {
             foreach ($includeJS as $js) {
                 $jspath = Asset::resolveAlias($js);
-                
+
                 if (!$jspath) {
                     $class = get_class($this);
                     $jspath = realpath(Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js);
