@@ -25,7 +25,8 @@ class DevGenModelRules extends Form {
             array (
                 'type' => 'TagField',
                 'name' => 'fields',
-                'label' => 'Fields',
+                'label' => 'qweqwe',
+                'layout' => 'Horizontal',
             ),
             array (
                 'column1' => array (
