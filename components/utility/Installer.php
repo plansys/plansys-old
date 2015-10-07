@@ -57,10 +57,10 @@ class Installer {
             return Setting::t('Unable to determine URL path info. Please make sure $_SERVER["PATH_INFO"] (or $_SERVER["PHP_SELF"] and $_SERVER["SCRIPT_NAME"]) contains proper value.');
         }
 
-        if (version_compare(PHP_VERSION, '5.6.6') >= 0 && ini_get("always_populate_raw_post_data") != -1) {
-          ## see http://stackoverflow.com/questions/26261001/warning-about-http-raw-post-data-being-deprecated
-          return Setting::t("Please set 'always_populate_raw_post_data' to '-1' in php.ini and restart your server.");
-        }
+        // if (version_compare(PHP_VERSION, '5.6.6') >= 0 && ini_get("always_populate_raw_post_data") != -1) {
+        //   ## see http://stackoverflow.com/questions/26261001/warning-about-http-raw-post-data-being-deprecated
+        //   return Setting::t("Please set 'always_populate_raw_post_data' to '-1' in php.ini and restart your server.");
+        // }
 
         return true;
     }
@@ -464,9 +464,9 @@ INSERT INTO `p_user_role` (`id`, `user_id`, `role_id`, `is_default_role`) VALUES
 
 INSERT INTO `p_user` (`id`, `nip`, `fullname`, `email`, `phone`, `username`, `password`, `last_login`, `is_deleted`) VALUES
 (1,	'-',	'Developer',	'-',	'-',	'dev',	md5('dev'),	now(),	0);
-
                 
 EOF;
+
         Yii::import('application.components.model.*');
         ActiveRecord::execute($sql);
     }

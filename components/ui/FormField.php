@@ -213,26 +213,6 @@ class FormField extends CComponent {
         return $this->_errors = $error;
     }
 
-<<<<<<< HEAD
-=======
-    public function evaluateExpression($_expression_, $_data_ = array()) {
-        if (is_string($_expression_)) {
-            extract($_data_);
-
-            $return = '';
-            try {
-                $return = @eval('return ' . $_expression_ . ';');
-            } catch(Exception $e){
-
-            }
-            return $return;
-        } else {
-            $_data_[] = $this;
-            return call_user_func_array($_expression_, $_data_);
-        }
-    }
-
->>>>>>> 1eceb84878bb46af478b1c057f30305aec81cd2b
     /**
      * @param array $expr
      * @param boolean $return
