@@ -58,7 +58,7 @@ class DefaultController extends Controller {
                     `id` = '1',
                     `email` = '-',
                     `username` = '{$model->username}',
-                    `password` = md5('{$model->password}'),
+                    `password` = '".Helper::hash($model->password)."',
                     `last_login` = '2015-02-26 07:06:32',
                     `is_deleted` = '0'
                 WHERE `id` = '1';

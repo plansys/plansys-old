@@ -110,14 +110,15 @@ class PopupWindow extends FormField {
             ),
             array (
                 'label' => 'Url',
-                'name' => 'url',
                 'options' => array (
                     'ng-model' => 'active.url',
                     'ng-delay' => '500',
                     'ng-if' => 'active.mode == \'url\'',
                     'ng-change' => 'save()',
                 ),
-                'type' => 'TextField',
+                'type' => 'ExpressionField',
+                'fieldname' => 'url',
+                'language' => 'js',
             ),
             array (
                 'label' => 'Options',

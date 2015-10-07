@@ -30,6 +30,15 @@ ob_start();
         $scope.formClassPath = "<?php echo $modelClassPath; ?>";
         $scope.modelBaseClass = "<?php echo ActiveRecord::baseClass($this->model); ?>";
         $scope.lastModified = "<?php echo Helper::getLastModified($modelClass); ?>";
+        $scope.date = date;
+        $scope.strtotime = strtotime;
+
+        $scope.closeWindow = function() {
+            window.close();
+        }
+        if (!!window.opener) {
+            $scope.parentWindow = window.opener.formScope;
+        }
 
         if ($scope.pageInfo.ctrl == 'formfield' && $scope.pageInfo.action == 'subform') {
             if (!!$scope.params.f && !!window.opener.popupScope) {

@@ -119,8 +119,12 @@ class Controller extends CController {
         ];
 
         if (is_object($model)) {
+            if (get_class($model) != $class) {
+                throw new Exception("Invalid model name, please instantiate model from {$class} class");
+            }
             $fb->model = $model;
         }
+
 
         $options['params'] = $params;
         $renderOptions     = array_merge($renderOptions, $options);

@@ -35,20 +35,21 @@ class User extends ActiveRecord {
     }
 
     public function afterSave() {
-        
+        parent::afterSave(false);
+
         ## get assign user id to user roles
         $ur = $this->userRoles;
         foreach ($ur as $k => $u) {
             $ur[$k]['user_id'] = $this->id;
         }
         $olduser = ActiveRecord::toArray($this->getRelated('userRoles'));
-        
         ActiveRecord::batch('UserRole', $ur, $olduser);
 
         ## re-subscribe user to notification
         if (!$this->isNewRecord) {
             Yii::app()->nfy->unsubscribe($this->id, null, true);
         }
+
         if ($this->subscribed === "on" || $this->subscribed === "ON" || $this->isNewRecord) {
             $roles = array();
             $sql = 'select DISTINCT role_name from p_user_role p '

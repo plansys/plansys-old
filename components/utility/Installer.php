@@ -302,6 +302,7 @@ class Installer {
     }
 
     public static function resetDB() {
+      $password = Helper::hash('dev');
         $sql = <<<EOF
 SET NAMES utf8;
 SET time_zone = '+00:00';
@@ -463,7 +464,7 @@ INSERT INTO `p_user_role` (`id`, `user_id`, `role_id`, `is_default_role`) VALUES
 (1,	1,	1,	'Yes');
 
 INSERT INTO `p_user` (`id`, `email`, `username`, `password`, `last_login`, `is_deleted`) VALUES
-(1,	'-',	'dev',	md5('dev'),	now(),	0);
+(1,	'-',	'dev',	{$password},	now(),	0);
                 
 EOF;
 

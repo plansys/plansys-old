@@ -444,7 +444,7 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
         }
         
         if (count($this->errors) == 0 && $this->changePassword != '') {
-            $this->password = md5($this->changePassword);
+            $this->password = Helper::hash($this->changePassword);
         }
     }
 

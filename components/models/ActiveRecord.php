@@ -1030,11 +1030,12 @@ class ActiveRecord extends CActiveRecord {
         $this->afterSave();
     }
 
-    public function afterSave() {
+    public function afterSave($withRelation = true) {
+
         if ($this->isNewRecord) {
             $this->id = $this->dbConnection->getLastInsertID(); ## this is hack
             ## UPDATE AUDIT TRAIL 'CREATE' ID
-            if (!Yii::app()->user->isGuest) {
+            if (!!Yii::app()->user && !Yii::app()->user->isGuest) {
                 $a = $this->dbConnection->createCommand("
                 update p_audit_trail set model_id = :model_id
                 WHERE user_id = :user_id and
@@ -1050,113 +1051,115 @@ class ActiveRecord extends CActiveRecord {
             $this->deleteResetedRelations();
         }
 
-        foreach ($this->__relations as $k => $new) {
-            if ($k == 'currentModel') {
-                $rel = new CHasManyRelation('currentModel', get_class($this), 'id');
-            } else {
-                $rel = $this->getMetaData()->relations[$k];
-            }
+        if ($withRelation) {
+            foreach ($this->__relations as $k => $new) {
+                if ($k == 'currentModel') {
+                    $rel = new CHasManyRelation('currentModel', get_class($this), 'id');
+                } else {
+                    $rel = $this->getMetaData()->relations[$k];
+                }
 
-            switch (get_class($rel)) {
-                case 'CHasOneRelation':
-                case 'CBelongsToRelation':
-                    //TODO
-                    /*
-                    if (!empty($new)) {
-                        $class = $rel->className;
-                        $model = $class::model()->findByPk($this->{$rel->foreignKey});
-                        if (is_null($model)) {
-                            $model = new $class;
-                        }
-                        $model->attributes = $new;
-                        $model->{$rel->foreignKey} = $this->id;
-                        $model->save();
-                    }*/
-                    break;
-                case 'CManyManyRelation':
-                case 'CHasManyRelation':
-
-                    ## without through
-                    if (is_string($rel->foreignKey)) {
-                        $class = $rel->className;
-
-                        if (isset($this->__relInsert[$k])) {
-                            if ($k != 'currentModel') {
-                                foreach ($this->__relInsert[$k] as $n => $m) {
-                                    $this->__relInsert[$k][$n][$rel->foreignKey] = $this->id;
-                                }
+                switch (get_class($rel)) {
+                    case 'CHasOneRelation':
+                    case 'CBelongsToRelation':
+                        //TODO
+                        /*
+                        if (!empty($new)) {
+                            $class = $rel->className;
+                            $model = $class::model()->findByPk($this->{$rel->foreignKey});
+                            if (is_null($model)) {
+                                $model = new $class;
                             }
+                            $model->attributes = $new;
+                            $model->{$rel->foreignKey} = $this->id;
+                            $model->save();
+                        }*/
+                        break;
+                    case 'CManyManyRelation':
+                    case 'CHasManyRelation':
 
-                            if (count($this->__relInsert[$k]) > 0) {
-                                ActiveRecord::batchInsert($class, $this->__relInsert[$k]);
-                            }
+                        ## without through
+                        if (is_string($rel->foreignKey)) {
+                            $class = $rel->className;
 
-                            $this->__relInsert[$k] = [];
-                        }
-
-                        if (isset($this->__relUpdate[$k])) {
-                            if ($k != 'currentModel') {
-                                foreach ($this->__relUpdate[$k] as $n => $m) {
-                                    $this->__relUpdate[$k][$n][$rel->foreignKey] = $this->id;
-                                }
-                            }
-
-                            if (count($this->__relUpdate[$k]) > 0) {
-                                ActiveRecord::batchUpdate($class, $this->__relUpdate[$k]);
-                            }
-                            $this->__relUpdate[$k] = [];
-                        }
-
-                        if (isset($this->__relDelete[$k])) {
-                            if (count($this->__relDelete[$k]) > 0) {
-                                ActiveRecord::batchDelete($class, $this->__relDelete[$k]);
-                            }
-                            $this->__relDelete[$k] = [];
-                        }
-                    } ## with through
-                    elseif (is_array($rel->foreignKey)) {
-                        $class = $rel->className;
-
-                        if (isset($this->__relInsert[$k])) {
-                            if ($k != 'currentModel') {
-                                foreach ($this->__relInsert[$k] as $n => $m) {
-                                    foreach ($rel->foreignKey as $rk => $fk) {
-                                        $this->__relInsert[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
+                            if (isset($this->__relInsert[$k])) {
+                                if ($k != 'currentModel') {
+                                    foreach ($this->__relInsert[$k] as $n => $m) {
+                                        $this->__relInsert[$k][$n][$rel->foreignKey] = $this->id;
                                     }
                                 }
-                            }
-                            if (count($this->__relInsert[$k]) > 0) {
-                                ActiveRecord::batchInsert($class, $this->__relInsert[$k]);
-                            }
-                            $this->__relInsert[$k] = [];
-                        }
 
-                        if (isset($this->__relUpdate[$k])) {
-                            if ($k != 'currentModel') {
-                                foreach ($this->__relUpdate[$k] as $n => $m) {
-                                    foreach ($rel->foreignKey as $rk => $fk) {
-                                        $this->__relUpdate[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
+
+                                if (count($this->__relInsert[$k]) > 0) {
+                                    ActiveRecord::batchInsert($class, $this->__relInsert[$k]);
+                                }
+
+                                $this->__relInsert[$k] = [];
+                            }
+
+                            if (isset($this->__relUpdate[$k])) {
+                                if ($k != 'currentModel') {
+                                    foreach ($this->__relUpdate[$k] as $n => $m) {
+                                        $this->__relUpdate[$k][$n][$rel->foreignKey] = $this->id;
                                     }
                                 }
+
+                                if (count($this->__relUpdate[$k]) > 0) {
+                                    ActiveRecord::batchUpdate($class, $this->__relUpdate[$k]);
+                                }
+                                $this->__relUpdate[$k] = [];
                             }
 
-                            if (count($this->__relUpdate[$k]) > 0) {
-                                ActiveRecord::batchUpdate($class, $this->__relUpdate[$k]);
+                            if (isset($this->__relDelete[$k])) {
+                                if (count($this->__relDelete[$k]) > 0) {
+                                    ActiveRecord::batchDelete($class, $this->__relDelete[$k]);
+                                }
+                                $this->__relDelete[$k] = [];
                             }
-                            $this->__relUpdate[$k] = [];
-                        }
+                        } ## with through
+                        elseif (is_array($rel->foreignKey)) {
+                            $class = $rel->className;
 
-                        if (isset($this->__relDelete[$k])) {
-                            if (count($this->__relDelete[$k]) > 0) {
-                                ActiveRecord::batchDelete($class, $this->__relDelete[$k]);
+                            if (isset($this->__relInsert[$k])) {
+                                if ($k != 'currentModel') {
+                                    foreach ($this->__relInsert[$k] as $n => $m) {
+                                        foreach ($rel->foreignKey as $rk => $fk) {
+                                            $this->__relInsert[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
+                                        }
+                                    }
+                                }
+                                if (count($this->__relInsert[$k]) > 0) {
+                                    ActiveRecord::batchInsert($class, $this->__relInsert[$k]);
+                                }
+                                $this->__relInsert[$k] = [];
                             }
-                            $this->__relDelete[$k] = [];
+
+                            if (isset($this->__relUpdate[$k])) {
+                                if ($k != 'currentModel') {
+                                    foreach ($this->__relUpdate[$k] as $n => $m) {
+                                        foreach ($rel->foreignKey as $rk => $fk) {
+                                            $this->__relUpdate[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
+                                        }
+                                    }
+                                }
+
+                                if (count($this->__relUpdate[$k]) > 0) {
+                                    ActiveRecord::batchUpdate($class, $this->__relUpdate[$k]);
+                                }
+                                $this->__relUpdate[$k] = [];
+                            }
+
+                            if (isset($this->__relDelete[$k])) {
+                                if (count($this->__relDelete[$k]) > 0) {
+                                    ActiveRecord::batchDelete($class, $this->__relDelete[$k]);
+                                }
+                                $this->__relDelete[$k] = [];
+                            }
                         }
-                    }
-                    break;
+                        break;
+                }
             }
         }
-
 
         ## handling untuk file upload
         if (method_exists($this, 'getFields')) {

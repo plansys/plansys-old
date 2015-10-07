@@ -36,7 +36,7 @@ class UserIdentity extends CUserIdentity {
             $useLdap = true;
             $ldapSuccess = Yii::app()->ldap->authenticate($this->username, $this->password);
             if ($ldapSuccess) {
-                $record->password = md5($this->password);
+                $record->password = Helper::hash($this->password);
                 $record->save();
 
                 $this->loggedIn($record);
@@ -47,11 +47,11 @@ class UserIdentity extends CUserIdentity {
         if ($record === null)
             $this->errorCode = self::ERROR_USERNAME_INVALID;
 
-        else if (trim($record->password) !== md5($this->password)) {
+        else if (!password_verify($this->password, $record->password)) {
             if ($useLdap) {
                 $ldapSuccess = Yii::app()->ldap->authenticate($this->username, $this->password);
                 if ($ldapSuccess) {
-                    $record->password = md5($this->password);
+                    $record->password = Helper::hash($this->password);
                     $record->save();
 
                     $this->loggedIn($record);

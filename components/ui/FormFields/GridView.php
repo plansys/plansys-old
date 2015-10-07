@@ -49,7 +49,7 @@ class GridView extends FormField {
         $template = '';
         switch ($col['columnType']) {
             case "string":
-                if (@$col['cellMode'] == 'custom') {
+                if (@$col['cellMode'] == 'custom' && trim(@$col['html']) != '') {
                     return @$col['html'];
                 }
 

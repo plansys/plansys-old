@@ -26,6 +26,10 @@ class Helper {
         return strtotime('1970-01-01 ' . $time . 'GMT');
     }
 
+    public static function hash($password) {
+        return password_hash($password, PASSWORD_DEFAULT);
+    }
+
     public static function generateMonthInterval($start, $end) {
         $startInt = new DateTime($start);
         $endInt   = new DateTime($end);
