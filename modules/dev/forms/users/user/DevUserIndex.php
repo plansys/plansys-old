@@ -60,8 +60,6 @@ class DevUserIndex extends User {
                         'relModelClass' => 'application.models.Role',
                         'relIdField' => 'role_description',
                         'relLabelField' => 'role_description',
-                        'list' => 0,
-                        'count' => 0,
                     ),
                     array (
                         'name' => 'username',

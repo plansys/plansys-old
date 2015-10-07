@@ -42,14 +42,11 @@ class GridView extends FormField {
 
         $this->attributes     = $field;
         $post['item']['html'] = '';
+
         echo $this->getRowTemplate($post['item'], $post['idx']);
     }
 
     public function getRowTemplate($col, $idx) {
-        if (@$col['cellMode'] == 'custom') {
-            return @$col['html'];
-        }
-
         $template = '';
         switch ($col['columnType']) {
             case "string":

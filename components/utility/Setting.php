@@ -448,7 +448,7 @@ class Setting {
     public static function getDB() {
         if (Setting::get('db.port') == null) {
             $connection = [
-                'connectionString' => Setting::get('db.driver') . ':host=' . Setting::get('db.server') . ';dbname=' . Setting::get('db.dbname'),
+                'connectionString' => Setting::get('db.driver') . ':host=' . Setting::get('db.host') . ';dbname=' . Setting::get('db.dbname'),
                 'emulatePrepare' => true,
                 'username' => Setting::get('db.username'),
                 'password' => Setting::get('db.password'),
@@ -456,7 +456,7 @@ class Setting {
             ];
         } else {
             $connection = [
-                'connectionString' => Setting::get('db.driver') . ':host=' . Setting::get('db.server') . ';port=' . Setting::get('db.port') . ';dbname=' . Setting::get('db.dbname'),
+                'connectionString' => Setting::get('db.driver') . ':host=' . Setting::get('db.host') . ';port=' . Setting::get('db.port') . ';dbname=' . Setting::get('db.dbname'),
                 'emulatePrepare' => true,
                 'username' => Setting::get('db.username'),
                 'password' => Setting::get('db.password'),
