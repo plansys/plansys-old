@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     $vendorDir . '/nikic/php-parser/lib/bootstrap.php',
+    $vendorDir . '/leeoniya/dump-r/dump_r.php',
 );
