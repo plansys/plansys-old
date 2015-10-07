@@ -12,7 +12,8 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                 $scope.update = function () {
                     switch ($scope.fieldType) {
                         case 'datetime':
-                            $scope.value = $scope.date + " " + $scope.time;
+                            var time = dateFilter($scope.time, 'HH:mm:00');
+                            $scope.value = $scope.date + " " + time;
                             break;
                         case 'date':
                             $scope.value = $scope.date;
@@ -21,7 +22,8 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                             $scope.value = $scope.date;
                             break;
                         case 'time':
-                            $scope.value = $scope.time;
+                            var time = dateFilter($scope.time, 'HH:mm:00');
+                            $scope.value = time;
                             break;
                     }
 
@@ -32,7 +34,6 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                         }, 0);
                     }
                 };
-
 
                 $scope.changeDate = function (e) {
                     $scope.date = dateFilter(e.date, 'yyyy-MM-dd');
@@ -98,7 +99,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
 
                 $scope.splitDateTime = function () {
                     if ($scope.value == null || ($scope.value != null && $scope.value.trim() == '')
-                            || $scope.value == '0000-00-00' || $scope.value == '0000-00-00 00:00:00') {
+                        || $scope.value == '0000-00-00' || $scope.value == '0000-00-00 00:00:00') {
                         if ($scope.defaultToday == 'Yes') {
                             switch ($scope.fieldType) {
                                 case 'datetime':
@@ -144,6 +145,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                             if (split.length > 1) {
                                 $scope.time = $scope.parseTime(split[1]);
                             }
+
                             break;
                         case "monthyear":
                             var date = split[0].split("-");
@@ -158,14 +160,14 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
 
                 $scope.changeMonth = function (m) {
                     $scope.month = m;
-                    
+
                     var month = $scope.month < 10 ? "0" + ($scope.month + 1) : $scope.month + 1;
                     $scope.value = $scope.year + "-" + month + "-01";
                 }
-                
+
                 $scope.changeYear = function (y) {
                     $scope.year = y;
-                    
+
                     var month = $scope.month < 10 ? "0" + ($scope.month + 1) : $scope.month + 1;
                     $scope.value = $scope.year + "-" + month + "-01";
                 }

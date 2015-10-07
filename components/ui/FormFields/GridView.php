@@ -41,7 +41,6 @@ class GridView extends FormField {
         $field    = $fb->findField(['name' => $post['name']]);
 
         $this->attributes     = $field;
-        $post['item']['html'] = '';
 
         echo $this->getRowTemplate($post['item'], $post['idx']);
     }
@@ -50,6 +49,10 @@ class GridView extends FormField {
         $template = '';
         switch ($col['columnType']) {
             case "string":
+                if (@$col['cellMode'] == 'custom') {
+                    return @$col['html'];
+                }
+
                 $template = '{{row.' . $col['name'] . '}}';
                 break;
             case "checkbox":
@@ -109,13 +112,24 @@ EOF;
 
     public function getHeaderTemplate($col, $idx) {
         switch ($col['columnType']) {
+
             case "string":
-                return <<<EOF
-<th><div class="th">
-    <div class="row-header" ng-click="sort('{$col['name']}')">
-        {$col['label']}
+                $sortable = "ng-click=\"sort('{$col['name']}')\"";
+                $caret = <<<EOF
         <i class="fa fa-caret-up" ng-if="isSort('{$col['name']}', 'asc')"></i>
         <i class="fa fa-caret-down" ng-if="isSort('{$col['name']}', 'desc')"></i>
+EOF;
+
+                if (isset($col['options'])  && isset($col['options']['sortable']) && $col['options']['sortable'] === 'false') {
+                    $sortable = '';
+                    $caret = '';
+                }
+
+                return <<<EOF
+<th><div class="th">
+    <div class="row-header" {$sortable}>
+        {$col['label']}
+        {$caret}
     </div>
 </div></th>
 EOF;

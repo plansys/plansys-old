@@ -35,14 +35,14 @@ class User extends ActiveRecord {
     }
 
     public function afterSave() {
-        parent::afterSave();
-
+        
         ## get assign user id to user roles
         $ur = $this->userRoles;
         foreach ($ur as $k => $u) {
             $ur[$k]['user_id'] = $this->id;
         }
         $olduser = ActiveRecord::toArray($this->getRelated('userRoles'));
+        
         ActiveRecord::batch('UserRole', $ur, $olduser);
 
         ## re-subscribe user to notification

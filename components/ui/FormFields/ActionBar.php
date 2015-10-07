@@ -74,13 +74,6 @@ class ActionBar extends FormField {
                 ),
                 'type' => 'TextField',
             ),
-            array (
-                'label' => 'Title Breacrumb Link',
-                'name' => 'titleLink',
-                'show' => 'Show',
-                'allowSpaceOnKey' => 'Yes',
-                'type' => 'KeyValueGrid',
-            ),
         );
     }
 

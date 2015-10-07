@@ -80,7 +80,7 @@ return array (
     array (
         'label' => 'Settings',
         'icon' => 'fa-sliders',
-        'url' => '/dev/settings/index',
+        'url' => '/dev/setting/app',
     ),
     array (
         'label' => 'Repository',

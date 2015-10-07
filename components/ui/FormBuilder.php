@@ -593,7 +593,7 @@ class FormBuilder extends CComponent {
 
         if (!$reflector->hasMethod($functionName)) {
             $this->model = new $class;
-
+            $this->updateExtendsFrom($reflector->getParentClass()->getName());
             if (is_subclass_of($this->model, 'FormField')) {
                 $fields       = [];
                 $this->fields = [];
@@ -1321,6 +1321,7 @@ EOF;
 
         ## define formdata
         $data = $this->defineFormData($formdata);
+
 
         ## render semua html
         foreach ($fields as $k => $f) {
