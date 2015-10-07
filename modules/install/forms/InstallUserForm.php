@@ -30,6 +30,7 @@ class InstallUserForm extends Form {
     public function getFields() {
         return array (
             array (
+                'type' => 'Text',
                 'value' => '<div class=\"install-pane\" style=\"width:350px;\">
     <div class=\"install-pane-head\">
         <img src=\"<?= Yii::app()->controller->staticUrl(\"/img/logo.png\"); ?>\" alt=\"Logo Plansys\" />
@@ -39,15 +40,6 @@ class InstallUserForm extends Form {
     
     <div ng-if=\"params.error\" style=\"margin-top:15px;\" class=\"alert alert-danger\">{{params.error}}</div>
     ',
-                'type' => 'Text',
-            ),
-            array (
-                'label' => 'Fullname:',
-                'name' => 'fullname',
-                'layout' => 'Vertical',
-                'labelWidth' => '0',
-                'fieldWidth' => '12',
-                'type' => 'TextField',
             ),
             array (
                 'label' => 'Username:',
@@ -66,8 +58,8 @@ class InstallUserForm extends Form {
                 'type' => 'TextField',
             ),
             array (
-                'value' => '<br/>',
                 'type' => 'Text',
+                'value' => '<br/>',
             ),
             array (
                 'label' => 'Finish Installation',
@@ -76,8 +68,8 @@ class InstallUserForm extends Form {
                 'type' => 'SubmitButton',
             ),
             array (
-                'value' => '</div>',
                 'type' => 'Text',
+                'value' => '</div>',
             ),
         );
     }

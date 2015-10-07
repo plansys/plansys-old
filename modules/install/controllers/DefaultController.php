@@ -52,14 +52,10 @@ class DefaultController extends Controller {
         if (isset($_POST['InstallUserForm'])) {
             $model->attributes = $_POST['InstallUserForm'];
             if ($model->validate()) {
-
                 ActiveRecord::execute("
                 set foreign_key_checks = 0;
                 UPDATE `p_user` SET
                     `id` = '1',
-                    `nip` = '-',
-                    `fullname` = '{$model->fullname}',
-                    `phone` = '-',
                     `email` = '-',
                     `username` = '{$model->username}',
                     `password` = md5('{$model->password}'),

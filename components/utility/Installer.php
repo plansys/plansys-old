@@ -462,8 +462,8 @@ INSERT INTO `p_role` (`id`, `role_name`, `role_description`, `menu_path`, `home_
 INSERT INTO `p_user_role` (`id`, `user_id`, `role_id`, `is_default_role`) VALUES
 (1,	1,	1,	'Yes');
 
-INSERT INTO `p_user` (`id`, `nip`, `fullname`, `email`, `phone`, `username`, `password`, `last_login`, `is_deleted`) VALUES
-(1,	'-',	'Developer',	'-',	'-',	'dev',	md5('dev'),	now(),	0);
+INSERT INTO `p_user` (`id`, `email`, `username`, `password`, `last_login`, `is_deleted`) VALUES
+(1,	'-',	'dev',	md5('dev'),	now(),	0);
                 
 EOF;
 
