@@ -3,7 +3,7 @@
 var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
 
 for (i in $scope.$parent.item) {
-    if (['columnType', 'name', 'label', 'show'].indexOf(i) < 0 && templateAttr.typeOptions[$scope.item.columnType].indexOf(i) < 0) {
+    if (['columnType', 'name', 'label', 'show', 'mergeSameRow','mergeSameRowWith','html'].indexOf(i) < 0 && templateAttr.typeOptions[$scope.item.columnType].indexOf(i) < 0) {
         delete $scope.$parent.value[$scope.$index][i];
     }
 }

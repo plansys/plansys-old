@@ -5,10 +5,30 @@ class GenModelController extends Controller {
     public $templates = [];
 
     public function actionIndex() {
+        $content = '';
+        $path    = [];
         if (isset($_GET['active'])) {
+            $path     = explode(".", $_GET['active']);
+            $filePath = Yii::getPathOfAlias(($path[0] == 'plansys' ? 'application' : 'app') . ".models." . $path[1]) . ".php";
+            $content  = file_get_contents($filePath);
         }
 
-        $this->renderForm('DevGenModel');
+        Asset::registerJS('application.static.js.lib.ace');
+        $this->renderForm('DevGenModelIndex', [
+            'content' => $content,
+            'name' => count($path)  > 1? $path[1] : ''
+        ]);
+    }
+
+    public function actionSave() {
+        $postdata = file_get_contents("php://input");
+        $post     = CJSON::decode($postdata);
+        $path     = explode(".", $post['active']);
+        $filePath = Yii::getPathOfAlias(($path[0] == 'plansys' ? 'application' : 'app') . ".models." . $path[1]) . ".php";
+
+        if (is_file($filePath)) {
+            file_put_contents($filePath, $post['content']);
+        }
     }
 
     public function actionNewModel() {

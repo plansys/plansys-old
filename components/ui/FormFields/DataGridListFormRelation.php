@@ -36,8 +36,8 @@ class DataGridListFormRelation extends Form {
     public function getFields() {
         return array (
             array (
-                'value' => '<hr/>',
                 'type' => 'Text',
+                'value' => '<hr/>',
             ),
             array (
                 'label' => 'Model',

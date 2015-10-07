@@ -38,22 +38,23 @@ class DataFilterListFormRelation extends Form {
     public function getFields() {
         return array (
             array (
-                'value' => '<Hr/>',
                 'type' => 'Text',
+                'value' => '<Hr/>',
             ),
             array (
                 'label' => 'Model',
                 'name' => 'relModelClass',
                 'options' => array (
-                    'ng-model' => '$parent.value[$parent.$index].relModelClass',
+                    'ng-model' => 'item.relModelClass',
                     'ng-change' => 'generateRelationField(value, $parent.value[$index]);updateListView();',
                     'ng-init' => 'generateRelationField(value[$index].relModelClass);',
+                    'ng-if' => 'item.filterType == \'relation\'',
                 ),
                 'menuPos' => 'pull-right',
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
-                'listExpr' => 'RelationField::listModel()',
+                'listExpr' => 'RelationField::listModel(true)',
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
                 'searchable' => 'Yes',
@@ -98,19 +99,23 @@ class DataFilterListFormRelation extends Form {
                 'type' => 'DropDownList',
             ),
             array (
-                'value' => '<hr/>',
                 'type' => 'Text',
+                'value' => '<hr/>',
             ),
             array (
-                'label' => 'Include Empty',
+                'label' => 'Include Empty Result',
                 'name' => 'relIncludeEmpty',
                 'options' => array (
                     'ng-model' => 'item.relIncludeEmpty',
                     'ng-change' => 'updateListView();',
                 ),
-                'listExpr' => '[\\\'No\\\',\\\'Yes\\\']',
-                'labelWidth' => '6',
-                'fieldWidth' => '6',
+                'menuPos' => 'pull-right',
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
+                ),
+                'listExpr' => '[\'No\',\'Yes\']',
+                'labelWidth' => '8',
+                'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
             array (
@@ -122,7 +127,10 @@ class DataFilterListFormRelation extends Form {
                     'ng-model' => 'item.relEmptyValue',
                     'ng-change' => 'updateListView();',
                     'ng-delay' => '500',
-                    'ng-if' => 'item.relIncludeEmpty == \\\'Yes\\\'',
+                    'ng-if' => 'item.relIncludeEmpty == \'Yes\'',
+                ),
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
                 ),
                 'type' => 'TextField',
             ),
@@ -135,7 +143,7 @@ class DataFilterListFormRelation extends Form {
                     'ng-model' => 'item.relEmptyLabel',
                     'ng-change' => 'updateListView();',
                     'ng-delay' => '500',
-                    'ng-if' => 'item.relIncludeEmpty == \\\'Yes\\\'',
+                    'ng-if' => 'item.relIncludeEmpty == \'Yes\'',
                 ),
                 'type' => 'TextField',
             ),
@@ -146,7 +154,7 @@ class DataFilterListFormRelation extends Form {
                 'baseClass' => 'DataFilter',
                 'options' => array (
                     'ng-change' => 'save();',
-                    'ng-model' => 'value[$index].relCriteria',
+                    'ng-model' => 'item.relCriteria',
                 ),
                 'modelClassJS' => 'DataFilter/inlinejs/relation-criteria.js',
                 'type' => 'SqlCriteria',

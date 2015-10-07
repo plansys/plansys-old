@@ -34,7 +34,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'Text',
             ],
              [
-                'value' => '<div ng-show=\\"value[$index].show\\">',
+                'value' => '<div ng-show=\'value[$index].show\'>',
                 'type' => 'Text',
             ],
              [
@@ -60,7 +60,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'ColorPicker',
             ],
              [
-                'value' => '<div style=\\"margin-top:10px;\\"></div>',
+                'value' => '<div style=\'margin-top:10px;\'></div>',
                 'type' => 'Text',
             ],
              [

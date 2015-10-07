@@ -2,6 +2,48 @@
 
 class DataFilterListForm extends Form {
 
+    public $name             = '';
+    public $label            = '';
+    public $listExpr         = '';
+    public $filterType       = 'string';
+    public $isCustom         = 'No';
+    public $options          = [];
+    public $resetable        = 'Yes';
+    public $defaultValue     = '';
+    public $defaultValueFrom = '';
+    public $defaultValueTo   = '';
+    public $defaultOperator  = '';
+    public $showOther        = 'No';
+    public $otherLabel       = '';
+    public $typeOptions      = [
+        'string' => ['defaultOperator', 'defaultValue'],
+        'number' => ['defaultOperator', 'defaultValue'],
+        'date' => ['defaultOperator', 'defaultValue', 'defaultValueFrom', 'defaultValueTo'],
+        'list' => ['defaultValue', 'listExpr'],
+        'check' => ['defaultValue', 'listExpr'],
+        'relation' => ['defaultValue', 'relParams', 'relCriteria', 'relModelClass', 'relIdField', 'relLabelField'],
+    ];
+    public $relParams        = [];
+    public $relCriteria      = [
+        'select' => '',
+        'distinct' => 'false',
+        'alias' => 't',
+        'condition' => '{[search]}',
+        'order' => '',
+        'group' => '',
+        'having' => '',
+        'join' => ''
+    ];
+
+    ### Relation ###
+    public $relModelClass   = '';
+    public $relIdField      = '';
+    public $relLabelField   = '';
+    public $relIncludeEmpty = 'No';
+    public $relEmptyValue   = 'null';
+    public $relEmptyLabel   = '-- NONE --';
+    public $queryOperator   = "";
+
     public function getFields() {
         return array (
             array (
@@ -9,7 +51,7 @@ class DataFilterListForm extends Form {
                 'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
 <div class=\"label data-filter-name pull-right\"> {{value[$index].filterType}}</div>
 
-{{value[$index].label}} 
+{{value[$index].label}}
 <div class=\"clearfix\"></div>
 </div>',
             ),
@@ -20,7 +62,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div ng-if=\\"value[$index].show\\">',
+                'value' => '<div ng-if=\'value[$index].show\'>',
             ),
             array (
                 'label' => 'Type',
@@ -42,6 +84,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 ),
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
+                'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
             array (
@@ -78,16 +121,20 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'TextField',
             ),
             array (
-                'label' => 'Exclude Condition',
+                'label' => 'Dropdown Behavior',
                 'name' => 'isCustom',
                 'options' => array (
                     'ng-model' => 'value[$index].isCustom',
                     'ng-change' => 'updateListView()',
                 ),
+                'menuPos' => 'pull-right',
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
-                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\');',
+                'list' => array (
+                    'No' => 'Default',
+                    'Yes' => 'Custom',
+                ),
                 'labelWidth' => '6',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
@@ -99,10 +146,11 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'ng-model' => 'value[$index].resetable',
                     'ng-change' => 'updateListView()',
                 ),
+                'menuPos' => 'pull-right',
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
-                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\');',
+                'listExpr' => 'array(\'Yes\',\'No\');',
                 'labelWidth' => '6',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
@@ -114,12 +162,12 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'ng-model' => 'value[$index].queryOperator',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                    'ng-if' => 'item.filterType == \\\'check\\\'',
+                    'ng-if' => 'item.filterType == \'check\' && item.filterType == \'list\'',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
-                'listExpr' => '[\\\'\\\'=>\\\'Like\\\', \\\'in\\\'=>\\\'In\\\']',
+                'listExpr' => '[\'\'=>\'Like\', \'in\'=>\'In\']',
                 'labelWidth' => '6',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
@@ -138,12 +186,12 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'ng-model' => 'value[$index].defaultOperator',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                    'ng-if' => 'item.filterType == \\\'number\\\'',
+                    'ng-if' => 'item.filterType == \'number\'',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
-                'listExpr' => 'DataFilter::getFilterOperators(\\\'number\\\')',
+                'listExpr' => 'DataFilter::getFilterOperators(\'number\')',
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
                 'type' => 'DropDownList',
@@ -155,12 +203,12 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'ng-model' => 'value[$index].defaultOperator',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                    'ng-if' => 'item.filterType == \\\'string\\\'',
+                    'ng-if' => 'item.filterType == \'string\'',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
-                'listExpr' => 'DataFilter::getFilterOperators(\\\'string\\\')',
+                'listExpr' => 'DataFilter::getFilterOperators(\'string\')',
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
                 'type' => 'DropDownList',
@@ -172,12 +220,12 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'ng-model' => 'value[$index].defaultOperator',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                    'ng-if' => 'item.filterType == \\\'date\\\'',
+                    'ng-if' => 'item.filterType == \'date\'',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
-                'listExpr' => 'DataFilter::getFilterOperators(\\\'date\\\')',
+                'listExpr' => 'DataFilter::getFilterOperators(\'date\')',
                 'labelWidth' => '3',
                 'fieldWidth' => '9',
                 'type' => 'DropDownList',
@@ -191,7 +239,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'ng-model' => 'value[$index].defaultValue',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                    'ng-if' => 'item.defaultOperator != \\\'Between\\\' && item.defaultOperator != \\\'Not Between\\\'',
+                    'ng-if' => 'item.defaultOperator != \'Between\' && item.defaultOperator != \'Not Between\'',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
@@ -207,7 +255,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'ng-model' => 'value[$index].defaultValueFrom',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                    'ng-if' => 'item.defaultOperator != \\\'\\\' && (item.filterType == \\\'date\\\' && (item.defaultOperator == \\\'Between\\\' || item.defaultOperator == \\\'Not Between\\\'))',
+                    'ng-if' => 'item.defaultOperator != \'\' && (item.filterType == \'date\' && (item.defaultOperator == \'Between\' || item.defaultOperator == \'Not Between\'))',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
@@ -223,7 +271,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'ng-model' => 'value[$index].defaultValueTo',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                    'ng-if' => 'item.defaultOperator != \\\'\\\' && (item.filterType == \\\'date\\\' && (item.defaultOperator == \\\'Between\\\' || item.defaultOperator == \\\'Not Between\\\'))',
+                    'ng-if' => 'item.defaultOperator != \'\' && (item.filterType == \'date\' && (item.defaultOperator == \'Between\' || item.defaultOperator == \'Not Between\'))',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
@@ -247,7 +295,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'ng-model' => 'value[$index].listExpr',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                    'ng-if' => 'value[$index].filterType ==\\\'list\\\' || value[$index].filterType == \\\'check\\\'',
+                    'ng-if' => 'value[$index].filterType ==\'list\' || value[$index].filterType == \'check\'',
                     'style' => 'margin-bottom:8px;',
                 ),
                 'type' => 'ExpressionField',
@@ -256,14 +304,14 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'name' => 'TypeRelation',
                 'subForm' => 'application.components.ui.FormFields.DataFilterListFormRelation',
                 'options' => array (
-                    'ng-if' => 'value[$index].filterType == \\\'relation\\\'',
+                    'ng-if' => 'value[$index].filterType == \'relation\'',
                 ),
                 'inlineJS' => 'DataFilter/inlinejs/dfr-init.js',
                 'type' => 'SubForm',
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div style=\\"margin-bottom:-3px;\\"></div>',
+                'value' => '<div style=\'margin-bottom:-3px;\'></div>',
             ),
             array (
                 'type' => 'Text',
@@ -285,47 +333,4 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
             ],
         ];
     }
-
-    public $name = '';
-    public $label = '';
-    public $listExpr = '';
-    public $filterType = 'string';
-    public $isCustom = 'No';
-    public $options = [];
-    public $resetable = 'Yes';
-    public $defaultValue = '';
-    public $defaultValueFrom = '';
-    public $defaultValueTo = '';
-    public $defaultOperator = '';
-    
-    public $typeOptions = [
-        'string' => ['defaultOperator', 'defaultValue'],
-        'number' => ['defaultOperator', 'defaultValue'],
-        'date' => ['defaultOperator', 'defaultValue', 'defaultValueFrom', 'defaultValueTo'],
-        'list' => ['defaultValue', 'listExpr'],
-        'check' => [ 'defaultValue', 'listExpr'],
-        'relation' => ['defaultValue', 'relParams', 'relCriteria', 'relModelClass', 'relIdField', 'relLabelField'],
-    ];
-
-    ### Relation ###
-    public $relParams = [];
-    public $relCriteria = [
-        'select' => '',
-        'distinct' => 'false',
-        'alias' => 't',
-        'condition' => '{[search]}',
-        'order' => '',
-        'group' => '',
-        'having' => '',
-        'join' => ''
-    ];
-    public $relModelClass = '';
-    public $relIdField = '';
-    public $relLabelField = '';
-
-    public $relIncludeEmpty = 'No';
-    public $relEmptyValue = 'null';
-    public $relEmptyLabel = '-- NONE --';
-    
-    public $queryOperator = "";
 }

@@ -110,7 +110,7 @@ class ChartLine extends FormField {
                         'buttonSize' => 'btn-xs',
                         'options' => array (
                             'style' => 'float:right;margin:10px 0px 5px 0px',
-                            'ng-show' => 'active.datasource != \\\'\\\'',
+                            'ng-show' => 'active.datasource != \'\'',
                             'ng-click' => 'generateSeries(active.retrieveMode)',
                         ),
                         'type' => 'LinkButton',

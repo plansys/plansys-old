@@ -55,6 +55,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 }
 
                 $scope.isCached = function () {
+                    if (!$scope.pageSetting) return false;
+
                     return !!$scope.pageSetting.dataFilters && !!$scope.pageSetting.dataFilters[$scope.name];
                 }
 
@@ -145,7 +147,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
 
                             ds.afterQueryInternal[$scope.renderID] = function () {
                                 if (ds.params.paging && $scope[ds.params.paging]
-                                        && $scope[ds.params.paging].gridOptions) {
+                                    && $scope[ds.params.paging].gridOptions) {
 
                                     var paging = $scope[ds.params.paging].gridOptions.pagingOptions;
                                     if (!paging)
@@ -231,12 +233,11 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 $scope.afterQuery = function (ds) {
                 };
                 $scope.updateFilter = function (filter, e, shouldExec) {
-
                     $scope.changeValueText(filter);
 
                     shouldExec = typeof shouldExec == "undefined" ? true : shouldExec;
                     if (typeof e != "undefined" && e != null &&
-                            ['list', 'check', 'relation'].indexOf(filter.filterType) < 0) {
+                        ['list', 'check', 'relation'].indexOf(filter.filterType) < 0) {
                         $scope.toggleFilterCriteria(e);
                     }
 
@@ -280,7 +281,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
 
                                 ds.afterQueryInternal[$scope.renderID] = function () {
                                     if (ds.params.paging && $scope[ds.params.paging]
-                                            && $scope[ds.params.paging].gridOptions) {
+                                        && $scope[ds.params.paging].gridOptions) {
                                         var paging = $scope[ds.params.paging].gridOptions.pagingOptions;
                                         if (paging.currentPage * paging.pageSize > ds.totalItems) {
                                             paging.currentPage = Math.floor(ds.totalItems / paging.pageSize);
@@ -319,8 +320,16 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 $scope.isObject = function (input) {
                     return angular.isObject(input);
                 }
+                $scope.dropdownSearchKeypress = function (e) {
+                    if (e.which == 13) {
+                        $scope.relationNext(e, $scope.filter);
+                        e.preventDefault();
+                    }
+                }
 
                 $scope.listSearch = function (e, filter) {
+                    if (!filter) return;
+
                     if (filter.filterType == "relation") {
                         $timeout(function () {
                             $scope.loading = true;
@@ -386,6 +395,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 $scope.relationNext = function (e, filter) {
                     e.stopPropagation();
                     e.preventDefault();
+                    if (!filter) return;
                     $scope.loading = true;
 
                     var params = {};
@@ -404,7 +414,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         'i': filter.list.length,
                         'p': params
                     }).success(function (data) {
-
                         $scope.loading = false;
                         if (data.list && data.list.length && data.list.length > 0) {
                             data.list.forEach(function (item) {
@@ -664,14 +673,14 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
 
                                         Date.prototype.getWeekOfMonth = function (exact) {
                                             var month = this.getMonth()
-                                                    , year = this.getFullYear()
-                                                    , firstWeekday = new Date(year, month, 1).getDay()
-                                                    , lastDateOfMonth = new Date(year, month + 1, 0).getDate()
-                                                    , offsetDate = this.getDate() + firstWeekday - 1
-                                                    , index = 1 // start index at 0 or 1, your choice
-                                                    , weeksInMonth = index + Math.ceil((lastDateOfMonth + firstWeekday - 7) / 7)
-                                                    , week = index + Math.floor(offsetDate / 7)
-                                                    ;
+                                                , year = this.getFullYear()
+                                                , firstWeekday = new Date(year, month, 1).getDay()
+                                                , lastDateOfMonth = new Date(year, month + 1, 0).getDate()
+                                                , offsetDate = this.getDate() + firstWeekday - 1
+                                                , index = 1 // start index at 0 or 1, your choice
+                                                , weeksInMonth = index + Math.ceil((lastDateOfMonth + firstWeekday - 7) / 7)
+                                                , week = index + Math.floor(offsetDate / 7)
+                                                ;
                                             if (exact || week < 2 + index)
                                                 return week;
                                             return week === weeksInMonth ? index + 5 : week;
@@ -875,6 +884,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 $scope.oldFilters = null;
                 $scope.datasource = $el.find("data[name=datasource]").text();
                 $scope.datasources = JSON.parse($el.find("data[name=datasources]").text());
+
                 $scope.name = $el.find("data[name=name]:eq(0)").text();
                 $scope.renderID = $el.find("data[name=render_id]").text();
                 $scope.dateOptions = {
@@ -913,9 +923,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
 
                         for (i in $scope.filters) {
                             var f = $scope.filters[i];
-                            if (!!$scope.oldFilters &&
-                                    !!$scope.oldFilters[i] &&
-                                    JSON.stringify(f[i]) != JSON.stringify($scope.oldFilters[i])) {
+                            if (!!$scope.oldFilters && !!$scope.oldFilters[i] &&
+                                JSON.stringify(f[i]) != JSON.stringify($scope.oldFilters[i])) {
 
                                 $scope.updateFilter(f, null, false);
                             }
@@ -933,8 +942,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         for (i in $scope.filters) {
                             var f = $scope.filters[i];
                             var dateCondition = (f.filterType == 'date'
-                                    && ['Daily', 'Weekly', 'Monthly', 'Yearly']
-                                    .indexOf(f.defaultOperator) >= 0);
+                            && ['Daily', 'Weekly', 'Monthly', 'Yearly']
+                                .indexOf(f.defaultOperator) >= 0);
 
                             f.show = (typeof f.show == "boolean" ? f.show : (showCount > 5 ? false : true));
                             if ($scope.ngIf(f)) {
@@ -947,7 +956,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                         f.operator = f.defaultOperator;
                                         if (f.filterType == 'date') {
                                             if (f.defaultOperator == 'Between'
-                                                    || f.defaultOperator == 'Not Between') {
+                                                || f.defaultOperator == 'Not Between') {
                                                 f.from = $scope.evalValue(f.defaultValueFrom);
                                                 f.to = $scope.evalValue(f.defaultValueTo);
                                             } else if (f.defaultOperator == 'Less Than') {

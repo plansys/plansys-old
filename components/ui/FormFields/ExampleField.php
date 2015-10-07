@@ -17,6 +17,7 @@ class ExampleField extends FormField {
     public static $category = "Layout";
     public static $toolbarIcon = "fa fa-tags";
 
+
     public function getLayoutClass() {
         return ($this->layout == 'Vertical' ? 'form-vertical' : '');
     }

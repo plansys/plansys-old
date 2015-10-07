@@ -820,6 +820,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                                     });
                                 }
 
+
                                 ds.lastQueryFrom = "DataGrid";
                                 ds.updateParam('order_by', order_by, 'order');
 

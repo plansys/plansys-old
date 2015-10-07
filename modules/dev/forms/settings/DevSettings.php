@@ -346,7 +346,7 @@ class DevSettings extends Form {
                     array (
                         'label' => 'System',
                         'name' => 'dbSys',
-                        'listExpr' => '[\\\'mysql\\\' => \\\'MySQL\\\']',
+                        'listExpr' => '[\'mysql\' => \'MySQL\']',
                         'type' => 'DropDownList',
                     ),
                     array (
@@ -454,7 +454,7 @@ class DevSettings extends Form {
                         'icon' => 'newspaper-o',
                         'buttonSize' => 'btn-xs',
                         'options' => array (
-                            'ng-if' => 'model.notifEnable == \\\'ON\\\'',
+                            'ng-if' => 'model.notifEnable == \'ON\'',
                             'ng-click' => 'checkNotif()',
                             'style' => 'float:right;margin:-50px -25px 0px 0px;',
                         ),
@@ -476,7 +476,7 @@ class DevSettings extends Form {
                         'labelWidth' => '6',
                         'fieldWidth' => '6',
                         'options' => array (
-                            'ng-if' => 'model.notifEnable==\\\'ON\\\'',
+                            'ng-if' => 'model.notifEnable==\'ON\'',
                         ),
                         'type' => 'ToggleSwitch',
                     ),
@@ -527,7 +527,7 @@ class DevSettings extends Form {
                         ),
                         'labelWidth' => '5',
                         'options' => array (
-                            'ng-if' => 'model.auditEnable== \\\'ON\\\'',
+                            'ng-if' => 'model.auditEnable== \'ON\'',
                         ),
                         'type' => 'CheckboxList',
                     ),
@@ -565,7 +565,7 @@ class DevSettings extends Form {
                 'buttonSize' => 'btn-xs',
                 'options' => array (
                     'style' => 'float:right;margin:-25px 25px 0px 0px;',
-                    'ng-if' => 'model.emailService!=\\\'none\\\'',
+                    'ng-if' => 'model.emailService!=\'none\'',
                     'ng-click' => 'sendEmail()',
                 ),
                 'type' => 'LinkButton',
@@ -590,7 +590,7 @@ class DevSettings extends Form {
                         'label' => 'Sender E-mail',
                         'name' => 'emailSender',
                         'options' => array (
-                            'ng-if' => 'model.emailService != \\\'none\\\'',
+                            'ng-if' => 'model.emailService != \'none\'',
                         ),
                         'type' => 'TextField',
                     ),
@@ -613,7 +613,7 @@ class DevSettings extends Form {
                         'name' => 'subForm1',
                         'subForm' => 'application.modules.dev.forms.settings.DevSettingsEmailSmtp',
                         'options' => array (
-                            'ng-if' => 'model.emailService == \\\'smtp\\\'',
+                            'ng-if' => 'model.emailService == \'smtp\'',
                         ),
                         'type' => 'SubForm',
                     ),
@@ -621,14 +621,14 @@ class DevSettings extends Form {
                         'name' => 'subForm2',
                         'subForm' => 'application.modules.dev.forms.settings.DevSettingsEmailGmail',
                         'options' => array (
-                            'ng-if' => 'model.emailService == \\\'gmail\\\'',
+                            'ng-if' => 'model.emailService == \'gmail\'',
                         ),
                         'type' => 'SubForm',
                     ),
                     array (
                         'name' => 'subForm3',
                         'options' => array (
-                            'ng-if' => 'model.emailService == \\\'ses\\\'',
+                            'ng-if' => 'model.emailService == \'ses\'',
                         ),
                         'type' => 'SubForm',
                     ),
@@ -661,7 +661,7 @@ class DevSettings extends Form {
                 'buttonSize' => 'btn-xs',
                 'options' => array (
                     'style' => 'float:right;margin:-25px 25px 0px 0px;',
-                    'ng-if' => 'model.ldapEnable==\\\'ON\\\'',
+                    'ng-if' => 'model.ldapEnable==\'ON\'',
                     'ng-click' => 'checkLdap()',
                 ),
                 'type' => 'LinkButton',
@@ -740,7 +740,7 @@ class DevSettings extends Form {
                 'w2' => '50%',
                 'options' => array (
                     'style' => 'margin-top : -45px;',
-                    'ng-if' => 'model.ldapEnable==\\\'ON\\\'',
+                    'ng-if' => 'model.ldapEnable==\'ON\'',
                 ),
                 'type' => 'ColumnField',
             ),

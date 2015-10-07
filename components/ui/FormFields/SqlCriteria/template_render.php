@@ -28,9 +28,7 @@
                     <i class="fa fa-link"></i> Loading SQL
                 </center>
                 
-                <pre ng-show='!isLoading'
-                    ng-style="{borderColor: (isError ? 'red' : '#ccc')}"
-                    style="font-size:12px;margin:0px;padding:5px 8px;white-space:pre-wrap;">{{ previewSQL}}</pre>
+                <div ng-show='!isLoading' ng-bind-html="previewSQL" style="margin-bottom:-10px"></div>
             </td>
         </tr>
     </table>

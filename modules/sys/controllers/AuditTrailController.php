@@ -4,8 +4,14 @@ class AuditTrailController extends Controller {
 
     public function actionTrack($t = "view") {
         $postdata = file_get_contents("php://input");
-        $path = json_decode($postdata, true);
-        if ($path['module'] == 'dev')
+        $path     = json_decode($postdata, true);
+        $tracking = Setting::get('auditTrail.enable');
+
+        if ($tracking != null && $tracking != true) {
+            return;
+        }
+
+        if ($path['module'] == 'dev' && !in_array($path['ctrl'], ['user', 'role']))
             return;
 
         if (!empty($path)) {

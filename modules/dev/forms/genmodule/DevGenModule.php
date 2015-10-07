@@ -22,8 +22,8 @@ class DevGenModule extends Form {
         $a = trim($this->module->removeIndent($this->module->generateImport()));
         $b = trim($this->module->loadImport());
 
-        $diff = TextDiff::compare($a, $b);
-        $this->synced = $diff == '';
+//        $diff = TextDiff::compare($a, $b);
+        $this->synced = $a != $b;
         return $this->synced;
     }
 
@@ -204,7 +204,7 @@ Module "' . $name . '" already exist';
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
-                        'title' => '<i class=\\\'fa fa-empire\\\'></i> Import Initialization <span ng-bind-html=\\\'importStatus\\\'></span>',
+                        'title' => '<i class=\'fa fa-empire\'></i> Import Initialization <span ng-bind-html=\'importStatus\'></span>',
                         'type' => 'SectionHeader',
                     ),
                     array (
@@ -240,7 +240,7 @@ margin:-50px -45px 0px 0px;',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
-                        'title' => '<i class=\\\'fa fa-cubes\\\'></i> Controllers',
+                        'title' => '<i class=\'fa fa-cubes\'></i> Controllers',
                         'type' => 'SectionHeader',
                     ),
                     array (
@@ -296,7 +296,7 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                 'column2' => array (
                     array (
                         'type' => 'Text',
-                        'value' => '<div ng-if=\\"model.accessType == \\\'DEFAULT\\\'\\">',
+                        'value' => '<div ng-if=\\"model.accessType == \'DEFAULT\'\\">',
                     ),
                     array (
                         'label' => 'Default Access Rule',
@@ -346,7 +346,7 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
-                        'title' => '<i class=\\\'fa fa-user-md\\\'></i> Role Access',
+                        'title' => '<i class=\'fa fa-user-md\'></i> Role Access',
                         'type' => 'SectionHeader',
                     ),
                     array (
@@ -358,7 +358,7 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                         'fieldWidth' => '12',
                         'options' => array (
                             'ng-change' => 'saveAC();',
-                            'unique' => '[\\\'role\\\', \\\'access\\\']',
+                            'unique' => '[\'role\', \'access\']',
                             'class' => 'flat',
                             'ng-delay' => '500',
                         ),
@@ -381,7 +381,7 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
-                        'title' => '<i class=\\\'fa fa-user\\\'></i> User Access',
+                        'title' => '<i class=\'fa fa-user\'></i> User Access',
                         'type' => 'SectionHeader',
                     ),
                     array (
@@ -393,7 +393,7 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                         'fieldWidth' => '12',
                         'options' => array (
                             'ng-change' => 'saveAC();',
-                            'unique' => '[\\\'user\\\', \\\'access\\\']',
+                            'unique' => '[\'user\', \'access\']',
                             'class' => 'flat',
                             'ng-delay' => '500',
                         ),

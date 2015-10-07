@@ -10,43 +10,44 @@ class Text extends FormField {
      * @return array me-return array property Text.
      */
     public function getFieldProperties() {
-        return array(
-            array(
-                'value' => '<div style=\\"width:70px;\\" class=\\"pull-right\\">',
-                'type'  => 'Text',
+        return array (
+            array (
+                'type' => 'Text',
+                'value' => '<div style=\'width:70px;\' class=\'pull-right\'>',
             ),
-            array(
-                'name'       => 'display',
-                'options'    => array(
-                    'ng-model'  => 'active.display',
+            array (
+                'name' => 'display',
+                'options' => array (
+                    'ng-model' => 'active.display',
                     'ng-change' => 'save()',
                 ),
-                'menuPos'    => 'pull-right',
-                'listExpr'   => '[\\\'block\\\',\\\'inline\\\']',
+                'menuPos' => 'pull-right',
+                'listExpr' => '[\'block\',\'inline\']',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
-                'type'       => 'DropDownList',
+                'type' => 'DropDownList',
             ),
-            array(
+            array (
+                'type' => 'Text',
                 'value' => '</div>',
-                'type'  => 'Text',
             ),
-            array(
-                'label'        => 'Render In Editor',
-                'name'         => 'renderInEditor',
-                'options'      => array(
-                    'ng-model'  => 'active.renderInEditor',
+            array (
+                'label' => 'Render In Editor',
+                'name' => 'renderInEditor',
+                'options' => array (
+                    'ng-model' => 'active.renderInEditor',
                     'ng-change' => 'save()',
                 ),
-                'labelOptions' => array(
+                'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
-                'listExpr'     => 'array(\\\'Yes\\\',\\\'No\\\')',
-                'fieldWidth'   => '3',
-                'labelWidth'   => '5',
-                'type'         => 'DropDownList',
+                'listExpr' => 'array(\'Yes\',\'No\')',
+                'labelWidth' => '5',
+                'fieldWidth' => '3',
+                'type' => 'DropDownList',
             ),
-            array(
+            array (
+                'type' => 'Text',
                 'value' => '<div class=\"text-editor-builder\">
   <div class=\"text-editor\" ui-ace=\"aceConfig({
   mode: \'html\',
@@ -57,14 +58,13 @@ style=\"width:100%;height:300px;margin-bottom:-250px;position: relative !importa
     </div>
 </div>
 ',
-                'type'  => 'Text',
             ),
         );
     }
 
     public $renderInEditor = 'No';
-    public $display = 'block';
-    public $type = 'Text';
+    public $display        = 'block';
+    public $type           = 'Text';
 
     /** @var string $value */
     public $value;
@@ -88,12 +88,12 @@ style=\"width:100%;height:300px;margin-bottom:-250px;position: relative !importa
     public function render() {
         $attributes = [
             'field' => $this->attributes,
-            'form'  => $this->formProperties,
+            'form' => $this->formProperties,
         ];
 
         ob_start();
         if (strpos($this->value, "<?") !== false) {
-            $model = $this->model;
+            $model      = $this->model;
             $controller = Yii::app()->controller;
 
             $attrs = $this->renderParams;

@@ -16,11 +16,8 @@ class SectionHeader extends FormField {
                 'layout' => 'Vertical',
                 'options' => array (
                     'ng-model' => 'active.title',
-                    'ng-change' => 'save()',
+                    'ng-change' => 'save();',
                     'ng-delay' => '500',
-                ),
-                'fieldOptions' => array (
-                    'auto-grow' => 'true',
                 ),
                 'type' => 'TextArea',
             ),

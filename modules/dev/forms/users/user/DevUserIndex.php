@@ -188,15 +188,6 @@ class DevUserIndex extends User {
                 'datasource' => 'dataSource1',
                 'columns' => array (
                     array (
-                        'name' => 'nip',
-                        'label' => 'nip',
-                        'options' => array (),
-                        'columnType' => 'string',
-                        'show' => false,
-                        'inputMask' => '',
-                        'stringAlias' => array (),
-                    ),
-                    array (
                         'name' => 'username',
                         'label' => 'username',
                         'options' => array (),
@@ -206,26 +197,8 @@ class DevUserIndex extends User {
                         'stringAlias' => array (),
                     ),
                     array (
-                        'name' => 'fullname',
-                        'label' => 'fullname',
-                        'options' => array (),
-                        'columnType' => 'string',
-                        'show' => false,
-                        'inputMask' => '',
-                        'stringAlias' => array (),
-                    ),
-                    array (
                         'name' => 'email',
                         'label' => 'email',
-                        'options' => array (),
-                        'columnType' => 'string',
-                        'show' => false,
-                        'inputMask' => '',
-                        'stringAlias' => array (),
-                    ),
-                    array (
-                        'name' => 'phone',
-                        'label' => 'phone',
                         'options' => array (),
                         'columnType' => 'string',
                         'show' => false,
@@ -258,7 +231,7 @@ class DevUserIndex extends User {
                     'enableColumnResize' => 'true',
                     'fullWidth' => 'true',
                 ),
-                'type' => 'DataTable',
+                'type' => 'DataGrid',
             ),
         );
     }

@@ -6,4 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'dump_r\\' => array($vendorDir . '/leeoniya/dump-r/src/dump_r'),
 );

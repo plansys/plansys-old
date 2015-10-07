@@ -53,7 +53,7 @@ class ListView extends FormField {
                 'name' => 'templateForm',
                 'options' => array (
                     'ng-model' => 'active.templateForm',
-                    'ng-show' => 'active.fieldTemplate == \\\'form\\\'',
+                    'ng-show' => 'active.fieldTemplate == \'form\'',
                     'ng-change' => 'save();',
                 ),
                 'menuPos' => 'pull-right',
@@ -63,11 +63,11 @@ class ListView extends FormField {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div ng-show=\\"active.fieldTemplate == \\\'default\\\'\\">',
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div style=\\\'margin:10px 0px 10px 10px;border:1px solid #ccc;padding:5px 5px 0px 5px;border-radius:4px;\\\'>',
+                'value' => '<div ng-show=\'active.fieldTemplate == \"default\"\'>
+    <div style=\'margin:10px 0px 10px 10px;border:1px solid #ccc;padding:5px 5px 0px 5px;border-radius:4px;\'>',
             ),
             array (
                 'label' => 'Field Type',
@@ -76,7 +76,7 @@ class ListView extends FormField {
                     'ng-change' => 'activeEditor.fieldTypeChange(active)',
                     'ng-model' => 'active.singleView',
                 ),
-                'listExpr' => '[\\\'TextField\\\',\\\'DropDownList\\\']',
+                'listExpr' => '[\'TextField\',\'DropDownList\']',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
@@ -102,7 +102,7 @@ class ListView extends FormField {
                 'mode' => 'single',
                 'subForm' => 'application.components.ui.FormFields.TextField',
                 'options' => array (
-                    'ng-if' => 'active.singleView == \\\'TextField\\\'',
+                    'ng-if' => 'active.singleView == \'TextField\'',
                     'ng-model' => 'active.singleViewOption',
                 ),
                 'type' => 'SubForm',
@@ -112,7 +112,7 @@ class ListView extends FormField {
                 'mode' => 'single',
                 'subForm' => 'application.components.ui.FormFields.DropDownList',
                 'options' => array (
-                    'ng-if' => 'active.singleView == \\\'DropDownList\\\'',
+                    'ng-if' => 'active.singleView == \'DropDownList\'',
                     'ng-model' => 'active.singleViewOption',
                 ),
                 'type' => 'SubForm',
@@ -124,7 +124,7 @@ class ListView extends FormField {
             ),
             array (
                 'type' => 'Text',
-                'value' => '</div><div ng-show=\\"active.fieldTemplate == \\\'form\\\' && active.templateForm != \\\'\\\'\\">',
+                'value' => '</div><div ng-show=\'active.fieldTemplate == \\"form\\" && active.templateForm != \\"\\"\'>',
             ),
             array (
                 'label' => 'Edit Subform',
@@ -173,7 +173,7 @@ class ListView extends FormField {
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                 ),
-                'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
+                'listExpr' => 'array(\'Horizontal\',\'Vertical\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
@@ -379,8 +379,7 @@ class ListView extends FormField {
 
         if ($this->fieldTemplate == 'form' && class_exists($class)) {
             $fb = FormBuilder::load($class);
-            $model = new $class;
-            $model->parent = $this->model;
+            $model = new $class($this->model);
 
             if ($this->value == "") {
                 $this->value = [];

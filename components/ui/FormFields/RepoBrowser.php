@@ -38,7 +38,7 @@ class RepoBrowser extends FormField {
                     'ng-model' => 'active.showBrowseButton',
                     'ng-change' => 'save();',
                 ],
-                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
+                'listExpr' => 'array(\'Yes\',\'No\')',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ],

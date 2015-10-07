@@ -2,7 +2,7 @@ $scope.getSynced = function () {
     if ($scope.model.synced) {
         return '<span style="color:green;font-size:11px;border:1px solid green;margin-left:10px;border-radius:3px;padding:1px 3px;background:white;"><i class="fa fa-check"></i> Synced</span>';
     } else {
-        return '<span style="color:orange;font-size:11px;border:1px solid orange;margin-left:10px;border-radius:3px;padding:1px 3px;background:white;"><i class="fa fa-warning"></i> Not Synced</span>';
+        return '<span style="color:orange;font-size:11px;border:1px solid orange;margin-left:10px;border-radius:3px;padding:1px 3px;background:white;"><i class="fa fa-warning"></i> Please Type to Sync</span>';
     }
 };
 $scope.importStatus = $scope.getSynced();

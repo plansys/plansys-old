@@ -5,14 +5,13 @@ function snakeToCamel(s) {
 
     return cm.charAt(0).toUpperCase() + cm.slice(1);
 }
+$scope.model.module = window.opener.activeItem.type;
 
 $scope.updateTable = function () {
     $timeout(function () {
         $scope.model.modelName = snakeToCamel($scope.model.tableName);
     });
 }
-
-$scope.model.module = window.opener.activeItem.type;
 
 if ($scope.params.href != "") {
     window.close();

@@ -98,8 +98,8 @@ class ChartPie extends FormField {
                 'totalColumns' => '1',
                 'column1' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
                         'label' => 'Generate Series',
@@ -108,12 +108,13 @@ class ChartPie extends FormField {
                         'buttonSize' => 'btn-xs',
                         'options' => array (
                             'style' => 'float:right;margin:10px 0px 5px 0px',
-                            'ng-show' => 'active.datasource != \\\'\\\'',
+                            'ng-show' => 'active.datasource != \'\'',
                             'ng-click' => 'generateSeries(active.retrieveMode)',
                         ),
                         'type' => 'LinkButton',
                     ),
                 ),
+                'w1' => '100%',
                 'type' => 'ColumnField',
             ),
             array (
@@ -128,8 +129,8 @@ class ChartPie extends FormField {
                 'type' => 'SectionHeader',
             ),
             array (
-                'value' => '<div style=\\"margin-bottom:5px;\\"></div>',
                 'type' => 'Text',
+                'value' => '<div style=\'margin-bottom:5px;\'></div>',
             ),
             array (
                 'name' => 'series',
@@ -141,6 +142,15 @@ class ChartPie extends FormField {
                     'ng-model' => 'active.series',
                     'ng-change' => 'save()',
                     'ps-after-add' => 'value.show = true',
+                ),
+                'singleViewOption' => array (
+                    'name' => 'val',
+                    'fieldType' => 'text',
+                    'labelWidth' => 0,
+                    'fieldWidth' => 12,
+                    'fieldOptions' => array (
+                        'ng-delay' => 500,
+                    ),
                 ),
                 'type' => 'ListView',
             ),

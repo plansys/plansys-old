@@ -434,10 +434,7 @@ CREATE TABLE `p_todo` (
 DROP TABLE IF EXISTS `p_user`;
 CREATE TABLE `p_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `nip` varchar(255) NOT NULL COMMENT 'NIP',
-  `fullname` varchar(255) NOT NULL COMMENT 'Fullname',
   `email` varchar(255) NOT NULL COMMENT 'E-Mail',
-  `phone` varchar(255) DEFAULT NULL COMMENT 'Phone',
   `username` varchar(255) NOT NULL COMMENT 'Username',
   `password` varchar(255) NOT NULL COMMENT 'Password',
   `last_login` datetime DEFAULT NULL,

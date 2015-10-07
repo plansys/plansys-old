@@ -48,7 +48,7 @@ class DevFormLayoutProperties extends Form {
                 'options' => array (
                     'ng-model' => 'layout.file',
                     'ng-change' => 'changeMenuTreeFile()',
-                    'ng-show' => 'layout.type == \\\'menu\\\'',
+                    'ng-show' => 'layout.type == \'menu\'',
                 ),
                 'listExpr' => 'MenuTree::listDropdown($model->module)',
                 'type' => 'DropDownList',
@@ -59,7 +59,7 @@ class DevFormLayoutProperties extends Form {
                     'ng-model' => 'layout.title',
                     'ng-change' => 'changeLayoutProperties()',
                     'ng-delay' => '500',
-                    'ng-show' => 'layout.type == \\\'menu\\\'',
+                    'ng-show' => 'layout.type == \'menu\'',
                 ),
                 'type' => 'TextField',
             ),
@@ -73,13 +73,13 @@ class DevFormLayoutProperties extends Form {
                     'ng-model' => 'layout.icon',
                     'ng-change' => 'changeLayoutProperties()',
                     'ng-delay' => '500',
-                    'ng-show' => 'layout.type == \\\'menu\\\'',
+                    'ng-show' => 'layout.type == \'menu\'',
                 ),
                 'type' => 'IconPicker',
             ),
             array (
                 'type' => 'Text',
-                'value' => '<hr ng-show=\\"layout.type == \\\'menu\\\'\\"/>',
+                'value' => '<hr ng-show=\\"layout.type == \'menu\'\\"/>',
             ),
             array (
                 'label' => 'Inline JS File',
@@ -87,13 +87,13 @@ class DevFormLayoutProperties extends Form {
                     'ng-model' => 'layout.inlineJS',
                     'ng-change' => 'changeLayoutProperties()',
                     'ng-delay' => '500',
-                    'ng-show' => 'layout.type == \\\'menu\\\'',
+                    'ng-show' => 'layout.type == \'menu\'',
                 ),
                 'type' => 'TextField',
             ),
             array (
                 'type' => 'Text',
-                'value' => '<hr ng-show=\\"layout.type == \\\'menu\\\'\\"/>',
+                'value' => '<hr ng-show=\\"layout.type == \'menu\'\\"/>',
             ),
             array (
                 'label' => 'Menu Options',
@@ -101,7 +101,7 @@ class DevFormLayoutProperties extends Form {
                 'options' => array (
                     'ng-model' => 'layout.menuOptions',
                     'ng-change' => 'changeLayoutProperties()',
-                    'ng-show' => 'layout.type == \\\'menu\\\'',
+                    'ng-show' => 'layout.type == \'menu\'',
                 ),
                 'type' => 'KeyValueGrid',
             ),

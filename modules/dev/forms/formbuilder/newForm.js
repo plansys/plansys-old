@@ -36,7 +36,12 @@ $scope.form.submit = function (f) {
         } else if (baseClass == '--custom--') {
             baseClass = $scope.model.custom;
         }
+
         activeScope.addForm($scope.params.prefix + $scope.model.formName, baseClass, activeScope.activeItem);
         window.close();
     }
 };
+
+$timeout(function () {
+    $("#DevFormNewForm_3").focus();
+}, 100);

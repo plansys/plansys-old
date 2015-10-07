@@ -94,11 +94,11 @@ class LinkButton extends FormField {
                 'label' => 'Group Type',
                 'name' => 'groupType',
                 'options' => array (
-                    'ng-show' => 'active.group.trim() != \\\'\\\'',
+                    'ng-show' => 'active.group.trim() != \'\'',
                     'ng-model' => 'active.groupType',
                     'ng-change' => 'save()',
                 ),
-                'listExpr' => 'array(\\\'ButtonGroup\\\', \\\'DropDown\\\')',
+                'listExpr' => 'array(\'ButtonGroup\', \'DropDown\')',
                 'type' => 'DropDownList',
             ),
             array (

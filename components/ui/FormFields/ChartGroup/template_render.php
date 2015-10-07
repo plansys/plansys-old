@@ -12,4 +12,5 @@
         <?= $this->renderColumn(1); ?>
         <div id="groupContainer<?= $this->name ?>" ></div>
     </div>
+    <div class="clearfix"></div>
 </div>

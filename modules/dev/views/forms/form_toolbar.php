@@ -11,7 +11,7 @@
                         &nbsp;{{settings.category[item.type]}}
                     </div>
                 </li>
-                <li ui-tree-node ng-if="settings.category[item.type]" class="item.type">
+                <li ng-if="!item.deprecated" ui-tree-node ng-if="settings.category[item.type]" class="item.type">
                     <div ui-tree-handle data-nodrop class="btn btn-default btn-sm">
                         <i class="{{settings.icon[item.type]}}" ></i>
                         {{item.name}}
@@ -24,7 +24,6 @@
 
 <script type="text/javascript">
     app.controller("ToolbarController", ["$scope", "$http", "$timeout", function ($scope, $http, $timeout) {
-
             var prev = "";
             $scope.isCategory = false;
             $scope.category = function (category) {

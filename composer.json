@@ -1,6 +1,8 @@
 {
-    "require": {
-        "nikic/php-parser": "^1.4",
-        "raveren/kint": "^1.0"
-    }
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "nikic/php-parser": "^1.4",
+    "leeoniya/dump-r": "*"
+  }
 }

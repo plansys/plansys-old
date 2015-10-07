@@ -2,14 +2,54 @@
 
 class DataGridListForm extends Form {
 
+    public $name        = '';
+    public $label       = '';
+    public $options     = [];
+    public $typeOptions = [
+        'string' => ['inputMask', 'options', 'stringAlias'],
+        'buttons' => ['buttonCollapsed', 'buttons', 'options'],
+        'dropdown' => ['listType', 'listExpr', 'listMustChoose', 'options'],
+        'relation' => ['relParams', 'relCriteria', 'relModelClass', 'relIdField', 'relLabelField', 'options']
+    ];
+    public $inputMask   = '';
+    public $stringAlias = [];
+
+    ### string options
+    public $buttonCollapsed = 'Yes';
+    public $buttons         = null;
+
+    ### button Options
+    public $listType       = 'php';
+    public $listExpr       = '';
+
+    ### dropdown Options
+    public $listMustChoose = 'No';
+    public $relParams     = [];
+    public $relCriteria   = [
+        'select' => '',
+        'distinct' => 'false',
+        'alias' => 't',
+        'condition' => '{[search]}',
+        'order' => '',
+        'group' => '',
+        'having' => '',
+        'join' => ''
+    ];
+
+    ### relation Options
+    public $relModelClass = '';
+    public $relIdField    = '';
+    public $relLabelField = '';
+    public $columnType = 'string';
+
     public function getFields() {
         return array (
             array (
                 'type' => 'Text',
                 'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
-<div class=\"label data-filter-name pull-right\"> 
+<div class=\"label data-filter-name pull-right\">
 {{value[$index].columnType}}</div>
-{{value[$index].label}} 
+{{value[$index].label}}
 <div class=\"clearfix\"></div>
 </div>',
             ),
@@ -20,7 +60,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div ng-if=\\"value[$index].show\\">',
+                'value' => '<div ng-if=\'value[$index].show\'>',
             ),
             array (
                 'type' => 'Text',
@@ -52,7 +92,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'ng-model' => 'value[$index].name',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                    'ng-if' => 'value[$index].columnType != \\\'buttons\\\'',
+                    'ng-if' => 'value[$index].columnType != \'buttons\'',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
@@ -79,7 +119,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'name' => 'TypeString',
                 'subForm' => 'application.components.ui.FormFields.DataGridListFormString',
                 'options' => array (
-                    'ng-if' => 'value[$index].columnType == \\\'string\\\'',
+                    'ng-if' => 'value[$index].columnType == \'string\'',
                 ),
                 'inlineJS' => 'DataGrid/inlinejs/dg-type.js',
                 'type' => 'SubForm',
@@ -88,7 +128,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'name' => 'TypeDropDown',
                 'subForm' => 'application.components.ui.FormFields.DataGridListFormDropdown',
                 'options' => array (
-                    'ng-if' => 'value[$index].columnType == \\\'dropdown\\\'',
+                    'ng-if' => 'value[$index].columnType == \'dropdown\'',
                 ),
                 'inlineJS' => 'DataGrid/inlinejs/dg-type.js',
                 'type' => 'SubForm',
@@ -97,7 +137,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'name' => 'TypeButton',
                 'subForm' => 'application.components.ui.FormFields.DataGridListFormButton',
                 'options' => array (
-                    'ng-if' => 'value[$index].columnType == \\\'buttons\\\'',
+                    'ng-if' => 'value[$index].columnType == \'buttons\'',
                 ),
                 'inlineJS' => 'DataGrid/inlinejs/dg-type.js',
                 'type' => 'SubForm',
@@ -106,7 +146,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'name' => 'TypeRelation',
                 'subForm' => 'application.components.ui.FormFields.DataGridListFormRelation',
                 'options' => array (
-                    'ng-if' => 'value[$index].columnType == \\\'relation\\\'',
+                    'ng-if' => 'value[$index].columnType == \'relation\'',
                 ),
                 'inlineJS' => 'DataGrid/inlinejs/dg-type.js',
                 'type' => 'SubForm',
@@ -123,7 +163,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div style=\\"margin-bottom:-3px;\\"></div>',
+                'value' => '<div style=\'margin-bottom:-3px;\'></div>',
             ),
             array (
                 'type' => 'Text',
@@ -131,6 +171,8 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
             ),
         );
     }
+
+    ### columnType
 
     public function getForm() {
         return [
@@ -145,47 +187,5 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
             ],
         ];
     }
-
-    public $name = '';
-    public $label = '';
-    public $options = [];
-    public $typeOptions = [
-        'string' => ['inputMask', 'options', 'stringAlias'],
-        'buttons' => ['buttonCollapsed', 'buttons', 'options'],
-        'dropdown' => ['listType', 'listExpr', 'listMustChoose', 'options'],
-        'relation' => ['relParams', 'relCriteria', 'relModelClass', 'relIdField', 'relLabelField', 'options']
-    ];
-
-    ### string options
-    public $inputMask = '';
-    public $stringAlias = [];
-
-    ### button Options
-    public $buttonCollapsed = 'Yes';
-    public $buttons = null;
-
-    ### dropdown Options
-    public $listType = 'php';
-    public $listExpr = '';
-    public $listMustChoose = 'No';
-
-    ### relation Options
-    public $relParams = [];
-    public $relCriteria = [
-        'select' => '',
-        'distinct' => 'false',
-        'alias' => 't',
-        'condition' => '{[search]}',
-        'order' => '',
-        'group' => '',
-        'having' => '',
-        'join' => ''
-    ];
-    public $relModelClass = '';
-    public $relIdField = '';
-    public $relLabelField = '';
-
-    ### columnType
-    public $columnType = 'string';
 
 }

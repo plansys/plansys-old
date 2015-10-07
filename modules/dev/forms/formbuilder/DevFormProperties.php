@@ -41,6 +41,20 @@ class DevFormProperties extends Form {
                 'type' => 'TextArea',
             ),
             array (
+                'label' => 'Extends From',
+                'name' => 'extendsFrom',
+                'options' => array (
+                    'ng-model' => '$parent.form.extendsFrom',
+                    'ng-change' => 'saveForm();',
+                    'ng-delay' => '500',
+                ),
+                'listExpr' => 'ModelGenerator::listModels();',
+                'searchable' => 'Yes',
+                'showOther' => 'Yes',
+                'otherLabel' => 'Custom Class',
+                'type' => 'DropDownList',
+            ),
+            array (
                 'label' => 'Form Layout',
                 'name' => 'layoutName',
                 'listExpr' => 'Layout::listLayout()',

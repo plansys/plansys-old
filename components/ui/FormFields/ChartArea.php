@@ -100,8 +100,8 @@ class ChartArea extends FormField {
                 'totalColumns' => '1',
                 'column1' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
                         'label' => 'Generate Series',
@@ -110,12 +110,13 @@ class ChartArea extends FormField {
                         'buttonSize' => 'btn-xs',
                         'options' => array (
                             'style' => 'float:right;margin:10px 0px 5px 0px',
-                            'ng-show' => 'active.datasource != \\\'\\\'',
+                            'ng-show' => 'active.datasource != \'\'',
                             'ng-click' => 'generateSeries(active.retrieveMode)',
                         ),
                         'type' => 'LinkButton',
                     ),
                 ),
+                'w1' => '100%',
                 'type' => 'ColumnField',
             ),
             array (
@@ -130,9 +131,9 @@ class ChartArea extends FormField {
                 'type' => 'SectionHeader',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<div style=\"margin-top:5px;\"></div>
 ',
-                'type' => 'Text',
             ),
             array (
                 'label' => 'Set as Tick',
@@ -147,9 +148,9 @@ class ChartArea extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<div style=\"margin-bottom:5px;\"></div>
 <hr />',
-                'type' => 'Text',
             ),
             array (
                 'name' => 'series',

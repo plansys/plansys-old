@@ -81,7 +81,7 @@ class ChartBar extends FormField {
                     'ng-model' => 'active.chartType',
                     'ng-change' => 'save()',
                 ),
-                'listExpr' => 'array(\\\'Bar\\\', \\\'Column\\\')',
+                'listExpr' => 'array(\'Bar\', \'Column\')',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
                 'type' => 'DropDownList',
@@ -122,7 +122,7 @@ class ChartBar extends FormField {
                         'buttonSize' => 'btn-xs',
                         'options' => array (
                             'style' => 'float:right;margin:10px 0px 5px 0px',
-                            'ng-show' => 'active.datasource != \\\'\\\'',
+                            'ng-show' => 'active.datasource != \'\'',
                             'ng-click' => 'generateSeries(active.retrieveMode)',
                         ),
                         'type' => 'LinkButton',

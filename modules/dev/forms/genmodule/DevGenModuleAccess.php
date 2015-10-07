@@ -29,7 +29,7 @@ class DevGenModuleAccess extends Form {
                     array (
                         'name' => 'role',
                         'options' => array (
-                            'ng-if' => 'name == \\\'rolesRule\\\'',
+                            'ng-if' => 'name == \'rolesRule\'',
                         ),
                         'labelWidth' => '0',
                         'fieldWidth' => '12',
@@ -41,7 +41,7 @@ class DevGenModuleAccess extends Form {
                     array (
                         'name' => 'user',
                         'options' => array (
-                            'ng-if' => 'name == \\\'usersRule\\\'',
+                            'ng-if' => 'name == \'usersRule\'',
                         ),
                         'labelWidth' => '0',
                         'fieldWidth' => '12',

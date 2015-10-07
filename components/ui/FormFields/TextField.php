@@ -57,7 +57,7 @@ class TextField extends FormField {
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                 ),
-                'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
+                'listExpr' => 'array(\'Horizontal\',\'Vertical\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
@@ -73,7 +73,7 @@ class TextField extends FormField {
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                            'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
+                            'ng-disabled' => 'active.layout == \'Vertical\'',
                         ),
                         'type' => 'TextField',
                     ),
@@ -128,7 +128,7 @@ class TextField extends FormField {
                     'ng-model' => 'active.autocomplete',
                     'ng-change' => 'generateAutoComplete(scope); save();',
                 ),
-                'listExpr' => '[\\\'\\\'=>\\\'Off\\\',\\\'rel\\\'=>\\\'On - Using Relation\\\', \\\'php\\\'=>\\\'On - Using PHP\\\']',
+                'listExpr' => '[\'\'=>\'Off\',\'rel\'=>\'On - Using Relation\', \'php\'=>\'On - Using PHP\']',
                 'type' => 'DropDownList',
             ),
             array (
@@ -137,9 +137,9 @@ class TextField extends FormField {
                 'options' => array (
                     'ng-model' => 'active.acMode',
                     'ng-change' => 'save();',
-                    'ng-if' => 'active.autocomplete != \\\'\\\'',
+                    'ng-if' => 'active.autocomplete != \'\'',
                 ),
-                'listExpr' => '[\\\'\\\'=>\\\'Default\\\',\\\'comma\\\'=>\\\'Comma Separated\\\']',
+                'listExpr' => '[\'\'=>\'Default\',\'comma\'=>\'Comma Separated\']',
                 'type' => 'DropDownList',
             ),
             array (

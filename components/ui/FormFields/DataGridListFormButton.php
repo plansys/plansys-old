@@ -29,14 +29,14 @@ class DataGridListFormButton extends Form {
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
-                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
+                'listExpr' => 'array(\'Yes\',\'No\')',
                 'labelWidth' => '3',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
             array (
                 'type' => 'Text',
-                'value' => '<hr ng-show=\\\'!!showButtonProp\\\' style=\\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\\" />',
+                'value' => '<hr ng-show=\'!!showButtonProp\' style=\'margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\' />',
             ),
             array (
                 'type' => 'Text',
@@ -45,7 +45,7 @@ class DataGridListFormButton extends Form {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div ng-show=\\"!!showButtonProp\\">',
+                'value' => '<div ng-show=\'!!showButtonProp\'>',
             ),
             array (
                 'name' => 'buttons',
@@ -74,7 +74,7 @@ class DataGridListFormButton extends Form {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<hr style=\\"margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\\" /><div class=\\"clearfix\\"></div>',
+                'value' => '<hr style=\'margin:0px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\' /><div class=\'clearfix\'></div>',
             ),
         );
     }

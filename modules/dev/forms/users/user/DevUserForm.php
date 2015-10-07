@@ -12,7 +12,7 @@ class DevUserForm extends User {
                         'label' => 'Kembali',
                         'url' => '/dev/user/index',
                         'options' => array (
-                            'ng-show' => 'module == \\\'dev\\\'',
+                            'ng-show' => 'module == \'dev\'',
                             'href' => 'url:/dev/user/{backUrl}',
                         ),
                         'type' => 'LinkButton',
@@ -28,15 +28,15 @@ class DevUserForm extends User {
                     array (
                         'renderInEditor' => 'Yes',
                         'type' => 'Text',
-                        'value' => '<div ng-if=\\"!isNewRecord && module == \\\'dev\\\'\\" class=\\"separator\\"></div>',
+                        'value' => '<div ng-if=\\"!isNewRecord && module == \'dev\'\\" class=\\"separator\\"></div>',
                     ),
                     array (
                         'label' => 'Hapus',
                         'buttonType' => 'danger',
                         'options' => array (
                             'href' => 'url:/dev/user/del?id={model.id}',
-                            'ng-if' => '!isNewRecord && module == \\\'dev\\\'',
-                            'prompt' => 'Ketik \\\'DELETE\\\' (tanpa kutip) untuk menghapus user ini',
+                            'ng-if' => '!isNewRecord && module == \'dev\'',
+                            'prompt' => 'Ketik \'DELETE\' (tanpa kutip) untuk menghapus user ini',
                             'prompt-if' => 'DELETE',
                         ),
                         'type' => 'LinkButton',
@@ -53,18 +53,8 @@ class DevUserForm extends User {
                 'showBorder' => 'Yes',
                 'column1' => array (
                     array (
-                        'label' => 'Fullname',
-                        'name' => 'fullname',
-                        'acMode' => 'comma',
-                        'modelClass' => 'application.models.User',
-                        'idField' => 'fullname',
-                        'labelField' => 'fullname',
-                        'acPHP' => '[\\\'JOS\\\',\\\'ASDasDAS\\\',\\\'asdsa\\\']',
-                        'type' => 'TextField',
-                    ),
-                    array (
                         'type' => 'Text',
-                        'value' => '<div ng-show=\\"module == \\\'dev\\\'\\">',
+                        'value' => '<div ng-show=\\"module == \'dev\'\\">',
                     ),
                     array (
                         'label' => 'Username',
@@ -152,18 +142,6 @@ class DevUserForm extends User {
                 ),
                 'column2' => array (
                     array (
-                        'label' => 'NIP',
-                        'name' => 'nip',
-                        'labelWidth' => '2',
-                        'type' => 'TextField',
-                    ),
-                    array (
-                        'label' => 'Phone',
-                        'name' => 'phone',
-                        'labelWidth' => '2',
-                        'type' => 'TextField',
-                    ),
-                    array (
                         'label' => 'Email',
                         'name' => 'email',
                         'labelWidth' => '2',
@@ -171,14 +149,14 @@ class DevUserForm extends User {
                     ),
                     array (
                         'type' => 'Text',
-                        'value' => '<div ng-if=\\"module == \\\'dev\\\' && !isNewRecord\\">',
+                        'value' => '<div ng-if=\\"module == \'dev\' && !isNewRecord\\">',
                     ),
                     array (
                         'label' => 'LDAP User',
-                        'js' => '\\\'Yes - Synced\\\'',
+                        'js' => '\'Yes - Synced\'',
                         'labelWidth' => '2',
                         'options' => array (
-                            'ng-if' => 'model.useLdap && model.password == \\\'\\\'',
+                            'ng-if' => 'model.useLdap && model.password == \'\'',
                         ),
                         'type' => 'LabelField',
                     ),
@@ -343,7 +321,6 @@ group_concat(new_value separator \', \')
 user_id
 from p_audit_trail where user_id = :id {AND [where]} group by action, model, user_id, model_id, stamp  {[order]} {[paging]}',
                 'params' => array (
-                    ':id' => '$model->id',
                     'paging' => 'dataGrid1',
                     'order' => 'dataGrid1',
                     'where' => 'dataFilter1',
@@ -352,11 +329,11 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                 'pagingSQL' => 'select count(*) from (select count(1) from p_audit_trail where user_id = :id {AND [where]} group by action, model, user_id, model_id, stamp) a',
                 'relationTo' => 'auditTrail',
                 'relationCriteria' => array (
-                    'select' => 't.*, \\\'L\\\' as link',
+                    'select' => 't.*, \'L\' as link',
                     'distinct' => 'false',
                     'alias' => 't',
-                    'condition' => '{user_id = :id} {AND} {[where]}',
-                    'order' => '{id desc, [order]}',
+                    'condition' => '{[where]}',
+                    'order' => 'id desc {, [order]}',
                     'paging' => '{[paging]}',
                     'group' => '',
                     'having' => '',
@@ -387,12 +364,12 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                         ),
                         'inputMask' => '',
                         'stringAlias' => array (
-                            'view' => '<div class=\\\'label label-default text-center\\\' style=\\\'display:block;width:100%;\\\'> VIEW </div>',
-                            'login' => '<div class=\\\'label label-info text-center\\\' style=\\\'display:block;width:100%;\\\'> LOGIN</div>',
-                            'logout' => '<div class=\\\'label label-warning text-center\\\' style=\\\'display:block;width:100%;\\\'> LOGOUT</div>',
-                            'update' => '<div class=\\\'label label-primary text-center\\\' style=\\\'display:block;width:100%;\\\'> UPDATE </div>',
-                            'create' => '<div class=\\\'label label-success text-center\\\' style=\\\'display:block;width:100%;\\\'> CREATE </div>',
-                            'delete' => '<div class=\\\'label label-danger text-center\\\' style=\\\'display:block;width:100%;\\\'> DELETE </div>',
+                            'view' => '<div class=\'label label-default text-center\' style=\'display:block;width:100%;\'> VIEW </div>',
+                            'login' => '<div class=\'label label-info text-center\' style=\'display:block;width:100%;\'> LOGIN</div>',
+                            'logout' => '<div class=\'label label-warning text-center\' style=\'display:block;width:100%;\'> LOGOUT</div>',
+                            'update' => '<div class=\'label label-primary text-center\' style=\'display:block;width:100%;\'> UPDATE </div>',
+                            'create' => '<div class=\'label label-success text-center\' style=\'display:block;width:100%;\'> CREATE </div>',
+                            'delete' => '<div class=\'label label-danger text-center\' style=\'display:block;width:100%;\'> DELETE </div>',
                         ),
                         'columnType' => 'string',
                         'show' => false,
@@ -407,7 +384,7 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                         'inputMask' => '',
                         'stringAlias' => array (),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                     ),
                     array (
                         'name' => 'link',
@@ -419,7 +396,7 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                         ),
                         'inputMask' => '',
                         'stringAlias' => array (
-                            'L' => '<i class=\\\'fa fa-link\\\'></i>',
+                            'L' => '<i class=\'fa fa-link\'></i>',
                         ),
                         'columnType' => 'string',
                         'show' => false,

@@ -109,7 +109,6 @@ class UserController extends Controller {
     }
 
     public function actionLdap() {
-
         try {
             $data = Yii::app()->ldap->user()->searchRaw('*');
         } catch (Exception $ex) {

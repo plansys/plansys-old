@@ -6,27 +6,22 @@
  */
 class DataFilter extends FormField {
 
-    /** @var string $name */
-    public $name;
-
-    /** @var string $datasource */
-    public $datasource;
-
-    /** @var string $filters */
-    public $filters = [];
-    public $options = [];
-    public $includeEmpty = 'No';
-    public $emptyValue = '';
-    public $emptyLabel = '';
-
     /** @var string $toolbarName */
     public static $toolbarName = "Data Filter";
-
     /** @var string $category */
     public static $category = "Data & Tables";
-
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-filter";
+    /** @var string $name */
+    public $name;
+    /** @var string $datasource */
+    public $datasource;
+    /** @var string $filters */
+    public $filters         = [];
+    public $options         = [];
+    public $includeEmpty    = 'No';
+    public $emptyValue      = '';
+    public $emptyLabel      = '';
     public $filterOperators = [
         'string' => [
             'Is Any Of',
@@ -60,11 +55,11 @@ class DataFilter extends FormField {
     ];
 
     public static function getFilterOperators($date = "") {
-        $a = new DataFilter;
+        $a       = new DataFilter;
         $filters = $a->filterOperators;
         if ($date != "") {
             $filters = $filters[$date];
-            $result = [];
+            $result  = [];
             foreach ($filters as $i => $k) {
                 $result[$k] = $k;
             }
@@ -72,270 +67,10 @@ class DataFilter extends FormField {
         return ['' => 'No Operator'] + $result;
     }
 
-    /**
-     * @return array me-return array property DataFilter.
-     */
-    public function getFieldProperties() {
-        return array (
-            array (
-                'label' => 'Data Filter Name',
-                'name' => 'name',
-                'labelWidth' => '5',
-                'fieldWidth' => '7',
-                'options' => array (
-                    'ng-model' => 'active.name',
-                    'ng-change' => 'changeActiveName()',
-                    'ng-delay' => '500',
-                ),
-                'type' => 'TextField',
-            ),
-            array (
-                'label' => 'Data Source Name',
-                'name' => 'datasource',
-                'options' => array (
-                    'ng-model' => 'active.datasource',
-                    'ng-change' => 'save()',
-                    'ng-delay' => '500',
-                    'ps-list' => 'dataSourceList',
-                ),
-                'labelWidth' => '5',
-                'fieldWidth' => '7',
-                'type' => 'DropDownList',
-            ),
-            array (
-                'label' => 'Generate Filters',
-                'buttonType' => 'success',
-                'icon' => 'magic',
-                'buttonSize' => 'btn-xs',
-                'options' => array (
-                    'style' => 'float:right;margin:0px 0px 5px 0px',
-                    'ng-show' => 'active.datasource != \\\'\\\'',
-                    'ng-click' => 'generateFilters()',
-                ),
-                'type' => 'LinkButton',
-            ),
-            array (
-                'value' => '<div class=\\"clearfix\\"></div>',
-                'type' => 'Text',
-            ),
-            array (
-                'title' => 'Filters',
-                'type' => 'SectionHeader',
-            ),
-            array (
-                'value' => '<div style=\\"margin-top:5px;\\"></div>',
-                'type' => 'Text',
-            ),
-            array (
-                'name' => 'filters',
-                'fieldTemplate' => 'form',
-                'templateForm' => 'application.components.ui.FormFields.DataFilterListForm',
-                'labelWidth' => '0',
-                'inlineJS' => 'DataFilter/inlinejs/dfr-init.js',
-                'fieldWidth' => '12',
-                'options' => array (
-                    'ng-model' => 'active.filters',
-                    'ng-change' => 'save()',
-                    'ps-after-add' => 'value.show = true;',
-                ),
-                'type' => 'ListView',
-            ),
-        );
-    }
-
-    /**
-     * @return array me-return array javascript yang di-include
-     */
-    public function includeJS() {
-        return ['data-filter.js'];
-    }
-
-    protected static function buildSingleParam($paramName, $column, $filter) {
-        $sql = "";
-        $param = "";
-        $pcolumn = preg_replace('/[^\da-z]/i', '_', $column);
-
-        ## quote field if it is containing illegal char
-        if (!preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", str_replace(".", "", $column))) {
-            $column = "`{$column}`";
-        }
-
-        switch ($filter['type']) {
-            case "string":
-                if ($filter['value'] != "" || $filter['operator'] == 'Is Empty') {
-                    switch ($filter['operator']) {
-                        case "Contains":
-                            $sql = "{$column} LIKE :{$paramName}_{$pcolumn}";
-                            $param = "%{$filter['value']}%";
-                            break;
-                        case "Does Not Contain":
-                            $sql = "{$column} NOT LIKE :{$paramName}_{$pcolumn}";
-                            $param = "%{$filter['value']}%";
-                            break;
-                        case "Is Equal To":
-                            $sql = "{$column} LIKE :{$paramName}_{$pcolumn}";
-                            $param = "{$filter['value']}";
-                            break;
-                        case "Starts With":
-                            $sql = "{$column} LIKE :{$paramName}_{$pcolumn}";
-                            $param = "{$filter['value']}%";
-                            break;
-                        case "Ends With":
-                            $sql = "{$column} LIKE :{$paramName}_{$pcolumn}";
-                            $param = "%{$filter['value']}";
-                            break;
-                        case "Is Any Of":
-                            $param_raw = preg_split('/\s+/', trim($filter['value']));
-                            $param = [];
-                            $psql = [];
-                            foreach ($param_raw as $k => $p) {
-                                $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
-                                $psql[] = "{$column} LIKE :{$paramName}_{$pcolumn}_{$k}";
-                            }
-                            $sql = "(" . implode(" OR ", $psql) . ")";
-                            break;
-                        case "Is Not Any Of":
-                            $param_raw = preg_split('/\s+/', trim($filter['value']));
-                            $param = [];
-                            $psql = [];
-                            foreach ($param_raw as $k => $p) {
-                                $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
-                                $psql[] = "{$column} NOT LIKE :{$paramName}_{$pcolumn}_{$k}";
-                            }
-                            $sql = "(" . implode(" AND ", $psql) . ")";
-                            break;
-                        case "Is Empty":
-                            $sql = "({$column} LIKE '' OR {$column} IS NULL)";
-                            break;
-                    }
-                }
-                break;
-            case "number":
-                if ($filter['value'] != "" || $filter['operator'] == 'Is Empty') {
-                    switch ($filter['operator']) {
-                        case "=":
-                        case "<>":
-                        case ">":
-                        case '>':
-                        case '>=':
-                        case '<=':
-                        case '<':
-                            $sql = "{$column} {$filter['operator']} :{$paramName}_{$pcolumn}";
-                            $param = "{$filter['value']}";
-                            break;
-                        case "Is Empty":
-                            $sql = "({$column} IS NULL)";
-                            break;
-                    }
-                }
-                break;
-            case "date":
-                switch ($filter['operator']) {
-                    case "Between":
-                    case "Weekly":
-                    case "Monthly":
-                    case "Yearly":
-                        if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
-                            $sql = "({$column} BETWEEN :{$paramName}_{$pcolumn}_from AND :{$paramName}_{$pcolumn}_to)";
-                            $fromStartHour = date('Y-m-d 23:59:00', strtotime('-1 day', strtotime(@$filter['value']['from'])));
-                            $toLastHour = date('Y-m-d 23:59:00', strtotime(@$filter['value']['to']));
-
-                            $param = [
-                                ":{$paramName}_{$pcolumn}_from" => $fromStartHour,
-                                ":{$paramName}_{$pcolumn}_to" => $toLastHour,
-                            ];
-                        }
-                        break;
-                    case "Not Between":
-                        if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
-                            $sql = "({$column} NOT BETWEEN :{$paramName}_{$pcolumn}_from AND :{$paramName}_{$pcolumn}_to)";
-                            $toLastHour = date('Y-m-d 23:59:00', strtotime(@$filter['value']['to']));
-                            $param = [
-                                ":{$paramName}_{$pcolumn}_from" => @$filter['value']['from'],
-                                ":{$paramName}_{$pcolumn}_to" => $toLastHour,
-                            ];
-
-                            if (@$filter['value']['to'] == '' || @$filter['value']['from'] == '') {
-                                $sql = "1 = 1";
-                            }
-                        }
-                        break;
-                    case "More Than":
-                        if (@$filter['value']['from'] != '') {
-                            $sql = "{$column} > :{$paramName}_{$pcolumn}";
-                            $param = @$filter['value']['from'];
-                        }
-                        break;
-                    case "Less Than":
-                        if (@$filter['value']['to'] != '') {
-                            $sql = "{$column} < :{$paramName}_{$pcolumn}";
-                            $param = @$filter['value']['to'];
-                        }
-                        break;
-                    case "Daily":
-                        if (@$filter['value'] != '') {
-                            $sql = "DATE({$column}) = DATE(:{$paramName}_{$pcolumn})";
-                            $param = @$filter['value'];
-                        }
-                        break;
-                }
-                break;
-            case "list":
-                if (isset($filter['value']) && $filter['value'] != '') {
-                    $sql = "{$column} LIKE :{$paramName}_{$pcolumn}";
-                    $param = @$filter['value'];
-                }
-                break;
-            case "relation":
-                switch ($filter['operator']) {
-                    case 'empty':
-                        if ($filter['value'] == 'null') {
-                            $sql = "{$column} is null";
-                            $param = @$filter['value'];
-                        } else {
-                            $sql = "{$column} = :{$paramName}_{$pcolumn}";
-                            $param = @$filter['value'];
-                        }
-                        break;
-                    default:
-                        if ($filter['value'] != '') {
-                            $sql = "{$column} = :{$paramName}_{$pcolumn}";
-                            $param = @$filter['value'];
-                        }
-                        break;
-                }
-                break;
-            case "check":
-                if ($filter['value'] != '') {
-                    if (@$filter['operator'] == 'in') {
-                        // USING IN...
-                        $param = [];
-                        $psql = [];
-                        foreach ($filter['value'] as $k => $p) {
-                            $param[":{$paramName}_{$pcolumn}_{$k}"] = "{$p}";
-                            $psql[] = ":{$paramName}_{$pcolumn}_{$k}";
-                        }
-                        $sql = "{$column} IN (" . implode(", ", $psql) . ")";
-                    } else {
-                        // USING LIKE...
-                        $param = [];
-                        $psql = [];
-                        foreach ($filter['value'] as $k => $p) {
-                            $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
-                            $psql[] = "{$column} LIKE :{$paramName}_{$pcolumn}_{$k}";
-                        }
-                        $sql = "(" . implode(" AND ", $psql) . ")";
-                    }
-                }
-                break;
-        }
-        return ['sql' => $sql, 'param' => $param];
-    }
-
     public static function generateParams($paramName, $params, $template = '', $paramOptions = []) {
-        $sql = [];
+        $sql        = [];
         $flatParams = [];
-        $paramName = preg_replace('/[^\da-z]/i', '_', $paramName);
+        $paramName  = preg_replace('/[^\da-z]/i', '_', $paramName);
 
         if (is_array($params) && count($params) > 0) {
             foreach ($params as $column => $filter) {
@@ -347,7 +82,7 @@ class DataFilter extends FormField {
                         $flatParams[$key] = $value;
                     }
                 } else {
-                    $column = preg_replace('/[^\da-z]/i', '_', $column);
+                    $column                                 = preg_replace('/[^\da-z]/i', '_', $column);
                     $flatParams[$paramName . "_" . $column] = $param['param'];
                 }
             }
@@ -373,11 +108,271 @@ class DataFilter extends FormField {
         return $template;
     }
 
+    protected static function buildSingleParam($paramName, $column, $filter) {
+        $sql     = "";
+        $param   = "";
+        $pcolumn = preg_replace('/[^\da-z]/i', '_', $column);
+
+        ## quote field if it is containing illegal char
+        if (!preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", str_replace(".", "", $column))) {
+            $column = "`{$column}`";
+        }
+
+        switch ($filter['type']) {
+            case "string":
+                if ($filter['value'] != "" || $filter['operator'] == 'Is Empty') {
+                    switch ($filter['operator']) {
+                        case "Contains":
+                            $sql   = "{$column} LIKE :{$paramName}_{$pcolumn}";
+                            $param = "%{$filter['value']}%";
+                            break;
+                        case "Does Not Contain":
+                            $sql   = "{$column} NOT LIKE :{$paramName}_{$pcolumn}";
+                            $param = "%{$filter['value']}%";
+                            break;
+                        case "Is Equal To":
+                            $sql   = "{$column} LIKE :{$paramName}_{$pcolumn}";
+                            $param = "{$filter['value']}";
+                            break;
+                        case "Starts With":
+                            $sql   = "{$column} LIKE :{$paramName}_{$pcolumn}";
+                            $param = "{$filter['value']}%";
+                            break;
+                        case "Ends With":
+                            $sql   = "{$column} LIKE :{$paramName}_{$pcolumn}";
+                            $param = "%{$filter['value']}";
+                            break;
+                        case "Is Any Of":
+                            $param_raw = preg_split('/\s+/', trim($filter['value']));
+                            $param     = [];
+                            $psql      = [];
+                            foreach ($param_raw as $k => $p) {
+                                $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
+                                $psql[]                                 = "{$column} LIKE :{$paramName}_{$pcolumn}_{$k}";
+                            }
+                            $sql = "(" . implode(" OR ", $psql) . ")";
+                            break;
+                        case "Is Not Any Of":
+                            $param_raw = preg_split('/\s+/', trim($filter['value']));
+                            $param     = [];
+                            $psql      = [];
+                            foreach ($param_raw as $k => $p) {
+                                $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
+                                $psql[]                                 = "{$column} NOT LIKE :{$paramName}_{$pcolumn}_{$k}";
+                            }
+                            $sql = "(" . implode(" AND ", $psql) . ")";
+                            break;
+                        case "Is Empty":
+                            $sql = "({$column} LIKE '' OR {$column} IS NULL)";
+                            break;
+                    }
+                }
+                break;
+            case "number":
+                if ($filter['value'] != "" || $filter['operator'] == 'Is Empty') {
+                    switch ($filter['operator']) {
+                        case "=":
+                        case "<>":
+                        case ">":
+                        case '>':
+                        case '>=':
+                        case '<=':
+                        case '<':
+                            $sql   = "{$column} {$filter['operator']} :{$paramName}_{$pcolumn}";
+                            $param = "{$filter['value']}";
+                            break;
+                        case "Is Empty":
+                            $sql = "({$column} IS NULL)";
+                            break;
+                    }
+                }
+                break;
+            case "date":
+                switch ($filter['operator']) {
+                    case "Between":
+                    case "Weekly":
+                    case "Monthly":
+                    case "Yearly":
+                        if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
+                            $sql           = "({$column} BETWEEN :{$paramName}_{$pcolumn}_from AND :{$paramName}_{$pcolumn}_to)";
+                            $fromStartHour = date('Y-m-d 23:59:00', strtotime('-1 day', strtotime(@$filter['value']['from'])));
+                            $toLastHour    = date('Y-m-d 23:59:00', strtotime(@$filter['value']['to']));
+
+                            $param = [
+                                ":{$paramName}_{$pcolumn}_from" => $fromStartHour,
+                                ":{$paramName}_{$pcolumn}_to" => $toLastHour,
+                            ];
+                        }
+                        break;
+                    case "Not Between":
+                        if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
+                            $sql        = "({$column} NOT BETWEEN :{$paramName}_{$pcolumn}_from AND :{$paramName}_{$pcolumn}_to)";
+                            $toLastHour = date('Y-m-d 23:59:00', strtotime(@$filter['value']['to']));
+                            $param      = [
+                                ":{$paramName}_{$pcolumn}_from" => @$filter['value']['from'],
+                                ":{$paramName}_{$pcolumn}_to" => $toLastHour,
+                            ];
+
+                            if (@$filter['value']['to'] == '' || @$filter['value']['from'] == '') {
+                                $sql = "1 = 1";
+                            }
+                        }
+                        break;
+                    case "More Than":
+                        if (@$filter['value']['from'] != '') {
+                            $sql   = "{$column} > :{$paramName}_{$pcolumn}";
+                            $param = @$filter['value']['from'];
+                        }
+                        break;
+                    case "Less Than":
+                        if (@$filter['value']['to'] != '') {
+                            $sql   = "{$column} < :{$paramName}_{$pcolumn}";
+                            $param = @$filter['value']['to'];
+                        }
+                        break;
+                    case "Daily":
+                        if (@$filter['value'] != '') {
+                            $sql   = "DATE({$column}) = DATE(:{$paramName}_{$pcolumn})";
+                            $param = @$filter['value'];
+                        }
+                        break;
+                }
+                break;
+            case "list":
+                if (isset($filter['value']) && $filter['value'] != '') {
+                    $sql   = "{$column} LIKE :{$paramName}_{$pcolumn}";
+                    $param = @$filter['value'];
+                }
+                break;
+            case "relation":
+                switch ($filter['operator']) {
+                    case 'empty':
+                        if ($filter['value'] == 'null') {
+                            $sql   = "{$column} is null";
+                            $param = @$filter['value'];
+                        } else {
+                            $sql   = "{$column} = :{$paramName}_{$pcolumn}";
+                            $param = @$filter['value'];
+                        }
+                        break;
+                    default:
+                        if ($filter['value'] != '') {
+                            $sql   = "{$column} = :{$paramName}_{$pcolumn}";
+                            $param = @$filter['value'];
+                        }
+                        break;
+                }
+                break;
+            case "check":
+                if ($filter['value'] != '') {
+                    if (@$filter['operator'] == 'in') {
+                        // USING IN...
+                        $param = [];
+                        $psql  = [];
+                        foreach ($filter['value'] as $k => $p) {
+                            $param[":{$paramName}_{$pcolumn}_{$k}"] = "{$p}";
+                            $psql[]                                 = ":{$paramName}_{$pcolumn}_{$k}";
+                        }
+                        $sql = "{$column} IN (" . implode(", ", $psql) . ")";
+                    } else {
+                        // USING LIKE...
+                        $param = [];
+                        $psql  = [];
+                        foreach ($filter['value'] as $k => $p) {
+                            $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
+                            $psql[]                                 = "{$column} LIKE :{$paramName}_{$pcolumn}_{$k}";
+                        }
+                        $sql = "(" . implode(" AND ", $psql) . ")";
+                    }
+                }
+                break;
+        }
+        return ['sql' => $sql, 'param' => $param];
+    }
+
+    /**
+     * @return array me-return array property DataFilter.
+     */
+    public function getFieldProperties() {
+        return array(
+            array(
+                'label' => 'Data Filter Name',
+                'name' => 'name',
+                'labelWidth' => '5',
+                'fieldWidth' => '7',
+                'options' => array(
+                    'ng-model' => 'active.name',
+                    'ng-change' => 'changeActiveName()',
+                    'ng-delay' => '500',
+                ),
+                'type' => 'TextField',
+            ),
+            array(
+                'label' => 'Data Source Name',
+                'name' => 'datasource',
+                'options' => array(
+                    'ng-model' => 'active.datasource',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                    'ps-list' => 'dataSourceList',
+                ),
+                'labelWidth' => '5',
+                'fieldWidth' => '7',
+                'type' => 'DropDownList',
+            ),
+            array(
+                'label' => 'Generate Filters',
+                'buttonType' => 'success',
+                'icon' => 'magic',
+                'buttonSize' => 'btn-xs',
+                'options' => array(
+                    'style' => 'float:right;margin:0px 0px 5px 0px',
+                    'ng-show' => 'active.datasource != \'\'',
+                    'ng-click' => 'generateFilters()',
+                ),
+                'type' => 'LinkButton',
+            ),
+            array(
+                'value' => '<div class=\'clearfix\'></div>',
+                'type' => 'Text',
+            ),
+            array(
+                'title' => 'Filters',
+                'type' => 'SectionHeader',
+            ),
+            array(
+                'value' => '<div style=\'margin-top:5px;\'></div>',
+                'type' => 'Text',
+            ),
+            array(
+                'name' => 'filters',
+                'fieldTemplate' => 'form',
+                'templateForm' => 'application.components.ui.FormFields.DataFilterListForm',
+                'labelWidth' => '0',
+                'inlineJS' => 'DataFilter/inlinejs/dfr-init.js',
+                'fieldWidth' => '12',
+                'options' => array(
+                    'ng-model' => 'active.filters',
+                    'ng-change' => 'save()',
+                    'ps-after-add' => 'value.show = true;',
+                ),
+                'type' => 'ListView',
+            ),
+        );
+    }
+
+    /**
+     * @return array me-return array javascript yang di-include
+     */
+    public function includeJS() {
+        return ['data-filter.js'];
+    }
+
     public function datasources() {
-        $ds = $this->builder->findAllField(['type' => 'DataSource']);
+        $ds     = $this->builder->findAllField(['type' => 'DataSource']);
         $return = [];
         foreach ($ds as $d) {
-            if (@$d['params']['where'] == $this->name) {
+            if (@$d['params']['where'] == $this->name || $d['name'] == $this->datasource) {
                 array_push($return, $d['name']);
             }
         }
@@ -388,7 +383,7 @@ class DataFilter extends FormField {
     public function actionRelInit() {
 
         $postdata = file_get_contents("php://input");
-        $post = CJSON::decode($postdata);
+        $post     = CJSON::decode($postdata);
 
         if (count($post) == 0)
             die();
@@ -400,19 +395,19 @@ class DataFilter extends FormField {
             if ($filter['name'] != $post['n'])
                 continue;
 
-            $rf = new RelationField;
-            $rf->params = $filter['relParams'];
-            $rf->modelClass = $filter['relModelClass'];
-            $rf->relationCriteria = $filter['relCriteria'];
-            $rf->relationCriteria['limit'] = ActiveRecord::DEFAULT_PAGE_SIZE;
+            $rf                             = new RelationField;
+            $rf->params                     = $filter['relParams'];
+            $rf->modelClass                 = $filter['relModelClass'];
+            $rf->relationCriteria           = $filter['relCriteria'];
+            $rf->relationCriteria['limit']  = ActiveRecord::DEFAULT_PAGE_SIZE;
             $rf->relationCriteria['offset'] = 0;
 
-            $rf->idField = $filter['relIdField'];
+            $rf->idField    = $filter['relIdField'];
             $rf->labelField = $filter['relLabelField'];
 
             $rf->relationCriteria['condition'] = $rf->idField . ' = :dataFilterID';
-            $rf->params[':dataFilterID'] = $post['v'];
-            $rf->builder = $this->builder;
+            $rf->params[':dataFilterID']       = $post['v'];
+            $rf->builder                       = $this->builder;
 
             $rawList = $rf->query(@$post['s'], $rf->params);
             echo json_encode($rawList);
@@ -422,7 +417,7 @@ class DataFilter extends FormField {
     public function actionRelnext() {
 
         $postdata = file_get_contents("php://input");
-        $post = CJSON::decode($postdata);
+        $post     = CJSON::decode($postdata);
 
         if (count($post) == 0)
             die();
@@ -436,16 +431,16 @@ class DataFilter extends FormField {
             if ($filter['name'] != $post['n'])
                 continue;
 
-            $rf = new RelationField;
-            $rf->params = $filter['relParams'];
-            $rf->modelClass = $filter['relModelClass'];
-            $rf->relationCriteria = $filter['relCriteria'];
-            $rf->relationCriteria['limit'] = ActiveRecord::DEFAULT_PAGE_SIZE;
+            $rf                             = new RelationField;
+            $rf->params                     = $filter['relParams'];
+            $rf->modelClass                 = $filter['relModelClass'];
+            $rf->relationCriteria           = $filter['relCriteria'];
+            $rf->relationCriteria['limit']  = ActiveRecord::DEFAULT_PAGE_SIZE;
             $rf->relationCriteria['offset'] = $start;
 
-            $rf->idField = $filter['relIdField'];
+            $rf->idField    = $filter['relIdField'];
             $rf->labelField = $filter['relLabelField'];
-            $rf->builder = $this->builder;
+            $rf->builder    = $this->builder;
 
             $rf->params = is_null($filter['relParams']) ? [] : $filter['relParams'];
             if (is_array($rf->params)) {
@@ -456,8 +451,10 @@ class DataFilter extends FormField {
                 }
             }
 
-            $list = [];
+            $list    = [];
             $rawList = $rf->query(@$post['s'], $rf->params);
+            $rawList = is_null($rawList) ? [] : $rawList;
+
             foreach ($rawList as $key => $val) {
                 $list[] = [
                     'key' => $val['value'],
@@ -476,6 +473,16 @@ class DataFilter extends FormField {
     }
 
     /**
+     * render
+     * Fungsi ini untuk me-render field dan atributnya
+     * @return mixed me-return sebuah field dan atribut datafilter dari hasil render
+     */
+    public function render() {
+        $this->processExpr();
+        return $this->renderInternal('template_render.php');
+    }
+
+    /**
      * @return array me-return array hasil proses expression.
      */
     public function processExpr() {
@@ -488,7 +495,7 @@ class DataFilter extends FormField {
                 case "list":
                 case "check":
                     $listExpr = @$filter['listExpr'];
-                    $list = [];
+                    $list     = [];
 
                     if ($listExpr != "") {
                         ## evaluate expression
@@ -507,18 +514,18 @@ class DataFilter extends FormField {
                     $this->filters[$k]['list'] = $list;
                     break;
                 case "relation":
-                    $rf = new RelationField;
-                    $rf->params = $filter['relParams'];
-                    $rf->modelClass = $filter['relModelClass'];
-                    $rf->relationCriteria = $filter['relCriteria'];
-                    $rf->relationCriteria['limit'] = ActiveRecord::DEFAULT_PAGE_SIZE;
+                    $rf                             = new RelationField;
+                    $rf->params                     = @$filter['relParams'];
+                    $rf->modelClass                 = @$filter['relModelClass'];
+                    $rf->relationCriteria           = @$filter['relCriteria'];
+                    $rf->relationCriteria['limit']  = ActiveRecord::DEFAULT_PAGE_SIZE;
                     $rf->relationCriteria['offset'] = 0;
 
-                    $rf->idField = $filter['relIdField'];
-                    $rf->labelField = $filter['relLabelField'];
-                    $rf->builder = $this->builder;
+                    $rf->idField    = @$filter['relIdField'];
+                    $rf->labelField = @$filter['relLabelField'];
+                    $rf->builder    = $this->builder;
 
-                    $this->filters[$k]['list'] = 0;
+                    $this->filters[$k]['list']  = 0;
                     $this->filters[$k]['count'] = 0;
                     break;
             }
@@ -527,16 +534,6 @@ class DataFilter extends FormField {
         return [
             'filters' => $this->filters
         ];
-    }
-
-    /**
-     * render
-     * Fungsi ini untuk me-render field dan atributnya
-     * @return mixed me-return sebuah field dan atribut datafilter dari hasil render
-     */
-    public function render() {
-        $this->processExpr();
-        return $this->renderInternal('template_render.php');
     }
 
 }

@@ -10,6 +10,7 @@ class ModelGenerator extends CComponent {
         $mc->template  = 'model.php';
 
         $mc->tableName  = $tableName;
+        $mc->baseClass  = 'ActiveRecord';
         $mc->modelClass = $modelName;
         $mc->prepare();
         $mc->save();
@@ -72,7 +73,7 @@ class ModelGenerator extends CComponent {
 
         $items = [];
         foreach ($appItems as $k => $m) {
-            $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
+            $m = str_replace($appDir . DIRECTORY_SEPARATOR, "", $m);
             $m = str_replace('.php', "", $m);
 
             $items[$m] = $m;

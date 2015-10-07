@@ -50,7 +50,7 @@ class DataGridListFormDropdown extends Form {
                 'labelOptions' =>  [
                     'style' => 'text-align:left;',
                 ],
-                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\');',
+                'listExpr' => 'array(\'Yes\',\'No\');',
                 'labelWidth' => '8',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',

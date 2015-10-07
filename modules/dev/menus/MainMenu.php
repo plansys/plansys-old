@@ -52,18 +52,8 @@ return array (
             ),
             array (
                 'label' => 'Controller Generator',
-                'icon' => 'fa-cubes',
-                'url' => '/dev/controllerGenerator/index',
-            ),
-            array (
-                'label' => '---',
-                'icon' => '',
-                'url' => '#',
-            ),
-            array (
-                'label' => 'Form Generator',
-                'icon' => 'fa-trello',
-                'url' => '/dev/formGenerator/index',
+                'icon' => 'fa-slack',
+                'url' => '/dev/genCtrl/index',
             ),
         ),
         'state' => 'collapsed',
@@ -86,11 +76,6 @@ return array (
             ),
         ),
         'state' => 'collapsed',
-    ),
-    array (
-        'label' => 'Database',
-        'icon' => 'fa-database',
-        'url' => '/dev/default/adminer',
     ),
     array (
         'label' => 'Settings',

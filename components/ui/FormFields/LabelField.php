@@ -6,170 +6,161 @@
  */
 class LabelField extends FormField {
 
+    /** @var string $toolbarName */
+    public static $toolbarName = "Label Field";
+    /** @var string $category */
+    public static $category = "User Interface";
+    /** @var string $toolbarIcon */
+    public static $toolbarIcon = "fa fa-font";
+    /** @var string $label */
+    public $label = '';
+    /** @var string $name */
+    public $name = '';
+    /** @var string $value */
+    public $value = '';
+    public $js = '';
+    /** @var string $layout */
+    public $layout = 'Horizontal';
+    /** @var integer $labelWidth */
+    public $labelWidth = 4;
+    /** @var integer $fieldWidth */
+    public $fieldWidth = 8;
+    /** @var array $options */
+    public $options = [];
+    /** @var array $labelOptions */
+    public $labelOptions = [];
+    /** @var array $fieldOptions */
+    public $fieldOptions = [];
+
     /**
      * @return array me-return array property TextField.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                    'ng-if' => 'active.js == \\\'\\\' || !active.js',
+                    'ng-if' => 'active.js == \'\' || !active.js',
                 ),
+                'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'JS:',
                 'name' => 'js',
                 'fieldHeight' => '0',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.js',
-                    'ng-change' => 'active.name=\\\'\\\';save()',
+                    'ng-change' => 'active.name=\'\';save()',
                     'ng-delay' => '500',
                 ),
-                'fieldOptions' => array (
+                'fieldOptions' => array(
                     'auto-grow' => '',
                 ),
                 'type' => 'TextArea',
             ),
-            array (
+            array(
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                 ),
-                'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
+                'listExpr' => 'array(\'Horizontal\',\'Vertical\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array (
-                'column1' => array (
-                    array (
+            array(
+                'column1' => array(
+                    array(
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                            'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
+                            'ng-disabled' => 'active.layout == \'Vertical\'',
                         ),
                         'type' => 'TextField',
                     ),
-                    array (
-                        'value' => '<column-placeholder></column-placeholder>',
+                    array(
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'column2' => array (
-                    array (
+                'column2' => array(
+                    array(
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => 12,
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                         ),
                         'type' => 'TextField',
                     ),
-                    array (
-                        'value' => '<column-placeholder></column-placeholder>',
+                    array(
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'column3' => array (
-                    array (
-                        'value' => '<column-placeholder></column-placeholder>',
+                'column3' => array(
+                    array(
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'column4' => array (
-                    array (
-                        'value' => '<column-placeholder></column-placeholder>',
+                'column4' => array(
+                    array(
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
             ),
-            array (
-                'value' => '<hr/>',
+            array(
                 'type' => 'Text',
+                'value' => '<hr/>',
             ),
-            array (
+            array(
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
             ),
         );
     }
-
-    /** @var string $label */
-    public $label = '';
-
-    /** @var string $name */
-    public $name = '';
-
-    /** @var string $value */
-    public $value = '';
-    
-    public $js = '';
-
-    /** @var string $layout */
-    public $layout = 'Horizontal';
-
-    /** @var integer $labelWidth */
-    public $labelWidth = 4;
-
-    /** @var integer $fieldWidth */
-    public $fieldWidth = 8;
-
-    /** @var array $options */
-    public $options = [];
-
-    /** @var array $labelOptions */
-    public $labelOptions = [];
-
-    /** @var array $fieldOptions */
-    public $fieldOptions = [];
-
-    /** @var string $toolbarName */
-    public static $toolbarName = "Label Field";
-
-    /** @var string $category */
-    public static $category = "User Interface";
-
-    /** @var string $toolbarIcon */
-    public static $toolbarIcon = "fa fa-newspaper-o";
 
     /**
      * @return array me-return array javascript yang di-include

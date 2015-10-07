@@ -5,22 +5,22 @@ class DataTableListForm extends Form {
     public function getFields() {
         return array (
             array (
+                'type' => 'Text',
                 'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
 <div class=\"label data-filter-name pull-right\"> 
 {{value[$index].columnType}}</div>
 {{value[$index].label}} 
 <div class=\"clearfix\"></div>
 </div>',
-                'type' => 'Text',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<hr ng-if=\"value[$index].show\"
 style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
-                'type' => 'Text',
             ),
             array (
-                'value' => '<div ng-if=\\"value[$index].show\\">',
                 'type' => 'Text',
+                'value' => '<div ng-if=\'value[$index].show\'>',
             ),
             array (
                 'label' => 'Type',
@@ -51,7 +51,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'ng-model' => 'value[$index].name',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                    'ng-if' => 'value[$index].columnType != \\\'buttons\\\'',
+                    'ng-if' => 'value[$index].columnType != \'buttons\'',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
@@ -80,7 +80,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'name' => 'TypeString',
                 'subForm' => 'application.components.ui.FormFields.DataGridListFormString',
                 'options' => array (
-                    'ng-if' => 'value[$index].columnType == \\\'string\\\'',
+                    'ng-if' => 'value[$index].columnType == \'string\'',
                 ),
                 'inlineJS' => 'DataGrid/inlinejs/dg-type.js',
                 'type' => 'SubForm',
@@ -89,7 +89,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'name' => 'TypeDropDown',
                 'subForm' => 'application.components.ui.FormFields.DataGridListFormDropdown',
                 'options' => array (
-                    'ng-if' => 'value[$index].columnType == \\\'dropdown\\\'',
+                    'ng-if' => 'value[$index].columnType == \'dropdown\'',
                 ),
                 'inlineJS' => 'DataGrid/inlinejs/dg-type.js',
                 'type' => 'SubForm',
@@ -98,7 +98,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'name' => 'TypeButton',
                 'subForm' => 'application.components.ui.FormFields.DataGridListFormButton',
                 'options' => array (
-                    'ng-if' => 'value[$index].columnType == \\\'buttons\\\'',
+                    'ng-if' => 'value[$index].columnType == \'buttons\'',
                 ),
                 'inlineJS' => 'DataGrid/inlinejs/dg-type.js',
                 'type' => 'SubForm',
@@ -107,7 +107,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'name' => 'TypeRelation',
                 'subForm' => 'application.components.ui.FormFields.DataGridListFormRelation',
                 'options' => array (
-                    'ng-if' => 'value[$index].columnType == \\\'relation\\\'',
+                    'ng-if' => 'value[$index].columnType == \'relation\'',
                 ),
                 'inlineJS' => 'DataGrid/inlinejs/dg-type.js',
                 'type' => 'SubForm',
@@ -123,12 +123,12 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'KeyValueGrid',
             ),
             array (
-                'value' => '<div style=\\"margin-bottom:-3px;\\"></div>',
                 'type' => 'Text',
+                'value' => '<div style=\'margin-bottom:-3px;\'></div>',
             ),
             array (
-                'value' => '</div>',
                 'type' => 'Text',
+                'value' => '</div>',
             ),
         );
     }

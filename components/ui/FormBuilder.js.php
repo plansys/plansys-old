@@ -15,8 +15,8 @@ if (Yii::app()->user->hasFlash('error')) {
 }
 ob_start();
 ?>
-<script type="text/javascript">
-<?php ob_start(); ?>
+<script type = "text/javascript" >
+    <?php ob_start(); ?>
     app.controller("<?= $modelClass ?>Controller", function ($scope, $parse, $timeout, $http, $localStorage, $filter) {
         $scope.form = <?php echo json_encode($this->form); ?>;
         $scope.model = <?php echo @json_encode($data['data']); ?>;
@@ -27,8 +27,15 @@ ob_start();
         $scope.pageUrl = "<?php echo @Yii::app()->request->url; ?>";
         $scope.pageInfo = <?php echo json_encode(AuditTrail::getPathInfo()) ?>;
         $scope.formClass = "<?php echo $modelClass; ?>";
+        $scope.formClassPath = "<?php echo $modelClassPath; ?>";
         $scope.modelBaseClass = "<?php echo ActiveRecord::baseClass($this->model); ?>";
         $scope.lastModified = "<?php echo Helper::getLastModified($modelClass); ?>";
+
+        if ($scope.pageInfo.ctrl == 'formfield' && $scope.pageInfo.action == 'subform') {
+            if (!!$scope.params.f && !!window.opener.popupScope) {
+                $scope.popupScope = window.opener.popupScope[$scope.params.f];
+            }
+        }
 
         // initialize pageSetting
         $timeout(function () {
@@ -76,49 +83,49 @@ ob_start();
 
         $scope.rel = {};
 
-<?php if (!Yii::app()->user->isGuest): ?>
-            $scope.user = <?php echo @json_encode(Yii::app()->user->info); ?>;
-            if ($scope.user != null) {
-                $scope.user.role = [];
-                for (i in $scope.user.roles) {
-                    $scope.user.role.push($scope.user.roles[i]['role_name']);
-                }
-
-                $scope.user.isRole = function (role) {
-                    for (i in $scope.user.role) {
-                        var r = $scope.user.role[i];
-                        if (r.indexOf(role + ".") == 0) {
-                            return true;
-                        }
-                    }
-
-                    for (i in $scope.user.role) {
-                        var r = $scope.user.role[i];
-                        if (r.indexOf(role + ".") == 0) {
-                            return true;
-                        }
-                    }
-
-                    return $scope.user.role.indexOf(role) >= 0;
-                }
+        <?php if (!Yii::app()->user->isGuest): ?>
+        $scope.user = <?php echo @json_encode(Yii::app()->user->info); ?>;
+        if ($scope.user != null) {
+            $scope.user.role = [];
+            for (i in $scope.user.roles) {
+                $scope.user.role.push($scope.user.roles[i]['role_name']);
             }
-<?php endif; ?>
 
-<?php if (is_object(Yii::app()->controller) && is_object(Yii::app()->controller->module)): ?>
-            $scope.module = '<?= Yii::app()->controller->module->id ?>';
-<?php endif; ?>
+            $scope.user.isRole = function (role) {
+                for (i in $scope.user.role) {
+                    var r = $scope.user.role[i];
+                    if (r.indexOf(role + ".") == 0) {
+                        return true;
+                    }
+                }
 
-<?php if (Yii::app()->user->hasFlash('info')): ?>
-            $scope.flash = '<?= Yii::app()->user->getFlash('info'); ?>';
-<?php endif; ?>
+                for (i in $scope.user.role) {
+                    var r = $scope.user.role[i];
+                    if (r.indexOf(role + ".") == 0) {
+                        return true;
+                    }
+                }
 
-<?php if (isset($data['validators'])): ?>
-            $scope.validators = <?php echo @json_encode($data['validators']); ?>;
-<?php endif; ?>
+                return $scope.user.role.indexOf(role) >= 0;
+            }
+        }
+        <?php endif; ?>
 
-<?php if (is_subclass_of($this->model, 'ActiveRecord') && isset($data['isNewRecord'])): ?>
-            $scope.isNewRecord = <?php echo $data['isNewRecord'] ? "true" : "false" ?>;
-<?php endif; ?>
+        <?php if (is_object(Yii::app()->controller) && is_object(Yii::app()->controller->module)): ?>
+        $scope.module = '<?= Yii::app()->controller->module->id ?>';
+        <?php endif; ?>
+
+        <?php if (Yii::app()->user->hasFlash('info')): ?>
+        $scope.flash = '<?= Yii::app()->user->getFlash('info'); ?>';
+        <?php endif; ?>
+
+        <?php if (isset($data['validators'])): ?>
+        $scope.validators = <?php echo @json_encode($data['validators']); ?>;
+        <?php endif; ?>
+
+        <?php if (is_subclass_of($this->model, 'ActiveRecord') && isset($data['isNewRecord'])): ?>
+        $scope.isNewRecord = <?php echo $data['isNewRecord'] ? "true" : "false" ?>;
+        <?php endif; ?>
 
         document.title = $scope.form.title;
         $scope.$watch('form.title', function () {
@@ -152,7 +159,7 @@ ob_start();
                     // track create or update in audit trail
                     $scope.formSubmitting = true;
                     if (!!$scope.model) {
-                        //$scope.pageInfo['data'] = JSON.stringify($scope.model);
+                        $scope.pageInfo['data'] = JSON.stringify($scope.model);
                         $scope.pageInfo['form_class'] = $scope.formClass;
                         $scope.pageInfo['model_class'] = $scope.modelBaseClass;
                         $scope.pageInfo['model_id'] = $scope.model.id;
@@ -201,7 +208,7 @@ ob_start();
         });
         function inlineJS() {
             $("div[ng-controller=<?= $modelClass ?>Controller]").css('opacity', 1);
-<?= implode("\n            ", explode("\n", $inlineJS)); ?>
+            <?= implode("\n            ", explode("\n", $inlineJS)); ?>
 
 
         }
@@ -222,7 +229,7 @@ ob_start();
         });
     });
 <?php $script = ob_get_clean(); ?>
-</script>
+</script >
 <?php
 ob_get_clean();
 

@@ -23,11 +23,11 @@ class SqlCriteriaForm extends Form {
         return array (
             array (
                 'type' => 'Text',
-                'value' => '<pre ng-style=\\"{borderColor: (isError ? \\\'red\\\' : \\\'#ccc\\\')}\\">{{previewSQL}}</pre>',
+                'value' => '<div ng-bind-html="previewSQL"></div>',
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div class=\\"alert alert-danger\\" style=\\"padding:5px;font-size:12px;\\" ng-if=\\"isError\\"> {{ errorMsg}}</div>',
+                'value' => '<div class=\'alert alert-danger\' style=\'padding:5px;font-size:12px;margin-bottom:10px;\' ng-if=\'isError\'> {{ errorMsg}}</div>',
             ),
             array (
                 'label' => 'Criteria',

@@ -20,6 +20,7 @@
                    ng-model="filter.search"
                    ng-change="listSearch($event, filter)"
                    ng-delay="500"
+                   ng-keypress="dropdownSearchKeypress($event)"
                    ng-click="$event.preventDefault()"
                    placeholder="Search ..."
                    class="input-block-level search-dropdown form-control" autocomplete="off">
@@ -44,7 +45,7 @@
                 ng-if="item.value != '---'" class="dropdown-item"
                 ng-class="{'dropdown-header': isObject(item.value),
                                     'hover': item.key == filter.value}"
-                ng-show="listFound(item.value + ' ' + item.key, filter)">
+                ng-show="filter.filterType == 'relation' || listFound(item.value + ' ' + item.key, filter)">
 
                 <a ng-if="!isObject(item.value) &&
                                 (filter.filterType == 'list' || filter.filterType == 'relation')"
@@ -76,7 +77,7 @@
                         <li ng-repeat-start="subitem in item.value track by $index "
                             ng-if="subitem.value != '---'"
                             ng-class="{'hover': subitem.key == filter.value}"
-                            ng-show="listFound(subitem.value + ' ' + subitem.key, filter)">
+                            ng-show="filter.filterType == 'relation' || listFound(subitem.value + ' ' + subitem.key, filter)">
 
                             <a ng-if="!isObject(subitem.value) && filter.filterType == 'list'"
                                dropdown-toggle href="#" ng-click="updateDropdown($event, filter, subitem);"
@@ -102,9 +103,9 @@
                 </div>
             </li>
             <hr ng-repeat-end ng-if="item.value == '---'"/>
-            <hr ng-if="filter.filterType == 'relation' && filter.count > filter.list.length"/>
+            <hr ng-if="!loading && filter.filterType == 'relation' && filter.count > filter.list.length"/>
             <li ng-if="filter.filterType == 'relation' && filter.count > filter.list.length">
-                <a href="#" ng-click="relationNext($event, filter)" style="margin-left:-5px;">
+                <a href="#" ng-click="relationNext($event, filter)" style="margin-left:-5px;padding-bottom:50px;">
                     <span ng-if="!loading"><i class="fa fa-angle-down"></i> &nbsp; Load More</span>
                     <span ng-if="loading"><i class="fa fa-refresh fa-spin"></i> &nbsp; Loading... </span>
                 </a>

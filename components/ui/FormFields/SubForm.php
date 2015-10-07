@@ -35,7 +35,7 @@ class SubForm extends FormField {
                 'defaultType' => 'first',
                 'list' => array (
                     'single' => 'Single Field',
-                    'multi' => 'Multi Field',
+                    'multi' => 'SubForm',
                 ),
                 'type' => 'DropDownList',
             ),
@@ -45,8 +45,8 @@ class SubForm extends FormField {
                 'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'save()',
+                    'ng-if' => 'active.mode == \'multi\'',
                     'ng-delay' => '500',
-                    'ng-if' => 'active.mode == \\\'multi\\\'',
                 ),
                 'type' => 'TextField',
             ),
@@ -57,7 +57,7 @@ class SubForm extends FormField {
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                    'ng-if' => 'active.mode == \\\'single\\\'',
+                    'ng-if' => 'active.mode == \'single\'',
                 ),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
@@ -74,6 +74,22 @@ class SubForm extends FormField {
                 'listExpr' => 'FormBuilder::listForm(null, true)',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Edit SubForm',
+                'icon' => 'sign-in',
+                'buttonSize' => 'btn-xs',
+                'options' => array (
+                    'style' => 'float:right;margin:0px 0px 5px 0px;',
+                    'href' => 'url:/dev/forms/update?class={active.subForm}',
+                    'target' => '_blank',
+                ),
+                'type' => 'LinkButton',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<div class=\"clearfix\"></div>
+<hr>',
             ),
             array (
                 'label' => 'Inline JS',

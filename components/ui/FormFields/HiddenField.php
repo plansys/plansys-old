@@ -38,9 +38,6 @@ class HiddenField extends FormField {
     public $value = '';
 	
     public $options = [];
-    
-    /** @var boolean $isHidden */
-    public $isHidden = true;
 
     /** @var string $toolbarName */
     public static $toolbarName = "Hidden Field";

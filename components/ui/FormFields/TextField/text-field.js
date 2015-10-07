@@ -68,7 +68,7 @@ app.directive('textField', function ($timeout, $http) {
                 
                 for (i in $scope.params) {
                     var p = $scope.params[i];
-                    if (p.indexOf('js:') === 0) {
+                    if (!!p.indexOf && p.indexOf('js:') === 0) {
                         var value = $scope.$parent.$eval(p.replace('js:', ''));
                         var key = i;
 

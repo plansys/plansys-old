@@ -5,8 +5,8 @@ class DevModule extends CWebModule {
     public $newFileMode = 0666;
     public $newDirMode  = 0777;
 
-    public function accessControl($controller, $action) {
-
+    public function accessControl($controller,$action) {
+        
     }
 
     public function init() {
@@ -17,6 +17,7 @@ class DevModule extends CWebModule {
             'application.modules.dev.forms.formbuilder.*',
             'application.modules.dev.forms.genmodule.*',
             'application.modules.dev.forms.genmenu.*',
+            'application.modules.dev.forms.genctrl.*',
             'application.modules.dev.forms.genmodel.*',
             'application.modules.dev.forms.generators.*',
             'application.modules.dev.forms.generators.templates.*',

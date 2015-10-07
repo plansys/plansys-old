@@ -71,8 +71,9 @@ class DevFormNewForm extends Form {
                 'label' => 'ActiveRecord Model',
                 'name' => 'model',
                 'options' => array (
-                    'ng-if' => 'model.baseClass == \\\'--model--\\\'',
+                    'ng-if' => 'model.baseClass == \'--model--\'',
                 ),
+                'defaultType' => 'first',
                 'listExpr' => 'ModelGenerator::listModels()',
                 'layout' => 'Vertical',
                 'searchable' => 'Yes',
@@ -83,7 +84,7 @@ class DevFormNewForm extends Form {
                 'name' => 'custom',
                 'layout' => 'Vertical',
                 'options' => array (
-                    'ng-if' => 'model.baseClass == \\\'--custom--\\\'',
+                    'ng-if' => 'model.baseClass == \'--custom--\'',
                 ),
                 'type' => 'TextField',
             ),

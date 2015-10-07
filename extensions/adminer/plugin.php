@@ -1,5 +1,8 @@
 <?php
 
+ini_set("display_error", "Off");
+error_reporting(0);
+
 /** Adminer customization allowing usage of plugins
 * @link http://www.adminer.org/plugins/#use
 * @author Jakub Vrana, http://www.vrana.cz/

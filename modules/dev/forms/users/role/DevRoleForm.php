@@ -48,14 +48,14 @@ class DevRoleForm extends Role {
                         'buttonType' => 'danger',
                         'options' => array (
                             'href' => 'url:/dev/user/roledel?id={model.id}',
-                            'ng-if' => '!isNewRecord && module == \\\'dev\\\'',
-                            'prompt' => 'Ketik \\\'DELETE\\\' (tanpa kutip) untuk menghapus role ini',
+                            'ng-if' => '!isNewRecord && module == \'dev\'',
+                            'prompt' => 'Ketik \'DELETE\' (tanpa kutip) untuk menghapus role ini',
                             'prompt-if' => 'DELETE',
                         ),
                         'type' => 'LinkButton',
                     ),
                 ),
-                'title' => '{{!isNewRecord ? \\\'Role Detail: \\\' + model.role_name : \\\'New Role\\\'}}',
+                'title' => '{{!isNewRecord ? \'Role Detail: \' + model.role_name : \'New Role\'}}',
                 'type' => 'ActionBar',
             ),
             array (
@@ -92,7 +92,7 @@ class DevRoleForm extends Role {
                         'options' => array (
                             'ng-if' => '!isNewRecord',
                         ),
-                        'listExpr' => 'MenuTree::listDropdown($model->rootRole,\\\'Default\\\',true);',
+                        'listExpr' => 'MenuTree::listDropdown($model->rootRole,\'Default\',true);',
                         'type' => 'DropDownList',
                     ),
                     array (

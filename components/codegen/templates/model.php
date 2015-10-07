@@ -31,7 +31,19 @@ class <?php echo $modelClass; ?> extends <?php echo $this->baseClass."\n"; ?>
 	public function relations()
 	{
 		return array(
-<?php foreach($relations as $name=>$relation): ?>
+<?php
+
+foreach ($relations as $n => $r) {
+    if (in_array($n, ['user', 'role', 'email'])) {
+        $r = str_replace('PUser', 'User', $r);
+        $r = str_replace('PRole', 'Role', $r);
+        $r = str_replace('PEmail', 'Email', $r);
+
+        $relations[$n] = $r;
+    }
+}
+
+foreach($relations as $name=>$relation): ?>
 			<?php echo "'$name' => $relation,\n"; ?>
 <?php endforeach; ?>
 		);

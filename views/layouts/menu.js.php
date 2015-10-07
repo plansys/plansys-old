@@ -91,6 +91,39 @@
                 }
             };
 
+            $scope.assignParentToItems = function(item, parent) {
+                if (item.length > 0) {
+                    item.forEach(function(children) {
+                        $scope.assignParentToItems(children);
+                    });
+                } else {
+                    if (!!item.items && item.items.length > 0) {
+                        item.items.forEach(function (children) {
+                            $scope.assignParentToItems(children, item);
+                        });
+                    }
+
+                    if (!!parent) {
+                        item.$parent = parent;
+                    }
+                }
+            }
+            $scope.assignParentToItems($scope.list);
+
+            $scope.expandAllParents = function(item) {
+                item.state = '';
+                if (item.$parent) {
+                    $scope.expandAllParents(item.$parent);
+                }
+            }
+
+            var unwatchActive =  $scope.$watch('active', function(e) {
+                if (!!e) {
+                    $scope.expandAllParents(e);
+                    unwatchActive();
+                }
+            });
+
             $scope.select = function (item, e) {
                 $scope.closeContextMenu();
 

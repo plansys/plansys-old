@@ -2,8 +2,8 @@
 
 class Widget extends CApplicationComponent {
 
-    public $icon = "";
-    public $badge = "";
+    public         $icon          = "";
+    public         $badge         = "";
     private static $activeWidgets = [];
 
     public function render() {
@@ -12,7 +12,7 @@ class Widget extends CApplicationComponent {
 
     public function renderInternal($file) {
         $reflector = new ReflectionClass($this);
-        $path = str_replace(".php", DIRECTORY_SEPARATOR . $file, $reflector->getFileName());
+        $path      = str_replace(".php", DIRECTORY_SEPARATOR . $file, $reflector->getFileName());
 
         $this->registerScript();
 
@@ -24,19 +24,21 @@ class Widget extends CApplicationComponent {
     public static function listActiveWidget() {
         if (count(Widget::$activeWidgets) == 0) {
             $path = "application.components.ui.Widgets";
-            $dir = Yii::getPathOfAlias($path);
+            $dir  = Yii::getPathOfAlias($path);
 
-            $items = glob($dir . DIRECTORY_SEPARATOR . "*.php");
+            $items  = glob($dir . DIRECTORY_SEPARATOR . "*.php");
             $result = [];
             foreach ($items as $k => $m) {
-                $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
-                $m = str_replace('.php', "", $m);
+                $m      = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
+                $m      = str_replace('.php', "", $m);
                 $widget = new $m;
 
                 $include = true;
                 switch ($m) {
                     case 'NfyWidget':
-                        $include = Yii::app()->user->model->subscribed;
+                        if (isset(Yii::app()->user->model)) {
+                            $include = Yii::app()->user->model->subscribed;
+                        }
                         break;
                 }
 
@@ -61,12 +63,12 @@ class Widget extends CApplicationComponent {
         if (count($includeJS) > 0) {
             foreach ($includeJS as $js) {
                 $class = get_class($this);
-                
+
                 $file = Yii::getPathOfAlias("application.components.ui.Widgets.{$class}") . '/' . $js;
-                if (!is_file($file)){ 
+                if (!is_file($file)) {
                     $file = Yii::getPathOfAlias("app.components.ui.Widgets.{$class}") . '/' . $js;
                 }
-                
+
                 Yii::app()->clientScript->registerScriptFile(
                     Asset::publish($file), CClientScript::POS_END
                 );
@@ -79,10 +81,10 @@ class Widget extends CApplicationComponent {
      */
     public function renderScript() {
         $includeJS = $this->includeJS();
-        $html = [];
+        $html      = [];
         if (count($includeJS) > 0) {
             foreach ($includeJS as $js) {
-                $class = get_class($this);
+                $class  = get_class($this);
                 $html[] = Asset::publish(Yii::getPathOfAlias("application.components.ui.Widgets.{$class}") . '/' . $js);
             }
         }

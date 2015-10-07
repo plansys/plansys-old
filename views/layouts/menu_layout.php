@@ -2,7 +2,7 @@
 <div context-menu="openContextMenu(item, $event, this)" context-menu-disabled="isContextMenuDisabled(item)" data-target="ContextMenu<?= $class ?>">
     <a ui-tree-handle href="{{ getUrl(item)}}" 
        target="{{ getTarget(item)}}"
-       ng-click="select(item, $event)" 
+       ng-click="select(item, $event)"
        ng-class="isSelected(item)"
        class="angular-ui-tree-handle">
         <div ng-show="objectSize(item.items) > 0" class="pull-left" 

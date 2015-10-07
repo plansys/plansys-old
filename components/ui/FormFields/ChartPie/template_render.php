@@ -12,4 +12,5 @@
         
         <div id="<?= strtolower($this->chartType); ?>Container<?= $this->name; ?>"></div>
     </div>
+    <div class="clearfix"></div>
 </div>

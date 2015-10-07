@@ -6,8 +6,22 @@
  */
 class Form extends CFormModel {
 
-    public $parent; ## used by listview to store parent model
+    private $parent; ## used by listview to store parent model
     private $__tempVar = [];
+
+
+    public function __construct($modelParent = null) {
+        parent::__construct('');
+        $this->parent = $modelParent;
+    }
+
+    /**
+     * @return array me-return attributes dari form tersebut.
+     */
+    public static function attributes() {
+        $field = new static();
+        return $field->attributes;
+    }
 
     public function __get($name) {
         switch (true) {
@@ -35,14 +49,14 @@ class Form extends CFormModel {
      */
     public function getAttributes($names = NULL) {
         $reflect = new ReflectionClass($this);
-        $props = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
-        $result = [];
+        $props   = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
+        $result  = [];
         foreach ($this->__tempVar as $k => $p) {
             $result[$k] = $p;
         }
         foreach ($props as $k => $p) {
             if (!$p->isStatic()) {
-                $name = $p->getName();
+                $name          = $p->getName();
                 $result[$name] = $this->$name;
             }
         }
@@ -61,24 +75,16 @@ class Form extends CFormModel {
     }
 
     /**
-     * @return array me-return attributes dari form tersebut.
-     */
-    public static function attributes() {
-        $field = new static();
-        return $field->attributes;
-    }
-
-    /**
      * @return array me-return array property DefaultFields.
      */
     public function getDefaultFields() {
-        $fields = $this->attributes;
+        $fields  = $this->attributes;
         $exclude = [];
-        $array = [];
+        $array   = [];
         foreach ($fields as $k => $f) {
             $array[] = [
-                'name'  => $k,
-                'type'  => 'TextField',
+                'name' => $k,
+                'type' => 'TextField',
                 'label' => ucfirst($k)
             ];
         }

@@ -3,7 +3,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
         scope: true,
         compile: function (element, attrs, transclude) {
             return function ($scope, $el, attrs, ctrl) {
-                var parent = $scope.$parent;
+                var parent = $scope.getParent($scope);
 
                 $scope.params = JSON.parse($el.find("data[name=params]").text());
                 $scope.paramsGet = JSON.parse($el.find("data[name=params_get]").text());
@@ -152,9 +152,10 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         if (typeof data == "string") {
                             $scope.showError(data);
                         } else {
-                            $scope.isDataReloaded = true;
-                            $scope.data = data.data;
                             $scope.original = angular.copy($scope.data);
+                            $scope.isDataReloaded = true;
+                            $scope.data.splice(0, $scope.data.length);
+                            $scope.data = $scope.data.concat(data.data);
                             $scope.totalItems = data.count * 1;
                             $scope.setDebug(data.debug);
                             if (typeof f == "function") {
@@ -186,17 +187,18 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         name: $scope.name,
                         class: $scope.class,
                         params: params,
+                        modelParams: $scope.model,
                         lc: $scope.shouldCount ? 0 : $scope.totalItems
                     }, {
                         timeout: $scope.httpRequest.promise
                     })
-                            .success(executeSuccess)
-                            .error(function (data) {
-                                if (typeof f == "function") {
-                                    f(false, data);
-                                }
-                                $scope.showError(data);
-                            });
+                        .success(executeSuccess)
+                        .error(function (data) {
+                            if (typeof f == "function") {
+                                f(false, data);
+                            }
+                            $scope.showError(data);
+                        });
                     $scope.shouldCount = true;
                 }
 
@@ -257,7 +259,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                         continue;
 
                                     if ($scope.deleteData != null &&
-                                            $scope.deleteData.indexOf($scope.data[i].id) >= 0) {
+                                        $scope.deleteData.indexOf($scope.data[i].id) >= 0) {
                                         $scope.data.splice(i, 1);
                                     }
                                 }
@@ -331,7 +333,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                             $scope.deleteData = [];
                                         }
 
-                                        if (angular.isNumber(del['id']*1) && del['id']*1 > 0) {
+                                        if (angular.isNumber(del['id'] * 1) && del['id'] * 1 > 0) {
                                             $scope.deleteData.push(del['id']);
                                         }
                                     }
@@ -343,7 +345,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 }
 
                 parent[$scope.name] = $scope;
-
             }
 
         }

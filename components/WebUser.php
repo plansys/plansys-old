@@ -38,7 +38,12 @@ class WebUser extends CWebUser {
     }
 
     public function getUseLdap() {
-        return !is_null(Setting::get('ldap'));
+        $useLdap = Setting::get('ldap');
+        if (is_null($useLdap)) return false;
+        else {
+            return $useLdap['enable'];
+        }
+
     }
 
     public function getfullRole() {
@@ -87,11 +92,11 @@ class WebUser extends CWebUser {
     }
 
     public function getInfo() {
-        
+
         if (Setting::$mode == "init" || Setting::$mode == "install") {
             return "{}";
         }
-        
+
         if (Yii::app()->user->isGuest) {
             return "{}";
         }
@@ -99,9 +104,9 @@ class WebUser extends CWebUser {
         if (!isset(Yii::app()->session['userinfo'])) {
             $attr = $this->model->getAttributes(true, false);
             unset($attr['password']);
-            $attr['role'] = $this->role;
-            $attr['roles'] = $this->model->roles;
-            $attr['full_role'] = $this->fullRole;
+            $attr['role']                   = $this->role;
+            $attr['roles']                  = $this->model->roles;
+            $attr['full_role']              = $this->fullRole;
             Yii::app()->session['userinfo'] = $attr;
         } else {
             $attr = Yii::app()->session['userinfo'];

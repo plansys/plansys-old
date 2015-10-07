@@ -1,234 +1,138 @@
 <?php
 
-class ControllerGenerator extends CodeGenerator {
+class ControllerGenerator extends CComponent {
 
-    //Helper UI
-    public static function listAllFile() {
-        $dir = Yii::getPathOfAlias('application.modules');
-        $appDir = Yii::getPathofAlias('app.modules');
-        $modules = glob($dir . DIRECTORY_SEPARATOR . "*");
-        $appModules = glob($appDir . DIRECTORY_SEPARATOR . "*");
+    public static function create($path, $name) {
+        $parser        = new PhpParser\Parser(new PhpParser\Lexer\Emulative);
+        $prettyPrinter = new CodePrinter;
+        $path          = explode(".", $path);
 
-        $files = [];
-        if (Setting::get('app.mode') == "plansys") {
-            foreach ($modules as $m) {
-                $module = ucfirst(str_replace($dir . DIRECTORY_SEPARATOR, '', $m));
-                $items = ControllerGenerator::listFile($module, 'dev');
-                $files[] = [
-                    'module' => $module,
-                    'items' => $items,
-                    'type' => 'dev'
-                ];
-            }
-        }
-        foreach ($appModules as $m) {
-            $module = ucfirst(str_replace($appDir . DIRECTORY_SEPARATOR, '', $m));
-            $items = ControllerGenerator::listFile($module, 'app');
-            $files[] = [
-                'module' => $module,
-                'items' => $items,
-                'type' => 'app'
-            ];
-        }
-        return $files;
-    }
-
-    public static function listFile($module, $type) {
-        if ($type == 'dev') {
-            Yii::import('application.modules.' . lcfirst($module) . '.controllers.*');
-            $dir = Yii::getPathOfAlias("application.modules.{$module}.controllers");
-            $path = 'application.modules.';
-        } else {
-            Yii::import('app.modules.' . lcfirst($module) . '.controllers.*');
-            $dir = Yii::getPathOfAlias("app.modules.{$module}.controllers");
-            $path = 'app.modules.';
+        $controllerPath = "";
+        if (count($path) == 1) {
+            $controllerPath = $path[0] . ".controllers." . $name;
+        } else if (count($path) == 2) {
+            $controllerPath = $path[0] . ".modules." . $path[1] . ".controllers." . $name;
         }
 
-        $items = glob($dir . DIRECTORY_SEPARATOR . "*");
+        try {
+            $templatePath   = Yii::getPathOfAlias("application.components.codegen.templates.controller") . ".php";
+            $template       = file_get_contents($templatePath);
+            $stmts          = $parser->parse($template);
+            $stmts[0]->name = ucfirst($name);
+            $generated      = $prettyPrinter->prettyPrintFile($stmts);
 
-        foreach ($items as $k => $m) {
-            $exist = 'yes';
-            $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);
-            $m = str_replace('.php', "", $m);
-            if (!class_exists($m)) {
-                $exist = 'no';
+            $cp = Yii::getPathOfAlias($controllerPath) . ".php";
+            if (!is_dir(dirname($cp))) {
+                mkdir(dirname($cp), 0777, true);
             }
 
-            $items[$k] = [
-                'name' => $m,
-                'module' => $module,
-                'class' => $path . lcfirst($module) . '.controllers.' . $m,
-                'class_path' => $path . lcfirst($module) . '.controllers.',
-                'exist' => $exist,
-            ];
-        }
-        return $items;
-    }
-
-    public function listMethod($class, $class_name) {
-        $declaredClasses = get_declared_classes();
-
-        if (!in_array($class_name, $declaredClasses))
-            Yii::import($class, true);
-        $reflection = new ReflectionClass($class_name);
-        $methods = $reflection->getMethods();
-        $action = [];
-        foreach ($methods as $m) {
-            if ($m->class == $class_name && !$reflection->getMethod($m->name)->isProtected() && !$reflection->getMethod($m->name)->isStatic() && self::isAction($m->name) == true) {
-                $rawParams = $reflection->getMethod($m->name)->getParameters();
-                $params = [];
-                if (!empty($rawParams)) {
-                    foreach ($rawParams as $p) {
-                        if ($p->isOptional()) {
-                            if (is_null($p->getDefaultValue())) {
-                                $params[] = '$' . $p->getName() . ' = null';
-                            } else {
-                                $params[] = '$' . $p->getName() . ' = ' . $p->getDefaultValue();
-                            }
-                        } else {
-                            $params[] = '$' . $p->getName();
-                        }
-                    }
-                }
-
-                if (!empty($params))
-                    $strParams = implode(',', $params);
-                else
-                    $strParams = null;
-                $action[] = [
-                    'name' => $m->name,
-                    'param' => $strParams
-                ];
-            }
-        }
-        return $action;
-    }
-
-    public static function isAction($method) {
-        if (substr($method, 0, 6) == 'action')
+            file_put_contents($cp, $generated);
             return true;
-        else
+        } catch (Exception $e) {
             return false;
-    }
-
-    public static function checkUrl($class, $param, $method) {
-        $module = explode('.modules.', $class);
-        $module = explode('.controllers.', $module[1]);
-        $moduleName = $module[0];
-        $controllerName = $module[1];
-        $controllerName = lcfirst(substr($controllerName, 0, -10));
-        $url = null;
-        if (empty($param)) {
-            $method = lcfirst(substr($method, 6));
-            $url = $moduleName . '/' . $controllerName . '/' . $method;
         }
-        return $url;
+
     }
 
-    public static function controllerPath($class, $type) {
-        $classPath = Yii::getPathOfAlias($class);
-        if ($type == 'dev')
-            $basePath = Yii::getPathOfAlias('application');
-        else
-            $basePath = Yii::getPathOfAlias('app');
-        $classPath = str_replace($basePath, '', $classPath);
-        $classPath = $classPath . '.php';
-        return $classPath;
-    }
+    public static function listCtrlForMenuTree() {
+        $list    = [];
+        $devMode = Setting::get('app.mode') === "plansys";
+        if ($devMode) {
+            $dir         = Yii::getPathOfAlias("application.modules") . DIRECTORY_SEPARATOR;
+            $items       = glob($dir . "*", GLOB_ONLYDIR);
+            $plansysList = [];
 
-    public static function controllerName($class) {
-        $className = explode('.controllers.', $class);
-        $className = $className[1];
-        return $className;
-    }
+            foreach ($items as $k => $f) {
+                $label     = str_replace($dir, "", $f);
+                $classPath = $f . DIRECTORY_SEPARATOR . ucfirst($label) . 'Module.php';
+                if (is_file($classPath)) {
+                    $ctrlsDir = $f . DIRECTORY_SEPARATOR . "controllers" . DIRECTORY_SEPARATOR;
+                    $ctrls    = self::listCtrlInDir('plansys.' . $label, $ctrlsDir);
 
-    public static function moduleControllerName($class) {
-        $module = explode('.modules.', $class);
-        $module = explode('.controllers.', $module[1]);
-        $moduleName = $module[0];
-        $controllerName = self::controllerName($class);
-        return [
-            'module' => $moduleName,
-            'controller' => $controllerName
+                    $plansysList[] = [
+                        'label' => $label,
+                        'module' => 'plansys',
+                        'items' => $ctrls,
+                        'target' => 'col2'
+                    ];
+                }
+            }
+
+            $ctrlsDir = Yii::getPathOfAlias("application.controllers") . DIRECTORY_SEPARATOR;
+            $ctrls    = self::listCtrlInDir('plansys', $ctrlsDir);
+            foreach ($ctrls as $ctrl) {
+                $plansysList[] = $ctrl;
+            }
+
+            $list[] = [
+                'label' => 'Plansys',
+                'module' => 'plansys',
+                'items' => $plansysList
+            ];
+
+        }
+
+        $dir     = Yii::getPathOfAlias("app.modules") . DIRECTORY_SEPARATOR;
+        $items   = glob($dir . "*", GLOB_ONLYDIR);
+        $appList = [];
+        foreach ($items as $k => $f) {
+            $label     = str_replace($dir, "", $f);
+            $classPath = $f . DIRECTORY_SEPARATOR . ucfirst($label) . 'Module.php';
+            if (is_file($classPath)) {
+                $ctrlsDir = $f . DIRECTORY_SEPARATOR . "controllers" . DIRECTORY_SEPARATOR;
+                $ctrls    = self::listCtrlInDir('app.' . $label, $ctrlsDir);
+
+                $appList[] = [
+                    'label' => $label,
+                    'module' => 'app',
+                    'items' => $ctrls,
+                    'target' => 'col2'
+                ];
+            }
+        }
+
+        $ctrlsDir = Yii::getPathOfAlias("app.controllers") . DIRECTORY_SEPARATOR;
+        $ctrls    = self::listCtrlInDir('app', $ctrlsDir);
+        foreach ($ctrls as $ctrl) {
+            $appList[] = $ctrl;
+        }
+
+        $list[] = [
+            'label' => 'App',
+            'module' => 'app',
+            'items' => $appList
         ];
+        return $list;
+
     }
 
-    //CodeGenerator
-    protected $baseClass = "Controller";
-    protected $basePath = "application.modules.{module}.Controllers";
 
-    public function addActionIndex($actionName, $modelClass = null, $params) {
-        $body = '
-        $this->renderForm("' . $modelClass . '");';
-        $this->updateFunction($actionName, $body, ['params' => $params]);
-    }
+    private static function listCtrlInDir($module, $ctrlDir) {
+        $ctrlRaw = glob($ctrlDir . "*.php");
+        $ctrls   = [];
+        $path    = explode(".", $module);
+        $m       = $path[0] != "plansys" ? "app" : "application";
 
-    public function addActionIndexWithPost($actionName, $modelClass = null, $params) {
-        $body = '
-        $model = new ' . $modelClass . ';
-                
-        if (isset($_POST["' . $modelClass . '"])) {
-            $model->attributes = $_POST["' . $modelClass . '"];
-            if ($model->saveModelArray()) {
-                $this->redirect(array("index"));
-            }
+        $controllerPath = "";
+        if (count($path) == 1) {
+            $controllerPath = $m . ".controllers.";
+        } else if (count($path) == 2) {
+            $controllerPath = $m . ".modules." . $path[1] . ".controllers.";
         }
-        $this->renderForm("' . $modelClass . '",$model);';
-        $this->updateFunction($actionName, $body, ['params' => $params]);
-    }
 
-    public function addActionCreate($actionName, $modelClass = null, $params) {
-        $body = '
-        $model = new ' . $modelClass . ';
-                
-        if (isset($_POST["' . $modelClass . '"])) {
-            $model->attributes = $_POST["' . $modelClass . '"];
-            if ($model->save()) {
-                $this->redirect(array("index"));
-            }
+        foreach ($ctrlRaw as $ctrl) {
+            $c       = str_replace([$ctrlDir, ".php"], "", $ctrl);
+            $ctrls[] = [
+                'label' => $c,
+                'icon' => 'fa-slack',
+                'active' => @$_GET['active'] == $module . '.' . $c,
+                'url' => Yii::app()->controller->createUrl('/dev/genCtrl/index', [
+                    'active' => $module . '.' . $c
+                ]),
+                'class' => $controllerPath . $c,
+                'target' => 'col2'
+            ];
         }
-        $this->renderForm("' . $modelClass . '",$model);';
-        $this->updateFunction($actionName, $body, ['params' => $params]);
+        return $ctrls;
     }
-
-    public function addActionUpdate($actionName, $modelClass = null, $params) {
-        $body = '
-        $model = $this->loadModel($id , "' . $modelClass . '");
-                
-        if (isset($_POST["' . $modelClass . '"])) {
-            $model->attributes = $_POST["' . $modelClass . '"];
-            if ($model->save()) {
-                $this->redirect(array("index"));
-            }
-        }
-        $this->renderForm("' . $modelClass . '",$model);';
-        $this->updateFunction($actionName, $body, ['params' => $params]);
-    }
-
-    public function addActionDelete($actionName, $modelClass = null, $params) {
-        $body = '
-        $this->loadModel($id , "' . $modelClass . '")->delete();';
-        $this->updateFunction($actionName, $body, ['params' => $params]);
-    }
-
-    public static function getTemplate() {
-        return [
-            'default' => 'Default',
-            '---' => '---',
-            'index' => 'Index Template',
-            'indexWithPost' => 'Index (Post CurrentModel)',
-            'create' => 'New Template',
-            'update' => 'Update Template',
-            'delete' => 'Delete Template',
-        ];
-    }
-
-    public function __construct($module, $class, $type = null) {
-        if ($type != 'dev') {
-            $this->basePath = "app.modules.{module}.Controllers";
-        }
-        $this->basePath = str_replace('{module}', $module, $this->basePath);
-        $this->load($class);
-    }
-
 }

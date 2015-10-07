@@ -6,20 +6,16 @@
  */
 class ModalDialog extends FormField {
 
-    public $name = '';
-    public $subForm = '';
-    public $options = [];
-    public $inlineJS = '';
-    public $size = '';
-
-    /** @var string $toolbarName */
-    public static $toolbarName = "Modal Dialog";
-
-    /** @var string $category */
-    public static $category = "Layout";
-
-    /** @var string $toolbarIcon */
-    public static $toolbarIcon = "fa fa-square fa-nm";
+    public static $toolbarName   = "Modal Dialog";
+    public static $category      = "Layout";
+    public static $toolbarIcon   = "fa fa-square fa-nm";
+    public static $deprecated    = true;
+    public        $name          = '';
+    public        $subForm       = '';
+    public        $options       = [];
+    public        $inlineJS      = '';
+    public        $size          = '';
+    private       $_subformClass = "";
 
     public function getFieldProperties() {
         return array (
@@ -63,8 +59,6 @@ class ModalDialog extends FormField {
         );
     }
 
-    private $_subformClass = "";
-
     public function getSubFormClass() {
         if ($this->_subformClass == "") {
             $this->_subformClass = Helper::explodeLast(".", $this->subForm);
@@ -74,22 +68,6 @@ class ModalDialog extends FormField {
 
     public function getCtrlName() {
         return $this->subFormClass . ucfirst($this->name);
-    }
-
-    private function renderController() {
-        $jspath = explode(".", $this->subForm);
-        array_pop($jspath);
-        $jspath = implode(".", $jspath);
-        $inlineJS = str_replace("/", DIRECTORY_SEPARATOR, trim($this->inlineJS, "/"));
-        $inlineJS = Yii::getPathOfAlias($jspath) . DIRECTORY_SEPARATOR . $inlineJS;
-        if (is_file($inlineJS)) {
-            $inlineJS = file_get_contents($inlineJS);
-        } else {
-            $inlineJS = '';
-        }
-
-        $controller = include("ModalDialog/controller.js.php");
-        return '<script>' . $controller . '</script>';
     }
 
     public function includeJS() {
@@ -102,13 +80,29 @@ class ModalDialog extends FormField {
         } else {
             ## render
             Yii::import($this->subForm);
-            $fb = FormBuilder::load($this->subFormClass);
+            $fb     = FormBuilder::load($this->subFormClass);
             $render = $fb->render($fb->model, [
                 'wrapForm' => false
             ]);
 
             return $render;
         }
+    }
+
+    private function renderController() {
+        $jspath = explode(".", $this->subForm);
+        array_pop($jspath);
+        $jspath   = implode(".", $jspath);
+        $inlineJS = str_replace("/", DIRECTORY_SEPARATOR, trim($this->inlineJS, "/"));
+        $inlineJS = Yii::getPathOfAlias($jspath) . DIRECTORY_SEPARATOR . $inlineJS;
+        if (is_file($inlineJS)) {
+            $inlineJS = file_get_contents($inlineJS);
+        } else {
+            $inlineJS = '';
+        }
+
+        $controller = include("ModalDialog/controller.js.php");
+        return '<script>' . $controller . '</script>';
     }
 
 }

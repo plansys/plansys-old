@@ -7,24 +7,24 @@ $scope.contextMenu = [
             PopupCenter(Yii.app.createUrl('/dev/genModel/newModel'), "Create New Model", '400', '500');
         }
     },
-    {
-        icon: "fa fa-fw fa-edit",
-        label: "Rename Model",
-        visible: function (item) {
-            return !!item.$parent;
-        },
-        click: function (item, e) {
-            var name = prompt('Please enter new module name:', item.label);
-            if (!!name) {
-                $http.get(Yii.app.createUrl('/dev/genModel/rename', {})).success(function (status) {
-                    if (status != "SUCCESS") {
-                        alert(status);
-                    } else {
-                    }
-                });
-            }
-        }
-    },
+    //{
+    //    icon: "fa fa-fw fa-edit",
+    //    label: "Rename Model",
+    //    visible: function (item) {
+    //        return !!item.$parent;
+    //    },
+    //    click: function (item, e) {
+    //        var name = prompt('Please enter new module name:', item.label);
+    //        if (!!name) {
+    //            $http.get(Yii.app.createUrl('/dev/genModel/rename', {})).success(function (status) {
+    //                if (status != "SUCCESS") {
+    //                    alert(status);
+    //                } else {
+    //                }
+    //            });
+    //        }
+    //    }
+    //},
     {
         hr: true,
         visible: function (item) {

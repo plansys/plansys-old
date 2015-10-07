@@ -46,7 +46,7 @@ class ColorPicker extends FormField {
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                            'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
+                            'ng-disabled' => 'active.layout == \'Vertical\'',
                         ),
                         'type' => 'TextField',
                     ),

@@ -42,6 +42,12 @@ class SysAuditTrailIndex extends AuditTrail {
                         'show' => false,
                         'defaultValue' => '',
                         'listExpr' => 'AuditTrail::typeDropdown(false)',
+                        'list' => array (
+                            'view' => 'View',
+                            'create' => 'Create',
+                            'update' => 'Update',
+                            'delete' => 'Delete',
+                        ),
                     ),
                     array (
                         'filterType' => 'relation',
@@ -66,6 +72,8 @@ class SysAuditTrailIndex extends AuditTrail {
                         'options' => array (
                             'width' => '150px',
                         ),
+                        'list' => 0,
+                        'count' => 0,
                     ),
                     array (
                         'name' => 'description',
@@ -130,12 +138,12 @@ class SysAuditTrailIndex extends AuditTrail {
                         'show' => false,
                         'inputMask' => '',
                         'stringAlias' => array (
-                            'view' => '<div class=\\\'label label-default text-center\\\' style=\\\'display:block;width:100%;\\\'> VIEW </div>',
-                            'login' => '<div class=\\\'label label-info text-center\\\' style=\\\'display:block;width:100%;\\\'> LOGIN</div>',
-                            'logout' => '<div class=\\\'label label-warning text-center\\\' style=\\\'display:block;width:100%;\\\'> LOGOUT</div>',
-                            'update' => '<div class=\\\'label label-primary text-center\\\' style=\\\'display:block;width:100%;\\\'> UPDATE </div>',
-                            'create' => '<div class=\\\'label label-success text-center\\\' style=\\\'display:block;width:100%;\\\'> CREATE </div>',
-                            'delete' => '<div class=\\\'label label-danger text-center\\\' style=\\\'display:block;width:100%;\\\'> DELETE </div>',
+                            'view' => '<div class=\'label label-default text-center\' style=\'display:block;width:100%;\'> VIEW </div>',
+                            'login' => '<div class=\'label label-info text-center\' style=\'display:block;width:100%;\'> LOGIN</div>',
+                            'logout' => '<div class=\'label label-warning text-center\' style=\'display:block;width:100%;\'> LOGOUT</div>',
+                            'update' => '<div class=\'label label-primary text-center\' style=\'display:block;width:100%;\'> UPDATE </div>',
+                            'create' => '<div class=\'label label-success text-center\' style=\'display:block;width:100%;\'> CREATE </div>',
+                            'delete' => '<div class=\'label label-danger text-center\' style=\'display:block;width:100%;\'> DELETE </div>',
                         ),
                     ),
                     array (
@@ -179,11 +187,6 @@ class SysAuditTrailIndex extends AuditTrail {
                     'useExternalSorting' => 'true',
                 ),
                 'type' => 'DataGrid',
-            ),
-            array (
-                'label' => 'Text Field',
-                'name' => 'textField1',
-                'type' => 'TextField',
             ),
         );
     }

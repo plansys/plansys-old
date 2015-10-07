@@ -279,12 +279,14 @@ class CActiveFinder extends CComponent
 				}
 				else
 					$element=new CJoinElement($this,$relation,$parent,++$this->_joinCount);
+
 				if(!empty($relation->through))
 				{
 					$slave=$this->buildJoinTree($parent,$relation->through,array('select'=>''));
 					$slave->master=$element;
 					$element->slave=$slave;
 				}
+
 				$parent->children[$with]=$element;
 				if(!empty($relation->with))
 					$this->buildJoinTree($element,$relation->with);
@@ -473,6 +475,7 @@ class CJoinElement
 
 		foreach($this->stats as $stat)
 			$stat->query();
+
 
 		if(!$this->children)
 			return;

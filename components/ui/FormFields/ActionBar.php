@@ -39,13 +39,13 @@ class ActionBar extends FormField {
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
-                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
-                'labelWidth' => '3',
+                'listExpr' => 'array(\'Yes\',\'No\')',
+                'labelWidth' => '5',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'Show Options Bar',
+                'label' => 'Show Option Menu',
                 'name' => 'showOptionsBar',
                 'options' => array (
                     'ng-model' => 'active.showOptionsBar',
@@ -54,8 +54,8 @@ class ActionBar extends FormField {
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
-                'listExpr' => '[\\\'Yes\\\',\\\'No\\\']',
-                'labelWidth' => '3',
+                'listExpr' => '[\'Yes\',\'No\']',
+                'labelWidth' => '5',
                 'fieldWidth' => '3',
                 'type' => 'DropDownList',
             ),
@@ -67,7 +67,7 @@ class ActionBar extends FormField {
                     'ng-model' => 'active.firstTabName',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                    'ng-if' => 'active.showSectionTab == \\\'Yes\\\'',
+                    'ng-if' => 'active.showSectionTab == \'Yes\'',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',

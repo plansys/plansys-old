@@ -35,7 +35,7 @@ class ColumnField extends FormField {
                     'ng-model' => 'active.showBorder',
                     'ng-change' => 'save();relayout();',
                 ),
-                'listExpr' => 'array(\\\'Yes\\\',\\\'No\\\')',
+                'listExpr' => 'array(\'Yes\',\'No\')',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),

@@ -140,7 +140,7 @@ class TagField extends FormField {
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                 ),
-                'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
+                'listExpr' => 'array(\'Horizontal\',\'Vertical\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
@@ -156,7 +156,7 @@ class TagField extends FormField {
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                            'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
+                            'ng-disabled' => 'active.layout == \'Vertical\'',
                         ),
                         'type' => 'TextField',
                     ),
@@ -227,7 +227,7 @@ class TagField extends FormField {
                 'options' => array (
                     'ng-model' => 'active.mustChoose',
                     'ng-change' => 'save();',
-                    'ng-if' => 'active.dropdown == \\\'normal\\\'',
+                    'ng-if' => 'active.dropdown == \'normal\'',
                 ),
                 'list' => array (
                     'yes' => 'Yes',

@@ -53,7 +53,11 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
         });
     };
     $scope.addForm = function (classname, extendsname, item) {
+
         if (!!classname && !!extendsname) {
+            if (item.alias[item.alias.length - 1] == '.') {
+                item.alias = item.alias.slice(0, -1);
+            }
             var module = item.module.replace('Plansys: ', '');
             $http.get(Yii.app.createUrl('/dev/forms/addForm', {
                 c: classname,
@@ -67,7 +71,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                             name: data.class,
                             class: data.class,
                             module: item.module,
-                            alias: item.alias.replace(/^\./, "") + "." + data.class,
+                            alias: item.alias + "." + data.class,
                             items: []
                         });
                     } else {
@@ -182,10 +186,8 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         icon: "fa fa-fw  fa-trash",
                         label: "Delete",
                         click: function (item) {
-                            if (confirm("Delete folder \"" + item.name + "\".\nAll forms and folder under it will also be deleted.\nAre you sure?")) {
-                                if (prompt("Type 'DELETE' to execute deleting this folder:") == 'DELETE') {
-                                    $scope.delFolder(sel, item);
-                                }
+                            if (prompt("Type 'DELETE' to execute deleting this folder:") == 'DELETE') {
+                                $scope.delFolder(sel, item);
                             }
                         }
                     }
@@ -202,23 +204,23 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         label: "Open New Tab",
                         click: function (item) {
                             window.open(
-                                    Yii.app.createUrl('/dev/forms/update', {
-                                        'class': item.alias
-                                    }),
-                                    '_blank'
-                                    );
+                                Yii.app.createUrl('/dev/forms/update', {
+                                    'class': item.alias
+                                }),
+                                '_blank'
+                            );
                         }
                     },
                     {
                         hr: true
                     },
-                    {
-                        icon: "fa fa-fw fa-pencil",
-                        label: "Rename",
-                        click: function (item) {
-                            var newname = prompt("Enter new form name:");
-                        }
-                    },
+                    //{
+                    //    icon: "fa fa-fw fa-pencil",
+                    //    label: "Rename",
+                    //    click: function (item) {
+                    //        var newname = prompt("Enter new form name:");
+                    //    }
+                    //},
                     {
                         icon: "fa fa-fw fa-sign-in",
                         label: "Move To",
@@ -233,10 +235,8 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         icon: "fa fa-fw  fa-trash",
                         label: "Delete",
                         click: function (item) {
-                            if (confirm("Delete form \"" + item.name + "\" ?")) {
-                                if (prompt("Type 'DELETE' to execute deleting this form:") == 'DELETE') {
-                                    $scope.delForm(sel, item);
-                                }
+                            if (prompt("Type 'DELETE' to execute deleting this form:") == 'DELETE') {
+                                $scope.delForm(sel, item);
                             }
                         }
                     }

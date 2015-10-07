@@ -10,6 +10,13 @@ pre {
     white-space: pre-wrap;
 }
 
+.blank-layout {
+    overflow: hidden;
+    padding: 0px;
+    margin: 0px;
+    background: white;
+}
+
 .container-full {
     margin: 0 auto;
     width: 100%;
@@ -243,7 +250,7 @@ i {
 }
 
 .table {
-    font-size:13px;
+    font-size: 13px;
 }
 
 /************************************ NAVBAR ***************************************/
@@ -435,6 +442,10 @@ div[ui-layout] > div.active > .overlay {
     display: block;
 }
 
+.ui-layout-no-splitbar .ui-splitbar {
+    display:none;
+}
+
 .ui-layout-column > div {
 }
 
@@ -538,8 +549,6 @@ div[ui-content] {
     background-position: 0 -546px;
 }
 
-
-
 .fbmin .ui-splitbar {
     display: none !important;
 }
@@ -597,13 +606,15 @@ div[ui-content] {
 }
 
 .column-field .section-header {
-    margin:-25px -50px 25px -25px;
+    margin: -25px -50px 25px -25px;
 }
+
 .column-field td:first-child .section-header {
-    margin-left:-40px;
+    margin-left: -40px;
 }
+
 .column-field td:last-child .section-header {
-    margin-right:-65px;
+    margin-right: -65px;
 }
 
 .SectionHeader {
@@ -701,38 +712,39 @@ div[ui-content] {
     overflow: auto;
 }
 
-.ui-splitbar{
-    display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
-    display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
-    display: -ms-flexbox;      /* TWEENER - IE 10 */
-    display: -webkit-flex;     /* NEW - Chrome */
-    display: flex;             /* NEW, Spec - Opera 12.1, Firefox 20+ */
+.ui-splitbar {
+    display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+    display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+    display: -ms-flexbox; /* TWEENER - IE 10 */
+    display: -webkit-flex; /* NEW - Chrome */
+    display: flex; /* NEW, Spec - Opera 12.1, Firefox 20+ */
     -webkit-justify-content: center;
     justify-content: center;
 
     right: auto;
-    width:4px !important;
+    width: 4px !important;
     position: absolute;
     z-index: 100;
-    overflow:visible !important;
+    overflow: visible !important;
 }
 
-
-.ui-layout-row > .ui-splitbar{
-    height: 8px; width: 100%;
+.ui-layout-row > .ui-splitbar {
+    height: 8px;
+    width: 100%;
     cursor: row-resize;
     text-align: center;
     justify-content: center;
     align-items: center;
-    border-bottom:1px solid #ddd;
+    border-bottom: 1px solid #ddd;
 }
-.ui-layout-column > .ui-splitbar{
-    width: 8px; 
+
+.ui-layout-column > .ui-splitbar {
+    width: 8px;
     height: 100%;
     cursor: col-resize;
     -webkit-flex-direction: column;
     flex-direction: column;
-    border-left:1px solid #ddd;
+    border-left: 1px solid #ddd;
 }
 
 .ui-layout-column > .ui-splitbar > a,
@@ -740,23 +752,29 @@ div[ui-content] {
     color: #ccc;
     cursor: pointer;
     font-size: 9px;
-    width:14px !important;
-    display:block;
+    width: 14px !important;
+    display: block;
     background: #fff;
-    text-align:center;
-    border:1px solid #ccc;
-}
-.ui-layout-column > .ui-splitbar > a {
-    padding:3px 0px;
-    margin-top:-1px;
-    margin-left:-7px;
-}
-.ui-splitbar > a:hover {
-    opacity:1;
-    background:#ccc;
-    color:#fff;
+    text-align: center;
+    border: 1px solid #ccc;
 }
 
+.ui-layout-column > .ui-splitbar > a {
+    padding: 3px 0px;
+    margin-top: -1px;
+    margin-left: -7px;
+}
+
+.ui-splitbar > a:hover {
+    opacity: 1;
+    background: #ccc;
+    color: #fff;
+}
+
+/****************************** EXPR-FIELD *******************************/
+[expression-field] {
+    border-right: 0px !important;
+}
 
 /******************************** TREE  *********************************/
 
@@ -917,11 +935,11 @@ li:hover > .item-btn {
 /************************** TAB PANE *********************************/
 
 .tab-set {
-    margin:0px -15px;
+    margin: 0px -15px;
 }
 
 .tab-set .tab-pane {
-    padding:0px 15px;
+    padding: 0px 15px;
 }
 
 .tab-set .nav-tabs {
@@ -951,7 +969,6 @@ li:hover > .item-btn {
     border-bottom: 0px !important;
     margin-top: 5px;
     cursor: pointer;
-
 
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -1356,9 +1373,10 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     z-index: 1;
     margin-top: 2px;
 }
+
 .list-view-item-remove:hover {
-    background:#ececeb;
-    color:red;
+    background: #ececeb;
+    color: red;
 }
 
 .list-view-item-move {
@@ -1381,11 +1399,11 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     border-right: 1px solid #ececeb;
     background: white;
     min-height: 25px;
-    opacity:0;
+    opacity: 0;
 }
 
 div[list-view] .list-view-item-container {
-    opacity:1;
+    opacity: 1;
 }
 
 .list-view-item-container td {
@@ -1393,11 +1411,13 @@ div[list-view] .list-view-item-container {
 }
 
 .list-view-item-container .column-field > tbody > tr > td {
-    padding-left:4px !important;
+    padding-left: 4px !important;
 }
+
 .list-view-item-container .column-field > tbody > tr > td:first-child {
-    padding-left:0px !important;
+    padding-left: 0px !important;
 }
+
 .list-view-add {
     color: #888;
     margin: 6px 0px;
@@ -1406,14 +1426,16 @@ div[list-view] .list-view-item-container {
 }
 
 .list-view-item-container.unsorted {
-    margin-left:-1px;
+    margin-left: -1px;
 }
 
 div[list-view].flat .angular-ui-tree-nodes > li {
-    border-radius:0px;margin:-6px 0px 5px 0px;
+    border-radius: 0px;
+    margin: -6px 0px 5px 0px;
 }
+
 div[list-view].flat .angular-ui-tree-nodes > li:first-child {
-    margin:0px 0px 5px 0px;
+    margin: 0px 0px 5px 0px;
 }
 
 /********************************* ACTION BAR **********************************/
@@ -1511,15 +1533,16 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
 }
 
 .link-btn {
-    display:inline-block;
+    display: inline-block;
     opacity: 0;
     margin: 3px 4px;
 }
 
-.btn-position-right  {
-    float:right;
-    margin:0px 0px 0px 5px;
+.btn-position-right {
+    float: right;
+    margin: 0px 0px 0px 5px;
 }
+
 /********************************* TEXT / HTML ********************************/
 
 .text-editor-builder {
@@ -1763,9 +1786,9 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
     width: 100%;
     padding: 0px !important;
     box-shadow: 0px 0px 0px 1px #ddd,
-        inset -1px 0px 0px 0px #ddd,
-        inset 1px 0px 0px 0px #ddd,
-        inset 0px -1px 0px 0px #ddd;
+    inset -1px 0px 0px 0px #ddd,
+    inset 1px 0px 0px 0px #ddd,
+    inset 0px -1px 0px 0px #ddd;
     cursor: pointer;
 }
 
@@ -2050,8 +2073,8 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
     font-size: 13px;
 }
 
-.data-grid-dropdown li.hover > a, 
-.data-grid-dropdown li.dropdown-other.hover{
+.data-grid-dropdown li.hover > a,
+.data-grid-dropdown li.dropdown-other.hover {
     background: #f5f5f5;
 }
 
@@ -2624,9 +2647,9 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
 
 [toggle-switch] .error,
 [radio-button-list] .error {
-    border:0px;
-    border-radius:3px;
-    margin-top:5px;
+    border: 0px;
+    border-radius: 3px;
+    margin-top: 5px;
 }
 
 .toggle-switch-field {
@@ -2897,7 +2920,6 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
     margin: 0px -1px 0px 0px;
 }
 
-
 .btn-default {
     background-color: rgb(247, 247, 247);
     background-image: linear-gradient(rgb(255, 255, 255), rgb(243, 243, 243));
@@ -3132,17 +3154,17 @@ div[dropdown] .dropdown-menu-submenu li a {
 }
 
 .menu-tree > .dropdown-menu {
-    padding:0px;
+    padding: 0px;
 }
 
-.menu-tree > .dropdown-menu > li:first-child > a{
-    padding-top:4px;
+.menu-tree > .dropdown-menu > li:first-child > a {
+    padding-top: 4px;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
 }
 
-.menu-tree > .dropdown-menu > li:last-child > a{
-    padding-bottom:4px;
+.menu-tree > .dropdown-menu > li:last-child > a {
+    padding-bottom: 4px;
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
 }
@@ -3326,7 +3348,7 @@ input[type=file] {
 }
 
 .input-sm, .form-horizontal .form-group-sm .form-control {
-    font-size:13px;
+    font-size: 13px;
 }
 
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {

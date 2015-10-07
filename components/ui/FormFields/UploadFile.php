@@ -65,7 +65,7 @@ class UploadFile extends FormField {
                     'ng-delay' => '500',
                 ],
                 'fieldOptions' => [
-                    'placeholder' => 'ex: \\\'{$model->id}.{$ext}\\\'',
+                    'placeholder' => 'ex: \'{$model->id}.{$ext}\'',
                     'auto-grow' => '',
                     'style' => 'min-height:50px;white-space:pre;word-break:break-all;',
                 ],
@@ -78,7 +78,7 @@ class UploadFile extends FormField {
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                 ],
-                'listExpr' => 'array(\\\'Horizontal\\\',\\\'Vertical\\\')',
+                'listExpr' => 'array(\'Horizontal\',\'Vertical\')',
                 'type' => 'DropDownList',
             ],
             [
@@ -103,7 +103,7 @@ class UploadFile extends FormField {
                     'ng-model' => 'active.allowDelete',
                     'ng-change' => 'save()',
                 ],
-                'listExpr' => '[\\\'Yes\\\',\\\'No\\\']',
+                'listExpr' => '[\'Yes\',\'No\']',
                 'type' => 'DropDownList',
             ],
             [
@@ -113,7 +113,7 @@ class UploadFile extends FormField {
                     'ng-model' => 'active.allowOverwrite',
                     'ng-change' => 'save()',
                 ],
-                'listExpr' => '[\\\'Yes\\\',\\\'No\\\']',
+                'listExpr' => '[\'Yes\',\'No\']',
                 'type' => 'DropDownList',
             ],
             [
@@ -136,7 +136,7 @@ class UploadFile extends FormField {
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                            'ng-disabled' => 'active.layout == \\\'Vertical\\\'',
+                            'ng-disabled' => 'active.layout == \'Vertical\'',
                         ],
                         'type' => 'TextField',
                     ],
