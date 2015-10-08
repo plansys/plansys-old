@@ -428,7 +428,7 @@ class ActiveRecord extends CActiveRecord {
         } else {
             $rel   = $this->getMetaData()->relations[$name];
             $class = $rel->className;
-            if (!class_exists($class)) {
+            if (!class_exists($class, false)) {
                 return [];
             }
 
