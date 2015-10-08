@@ -60,7 +60,7 @@ class DevGenModelIndex extends Form {
             array (
                 'type' => 'Text',
                 'value' => '
-<tabset class=\'tab-set\' ng-if=\'!!params.active\'>
+<tabset class=\'single-tab tab-set\' ng-if=\'!!params.active\'>
 <tab active=\"true\">
     <tab-heading>
         <i class=\"fa fa-cube\"></i>

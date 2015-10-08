@@ -1,10 +1,10 @@
 {
     "db": {
         "driver": "mysql",
-        "host": "192.168.100.100",
-        "username": "etis",
-        "password": "etis",
-        "dbname": "smu_hrd"
+        "host": "localhost",
+        "username": "root",
+        "password": "okedeh",
+        "dbname": "test"
     },
     "repo": {
         "path": "repo"

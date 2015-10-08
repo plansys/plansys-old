@@ -18,7 +18,7 @@ class DevGenCtrlIndex extends Form{
             array (
                 'type' => 'Text',
                 'value' => '
-<tabset class=\'tab-set\' ng-if=\'!!params.active\'>
+<tabset class=\'tab-set single-tab\' ng-if=\'!!params.active\'>
 <tab active=\"true\">
     <tab-heading>
         <i class=\"fa fa-slack\"></i>

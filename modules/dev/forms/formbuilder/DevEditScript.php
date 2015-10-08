@@ -14,8 +14,8 @@ class DevEditScript extends Form {
     font-weight: bold;\">
     <i class=\"fa fa-pencil-square-o\"></i> Edit Form
 </a>
-<tabset class=\'tab-set\'>
-    <tab active=\"true\">
+<tabset class=\'tab-set single-tab\'>
+    <tab>
         <tab-heading>
             {{params.shortname}} &bull; {{params.status}}
         </tab-heading>

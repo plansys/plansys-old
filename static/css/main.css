@@ -986,6 +986,11 @@ li:hover > .item-btn {
     background: rgba(255, 255, 255, 1);
 }
 
+.tab-set.single-tab .nav-tabs > li {
+    margin-top:-1px;
+    margin-bottom:0px;
+}
+
 /************************** FORM BUILDER *****************************/
 .toolbar-item {
     padding: 0px 0px;

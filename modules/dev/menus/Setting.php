@@ -25,9 +25,10 @@ return array (
             array (
                 'label' => 'App Setting',
                 'icon' => 'fa-home',
-                'url' => 'dev/setting/app',
+                'url' => '/dev/setting/app',
+                'formattedUrl' => '/smuhrd/index.php?r=dev/setting/app',
             ),
         ),
-        'state' => '',
+        'state' => 'collapsed',
     ),
 );
