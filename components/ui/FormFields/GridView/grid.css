@@ -5,6 +5,7 @@
 [grid-view] table {
     opacity: 0;
     width: 100%;
+    background:white;
 }
 
 [grid-view] table.loaded {
@@ -144,6 +145,7 @@
     width: 25px;
     text-align: center;
     padding: 0px;
+    min-width:25px;
 }
 
 [grid-view] .t-checkbox label {

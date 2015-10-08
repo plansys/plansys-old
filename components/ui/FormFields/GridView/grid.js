@@ -88,6 +88,10 @@ app.directive('gridView', function ($timeout, $http) {
                         if (JSON.stringify($scope.gridOptions.pageInfo) != JSON.stringify($scope.pageSetting.dataGrids[$scope.name].paging)) {
                             if (typeof $scope.pageSetting.dataGrids[$scope.name].paging != "undefined") {
                                 $scope.gridOptions.pageInfo = $scope.pageSetting.dataGrids[$scope.name].paging;
+
+                                if (typeof $scope.gridOptions.pageSize != "undefined") {
+                                    $scope.gridOptions.pageInfo.pageSize = $scope.gridOptions.pageSize * 1;
+                                }
                                 $scope.updatePaging($scope.gridOptions.pageInfo, false);
                                 changing = true;
                             }
@@ -97,6 +101,7 @@ app.directive('gridView', function ($timeout, $http) {
                             $scope.datasource.query();
                         }
                     }
+
                 }
 
                 // update sorting
@@ -473,6 +478,11 @@ app.directive('gridView', function ($timeout, $http) {
                         currentPage: 1,
                         typingPage: 1
                     };
+
+                    if (typeof $scope.gridOptions.pageSize != "undefined") {
+                        $scope.gridOptions.pageInfo.pageSize = $scope.gridOptions.pageSize * 1;
+                    }
+
                     $scope.$watch('gridOptions.pageInfo', function (paging, oldpaging) {
                         if (paging.typingPage != oldpaging.typingPage) return;
                         if (paging != oldpaging) {
