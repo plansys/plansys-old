@@ -1025,7 +1025,6 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function doAfterSave($withRelation = true) {
-
         if ($this->isNewRecord) {
             $this->id = $this->dbConnection->getLastInsertID(); ## this is hack
             ## UPDATE AUDIT TRAIL 'CREATE' ID

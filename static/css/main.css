@@ -1415,11 +1415,11 @@ div[list-view] .list-view-item-container {
     padding: 0px !important;
 }
 
-.list-view-item-container .column-field > tbody > tr > td {
+.list-view-item-container .column-field > div {
     padding-left: 4px !important;
 }
 
-.list-view-item-container .column-field > tbody > tr > td:first-child {
+.list-view-item-container .column-field > div:first-child {
     padding-left: 0px !important;
 }
 
@@ -1631,7 +1631,7 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
     border-left: 1px solid blue;
 }
 
-.form-builder-properties .column-field td {
+.form-builder-properties .column-field > div {
     padding: 0px;
 }
 
@@ -3427,9 +3427,15 @@ div[icon-picker] .popover-content {
 
 .column-field {
     width: 100%;
+    margin-bottom:-10px;
 }
 
-.column-field > tbody > tr > td {
+.column-field > div {
+    height:100%;
+    display:inline-block;
+    margin-left:-5px
+}
+.column-field > div > .column-field-inner {
     padding: 25px 50px 25px 25px;
 }
 

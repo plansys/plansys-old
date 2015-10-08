@@ -1,10 +1,10 @@
-<table <?= $this->expandAttributes($this->options) ?>>
-    <tr valign="top">
+<div <?= $this->expandAttributes($this->options) ?>>
         <?php for ($i = 1; $i <= $this->totalColumns; $i++): ?> 
-            <td style="width:<?= $this->{'w' . $i} ?>;
+            <div style="width:<?= $this->{'w' . $i} ?>;
                 <?= $this->showBorder == 'Yes' && $i != 1 ? "border-left:1px solid #ececeb;" : "" ?>">
-                <?= $this->renderColumn($i); ?>
-            </td>
+                <div class="column-field-inner">
+                    <?= $this->renderColumn($i); ?>
+                </div>
+            </div>
         <?php endfor; ?>
-    </tr>
-</table>
+</div>

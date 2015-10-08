@@ -36,7 +36,6 @@ app.directive('gridView', function ($timeout, $http) {
                 };
 
                 $scope.gridOptions.controlBar = $scope.gridOptions.controlBar !== 'false';
-
                 $scope.rowClass = function (row, colName, colType) {
                     var rc = {
                         aggregate: row.$type == 'a' && !!row[colName]
@@ -247,7 +246,7 @@ app.directive('gridView', function ($timeout, $http) {
                 }
                 $scope.recalcHeaderWidth = function () {
                     var count = $(".thead .th").length;
-                    $(".thead .th").each(function (i) {
+                    $el.find(".thead .th").each(function (i) {
                         var offset = (count - 1 == i ? 1 : 0);
                         $(this).width($header.find("th:eq(" + i + ")").outerWidth() - offset);
                     });
