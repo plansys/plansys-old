@@ -21,6 +21,7 @@ class DataSource extends FormField {
     public        $pagingSQL         = '';
     public        $pagingPHP         = '';
     public        $relationTo        = '';
+    public        $postIdentifier    = '';
     public        $queryParams       = [];
     public        $relationCriteria  = [
         'select' => '',
@@ -302,6 +303,20 @@ class DataSource extends FormField {
                 'listExpr' => 'array(\'Yes\',\'No\')',
                 'labelWidth' => '5',
                 'fieldWidth' => '4',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Identifier Column',
+                'name' => 'postIdentifier',
+                'options' => array (
+                    'ng-model' => 'active.postIdentifier',
+                    'ps-list' => 'modelFieldList',
+                    'ng-if' => 'active.postData == \'Yes\'',
+                ),
+                'labelWidth' => '5',
+                'fieldWidth' => '7',
+                'showOther' => 'Yes',
+                'otherLabel' => 'Custom Column',
                 'type' => 'DropDownList',
             ),
             array (

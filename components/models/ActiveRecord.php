@@ -426,15 +426,16 @@ class ActiveRecord extends CActiveRecord {
         if ($name == 'currentModel' || is_null($name)) {
             $this->__relations['currentModel'] = $this->getRelatedArray($criteria);
         } else {
-            $rel          = $this->getMetaData()->relations[$name];
-            $class        = $rel->className;
-            $relClassType = get_class($rel);
-            if (!class_exists($class))
+            $rel   = $this->getMetaData()->relations[$name];
+            $class = $rel->className;
+            if (!class_exists($class)) {
                 return [];
+            }
 
-            $tableModel = $class::model();
-            $table      = $tableModel->tableName();
-            $tablePKCol = $tableModel->metadata->tableSchema->primaryKey;
+            $relClassType = get_class($rel);
+            $tableModel   = $class::model();
+            $table        = $tableModel->tableName();
+            $tablePKCol   = $tableModel->metadata->tableSchema->primaryKey;
 
 
             switch ($relClassType) {
@@ -939,17 +940,6 @@ class ActiveRecord extends CActiveRecord {
         return $props;
     }
 
-    public function getAttributes($names = true) {
-        $attributes = parent::getAttributes($names);
-        $attributes = array_merge($this->attributeProperties, $attributes);
-
-        foreach ($this->__relations as $k => $r) {
-            $attributes[$k] = $this->__relations[$k];
-        }
-
-        return $attributes;
-    }
-
     public function getAttributesRelated($names = true) {
         $attributes = parent::getAttributes($names);
         $attributes = array_merge($attributes, $this->__relations);
@@ -1288,6 +1278,17 @@ class ActiveRecord extends CActiveRecord {
                     break;
             }
         }
+    }
+
+    public function getAttributes($names = true) {
+        $attributes = parent::getAttributes($names);
+        $attributes = array_merge($this->attributeProperties, $attributes);
+
+        foreach ($this->__relations as $k => $r) {
+            $attributes[$k] = $this->__relations[$k];
+        }
+
+        return $attributes;
     }
 
     public function getModelFieldList() {

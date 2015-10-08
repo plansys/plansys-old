@@ -240,7 +240,7 @@ app.filter("timeago", function () {
         return (time <= local) ? span + ' yang lalu' : 'pada ' + span;
     }
 });
-app.directive('contentEdit', ['$timeout', function ($timeout) {
+app.directive('contenteditable', ['$timeout', function ($timeout) {
     return {
         restrict: 'A',
         require: '?ngModel',
@@ -638,25 +638,27 @@ app.directive('ngDelay', ['$timeout',
         };
     }
 ]);
-app.directive("formSubmit", ['$timeout', function ($timeout) {
-    return {
-        scope: {
-            formSubmit: "@"
-        },
-        link: function (scope, element, attributes) {
-            element.bind("submit", function (loadEvent) {
+app.directive("formSubmit", ['$timeout',
+    function ($timeout) {
+        return {
+            scope: {
+                formSubmit: "@"
+            },
+            link: function (scope, element, attributes) {
+                element.bind("submit", function (loadEvent) {
 
-                scope.$parent.$eval(scope.formSubmit);
+                    scope.$parent.$eval(scope.formSubmit);
 
-                element.unbind("submit");
-                $timeout(function () {
-                    element.submit();
-                }, 0);
-                return false;
-            });
+                    element.unbind("submit");
+                    $timeout(function () {
+                        element.submit();
+                    }, 0);
+                    return false;
+                });
+            }
         }
     }
-}]);
+]);
 
 //PHP date implementation in JS
 function date(format, timestamp) {
