@@ -238,7 +238,6 @@ class GenMenuController extends Controller {
 
     public function actionUpdate($class) {
         $this->layout = "//layouts/blank";
-
         $path = $class;
 
         $class_path = explode(".", $class);

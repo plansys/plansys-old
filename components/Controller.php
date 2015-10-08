@@ -110,8 +110,8 @@ class Controller extends CController {
         $class = $this->prepareFormName($class);
         $fb    = FormBuilder::load($class);
 
-        $this->pageTitle = $fb->form['title'];
-        $this->layout    = isset($options['layout']) ? $options['layout'] : '//layouts/form';
+        $this->pageTitle   = isset($options['pageTitle']) ? $options['pageTitle'] : $fb->form['title'];
+        $this->layout      = isset($options['layout']) ? $options['layout'] : '//layouts/form';
 
         $renderOptions = [
             'wrapForm' => true,
@@ -124,7 +124,6 @@ class Controller extends CController {
             }
             $fb->model = $model;
         }
-
 
         $options['params'] = $params;
         $renderOptions     = array_merge($renderOptions, $options);
@@ -236,7 +235,6 @@ class Controller extends CController {
 
         if (Yii::app()->user->model) {
             $roles = Yii::app()->user->model->getRoles(true);
-
             if (count($roles) > 1) {
 
                 $roleItems = [];

@@ -10,7 +10,7 @@ $options = array (
         'name' => 'col1',
         'file' => 'application.modules.dev.menus.Setting',
         'icon' => 'fa-sliders',
-        'title' => 'Settings',
+        'title' => 'Main Setting',
         'menuOptions' => array (),
     ),
 );
@@ -18,17 +18,9 @@ $options = array (
 
 return array (
     array (
-        'label' => 'Tes Menu',
-        'icon' => '',
-        'url' => '#',
-        'items' => array (
-            array (
-                'label' => 'App Setting',
-                'icon' => 'fa-home',
-                'url' => '/dev/setting/app',
-                'formattedUrl' => '/smuhrd/index.php?r=dev/setting/app',
-            ),
-        ),
-        'state' => 'collapsed',
+        'label' => 'Application Setting',
+        'icon' => 'fa-home',
+        'url' => '/dev/setting/app',
+        'formattedUrl' => '/smuhrd/index.php?r=dev/setting/app',
     ),
 );

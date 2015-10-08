@@ -9,7 +9,6 @@ class Form extends CFormModel {
     private $parent; ## used by listview to store parent model
     private $__tempVar = [];
 
-
     public function __construct($modelParent = null) {
         parent::__construct('');
         $this->parent = $modelParent;

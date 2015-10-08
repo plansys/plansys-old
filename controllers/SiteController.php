@@ -5,7 +5,7 @@ class SiteController extends Controller {
     /**
      * This is the default 'index' action that is invoked
      * when an action is not explicitly requested by users.
-     */    
+     */
     public function actionIndex() {
         if (Yii::app()->user->isGuest) {
             $this->redirect(array("login"));
@@ -25,31 +25,37 @@ class SiteController extends Controller {
                 $shouldRender = false;
                 switch ($error['code']) {
                     case 403:
-                        $msg = 'Anda tidak memiliki hak akses terhadap URL ini. <br/>'
+                        if (Yii::app()->user->isGuest) {
+                            $this->redirect(['/site/login',
+                                'redir' => "//$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"
+                            ]);
+                        } else {
+                            $msg = 'Anda tidak memiliki hak akses terhadap URL ini. <br/>'
                                 . 'Mohon segera alihkan tujuan anda ke halaman lain. <br/>';
-                        if (isset($error['message']) && trim($error['message']) != '') {
-                            $msg = $error['message'];
-                        }
+                            if (isset($error['message']) && trim($error['message']) != '') {
+                                $msg = $error['message'];
+                            }
 
-                        $error = array(
-                            'code'    => 'Peringatan: Tidak ada akses',
-                            'message' => $msg
-                        );
-                        $shouldRender = true;
+                            $error        = array(
+                                'code' => 'Peringatan: Tidak ada akses',
+                                'message' => $msg
+                            );
+                            $shouldRender = true;
+                        }
                         break;
                     case 404:
-                        $error = array(
-                            'code'    => 'Peringatan: Data / halaman tidak ditemukan',
+                        $error        = array(
+                            'code' => 'Peringatan: Data / halaman tidak ditemukan',
                             'message' => 'Data yang ingin Anda lihat tidak dapat ditemukan. <br/>'
-                            . 'Mohon periksa kembali URL yang ingin Anda buka.<br/><br/>'
-                            . 'Atau mungkin juga data yang ingin Anda akses sudah dihapus.'
+                                . 'Mohon periksa kembali URL yang ingin Anda buka.<br/><br/>'
+                                . 'Atau mungkin juga data yang ingin Anda akses sudah dihapus.'
                         );
                         $shouldRender = true;
                         break;
                 }
 
                 if ($shouldRender) {
-                    $this->pageTitle = $error['code'];
+                    $this->pageTitle  = $error['code'];
                     $_GET['rendered'] = true;
                     $this->render('error', $error);
                 }
@@ -58,22 +64,22 @@ class SiteController extends Controller {
             switch ($id) {
                 case "integrity":
                     $error = array(
-                        'code'    => 'Peringatan: Integritas Data',
+                        'code' => 'Peringatan: Integritas Data',
                         'message' => 'Anda tidak dapat menghapus data ini karena<br/> '
-                        . 'data ini adalah referensi data lainnya. '
+                            . 'data ini adalah referensi data lainnya. '
                     );
                     break;
                 case "ldap_missing":
                     $error = array(
-                        'code'    => 'Peringatan: Login Tanpa Role',
+                        'code' => 'Peringatan: Login Tanpa Role',
                         'message' => 'Anda berhasil login ke sistem, '
-                        . 'akan tetapi<br/>Anda belum memiliki Role pada sistem ini.'
-                        . '<br/><br/>Mohon hubungi Administrator<br/> untuk mendapatkan Role pada sistem'
+                            . 'akan tetapi<br/>Anda belum memiliki Role pada sistem ini.'
+                            . '<br/><br/>Mohon hubungi Administrator<br/> untuk mendapatkan Role pada sistem'
                     );
                     break;
             }
             if ($id != "") {
-                $this->pageTitle = $error['code'];
+                $this->pageTitle  = $error['code'];
                 $_GET['rendered'] = true;
                 $this->render("error", $error);
             }
@@ -96,6 +102,10 @@ class SiteController extends Controller {
             Yii::app()->end();
         }
 
+        if (isset($_GET['redir'])) {
+            Yii::app()->user->returnUrl = $_GET['redir'];
+        }
+
         // collect user input data
         if (isset($_POST['LoginForm'])) {
             $model->attributes = $_POST['LoginForm'];
@@ -115,7 +125,9 @@ class SiteController extends Controller {
         }
 
         // display the login form
-        $this->renderForm('LoginForm', $model);
+        $this->renderForm('LoginForm', $model, [], [
+            'pageTitle' => Setting::get("app.name") . " Login"
+        ]);
     }
 
     /**

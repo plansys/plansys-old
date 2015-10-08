@@ -10,6 +10,10 @@ class DevFormLayoutProperties extends Form {
     public function getFields() {
         return array (
             array (
+                'type' => 'Text',
+                'value' => '<div style=\\"padding:0px 5px;\\">',
+            ),
+            array (
                 'label' => 'Layout Type',
                 'name' => 'layoutType',
                 'options' => array (
@@ -44,16 +48,6 @@ class DevFormLayoutProperties extends Form {
                 'value' => '<div class=\\"clearfix\\"></div><hr/>',
             ),
             array (
-                'label' => 'Menu Tree',
-                'options' => array (
-                    'ng-model' => 'layout.file',
-                    'ng-change' => 'changeMenuTreeFile()',
-                    'ng-show' => 'layout.type == \'menu\'',
-                ),
-                'listExpr' => 'MenuTree::listDropdown($model->module)',
-                'type' => 'DropDownList',
-            ),
-            array (
                 'label' => 'Title',
                 'options' => array (
                     'ng-model' => 'layout.title',
@@ -76,6 +70,32 @@ class DevFormLayoutProperties extends Form {
                     'ng-show' => 'layout.type == \'menu\'',
                 ),
                 'type' => 'IconPicker',
+            ),
+            array (
+                'label' => 'Menu Tree',
+                'options' => array (
+                    'ng-model' => 'layout.file',
+                    'ng-change' => 'changeMenuTreeFile()',
+                    'ng-show' => 'layout.type == \'menu\'',
+                ),
+                'listExpr' => 'MenuTree::listDropdown($model->module)',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Edit Menu',
+                'icon' => 'sign-in',
+                'position' => 'right',
+                'buttonSize' => 'btn-xs',
+                'options' => array (
+                    'style' => 'float:right;margin:0px 0px 5px 5px;',
+                    'ng-click' => 'popupWindow1.open()',
+                    'ng-if' => 'layout.type == \'menu\'',
+                ),
+                'type' => 'LinkButton',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<div class=\\"clearfix\\"></div>',
             ),
             array (
                 'type' => 'Text',
@@ -104,6 +124,20 @@ class DevFormLayoutProperties extends Form {
                     'ng-show' => 'layout.type == \'menu\'',
                 ),
                 'type' => 'KeyValueGrid',
+            ),
+            array (
+                'type' => 'PopupWindow',
+                'name' => 'popupWindow1',
+                'options' => array (
+                    'width' => '800',
+                    'height' => '500',
+                ),
+                'mode' => 'url',
+                'url' => '/dev/genMenu/update&class={{layout.file}}',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '</div>',
             ),
         );
     }

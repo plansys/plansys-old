@@ -19,7 +19,6 @@
                 }
             }
             $scope.formTreeOpen = function (sel, e, item) {
-                console.log(item);
                 $scope.menuSelect = sel.$modelValue;
                 $(".menu-sel").removeClass("active").removeClass(".menu-sel");
                 $(e.target).parents('[ui-tree-handle]').addClass("menu-sel active");

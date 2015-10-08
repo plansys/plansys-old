@@ -136,10 +136,11 @@ ob_start();
         $scope.isNewRecord = <?php echo $data['isNewRecord'] ? "true" : "false" ?>;
         <?php endif; ?>
 
-        document.title = $scope.form.title;
+        $scope.form.title = document.title;
         $scope.$watch('form.title', function () {
             document.title = $scope.form.title;
         });
+
         $scope.formSubmitting = false;
         $scope.startLoading = function () {
             $scope.formSubmitting = true;

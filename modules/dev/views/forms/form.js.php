@@ -519,6 +519,19 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
         }
     }
 
+    function toTitleCase(str) {
+        // Replace special characters with a space
+        str = str.replace(/[^a-zA-Z0-9 ]/g, " ");
+        // put a space before an uppercase letter
+        str = str.replace(/([a-z](?=[A-Z]))/g, '$1 ');
+        // Lower case first character and some other stuff that I don't understand
+        str = str.replace(/([^a-zA-Z0-9 ])|^[0-9]+/g, '').trim().toLowerCase();
+        // uppercase characters preceded by a space or number
+        str = str.replace(/([ 0-9]+)([a-zA-Z])/g, function (a, b, c) {
+            return b.trim() + ' ' + c.toUpperCase();
+        });
+        return str[0].toUpperCase() + str.substr(1);
+    }
     /************************ DATA FILTERS ****************************/
     $scope.generateFilters = function () {
         var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
@@ -540,7 +553,7 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
                         for (i in data[0]) {
                             var filter = angular.extend({}, templateAttr);
                             filter.name = i;
-                            filter.label = i;
+                            filter.label = toTitleCase(i);
                             if (i == 'id') {
                                 filter.filterType = 'number';
                             }
@@ -595,20 +608,6 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
         }
     }
     $scope.generateColumns = function () {
-        function toTitleCase(str) {
-            // Replace special characters with a space
-            str = str.replace(/[^a-zA-Z0-9 ]/g, " ");
-            // put a space before an uppercase letter
-            str = str.replace(/([a-z](?=[A-Z]))/g, '$1 ');
-            // Lower case first character and some other stuff that I don't understand
-            str = str.replace(/([^a-zA-Z0-9 ])|^[0-9]+/g, '').trim().toLowerCase();
-            // uppercase characters preceded by a space or number
-            str = str.replace(/([ 0-9]+)([a-zA-Z])/g, function (a, b, c) {
-                return b.trim() + ' ' + c.toUpperCase();
-            });
-            return str[0].toUpperCase() + str.substr(1);
-        }
-
         var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
         if (confirm("Your current columns will be lost. Are you sure?")) {
             $scope.active.columns.splice(0, $scope.active.columns.length);

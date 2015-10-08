@@ -8,7 +8,6 @@
     background-repeat: repeat-x;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ddd5f5f5', endColorstr='#ffeeeeee', GradientType=0);
     white-space: nowrap;
-    text-transform: uppercase;
     color: #5E5E5E;
     font-size: 11px;
     padding: 4px 4px 4px 8px;
@@ -17,5 +16,10 @@
     min-height: 20px;
     font-weight: bold;
     cursor: default;">
-   <i class="fa fa-table"></i> Grid View: {{field.name}}
+    <div class="label label-default pull-right" style="font-size:10px;margin:2px;">GRID VIEW</div>
+    <i class="fa fa-list-alt fa-nm"></i>
+
+    <div class="label label-default" style="font-size:10px;">
+        {{field.name}}
+    </div>
 </div>

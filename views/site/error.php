@@ -12,7 +12,7 @@
             </div>
             <?php echo $message; ?>
             <br/><br/>
-            <a  onclick="window.history.back();" class="btn-default btn">
+            <a onclick="window.history.back();" class="btn-default btn">
                 <i class="fa fa-arrow-left"></i> <b>Kembali</b>
             </a>
         </div>
