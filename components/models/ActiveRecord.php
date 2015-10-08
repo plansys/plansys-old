@@ -1030,7 +1030,11 @@ class ActiveRecord extends CActiveRecord {
         $this->afterSave();
     }
 
-    public function afterSave($withRelation = true) {
+    public function afterSave() {
+        return $this->doAfterSave();
+    }
+
+    public function doAfterSave($withRelation = true) {
 
         if ($this->isNewRecord) {
             $this->id = $this->dbConnection->getLastInsertID(); ## this is hack

@@ -35,7 +35,7 @@ class User extends ActiveRecord {
     }
 
     public function afterSave() {
-        parent::afterSave(false);
+        parent::doAfterSave(false);
 
         ## get assign user id to user roles
         $ur = $this->userRoles;
