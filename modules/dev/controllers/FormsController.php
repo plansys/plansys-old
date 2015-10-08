@@ -355,6 +355,7 @@ EOF;
             'class' => $class,
             'classPath' => $classPath,
             'formType' => $formType,
+            'moduleName' => Helper::explodeFirst(".", $classPath),
             'toolbarData' => @$toolbar['data'],
             'fieldData' => $fieldData,
         ), true);

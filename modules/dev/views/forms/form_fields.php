@@ -11,7 +11,6 @@
             <div class='field-select btn btn-default btn-sm'>
                 <span ng-switch on="field.type">
                     <i ng-switch-when="ColumnField" class="fa fa-columns"></i>
-                    <span ng-switch-when="LinkButton"></span> 
                     <i ng-switch-default class="fa fa-hand-o-up"></i>
                 </span>
                 <span class="field-info-text" ng-switch on="field.type">

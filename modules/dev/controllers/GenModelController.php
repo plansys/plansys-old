@@ -8,15 +8,27 @@ class GenModelController extends Controller {
         $content = '';
         $path    = [];
         if (isset($_GET['active'])) {
-            $path     = explode(".", $_GET['active']);
+            $path = explode(".", $_GET['active']);
+            if (count($path) < 2) {
+                $ref      = new ReflectionClass($_GET['active']);
+                $filename = $ref->getFileName();
+                if (strpos($filename, Yii::getPathOfAlias('app')) === 0) {
+                    $this->redirect(['/dev/genModel/index', 'active' => 'app.' . $_GET['active']]);
+                } else if (strpos($filename, Yii::getPathOfAlias('application')) === 0) {
+                    $this->redirect(['/dev/genModel/index', 'active' => 'plansys.' . $_GET['active']]);
+                }
+                throw new CHttpException(404);
+                return false;
+            }
             $filePath = Yii::getPathOfAlias(($path[0] == 'plansys' ? 'application' : 'app') . ".models." . $path[1]) . ".php";
-            $content  = file_get_contents($filePath);
+
+            $content = file_get_contents($filePath);
         }
 
         Asset::registerJS('application.static.js.lib.ace');
         $this->renderForm('DevGenModelIndex', [
             'content' => $content,
-            'name' => count($path)  > 1? $path[1] : ''
+            'name' => count($path) > 1 ? $path[1] : ''
         ]);
     }
 

@@ -212,6 +212,18 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         }
                     },
                     {
+                        icon: "fa fa-fw fa-pencil",
+                        label: "Edit Code",
+                        click: function (item) {
+                            window.open(
+                                Yii.app.createUrl('/dev/forms/code', {
+                                    'c': item.alias
+                                }),
+                                'iframe'
+                            );
+                        }
+                    },
+                    {
                         hr: true
                     },
                     //{

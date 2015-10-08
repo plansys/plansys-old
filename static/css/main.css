@@ -684,7 +684,7 @@ div[ui-content] {
 .LinkButton .field-info {
     right: auto !important;
     left: 0px !important;
-    top: -20px !important;
+    margin-top:-20px !important;
 }
 
 .LinkButton .field-info .btn-group {
