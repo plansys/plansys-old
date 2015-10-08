@@ -57,6 +57,32 @@ class FormsController extends Controller {
         }
     }
 
+    public function actionCode($c, $ext = '.php') {
+        $content = file_get_contents(Yii::getPathOfAlias($c) . $ext);
+
+        Asset::registerJS('application.static.js.lib.ace');
+        $this->renderForm('DevEditScript', null, [
+            'content' => $content,
+            'mode' => 'php',
+            'status' => 'Ctrl+S to Save',
+            'name' => $c,
+            'ext' => $ext,
+            'shortname' => Helper::explodeLast('.', $c)
+        ], [
+            'layout' => '//layouts/blank'
+        ]);
+    }
+
+    public function actionCodeSave() {
+        $postdata = file_get_contents("php://input");
+        $post     = CJSON::decode($postdata);
+        $filePath = Yii::getPathOfAlias($post['name']) . $post['ext'];
+
+        if (is_file($filePath)) {
+            file_put_contents($filePath, $post['content']);
+        }
+    }
+
     public function actionAddForm($c, $e, $p, $m) {
         if (@class_exists($e)) {
             $appFormsPath = Yii::getPathOfAlias('app.forms');

@@ -1,7 +1,10 @@
-<div ng-controller="PageController" ng-cloak >
+<div ng-controller="PageController" ng-cloak>
     <div id="must-reload">
         <h3>Source file has changed</h3>
-        <div class="btn btn-success" onclick="location.reload()"><i class="fa fa-refresh fa-spin"></i> Refreshing Form...</div>
+
+        <div class="btn btn-success" onclick="location.reload()"><i class="fa fa-refresh fa-spin"></i> Refreshing
+            Form...
+        </div>
     </div>
     <div ui-layout class="sub" options="{ flow : 'column', dividerSize:1}">
         <div ui-layout-container size='69%'>
@@ -23,6 +26,13 @@
         </div>
 
         <div ui-layout-container min-size="250px">
+            <a ng-href="<?= Yii::app()->createUrl('/dev/forms/code', ['c' => $_GET['class']]); ?>"
+               class="btn btn-default btn-xs pull-right" style="
+                margin: 4px 2px;
+                font-size: 11px;
+                font-weight: bold;">
+                <i class="fa fa-pencil-square-o"></i> Edit Code
+            </a>
             <!-- form-builder-toolbar -->
             <tabset class="toolbar">
                 <tab ng-click="tabs.toolbar = true" active="tabs.toolbar"
@@ -66,25 +76,25 @@
 
                         <form class="form-horizontal" role="form"
                               ng-if="active == null && layout == null">
-                                  <?php
-                                  if ($formType == "ActiveRecord" || $formType == "Form"):
-                                      include('form_properties.php');
-                                  else:
-                                      echo '<br /><br /><br /><center>&mdash; {{propMsg}} &mdash;</center>';
-                                  endif;
-                                  ?>
+                            <?php
+                            if ($formType == "ActiveRecord" || $formType == "Form"):
+                                include('form_properties.php');
+                            else:
+                                echo '<br /><br /><br /><center>&mdash; {{propMsg}} &mdash;</center>';
+                            endif;
+                            ?>
                         </form>
 
                         <form class="form-horizontal" role="form"
                               ng-if=" active == null && layout != null">
-                                  <?php
-                                  if ($formType == "ActiveRecord" || $formType == "Form"):
-                                      include('form_layout.php');
-                                  else:
-                                      echo '<br /><br /><br /><center>&mdash; Welcome '
-                                      . 'To Form Builder &mdash;</center>';
-                                  endif;
-                                  ?>
+                            <?php
+                            if ($formType == "ActiveRecord" || $formType == "Form"):
+                                include('form_layout.php');
+                            else:
+                                echo '<br /><br /><br /><center>&mdash; Welcome '
+                                    . 'To Form Builder &mdash;</center>';
+                            endif;
+                            ?>
                         </form>
 
                         <div ui-content style="margin-top:3px;"

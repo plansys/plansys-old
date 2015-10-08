@@ -1217,10 +1217,11 @@ class ActiveRecord extends CActiveRecord {
                 }
             }
 
+
             if (count($attrs) > 0) {
                 if ($this->isNewRecord) {
                     $this->isNewRecord = false;
-                    $this->update($attrs);
+                    $this->updateByPk($this->id, $this->getAttributes($attrs));
                     $this->isNewRecord = true;
                 } else {
                     $this->update($attrs);

@@ -1,0 +1,36 @@
+{
+    "db": {
+        "driver": "mysql",
+        "host": "192.168.100.100",
+        "username": "etis",
+        "password": "etis",
+        "dbname": "smu_hrd"
+    },
+    "repo": {
+        "path": "repo"
+    },
+    "app": {
+        "dir": "app",
+        "mode": "plansys",
+        "host": "http:\/\/localhost",
+        "name": "",
+        "passEncrypt": "md5"
+    },
+    "notif": {
+        "enable": true,
+        "email": true
+    },
+    "email": {
+        "transport": {
+            "service": "none"
+        },
+        "from": null
+    },
+    "ldap": {
+        "enable": false
+    },
+    "auditTrail": {
+        "enable": false,
+        "track": null
+    }
+}
