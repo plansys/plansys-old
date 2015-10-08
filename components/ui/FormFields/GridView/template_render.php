@@ -19,7 +19,7 @@
         Loading Data...
     </div>
 
-    <div class="data-grid-paging" ng-if="loaded">
+    <div class="data-grid-paging" ng-if="loaded && gridOptions.controlBar">
         <div class="data-grid-pagination" ng-init="checkMode()">
             <div class="pull-left" style="margin:5px;" ng-if="mode == 'full'">Page:</div>
             <div class="pull-left data-grid-page-selector">

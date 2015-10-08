@@ -1071,7 +1071,6 @@ class ActiveRecord extends CActiveRecord {
                         break;
                     case 'CManyManyRelation':
                     case 'CHasManyRelation':
-
                         ## without through
                         if (is_string($rel->foreignKey)) {
                             $class = $rel->className;

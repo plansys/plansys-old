@@ -35,6 +35,8 @@ app.directive('gridView', function ($timeout, $http) {
                     return Yii.app.createUrl(a, b, c);
                 };
 
+                $scope.gridOptions.controlBar = $scope.gridOptions.controlBar !== 'false';
+
                 $scope.rowClass = function (row, colName, colType) {
                     var rc = {
                         aggregate: row.$type == 'a' && !!row[colName]
@@ -189,6 +191,7 @@ app.directive('gridView', function ($timeout, $http) {
                         $scope.savePageSetting();
                     }
                 }
+
                 $scope.pagingKeyPress = function (e) {
                     if (e.which == 13) {
                         e.preventDefault();
@@ -511,6 +514,7 @@ app.directive('gridView', function ($timeout, $http) {
                             $scope.loading = false;
                             if (!$scope.loaded) {
                                 $scope.loaded = true;
+                                $scope.datasource.resetOriginal();
                             }
                             $scope.onGridRender('query');
 
