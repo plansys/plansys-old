@@ -30,8 +30,12 @@ class WebUser extends CWebUser {
     }
 
     public function getModel() {
-        if (is_null($this->_model)) {
-            $this->_model = User::model()->findByPk($this->id);
+        try {
+            if (is_null($this->_model)) {
+                $this->_model = User::model()->findByPk($this->id);
+            }
+        } catch (CdbException $e) {
+            $this->_model = null;
         }
 
         return $this->_model;

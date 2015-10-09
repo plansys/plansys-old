@@ -23,4 +23,9 @@ return array (
         'url' => '/dev/setting/app',
         'formattedUrl' => '/smuhrd/index.php?r=dev/setting/app',
     ),
+    array (
+        'label' => 'Database Setting',
+        'icon' => 'fa-database',
+        'url' => '/dev/setting/database',
+    ),
 );

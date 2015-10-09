@@ -306,14 +306,15 @@ class Setting {
         } else {
             $config['components']['curl'] = array(
                 'class' => 'ext.curl.Curl',
-                'options' => array(CURLOPT_HEADER => true),
+//                'options' => array(CURLOPT_HEADER => true),
             );
 
             if ($type == "main" && Setting::getThemePath() != "") {
                 $config['components']['themeManager'] = array(
                     'basePath' => Setting::getThemePath()
                 );
-                $config['theme']                      = 'default';
+
+                $config['theme'] = 'default';
             }
         }
 

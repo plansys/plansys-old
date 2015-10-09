@@ -5,7 +5,7 @@
             <span class="title"><?= $this->title ?></span>
         </div>
         <?php
-        if ($this->showOptionsBar != 'No' && (!!Yii::app()->controller->module && Yii::app()->controller->module->id != "sys") && @$this->form['layout']['name'] == 'full-width'): ?>
+        if ($this->showOptionsBar != 'No'): ?>
             <div class="print-bar">
                 <div class="ac-portlet-btngroup btn-group" dropdown>
                     <button type="button" class="btn ac-portlet-button btn-sm btn-default dropdown-toggle">

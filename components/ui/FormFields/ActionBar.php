@@ -54,7 +54,7 @@ class ActionBar extends FormField {
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
-                'listExpr' => '[\'Yes\',\'No\']',
+                'listExpr' => '[\'No\', \'Yes\']',
                 'labelWidth' => '5',
                 'fieldWidth' => '3',
                 'type' => 'DropDownList',
@@ -134,7 +134,7 @@ class ActionBar extends FormField {
     /** @var string $bottomRight */
     public $bottomRight = "";
     public $showSectionTab = "Yes";
-    public $showOptionsBar = "Yes";
+    public $showOptionsBar = "No";
 
     public function getPortlets() {
         $portlets = $this->builder->findAllField(['type' => 'Portlet']);

@@ -12,7 +12,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
                 $scope.class = $el.find("data[name=class_alias]").text().trim();
                 $scope.postData = $el.find("data[name=post_data]").text().trim();
-                $scope.postID = $el.find("data[name=post_identifier]:eq(0)").text().trim();
+                $scope.primaryKey = $el.find("data[name=primary_key]:eq(0)").text().trim();
                 $scope.relationTo = $el.find("data[name=relation_to]").text().trim();
                 $scope.insertData = [];
                 $scope.updateData = [];
@@ -22,8 +22,8 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 $scope.deleteData = $scope.deleteData || [];
                 $scope.untrackColumns = [];
 
-                if (!$scope.postID) {
-                    $scope.postID = 'id';
+                if (!$scope.primaryKey) {
+                    $scope.primaryKey = 'id';
                 }
 
                 $scope.resetData = function () {
@@ -137,7 +137,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
 
                 $scope.query = function (f) {
                     var model = $scope.model || {};
-                    var model_id = model[$scope.postID] || null;
+                    var model_id = model[$scope.primaryKey] || null;
 
                     for (i in $scope.beforeQueryInternal) {
                         $scope.beforeQueryInternal[i]($scope);
@@ -230,13 +230,9 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     $scope.data = JSON.parse($el.find("data[name=data]").text());
                 }
 
-                $scope.isDataReloaded = false;
                 $scope.trackChanges = true;
-
                 $scope.resetOriginal = function() {
                     $scope.original = angular.copy($scope.data);
-                    $scope.isDataReloaded = false;
-                    console.log("ASD");
                 }
 
                 if ($scope.postData == 'Yes') {
@@ -247,111 +243,8 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                             $scope.data = [];
                         }
                         if (newval !== oldval && $scope.trackChanges) {
-                            console.log($scope.isDataReloaded);
-
-                            if ($scope.isDataReloaded) {
-                                $scope.trackChanges = false;
-
-                                for (i in $scope.insertData) {
-                                    $scope.data.push($scope.insertData[i]);
-                                }
-
-                                for (i in $scope.updateData) {
-                                    for (j in $scope.data) {
-                                        if ($scope.data[j][$scope.postID] == $scope.updateData[i][$scope.postID]) {
-                                            $scope.data[j] = $scope.updateData[i];
-                                        }
-                                    }
-                                }
-
-                                for (var i = $scope.data.length - 1; i >= 0; i--) {
-                                    if (typeof $scope.data[i][$scope.postID] == "undefined")
-                                        continue;
-
-                                    if ($scope.deleteData != null &&
-                                        $scope.deleteData.indexOf($scope.data[i][$scope.postID]) >= 0) {
-                                        $scope.data.splice(i, 1);
-                                    }
-                                }
-
-                                $timeout(function () {
-                                    $scope.trackChanges = true;
-                                    $scope.isDataReloaded = false;
-                                }, 0);
-                            } else {
-                                $scope.insertData = [];
-                                $scope.updateData = [];
-                                $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text());
-
-                                // find newly inserted data or updated data
-                                for (i in newval) {
-                                    var newv = newval[i];
-                                    var found = false;
-
-                                    for (var k in $scope.original) {
-                                        var oldv = $scope.original[k];
-                                        if (newv[$scope.postID] != null && oldv[$scope.postID] == newv[$scope.postID]) {
-                                            found = true;
-
-                                            var isEqual = true;
-                                            for (var m in oldv) {
-                                                if ($scope.untrackColumns.indexOf(m) >= 0)
-                                                    continue;
-
-                                                if (typeof newv[m] == "undefined") {
-                                                    isEqual = false;
-                                                } else if (!!newv[m] && oldv[m] !== newv[m]) {
-                                                    isEqual = false;
-                                                } else if (!newv[m] && !!oldv[m]) {
-                                                    isEqual = false;
-                                                }
-                                            }
-
-                                            if (!isEqual) {
-                                                $scope.updateData.push(newv);
-                                            }
-                                        }
-                                    }
-
-                                    if (!found) {
-                                        var isEmpty = true;
-                                        for (x in newv) {
-                                            if ($scope.untrackColumns.indexOf(x) >= 0)
-                                                continue;
-
-                                            if (!!newv[x])
-                                                isEmpty = false;
-                                        }
-
-                                        if (!isEmpty) {
-                                            $scope.insertData.push(newv);
-                                        }
-                                    }
-                                }
-
-                                // find deleted data
-                                for (i in $scope.original) {
-                                    var del = $scope.original[i];
-                                    var found = false;
-                                    for (k in newval) {
-                                        if (del[$scope.postID] == newval[k][$scope.postID]) {
-                                            found = true;
-                                        }
-                                    }
-
-                                    if (!found) {
-                                        if ($scope.deleteData == null || !!!$scope.deleteData || typeof $scope.deleteData != 'object') {
-                                            $scope.deleteData = [];
-                                        }
-
-                                        if (angular.isNumber(del[$scope.postID] * 1) && del[$scope.postID] * 1 > 0) {
-                                            $scope.deleteData.push(del[$scope.postID]);
-                                        }
-                                    }
-                                }
-                            }
+                            
                         }
-                        console.log($scope.postID, "INSERT", $scope.insertData, "UPDATE", $scope.updateData, "DELETE", $scope.deleteData);
                     }, true);
                 }
 

@@ -1,5 +1,4 @@
 <div ps-data-source name="<?= $this->renderName ?>">
-
     <data name="data" class="hide"><?= json_encode($this->data['data']); ?></data>
     <data name="total_item" class="hide"><?= $this->data['count']; ?></data>
     <data name="params" class="hide"><?= json_encode($this->params); ?></data>
@@ -8,7 +7,7 @@
     <data name="relation_def"
           class="hide"><?= json_encode(method_exists($this->model, 'relations') ? $this->model->relations() : []); ?></data>
     <data name="post_data" class="hide"><?= $this->postData; ?></data>
-    <data name="post_identifier" class="hide"><?= $this->postIdentifier; ?></data>
+    <data name="primary_key" class="hide"><?= $this->getPrimaryKey(); ?></data>
     <data name="class_alias" class="hide"><?= Helper::classAlias($model) ?></data>
     <data name="params_get" class="hide"><?= json_encode($_GET); ?></data>
     <data name="params_default" class="hide"><?= @json_encode($this->data['params']); ?></data>

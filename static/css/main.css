@@ -1631,10 +1631,6 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
     border-left: 1px solid blue;
 }
 
-.form-builder-properties .column-field > div {
-    padding: 0px;
-}
-
 .column-placeholder-handle {
     position: absolute !important;
     top: -1px !important;
@@ -3317,7 +3313,7 @@ textarea.form-control {
     border-radius: 0px 0px 3px 3px;
 }
 
-.error-container {
+.error-container, .flash-container {
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
 }
@@ -3427,7 +3423,6 @@ div[icon-picker] .popover-content {
 
 .column-field {
     width: 100%;
-    margin-bottom:-10px;
     vertical-align: top;
 }
 
@@ -3439,6 +3434,10 @@ div[icon-picker] .popover-content {
 }
 .column-field > div > .column-field-inner {
     padding: 25px 50px 25px 25px;
+}
+
+#toolbar-properties .column-field > div > .column-field-inner {
+    padding: 5px 5px 10px 5px;
 }
 
 .input-group-addon {

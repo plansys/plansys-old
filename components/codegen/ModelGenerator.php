@@ -63,7 +63,7 @@ class ModelGenerator extends CComponent {
         return $tables;
     }
 
-    public static function listModels() {
+    public static function listModels($includePlansys = false) {
         $dir    = Yii::getPathOfAlias("application.models");
         $appDir = Yii::getPathOfAlias("app.models");
 
@@ -80,7 +80,7 @@ class ModelGenerator extends CComponent {
         }
         $models['App Model'] = $items;
 
-        if (Setting::get('app.mode') == "plansys") {
+        if (Setting::get('app.mode') == "plansys" || !!$includePlansys) {
             $items = [];
             foreach ($devItems as $k => $m) {
                 $m = str_replace($dir . DIRECTORY_SEPARATOR, "", $m);

@@ -1029,7 +1029,7 @@ function dump() {
         foreach ($args as $k => $n) {
             $dump[$key[trim($k)]] = $n;
         }
-        echo '<pre class="dump_r" style="margin-bottom:-17px;position:absolute;border-right:0px;border-bottom:0px;"><div class="file-line" style="border:0px;">' . $src->file . " (line {$src->line})</div></pre>";
+        echo '<pre class="dump_r" style="margin-bottom:-17px;position:absolute;width:100%;border-right:0px;border-bottom:0px;"><div class="file-line" style="border:0px;">' . $src->file . " (line {$src->line})</div></pre>";
         dump_r($dump);
     }
 }

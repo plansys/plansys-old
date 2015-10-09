@@ -11,6 +11,7 @@
     <data name="datasource" class="hide"><?= $this->datasource; ?></data>
     <data name="render_id" class="hide"><?= $this->renderID; ?></data>
     <data name="columns" class="hide"><?= json_encode($columnsWithoutHTML); ?></data>
+    <data name="dpz" class="hide"><?= ActiveRecord::DEFAULT_PAGE_SIZE; ?></data>
     <data name="grid_options" class="hide"><?= json_encode($this->gridOptions); ?></data>
     <!-- /info -->
 
@@ -64,7 +65,7 @@
             <div class="pull-left" style="margin:5px">
                 of {{ Math.ceil(datasource.totalItems / gridOptions.pageInfo.pageSize) | number}}
             </div>
-            <div ng-if="mode=='full'"
+            <div ng-if="mode=='full' && datasource.totalItems  > 0"
                  style="float:left; border-left:1px solid #ccc;margin:2px 4px 2px 5px;padding:3px 0px 3px 8px;">
                 {{ (gridOptions.pageInfo.pageSize * (gridOptions.pageInfo.currentPage -1)) + 1| number }}
                 &nbsp;<i class="fa fa-caret-right"></i>

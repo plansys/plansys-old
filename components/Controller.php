@@ -110,8 +110,8 @@ class Controller extends CController {
         $class = $this->prepareFormName($class);
         $fb    = FormBuilder::load($class);
 
-        $this->pageTitle   = isset($options['pageTitle']) ? $options['pageTitle'] : $fb->form['title'];
-        $this->layout      = isset($options['layout']) ? $options['layout'] : '//layouts/form';
+        $this->pageTitle = isset($options['pageTitle']) ? $options['pageTitle'] : $fb->form['title'];
+        $this->layout    = isset($options['layout']) ? $options['layout'] : '//layouts/form';
 
         $renderOptions = [
             'wrapForm' => true,
@@ -196,12 +196,15 @@ class Controller extends CController {
         return $class;
     }
 
+    public function flash($info = '') {
+        Yii::app()->user->setFlash('info', $info);
+    }
+
     public function getMainMenu() {
         if (Setting::$mode == "init" || Setting::$mode == "install") {
             if ($this->module->id != "install") {
                 $this->redirect(["/install/default/index"]);
             }
-
             return [
                 [
                     'label' => 'Plansys Installer'

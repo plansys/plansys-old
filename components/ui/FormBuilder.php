@@ -1315,7 +1315,10 @@ EOF;
             $formAttr = array_merge($formOptions, $formDefaultAttr);
             $formAttr = Helper::expandAttributes($formAttr);
             $html .= "<div style='opacity:0' {$ngctrl}><form {$formAttr}>";
-            $html .= "<div ng-if='flash' class='error-container alert alert-success text-center' style='margin:0px'>{{flash}}</div>";
+            $html .= "<div ng-show='!!flash' ng-if='!!flash' class='flash-container alert alert-success text-center' style='margin:0px'>
+    <div href='#' class='close' ng-click='flash = false' aria-label='close' title='close'>&times;</div>
+    {{flash}}
+</div>";
             $html .= "<div ng-if='objectSize(errors) > 0' class='error-container alert alert-danger' style='margin:0px'><ul><li ng-repeat='(k,e) in errors' style='white-space:pre-wrap;' ng-bind-html='e[0]'></li></ul></div>";
         }
 

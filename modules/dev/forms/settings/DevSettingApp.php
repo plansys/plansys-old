@@ -51,7 +51,7 @@ class DevSettingApp extends Form {
                     array (
                         'label' => 'Save Setting',
                         'buttonType' => 'success',
-                        'icon' => 'floppy-o',
+                        'icon' => 'check-square',
                         'options' => array (
                             'ng-click' => 'form.submit(this)',
                         ),
@@ -60,7 +60,6 @@ class DevSettingApp extends Form {
                 ),
                 'title' => '<i class=\\"fa fa-home\\"></i> {{form.title}}',
                 'showSectionTab' => 'No',
-                'showOptionsBar' => 'No',
                 'type' => 'ActionBar',
             ),
             array (
@@ -109,7 +108,7 @@ class DevSettingApp extends Form {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<hr/>',
+                'value' => '<hr style=\\"margin:0px -15px;\\">',
             ),
         );
     }

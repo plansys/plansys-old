@@ -2,9 +2,13 @@ app.directive('linkBtn', function ($timeout, $parse, $compile, $http) {
     return {
         scope: true,
         compile: function (element, attrs, transclude) {
+            var ngClick = null;
+            if (attrs.ngClick) {
+                ngClick = attrs.ngClick;
+                delete attrs.ngClick;
+            }
             return function ($scope, $el, attrs, ctrl) {
                 var urlVars = [];
-
                 var generateUrl = function (url, type) {
                     var output = '';
                     if (typeof url == "string") {
@@ -118,10 +122,12 @@ app.directive('linkBtn', function ($timeout, $parse, $compile, $http) {
                     return false;
                 }
 
+
                 $el.click(function (e) {
                     if (attrs.confirm) {
                         e.stopPropagation();
                         if (!confirm(attrs.confirm)) {
+                            e.preventDefault();
                             return false;
                         }
 
@@ -145,9 +151,12 @@ app.directive('linkBtn', function ($timeout, $parse, $compile, $http) {
                             return false;
                         }
                     }
+
+                    $scope.$eval(ngClick);
                 });
 
-                if (attrs.submit) {
+
+                if (!!attrs.submit) {
                     var href = attrs.submit;
                     if (href.trim().substr(0, 4) == "url:") {
                         var url = href.trim().substr(4);
@@ -157,8 +166,7 @@ app.directive('linkBtn', function ($timeout, $parse, $compile, $http) {
                     $scope.url = href;
 
                     if (!attrs.ngClick) {
-                        $el.attr('ng-click', 'form.submit(this)');
-                        $el.replaceWith($compile($el[0])($scope));
+                        ngClick = 'form.submit(this)';
                     }
                 }
             }

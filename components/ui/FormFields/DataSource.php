@@ -21,7 +21,6 @@ class DataSource extends FormField {
     public        $pagingSQL         = '';
     public        $pagingPHP         = '';
     public        $relationTo        = '';
-    public        $postIdentifier    = '';
     public        $queryParams       = [];
     public        $relationCriteria  = [
         'select' => '',
@@ -280,23 +279,23 @@ class DataSource extends FormField {
      * @return array Fungsi ini akan me-return array property DataSource.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Data Source Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Post Data ?',
                 'name' => 'postData',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.postData',
                     'ng-change' => 'save()',
                 ),
@@ -305,40 +304,26 @@ class DataSource extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array (
-                'label' => 'Identifier Column',
-                'name' => 'postIdentifier',
-                'options' => array (
-                    'ng-model' => 'active.postIdentifier',
-                    'ps-list' => 'modelFieldList',
-                    'ng-if' => 'active.postData == \'Yes\'',
-                ),
-                'labelWidth' => '5',
-                'fieldWidth' => '7',
-                'showOther' => 'Yes',
-                'otherLabel' => 'Custom Column',
-                'type' => 'DropDownList',
-            ),
-            array (
+            array(
                 'label' => 'Relation To',
                 'name' => 'relationTo',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.relationTo',
                     'ng-change' => 'save()',
                     'ps-list' => 'relFieldList',
                     'ng-if' => 'active.postData == \'Yes\'',
                 ),
-                'list' => array (),
+                'list' => array(),
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
                 'searchable' => 'Yes',
                 'otherLabel' => '-- NONE --',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Debug SQL ?',
                 'name' => 'debugSql',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.debugSql',
                     'ng-change' => 'save()',
                 ),
@@ -347,15 +332,15 @@ class DataSource extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Source Type',
                 'name' => 'fieldType',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.fieldType',
                     'ng-change' => 'save()',
                     'ng-if' => 'active.relationTo == \'\' || active.postData == \'No\'',
                 ),
-                'list' => array (
+                'list' => array(
                     'sql' => 'SQL',
                     'phpsql' => 'PHP (Return SQL)',
                     'php' => 'PHP (Return Array)',
@@ -364,10 +349,10 @@ class DataSource extends FormField {
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Paging',
                 'name' => 'enablePaging',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.enablePaging',
                     'ng-change' => 'save()',
                     'ng-if' => 'active.relationTo == \'\' || active.postData == \'No\'',
@@ -377,12 +362,12 @@ class DataSource extends FormField {
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'name' => 'relationCriteria',
                 'label' => 'Relation Query',
                 'paramsField' => 'params',
                 'baseClass' => 'DataSource',
-                'options' => array (
+                'options' => array(
                     'ng-if' => 'active.postData == \'Yes\' && active.relationTo != \'\'',
                     'ng-model' => 'active.relationCriteria',
                     'ng-change' => 'save()',
@@ -390,197 +375,197 @@ class DataSource extends FormField {
                 'modelClassJS' => 'DataSource/relation-criteria.js',
                 'type' => 'SqlCriteria',
             ),
-            array (
+            array(
                 'label' => 'SQL',
                 'fieldname' => 'sql',
                 'language' => 'sql',
-                'options' => array (
+                'options' => array(
                     'ng-show' => 'active.fieldType == \'sql\' && (active.relationTo == \'\' || active.postData == \'No\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'PHP Function',
                 'fieldname' => 'php',
-                'options' => array (
+                'options' => array(
                     'ng-show' => '(active.fieldType == \'php\' || active.fieldType == \'phpsql\') && (active.relationTo == \'\' || active.postData == \'No\')',
                     'ps-valid' => 'save();',
                 ),
                 'desc' => 'ex: Model::yourFunction($params);',
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'Total Item - PHP Function',
                 'fieldname' => 'pagingPHP',
-                'options' => array (
+                'options' => array(
                     'ng-show' => '(active.fieldType == \'php\' || active.fieldType == \'phpsql\') && active.enablePaging == \'Yes\' && (active.relationTo == \'\' || active.postData == \'No\')',
                     'ps-valid' => 'save();',
                 ),
                 'desc' => 'ex: Model::yourFunction($params);',
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'Total Item - SQL',
                 'fieldname' => 'pagingSQL',
                 'language' => 'sql',
-                'options' => array (
+                'options' => array(
                     'ng-show' => 'active.fieldType == \'sql\' && active.enablePaging == \'Yes\' && (active.relationTo == \'\' || active.postData == \'No\')',
                     'ps-valid' => 'save();',
                 ),
                 'type' => 'ExpressionField',
             ),
-            array (
+            array(
                 'label' => 'Parameters',
                 'name' => 'params',
                 'show' => 'Show',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '<div ng-if=\'active.postData == \"Yes\" && active.relationTo == \"currentModel\"\'>
     
     <div ng-init=\"active.$showGrouping = active.aggregateGroups.length == 0\"></div>',
             ),
-            array (
+            array(
                 'title' => 'Grouping',
                 'type' => 'SectionHeader',
             ),
-            array (
+            array(
                 'label' => 'Hide',
                 'icon' => 'chevron-up',
                 'position' => 'right',
                 'buttonSize' => 'btn-xs',
-                'options' => array (
+                'options' => array(
                     'ng-click' => 'active.$showGrouping = !active.$showGrouping',
                     'style' => 'margin-top:-25px;',
                     'ng-if' => 'active.$showGrouping',
                 ),
                 'type' => 'LinkButton',
             ),
-            array (
+            array(
                 'label' => 'Edit',
                 'icon' => 'chevron-down',
                 'position' => 'right',
                 'buttonSize' => 'btn-xs',
-                'options' => array (
+                'options' => array(
                     'ng-click' => 'active.$showGrouping = !active.$showGrouping',
                     'style' => 'margin-top:-25px;',
                     'ng-if' => '!active.$showGrouping',
                 ),
                 'type' => 'LinkButton',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '<div ng-if=\\"active.$showGrouping\\" style=\\"margin-top:5px\\">',
             ),
-            array (
+            array(
                 'label' => 'Max. Aggregate Level',
                 'name' => 'maxAggregateLevel',
                 'labelWidth' => '7',
                 'fieldWidth' => '5',
                 'postfix' => 'level',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.maxAggregateLevel',
                     'ng-delay' => '500',
                     'ng-change' => 'save();',
                     'ng-if' => 'false',
                 ),
-                'labelOptions' => array (
+                'labelOptions' => array(
                     'style' => 'text-align:left;',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'name' => 'aggregateGroups',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.DataSourceAggregateGroup',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.aggregateGroups',
                     'ng-change' => 'save()',
                 ),
                 'sortable' => 'No',
-                'singleViewOption' => array (
+                'singleViewOption' => array(
                     'name' => 'val',
                     'fieldType' => 'text',
                     'labelWidth' => 0,
                     'fieldWidth' => 12,
-                    'fieldOptions' => array (
+                    'fieldOptions' => array(
                         'ng-delay' => 500,
                     ),
                 ),
                 'type' => 'ListView',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '</div>
 <div style=\"height:5px\"></div>
 <div ng-if=\"active.aggregateGroups.length > 0\">',
             ),
-            array (
+            array(
                 'title' => 'Aggregates',
                 'type' => 'SectionHeader',
             ),
-            array (
+            array(
                 'label' => 'Edit',
                 'icon' => 'chevron-down',
                 'position' => 'right',
                 'buttonSize' => 'btn-xs',
-                'options' => array (
+                'options' => array(
                     'ng-click' => 'active.$showAggregate = !active.$showAggregate',
                     'style' => 'margin-top:-25px;',
                     'ng-if' => '!active.$showAggregate',
                 ),
                 'type' => 'LinkButton',
             ),
-            array (
+            array(
                 'label' => 'Hide',
                 'icon' => 'chevron-up',
                 'position' => 'right',
                 'buttonSize' => 'btn-xs',
-                'options' => array (
+                'options' => array(
                     'ng-click' => 'active.$showAggregate = !active.$showAggregate',
                     'style' => 'margin-top:-25px;',
                     'ng-if' => 'active.$showAggregate',
                 ),
                 'type' => 'LinkButton',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '<div ng-if=\\"active.$showAggregate\\" style=\\"margin-top:5px\\">',
             ),
-            array (
+            array(
                 'name' => 'aggregateColumns',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.DataSourceAggregateCol',
                 'layout' => 'Vertical',
                 'fieldWidth' => '12',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.aggregateColumns',
                     'ng-change' => 'save()',
                 ),
-                'singleViewOption' => array (
+                'singleViewOption' => array(
                     'name' => 'val',
                     'fieldType' => 'text',
                     'labelWidth' => 0,
                     'fieldWidth' => 12,
-                    'fieldOptions' => array (
+                    'fieldOptions' => array(
                         'ng-delay' => 500,
                     ),
                 ),
                 'type' => 'ListView',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '</div>',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '</div>',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '</div>',
             ),
@@ -601,6 +586,25 @@ class DataSource extends FormField {
         }
 
         echo Helper::classAlias($relClass);
+    }
+
+    public function getPrimaryKey() {
+        if ($this->relationTo == '' || $this->postData == 'No') {
+            return 'id';
+        } else {
+            if ($this->relationTo == 'currentModel') {
+                return $this->model->metadata->tableSchema->primaryKey;
+            } else {
+                $rel = $this->model->metaData->relations[$this->relationTo];
+                $className = $rel->className;
+                if (class_exists($className, false)) {
+                    $pk = $className::model()->metadata->tableSchema->primaryKey;
+                    if (is_string($pk)) {
+                        return $pk;
+                    }
+                }
+            }
+        }
     }
 
     public function actionQuery() {

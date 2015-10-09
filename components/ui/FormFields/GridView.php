@@ -31,6 +31,15 @@ class GridView extends FormField {
     }
 
     public function render() {
+
+        foreach ($this->columns as $k => $c) {
+            $name = explode(".", $c['name']);
+            if (count($name) > 1) {
+                $this->columns[$k]['fieldName'] = $c['name'];
+                $this->columns[$k]['name'] = array_pop($name);
+            }
+        }
+
         return $this->renderInternal('template_render.php');
     }
 
@@ -40,7 +49,7 @@ class GridView extends FormField {
         $fb       = FormBuilder::load($post['class']);
         $field    = $fb->findField(['name' => $post['name']]);
 
-        $this->attributes     = $field;
+        $this->attributes = $field;
 
         echo $this->getRowTemplate($post['item'], $post['idx']);
     }
@@ -111,18 +120,19 @@ EOF;
     }
 
     public function getHeaderTemplate($col, $idx) {
-        switch ($col['columnType']) {
+        $fieldName = isset($col['fieldName']) ? $col['fieldName'] : $col['name'];
 
+        switch ($col['columnType']) {
             case "string":
-                $sortable = "ng-click=\"sort('{$col['name']}')\"";
-                $caret = <<<EOF
-        <i class="fa fa-caret-up" ng-if="isSort('{$col['name']}', 'asc')"></i>
-        <i class="fa fa-caret-down" ng-if="isSort('{$col['name']}', 'desc')"></i>
+                $sortable = "ng-click=\"sort('{$fieldName}')\"";
+                $caret    = <<<EOF
+        <i class="fa fa-caret-up" ng-if="isSort('{$fieldName}', 'asc')"></i>
+        <i class="fa fa-caret-down" ng-if="isSort('{$fieldName}', 'desc')"></i>
 EOF;
 
-                if (isset($col['options'])  && isset($col['options']['sortable']) && $col['options']['sortable'] === 'false') {
+                if (isset($col['options']) && isset($col['options']['sortable']) && $col['options']['sortable'] === 'false') {
                     $sortable = '';
-                    $caret = '';
+                    $caret    = '';
                 }
 
                 return <<<EOF

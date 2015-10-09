@@ -23,6 +23,7 @@ app.directive('gridView', function ($timeout, $http) {
                 $scope.renderID = $el.find("data[name=render_id]").text();
                 $scope.gridOptions = JSON.parse($el.find("data[name=grid_options]:eq(0)").text());
                 $scope.columns = JSON.parse(columnRaw);
+                $scope.defaultPageSize = $el.find("data[name=dpz]:eq(0)").text();
                 $scope.datasource = $scope.parent[$el.find("data[name=datasource]:eq(0)").text()];
                 $scope.checkMode = function () {
                     if ($el.width() < 750) {
@@ -77,8 +78,14 @@ app.directive('gridView', function ($timeout, $http) {
                     };
                 }
                 $scope.loadPageSetting = function () {
+                    var changing = false;
+                    if (typeof $scope.gridOptions.pageSize != "undefined") {
+                        $scope.gridOptions.pageInfo.pageSize = $scope.gridOptions.pageSize * 1;
+                        $scope.updatePaging($scope.gridOptions.pageInfo, false);
+                        changing = true;
+                    }
+
                     if (!!$scope.pageSetting && !!$scope.pageSetting.dataGrids && !!$scope.pageSetting.dataGrids[$scope.name]) {
-                        var changing = false;
                         if (JSON.stringify($scope.gridOptions.sortInfo) != JSON.stringify($scope.pageSetting.dataGrids[$scope.name].sort)) {
                             $scope.gridOptions.sortInfo = $scope.pageSetting.dataGrids[$scope.name].sort;
                             $scope.updateSorting($scope.gridOptions.sortInfo, false);
@@ -89,19 +96,15 @@ app.directive('gridView', function ($timeout, $http) {
                             if (typeof $scope.pageSetting.dataGrids[$scope.name].paging != "undefined") {
                                 $scope.gridOptions.pageInfo = $scope.pageSetting.dataGrids[$scope.name].paging;
 
-                                if (typeof $scope.gridOptions.pageSize != "undefined") {
-                                    $scope.gridOptions.pageInfo.pageSize = $scope.gridOptions.pageSize * 1;
-                                }
                                 $scope.updatePaging($scope.gridOptions.pageInfo, false);
                                 changing = true;
                             }
                         }
-
-                        if (changing) {
-                            $scope.datasource.query();
-                        }
                     }
 
+                    if (changing) {
+                        $scope.datasource.query();
+                    }
                 }
 
                 // update sorting
@@ -141,7 +144,6 @@ app.directive('gridView', function ($timeout, $http) {
 
                         ds.lastQueryFrom = "GridView";
                         ds.updateParam('order_by', order_by, 'order');
-
                         if (typeof executeQuery == "undefined") {
                             executeQuery = true;
                         }
@@ -187,6 +189,7 @@ app.directive('gridView', function ($timeout, $http) {
                         executeQuery = true;
                     }
                     if (executeQuery) {
+                        ds.isDataReloaded = true;
                         if (typeof oldpaging != "undefined" && paging.pageSize == oldpaging.pageSize) {
                             ds.queryWithoutCount();
                         } else {
@@ -473,7 +476,7 @@ app.directive('gridView', function ($timeout, $http) {
                 $scope.initGrid = function () {
                     $scope.gridOptions.pageInfo = {
                         pageSizes: [10, 25, 50, 100, 250, 500, 1000],
-                        pageSize: 25,
+                        pageSize: $scope.defaultPageSize,
                         totalServerItems: $scope.datasource.totalItems,
                         currentPage: 1,
                         typingPage: 1
@@ -523,10 +526,8 @@ app.directive('gridView', function ($timeout, $http) {
                             $scope.loading = false;
                             if (!$scope.loaded) {
                                 $scope.loaded = true;
-                                $scope.datasource.resetOriginal();
                             }
                             $scope.onGridRender('query');
-
                         };
                         $scope.loadPageSetting();
                     });

@@ -36,7 +36,6 @@ class DevFormNewForm extends Form {
                 ),
                 'title' => 'Create New Form',
                 'showSectionTab' => 'No',
-                'showOptionsBar' => 'No',
                 'type' => 'ActionBar',
             ),
             array (
@@ -74,7 +73,7 @@ class DevFormNewForm extends Form {
                     'ng-if' => 'model.baseClass == \'--model--\'',
                 ),
                 'defaultType' => 'first',
-                'listExpr' => 'ModelGenerator::listModels()',
+                'listExpr' => 'ModelGenerator::listModels(true)',
                 'layout' => 'Vertical',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
