@@ -189,7 +189,6 @@ app.directive('gridView', function ($timeout, $http) {
                         executeQuery = true;
                     }
                     if (executeQuery) {
-                        ds.isDataReloaded = true;
                         if (typeof oldpaging != "undefined" && paging.pageSize == oldpaging.pageSize) {
                             ds.queryWithoutCount();
                         } else {
@@ -521,17 +520,23 @@ app.directive('gridView', function ($timeout, $http) {
                             if ($scope.datasource.lastQueryFrom == "DataFilter" && !!$scope.gridOptions.pageInfo) {
                                 $scope.gridOptions.pageInfo.currentPage = 1;
                             }
+                            $scope.datasource.trackChanges = false;
                         }
                         $scope.datasource.afterQueryInternal[$scope.renderID] = function () {
                             $scope.loading = false;
                             if (!$scope.loaded) {
                                 $scope.loaded = true;
                             }
+                            if (!$scope.datasource.trackChanges) {
+                                $scope.datasource.resetOriginal();
+                                $scope.datasource.trackChanges = true;
+                            }
                             $scope.onGridRender('query');
                         };
                         $scope.loadPageSetting();
                     });
                 };
+                $scope.datasource.trackChanges = false;
                 $scope.gridRenderTimeout = null;
                 $scope.onGridRender = function (flag) {
                     if ($scope.gridRenderTimeout !== null) {

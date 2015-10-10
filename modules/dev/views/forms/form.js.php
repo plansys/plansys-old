@@ -65,7 +65,7 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
 
 
     window.$(document).keydown(function (event) {
-        if (!( String.fromCharCode(event.which).toLowerCase() == 's' && event.ctrlKey) && !(event.which == 19)) return true;
+        if (!( String.fromCharCode(event.which).toLowerCase() == 's' && event.metaKey) && !(event.which == 19)) return true;
         $scope.save();
         event.preventDefault();
         return false;

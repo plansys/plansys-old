@@ -231,10 +231,51 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 }
 
                 $scope.trackChanges = true;
-                $scope.resetOriginal = function() {
+                $scope.resetOriginal = function () {
                     $scope.original = angular.copy($scope.data);
                 }
 
+                var diff = function (oldArray, newArray) {
+                    var i, oldHash = {}, newHash = {}, pk = $scope.primaryKey,
+                        diff = {
+                            insert: [],
+                            update: [],
+                            delete: []
+                        };
+
+                    for (i in oldArray) {
+                        oldHash[oldArray[i][pk]] = oldArray[i];
+                    }
+
+                    for (i in newArray) {
+                        var item = newArray[i];
+                        newHash[item[pk]] = item;
+
+                        //if pk is empty --OR-- pk is not in old hash
+                        if (item[pk] === '' || typeof oldHash[item[pk]] === "undefined") {
+                            // then it is new item
+                            diff.insert.push(item);
+                        } else {
+                            // if pk is NOT empty --AND-- pk is IN old hash
+                            // then maybe it is updated?
+                            if (!angular.equals(item, oldHash[item[pk]])) {
+                                // if item is different so it's definitely updated
+                                diff.update.push(item);
+                            }
+                        }
+                    }
+
+                    //check for deleted items
+                    for (i in oldHash) {
+                        // if old item is NOT available in new array
+                        if (typeof newHash[i] == "undefined") {
+                            // then it is definitely deleted
+                            diff.delete.push(oldHash[i]);
+                        }
+                    }
+
+                    return diff;
+                };
                 if ($scope.postData == 'Yes') {
                     $scope.resetOriginal();
 
@@ -242,8 +283,12 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         if (typeof $scope.data == "undefined") {
                             $scope.data = [];
                         }
-                        if (newval !== oldval && $scope.trackChanges) {
-                            
+                        if ($scope.trackChanges && !angular.equals($scope.original, newval)) {
+                            //retain diffResult between paging/sorting query
+                            var df = diff($scope.original, newval);
+                            $scope.insertData = df.insert;
+                            $scope.updateData = df.update;
+                            $scope.deleteData = df.delete;
                         }
                     }, true);
                 }
