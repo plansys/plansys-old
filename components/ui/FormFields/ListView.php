@@ -5,55 +5,93 @@
  * @author rizky
  */
 class ListView extends FormField {
+    public static $toolbarName        = "List View";
+    public static $category           = "Data & Tables";
+    public static $toolbarIcon        = "glyphicon glyphicon-align-justify";
+    public        $name               = '';
+    public        $fieldTemplate      = 'datasource';
+    public        $templateForm       = '';
+    public        $value              = '';
+    public        $layout             = 'Horizontal';
+    public        $labelWidth         = 0;
+    public        $inlineJS           = '';
+    public        $fieldWidth         = 12;
+    public        $datasource         = '';
+    public        $options            = [];
+    public        $fieldOptions       = [];
+    public        $sortable           = 'yes';
+    public        $singleView         = 'TextField';
+    public        $singleViewOption   = null;
+    protected     $renderTemplateForm;
+    protected     $templateAttributes = [];
 
     /**
      * @return array me-return array property TextField.
      */
     public function getFieldProperties() {
-        return array (
-            array (
-                'label' => 'Field Name',
-                'name' => 'name',
-                'options' => array (
-                    'ng-model' => 'active.name',
-                    'ng-change' => 'changeActiveName()',
-                    'ps-list' => 'modelFieldList',
-                ),
-                'list' => array (),
-                'searchable' => 'Yes',
-                'showOther' => 'Yes',
-                'type' => 'DropDownList',
-            ),
-            array (
-                'label' => 'Label',
-                'name' => 'label',
-                'options' => array (
-                    'ng-model' => 'active.label',
-                    'ng-change' => 'save()',
-                    'ng-delay' => '500',
-                ),
-                'type' => 'TextField',
-            ),
-            array (
-                'label' => 'List Type',
+        return array(
+            array(
+                'label' => 'ListView Mode',
                 'name' => 'fieldTemplate',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.fieldTemplate',
-                    'ng-change' => 'save();',
+                    'ng-change' => 'changeListViewMode();',
                 ),
-                'list' => array (
-                    'default' => 'FormField',
+                'list' => array(
+                    'datasource' => 'SubForm + DataSource',
                     'form' => 'SubForm',
+                    'default' => 'FormField',
                 ),
                 'otherLabel' => 'Other...',
                 'type' => 'DropDownList',
             ),
-            array (
-                'label' => 'Template Form',
+            array(
+                'type' => 'Text',
+                'value' => '<hr>',
+            ),
+            array(
+                'label' => 'Field Name',
+                'name' => 'name',
+                'options' => array(
+                    'ng-model' => 'active.name',
+                    'ng-change' => 'changeActiveName()',
+                    'ps-list' => 'modelFieldList',
+                    'ng-if' => 'active.fieldTemplate != \'datasource\'',
+                ),
+                'list' => array(),
+                'searchable' => 'Yes',
+                'showOther' => 'Yes',
+                'type' => 'DropDownList',
+            ),
+            array(
+                'label' => 'Field Name',
+                'name' => 'name',
+                'options' => array(
+                    'ng-model' => 'active.name',
+                    'ng-change' => 'changeActiveName()',
+                    'ng-delay' => '500',
+                    'ng-if' => 'active.fieldTemplate == \'datasource\'',
+                ),
+                'type' => 'TextField',
+            ),
+            array(
+                'label' => 'Data Source',
+                'name' => 'datasource',
+                'options' => array(
+                    'ng-model' => 'active.datasource',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                    'ps-list' => 'dataSourceList',
+                    'ng-if' => 'active.fieldTemplate == \'datasource\'',
+                ),
+                'type' => 'DropDownList',
+            ),
+            array(
+                'label' => 'SubForm',
                 'name' => 'templateForm',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.templateForm',
-                    'ng-show' => 'active.fieldTemplate == \'form\'',
+                    'ng-show' => 'active.fieldTemplate == \'form\' || active.fieldTemplate == \'datasource\'',
                     'ng-change' => 'save();',
                 ),
                 'menuPos' => 'pull-right',
@@ -61,18 +99,18 @@ class ListView extends FormField {
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'type' => 'Text',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '<div ng-show=\'active.fieldTemplate == \"default\"\'>
     <div style=\'margin:10px 0px 10px 10px;border:1px solid #ccc;padding:5px 5px 0px 5px;border-radius:4px;\'>',
             ),
-            array (
+            array(
                 'label' => 'Field Type',
                 'name' => 'singleView',
-                'options' => array (
+                'options' => array(
                     'ng-change' => 'activeEditor.fieldTypeChange(active)',
                     'ng-model' => 'active.singleView',
                 ),
@@ -80,96 +118,97 @@ class ListView extends FormField {
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Edit',
                 'icon' => 'pencil',
                 'buttonSize' => 'btn-xs',
-                'options' => array (
+                'options' => array(
                     'style' => 'float:right;margin-top:-32px;',
                     'ng-click' => 'activeEditor.toggleEdit(active)',
                 ),
                 'type' => 'LinkButton',
             ),
-            array (
+            array(
                 'type' => 'Text',
-                'value' => '    <div 
-    ng-if=\'active.edited\' 
+                'value' => '    <div
+    ng-if=\'active.edited\'
     class=\'list-view-single-edit\'
     style=\'border-top:1px solid #ccc;margin:0px -5px;padding:5px 5px 0px 5px;\'>',
             ),
-            array (
+            array(
                 'name' => 'singleViewOption',
                 'mode' => 'single',
                 'subForm' => 'application.components.ui.FormFields.TextField',
-                'options' => array (
+                'options' => array(
                     'ng-if' => 'active.singleView == \'TextField\'',
                     'ng-model' => 'active.singleViewOption',
                 ),
                 'type' => 'SubForm',
             ),
-            array (
+            array(
                 'name' => 'singleViewOption',
                 'mode' => 'single',
                 'subForm' => 'application.components.ui.FormFields.DropDownList',
-                'options' => array (
+                'options' => array(
                     'ng-if' => 'active.singleView == \'DropDownList\'',
                     'ng-model' => 'active.singleViewOption',
                 ),
                 'type' => 'SubForm',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '    </div>
 </div>',
             ),
-            array (
+            array(
                 'type' => 'Text',
-                'value' => '</div><div ng-show=\'active.fieldTemplate == \\"form\\" && active.templateForm != \\"\\"\'>',
+                'value' => '</div><div ng-show=\'active.fieldTemplate == \\"form\\" || active.fieldTemplate == \\"datasource\\"\'>',
             ),
-            array (
+            array(
                 'label' => 'Edit Subform',
                 'icon' => 'sign-in',
                 'buttonSize' => 'btn-xs',
-                'options' => array (
+                'options' => array(
                     'style' => 'float:right;margin:0px 0px 5px 0px;',
                     'href' => 'url:/dev/forms/update?class={active.templateForm}',
                     'target' => '_blank',
+                    'ng-if' => 'active.templateForm != \'\'',
                 ),
                 'type' => 'LinkButton',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '<div class=\"clearfix\"></div>
 <hr/></div>',
             ),
-            array (
+            array(
                 'label' => 'Inline JS',
                 'name' => 'inlineJS',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.inlineJS',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Sortable',
                 'name' => 'sortable',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.sortable',
                     'ng-change' => 'save();',
                 ),
-                'list' => array (
+                'list' => array(
                     'yes' => 'Yes',
                     'No' => 'No',
                 ),
                 'fieldWidth' => '5',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                 ),
@@ -177,53 +216,53 @@ class ListView extends FormField {
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array (
-                'column1' => array (
-                    array (
+            array(
+                'column1' => array(
+                    array(
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                         ),
                         'type' => 'TextField',
                     ),
-                    array (
+                    array(
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'column2' => array (
-                    array (
+                'column2' => array(
+                    array(
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => 12,
                         'fieldWidth' => '11',
-                        'options' => array (
+                        'options' => array(
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                         ),
                         'type' => 'TextField',
                     ),
-                    array (
+                    array(
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'column3' => array (
-                    array (
+                'column3' => array(
+                    array(
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'column4' => array (
-                    array (
+                'column4' => array(
+                    array(
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
@@ -232,76 +271,22 @@ class ListView extends FormField {
                 'w2' => '50%',
                 'type' => 'ColumnField',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '<hr/>',
             ),
-            array (
+            array(
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array (
-                'label' => 'Label Options',
-                'name' => 'labelOptions',
-                'type' => 'KeyValueGrid',
-            ),
-            array (
+            array(
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
             ),
         );
     }
-
-    /** @var string $label */
-    public $label = '';
-
-    /** @var string $name */
-    public $name = '';
-
-    /** @var string $fieldTemplate */
-    public $fieldTemplate = 'default';
-
-    /** @var string $templateForm */
-    public $templateForm = '';
-
-    /** @var string $value */
-    public $value = '';
-
-    /** @var string $layout */
-    public $layout = 'Horizontal';
-
-    /** @var string $layoutVertical */
-    public $layoutVertical = '';
-
-    /** @var integer $labelWidth */
-    public $labelWidth = 4;
-    public $inlineJS = '';
-
-    /** @var integer $fieldWidth */
-    public $fieldWidth = 8;
-
-    /** @var array $options */
-    public $options = [];
-
-    /** @var array $labelOptions */
-    public $labelOptions = [];
-
-    /** @var array $fieldOptions */
-    public $fieldOptions = [];
-
-    /** @var string $toolbarName */
-    public static $toolbarName = "List View";
-
-    /** @var string $category */
-    public static $category = "Data & Tables";
-
-    /** @var string $toolbarIcon */
-    public static $toolbarIcon = "glyphicon glyphicon-align-justify";
-    public $sortable = 'yes';
-    public $singleView = 'TextField';
-    public $singleViewOption = null;
 
     /**
      * @return array me-return array javascript yang di-include
@@ -339,7 +324,6 @@ class ListView extends FormField {
             $class = "control-label col-sm-{$this->labelWidth}";
         }
 
-        $class .= @$this->labelOptions['class'];
         return $class;
     }
 
@@ -351,9 +335,6 @@ class ListView extends FormField {
     public function getFieldColClass() {
         return "col-sm-" . $this->fieldWidth;
     }
-
-    protected $renderTemplateForm;
-    protected $templateAttributes = [];
 
     public function includeEditorJS() {
         return ['list-view-editor.js'];
@@ -370,15 +351,15 @@ class ListView extends FormField {
         $this->addClass($this->errorClass, 'options');
 
         $this->fieldOptions['ui-tree-node'] = '';
-        $this->fieldOptions['ng-repeat'] = 'item in value';
-        $this->fieldOptions['ng-init'] = 'model = value[$index];';
+        $this->fieldOptions['ng-repeat']    = 'item in value';
+        $this->fieldOptions['ng-init']      = 'model = value[$index];';
         $this->addClass('list-view-item', 'fieldOptions');
-        
+
         Yii::import(FormBuilder::classPath($this->templateForm));
         $class = Helper::explodeLast(".", $this->templateForm);
 
-        if ($this->fieldTemplate == 'form' && class_exists($class)) {
-            $fb = FormBuilder::load($class);
+        if (($this->fieldTemplate == 'form' || $this->fieldTemplate == 'datasource') && class_exists($class)) {
+            $fb    = FormBuilder::load($class);
             $model = new $class($this->model);
 
             if ($this->value == "") {
@@ -386,14 +367,14 @@ class ListView extends FormField {
             }
 
             $this->templateAttributes = $model->attributes;
-            $fb->model = $model;
+            $fb->model                = $model;
             $this->renderTemplateForm = $fb->render($model, ['wrapForm' => false]);
-            
+
         } else if ($this->fieldTemplate == 'default') {
-            $field = new $this->singleView;
-            $field->attributes = $this->singleViewOption;
-            $field->renderID = $this->name . rand(0, 10000);
-            $field->builder = $this->builder;
+            $field                 = new $this->singleView;
+            $field->attributes     = $this->singleViewOption;
+            $field->renderID       = $this->name . rand(0, 10000);
+            $field->builder        = $this->builder;
             $field->formProperties = $this->formProperties;
 
             $this->templateAttributes = ['val' => ''];

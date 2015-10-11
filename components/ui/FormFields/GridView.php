@@ -31,16 +31,23 @@ class GridView extends FormField {
     }
 
     public function render() {
-
-        foreach ($this->columns as $k => $c) {
-            $name = explode(".", $c['name']);
-            if (count($name) > 1) {
-                $this->columns[$k]['fieldName'] = $c['name'];
-                $this->columns[$k]['name'] = array_pop($name);
-            }
-        }
-
+        $this->processColumns();
         return $this->renderInternal('template_render.php');
+    }
+
+    private function processColumns() {
+        foreach ($this->columns as $k => $c) {
+            $this->columns[$k] = $this->processSingleColumn($c);
+        }
+    }
+
+    private function processSingleColumn($c) {
+        $name = explode(".", $c['name']);
+        if (count($name) > 1) {
+            $c['fieldName'] = $c['name'];
+            $c['name']      = array_pop($name);
+        }
+        return $c;
     }
 
     public function actionCellTemplate() {
@@ -50,36 +57,41 @@ class GridView extends FormField {
         $field    = $fb->findField(['name' => $post['name']]);
 
         $this->attributes = $field;
-
+        $post['item'] = $this->processSingleColumn($post['item']);
         echo $this->getRowTemplate($post['item'], $post['idx']);
     }
 
     public function getRowTemplate($col, $idx) {
-        $template = '';
+        $template  = '';
+        $fieldName = $col['name'];
         switch ($col['columnType']) {
             case "string":
                 if (@$col['cellMode'] == 'custom' && trim(@$col['html']) != '') {
                     return @$col['html'];
                 }
 
-                $template = '{{row.' . $col['name'] . '}}';
+                $template = '{{row.' . $fieldName . '}}';
                 break;
             case "checkbox":
                 $template = '<label ng-if="row.$type == \'r\' || !row.$type"><input
-ng-click="checkboxRow(row, \'' . $col['name'] . '\', ' . $idx . ', $event)"
-ng-checked="checkboxRowChecked(row, \'' . $col['name'] . '\', ' . $idx . ')"
+ng-click="checkboxRow(row, \'' . $fieldName . '\', ' . $idx . ', $event)"
+ng-checked="checkboxRowChecked(row, \'' . $fieldName . '\', ' . $idx . ')"
 type="checkbox" /></label>';
                 break;
         }
 
+        $rowState = '';
         if ($idx == $this->getStartingColumnGroup()) {
-            $template = "<span class='row-group-padding' style='width:{{row.\$level*10}}px;'></span>
+            $rowState = "<div ng-include='\"row-state-template\"'></div>\n    ";
+            $template = "<span class='row-group-padding'
+        style='width:{{row.\$level*10}}px;'></span>
     {$template}";
         }
 
+
         return <<<EOF
-<td ng-class="rowClass(row, '{$col['name']}', '{$col['columnType']}')">
-    {$template}
+<td ng-class="rowClass(row, '{$fieldName}', '{$col['columnType']}')">
+    {$rowState}{$template}
 </td>
 EOF;
     }
@@ -156,23 +168,23 @@ EOL;
     }
 
     public function getFieldProperties() {
-        return array(
-            array(
+        return array (
+            array (
                 'label' => 'GridView Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Data Source Name',
                 'name' => 'datasource',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.datasource',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -182,62 +194,60 @@ EOL;
                 'fieldWidth' => '7',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Generate Columns',
                 'buttonType' => 'success',
                 'icon' => 'magic',
                 'buttonSize' => 'btn-xs',
-                'options' => array(
+                'options' => array (
                     'style' => 'float:right;margin:0px 0px 5px 0px',
                     'ng-show' => 'active.datasource != \'\'',
                     'ng-click' => 'generateColumns()',
                 ),
                 'type' => 'LinkButton',
             ),
-            array(
+            array (
                 'type' => 'Text',
                 'value' => '<div class=\'clearfix\'></div>',
             ),
-            array(
+            array (
                 'label' => 'Grid Options',
                 'name' => 'gridOptions',
                 'type' => 'KeyValueGrid',
             ),
-            array(
+            array (
                 'label' => 'Container Element Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array(
+            array (
                 'label' => 'Table Element Options',
                 'name' => 'tableOptions',
                 'type' => 'KeyValueGrid',
             ),
-            array(
+            array (
                 'title' => 'Columns',
                 'type' => 'SectionHeader',
             ),
-            array(
+            array (
                 'type' => 'Text',
                 'value' => '<div style=\'margin-top:5px\'></div>',
             ),
-            array(
+            array (
                 'name' => 'columns',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.GridViewCol',
-                'labelWidth' => '0',
                 'inlineJS' => 'GridView/grid-builder.js',
-                'fieldWidth' => '12',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.columns',
                     'ng-change' => 'save()',
                 ),
-                'singleViewOption' => array(
+                'singleViewOption' => array (
                     'name' => 'val',
                     'fieldType' => 'text',
                     'labelWidth' => 0,
                     'fieldWidth' => 12,
-                    'fieldOptions' => array(
+                    'fieldOptions' => array (
                         'ng-delay' => 500,
                     ),
                 ),

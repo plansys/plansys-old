@@ -59,6 +59,7 @@ class DataSourceAggregateCol extends Form {
                     'ng-change' => 'udpateListItem()',
                 ),
                 'menuPos' => 'pull-right',
+                'defaultType' => 'first',
                 'list' => array (
                     'sum' => 'sum',
                     'avg' => 'avg',

@@ -16,10 +16,10 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 $scope.relationTo = $el.find("data[name=relation_to]").text().trim();
                 $scope.insertData = [];
                 $scope.updateData = [];
-                $scope.httpRequest = false;
-                $scope.loading = false;
                 $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text());
                 $scope.deleteData = $scope.deleteData || [];
+                $scope.httpRequest = false;
+                $scope.loading = false;
                 $scope.untrackColumns = [];
 
                 if (!$scope.primaryKey) {
@@ -55,7 +55,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 }
 
                 $scope.updateParam = function (key, value, name) {
-
                     if (typeof name === "undefined") {
                         $scope.sqlParams[key] = value;
                         return true;
@@ -166,6 +165,55 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                             }
                             $scope.loading = false;
 
+                            // Retain editing result between paging/sorting query
+                            if ($scope.updateData.length > 0 ||
+                                $scope.insertData.length > 0 ||
+                                $scope.deleteData.length > 0) {
+
+                                var pk = $scope.primaryKey,
+                                    diffHash = {};
+
+                                for (i in $scope.data) {
+                                    diffHash[$scope.data[i][pk]] = $scope.data[i];
+                                }
+
+                                if ($scope.insertData.length > 0) {
+                                    for (i in $scope.insertData) {
+                                        var item = $scope.insertData[i];
+                                        if (typeof diffHash[item[pk]] != "undefined") {
+                                            // if inserted data is already available in current state
+                                            // then the data should not be inserted, but rather updated
+                                            $scope.updateData.push($scope.insertData.splice(i, 1));
+                                        } else {
+                                            $scope.data.push($scope.insertData[i]);
+                                        }
+                                    }
+                                }
+
+                                if ($scope.updateData.length > 0) {
+                                    for (i in $scope.updateData) {
+                                        var item = $scope.updateData[i];
+                                        if (typeof diffHash[item[pk]] != "undefined") {
+                                            $.extend(true, diffHash[item[pk]], item);
+                                        } else {
+                                            // if updated data is not available in current state
+                                            // may be it is available on previous state, so do not change anything
+                                            // because it will be sent anyway
+                                        }
+                                    }
+                                }
+
+                                if ($scope.deleteData.length > 0) {
+                                    for (i in $scope.deleteData) {
+                                        var item = $scope.deleteData[i];
+                                        if (typeof diffHash[item[pk]] != "undefined") {
+                                            diffHash[item[pk]].$rowState = 'remove';
+                                        }
+                                    }
+                                }
+                            }
+
+                            // execute afterQueryInternal
                             for (i in $scope.afterQueryInternal) {
                                 $scope.afterQueryInternal[i]($scope);
                             }
@@ -244,22 +292,37 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         };
 
                     for (i in oldArray) {
+                        if (!!oldArray[i].$type && oldArray[i].$type != 'r') {
+                            continue;
+                        }
+
                         oldHash[oldArray[i][pk]] = oldArray[i];
                     }
 
                     for (i in newArray) {
+                        if (!!newArray[i].$type && newArray[i].$type != 'r') {
+                            continue;
+                        }
+
                         var item = newArray[i];
                         newHash[item[pk]] = item;
 
+                        var pkIsEmpty = !item[pk];
+                        if (!!item[pk] && !!item[pk].toString) {
+                            pkIsEmpty = (item[pk].toString() === '');
+                        }
+
                         //if pk is empty --OR-- pk is not in old hash
-                        if (item[pk] === '' || typeof oldHash[item[pk]] === "undefined") {
+                        if (pkIsEmpty || typeof oldHash[item[pk]] === "undefined") {
                             // then it is new item
+                            item.$rowState = 'insert';
                             diff.insert.push(item);
                         } else {
                             // if pk is NOT empty --AND-- pk is IN old hash
                             // then maybe it is updated?
                             if (!angular.equals(item, oldHash[item[pk]])) {
                                 // if item is different so it's definitely updated
+                                item.$rowState = 'edit';
                                 diff.update.push(item);
                             }
                         }
@@ -278,17 +341,68 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 };
                 if ($scope.postData == 'Yes') {
                     $scope.resetOriginal();
-
                     $scope.$watch('data', function (newval, oldval) {
                         if (typeof $scope.data == "undefined") {
                             $scope.data = [];
                         }
+
                         if ($scope.trackChanges && !angular.equals($scope.original, newval)) {
-                            //retain diffResult between paging/sorting query
                             var df = diff($scope.original, newval);
-                            $scope.insertData = df.insert;
-                            $scope.updateData = df.update;
-                            $scope.deleteData = df.delete;
+
+                            // Handle Insert Data
+                            for (i in df.insert) {
+                                if ($scope.insertData.indexOf(df.insert[i]) < 0) {
+                                    $scope.insertData.push(df.insert[i]);
+                                }
+                            }
+
+                            // Generate UpdateData Hash (to enable faster primary key look up)
+                            var updateHash = {};
+                            for (i in $scope.updateData) {
+                                updateHash[$scope.updateData[i][$scope.primaryKey]] = {
+                                    data: $scope.updateData[i],
+                                    idx: i
+                                };
+                            }
+                            // Generate DeleteData Hash (to enable faster primary key look up)
+                            var deleteHash = {};
+                            for (i in $scope.deleteData) {
+                                deleteHash[$scope.deleteData[i][$scope.primaryKey]] = {
+                                    data: $scope.deleteData[i],
+                                    idx: i
+                                };
+                            }
+
+                            // Handle Update Data
+                            for (i in df.update) {
+                                if (!updateHash[df.update[i][$scope.primaryKey]]) {
+                                    // if data is not in updateData, then add it to updateData
+                                    $scope.updateData.push(df.update[i]);
+
+                                    // if data is already marked as deleted, then mark it as updated
+                                    // by removing it from deleteData array
+                                    if (!!deleteHash[df.update[i][$scope.primaryKey]]) {
+                                        $scope.deleteData.splice(deleteHash[df.update[i][$scope.primaryKey]].idx, 1);
+                                    }
+                                } else {
+                                    // if data is already in updateData, then update it
+                                    var updateItem = updateHash[df.update[i][$scope.primaryKey]];
+                                    $.extend(true, $scope.updateData[updateItem.idx], df.update[i]);
+                                }
+                            }
+
+                            // Handle Delete Data
+                            for (i in df.delete) {
+                                if (!deleteHash[df.delete[i][$scope.primaryKey]]) {
+                                    $scope.deleteData.push(df.delete[i]);
+
+                                    for (j in $scope.updateData) {
+                                        if ($scope.updateData[j][$scope.primaryKey] == df.delete[i][$scope.primaryKey]) {
+                                            $scope.updateData.splice(j, 1);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }, true);
                 }

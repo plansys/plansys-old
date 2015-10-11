@@ -1,15 +1,6 @@
     
 <div list-view  <?= $this->expandAttributes($this->options) ?>>
 
-    <!-- label -->
-    <?php if ($this->label != ""): ?>
-        <label <?= $this->expandAttributes($this->labelOptions) ?>
-            class="<?= $this->labelClass ?>" for="<?= $this->renderName; ?>">
-                <?= $this->label ?>
-        </label>
-    <?php endif; ?>
-    <!-- /label -->
-
     <div ng-controller="ListViewController" class="<?= $this->fieldColClass ?>">
         <!-- data -->
         <data name="name" class="hide"><?= $this->name; ?></data>
@@ -17,6 +8,8 @@
         <data name="field_template" class="hide"><?= $this->fieldTemplate ?></data>
         <data name="template_attr" class="hide"><?= json_encode($this->templateAttributes) ?></data>
         <data name="model_class" class="hide"><?= @get_class($model) ?></data>
+        <data name="datasource" class="hide"><?= $this->datasource ?></data>
+        <data name="render_id" class="hide"><?= $this->renderID; ?></data>
         <data name="options" class="hide"><?= json_encode($this->options) ?></data>
         <!-- /data -->
         <!-- field -->
@@ -56,8 +49,7 @@
                 </ol>
             </div>
         </div>
-
-        <div ng-show="loading" class="list-view-loading">
+        <div ng-show="loading || loaded" class="list-view-loading">
             <i class="fa fa-link"></i>
             Loading ListView...
         </div> 

@@ -38,8 +38,13 @@ app.directive('gridView', function ($timeout, $http) {
 
                 $scope.gridOptions.controlBar = $scope.gridOptions.controlBar !== 'false';
                 $scope.rowClass = function (row, colName, colType) {
+                    var agrStr = '';
+                    if (typeof row[colName] !== "undefined" && row[colName] !== null && row[colName].toString) {
+                        agrStr = row[colName].toString();
+                    }
+
                     var rc = {
-                        aggregate: row.$type == 'a' && !!row[colName]
+                        aggregate: row.$type == 'a' && agrStr != ''
                     };
 
                     rc['t-' + colType] = true;
@@ -47,6 +52,36 @@ app.directive('gridView', function ($timeout, $http) {
                     rc['lv-' + (row.$level || 0)] = true;
 
                     return rc;
+                }
+                $scope.rowStateClass = function (row) {
+                    if (!row.$rowState) {
+                        return '';
+                    } else {
+                        return 'row-state-' + row.$rowState;
+                    }
+                }
+                $scope.rowUndoState = function (row) {
+                    var hash = {}, trans = {
+                        insert: 'insertData',
+                        edit: 'updateData',
+                        remove: 'deleteData'
+                    }
+
+                    var diffData = $scope.datasource[trans[row.$rowState]];
+                    if (row.$rowState == 'edit' || row.$rowState == 'remove') {
+                        var pk = $scope.datasource.primaryKey;
+                        for (i in diffData) {
+                            if (diffData[i][pk] == row[pk]) {
+                                diffData.splice(i, 1);
+                                break;
+                            }
+                        }
+                    } else {
+                        var idx = diffData.indexOf(row);
+                        diffData.splice(idx, 1);
+                    }
+
+                    $scope.updatePaging($scope.gridOptions.pageInfo);
                 }
 
                 // when ng-model is changed from inside directive
@@ -104,6 +139,8 @@ app.directive('gridView', function ($timeout, $http) {
 
                     if (changing) {
                         $scope.datasource.query();
+                    } else {
+                        $scope.datasource.trackChanges = true;
                     }
                 }
 
@@ -237,6 +274,10 @@ app.directive('gridView', function ($timeout, $http) {
                 $scope.lastPage = function () {
                     $scope.gridOptions.pageInfo.currentPage = $scope.datasource.totalItems;
                     $scope.savePageSetting();
+                }
+
+                $scope.deleteRow = function (idx) {
+                    $scope.datasource.data.splice(idx, 1);
                 }
 
                 // fixed header on scroll

@@ -12,6 +12,17 @@ app.directive('listView', function ($timeout) {
                 $scope.parent = parent;
                 $scope.itemChanging = false;
 
+                // set default value
+                $scope.loading = true;
+                $scope.value = JSON.parse($el.find("data[name=value]").html().trim());
+                $scope.modelClass = $el.find("data[name=model_class]").html().trim();
+                $scope.fieldTemplate = $el.find("data[name=field_template]").html().trim();
+                $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
+                $scope.renderID = $el.find("data[name=render_id]").text();
+                $scope.datasource = $scope.parent[$el.find("data[name=datasource]:eq(0)").text()];
+                $scope.templateAttr = JSON.parse($el.find("data[name=template_attr]").html().trim());
+                $scope.options = JSON.parse($el.find("data[name=options]").html().trim());
+
                 // when ng-model is changed from inside directive
                 $scope.updateListView = function () {
                     if (!!ctrl) {
@@ -111,13 +122,15 @@ app.directive('listView', function ($timeout) {
                         data: d[0]
                     };
                     ctrl.$setViewValue(angular.copy($scope.value));
+
                     $scope.showUndoDelete = true;
                 };
 
                 $scope.addItem = function (e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    if ($scope.value == null || typeof $scope.value == "undefined" || $scope.value == "") {
+
+                    if ($scope.value === null || typeof $scope.value === "undefined" || $scope.value === "") {
                         $scope.value = [];
                     }
 
@@ -199,14 +212,6 @@ app.directive('listView', function ($timeout) {
                     });
                 }
 
-                // set default value
-                $scope.value = JSON.parse($el.find("data[name=value]").html().trim());
-                $scope.modelClass = $el.find("data[name=model_class]").html().trim();
-                $scope.fieldTemplate = $el.find("data[name=field_template]").html().trim();
-                $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
-                $scope.templateAttr = JSON.parse($el.find("data[name=template_attr]").html().trim());
-                $scope.options = JSON.parse($el.find("data[name=options]").html().trim());
-
                 // change Watchers
                 $timeout(function () {
                     if (!!$scope.options['ng-change']) {
@@ -221,27 +226,46 @@ app.directive('listView', function ($timeout) {
                 });
 
                 // if ngModel is present, use that instead of value from php
+
                 if (attrs.ngModel) {
                     $timeout(function () {
-                        var ngModelValue = $scope.$eval(attrs.ngModel);
-                        if (typeof ngModelValue != "undefined") {
-                            if ($scope.fieldTemplate == "default") {
-                                var newVal = [];
-                                for (i in ngModelValue) {
-                                    newVal.push({val: ngModelValue[i]});
+                        if ($scope.fieldTemplate == 'datasource') {
+                            $scope.value = $scope.datasource.data;
+                            $scope.datasource.beforeQueryInternal[$scope.renderID] = function () {
+                                $scope.loading = true;
+                            }
+                            $scope.datasource.afterQueryInternal[$scope.renderID] = function () {
+                                $scope.value = $scope.datasource.data;
+                                $timeout(function () {
+                                    $scope.loading = false;
+                                }, 100);
+                            }
+                        } else {
+                            var ngModelValue = $scope.$eval(attrs.ngModel);
+                            if (typeof ngModelValue != "undefined") {
+                                if ($scope.fieldTemplate == "default") {
+                                    var newVal = [];
+                                    for (i in ngModelValue) {
+                                        newVal.push({val: ngModelValue[i]});
+                                    }
+                                    ngModelValue = newVal;
                                 }
-                                ngModelValue = newVal;
-                            }
 
-                            for (i in ngModelValue) {
-                                ngModelValue[i].$$id = lastId++;
-                            }
+                                for (i in ngModelValue) {
+                                    ngModelValue[i].$$id = lastId++;
+                                }
 
-                            $scope.value = ngModelValue;
+                                $scope.value = ngModelValue;
+                            }
                         }
+
                         if (!$scope.inEditor) {
                             parent[$scope.name] = $scope;
                         }
+                        $timeout(function () {
+                            $scope.loading = false;
+                        }, 100);
+
                     }, 0);
                 }
             }

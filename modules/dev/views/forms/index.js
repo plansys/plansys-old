@@ -74,6 +74,12 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                             alias: item.alias + "." + data.class,
                             items: []
                         });
+                        $scope.active = item.items[item.items.length - 1];
+                        console.log($scope.active);
+
+                        window.open(Yii.app.createUrl('dev/forms/update', {
+                            'class': item.alias + "." + data.class
+                        }), 'iframe');
                     } else {
                         alert(data.error);
                     }

@@ -151,8 +151,9 @@ app.directive('linkBtn', function ($timeout, $parse, $compile, $http) {
                             return false;
                         }
                     }
-
-                    $scope.$eval(ngClick);
+                    $timeout(function () {
+                        $scope.$eval(ngClick);
+                    });
                 });
 
 

@@ -102,8 +102,7 @@ class ActiveRecord extends CActiveRecord {
      * Returns the static model of the specified AR class.
      * @return the static model class
      */
-    public
-    static function model($className = null) {
+    public static function model($className = null) {
         if (is_null($className)) {
             $className = get_called_class();
         }
@@ -177,26 +176,36 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    public static function batchInsert($model, &$data) {
+    public static function batchInsert($modelClass, &$data, $assignNewID = true) {
         if (!is_array($data) || count($data) == 0)
             return;
 
+        $model = null;
+        if (!class_exists($modelClass)) {
+            $table = $modelClass;
+        } else {
+            $model = $modelClass::model();
+            $table = $model->tableSchema->name;
+        }
 
-        $table   = $model::model()->tableSchema->name;
         $builder = Yii::app()->db->schema->commandBuilder;
         $command = $builder->createMultipleInsertCommand($table, $data);
         $command->execute();
 
-        $id = Yii::app()->db->getLastInsertID();
-        foreach ($data as &$d) {
-            $d['id'] = $id;
-            $id++;
+        if ($assignNewID && !!$model) {
+            $id = Yii::app()->db->getLastInsertID();
+            $pk = $model->tableSchema->primaryKey;
+            foreach ($data as &$d) {
+                $d[$pk] = $id;
+                $id++;
+            }
         }
     }
 
     public static function batchUpdate($model, $data) {
         if (!is_array($data) || count($data) == 0)
             return;
+        $pk    = $model::model()->tableSchema->primaryKey;
         $table = $model::model()->tableSchema->name;
         $field = $model::model()->tableSchema->columns;
         unset($field['id']);
@@ -214,8 +223,8 @@ class ActiveRecord extends CActiveRecord {
         }
 
         foreach ($data as $d) {
-            $cond = $d['id'];
-            unset($d['id']);
+            $cond = $d[$pk];
+            unset($d[$pk]);
             $updatearr = [];
             for ($i = 0; $i < $columnCount; $i++) {
 
@@ -238,7 +247,7 @@ class ActiveRecord extends CActiveRecord {
 
             $updatesql = implode(",", $updatearr);
             if ($updatesql != '') {
-                $update .= "UPDATE {$table} SET {$updatesql} WHERE id='{$cond}';";
+                $update .= "UPDATE {$table} SET {$updatesql} WHERE {$pk}='{$cond}';";
             }
         }
         if ($update != '') {
@@ -252,17 +261,27 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    public static function batchDelete($model, $data) {
+    public static function batchDelete($model, $data, $options = []) {
         if (!is_array($data) || count($data) == 0)
             return;
 
-        $table = $model::model()->tableSchema->name;
+        if (isset($options['table'])) {
+            $table = $options['table'];
+        } else {
+            $table = $model::model()->tableSchema->name;
+        }
+
+        if (isset($options['pk'])) {
+            $pk = $options['pk'];
+        } else {
+            $pk = $model::model()->tableSchema->primaryKey;
+        }
 
         if (is_array($data[0])) {
             $ids = [];
             foreach ($data as $i => $j) {
-                if (is_numeric(@$j['id'])) {
-                    $ids[] = $j['id'];
+                if (is_numeric(@$j[$pk])) {
+                    $ids[] = $j[$pk];
                 }
             }
         } else {
@@ -270,14 +289,20 @@ class ActiveRecord extends CActiveRecord {
         }
 
         if (!empty($ids)) {
-            $delete = "DELETE FROM {$table} WHERE id IN (" . implode(",", $ids) . ");";
+            $ids       = implode(",", $ids);
+            $condition = isset($options['condition']) ? $options['condition'] : "{$pk} IN (:ids)";
+            $condition = str_replace(":ids", $ids, $condition);
+
+            $delete = "DELETE FROM {$table} WHERE $condition;";
 
             $command = Yii::app()->db->createCommand($delete);
             try {
                 $command->execute();
             } catch (CDbException $e) {
-                if ($e->errorInfo[0] == "23000") {
-                    Yii::app()->controller->redirect(["/site/error&id=integrity"]);
+                if (!isset($options['integrityError']) || (!!@$options['integrityError'])) {
+                    if ($e->errorInfo[0] == "23000") {
+                        Yii::app()->controller->redirect(["/site/error&id=integrity"]);
+                    }
                 }
             }
         }
@@ -428,7 +453,7 @@ class ActiveRecord extends CActiveRecord {
         } else {
             $rel   = $this->getMetaData()->relations[$name];
             $class = $rel->className;
-            if (!class_exists($class, false)) {
+            if (!class_exists($class)) {
                 return [];
             }
 
@@ -436,7 +461,6 @@ class ActiveRecord extends CActiveRecord {
             $tableModel   = $class::model();
             $table        = $tableModel->tableName();
             $tablePKCol   = $tableModel->metadata->tableSchema->primaryKey;
-
 
             switch ($relClassType) {
                 case 'CHasOneRelation':
@@ -502,6 +526,14 @@ class ActiveRecord extends CActiveRecord {
                     $this->__relations[$name] = $this->getRelated($name, true, $criteria);
                     break;
             }
+
+            if (isset($criteria['aggregate'])) {
+                $criteriaAggregate = $criteria['aggregate'];
+                unset($criteria['aggregate']);
+                $cdbCriteria = new CDbCriteria($criteria);
+                $tableSchema = $tableModel->metadata->tableSchema;
+                $this->processAggregate($this->__relations[$name], $criteriaAggregate, $tableSchema, $cdbCriteria);
+            }
         }
         return $this->__relations[$name];
     }
@@ -546,51 +578,55 @@ class ActiveRecord extends CActiveRecord {
 
         ## aggregate
         if (isset($criteriaAggregate)) {
-            $ag = new ArrayGroup($rawData, $criteriaAggregate['groups'], $criteriaAggregate['columns']);
-            $ag->group();
+            $this->processAggregate($rawData, $criteriaAggregate, $tableSchema, $cdbCriteria);
+        }
 
-            foreach ($criteriaAggregate['groups'] as $lvl => $group) {
-                if ($group['mode'] == 'sql' && isset($group['sql']) && trim($group['sql']) != '') {
-                    $cdbCriteria->limit = -1;
-                    $cdbCriteria->order = '';
-                    $command            = $builder->createFindCommand($tableSchema, $cdbCriteria);
-                    $sql                = $command->text;
-                    $sql                = str_replace("{sql}", $sql, $group['sql']);
-                    $sqlGroup           = $this->dbConnection->createCommand($sql)->queryAll(true, $cdbCriteria->params);
+        return $rawData;
+    }
 
-                    foreach ($sqlGroup as $sg) {
-                        $cursor = &$ag->grouped;
+    private function processAggregate(&$rawData, $criteriaAggregate, $cdbCriteria) {
+        $ag = new ArrayGroup($rawData, $criteriaAggregate['groups'], $criteriaAggregate['columns']);
+        $ag->group();
 
-                        if ($lvl > 0) {
-                            $skip = false;
-                            for ($clvl = 1; $clvl <= $lvl; $clvl++) {
-                                $sgval  = $sg[$criteriaAggregate['groups'][$clvl]['col']];
-                                $cursor = &$cursor['$items'];
+        foreach ($criteriaAggregate['groups'] as $lvl => $group) {
+            if ($group['mode'] == 'sql' && isset($group['sql']) && trim($group['sql']) != '') {
+                $cdbCriteria->limit = -1;
+                $cdbCriteria->order = '';
+                $command            = $builder->createFindCommand($tableSchema, $cdbCriteria);
+                $sql                = $command->text;
+                $sql                = str_replace("{sql}", $sql, $group['sql']);
+                $sqlGroup           = $this->dbConnection->createCommand($sql)->queryAll(true, $cdbCriteria->params);
 
-                                if (isset($cursor[$sgval])) {
-                                    $cursor = &$cursor[$sgval];
-                                } else {
-                                    $skip = true;
-                                    break;
-                                }
+                foreach ($sqlGroup as $sg) {
+                    $cursor = &$ag->grouped;
+
+                    if ($lvl > 0) {
+                        $skip = false;
+                        for ($clvl = 1; $clvl <= $lvl; $clvl++) {
+                            $sgval  = $sg[$criteriaAggregate['groups'][$clvl]['col']];
+                            $cursor = &$cursor['$items'];
+
+                            if (isset($cursor[$sgval])) {
+                                $cursor = &$cursor[$sgval];
+                            } else {
+                                $skip = true;
+                                break;
                             }
-
-                            if ($skip) continue;
                         }
 
-                        $aggregate = &$cursor['$aggregate'];
-                        foreach ($criteriaAggregate['columns'] as $c => $aggr) {
-                            if (isset($sg[$c])) {
-                                $aggregate[$c] = $sg[$c];
-                            }
+                        if ($skip) continue;
+                    }
+
+                    $aggregate = &$cursor['$aggregate'];
+                    foreach ($criteriaAggregate['columns'] as $c => $aggr) {
+                        if (isset($sg[$c])) {
+                            $aggregate[$c] = $sg[$c];
                         }
                     }
                 }
             }
-            $rawData = $ag->flatten();
         }
-
-        return $rawData;
+        $rawData = $ag->flatten();
     }
 
     public static function queryRow($sql, $params = []) {
@@ -783,27 +819,6 @@ class ActiveRecord extends CActiveRecord {
         ];
     }
 
-//    public function beforeSave() {
-//        ## clean primary keys
-//        if ($this->primaryKey == '') {
-//            $table = $this->getMetaData()->tableSchema;
-//            $primaryKey = $table->primaryKey;
-//            $this->$primaryKey = null;
-//        }
-//
-//        ## clean relation columns
-//        $rels = array_keys($this->getMetaData()->tableSchema->foreignKeys);
-//        foreach ($rels as $k => $rel) {
-//            if (is_string($rel)) {
-//                if (!is_numeric($this[$rel]) && !is_null($this[$rel])) {
-//                    $this[$rel] = null;
-//                }
-//            }
-//        }
-//
-//        return true;
-//    }
-
     public function resetRel($relation, $data = null) {
         $this->__relInsert[$relation] = [];
         $this->__relUpdate[$relation] = [];
@@ -820,37 +835,6 @@ class ActiveRecord extends CActiveRecord {
         foreach ($data as $d) {
             if (isset($d['id']) && is_numeric($d['id'])) {
                 $this->__relUpdate[$relation][] = $d;
-            } else {
-                $this->__relInsert[$relation][] = $d;
-            }
-        }
-    }
-
-    public function setRel($relation, $data = null) {
-        if (is_null($data)) {
-            if (isset($this->__relations[$relation])) {
-                $data = $this->__relations[$relation];
-            } else {
-                $data = [];
-            }
-        }
-
-        foreach ($data as $d) {
-            if (isset($d['id']) && is_numeric($d['id'])) {
-                $found = false;
-
-                foreach ($this->__relUpdate[$relation] as $k => $u) {
-                    if ($u['id'] == $d['id']) {
-                        $found = true;
-                        break;
-                    }
-                }
-
-                if ($found) {
-                    $this->__relUpdate[$relation][$k] = $d;
-                } else {
-                    $this->__relInsert[$relation][] = $d;
-                }
             } else {
                 $this->__relInsert[$relation][] = $d;
             }
@@ -913,7 +897,6 @@ class ActiveRecord extends CActiveRecord {
                 $value                 = is_string($value) ? json_decode($value, true) : $value;
                 $this->__relDelete[$k] = $value;
             }
-
 
             $this->applyRelChange($k);
         }
@@ -982,12 +965,7 @@ class ActiveRecord extends CActiveRecord {
             $attributes = $attributes + ['Relations' => $relations];
         }
 
-
         return $attributes;
-    }
-
-    public function getRels() {
-        return $this->__relations;
     }
 
     public function save($runValidation = true, $attributes = null) {
@@ -1025,8 +1003,10 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function doAfterSave($withRelation = true) {
+        $pk = $this->tableSchema->primaryKey;
+
         if ($this->isNewRecord) {
-            $this->id = $this->dbConnection->getLastInsertID(); ## this is hack
+            $this->{$pk} = $this->dbConnection->getLastInsertID(); ## this is hack
             ## UPDATE AUDIT TRAIL 'CREATE' ID
             if (!!Yii::app()->user && !Yii::app()->user->isGuest) {
                 $a = $this->dbConnection->createCommand("
@@ -1036,7 +1016,7 @@ class ActiveRecord extends CActiveRecord {
                 type = 'create' and
                 model_id is null")->execute([
                     'model_class' => ActiveRecord::baseClass($this),
-                    'model_id' => $this->id,
+                    'model_id' => $this->{$pk},
                     'user_id' => Yii::app()->user->id
                 ]);
             }
@@ -1052,101 +1032,140 @@ class ActiveRecord extends CActiveRecord {
                     $rel = $this->getMetaData()->relations[$k];
                 }
 
-                switch (get_class($rel)) {
+                $relClass = $rel->className;
+                if (!class_exists($relClass))
+                    continue;
+
+                $relType       = get_class($rel);
+                $relForeignKey = $rel->foreignKey;
+                $relTableModel = $relClass::model();
+                $relTable      = $relTableModel->tableName();
+                $relPK         = $relTableModel->metadata->tableSchema->primaryKey;
+
+                switch ($relType) {
                     case 'CHasOneRelation':
                     case 'CBelongsToRelation':
-                        //TODO
-                        /*
                         if (!empty($new)) {
-                            $class = $rel->className;
-                            $model = $class::model()->findByPk($this->{$rel->foreignKey});
-                            if (is_null($model)) {
-                                $model = new $class;
+                            $relForeignKey = $rel->foreignKey;
+                            if ($this->{$relForeignKey} == $new[$relPK]) {
+                                $model = $relClass::model()->findByPk($this->{$relForeignKey});
+                                if (is_null($model)) {
+                                    $model = new $relClass;
+                                }
+                                if (array_diff($model->attributes, $new)) {
+                                    $model->attributes = $new;
+                                    if ($relType == 'CHasOneRelation') {
+                                        $model->{$relForeignKey} = $this->{$pk};
+                                    }
+                                    $model->save();
+                                }
+                            } else {
+                                $this->loadRelation($rel->name);
                             }
-                            $model->attributes = $new;
-                            $model->{$rel->foreignKey} = $this->id;
-                            $model->save();
-                        }*/
+                        }
                         break;
                     case 'CManyManyRelation':
                     case 'CHasManyRelation':
-                        ## without through
-                        if (is_string($rel->foreignKey)) {
-                            $class = $rel->className;
+                        ## if relation type is Many to Many
+                        $relMM = [];
+                        if ($relType == 'CManyManyRelation') {
+                            $parser = new PhpParser\Parser(new PhpParser\Lexer\Emulative);
+                            $stmts  = $parser->parse('<?php ' . $relForeignKey . ';');
+                            if (count($stmts) > 0) {
+                                $relMM = [
+                                    'tableName' => $stmts[0]->name->parts[0],
+                                    'from' => $stmts[0]->args[0]->value->name->parts[0],
+                                    'to' => $stmts[0]->args[1]->value->name->parts[0]
+                                ];
+                            }
+                        }
 
-                            if (isset($this->__relInsert[$k])) {
-                                if ($k != 'currentModel') {
-                                    foreach ($this->__relInsert[$k] as $n => $m) {
-                                        $this->__relInsert[$k][$n][$rel->foreignKey] = $this->id;
+                        ## Handle Insert
+                        if (isset($this->__relInsert[$k])) {
+                            if ($k != 'currentModel') {
+                                if (is_string($relForeignKey)) { ## without through
+                                    if ($relType != 'CManyManyRelation') {
+                                        foreach ($this->__relInsert[$k] as $n => $m) {
+                                            $this->__relInsert[$k][$n][$relForeignKey] = $this->{$pk};
+                                        }
                                     }
-                                }
-
-
-                                if (count($this->__relInsert[$k]) > 0) {
-                                    ActiveRecord::batchInsert($class, $this->__relInsert[$k]);
-                                }
-
-                                $this->__relInsert[$k] = [];
-                            }
-
-                            if (isset($this->__relUpdate[$k])) {
-                                if ($k != 'currentModel') {
-                                    foreach ($this->__relUpdate[$k] as $n => $m) {
-                                        $this->__relUpdate[$k][$n][$rel->foreignKey] = $this->id;
-                                    }
-                                }
-
-                                if (count($this->__relUpdate[$k]) > 0) {
-                                    ActiveRecord::batchUpdate($class, $this->__relUpdate[$k]);
-                                }
-                                $this->__relUpdate[$k] = [];
-                            }
-
-                            if (isset($this->__relDelete[$k])) {
-                                if (count($this->__relDelete[$k]) > 0) {
-                                    ActiveRecord::batchDelete($class, $this->__relDelete[$k]);
-                                }
-                                $this->__relDelete[$k] = [];
-                            }
-                        } ## with through
-                        elseif (is_array($rel->foreignKey)) {
-                            $class = $rel->className;
-
-                            if (isset($this->__relInsert[$k])) {
-                                if ($k != 'currentModel') {
+                                } else if (is_array($foreignKey)) { ## with through
                                     foreach ($this->__relInsert[$k] as $n => $m) {
-                                        foreach ($rel->foreignKey as $rk => $fk) {
+                                        foreach ($relForeignKey as $rk => $fk) {
                                             $this->__relInsert[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
                                         }
                                     }
                                 }
-                                if (count($this->__relInsert[$k]) > 0) {
-                                    ActiveRecord::batchInsert($class, $this->__relInsert[$k]);
-                                }
-                                $this->__relInsert[$k] = [];
                             }
 
-                            if (isset($this->__relUpdate[$k])) {
-                                if ($k != 'currentModel') {
+                            if (count($this->__relInsert[$k]) > 0) {
+                                ActiveRecord::batchInsert($relClass, $this->__relInsert[$k]);
+
+                                ## if current relation is many to many
+                                if ($relType == 'CManyManyRelation' && !empty($relMM)) {
+                                    ## then create transaction entry to link between
+                                    ## related model and current model
+                                    $manyRel = [];
+                                    foreach ($this->__relInsert[$k] as $item) {
+                                        $manyRel[] = [
+                                            $relMM['from'] => $this->{$pk},
+                                            $relMM['to'] => $item[$relPK]
+                                        ];
+                                    }
+
+                                    ActiveRecord::batchInsert($relMM['tableName'], $manyRel, false);
+                                }
+                            }
+                            $this->__relInsert[$k] = [];
+                        }
+
+                        ## Handle Update
+                        if (isset($this->__relUpdate[$k])) {
+                            if ($k != 'currentModel') {
+                                if (is_string($relForeignKey)) { ## without through
+                                    if ($relType == 'CManyManyRelation') {
+
+                                    } else {
+                                        foreach ($this->__relUpdate[$k] as $n => $m) {
+                                            $this->__relUpdate[$k][$n][$relForeignKey] = $this->{$pk};
+                                        }
+                                    }
+                                } else if (is_array($relForeignKey)) { ## with through
                                     foreach ($this->__relUpdate[$k] as $n => $m) {
-                                        foreach ($rel->foreignKey as $rk => $fk) {
+                                        foreach ($relForeignKey as $rk => $fk) {
                                             $this->__relUpdate[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
                                         }
                                     }
                                 }
-
-                                if (count($this->__relUpdate[$k]) > 0) {
-                                    ActiveRecord::batchUpdate($class, $this->__relUpdate[$k]);
-                                }
-                                $this->__relUpdate[$k] = [];
                             }
 
-                            if (isset($this->__relDelete[$k])) {
-                                if (count($this->__relDelete[$k]) > 0) {
-                                    ActiveRecord::batchDelete($class, $this->__relDelete[$k]);
-                                }
-                                $this->__relDelete[$k] = [];
+                            if (count($this->__relUpdate[$k]) > 0) {
+                                ActiveRecord::batchUpdate($relClass, $this->__relUpdate[$k]);
                             }
+                            $this->__relUpdate[$k] = [];
+                        }
+
+                        ## Handle Delete
+                        if (isset($this->__relDelete[$k])) {
+                            if (count($this->__relDelete[$k]) > 0) {
+                                if ($relType == 'CManyManyRelation') {
+                                    if (!empty($relMM)) {
+                                        //first remove entry in transaction table first
+                                        ActiveRecord::batchDelete($relMM['tableName'], $this->__relDelete[$k], [
+                                            'table' => $relMM['tableName'],
+                                            'pk' => $relPK,
+                                            'condition' => "{$relMM['from']} = {$this->{$pk}} AND {$relMM['to']} IN (:ids)",
+                                            'integrityError' => false
+                                        ]);
+
+                                        //and then remove entry in actual table
+                                        ActiveRecord::batchDelete($relClass, $this->__relDelete[$k]);
+                                    }
+                                } else {
+                                    ActiveRecord::batchDelete($relClass, $this->__relDelete[$k]);
+                                }
+                            }
+                            $this->__relDelete[$k] = [];
                         }
                         break;
                 }

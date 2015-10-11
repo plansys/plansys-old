@@ -317,7 +317,7 @@
 
 
         window.$(document).keydown(function (event) {
-            if (!( String.fromCharCode(event.which).toLowerCase() == 's' && event.metaKey) && !(event.which == 19)) {
+            if (!( String.fromCharCode(event.which).toLowerCase() == 's' && (event.metaKey || event.ctrlKey)) && !(event.which == 19)) {
                 return true;
             }
             $scope.save($scope.list);

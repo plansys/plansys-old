@@ -9,8 +9,8 @@ class FormField extends CComponent {
     public static $toolbarName;
     public static $category;
     public static $toolbarIcon; // list of form fields to be parsed array('from'=>'to')
-    public static $inEditor         = false;
-    public static $categorySettings = [
+    public static $inEditor           = false;
+    public static $categorySettings   = [
         'User Interface' => [
             'icon' => 'fa-cubes',
         ],
@@ -24,13 +24,14 @@ class FormField extends CComponent {
             'icon' => 'fa-bar-chart',
         ]
     ]; //to distinguish one field to another, will be filled when rendering, -NOT- in editor
-    public static $deprecated       = false;
-    public        $parseField       = [];
-    public        $renderParams     = [];
-    public        $renderID         = "";
-    public        $extendsForm      = '';
-    private       $_errors          = [];
-    private       $_form_properties = [
+    public static $deprecated         = false;
+    public        $parseField         = [];
+    public        $renderParams       = [];
+    public        $renderID           = "";
+    public        $fieldNameTemplate = "";
+    public        $extendsForm        = '';
+    private       $_errors            = [];
+    private       $_form_properties   = [
         'formTitle' => '',
         'layout' => [
             'name' => 'full-width',
@@ -41,7 +42,7 @@ class FormField extends CComponent {
             ]
         ],
     ];
-    private       $_builder         = null;
+    private       $_builder           = null;
 
     public static function template() {
         return self::renderTemplate('template_editor.php');
@@ -361,8 +362,12 @@ class FormField extends CComponent {
     /**
      * @return string me-return string nama class
      */
+
     public function getRenderName() {
         if (property_exists($this, 'name')) {
+            if ($this->fieldNameTemplate != "") {
+                return str_replace([":model", ":name"], [get_class($this->model), $this->name], $this->fieldNameTemplate);
+            }
 
             if (is_array($this->model)) {
                 return $this->name;

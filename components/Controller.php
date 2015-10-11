@@ -212,6 +212,7 @@ class Controller extends CController {
             ];
         }
 
+
         $name = "";
         if (!Yii::app()->user->isGuest) {
             if (isset(Yii::app()->user->model)) {
@@ -272,6 +273,7 @@ class Controller extends CController {
                 'visible' => !Yii::app()->user->isGuest
             ],
         ];
+
         if (Yii::app()->user->isGuest) {
             return $default;
         } else {

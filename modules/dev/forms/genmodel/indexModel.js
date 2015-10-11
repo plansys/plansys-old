@@ -1,7 +1,7 @@
 $scope.status = navigator.platform.indexOf('Mac') > -1 ? 'Save: Cmd + S' : 'Save: Ctrl + S';
 window.$(document).keydown(function (event) {
     $scope.status = navigator.platform.indexOf('Mac') > -1 ? 'Save: Cmd + S' : 'Save: Ctrl + S';
-    if (!( String.fromCharCode(event.which).toLowerCase() == 's' && event.metaKey) && !(event.which == 19)) return true;
+    if (!( String.fromCharCode(event.which).toLowerCase() == 's' && (event.metaKey || event.ctrlKey)) && !(event.which == 19)) return true;
     $scope.status = 'Saving...';
     var data = {content: $scope.params.content, active: $scope.params.active};
     $http.post(Yii.app.createUrl('/dev/genModel/save'), data)

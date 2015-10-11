@@ -1020,3 +1020,9 @@ function trim(str, charlist) {
 
     return whitespace.indexOf(str.charAt(0)) === -1 ? str : '';
 }
+
+if (!Array.isArray) {
+    Array.isArray = function(arg) {
+        return Object.prototype.toString.call(arg) === '[object Array]';
+    };
+}

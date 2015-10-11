@@ -65,7 +65,7 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
 
 
     window.$(document).keydown(function (event) {
-        if (!( String.fromCharCode(event.which).toLowerCase() == 's' && event.metaKey) && !(event.which == 19)) return true;
+        if (!( String.fromCharCode(event.which).toLowerCase() == 's' && (event.metaKey || event.ctrlKey)) && !(event.which == 19)) return true;
         $scope.save();
         event.preventDefault();
         return false;
@@ -532,6 +532,7 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
         });
         return str[0].toUpperCase() + str.substr(1);
     }
+
     /************************ DATA FILTERS ****************************/
     $scope.generateFilters = function () {
         var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=template_attr]:eq(0)").text());
@@ -677,7 +678,12 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
         $scope.dataSourceList = dslist;
     }
 
-
+    $scope.changeListViewMode = function () {
+        if ($scope.active.fieldTemplate != 'datasource') {
+            $scope.active.name = $scope.modelFieldList['DB Fields'][Object.keys($scope.modelFieldList['DB Fields'])[0]];
+        }
+        $scope.save();
+    }
     $scope.changeActiveName = function () {
         $el = $(":focus");
         if (typeof $el != "undefined") {
@@ -827,7 +833,7 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
         clearTimeout(selectTimeout);
         $scope.active = null;
         $scope.activeTree = null;
-        $scope.propMsg = 'Loading Field'
+        $scope.propMsg = 'Loading Field';
         selectTimeout = setTimeout(function () {
             $scope.$apply(function () {
                 if ($scope.active == null || item.$modelValue.type != $scope.active.type) {
@@ -847,6 +853,7 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
                     case 'DataGrid':
                     case 'DataTable':
                     case 'GridView':
+                    case 'ListView':
                         $scope.getDataSourceList();
                         break;
                     case 'RelationField':
@@ -865,6 +872,7 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
                     $scope.activeEditor.onSelect($scope.active);
                 }
 
+                $scope.propMsg = 'Welcome To Form Builder';
             });
         }, 10);
     };

@@ -6,27 +6,17 @@
  */
 class FormBuilder extends CComponent {
 
-    /** @const string Constanta NEWLINE_MARKER */
     const NEWLINE_MARKER = "!@#$%^&*NEWLINE&^%$#@!";
-    /**
-     * @var array $_buildRenderID
-     * @access private
-     */
-    private static $_buildRenderID = [];
-    /** @var model $model */
-    public $model = null;
-    /** @var $timestamp sebagai penanda kapan form ini terakhir diedit */
-    public $timestamp;
-    /**
-     * @var integer $countRenderID
-     * @access private
-     */
-    private $countRenderID   = 1;
-    private $methods         = [];
-    private $file            = [];
-    private $sourceFile      = '';
-    private $originalClass   = '';
-    private $_findFieldCache = null;
+    private static $_buildRenderID    = [];
+    public         $model             = null;
+    public         $timestamp;
+    public         $fieldNameTemplate = "";
+    private        $countRenderID     = 1;
+    private        $methods           = [];
+    private        $file              = [];
+    private        $sourceFile        = '';
+    private        $originalClass     = '';
+    private        $_findFieldCache   = null;
 
     public static function resetSession($class) {
         Yii::app()->session['FormBuilder_' . $class] = null;
@@ -614,6 +604,17 @@ class FormBuilder extends CComponent {
         return $processed;
     }
 
+    public function updateExtendsFrom($extendsFrom) {
+        $class = get_class($this->model);
+        foreach ($this->file as $k => $f) {
+            if (strpos(trim($f), 'class ' . $class) === 0) {
+                $this->file[$k] = "class {$class} extends {$extendsFrom} {";
+            }
+        }
+
+        return true;
+    }
+
     /**
      * @param array $fields
      * @return array me-return array fields hasil dari proses expression field
@@ -874,7 +875,7 @@ EOF;
             //TODO: fix gigantic bug, do not allow more than 200 consecutive spaces
             $buffer = preg_replace('/\s{200,}/', ' ', $buffer);
             $buffer = str_replace('\\\\\'', '\'', $buffer);
-            $file = explode("\n", $buffer);
+            $file   = explode("\n", $buffer);
 
             fwrite($fp, $buffer);
             fflush($fp); // flush output before releasing the lock
@@ -1142,17 +1143,6 @@ EOF;
         return $this->updateFunctionBody('getForm', $form);
     }
 
-    public function updateExtendsFrom($extendsFrom) {
-        $class = get_class($this->model);
-        foreach ($this->file as $k => $f) {
-            if (strpos(trim($f), 'class ' . $class) === 0) {
-                $this->file[$k] = "class {$class} extends {$extendsFrom} {";
-            }
-        }
-
-        return true;
-    }
-
     /**
      * @return array me-return array
      */
@@ -1168,7 +1158,7 @@ EOF;
      * @return string me-return string script yang di-include
      */
     public function renderAngularController($formdata = null, $renderParams = []) {
-        $modelClass = get_class($this->model);
+        $modelClass     = get_class($this->model);
         $modelClassPath = Helper::getAlias($this->model);
 
         ## define formdata
@@ -1364,6 +1354,7 @@ EOF;
 
                 ## assign field render id
                 $field->renderID = $modelClass . '_' . $FFRenderID . $this->countRenderID++;
+                $field->fieldNameTemplate = $this->fieldNameTemplate;
 
                 ## then render the field, (including registering script)
                 $html .= $field->render();

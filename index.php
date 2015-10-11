@@ -11,6 +11,14 @@ $root = $mode != "init" ? dirname(__FILE__) . '/plansys' : dirname(__FILE__);
 $yii      = $root . '/framework/yii.php';
 $config   = $root . '/config/main.php';
 $setting  = $root . '/components/utility/Setting.php';
+if (!file_exists($root . '/vendor/autoload.php')) {
+    echo "
+    <center>
+        <b>Composer failed to load!</b><br/>
+        Please run <code>'composer update'</code> on plansys directory
+    </center>";
+    die();
+}
 $composer = require ($root . '/vendor/autoload.php');
 
 ## Initialize settings
