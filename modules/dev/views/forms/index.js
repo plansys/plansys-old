@@ -143,7 +143,18 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                             var foldername = prompt("Enter new folder name:");
                             $scope.addFolder(foldername, item);
                         }
-                    }
+                    },
+                    {
+                        hr: true
+                    },
+                    {
+                        icon: "fa fa-fw fa-cube",
+                        label: "New CRUD",
+                        click: function (item) {
+                            $scope.activeItem = item;
+                            PopupCenter(Yii.app.createUrl('/dev/crud/new'), "Create New CRUD" , '800', '550');
+                        }
+                    },
                 ];
                 $timeout(function () {
                     $scope.select(sel, item);
@@ -166,6 +177,17 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         click: function (item) {
                             var foldername = prompt("Enter new folder name:");
                             $scope.addFolder(foldername, item);
+                        }
+                    },
+                    {
+                        hr: true
+                    },
+                    {
+                        icon: "fa fa-fw fa-cube",
+                        label: "New CRUD",
+                        click: function (item) {
+                            $scope.activeItem = item;
+                            PopupCenter(Yii.app.createUrl('/dev/crud/new'), "Create New CRUD" , '800', '550');
                         }
                     },
                     {

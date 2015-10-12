@@ -173,7 +173,6 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
                 } else if (data == 'FAILED: PERMISSION DENIED') {
                     alert('ERROR: Failed to write file\nReason: Permission Denied');
                 }
-
             })
             .error(function (data, status) {
                 $scope.saving = false;
@@ -233,7 +232,7 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
         $(".form-field.active").removeClass("active");
         if ($scope.form.layout.data[layout] == null) {
             $scope.form.layout.data[layout] = {
-                type: '',
+                type: ''
             }
         }
 

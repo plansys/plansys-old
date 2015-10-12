@@ -62,7 +62,6 @@ class DevUserForm extends User {
                         'type' => 'TextField',
                     ),
                     array (
-                        'label' => 'User Role',
                         'name' => 'userRoles',
                         'fieldTemplate' => 'form',
                         'templateForm' => 'application.modules.dev.forms.users.user.DevUserRoleList',

@@ -1,11 +1,10 @@
-    
 <div label-field <?= $this->expandAttributes($this->options) ?>>
 
     <!-- label -->
     <?php if ($this->label != ""): ?>
         <label <?= $this->expandAttributes($this->labelOptions) ?>
             class="<?= $this->labelClass ?>" for="<?= $this->renderID; ?>">
-                <?= $this->label ?>
+            <?= $this->label ?>
         </label>
     <?php endif; ?>
     <!-- /label -->
@@ -19,13 +18,14 @@
         <!-- /data -->
 
         <!-- field -->
-        <div <?= $this->expandAttributes($this->fieldOptions) ?>><?php if ($this->js != ""): ?>{{ <?= $this->js ?>}}<?php else: ?>{{ value}}<?php endif; ?> &nbsp;</div>
+        <div <?= $this->expandAttributes($this->fieldOptions) ?>><?php if ($this->js != ""): ?>{{ <?= $this->js ?>}}<?php else: ?>{{ value}}<?php endif; ?>
+            &nbsp;</div>
         <input type="hidden"
                id='<?= $this->renderID ?>'
-               name='<?= $this->renderName ?>'
+               name='<?= isset($this->fieldOptions['name']) ? $this->fieldOptions['name'] : $this->renderName ?>'
                ng-model="value"
                ng-value="value"
-               />
+            />
         <!-- /field -->
 
         <!-- error -->

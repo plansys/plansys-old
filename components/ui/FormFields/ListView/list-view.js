@@ -226,7 +226,6 @@ app.directive('listView', function ($timeout) {
                 });
 
                 // if ngModel is present, use that instead of value from php
-
                 if (attrs.ngModel) {
                     $timeout(function () {
                         if ($scope.fieldTemplate == 'datasource') {
@@ -262,11 +261,10 @@ app.directive('listView', function ($timeout) {
                         if (!$scope.inEditor) {
                             parent[$scope.name] = $scope;
                         }
-                        $timeout(function () {
-                            $scope.loading = false;
-                        }, 100);
-
                     }, 0);
+                    $timeout(function () {
+                        $scope.loading = false;
+                    }, 100);
                 }
             }
         }

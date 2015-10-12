@@ -110,8 +110,18 @@ class Controller extends CController {
         $class = $this->prepareFormName($class);
         $fb    = FormBuilder::load($class);
 
+        ## check if layout property is declared by rendering controller
+        $reflection  = new ReflectionObject($this);
+        $layoutClass = $reflection->getProperty('layout')->getDeclaringClass()->getName();
+
+        ## if layout property is not declared, then set it to default form layout '//layouts/form'
+        if ($layoutClass != get_class($this)) {
+            $this->layout = '//layouts/form';
+        }
+
+        ## set page title & layout to options
         $this->pageTitle = isset($options['pageTitle']) ? $options['pageTitle'] : $fb->form['title'];
-        $this->layout    = isset($options['layout']) ? $options['layout'] : '//layouts/form';
+        $this->layout    = isset($options['layout']) ? $options['layout'] : $this->layout;
 
         $renderOptions = [
             'wrapForm' => true,

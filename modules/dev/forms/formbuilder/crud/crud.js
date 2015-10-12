@@ -24,24 +24,11 @@ function generateClassPrefix(s) {
 }
 
 $scope.params.prefix = generateClassPrefix(activeScope.activeItem.alias);
-$scope.onFormNameChange = function () {
-    $scope.model.formName = ($scope.model.formName.charAt(0).toUpperCase() + $scope.model.formName.slice(1)).replace(/[^a-z0-9]/gi,'');
+$scope.params.alias = activeScope.activeItem.alias;
+$scope.onNameChange = function () {
+    $scope.model.name = ($scope.model.name.charAt(0).toLowerCase() + $scope.model.name.slice(1)).replace(/[^a-z0-9]/gi,'');
 }
 
 $scope.form.submit = function (f) {
-    if ($scope.model.formName != '') {
-        var baseClass = $scope.model.baseClass;
-        if (baseClass == '--model--') {
-            baseClass = $scope.model.model;
-        } else if (baseClass == '--custom--') {
-            baseClass = $scope.model.custom;
-        }
-
-        activeScope.addForm($scope.params.prefix + $scope.model.formName, baseClass, activeScope.activeItem);
-        window.close();
-    }
-};
-
-$timeout(function () {
-    $("#DevFormNewForm_3").focus();
-}, 100);
+    $scope.debug = f;
+}
