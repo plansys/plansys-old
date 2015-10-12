@@ -192,7 +192,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         icon: "fa fa-fw  fa-trash",
                         label: "Delete",
                         click: function (item) {
-                            if (confirm("Are you sure want to delete this folder ?') {
+                            if (confirm("Are you sure want to delete this folder ?")) {
                                 $scope.delFolder(sel, item);
                             }
                         }
@@ -253,7 +253,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         icon: "fa fa-fw  fa-trash",
                         label: "Delete",
                         click: function (item) {
-                            if (confirm("Are you sure want to delete this folder ?') {
+                            if (confirm("Are you sure want to delete this folder ?"))    {
                                 $scope.delForm(sel, item);
                             }
                         }
