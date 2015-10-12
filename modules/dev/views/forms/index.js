@@ -192,7 +192,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         icon: "fa fa-fw  fa-trash",
                         label: "Delete",
                         click: function (item) {
-                            if (prompt("Type 'DELETE' to execute deleting this folder:") == 'DELETE') {
+                            if (confirm("Are you sure want to delete this folder ?') {
                                 $scope.delFolder(sel, item);
                             }
                         }
@@ -239,21 +239,21 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                     //        var newname = prompt("Enter new form name:");
                     //    }
                     //},
-                    {
-                        icon: "fa fa-fw fa-sign-in",
-                        label: "Move To",
-                        click: function (item) {
-                            alert("This feature is stil under construction...");
-                        }
-                    },
-                    {
-                        hr: true
-                    },
+                    //{
+                    //    icon: "fa fa-fw fa-sign-in",
+                    //    label: "Move To",
+                    //    click: function (item) {
+                    //        alert("This feature is stil under construction...");
+                    //    }
+                    //},
+                    //{
+                    //    hr: true
+                    //},
                     {
                         icon: "fa fa-fw  fa-trash",
                         label: "Delete",
                         click: function (item) {
-                            if (prompt("Type 'DELETE' to execute deleting this form:") == 'DELETE') {
+                            if (confirm("Are you sure want to delete this folder ?') {
                                 $scope.delForm(sel, item);
                             }
                         }

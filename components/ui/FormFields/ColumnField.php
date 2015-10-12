@@ -6,6 +6,36 @@
  */
 class ColumnField extends FormField {
 
+    public static $toolbarName      = "Columns";
+    public static $category         = "Layout";
+    public static $toolbarIcon      = "fa fa-columns";
+    public        $totalColumns     = 2;
+    public        $showBorder       = 'No';
+    public        $parseField       = [
+        'column1' => 'renderColumn1',
+        'column2' => 'renderColumn2',
+        'column3' => 'renderColumn3',
+        'column4' => 'renderColumn4',
+        'column5' => 'renderColumn5',
+    ];
+    public        $column1          = ['<column-placeholder></column-placeholder>'];
+    public        $column2          = ['<column-placeholder></column-placeholder>'];
+    public        $column3          = ['<column-placeholder></column-placeholder>'];
+    public        $column4          = ['<column-placeholder></column-placeholder>'];
+    public        $column5          = ['<column-placeholder></column-placeholder>'];
+    public        $renderColumn1    = "";
+    public        $renderColumn2    = "";
+    public        $renderColumn3    = "";
+    public        $renderColumn4    = "";
+    public        $renderColumn5    = "";
+    public        $w1;
+    public        $w2;
+    public        $w3;
+    public        $w4;
+    public        $w5;
+    public        $options          = [];
+    public        $perColumnOptions = [];
+
     /**
      * @return array me-return array property ColumnField.
      */
@@ -108,73 +138,19 @@ class ColumnField extends FormField {
                 'value' => '<hr/>',
             ),
             array (
-                'label' => 'Options',
+                'label' => 'Container Options',
                 'name' => 'options',
+                'show' => 'Show',
+                'type' => 'KeyValueGrid',
+            ),
+            array (
+                'label' => 'Per Column Options',
+                'name' => 'perColumnOptions',
                 'show' => 'Show',
                 'type' => 'KeyValueGrid',
             ),
         );
     }
-
-    /** @var integer $totalColumns */
-    public $totalColumns = 2;
-
-    /** @var string $showBorder */
-    public $showBorder = 'No';
-
-    /** @var array $parseField */
-    public $parseField = [
-        'column1' => 'renderColumn1',
-        'column2' => 'renderColumn2',
-        'column3' => 'renderColumn3',
-        'column4' => 'renderColumn4',
-        'column5' => 'renderColumn5',
-    ];
-
-    /** @var array $column1 */
-    public $column1 = ['<column-placeholder></column-placeholder>'];
-
-    /** @var array $column2 */
-    public $column2 = ['<column-placeholder></column-placeholder>'];
-
-    /** @var array $column3 */
-    public $column3 = ['<column-placeholder></column-placeholder>'];
-
-    /** @var array $column4 */
-    public $column4 = ['<column-placeholder></column-placeholder>'];
-
-    /** @var array $column5 */
-    public $column5 = ['<column-placeholder></column-placeholder>'];
-
-    /** @var string $renderColumn1 */
-    public $renderColumn1 = "";
-
-    /** @var string $renderColumn2 */
-    public $renderColumn2 = "";
-
-    /** @var string $renderColumn3 */
-    public $renderColumn3 = "";
-
-    /** @var string $renderColumn4 */
-    public $renderColumn4 = "";
-
-    /** @var string $renderColumn5 */
-    public $renderColumn5 = "";
-    public $w1;
-    public $w2;
-    public $w3;
-    public $w4;
-    public $w5;
-
-    /** @var string $toolbarName */
-    public static $toolbarName = "Columns";
-
-    /** @var string $category */
-    public static $category = "Layout";
-
-    /** @var string $toolbarIcon */
-    public static $toolbarIcon = "fa fa-columns";
-    public $options = [];
 
     /**
      * @return integer me-return width dari column yang akan dirender.
@@ -209,7 +185,7 @@ class ColumnField extends FormField {
     /**
      * render
      * Fungsi ini untuk me-render field dan atributnya
-     * @return mixed me-return sebuah field ColumnField dari hasil render 
+     * @return mixed me-return sebuah field ColumnField dari hasil render
      */
     public function render() {
 

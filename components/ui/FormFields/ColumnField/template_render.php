@@ -4,7 +4,7 @@
                 <?= $this->showBorder == 'Yes' && $i != 1 ? "border-left:1px solid #ececeb;" : "" ?>
                 <?= $this->showBorder == 'Yes' && $i == 1 ? "border-right:1px solid #ececeb;" : "" ?>
                 ">
-                <div class="column-field-inner">
+                <div class="column-field-inner" <?= $this->expandAttributes($this->perColumnOptions) ?>>
                     <?= $this->renderColumn($i); ?>
                 </div>
             </div>
