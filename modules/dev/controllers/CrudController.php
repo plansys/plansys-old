@@ -10,4 +10,88 @@ class CrudController extends Controller {
         }
         $this->renderForm('DevCrudMainForm');
     }
+
+    public function actionCheckFile() {
+        $postdata = file_get_contents("php://input");
+        $post     = CJSON::decode($postdata);
+
+        if ($post['file']['type'] == 'folder') {
+            echo "ready";
+            die();
+        } else {
+            if (isset($post['file']['path'])) {
+                $check = Yii::getPathOfAlias($post['file']['path']) . DIRECTORY_SEPARATOR;
+            } else {
+                $check = Yii::getPathOfAlias($post['path']) . DIRECTORY_SEPARATOR;
+            }
+            $check .= $post['file']['name'];
+        }
+
+        echo file_exists($check) ? "exist" : "ready";
+    }
+
+    public function actionGenerate() {
+        $postdata = file_get_contents("php://input");
+        $post     = CJSON::decode($postdata);
+
+        $path   = Yii::getPathOfAlias($post['path']);
+        $file   = $path . DIRECTORY_SEPARATOR . $post['name'];
+        $result = [
+            'status' => 'ok',
+            'path' => $path,
+            'file' => $file
+        ];
+
+        switch ($post['type']) {
+            case "folder":
+                if (!file_exists($path)) {
+                    mkdir($path, 777, true);
+                }
+                break;
+            case "index":
+            case "form":
+            case "master":
+                if (!file_exists($file) || !!@$post['overwrite']) {
+                    $this->generateAR($post, $result);
+                }
+                break;
+            case "controller":
+                if (!file_exists($file) || !!@$post['overwrite']) {
+                    $this->generateController($post, $result);
+                }
+                break;
+            default:
+                break;
+        }
+        echo json_encode($result);
+    }
+
+    public function generateController($post, &$result) {
+        $tplName = $post['mode'] == 'crud' ? 'TplCrudController' : 'TplMasterController';
+        $tpl     = file_get_contents(Yii::getPathOfAlias('application.components.codegen.templates.' . $tplName) . ".php");
+        $replace = [$tplName => $post['className']];
+
+        if (isset($post['formName'])) {
+            $replace['TemplateForm'] = $post['dirName'] . "." . $post['formName'];
+        }
+
+        if (isset($post['indexName'])) {
+            $replace['TemplateIndex'] = $post['dirName'] . "." . $post['indexName'];
+        }
+
+        $content = str_replace(array_keys($replace), array_values($replace), $tpl);
+        file_put_contents($result['file'], $content);
+    }
+
+    public function generateAR($post, &$result) {
+        $result['touch'] = $this->createUrl('/dev/forms/update&class=' . $post['path'] . "." . $post['className']);
+        $content         = <<<EOF
+<?php
+
+class {$post['className']} extends {$post['extendsName']} {
+
+}
+EOF;
+        file_put_contents($result['file'], $content);
+    }
 }

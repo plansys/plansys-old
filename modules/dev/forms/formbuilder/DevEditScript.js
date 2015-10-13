@@ -6,7 +6,7 @@ window.$(document).keydown(function (event) {
 
     var data = {
         content: $scope.params.content,
-        name: $scope.params.name,
+        name: $scope.params.script || $scope.params.name,
         ext: $scope.params.ext
     };
     $http.post(Yii.app.createUrl('/dev/forms/codeSave'), data)

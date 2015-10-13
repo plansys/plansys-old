@@ -1,6 +1,6 @@
 <?php
 
-class TemplateController extends Controller {
+class TplCrudController extends Controller {
 
     public function actionIndex() {
         $this->renderForm('TemplateIndex');
@@ -11,7 +11,7 @@ class TemplateController extends Controller {
         if (isset($_POST["TemplateForm"])) {
             $model->attributes = $_POST["TemplateForm"];
             if ($model->save()) {
-                Yii::app()->user->setFlash('info', 'Data berhasil disimpan');
+                $this->flash('info', 'Data berhasil disimpan');
                 $this->redirect(['index']);
             }
         }
@@ -24,7 +24,7 @@ class TemplateController extends Controller {
         if (isset($_POST["TemplateForm"])) {
             $model->attributes = $_POST["TemplateForm"];
             if ($model->save()) {
-                Yii::app()->user->setFlash('info', 'Data berhasil disimpan');
+                $this->flash('info', 'Data berhasil disimpan');
                 $this->redirect(["index"]);
             }
         }
@@ -34,7 +34,7 @@ class TemplateController extends Controller {
     public function actionDelete($id) {
         $model = $this->loadModel($id, "TemplateForm");
         if (!is_null($model)) {
-            Yii::app()->user->setFlash('info', 'Data berhasil dihapus');
+            $this->flash('info', 'Data berhasil dihapus');
             $model->delete();
         }
 

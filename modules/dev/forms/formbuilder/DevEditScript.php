@@ -17,7 +17,7 @@ class DevEditScript extends Form {
 <tabset class=\'tab-set single-tab\'>
     <tab>
         <tab-heading>
-            {{params.shortname}} &bull; {{params.status}}
+            {{params.shortname}} &bull; {{params.status}} 
         </tab-heading>
         <div style=\'padding:0px 0px;width:100%;height:100%;\'>
             <div class=\"text-editor-builder\">

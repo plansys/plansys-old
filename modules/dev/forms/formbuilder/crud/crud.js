@@ -1,3 +1,6 @@
+if (!window.opener || !window.opener.activeScope) {
+    window.close();
+}
 var activeScope = window.opener.activeScope;
 function generateClassPrefix(s) {
     var parts = s.split(".");
@@ -22,18 +25,36 @@ function generateClassPrefix(s) {
     return result.charAt(0).toUpperCase() + result.slice(1);
 }
 
-function generateControllerPath() {
-    var path = $scope.data.path.split('.');
-    path.pop();
-    path.pop();
-    return path.join(".") + ".controllers";
+$scope.getModulePath = function () {
+    var path = activeScope.activeItem.alias;
+    var module = path.split(".");
+    if (path.indexOf('modules') > 0 && module.length >= 3) {
+        return module.splice(0, 3).join(".");
+    } else {
+        return module[0];
+    }
 }
+$scope.getControllerUrl = function () {
+    var module = '';
+    var mp = $scope.getModulePath().split(".");
+    if ($scope.getModulePath().length > 1) {
+        module = mp.pop() + "/";
+    }
 
+    if (!!$scope.model) {
+        return Yii.app.createUrl(module + $scope.model.dirName + "/index");
+    }
+}
+$scope.generateControllerPath = function () {
+    return $scope.getModulePath() + ".controllers";
+}
 $scope.params.prefix = generateClassPrefix(activeScope.activeItem.alias);
 $scope.params.alias = activeScope.activeItem.alias;
 $scope.data = {};
+$scope.exists = [];
 $scope.step = '1';
 $scope.msg = '';
+
 $scope.onNameChange = function () {
     $scope.model.name = ($scope.model.name.charAt(0).toUpperCase() + $scope.model.name.slice(1)).replace(/[^a-z0-9]/gi, '');
     $scope.model.dirName = ($scope.model.name.charAt(0).toLowerCase() + $scope.model.name.slice(1)).replace(/[^a-z0-9]/gi, '');
@@ -42,29 +63,67 @@ $scope.onNameChange = function () {
         files: []
     };
 }
-$scope.form.submit = function (f) {
 
+$scope.checkAll = function (e) {
+    var checked = $(e.target).is(':checked');
+    $scope.data.files.forEach(function (i) {
+        if (i.status == 'exist') {
+            i.overwrite = checked;
+        }
+    });
+}
+$scope.form.submit = function (f) {
+    $scope.data = {
+        path: trim($scope.params.alias, '.') + '.' + $scope.model.dirName,
+        files: []
+    };
     // main form data
     $scope.data.files.push({
         name: $scope.data.path,
         type: 'folder'
     });
-    $scope.data.files.push({
-        name: $scope.params.prefix + $scope.model.name + 'Index.php',
-        className: $scope.params.prefix + $scope.model.name + 'Index',
-        type: 'index',
-    });
-    $scope.data.files.push({
-        name: $scope.params.prefix + $scope.model.name + 'Form.php',
-        className: $scope.params.prefix + $scope.model.name + 'Form',
-        type: 'form',
-    });
-    $scope.data.files.push({
-        name: $scope.model.name + 'Controller.php',
-        className: $scope.model.name + 'Controller',
-        type: 'controller',
-        path: generateControllerPath()
-    });
+
+    if ($scope.model.masterData == 'No') {
+        $scope.data.files.push({
+            name: $scope.params.prefix + $scope.model.name + 'Index.php',
+            className: $scope.params.prefix + $scope.model.name + 'Index',
+            extendsName: $scope.model.model,
+            type: 'index',
+        });
+        $scope.data.files.push({
+            name: $scope.params.prefix + $scope.model.name + 'Form.php',
+            className: $scope.params.prefix + $scope.model.name + 'Form',
+            extendsName: $scope.model.model,
+            type: 'form',
+        });
+        $scope.data.files.push({
+            name: $scope.model.name + 'Controller.php',
+            className: $scope.model.name + 'Controller',
+            dirName: $scope.model.dirName,
+            type: 'controller',
+            mode: 'crud',
+            formName: $scope.params.prefix + $scope.model.name + 'Form',
+            indexName: $scope.params.prefix + $scope.model.name + 'Index',
+            path: $scope.generateControllerPath()
+        });
+    } else {
+        $scope.data.files.push({
+            name: $scope.params.prefix + $scope.model.name + 'Master.php',
+            className: $scope.params.prefix + $scope.model.name + 'Master',
+            extendsName: $scope.model.model,
+            type: 'master',
+        });
+        $scope.data.files.push({
+            name: $scope.model.name + 'Controller.php',
+            className: $scope.model.name + 'Controller',
+            dirName: $scope.model.dirName,
+            indexName: $scope.params.prefix + $scope.model.name + 'Master',
+            type: 'controller',
+            mode: 'master',
+            path: $scope.generateControllerPath()
+        });
+
+    }
 
     $scope.step = 2;
     $scope.msg = 'Cheking file availability...';
@@ -72,15 +131,80 @@ $scope.form.submit = function (f) {
     $scope.checkNext();
 }
 $scope.resetCheck = function () {
-    $scope.$check = 0;
+    $scope.$index = 0;
+    $scope.exists = [];
+}
+$scope.back = function () {
+    $timeout(function () {
+        $scope.step = 1;
+    });
 }
 $scope.checkNext = function () {
-    $scope.data.files[$scope.$check].status = 'ready';
-    $scope.$check++;
+    if ($scope.step != 2) return;
 
-    if ($scope.$check < $scope.data.files.length) {
-        $scope.checkNext();
+    if ($scope.$index < $scope.data.files.length) {
+        $http.post(Yii.app.createUrl("/dev/crud/checkFile"), {
+            path: $scope.data.path,
+            file: $scope.data.files[$scope.$index]
+        }).success(function (res) {
+            if (res == "exist" && $scope.data.files[$scope.$index].type != 'folder') {
+                $scope.exists.push($scope.data.files[$scope.$index]);
+            }
+            $scope.data.files[$scope.$index].status = res;
+            $scope.$index++;
+            $scope.checkNext();
+        }).error(function (res) {
+            alert(res);
+        });
     } else {
         $scope.step = 3;
+        $scope.$index = 0;
+        if ($scope.exists.length > 0) {
+            $scope.msg = 'Some file(s) already exists, choose which file to overwrite';
+        } else {
+            $scope.msg = 'Ready to Generate';
+        }
+    }
+}
+
+$scope.done = function () {
+    window.close();
+    window.opener.location.reload();
+}
+$scope.generateNext = function () {
+    if ($scope.step < 4) {
+        $scope.step = 4;
+    }
+
+    if ($scope.$index < $scope.data.files.length) {
+        if (!$scope.data.files[$scope.$index].path) {
+            $scope.data.files[$scope.$index].path = $scope.data.path;
+        }
+        if ($scope.data.files[$scope.$index].status == 'exist' && !$scope.data.files[$scope.$index].overwrite) {
+            $scope.data.files[$scope.$index].status = 'skipped';
+            $scope.$index++;
+            $scope.generateNext();
+        } else {
+            $scope.data.files[$scope.$index].status = 'processing';
+            $http.post(Yii.app.createUrl("/dev/crud/generate"), $scope.data.files[$scope.$index]).success(function (res) {
+                if (!!res.touch) {
+                    $http.get(res.touch).then(function () {
+                        $scope.data.files[$scope.$index].status = res.status;
+                        $scope.$index++;
+                        $scope.generateNext();
+                    });
+                } else {
+                    $scope.data.files[$scope.$index].status = res.status;
+                    $scope.$index++;
+                    $scope.generateNext();
+                }
+            }).error(function (res) {
+                alert(res);
+            });
+        }
+    } else {
+        $scope.step = 5;
+        $scope.msg = 'CRUD successfully generated!';
+        $scope.msg += ' <a class="btn btn-xs btn-success" target="_blank" href="' + $scope.getControllerUrl() + '">Visit ' + $scope.model.name + ' Now <i class="fa fa-chevron-right"></i></a>';
     }
 }

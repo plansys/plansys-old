@@ -434,7 +434,7 @@ class FormBuilder extends CComponent {
 
             if (!$reflector->hasMethod($functionName)) {
                 $this->model = new $class;
-                $fields      = $this->model->defaultFields;
+                $fields      = $this->model->getDefaultFields();
             } else {
                 $fields = $this->model->$functionName();
             }
@@ -588,7 +588,7 @@ class FormBuilder extends CComponent {
                 $fields       = [];
                 $this->fields = [];
             } else {
-                $fields       = $this->model->defaultFields;
+                $fields       = $this->model->getDefaultFields();
                 $this->fields = $fields;
             }
         } else {
@@ -733,7 +733,6 @@ class FormBuilder extends CComponent {
      * @param array $fields
      */
     public function setFields($fields) {
-        $fieldlist = [];
         $multiline = [];
 
         $this->tidyRecursive($fields, $multiline);
@@ -1353,7 +1352,7 @@ EOF;
                 $field->renderParams   = $renderParams;
 
                 ## assign field render id
-                $field->renderID = $modelClass . '_' . $FFRenderID . $this->countRenderID++;
+                $field->renderID          = $modelClass . '_' . $FFRenderID . $this->countRenderID++;
                 $field->fieldNameTemplate = $this->fieldNameTemplate;
 
                 ## then render the field, (including registering script)
