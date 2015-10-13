@@ -42,6 +42,12 @@ class SysAuditTrailIndex extends AuditTrail {
                         'show' => false,
                         'defaultValue' => '',
                         'listExpr' => 'AuditTrail::typeDropdown(false)',
+                        'list' => array (
+                            'view' => 'View',
+                            'create' => 'Create',
+                            'update' => 'Update',
+                            'delete' => 'Delete',
+                        ),
                     ),
                     array (
                         'filterType' => 'relation',
@@ -66,6 +72,8 @@ class SysAuditTrailIndex extends AuditTrail {
                         'options' => array (
                             'width' => '150px',
                         ),
+                        'list' => 0,
+                        'count' => 0,
                     ),
                     array (
                         'name' => 'description',
@@ -127,7 +135,7 @@ class SysAuditTrailIndex extends AuditTrail {
                         ),
                         'name' => 'type',
                         'label' => 'Type',
-                        'show' => false,
+                        'show' => true,
                         'inputMask' => '',
                         'stringAlias' => array (
                             'view' => '<div class=\'label label-default text-center\' style=\'display:block;width:100%;\'> VIEW </div>',

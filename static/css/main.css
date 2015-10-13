@@ -443,7 +443,7 @@ div[ui-layout] > div.active > .overlay {
 }
 
 .ui-layout-no-splitbar .ui-splitbar {
-    display:none;
+    display: none;
 }
 
 .ui-layout-column > div {
@@ -684,7 +684,7 @@ div[ui-content] {
 .LinkButton .field-info {
     right: auto !important;
     left: 0px !important;
-    margin-top:-20px !important;
+    margin-top: -20px !important;
 }
 
 .LinkButton .field-info .btn-group {
@@ -987,8 +987,8 @@ li:hover > .item-btn {
 }
 
 .tab-set.single-tab .nav-tabs > li {
-    margin-top:-1px;
-    margin-bottom:0px;
+    margin-top: -1px;
+    margin-bottom: 0px;
 }
 
 /************************** FORM BUILDER *****************************/
@@ -3012,6 +3012,11 @@ ul[datepicker-popup-wrap] .btn-info .text-info {
     color: #fff;
 }
 
+.btn-success.disabled, .btn-success[disabled], fieldset[disabled] .btn-success, .btn-success.disabled:hover, .btn-success[disabled]:hover, fieldset[disabled] .btn-success:hover, .btn-success.disabled:focus, .btn-success[disabled]:focus, fieldset[disabled] .btn-success:focus, .btn-success.disabled:active, .btn-success[disabled]:active, fieldset[disabled] .btn-success:active, .btn-success.disabled.active, .btn-success[disabled].active, fieldset[disabled] .btn-success.active {
+    background-color: #8cd42f !important;
+    background-image: none;
+}
+
 .btn-info {
     background-color: #5bc0de;
     background-color: #49afcd;
@@ -3427,11 +3432,12 @@ div[icon-picker] .popover-content {
 }
 
 .column-field > div {
-    height:100%;
-    display:inline-block;
+    height: 100%;
+    display: inline-block;
     vertical-align: top;
-    margin-left:-5px
+    margin-left: -5px
 }
+
 .column-field > div > .column-field-inner {
     padding: 25px 50px 25px 25px;
 }

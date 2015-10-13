@@ -229,15 +229,17 @@ app.directive('listView', function ($timeout) {
                 if (attrs.ngModel) {
                     $timeout(function () {
                         if ($scope.fieldTemplate == 'datasource') {
-                            $scope.value = $scope.datasource.data;
-                            $scope.datasource.beforeQueryInternal[$scope.renderID] = function () {
-                                $scope.loading = true;
-                            }
-                            $scope.datasource.afterQueryInternal[$scope.renderID] = function () {
+                            if (!!$scope.datasource) {
                                 $scope.value = $scope.datasource.data;
-                                $timeout(function () {
-                                    $scope.loading = false;
-                                }, 100);
+                                $scope.datasource.beforeQueryInternal[$scope.renderID] = function () {
+                                    $scope.loading = true;
+                                }
+                                $scope.datasource.afterQueryInternal[$scope.renderID] = function () {
+                                    $scope.value = $scope.datasource.data;
+                                    $timeout(function () {
+                                        $scope.loading = false;
+                                    }, 100);
+                                }
                             }
                         } else {
                             var ngModelValue = $scope.$eval(attrs.ngModel);
