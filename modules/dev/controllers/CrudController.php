@@ -1,17 +1,22 @@
 <?php
 
-class CrudController extends Controller {
+class CrudController extends Controller
+{
     public $layout = '//layouts/blank';
 
-    public function actionNew() {
+    public function actionNew()
+    {
         if (!empty($_POST)) {
             var_dump($_POST);
             die();
         }
-        $this->renderForm('DevCrudMainForm');
+
+        $model = new DevCrudMainForm();
+        $this->renderForm('DevCrudMainForm', $model);
     }
 
-    public function actionCheckFile() {
+    public function actionCheckFile()
+    {
         $postdata = file_get_contents("php://input");
         $post     = CJSON::decode($postdata);
 
@@ -30,7 +35,8 @@ class CrudController extends Controller {
         echo file_exists($check) ? "exist" : "ready";
     }
 
-    public function actionGenerate() {
+    public function actionGenerate()
+    {
         $postdata = file_get_contents("php://input");
         $post     = CJSON::decode($postdata);
 
@@ -45,7 +51,7 @@ class CrudController extends Controller {
         switch ($post['type']) {
             case "folder":
                 if (!file_exists($path)) {
-                    mkdir($path, 777, true);
+                    mkdir($path, 0777, true);
                 }
                 break;
             case "index":
@@ -66,24 +72,28 @@ class CrudController extends Controller {
         echo json_encode($result);
     }
 
-    public function generateController($post, &$result) {
+    public function generateController($post, &$result)
+    {
         $tplName = $post['mode'] == 'crud' ? 'TplCrudController' : 'TplMasterController';
         $tpl     = file_get_contents(Yii::getPathOfAlias('application.components.codegen.templates.' . $tplName) . ".php");
-        $replace = [$tplName => $post['className']];
+        $replace = [
+            $tplName => $post['className'],
+            '##IMPORT-PLACEHOLDER##' => 'Yii::import("' . $post['alias'] . '.*");',
+        ];
 
         if (isset($post['formName'])) {
-            $replace['TemplateForm'] = $post['dirName'] . "." . $post['formName'];
+            $replace['TemplateForm'] = $post['formName'];
         }
-
         if (isset($post['indexName'])) {
-            $replace['TemplateIndex'] = $post['dirName'] . "." . $post['indexName'];
+            $replace['TemplateIndex'] = $post['indexName'];
         }
 
         $content = str_replace(array_keys($replace), array_values($replace), $tpl);
         file_put_contents($result['file'], $content);
     }
 
-    public function generateAR($post, &$result) {
+    public function generateAR($post, &$result)
+    {
         $result['touch'] = $this->createUrl('/dev/forms/update&class=' . $post['path'] . "." . $post['className']);
         $content         = <<<EOF
 <?php

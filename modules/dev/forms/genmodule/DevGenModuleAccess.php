@@ -79,6 +79,9 @@ class DevGenModuleAccess extends Form {
                 'w3' => '25%',
                 'w4' => '25%',
                 'w5' => '20%',
+                'perColumnOptions' => array (
+                    'style' => 'padding:5px;',
+                ),
                 'type' => 'ColumnField',
             ),
             array (

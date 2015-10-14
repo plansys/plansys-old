@@ -40,21 +40,21 @@ class DevCrudMainForm extends Form {
             array (
                 'linkBar' => array (
                     array (
+                        'label' => 'Back',
+                        'icon' => 'chevron-left',
+                        'options' => array (
+                            'ng-click' => 'back()',
+                            'ng-show' => 'step > 1 && step < 5',
+                        ),
+                        'type' => 'LinkButton',
+                    ),
+                    array (
                         'label' => 'Done',
                         'buttonType' => 'success',
                         'icon' => 'check',
                         'options' => array (
                             'ng-click' => 'done()',
                             'ng-if' => 'step == 5',
-                        ),
-                        'type' => 'LinkButton',
-                    ),
-                    array (
-                        'label' => 'Back',
-                        'icon' => 'chevron-left',
-                        'options' => array (
-                            'ng-click' => 'back()',
-                            'ng-show' => 'step > 1 && step < 5',
                         ),
                         'type' => 'LinkButton',
                     ),
@@ -83,6 +83,10 @@ class DevCrudMainForm extends Form {
                 ),
                 'showSectionTab' => 'No',
                 'type' => 'ActionBar',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<pre>{{ data | json }}</pre>',
             ),
             array (
                 'type' => 'Text',
@@ -145,13 +149,26 @@ class DevCrudMainForm extends Form {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div ng-if=\\"$showAdvanced\\">',
+                'value' => '<div ng-if=\\"!!model.name\\">',
+            ),
+            array (
+                'title' => 'Advanced Settings',
+                'type' => 'SectionHeader',
             ),
             array (
                 'column1' => array (
                     array (
+                        'label' => 'Master Data',
+                        'name' => 'masterData',
+                        'listExpr' => '[\'Yes\',\'No\']',
+                        'type' => 'DropDownList',
+                    ),
+                    array (
                         'label' => 'Bulk Checkbox',
                         'name' => 'bulkCheckbox',
+                        'options' => array (
+                            'ng-if' => 'model.masterData == \'No\'',
+                        ),
                         'listExpr' => '[\'Yes\',\'No\']',
                         'type' => 'DropDownList',
                     ),
@@ -174,15 +191,10 @@ class DevCrudMainForm extends Form {
                 ),
                 'w1' => '50%',
                 'w2' => '50%',
+                'perColumnOptions' => array (
+                    'style' => 'padding-right:0px;',
+                ),
                 'type' => 'ColumnField',
-            ),
-            array (
-                'type' => 'Text',
-                'value' => '</div>',
-            ),
-            array (
-                'type' => 'Text',
-                'value' => '<div ng-if=\\"!!model.name\\">',
             ),
             array (
                 'title' => 'Relations',
@@ -190,7 +202,7 @@ class DevCrudMainForm extends Form {
             ),
             array (
                 'type' => 'Text',
-                'value' => ' </div>',
+                'value' => '</div>',
             ),
             array (
                 'type' => 'Text',

@@ -1,29 +1,31 @@
 <?php
 
-class ActiveRecordTemplate extends CComponent {
+class ActiveRecordTemplate extends CComponent
+{
 
-    public static function generateFields($model) {
-        $array     = $model->modelFieldList;
-        $classPart = explode("-", Helper::camelToSnake(get_class($model)));
-        $lastPart  = count($classPart) - 1;
-        $params    = [
+    public static function generateFields($model)
+    {
+        $array         = $model->modelFieldList;
+        $classPart     = explode("-", Helper::camelToSnake(get_class($model)));
+        $lastPartIndex = count($classPart) - 1;
+        $params        = [
             'array' => $array,
             'columns' => $model->tableSchema->columns,
             'primaryKey' => $model->tableSchema->primaryKey,
             'classPart' => $classPart,
             'length' => count($array),
             'basic' => lcfirst(implode("", array_map('ucfirst', $classPart))),
-            'basicTitle' => Helper::camelToSpacedCamel(implode("", array_map('ucfirst', $classPart)))
         ];
-        if (!empty($classPart) && (in_array($classPart[$lastPart], ["index", "form", "master"]))) {
-            $params['type']       = array_pop($classPart);
-            $params['basicTitle'] = Helper::camelToSpacedCamel(implode("", array_map('ucfirst', $classPart)));
+        if (!empty($classPart) && (in_array($classPart[$lastPartIndex], ["index", "form", "master"]))) {
+            $params['type'] = array_pop($classPart);
         } else {
             $params['type'] = "";
         }
-        $params['module'] = array_shift($classPart);
-        $type             = $params['type'];
-        $return           = [];
+
+        $params['module']     = array_shift($classPart);
+        $params['basicTitle'] = Helper::camelToSpacedCamel(implode("", array_map('ucfirst', $classPart)));
+        $type                 = $params['type'];
+        $return               = [];
 
         switch ($type) {
             case "index":
@@ -40,10 +42,11 @@ class ActiveRecordTemplate extends CComponent {
         return $return;
     }
 
-    private static function generateMaster(&$return, $params) {
+    private static function generateMaster(&$return, $params)
+    {
         $array      = [];
         $primaryKey = '';
-        $cols    = [];
+        $cols       = [];
         $length     = 0;
         $basicTitle = "";
         $module     = '';
@@ -53,24 +56,27 @@ class ActiveRecordTemplate extends CComponent {
         $return[] = [
             'linkBar' => [
                 [
-                    'label' => 'Tambah ' . $basicTitle,
+                    'label' => 'Simpan ' . $basicTitle,
                     'buttonType' => 'success',
-                    'icon' => 'plus',
+                    'icon' => 'check',
                     'options' => [
-                        'href' => "url:/{$module}/{$basic}/new",
+                        'ng-click' => "form.submit(this)",
                     ],
                     'type' => 'LinkButton',
                 ],
             ],
-            'title' => 'Daftar ' . $basicTitle,
+            'title' => '{{ form.title }}',
             'showSectionTab' => 'No',
             'type' => 'ActionBar',
         ];
 
+        $gv = new GridView;
+
         ## generate Filters & Columns
+        $pkCol = null;
         foreach ($array as $k => $i) {
-            if ($array[$k]['name'] == $primaryKey) {
-                continue;
+            if ($i['name'] == $primaryKey) {
+                $i['label'] = $i['name'];
             }
 
             ## setup label
@@ -82,19 +88,29 @@ class ActiveRecordTemplate extends CComponent {
             ];
             $filter['name']  = $i['name'];
             $filter['label'] = $i['label'];
+            $filters[]       = $filter;
 
             ## setup columns
             $column          = [
                 'columnType' => "string",
                 'options' => [],
+                'genOptions' => []
             ];
             $column['name']  = $i['name'];
             $column['label'] = $i['label'];
 
+            if ($i['name'] != $primaryKey) {
+                $gv->columns[]                    = $column;
+                $column['cellMode']               = 'custom';
+                $column['genOptions']['editable'] = true;
+                $column['html']                   = $gv->getRowTemplate($column, $k);
 
-            $filters[] = $filter;
-            $cols[]    = $column;
+                $cols[] = $column;
+            } else {
+                $pkCol = $column;
+            }
         }
+        array_unshift($cols, $pkCol);
 
         $return[] = [
             'name' => 'dataFilter1',
@@ -121,7 +137,8 @@ class ActiveRecordTemplate extends CComponent {
         return $return;
     }
 
-    private static function generateForm(&$return, $params) {
+    private static function generateForm(&$return, $params)
+    {
         $array      = [];
         $primaryKey = '';
         $columns    = [];
@@ -270,7 +287,8 @@ class ActiveRecordTemplate extends CComponent {
         return $return;
     }
 
-    private static function generateIndex(&$return, $params) {
+    private static function generateIndex(&$return, $params)
+    {
         $array      = [];
         $columns    = [];
         $basicTitle = "";

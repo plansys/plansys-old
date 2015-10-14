@@ -37,12 +37,12 @@ $scope.getModulePath = function () {
 $scope.getControllerUrl = function () {
     var module = '';
     var mp = $scope.getModulePath().split(".");
-    if ($scope.getModulePath().length > 1) {
+    if ($scope.getModulePath().length > 3) {
         module = mp.pop() + "/";
     }
 
     if (!!$scope.model) {
-        return Yii.app.createUrl(module + $scope.model.dirName + "/index");
+        return Yii.app.createUrl(module + $scope.model.lcName + "/index");
     }
 }
 $scope.generateControllerPath = function () {
@@ -55,13 +55,28 @@ $scope.exists = [];
 $scope.step = '1';
 $scope.msg = '';
 
-$scope.onNameChange = function () {
-    $scope.model.name = ($scope.model.name.charAt(0).toUpperCase() + $scope.model.name.slice(1)).replace(/[^a-z0-9]/gi, '');
-    $scope.model.dirName = ($scope.model.name.charAt(0).toLowerCase() + $scope.model.name.slice(1)).replace(/[^a-z0-9]/gi, '');
+
+$scope.resetData = function () {
     $scope.data = {
-        path: trim($scope.params.alias, '.') + '.' + $scope.model.dirName,
+        path: trim($scope.params.alias, '.') + '.' + $scope.model.lcName,
         files: []
     };
+
+    $scope.dirName = [];
+    var markDirName = false
+    $scope.data.path.split(".").forEach(function (i) {
+        if (i == 'forms') {
+            markDirName = true;
+        } else if (markDirName) {
+            $scope.dirName.push(i);
+        }
+    });
+    $scope.dirName = $scope.dirName.join(".");
+}
+$scope.onNameChange = function () {
+    $scope.model.name = ($scope.model.name.charAt(0).toUpperCase() + $scope.model.name.slice(1)).replace(/[^a-z0-9]/gi, '');
+    $scope.model.lcName = ($scope.model.name.charAt(0).toLowerCase() + $scope.model.name.slice(1)).replace(/[^a-z0-9]/gi, '');
+    $scope.resetData();
 }
 
 $scope.checkAll = function (e) {
@@ -73,10 +88,8 @@ $scope.checkAll = function (e) {
     });
 }
 $scope.form.submit = function (f) {
-    $scope.data = {
-        path: trim($scope.params.alias, '.') + '.' + $scope.model.dirName,
-        files: []
-    };
+    $scope.resetData();
+
     // main form data
     $scope.data.files.push({
         name: $scope.data.path,
@@ -99,11 +112,11 @@ $scope.form.submit = function (f) {
         $scope.data.files.push({
             name: $scope.model.name + 'Controller.php',
             className: $scope.model.name + 'Controller',
-            dirName: $scope.model.dirName,
             type: 'controller',
             mode: 'crud',
             formName: $scope.params.prefix + $scope.model.name + 'Form',
             indexName: $scope.params.prefix + $scope.model.name + 'Index',
+            alias: $scope.data.path,
             path: $scope.generateControllerPath()
         });
     } else {
@@ -116,10 +129,10 @@ $scope.form.submit = function (f) {
         $scope.data.files.push({
             name: $scope.model.name + 'Controller.php',
             className: $scope.model.name + 'Controller',
-            dirName: $scope.model.dirName,
             indexName: $scope.params.prefix + $scope.model.name + 'Master',
             type: 'controller',
             mode: 'master',
+            alias: $scope.data.path,
             path: $scope.generateControllerPath()
         });
 
@@ -154,7 +167,9 @@ $scope.checkNext = function () {
             $scope.$index++;
             $scope.checkNext();
         }).error(function (res) {
-            alert(res);
+            $scope.data.files[$scope.$index].status = 'Failed to check file';
+            $scope.$index++;
+            $scope.checkNext();
         });
     } else {
         $scope.step = 3;
@@ -199,7 +214,9 @@ $scope.generateNext = function () {
                     $scope.generateNext();
                 }
             }).error(function (res) {
-                alert(res);
+                $scope.data.files[$scope.$index].status = 'Failed to write';
+                $scope.$index++;
+                $scope.generateNext();
             });
         }
     } else {
