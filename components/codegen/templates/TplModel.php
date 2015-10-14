@@ -14,6 +14,12 @@
 
 class <?php echo $modelClass; ?> extends <?php echo $this->baseClass."\n"; ?>
 {
+<?php if (!!@$options['softDelete']): ?>
+	public $softDelete = array(
+		'column' => '<?php echo $options['softDelete']['column']; ?>',
+		'value' => <?php echo $options['softDelete']['value']; ?>
+	);
+<?php endif; ?>
 
 	public function tableName()
 	{

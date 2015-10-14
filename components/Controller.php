@@ -136,7 +136,7 @@ class Controller extends CController
         ];
 
         if (is_object($model)) {
-            if (get_class($model) != $class) {
+            if (get_class($model) != Helper::explodeLast(".", $class)) {
                 throw new Exception("Invalid model name, please instantiate model from {$class} class");
             }
             $fb->model = $model;

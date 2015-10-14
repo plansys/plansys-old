@@ -24,6 +24,7 @@ return array (
                 'label' => 'Form Builder',
                 'icon' => 'fa-gavel',
                 'url' => '/dev/forms/index',
+                'formattedUrl' => '/index.php?r=dev/forms/index',
             ),
             array (
                 'label' => '---',
@@ -34,6 +35,7 @@ return array (
                 'label' => 'MenuTree Editor',
                 'icon' => 'fa-sitemap',
                 'url' => '/dev/genMenu/index',
+                'formattedUrl' => '/index.php?r=dev/genMenu/index',
             ),
             array (
                 'label' => '---',
@@ -44,16 +46,19 @@ return array (
                 'label' => 'Module Generator',
                 'icon' => 'fa-empire',
                 'url' => '/dev/genModule/index',
+                'formattedUrl' => '/index.php?r=dev/genModule/index',
             ),
             array (
                 'label' => 'Model Generator',
                 'icon' => 'fa-cube',
                 'url' => '/dev/genModel/index',
+                'formattedUrl' => '/index.php?r=dev/genModel/index',
             ),
             array (
                 'label' => 'Controller Generator',
                 'icon' => 'fa-slack',
                 'url' => '/dev/genCtrl/index',
+                'formattedUrl' => '/index.php?r=dev/genCtrl/index',
             ),
         ),
         'state' => 'collapsed',
@@ -68,11 +73,13 @@ return array (
                 'label' => 'User List',
                 'icon' => 'fa-user',
                 'url' => '/dev/user/index',
+                'formattedUrl' => '/index.php?r=dev/user/index',
             ),
             array (
                 'label' => 'Role Manager',
                 'icon' => 'fa-graduation-cap',
                 'url' => '/dev/user/roles',
+                'formattedUrl' => '/index.php?r=dev/user/roles',
             ),
         ),
         'state' => 'collapsed',
@@ -81,10 +88,12 @@ return array (
         'label' => 'Settings',
         'icon' => 'fa-sliders',
         'url' => '/dev/setting/app',
+        'formattedUrl' => '/index.php?r=dev/setting/app',
     ),
     array (
         'label' => 'Repository',
         'icon' => 'fa-folder-open',
         'url' => '/repo/index',
+        'formattedUrl' => '/index.php?r=repo/index',
     ),
 );

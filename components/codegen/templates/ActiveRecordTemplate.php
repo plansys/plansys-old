@@ -12,6 +12,7 @@ class ActiveRecordTemplate extends CComponent {
             'primaryKey' => $model->tableSchema->primaryKey,
             'classPart' => $classPart,
             'length' => count($array),
+            'model' => $model,
             'basic' => lcfirst(implode("", array_map('ucfirst', $classPart))),
         ];
         if (!empty($classPart) && (in_array($classPart[$lastPartIndex], ["index", "form", "master"]))) {
@@ -43,6 +44,7 @@ class ActiveRecordTemplate extends CComponent {
     private static function generateIndex(&$return, $params) {
         $array      = [];
         $columns    = [];
+        $model      = null;
         $basicTitle = "";
         $module     = '';
         $basic      = '';
@@ -66,20 +68,24 @@ class ActiveRecordTemplate extends CComponent {
             'type' => 'ActionBar',
         ];
 
-        ## generate Filters & Columns
+        $gv = new GridView;
 
+        ## generate Filters & Columns
         foreach ($array as $k => $i) {
             if ($array[$k]['name'] == $primaryKey) {
-                $array_id = $array[$k];
                 continue;
             }
-
-            $filter = [
-                'filterType' => "string"
+            $i['label'] = implode(" ", array_map('ucfirst', explode("_", $i['label'])));
+            $filter     = [
+                'filterType' => "string",
+                'name' => $i['name'],
+                'label' => $i['label']
             ];
-            $column = [
+            $column     = [
                 'columnType' => "string",
                 'options' => [],
+                'name' => $i['name'],
+                'label' => $i['label']
             ];
             switch (true) {
                 case $columns[$array[$k]['name']]->dbType == "date" :
@@ -92,78 +98,41 @@ class ActiveRecordTemplate extends CComponent {
                 case $columns[$array[$k]['name']]->dbType == "time" :
                     $column['inputMask'] = "99:99";
                     break;
-//                case substr($i['name'], -3) == "_id":
-//                    ## get class name
-//                    $relName    = substr($i['name'], 0, strlen($i['name']) - 3);
-//                    $i['label'] = $relName;
-//
-//                    $relName = implode("", array_map('ucfirst', explode("_", $relName)));
-//
-//
-//                    if (@is_subclass_of($relName, 'ActiveRecord')) {
-//
-//                        ## get class alias
-//                        if (is_file(Yii::getPathOfAlias('app.models.' . $relName) . ".php")) {
-//
-//                            $classAlias = "app.models." . $relName;
-//                        } else if (is_file(Yii::getPathOfAlias('application.models.' . $relName) . ".php")) {
-//                            $classAlias = "application.models." . $relName;
-//                        } else {
-//                            $classAlias = '';
-//                        }
-//
-//                        if ($classAlias != '') {
-//                            ## fill attribute
-//                            $filter['filterType']    = "relation";
-//                            $filter['relModelClass'] = $classAlias;
-//                            $filter['relIdField']    = 'id';
-//                            $filter['relParams']     = [];
-//                            $filter['relCriteria']   = array(
-//                                'select' => '',
-//                                'distinct' => 'false',
-//                                'alias' => 't',
-//                                'condition' => '{[search]}',
-//                                'order' => '',
-//                                'group' => '',
-//                                'having' => '',
-//                                'join' => '',
-//                            );
-//                            $attr                    = $relName::model()->attributes;
-//
-//                            ## fill label field
-//                            if (array_key_exists('name', $attr)) {
-//                                $filter['relLabelField'] = 'name';
-//                            } else if (array_key_exists('nama', $attr)) {
-//                                $filter['relLabelField'] = 'nama';
-//                            } else {
-//                                foreach ($attr as $y => $z) {
-//                                    if ($y == 'id')
-//                                        continue;
-//                                    if (substr($y, -3) == "_id")
-//                                        continue;
-//
-//                                    $filter['relLabelField'] = $y;
-//                                    break;
-//                                }
-//                            }
-//                            $column               = $filter;
-//                            $column['columnType'] = "relation";
-//                            unset($column['filterType']);
-//                        }
-//                    }
-                    break;
             }
 
-            $i['label'] = implode(" ", array_map('ucfirst', explode("_", $i['label'])));
-
-            $filter['name']  = $i['name'];
-            $filter['label'] = $i['label'];
-            $column['name']  = $i['name'];
-            $column['label'] = $i['label'];
-
-            $filters[] = $filter;
-            $cols[]    = $column;
+            $filters[]     = $filter;
+            $cols[]        = $column;
+            $gv->columns[] = $column;
         }
+
+        $editButtonCol         = [
+            'name' => '',
+            'label' => '',
+            'columnType' => "string",
+            'options' => [],
+            'cellMode' => 'custom',
+            'genOptions' => [
+                'mode' => 'edit-button',
+                'editUrl' => "'{$model->url}'"
+            ]
+        ];
+        $gv->columns[]         = $editButtonCol;
+        $editButtonCol['html'] = $gv->getRowTemplate($editButtonCol, count($cols));
+        array_push($cols, $editButtonCol);
+
+        $delButtonCol         = [
+            'name' => '',
+            'label' => '',
+            'columnType' => "string",
+            'options' => [],
+            'cellMode' => 'custom',
+            'genOptions' => [
+                'mode' => 'del-button'
+            ]
+        ];
+        $gv->columns[]        = $delButtonCol;
+        $delButtonCol['html'] = $gv->getRowTemplate($delButtonCol, count($cols));
+        array_push($cols, $delButtonCol);
 
         $return[] = [
             'name' => 'dataFilter1',
@@ -396,11 +365,11 @@ class ActiveRecordTemplate extends CComponent {
             $column['label'] = $i['label'];
 
             if ($i['name'] != $primaryKey) {
-                $gv->columns[]                    = $column;
-                $column['cellMode']               = 'custom';
-                $column['genOptions']['editable'] = true;
-                $column['html']                   = $gv->getRowTemplate($column, $k);
-                $cols[]                           = $column;
+                $gv->columns[]                = $column;
+                $column['cellMode']           = 'custom';
+                $column['genOptions']['mode'] = 'master-data';
+                $column['html']               = $gv->getRowTemplate($column, $k);
+                $cols[]                       = $column;
             } else {
                 $pkCol = $column;
             }
@@ -414,7 +383,7 @@ class ActiveRecordTemplate extends CComponent {
             'options' => [],
             'cellMode' => 'custom',
             'genOptions' => [
-                'delButton' => true
+                'mode' => 'del-button'
             ]
         ];
         $gv->columns[]        = $delButtonCol;
@@ -427,6 +396,13 @@ class ActiveRecordTemplate extends CComponent {
             'type' => 'DataFilter',
             'filters' => $filters
         ];
+
+        if (!!$model->softDelete) {
+            $condition = $model->softDelete['column'] . ' <> \'' . $model->softDelete['value'] . '\' {AND [where]}';
+        } else {
+            $condition = '{[where]}';
+        }
+
         $return[] = [
             'name' => 'dataSource1',
             'params' => [
@@ -435,6 +411,17 @@ class ActiveRecordTemplate extends CComponent {
                 'order' => 'dataGrid1',
             ],
             'relationTo' => 'currentModel',
+            'relationCriteria' => array(
+                'select' => '',
+                'distinct' => 'false',
+                'alias' => 't',
+                'condition' => $condition,
+                'order' => '{[order]}',
+                'paging' => '{[paging]}',
+                'group' => '',
+                'having' => '',
+                'join' => '',
+            ),
             'type' => 'DataSource',
         ];
         $return[] = [

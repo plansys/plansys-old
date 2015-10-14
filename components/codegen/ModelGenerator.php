@@ -3,7 +3,6 @@
 class ModelGenerator extends CComponent {
 
     public static function create($tableName, $modelName, $module, $options = []) {
-
         $mc               = new ModelGeneratorCode();
         $mc->modelPath    = $module . ".models";
         $mc->template     = 'TplModel.php';

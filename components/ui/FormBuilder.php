@@ -34,7 +34,6 @@ class FormBuilder extends CComponent {
             return null;
 
         $originalClass = $class;
-
         if (strpos($class, ".") !== false) {
             $classFile = FormBuilder::classPath($class);
             $class     = Helper::explodeLast(".", $classFile);
@@ -49,7 +48,6 @@ class FormBuilder extends CComponent {
 
                     require_once($classFile);
                 }
-
             }
 
             if (!class_exists($class)) {

@@ -70,8 +70,7 @@ class CrudController extends Controller {
 <?php
 
 class {$post['className']} extends {$post['extendsName']} {
-    {$softDelete}
-
+    
 }
 EOF;
         file_put_contents($result['file'], $content);

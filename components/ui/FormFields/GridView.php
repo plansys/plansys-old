@@ -93,17 +93,25 @@ type="checkbox" /></label>';
 
 
         if (!!@$col['genOptions']) {
-            if (!!@$col['genOptions']['editable']) {
-                $template = '
+            $template = '';
+            switch ($col['genOptions']['mode']) {
+                case "master-data":
+                    $template = '
     <textarea auto-grow ng-model="row.' . $fieldName . '" ng-keyup="editKey($event)"></textarea>';
-            }
-
-            if (!!@$col['genOptions']['delButton']) {
-                $style    = ' style="width:25px;"';
-                $template = '
+                    break;
+                case "del-button":
+                    $style    = ' style="width:20px;"';
+                    $template = '
     <div ng-if="!row.$rowState" ng-click="removeRow(row)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></div>
     <div ng-if="row.$rowState == \'remove\'" ng-click="undoRemoveRow(row)" class="btn btn-default btn-xs"><i class="fa fa-undo"></i></div>
 ';
+                    break;
+                case 'edit-button':
+                    $style    = ' style="width:20px;"';
+                    $template = '
+    <a ng-href="\{\{ url(' . $col['genOptions']['editUrl'] . ') \}\}" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>
+';
+                    break;
             }
         }
 
@@ -125,7 +133,6 @@ EOF;
         switch ($col['columnType']) {
             case "string":
                 $template = '<td style="cursor:pointer;" ng-click="hideGroup(row, $event)"></td>';
-
                 break;
             case
             "checkbox":
@@ -133,7 +140,6 @@ EOF;
 <td class="t-{$col['columnType']}"><label><input type="checkbox" class="cb-{$col['name']}"
 ng-click="checkboxGroup(\$index, '{$col['name']}', '$idx', \$event)" /></label></td>
 EOF;
-
                 break;
         }
 

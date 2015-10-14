@@ -46,7 +46,13 @@ class GenModelController extends Controller {
     public function actionFieldList($table) {
         $schema = Yii::app()->db->schema->tables;
         if (isset($schema[$table])) {
-            echo  json_encode(array_keys($schema[$table]->columns));
+            $fields = $schema[$table]->columns;
+            $array  = [];
+            foreach ($fields as $k=>$a) {
+                $array[$k] = $k;
+            }
+
+            echo json_encode($array);
         }
     }
 
