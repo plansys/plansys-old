@@ -8,9 +8,6 @@ class DevCrudMainForm extends Form {
     
     ## Advanced Settings
     public $bulkCheckbox = 'Yes';
-    public $softDelete = 'No';
-    public $softDeleteColumn = '';
-    public $softDeleteValue = '1';
     public $masterData = 'No';
     
     public function rules() {
@@ -139,7 +136,8 @@ class DevCrudMainForm extends Form {
                 'w1' => '50%',
                 'w2' => '50%',
                 'perColumnOptions' => array (
-                    'style' => 'padding-right:0px;',
+                    'style' => 'padding-right:20px;
+padding-left:0px;',
                 ),
                 'type' => 'ColumnField',
             ),
@@ -152,19 +150,11 @@ class DevCrudMainForm extends Form {
                 'type' => 'SectionHeader',
             ),
             array (
+                'showBorder' => 'Yes',
                 'column1' => array (
                     array (
                         'label' => 'Master Data',
                         'name' => 'masterData',
-                        'listExpr' => '[\'Yes\',\'No\']',
-                        'type' => 'DropDownList',
-                    ),
-                    array (
-                        'label' => 'Bulk Checkbox',
-                        'name' => 'bulkCheckbox',
-                        'options' => array (
-                            'ng-if' => 'model.masterData == \'No\'',
-                        ),
                         'listExpr' => '[\'Yes\',\'No\']',
                         'type' => 'DropDownList',
                     ),
@@ -179,24 +169,30 @@ class DevCrudMainForm extends Form {
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
-                        'label' => 'Soft Delete',
-                        'name' => 'softDelete',
+                        'label' => 'Bulk Checkbox',
+                        'name' => 'bulkCheckbox',
+                        'options' => array (
+                            'ng-if' => 'model.masterData == \'No\'',
+                        ),
                         'listExpr' => '[\'Yes\',\'No\']',
                         'type' => 'DropDownList',
                     ),
                     array (
-                        'label' => 'Column',
-                        'name' => 'softDeleteColumn',
-                        'options' => array (
-                            'ps-list' => 'columnList',
-                        ),
-                        'type' => 'DropDownList',
+                        'renderInEditor' => 'Yes',
+                        'type' => 'Text',
+                        'value' => '<div ng-if=\"model.softDelete == \'Yes\'\">
+    <div class=\"col-sm-4\"></div>
+    <div class=\"col-sm-8 info\" style=\"margin-left:-10px;padding-right: 0px;\">
+       * Mark deleted row using value above 
+    </div>
+</div>',
                     ),
                 ),
                 'w1' => '50%',
                 'w2' => '50%',
                 'perColumnOptions' => array (
-                    'style' => 'padding-right:0px;',
+                    'style' => 'padding-right:20px;
+padding-left:0px;',
                 ),
                 'type' => 'ColumnField',
             ),

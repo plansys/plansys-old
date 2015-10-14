@@ -1,22 +1,20 @@
 <?php
 
-class CrudController extends Controller
-{
+class CrudController extends Controller {
     public $layout = '//layouts/blank';
 
-    public function actionNew()
-    {
-        if (!empty($_POST)) {
-            var_dump($_POST);
-            die();
-        }
-
+    public function actionNew() {
         $model = new DevCrudMainForm();
         $this->renderForm('DevCrudMainForm', $model);
     }
 
-    public function actionCheckFile()
-    {
+    public function actionModelList($model) {
+        if (class_exists($model)) {
+            echo json_encode($model::model()->getAttributesList());
+        }
+    }
+
+    public function actionCheckFile() {
         $postdata = file_get_contents("php://input");
         $post     = CJSON::decode($postdata);
 
@@ -35,8 +33,7 @@ class CrudController extends Controller
         echo file_exists($check) ? "exist" : "ready";
     }
 
-    public function actionGenerate()
-    {
+    public function actionGenerate() {
         $postdata = file_get_contents("php://input");
         $post     = CJSON::decode($postdata);
 
@@ -72,8 +69,20 @@ class CrudController extends Controller
         echo json_encode($result);
     }
 
-    public function generateController($post, &$result)
-    {
+    public function generateAR($post, &$result) {
+        $result['touch'] = $this->createUrl('/dev/forms/update&class=' . $post['path'] . "." . $post['className']);
+        $content         = <<<EOF
+<?php
+
+class {$post['className']} extends {$post['extendsName']} {
+    {$softDelete}
+
+}
+EOF;
+        file_put_contents($result['file'], $content);
+    }
+
+    public function generateController($post, &$result) {
         $tplName = $post['mode'] == 'crud' ? 'TplCrudController' : 'TplMasterController';
         $tpl     = file_get_contents(Yii::getPathOfAlias('application.components.codegen.templates.' . $tplName) . ".php");
         $replace = [
@@ -89,19 +98,6 @@ class CrudController extends Controller
         }
 
         $content = str_replace(array_keys($replace), array_values($replace), $tpl);
-        file_put_contents($result['file'], $content);
-    }
-
-    public function generateAR($post, &$result)
-    {
-        $result['touch'] = $this->createUrl('/dev/forms/update&class=' . $post['path'] . "." . $post['className']);
-        $content         = <<<EOF
-<?php
-
-class {$post['className']} extends {$post['extendsName']} {
-
-}
-EOF;
         file_put_contents($result['file'], $content);
     }
 }

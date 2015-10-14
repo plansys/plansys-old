@@ -54,7 +54,7 @@ $scope.data = {};
 $scope.exists = [];
 $scope.step = '1';
 $scope.msg = '';
-
+$scope.fieldList = [];
 
 $scope.resetData = function () {
     $scope.data = {
@@ -77,6 +77,11 @@ $scope.onNameChange = function () {
     $scope.model.name = ($scope.model.name.charAt(0).toUpperCase() + $scope.model.name.slice(1)).replace(/[^a-z0-9]/gi, '');
     $scope.model.lcName = ($scope.model.name.charAt(0).toLowerCase() + $scope.model.name.slice(1)).replace(/[^a-z0-9]/gi, '');
     $scope.resetData();
+    
+    $http.get(Yii.app.createUrl('/dev/crud/modelList', {'model':$scope.model.name}))
+        .success(function(res) {
+            $scope.fieldList = res;
+        });
 }
 
 $scope.checkAll = function (e) {
