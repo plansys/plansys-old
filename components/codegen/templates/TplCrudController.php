@@ -13,7 +13,7 @@ class TplCrudController extends Controller {
         if (isset($_POST["TemplateForm"])) {
             $model->attributes = $_POST["TemplateForm"];
             if ($model->save()) {
-                $this->flash('info', 'Data berhasil disimpan');
+                $this->flash('info', 'Data Berhasil Disimpan');
                 $this->redirect(['index']);
             }
         }
@@ -26,7 +26,7 @@ class TplCrudController extends Controller {
         if (isset($_POST["TemplateForm"])) {
             $model->attributes = $_POST["TemplateForm"];
             if ($model->save()) {
-                $this->flash('info', 'Data berhasil disimpan');
+                $this->flash('info', 'Data Berhasil Disimpan');
                 $this->redirect(["index"]);
             }
         }
@@ -36,7 +36,7 @@ class TplCrudController extends Controller {
     public function actionDelete($id) {
         $model = $this->loadModel($id, "TemplateForm");
         if (!is_null($model)) {
-            $this->flash('info', 'Data berhasil dihapus');
+            $this->flash('info', 'Data Berhasil Dihapus');
             $model->delete();
         }
 

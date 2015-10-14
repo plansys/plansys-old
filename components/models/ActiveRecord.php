@@ -301,7 +301,7 @@ class ActiveRecord extends CActiveRecord {
             } catch (CDbException $e) {
                 if (!isset($options['integrityError']) || (!!@$options['integrityError'])) {
                     if ($e->errorInfo[0] == "23000") {
-                        Yii::app()->controller->redirect(["/site/error&id=integrity"]);
+                        Yii::app()->controller->redirect(["/site/error&id=integrity&msg=" . $e->errorInfo[2]]);
                     }
                 }
             }

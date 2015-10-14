@@ -1,7 +1,6 @@
 <?php
 
-class GridView extends FormField
-{
+class GridView extends FormField {
 
     public static $toolbarName  = "GridView";
     public static $category     = "Data & Tables";
@@ -20,36 +19,30 @@ class GridView extends FormField
     public        $genOptions   = [];
     public        $columns      = [];
 
-    public function getErrorClass()
-    {
+    public function getErrorClass() {
         return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
     }
 
-    public function includeCSS()
-    {
+    public function includeCSS() {
         return ['grid.css'];
     }
 
-    public function includeJS()
-    {
+    public function includeJS() {
         return ['grid.js'];
     }
 
-    public function render()
-    {
+    public function render() {
         $this->processColumns();
         return $this->renderInternal('template_render.php');
     }
 
-    private function processColumns()
-    {
+    private function processColumns() {
         foreach ($this->columns as $k => $c) {
             $this->columns[$k] = $this->processSingleColumn($c);
         }
     }
 
-    private function processSingleColumn($c)
-    {
+    private function processSingleColumn($c) {
         $name = explode(".", $c['name']);
         if (count($name) > 1) {
             $c['fieldName'] = $c['name'];
@@ -59,8 +52,7 @@ class GridView extends FormField
         return $c;
     }
 
-    public function actionCellTemplate()
-    {
+    public function actionCellTemplate() {
         $postdata = file_get_contents("php://input");
         $post     = CJSON::decode($postdata);
         $fb       = FormBuilder::load($post['class']);
@@ -71,9 +63,9 @@ class GridView extends FormField
         echo $this->getRowTemplate($post['item'], $post['idx']);
     }
 
-    public function getRowTemplate($col, $idx)
-    {
+    public function getRowTemplate($col, $idx) {
         $template  = '';
+        $style     = '';
         $fieldName = $col['name'];
         switch ($col['columnType']) {
             case "string":
@@ -99,29 +91,36 @@ type="checkbox" /></label>';
     {$template}";
         }
 
+
         if (!!@$col['genOptions']) {
             if (!!@$col['genOptions']['editable']) {
                 $template = '
-    <textarea auto-grow ng-model="row.' . $fieldName . '"></textarea>';
+    <textarea auto-grow ng-model="row.' . $fieldName . '" ng-keyup="editKey($event)"></textarea>';
+            }
+
+            if (!!@$col['genOptions']['delButton']) {
+                $style    = ' style="width:25px;"';
+                $template = '
+    <div ng-if="!row.$rowState" ng-click="removeRow(row)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></div>
+    <div ng-if="row.$rowState == \'remove\'" ng-click="undoRemoveRow(row)" class="btn btn-default btn-xs"><i class="fa fa-undo"></i></div>
+';
             }
         }
 
         return <<<EOF
-<td ng-class="rowClass(row, '{$fieldName}', '{$col['columnType']}')">
+<td{$style} ng-class="rowClass(row, '{$fieldName}', '{$col['columnType']}')">
     {$rowState}{$template}
 </td>
 EOF;
     }
 
-    private function getStartingColumnGroup()
-    {
+    private function getStartingColumnGroup() {
         foreach ($this->columns as $k => $c) {
             if ($c['columnType'] == 'string') return $k;
         }
     }
 
-    public function getGroupTemplate($col, $idx)
-    {
+    public function getGroupTemplate($col, $idx) {
         $template = '';
         switch ($col['columnType']) {
             case "string":
@@ -150,8 +149,7 @@ EOF;
 
     }
 
-    public function getHeaderTemplate($col, $idx)
-    {
+    public function getHeaderTemplate($col, $idx) {
         $fieldName = isset($col['fieldName']) ? $col['fieldName'] : $col['name'];
 
         switch ($col['columnType']) {
@@ -187,8 +185,7 @@ EOL;
         }
     }
 
-    public function getFieldProperties()
-    {
+    public function getFieldProperties() {
         return array(
             array(
                 'label' => 'GridView Name',

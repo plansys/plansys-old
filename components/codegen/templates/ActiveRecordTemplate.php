@@ -1,10 +1,8 @@
 <?php
 
-class ActiveRecordTemplate extends CComponent
-{
+class ActiveRecordTemplate extends CComponent {
 
-    public static function generateFields($model)
-    {
+    public static function generateFields($model) {
         $array         = $model->modelFieldList;
         $classPart     = explode("-", Helper::camelToSnake(get_class($model)));
         $lastPartIndex = count($classPart) - 1;
@@ -42,75 +40,130 @@ class ActiveRecordTemplate extends CComponent
         return $return;
     }
 
-    private static function generateMaster(&$return, $params)
-    {
+    private static function generateIndex(&$return, $params) {
         $array      = [];
-        $primaryKey = '';
-        $cols       = [];
-        $length     = 0;
+        $columns    = [];
         $basicTitle = "";
         $module     = '';
         $basic      = '';
+        $primaryKey = '';
         extract($params);
 
         $return[] = [
             'linkBar' => [
                 [
-                    'label' => 'Simpan ' . $basicTitle,
+                    'label' => 'Tambah ' . $basicTitle,
                     'buttonType' => 'success',
-                    'icon' => 'check',
+                    'icon' => 'plus',
                     'options' => [
-                        'ng-click' => "form.submit(this)",
+                        'href' => "url:/{$module}/{$basic}/new",
                     ],
                     'type' => 'LinkButton',
                 ],
             ],
-            'title' => '{{ form.title }}',
+            'title' => 'Daftar ' . $basicTitle,
             'showSectionTab' => 'No',
             'type' => 'ActionBar',
         ];
 
-        $gv = new GridView;
-
         ## generate Filters & Columns
-        $pkCol = null;
+
         foreach ($array as $k => $i) {
-            if ($i['name'] == $primaryKey) {
-                $i['label'] = $i['name'];
+            if ($array[$k]['name'] == $primaryKey) {
+                $array_id = $array[$k];
+                continue;
             }
 
-            ## setup label
-            $i['label'] = implode(" ", array_map('ucfirst', explode("_", $i['label'])));
-
-            ## setup filters
-            $filter          = [
+            $filter = [
                 'filterType' => "string"
             ];
-            $filter['name']  = $i['name'];
-            $filter['label'] = $i['label'];
-            $filters[]       = $filter;
-
-            ## setup columns
-            $column          = [
+            $column = [
                 'columnType' => "string",
                 'options' => [],
-                'genOptions' => []
             ];
+            switch (true) {
+                case $columns[$array[$k]['name']]->dbType == "date" :
+                    $filter['filterType'] = "date";
+                    $column['inputMask']  = "99/99/9999";
+                    break;
+                case $columns[$array[$k]['name']]->dbType == "datetime" :
+                    $column['inputMask'] = "99/99/9999 99:99";
+                    break;
+                case $columns[$array[$k]['name']]->dbType == "time" :
+                    $column['inputMask'] = "99:99";
+                    break;
+//                case substr($i['name'], -3) == "_id":
+//                    ## get class name
+//                    $relName    = substr($i['name'], 0, strlen($i['name']) - 3);
+//                    $i['label'] = $relName;
+//
+//                    $relName = implode("", array_map('ucfirst', explode("_", $relName)));
+//
+//
+//                    if (@is_subclass_of($relName, 'ActiveRecord')) {
+//
+//                        ## get class alias
+//                        if (is_file(Yii::getPathOfAlias('app.models.' . $relName) . ".php")) {
+//
+//                            $classAlias = "app.models." . $relName;
+//                        } else if (is_file(Yii::getPathOfAlias('application.models.' . $relName) . ".php")) {
+//                            $classAlias = "application.models." . $relName;
+//                        } else {
+//                            $classAlias = '';
+//                        }
+//
+//                        if ($classAlias != '') {
+//                            ## fill attribute
+//                            $filter['filterType']    = "relation";
+//                            $filter['relModelClass'] = $classAlias;
+//                            $filter['relIdField']    = 'id';
+//                            $filter['relParams']     = [];
+//                            $filter['relCriteria']   = array(
+//                                'select' => '',
+//                                'distinct' => 'false',
+//                                'alias' => 't',
+//                                'condition' => '{[search]}',
+//                                'order' => '',
+//                                'group' => '',
+//                                'having' => '',
+//                                'join' => '',
+//                            );
+//                            $attr                    = $relName::model()->attributes;
+//
+//                            ## fill label field
+//                            if (array_key_exists('name', $attr)) {
+//                                $filter['relLabelField'] = 'name';
+//                            } else if (array_key_exists('nama', $attr)) {
+//                                $filter['relLabelField'] = 'nama';
+//                            } else {
+//                                foreach ($attr as $y => $z) {
+//                                    if ($y == 'id')
+//                                        continue;
+//                                    if (substr($y, -3) == "_id")
+//                                        continue;
+//
+//                                    $filter['relLabelField'] = $y;
+//                                    break;
+//                                }
+//                            }
+//                            $column               = $filter;
+//                            $column['columnType'] = "relation";
+//                            unset($column['filterType']);
+//                        }
+//                    }
+                    break;
+            }
+
+            $i['label'] = implode(" ", array_map('ucfirst', explode("_", $i['label'])));
+
+            $filter['name']  = $i['name'];
+            $filter['label'] = $i['label'];
             $column['name']  = $i['name'];
             $column['label'] = $i['label'];
 
-            if ($i['name'] != $primaryKey) {
-                $gv->columns[]                    = $column;
-                $column['cellMode']               = 'custom';
-                $column['genOptions']['editable'] = true;
-                $column['html']                   = $gv->getRowTemplate($column, $k);
-
-                $cols[] = $column;
-            } else {
-                $pkCol = $column;
-            }
+            $filters[] = $filter;
+            $cols[]    = $column;
         }
-        array_unshift($cols, $pkCol);
 
         $return[] = [
             'name' => 'dataFilter1',
@@ -137,8 +190,7 @@ class ActiveRecordTemplate extends CComponent
         return $return;
     }
 
-    private static function generateForm(&$return, $params)
-    {
+    private static function generateForm(&$return, $params) {
         $array      = [];
         $primaryKey = '';
         $columns    = [];
@@ -287,131 +339,87 @@ class ActiveRecordTemplate extends CComponent
         return $return;
     }
 
-    private static function generateIndex(&$return, $params)
-    {
+    private static function generateMaster(&$return, $params) {
         $array      = [];
-        $columns    = [];
+        $primaryKey = '';
+        $cols       = [];
+        $length     = 0;
         $basicTitle = "";
         $module     = '';
         $basic      = '';
-        $primaryKey = '';
         extract($params);
 
         $return[] = [
             'linkBar' => [
                 [
-                    'label' => 'Tambah ' . $basicTitle,
+                    'label' => 'Simpan ' . $basicTitle,
                     'buttonType' => 'success',
-                    'icon' => 'plus',
+                    'icon' => 'check',
                     'options' => [
-                        'href' => "url:/{$module}/{$basic}/new",
+                        'ng-click' => "form.submit(this)",
                     ],
                     'type' => 'LinkButton',
                 ],
             ],
-            'title' => 'Daftar ' . $basicTitle,
+            'title' => '{{ form.title }}',
             'showSectionTab' => 'No',
             'type' => 'ActionBar',
         ];
 
+        $gv = new GridView;
+
         ## generate Filters & Columns
-
+        $pkCol = null;
         foreach ($array as $k => $i) {
-            if ($array[$k]['name'] == $primaryKey) {
-                $array_id = $array[$k];
-                continue;
+            if ($i['name'] == $primaryKey) {
+                $i['label'] = $i['name'];
             }
 
-            $filter = [
-                'filterType' => "string"
-            ];
-            $column = [
-                'columnType' => "string",
-                'options' => [],
-            ];
-            switch (true) {
-                case $columns[$array[$k]['name']]->dbType == "date" :
-                    $filter['filterType'] = "date";
-                    $column['inputMask']  = "99/99/9999";
-                    break;
-                case $columns[$array[$k]['name']]->dbType == "datetime" :
-                    $column['inputMask'] = "99/99/9999 99:99";
-                    break;
-                case $columns[$array[$k]['name']]->dbType == "time" :
-                    $column['inputMask'] = "99:99";
-                    break;
-//                case substr($i['name'], -3) == "_id":
-//                    ## get class name
-//                    $relName    = substr($i['name'], 0, strlen($i['name']) - 3);
-//                    $i['label'] = $relName;
-//
-//                    $relName = implode("", array_map('ucfirst', explode("_", $relName)));
-//
-//
-//                    if (@is_subclass_of($relName, 'ActiveRecord')) {
-//
-//                        ## get class alias
-//                        if (is_file(Yii::getPathOfAlias('app.models.' . $relName) . ".php")) {
-//
-//                            $classAlias = "app.models." . $relName;
-//                        } else if (is_file(Yii::getPathOfAlias('application.models.' . $relName) . ".php")) {
-//                            $classAlias = "application.models." . $relName;
-//                        } else {
-//                            $classAlias = '';
-//                        }
-//
-//                        if ($classAlias != '') {
-//                            ## fill attribute
-//                            $filter['filterType']    = "relation";
-//                            $filter['relModelClass'] = $classAlias;
-//                            $filter['relIdField']    = 'id';
-//                            $filter['relParams']     = [];
-//                            $filter['relCriteria']   = array(
-//                                'select' => '',
-//                                'distinct' => 'false',
-//                                'alias' => 't',
-//                                'condition' => '{[search]}',
-//                                'order' => '',
-//                                'group' => '',
-//                                'having' => '',
-//                                'join' => '',
-//                            );
-//                            $attr                    = $relName::model()->attributes;
-//
-//                            ## fill label field
-//                            if (array_key_exists('name', $attr)) {
-//                                $filter['relLabelField'] = 'name';
-//                            } else if (array_key_exists('nama', $attr)) {
-//                                $filter['relLabelField'] = 'nama';
-//                            } else {
-//                                foreach ($attr as $y => $z) {
-//                                    if ($y == 'id')
-//                                        continue;
-//                                    if (substr($y, -3) == "_id")
-//                                        continue;
-//
-//                                    $filter['relLabelField'] = $y;
-//                                    break;
-//                                }
-//                            }
-//                            $column               = $filter;
-//                            $column['columnType'] = "relation";
-//                            unset($column['filterType']);
-//                        }
-//                    }
-                    break;
-            }
-
+            ## setup label
             $i['label'] = implode(" ", array_map('ucfirst', explode("_", $i['label'])));
 
+            ## setup filters
+            $filter          = [
+                'filterType' => "string"
+            ];
             $filter['name']  = $i['name'];
             $filter['label'] = $i['label'];
+            $filters[]       = $filter;
+
+            ## setup columns
+            $column          = [
+                'columnType' => "string",
+                'options' => [],
+                'genOptions' => []
+            ];
             $column['name']  = $i['name'];
             $column['label'] = $i['label'];
 
-            $filters[] = $filter;
-            $cols[]    = $column;
+            if ($i['name'] != $primaryKey) {
+                $gv->columns[]                    = $column;
+                $column['cellMode']               = 'custom';
+                $column['genOptions']['editable'] = true;
+                $column['html']                   = $gv->getRowTemplate($column, $k);
+                $cols[]                           = $column;
+            } else {
+                $pkCol = $column;
+            }
         }
+        array_unshift($cols, $pkCol);
+
+        $delButtonCol         = [
+            'name' => '',
+            'label' => '',
+            'columnType' => "string",
+            'options' => [],
+            'cellMode' => 'custom',
+            'genOptions' => [
+                'delButton' => true
+            ]
+        ];
+        $gv->columns[]        = $delButtonCol;
+        $delButtonCol['html'] = $gv->getRowTemplate($delButtonCol, count($cols));
+        array_push($cols, $delButtonCol);
 
         $return[] = [
             'name' => 'dataFilter1',

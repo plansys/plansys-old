@@ -86,10 +86,6 @@ class DevCrudMainForm extends Form {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<pre>{{ data | json }}</pre>',
-            ),
-            array (
-                'type' => 'Text',
                 'value' => '<div ng-show=\'step == 1\'>',
             ),
             array (

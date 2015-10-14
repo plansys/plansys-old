@@ -66,6 +66,7 @@
 [grid-view] .thead.show {
     position: fixed;
     display: block;
+    z-index:100;
     white-space: nowrap;
 }
 
@@ -200,7 +201,7 @@
     margin: 16px 0px 0px -5px;
     border: 1px solid #ddd;
     opacity:0;
-    z-index:110;
+    z-index:99;
     border-top: 0px;
     padding: 2px 4px 4px 3px;
     border-bottom-left-radius: 5px;
@@ -229,8 +230,9 @@
     height:8px;
     display:block;
     float:right;
+    box-shadow:inset 0px 0px 0px 1px #fff;
     resize:none;
     box-sizing: content-box;
-    margin:-4px -6px -3px 0px;
+    margin:-3px -5px -2px 0px;
     background:transparent;
 }

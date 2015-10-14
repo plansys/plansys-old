@@ -53,6 +53,34 @@ app.directive('gridView', function ($timeout, $http) {
 
                     return rc;
                 }
+                $scope.editKey = function (e) {
+                    var ngModel = $(e.target).attr('ng-model');
+                    if (e.target.value.length == e.target.selectionEnd) {
+                        if (e.which == 40) {
+                            var nextRow = $(e.target).parents("tr").next().find('textarea[ng-model="' + ngModel + '"]');
+                            if (!!nextRow) {
+                                nextRow.focus();
+                            }
+                        } else if (e.which == 39) {
+                            var nextCol = $(e.target).parents("td").next().find('textarea');
+                            if (!!nextCol) {
+                                nextCol.focus();
+                            }
+                        }
+                    } else if (e.target.selectionEnd == 0) {
+                        if (e.which == 38) {
+                            var prevRow = $(e.target).parents("tr").prev().find('textarea[ng-model="' + ngModel + '"]');
+                            if (!!prevRow) {
+                                prevRow.focus();
+                            }
+                        } else if (e.which == 37) {
+                            var prevCol = $(e.target).parents("td").prev().find('textarea');
+                            if (!!prevCol) {
+                                prevCol.focus();
+                            }
+                        }
+                    }
+                }
                 $scope.rowStateClass = function (row) {
                     if (!row.$rowState) {
                         return '';
@@ -82,6 +110,23 @@ app.directive('gridView', function ($timeout, $http) {
                     }
 
                     $scope.updatePaging($scope.gridOptions.pageInfo);
+                }
+
+                $scope.removeRow = function (row) {
+                    row.$rowState = 'remove';
+                    $scope.datasource.deleteData.push(row);
+                    $timeout(function () {
+                        $scope.recalcHeaderWidth();
+                    });
+                }
+
+                $scope.undoRemoveRow = function (row) {
+                    var idx = $scope.datasource.deleteData.indexOf(row);
+                    $scope.datasource.deleteData.splice(idx, 1);
+                    row.$rowState = '';
+                    $timeout(function () {
+                        $scope.recalcHeaderWidth();
+                    });
                 }
 
                 // when ng-model is changed from inside directive
@@ -146,6 +191,8 @@ app.directive('gridView', function ($timeout, $http) {
 
                 // update sorting
                 $scope.sort = function (col) {
+                    if (col == '') return;
+
                     var direction = $scope.isSort(col, 'asc') ? 'desc' : 'asc';
                     $scope.gridOptions.sortInfo = {
                         fields: [col],
@@ -170,9 +217,11 @@ app.directive('gridView', function ($timeout, $http) {
                 $scope.updateSorting = function (sort, executeQuery) {
                     var ds = $scope.datasource;
                     if (typeof ds != "undefined") {
-
                         var order_by = [];
                         for (i in sort.fields) {
+                            if (sort.fields[i] == '') {
+                                return;
+                            }
                             order_by.push({
                                 field: sort.fields[i],
                                 direction: sort.directions[i]
@@ -429,8 +478,8 @@ app.directive('gridView', function ($timeout, $http) {
                     $el.find('table tbody tr.r.hide').removeClass('hide');
                 }
 
-                $scope.checkbox = {};
                 // checkbox handling
+                $scope.checkbox = {};
                 $scope.checkboxRow = function (row, colName, colIdx, e) {
                     if (typeof $scope.checkbox[colName] == "undefined") {
                         $scope.checkbox[colName] = [];
