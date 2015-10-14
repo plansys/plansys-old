@@ -14,6 +14,7 @@
 
 class <?php echo $modelClass; ?> extends <?php echo $this->baseClass."\n"; ?>
 {
+
 	public function tableName()
 	{
 		return '<?php echo $tableName; ?>';

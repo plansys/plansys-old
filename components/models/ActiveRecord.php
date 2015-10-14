@@ -2,6 +2,7 @@
 
 class ActiveRecord extends CActiveRecord {
     const DEFAULT_PAGE_SIZE = 25;
+    protected $softDelete         = [];
     private   $__relations        = [];
     private   $__relationsObj     = [];
     private   $__isRelationLoaded = false;
@@ -12,7 +13,6 @@ class ActiveRecord extends CActiveRecord {
     private   $__relDelete        = [];
     private   $__relReset         = [];
     private   $__tempVar          = [];
-    protected $softDelete         = [];
 
     public static function execute($sql, $params = []) {
         return Yii::app()->db->createCommand($sql)->execute($params);
@@ -1346,5 +1346,6 @@ class ActiveRecord extends CActiveRecord {
         Yii::import("application.components.codegen.templates.ActiveRecordTemplate");
         return ActiveRecordTemplate::generateFields($this);
     }
+
 
 }

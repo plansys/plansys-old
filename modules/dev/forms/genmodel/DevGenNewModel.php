@@ -5,6 +5,9 @@ class DevGenNewModel extends Form {
     public $module;
     public $modelName;
     public $tableName;
+    public $softDelete = 'No';
+    public $softDeleteColumn = '';
+    public $softDeleteValue = '1';
 
     public function getForm() {
         return array(
@@ -36,7 +39,6 @@ class DevGenNewModel extends Form {
                     ),
                 ),
                 'showSectionTab' => 'No',
-                'showOptionsBar' => 'No',
                 'type' => 'ActionBar',
             ),
             array (
@@ -51,7 +53,7 @@ class DevGenNewModel extends Form {
                 'label' => 'Table Name',
                 'name' => 'tableName',
                 'options' => array (
-                    'ng-change' => 'updateTable()',
+                    'ng-change' => 'updateTable(); getListField();',
                 ),
                 'listExpr' => 'ModelGenerator::listTables()',
                 'searchable' => 'Yes',
@@ -61,8 +63,32 @@ class DevGenNewModel extends Form {
             array (
                 'label' => 'Model Name',
                 'name' => 'modelName',
+                'type' => 'TextField',
+            ),
+            array (
+                'label' => 'Soft Delete',
+                'name' => 'softDelete',
                 'options' => array (
-                    'ng-change' => '',
+                    'ng-change' => 'getListField()',
+                    'ng-if' => '!!model.modelName',
+                ),
+                'listExpr' => '[\'No\', \'Yes\']',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Soft Delete Column',
+                'name' => 'softDeleteColumn',
+                'options' => array (
+                    'ps-list' => 'fieldList',
+                    'ng-if' => 'model.softDelete == \'Yes\'',
+                ),
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Soft Delete Value',
+                'name' => 'softDeleteValue',
+                'options' => array (
+                    'ng-if' => 'model.softDelete == \'Yes\'',
                 ),
                 'type' => 'TextField',
             ),

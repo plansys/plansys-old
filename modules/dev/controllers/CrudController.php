@@ -8,11 +8,6 @@ class CrudController extends Controller {
         $this->renderForm('DevCrudMainForm', $model);
     }
 
-    public function actionModelList($model) {
-        if (class_exists($model)) {
-            echo json_encode($model::model()->getAttributesList());
-        }
-    }
 
     public function actionCheckFile() {
         $postdata = file_get_contents("php://input");

@@ -13,6 +13,13 @@ $scope.updateTable = function () {
     });
 }
 
+$scope.getListField = function() {
+    $http.get(Yii.app.createUrl('/dev/genModel/fieldList', {'table':$scope.model.tableName}))
+        .success(function(res) {
+            $scope.fieldList = res;
+        });
+}
+
 if ($scope.params.href != "") {
     window.close();
     window.opener.location.href = $scope.params.href;
