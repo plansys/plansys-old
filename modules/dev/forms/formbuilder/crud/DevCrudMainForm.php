@@ -184,6 +184,14 @@ class DevCrudMainForm extends Form {
                         'listExpr' => '[\'Yes\',\'No\']',
                         'type' => 'DropDownList',
                     ),
+                    array (
+                        'label' => 'Column',
+                        'name' => 'softDeleteColumn',
+                        'options' => array (
+                            'ps-list' => 'columnList',
+                        ),
+                        'type' => 'DropDownList',
+                    ),
                 ),
                 'w1' => '50%',
                 'w2' => '50%',

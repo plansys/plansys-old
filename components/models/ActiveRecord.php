@@ -2,16 +2,17 @@
 
 class ActiveRecord extends CActiveRecord {
     const DEFAULT_PAGE_SIZE = 25;
-    private $__relations        = [];
-    private $__relationsObj     = [];
-    private $__isRelationLoaded = false;
-    private $__pageSize         = [];
-    private $__page             = [];
-    private $__relInsert        = [];
-    private $__relUpdate        = [];
-    private $__relDelete        = [];
-    private $__relReset         = [];
-    private $__tempVar          = [];
+    private   $__relations        = [];
+    private   $__relationsObj     = [];
+    private   $__isRelationLoaded = false;
+    private   $__pageSize         = [];
+    private   $__page             = [];
+    private   $__relInsert        = [];
+    private   $__relUpdate        = [];
+    private   $__relDelete        = [];
+    private   $__relReset         = [];
+    private   $__tempVar          = [];
+    protected $softDelete         = [];
 
     public static function execute($sql, $params = []) {
         return Yii::app()->db->createCommand($sql)->execute($params);
@@ -293,9 +294,13 @@ class ActiveRecord extends CActiveRecord {
             $condition = isset($options['condition']) ? $options['condition'] : "{$pk} IN (:ids)";
             $condition = str_replace(":ids", $ids, $condition);
 
-            $delete = "DELETE FROM {$table} WHERE $condition;";
+            if (empty($model->softDelete)) {
+                $delete  = "DELETE FROM {$table} WHERE $condition;";
+                $command = Yii::app()->db->createCommand($delete);
+            } else {
 
-            $command = Yii::app()->db->createCommand($delete);
+            }
+
             try {
                 $command->execute();
             } catch (CDbException $e) {
@@ -1332,7 +1337,7 @@ class ActiveRecord extends CActiveRecord {
             parent::delete();
         } catch (CDbException $e) {
             if ($e->errorInfo[0] == "23000") {
-                Yii::app()->controller->redirect(["/site/error&id=integrity"]);
+                Yii::app()->controller->redirect(["/site/error&id=integrity&msg=" . $e->errorInfo[2]]);
             }
         }
     }
