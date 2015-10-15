@@ -223,16 +223,15 @@
     font-weight: bold;
 }
 
-[grid-view] td textarea {
+[grid-view] td [contenteditable] {
     border: 0px;
     width:100%;
-    padding:4px 4px 4px 6px;
-    height:8px;
-    display:block;
-    float:right;
-    box-shadow:inset 0px 0px 0px 1px #fff;
+    padding:5px 4px 4px 4px;
+    min-height:16px;
+    display:inline-block;
+    box-shadow:inset 0px 0px 0px 1px #999;
     resize:none;
+    margin:-2px 0px -1px -4px;
     box-sizing: content-box;
-    margin:-3px -5px -2px 0px;
     background:transparent;
 }

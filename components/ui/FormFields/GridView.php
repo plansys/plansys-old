@@ -84,7 +84,7 @@ type="checkbox" /></label>';
         }
 
         $rowState = '';
-        if ($idx == $this->getStartingColumnGroup()) {
+        if ($idx == 0 && !@$col['options']['mode']) {
             $rowState = "<div ng-include='\"row-state-template\"'></div>\n    ";
             $template = "<span class='row-group-padding'
         style='width:{{row.\$level*10}}px;'></span>
@@ -97,7 +97,7 @@ type="checkbox" /></label>';
             switch ($col['options']['mode']) {
                 case "editable":
                     $template = '
-    <textarea auto-grow ng-model="row.' . $fieldName . '" ng-keyup="editKey($event)"></textarea>';
+    <div contenteditable="true" ng-model="row.' . $fieldName . '" ng-keyup="editKey($event)"></textarea>';
                     break;
                 case "del-button":
                     $style    = ' style="width:20px;"';

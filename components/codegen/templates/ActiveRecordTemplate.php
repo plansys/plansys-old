@@ -499,6 +499,14 @@ class ActiveRecordTemplate extends CComponent {
             'type' => 'GridView',
             'columns' => $cols
         ];
+        $return[] = [
+            'renderInEditor' => 'Yes',
+            'type' => 'Text',
+            'value' => '<div style="margin-top:5px;text-align:center;\">
+    <div ng-click="gridView1.addRow()"
+    class="btn btn-sm btn-success"><i class="fa fa-plus"></i> New Record</div>
+</div>',
+        ];
         return $return;
     }
 

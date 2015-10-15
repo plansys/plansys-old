@@ -112,6 +112,14 @@ app.directive('gridView', function ($timeout, $http) {
                     $scope.updatePaging($scope.gridOptions.pageInfo);
                 }
 
+                $scope.addRow = function () {
+                    var newModel = {};
+                    if (!!$scope.model) {
+                        newModel = angular.copy($scope.model);
+                    }
+                    $scope.datasource.data.push(newModel);
+                }
+
                 $scope.removeRow = function (row) {
                     row.$rowState = 'remove';
                     $scope.datasource.deleteData.push(row);
