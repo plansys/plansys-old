@@ -130,7 +130,7 @@ app.directive('gridView', function ($timeout, $http) {
                             var idx = $scope.datasource.updateData.indexOf(row);
                             $scope.datasource.updateData.splice(idx, 1);
                             $scope.datasource.query();
-                        break;
+                            break;
                     }
                     row.$rowState = '';
                     $timeout(function () {
@@ -489,26 +489,52 @@ app.directive('gridView', function ($timeout, $http) {
 
                 // checkbox handling
                 $scope.checkbox = {};
+                $scope.getModifyDS = function (col) {
+                    if (!!col.options && !!col.options.modifyDataSource && col.options.modifyDataSource == 'false') {
+                        return false;
+                    }
+                    return true;
+                }
+                $scope.checkboxValues = function (colName, column) {
+                    var ret = [];
+                    for (i in $scope.checkbox[colName]) {
+                        if (typeof $scope.checkbox[colName][i][column] != "undefined") {
+                            ret.push($scope.checkbox[colName][i][column])
+                        }
+                    }
+                    return ret.join(",");
+                }
                 $scope.checkboxRow = function (row, colName, colIdx, e) {
+                    var modify = $scope.getModifyDS($scope.columns[colIdx]);
                     if (typeof $scope.checkbox[colName] == "undefined") {
                         $scope.checkbox[colName] = [];
                     }
                     var isChecked = $(e.target).is(":checked");
-                    var rowFound = $scope.checkbox[colName].indexOf(row);
+                    var rowFound = -1;
+                    for (a in $scope.checkbox[colName]) {
+                        if ($scope.checkbox[colName][a][$scope.datasource.primaryKey] == row[$scope.datasource.primaryKey]) {
+                            rowFound = a;
+                        }
+                    }
                     if (isChecked) {
                         if (rowFound < 0) {
                             $scope.checkbox[colName].push(row);
                         }
-                        row[colName] = $scope.columns[colIdx].checkedValue;
+                        if (modify) {
+                            row[colName] = $scope.columns[colIdx].checkedValue;
+                        }
                     } else {
                         if (rowFound >= 0) {
                             $scope.checkbox[colName].splice(rowFound, 1);
                         }
-                        row[colName] = $scope.columns[colIdx].uncheckedValue;
+                        if (modify) {
+                            row[colName] = $scope.columns[colIdx].uncheckedValue;
+                        }
                     }
                 }
                 $scope.checkboxGroup = function (rowIdx, colName, colIdx, e) {
                     var loop = true;
+                    var modify = $scope.getModifyDS($scope.columns[colIdx]);
                     var cursor = $(e.target).parents("tr").next();
                     var level = (rowIdx == -1 ? -1 : $scope.datasource.data[rowIdx].$level);
                     if (level < 0) {
@@ -523,17 +549,26 @@ app.directive('gridView', function ($timeout, $http) {
                         }
                         if (cursor.attr("lv") > level) {
                             if (cursor.hasClass("r")) {
-                                var rowFound = $scope.checkbox[colName].indexOf(row);
+                                var rowFound = -1;
+                                for (a in $scope.checkbox[colName]) {
+                                    if ($scope.checkbox[colName][a][$scope.datasource.primaryKey] == row[$scope.datasource.primaryKey]) {
+                                        rowFound = a;
+                                    }
+                                }
                                 if (isChecked) {
                                     if (rowFound < 0) {
                                         $scope.checkbox[colName].push(row);
                                     }
-                                    row[colName] = $scope.columns[colIdx].checkedValue;
+                                    if (modify) {
+                                        row[colName] = $scope.columns[colIdx].checkedValue;
+                                    }
                                 } else {
                                     if (rowFound >= 0) {
                                         $scope.checkbox[colName].splice(rowFound, 1);
                                     }
-                                    row[colName] = $scope.columns[colIdx].uncheckedValue;
+                                    if (modify) {
+                                        row[colName] = $scope.columns[colIdx].uncheckedValue;
+                                    }
                                 }
                             } else if (cursor.hasClass("g")) {
                                 cursor.find(".cb-" + colName).prop('checked', isChecked);
@@ -551,10 +586,21 @@ app.directive('gridView', function ($timeout, $http) {
                     $scope.checkboxGroup(-1, colName, colIdx, e);
                 }
                 $scope.checkboxRowChecked = function (row, colName, colIdx) {
-                    if (row[colName] == $scope.columns[colIdx].checkedValue) {
-                        return true;
+                    if (!!$scope.getModifyDS($scope.columns[colIdx])) {
+                        if (row[colName] == $scope.columns[colIdx].checkedValue) {
+                            return true;
+                        } else {
+                            return false;
+                        }
                     } else {
+                        if (!$scope.checkbox[colName]) return false;
+                        for (a in $scope.checkbox[colName]) {
+                            if ($scope.checkbox[colName][a][$scope.datasource.primaryKey] == row[$scope.datasource.primaryKey]) {
+                                return true;
+                            }
+                        }
                         return false;
+
                     }
                 }
 

@@ -5,6 +5,7 @@ class DevCrudMainForm extends Form {
     public $name = '';
     public $path = '';
     public $model = '';
+    public $relations = [];
     
     ## Advanced Settings
     public $bulkCheckbox = 'No';
@@ -94,6 +95,7 @@ class DevCrudMainForm extends Form {
                             'ng-change' => 'model.name = model.model; onNameChange();',
                         ),
                         'listExpr' => 'array_merge([\'\'=>\'Choose Model\'], ModelGenerator::listModels(true))',
+                        'searchable' => 'Yes',
                         'type' => 'DropDownList',
                     ),
                     array (
@@ -201,6 +203,24 @@ padding-left:0px;',
                 'type' => 'SectionHeader',
             ),
             array (
+                'name' => 'relations',
+                'fieldTemplate' => 'form',
+                'templateForm' => 'application.modules.dev.forms.formbuilder.crud.DevCrudRelForm',
+                'options' => array (
+                    'style' => 'margin-top:10px;',
+                ),
+                'singleViewOption' => array (
+                    'name' => 'val',
+                    'fieldType' => 'text',
+                    'labelWidth' => 0,
+                    'fieldWidth' => 12,
+                    'fieldOptions' => array (
+                        'ng-delay' => 500,
+                    ),
+                ),
+                'type' => 'ListView',
+            ),
+            array (
                 'type' => 'Text',
                 'value' => '</div>',
             ),
@@ -217,7 +237,7 @@ padding-left:0px;',
             <th style=\'width:20px;\'></th>
             <th style=\'width:10%;\'>Type</th>
             <th style=\'width:45%;\'>Name</th>
-            <th style=\'width:30%;\'>Status</th>
+            <th style=\'width:{{step == 3 ? 30 : 45 }}%;\'>Status</th>
             <th ng-if=\"step == 3\" style=\'width:15%;text-align:center;\'>
                 <label style=\'margin:0px;\' ng-if=\"exists.length > 0\">
                     <input style=\'margin:0px;\' ng-click=\'checkAll($event)\' type=\"checkbox\">&nbsp;Check all

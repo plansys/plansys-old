@@ -34,11 +34,17 @@ class TplCrudController extends Controller {
     }
 
     public function actionDelete($id) {
-        $model = $this->loadModel($id, "TemplateForm");
-        if (!is_null($model)) {
+        if (strpos($id, ',') > 0) {
+            ActiveRecord::batchDelete("TemplateForm", explode(",", $id));
             $this->flash('Data Berhasil Dihapus');
-            $model->delete();
+        } else {
+            $model = $this->loadModel($id, "TemplateForm");
+            if (!is_null($model)) {
+                $this->flash('Data Berhasil Dihapus');
+                $model->delete();
+            }
         }
+
 
         $this->redirect(['index']);
     }

@@ -92,7 +92,7 @@ type="checkbox" /></label>';
         }
 
 
-        if (!!@$col['options'] && @$col['cellMode'] == 'custom') {
+        if (!!@$col['options']['mode']) {
             $template = '';
             switch ($col['options']['mode']) {
                 case "editable":
@@ -109,12 +109,12 @@ type="checkbox" /></label>';
                     break;
                 case 'edit-button':
                     $style    = ' style="width:20px;"';
-                    $template = '<a ng-href="\{\{ ' . $col['options']['editUrl'] . ' \}\}"
+                    $template = '<a ng-url="' . $col['options']['editUrl'] . '"
     class="btn-block btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>';
                     break;
                 case 'del-url-button':
                     $style    = ' style="width:20px;"';
-                    $template = '<a ng-href="\{\{ ' . $col['options']['editUrl'] . ' \}\}"
+                    $template = '<a ng-url="' . $col['options']['editUrl'] . '"
     onClick="return confirm(\'Are you sure?\')"
     class="btn-block btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>';
                     break;

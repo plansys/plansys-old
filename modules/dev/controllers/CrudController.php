@@ -8,6 +8,27 @@ class CrudController extends Controller {
         $this->renderForm('DevCrudMainForm', $model);
     }
 
+    public function actionlistRelation($m) {
+        if (class_exists($m)) {
+            $result = [];
+            $rel    = $m::model()->metaData->relations;
+            foreach ($rel as $k => $r) {
+                $relClass = $r->className;
+                if (class_exists($relClass)) {
+                    $tableName = $relClass::model()->tableName();
+                } else {
+                    $tableName = false;
+                }
+                $result[$k] = [
+                    'type' => get_class($r),
+                    'tableName' => $tableName
+                ];
+
+                $result[$k] += json_decode(json_encode($r), true);
+            }
+            echo json_encode($result);
+        }
+    }
 
     public function actionCheckFile() {
         $postdata = file_get_contents("php://input");
@@ -66,9 +87,13 @@ class CrudController extends Controller {
 
     public function generateAR($post, &$result) {
         $result['touch'] = $this->createUrl('/dev/forms/update&class=' . $post['path'] . "." . $post['className']);
-        $genOptions = json_encode($post);
 
-        $content         = <<<EOF
+        if (!isset($_SESSION['CrudGenerator'])) {
+            $_SESSION['CrudGenerator'] = [];
+        }
+        $_SESSION['CrudGenerator'][$post['className']] = $post;
+
+        $content = <<<EOF
 <?php
 
 class {$post['className']} extends {$post['extendsName']} {

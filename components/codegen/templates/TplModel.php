@@ -18,6 +18,7 @@ class <?php echo $modelClass; ?> extends <?php echo $this->baseClass."\n"; ?>
 	public $softDelete = array(
 		'column' => '<?php echo $options['softDelete']['column']; ?>',
 		'value' => <?php echo $options['softDelete']['value']; ?>
+
 	);
 <?php endif; ?>
 

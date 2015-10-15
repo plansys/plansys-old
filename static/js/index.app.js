@@ -131,14 +131,7 @@ app.filter('hourFormat', function () {
 app.filter('dateFormat', function (dateFilter) {
     return function (date, format) {
         if (date != "0000-00-00") {
-            date = new Date(strtotime(date) * 1000);
-
-            var d = dateFilter(date, format);
-            if (typeof d == "undefined" || d.trim() == "Jan 1, 1970" || d.indexOf('NaN') >= 0) {
-                return "";
-            } else {
-                return d;
-            }
+            return date(format, strtotime(date));
         } else {
             return "";
         }
@@ -306,6 +299,11 @@ app.directive('ngEnter', function () {
                 event.preventDefault();
             }
         });
+    };
+});
+app.directive('ngUrl', function ($interpolate) {
+    return function ($scope, el, attrs) {
+        $(el).attr('href', Yii.app.createUrl($interpolate(attrs.ngUrl)($scope)));
     };
 });
 app.directive('autoGrow', ['$timeout', '$window', function ($timeout, $window) {

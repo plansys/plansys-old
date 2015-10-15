@@ -191,60 +191,13 @@ class DevRoleForm extends Role {
                 'datasource' => 'dataSource1',
                 'columns' => array (
                     array (
-                        'name' => 'nip',
-                        'label' => 'nip',
+                        'name' => 'id',
+                        'label' => 'User ID',
                         'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
+                        'inputMask' => '',
+                        'stringAlias' => array (),
                         'columnType' => 'string',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'fullname',
-                        'label' => 'fullname',
-                        'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
-                        'columnType' => 'string',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'email',
-                        'label' => 'email',
-                        'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
-                        'columnType' => 'string',
-                        'show' => false,
-                    ),
-                    array (
-                        'name' => 'phone',
-                        'label' => 'phone',
-                        'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
-                        'columnType' => 'string',
-                        'show' => false,
+                        'show' => true,
                     ),
                     array (
                         'name' => 'username',

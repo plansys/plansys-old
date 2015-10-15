@@ -52,23 +52,45 @@ class ActiveRecordTemplate extends CComponent {
         $primaryKey = '';
         extract($params);
 
+        $generatorParams = [];
+        if (isset($_SESSION['CrudGenerator']) && isset($_SESSION['CrudGenerator'][get_class($model)])) {
+            $generatorParams = $_SESSION['CrudGenerator'][get_class($model)];
+            unset($_SESSION['CrudGenerator'][get_class($model)]);
+        }
+
         $prefixUrl = "{$basic}";
-        if ($module != '') {
+        if ($module != '' && $module != 'app' && $module != 'application') {
             $prefixUrl = "{$module}/" . $prefixUrl;
         }
 
-        $return[] = [
-            'linkBar' => [
-                [
-                    'label' => 'Tambah ' . $basicTitle,
-                    'buttonType' => 'success',
-                    'icon' => 'plus',
-                    'options' => [
-                        'href' => "url:/{$prefixUrl}/new",
-                    ],
-                    'type' => 'LinkButton',
+        $linkBar = [
+            [
+                'label' => 'Tambah ' . $basicTitle,
+                'buttonType' => 'success',
+                'icon' => 'plus',
+                'options' => [
+                    'href' => "url:/{$prefixUrl}/new",
                 ],
+                'type' => 'LinkButton',
             ],
+        ];
+
+        if (@$generatorParams['bulkCheckbox'] == 'Yes') {
+            array_unshift($linkBar,
+                [
+                    'label' => 'Delete Item(s)',
+                    'buttonType' => 'danger',
+                    'icon' => 'trash',
+                    'options' => array(
+                        'href' => 'url:' . $prefixUrl . '/delete&id={ gridView1.checkboxValues(\'chk\',\'' . $primaryKey . '\') }',
+                        'ng-if' => 'gridView1.checkbox.chk.length > 0',
+                    ),
+                    'type' => 'LinkButton',
+                ]);
+        }
+
+        $return[] = [
+            'linkBar' => $linkBar,
             'title' => 'Daftar ' . $basicTitle,
             'showSectionTab' => 'No',
             'type' => 'ActionBar',
@@ -111,7 +133,7 @@ class ActiveRecordTemplate extends CComponent {
             $gv->columns[] = $column;
         }
 
-        $editUrl               = Yii::app()->createUrl("{$prefixUrl}/update");
+        $editUrl               = "{$prefixUrl}/update";
         $editButtonCol         = [
             'name' => '',
             'label' => '',
@@ -119,27 +141,46 @@ class ActiveRecordTemplate extends CComponent {
             'cellMode' => 'custom',
             'options' => [
                 'mode' => 'edit-button',
-                'editUrl' => "'{$editUrl}&id=' + row.{$primaryKey}"
+                'editUrl' => "{$editUrl}&id={{row.{$primaryKey}}}"
             ]
         ];
         $gv->columns[]         = $editButtonCol;
         $editButtonCol['html'] = $gv->getRowTemplate($editButtonCol, count($cols));
         array_push($cols, $editButtonCol);
 
-        $delUrl               = Yii::app()->createUrl("{$prefixUrl}/delete");
-        $delButtonCol         = [
-            'name' => '',
-            'label' => '',
-            'columnType' => "string",
-            'cellMode' => 'custom',
-            'options' => [
-                'mode' => 'del-url-button',
-                'editUrl' => "'{$delUrl}&id=' + row.{$primaryKey}"
-            ]
-        ];
-        $gv->columns[]        = $delButtonCol;
-        $delButtonCol['html'] = $gv->getRowTemplate($delButtonCol, count($cols));
-        array_push($cols, $delButtonCol);
+
+        if (@$generatorParams['bulkCheckbox'] == 'Yes') {
+            $checkboxCol   = [
+                'name' => 'chk',
+                'label' => '',
+                'options' => array(
+                    'modifyDataSource' => 'false',
+                ),
+                'mergeSameRow' => '',
+                'mergeSameRowWith' => '',
+                'html' => '',
+                'columnType' => 'checkbox',
+                'show' => false,
+                'checkedValue' => 'checked',
+            ];
+            $gv->columns[] = $checkboxCol;
+            array_push($cols, $checkboxCol);
+        } else {
+            $delUrl               = "{$prefixUrl}/delete";
+            $delButtonCol         = [
+                'name' => '',
+                'label' => '',
+                'columnType' => "string",
+                'cellMode' => 'custom',
+                'options' => [
+                    'mode' => 'del-url-button',
+                    'editUrl' => "{$delUrl}&id={{row.{$primaryKey}}}"
+                ]
+            ];
+            $gv->columns[]        = $delButtonCol;
+            $delButtonCol['html'] = $gv->getRowTemplate($delButtonCol, count($cols));
+            array_push($cols, $delButtonCol);
+        }
 
         $return[] = [
             'name' => 'dataFilter1',
@@ -157,8 +198,8 @@ class ActiveRecordTemplate extends CComponent {
             'name' => 'dataSource1',
             'params' => [
                 'where' => 'dataFilter1',
-                'paging' => 'dataGrid1',
-                'order' => 'dataGrid1',
+                'paging' => 'gridView1',
+                'order' => 'gridView1',
             ],
             'relationTo' => 'currentModel',
             'relationCriteria' => array(
@@ -175,7 +216,7 @@ class ActiveRecordTemplate extends CComponent {
             'type' => 'DataSource',
         ];
         $return[] = [
-            'name' => 'dataGrid1',
+            'name' => 'gridView1',
             'datasource' => 'dataSource1',
             'type' => 'GridView',
             'columns' => $cols
@@ -192,6 +233,11 @@ class ActiveRecordTemplate extends CComponent {
         $module     = '';
         $basic      = '';
         extract($params);
+
+        $prefixUrl = "{$basic}";
+        if ($module != '' && $module != 'app' && $module != 'application') {
+            $prefixUrl = "{$module}/" . $prefixUrl;
+        }
 
         $column1  = [];
         $column2  = [];
@@ -242,7 +288,7 @@ class ActiveRecordTemplate extends CComponent {
                             ## fill attribute
                             $array[$k]['type']       = "RelationField";
                             $array[$k]['modelClass'] = $classAlias;
-                            $array[$k]['idField']    = 'id';
+                            $array[$k]['idField']    = $relName::model()->tableSchema->primaryKey;
                             $attr                    = $relName::model()->attributes;
 
                             ## fill label field
@@ -252,7 +298,7 @@ class ActiveRecordTemplate extends CComponent {
                                 $array[$k]['labelField'] = 'nama';
                             } else {
                                 foreach ($attr as $y => $z) {
-                                    if ($y == 'id')
+                                    if ($y == $array[$k]['idField'])
                                         continue;
                                     if (substr($y, -3) == "_id")
                                         continue;
@@ -285,7 +331,7 @@ class ActiveRecordTemplate extends CComponent {
                     'buttonType' => 'default',
                     'icon' => '',
                     'options' => [
-                        'href' => "url:/{$module}/{$basic}/index",
+                        'href' => "url:/{$prefixUrl}/index",
                     ],
                     'type' => 'LinkButton',
                 ],
@@ -309,7 +355,7 @@ class ActiveRecordTemplate extends CComponent {
                     'icon' => '',
                     'options' => [
                         'ng-if' => '!isNewRecord',
-                        'href' => "url:/{$module}/{$basic}/delete?id={model.{$primaryKey}}",
+                        'href' => "url:/{$prefixUrl}/delete?id={model.{$primaryKey}}",
                         'confirm' => 'Apakah Anda Yakin ?'
                     ],
                     'type' => 'LinkButton',
@@ -430,8 +476,8 @@ class ActiveRecordTemplate extends CComponent {
             'name' => 'dataSource1',
             'params' => [
                 'where' => 'dataFilter1',
-                'paging' => 'dataGrid1',
-                'order' => 'dataGrid1',
+                'paging' => 'gridView1',
+                'order' => 'gridView1',
             ],
             'relationTo' => 'currentModel',
             'relationCriteria' => array(
@@ -448,7 +494,7 @@ class ActiveRecordTemplate extends CComponent {
             'type' => 'DataSource',
         ];
         $return[] = [
-            'name' => 'dataGrid1',
+            'name' => 'gridView1',
             'datasource' => 'dataSource1',
             'type' => 'GridView',
             'columns' => $cols

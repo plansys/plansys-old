@@ -1,3 +1,4 @@
+
 <?php
 if (count(@$renderParams['errors']) > 0) {
     if (isset($data['errors'])) {

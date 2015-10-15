@@ -55,7 +55,8 @@ $scope.data = {};
 $scope.exists = [];
 $scope.step = '1';
 $scope.msg = '';
-$scope.fieldList = [];
+$scope.relationList = [];
+$scope.relNameList = {};
 
 $scope.resetData = function () {
     $scope.data = {
@@ -78,6 +79,18 @@ $scope.onNameChange = function () {
     $scope.model.name = ($scope.model.name.charAt(0).toUpperCase() + $scope.model.name.slice(1)).replace(/[^a-z0-9]/gi, '');
     $scope.model.lcName = ($scope.model.name.charAt(0).toLowerCase() + $scope.model.name.slice(1)).replace(/[^a-z0-9]/gi, '');
     $scope.resetData();
+
+    $http.get(Yii.app.createUrl('/dev/crud/listRelation&m=' + $scope.model.name))
+        .success(function (res) {
+            $scope.relationList = res;
+            $scope.relNameList = {
+                '': 'Choose Relation',
+                '---': '---'
+            };
+            for (i in res) {
+                $scope.relNameList[i] = i;
+            }
+        });
 }
 
 $scope.checkAll = function (e) {
@@ -102,9 +115,8 @@ $scope.form.submit = function (f) {
             name: $scope.params.prefix + $scope.model.name + 'Index.php',
             className: $scope.params.prefix + $scope.model.name + 'Index',
             extendsName: $scope.model.model,
-            editUrl: $scope.getControllerUrl('/update'),
-            editUrl: $scope.getControllerUrl('/new'),
             type: 'index',
+            bulkCheckbox: $scope.model.bulkCheckbox
         });
         $scope.data.files.push({
             name: $scope.params.prefix + $scope.model.name + 'Form.php',
@@ -120,6 +132,7 @@ $scope.form.submit = function (f) {
             formName: $scope.params.prefix + $scope.model.name + 'Form',
             indexName: $scope.params.prefix + $scope.model.name + 'Index',
             alias: $scope.data.path,
+            bulkCheckbox: $scope.model.bulkCheckbox,
             path: $scope.getControllerPath()
         });
     } else {
@@ -191,6 +204,7 @@ $scope.done = function () {
 }
 $scope.generateNext = function () {
     if ($scope.step < 4) {
+        $scope.msg = 'Generating Files...';
         $scope.step = 4;
     }
 

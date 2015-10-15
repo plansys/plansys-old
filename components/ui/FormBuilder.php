@@ -7,16 +7,17 @@
 class FormBuilder extends CComponent {
 
     const NEWLINE_MARKER = "!@#$%^&*NEWLINE&^%$#@!";
-    private static $_buildRenderID    = [];
-    public         $model             = null;
+    private static $_buildRenderID       = [];
+    public         $model                = null;
     public         $timestamp;
-    public         $fieldNameTemplate = "";
-    private        $countRenderID     = 1;
-    private        $methods           = [];
-    private        $file              = [];
-    private        $sourceFile        = '';
-    private        $originalClass     = '';
-    private        $_findFieldCache   = null;
+    public         $fieldNameTemplate    = "";
+    private        $countRenderID        = 1;
+    private        $methods              = [];
+    private        $file                 = [];
+    private        $sourceFile           = '';
+    private        $originalClass        = '';
+    private        $findFieldCache       = null;
+    private        $crudGeneratorOptions = [];
 
     public static function resetSession($class) {
         Yii::app()->session['FormBuilder_' . $class] = null;
@@ -401,7 +402,7 @@ class FormBuilder extends CComponent {
     }
 
     public function findAllField($attributes, $recursive = null, $results = []) {
-        if (is_null($this->_findFieldCache)) {
+        if (is_null($this->findFieldCache)) {
             ## cache the fields
             $class     = get_class($this->model);
             $reflector = new ReflectionClass($class);
@@ -418,11 +419,11 @@ class FormBuilder extends CComponent {
                 $fields = $this->model->$functionName();
             }
 
-            $this->_findFieldCache = $this->parseFields($fields);
+            $this->findFieldCache = $this->parseFields($fields);
         }
 
         if (is_null($recursive)) {
-            $fields = $this->_findFieldCache;
+            $fields = $this->findFieldCache;
         } else {
             $fields = $recursive;
         }
@@ -645,7 +646,7 @@ class FormBuilder extends CComponent {
     }
 
     public function findField($attributes, $recursive = null) {
-        if (is_null($this->_findFieldCache)) {
+        if (is_null($this->findFieldCache)) {
             ## cache the fields
             $class     = get_class($this->model);
             $reflector = new ReflectionClass($class);
@@ -662,11 +663,11 @@ class FormBuilder extends CComponent {
                 $fields = $this->model->$functionName();
             }
 
-            $this->_findFieldCache = $this->parseFields($fields);
+            $this->findFieldCache = $this->parseFields($fields);
         }
 
         if (is_null($recursive)) {
-            $fields = $this->_findFieldCache;
+            $fields = $this->findFieldCache;
         } else {
             $fields = $recursive;
         }
@@ -807,6 +808,8 @@ class FormBuilder extends CComponent {
         }
 
         ## get class data
+        $isNewFunc  = false;
+        $sourceFile = '';
         extract($this->getLineOfClass($class, $functionName));
 
         if (is_array($fields)) {
