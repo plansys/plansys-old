@@ -66,11 +66,12 @@ class CrudController extends Controller {
 
     public function generateAR($post, &$result) {
         $result['touch'] = $this->createUrl('/dev/forms/update&class=' . $post['path'] . "." . $post['className']);
+        $genOptions = json_encode($post);
+
         $content         = <<<EOF
 <?php
 
 class {$post['className']} extends {$post['extendsName']} {
-    
 }
 EOF;
         file_put_contents($result['file'], $content);

@@ -1355,9 +1355,9 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    public function getDefaultFields() {
+    public function getDefaultFields($options = []) {
         Yii::import("application.components.codegen.templates.ActiveRecordTemplate");
-        return ActiveRecordTemplate::generateFields($this);
+        return ActiveRecordTemplate::generateFields($this, $options);
     }
 
 

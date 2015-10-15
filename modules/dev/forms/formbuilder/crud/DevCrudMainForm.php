@@ -7,7 +7,7 @@ class DevCrudMainForm extends Form {
     public $model = '';
     
     ## Advanced Settings
-    public $bulkCheckbox = 'Yes';
+    public $bulkCheckbox = 'No';
     public $masterData = 'No';
     
     public function rules() {
@@ -174,7 +174,7 @@ padding-left:0px;',
                         'options' => array (
                             'ng-if' => 'model.masterData == \'No\'',
                         ),
-                        'listExpr' => '[\'Yes\',\'No\']',
+                        'listExpr' => '[\'No\',\'Yes\']',
                         'type' => 'DropDownList',
                     ),
                     array (

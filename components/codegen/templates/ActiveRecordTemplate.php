@@ -13,7 +13,6 @@ class ActiveRecordTemplate extends CComponent {
             'classPart' => $classPart,
             'length' => count($array),
             'model' => $model,
-            'basic' => lcfirst(implode("", array_map('ucfirst', $classPart))),
         ];
         if (!empty($classPart) && (in_array($classPart[$lastPartIndex], ["index", "form", "master"]))) {
             $params['type'] = array_pop($classPart);
@@ -23,8 +22,10 @@ class ActiveRecordTemplate extends CComponent {
 
         $params['module']     = array_shift($classPart);
         $params['basicTitle'] = Helper::camelToSpacedCamel(implode("", array_map('ucfirst', $classPart)));
-        $type                 = $params['type'];
-        $return               = [];
+        $params['basic']      = lcfirst(implode("", array_map('ucfirst', $classPart)));
+
+        $type   = $params['type'];
+        $return = [];
 
         switch ($type) {
             case "index":
@@ -51,6 +52,11 @@ class ActiveRecordTemplate extends CComponent {
         $primaryKey = '';
         extract($params);
 
+        $prefixUrl = "{$basic}";
+        if ($module != '') {
+            $prefixUrl = "{$module}/" . $prefixUrl;
+        }
+
         $return[] = [
             'linkBar' => [
                 [
@@ -58,7 +64,7 @@ class ActiveRecordTemplate extends CComponent {
                     'buttonType' => 'success',
                     'icon' => 'plus',
                     'options' => [
-                        'href' => "url:/{$module}/{$basic}/new",
+                        'href' => "url:/{$prefixUrl}/new",
                     ],
                     'type' => 'LinkButton',
                 ],
@@ -105,29 +111,30 @@ class ActiveRecordTemplate extends CComponent {
             $gv->columns[] = $column;
         }
 
+        $editUrl               = Yii::app()->createUrl("{$prefixUrl}/update");
         $editButtonCol         = [
             'name' => '',
             'label' => '',
             'columnType' => "string",
-            'options' => [],
             'cellMode' => 'custom',
-            'genOptions' => [
+            'options' => [
                 'mode' => 'edit-button',
-                'editUrl' => "'{$model->url}'"
+                'editUrl' => "'{$editUrl}&id=' + row.{$primaryKey}"
             ]
         ];
         $gv->columns[]         = $editButtonCol;
         $editButtonCol['html'] = $gv->getRowTemplate($editButtonCol, count($cols));
         array_push($cols, $editButtonCol);
 
+        $delUrl               = Yii::app()->createUrl("{$prefixUrl}/delete");
         $delButtonCol         = [
             'name' => '',
             'label' => '',
             'columnType' => "string",
-            'options' => [],
             'cellMode' => 'custom',
-            'genOptions' => [
-                'mode' => 'del-button'
+            'options' => [
+                'mode' => 'del-url-button',
+                'editUrl' => "'{$delUrl}&id=' + row.{$primaryKey}"
             ]
         ];
         $gv->columns[]        = $delButtonCol;
@@ -140,6 +147,12 @@ class ActiveRecordTemplate extends CComponent {
             'type' => 'DataFilter',
             'filters' => $filters
         ];
+
+        if (!!$model->softDelete) {
+            $condition = $model->softDelete['column'] . ' <> \'' . $model->softDelete['value'] . '\' {AND [where]}';
+        } else {
+            $condition = '{[where]}';
+        }
         $return[] = [
             'name' => 'dataSource1',
             'params' => [
@@ -148,6 +161,17 @@ class ActiveRecordTemplate extends CComponent {
                 'order' => 'dataGrid1',
             ],
             'relationTo' => 'currentModel',
+            'relationCriteria' => array(
+                'select' => '',
+                'distinct' => 'false',
+                'alias' => 't',
+                'condition' => $condition,
+                'order' => '{[order]}',
+                'paging' => '{[paging]}',
+                'group' => '',
+                'having' => '',
+                'join' => '',
+            ),
             'type' => 'DataSource',
         ];
         $return[] = [
@@ -285,7 +309,7 @@ class ActiveRecordTemplate extends CComponent {
                     'icon' => '',
                     'options' => [
                         'ng-if' => '!isNewRecord',
-                        'href' => "url:/{$module}/{$basic}/delete?id={model.id}",
+                        'href' => "url:/{$module}/{$basic}/delete?id={model.{$primaryKey}}",
                         'confirm' => 'Apakah Anda Yakin ?'
                     ],
                     'type' => 'LinkButton',
@@ -314,6 +338,7 @@ class ActiveRecordTemplate extends CComponent {
         $cols       = [];
         $length     = 0;
         $basicTitle = "";
+        $model      = null;
         $module     = '';
         $basic      = '';
         extract($params);
@@ -358,18 +383,17 @@ class ActiveRecordTemplate extends CComponent {
             ## setup columns
             $column          = [
                 'columnType' => "string",
-                'options' => [],
-                'genOptions' => []
+                'options' => []
             ];
             $column['name']  = $i['name'];
             $column['label'] = $i['label'];
 
             if ($i['name'] != $primaryKey) {
-                $gv->columns[]                = $column;
-                $column['cellMode']           = 'custom';
-                $column['genOptions']['mode'] = 'master-data';
-                $column['html']               = $gv->getRowTemplate($column, $k);
-                $cols[]                       = $column;
+                $gv->columns[]             = $column;
+                $column['cellMode']        = 'custom';
+                $column['options']['mode'] = 'editable';
+                $column['html']            = $gv->getRowTemplate($column, $k);
+                $cols[]                    = $column;
             } else {
                 $pkCol = $column;
             }
@@ -380,9 +404,8 @@ class ActiveRecordTemplate extends CComponent {
             'name' => '',
             'label' => '',
             'columnType' => "string",
-            'options' => [],
             'cellMode' => 'custom',
-            'genOptions' => [
+            'options' => [
                 'mode' => 'del-button'
             ]
         ];

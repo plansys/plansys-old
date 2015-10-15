@@ -34,18 +34,19 @@ $scope.getModulePath = function () {
         return module[0];
     }
 }
-$scope.getControllerUrl = function () {
+$scope.getControllerUrl = function (action) {
     var module = '';
     var mp = $scope.getModulePath().split(".");
     if ($scope.getModulePath().length > 3) {
         module = mp.pop() + "/";
     }
+    action = action || "/index";
 
     if (!!$scope.model) {
-        return Yii.app.createUrl(module + $scope.model.lcName + "/index");
+        return Yii.app.createUrl(module + $scope.model.lcName + action);
     }
 }
-$scope.generateControllerPath = function () {
+$scope.getControllerPath = function () {
     return $scope.getModulePath() + ".controllers";
 }
 $scope.params.prefix = generateClassPrefix(activeScope.activeItem.alias);
@@ -101,6 +102,8 @@ $scope.form.submit = function (f) {
             name: $scope.params.prefix + $scope.model.name + 'Index.php',
             className: $scope.params.prefix + $scope.model.name + 'Index',
             extendsName: $scope.model.model,
+            editUrl: $scope.getControllerUrl('/update'),
+            editUrl: $scope.getControllerUrl('/new'),
             type: 'index',
         });
         $scope.data.files.push({
@@ -117,7 +120,7 @@ $scope.form.submit = function (f) {
             formName: $scope.params.prefix + $scope.model.name + 'Form',
             indexName: $scope.params.prefix + $scope.model.name + 'Index',
             alias: $scope.data.path,
-            path: $scope.generateControllerPath()
+            path: $scope.getControllerPath()
         });
     } else {
         $scope.data.files.push({
@@ -133,7 +136,7 @@ $scope.form.submit = function (f) {
             type: 'controller',
             mode: 'master',
             alias: $scope.data.path,
-            path: $scope.generateControllerPath()
+            path: $scope.getControllerPath()
         });
 
     }

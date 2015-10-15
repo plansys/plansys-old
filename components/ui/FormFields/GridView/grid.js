@@ -121,8 +121,17 @@ app.directive('gridView', function ($timeout, $http) {
                 }
 
                 $scope.undoRemoveRow = function (row) {
-                    var idx = $scope.datasource.deleteData.indexOf(row);
-                    $scope.datasource.deleteData.splice(idx, 1);
+                    switch (row.$rowState) {
+                        case 'remove':
+                            var idx = $scope.datasource.deleteData.indexOf(row);
+                            $scope.datasource.deleteData.splice(idx, 1);
+                            break;
+                        case 'edit':
+                            var idx = $scope.datasource.updateData.indexOf(row);
+                            $scope.datasource.updateData.splice(idx, 1);
+                            $scope.datasource.query();
+                        break;
+                    }
                     row.$rowState = '';
                     $timeout(function () {
                         $scope.recalcHeaderWidth();

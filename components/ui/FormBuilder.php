@@ -42,7 +42,7 @@ class FormBuilder extends CComponent {
                 Yii::import($classFile);
             } catch (Exception $e) {
                 if (isset(Yii::app()->controller) && isset(Yii::app()->controller->module)) {
-                    $basePath = Yii::app()->controller->module->basePath;
+                    $basePath  = Yii::app()->controller->module->basePath;
                     $classFile = str_replace(".", DIRECTORY_SEPARATOR, $classFile) . ".php";
                     $classFile = $basePath . DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR . $classFile;
 
@@ -259,7 +259,7 @@ class FormBuilder extends CComponent {
             $glob      = Helper::globRecursive($forms_dir . "*.php", 0, true);
             $items     = $glob['files'];
             $items     = FormBuilder::formatGlob($items, $forms_dir, '', $func, 'application.forms', $formatRecursive);
-            $files[] = [
+            $files[]   = [
                 'module' => 'Plansys: forms',
                 'alias' => "application.forms",
                 'count' => $glob['count'],
@@ -298,7 +298,7 @@ class FormBuilder extends CComponent {
         $glob      = Helper::globRecursive($forms_dir . "*.php", 0, true);
         $items     = $glob['files'];
         $items     = FormBuilder::formatGlob($items, $forms_dir, '', $func, 'app.forms', $formatRecursive);
-        $files[] = [
+        $files[]   = [
             'module' => 'app',
             'alias' => 'app.forms',
             'items' => $items,
@@ -567,8 +567,15 @@ class FormBuilder extends CComponent {
                 $fields       = [];
                 $this->fields = [];
             } else {
-                $fields       = $this->model->getDefaultFields();
+
+                if (property_exists($this->model, 'generatorOptions')) {
+                    $options = json_decode($this->model->generatorOptions, true);
+                    $fields  = $this->model->getDefaultFields($options);
+                } else {
+                    $fields = $this->model->getDefaultFields();
+                }
                 $this->fields = $fields;
+
             }
         } else {
             $fields = $this->model->$functionName();
@@ -839,7 +846,7 @@ EOF;
         $this->methods[$functionName]['line']   = $line;
 
         $this->file = $file;
-        $fp = @fopen($sourceFile, 'r+');
+        $fp         = @fopen($sourceFile, 'r+');
         if (!$fp) {
             return false;
         }

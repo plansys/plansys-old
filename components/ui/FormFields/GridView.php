@@ -92,25 +92,31 @@ type="checkbox" /></label>';
         }
 
 
-        if (!!@$col['genOptions']) {
+        if (!!@$col['options'] && @$col['cellMode'] == 'custom') {
             $template = '';
-            switch ($col['genOptions']['mode']) {
-                case "master-data":
+            switch ($col['options']['mode']) {
+                case "editable":
                     $template = '
     <textarea auto-grow ng-model="row.' . $fieldName . '" ng-keyup="editKey($event)"></textarea>';
                     break;
                 case "del-button":
                     $style    = ' style="width:20px;"';
-                    $template = '
-    <div ng-if="!row.$rowState" ng-click="removeRow(row)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></div>
-    <div ng-if="row.$rowState == \'remove\'" ng-click="undoRemoveRow(row)" class="btn btn-default btn-xs"><i class="fa fa-undo"></i></div>
-';
+                    $template = '<div ng-if="!row.$rowState" ng-click="removeRow(row)"
+    class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></div>
+
+    <div ng-if="[\'edit\',\'remove\'].indexOf(row.$rowState) >= 0" ng-click="undoRemoveRow(row)"
+    class="btn btn-default btn-xs"><i class="fa fa-undo"></i></div>';
                     break;
                 case 'edit-button':
                     $style    = ' style="width:20px;"';
-                    $template = '
-    <a ng-href="\{\{ url(' . $col['genOptions']['editUrl'] . ') \}\}" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>
-';
+                    $template = '<a ng-href="\{\{ ' . $col['options']['editUrl'] . ' \}\}"
+    class="btn-block btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>';
+                    break;
+                case 'del-url-button':
+                    $style    = ' style="width:20px;"';
+                    $template = '<a ng-href="\{\{ ' . $col['options']['editUrl'] . ' \}\}"
+    onClick="return confirm(\'Are you sure?\')"
+    class="btn-block btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>';
                     break;
             }
         }
