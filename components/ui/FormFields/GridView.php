@@ -97,7 +97,7 @@ type="checkbox" /></label>';
             switch ($col['options']['mode']) {
                 case "editable":
                     $template = '
-    <div contenteditable="true" ng-model="row.' . $fieldName . '" ng-keyup="editKey($event)"></textarea>';
+    <div contenteditable="true" ng-model="row.' . $fieldName . '" ng-keydown="editKey($event)"></textarea>';
                     break;
                 case "del-button":
                     $style    = ' style="width:20px;"';

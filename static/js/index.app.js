@@ -240,8 +240,7 @@ app.directive("contenteditable", function ($timeout) {
         link: function (scope, element, attrs, ngModel) {
 
             function read() {
-                var html = element.html();
-                html = html.replace(/&nbsp;/g, "\u00a0").trim();
+                var html = element.text().trim();
                 ngModel.$setViewValue(html);
             }
 

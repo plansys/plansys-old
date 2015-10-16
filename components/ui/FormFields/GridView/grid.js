@@ -55,28 +55,41 @@ app.directive('gridView', function ($timeout, $http) {
                 }
                 $scope.editKey = function (e) {
                     var ngModel = $(e.target).attr('ng-model');
-                    if (e.target.value.length == e.target.selectionEnd) {
+                    var sel = window.getSelection();
+                    var textLength = $(e.target).text().length;
+
+                    if (textLength == sel.getRangeAt(0).endOffset || e.altKey) {
                         if (e.which == 40) {
-                            var nextRow = $(e.target).parents("tr").next().find('textarea[ng-model="' + ngModel + '"]');
+                            var nextRow = $(e.target).parents("tr").next().find('[contenteditable][ng-model="' + ngModel + '"]');
                             if (!!nextRow) {
-                                nextRow.focus();
+                                $timeout(function () {
+                                    nextRow.focus();
+                                });
                             }
                         } else if (e.which == 39) {
-                            var nextCol = $(e.target).parents("td").next().find('textarea');
+                            var nextCol = $(e.target).parents("td").next().find('[contenteditable]');
                             if (!!nextCol) {
-                                nextCol.focus();
+                                $timeout(function () {
+                                    nextCol.focus();
+                                });
                             }
                         }
-                    } else if (e.target.selectionEnd == 0) {
+                    }
+
+                    if (sel.getRangeAt(0).endOffset == 0 || e.altKey) {
                         if (e.which == 38) {
-                            var prevRow = $(e.target).parents("tr").prev().find('textarea[ng-model="' + ngModel + '"]');
+                            var prevRow = $(e.target).parents("tr").prev().find('[contenteditable][ng-model="' + ngModel + '"]');
                             if (!!prevRow) {
-                                prevRow.focus();
+                                $timeout(function () {
+                                    prevRow.focus();
+                                });
                             }
                         } else if (e.which == 37) {
-                            var prevCol = $(e.target).parents("td").prev().find('textarea');
+                            var prevCol = $(e.target).parents("td").prev().find('[contenteditable]');
                             if (!!prevCol) {
-                                prevCol.focus();
+                                $timeout(function () {
+                                    prevCol.focus();
+                                });
                             }
                         }
                     }
