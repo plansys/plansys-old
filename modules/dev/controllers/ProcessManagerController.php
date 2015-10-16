@@ -33,7 +33,6 @@ class ProcessManagerController extends Controller {
     public function actionStop() {    
         $isRunning = Setting::get('processManager.isRunning', false);
         if($isRunning){
-            
             $pid = Setting::get('processManager.pid');
             chdir(Yii::getPathOfAlias('application'));            
 
@@ -78,8 +77,7 @@ class ProcessManagerController extends Controller {
 
         if(isset($_POST['DevSettingsProcessManagerPopUp'])){
             $cmd    = $_POST['DevSettingsProcessManagerPopUp'];
-            $href   = $cmd['processUrl'];   
-
+            $href   = Yii::app()->createUrl("dev/processManager/create",["active"=> $cmd['processUrl']]);   
             $file = end(explode("=", $_POST['processFile']));            
 
             //Creating unique id for setting 
@@ -89,13 +87,9 @@ class ProcessManagerController extends Controller {
             Setting::set('tmp.process.name', $cmd['processName']);            
             Setting::set('tmp.process.command', $cmd['processCommand']);            
             Setting::set('tmp.process.file', $file);                        
-            
         }
 
-        $this->renderForm('settings.DevSettingsProcessManagerPopUp',null,
-        [
-            'href' => $href
-        ],[
+        $this->renderForm('settings.DevSettingsProcessManagerPopUp',null, ['href' => $href],[
             'layout'=>'//layouts/blank'
         ]);
     }
@@ -115,21 +109,20 @@ class ProcessManagerController extends Controller {
             $name = Setting::get('tmp.process.name');
             $command = Setting::get('tmp.process.command');
             $file = Setting::get('tmp.process.file');
-
-            
-            $filePath = Yii::getPathOfAlias((count($path)>2 ? "application.modules.". $path[1] . ".commands." . $path[2]  : "application.commands.". $path[1])) . ".php";                                
+            $filePath = Yii::getPathOfAlias($_GET['active']) . ".php";                                
             $content = file_get_contents($filePath);
         }else{
             $this->redirect(['/dev/processManager/']);
         }
-
+        
+        $prefix = Helper::explodeFirst("-", Helper::camelToSnake(Helper::explodeLast(".", $file)));
         if(isset($_POST['DevSettingsProcessManagerForm'])){
 
             $cmd     = $_POST['DevSettingsProcessManagerForm'];
             $id      = $_POST['processSettingsId'];            
             
             Setting::set("process.".$id.".name", $cmd['processNameDisp']);
-            Setting::set("process.".$id.".command", $cmd['processCommand']);
+            Setting::set("process.".$id.".command", $prefix . " " . $cmd['processCommand']);
             Setting::set("process.".$id.".period", $cmd['processPeriod']);
             Setting::set("process.".$id.".periodType", $cmd['processPeriodType']);            
             Setting::set("process.".$id.".periodCount", ProcessHelper::periodConverter($cmd['processPeriod'], $cmd['processPeriodType']));            
@@ -141,7 +134,7 @@ class ProcessManagerController extends Controller {
 
             $this->redirect(['/dev/processManager/']);
         }
-
+        
         Asset::registerJS('application.static.js.lib.ace');
         $this->renderForm('settings.DevSettingsProcessManagerForm', [
             'content' => $content,            
@@ -149,6 +142,7 @@ class ProcessManagerController extends Controller {
             'processName' => $name,
             'processNameDisp' => $name,
             'processCommand' => $command,
+            'prefix' => $prefix,
             'processSettingsId' => $id            
         ]);
 

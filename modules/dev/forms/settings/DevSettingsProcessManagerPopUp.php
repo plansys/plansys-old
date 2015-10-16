@@ -33,9 +33,8 @@ class DevSettingsProcessManagerPopUp extends Form {
                         'type' => 'LinkButton',
                     ),
                 ),
-                'title' => 'Create new process',
+                'title' => 'Create New Process',
                 'showSectionTab' => 'No',
-                'showOptionsBar' => 'Yes',
                 'type' => 'ActionBar',
             ),
             array (
@@ -44,22 +43,31 @@ class DevSettingsProcessManagerPopUp extends Form {
 <input type=\"hidden\" name=\"processFile\" value=\"{{model.processUrl}}\"/>',
             ),
             array (
-                'label' => 'Name',
-                'name' => 'processName',
-                'type' => 'TextField',
-            ),
-            array (
                 'label' => 'Command',
                 'name' => 'processUrl',
+                'options' => array (
+                    'ng-change' => 'processUrlChange()',
+                ),
                 'listExpr' => 'ProcessHelper::listCmdForMenuTree();',
                 'searchable' => 'Yes',
-                'showOther' => 'Yes',
                 'otherLabel' => 'New',
                 'type' => 'DropDownList',
             ),
             array (
+                'label' => 'Process Name',
+                'name' => 'processName',
+                'options' => array (
+                    'ng-if' => '!!model.processUrl',
+                ),
+                'type' => 'TextField',
+            ),
+            array (
                 'label' => 'Process Command Line',
                 'name' => 'processCommand',
+                'prefix' => '{{ prefix }}',
+                'options' => array (
+                    'ng-if' => '!!model.processUrl',
+                ),
                 'type' => 'TextField',
             ),
         );

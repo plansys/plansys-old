@@ -75,6 +75,7 @@ class DevSettingsProcessManagerForm extends Form {
                         'label' => 'Command',
                         'name' => 'processCommand',
                         'layout' => 'Vertical',
+                        'prefix' => '{{ params.prefix }}',
                         'options' => array (
                             'ng-model' => 'params.processCommand',
                         ),
@@ -121,7 +122,7 @@ class DevSettingsProcessManagerForm extends Form {
                 'w3' => '25%',
                 'w4' => '25%',
                 'perColumnOptions' => array (
-                    'style' => 'padding:0px 10px;',
+                    'style' => 'padding:0px 0px 0px 0px;',
                 ),
                 'type' => 'ColumnField',
             ),
@@ -146,7 +147,7 @@ class DevSettingsProcessManagerForm extends Form {
 <tab active=\"true\">
     <tab-heading>
         <i class=\"fa fa-cube\"></i>
-        {{params.name}} Model &bull; {{status}}
+        Model &bull; {{status}}
     </tab-heading>
     <div style=\'padding:0px 0px;\'>',
             ),

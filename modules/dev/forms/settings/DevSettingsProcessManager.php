@@ -67,7 +67,6 @@ class DevSettingsProcessManager extends Form {
                 ),
                 'title' => 'Process Manager',
                 'showSectionTab' => 'No',
-                'showOptionsBar' => 'Yes',
                 'type' => 'ActionBar',
             ),
             array (
