@@ -88,13 +88,11 @@ class DevSettingApp extends Form {
                 ),
                 'column2' => array (
                     array (
-                        'label' => 'Host',
-                        'name' => 'host',
-                        'type' => 'TextField',
-                    ),
-                    array (
                         'label' => 'Main Dir',
                         'name' => 'dir',
+                        'fieldOptions' => array (
+                            'disabled' => 'true',
+                        ),
                         'type' => 'TextField',
                     ),
                     array (

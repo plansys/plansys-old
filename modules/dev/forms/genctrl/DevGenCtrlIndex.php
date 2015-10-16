@@ -50,7 +50,7 @@ ng-model=\"params.content\">
 
     public function getForm() {
         return array (
-            'title' => 'Daftar Gen Ctrl ',
+            'title' => 'Generate Controller',
             'layout' => array (
                 'name' => '2-cols',
                 'data' => array (

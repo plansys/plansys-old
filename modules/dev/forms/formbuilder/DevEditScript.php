@@ -8,8 +8,7 @@ class DevEditScript extends Form {
                 'type' => 'Text',
                 'value' => '
 <a ng-href=\"{{ Yii.app.createUrl(\'/dev/forms/update&class=\' + params.name ) }}\"
-   class=\"btn btn-default btn-xs pull-right\" style=\"
-    margin: 4px -10px 4px 2px;
+   class=\"btn btn-default btn-xs pull-right\" style=\"margin: 4px -10px 4px 2px;
     font-size: 11px;
     font-weight: bold;\">
     <i class=\"fa fa-pencil-square-o\"></i> Edit Form
@@ -17,9 +16,9 @@ class DevEditScript extends Form {
 <tabset class=\'tab-set single-tab\'>
     <tab>
         <tab-heading>
-            {{params.shortname}} &bull; {{params.status}}
+            {{params.shortname}} &bull; {{params.status}} 
         </tab-heading>
-        <div style=\'padding:0px 0px;width:100%;height:100%;\'>
+        <div style=\'padding:0px 0px;width:100%;\'>
             <div class=\"text-editor-builder\">
               <div class=\"text-editor\" ui-ace=\"aceConfig({
               mode: params.mode

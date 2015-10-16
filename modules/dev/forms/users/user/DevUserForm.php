@@ -62,6 +62,10 @@ class DevUserForm extends User {
                         'type' => 'TextField',
                     ),
                     array (
+                        'type' => 'Text',
+                        'value' => '<div style=\\"float:right;min-width:400px;\\">',
+                    ),
+                    array (
                         'name' => 'userRoles',
                         'fieldTemplate' => 'form',
                         'templateForm' => 'application.modules.dev.forms.users.user.DevUserRoleList',
@@ -78,6 +82,11 @@ class DevUserForm extends User {
                             ),
                         ),
                         'type' => 'ListView',
+                    ),
+                    array (
+                        'type' => 'Text',
+                        'value' => '</div>
+<div class=\"clearfix\"></div>',
                     ),
                     array (
                         'type' => 'Text',

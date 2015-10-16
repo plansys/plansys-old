@@ -1,6 +1,8 @@
 <?php
 
-class TemplateController extends Controller {
+##IMPORT-PLACEHOLDER##
+
+class TplCrudController extends Controller {
 
     public function actionIndex() {
         $this->renderForm('TemplateIndex');
@@ -11,7 +13,7 @@ class TemplateController extends Controller {
         if (isset($_POST["TemplateForm"])) {
             $model->attributes = $_POST["TemplateForm"];
             if ($model->save()) {
-                Yii::app()->user->setFlash('info', 'Data berhasil disimpan');
+                $this->flash('Data Berhasil Disimpan');
                 $this->redirect(['index']);
             }
         }
@@ -24,7 +26,7 @@ class TemplateController extends Controller {
         if (isset($_POST["TemplateForm"])) {
             $model->attributes = $_POST["TemplateForm"];
             if ($model->save()) {
-                Yii::app()->user->setFlash('info', 'Data berhasil disimpan');
+                $this->flash('Data Berhasil Disimpan');
                 $this->redirect(["index"]);
             }
         }
@@ -32,11 +34,17 @@ class TemplateController extends Controller {
     }
 
     public function actionDelete($id) {
-        $model = $this->loadModel($id, "TemplateForm");
-        if (!is_null($model)) {
-            Yii::app()->user->setFlash('info', 'Data berhasil dihapus');
-            $model->delete();
+        if (strpos($id, ',') > 0) {
+            ActiveRecord::batchDelete("TemplateForm", explode(",", $id));
+            $this->flash('Data Berhasil Dihapus');
+        } else {
+            $model = $this->loadModel($id, "TemplateForm");
+            if (!is_null($model)) {
+                $this->flash('Data Berhasil Dihapus');
+                $model->delete();
+            }
         }
+
 
         $this->redirect(['index']);
     }

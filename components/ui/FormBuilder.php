@@ -7,16 +7,17 @@
 class FormBuilder extends CComponent {
 
     const NEWLINE_MARKER = "!@#$%^&*NEWLINE&^%$#@!";
-    private static $_buildRenderID    = [];
-    public         $model             = null;
+    private static $_buildRenderID       = [];
+    public         $model                = null;
     public         $timestamp;
-    public         $fieldNameTemplate = "";
-    private        $countRenderID     = 1;
-    private        $methods           = [];
-    private        $file              = [];
-    private        $sourceFile        = '';
-    private        $originalClass     = '';
-    private        $_findFieldCache   = null;
+    public         $fieldNameTemplate    = "";
+    private        $countRenderID        = 1;
+    private        $methods              = [];
+    private        $file                 = [];
+    private        $sourceFile           = '';
+    private        $originalClass        = '';
+    private        $findFieldCache       = null;
+    private        $crudGeneratorOptions = [];
 
     public static function resetSession($class) {
         Yii::app()->session['FormBuilder_' . $class] = null;
@@ -42,12 +43,12 @@ class FormBuilder extends CComponent {
                 Yii::import($classFile);
             } catch (Exception $e) {
                 if (isset(Yii::app()->controller) && isset(Yii::app()->controller->module)) {
-                    $basePath = Yii::app()->controller->module->basePath;
-                }
+                    $basePath  = Yii::app()->controller->module->basePath;
+                    $classFile = str_replace(".", DIRECTORY_SEPARATOR, $classFile) . ".php";
+                    $classFile = $basePath . DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR . $classFile;
 
-                $classFile = str_replace(".", DIRECTORY_SEPARATOR, $classFile) . ".php";
-                $classFile = $basePath . DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR . $classFile;
-                require_once($classFile);
+                    require_once($classFile);
+                }
             }
 
             if (!class_exists($class)) {
@@ -258,18 +259,8 @@ class FormBuilder extends CComponent {
             $forms_dir = Yii::getPathOfAlias("application.forms") . DIRECTORY_SEPARATOR;
             $glob      = Helper::globRecursive($forms_dir . "*.php", 0, true);
             $items     = $glob['files'];
-            foreach ($items as $k => $f) {
-                $f         = realpath($f);
-                $file_dir  = dirname($f) . DIRECTORY_SEPARATOR;
-                $items[$k] = str_replace($file_dir, "", $f);
-                $items[$k] = str_replace('.php', "", $items[$k]);
-                if (!is_null($func)) {
-                    $alias     = trim(str_replace($forms_dir, '', $file_dir), DIRECTORY_SEPARATOR);
-                    $alias     = trim('application.forms.' . $alias, '.');
-                    $items[$k] = $func($items[$k], "", $alias, $f);
-                }
-            }
-            $files[] = [
+            $items     = FormBuilder::formatGlob($items, $forms_dir, '', $func, 'application.forms', $formatRecursive);
+            $files[]   = [
                 'module' => 'Plansys: forms',
                 'alias' => "application.forms",
                 'count' => $glob['count'],
@@ -307,19 +298,8 @@ class FormBuilder extends CComponent {
         $forms_dir = Yii::getPathOfAlias("app.forms") . DIRECTORY_SEPARATOR;
         $glob      = Helper::globRecursive($forms_dir . "*.php", 0, true);
         $items     = $glob['files'];
-        foreach ($items as $k => $f) {
-            $f         = realpath($f);
-            $file_dir  = dirname($f) . DIRECTORY_SEPARATOR;
-            $items[$k] = str_replace($file_dir, "", $f);
-            $items[$k] = str_replace('.php', "", $items[$k]);
-            if (!is_null($func)) {
-                $alias     = trim(str_replace($forms_dir, '', $file_dir), DIRECTORY_SEPARATOR);
-                $alias     = trim('app.forms.' . $alias, '.');
-                $items[$k] = $func($items[$k], "", $alias, $f);
-            }
-        }
-
-        $files[] = [
+        $items     = FormBuilder::formatGlob($items, $forms_dir, '', $func, 'app.forms', $formatRecursive);
+        $files[]   = [
             'module' => 'app',
             'alias' => 'app.forms',
             'items' => $items,
@@ -422,7 +402,7 @@ class FormBuilder extends CComponent {
     }
 
     public function findAllField($attributes, $recursive = null, $results = []) {
-        if (is_null($this->_findFieldCache)) {
+        if (is_null($this->findFieldCache)) {
             ## cache the fields
             $class     = get_class($this->model);
             $reflector = new ReflectionClass($class);
@@ -434,16 +414,16 @@ class FormBuilder extends CComponent {
 
             if (!$reflector->hasMethod($functionName)) {
                 $this->model = new $class;
-                $fields      = $this->model->defaultFields;
+                $fields      = $this->model->getDefaultFields();
             } else {
                 $fields = $this->model->$functionName();
             }
 
-            $this->_findFieldCache = $this->parseFields($fields);
+            $this->findFieldCache = $this->parseFields($fields);
         }
 
         if (is_null($recursive)) {
-            $fields = $this->_findFieldCache;
+            $fields = $this->findFieldCache;
         } else {
             $fields = $recursive;
         }
@@ -588,8 +568,15 @@ class FormBuilder extends CComponent {
                 $fields       = [];
                 $this->fields = [];
             } else {
-                $fields       = $this->model->defaultFields;
+
+                if (property_exists($this->model, 'generatorOptions')) {
+                    $options = json_decode($this->model->generatorOptions, true);
+                    $fields  = $this->model->getDefaultFields($options);
+                } else {
+                    $fields = $this->model->getDefaultFields();
+                }
                 $this->fields = $fields;
+
             }
         } else {
             $fields = $this->model->$functionName();
@@ -659,7 +646,7 @@ class FormBuilder extends CComponent {
     }
 
     public function findField($attributes, $recursive = null) {
-        if (is_null($this->_findFieldCache)) {
+        if (is_null($this->findFieldCache)) {
             ## cache the fields
             $class     = get_class($this->model);
             $reflector = new ReflectionClass($class);
@@ -676,11 +663,11 @@ class FormBuilder extends CComponent {
                 $fields = $this->model->$functionName();
             }
 
-            $this->_findFieldCache = $this->parseFields($fields);
+            $this->findFieldCache = $this->parseFields($fields);
         }
 
         if (is_null($recursive)) {
-            $fields = $this->_findFieldCache;
+            $fields = $this->findFieldCache;
         } else {
             $fields = $recursive;
         }
@@ -733,9 +720,7 @@ class FormBuilder extends CComponent {
      * @param array $fields
      */
     public function setFields($fields) {
-        $fieldlist = [];
         $multiline = [];
-
         $this->tidyRecursive($fields, $multiline);
 
         if (is_subclass_of($this->model, 'FormField')) {
@@ -823,6 +808,8 @@ class FormBuilder extends CComponent {
         }
 
         ## get class data
+        $isNewFunc  = false;
+        $sourceFile = '';
         extract($this->getLineOfClass($class, $functionName));
 
         if (is_array($fields)) {
@@ -862,8 +849,7 @@ EOF;
         $this->methods[$functionName]['line']   = $line;
 
         $this->file = $file;
-
-        $fp = @fopen($sourceFile, 'r+');
+        $fp         = @fopen($sourceFile, 'r+');
         if (!$fp) {
             return false;
         }
@@ -1353,7 +1339,7 @@ EOF;
                 $field->renderParams   = $renderParams;
 
                 ## assign field render id
-                $field->renderID = $modelClass . '_' . $FFRenderID . $this->countRenderID++;
+                $field->renderID          = $modelClass . '_' . $FFRenderID . $this->countRenderID++;
                 $field->fieldNameTemplate = $this->fieldNameTemplate;
 
                 ## then render the field, (including registering script)

@@ -100,7 +100,7 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
 
             $scope.resizeTimeout = null;
             $scope.resize = function (st) {
-                var height = $scope.originalHeight;
+                var height = Math.min($scope.originalHeight, $el.height());
                 var $container = $el.parents('.container-fluid').parent();
 
                 $el.css({
@@ -108,7 +108,7 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                     left: $container.offset().left,
                     width: $container.width()
                 });
-                
+
                 $timeout(function () {
                     var woffset = $container.hasClass('container-full') ? 0 : 1;
 
@@ -158,7 +158,7 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
             // add action tab link
             $(".section-header").each(function () {
                 $('<a href="#' + $(this).attr('scrollTo') + '">' + $(this).text() + '</a>')
-                        .insertBefore(".action-bar:eq(0) .action-tab .clearfix");
+                    .insertBefore(".action-bar:eq(0) .action-tab .clearfix");
             })
 
             // on action tab click

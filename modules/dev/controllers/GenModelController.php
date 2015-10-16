@@ -43,6 +43,19 @@ class GenModelController extends Controller {
         }
     }
 
+    public function actionFieldList($table) {
+        $schema = Yii::app()->db->schema->tables;
+        if (isset($schema[$table])) {
+            $fields = $schema[$table]->columns;
+            $array  = [];
+            foreach ($fields as $k=>$a) {
+                $array[$k] = $k;
+            }
+
+            echo json_encode($array);
+        }
+    }
+
     public function actionNewModel() {
         $this->templates['model.php'] = Yii::getPathOfAlias('application.components.codegen.templates');
 
@@ -57,7 +70,16 @@ class GenModelController extends Controller {
             $tableName = $s['tableName'];
             $modelName = $s['modelName'];
             $module    = $s['module'] == 'plansys' ? 'application' : 'app';
-            ModelGenerator::create($tableName, $modelName, $module);
+            $options   = [];
+
+            if ($s['softDelete'] == 'Yes') {
+                $options['softDelete'] = [
+                    'column' => $s['softDeleteColumn'],
+                    'value' => $s['softDeleteValue']
+                ];
+            }
+
+            ModelGenerator::create($tableName, $modelName, $module, $options);
             $href = Yii::app()->createUrl('/dev/genModel/index', ['active' => $s['module'] . "." . $modelName]);
         }
 

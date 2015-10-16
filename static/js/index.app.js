@@ -131,14 +131,7 @@ app.filter('hourFormat', function () {
 app.filter('dateFormat', function (dateFilter) {
     return function (date, format) {
         if (date != "0000-00-00") {
-            date = new Date(strtotime(date) * 1000);
-
-            var d = dateFilter(date, format);
-            if (typeof d == "undefined" || d.trim() == "Jan 1, 1970" || d.indexOf('NaN') >= 0) {
-                return "";
-            } else {
-                return d;
-            }
+            return date(format, strtotime(date));
         } else {
             return "";
         }
@@ -240,99 +233,27 @@ app.filter("timeago", function () {
         return (time <= local) ? span + ' yang lalu' : 'pada ' + span;
     }
 });
-app.directive('contenteditable', ['$timeout', function ($timeout) {
+app.directive("contenteditable", function ($timeout) {
     return {
-        restrict: 'A',
-        require: '?ngModel',
+        restrict: "A",
+        require: "ngModel",
         link: function (scope, element, attrs, ngModel) {
-            // don't do anything unless this is actually bound to a model
-            if (!ngModel) {
-                return
+
+            function read() {
+                var html = element.text().trim();
+                ngModel.$setViewValue(html);
             }
 
-            // options
-            var opts = {}
-            angular.forEach([
-                'stripBr',
-                'noLineBreaks',
-                'selectNonEditable',
-                'moveCaretToEndOnChange',
-            ], function (opt) {
-                var o = attrs[opt]
-                opts[opt] = o && o !== 'false'
-            })
-
-            // view -> model
-            element.bind('input', function (e) {
-                scope.$apply(function () {
-                    var html, html2, rerender
-                    html = element.html()
-                    rerender = false
-                    if (opts.stripBr) {
-                        html = html.replace(/<br>$/, '')
-                    }
-                    if (opts.noLineBreaks) {
-                        html2 = html.replace(/<div>/g, '').replace(/<br>/g, '').replace(/<\/div>/g, '')
-                        if (html2 !== html) {
-                            rerender = true
-                            html = html2
-                        }
-                    }
-                    ngModel.$setViewValue(html)
-                    if (rerender) {
-                        ngModel.$render()
-                    }
-                    if (html === '') {
-                        // the cursor disappears if the contents is empty
-                        // so we need to refocus
-                        $timeout(function () {
-                            element[0].blur()
-                            element[0].focus()
-                        })
-                    }
-                })
-            })
-
-            // model -> view
-            var oldRender = ngModel.$render
             ngModel.$render = function () {
-                var el, el2, range, sel
-                if (!!oldRender) {
-                    oldRender()
-                }
-                element.html(ngModel.$viewValue || '')
-                if (opts.moveCaretToEndOnChange) {
-                    el = element[0]
-                    range = document.createRange()
-                    sel = window.getSelection()
-                    if (el.childNodes.length > 0) {
-                        el2 = el.childNodes[el.childNodes.length - 1]
-                        range.setStartAfter(el2)
-                    } else {
-                        range.setStartAfter(el)
-                    }
-                    range.collapse(true)
-                    sel.removeAllRanges()
-                    sel.addRange(range)
-                }
-            }
-            if (opts.selectNonEditable) {
-                element.bind('click', function (e) {
-                    var range, sel, target
-                    target = e.toElement
-                    if (target !== this && angular.element(target).attr('contenteditable') === 'false') {
-                        range = document.createRange()
-                        sel = window.getSelection()
-                        range.setStartBefore(target)
-                        range.setEndAfter(target)
-                        sel.removeAllRanges()
-                        sel.addRange(range)
-                    }
-                })
-            }
+                element.html(ngModel.$viewValue || "");
+            };
+
+            element.bind("blur", function (e) {
+                scope.$apply(read);
+            });
         }
-    }
-}]);
+    };
+});
 
 //String.prototype.fromMysqlDate = String.prototype.fromMysqlDate ||  function () {
 //    var t = this.split(/[- :]/);
@@ -377,6 +298,11 @@ app.directive('ngEnter', function () {
                 event.preventDefault();
             }
         });
+    };
+});
+app.directive('ngUrl', function ($interpolate) {
+    return function ($scope, el, attrs) {
+        $(el).attr('href', Yii.app.createUrl($interpolate(attrs.ngUrl)($scope)));
     };
 });
 app.directive('autoGrow', ['$timeout', '$window', function ($timeout, $window) {
@@ -1022,7 +948,7 @@ function trim(str, charlist) {
 }
 
 if (!Array.isArray) {
-    Array.isArray = function(arg) {
+    Array.isArray = function (arg) {
         return Object.prototype.toString.call(arg) === '[object Array]';
     };
 }

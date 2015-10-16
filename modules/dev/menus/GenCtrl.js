@@ -29,6 +29,16 @@ $scope.contextMenu = [
     //    }
     //},
     {
+        icon: "fa fa-fw fa-sign-in",
+        label: "Open New Tab",
+        visible: function (item) {
+            return !!item.class;
+        },
+        click: function (item) {
+            window.open(item.url,'_blank');
+        }
+    },
+    {
         icon: "fa fa-fw fa-trash",
         label: "Delete",
         visible: function (item) {

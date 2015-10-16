@@ -2,16 +2,17 @@
 
 class ActiveRecord extends CActiveRecord {
     const DEFAULT_PAGE_SIZE = 25;
-    private $__relations        = [];
-    private $__relationsObj     = [];
-    private $__isRelationLoaded = false;
-    private $__pageSize         = [];
-    private $__page             = [];
-    private $__relInsert        = [];
-    private $__relUpdate        = [];
-    private $__relDelete        = [];
-    private $__relReset         = [];
-    private $__tempVar          = [];
+    protected $softDelete         = [];
+    private   $__relations        = [];
+    private   $__relationsObj     = [];
+    private   $__isRelationLoaded = false;
+    private   $__pageSize         = [];
+    private   $__page             = [];
+    private   $__relInsert        = [];
+    private   $__relUpdate        = [];
+    private   $__relDelete        = [];
+    private   $__relReset         = [];
+    private   $__tempVar          = [];
 
     public static function execute($sql, $params = []) {
         return Yii::app()->db->createCommand($sql)->execute($params);
@@ -49,7 +50,6 @@ class ActiveRecord extends CActiveRecord {
             if (isset($new[$key . 'Insert'])) {
                 $post[$key . 'Insert'] = $new[$key . 'Insert'];
             }
-
             if ($flattenPost) {
                 ActiveRecord::flattenPost($post, $key);
             }
@@ -265,16 +265,18 @@ class ActiveRecord extends CActiveRecord {
         if (!is_array($data) || count($data) == 0)
             return;
 
+        $instance = $model::model();
+
         if (isset($options['table'])) {
             $table = $options['table'];
         } else {
-            $table = $model::model()->tableSchema->name;
+            $table = $instance->tableSchema->name;
         }
 
         if (isset($options['pk'])) {
             $pk = $options['pk'];
         } else {
-            $pk = $model::model()->tableSchema->primaryKey;
+            $pk = $instance->tableSchema->primaryKey;
         }
 
         if (is_array($data[0])) {
@@ -289,22 +291,33 @@ class ActiveRecord extends CActiveRecord {
         }
 
         if (!empty($ids)) {
-            $ids       = implode(",", $ids);
+            $idsString = implode(",", $ids);
             $condition = isset($options['condition']) ? $options['condition'] : "{$pk} IN (:ids)";
-            $condition = str_replace(":ids", $ids, $condition);
+            $condition = str_replace(":ids", $idsString, $condition);
 
-            $delete = "DELETE FROM {$table} WHERE $condition;";
-
-            $command = Yii::app()->db->createCommand($delete);
-            try {
-                $command->execute();
-            } catch (CDbException $e) {
-                if (!isset($options['integrityError']) || (!!@$options['integrityError'])) {
-                    if ($e->errorInfo[0] == "23000") {
-                        Yii::app()->controller->redirect(["/site/error&id=integrity"]);
+            if (empty($instance->softDelete)) {
+                $sql     = "DELETE FROM {$table} WHERE $condition;";
+                $command = Yii::app()->db->createCommand($sql);
+                try {
+                    $command->execute();
+                } catch (CDbException $e) {
+                    if (!isset($options['integrityError']) || (!!@$options['integrityError'])) {
+                        if ($e->errorInfo[0] == "23000") {
+                            Yii::app()->controller->redirect(["/site/error&id=integrity&msg=" . $e->errorInfo[2]]);
+                        }
                     }
                 }
+            } else {
+                $params = [];
+                foreach ($ids as $id) {
+                    $params[] = [
+                        $pk => $id,
+                        $instance->softDelete['column'] => $instance->softDelete['value']
+                    ];
+                }
+                ActiveRecord::batchUpdate($model, $params);
             }
+
         }
     }
 
@@ -1329,17 +1342,23 @@ class ActiveRecord extends CActiveRecord {
 
     public function delete() {
         try {
-            parent::delete();
+            if (!!$this->softDelete) {
+                $this->{$this->softDelete['column']} = $this->softDelete['value'];
+                $this->update([$this->softDelete['column']]);
+            } else {
+                parent::delete();
+            }
         } catch (CDbException $e) {
             if ($e->errorInfo[0] == "23000") {
-                Yii::app()->controller->redirect(["/site/error&id=integrity"]);
+                Yii::app()->controller->redirect(["/site/error&id=integrity&msg=" . $e->errorInfo[2]]);
             }
         }
     }
 
-    public function getDefaultFields() {
+    public function getDefaultFields($options = []) {
         Yii::import("application.components.codegen.templates.ActiveRecordTemplate");
-        return ActiveRecordTemplate::generateFields($this);
+        return ActiveRecordTemplate::generateFields($this, $options);
     }
+
 
 }

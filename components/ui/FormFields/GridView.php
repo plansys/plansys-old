@@ -16,6 +16,7 @@ class GridView extends FormField {
     public        $tableOptions = [];
     public        $datasource   = '';
     public        $gridOptions  = [];
+    public        $genOptions   = [];
     public        $columns      = [];
 
     public function getErrorClass() {
@@ -64,6 +65,7 @@ class GridView extends FormField {
 
     public function getRowTemplate($col, $idx) {
         $template  = '';
+        $style     = '';
         $fieldName = $col['name'];
         switch ($col['columnType']) {
             case "string":
@@ -82,7 +84,7 @@ type="checkbox" /></label>';
         }
 
         $rowState = '';
-        if ($idx == $this->getStartingColumnGroup()) {
+        if ($idx == 0 && !@$col['options']['mode']) {
             $rowState = "<div ng-include='\"row-state-template\"'></div>\n    ";
             $template = "<span class='row-group-padding'
         style='width:{{row.\$level*10}}px;'></span>
@@ -90,8 +92,37 @@ type="checkbox" /></label>';
         }
 
 
+        if (!!@$col['options']['mode']) {
+            $template = '';
+            switch ($col['options']['mode']) {
+                case "editable":
+                    $template = '
+    <div contenteditable="true" ng-model="row.' . $fieldName . '" ng-keydown="editKey($event)"></textarea>';
+                    break;
+                case "del-button":
+                    $style    = ' style="width:20px;"';
+                    $template = '<div ng-if="!row.$rowState" ng-click="removeRow(row)"
+    class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></div>
+
+    <div ng-if="[\'edit\',\'remove\'].indexOf(row.$rowState) >= 0" ng-click="undoRemoveRow(row)"
+    class="btn btn-default btn-xs"><i class="fa fa-undo"></i></div>';
+                    break;
+                case 'edit-button':
+                    $style    = ' style="width:20px;"';
+                    $template = '<a ng-url="' . $col['options']['editUrl'] . '"
+    class="btn-block btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>';
+                    break;
+                case 'del-url-button':
+                    $style    = ' style="width:20px;"';
+                    $template = '<a ng-url="' . $col['options']['editUrl'] . '"
+    onClick="return confirm(\'Are you sure?\')"
+    class="btn-block btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>';
+                    break;
+            }
+        }
+
         return <<<EOF
-<td ng-class="rowClass(row, '{$fieldName}', '{$col['columnType']}')">
+<td{$style} ng-class="rowClass(row, '{$fieldName}', '{$col['columnType']}')">
     {$rowState}{$template}
 </td>
 EOF;
@@ -108,7 +139,6 @@ EOF;
         switch ($col['columnType']) {
             case "string":
                 $template = '<td style="cursor:pointer;" ng-click="hideGroup(row, $event)"></td>';
-
                 break;
             case
             "checkbox":
@@ -116,7 +146,6 @@ EOF;
 <td class="t-{$col['columnType']}"><label><input type="checkbox" class="cb-{$col['name']}"
 ng-click="checkboxGroup(\$index, '{$col['name']}', '$idx', \$event)" /></label></td>
 EOF;
-
                 break;
         }
 

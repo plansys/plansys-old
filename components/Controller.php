@@ -4,39 +4,44 @@
  * Controller is the customized base controller class.
  * All controller classes for this application should extend from this base class.
  */
-class Controller extends CController {
+class Controller extends CController
+{
 
     /**
      * @var string the default layout for the controller view. Defaults to '//layouts/column1',
      * meaning using a single column layout. See 'protected/views/layouts/column1.php'.
      */
-    public $layout       = '//layouts/main';
+    public $layout = '//layouts/main';
     public $reportLayout = '//layouts/report';
 
-    public function staticUrl($path = '') {
+    public function staticUrl($path = '')
+    {
         $static = "/static";
 
         if (!isset($_GET['errorBeforeInstall'])) {
-            $dir    = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
+            $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
             $static = "/" . array_pop($dir) . "/static";
         }
 
         return $this->url($static . $path);
     }
 
-    public function url($path) {
+    public function url($path)
+    {
         return Yii::app()->request->baseUrl . $path;
     }
 
-    public function staticAppUrl($path) {
-        $dir    = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
+    public function staticAppUrl($path)
+    {
+        $dir = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
         $static = "/" . array_pop($dir) . "/static";
         return $this->url($static . $path);
     }
 
-    public function isPosted($class) {
+    public function isPosted($class)
+    {
         $valid = true;
-        $args  = func_get_args();
+        $args = func_get_args();
         foreach ($args as $c) {
             if (is_object($c)) {
                 $c = get_class($c);
@@ -51,7 +56,8 @@ class Controller extends CController {
         return $valid;
     }
 
-    public function getPost($class) {
+    public function getPost($class)
+    {
         if (isset($this->module)) {
             $module = $this->module->id;
             if (substr($class, 0, strlen($module)) != $module) {
@@ -62,7 +68,8 @@ class Controller extends CController {
         return @$_POST[$class];
     }
 
-    public function renderReport($file, $data = null, $return = false) {
+    public function renderReport($file, $data = null, $return = false)
+    {
         $report = new Report;
 
         $filePath = $this->getReportFile($file);
@@ -78,7 +85,8 @@ class Controller extends CController {
         $report->createPdf($output);
     }
 
-    public function getReportFile($reportFile) {
+    public function getReportFile($reportFile)
+    {
         $ds = DIRECTORY_SEPARATOR;
         if (strpos($reportFile, '.')) {
             $filePath = Yii::getPathOfAlias($reportFile) . '.php';
@@ -87,10 +95,10 @@ class Controller extends CController {
                 $basePath = $this->module->basePath;
                 $filePath = $basePath . $ds . "reports" . $ds . $reportFile . ".php";
             } else {
-                $alias       = Helper::getAlias($this);
-                $location    = Helper::explodeFirst('.', $alias);
+                $alias = Helper::getAlias($this);
+                $location = Helper::explodeFirst('.', $alias);
                 $reportAlias = $location . '.reports';
-                $filePath    = Yii::getPathOfAlias($reportAlias) . $ds . $reportFile . '.php';
+                $filePath = Yii::getPathOfAlias($reportAlias) . $ds . $reportFile . '.php';
             }
         }
         if (is_file($filePath)) {
@@ -100,18 +108,17 @@ class Controller extends CController {
         }
     }
 
-    public function renderForm($class, $model = null, $params = [], $options = []) {
+    public function renderForm($class, $model = null, $params = [], $options = [])
+    {
         if (is_array($model)) {
             $options = $params;
-            $params  = $model;
-            $model   = null;
+            $params = $model;
+            $model = null;
         }
-
-        $class = $this->prepareFormName($class);
-        $fb    = FormBuilder::load($class);
+        $fb = FormBuilder::load($class);
 
         ## check if layout property is declared by rendering controller
-        $reflection  = new ReflectionObject($this);
+        $reflection = new ReflectionObject($this);
         $layoutClass = $reflection->getProperty('layout')->getDeclaringClass()->getName();
 
         ## if layout property is not declared, then set it to default form layout '//layouts/form'
@@ -121,7 +128,7 @@ class Controller extends CController {
 
         ## set page title & layout to options
         $this->pageTitle = isset($options['pageTitle']) ? $options['pageTitle'] : $fb->form['title'];
-        $this->layout    = isset($options['layout']) ? $options['layout'] : $this->layout;
+        $this->layout = isset($options['layout']) ? $options['layout'] : $this->layout;
 
         $renderOptions = [
             'wrapForm' => true,
@@ -129,17 +136,17 @@ class Controller extends CController {
         ];
 
         if (is_object($model)) {
-            if (get_class($model) != $class) {
+            if (get_class($model) != Helper::explodeLast(".", $class)) {
                 throw new Exception("Invalid model name, please instantiate model from {$class} class");
             }
             $fb->model = $model;
         }
 
         $options['params'] = $params;
-        $renderOptions     = array_merge($renderOptions, $options);
-        $mainform          = $fb->render($model, $renderOptions);
-        $data              = $fb->form['layout']['data'];
-        $renderSection     = @$_GET['render_section'];
+        $renderOptions = array_merge($renderOptions, $options);
+        $mainform = $fb->render($model, $renderOptions);
+        $data = $fb->form['layout']['data'];
+        $renderSection = @$_GET['render_section'];
 
         foreach ($data as $k => $d) {
             if ($d['type'] == "mainform") {
@@ -154,7 +161,8 @@ class Controller extends CController {
         $this->renderText($layout, false);
     }
 
-    public function prepareFormName($class, $module = null) {
+    public function prepareFormName($class, $module = null)
+    {
         if (isset($module)) {
             if (is_string($module)) {
                 $moduleList = Setting::getModules();
@@ -178,15 +186,27 @@ class Controller extends CController {
             }
         }
 
+
         if (strpos($class, '.') > 0) {
             $className = Helper::explodeLast(".", $class);
+
             if (!class_exists($className, false)) {
                 try {
                     Yii::import($class);
                 } catch (CException $e) {
+
                     if ($module) {
                         $moduleAlias = Helper::getAlias($module->basePath);
                         Yii::import($moduleAlias . ".forms." . $class);
+                    } else {
+                        $reflection = new ReflectionClass($this);
+                        $path = $reflection->getFileName();
+
+                        if (strpos($path, Yii::getPathOfAlias('app')) === 0) {
+                            Yii::import('app.forms.' . $class);
+                        } else if (strpos($path, Yii::getPathOfAlias('application')) === 0) {
+                            Yii::import('application.forms.' . $class);
+                        }
                     }
                 }
             }
@@ -206,11 +226,13 @@ class Controller extends CController {
         return $class;
     }
 
-    public function flash($info = '') {
+    public function flash($info = '')
+    {
         Yii::app()->user->setFlash('info', $info);
     }
 
-    public function getMainMenu() {
+    public function getMainMenu()
+    {
         if (Setting::$mode == "init" || Setting::$mode == "install") {
             if ($this->module->id != "install") {
                 $this->redirect(["/install/default/index"]);
@@ -287,7 +309,7 @@ class Controller extends CController {
         if (Yii::app()->user->isGuest) {
             return $default;
         } else {
-            $module   = Yii::app()->user->role;
+            $module = Yii::app()->user->role;
             $menuPath = Yii::app()->user->menuPath;
             $menuPath = $menuPath == '' ? 'MainMenu' : $menuPath;
 
@@ -309,16 +331,18 @@ class Controller extends CController {
         }
     }
 
-    public function newModel($class) {
+    public function newModel($class)
+    {
         $class = $this->prepareFormName($class);
         return new $class;
     }
 
-    public function loadAllModel($class, $attr) {
+    public function loadAllModel($class, $attr)
+    {
         ## kalo ternyata $form dan $attr kebalik
         if (is_string($attr)) {
-            $temp  = $attr;
-            $attr  = $class;
+            $temp = $attr;
+            $attr = $class;
             $class = $temp;
         }
 
@@ -332,11 +356,12 @@ class Controller extends CController {
         return $model;
     }
 
-    public function loadModel($class, $attr) {
+    public function loadModel($class, $attr)
+    {
         ## kalo ternyata $form dan $attr kebalik
         if (is_array($class) || is_numeric($class)) {
-            $temp  = $attr;
-            $attr  = $class;
+            $temp = $attr;
+            $attr = $class;
             $class = $temp;
         }
 
@@ -358,11 +383,13 @@ class Controller extends CController {
         return $model;
     }
 
-    public function setInfo($info) {
+    public function setInfo($info)
+    {
         Yii::app()->user->setFlash('info', $info);
     }
 
-    public function beforeAction($action) {
+    public function beforeAction($action)
+    {
         ## when mode is init or install then redirect to installation mode
         if (Setting::$mode == "init" || Setting::$mode == "install") {
             if ($this->id != "default") {

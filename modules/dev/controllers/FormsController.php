@@ -57,17 +57,30 @@ class FormsController extends Controller {
         }
     }
 
-    public function actionCode($c, $ext = '.php') {
-        $content = file_get_contents(Yii::getPathOfAlias($c) . $ext);
+    public function actionCode($c, $s = null) {
+        $ext    = ".php";
+        $script = null;
+
+        if (isset($s)) {
+            $file        = explode(".", $c);
+            $scriptToken = explode(".", $s);
+            $ext         = "." . array_pop($scriptToken);
+            array_pop($file);
+            $script  = implode(".", $file) . "." . implode(".", $scriptToken);
+            $content = file_get_contents(Yii::getPathOfAlias(implode(".", $file)) . DIRECTORY_SEPARATOR . $s);
+        } else {
+            $content = file_get_contents(Yii::getPathOfAlias($c) . $ext);
+        }
 
         Asset::registerJS('application.static.js.lib.ace');
         $this->renderForm('DevEditScript', null, [
             'content' => $content,
-            'mode' => 'php',
+            'mode' => $ext == '.php' ? 'php' : 'javascript',
             'status' => 'Ctrl+S to Save',
             'name' => $c,
+            'script' => $script,
             'ext' => $ext,
-            'shortname' => Helper::explodeLast('.', $c)
+            'shortname' => isset($s) ? $s : Helper::explodeLast('.', $c)
         ], [
             'layout' => '//layouts/blank'
         ]);
@@ -189,6 +202,7 @@ EOF;
 
     public function actionFormList($m = '') {
         $list   = FormBuilder::listFile();
+
         $return = [];
         if ($m == '') {
             foreach ($list as $k => $l) {

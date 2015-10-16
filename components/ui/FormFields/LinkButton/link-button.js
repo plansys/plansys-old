@@ -161,9 +161,8 @@ app.directive('linkBtn', function ($timeout, $parse, $compile, $http) {
                     var href = attrs.submit;
                     if (href.trim().substr(0, 4) == "url:") {
                         var url = href.trim().substr(4);
-                        href = eval(generateUrl(url, 'function'));
+                        href = $scope.$eval(generateUrl(url, 'function'));
                     }
-
                     $scope.url = href;
 
                     if (!attrs.ngClick) {

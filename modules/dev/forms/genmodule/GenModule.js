@@ -39,6 +39,10 @@ if ($scope.params.tab) {
     $scope.activeTab = $scope.params.tab;
 }
 
+if (!!$scope.model.name) {
+    $scope.form.title = 'Module - ' + $scope.model.name;
+}
+
 $timeout(function () {
     $scope.acStatus = '';
     $scope.saveAC = function () {

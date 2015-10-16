@@ -21,10 +21,7 @@ class DevFormProperties extends Form {
                     ),
                 ),
             ),
-            'includeJS' => array (
-                'asfga',
-                'asf',
-            ),
+            'includeJS' => array (),
         );
     }
 
@@ -67,9 +64,8 @@ class DevFormProperties extends Form {
                 'type' => 'DropDownList',
             ),
             array (
-                'renderInEditor' => 'Yes',
                 'type' => 'Text',
-                'value' => '<a ng-href=\"{{Yii.app.createUrl(\'/dev/genModel/index\', {active:$parent.form.extendsFrom})}}\" 
+                'value' => '<a ng-if=\"$parent.form.extendsFrom != \'Form\'\" ng-href=\"{{Yii.app.createUrl(\'/dev/genModel/index\', {active:$parent.form.extendsFrom})}}\" 
     style=\"margin-bottom:5px;\"
     target=\"_blank\"
     class=\"pull-right btn btn-default btn-xs\">
@@ -89,7 +85,20 @@ class DevFormProperties extends Form {
                 'type' => 'TextField',
             ),
             array (
-                'label' => 'Include JS File',
+                'renderInEditor' => 'Yes',
+                'type' => 'Text',
+                'value' => '<a ng-href=\"{{Yii.app.createUrl(\'/dev/forms/code\', {
+    c: classPath,
+    s: $parent.form.inlineJS
+})}}\" 
+    style=\"margin-bottom:5px;\"
+    class=\"pull-right btn btn-default btn-xs\">
+    <i class=\"fa fa-sign-in\"></i>
+    Edit Inline JS
+</a>
+<div class=\"clearfix\"></div>',
+            ),
+            array (
                 'name' => 'includeJS',
                 'options' => array (
                     'ng-model' => '$parent.form.includeJS',

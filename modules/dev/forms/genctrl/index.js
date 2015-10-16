@@ -15,3 +15,7 @@ window.$(document).keydown(function (event) {
     event.preventDefault();
     return false;
 });
+
+if (!!$scope.params.name) {
+    $scope.form.title = 'Ctrl - ' + $scope.params.name;
+}

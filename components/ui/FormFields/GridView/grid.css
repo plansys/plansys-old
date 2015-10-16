@@ -66,6 +66,7 @@
 [grid-view] .thead.show {
     position: fixed;
     display: block;
+    z-index:100;
     white-space: nowrap;
 }
 
@@ -200,7 +201,7 @@
     margin: 16px 0px 0px -5px;
     border: 1px solid #ddd;
     opacity:0;
-    z-index:110;
+    z-index:99;
     border-top: 0px;
     padding: 2px 4px 4px 3px;
     border-bottom-left-radius: 5px;
@@ -220,4 +221,18 @@
 [grid-view] .row-state-detail .btn {
     font-size: 10px;
     font-weight: bold;
+}
+
+[grid-view] td [contenteditable] {
+    border: 0px;
+    width:100%;
+    padding:5px 4px 4px 4px;
+    min-height:16px;
+    display:inline-block;
+    white-space: pre-wrap;
+    box-shadow:inset 0px 0px 0px 1px #999;
+    resize:none;
+    margin:-2px 0px -1px -4px;
+    box-sizing: content-box;
+    background:transparent;
 }

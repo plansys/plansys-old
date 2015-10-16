@@ -722,7 +722,6 @@ class DevSettings extends Form {
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
-                        'label' => 'Domain Controllers',
                         'name' => 'ldapDomainControllers',
                         'singleViewOption' => array (
                             'name' => 'val',

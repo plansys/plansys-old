@@ -2,16 +2,16 @@
 
 class ModelGenerator extends CComponent {
 
-    public static function create($tableName, $modelName, $module) {
-        Yii::import("application.framework.gii.*");
-        Yii::import("application.framework.gii.generators.model.ModelCode");
-        $mc            = new ModelCode();
-        $mc->modelPath = $module . ".models";
-        $mc->template  = 'model.php';
+    public static function create($tableName, $modelName, $module, $options = []) {
+        $mc               = new ModelGeneratorCode();
+        $mc->modelPath    = $module . ".models";
+        $mc->template     = 'TplModel.php';
 
         $mc->tableName  = $tableName;
         $mc->baseClass  = 'ActiveRecord';
         $mc->modelClass = $modelName;
+        $mc->options    = $options;
+
         $mc->prepare();
         $mc->save();
     }
