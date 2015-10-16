@@ -4,12 +4,58 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "bd05b399be70f963eb45e2d0d1202ce6",
-    "content-hash": "e5613b35089be885fc30ecdc3d74b802",
+    "hash": "5ecd1e0c76baad86842f3669cfc46abe",
+    "content-hash": "26f72be4402ac6f4310b4f589954d02a",
     "packages": [
         {
+            "name": "jagandecapri/symfony-parallel-process",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jagandecapri/symfony-parallel-process.git",
+                "reference": "2e58e423ab08e786f7b99b6128ead0314798bab9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jagandecapri/symfony-parallel-process/zipball/2e58e423ab08e786f7b99b6128ead0314798bab9",
+                "reference": "2e58e423ab08e786f7b99b6128ead0314798bab9",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/process": "~2.6"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Jack\\Symfony\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jack",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Simple wrapper to enable parallel processing using Symfony Process component",
+            "homepage": "https://github.com/jagandecapri/symfony-parallel-process",
+            "keywords": [
+                "parallel",
+                "parallel processing",
+                "process",
+                "symfony"
+            ],
+            "time": "2015-06-17 14:24:29"
+        },
+        {
             "name": "leeoniya/dump-r",
-            "version": "dev-master",
+            "version": "2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/leeoniya/dump_r.php.git",
@@ -104,6 +150,55 @@
                 "php"
             ],
             "time": "2015-09-19 14:15:08"
+        },
+        {
+            "name": "symfony/process",
+            "version": "v2.7.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/process.git",
+                "reference": "b27c8e317922cd3cdd3600850273cf6b82b2e8e9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/process/zipball/b27c8e317922cd3cdd3600850273cf6b82b2e8e9",
+                "reference": "b27c8e317922cd3cdd3600850273cf6b82b2e8e9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "~2.7"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Process\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Process Component",
+            "homepage": "https://symfony.com",
+            "time": "2015-09-19 19:59:23"
         }
     ],
     "packages-dev": [],

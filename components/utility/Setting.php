@@ -50,8 +50,14 @@ class Setting {
         }
     }
 
-    public static function get($key, $default = null) {
+    public static function get($key, $default = null, $forceRead = false) {
         $keys = explode('.', $key);
+
+        if ($forceRead) {
+            $file = @file_get_contents(Setting::$path);   
+            $setting       = json_decode($file, true);
+            Setting::$data = Setting::arrayMergeRecursiveReplace(Setting::$default, $setting);
+        }
 
         $arr = Setting::$data;
         while ($k = array_shift($keys)) {
