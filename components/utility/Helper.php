@@ -38,7 +38,7 @@ class Helper {
         return $period;
     }
 
-    public static function GetStringBetween($string, $start, $finish) {
+    public static function getStringBetween($string, $start, $finish) {
         $string   = " " . $string;
         $position = strpos($string, $start);
         if ($position == 0)

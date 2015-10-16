@@ -29,15 +29,15 @@ class ListView extends FormField {
      * @return array me-return array property TextField.
      */
     public function getFieldProperties() {
-        return array(
-            array(
+        return array (
+            array (
                 'label' => 'ListView Mode',
                 'name' => 'fieldTemplate',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.fieldTemplate',
                     'ng-change' => 'changeListViewMode();',
                 ),
-                'list' => array(
+                'list' => array (
                     'datasource' => 'SubForm + DataSource',
                     'form' => 'SubForm',
                     'default' => 'FormField',
@@ -45,28 +45,28 @@ class ListView extends FormField {
                 'otherLabel' => 'Other...',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'type' => 'Text',
                 'value' => '<hr>',
             ),
-            array(
+            array (
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
                     'ng-if' => 'active.fieldTemplate != \'datasource\'',
                 ),
-                'list' => array(),
+                'list' => array (),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
@@ -74,10 +74,10 @@ class ListView extends FormField {
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Data Source',
                 'name' => 'datasource',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.datasource',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -86,10 +86,10 @@ class ListView extends FormField {
                 ),
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'SubForm',
                 'name' => 'templateForm',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.templateForm',
                     'ng-show' => 'active.fieldTemplate == \'form\' || active.fieldTemplate == \'datasource\'',
                     'ng-change' => 'save();',
@@ -99,18 +99,15 @@ class ListView extends FormField {
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
-            array(
-                'type' => 'Text',
-            ),
-            array(
+            array (
                 'type' => 'Text',
                 'value' => '<div ng-show=\'active.fieldTemplate == \"default\"\'>
     <div style=\'margin:10px 0px 10px 10px;border:1px solid #ccc;padding:5px 5px 0px 5px;border-radius:4px;\'>',
             ),
-            array(
+            array (
                 'label' => 'Field Type',
                 'name' => 'singleView',
-                'options' => array(
+                'options' => array (
                     'ng-change' => 'activeEditor.fieldTypeChange(active)',
                     'ng-model' => 'active.singleView',
                 ),
@@ -118,57 +115,57 @@ class ListView extends FormField {
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Edit',
                 'icon' => 'pencil',
                 'buttonSize' => 'btn-xs',
-                'options' => array(
+                'options' => array (
                     'style' => 'float:right;margin-top:-32px;',
                     'ng-click' => 'activeEditor.toggleEdit(active)',
                 ),
                 'type' => 'LinkButton',
             ),
-            array(
+            array (
                 'type' => 'Text',
                 'value' => '    <div
     ng-if=\'active.edited\'
     class=\'list-view-single-edit\'
     style=\'border-top:1px solid #ccc;margin:0px -5px;padding:5px 5px 0px 5px;\'>',
             ),
-            array(
+            array (
                 'name' => 'singleViewOption',
                 'mode' => 'single',
                 'subForm' => 'application.components.ui.FormFields.TextField',
-                'options' => array(
+                'options' => array (
                     'ng-if' => 'active.singleView == \'TextField\'',
                     'ng-model' => 'active.singleViewOption',
                 ),
                 'type' => 'SubForm',
             ),
-            array(
+            array (
                 'name' => 'singleViewOption',
                 'mode' => 'single',
                 'subForm' => 'application.components.ui.FormFields.DropDownList',
-                'options' => array(
+                'options' => array (
                     'ng-if' => 'active.singleView == \'DropDownList\'',
                     'ng-model' => 'active.singleViewOption',
                 ),
                 'type' => 'SubForm',
             ),
-            array(
+            array (
                 'type' => 'Text',
                 'value' => '    </div>
 </div>',
             ),
-            array(
+            array (
                 'type' => 'Text',
                 'value' => '</div><div ng-show=\'active.fieldTemplate == \\"form\\" || active.fieldTemplate == \\"datasource\\"\'>',
             ),
-            array(
+            array (
                 'label' => 'Edit Subform',
                 'icon' => 'sign-in',
                 'buttonSize' => 'btn-xs',
-                'options' => array(
+                'options' => array (
                     'style' => 'float:right;margin:0px 0px 5px 0px;',
                     'href' => 'url:/dev/forms/update?class={active.templateForm}',
                     'target' => '_blank',
@@ -176,39 +173,53 @@ class ListView extends FormField {
                 ),
                 'type' => 'LinkButton',
             ),
-            array(
+            array (
                 'type' => 'Text',
                 'value' => '<div class=\"clearfix\"></div>
 <hr/></div>',
             ),
-            array(
+            array (
                 'label' => 'Inline JS',
                 'name' => 'inlineJS',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.inlineJS',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
+                'renderInEditor' => 'Yes',
+                'type' => 'Text',
+                'value' => '<a ng-href=\"{{Yii.app.createUrl(\'/dev/forms/code\', {
+    c: classPath,
+    s: active.inlineJS
+})}}\" 
+    style=\"margin-bottom:5px;\"
+    class=\"pull-right btn btn-default btn-xs\">
+    <i class=\"fa fa-sign-in\"></i>
+    Edit Inline JS
+</a>
+<div class=\"clearfix\"></div>',
+            ),
+            array (
                 'label' => 'Sortable',
                 'name' => 'sortable',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.sortable',
                     'ng-change' => 'save();',
                 ),
-                'list' => array(
+                'list' => array (
                     'yes' => 'Yes',
                     'No' => 'No',
                 ),
                 'fieldWidth' => '5',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
                 ),
@@ -216,53 +227,53 @@ class ListView extends FormField {
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),
-            array(
-                'column1' => array(
-                    array(
+            array (
+                'column1' => array (
+                    array (
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => array(
+                        'options' => array (
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                         ),
                         'type' => 'TextField',
                     ),
-                    array(
+                    array (
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'column2' => array(
-                    array(
+                'column2' => array (
+                    array (
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => 12,
                         'fieldWidth' => '11',
-                        'options' => array(
+                        'options' => array (
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                         ),
                         'type' => 'TextField',
                     ),
-                    array(
+                    array (
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'column3' => array(
-                    array(
+                'column3' => array (
+                    array (
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
-                'column4' => array(
-                    array(
+                'column4' => array (
+                    array (
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
@@ -271,16 +282,16 @@ class ListView extends FormField {
                 'w2' => '50%',
                 'type' => 'ColumnField',
             ),
-            array(
+            array (
                 'type' => 'Text',
                 'value' => '<hr/>',
             ),
-            array(
+            array (
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array(
+            array (
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',

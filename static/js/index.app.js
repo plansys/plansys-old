@@ -80,9 +80,7 @@ app.filter('capitalize', function () {
 });
 app.filter('ucfirst', function () {
     return function (input, arg) {
-        return input.replace(/(?:^|\s)\S/g, function (a) {
-            return a.toUpperCase();
-        });
+        return ucfirst(input);
     };
 });
 app.filter('fileSize', function () {
@@ -738,6 +736,13 @@ function PopupCenter(url, title, w, h) {
     if (window.focus) {
         newWindow.focus();
     }
+}
+
+//PHP ucfirst implementation in JS
+function ucfirst(input) {
+    return input.replace(/(?:^|\s)\S/g, function (a) {
+        return a.toUpperCase();
+    })
 }
 
 //PHP strtotime implementation in JS

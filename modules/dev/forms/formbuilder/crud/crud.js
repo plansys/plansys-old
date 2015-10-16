@@ -123,6 +123,7 @@ $scope.form.submit = function (f) {
             className: $scope.params.prefix + $scope.model.name + 'Form',
             extendsName: $scope.model.model,
             type: 'form',
+            relations: $scope.model.relations
         });
         $scope.data.files.push({
             name: $scope.model.name + 'Controller.php',
@@ -133,8 +134,21 @@ $scope.form.submit = function (f) {
             indexName: $scope.params.prefix + $scope.model.name + 'Index',
             alias: $scope.data.path,
             bulkCheckbox: $scope.model.bulkCheckbox,
-            path: $scope.getControllerPath()
+            path: $scope.getControllerPath(),
+            relations: $scope.model.relations
         });
+
+        for (i in $scope.model.relations) {
+            var rel = $scope.model.relations[i];
+            $scope.data.files.push({
+                name: $scope.params.prefix + $scope.model.name + ucfirst(rel.name) + 'Relform.php',
+                className: $scope.params.prefix + $scope.model.name + ucfirst(rel.name) + 'Relform',
+                extendsName: rel.className,
+                type: 'relform',
+                relation: rel
+            });
+        }
+
     } else {
         $scope.data.files.push({
             name: $scope.params.prefix + $scope.model.name + 'Master.php',
@@ -151,7 +165,6 @@ $scope.form.submit = function (f) {
             alias: $scope.data.path,
             path: $scope.getControllerPath()
         });
-
     }
 
     $scope.step = 2;

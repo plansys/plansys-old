@@ -145,7 +145,7 @@ padding-left:0px;',
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div ng-if=\\"!!model.name\\">',
+                'value' => '        <div ng-if=\\"!!model.name\\">',
             ),
             array (
                 'title' => 'Advanced Settings',
@@ -157,7 +157,7 @@ padding-left:0px;',
                     array (
                         'label' => 'Master Data',
                         'name' => 'masterData',
-                        'listExpr' => '[\'Yes\',\'No\']',
+                        'listExpr' => '[\'No\', \'Yes\']',
                         'type' => 'DropDownList',
                     ),
                     array (
@@ -199,6 +199,10 @@ padding-left:0px;',
                 'type' => 'ColumnField',
             ),
             array (
+                'type' => 'Text',
+                'value' => '                <div ng-if=\\"model.masterData == \'No\'\\">',
+            ),
+            array (
                 'title' => 'Relations',
                 'type' => 'SectionHeader',
             ),
@@ -206,6 +210,7 @@ padding-left:0px;',
                 'name' => 'relations',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.modules.dev.forms.formbuilder.crud.DevCrudRelForm',
+                'inlineJS' => 'relForm.js',
                 'options' => array (
                     'style' => 'margin-top:10px;',
                 ),
@@ -222,11 +227,13 @@ padding-left:0px;',
             ),
             array (
                 'type' => 'Text',
-                'value' => '</div>',
+                'value' => '        </div>
+    </div>
+</div>',
             ),
             array (
                 'type' => 'Text',
-                'value' => '</div>
+                'value' => '
 <div ng-show=\'step > 1\'>',
             ),
             array (

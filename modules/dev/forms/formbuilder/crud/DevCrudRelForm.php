@@ -10,9 +10,11 @@ class DevCrudRelForm extends Form {
                 'data' => array (
                     'col1' => array (
                         'type' => 'mainform',
+                        'size' => '100',
                     ),
                 ),
             ),
+            'inlineJS' => '',
         );
     }
 
@@ -30,13 +32,22 @@ class DevCrudRelForm extends Form {
                         'name' => 'name',
                         'options' => array (
                             'ps-list' => '$parent.relNameList',
+                            'ng-model' => 'item.name',
+                            'ng-change' => 'changeRelation(item, relationList[model.name])',
                         ),
                         'type' => 'DropDownList',
                     ),
                     array (
                         'type' => 'Text',
                         'value' => '<div ng-if=\"!!model.name\">
-    <pre ng-if=\"!!relationList[model.name].tableName\" style=\"padding:5px;margin:5px 1px 5px 5px;font-size:12px;\">
+    <pre ng-if=\"!!relationList[model.name].tableName\" style=\"
+    padding:5px;
+    margin:5px 1px 5px 5px;
+    font-size:12px;
+    user-select:text;
+    -webkit-user-select:text;
+    -moz-user-select:text;
+    \">
 TYPE  : {{ relationList[model.name].type }}
 TABLE : {{ relationList[model.name].tableName }}
 FK    : {{ relationList[model.name].foreignKey }}</pre>
@@ -54,6 +65,21 @@ FK    : {{ relationList[model.name].foreignKey }}</pre>
                     array (
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                    ),
+                    array (
+                        'name' => 'BelongsTo',
+                        'subForm' => 'application.modules.dev.forms.formbuilder.crud.DevCrudRelBelongsTo',
+                        'options' => array (
+                            'ng-if' => 'relationList[model.name].type == \'CBelongsToRelation\'',
+                        ),
+                        'type' => 'SubForm',
+                    ),
+                    array (
+                        'type' => 'Text',
+                        'value' => '<div ng-if=\"false\">
+    <pre>{{ model | json }}</pre>
+    <pre>{{  relationList[model.name] | json }}</pre>
+</div>',
                     ),
                 ),
                 'w1' => '50%',

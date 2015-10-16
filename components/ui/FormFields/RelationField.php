@@ -527,6 +527,9 @@ class RelationField extends FormField {
             $criteria['nolimit'] = true;
         }
 
+        ## softDelete behavior
+        $this->applySoftDelete($criteria);
+
         return $criteria;
     }
 
@@ -708,6 +711,10 @@ class RelationField extends FormField {
     public function actionDgrSearch() {
         $postdata = file_get_contents("php://input");
         $post     = CJSON::decode($postdata);
+
+        $s = '';
+        $m = '';
+        $f = '';
         extract($post);
 
         $fb    = FormBuilder::load($m);
@@ -770,12 +777,36 @@ class RelationField extends FormField {
             }
         }
 
+
         $this->relationCriteria['condition'] = $this->relationCriteria['alias'] . "." . $this->idField . " = :find_id_param_relation_field";
         $p[':find_id_param_relation_field']  = $v;
 
-
         $result = $this->query($s, $p);
         echo json_encode(@$result[count($result) - 1]);
+    }
+
+    private function applySoftDelete(&$criteria) {
+        Yii::import($this->modelClass);
+        $relClass = Helper::explodeLast(".", $this->modelClass);
+        if (!class_exists($relClass))
+            return;
+
+        $sd = $relClass::model()->softDelete;
+        if (!empty($sd)) {
+            $prefix = '';
+            if (@$criteria['alias'] != '') {
+                $prefix = $criteria['alias'] . '.';
+            }
+
+            if (!isset($criteria['condition'])) {
+                $criteria['condition'] = '';
+                $and                   = '';
+            } else {
+                $and = ' AND ';
+            }
+
+            $criteria['condition'] .= "{$and} {$prefix}{$sd['column']} <> '{$sd['value']}'";
+        }
     }
 
     public function actionSearch() {
@@ -785,7 +816,13 @@ class RelationField extends FormField {
             return;
         }
 
+        $m = '';
+        $f = '';
+        $v = '';
+        $s = '';
+        $p = '';
         extract($post);
+
         $fb = FormBuilder::load($m);
         if (isset($i)) {
             $field = $fb->findField(['name' => $f, 'identifier' => @$i]);
@@ -858,6 +895,7 @@ class RelationField extends FormField {
         if (isset($criteria['offset']))
             unset($criteria['offset']);
 
+        $this->applySoftDelete($criteria);
         $countCommand = $builder->createCountCommand($tableSchema, new CDbCriteria($criteria));
         $count        = $countCommand->queryScalar();
 

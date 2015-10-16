@@ -175,7 +175,7 @@ class ModuleGenerator extends CodeGenerator {
         }
         if (is_array(@$array['custom'])) {
             foreach ($array['custom'] as $k => $d) {
-                $code = Helper::GetStringBetween($func, $this->customFuncStart($key, $k), $this->customFuncEnd($key, $k));
+                $code = Helper::getStringBetween($func, $this->customFuncStart($key, $k), $this->customFuncEnd($key, $k));
                 $result[] = [
                     $key => $k . '',
                     'func' => trim($code),

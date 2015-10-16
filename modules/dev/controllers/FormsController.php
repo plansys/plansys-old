@@ -66,8 +66,14 @@ class FormsController extends Controller {
             $scriptToken = explode(".", $s);
             $ext         = "." . array_pop($scriptToken);
             array_pop($file);
-            $script  = implode(".", $file) . "." . implode(".", $scriptToken);
-            $content = file_get_contents(Yii::getPathOfAlias(implode(".", $file)) . DIRECTORY_SEPARATOR . $s);
+            $script   = implode(".", $file) . "." . implode(".", $scriptToken);
+            $filePath = Yii::getPathOfAlias(implode(".", $file)) . DIRECTORY_SEPARATOR . $s;
+            if (!file_exists($filePath)) {
+                file_put_contents($filePath, "");
+                $content = "";
+            } else {
+                $content = file_get_contents($filePath);
+            }
         } else {
             $content = file_get_contents(Yii::getPathOfAlias($c) . $ext);
         }
@@ -201,7 +207,7 @@ EOF;
     }
 
     public function actionFormList($m = '') {
-        $list   = FormBuilder::listFile();
+        $list = FormBuilder::listFile();
 
         $return = [];
         if ($m == '') {

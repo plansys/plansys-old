@@ -43,6 +43,14 @@ app.directive('relationField', function ($timeout, $http) {
                     $el.find(".dropdown-menu").scrollTop(scroll - top);
                 }
 
+                $scope.unselect = function () {
+                    $scope.value = '';
+                    $scope.text = '';
+                    $scope.renderedFormList.splice(0, $scope.renderedFormList.length);
+                    $scope.doSearch();
+                    ctrl.$setViewValue($scope.value);
+                }
+
                 $scope.dropdownKeypress = function (e) {
                     if (e.which === 13) {
                         if ($scope.isOpen) {
@@ -104,7 +112,11 @@ app.directive('relationField', function ($timeout, $http) {
                     $scope.updateInternal(item.key);
                 };
 
-                $scope.updateInternal = function (value) {
+                $scope.reload = function () {
+                    $scope.updateInternal($scope.value, true);
+                }
+
+                $scope.updateInternal = function (value, forceReload) {
                     function isEmpty(a) {
                         return !a || a == '';
                     }
@@ -125,8 +137,7 @@ app.directive('relationField', function ($timeout, $http) {
                         }
                     });
 
-
-                    if (!isFound &&  typeof $el.find("li:eq(0) a").attr('value') != "undefined") {
+                    if ((!isFound || !!forceReload) && typeof $el.find("li:eq(0) a").attr('value') != "undefined") {
 
                         // when current value not found in renderedFormList, then search it on server...
                         if (!!$scope.value) {
@@ -408,6 +419,8 @@ app.directive('relationField', function ($timeout, $http) {
                         $scope.searchable = $scope.$parent.$eval(attrs.searchable);
                     }
                 }, 100);
+
+                parent[$scope.name] = $scope;
             }
         }
     };

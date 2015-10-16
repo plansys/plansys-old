@@ -37,7 +37,6 @@ app.directive('listView', function ($timeout) {
                 $scope.setViewValue = function () {
                     $scope.processValue(function () {
                         $scope.showUndoDelete = false;
-
                         var value = angular.copy($scope.value);
                         if ($scope.fieldTemplate == "default") {
                             var newVal = [];
@@ -46,6 +45,7 @@ app.directive('listView', function ($timeout) {
                             }
                             value = newVal;
                         }
+
 
                         ctrl.$setViewValue(value);
                     });
@@ -214,15 +214,13 @@ app.directive('listView', function ($timeout) {
 
                 // change Watchers
                 $timeout(function () {
-                    if (!!$scope.options['ng-change']) {
-                        $scope.stopWatchChanges = $scope.$watch('value', function (n, o) {
-                            if (n !== o) {
-                                if (!$scope.itemChanging) {
-                                    $scope.setViewValue();
-                                }
+                    $scope.stopWatchChanges = $scope.$watch('value', function (n, o) {
+                        if (n !== o) {
+                            if (!$scope.itemChanging) {
+                                $scope.setViewValue();
                             }
-                        }, true);
-                    }
+                        }
+                    }, true);
                 });
 
                 // if ngModel is present, use that instead of value from php

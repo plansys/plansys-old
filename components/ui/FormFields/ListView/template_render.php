@@ -41,7 +41,7 @@
                             <i class="fa fa-arrows"></i>
                         </div>
 
-                        <div class='list-view-item-container <?php if ($this->sortable == 'No'): ?>unsorted<?php endif ?>' >
+                        <div class='list-view-item-container <?php if ($this->sortable == 'No'): ?>unsorted<?php endif ?>'>
                             <?= $this->renderTemplateForm; ?>
                             <div class="clearfix"></div>
                         </div>
