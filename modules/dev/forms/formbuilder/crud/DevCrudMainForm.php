@@ -145,7 +145,7 @@ padding-left:0px;',
             ),
             array (
                 'type' => 'Text',
-                'value' => '        <div ng-if=\\"!!model.name\\">',
+                'value' => '                                                                <div ng-if=\\"!!model.name\\">',
             ),
             array (
                 'title' => 'Advanced Settings',
@@ -200,7 +200,7 @@ padding-left:0px;',
             ),
             array (
                 'type' => 'Text',
-                'value' => '                <div ng-if=\\"model.masterData == \'No\'\\">',
+                'value' => '                                                                                                                                <div ng-if=\\"model.masterData == \'No\'\\">',
             ),
             array (
                 'title' => 'Relations',
@@ -262,7 +262,16 @@ padding-left:0px;',
             <td>{{f.type}}</td>
             <td>{{f.name}}</td>
             <td>
-                <div class=\"label label-default\" style=\"text-transform:uppercase;\">{{f.status == \'exist\' ? \'FILE EXISTS\' : f.status}}</div>
+                <div class=\"label label-default\" style=\"text-transform:uppercase;\">
+                    {{f.status == \'exist\' ? \'FILE EXISTS\' : f.status}}
+                </div>
+                <div ng-if=\"!!f.warning\" class=\"alert alert-warning\" 
+                    ng-bind-html=\"f.warning\" style=\"
+                    font-size:12px;
+                    margin:0px;
+                    margin-top:5px;
+                    padding:5px
+                \"></div>
             </td>
             <td style=\'text-align:center;\' ng-if=\"step == 3\">
                 <label style=\'margin:0px;\' ng-if=\'f.status == \"exist\"\' >

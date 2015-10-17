@@ -136,8 +136,6 @@ class ChartPie extends FormField {
                 'name' => 'series',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.ChartSeriesForm',
-                'labelWidth' => '0',
-                'fieldWidth' => '12',
                 'options' => array (
                     'ng-model' => 'active.series',
                     'ng-change' => 'save()',

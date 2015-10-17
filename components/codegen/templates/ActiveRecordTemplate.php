@@ -226,6 +226,210 @@ class ActiveRecordTemplate extends CComponent {
         return $return;
     }
 
+    private static function generateRelform(&$return, $params) {
+        $array      = [];
+        $primaryKey = '';
+        $columns    = [];
+        $length     = 0;
+        $model      = null;
+        $basicTitle = "";
+        $module     = '';
+        $basic      = '';
+        extract($params);
+
+        $generatorParams = [];
+        if (isset($_SESSION['CrudGenerator']) && isset($_SESSION['CrudGenerator'][get_class($model)])) {
+            $generatorParams = $_SESSION['CrudGenerator'][get_class($model)];
+            unset($_SESSION['CrudGenerator'][get_class($model)]);
+        }
+
+        ## get basic model name
+        $basic = substr($basic, 0, strlen($generatorParams['relation']['name']) * -1);
+
+        $prefixUrl = "{$basic}";
+        if ($module != '' && $module != 'app' && $module != 'application') {
+            $prefixUrl = "{$module}/" . $prefixUrl;
+        }
+
+        $column1  = [];
+        $column2  = [];
+        $array_id = null;
+        foreach ($array as $k => $i) {
+            if (isset($array[$k]['name'])) {
+                if ($array[$k]['name'] == $primaryKey) {
+                    $array_id = $array[$k];
+                    continue;
+                }
+                if (isset($array[$k]['label'])) {
+                    $array[$k]['label'] = ucfirst(implode(" ", array_map('ucfirst', explode("_", $array[$k]['label']))));
+                }
+                switch (true) {
+                    case $columns[$array[$k]['name']]->dbType == "date":
+                        $array[$k]['type']      = "DateTimePicker";
+                        $array[$k]['fieldType'] = "date";
+                        break;
+                    case $columns[$array[$k]['name']]->dbType == "datetime":
+                        $array[$k]['type']      = "DateTimePicker";
+                        $array[$k]['fieldType'] = "datetime";
+                        break;
+                    case $columns[$array[$k]['name']]->dbType == "timestamp":
+                        $array[$k]['type']      = "DateTimePicker";
+                        $array[$k]['fieldType'] = "datetime";
+                        break;
+                    case $columns[$array[$k]['name']]->dbType == "time":
+                        $array[$k]['type']      = "DateTimePicker";
+                        $array[$k]['fieldType'] = "time";
+                        break;
+                    case substr($i['name'], -3) == "_id":
+                        ## generate relation field
+                        ## get class name
+                        $relClassName       = substr($i['name'], 0, strlen($i['name']) - 3);
+                        $array[$k]['label'] = str_replace("_", " ", ucfirst($relClassName));
+                        $relClassName       = implode("", array_map('ucfirst', explode("_", $relClassName)));
+
+                        if (@is_subclass_of($relClassName, 'ActiveRecord')) {
+                            ## get class alias
+                            if (is_file(Yii::getPathOfAlias('app.models.' . $relClassName) . ".php")) {
+                                $classAlias = "app.models." . $relClassName;
+                            } else if (is_file(Yii::getPathOfAlias('application.models.' . $relClassName) . ".php")) {
+                                $classAlias = "application.models." . $relClassName;
+                            } else {
+                                $classAlias = '';
+                            }
+
+                            if ($classAlias != '') {
+                                ## fill attribute
+                                $array[$k]['type']       = "RelationField";
+                                $array[$k]['modelClass'] = $classAlias;
+                                $array[$k]['idField']    = $relClassName::model()->tableSchema->primaryKey;
+                                $attr                    = $relClassName::model()->attributes;
+
+                                ## fill label field
+                                if (array_key_exists('name', $attr)) {
+                                    $array[$k]['labelField'] = 'name';
+                                } else if (array_key_exists('nama', $attr)) {
+                                    $array[$k]['labelField'] = 'nama';
+                                } else {
+                                    foreach ($attr as $y => $z) {
+                                        if ($y == $array[$k]['idField'])
+                                            continue;
+                                        if ($y == 'softDelete')
+                                            continue;
+                                        if (substr($y, -3) == "_id")
+                                            continue;
+
+                                        $array[$k]['labelField'] = $y;
+                                        break;
+                                    }
+                                }
+                            }
+                        } else if (!empty($generatorParams)) {
+                            if (!isset($_SESSION['CrudGenerator'][get_class($model)])) {
+                                $_SESSION['CrudGenerator'][get_class($model)] = [];
+                            }
+
+                            if (!isset($_SESSION['CrudGenerator'][get_class($model)]['msg'])) {
+                                $_SESSION['CrudGenerator'][get_class($model)] = [
+                                    'msg' => '<b>WARNING: </b>'
+                                ];
+                            }
+
+                            $msg = $_SESSION['CrudGenerator'][get_class($model)]['msg'];
+                            $msg .= ' <br/>&bull; Failed to create RelationField <b>' . $i['name'] . '</b>,
+                                      <br/> &nbsp; Model Class <b>' . $relClassName . '</b> is not available';
+                            $_SESSION['CrudGenerator'][get_class($model)] = ['msg' => $msg];
+                        }
+                        break;
+                }
+            }
+
+            if ($k < $length / 2) {
+                $column1[] = $array[$k];
+            } else {
+                $column2[] = $array[$k];
+            }
+
+        }
+
+        $column1[] = '<column-placeholder></column-placeholder>';
+        $column2[] = '<column-placeholder></column-placeholder>';
+        $return[]  = [
+            'type' => 'Text',
+            'value' => '<div ng-show="!params.posted">',
+        ];
+
+        $linkBar = [
+            [
+                'label' => 'Simpan',
+                'buttonType' => 'success',
+                'icon' => 'check',
+                'options' => [
+                    'ng-click' => "form.submit(this)",
+                ],
+                'type' => 'LinkButton',
+            ],
+        ];
+
+        if ($generatorParams['relation']['deleteable'] == 'Yes') {
+            $linkBar[] = [
+                'type' => 'Text',
+                'value' => '<div ng-if="!isNewRecord" class="separator"></div>',
+                'renderInEditor' => 'Yes',
+            ];
+            $linkBar[] = [
+                'label' => 'Hapus',
+                'buttonType' => 'danger',
+                'icon' => 'trash',
+                'options' => [
+                    'ng-if' => '!isNewRecord',
+                    'href' => 'url:/' . $prefixUrl . '/delete' . ucfirst($generatorParams['relation']['name']) . '&id={params.id}',
+                    'confirm' => 'Apakah Anda Yakin ?'
+                ],
+                'type' => 'LinkButton',
+            ];
+        }
+
+        $return[] = [
+            'linkBar' => $linkBar,
+            'title' => '{{ isNewRecord ? \'Tambah ' . $basicTitle . '\' : \'Update ' . $basicTitle . '\'}}',
+            'showSectionTab' => 'No',
+            'type' => 'ActionBar',
+        ];
+
+        if (!is_null($array_id)) {
+            $return[] = $array_id;
+        }
+        $return[] = [
+            'type' => 'ColumnField',
+            'column1' => $column1,
+            'column2' => $column2
+        ];
+        $return[] = [
+            'type' => 'Text',
+            'value' => '</div>
+<div ng-if="!!params.posted">
+    <br>
+    <br>
+    <br>
+    <div ng-if=\'!!params.inserted\'>
+        <div ng-init=\'
+        parentWindow.' . $generatorParams['relation']['foreignKey'] . '.updateInternal(model.' . $primaryKey . ');
+        \'></div>
+    </div>
+    <div ng-if=\'!!params.deleted\'>
+        <div ng-init=\'
+        parentWindow.' . $generatorParams['relation']['foreignKey'] . '.unselect();
+        \'></div>
+    </div>
+    <div style=\'text-align:center;\' ng-init=\'
+    closeWindow();
+    parentWindow.' . $generatorParams['relation']['foreignKey'] . '.reload();
+    \'>Loading ...</div>
+</div>'
+        ];
+        return $return;
+    }
+
     private static function generateForm(&$return, $params) {
         $array      = [];
         $primaryKey = '';
@@ -243,8 +447,6 @@ class ActiveRecordTemplate extends CComponent {
             $generatorParams = $_SESSION['CrudGenerator'][$modelClassName];
             unset($_SESSION['CrudGenerator'][$modelClassName]);
         }
-
-        $generatorParams = json_decode('{"name":"ErisFilmForm.php","className":"ErisFilmForm","extendsName":"Film","type":"form","relations":[{"name":"language","tableName":"language","type":"CBelongsToRelation","foreignKey":"language_id","className":"Language","formType":"PopUp"},{"name":"originalLanguage","tableName":"language","type":"CBelongsToRelation","foreignKey":"original_language_id","className":"Language","formType":"PopUp"}],"status":"processing","overwrite":true,"path":"app.modules.eris.forms.film"}', true);
 
         $prefixUrl = "{$basic}";
         if ($module != '' && $module != 'app' && $module != 'application') {
@@ -298,27 +500,57 @@ class ActiveRecordTemplate extends CComponent {
                                 if (@$rel['type'] == 'CBelongsToRelation' && $relClassName == $relName) {
                                     $relForm      = substr($modelClassName, 0, -4) . $relName . 'Relform';
                                     $relClassName = $rel['className'];
+                                    $buttons      = [];
 
-                                    $genRel[] = [
-                                        'index' => $k,
-                                        'data' => [[
+                                    if ($rel['insertable'] == "Yes") {
+                                        $label     = strlen($array[$k]['label']) > 10 ? '' : $array[$k]['label'];
+                                        $buttons[] = [
                                             'renderInEditor' => 'Yes',
                                             'type' => 'Text',
                                             'value' => '<div
-ng-click="Rel' . $relName . 'Popup.open()" ng-if="!!model.' . $i['name'] . '"
+ng-click="Rel' . $relName . 'InsertPopup.open()"
+style="margin:0px 0px 10px 5px;" class="btn btn-xs btn-default pull-right"><i class="fa fa-plus"></i> New ' . $label . '</div>',
+                                        ];
+                                    }
+
+                                    $buttons[] = [
+                                        'renderInEditor' => 'Yes',
+                                        'type' => 'Text',
+                                        'value' => '<div
+ng-click="Rel' . $relName . 'UpdatePopup.open()" ng-if="!!model.' . $i['name'] . ' && !!' . $i['name'] . '.text"
 style="margin-bottom:10px;" class="btn btn-xs btn-default pull-right"><i class="fa fa-pencil"></i> Edit ' . $array[$k]['label'] . '</div>
 <div class="clearfix"></div>',
-                                        ], [
+                                    ];
+
+                                    if ($rel['insertable'] == "Yes") {
+                                        $buttons[] = [
                                             'type' => 'PopupWindow',
-                                            'name' => 'Rel' . $relName . 'Popup',
+                                            'name' => 'Rel' . $relName . 'InsertPopup',
                                             'options' => array(
                                                 'height' => '500',
                                                 'width' => '700',
                                             ),
                                             'mode' => 'url',
-                                            'url' => $prefixUrl . '/update' . $relName . '&id={{model.' . $i['name'] . '}}',
-                                        ]]
+                                            'url' => $prefixUrl . '/insert' . $relName . '&id={{model.' . $i['name'] . '}}',
+                                        ];
+                                    }
+
+                                    $buttons[] = [
+                                        'type' => 'PopupWindow',
+                                        'name' => 'Rel' . $relName . 'UpdatePopup',
+                                        'options' => array(
+                                            'height' => '500',
+                                            'width' => '700',
+                                        ),
+                                        'mode' => 'url',
+                                        'url' => $prefixUrl . '/update' . $relName . '&id={{model.' . $i['name'] . '}}',
                                     ];
+
+                                    $genRel[] = [
+                                        'index' => $k,
+                                        'data' => $buttons
+                                    ];
+                                    break;
                                 }
                             }
                         }
@@ -359,6 +591,21 @@ style="margin-bottom:10px;" class="btn btn-xs btn-default pull-right"><i class="
                                     }
                                 }
                             }
+                        } else if (!empty($generatorParams)) {
+                            if (!isset($_SESSION['CrudGenerator'][get_class($model)])) {
+                                $_SESSION['CrudGenerator'][get_class($model)] = [];
+                            }
+
+                            if (!isset($_SESSION['CrudGenerator'][get_class($model)]['msg'])) {
+                                $_SESSION['CrudGenerator'][get_class($model)] = [
+                                    'msg' => '<b>WARNING: </b>'
+                                ];
+                            }
+
+                            $msg = $_SESSION['CrudGenerator'][get_class($model)]['msg'];
+                            $msg .= ' <br/>&bull; Failed to create RelationField <b>' . $i['name'] . '</b>,
+                                      <br/> &nbsp; Model Class <b>' . $relClassName . '</b> is not available';
+                            $_SESSION['CrudGenerator'][get_class($model)] = ['msg' => $msg];
                         }
                         break;
                 }
@@ -373,8 +620,8 @@ style="margin-bottom:10px;" class="btn btn-xs btn-default pull-right"><i class="
         }
 
         foreach ($genRel as $i => $gen) {
-            $colNum = $gen['index'] > floor(count($array) / 2) ? 2 : 1;
-            $idx    = $gen['index'] > floor(count($array) / 2) ? $gen['index'] - ceil(count($array) / 2) : $gen['index'];
+            $colNum = $gen['index'] >= floor(count($array) / 2) ? 2 : 1;
+            $idx    = $gen['index'] >= floor(count($array) / 2) ? $gen['index'] - ceil(count($array) / 2) : $gen['index'];
             $offset = ($i * count($gen['data'])) + 1;
             array_splice(${'column' . $colNum}, $idx + $offset, 0, $gen['data']);
         }
@@ -432,187 +679,6 @@ style="margin-bottom:10px;" class="btn btn-xs btn-default pull-right"><i class="
             'type' => 'ColumnField',
             'column1' => $column1,
             'column2' => $column2
-        ];
-        return $return;
-    }
-
-
-    private static function generateRelform(&$return, $params) {
-        $array      = [];
-        $primaryKey = '';
-        $columns    = [];
-        $length     = 0;
-        $model      = null;
-        $basicTitle = "";
-        $module     = '';
-        $basic      = '';
-        extract($params);
-
-        $generatorParams = [];
-        if (isset($_SESSION['CrudGenerator']) && isset($_SESSION['CrudGenerator'][get_class($model)])) {
-            $generatorParams = $_SESSION['CrudGenerator'][get_class($model)];
-            unset($_SESSION['CrudGenerator'][get_class($model)]);
-        }
-
-
-        ## get basic model name
-        $basic = substr($basic, 0, strlen($generatorParams['relation']['name']) * -1);
-
-        $prefixUrl = "{$basic}";
-        if ($module != '' && $module != 'app' && $module != 'application') {
-            $prefixUrl = "{$module}/" . $prefixUrl;
-        }
-
-        $column1  = [];
-        $column2  = [];
-        $array_id = null;
-        foreach ($array as $k => $i) {
-            if (isset($array[$k]['name'])) {
-                if ($array[$k]['name'] == $primaryKey) {
-                    $array_id = $array[$k];
-                    continue;
-                }
-                if (isset($array[$k]['label'])) {
-                    $array[$k]['label'] = ucfirst(implode(" ", array_map('ucfirst', explode("_", $array[$k]['label']))));
-                }
-
-                switch (true) {
-                    case $columns[$array[$k]['name']]->dbType == "date":
-                        $array[$k]['type']      = "DateTimePicker";
-                        $array[$k]['fieldType'] = "date";
-                        break;
-                    case $columns[$array[$k]['name']]->dbType == "datetime":
-                        $array[$k]['type']      = "DateTimePicker";
-                        $array[$k]['fieldType'] = "datetime";
-                        break;
-                    case $columns[$array[$k]['name']]->dbType == "timestamp":
-                        $array[$k]['type']      = "DateTimePicker";
-                        $array[$k]['fieldType'] = "datetime";
-                        break;
-                    case $columns[$array[$k]['name']]->dbType == "time":
-                        $array[$k]['type']      = "DateTimePicker";
-                        $array[$k]['fieldType'] = "time";
-                        break;
-                    case substr($i['name'], -3) == "_id":
-                        ## generate relation field
-                        ## get class name
-                        $relClassName       = substr($i['name'], 0, strlen($i['name']) - 3);
-                        $array[$k]['label'] = str_replace("_", " ", ucfirst($relClassName));
-                        $relClassName       = implode("", array_map('ucfirst', explode("_", $relClassName)));
-
-                        if (@is_subclass_of($relClassName, 'ActiveRecord')) {
-                            ## get class alias
-                            if (is_file(Yii::getPathOfAlias('app.models.' . $relClassName) . ".php")) {
-                                $classAlias = "app.models." . $relClassName;
-                            } else if (is_file(Yii::getPathOfAlias('application.models.' . $relClassName) . ".php")) {
-                                $classAlias = "application.models." . $relClassName;
-                            } else {
-                                $classAlias = '';
-                            }
-
-                            if ($classAlias != '') {
-                                ## fill attribute
-                                $array[$k]['type']       = "RelationField";
-                                $array[$k]['modelClass'] = $classAlias;
-                                $array[$k]['idField']    = $relClassName::model()->tableSchema->primaryKey;
-                                $attr                    = $relClassName::model()->attributes;
-
-                                ## fill label field
-                                if (array_key_exists('name', $attr)) {
-                                    $array[$k]['labelField'] = 'name';
-                                } else if (array_key_exists('nama', $attr)) {
-                                    $array[$k]['labelField'] = 'nama';
-                                } else {
-                                    foreach ($attr as $y => $z) {
-                                        if ($y == $array[$k]['idField'])
-                                            continue;
-                                        if ($y == 'softDelete')
-                                            continue;
-                                        if (substr($y, -3) == "_id")
-                                            continue;
-
-                                        $array[$k]['labelField'] = $y;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                }
-            }
-
-            if ($k < $length / 2) {
-                $column1[] = $array[$k];
-            } else {
-                $column2[] = $array[$k];
-            }
-
-        }
-
-        $column1[] = '<column-placeholder></column-placeholder>';
-        $column2[] = '<column-placeholder></column-placeholder>';
-        $return[]  = [
-            'type' => 'Text',
-            'value' => '<div ng-show="!params.posted">',
-        ];
-        $return[]  = [
-            'linkBar' => [
-                [
-                    'label' => 'Simpan',
-                    'buttonType' => 'success',
-                    'icon' => 'check',
-                    'options' => [
-                        'ng-click' => "form.submit(this)",
-                    ],
-                    'type' => 'LinkButton',
-                ],
-                [
-                    'type' => 'Text',
-                    'value' => '<div ng-if="!isNewRecord" class="separator"></div>',
-                    'renderInEditor' => 'Yes',
-                ],
-                [
-                    'label' => 'Hapus',
-                    'buttonType' => 'danger',
-                    'icon' => 'trash',
-                    'options' => [
-                        'ng-if' => '!isNewRecord',
-                        'href' => 'url:/' . $prefixUrl . '/delete' . ucfirst($generatorParams['relation']['name']) . '&id={model.' . $generatorParams['relation']['foreignKey'] . '}',
-                        'confirm' => 'Apakah Anda Yakin ?'
-                    ],
-                    'type' => 'LinkButton',
-                ],
-            ],
-            'title' => '{{ isNewRecord ? \'Tambah ' . $basicTitle . '\' : \'Update ' . $basicTitle . '\'}}',
-            'showSectionTab' => 'No',
-            'type' => 'ActionBar',
-        ];
-
-        if (!is_null($array_id)) {
-            $return[] = $array_id;
-        }
-        $return[] = [
-            'type' => 'ColumnField',
-            'column1' => $column1,
-            'column2' => $column2
-        ];
-        $return[] = [
-            'type' => 'Text',
-            'value' => '</div>
-<div ng-if="!!params.posted">
-    <br>
-    <br>
-    <br>
-    <div ng-if=\'!!params.deleted\'>
-        <div ng-init=\'
-        parentWindow.' . $generatorParams['relation']['foreignKey'] . '.unselect();
-        \'></div>
-    </div>
-    <div style=\'text-align:center;\' ng-init=\'
-    closeWindow();
-    parentWindow.' . $generatorParams['relation']['foreignKey'] . '.reload();
-    \'>Loading ...</div>
-</div>'
         ];
         return $return;
     }

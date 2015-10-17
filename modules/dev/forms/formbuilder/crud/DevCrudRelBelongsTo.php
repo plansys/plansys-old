@@ -3,6 +3,8 @@
 class DevCrudRelBelongsTo extends Form {
 
     public $formType  = "";
+    public $deleteable = "Yes";
+    public $insertable = "Yes";
 
     public function getForm() {
         return array (
@@ -29,6 +31,29 @@ class DevCrudRelBelongsTo extends Form {
   \'SubForm\' => \'SubForm\'
 ]',
                 'type' => 'DropDownList',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<hr>
+<div ng-if=\"model.formType == \'PopUp\'\">',
+            ),
+            array (
+                'label' => 'Delete-able',
+                'name' => 'deleteable',
+                'defaultType' => 'first',
+                'listExpr' => '[\'Yes\',\'No\']',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Insert-able',
+                'name' => 'insertable',
+                'defaultType' => 'first',
+                'listExpr' => '[\'Yes\',\'No\']',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '</div>',
             ),
         );
     }

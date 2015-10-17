@@ -204,7 +204,16 @@ class Helper {
         return $arr;
     }
 
-// Does not support flag GLOB_BRACE  
+    public static function sortArray(&$array, $subfield) {
+        $sortarray = array();
+        foreach ($array as $key => $row) {
+            $sortarray[$key] = $row[$subfield];
+        }
+
+        array_multisort($sortarray, SORT_ASC, $array);
+    }
+
+    // Does not support flag GLOB_BRACE
     public static function globRecursive($pattern, $flags = 0, $returnCount = false, $count = 0) {
         $files = glob($pattern, $flags);
         if ($returnCount) {

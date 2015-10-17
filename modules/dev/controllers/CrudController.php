@@ -120,27 +120,33 @@ EOF;
 
 
         $relations = "";
-        foreach ($post['relations'] as $rel) {
-            switch ($rel['type']) {
-                case "CBelongsToRelation":
-                    $relName  = ucfirst($rel['name']);
-                    $formName = substr($post['formName'], 0, -4) . $relName . 'Relform';
-                    $tprel    = file_get_contents(Yii::getPathOfAlias('application.components.codegen.templates.TplRelBTController') . ".php");
-                    $tprel    = Helper::getStringBetween($tprel, '### TEMPLATE-START ###', '### TEMPLATE-END ####');
-                    $reprel   = [
-                        'RelModel' => $relName,
-                        'TemplateForm' => $formName,
-                    ];
-                    $tprel    = str_replace(array_keys($reprel), array_values($reprel), $tprel);
-                    $relations .= "
+        if (isset($post['relations'])) {
+            foreach ($post['relations'] as $rel) {
+                switch ($rel['type']) {
+                    case "CBelongsToRelation":
+                        $relName  = ucfirst($rel['name']);
+                        $formName = substr($post['formName'], 0, -4) . $relName . 'Relform';
+                        $tprel    = file_get_contents(Yii::getPathOfAlias('application.components.codegen.templates.TplRelBTController') . ".php");
+                        $tprel    = Helper::getStringBetween($tprel, '### TEMPLATE-START ###', '### TEMPLATE-END ####');
+                        $reprel   = [
+                            'RelModel' => $relName,
+                            'TemplateForm' => $formName,
+                        ];
+                        $tprel    = str_replace(array_keys($reprel), array_values($reprel), $tprel);
+                        $relations .= "
 {$tprel}
                     ";
-                    break;
+                        break;
+                }
             }
         }
 
         $replace['##RELATION-PLACEHOLDER##'] = $relations;
         $content                             = str_replace(array_keys($replace), array_values($replace), $tpl);
         file_put_contents($result['file'], $content);
+    }
+
+    public function actionWarning($c) {
+        echo @$_SESSION['CrudGenerator'][$c]['msg'];
     }
 }

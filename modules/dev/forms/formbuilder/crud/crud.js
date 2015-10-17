@@ -235,8 +235,12 @@ $scope.generateNext = function () {
                 if (!!res.touch) {
                     $http.get(res.touch).then(function () {
                         $scope.data.files[$scope.$index].status = res.status;
-                        $scope.$index++;
-                        $scope.generateNext();
+                        $http.get(Yii.app.createUrl("/dev/crud/warning", {c: $scope.data.files[$scope.$index].className}))
+                            .success(function (res) {
+                                $scope.data.files[$scope.$index].warning = res;
+                                $scope.$index++;
+                                $scope.generateNext();
+                            });
                     });
                 } else {
                     $scope.data.files[$scope.$index].status = res.status;
@@ -252,6 +256,6 @@ $scope.generateNext = function () {
     } else {
         $scope.step = 5;
         $scope.msg = 'CRUD successfully generated!';
-        $scope.msg += ' <a class="btn btn-xs btn-success" target="_blank" href="' + $scope.getControllerUrl() + '">Visit ' + $scope.model.name + ' Now <i class="fa fa-chevron-right"></i></a>';
+        $scope.msg += ' <a class="btn btn-xs btn-success" target="_blank" onClick="window.close()" href="' + $scope.getControllerUrl() + '">Visit ' + $scope.model.name + ' Now <i class="fa fa-chevron-right"></i></a>';
     }
 }

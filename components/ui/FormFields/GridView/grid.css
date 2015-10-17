@@ -230,7 +230,7 @@
     min-height:16px;
     display:inline-block;
     white-space: pre-wrap;
-    box-shadow:inset 0px 0px 0px 1px #999;
+    box-shadow:inset 0px 0px 0px 1px #fff;
     resize:none;
     margin:-2px 0px -1px -4px;
     box-sizing: content-box;

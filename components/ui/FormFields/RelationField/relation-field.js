@@ -43,6 +43,20 @@ app.directive('relationField', function ($timeout, $http) {
                     $el.find(".dropdown-menu").scrollTop(scroll - top);
                 }
 
+                $scope.reload = function () {
+                    $scope.doSearch(function () {
+                        $("[relation-field] > data[rel_class='" + $scope.relClass + "']").each(function (idx, item) {
+                            var itemScope = angular.element(item).scope();
+                            if (!!itemScope && itemScope != $scope) {
+                                itemScope.doSearch(function() {
+
+                                });
+                            }
+                        });
+                        $scope.updateInternal($scope.value, true);
+                    });
+                }
+
                 $scope.unselect = function () {
                     $scope.value = '';
                     $scope.text = '';
@@ -111,10 +125,6 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.update = function (item, f) {
                     $scope.updateInternal(item.key);
                 };
-
-                $scope.reload = function () {
-                    $scope.updateInternal($scope.value, true);
-                }
 
                 $scope.updateInternal = function (value, forceReload) {
                     function isEmpty(a) {
@@ -354,6 +364,7 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.value = $el.find("data[name=value]").html().trim();
                 $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
+                $scope.relClass = $el.find("data[name=rel_class]:eq(0)").attr('rel_class').trim();
                 $scope.modelField = JSON.parse($el.find("data[name=model_field]").text());
                 $scope.paramValue = {};
                 $scope.isOpen = false;

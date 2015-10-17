@@ -262,6 +262,7 @@ app.directive('dropDownList', function ($timeout) {
                             $scope.updateInternal($scope.value);
                         }, 0);
                     }
+
                     $scope.$watch(attrs.psList, changeFieldList);
                 }
 
@@ -317,6 +318,7 @@ app.directive('dropDownList', function ($timeout) {
                             $scope.updateInternal($el.find("data[name=value]").html());
                         }
                     }
+
                     switch ($scope.defaultType) {
                         case '':
                             init();
@@ -331,7 +333,15 @@ app.directive('dropDownList', function ($timeout) {
                             }
                             break;
                     }
-
+                    $timeout(function () {
+                        if (typeof ctrl.$viewValue == 'undefined') {
+                            if (!$scope.formList['']) {
+                                $scope.text = '';
+                            } else if (!!$scope.formList['']) {
+                                $scope.text = $scope.formList[''];
+                            }
+                        }
+                    });
                     if (attrs.searchable) {
                         $scope.searchable = $scope.$parent.$eval(attrs.searchable);
                     }
