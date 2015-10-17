@@ -2,7 +2,7 @@
 
 class ActiveRecord extends CActiveRecord {
     const DEFAULT_PAGE_SIZE = 25;
-    protected $softDelete         = [];
+    protected $_softDelete        = [];
     private   $__relations        = [];
     private   $__relationsObj     = [];
     private   $__isRelationLoaded = false;
@@ -295,7 +295,7 @@ class ActiveRecord extends CActiveRecord {
             $condition = isset($options['condition']) ? $options['condition'] : "{$pk} IN (:ids)";
             $condition = str_replace(":ids", $idsString, $condition);
 
-            if (empty($instance->softDelete)) {
+            if (empty($instance->_softDelete)) {
                 $sql     = "DELETE FROM {$table} WHERE $condition;";
                 $command = Yii::app()->db->createCommand($sql);
                 try {
@@ -312,7 +312,7 @@ class ActiveRecord extends CActiveRecord {
                 foreach ($ids as $id) {
                     $params[] = [
                         $pk => $id,
-                        $instance->softDelete['column'] => $instance->softDelete['value']
+                        $instance->_softDelete['column'] => $instance->_softDelete['value']
                     ];
                 }
                 ActiveRecord::batchUpdate($model, $params);
@@ -605,6 +605,8 @@ class ActiveRecord extends CActiveRecord {
             if ($group['mode'] == 'sql' && isset($group['sql']) && trim($group['sql']) != '') {
                 $cdbCriteria->limit = -1;
                 $cdbCriteria->order = '';
+                $builder            = $this->commandBuilder;
+                $tableSchema        = $this->tableSchema;
                 $command            = $builder->createFindCommand($tableSchema, $cdbCriteria);
                 $sql                = $command->text;
                 $sql                = str_replace("{sql}", $sql, $group['sql']);
@@ -1102,7 +1104,7 @@ class ActiveRecord extends CActiveRecord {
                                             $this->__relInsert[$k][$n][$relForeignKey] = $this->{$pk};
                                         }
                                     }
-                                } else if (is_array($foreignKey)) { ## with through
+                                } else if (is_array($relForeignKey)) { ## with through
                                     foreach ($this->__relInsert[$k] as $n => $m) {
                                         foreach ($relForeignKey as $rk => $fk) {
                                             $this->__relInsert[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
@@ -1199,6 +1201,7 @@ class ActiveRecord extends CActiveRecord {
 
                 ## create directory
                 ## Jika disini gagal, berarti ada yang salah dengan format uploadPath di FormBuilder-nya
+                $evalDir = '';
                 eval('$evalDir = "' . $f['uploadPath'] . '";');
                 $evalDir    = str_replace(["\n", "\r"], "", $evalDir);
                 $repopath   = realpath(Yii::getPathOfAlias("repo"));
@@ -1342,9 +1345,9 @@ class ActiveRecord extends CActiveRecord {
 
     public function delete() {
         try {
-            if (!!$this->softDelete) {
-                $this->{$this->softDelete['column']} = $this->softDelete['value'];
-                $this->update([$this->softDelete['column']]);
+            if (!!$this->_softDelete) {
+                $this->{$this->_softDelete['column']} = $this->_softDelete['value'];
+                $this->update([$this->_softDelete['column']]);
             } else {
                 parent::delete();
             }

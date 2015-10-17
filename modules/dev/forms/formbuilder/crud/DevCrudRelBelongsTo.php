@@ -38,14 +38,14 @@ class DevCrudRelBelongsTo extends Form {
 <div ng-if=\"model.formType == \'PopUp\'\">',
             ),
             array (
-                'label' => 'Delete-able',
+                'label' => 'Deleteable',
                 'name' => 'deleteable',
                 'defaultType' => 'first',
                 'listExpr' => '[\'Yes\',\'No\']',
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'Insert-able',
+                'label' => 'Insertable',
                 'name' => 'insertable',
                 'defaultType' => 'first',
                 'listExpr' => '[\'Yes\',\'No\']',

@@ -274,19 +274,6 @@ Isi field disamping untuk mengubah password.
                         'resetable' => 'Yes',
                         'defaultValue' => '',
                         'show' => false,
-                        'list' => array (
-                            'general' => array (
-                                'view' => 'View',
-                                'create' => 'Create',
-                                'update' => 'Update',
-                                'delete' => 'Delete',
-                            ),
-                            'other' => array (
-                                'login' => 'Login',
-                                'logout' => 'Logout',
-                                'other' => 'Other',
-                            ),
-                        ),
                     ),
                     array (
                         'name' => 'description',
@@ -341,7 +328,7 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                     'distinct' => 'false',
                     'alias' => 't',
                     'condition' => '{[where]}',
-                    'order' => 'id desc {, [order]}',
+                    'order' => '{[order], id desc}',
                     'paging' => '{[paging]}',
                     'group' => '',
                     'having' => '',
@@ -359,10 +346,10 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                         'options' => array (
                             'width' => '140',
                         ),
-                        'inputMask' => '99/99/9999 99:99',
+                        'inputMask' => '',
                         'stringAlias' => array (),
                         'columnType' => 'string',
-                        'show' => false,
+                        'show' => true,
                     ),
                     array (
                         'name' => 'type',

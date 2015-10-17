@@ -791,7 +791,7 @@ class RelationField extends FormField {
         if (!class_exists($relClass))
             return;
 
-        $sd = $relClass::model()->softDelete;
+        $sd = $relClass::model()->_softDelete;
         if (!empty($sd)) {
             $prefix = '';
             if (@$criteria['alias'] != '') {

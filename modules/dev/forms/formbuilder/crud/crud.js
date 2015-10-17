@@ -140,15 +140,18 @@ $scope.form.submit = function (f) {
 
         for (i in $scope.model.relations) {
             var rel = $scope.model.relations[i];
-            $scope.data.files.push({
-                name: $scope.params.prefix + $scope.model.name + ucfirst(rel.name) + 'Relform.php',
-                className: $scope.params.prefix + $scope.model.name + ucfirst(rel.name) + 'Relform',
-                extendsName: rel.className,
-                type: 'relform',
-                relation: rel
-            });
+            switch (rel.type) {
+                case "CBelongsToRelation":
+                    $scope.data.files.push({
+                        name: $scope.params.prefix + $scope.model.name + ucfirst(rel.name) + 'Relform.php',
+                        className: $scope.params.prefix + $scope.model.name + ucfirst(rel.name) + 'Relform',
+                        extendsName: rel.className,
+                        type: 'relform',
+                        relation: rel
+                    });
+                    break;
+            }
         }
-
     } else {
         $scope.data.files.push({
             name: $scope.params.prefix + $scope.model.name + 'Master.php',

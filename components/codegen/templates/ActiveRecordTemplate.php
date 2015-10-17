@@ -32,7 +32,9 @@ class ActiveRecordTemplate extends CComponent {
                 self::generateIndex($return, $params);
                 break;
             case "relform":
-                self::generateRelform($return, $params);
+                if (isset($_SESSION['CrudGenerator'][get_class($model)]['relation']['type'])) {
+                    self::generateRelform($return, $params);
+                }
                 break;
             case "form":
                 self::generateForm($return, $params);
@@ -100,7 +102,6 @@ class ActiveRecordTemplate extends CComponent {
         ];
 
         $gv = new GridView;
-
         ## generate Filters & Columns
         foreach ($array as $k => $i) {
             if ($array[$k]['name'] == $primaryKey) {
@@ -118,18 +119,6 @@ class ActiveRecordTemplate extends CComponent {
                 'name' => $i['name'],
                 'label' => $i['label']
             ];
-            switch (true) {
-                case $columns[$array[$k]['name']]->dbType == "date" :
-                    $filter['filterType'] = "date";
-                    $column['inputMask']  = "99/99/9999";
-                    break;
-                case $columns[$array[$k]['name']]->dbType == "datetime" :
-                    $column['inputMask'] = "99/99/9999 99:99";
-                    break;
-                case $columns[$array[$k]['name']]->dbType == "time" :
-                    $column['inputMask'] = "99:99";
-                    break;
-            }
 
             $filters[]     = $filter;
             $cols[]        = $column;
@@ -191,8 +180,8 @@ class ActiveRecordTemplate extends CComponent {
             'filters' => $filters
         ];
 
-        if (!!$model->softDelete) {
-            $condition = $model->softDelete['column'] . ' <> \'' . $model->softDelete['value'] . '\' {AND [where]}';
+        if (!!$model->_softDelete) {
+            $condition = $model->_softDelete['column'] . ' <> \'' . $model->_softDelete['value'] . '\' {AND [where]}';
         } else {
             $condition = '{[where]}';
         }
@@ -244,8 +233,7 @@ class ActiveRecordTemplate extends CComponent {
         }
 
         ## get basic model name
-        $basic = substr($basic, 0, strlen($generatorParams['relation']['name']) * -1);
-
+        $basic     = substr($basic, 0, strlen($generatorParams['relation']['name']) * -1);
         $prefixUrl = "{$basic}";
         if ($module != '' && $module != 'app' && $module != 'application') {
             $prefixUrl = "{$module}/" . $prefixUrl;
@@ -313,7 +301,7 @@ class ActiveRecordTemplate extends CComponent {
                                     foreach ($attr as $y => $z) {
                                         if ($y == $array[$k]['idField'])
                                             continue;
-                                        if ($y == 'softDelete')
+                                        if ($y == '_softDelete')
                                             continue;
                                         if (substr($y, -3) == "_id")
                                             continue;
@@ -324,20 +312,8 @@ class ActiveRecordTemplate extends CComponent {
                                 }
                             }
                         } else if (!empty($generatorParams)) {
-                            if (!isset($_SESSION['CrudGenerator'][get_class($model)])) {
-                                $_SESSION['CrudGenerator'][get_class($model)] = [];
-                            }
-
-                            if (!isset($_SESSION['CrudGenerator'][get_class($model)]['msg'])) {
-                                $_SESSION['CrudGenerator'][get_class($model)] = [
-                                    'msg' => '<b>WARNING: </b>'
-                                ];
-                            }
-
-                            $msg = $_SESSION['CrudGenerator'][get_class($model)]['msg'];
-                            $msg .= ' <br/>&bull; Failed to create RelationField <b>' . $i['name'] . '</b>,
-                                      <br/> &nbsp; Model Class <b>' . $relClassName . '</b> is not available';
-                            $_SESSION['CrudGenerator'][get_class($model)] = ['msg' => $msg];
+                            self::appendGenMsg('<br/>&bull; Failed to create RelationField <b>' . $i['name'] . '</b>,
+                                      <br/> &nbsp; Model Class <b>' . $relClassName . '</b> is not available', $model);
                         }
                         break;
                 }
@@ -348,7 +324,6 @@ class ActiveRecordTemplate extends CComponent {
             } else {
                 $column2[] = $array[$k];
             }
-
         }
 
         $column1[] = '<column-placeholder></column-placeholder>';
@@ -430,6 +405,139 @@ class ActiveRecordTemplate extends CComponent {
         return $return;
     }
 
+
+    private static function generateMaster(&$return, $params) {
+        $array      = [];
+        $primaryKey = '';
+        $cols       = [];
+        $length     = 0;
+        $basicTitle = "";
+        $model      = null;
+        $module     = '';
+        $basic      = '';
+        extract($params);
+
+        $return[] = [
+            'linkBar' => [
+                [
+                    'label' => 'Simpan ' . $basicTitle,
+                    'buttonType' => 'success',
+                    'icon' => 'check',
+                    'options' => [
+                        'ng-click' => "form.submit(this)",
+                    ],
+                    'type' => 'LinkButton',
+                ],
+            ],
+            'title' => '{{ form.title }}',
+            'showSectionTab' => 'No',
+            'type' => 'ActionBar',
+        ];
+
+        $gv = new GridView;
+
+        ## generate Filters & Columns
+        $pkCol = null;
+        foreach ($array as $k => $i) {
+            if ($i['name'] == $primaryKey) {
+                $i['label'] = $i['name'];
+            }
+
+            ## setup label
+            $i['label'] = implode(" ", array_map('ucfirst', explode("_", $i['label'])));
+
+            ## setup filters
+            $filter          = [
+                'filterType' => "string"
+            ];
+            $filter['name']  = $i['name'];
+            $filter['label'] = $i['label'];
+            $filters[]       = $filter;
+
+            ## setup columns
+            $column          = [
+                'columnType' => "string",
+                'options' => []
+            ];
+            $column['name']  = $i['name'];
+            $column['label'] = $i['label'];
+
+            if ($i['name'] != $primaryKey) {
+                $gv->columns[]             = $column;
+                $column['cellMode']        = 'custom';
+                $column['options']['mode'] = 'editable';
+                $column['html']            = $gv->getRowTemplate($column, $k);
+                $cols[]                    = $column;
+            } else {
+                $pkCol = $column;
+            }
+        }
+        array_unshift($cols, $pkCol);
+
+        $delButtonCol         = [
+            'name' => '',
+            'label' => '',
+            'columnType' => "string",
+            'cellMode' => 'custom',
+            'options' => [
+                'mode' => 'del-button'
+            ]
+        ];
+        $gv->columns[]        = $delButtonCol;
+        $delButtonCol['html'] = $gv->getRowTemplate($delButtonCol, count($cols));
+        array_push($cols, $delButtonCol);
+
+        $return[] = [
+            'name' => 'dataFilter1',
+            'datasource' => 'dataSource1',
+            'type' => 'DataFilter',
+            'filters' => $filters
+        ];
+
+        if (!!$model->_softDelete) {
+            $condition = $model->_softDelete['column'] . ' <> \'' . $model->_softDelete['value'] . '\' {AND [where]}';
+        } else {
+            $condition = '{[where]}';
+        }
+
+        $return[] = [
+            'name' => 'dataSource1',
+            'params' => [
+                'where' => 'dataFilter1',
+                'paging' => 'gridView1',
+                'order' => 'gridView1',
+            ],
+            'relationTo' => 'currentModel',
+            'relationCriteria' => array(
+                'select' => '',
+                'distinct' => 'false',
+                'alias' => 't',
+                'condition' => $condition,
+                'order' => '{[order]}',
+                'paging' => '{[paging]}',
+                'group' => '',
+                'having' => '',
+                'join' => '',
+            ),
+            'type' => 'DataSource',
+        ];
+        $return[] = [
+            'name' => 'gridView1',
+            'datasource' => 'dataSource1',
+            'type' => 'GridView',
+            'columns' => $cols
+        ];
+        $return[] = [
+            'renderInEditor' => 'Yes',
+            'type' => 'Text',
+            'value' => '<div style="margin-top:5px;text-align:center;\">
+    <div ng-click="gridView1.addRow()"
+    class="btn btn-sm btn-success"><i class="fa fa-plus"></i> New Record</div>
+</div>',
+        ];
+        return $return;
+    }
+
     private static function generateForm(&$return, $params) {
         $array      = [];
         $primaryKey = '';
@@ -447,6 +555,8 @@ class ActiveRecordTemplate extends CComponent {
             $generatorParams = $_SESSION['CrudGenerator'][$modelClassName];
             unset($_SESSION['CrudGenerator'][$modelClassName]);
         }
+
+        $generatorParams = json_decode('{"name":"ErisAddressForm.php","className":"ErisAddressForm","extendsName":"Address","type":"form","relations":[{"name":"customers","tableName":"customer","type":"CHasManyRelation","foreignKey":"address_id","className":"Customer","formType":"Table","editable":"No","insertable":"No"}],"status":"processing","overwrite":true,"path":"app.modules.eris.forms.address"}', true);
 
         $prefixUrl = "{$basic}";
         if ($module != '' && $module != 'app' && $module != 'application') {
@@ -581,7 +691,7 @@ style="margin-bottom:10px;" class="btn btn-xs btn-default pull-right"><i class="
                                     foreach ($attr as $y => $z) {
                                         if ($y == $array[$k]['idField'])
                                             continue;
-                                        if ($y == 'softDelete')
+                                        if ($y == '_softDelete')
                                             continue;
                                         if (substr($y, -3) == "_id")
                                             continue;
@@ -592,24 +702,11 @@ style="margin-bottom:10px;" class="btn btn-xs btn-default pull-right"><i class="
                                 }
                             }
                         } else if (!empty($generatorParams)) {
-                            if (!isset($_SESSION['CrudGenerator'][get_class($model)])) {
-                                $_SESSION['CrudGenerator'][get_class($model)] = [];
-                            }
-
-                            if (!isset($_SESSION['CrudGenerator'][get_class($model)]['msg'])) {
-                                $_SESSION['CrudGenerator'][get_class($model)] = [
-                                    'msg' => '<b>WARNING: </b>'
-                                ];
-                            }
-
-                            $msg = $_SESSION['CrudGenerator'][get_class($model)]['msg'];
-                            $msg .= ' <br/>&bull; Failed to create RelationField <b>' . $i['name'] . '</b>,
-                                      <br/> &nbsp; Model Class <b>' . $relClassName . '</b> is not available';
-                            $_SESSION['CrudGenerator'][get_class($model)] = ['msg' => $msg];
+                            self::appendGenMsg('<br/>&bull; Failed to create RelationField <b>' . $i['name'] . '</b>,
+                                      <br/> &nbsp; Model Class <b>' . $relClassName . '</b> is not available', $model);
                         }
                         break;
                 }
-
             }
 
             if ($k < $length / 2) {
@@ -680,139 +777,81 @@ style="margin-bottom:10px;" class="btn btn-xs btn-default pull-right"><i class="
             'column1' => $column1,
             'column2' => $column2
         ];
+
+        if (!!@$generatorParams['relations']) {
+            foreach ($generatorParams['relations'] as $rel) {
+                if ($rel['type'] == 'CHasManyRelation' || $rel['type'] == 'CHasManyRelation') {
+                    $return[] = [
+                        'title' => ucfirst($rel['name']),
+                        'type' => 'SectionHeader',
+                    ];
+
+                    if (!@is_subclass_of($rel['className'], 'ActiveRecord')) {
+                        self::appendGenMsg('<br/>&bull; Failed to create Relation <b>' . $rel['name'] . '</b>,
+                                      <br/> &nbsp; Model Class <b>' . $rel['className'] . '</b> is not available', $model);
+                        continue;
+                    }
+
+                    switch ($rel['formType']) {
+                        case "Table":
+                            $return[] = self::insertRelTable($rel, $model);
+                            break;
+                        case "SubForm":
+                            $return[] = self::insertRelSubForm($generatorParams, $rel);
+                            break;
+                    }
+                }
+            }
+        }
+
         return $return;
     }
 
-    private static function generateMaster(&$return, $params) {
-        $array      = [];
-        $primaryKey = '';
-        $cols       = [];
-        $length     = 0;
-        $basicTitle = "";
-        $model      = null;
-        $module     = '';
-        $basic      = '';
-        extract($params);
+    private static function insertRelTable($params, $parentModel) {
+        $gv         = new GridView;
+        $model      = $params['className']::model();
+        $array      = $model->modelFieldList;
+        $primaryKey = $model->tableSchema->primaryKey;
 
-        $return[] = [
-            'linkBar' => [
-                [
-                    'label' => 'Simpan ' . $basicTitle,
-                    'buttonType' => 'success',
-                    'icon' => 'check',
-                    'options' => [
-                        'ng-click' => "form.submit(this)",
-                    ],
-                    'type' => 'LinkButton',
-                ],
-            ],
-            'title' => '{{ form.title }}',
-            'showSectionTab' => 'No',
-            'type' => 'ActionBar',
-        ];
+        var_dump($array);
+        die();
 
-        $gv = new GridView;
-
-        ## generate Filters & Columns
-        $pkCol = null;
         foreach ($array as $k => $i) {
-            if ($i['name'] == $primaryKey) {
-                $i['label'] = $i['name'];
+            if ($array[$k]['name'] == $primaryKey) {
+                continue;
             }
-
-            ## setup label
             $i['label'] = implode(" ", array_map('ucfirst', explode("_", $i['label'])));
-
-            ## setup filters
-            $filter          = [
-                'filterType' => "string"
+            $filter     = [
+                'filterType' => "string",
+                'name' => $i['name'],
+                'label' => $i['label']
             ];
-            $filter['name']  = $i['name'];
-            $filter['label'] = $i['label'];
-            $filters[]       = $filter;
-
-            ## setup columns
-            $column          = [
+            $column     = [
                 'columnType' => "string",
-                'options' => []
+                'options' => [],
+                'name' => $i['name'],
+                'label' => $i['label']
             ];
-            $column['name']  = $i['name'];
-            $column['label'] = $i['label'];
 
-            if ($i['name'] != $primaryKey) {
-                $gv->columns[]             = $column;
-                $column['cellMode']        = 'custom';
-                $column['options']['mode'] = 'editable';
-                $column['html']            = $gv->getRowTemplate($column, $k);
-                $cols[]                    = $column;
-            } else {
-                $pkCol = $column;
-            }
+            $filters[]     = $filter;
+            $cols[]        = $column;
+            $gv->columns[] = $column;
         }
-        array_unshift($cols, $pkCol);
-
-        $delButtonCol         = [
-            'name' => '',
-            'label' => '',
-            'columnType' => "string",
-            'cellMode' => 'custom',
-            'options' => [
-                'mode' => 'del-button'
-            ]
-        ];
-        $gv->columns[]        = $delButtonCol;
-        $delButtonCol['html'] = $gv->getRowTemplate($delButtonCol, count($cols));
-        array_push($cols, $delButtonCol);
-
-        $return[] = [
-            'name' => 'dataFilter1',
-            'datasource' => 'dataSource1',
-            'type' => 'DataFilter',
-            'filters' => $filters
-        ];
-
-        if (!!$model->softDelete) {
-            $condition = $model->softDelete['column'] . ' <> \'' . $model->softDelete['value'] . '\' {AND [where]}';
-        } else {
-            $condition = '{[where]}';
-        }
-
-        $return[] = [
-            'name' => 'dataSource1',
-            'params' => [
-                'where' => 'dataFilter1',
-                'paging' => 'gridView1',
-                'order' => 'gridView1',
-            ],
-            'relationTo' => 'currentModel',
-            'relationCriteria' => array(
-                'select' => '',
-                'distinct' => 'false',
-                'alias' => 't',
-                'condition' => $condition,
-                'order' => '{[order]}',
-                'paging' => '{[paging]}',
-                'group' => '',
-                'having' => '',
-                'join' => '',
-            ),
-            'type' => 'DataSource',
-        ];
-        $return[] = [
-            'name' => 'gridView1',
-            'datasource' => 'dataSource1',
-            'type' => 'GridView',
-            'columns' => $cols
-        ];
-        $return[] = [
-            'renderInEditor' => 'Yes',
-            'type' => 'Text',
-            'value' => '<div style="margin-top:5px;text-align:center;\">
-    <div ng-click="gridView1.addRow()"
-    class="btn btn-sm btn-success"><i class="fa fa-plus"></i> New Record</div>
-</div>',
-        ];
-        return $return;
     }
 
+    private static function appendGenMsg($message, $model) {
+        if (!isset($_SESSION['CrudGenerator'][get_class($model)])) {
+            $_SESSION['CrudGenerator'][get_class($model)] = [];
+        }
+
+        if (!isset($_SESSION['CrudGenerator'][get_class($model)]['msg'])) {
+            $_SESSION['CrudGenerator'][get_class($model)] = [
+                'msg' => '<b>WARNING: </b>'
+            ];
+        }
+
+        $msg = $_SESSION['CrudGenerator'][get_class($model)]['msg'];
+        $msg .= $message;
+        $_SESSION['CrudGenerator'][get_class($model)] = ['msg' => $msg];
+    }
 }

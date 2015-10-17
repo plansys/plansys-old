@@ -14,8 +14,6 @@ class ActionBar extends FormField {
             array (
                 'label' => 'Title',
                 'name' => 'title',
-                'labelWidth' => '3',
-                'fieldWidth' => '9',
                 'options' => array (
                     'ng-model' => 'active.title',
                     'ng-change' => 'save()',
@@ -40,7 +38,6 @@ class ActionBar extends FormField {
                     'style' => 'text-align:left;',
                 ),
                 'listExpr' => 'array(\'Yes\',\'No\')',
-                'labelWidth' => '5',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
@@ -55,14 +52,12 @@ class ActionBar extends FormField {
                     'style' => 'text-align:left;',
                 ),
                 'listExpr' => '[\'No\', \'Yes\']',
-                'labelWidth' => '5',
-                'fieldWidth' => '3',
+                'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
             array (
                 'label' => 'First Tab',
                 'name' => 'firstTabName',
-                'labelWidth' => '3',
                 'options' => array (
                     'ng-model' => 'active.firstTabName',
                     'ng-change' => 'save()',
