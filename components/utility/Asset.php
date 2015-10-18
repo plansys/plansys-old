@@ -2,7 +2,6 @@
 
 class Asset extends CComponent {
 
-
     public static function resolveAlias($path) {
         $pathArr = explode(".", $path);
         if (in_array($pathArr[count($pathArr) - 1], ["php", "js", "css"])) {

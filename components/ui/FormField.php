@@ -4,6 +4,9 @@
  * Class FormField
  * @author rizky
  */
+
+Yii::import('application.components.utility.Asset');
+
 class FormField extends CComponent {
 
     public static $toolbarName;

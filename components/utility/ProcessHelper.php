@@ -163,12 +163,33 @@ class ProcessHelper extends CComponent {
         return ((strtolower(trim($output[0])) == 'false') ? false : true);
     }
 
+
+    public static function getProcessCommand() {
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            return 'process.exe';
+        } else if (strtoupper(substr(PHP_OS, 0, 6)) === 'DARWIN'){
+            return './process.osx';
+        }
+    }
+
+    public static function run($command) {
+        $pid     = [];
+        $process = ProcessHelper::getProcessCommand();
+
+        chdir(Yii::getPathOfAlias('application'));
+        exec($process . ' run ' . $command, $pid);
+
+        if (!empty($pid)) return $pid[0];
+        else return false;
+    }
+
     public static function kill($pid) {
         $output = null;
         $return = null;
 
         chdir(Yii::getPathOfAlias('application'));
-        exec('process kill ' . $pid, $output, $return);
+        $process = ProcessHelper::getProcessCommand();
+        exec($process . ' kill ' . $pid, $output, $return);
 
         return $output;
     }
