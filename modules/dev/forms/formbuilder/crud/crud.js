@@ -34,6 +34,17 @@ $scope.getModulePath = function () {
         return module[0];
     }
 }
+
+$scope.getStatus = function(f) {
+    if (!f || !f.status) 
+        return "Waiting";
+    
+    if (f.status == 'exist') {
+        return f.status;
+    }
+    
+    return f.status;
+}
 $scope.getControllerUrl = function (action) {
     var module = '';
     var mp = $scope.getModulePath().split(".");

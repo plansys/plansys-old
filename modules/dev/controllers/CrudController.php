@@ -122,6 +122,8 @@ EOF;
         $relations = "";
         if (isset($post['relations'])) {
             foreach ($post['relations'] as $rel) {
+                if (!isset($rel['name'])) continue;
+
                 switch ($rel['type']) {
                     case "CBelongsToRelation":
                         $relName  = ucfirst($rel['name']);

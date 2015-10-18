@@ -70,7 +70,7 @@ FK    : {{ relationList[model.name].foreignKey }}</pre>
                         'name' => 'RelBelongsTo',
                         'subForm' => 'application.modules.dev.forms.formbuilder.crud.DevCrudRelBelongsTo',
                         'options' => array (
-                            'ng-if' => '!!model.name && model.type == \'CBelongsToRelation\'',
+                            'ng-if' => '!!model.tableName && !!model.name && model.type == \'CBelongsToRelation\'',
                         ),
                         'type' => 'SubForm',
                     ),
@@ -78,7 +78,7 @@ FK    : {{ relationList[model.name].foreignKey }}</pre>
                         'name' => 'RelMany',
                         'subForm' => 'application.modules.dev.forms.formbuilder.crud.DevCrudRelMany',
                         'options' => array (
-                            'ng-if' => '!!model.tableName && !!model.type && model.type != \'CBelongsToRelation\'',
+                            'ng-if' => '!!model.tableName && !!model.name && model.type != \'CBelongsToRelation\'',
                         ),
                         'type' => 'SubForm',
                     ),

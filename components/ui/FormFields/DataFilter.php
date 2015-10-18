@@ -348,9 +348,7 @@ class DataFilter extends FormField {
                 'name' => 'filters',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.DataFilterListForm',
-                'labelWidth' => '0',
                 'inlineJS' => 'DataFilter/inlinejs/dfr-init.js',
-                'fieldWidth' => '12',
                 'options' => array (
                     'ng-model' => 'active.filters',
                     'ng-change' => 'save()',

@@ -105,7 +105,7 @@
             <hr ng-repeat-end ng-if="item.value == '---'"/>
             <hr ng-if="!loading && filter.filterType == 'relation' && filter.count > filter.list.length"/>
             <li ng-if="filter.filterType == 'relation' && filter.count > filter.list.length">
-                <a href="#" ng-click="relationNext($event, filter)" style="margin-left:-5px;padding-bottom:50px;">
+                <a href="#" ng-click="relationNext($event, filter)" style="margin-left:-5px;padding-bottom:10px;">
                     <span ng-if="!loading"><i class="fa fa-angle-down"></i> &nbsp; Load More</span>
                     <span ng-if="loading"><i class="fa fa-refresh fa-spin"></i> &nbsp; Loading... </span>
                 </a>

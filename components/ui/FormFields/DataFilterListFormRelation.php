@@ -47,7 +47,7 @@ class DataFilterListFormRelation extends Form {
                 'options' => array (
                     'ng-model' => 'item.relModelClass',
                     'ng-change' => 'generateRelationField(value, $parent.value[$index]);updateListView();',
-                    'ng-init' => 'generateRelationField(value[$index].relModelClass);',
+                    'ng-init' => 'generateRelationField(item.relModelClass);',
                     'ng-if' => 'item.filterType == \'relation\'',
                 ),
                 'menuPos' => 'pull-right',
@@ -59,6 +59,10 @@ class DataFilterListFormRelation extends Form {
                 'fieldWidth' => '9',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<div ng-show=\\"!!item.relModelClass\\">',
             ),
             array (
                 'label' => 'ID Field',
@@ -87,6 +91,7 @@ class DataFilterListFormRelation extends Form {
                     'ng-change' => 'updateListView();',
                     'ps-list' => 'relationFieldList',
                 ),
+                'defaultType' => 'first',
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
@@ -110,6 +115,7 @@ class DataFilterListFormRelation extends Form {
                     'ng-change' => 'updateListView();',
                 ),
                 'menuPos' => 'pull-right',
+                'defaultType' => 'first',
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
@@ -145,6 +151,9 @@ class DataFilterListFormRelation extends Form {
                     'ng-delay' => '500',
                     'ng-if' => 'item.relIncludeEmpty == \'Yes\'',
                 ),
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
+                ),
                 'type' => 'TextField',
             ),
             array (
@@ -168,6 +177,10 @@ class DataFilterListFormRelation extends Form {
                     'ng-model' => 'item.relParams;',
                 ),
                 'type' => 'KeyValueGrid',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '</div>',
             ),
         );
     }

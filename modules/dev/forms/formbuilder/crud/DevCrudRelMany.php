@@ -6,6 +6,7 @@ class DevCrudRelMany extends Form {
     public $chooseable = 'No';
     public $editable = 'No';
     public $insertable = 'No';
+    public $deleteable = 'No';
 
     public function getForm() {
         return array (
@@ -31,6 +32,10 @@ class DevCrudRelMany extends Form {
                 'type' => 'DropDownList',
             ),
             array (
+                'type' => 'Text',
+                'value' => '<hr ng-if=\\"model.type == \'CManyManyRelation\'\\">',
+            ),
+            array (
                 'label' => 'Chooseable',
                 'name' => 'chooseable',
                 'options' => array (
@@ -39,6 +44,11 @@ class DevCrudRelMany extends Form {
                 'defaultType' => 'first',
                 'listExpr' => '[\'Yes\',\'No\']',
                 'type' => 'DropDownList',
+            ),
+            array (
+                'renderInEditor' => 'Yes',
+                'type' => 'Text',
+                'value' => '<hr>',
             ),
             array (
                 'label' => 'Editable',
@@ -52,6 +62,13 @@ class DevCrudRelMany extends Form {
                 'name' => 'insertable',
                 'defaultType' => 'first',
                 'listExpr' => '[\'No\',\'PopUp\', \'Inline\']',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Deleteable',
+                'name' => 'deleteable',
+                'defaultType' => 'first',
+                'listExpr' => '[\'No\', \'Single Delete\', \'Multi Delete\']',
                 'type' => 'DropDownList',
             ),
         );

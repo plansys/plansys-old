@@ -304,35 +304,26 @@ app.directive('dropDownList', function ($timeout) {
                 $scope.openedInField = false;
 
                 $scope.search = "";
-                //if ngModel is present, use that instead of value from php
                 $timeout(function () {
-                    function init() {
-                        if (attrs.ngModel) {
-                            var ngModelValue = $scope.$eval(attrs.ngModel);
-                            if (typeof ngModelValue != "undefined") {
-                                $scope.updateInternal(ngModelValue);
-                            } else {
-                                $scope.updateInternal($el.find("data[name=value]").html());
-                            }
-                        } else {
-                            $scope.updateInternal($el.find("data[name=value]").html());
+                    var initialValue = $el.find("data[name=value]").html();
+                    if (attrs.ngModel) {
+                        var ngModelValue = $scope.$eval(attrs.ngModel);
+                        if (typeof ngModelValue != "undefined") {
+                            initialValue = ngModelValue;
                         }
                     }
-
-                    switch ($scope.defaultType) {
-                        case '':
-                            init();
-                            break;
-                        case 'first':
-                            if ($scope.renderedFormList.length > 0) {
-                                if ($scope.value == '') {
-                                    $scope.update($scope.renderedFormList[0].value);
-                                } else {
-                                    $scope.update($scope.value)
-                                }
-                            }
-                            break;
+                    if ($scope.defaultType == 'first' && !initialValue && !!$scope.renderedFormList[0].value) {
+                        initialValue = $scope.renderedFormList[0].value;
                     }
+
+                    if (!!initialValue) {
+                        $scope.updateInternal(initialValue);
+                    }
+
+                    if ($scope.defaultType == 'first') {
+                        ctrl.$setViewValue(initialValue);
+                    }
+
                     $timeout(function () {
                         if (typeof ctrl.$viewValue == 'undefined') {
                             if (!$scope.formList['']) {

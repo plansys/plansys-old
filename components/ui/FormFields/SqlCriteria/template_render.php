@@ -28,7 +28,12 @@
                     <i class="fa fa-link"></i> Loading SQL
                 </center>
                 
-                <div ng-show='!isLoading' ng-bind-html="previewSQL" style="margin-bottom:-10px"></div>
+                <div ng-show='!isLoading' ng-bind-html="previewSQL" style="
+                    margin-bottom:-10px;
+                    -moz-user-select:text;
+                    -webkit-user-select:text;
+                    user-select:text;
+                "></div>
             </td>
         </tr>
     </table>

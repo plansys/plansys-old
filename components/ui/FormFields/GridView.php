@@ -86,7 +86,7 @@ type="checkbox" /></label>';
         $rowState = '';
         if ($idx == 0 && !@$col['options']['mode']) {
             $rowState = "<div ng-include='\"row-state-template\"'></div>\n    ";
-            $template = "<span class='row-group-padding'
+            $template = "<span class='row-group-padding' ng-if='!!row.\$level'
         style='width:{{row.\$level*10}}px;'></span>
     {$template}";
         }

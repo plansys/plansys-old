@@ -377,6 +377,8 @@ app.directive('gridView', function ($timeout, $http) {
                         var offset = (count - 1 == i ? 1 : 0);
                         $(this).width($header.find("th:eq(" + i + ")").outerWidth() - offset);
                     });
+
+                    //$el.parents('.container-fluid').width(Math.max($el.parents('.container-fluid').width(), $el.width() + 15));
                 }
                 $(window).resize(function () {
                     $timeout(function () {

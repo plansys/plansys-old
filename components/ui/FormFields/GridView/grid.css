@@ -118,7 +118,7 @@
 }
 
 [grid-view] tr:hover td {
-    background-color: #ccff89 !important;
+    background-color: #FFFFAA !important;
 }
 
 [grid-view] .row-group-padding {
@@ -195,7 +195,7 @@
     height:12px;
 }
 [grid-view] tr:hover .row-state-detail {
-    background:#ccff89;
+    background:#FFFFAA;
 }
 [grid-view] .row-state-detail .row-state-options {
     margin: 16px 0px 0px -5px;
@@ -207,7 +207,7 @@
     border-bottom-left-radius: 5px;
     position: absolute;
     text-transform:uppercase;
-    background:#ccff89;
+    background:#FFFFAA;
     border-bottom-right-radius: 5px;
     -webkit-transition: opacity .2s ease-in;
     -moz-transition: opacity .2s ease-in;
