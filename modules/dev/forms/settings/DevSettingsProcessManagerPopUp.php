@@ -70,6 +70,24 @@ class DevSettingsProcessManagerPopUp extends Form {
                 ),
                 'type' => 'TextField',
             ),
+            array (
+                'label' => 'Period',
+                'name' => 'processPeriod',
+                'options' => array (
+                    'ng-if' => '!!model.processUrl',
+                ),
+                'type' => 'TextField',
+            ),
+            array (
+                'label' => 'Period Type',
+                'name' => 'processPeriodType',
+                'options' => array (
+                    'ng-if' => '!!model.processUrl',
+                ),
+                'defaultType' => 'first',
+                'listExpr' => '[\\"secondly\\",\\"minutely\\",\\"hourly\\",\\"daily\\"]',
+                'type' => 'DropDownList',
+            ),
         );
     }
 

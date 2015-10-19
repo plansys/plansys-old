@@ -1,39 +1,40 @@
 <?php
 
 class ProcessManagerController extends Controller {
-
-    public function actionIndex() {
-        $pid = ProcessHelper::run('php yiic.php pm');
+    
+    public function actionIndex() {        
         $this->actionList();
     }
 
-    public function actionList() {
+    public function actionList() {                    
         $pmIsRunning = Setting::get('processManager.isRunning', false);
         $this->renderForm('settings.DevSettingsProcessManager', null, [
-            'pmIsRunning' => $pmIsRunning
+            'pmIsRunning'=>$pmIsRunning
         ]);
     }
 
-
-    public function actionStart() {
+    public function actionStart() {    
         $isRunning = Setting::get('processManager.isRunning', false);
-        if (!$isRunning) {
+        if(!$isRunning){
+            $pid = null;
+            chdir(Yii::getPathOfAlias('application'));
+
             //Starting processManager
             Setting::set('processManager.isRunning', true);
-            $pid = ProcessHelper::run('php yiic.php pm');
+            exec('process run yiic pm', $pid);
 
-            if (!!$pid) {
-                Setting::set('processManager.pid', $pid);
+            if(isset($pid)){
+                Setting::set('processManager.pid', $pid[0]);
             }
-        }
+        }     
         $this->redirect(['/dev/processManager/']);
     }
 
-    public
-    function actionStop() {
+    public function actionStop() {    
         $isRunning = Setting::get('processManager.isRunning', false);
-        if ($isRunning) {
+        if($isRunning){
             $pid = Setting::get('processManager.pid');
+            chdir(Yii::getPathOfAlias('application'));            
 
             //Stopping processManager
             Setting::set('processManager.isRunning', false);
@@ -42,188 +43,159 @@ class ProcessManagerController extends Controller {
 
             //Stopping running child process
             $prcs = Setting::get('process');
-            if (!empty($prcs)) {
-                foreach ($prcs as $id => $prc) {
-                    $this->actionStopProcess($id);
-                }
+            foreach ($prcs as $id=>$prc) {
+                $this->actionStopProcess($id);
             }
+        }     
+        $this->redirect(['/dev/processManager/']);
+    }
+
+    public function actionStartProcess($id){
+        $prc = Setting::get('process.'.$id);        
+        if(!$prc['isStarted']){            
+            Setting::set('process.'.$id.'.isStarted', true);
         }
         $this->redirect(['/dev/processManager/']);
     }
 
-    public
-    function actionStartProcess($id) {
-        $prc = Setting::get('process.' . $id);
-        if (!$prc['isStarted']) {
-            Setting::set('process.' . $id . '.isStarted', true);
-        }
-        $this->redirect(['/dev/processManager/']);
-    }
-
-    public
-    function actionStopProcess($id) {
-        $prc = Setting::get('process.' . $id);
-        if ($prc['isStarted']) {
-            Setting::set('process.' . $id . '.isStarted', false);
-            if (isset($prc['pid'])) {
+    public function actionStopProcess($id){
+        $prc = Setting::get('process.'.$id);
+        if($prc['isStarted']){
+            Setting::set('process.'.$id.'.isStarted', false);
+            if(isset($prc['pid'])){
                 ProcessHelper::kill($prc['pid']);
-                Setting::set('process.' . $id . '.pid', null);
-            }
+                Setting::set('process.'.$id.'.pid', null);
+            }            
         }
         $this->redirect(['/dev/processManager/']);
     }
-
-    public function actionCreateCommand() {
-        $href    = '';
-        $name    = '';
+    
+    public function actionCreate(){        
+        $href = '';
+        $name = '';
         $command = '';
 
-        if (isset($_POST['DevSettingsProcessManagerPopUp'])) {
-            $cmd  = $_POST['DevSettingsProcessManagerPopUp'];
-            $href = Yii::app()->createUrl("dev/processManager/create", ["active" => $cmd['processUrl']]);
-            $file = end(explode("=", $_POST['processFile']));
+        if(isset($_POST['DevSettingsProcessManagerPopUp'])){
+            $cmd    = $_POST['DevSettingsProcessManagerPopUp'];            
+            $file   = end(explode("=", $_POST['processFile']));            
+            $prefix = Helper::explodeFirst("-", Helper::camelToSnake(Helper::explodeLast(".", $file)));
 
-            //Creating unique id for setting
-            $id = ProcessHelper::createSettingsId($cmd['processName']);
+            //Creating unique id for setting 
+            $id     = ProcessHelper::createSettingsId($cmd['processName']);            
 
-            Setting::set('tmp.process.id', $id);
-            Setting::set('tmp.process.name', $cmd['processName']);
-            Setting::set('tmp.process.command', $cmd['processCommand']);
-            Setting::set('tmp.process.file', $file);
+            Setting::set("process.".$id.".name", $cmd['processName']);
+            Setting::set("process.".$id.".command", $prefix . " " . $cmd['processCommand']);
+            Setting::set("process.".$id.".period", $cmd['processPeriod']);
+            Setting::set("process.".$id.".periodType", $cmd['processPeriodType']);            
+            Setting::set("process.".$id.".periodCount", ProcessHelper::periodConverter($cmd['processPeriod'], $cmd['processPeriodType']));            
+
+            // Default process value
+            Setting::set("process.".$id.".lastRun", null);            
+            Setting::set("process.".$id.".isStarted", false);            
+            Setting::set("process.".$id.".pid", null);            
+            Setting::set("process.".$id.".file", $file);            
+            Setting::set("process.".$id.".runOnce", false);
+
+            $href   = Yii::app()->createUrl("dev/processManager/update",["id"=> $id, "active" => $file]);            
+
         }
 
-        $this->renderForm('settings.DevSettingsProcessManagerPopUp', null, ['href' => $href], [
-            'layout' => '//layouts/blank'
+        $this->renderForm('settings.DevSettingsProcessManagerPopUp',null, ['href' => $href],[
+            'layout'=>'//layouts/blank'
         ]);
     }
-
-    public function actionCreate() {
+    
+    public function actionUpdate($id = null){        
         $content = '';
-        $path    = [];
         $name    = '';
         $command = '';
-        $id      = '';
+        $commandFull  = '';
+        $commandPrefix= '';
         $file    = '';
+        $period  = '';
+        $periodType  = '';
+        $cmd = [];
 
-        if (isset($_GET['active'])) {
-            $path = explode(".", $_GET['active']);
-
-            $id       = Setting::get('tmp.process.id');
-            $name     = Setting::get('tmp.process.name');
-            $command  = Setting::get('tmp.process.command');
-            $file     = Setting::get('tmp.process.file');
-            $filePath = Yii::getPathOfAlias($_GET['active']) . ".php";
-            $content  = file_get_contents($filePath);
-        } else {
-            $this->redirect(['/dev/processManager/']);
-        }
-
-        $prefix = Helper::explodeFirst("-", Helper::camelToSnake(Helper::explodeLast(".", $file)));
-        if (isset($_POST['DevSettingsProcessManagerForm'])) {
-
-            $cmd = $_POST['DevSettingsProcessManagerForm'];
-            $id  = $_POST['processSettingsId'];
-
-            Setting::set("process." . $id . ".name", $cmd['processNameDisp']);
-            Setting::set("process." . $id . ".command", $prefix . " " . $cmd['processCommand']);
-            Setting::set("process." . $id . ".period", $cmd['processPeriod']);
-            Setting::set("process." . $id . ".periodType", $cmd['processPeriodType']);
-            Setting::set("process." . $id . ".periodCount", ProcessHelper::periodConverter($cmd['processPeriod'], $cmd['processPeriodType']));
-            Setting::set("process." . $id . ".lastRun", null);
-            Setting::set("process." . $id . ".isStarted", false);
-            Setting::set("process." . $id . ".pid", null);
-            Setting::set("process." . $id . ".file", $file);
-            Setting::remove('tmp.process');
-
-            $this->redirect(['/dev/processManager/']);
-        }
-
-        Asset::registerJS('application.static.js.lib.ace');
-        $this->renderForm('settings.DevSettingsProcessManagerForm', [
-            'content' => $content,
-            'name' => count($path) > 1 ? $path : '',
-            'processName' => $name,
-            'processNameDisp' => $name,
-            'processCommand' => $command,
-            'prefix' => $prefix,
-            'processSettingsId' => $id
-        ]);
-
-    }
-
-    public function actionUpdate($id = null) {
-        $content    = '';
-        $path       = [];
-        $name       = '';
-        $command    = '';
-        $file       = '';
-        $period     = '';
-        $periodType = '';
-        $cmd        = [];
-
-        if (isset($id)) {
-            $cmd = Setting::get('process.' . $id);
-
-            if (count($cmd) > 0) {
-                $path       = explode(".", $cmd['file']);
+        if (isset($id)) {   
+            $cmd = Setting::get('process.'.$id);            
+            
+            if(count($cmd) > 0){                                
                 $id         = $id;
                 $name       = $cmd['name'];
-                $command    = $cmd['command'];
+                $commandFull= $cmd['command'];
+                $tmp        = explode(" ", $cmd['command']);
+                $commandPrefix= array_shift($tmp);
+                $command    = implode(" ", $tmp);
                 $period     = $cmd['period'];
                 $periodType = $cmd['periodType'];
-
-                $filePath = Yii::getPathOfAlias((count($path) > 2 ? "application.modules." . $path[1] . ".commands." . $path[2] : "application.commands." . $path[1])) . ".php";
-                $content  = file_get_contents($filePath);
-            } else {
+                $file       = $cmd['file'];
+                $prefix     = Helper::explodeFirst("-", Helper::camelToSnake(Helper::explodeLast(".", $file)));
+                
+                //$filePath = Yii::getPathOfAlias((count($path)>2 ? "application.modules.". $path[1] . ".commands." . $path[2]  : "application.commands.". $path[1])) . ".php";                                
+                $filePath = Yii::getPathOfAlias($file) . ".php";                                                
+                $content = file_get_contents($filePath);                
+            }else{
                 $this->redirect(['/dev/processManager/']);
             }
-        } else {
+        }else{
             $this->redirect(['/dev/processManager/']);
         }
 
-        if (isset($_POST['DevSettingsProcessManagerForm'])) {
+        if(isset($_POST['DevSettingsProcessManagerForm'])){
 
-            $cmd = $_POST['DevSettingsProcessManagerForm'];
-            $id  = $_POST['processSettingsId'];
-
-            Setting::set("process." . $id . ".name", $cmd['processNameDisp']);
-            Setting::set("process." . $id . ".command", $cmd['processCommand']);
-            Setting::set("process." . $id . ".period", $cmd['processPeriod']);
-            Setting::set("process." . $id . ".periodType", $cmd['processPeriodType']);
-            Setting::set("process." . $id . ".periodCount", ProcessHelper::periodConverter($cmd['processPeriod'], $cmd['processPeriodType']));
+            $cmd     = $_POST['DevSettingsProcessManagerForm'];
+            $id      = $_POST['processSettingsId'];            
+            $prefix  = $_POST['processCommandPrefix'];            
+            
+            Setting::set("process.".$id.".name", $cmd['processName']);
+            Setting::set("process.".$id.".command", $prefix.' '.$cmd['processCommand']);
+            Setting::set("process.".$id.".period", $cmd['processPeriod']);
+            Setting::set("process.".$id.".periodType", $cmd['processPeriodType']);                        
+            Setting::set("process.".$id.".periodCount", ProcessHelper::periodConverter($cmd['processPeriod'], $cmd['processPeriodType']));
 
             $this->redirect(['/dev/processManager/']);
         }
 
         Asset::registerJS('application.static.js.lib.ace');
         $this->renderForm('settings.DevSettingsProcessManagerForm', [
-            'content' => $content,
-            'name' => count($path) > 1 ? $path : '',
+            'content' => $content,            
+            'name' => $file,
+            'prefix' => $name,
             'processName' => $name,
-            'processNameDisp' => $name,
             'processCommand' => $command,
+            'processCommandPrefix' => $commandPrefix,
+            'processCommandFull' => $commandFull,
             'processSettingsId' => $id,
-            'periodType' => $periodType,
-            'period' => $period
+            'periodType'=>$periodType,
+            'period' =>$period
         ]);
     }
 
-    public function actionDelete($id = null) {
-        if (isset($id)) {
-            Setting::remove('process.' . $id);
+    public function actionDelete($id = null){
+        if(isset($id)){            
+            Setting::remove('process.'.$id);            
         }
 
         $this->redirect(['/dev/processManager/']);
     }
 
-    public function actionSave() {
+    public function actionSave(){
         $postdata = file_get_contents("php://input");
         $post     = CJSON::decode($postdata);
         $path     = explode(".", $post['active']);
-        $filePath = Yii::getPathOfAlias((count($path) > 2 ? "application.modules." . $path[1] . ".commands." . $path[2] : "application.commands." . $path[1])) . ".php";
+        $filePath = Yii::getPathOfAlias((count($path)>2 ? "application.modules.". $path[1] . ".commands." . $path[2]  : "application.commands.". $path[1])) . ".php";                                
 
         if (is_file($filePath)) {
             file_put_contents($filePath, $post['content']);
+        }
+    }
+
+    public function actionSandbox(){
+        echo "Process Sandbox<br/>";
+        $pid = ProcessHelper::run("Testing Run Once", "yiic test test --name=abcd");
+        
+        if(!$pid){
+            echo "Unable to run command, please check Process Manager";
         }
     }
 

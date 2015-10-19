@@ -14,7 +14,8 @@ class ProcessHelper extends CComponent {
                 'period' => $prc['period'],
                 'periodType' => $prc['periodType'],
                 'lastRun' => $prc['lastRun'],
-                'isStarted' => $prc['isStarted']
+                'isStarted' => $prc['isStarted'],
+                'runOnce' => $prc['runOnce']
             ];
         }
 
@@ -172,15 +173,39 @@ class ProcessHelper extends CComponent {
         }
     }
 
-    public static function run($command) {
+    public static function run($name, $command, $runOnce = TRUE) {
+        if(!ProcessHelper::isPMRunning()){
+            return false;
+        }
+
         $pid     = [];
         $process = ProcessHelper::getProcessCommand();
 
+
+        $id = ProcessHelper::createSettingsId($name);        
+
         chdir(Yii::getPathOfAlias('application'));
         exec($process . ' run ' . $command, $pid);
+        echo $process . ' run ' . $command;
 
-        if (!empty($pid)) return $pid[0];
-        else return false;
+        if (!empty($pid)){ 
+            # Default value of Processes
+            Setting::set("process.".$id.".name", $name);
+            Setting::set("process.".$id.".command", $command);        
+            Setting::set("process.".$id.".period", null);
+            Setting::set("process.".$id.".periodType", null);            
+            Setting::set("process.".$id.".periodCount", null);            
+
+            Setting::set("process.".$id.".lastRun", time());            
+            Setting::set("process.".$id.".isStarted", true);            
+            Setting::set("process.".$id.".pid", $pid[0]);  
+            Setting::set("process.".$id.".file", null);             
+            Setting::set("process.".$id.".runOnce", $runOnce);
+
+            return $pid[0];
+        }else{ 
+            return false;
+        }
     }
 
     public static function kill($pid) {
@@ -192,6 +217,11 @@ class ProcessHelper extends CComponent {
         exec($process . ' kill ' . $pid, $output, $return);
 
         return $output;
+    }
+
+    public static function isPMRunning(){
+        $return = Setting::get('processManager.isRunning', false, true);        
+        return $return;
     }
 }
 

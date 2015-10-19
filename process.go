@@ -39,7 +39,7 @@ func main() {
 			log.Fatal(false)		
 		}
 	} else if os.Args[1] == "run"{
-		cmd := exec.Command(os.Args[2], strings.Join(os.Args[3:], " "))
+		cmd := exec.Command(os.Args[2], os.Args[3:]...)
 		err := cmd.Start()	
 		if err == nil {
 			if cmd.Process != nil {
@@ -48,6 +48,14 @@ func main() {
 		}else{
 			log.Fatal(err)		
 		}
+	}else if os.Args[1] == "debug"{
+		//cmd := exec.Command(os.Args[2], strings.Join(os.Args[3:], " "))
+		cmd := exec.Command(os.Args[2], os.Args[3:]...)
+		out, err := cmd.Output()
+		//fmt.Printf("%s %s\n", os.Args[2],strings.Join(os.Args[3:], " "))
+		fmt.Printf("%s\n", strings.Join(os.Args[3:], " "))
+		fmt.Printf("%s\n", out)
+		log.Fatal(err)
 	}
 
 }
