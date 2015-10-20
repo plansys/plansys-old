@@ -83,7 +83,7 @@ class DevCrudRelMany extends Form {
                     'ng-if' => 'model.type == \'CHasManyRelation\'',
                 ),
                 'defaultType' => 'first',
-                'listExpr' => '[\'No\', \'Single Delete\', \'Multi Delete\']',
+                'listExpr' => '[\'No\', \'Yes\']',
                 'type' => 'DropDownList',
             ),
         );

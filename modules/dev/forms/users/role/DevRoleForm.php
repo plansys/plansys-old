@@ -14,7 +14,7 @@ class DevRoleForm extends Role {
                     ),
                 ),
             ),
-            'inlineJS' => '',
+            'inlineJS' => 'DevRoleForm.js',
         );
     }
 
@@ -56,6 +56,7 @@ class DevRoleForm extends Role {
                     ),
                 ),
                 'title' => '{{!isNewRecord ? \'Role Detail: \' + model.role_name : \'New Role\'}}',
+                'showSectionTab' => 'No',
                 'type' => 'ActionBar',
             ),
             array (
@@ -67,12 +68,18 @@ class DevRoleForm extends Role {
                     array (
                         'label' => 'Role Name',
                         'name' => 'role_name',
+                        'options' => array (
+                            'ng-change' => 'roleNameChange()',
+                        ),
                         'type' => 'TextField',
                     ),
                     array (
                         'label' => 'Role Description',
                         'name' => 'role_description',
-                        'type' => 'TextField',
+                        'fieldOptions' => array (
+                            'auto-grow' => 'true',
+                        ),
+                        'type' => 'TextArea',
                     ),
                     array (
                         'type' => 'Text',
@@ -84,6 +91,9 @@ class DevRoleForm extends Role {
                         'label' => 'Home Page',
                         'name' => 'home_url',
                         'prefix' => 'url:',
+                        'options' => array (
+                            'ng-if' => '!isNewRecord',
+                        ),
                         'type' => 'TextField',
                     ),
                     array (
@@ -99,6 +109,9 @@ class DevRoleForm extends Role {
                         'label' => 'Repo Path',
                         'name' => 'repo_path',
                         'prefix' => 'repo/',
+                        'options' => array (
+                            'ng-if' => '!isNewRecord',
+                        ),
                         'type' => 'TextField',
                     ),
                     array (

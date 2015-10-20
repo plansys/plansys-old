@@ -260,7 +260,6 @@ class Controller extends CController {
         if (Yii::app()->user->model) {
             $roles = Yii::app()->user->model->getRoles(true);
             if (count($roles) > 1) {
-
                 $roleItems = [];
                 foreach ($roles as $k => $r) {
                     $rc = ($r['role_name'] == Yii::app()->user->fullRole ? 'fa-check-square-o' : 'fa-square-o');
@@ -301,9 +300,13 @@ class Controller extends CController {
             $menuPath = Yii::app()->user->menuPath;
             $menuPath = $menuPath == '' ? 'MainMenu' : $menuPath;
 
-            $path = Yii::getPathOfAlias("application.modules.{$module}.menus.{$menuPath}") . ".php";
-            if (!is_file($path)) {
-                $path = Yii::getPathOfAlias("app.modules.{$module}.menus.{$menuPath}") . ".php";
+            if (strpos($menuPath, ".") > 0) {
+                $path = Yii::getPathOfAlias($menuPath) . ".php";
+            } else {
+                $path = Yii::getPathOfAlias("application.modules.{$module}.menus.{$menuPath}") . ".php";
+                if (!is_file($path)) {
+                    $path = Yii::getPathOfAlias("app.modules.{$module}.menus.{$menuPath}") . ".php";
+                }
             }
 
             $menuModule = [];
