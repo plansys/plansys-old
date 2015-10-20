@@ -31,6 +31,19 @@ class DevSettingsProcessManagerForm extends Form {
             array (
                 'linkBar' => array (
                     array (
+                        'label' => 'Back',
+                        'icon' => 'chevron-left',
+                        'options' => array (
+                            'ng-href' => 'url:/dev/processManager',
+                        ),
+                        'type' => 'LinkButton',
+                    ),
+                    array (
+                        'renderInEditor' => 'Yes',
+                        'type' => 'Text',
+                        'value' => '<div ng-if=\\"!isNewRecord\\" class=\\"separator\\"></div>',
+                    ),
+                    array (
                         'label' => 'Save',
                         'buttonType' => 'success',
                         'icon' => 'save',
@@ -51,7 +64,8 @@ class DevSettingsProcessManagerForm extends Form {
             array (
                 'type' => 'Text',
                 'value' => '<input type=\"hidden\" value=\"{{params.processSettingsId}}\" name=\"processSettingsId\"/>
-<input type=\"hidden\" value=\"{{params.processName}}\" name=\"processOldName\"/>',
+
+<input type=\"hidden\" value=\"{{params.processCommandPrefix}}\" name=\"processCommandPrefix\"/>',
             ),
             array (
                 'totalColumns' => '4',
@@ -62,10 +76,10 @@ class DevSettingsProcessManagerForm extends Form {
                     ),
                     array (
                         'label' => 'Process Name',
-                        'name' => 'processNameDisp',
+                        'name' => 'processName',
                         'layout' => 'Vertical',
                         'options' => array (
-                            'ng-model' => 'params.processNameDisp',
+                            'ng-model' => 'params.processName',
                         ),
                         'type' => 'TextField',
                     ),
@@ -75,7 +89,7 @@ class DevSettingsProcessManagerForm extends Form {
                         'label' => 'Command',
                         'name' => 'processCommand',
                         'layout' => 'Vertical',
-                        'prefix' => '{{ params.prefix }}',
+                        'prefix' => '{{ params.processCommandPrefix }}',
                         'options' => array (
                             'ng-model' => 'params.processCommand',
                         ),
@@ -108,6 +122,7 @@ class DevSettingsProcessManagerForm extends Form {
                         'options' => array (
                             'ng-model' => 'params.periodType',
                         ),
+                        'defaultType' => 'first',
                         'listExpr' => '[\\"secondly\\",\\"minutely\\",\\"hourly\\",\\"daily\\"]',
                         'layout' => 'Vertical',
                         'type' => 'DropDownList',

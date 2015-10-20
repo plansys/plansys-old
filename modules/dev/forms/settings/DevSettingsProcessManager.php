@@ -60,7 +60,7 @@ class DevSettingsProcessManager extends Form {
                         'buttonType' => 'info',
                         'icon' => 'plus',
                         'options' => array (
-                            'ng-click' => 'procManPopUp()',
+                            'ng-click' => 'popupWindowCreateProcess.open()',
                         ),
                         'type' => 'LinkButton',
                     ),
@@ -68,6 +68,16 @@ class DevSettingsProcessManager extends Form {
                 'title' => 'Process Manager',
                 'showSectionTab' => 'No',
                 'type' => 'ActionBar',
+            ),
+            array (
+                'type' => 'PopupWindow',
+                'name' => 'popupWindowCreateProcess',
+                'options' => array (
+                    'height' => '500',
+                ),
+                'mode' => 'url',
+                'url' => '/dev/processManager/create',
+                'title' => 'Create New Process',
             ),
             array (
                 'name' => 'dataSourceProcMan',
@@ -119,46 +129,37 @@ class DevSettingsProcessManager extends Form {
                     array (
                         'name' => 'lastRun',
                         'label' => 'Last Run',
-                        'options' => array (),
-                        'mergeSameRow' => '',
-                        'mergeSameRowWith' => '',
                         'html' => '<td ng-class=\"rowClass(row, \'lastRun\', \'string\')\">
-    {{ date(\"d M Y H:i:s\", row.lastRun) }}
+    {{ (!!row.lastRun)? date(\"d M Y H:i:s\", row.lastRun):\"-\" }}
 </td>',
                         'columnType' => 'string',
-                        'typeOptions' => array (
-                            'string' => array (
-                                'html',
-                            ),
-                        ),
-                        'show' => false,
-                        'cellMode' => 'custom',
-                    ),
-                    array (
-                        'name' => 'isStarted',
-                        'label' => 'Status',
-                        'html' => '<td ng-class=\"rowClass(row, \'isStarted\', \'string\')\">
-    <span ng-if=\"row.isStarted\" class=\"label label-success\">Started</span>
-    <span ng-if=\"!row.isStarted\" class=\"label label-danger\">Stopped</span>
-</td>',
-                        'columnType' => 'string',
-                        'show' => false,
+                        'show' => true,
+                        'mergeSameRow' => 'No',
                         'cellMode' => 'custom',
                     ),
                     array (
                         'name' => 'action',
                         'label' => 'Action',
                         'options' => array (),
-                        'mergeSameRow' => '',
+                        'mergeSameRow' => 'No',
                         'mergeSameRowWith' => '',
                         'html' => '<td ng-class=\"rowClass(row, \'action\', \'string\')\" align=\"center\">
-    <span ng-if=\"params.pmIsRunning\">
-        <a ng-if=\"!row.isStarted\" ng-href=\"{{url(\'/dev/processManager/startProcess&id=\'+row.id)}}\" class=\"btn btn-xs btn-success\"> <i class=\"fa fa-play\"></i></a>
-        <a ng-if=\"row.isStarted\" ng-href=\"{{url(\'/dev/processManager/stopProcess&id=\'+row.id)}}\" class=\"btn btn-xs btn-danger\"> <i class=\"fa fa-stop\"></i></a>
+    <!-- If not RunOnce is true -->
+    <span ng-if=\"!row.runOnce\">
+        <span ng-if=\"params.pmIsRunning\">
+            <a ng-if=\"!row.isStarted\" ng-href=\"{{url(\'/dev/processManager/startProcess&id=\'+row.id)}}\" class=\"btn btn-xs btn-success\"> <i class=\"fa fa-play\"></i></a>
+            <a ng-if=\"row.isStarted\" ng-href=\"{{url(\'/dev/processManager/stopProcess&id=\'+row.id)}}\" class=\"btn btn-xs btn-danger\"> <i class=\"fa fa-stop\"></i></a>
+        </span>
+        <a ng-href=\"{{url(\'/dev/processManager/update&id=\'+row.id+\'&active=\'+row.file)}}\" class=\"btn btn-xs btn-primary\"> <i class=\"fa fa-pencil\"></i></a>
+        <a ng-href=\"{{url(\'/dev/processManager/delete&id=\'+row.id)}}\" class=\"btn btn-xs btn-danger\" onClick=\"return confirm(\'Are you sure ?\')\"> <i class=\"fa fa-trash\"></i></a>
     </span>
-    <a ng-href=\"{{url(\'/dev/processManager/update&id=\'+row.id+\'&active=\'+row.file)}}\" class=\"btn btn-xs btn-primary\"> <i class=\"fa fa-pencil\"></i></a>
-    <a ng-href=\"{{url(\'/dev/processManager/delete&id=\'+row.id)}}\" class=\"btn btn-xs btn-danger\" onClick=\"return confirm(\'Are you sure ?\')\"> <i class=\"fa fa-trash\"></i></a>
     
+    <!-- If RunOnce is true and the process is still running -->
+    <span ng-if=\"row.runOnce\">
+        <span ng-if=\"params.pmIsRunning\">
+                <a ng-if=\"row.isStarted\" ng-href=\"{{url(\'/dev/processManager/stopProcess&id=\'+row.id)}}\" class=\"btn btn-xs btn-danger\"> <i class=\"fa fa-stop\"></i></a>
+        </span>
+    </span>
 </td>',
                         'columnType' => 'string',
                         'typeOptions' => array (
