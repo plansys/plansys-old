@@ -143,7 +143,6 @@ class ActiveRecordTemplate extends CComponent {
             ]
         ];
         $gv->columns[]         = $editButtonCol;
-        $editButtonCol['html'] = $gv->getRowTemplate($editButtonCol, count($gridColumns));
         array_push($gridColumns, $editButtonCol);
 
         if (@$generatorParams['bulkCheckbox'] == 'Yes') {
@@ -174,7 +173,6 @@ class ActiveRecordTemplate extends CComponent {
                 ]
             ];
             $gv->columns[]        = $delButtonCol;
-            $delButtonCol['html'] = $gv->getRowTemplate($delButtonCol, count($gridColumns));
             array_push($gridColumns, $delButtonCol);
         }
 
@@ -562,7 +560,6 @@ ng-disabled="!gridView1.checkbox.chk
                 $gv->columns[]             = $column;
                 $column['cellMode']        = 'custom';
                 $column['options']['mode'] = 'editable';
-                $column['html']            = $gv->getRowTemplate($column, $k);
                 $cols[]                    = $column;
             } else {
                 $pkCol = $column;
@@ -580,7 +577,6 @@ ng-disabled="!gridView1.checkbox.chk
             ]
         ];
         $gv->columns[]        = $delButtonCol;
-        $delButtonCol['html'] = $gv->getRowTemplate($delButtonCol, count($cols));
         array_push($cols, $delButtonCol);
 
         $return[] = [
