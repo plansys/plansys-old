@@ -35,14 +35,14 @@ $scope.getModulePath = function () {
     }
 }
 
-$scope.getStatus = function(f) {
-    if (!f || !f.status) 
+$scope.getStatus = function (f) {
+    if (!f || !f.status)
         return "Waiting";
-    
+
     if (f.status == 'exist') {
         return f.status;
     }
-    
+
     return f.status;
 }
 $scope.getControllerUrl = function (action) {
@@ -160,6 +160,27 @@ $scope.form.submit = function (f) {
                         type: 'relform',
                         relation: rel
                     });
+                    break
+                case "CManyManyRelation":
+                    if (rel.chooseable == 'Yes') {
+                        $scope.data.files.push({
+                            name: $scope.params.prefix + $scope.model.name + ucfirst(rel.name) + 'ChooseRelform.php',
+                            className: $scope.params.prefix + $scope.model.name + ucfirst(rel.name) + 'ChooseRelform',
+                            extendsName: rel.className,
+                            type: 'relform',
+                            relation: rel,
+                            inlineJs: $scope.params.prefix + $scope.model.name + ucfirst(rel.name) + 'ChooseRelform.js'
+                        });
+                        $scope.data.files.push({
+                            name: $scope.params.prefix + $scope.model.name + ucfirst(rel.name) + 'ChooseRelform.js',
+                            template: 'TplRelMMIndex',
+                            replace: {
+                                dsParent: 'ds' + ucfirst(rel.name)
+                            },
+                            type: 'js',
+                            relation: rel
+                        });
+                    }
                     break;
             }
         }
@@ -227,7 +248,7 @@ $scope.checkNext = function () {
 
 $scope.done = function () {
     window.close();
-    window.opener.location.reload();
+    // window.opener.location.reload();
 }
 $scope.generateNext = function () {
     if ($scope.step < 4) {

@@ -4,6 +4,7 @@ class DevCrudRelMany extends Form {
 
     public $formType = 'Table';
     public $chooseable = 'No';
+    public $uniqueEntry = 'No';
     public $editable = 'No';
     public $insertable = 'No';
     public $deleteable = 'No';
@@ -33,7 +34,8 @@ class DevCrudRelMany extends Form {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<hr ng-if=\\"model.type == \'CManyManyRelation\'\\">',
+                'value' => '<hr ng-if=\"model.type == \'CManyManyRelation\'\">
+',
             ),
             array (
                 'label' => 'Chooseable',
@@ -42,7 +44,17 @@ class DevCrudRelMany extends Form {
                     'ng-if' => 'model.type == \'CManyManyRelation\'',
                 ),
                 'defaultType' => 'first',
-                'listExpr' => '[\'Yes\',\'No\']',
+                'listExpr' => '[\'No\', \'Yes\']',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Unique Entry',
+                'name' => 'uniqueEntry',
+                'options' => array (
+                    'ng-if' => 'model.type == \'CManyManyRelation\' && model.chooseable == \'Yes\'',
+                ),
+                'defaultType' => 'first',
+                'listExpr' => '[\'No\',\'Yes\']',
                 'type' => 'DropDownList',
             ),
             array (
@@ -67,6 +79,9 @@ class DevCrudRelMany extends Form {
             array (
                 'label' => 'Deleteable',
                 'name' => 'deleteable',
+                'options' => array (
+                    'ng-if' => 'model.type == \'CHasManyRelation\'',
+                ),
                 'defaultType' => 'first',
                 'listExpr' => '[\'No\', \'Single Delete\', \'Multi Delete\']',
                 'type' => 'DropDownList',

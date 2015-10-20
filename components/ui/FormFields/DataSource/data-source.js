@@ -262,7 +262,12 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         parent.$watchCollection(watch, function (newv, oldv) {
                             if (newv != oldv) {
                                 $scope.updateParam(key, newv);
-                                $scope.query();
+                                $scope.trackChanges = false;
+                                $scope.internalQuery = true;
+                                $scope.query(function () {
+                                    $scope.trackChanges = true;
+                                    $scope.internalQuery = false;
+                                });
                             }
                         });
 
@@ -271,16 +276,34 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     }
                 });
 
+
+                $scope.internalQuery = false;
+                $scope.trackChanges = true;
+                $scope.resetOriginal = function () {
+                    $scope.original = angular.copy($scope.data);
+                }
+
                 if (jsParamExist) {
-                    $scope.query();
                     $scope.data = [];
+                    $scope.trackChanges = false;
+                    $scope.internalQuery = true;
+                    $scope.query(function () {
+                        $scope.resetOriginal();
+                        $scope.trackChanges = true;
+                        $scope.internalQuery = false;
+                    });
                 } else {
                     $scope.data = JSON.parse($el.find("data[name=data]").text());
                 }
 
-                $scope.trackChanges = true;
-                $scope.resetOriginal = function () {
-                    $scope.original = angular.copy($scope.data);
+                $scope.enableTrackChanges = function () {
+                    if (!$scope.internalQuery) {
+                        $scope.trackChanges = true;
+                    }
+                }
+
+                $scope.disableTrackChanges = function () {
+                    $scope.trackChanges = false;
                 }
 
                 var diff = function (oldArray, newArray) {

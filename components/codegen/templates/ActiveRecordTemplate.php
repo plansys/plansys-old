@@ -113,16 +113,14 @@ class ActiveRecordTemplate extends CComponent {
                 'name' => $i['name'],
                 'label' => $i['label']
             ];
-
-            $filter = self::processFilterColumn([
+            $filter     = self::processFilterColumn([
                 'filter' => $filter,
                 'model' => $model,
                 'field' => $i,
                 'fieldIndex' => $k,
                 'tableColumns' => $tableColumns
             ]);
-
-            $column = [
+            $column     = [
                 'columnType' => "string",
                 'options' => [],
                 'name' => $i['name'],
@@ -139,7 +137,6 @@ class ActiveRecordTemplate extends CComponent {
             'name' => '',
             'label' => '',
             'columnType' => "string",
-            'cellMode' => 'custom',
             'options' => [
                 'mode' => 'edit-button',
                 'editUrl' => "{$editUrl}&id={{row.{$primaryKey}}}"
@@ -171,10 +168,9 @@ class ActiveRecordTemplate extends CComponent {
                 'name' => '',
                 'label' => '',
                 'columnType' => "string",
-                'cellMode' => 'custom',
                 'options' => [
-                    'mode' => 'del-url-button',
-                    'editUrl' => "{$delUrl}&id={{row.{$primaryKey}}}"
+                    'mode' => 'del-button',
+                    'delUrl' => "{$delUrl}&id={{row.{$primaryKey}}}"
                 ]
             ];
             $gv->columns[]        = $delButtonCol;
@@ -215,21 +211,181 @@ class ActiveRecordTemplate extends CComponent {
     }
 
     private static function generateRelform(&$return, $params) {
-        $fieldList    = [];
-        $primaryKey   = '';
-        $tableColumns = [];
-        $length       = 0;
-        $model        = null;
-        $basicTitle   = "";
-        $module       = '';
-        $basic        = '';
+        $model = null;
         extract($params);
 
         $generatorParams = [];
         if (isset($_SESSION['CrudGenerator']) && isset($_SESSION['CrudGenerator'][get_class($model)])) {
             $generatorParams = $_SESSION['CrudGenerator'][get_class($model)];
-            unset($_SESSION['CrudGenerator'][get_class($model)]);
         }
+        $params['generatorParams'] = $generatorParams;
+        switch ($generatorParams['relation']['type']) {
+            case "CBelongsToRelation":
+                self::generateRelBelongsToForm($return, $params);
+                break;
+            case "CManyManyRelation":
+                self::generateRelManyManyIndex($return, $params);
+                break;
+        }
+
+        return $return;
+    }
+
+    private static function generateRelManyManyIndex(&$return, $params) {
+        $fieldList       = [];
+        $primaryKey      = '';
+        $tableColumns    = [];
+        $length          = 0;
+        $model           = null;
+        $basicTitle      = "";
+        $module          = '';
+        $basic           = '';
+        $generatorParams = '';
+        extract($params);
+
+        $relClass      = $generatorParams['relation']['className'];
+        $model         = $relClass::model();
+        $primaryKey    = $model->tableSchema->primaryKey;
+        $filterColumns = [];
+        $gridColumns   = [];
+
+        $relClassSpaced = Helper::camelToSpacedCamel($relClass);
+
+        ## generate ActionBar
+        $return[] = [
+            'linkBar' => [
+                [
+                    'renderInEditor' => 'Yes',
+                    'type' => 'Text',
+                    'value' => '<div
+ng-click="choose()"
+class="btn btn-sm btn-success"
+ng-disabled="!gridView1.checkbox.chk
+|| gridView1.checkbox.chk.length == 0">
+   <i class="fa fa-check"></i>
+   <b>
+       Pilih
+       <span ng-if="gridView1.checkbox.chk.length > 0">
+           {{gridView1.checkbox.chk.length}}
+       </span>
+       ' . $relClassSpaced . '
+   </b>
+</div>
+',
+                ],
+            ],
+            'title' => 'Daftar ' . ucfirst($generatorParams['relation']['name']),
+            'showSectionTab' => 'No',
+            'type' => 'ActionBar',
+        ];
+
+        ## generate Filters & Columns
+        $gv = new GridView;
+        foreach ($fieldList as $k => $i) {
+            if ($fieldList[$k]['name'] == $primaryKey) {
+                continue;
+            }
+            $i['label'] = implode(" ", array_map('ucfirst', explode("_", $i['label'])));
+            $filter     = [
+                'filterType' => "string",
+                'name' => $i['name'],
+                'label' => $i['label']
+            ];
+            $filter     = self::processFilterColumn([
+                'filter' => $filter,
+                'model' => $model,
+                'field' => $i,
+                'fieldIndex' => $k,
+                'tableColumns' => $tableColumns
+            ]);
+            $column     = [
+                'columnType' => "string",
+                'options' => [],
+                'name' => $i['name'],
+                'label' => $i['label']
+            ];
+
+            $filterColumns[] = $filter;
+            $gridColumns[]   = $column;
+            $gv->columns[]   = $column;
+        }
+
+        $checkboxCol   = [
+            'name' => 'chk',
+            'label' => '',
+            'options' => array(
+                'modifyDataSource' => 'false',
+            ),
+            'mergeSameRow' => '',
+            'mergeSameRowWith' => '',
+            'html' => '',
+            'columnType' => 'checkbox',
+            'show' => false,
+            'checkedValue' => 'checked',
+        ];
+        $gv->columns[] = $checkboxCol;
+        array_push($gridColumns, $checkboxCol);
+        $return[] = [
+            'name' => 'dataFilter1',
+            'datasource' => 'dataSource1',
+            'type' => 'DataFilter',
+            'filters' => $filterColumns
+        ];
+
+        $condition = self::criteriaCondition($model);
+        $params    = [];
+        if (@$generatorParams['relation']['uniqueEntry'] == 'Yes') {
+            $token   = token_get_all("<?php " . str_replace(" ", "", $generatorParams['relation']['foreignKey']));
+            $mmTable = $token[1][1];
+            $mmFrom  = $token[3][1];
+            $mmTo    = $token[5][1];
+
+            if ($condition != "{[where]}") {
+                $condition = "{{$primaryKey} not in (select {$mmTo} from {$mmTable} where {$mmFrom} = :id) AND} {{$primaryKey} not in (:jsid) AND} " . $condition;
+            } else {
+                $condition = "{{$primaryKey} not in (select {$mmTo} from {$mmTable} where {$mmFrom} = :id) AND} {{$primaryKey} not in (:jsid)} {AND [where]} ";
+            }
+
+            $params[':id']   = 'php: @$_GET["id"]';
+            $params[':jsid'] = 'js: excludeID()';
+        }
+
+        $return[] = [
+            'name' => 'dataSource1',
+            'relationTo' => 'currentModel',
+            'relationCriteria' => array(
+                'select' => '',
+                'distinct' => 'false',
+                'alias' => 't',
+                'condition' => $condition,
+                'order' => '{[order]}',
+                'paging' => '{[paging]}',
+                'group' => '',
+                'having' => '',
+                'join' => '',
+            ),
+            'params' => $params,
+            'type' => 'DataSource',
+        ];
+        $return[] = [
+            'name' => 'gridView1',
+            'datasource' => 'dataSource1',
+            'type' => 'GridView',
+            'columns' => $gridColumns
+        ];
+    }
+
+    private static function generateRelBelongsToForm(&$return, $params) {
+        $fieldList       = [];
+        $primaryKey      = '';
+        $tableColumns    = [];
+        $length          = 0;
+        $model           = null;
+        $basicTitle      = "";
+        $module          = '';
+        $basic           = '';
+        $generatorParams = '';
+        extract($params);
 
         ## get basic model name
         $basic     = substr($basic, 0, strlen($generatorParams['relation']['name']) * -1);
@@ -257,8 +413,7 @@ class ActiveRecordTemplate extends CComponent {
                     'fieldIndex' => $k,
                     'tableColumns' => $tableColumns,
                     'generatorParams' => $generatorParams,
-                    'prefixUrl' => $prefixUrl,
-                    'belongsToRel' => true
+                    'prefixUrl' => $prefixUrl
                 ]);
             }
 
@@ -345,9 +500,7 @@ class ActiveRecordTemplate extends CComponent {
     \'>Loading ...</div>
 </div>'
         ];
-        return $return;
     }
-
 
     private static function generateMaster(&$return, $params) {
         $fieldList  = [];
@@ -499,6 +652,12 @@ class ActiveRecordTemplate extends CComponent {
             unset($_SESSION['CrudGenerator'][$modelClassName]);
         }
 
+        $generatorParams = json_decode('{"name":"AppCountryForm.php","className":"AppCountryForm","extendsName":"Country","type":"form","relations":[{"name":"cities","tableName":"city","type":"CHasManyRelation","foreignKey":"country_id","className":"City","formType":"Table","editable":"No","insertable":"No","chooseable":"No","deleteable":"Yes"}],"status":"processing","path":"app.forms.country"}', true);
+
+//        $generatorParams = json_decode('{"name":"AppCityForm.php","className":"AppCityForm","extendsName":"City","type":"form","relations":[{"name":"addresses","tableName":"address","type":"CHasManyRelation","foreignKey":"city_id","className":"Address","formType":"Table","editable":"Inline","insertable":"Inline","deleteable":"Multi Delete"}],"status":"processing","overwrite":true,"path":"app.forms.city"}', true);
+
+//        $generatorParams = json_decode('{"name":"AppCityForm.php","className":"AppCityForm","extendsName":"City","type":"form","relations":[{"name":"country","tableName":"country","type":"CBelongsToRelation","foreignKey":"country_id","className":"Country","formType":"PopUp","deleteable":"Yes","insertable":"Yes"}],"status":"processing","overwrite":true,"path":"app.forms.city"}', true);
+
         $prefixUrl = "{$basic}";
         if ($module != '' && $module != 'app' && $module != 'application') {
             $prefixUrl = "{$module}/" . $prefixUrl;
@@ -507,7 +666,7 @@ class ActiveRecordTemplate extends CComponent {
         $column1      = [];
         $column2      = [];
         $fieldList_id = null;
-        $genRel       = [];
+        $genBelongsTo = [];
 
         foreach ($fieldList as $k => $i) {
             if (isset($fieldList[$k]['name']) && isset($tableColumns[$fieldList[$k]['name']])) {
@@ -526,7 +685,7 @@ class ActiveRecordTemplate extends CComponent {
                     'tableColumns' => $tableColumns,
                     'generatorParams' => $generatorParams,
                     'prefixUrl' => $prefixUrl
-                ]);
+                ], $genBelongsTo);
             }
 
             if ($k < $length / 2) {
@@ -536,7 +695,7 @@ class ActiveRecordTemplate extends CComponent {
             }
         }
 
-        foreach ($genRel as $i => $gen) {
+        foreach ($genBelongsTo as $i => $gen) {
             $colNum = $gen['index'] >= floor(count($fieldList) / 2) ? 2 : 1;
             $idx    = $gen['index'] >= floor(count($fieldList) / 2) ? $gen['index'] - ceil(count($fieldList) / 2) : $gen['index'];
             $offset = ($i * count($gen['data'])) + 1;
@@ -601,28 +760,36 @@ class ActiveRecordTemplate extends CComponent {
         if (!!@$generatorParams['relations']) {
             foreach ($generatorParams['relations'] as $rel) {
                 if (!isset($rel['name'])) continue;
-
+                if (!@is_subclass_of($rel['className'], 'ActiveRecord')) {
+                    self::appendGenMsg('<br/>&bull; Failed to create Relation <b>' . $rel['name'] . '</b>,
+                                      <br/> &nbsp; Model Class <b>' . $rel['className'] . '</b> is not available', $model);
+                    continue;
+                }
+                $relName = ucfirst($rel['name']);
                 if ($rel['type'] == 'CHasManyRelation' || $rel['type'] == 'CManyManyRelation') {
                     $return[] = [
-                        'title' => ucfirst($rel['name']),
+                        'title' => $relName,
                         'type' => 'SectionHeader',
                     ];
 
-                    if ($rel['type'] == "CManyManyRelation" && $rel['chooseable'] == "Yes") {
-                        $return[] = [
-                            'type' => 'Text',
-                            'value' => '<div
-    style="float:right;margin-top:-25px;"
-    class="btn btn-xs btn-success">
-    <i class="fa fa-plus"></i>
-    <b>Pilih ' . ucfirst($rel['name']) . '</b>
-</div>'];
-                    }
-
-                    if (!@is_subclass_of($rel['className'], 'ActiveRecord')) {
-                        self::appendGenMsg('<br/>&bull; Failed to create Relation <b>' . $rel['name'] . '</b>,
-                                      <br/> &nbsp; Model Class <b>' . $rel['className'] . '</b> is not available', $model);
-                        continue;
+                    if ($rel['type'] == "CManyManyRelation") {
+                        if ($rel['chooseable'] == "Yes") {
+                            self::appendChooseButton($return, [
+                                'primaryKey' => $primaryKey,
+                                'prefixUrl' => $prefixUrl,
+                                'relName' => $relName,
+                                'rel' => $rel
+                            ]);
+                        }
+                    } else if ($rel['type'] == "CHasManyRelation") {
+                        if ($rel['insertable'] != "No") {
+                            self::appendInsertButton($return, [
+                                'primaryKey' => $primaryKey,
+                                'prefixUrl' => $prefixUrl,
+                                'relName' => $relName,
+                                'rel' => $rel
+                            ]);
+                        }
                     }
 
                     switch ($rel['formType']) {
@@ -653,6 +820,65 @@ class ActiveRecordTemplate extends CComponent {
             }
         }
         return $relClassName;
+    }
+
+    private static function appendInsertButton(&$return, $params) {
+        $relName    = '';
+        $prefixUrl  = '';
+        $primaryKey = '';
+        $rel        = [];
+        extract($params);
+
+        if ($rel['insertable'] == "PopUp") {
+            $return[] = [
+                'type' => 'Text',
+                'value' => '<div
+    ng-click="rel' . $relName . 'ChoosePopup.open();"
+    style="float:right;margin-top:-25px;"
+    class="btn btn-xs btn-success">
+    <i class="fa fa-plus"></i>
+    <b>Tambah ' . ucfirst(Helper::camelToSnake($rel['className'])) . '</b>
+</div>'];
+        } else if ($rel['insertable'] == "Inline") {
+            $return[] = [
+                'type' => 'Text',
+                'value' => '<div
+    ng-click="gv' . $relName . '.addRow();"
+    style="float:right;margin-top:-25px;"
+    class="btn btn-xs btn-success">
+    <i class="fa fa-plus"></i>
+    <b>Tambah ' . ucfirst(Helper::camelToSnake($rel['className'])) . '</b>
+</div>'];
+        }
+
+    }
+
+    private static function appendChooseButton(&$return, $params) {
+        $relName    = '';
+        $prefixUrl  = '';
+        $primaryKey = '';
+        $rel        = [];
+        extract($params);
+        $return[] = [
+            'type' => 'Text',
+            'value' => '<div
+    ng-click="rel' . $relName . 'ChoosePopup.open();"
+    style="float:right;margin-top:-25px;"
+    class="btn btn-xs btn-success">
+    <i class="fa fa-plus"></i>
+    <b>Pilih ' . ucfirst(Helper::camelToSnake($rel['className'])) . '</b>
+</div>'];
+
+        $return[] = [
+            'type' => 'PopupWindow',
+            'name' => 'rel' . $relName . 'ChoosePopup',
+            'options' => array(
+                'height' => '500',
+                'width' => '700',
+            ),
+            'mode' => 'url',
+            'url' => $prefixUrl . '/choose' . $relName . '{{ "&id=" + model.' . $primaryKey . ' || ""}}',
+        ];
     }
 
     private static function insertRelTable($rel, &$return) {
@@ -687,9 +913,18 @@ class ActiveRecordTemplate extends CComponent {
                 'tableColumns' => $tableColumns
             ]);
 
+            $options = [];
+            if ($rel['insertable'] == "Inline" && $rel['editable'] == "Inline") {
+                $options['mode'] = 'editable';
+            } else if ($rel['insertable'] == "Inline" && $rel['editable'] != "Inline") {
+                $options['mode'] = 'editable-insert';
+            } else if ($rel['insertable'] != "Inline" && $rel['editable'] == "Inline") {
+                $options['mode'] = 'editable-update';
+            }
+
             $column = [
                 'columnType' => "string",
-                'options' => [],
+                'options' => $options,
                 'name' => 't.' . $i['name'],
                 'label' => $i['label']
             ];
@@ -697,6 +932,34 @@ class ActiveRecordTemplate extends CComponent {
             $filterColumns[] = $filter;
             $gridColumns[]   = $column;
             $gv->columns[]   = $column;
+        }
+
+        if ($rel['type'] == "CManyManyRelation" && $rel['chooseable'] == "Yes") {
+            $delButtonCol  = [
+                'name' => '',
+                'label' => '',
+                'columnType' => "string",
+                'options' => [
+                    'mode' => 'unchoose-button',
+                ]
+            ];
+            $gv->columns[] = $delButtonCol;
+            array_push($gridColumns, $delButtonCol);
+        }
+
+        if ($rel['type'] == "CHasManyRelation") {
+            if ($rel['deleteable'] == "Yes") {
+                $delButtonCol  = [
+                    'name' => '',
+                    'label' => '',
+                    'columnType' => "string",
+                    'options' => [
+                        'mode' => 'del-button',
+                    ]
+                ];
+                $gv->columns[] = $delButtonCol;
+                array_push($gridColumns, $delButtonCol);
+            }
         }
 
         $return[] = [
@@ -756,14 +1019,13 @@ class ActiveRecordTemplate extends CComponent {
         $_SESSION['CrudGenerator'][get_class($model)] = ['msg' => $msg];
     }
 
-    private static function processGridColumn($params) {
+    private static function processGridColumn($params, &$genBelongsTo = null) {
         $model           = '';
         $field           = [];
         $fieldIndex      = 0;
         $tableColumns    = [];
         $generatorParams = [];
         $prefixUrl       = '';
-        $belongsToRel    = false;
         extract($params);
 
         switch (true) {
@@ -789,7 +1051,7 @@ class ActiveRecordTemplate extends CComponent {
                 break;
             case substr($field['name'], -3) == "_id": ## generate relation field
                 $relClassName = self::getRelClassName($model, $field['name']);
-                if (!!@$generatorParams['relations'] && !!$belongsToRel) {
+                if (!!@$generatorParams['relations'] && !is_null($genBelongsTo)) {
                     foreach ($generatorParams['relations'] as $rel) {
                         if (!isset($rel['name'])) continue;
 
@@ -804,7 +1066,7 @@ class ActiveRecordTemplate extends CComponent {
                                     'renderInEditor' => 'Yes',
                                     'type' => 'Text',
                                     'value' => '<div
-ng-click="Rel' . $relName . 'InsertPopup.open()"
+ng-click="rel' . $relName . 'InsertPopup.open()"
 style="margin:0px 0px 10px 5px;" class="btn btn-xs btn-default pull-right"><i class="fa fa-plus"></i> New ' . $label . '</div>',
                                 ];
                             }
@@ -813,7 +1075,7 @@ style="margin:0px 0px 10px 5px;" class="btn btn-xs btn-default pull-right"><i cl
                                 'renderInEditor' => 'Yes',
                                 'type' => 'Text',
                                 'value' => '<div
-ng-click="Rel' . $relName . 'UpdatePopup.open()" ng-if="!!model.' . $i['name'] . ' && !!' . $i['name'] . '.text"
+ng-click="rel' . $relName . 'UpdatePopup.open()" ng-if="!!model.' . $field['name'] . ' && !!' . $field['name'] . '.text"
 style="margin-bottom:10px;" class="btn btn-xs btn-default pull-right"><i class="fa fa-pencil"></i> Edit ' . $field['label'] . '</div>
 <div class="clearfix"></div>',
                             ];
@@ -821,28 +1083,28 @@ style="margin-bottom:10px;" class="btn btn-xs btn-default pull-right"><i class="
                             if ($rel['insertable'] == "Yes") {
                                 $buttons[] = [
                                     'type' => 'PopupWindow',
-                                    'name' => 'Rel' . $relName . 'InsertPopup',
+                                    'name' => 'rel' . $relName . 'InsertPopup',
                                     'options' => array(
                                         'height' => '500',
                                         'width' => '700',
                                     ),
                                     'mode' => 'url',
-                                    'url' => $prefixUrl . '/insert' . $relName . '&id={{model.' . $i['name'] . '}}',
+                                    'url' => $prefixUrl . '/insert' . $relName,
                                 ];
                             }
 
                             $buttons[] = [
                                 'type' => 'PopupWindow',
-                                'name' => 'Rel' . $relName . 'UpdatePopup',
+                                'name' => 'rel' . $relName . 'UpdatePopup',
                                 'options' => array(
                                     'height' => '500',
                                     'width' => '700',
                                 ),
                                 'mode' => 'url',
-                                'url' => $prefixUrl . '/update' . $relName . '&id={{model.' . $i['name'] . '}}',
+                                'url' => $prefixUrl . '/update' . $relName . '&id={{model.' . $field['name'] . '}}',
                             ];
 
-                            $genRel[] = [
+                            $genBelongsTo[] = [
                                 'index' => $fieldIndex,
                                 'data' => $buttons
                             ];
@@ -887,7 +1149,7 @@ style="margin-bottom:10px;" class="btn btn-xs btn-default pull-right"><i class="
                         }
                     }
                 } else if (!empty($generatorParams)) {
-                    self::appendGenMsg('<br/>&bull; Failed to create RelationField <b>' . $i['name'] . '</b>,
+                    self::appendGenMsg('<br/>&bull; Failed to create RelationField <b>' . $field['name'] . '</b>,
                                       <br/> &nbsp; Model Class <b>' . $relClassName . '</b> is not available', $model);
                 }
                 break;

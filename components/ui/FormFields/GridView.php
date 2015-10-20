@@ -67,6 +67,9 @@ class GridView extends FormField {
         $template  = '';
         $style     = '';
         $fieldName = $col['name'];
+        if ($fieldName == "" && !@$col['options']['mode']) return "";
+
+
         switch ($col['columnType']) {
             case "string":
                 if (@$col['cellMode'] == 'custom' && trim(@$col['html']) != '') {
@@ -84,39 +87,68 @@ type="checkbox" /></label>';
         }
 
         $rowState = '';
-        if ($idx == 0 && !@$col['options']['mode']) {
+        if ($idx == 0) {
             $rowState = "<div ng-include='\"row-state-template\"'></div>\n    ";
-            $template = "<span class='row-group-padding' ng-if='!!row.\$level'
+            if (!@$col['options']['mode']) {
+                $template = "<span class='row-group-padding' ng-if='!!row.\$level'
         style='width:{{row.\$level*10}}px;'></span>
     {$template}";
+            }
         }
 
 
         if (!!@$col['options']['mode']) {
-            $template = '';
+            $editableCss = '';
+            if ($idx == 0) {
+                $editableCss = 'style="padding-right: 0px;padding-left: 8px;"';
+            }
+
             switch ($col['options']['mode']) {
                 case "editable":
                     $template = '
-    <div contenteditable="true" ng-model="row.' . $fieldName . '" ng-keydown="editKey($event)"></textarea>';
+    <div contenteditable="true" ' . $editableCss . ' ng-model="row.' . $fieldName . '"
+         ng-keydown="editKey($event)"></div>';
+                    break;
+                case "editable-insert":
+                    $template = '
+    <div contenteditable="true" ' . $editableCss . ' ng-if="row.$rowState == \'insert\'"
+         ng-model="row.' . $fieldName . '" ng-keydown="editKey($event)"></div>
+    <span ng-show="row.$rowState != \'insert\'">' . $template . '</span>';
+                    break;
+                case "editable-update":
+                    $template = '
+    <div contenteditable="true" ' . $editableCss . ' ng-if="row.$rowState != \'insert\'"
+         ng-model="row.' . $fieldName . '" ng-keydown="editKey($event)"></div>
+    <span ng-show="row.$rowState == \'insert\'">' . $template . '</span>';
                     break;
                 case "del-button":
-                    $style    = ' style="width:20px;"';
-                    $template = '<div ng-if="!row.$rowState" ng-click="removeRow(row)"
+                    if (!isset($col['options']['delUrl'])) {
+                        $style    = ' style="width:20px;"';
+                        $template = '<div ng-if="!row.$rowState" ng-click="removeRow(row)"
     class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></div>
 
     <div ng-if="[\'edit\',\'remove\'].indexOf(row.$rowState) >= 0" ng-click="undoRemoveRow(row)"
     class="btn btn-default btn-xs"><i class="fa fa-undo"></i></div>';
+                    } else {
+                        $style    = ' style="width:20px;"';
+                        $template = '<a ng-url="' . $col['options']['delUrl'] . '"
+    onClick="return confirm(\'Are you sure?\')"
+    class="btn-block btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>';
+                    }
+                    break;
+                case "unchoose-button":
+                    $style    = ' style="width:20px;"';
+                    $template = '<div ng-if="!row.$rowState || row.$rowState == \'insert\'" ng-click="removeRow(row)"
+    class="btn btn-danger btn-xs"><i class="fa fa-times"></i></div>
+
+    <div ng-if="[\'remove\'].indexOf(row.$rowState) >= 0" ng-click="undoRemoveRow(row)"
+    class="btn btn-default btn-xs"><i class="fa fa-undo"></i></div>
+    ';
                     break;
                 case 'edit-button':
                     $style    = ' style="width:20px;"';
                     $template = '<a ng-url="' . $col['options']['editUrl'] . '"
     class="btn-block btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>';
-                    break;
-                case 'del-url-button':
-                    $style    = ' style="width:20px;"';
-                    $template = '<a ng-url="' . $col['options']['editUrl'] . '"
-    onClick="return confirm(\'Are you sure?\')"
-    class="btn-block btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>';
                     break;
             }
         }
@@ -156,13 +188,12 @@ EOF;
 </td>
 ';
         }
-
         return $template;
-
     }
 
     public function getHeaderTemplate($col, $idx) {
         $fieldName = isset($col['fieldName']) ? $col['fieldName'] : $col['name'];
+        if ($fieldName == "" && !@$col['options']['mode']) return "";
 
         switch ($col['columnType']) {
             case "string":

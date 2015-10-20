@@ -27,7 +27,7 @@ class TplCrudController extends Controller {
             $model->attributes = $_POST["TemplateForm"];
             if ($model->save()) {
                 $this->flash('Data Berhasil Disimpan');
-                $this->redirect(["index"]);
+                $this->redirect(['update', 'id' => $id]);
             }
         }
         $this->renderForm("TemplateForm", $model);

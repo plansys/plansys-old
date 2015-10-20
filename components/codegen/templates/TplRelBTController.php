@@ -1,8 +1,8 @@
 <?php
 
-class TplRelBtController {
+class TplRelBTController {
 ### TEMPLATE-START ###
-    public function actionInsertRelModel($id) {
+    public function actionInsertRelModel() {
         $model  = new TemplateForm;
         $posted = false;
         if (isset($_POST["TemplateForm"])) {
@@ -37,5 +37,5 @@ class TplRelBtController {
             'layout' => '//layouts/blank'
         ]);
     }
-### TEMPLATE-END ####
+### TEMPLATE-END ###
 }

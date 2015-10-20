@@ -113,6 +113,14 @@ class Helper {
         }
     }
 
+    public static function strReplaceFirst($search, $replace, $subject) {
+        $pos = strpos($subject, $search);
+        if ($pos !== false) {
+            $subject = substr_replace($subject, $replace, $pos, strlen($search));
+        }
+        return $subject;
+    }
+
     public static function explodeFirst($delimeter, $str) {
         $a = explode($delimeter, $str);
         return array_shift($a);

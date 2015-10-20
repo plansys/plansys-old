@@ -75,6 +75,9 @@ class CrudController extends Controller {
                     $this->generateAR($post, $result);
                 }
                 break;
+            case "js":
+                $this->generateJS($post, $result);
+                break;
             case "controller":
                 if (!file_exists($file) || !!@$post['overwrite']) {
                     $this->generateController($post, $result);
@@ -84,6 +87,12 @@ class CrudController extends Controller {
                 break;
         }
         echo json_encode($result);
+    }
+
+    public function generateJS($post, &$result) {
+        $tpl     = file_get_contents(Yii::getPathOfAlias('application.components.codegen.templates.' . $post['template']) . ".js");
+        $content = str_replace(array_keys($post['replace']), array_values($post['replace']), $tpl);
+        file_put_contents($result['file'], $content);
     }
 
     public function generateAR($post, &$result) {
@@ -129,12 +138,27 @@ EOF;
                         $relName  = ucfirst($rel['name']);
                         $formName = substr($post['formName'], 0, -4) . $relName . 'Relform';
                         $tprel    = file_get_contents(Yii::getPathOfAlias('application.components.codegen.templates.TplRelBTController') . ".php");
-                        $tprel    = Helper::getStringBetween($tprel, '### TEMPLATE-START ###', '### TEMPLATE-END ####');
+                        $tprel    = Helper::getStringBetween($tprel, '### TEMPLATE-START ###', '### TEMPLATE-END ###');
                         $reprel   = [
                             'RelModel' => $relName,
                             'TemplateForm' => $formName,
                         ];
                         $tprel    = str_replace(array_keys($reprel), array_values($reprel), $tprel);
+                        $relations .= "
+{$tprel}
+                    ";
+                        break;
+
+                    case "CManyManyRelation":
+                        $relName        = ucfirst($rel['name']);
+                        $chooseFormName = substr($post['formName'], 0, -4) . $relName . 'ChooseRelform';
+                        $tprel          = file_get_contents(Yii::getPathOfAlias('application.components.codegen.templates.TplRelMMController') . ".php");
+                        $tprel          = Helper::getStringBetween($tprel, '### TEMPLATE-START ###', '### TEMPLATE-END ###');
+                        $reprel         = [
+                            'RelModel' => $relName,
+                            'TemplateChooseForm' => $chooseFormName,
+                        ];
+                        $tprel          = str_replace(array_keys($reprel), array_values($reprel), $tprel);
                         $relations .= "
 {$tprel}
                     ";

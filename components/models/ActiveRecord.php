@@ -265,12 +265,12 @@ class ActiveRecord extends CActiveRecord {
         if (!is_array($data) || count($data) == 0)
             return;
 
-        $instance = $model::model();
-
+        $instance = null;
         if (isset($options['table'])) {
             $table = $options['table'];
         } else {
-            $table = $instance->tableSchema->name;
+            $instance = $model::model();
+            $table    = $instance->tableSchema->name;
         }
 
         if (isset($options['pk'])) {
@@ -1081,7 +1081,7 @@ class ActiveRecord extends CActiveRecord {
                         break;
                     case 'CManyManyRelation':
                     case 'CHasManyRelation':
-                        ## if relation type is Many to Many
+                        ## if relation type is Many to Many, prepare required variable
                         $relMM = [];
                         if ($relType == 'CManyManyRelation') {
                             $parser = new PhpParser\Parser(new PhpParser\Lexer\Emulative);
@@ -1114,12 +1114,12 @@ class ActiveRecord extends CActiveRecord {
                             }
 
                             if (count($this->__relInsert[$k]) > 0) {
-                                ActiveRecord::batchInsert($relClass, $this->__relInsert[$k]);
+                                if ($relType == "CHasManyRelation") {
+                                    ActiveRecord::batchInsert($relClass, $this->__relInsert[$k]);
+                                }
 
                                 ## if current relation is many to many
                                 if ($relType == 'CManyManyRelation' && !empty($relMM)) {
-                                    ## then create transaction entry to link between
-                                    ## related model and current model
                                     $manyRel = [];
                                     foreach ($this->__relInsert[$k] as $item) {
                                         $manyRel[] = [
@@ -1128,7 +1128,18 @@ class ActiveRecord extends CActiveRecord {
                                         ];
                                     }
 
+                                    ## if relinsert is already exist, then do not insert it again
+                                    foreach ($this->__relInsert[$k] as $insIdx => &$ins) {
+                                        if (!!@$ins[$relPK]) {
+                                            unset($this->__relInsert[$k]);
+                                        }
+                                    }
+                                    ActiveRecord::batchInsert($relClass, $this->__relInsert[$k]);
+
+                                    ## create transaction entry to link between
+                                    ## related model and current model
                                     ActiveRecord::batchInsert($relMM['tableName'], $manyRel, false);
+
                                 }
                             }
                             $this->__relInsert[$k] = [];
@@ -1174,7 +1185,7 @@ class ActiveRecord extends CActiveRecord {
                                         ]);
 
                                         //and then remove entry in actual table
-                                        ActiveRecord::batchDelete($relClass, $this->__relDelete[$k]);
+                                        //ActiveRecord::batchDelete($relClass, $this->__relDelete[$k]);
                                     }
                                 } else {
                                     ActiveRecord::batchDelete($relClass, $this->__relDelete[$k]);

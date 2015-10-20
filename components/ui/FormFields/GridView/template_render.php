@@ -10,6 +10,7 @@
             <i class="fa fa-pencil" ng-if="row.$rowState == 'edit'"></i>
             <i class="fa fa-plus" ng-if="row.$rowState == 'insert'"></i>
             <i class="fa fa-trash" ng-if="row.$rowState == 'remove'"></i>
+
             <div class="row-state-options">
                 <div class="btn btn-xs btn-default" ng-click="rowUndoState(row)"> Cancel {{ row.$rowState }}</div>
             </div>
@@ -73,7 +74,7 @@
                     </div>
                 </div>
             </div>
-            <div class="pull-left" style="margin:5px">
+            <div ng-if="mode=='full'" class="pull-left" style="margin:5px">
                 of {{ Math.ceil(datasource.totalItems / gridOptions.pageInfo.pageSize) | number}}
             </div>
             <div ng-if="mode=='full' && datasource.totalItems  > 0"
@@ -82,9 +83,8 @@
                 &nbsp;<i class="fa fa-caret-right"></i>
                 {{ Math.min(gridOptions.pageInfo.pageSize * gridOptions.pageInfo.currentPage, datasource.totalItems) }}
             </div>
-            <div ng-if="mode=='full'" class="pull-left"
+            <div class="pull-left"
                  style="border-left:1px solid #ccc;margin:2px 5px;padding:3px 8px;">
-
                 <div ng-if="datasource.loading">
                     <i class="fa fa-refresh fa-spin"></i> Loading Data...
                 </div>
@@ -97,7 +97,7 @@
             <div class="btn-group pull-right" style="padding-top:2px;margin-left:5px;">
                 <button ng-click="datasource.query()"
                         type="button" class="btn btn-default">
-                    <i class="fa fa-refresh"></i> Refresh
+                    <i class="fa fa-refresh {{datasource.loading ? 'fa-spin' : ''}}"></i> Refresh
                 </button>
                 <button ng-click="reset()" ng-if="!!resetPageSetting"
                         type="button" class="btn btn-default">

@@ -299,8 +299,15 @@ app.directive('ngEnter', function () {
     };
 });
 app.directive('ngUrl', function ($interpolate) {
-    return function ($scope, el, attrs) {
-        $(el).attr('href', Yii.app.createUrl($interpolate(attrs.ngUrl)($scope)));
+    return {
+        link: function ($scope, el, attrs) {
+            attrs.$observe(
+                "ngUrl",
+                function (newValue, oldValue) {
+                    $(el).attr('href', Yii.app.createUrl($interpolate(newValue)($scope.$parent)));
+                }
+            );
+        }
     };
 });
 app.directive('autoGrow', ['$timeout', '$window', function ($timeout, $window) {

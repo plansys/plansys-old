@@ -65,7 +65,7 @@ class DevFormProperties extends Form {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<a ng-if=\"$parent.form.extendsFrom != \'Form\'\" ng-href=\"{{Yii.app.createUrl(\'/dev/genModel/index\', {active:$parent.form.extendsFrom})}}\" 
+                'value' => '<a ng-show=\"$parent.form.extendsFrom != \'Form\'\" ng-href=\"{{Yii.app.createUrl(\'/dev/genModel/index\', {active:$parent.form.extendsFrom})}}\" 
     style=\"margin-bottom:5px;\"
     target=\"_blank\"
     class=\"pull-right btn btn-default btn-xs\">

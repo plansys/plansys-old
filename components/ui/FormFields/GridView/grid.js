@@ -117,12 +117,16 @@ app.directive('gridView', function ($timeout, $http) {
                                 break;
                             }
                         }
-                    } else {
+
+                        $scope.updatePaging($scope.gridOptions.pageInfo);
+                    } else if (row.$rowState == 'insert') {
                         var idx = diffData.indexOf(row);
                         diffData.splice(idx, 1);
-                    }
 
-                    $scope.updatePaging($scope.gridOptions.pageInfo);
+                        var didx = $scope.datasource.data.indexOf(row);
+                        $scope.datasource.data.splice(didx, 1);
+                        return;
+                    }
                 }
 
                 $scope.addRow = function () {
@@ -134,8 +138,18 @@ app.directive('gridView', function ($timeout, $http) {
                 }
 
                 $scope.removeRow = function (row) {
-                    row.$rowState = 'remove';
-                    $scope.datasource.deleteData.push(row);
+                    if (row.$rowState == 'insert') {
+                        var idx = $scope.datasource.insertData.indexOf(row);
+                        $scope.datasource.insertData.splice(idx, 1);
+
+                        var didx = $scope.datasource.data.indexOf(row);
+                        $scope.datasource.data.splice(didx, 1);
+                        return;
+                    } else {
+                        row.$rowState = 'remove';
+                        $scope.datasource.deleteData.push(row);
+                    }
+
                     $timeout(function () {
                         $scope.recalcHeaderWidth();
                     });
@@ -215,7 +229,7 @@ app.directive('gridView', function ($timeout, $http) {
                     if (changing) {
                         $scope.datasource.query();
                     } else {
-                        $scope.datasource.trackChanges = true;
+                        $scope.datasource.disableTrackChanges(false);
                     }
                 }
 
@@ -688,7 +702,7 @@ app.directive('gridView', function ($timeout, $http) {
                             if ($scope.datasource.lastQueryFrom == "DataFilter" && !!$scope.gridOptions.pageInfo) {
                                 $scope.gridOptions.pageInfo.currentPage = 1;
                             }
-                            $scope.datasource.trackChanges = false;
+                            $scope.datasource.disableTrackChanges();
                         }
                         $scope.datasource.afterQueryInternal[$scope.renderID] = function () {
                             $scope.loading = false;
@@ -697,14 +711,14 @@ app.directive('gridView', function ($timeout, $http) {
                             }
                             if (!$scope.datasource.trackChanges) {
                                 $scope.datasource.resetOriginal();
-                                $scope.datasource.trackChanges = true;
+                                $scope.datasource.enableTrackChanges();
                             }
                             $scope.onGridRender('query');
                         };
                         $scope.loadPageSetting();
                     });
                 };
-                $scope.datasource.trackChanges = false;
+                $scope.datasource.disableTrackChanges();
                 $scope.gridRenderTimeout = null;
                 $scope.onGridRender = function (flag) {
                     if ($scope.gridRenderTimeout !== null) {
@@ -725,4 +739,5 @@ app.directive('gridView', function ($timeout, $http) {
             };
         }
     }
-});
+})
+;

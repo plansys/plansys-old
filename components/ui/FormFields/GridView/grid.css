@@ -5,7 +5,7 @@
 [grid-view] table {
     opacity: 0;
     width: 100%;
-    background:white;
+    background: white;
 }
 
 [grid-view] table.loaded {
@@ -66,7 +66,7 @@
 [grid-view] .thead.show {
     position: fixed;
     display: block;
-    z-index:100;
+    z-index: 100;
     white-space: nowrap;
 }
 
@@ -146,7 +146,7 @@
     width: 25px;
     text-align: center;
     padding: 0px;
-    min-width:25px;
+    min-width: 25px;
 }
 
 [grid-view] .t-checkbox label {
@@ -159,55 +159,67 @@
 }
 
 [grid-view] .row-state {
-    position:absolute;
-    opacity:0.8;
-    text-transform:uppercase;
+    position: absolute;
+    opacity: 0.8;
+    text-transform: uppercase;
 }
+
 [grid-view] .row-state-insert {
-    background-color:#e6ffc9;
+    background-color: #e6ffc9;
 }
+
 [grid-view] .row-state-edit {
-    background-color:#ddf2ff;
+    background-color: #ddf2ff;
 }
+
 [grid-view] .row-state-remove {
-    background-color:#ffe8e8;
+    background-color: #ffe8e8;
 }
+
 [grid-view] tr:hover .row-state {
-    position:absolute;
-    opacity:0;
-    text-transform:uppercase;
+    position: absolute;
+    opacity: 0;
+    text-transform: uppercase;
 }
+
 [grid-view] .row-state-detail {
-    position:absolute;
-    margin-left:-18px;
-    margin-top:-4px;
-    padding:6px 4px 5px 4px;
-    border-top-left-radius:3px;
-    border-bottom-left-radius:3px;
-    border:1px solid #ddd;
-    border-right:0px;
-    height:25px;
+    position: absolute;
+    margin-left: -18px;
+    margin-top: -4px;
+    padding: 6px 4px 5px 4px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border: 1px solid #ddd;
+    border-right: 0px;
+    height: 25px;
 }
+
+[grid-view] .editable .row-state-detail {
+    margin-top: -1px;
+}
+
 [grid-view] .row-state-detail i {
-    float:left;
-    display:block;
-    line-height:12px;
-    height:12px;
+    float: left;
+    display: block;
+    line-height: 12px;
+    height: 12px;
 }
+
 [grid-view] tr:hover .row-state-detail {
-    background:#FFFFAA;
+    background: #FFFFAA;
 }
+
 [grid-view] .row-state-detail .row-state-options {
     margin: 16px 0px 0px -5px;
     border: 1px solid #ddd;
-    opacity:0;
-    z-index:99;
+    opacity: 0;
+    z-index: 99;
     border-top: 0px;
     padding: 2px 4px 4px 3px;
     border-bottom-left-radius: 5px;
     position: absolute;
-    text-transform:uppercase;
-    background:#FFFFAA;
+    text-transform: uppercase;
+    background: #FFFFAA;
     border-bottom-right-radius: 5px;
     -webkit-transition: opacity .2s ease-in;
     -moz-transition: opacity .2s ease-in;
@@ -215,9 +227,11 @@
     -ms-transition: opacity .2s ease-in;
     transition: opacity .2s ease-in;
 }
+
 [grid-view] tr:hover .row-state-detail .row-state-options {
-    opacity:1;
+    opacity: 1;
 }
+
 [grid-view] .row-state-detail .btn {
     font-size: 10px;
     font-weight: bold;
@@ -225,14 +239,14 @@
 
 [grid-view] td [contenteditable] {
     border: 0px;
-    width:100%;
-    padding:5px 4px 4px 4px;
-    min-height:16px;
-    display:inline-block;
+    width: 100%;
+    padding: 5px 4px 4px 4px;
+    min-height: 16px;
+    display: inline-block;
     white-space: pre-wrap;
-    box-shadow:inset 0px 0px 0px 1px #fff;
-    resize:none;
-    margin:-2px 0px -1px -4px;
+    box-shadow: inset 0px 0px 0px 1px #fff;
+    resize: none;
+    margin: -2px 0px -1px -4px;
     box-sizing: content-box;
-    background:transparent;
+    background: transparent;
 }
