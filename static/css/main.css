@@ -596,7 +596,7 @@ div[ui-content] {
     border-right: 0px;
     background: #fafafa;
     padding: 4px 20px;
-    color: #777;
+    color: #333;
     font-size: 13px;
     text-shadow: rgb(255, 255, 255) 0px 1px 0px;
     font-weight: bold;
@@ -2086,116 +2086,6 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
     height: 18px;
     margin: -5px 3px;
 
-}
-
-/********************************** DATA FILTER **************************************/
-.data-filter {
-    margin: 0px -15px 0px -15px;
-    border-top: 1px solid #e2e2e2;
-    border-bottom: 1px solid #e2e2e2;
-    background: #efefef;
-    -webkit-box-shadow: inset 0 2px 1px rgba(0, 0, 0, 0.02);
-    -moz-box-shadow: inset 0 2px 1px rgba(0, 0, 0, 0.02);
-    box-shadow: inset 0 2px 1px rgba(0, 0, 0, 0.02);
-}
-
-.data-filter.dash-filter {
-    background: #fff;
-    z-index: 120;
-}
-
-.dash-filter .filter-item-container > div > .btn-group > .btn {
-    padding: 3px 10px 5px 10px;
-    height: 28px !important;
-}
-
-.data-filter-type {
-    width: 84px;
-    float: left;
-    border-right: 1px dotted #ececeb;
-    margin: -4px 6px 0px 0px;
-    padding: 4px;
-    text-align: center;
-}
-
-.data-filter-name {
-    border: 1px solid #ccc;
-    font-size: 11px;
-    font-weight: normal;
-    color: #666;
-}
-
-.data-filter-type .badge {
-    width: 100%;
-}
-
-.filter-reset {
-    color: #666;
-    border-radius: 0px 3px 3px 0px !important;
-    border: 1px solid #bbb;
-    padding: 2px 3px 2px 3px;
-    margin-top: 4px;
-}
-
-.dash-filter .filter-item-container > div > .btn-group > .filter-reset {
-    margin-top: 0px;
-    margin-left: -2px;
-    padding-top: 3px;
-    padding-bottom: 1px;
-}
-
-.filter-criteria {
-    padding: 8px;
-    font-size: 13px;
-}
-
-.filter-td {
-    padding: 10px 10px 5px 10px;
-}
-
-.dash-filter .filter-td {
-    padding: 5px 10px 1px 15px;
-}
-
-.filter-manage {
-    width: 0px;
-    padding: 10px 13px 10px 16px;
-    border-right: 1px solid #ddd;
-    background: rgba(255, 255, 255, .3);
-}
-
-.dash-filter .filter-manage {
-    display: none;
-}
-
-.filter-dropdown-label {
-    margin: 0px;
-    font-weight: normal;
-    cursor: pointer;
-}
-
-.filter-item-container {
-    padding-bottom: 5px;
-    float: left;
-}
-
-.filter-manage label {
-    font-weight: normal;
-    padding: 0px;
-    margin: 0px;
-    cursor: pointer;
-}
-
-.filter-manage a {
-    padding: 3px 20px 3px 10px !important;
-}
-
-.filter-manage .btn {
-    color: #aaa;
-}
-
-.filter-manage .btn .caret {
-    margin: -2px -2px 0px 4px;
 }
 
 /********************************** MODAL BACKDROP **************************************/

@@ -1,6 +1,6 @@
 <div class="btn-group" style="margin-right:7px;">
     <button type="button" ng-click="toggleFilterCriteria($event)" 
-            class="btn btn-default btn-sm dropdown-toggle filter-criteria-button" style="color:#666;">
+            class="btn btn-default btn-sm dropdown-toggle filter-criteria-button" style="color:#333;">
 
         <span style="font-size:13px;"> 
             {{filter.label}}<span 

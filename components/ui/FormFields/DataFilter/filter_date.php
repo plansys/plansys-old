@@ -10,7 +10,7 @@
     </a>
     <button type="button" ng-click="toggleFilterCriteria($event)" ng-disabled="filter.options.lockOperator"  
             class="btn btn-default btn-sm dropdown-toggle filter-criteria-button" 
-            style="color:#666;opacity:1;height:31px;">
+            style="color:#333;opacity:1;height:31px;">
         <span style="font-size:13px;"> 
             {{filter.label}}<span 
                 ng-hide="(filter.filterType == 'number'

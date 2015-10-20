@@ -375,6 +375,10 @@ class DataFilter extends FormField {
         return ['data-filter.js'];
     }
 
+    public function includeCSS() {
+        return ['data-filter.css'];
+    }
+
     public function datasources() {
         $ds     = $this->builder->findAllField(['type' => 'DataSource']);
         $return = [];

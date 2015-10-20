@@ -127,9 +127,9 @@ app.filter('hourFormat', function () {
     }
 });
 app.filter('dateFormat', function (dateFilter) {
-    return function (date, format) {
-        if (date != "0000-00-00") {
-            return date(format, strtotime(date));
+    return function (input, format) {
+        if (input != "0000-00-00") {
+            return date(format, strtotime(input));
         } else {
             return "";
         }

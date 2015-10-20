@@ -652,7 +652,7 @@ ng-disabled="!gridView1.checkbox.chk
             unset($_SESSION['CrudGenerator'][$modelClassName]);
         }
 
-        $generatorParams = json_decode('{"name":"AppCountryForm.php","className":"AppCountryForm","extendsName":"Country","type":"form","relations":[{"name":"cities","tableName":"city","type":"CHasManyRelation","foreignKey":"country_id","className":"City","formType":"Table","editable":"No","insertable":"No","chooseable":"No","deleteable":"Yes"}],"status":"processing","path":"app.forms.country"}', true);
+//        $generatorParams = json_decode('{"name":"AppCountryForm.php","className":"AppCountryForm","extendsName":"Country","type":"form","relations":[{"name":"cities","tableName":"city","type":"CHasManyRelation","foreignKey":"country_id","className":"City","formType":"Table","editable":"No","insertable":"No","chooseable":"No","deleteable":"Yes"}],"status":"processing","path":"app.forms.country"}', true);
 
 //        $generatorParams = json_decode('{"name":"AppCityForm.php","className":"AppCityForm","extendsName":"City","type":"form","relations":[{"name":"addresses","tableName":"address","type":"CHasManyRelation","foreignKey":"city_id","className":"Address","formType":"Table","editable":"Inline","insertable":"Inline","deleteable":"Multi Delete"}],"status":"processing","overwrite":true,"path":"app.forms.city"}', true);
 
@@ -992,13 +992,20 @@ ng-disabled="!gridView1.checkbox.chk
             'columns' => $gridColumns
         ];
 
+        $return[] = [
+            'renderInEditor' => 'Yes',
+            'type' => 'Text',
+            'value' => '<div style="height:175px;"></div>',
+        ];
+
+
         return $return;
     }
 
     private static function criteriaCondition($model) {
         $condition = '{[where]}';
         if (!!$model->_softDelete) {
-            $condition = $model->_softDelete['column'] . ' <> \'' . $model->_softDelete['value'] . '\' {AND [where]}';
+            $condition = 't.' . $model->_softDelete['column'] . ' <> \'' . $model->_softDelete['value'] . '\' {AND [where]}';
         }
         return $condition;
     }
@@ -1055,9 +1062,9 @@ ng-disabled="!gridView1.checkbox.chk
                     foreach ($generatorParams['relations'] as $rel) {
                         if (!isset($rel['name'])) continue;
 
-                        $relName = ucfirst($rel['name']);
-                        if (@$rel['type'] == 'CBelongsToRelation' && $relClassName == $relName) {
+                        if (@$rel['type'] == 'CBelongsToRelation' && $relClassName == $rel['className']) {
                             $relClassName = $rel['className'];
+                            $relName      = Helper::snakeToCamel(substr($field['name'], 0, -3));
                             $buttons      = [];
 
                             if ($rel['insertable'] == "Yes") {

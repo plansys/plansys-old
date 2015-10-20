@@ -121,6 +121,7 @@ type="checkbox" /></label>';
          ng-model="row.' . $fieldName . '" ng-keydown="editKey($event)"></div>
     <span ng-show="row.$rowState == \'insert\'">' . $template . '</span>';
                     break;
+
                 case "del-button":
                     if (!isset($col['options']['delUrl'])) {
                         $style    = ' style="width:20px;"';
