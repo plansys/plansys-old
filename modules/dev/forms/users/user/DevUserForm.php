@@ -63,7 +63,11 @@ class DevUserForm extends User {
                     ),
                     array (
                         'type' => 'Text',
-                        'value' => '<div style=\\"float:right;min-width:400px;\\">',
+                        'value' => '<div class=\"form-group form-group-sm\">   
+    <label class=\"control-label col-sm-4\"> 
+        User Role(s)
+    </label>
+    <div class=\"col-sm-8\">',
                     ),
                     array (
                         'name' => 'userRoles',
@@ -85,7 +89,8 @@ class DevUserForm extends User {
                     ),
                     array (
                         'type' => 'Text',
-                        'value' => '</div>
+                        'value' => '    </div>
+</div>
 <div class=\"clearfix\"></div>',
                     ),
                     array (
@@ -274,6 +279,19 @@ Isi field disamping untuk mengubah password.
                         'resetable' => 'Yes',
                         'defaultValue' => '',
                         'show' => false,
+                        'list' => array (
+                            'general' => array (
+                                'view' => 'View',
+                                'create' => 'Create',
+                                'update' => 'Update',
+                                'delete' => 'Delete',
+                            ),
+                            'other' => array (
+                                'login' => 'Login',
+                                'logout' => 'Logout',
+                                'other' => 'Other',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'description',
