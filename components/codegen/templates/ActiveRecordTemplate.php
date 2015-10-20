@@ -339,7 +339,7 @@ ng-disabled="!gridView1.checkbox.chk
             $mmTo    = $token[5][1];
 
             if ($condition != "{[where]}") {
-                $condition = "{{$primaryKey} not in (select {$mmTo} from {$mmTable} where {$mmFrom} = :id) AND} {{$primaryKey} not in (:jsid) AND} " . $condition;
+                $condition = "{{$primaryKey} not in (select {$mmTo} from {$mmTable} where {$mmFrom} = :id) AND} {{$primaryKey} not in (:jsid)} {AND} " . $condition;
             } else {
                 $condition = "{{$primaryKey} not in (select {$mmTo} from {$mmTable} where {$mmFrom} = :id) AND} {{$primaryKey} not in (:jsid)} {AND [where]} ";
             }

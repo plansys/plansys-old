@@ -25,6 +25,19 @@ function generateClassPrefix(s) {
     return result.charAt(0).toUpperCase() + result.slice(1);
 }
 
+$scope.classPrefix = [];
+
+$scope.generateClassPrefix = function() {
+    $scope.model.prefix = "";
+    var prefixList = $scope.model.model.replace(/([a-z](?=[A-Z]))/g, '$1 ').split(" ");
+    
+    if (prefixList.length > 1) {
+        $scope.classPrefix = ['-- NONE --', '---', prefixList[0]];
+    } else {
+        $scope.classPrefix = [];
+    }
+}
+
 $scope.getModulePath = function () {
     var path = activeScope.activeItem.alias;
     var module = path.split(".");
@@ -90,6 +103,8 @@ $scope.onNameChange = function () {
     $scope.model.name = ($scope.model.name.charAt(0).toUpperCase() + $scope.model.name.slice(1)).replace(/[^a-z0-9]/gi, '');
     $scope.model.lcName = ($scope.model.name.charAt(0).toLowerCase() + $scope.model.name.slice(1)).replace(/[^a-z0-9]/gi, '');
     $scope.resetData();
+    
+    $scope.generateClassPrefix();
 
     $http.get(Yii.app.createUrl('/dev/crud/listRelation&m=' + $scope.model.name))
         .success(function (res) {

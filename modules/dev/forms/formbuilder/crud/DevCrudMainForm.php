@@ -6,6 +6,7 @@ class DevCrudMainForm extends Form {
     public $path = '';
     public $model = '';
     public $relations = [];
+    public $prefix = '';
     
     ## Advanced Settings
     public $bulkCheckbox = 'No';
@@ -126,6 +127,15 @@ class DevCrudMainForm extends Form {
                         'type' => 'LabelField',
                     ),
                     array (
+                        'label' => 'Class Prefix',
+                        'name' => 'prefix',
+                        'options' => array (
+                            'ps-list' => 'classPrefix',
+                            'ng-if' => 'classPrefix.length > 0',
+                        ),
+                        'type' => 'DropDownList',
+                    ),
+                    array (
                         'type' => 'Text',
                         'value' => '<input type=\"hidden\" name=\"DevCrudMainForm[path]\" ng-value=\"data.path\">
 ',
@@ -145,7 +155,7 @@ padding-left:0px;',
             ),
             array (
                 'type' => 'Text',
-                'value' => '                                <div ng-if=\\"!!model.name\\">',
+                'value' => ' <div ng-if=\\"!!model.name\\">',
             ),
             array (
                 'title' => 'Advanced Settings',
@@ -200,7 +210,7 @@ padding-left:0px;',
             ),
             array (
                 'type' => 'Text',
-                'value' => '                                                                 <div ng-if=\\"model.masterData == \'No\'\\">',
+                'value' => '                <div ng-if=\\"model.masterData == \'No\' && relationList.length > 0\\">',
             ),
             array (
                 'title' => 'Relations',
