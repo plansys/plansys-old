@@ -199,6 +199,11 @@ EOF;
 
         $replace['##RELATION-PLACEHOLDER##'] = $relations;
         $content                             = str_replace(array_keys($replace), array_values($replace), $tpl);
+        
+        if(!is_dir(dirname($result['file']))) {
+            mkdir(dirname($result['file']), 0777, true);
+        }
+        
         file_put_contents($result['file'], $content);
     }
 
