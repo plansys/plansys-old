@@ -25,17 +25,19 @@ function generateClassPrefix(s) {
     return result.charAt(0).toUpperCase() + result.slice(1);
 }
 
-$scope.classPrefix = [];
+$scope.classPrefix = null;
 
-$scope.generateClassPrefix = function() {
+$scope.generateClassPrefix = function () {
     $scope.model.prefix = "";
     var prefixList = $scope.model.model.replace(/([a-z](?=[A-Z]))/g, '$1 ').split(" ");
-    
+
     if (prefixList.length > 1) {
-        $scope.classPrefix = ['-- NONE --', '---', prefixList[0]];
+        $scope.classPrefix = {'': '-- NONE --', '---': '---'};
+        $scope.classPrefix[prefixList[0]] = prefixList[0];
     } else {
-        $scope.classPrefix = [];
+        $scope.classPrefix = null;
     }
+    console.log($scope.classPrefix);
 }
 
 $scope.getModulePath = function () {
@@ -103,7 +105,7 @@ $scope.onNameChange = function () {
     $scope.model.name = ($scope.model.name.charAt(0).toUpperCase() + $scope.model.name.slice(1)).replace(/[^a-z0-9]/gi, '');
     $scope.model.lcName = ($scope.model.name.charAt(0).toLowerCase() + $scope.model.name.slice(1)).replace(/[^a-z0-9]/gi, '');
     $scope.resetData();
-    
+
     $scope.generateClassPrefix();
 
     $http.get(Yii.app.createUrl('/dev/crud/listRelation&m=' + $scope.model.name))
@@ -135,29 +137,33 @@ $scope.form.submit = function (f) {
         name: $scope.data.path,
         type: 'folder'
     });
+    var modelName = $scope.model.name;
+    if ($scope.model.prefix != '') {
+        modelName = modelName.substr($scope.model.prefix.length);
+    }
 
     if ($scope.model.masterData == 'No') {
         $scope.data.files.push({
-            name: $scope.params.prefix + $scope.model.name + 'Index.php',
-            className: $scope.params.prefix + $scope.model.name + 'Index',
+            name: $scope.params.prefix + modelName + 'Index.php',
+            className: $scope.params.prefix + modelName + 'Index',
             extendsName: $scope.model.model,
             type: 'index',
             bulkCheckbox: $scope.model.bulkCheckbox
         });
         $scope.data.files.push({
-            name: $scope.params.prefix + $scope.model.name + 'Form.php',
-            className: $scope.params.prefix + $scope.model.name + 'Form',
+            name: $scope.params.prefix + modelName + 'Form.php',
+            className: $scope.params.prefix + modelName + 'Form',
             extendsName: $scope.model.model,
             type: 'form',
             relations: $scope.model.relations
         });
         $scope.data.files.push({
-            name: $scope.model.name + 'Controller.php',
-            className: $scope.model.name + 'Controller',
+            name: modelName + 'Controller.php',
+            className: modelName + 'Controller',
             type: 'controller',
             mode: 'crud',
-            formName: $scope.params.prefix + $scope.model.name + 'Form',
-            indexName: $scope.params.prefix + $scope.model.name + 'Index',
+            formName: $scope.params.prefix + modelName + 'Form',
+            indexName: $scope.params.prefix + modelName + 'Index',
             alias: $scope.data.path,
             bulkCheckbox: $scope.model.bulkCheckbox,
             path: $scope.getControllerPath(),
@@ -169,8 +175,8 @@ $scope.form.submit = function (f) {
             switch (rel.type) {
                 case "CBelongsToRelation":
                     $scope.data.files.push({
-                        name: $scope.params.prefix + $scope.model.name + ucfirst(rel.name) + 'Relform.php',
-                        className: $scope.params.prefix + $scope.model.name + ucfirst(rel.name) + 'Relform',
+                        name: $scope.params.prefix + modelName + ucfirst(rel.name) + 'Relform.php',
+                        className: $scope.params.prefix + modelName + ucfirst(rel.name) + 'Relform',
                         extendsName: rel.className,
                         type: 'relform',
                         relation: rel
@@ -179,15 +185,15 @@ $scope.form.submit = function (f) {
                 case "CManyManyRelation":
                     if (rel.chooseable == 'Yes') {
                         $scope.data.files.push({
-                            name: $scope.params.prefix + $scope.model.name + ucfirst(rel.name) + 'ChooseRelform.php',
-                            className: $scope.params.prefix + $scope.model.name + ucfirst(rel.name) + 'ChooseRelform',
+                            name: $scope.params.prefix + modelName + ucfirst(rel.name) + 'ChooseRelform.php',
+                            className: $scope.params.prefix + modelName + ucfirst(rel.name) + 'ChooseRelform',
                             extendsName: rel.className,
                             type: 'relform',
                             relation: rel,
-                            inlineJs: $scope.params.prefix + $scope.model.name + ucfirst(rel.name) + 'ChooseRelform.js'
+                            inlineJs: $scope.params.prefix + modelName + ucfirst(rel.name) + 'ChooseRelform.js'
                         });
                         $scope.data.files.push({
-                            name: $scope.params.prefix + $scope.model.name + ucfirst(rel.name) + 'ChooseRelform.js',
+                            name: $scope.params.prefix + modelName + ucfirst(rel.name) + 'ChooseRelform.js',
                             template: 'TplRelMMIndex',
                             replace: {
                                 dsParent: 'ds' + ucfirst(rel.name)
@@ -201,15 +207,15 @@ $scope.form.submit = function (f) {
         }
     } else {
         $scope.data.files.push({
-            name: $scope.params.prefix + $scope.model.name + 'Master.php',
-            className: $scope.params.prefix + $scope.model.name + 'Master',
+            name: $scope.params.prefix + modelName + 'Master.php',
+            className: $scope.params.prefix + modelName + 'Master',
             extendsName: $scope.model.model,
             type: 'master',
         });
         $scope.data.files.push({
-            name: $scope.model.name + 'Controller.php',
-            className: $scope.model.name + 'Controller',
-            indexName: $scope.params.prefix + $scope.model.name + 'Master',
+            name: modelName + 'Controller.php',
+            className: modelName + 'Controller',
+            indexName: $scope.params.prefix + modelName + 'Master',
             type: 'controller',
             mode: 'master',
             alias: $scope.data.path,

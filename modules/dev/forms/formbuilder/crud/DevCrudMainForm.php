@@ -131,7 +131,7 @@ class DevCrudMainForm extends Form {
                         'name' => 'prefix',
                         'options' => array (
                             'ps-list' => 'classPrefix',
-                            'ng-if' => 'classPrefix.length > 0',
+                            'ng-if' => '!!classPrefix',
                         ),
                         'type' => 'DropDownList',
                     ),
@@ -210,7 +210,7 @@ padding-left:0px;',
             ),
             array (
                 'type' => 'Text',
-                'value' => '                <div ng-if=\\"model.masterData == \'No\'\\">',
+                'value' => '                                <div ng-if=\\"model.masterData == \'No\'\\">',
             ),
             array (
                 'title' => 'Relations',
