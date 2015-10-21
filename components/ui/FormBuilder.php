@@ -1053,7 +1053,6 @@ EOF;
             ];
 
             if (empty($this->getFunctionBody($reflector->getFileName(), 'getForm'))) {
-
                 if (isset($_SESSION['CrudGenerator']) && isset($_SESSION['CrudGenerator'][get_class($this->model)])) {
                     if (isset($_SESSION['CrudGenerator'][get_class($this->model)]['inlineJs'])) {
                         $defaultFields['inlineJS'] = $_SESSION['CrudGenerator'][get_class($this->model)]['inlineJs'];

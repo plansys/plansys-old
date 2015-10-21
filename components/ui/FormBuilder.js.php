@@ -33,6 +33,7 @@ ob_start();
         $scope.lastModified = "<?php echo Helper::getLastModified($modelClass); ?>";
         $scope.date = date;
         $scope.strtotime = strtotime;
+        $scope.angular = angular;
 
         $scope.closeWindow = function() {
             window.close();

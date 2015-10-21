@@ -70,6 +70,7 @@ class CrudController extends Controller {
             case "index":
             case "form":
             case "relform":
+            case "chooserelform":
             case "master":
                 if (!file_exists($file) || !!@$post['overwrite']) {
                     $this->generateAR($post, $result);
@@ -149,19 +150,48 @@ EOF;
                     ";
                         break;
 
+                    case "CHasManyRelation":
                     case "CManyManyRelation":
-                        $relName        = ucfirst($rel['name']);
-                        $chooseFormName = substr($post['formName'], 0, -4) . $relName . 'ChooseRelform';
-                        $tprel          = file_get_contents(Yii::getPathOfAlias('application.components.codegen.templates.TplRelMMController') . ".php");
-                        $tprel          = Helper::getStringBetween($tprel, '### TEMPLATE-START ###', '### TEMPLATE-END ###');
-                        $reprel         = [
-                            'RelModel' => $relName,
-                            'TemplateChooseForm' => $chooseFormName,
-                        ];
-                        $tprel          = str_replace(array_keys($reprel), array_values($reprel), $tprel);
-                        $relations .= "
+                        if ($rel['editable'] == "PopUp") {
+                            $foreignKey = $rel['foreignKey'];
+                            if ($rel['type'] == "CManyManyRelation") {
+                                $token   = token_get_all("<?php " . str_replace(" ", "", $rel['foreignKey']));
+                                $mmTable = $token[1][1];
+                                $mmFrom  = $token[3][1];
+                                $mmTo    = $token[5][1];
+
+                                $foreignKey = $mmFrom;
+                            }
+
+                            $relName  = ucfirst($rel['name']);
+                            $formName = substr($post['formName'], 0, -4) . $relName . 'Relform';
+                            $tprel    = file_get_contents(Yii::getPathOfAlias('application.components.codegen.templates.TplRelMController') . ".php");
+                            $tprel    = Helper::getStringBetween($tprel, '### TEMPLATE-START ###', '### TEMPLATE-END ###');
+                            $reprel   = [
+                                'RelModel' => $relName,
+                                'TemplateForm' => $formName,
+                                'foreignKey' => $foreignKey
+                            ];
+                            $tprel    = str_replace(array_keys($reprel), array_values($reprel), $tprel);
+                            $relations .= "
 {$tprel}
                     ";
+                        }
+
+                        if ($rel['type'] == 'CManyManyRelation') {
+                            $relName        = ucfirst($rel['name']);
+                            $chooseFormName = substr($post['formName'], 0, -4) . $relName . 'ChooseRelform';
+                            $tprel          = file_get_contents(Yii::getPathOfAlias('application.components.codegen.templates.TplRelMMController') . ".php");
+                            $tprel          = Helper::getStringBetween($tprel, '### TEMPLATE-START ###', '### TEMPLATE-END ###');
+                            $reprel         = [
+                                'RelModel' => $relName,
+                                'TemplateChooseForm' => $chooseFormName,
+                            ];
+                            $tprel          = str_replace(array_keys($reprel), array_values($reprel), $tprel);
+                            $relations .= "
+{$tprel}
+                    ";
+                        }
                         break;
                 }
             }

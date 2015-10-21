@@ -72,6 +72,9 @@ class DevCrudRelMany extends Form {
             array (
                 'label' => 'Insertable',
                 'name' => 'insertable',
+                'options' => array (
+                    'ng-if' => 'model.type != \'CManyManyRelation\' || (model.type == \'CManyManyRelation\' && model.chooseable == \'Yes\')',
+                ),
                 'defaultType' => 'first',
                 'listExpr' => '[\'No\',\'PopUp\', \'Inline\']',
                 'type' => 'DropDownList',

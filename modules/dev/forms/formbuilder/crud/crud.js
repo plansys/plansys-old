@@ -182,13 +182,24 @@ $scope.form.submit = function (f) {
                         relation: rel
                     });
                     break
+                case "CHasManyRelation":
                 case "CManyManyRelation":
+                    if (rel.editable == "PopUp" || rel.insertable == "PopUp") {
+                        $scope.data.files.push({
+                            name: $scope.params.prefix + modelName + ucfirst(rel.name) + 'Relform.php',
+                            className: $scope.params.prefix + modelName + ucfirst(rel.name) + 'Relform',
+                            extendsName: rel.className,
+                            type: 'relform',
+                            relation: rel
+                        });
+                    }
+
                     if (rel.chooseable == 'Yes') {
                         $scope.data.files.push({
                             name: $scope.params.prefix + modelName + ucfirst(rel.name) + 'ChooseRelform.php',
                             className: $scope.params.prefix + modelName + ucfirst(rel.name) + 'ChooseRelform',
                             extendsName: rel.className,
-                            type: 'relform',
+                            type: 'chooserelform',
                             relation: rel,
                             inlineJs: $scope.params.prefix + modelName + ucfirst(rel.name) + 'ChooseRelform.js'
                         });

@@ -132,8 +132,8 @@ class ActiveRecordTemplate extends CComponent {
             $gv->columns[]   = $column;
         }
 
-        $editUrl               = "{$prefixUrl}/update";
-        $editButtonCol         = [
+        $editUrl       = "{$prefixUrl}/update";
+        $editButtonCol = [
             'name' => '',
             'label' => '',
             'columnType' => "string",
@@ -142,7 +142,7 @@ class ActiveRecordTemplate extends CComponent {
                 'editUrl' => "{$editUrl}&id={{row.{$primaryKey}}}"
             ]
         ];
-        $gv->columns[]         = $editButtonCol;
+        $gv->columns[] = $editButtonCol;
         array_push($gridColumns, $editButtonCol);
 
         if (@$generatorParams['bulkCheckbox'] == 'Yes') {
@@ -162,8 +162,8 @@ class ActiveRecordTemplate extends CComponent {
             $gv->columns[] = $checkboxCol;
             array_push($gridColumns, $checkboxCol);
         } else {
-            $delUrl               = "{$prefixUrl}/delete";
-            $delButtonCol         = [
+            $delUrl        = "{$prefixUrl}/delete";
+            $delButtonCol  = [
                 'name' => '',
                 'label' => '',
                 'columnType' => "string",
@@ -172,7 +172,7 @@ class ActiveRecordTemplate extends CComponent {
                     'delUrl' => "{$delUrl}&id={{row.{$primaryKey}}}"
                 ]
             ];
-            $gv->columns[]        = $delButtonCol;
+            $gv->columns[] = $delButtonCol;
             array_push($gridColumns, $delButtonCol);
         }
 
@@ -221,8 +221,21 @@ class ActiveRecordTemplate extends CComponent {
             case "CBelongsToRelation":
                 self::generateRelBelongsToForm($return, $params);
                 break;
+            case "CHasManyRelation":
             case "CManyManyRelation":
-                self::generateRelManyManyIndex($return, $params);
+                if ($generatorParams['type'] == "relform") {
+                    if ($generatorParams['relation']['editable'] == "PopUp" ||
+                        $generatorParams['relation']['insertable'] == "PopUp"
+                    ) {
+                        self::generateRelManyForm($return, $params);
+                    }
+                }
+
+                if ($generatorParams['type'] == "chooserelform") {
+                    if ($generatorParams['relation']['type'] == "CManyManyRelation") {
+                        self::generateRelManyManyIndex($return, $params);
+                    }
+                }
                 break;
         }
 
@@ -241,21 +254,27 @@ class ActiveRecordTemplate extends CComponent {
         $generatorParams = '';
         extract($params);
 
-        $relClass      = $generatorParams['relation']['className'];
-        $model         = $relClass::model();
-        $primaryKey    = $model->tableSchema->primaryKey;
-        $filterColumns = [];
-        $gridColumns   = [];
+        $basic     = substr($basic, 0, strlen($generatorParams['relation']['name'] . "Choose") * -1);
+        $prefixUrl = "{$basic}";
+        if ($module != '' && $module != 'app' && $module != 'application') {
+            $prefixUrl = "{$module}/" . $prefixUrl;
+        }
+
+        $relClass         = $generatorParams['relation']['className'];
+        $model            = $relClass::model();
+        $parentPrimaryKey = $primaryKey;
+        $primaryKey       = $model->tableSchema->primaryKey;
+        $filterColumns    = [];
+        $gridColumns      = [];
 
         $relClassSpaced = Helper::camelToSpacedCamel($relClass);
 
         ## generate ActionBar
-        $return[] = [
-            'linkBar' => [
-                [
-                    'renderInEditor' => 'Yes',
-                    'type' => 'Text',
-                    'value' => '<div
+        $linkBar = [
+            [
+                'renderInEditor' => 'Yes',
+                'type' => 'Text',
+                'value' => '<div
 ng-click="choose()"
 class="btn btn-sm btn-success"
 ng-disabled="!gridView1.checkbox.chk
@@ -270,8 +289,29 @@ ng-disabled="!gridView1.checkbox.chk
    </b>
 </div>
 ',
-                ],
             ],
+        ];
+
+        if ($generatorParams['relation']['type'] == "CManyManyRelation" && $generatorParams['relation']['insertable'] == "PopUp") {
+            $relName = ucfirst($generatorParams['relation']['name']);
+            array_unshift($linkBar,
+                [
+                    'renderInEditor' => 'Yes',
+                    'type' => 'Text',
+                    'value' => '<a ng-url="' . $prefixUrl . '/insert' . $relName . '&id={{params.id}}"
+class="btn btn-sm btn-default">
+   <i class="fa fa-plus"></i>
+   <b>
+       Tambah
+       ' . $relClassSpaced . '
+   </b>
+</a>
+'
+                ]);
+        }
+
+        $return[] = [
+            'linkBar' => $linkBar,
             'title' => 'Daftar ' . ucfirst($generatorParams['relation']['name']),
             'showSectionTab' => 'No',
             'type' => 'ActionBar',
@@ -339,9 +379,11 @@ ng-disabled="!gridView1.checkbox.chk
             $mmTo    = $token[5][1];
 
             if ($condition != "{[where]}") {
-                $condition = "{t.{$primaryKey} not in (select {$mmTo} from {$mmTable} where {$mmFrom} = :id) AND} {t.{$primaryKey} not in (:jsid)} {AND} " . $condition;
+                $condition = "{t.{$primaryKey} not in (select {$mmTo} from {$mmTable} where {$mmFrom} = :id)}
+                {AND} {t.{$primaryKey} not in (:jsid)} {AND} " . $condition;
             } else {
-                $condition = "{t.{$primaryKey} not in (select {$mmTo} from {$mmTable} where {$mmFrom} = :id) AND} {t.{$primaryKey} not in (:jsid)}  c{AND} {[where]} ";
+                $condition = "{t.{$primaryKey} not in (select {$mmTo} from {$mmTable} where {$mmFrom} = :id)}
+                {AND} {t.{$primaryKey} not in (:jsid)} {AND} {[where]} ";
             }
 
             $params[':id']   = 'php: @$_GET["id"]';
@@ -370,6 +412,136 @@ ng-disabled="!gridView1.checkbox.chk
             'datasource' => 'dataSource1',
             'type' => 'GridView',
             'columns' => $gridColumns
+        ];
+    }
+
+    private static function generateRelManyForm(&$return, $params) {
+        $fieldList       = [];
+        $primaryKey      = '';
+        $tableColumns    = [];
+        $length          = 0;
+        $model           = null;
+        $basicTitle      = "";
+        $module          = '';
+        $basic           = '';
+        $generatorParams = '';
+        extract($params);
+
+        ## get basic model name
+        $basic     = substr($basic, 0, strlen($generatorParams['relation']['name']) * -1);
+        $prefixUrl = "{$basic}";
+        if ($module != '' && $module != 'app' && $module != 'application') {
+            $prefixUrl = "{$module}/" . $prefixUrl;
+        }
+
+        $column1      = [];
+        $column2      = [];
+        $fieldList_id = null;
+        foreach ($fieldList as $k => $i) {
+            if (isset($fieldList[$k]['name'])) {
+                if ($fieldList[$k]['name'] == $primaryKey) {
+                    $fieldList_id = $fieldList[$k];
+                    continue;
+                }
+                if (isset($fieldList[$k]['label'])) {
+                    $fieldList[$k]['label'] = ucfirst(implode(" ", array_map('ucfirst', explode("_", $fieldList[$k]['label']))));
+                }
+
+                $fieldList[$k] = self::processGridColumn([
+                    'model' => $model,
+                    'field' => $i,
+                    'fieldIndex' => $k,
+                    'tableColumns' => $tableColumns,
+                    'generatorParams' => $generatorParams,
+                    'prefixUrl' => $prefixUrl
+                ]);
+            }
+
+            if ($k < $length / 2) {
+                $column1[] = $fieldList[$k];
+            } else {
+                $column2[] = $fieldList[$k];
+            }
+        }
+
+        $column1[] = '<column-placeholder></column-placeholder>';
+        $column2[] = '<column-placeholder></column-placeholder>';
+        $return[]  = [
+            'type' => 'Text',
+            'value' => '<div ng-show="!params.posted">',
+        ];
+
+        $linkBar = [
+            [
+                'label' => 'Simpan',
+                'buttonType' => 'success',
+                'icon' => 'check',
+                'options' => [
+                    'ng-click' => "form.submit(this)",
+                ],
+                'type' => 'LinkButton',
+            ],
+        ];
+
+        if (@$generatorParams['relation']['deleteable'] == 'Yes') {
+            $linkBar[] = [
+                'type' => 'Text',
+                'value' => '<div ng-if="!isNewRecord" class="separator"></div>',
+                'renderInEditor' => 'Yes',
+            ];
+            $linkBar[] = [
+                'label' => 'Hapus',
+                'buttonType' => 'danger',
+                'icon' => 'trash',
+                'options' => [
+                    'ng-if' => '!isNewRecord',
+                    'href' => 'url:/' . $prefixUrl . '/delete' . ucfirst($generatorParams['relation']['name']) . '&id={params.id}',
+                    'confirm' => 'Apakah Anda Yakin ?'
+                ],
+                'type' => 'LinkButton',
+            ];
+        }
+
+        $return[] = [
+            'linkBar' => $linkBar,
+            'title' => '{{ isNewRecord ? \'Tambah ' . $basicTitle . '\' : \'Update ' . $basicTitle . '\'}}',
+            'showSectionTab' => 'No',
+            'type' => 'ActionBar',
+        ];
+
+        if (!is_null($fieldList_id)) {
+            $return[] = $fieldList_id;
+        }
+        $return[] = [
+            'type' => 'ColumnField',
+            'column1' => $column1,
+            'column2' => $column2
+        ];
+
+        $insertInit = '';
+        if ($generatorParams['relation']['type'] == "CManyManyRelation" && $generatorParams['relation']['insertable'] == "PopUp") {
+            $insertInit = 'parentWindow.ds' . ucfirst($generatorParams['relation']['name']) . '.data.push(model);
+        parentWindow.ds' . ucfirst($generatorParams['relation']['name']) . '.insertData.push(model);
+        model.$rowState = "insert";';
+        }
+
+        $return[] = [
+            'type' => 'Text',
+            'value' => '</div>
+<div ng-if="!!params.posted">
+    <br>
+    <br>
+    <br>
+    <div ng-if=\'!!params.inserted\'>
+        <div ng-init=\'
+        ' . $insertInit . '
+        \'></div>
+    </div>
+    <div style=\'text-align:center;\' ng-init=\'
+    closeWindow();
+    parentWindow.ds' . ucfirst($generatorParams['relation']['name']) . '.query();
+    \'>Loading ...</div>
+</div>'
         ];
     }
 
@@ -567,7 +739,7 @@ ng-disabled="!gridView1.checkbox.chk
         }
         array_unshift($cols, $pkCol);
 
-        $delButtonCol         = [
+        $delButtonCol  = [
             'name' => '',
             'label' => '',
             'columnType' => "string",
@@ -576,7 +748,7 @@ ng-disabled="!gridView1.checkbox.chk
                 'mode' => 'del-button'
             ]
         ];
-        $gv->columns[]        = $delButtonCol;
+        $gv->columns[] = $delButtonCol;
         array_push($cols, $delButtonCol);
 
         $return[] = [
@@ -587,7 +759,7 @@ ng-disabled="!gridView1.checkbox.chk
         ];
 
         if (!!$model->_softDelete) {
-            $condition = $model->_softDelete['column'] . ' <> \'' . $model->_softDelete['value'] . '\' {AND [where]}';
+            $condition = $model->_softDelete['column'] . ' <> \'' . $model->_softDelete['value'] . '\' {AND} {[where]}';
         } else {
             $condition = '{[where]}';
         }
@@ -648,7 +820,7 @@ ng-disabled="!gridView1.checkbox.chk
             unset($_SESSION['CrudGenerator'][$modelClassName]);
         }
 
-//        $generatorParams = json_decode('{"name":"AppCountryForm.php","className":"AppCountryForm","extendsName":"Country","type":"form","relations":[{"name":"cities","tableName":"city","type":"CHasManyRelation","foreignKey":"country_id","className":"City","formType":"Table","editable":"No","insertable":"No","chooseable":"No","deleteable":"Yes"}],"status":"processing","path":"app.forms.country"}', true);
+//        $generatorParams = json_decode('{"name":"AppCountryForm.php","className":"AppCountryForm","extendsName":"Country","type":"form","relations":[{"name":"cities","tableName":"city","type":"CHasManyRelation","foreignKey":"country_id","className":"City","formType":"Table","editable":"PopUp","insertable":"PopUp","chooseable":"No","deleteable":"Yes"}],"status":"processing","path":"app.forms.country"}', true);
 
 //        $generatorParams = json_decode('{"name":"AppCityForm.php","className":"AppCityForm","extendsName":"City","type":"form","relations":[{"name":"addresses","tableName":"address","type":"CHasManyRelation","foreignKey":"city_id","className":"Address","formType":"Table","editable":"Inline","insertable":"Inline","deleteable":"Multi Delete"}],"status":"processing","overwrite":true,"path":"app.forms.city"}', true);
 
@@ -790,7 +962,10 @@ ng-disabled="!gridView1.checkbox.chk
 
                     switch ($rel['formType']) {
                         case "Table":
-                            self::insertRelTable($rel, $return);
+                            self::insertRelTable($rel, $return, [
+                                'prefixUrl' => $prefixUrl,
+                                'parentPrimaryKey' => $primaryKey
+                            ]);
                             break;
                         case "SubForm":
                             self::insertRelSubForm($rel, $return);
@@ -829,7 +1004,7 @@ ng-disabled="!gridView1.checkbox.chk
             $return[] = [
                 'type' => 'Text',
                 'value' => '<div
-    ng-click="rel' . $relName . 'ChoosePopup.open();"
+    ng-click="rel' . $relName . 'InsertPopup.open();"
     style="float:right;margin-top:-25px;"
     class="btn btn-xs btn-success">
     <i class="fa fa-plus"></i>
@@ -877,7 +1052,7 @@ ng-disabled="!gridView1.checkbox.chk
         ];
     }
 
-    private static function insertRelTable($rel, &$return) {
+    private static function insertRelTable($rel, &$return, $params) {
         $gv            = new GridView;
         $model         = $rel['className']::model();
         $gridColumns   = [];
@@ -886,6 +1061,10 @@ ng-disabled="!gridView1.checkbox.chk
         $fieldList     = $model->modelFieldList;
         $primaryKey    = $model->tableSchema->primaryKey;
         $tableColumns  = $model->tableSchema->columns;
+
+        $prefixUrl        = '';
+        $parentPrimaryKey = '';
+        extract($params);
 
         foreach ($fieldList as $k => $i) {
             if ($fieldList[$k]['name'] == $rel['foreignKey']) {
@@ -928,6 +1107,20 @@ ng-disabled="!gridView1.checkbox.chk
             $filterColumns[] = $filter;
             $gridColumns[]   = $column;
             $gv->columns[]   = $column;
+        }
+
+        if ($rel['editable'] == "PopUp") {
+            $editButtonCol = [
+                'name' => '',
+                'label' => '',
+                'columnType' => "string",
+                'options' => [
+                    'mode' => 'edit-popup-button',
+                    'popupName' => 'rel' . $relName . 'EditPopup'
+                ]
+            ];
+            $gv->columns[] = $editButtonCol;
+            array_push($gridColumns, $editButtonCol);
         }
 
         if ($rel['type'] == "CManyManyRelation" && $rel['chooseable'] == "Yes") {
@@ -988,6 +1181,32 @@ ng-disabled="!gridView1.checkbox.chk
             'columns' => $gridColumns
         ];
 
+        if ($rel['editable'] == "PopUp") {
+            $return[] = [
+                'type' => 'PopupWindow',
+                'name' => 'rel' . $relName . 'EditPopup',
+                'options' => array(
+                    'height' => '500',
+                    'width' => '700',
+                ),
+                'mode' => 'url',
+                'url' => $prefixUrl . '/update' . $relName . '&id={{rel' . $relName . 'EditPopup.editId}}',
+            ];
+        }
+
+        if ($rel['insertable'] == "PopUp" && $rel['type'] == "CHasManyRelation") {
+            $return[] = [
+                'type' => 'PopupWindow',
+                'name' => 'rel' . $relName . 'InsertPopup',
+                'options' => array(
+                    'height' => '500',
+                    'width' => '700',
+                ),
+                'mode' => 'url',
+                'url' => $prefixUrl . '/insert' . $relName . '&id={{model.' . $parentPrimaryKey . '}}',
+            ];
+        }
+
         $return[] = [
             'renderInEditor' => 'Yes',
             'type' => 'Text',
@@ -1001,7 +1220,7 @@ ng-disabled="!gridView1.checkbox.chk
     private static function criteriaCondition($model) {
         $condition = '{[where]}';
         if (!!$model->_softDelete) {
-            $condition = 't.' . $model->_softDelete['column'] . ' <> \'' . $model->_softDelete['value'] . '\' {AND [where]}';
+            $condition = 't.' . $model->_softDelete['column'] . ' <> \'' . $model->_softDelete['value'] . '\' {AND} {[where]}';
         }
         return $condition;
     }

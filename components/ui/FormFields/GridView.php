@@ -146,6 +146,13 @@ type="checkbox" /></label>';
     class="btn btn-default btn-xs"><i class="fa fa-undo"></i></div>
     ';
                     break;
+                case 'edit-popup-button':
+                    $style    = ' style="width:20px;"';
+                    $template = '<a ng-if="row.$rowState != \'insert\'" ng-click="
+'.$col['options']['popupName'].'.editId = row[datasource.primaryKey];
+' . $col['options']['popupName'] . '.open()"
+    class="btn-block btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>';
+                    break;
                 case 'edit-button':
                     $style    = ' style="width:20px;"';
                     $template = '<a ng-url="' . $col['options']['editUrl'] . '"
