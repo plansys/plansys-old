@@ -15,7 +15,7 @@ class TplRelMController {
         if (isset($_POST["TemplateForm"])) {
             $model->attributes = $_POST["TemplateForm"];
             $model->foreignKey = $id;
-            if ($model->validate()) {
+            if ($model->insertMethod()) {
                 $posted = true;
             }
         }

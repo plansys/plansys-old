@@ -10,9 +10,10 @@
             <i ng-show="item.state == 'collapsed'" class="fa fa-caret-right"></i>
             <i ng-show="item.state != 'collapsed'" class="fa fa-caret-down"></i>
         </div>
-        <div>
-            <i style="pointer-events: none" ng-if="iconAvailable(item)"  class="fa fa-fw {{item.icon}}"></i>
-            <span style="pointer-events: none" ng-bind-html="item.label"></span>
+        <div style="padding-left:20px;">
+            <i style="pointer-events: none;float:left;margin:4px 0px 0px -19px;" 
+                ng-if="iconAvailable(item)"  class="fa fa-fw {{item.icon}}"></i>
+            <span style="pointer-events: none;word-break: break-all;" ng-bind-html="item.label"></span>
         </div>
         <div ng-if="item.active" ng-init="select(item)"></div>
     </a>
@@ -23,7 +24,7 @@
      id="ContextMenu<?= $class ?>">
     <ul class="dropdown-menu" role="menu">
         <li ng-repeat-start="menu in contextMenu track by $index" ng-if="menu.visible && !menu.hr">
-            <a class="pointer" role="menuitem"
+            <a class="pointer" role="menuitem" 
                ng-click="executeMenu(menu.click, item, $event)">
                 <i class="{{menu.icon}}"></i> {{ menu.label}}
             </a>

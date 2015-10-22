@@ -21,11 +21,11 @@
 <a ng-if='item.class' target="iframe"
    href="<?php echo $this->createUrl('update', array('class' => '')); ?>{{item.alias}}"
    ui-tree-handle ng-click="select(this)" ng-class="isSelected(this)">
-    <div style="margin:-1px 0px;padding:1px 0px;" 
+    <div style="margin:-1px 0px;padding:1px 0px 1px 16px;" 
          context-menu="formTreeOpen(this, $event, item)"
          data-target="FormTreeMenu">
-        <i class="fa {{ getIcon(item) }} fa-nm"></i>
-        {{item.name}}
+        <i class="fa {{ getIcon(item) }} fa-nm" style="float:left;margin:2px 0px 0px -18px;"></i>
+        <div style="word-break:break-all;">{{item.name}}</div>
     </div>
 </a>
 <div class="dropdown menu-tree" id="FormTreeMenu">

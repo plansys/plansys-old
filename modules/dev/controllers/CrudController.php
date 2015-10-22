@@ -152,7 +152,7 @@ EOF;
 
                     case "CHasManyRelation":
                     case "CManyManyRelation":
-                        if ($rel['editable'] == "PopUp") {
+                        if ($rel['editable'] == "PopUp" || $rel['insertable'] == 'PopUp') {
                             $foreignKey = $rel['foreignKey'];
                             if ($rel['type'] == "CManyManyRelation") {
                                 $token   = token_get_all("<?php " . str_replace(" ", "", $rel['foreignKey']));
@@ -170,7 +170,8 @@ EOF;
                             $reprel   = [
                                 'RelModel' => $relName,
                                 'TemplateForm' => $formName,
-                                'foreignKey' => $foreignKey
+                                'foreignKey' => $foreignKey,
+                                'insertMethod' => $rel['type'] == 'CHasManyRelation' ? 'validate' : 'save'
                             ];
                             $tprel    = str_replace(array_keys($reprel), array_values($reprel), $tprel);
                             $relations .= "
