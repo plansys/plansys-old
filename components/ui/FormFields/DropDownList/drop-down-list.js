@@ -57,7 +57,9 @@ app.directive('dropDownList', function ($timeout) {
                             if (ddParent.length > 0) {
                                 $a = ddParent.find("li.dropdown-item:eq(0)");
                             }
-                        }
+                        } else if ($a.hasClass("dropdown-header")) {
+                            $a = $a.find("li.dropdown-item:eq(0)");            
+                        } 
                         
                         if ($a.length == 0 && $scope.renderedFormList.length > 0) {
                             $scope.updateInternal($scope.renderedFormList[0].key);
@@ -87,7 +89,11 @@ app.directive('dropDownList', function ($timeout) {
                         if ($a.length == 0) {
                             var ddParent = $el.find("li.dropdown-item.hover").parents("li.dropdown-header").prev();
                             if (ddParent.length > 0) {
-                                $a = ddParent.find("li.dropdown-item:last-child");
+                                if (ddParent.hasClass("dropdown-header")) {
+                                    $a = ddParent.find("li.dropdown-item:last-child");            
+                                } else {
+                                    $a = ddParent;
+                                }
                             }
                         }
 

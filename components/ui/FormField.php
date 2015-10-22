@@ -307,7 +307,7 @@ class FormField extends CComponent {
             foreach ($includeJS as $js) {
                 $class  = get_class($this);
                 $jspath = realpath(Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js);
-
+                
                 if (is_dir($jspath)) {
                     $path  = Asset::publish($jspath);
                     $files = glob($jspath . "/*");
