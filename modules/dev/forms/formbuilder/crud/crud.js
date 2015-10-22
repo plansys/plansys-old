@@ -2,7 +2,7 @@ if (!window.opener || !window.opener.activeScope) {
     window.close();
 }
 var activeScope = window.opener.activeScope;
-function generateClassPrefix(s) {
+function initClassPrefix(s) {
     var parts = s.split(".");
 
     if (parts[1] == "forms") {
@@ -26,7 +26,6 @@ function generateClassPrefix(s) {
 }
 
 $scope.classPrefix = null;
-
 $scope.generateClassPrefix = function () {
     $scope.model.prefix = "";
     var prefixList = $scope.model.model.replace(/([a-z](?=[A-Z]))/g, '$1 ').split(" ");
@@ -37,7 +36,6 @@ $scope.generateClassPrefix = function () {
     } else {
         $scope.classPrefix = null;
     }
-    console.log($scope.classPrefix);
 }
 
 $scope.getModulePath = function () {
@@ -69,13 +67,13 @@ $scope.getControllerUrl = function (action) {
     action = action || "/index";
 
     if (!!$scope.model) {
-        return Yii.app.createUrl(module + $scope.model.lcName + action);
+        return Yii.app.createUrl(module + $scope.model.lcName.substr($scope.model.prefix.length) + action);
     }
 }
 $scope.getControllerPath = function () {
     return $scope.getModulePath() + ".controllers";
 }
-$scope.params.prefix = generateClassPrefix(activeScope.activeItem.alias);
+$scope.params.prefix = initClassPrefix(activeScope.activeItem.alias);
 $scope.params.alias = activeScope.activeItem.alias;
 $scope.data = {};
 $scope.exists = [];
@@ -86,7 +84,7 @@ $scope.relNameList = {};
 
 $scope.resetData = function () {
     $scope.data = {
-        path: trim($scope.params.alias, '.') + '.' + $scope.model.lcName,
+        path: trim($scope.params.alias, '.') + '.' + $scope.model.lcName.substr($scope.model.prefix.length),
         files: []
     };
 
@@ -119,6 +117,11 @@ $scope.onNameChange = function () {
                 $scope.relNameList[i] = i;
             }
         });
+}
+$scope.onPrefixChange = function() {
+    $timeout(function() {
+        $scope.resetData();
+    });
 }
 
 $scope.checkAll = function (e) {

@@ -519,7 +519,7 @@ class="btn btn-sm btn-default">
         ];
 
         $insertInit = '';
-        if ($generatorParams['relation']['type'] == "CManyManyRelation" && $generatorParams['relation']['insertable'] == "PopUp") {
+        if ($generatorParams['relation']['insertable'] == "PopUp") {
             $insertInit = 'parentWindow.ds' . ucfirst($generatorParams['relation']['name']) . '.data.push(model);
         parentWindow.ds' . ucfirst($generatorParams['relation']['name']) . '.insertData.push(model);
         model.$rowState = "insert";';

@@ -35,6 +35,7 @@ class DevCrudRelForm extends Form {
                             'ng-model' => 'item.name',
                             'ng-change' => 'changeRelation(item, relationList[model.name])',
                         ),
+                        'searchable' => 'Yes',
                         'type' => 'DropDownList',
                     ),
                     array (

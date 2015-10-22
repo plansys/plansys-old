@@ -18,6 +18,7 @@ class GridView extends FormField {
     public        $gridOptions  = [];
     public        $genOptions   = [];
     public        $columns      = [];
+    public        $hasEditable  = false;
 
     public function getErrorClass() {
         return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
@@ -47,6 +48,10 @@ class GridView extends FormField {
         if (count($name) > 1) {
             $c['fieldName'] = $c['name'];
             $c['name']      = array_pop($name);
+        }
+        
+        if (isset($c['options']['mode']) && strpos($c['options']['mode'], "editable") === 0) {
+            $this->hasEditable = true;
         }
 
         return $c;
@@ -88,7 +93,8 @@ type="checkbox" /></label>';
 
         $rowState = '';
         if ($idx == 0) {
-            $rowState = "<div ng-include='\"row-state-template\"'></div>\n    ";
+            $rowStateCss = $this->hasEditable ? "class='editable'" : "";
+            $rowState = "<div {$rowStateCss} ng-include='\"row-state-template\"'></div>\n    ";
             if (!@$col['options']['mode']) {
                 $template = "<span class='row-group-padding' ng-if='!!row.\$level'
         style='width:{{row.\$level*10}}px;'></span>

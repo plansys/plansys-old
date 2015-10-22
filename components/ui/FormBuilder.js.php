@@ -16,7 +16,7 @@ if (Yii::app()->user->hasFlash('error')) {
 }
 ob_start();
 ?>
-<script type = "text/javascript" >
+<script type = "text/javascript">
     <?php ob_start(); ?>
     app.controller("<?= $modelClass ?>Controller", function ($scope, $parse, $timeout, $http, $localStorage, $filter) {
         $scope.form = <?php echo json_encode($this->form); ?>;

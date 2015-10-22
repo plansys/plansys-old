@@ -116,16 +116,22 @@ class FormBuilder extends CComponent {
         $classArr  = explode(".", $class);
         $class     = "";
         $classFile = "";
+        $prevC     = "";
         foreach ($classArr as $k => $c) {
             if ($k < count($classArr) - 1) {
                 if ($c == "FormFields") {
                     $classFile .= $c . ".";
                 } else {
-                    $classFile .= strtolower($c) . ".";
+                    if ($prevC == "modules") {
+                        $classFile .= strtolower($c) . ".";
+                    } else {
+                        $classFile .= $c . ".";
+                    }
                 }
             } else {
                 $classFile .= $c;
             }
+            $prevC = $c;
         }
 
 
