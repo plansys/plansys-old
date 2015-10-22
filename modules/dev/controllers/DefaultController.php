@@ -3,7 +3,6 @@
 class DefaultController extends Controller {
 
     public function actionNew() {
-
         $this->renderForm("");
     }
 
@@ -38,6 +37,8 @@ class DefaultController extends Controller {
             $_GET['db'] = $db['dbname'];
             $params = "username={$_GET['u']}&db={$_GET['db']}&p={$_GET['p']}&s={$_GET['s']}";
         }
+        
+        var_dump("asek asek aja deh");
 
         $this->render("adminer", [
             'params' => $params

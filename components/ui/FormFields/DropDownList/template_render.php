@@ -56,8 +56,11 @@
                 <ul ng-if="renderedFormList" style="overflow-x:hidden"
                     class="dropdown-menu inner" role="menu">
                     <li ng-repeat-start="item in renderedFormList track by $index" 
-                        ng-if="item.value != '---'" class="dropdown-item" 
-                        ng-class="{'dropdown-header': isObject(item.value)}"
+                        ng-if="item.value != '---'" 
+                        ng-class="{
+                            'dropdown-header': isObject(item.value),
+                            'dropdown-item' : !angular.isArray(item.value)
+                        }"
                         ng-show="isFound(item.value + ' ' + item.key) || isObject(item.value)">
 
                         <a ng-if="!isObject(item.value)"
@@ -75,6 +78,7 @@
                                 style="display:block;border-radius:0px;">
                                 <li ng-repeat-start="subitem in item.value track by $index" 
                                     ng-if="subitem.value != '---'"
+                                    class="dropdown-item"
                                     ng-show="isFound(subitem.value + ' ' + subitem.key)">
 
                                     <a ng-if="!isObject(subitem.value)"

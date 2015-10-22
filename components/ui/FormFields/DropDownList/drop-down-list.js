@@ -31,7 +31,7 @@ app.directive('dropDownList', function ($timeout) {
                     if (e.which === 13) {
                         if ($scope.isOpen) {
                             $timeout(function () {
-                                $el.find("li.hover a").click();
+                                $el.find("li.dropdown-item.hover a:eq(0)").click();
                                 $scope.isOpen = false;
                             }, 0);
                         } else {
@@ -46,7 +46,19 @@ app.directive('dropDownList', function ($timeout) {
                     if (e.which === 40) {
                         $scope.isOpen = true;
 
-                        $a = $el.find("li.hover").next();
+                        if ($el.find("li.dropdown-item.hover").length == 0) {
+                            $el.find("li.dropdown-item:eq(0)").addClass("hover");
+                        }
+                        
+                        $a = $el.find("li.dropdown-item.hover").next();
+                        
+                        if ($a.length == 0) {
+                            var ddParent = $el.find("li.dropdown-item.hover").parents("li.dropdown-header").next();
+                            if (ddParent.length > 0) {
+                                $a = ddParent.find("li.dropdown-item:eq(0)");
+                            }
+                        }
+                        
                         if ($a.length == 0 && $scope.renderedFormList.length > 0) {
                             $scope.updateInternal($scope.renderedFormList[0].key);
                         } else {
@@ -58,7 +70,7 @@ app.directive('dropDownList', function ($timeout) {
 
                             if ($a.length > 0 && $a.is("li")) {
                                 $el.find("li.hover").removeClass("hover");
-                                $a.addClass("hover").find("a").focus();
+                                $a.addClass("hover").find("a:eq(0)").focus();
                             }
                         }
                         e.preventDefault();
@@ -66,7 +78,18 @@ app.directive('dropDownList', function ($timeout) {
                     } else if (e.which === 38) {
                         $scope.isOpen = true;
 
-                        $a = $el.find("li.hover").prev();
+                        if ($el.find("li.dropdown-item.hover").length == 0) {
+                            $el.find("li.dropdown-item:eq(0)").addClass("hover");
+                        }
+                        
+                        $a = $el.find("li.dropdown-item.hover").prev();
+
+                        if ($a.length == 0) {
+                            var ddParent = $el.find("li.dropdown-item.hover").parents("li.dropdown-header").prev();
+                            if (ddParent.length > 0) {
+                                $a = ddParent.find("li.dropdown-item:last-child");
+                            }
+                        }
 
                         if ($a.length && $a.length == 0) {
                             $a = $el.find("li:last-child");
@@ -79,7 +102,7 @@ app.directive('dropDownList', function ($timeout) {
                         }
                         if ($a.length && $a.length > 0 && $a.is("li")) {
                             $el.find("li.hover").removeClass("hover")
-                            $a.addClass("hover").find("a").focus();
+                            $a.addClass("hover").find("a:eq(0)").focus();
                         }
                         e.preventDefault();
                         e.stopPropagation();

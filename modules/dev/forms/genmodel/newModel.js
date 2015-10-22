@@ -5,7 +5,9 @@ function snakeToCamel(s) {
 
     return cm.charAt(0).toUpperCase() + cm.slice(1);
 }
-$scope.model.module = window.opener.activeItem.type;
+if (!!window.opener.activeItem) {
+    $scope.model.module = window.opener.activeItem.type;
+}
 
 $scope.updateTable = function () {
     $timeout(function () {
