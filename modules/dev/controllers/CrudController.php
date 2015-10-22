@@ -12,6 +12,7 @@ class CrudController extends Controller {
         if (class_exists($m)) {
             $result = [];
             $rel    = $m::model()->metaData->relations;
+            
             foreach ($rel as $k => $r) {
                 $relClass = $r->className;
                 if (class_exists($relClass)) {
@@ -71,6 +72,7 @@ class CrudController extends Controller {
             case "form":
             case "relform":
             case "chooserelform":
+            case "subform":
             case "master":
                 if (!file_exists($file) || !!@$post['overwrite']) {
                     $this->generateAR($post, $result);

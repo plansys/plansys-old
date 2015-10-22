@@ -293,7 +293,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         $scope.internalQuery = false;
                     });
                 } else {
-                    $scope.data = JSON.parse($el.find("data[name=data]").text());
+                    $scope.data = JSON.parse($el.find("data[name=data]:eq(0)").text());
                 }
 
                 $scope.enableTrackChanges = function () {

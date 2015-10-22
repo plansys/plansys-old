@@ -5,6 +5,7 @@ class DevCrudRelBelongsTo extends Form {
     public $formType  = "";
     public $deleteable = "Yes";
     public $insertable = "Yes";
+    public $editable  = "No";
 
     public function getForm() {
         return array (
@@ -49,6 +50,21 @@ class DevCrudRelBelongsTo extends Form {
                 'name' => 'insertable',
                 'defaultType' => 'first',
                 'listExpr' => '[\'Yes\',\'No\']',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '</div>',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<div ng-if=\\"model.formType == \'SubForm\'\\">',
+            ),
+            array (
+                'label' => 'Editable',
+                'name' => 'editable',
+                'defaultType' => 'first',
+                'listExpr' => '[\'No\',\'Yes\']',
                 'type' => 'DropDownList',
             ),
             array (

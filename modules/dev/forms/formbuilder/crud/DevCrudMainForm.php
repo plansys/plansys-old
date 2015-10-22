@@ -211,7 +211,7 @@ padding-left:0px;',
             ),
             array (
                 'type' => 'Text',
-                'value' => '                                                                                                                                <div ng-if=\\"model.masterData == \'No\'\\">',
+                'value' => ' <div ng-if=\\"model.masterData == \'No\'\\">',
             ),
             array (
                 'title' => 'Relations',

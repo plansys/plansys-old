@@ -15,7 +15,8 @@ class ActiveRecordTemplate extends CComponent {
             'length' => count($fieldList),
             'model' => $model,
         ];
-        if (!empty($classPart) && (in_array($classPart[$lastPartIndex], ["index", "form", "master", "relform"]))) {
+        $types = ["index", "form", "master", "relform", "subform"];
+        if (!empty($classPart) && (in_array($classPart[$lastPartIndex], $types))) {
             $params['type'] = array_pop($classPart);
         } else {
             $params['type'] = "";
@@ -33,6 +34,7 @@ class ActiveRecordTemplate extends CComponent {
                 self::generateIndex($return, $params);
                 break;
             case "relform":
+            case "subform":
                 if (isset($_SESSION['CrudGenerator'][get_class($model)]['relation']['type'])) {
                     self::generateRelform($return, $params);
                 }
@@ -219,7 +221,11 @@ class ActiveRecordTemplate extends CComponent {
         $params['generatorParams'] = $generatorParams;
         switch ($generatorParams['relation']['type']) {
             case "CBelongsToRelation":
-                self::generateRelBelongsToForm($return, $params);
+                if ($generatorParams['relation']['formType'] == "PopUp") {
+                    self::generateRelBelongsToForm($return, $params);
+                } else {
+                    self::generateRelSubForm($return, $params);
+                }
                 break;
             case "CHasManyRelation":
             case "CManyManyRelation":
@@ -545,6 +551,68 @@ class="btn btn-sm btn-default">
         ];
     }
 
+    private static function generateRelSubForm(&$return, $params) {
+        $fieldList       = [];
+        $primaryKey      = '';
+        $tableColumns    = [];
+        $length          = 0;
+        $model           = null;
+        $basicTitle      = "";
+        $module          = '';
+        $basic           = '';
+        $generatorParams = '';
+        extract($params);
+
+        ## get basic model name
+        $basic     = substr($basic, 0, strlen($generatorParams['relation']['name']) * -1);
+        $prefixUrl = "{$basic}";
+        if ($module != '' && $module != 'app' && $module != 'application') {
+            $prefixUrl = "{$module}/" . $prefixUrl;
+        }
+
+        $column1      = [];
+        $column2      = [];
+        $fieldList_id = null;
+        foreach ($fieldList as $k => $i) {
+            if (isset($fieldList[$k]['name'])) {
+                if ($fieldList[$k]['name'] == $primaryKey) {
+                    $fieldList_id = $fieldList[$k];
+                    continue;
+                }
+                if (isset($fieldList[$k]['label'])) {
+                    $fieldList[$k]['label'] = ucfirst(implode(" ", array_map('ucfirst', explode("_", $fieldList[$k]['label']))));
+                }
+
+                $fieldList[$k] = self::processGridColumn([
+                    'model' => $model,
+                    'field' => $i,
+                    'fieldIndex' => $k,
+                    'tableColumns' => $tableColumns,
+                    'generatorParams' => $generatorParams,
+                    'prefixUrl' => $prefixUrl
+                ]);
+            }
+
+            if ($k < $length / 2) {
+                $column1[] = $fieldList[$k];
+            } else {
+                $column2[] = $fieldList[$k];
+            }
+        }
+
+        $column1[] = '<column-placeholder></column-placeholder>';
+        $column2[] = '<column-placeholder></column-placeholder>';
+        
+        if (!is_null($fieldList_id)) {
+            $return[] = $fieldList_id;
+        }
+        $return[] = [
+            'type' => 'ColumnField',
+            'column1' => $column1,
+            'column2' => $column2
+        ];
+    }
+
     private static function generateRelBelongsToForm(&$return, $params) {
         $fieldList       = [];
         $primaryKey      = '';
@@ -820,11 +888,7 @@ class="btn btn-sm btn-default">
             unset($_SESSION['CrudGenerator'][$modelClassName]);
         }
 
-//        $generatorParams = json_decode('{"name":"AppCountryForm.php","className":"AppCountryForm","extendsName":"Country","type":"form","relations":[{"name":"cities","tableName":"city","type":"CHasManyRelation","foreignKey":"country_id","className":"City","formType":"Table","editable":"PopUp","insertable":"PopUp","chooseable":"No","deleteable":"Yes"}],"status":"processing","path":"app.forms.country"}', true);
-
-//        $generatorParams = json_decode('{"name":"AppCityForm.php","className":"AppCityForm","extendsName":"City","type":"form","relations":[{"name":"addresses","tableName":"address","type":"CHasManyRelation","foreignKey":"city_id","className":"Address","formType":"Table","editable":"Inline","insertable":"Inline","deleteable":"Multi Delete"}],"status":"processing","overwrite":true,"path":"app.forms.city"}', true);
-
-//        $generatorParams = json_decode('{"name":"AppCityForm.php","className":"AppCityForm","extendsName":"City","type":"form","relations":[{"name":"country","tableName":"country","type":"CBelongsToRelation","foreignKey":"country_id","className":"Country","formType":"PopUp","deleteable":"Yes","insertable":"Yes"}],"status":"processing","overwrite":true,"path":"app.forms.city"}', true);
+        // $generatorParams = json_decode('{"name":"AppCityForm.php","className":"AppCityForm","extendsName":"City","type":"form","relations":[{"name":"country","tableName":"country","type":"CBelongsToRelation","foreignKey":"country_id","className":"Country","formType":"SubForm","deleteable":"Yes","insertable":"Yes","editable":"No"}],"status":"processing","overwrite":true,"path":"app.forms.city"}', true);
 
         $prefixUrl = "{$basic}";
         if ($module != '' && $module != 'app' && $module != 'application') {
@@ -934,7 +998,22 @@ class="btn btn-sm btn-default">
                     continue;
                 }
                 $relName = ucfirst($rel['name']);
-                if ($rel['type'] == 'CHasManyRelation' || $rel['type'] == 'CManyManyRelation') {
+                
+                if ($rel['type'] == "CBelongsToRelation") {
+                    if ($rel['formType'] == "SubForm") {
+                        $return[] = [
+                            'title' => $relName,
+                            'type' => 'SectionHeader',
+                        ];
+                        
+                        $return[] = [
+                            'name' => $rel['name'],
+                            'mode' => 'single',
+                            'subForm' => $generatorParams['path'] . '.' . $rel['subFormClass'],
+                            'type' => 'SubForm'
+                        ];
+                    }
+                } else if ($rel['type'] == 'CHasManyRelation' || $rel['type'] == 'CManyManyRelation') {
                     $return[] = [
                         'title' => $relName,
                         'type' => 'SectionHeader',
@@ -966,9 +1045,6 @@ class="btn btn-sm btn-default">
                                 'prefixUrl' => $prefixUrl,
                                 'parentPrimaryKey' => $primaryKey
                             ]);
-                            break;
-                        case "SubForm":
-                            self::insertRelSubForm($rel, $return);
                             break;
                     }
                 }
@@ -1051,7 +1127,7 @@ class="btn btn-sm btn-default">
             'url' => $prefixUrl . '/choose' . $relName . '{{ "&id=" + model.' . $primaryKey . ' || ""}}',
         ];
     }
-
+    
     private static function insertRelTable($rel, &$return, $params) {
         $gv            = new GridView;
         $model         = $rel['className']::model();
@@ -1277,7 +1353,9 @@ class="btn btn-sm btn-default">
                     foreach ($generatorParams['relations'] as $rel) {
                         if (!isset($rel['name'])) continue;
 
-                        if (@$rel['type'] == 'CBelongsToRelation' && $relClassName == $rel['className']) {
+                        if (@$rel['type'] == 'CBelongsToRelation' 
+                            && $relClassName == $rel['className']
+                            && $rel['formType'] == "PopUp") {
                             $relClassName = $rel['className'];
                             $relName      = Helper::snakeToCamel(substr($field['name'], 0, -3));
                             $buttons      = [];

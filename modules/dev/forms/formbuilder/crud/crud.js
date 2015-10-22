@@ -146,6 +146,16 @@ $scope.form.submit = function (f) {
     }
 
     if ($scope.model.masterData == 'No') {
+        
+        for (i in $scope.model.relations) {
+            var rel = $scope.model.relations[i];
+            if (rel.type == "CBelongsToRelation") {
+                if (rel.formType == "SubForm") {
+                    rel.subFormClass = $scope.params.prefix + modelName + ucfirst(rel.name) + 'Subform';
+                }
+            }
+        }
+        
         $scope.data.files.push({
             name: $scope.params.prefix + modelName + 'Index.php',
             className: $scope.params.prefix + modelName + 'Index',
@@ -177,13 +187,23 @@ $scope.form.submit = function (f) {
             var rel = $scope.model.relations[i];
             switch (rel.type) {
                 case "CBelongsToRelation":
-                    $scope.data.files.push({
-                        name: $scope.params.prefix + modelName + ucfirst(rel.name) + 'Relform.php',
-                        className: $scope.params.prefix + modelName + ucfirst(rel.name) + 'Relform',
-                        extendsName: rel.className,
-                        type: 'relform',
-                        relation: rel
-                    });
+                    if (rel.formType =='PopUp') {
+                        $scope.data.files.push({
+                            name: $scope.params.prefix + modelName + ucfirst(rel.name) + 'Relform.php',
+                            className: $scope.params.prefix + modelName + ucfirst(rel.name) + 'Relform',
+                            extendsName: rel.className,
+                            type: 'relform',
+                            relation: rel
+                        });
+                    } else if (rel.formType == 'SubForm') {
+                        $scope.data.files.push({
+                            name: $scope.params.prefix + modelName + ucfirst(rel.name) + 'Subform.php',
+                            className: $scope.params.prefix + modelName + ucfirst(rel.name) + 'Subform',
+                            extendsName: rel.className,
+                            type: 'subform',
+                            relation: rel
+                        });
+                    }
                     break
                 case "CHasManyRelation":
                 case "CManyManyRelation":

@@ -20,7 +20,7 @@ ob_start();
     <?php ob_start(); ?>
     app.controller("<?= $modelClass ?>Controller", function ($scope, $parse, $timeout, $http, $localStorage, $filter) {
         $scope.form = <?php echo json_encode($this->form); ?>;
-        $scope.model = <?php echo @json_encode($data['data']); ?>;
+        $scope.model = <?php echo @json_encode($data['data'], JSON_PARTIAL_OUTPUT_ON_ERROR); ?>;
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
         $scope.renderParams = <?php echo @json_encode($renderParams); ?>;
         $scope.getParams = <?php echo @json_encode($_GET); ?>;
