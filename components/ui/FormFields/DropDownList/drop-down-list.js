@@ -70,7 +70,7 @@ app.directive('dropDownList', function ($timeout) {
 
                             if ($a.length > 0 && $a.is("li")) {
                                 $el.find("li.hover").removeClass("hover");
-                                $a.addClass("hover").find("a:eq(0)").focus();
+                                $a.addClass("hover").find("a:eq(0)");
                             }
                         }
                         e.preventDefault();
@@ -102,7 +102,7 @@ app.directive('dropDownList', function ($timeout) {
                         }
                         if ($a.length && $a.length > 0 && $a.is("li")) {
                             $el.find("li.hover").removeClass("hover")
-                            $a.addClass("hover").find("a:eq(0)").focus();
+                            $a.addClass("hover").find("a:eq(0)");
                         }
                         e.preventDefault();
                         e.stopPropagation();
