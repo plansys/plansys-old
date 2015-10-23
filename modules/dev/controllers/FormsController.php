@@ -122,7 +122,7 @@ class {$class} extends {$extends} {
 
 }
 EOF;
-                    if (is_dir(dirname($path))) {
+                    if (!is_dir(dirname($path))) {
                         mkdir(dirname($path), 0777, true);
                     }
 
