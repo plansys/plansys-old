@@ -207,34 +207,38 @@ $scope.form.submit = function (f) {
                     break
                 case "CHasManyRelation":
                 case "CManyManyRelation":
-                    if (rel.editable == "PopUp" || rel.insertable == "PopUp") {
-                        $scope.data.files.push({
-                            name: $scope.params.prefix + modelName + ucfirst(rel.name) + 'Relform.php',
-                            className: $scope.params.prefix + modelName + ucfirst(rel.name) + 'Relform',
-                            extendsName: rel.className,
-                            type: 'relform',
-                            relation: rel
-                        });
-                    }
-
-                    if (rel.chooseable == 'Yes') {
-                        $scope.data.files.push({
-                            name: $scope.params.prefix + modelName + ucfirst(rel.name) + 'ChooseRelform.php',
-                            className: $scope.params.prefix + modelName + ucfirst(rel.name) + 'ChooseRelform',
-                            extendsName: rel.className,
-                            type: 'chooserelform',
-                            relation: rel,
-                            inlineJs: $scope.params.prefix + modelName + ucfirst(rel.name) + 'ChooseRelform.js'
-                        });
-                        $scope.data.files.push({
-                            name: $scope.params.prefix + modelName + ucfirst(rel.name) + 'ChooseRelform.js',
-                            template: 'TplRelMMIndex',
-                            replace: {
-                                dsParent: 'ds' + ucfirst(rel.name)
-                            },
-                            type: 'js',
-                            relation: rel
-                        });
+                    if (rel.formType == "SubForm") {
+                        
+                    } else if (rel.formType == "Table") {
+                        if (rel.editable == "PopUp" || rel.insertable == "PopUp") {
+                            $scope.data.files.push({
+                                name: $scope.params.prefix + modelName + ucfirst(rel.name) + 'Relform.php',
+                                className: $scope.params.prefix + modelName + ucfirst(rel.name) + 'Relform',
+                                extendsName: rel.className,
+                                type: 'relform',
+                                relation: rel
+                            });
+                        }
+    
+                        if (rel.chooseable == 'Yes') {
+                            $scope.data.files.push({
+                                name: $scope.params.prefix + modelName + ucfirst(rel.name) + 'ChooseRelform.php',
+                                className: $scope.params.prefix + modelName + ucfirst(rel.name) + 'ChooseRelform',
+                                extendsName: rel.className,
+                                type: 'chooserelform',
+                                relation: rel,
+                                inlineJs: $scope.params.prefix + modelName + ucfirst(rel.name) + 'ChooseRelform.js'
+                            });
+                            $scope.data.files.push({
+                                name: $scope.params.prefix + modelName + ucfirst(rel.name) + 'ChooseRelform.js',
+                                template: 'TplRelMMIndex',
+                                replace: {
+                                    dsParent: 'ds' + ucfirst(rel.name)
+                                },
+                                type: 'js',
+                                relation: rel
+                            });
+                        }
                     }
                     break;
             }

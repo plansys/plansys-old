@@ -983,6 +983,47 @@ class ActiveRecord extends CActiveRecord {
         return $attributes;
     }
 
+    public function beforeValidate() {
+        $validator     = new CInlineValidator;
+        $validator->method = 'relationValidator';
+        foreach ($this->__relations as $k => $new) { 
+            if (!empty($this->{$k})) {
+                $validator->attributes[] = $k;
+            }
+        }
+        
+        if (!empty($validator->attributes)) {
+            $this->validatorList->add($validator);
+        }
+        
+        return parent::beforeValidate();
+    }
+    
+    public function relationValidator($a, $b) {
+        $rel = @$this->metaData->relations[$a];
+        
+        if (!!$rel) {
+            switch (get_class($rel)) {
+                case 'CHasManyRelation': 
+                    $modelClass = $rel->className;
+                    $model = new $modelClass;
+                    
+                    foreach ($this->__relations[$a] as $r) {
+                        $model->attributes = $r;
+                        
+                        if (!$model->validate()) {
+                            foreach ($model->errors as $index=>$err) {
+                                $this->addError($a . '[' . $index . ']', $err);
+                            }
+                        }
+                    }
+                break;
+            }
+        }
+        
+        // $this->addError('cities[]', 'mantab');
+    }
+
     public function save($runValidation = true, $attributes = null) {
         if (!$runValidation || $this->validate($attributes)) {
             try {
@@ -1042,7 +1083,7 @@ class ActiveRecord extends CActiveRecord {
         if ($withRelation) {
             foreach ($this->__relations as $k => $new) {
                 if ($k == 'currentModel') {
-                    $rel = new CHasManyRelation('currentModel', get_class($this), 'id');
+                    $rel = new CHasManyRelation('currentModel', get_class($this), $pk);
                 } else {
                     $rel = $this->getMetaData()->relations[$k];
                 }

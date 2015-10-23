@@ -41,7 +41,7 @@ class DevCrudRelMany extends Form {
                 'label' => 'Chooseable',
                 'name' => 'chooseable',
                 'options' => array (
-                    'ng-if' => 'model.type == \'CManyManyRelation\'',
+                    'ng-if' => 'model.formType == \'Table\' && model.type == \'CManyManyRelation\'',
                 ),
                 'defaultType' => 'first',
                 'listExpr' => '[\'No\', \'Yes\']',
@@ -65,6 +65,9 @@ class DevCrudRelMany extends Form {
             array (
                 'label' => 'Editable',
                 'name' => 'editable',
+                'options' => array (
+                    'ng-if' => 'model.formType == \'Table\'',
+                ),
                 'defaultType' => 'first',
                 'listExpr' => '[\'No\', \'PopUp\', \'Inline\']',
                 'type' => 'DropDownList',
@@ -73,7 +76,7 @@ class DevCrudRelMany extends Form {
                 'label' => 'Insertable',
                 'name' => 'insertable',
                 'options' => array (
-                    'ng-if' => 'model.type != \'CManyManyRelation\' || (model.type == \'CManyManyRelation\' && model.chooseable == \'Yes\')',
+                    'ng-if' => 'model.formType == \'Table\' && (model.type != \'CManyManyRelation\' || (model.type == \'CManyManyRelation\' && model.chooseable == \'Yes\'))',
                 ),
                 'defaultType' => 'first',
                 'listExpr' => '[\'No\',\'PopUp\', \'Inline\']',
@@ -83,7 +86,7 @@ class DevCrudRelMany extends Form {
                 'label' => 'Deleteable',
                 'name' => 'deleteable',
                 'options' => array (
-                    'ng-if' => 'model.type == \'CHasManyRelation\'',
+                    'ng-if' => 'model.formType == \'Table\' && model.type == \'CHasManyRelation\'',
                 ),
                 'defaultType' => 'first',
                 'listExpr' => '[\'No\', \'Yes\']',

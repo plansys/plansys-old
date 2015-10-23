@@ -589,7 +589,8 @@ class="btn btn-sm btn-default">
                     'fieldIndex' => $k,
                     'tableColumns' => $tableColumns,
                     'generatorParams' => $generatorParams,
-                    'prefixUrl' => $prefixUrl
+                    'prefixUrl' => $prefixUrl,
+                    'disabled' => ($generatorParams['relation']['editable'] == "No")
                 ]);
             }
 
@@ -1327,8 +1328,13 @@ class="btn btn-sm btn-default">
         $tableColumns    = [];
         $generatorParams = [];
         $prefixUrl       = '';
+        $disabled        = false;
         extract($params);
 
+        if (!!$disabled) {
+            $field['fieldOptions']['disabled'] = true; 
+        }
+        
         switch (true) {
             case $tableColumns[$field['name']]->dbType == "text":
                 $field['type']                      = "TextArea";
