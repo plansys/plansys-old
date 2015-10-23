@@ -23,7 +23,8 @@
         <data name="show_other" class="hide"><?= $this->showOther ?></data>
         <data name="other_label" class="hide"><?= $this->otherLabel ?></data>
         <data name="model_class" class="hide"><?= Helper::getAlias($model) ?></data>
-        <data name="model_field" class="hide"><?= json_encode($model->attributes) ?></data>
+        <data name="model_field" class="hide"><?= json_encode($model->attributes, JSON_PARTIAL_OUTPUT_ON_ERROR) ?></data>
+        <data name="rel_model_class" class="hide"><?= $this->modelClass ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
         <data name="params" class="hide"><?= json_encode($this->params) ?></data>
 

@@ -1010,7 +1010,10 @@ class="btn btn-sm btn-default">
                             'name' => $rel['name'],
                             'mode' => 'single',
                             'subForm' => $generatorParams['path'] . '.' . $rel['subFormClass'],
-                            'type' => 'SubForm'
+                            'type' => 'SubForm',
+                            'options' => [
+                                'ng-init' => "model.{$rel['name']} = model.{$rel['name']} || {}"
+                            ]
                         ];
                     }
                 } else if ($rel['type'] == 'CHasManyRelation' || $rel['type'] == 'CManyManyRelation') {
@@ -1349,65 +1352,70 @@ class="btn btn-sm btn-default">
                 break;
             case substr($field['name'], -3) == "_id": ## generate relation field
                 $relClassName = self::getRelClassName($model, $field['name']);
+                
+                $belongsToSubForm = [];
                 if (!!@$generatorParams['relations'] && !is_null($genBelongsTo)) {
                     foreach ($generatorParams['relations'] as $rel) {
                         if (!isset($rel['name'])) continue;
 
                         if (@$rel['type'] == 'CBelongsToRelation' 
-                            && $relClassName == $rel['className']
-                            && $rel['formType'] == "PopUp") {
-                            $relClassName = $rel['className'];
-                            $relName      = Helper::snakeToCamel(substr($field['name'], 0, -3));
-                            $buttons      = [];
-
-                            if ($rel['insertable'] == "Yes") {
-                                $label     = strlen($field['label']) > 10 ? '' : $field['label'];
-                                $buttons[] = [
-                                    'renderInEditor' => 'Yes',
-                                    'type' => 'Text',
-                                    'value' => '<div
-ng-click="rel' . $relName . 'InsertPopup.open()"
-style="margin:0px 0px 10px 5px;" class="btn btn-xs btn-default pull-right"><i class="fa fa-plus"></i> New ' . $label . '</div>',
-                                ];
-                            }
-
-                            $buttons[] = [
-                                'renderInEditor' => 'Yes',
-                                'type' => 'Text',
-                                'value' => '<div
-ng-click="rel' . $relName . 'UpdatePopup.open()" ng-if="!!model.' . $field['name'] . ' && !!' . $field['name'] . '.text"
-style="margin-bottom:10px;" class="btn btn-xs btn-default pull-right"><i class="fa fa-pencil"></i> Edit ' . $field['label'] . '</div>
-<div class="clearfix"></div>',
-                            ];
-
-                            if ($rel['insertable'] == "Yes") {
-                                $buttons[] = [
-                                    'type' => 'PopupWindow',
-                                    'name' => 'rel' . $relName . 'InsertPopup',
-                                    'options' => array(
-                                        'height' => '500',
-                                        'width' => '700',
-                                    ),
-                                    'mode' => 'url',
-                                    'url' => $prefixUrl . '/insert' . $relName,
-                                ];
-                            }
-
-                            $buttons[] = [
-                                'type' => 'PopupWindow',
-                                'name' => 'rel' . $relName . 'UpdatePopup',
-                                'options' => array(
-                                    'height' => '500',
-                                    'width' => '700',
-                                ),
-                                'mode' => 'url',
-                                'url' => $prefixUrl . '/update' . $relName . '&id={{model.' . $field['name'] . '}}',
-                            ];
-
-                            $genBelongsTo[] = [
-                                'index' => $fieldIndex,
-                                'data' => $buttons
-                            ];
+                            && $relClassName == $rel['className']) {
+                                if ($rel['formType'] == "PopUp") {
+                                    $relClassName = $rel['className'];
+                                    $relName      = Helper::snakeToCamel(substr($field['name'], 0, -3));
+                                    $buttons      = [];
+        
+                                    if ($rel['insertable'] == "Yes") {
+                                        $label     = strlen($field['label']) > 10 ? '' : $field['label'];
+                                        $buttons[] = [
+                                            'renderInEditor' => 'Yes',
+                                            'type' => 'Text',
+                                            'value' => '<div
+        ng-click="rel' . $relName . 'InsertPopup.open()"
+        style="margin:0px 0px 10px 5px;" class="btn btn-xs btn-default pull-right"><i class="fa fa-plus"></i> New ' . $label . '</div>',
+                                        ];
+                                    }
+        
+                                    $buttons[] = [
+                                        'renderInEditor' => 'Yes',
+                                        'type' => 'Text',
+                                        'value' => '<div
+        ng-click="rel' . $relName . 'UpdatePopup.open()" ng-if="!!model.' . $field['name'] . ' && !!' . $field['name'] . '.text"
+        style="margin-bottom:10px;" class="btn btn-xs btn-default pull-right"><i class="fa fa-pencil"></i> Edit ' . $field['label'] . '</div>
+        <div class="clearfix"></div>',
+                                    ];
+        
+                                    if ($rel['insertable'] == "Yes") {
+                                        $buttons[] = [
+                                            'type' => 'PopupWindow',
+                                            'name' => 'rel' . $relName . 'InsertPopup',
+                                            'options' => array(
+                                                'height' => '500',
+                                                'width' => '700',
+                                            ),
+                                            'mode' => 'url',
+                                            'url' => $prefixUrl . '/insert' . $relName,
+                                        ];
+                                    }
+        
+                                    $buttons[] = [
+                                        'type' => 'PopupWindow',
+                                        'name' => 'rel' . $relName . 'UpdatePopup',
+                                        'options' => array(
+                                            'height' => '500',
+                                            'width' => '700',
+                                        ),
+                                        'mode' => 'url',
+                                        'url' => $prefixUrl . '/update' . $relName . '&id={{model.' . $field['name'] . '}}',
+                                    ];
+        
+                                    $genBelongsTo[] = [
+                                        'index' => $fieldIndex,
+                                        'data' => $buttons
+                                    ];
+                                } else if ($rel['formType'] == "SubForm") {
+                                    $belongsToSubForm['rel'] = $rel['name'];
+                                }
                             break;
                         }
                     }
@@ -1428,6 +1436,10 @@ style="margin-bottom:10px;" class="btn btn-xs btn-default pull-right"><i class="
                         $field['modelClass'] = $classAlias;
                         $field['idField']    = $relClassName::model()->tableSchema->primaryKey;
                         $attr                = $relClassName::model()->attributes;
+
+                        if (!empty($belongsToSubForm)) {
+                            $field['options']['ng-change'] = "updateDetail('{$belongsToSubForm['rel']}')";
+                        }
 
                         ## fill label field
                         if (array_key_exists('name', $attr)) {

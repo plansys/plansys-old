@@ -813,6 +813,14 @@ class FormBuilder extends CComponent {
             $using_another_class = true;
         }
 
+        ## if current model is an ActiveRecord Model, then do not write anything!
+        if (isset($this->model)) {
+            $alias = Helper::getAlias($this->model);
+            if (strpos($alias, 'app.models') === 0) {
+                return false;
+            }
+        }
+        
         ## get class data
         $isNewFunc  = false;
         $sourceFile = '';

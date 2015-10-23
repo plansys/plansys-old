@@ -84,10 +84,23 @@ app.directive('relationField', function ($timeout, $http) {
                     if (e.which === 40) {
                         $scope.isOpen = true;
 
-                        $a = $el.find("li.hover").next();
+                        if ($el.find("li.dropdown-item.hover").length == 0) {
+                            $el.find("li.dropdown-item:eq(0)").addClass("hover");
+                        }
+                        
+                        $a = $el.find("li.dropdown-item.hover").next();
+                        
+                        if ($a.length == 0) {
+                            var ddParent = $el.find("li.dropdown-item.hover").parents("li.dropdown-header").next();
+                            if (ddParent.length > 0) {
+                                $a = ddParent.find("li.dropdown-item:eq(0)");
+                            }
+                        } else if ($a.hasClass("dropdown-header")) {
+                            $a = $a.find("li.dropdown-item:eq(0)");            
+                        } 
+                        
                         if ($a.length == 0 && $scope.renderedFormList.length > 0) {
                             $scope.updateInternal($scope.renderedFormList[0].key);
-                            $el.find("li:eq(1)").addClass("hover");
                         } else {
                             var i = 0;
                             while ((!$a.is("li") || !$a.is(":visible")) && i < 100) {
@@ -98,6 +111,11 @@ app.directive('relationField', function ($timeout, $http) {
                             if ($a.length > 0 && $a.is("li")) {
                                 $el.find("li.hover").removeClass("hover")
                                 $a.addClass("hover");
+                                
+                                $timeout(function(){
+                                    $el.find('.search-dropdown').focus();
+                                }); 
+                                
                             }
                         }
                         $scope.fixScroll();
@@ -106,7 +124,27 @@ app.directive('relationField', function ($timeout, $http) {
                     } else if (e.which === 38) {
                         $scope.isOpen = true;
 
-                        $a = $el.find("li.hover").prev();
+                        if ($el.find("li.dropdown-item.hover").length == 0) {
+                            $el.find("li.dropdown-item:eq(0)").addClass("hover");
+                        }
+                        
+                        $a = $el.find("li.dropdown-item.hover").prev();
+
+                        if ($a.length == 0) {
+                            var ddParent = $el.find("li.dropdown-item.hover").parents("li.dropdown-header").prev();
+                            if (ddParent.length > 0) {
+                                if (ddParent.hasClass("dropdown-header")) {
+                                    $a = ddParent.find("li.dropdown-item:last-child");            
+                                } else {
+                                    $a = ddParent;
+                                }
+                            }
+                        }
+
+                        if ($a.length && $a.length == 0) {
+                            $a = $el.find("li:last-child");
+                        }
+                        
                         var i = 0;
                         while ((!$a.is("li") || !$a.is(":visible")) && i < 100) {
                             $a = $a.prev();
@@ -115,6 +153,10 @@ app.directive('relationField', function ($timeout, $http) {
                         if ($a.length > 0 && $a.is("li")) {
                             $el.find("li.hover").removeClass("hover")
                             $a.addClass("hover").find("a");
+                            
+                            $timeout(function(){
+                                $el.find('.search-dropdown').focus();
+                            });
                         }
                         $scope.fixScroll();
                         e.preventDefault();
@@ -126,6 +168,27 @@ app.directive('relationField', function ($timeout, $http) {
                     $scope.updateInternal(item.key);
                 };
 
+                $scope.updateDetail = function(relation) {
+                    if (!!$scope.value) {
+                        $http.get(Yii.app.createUrl('formfield/RelationField.getDetail',{
+                            'm': $scope.relModelClass,
+                            'id': $scope.value
+                        })).success(function (data) {
+                            if (!!data) { 
+                                $timeout(function() {
+                                    if (angular.isObject($scope.model[relation])) {
+                                        for (i in data) {
+                                            $scope.model[relation][i] = data[i];
+                                        }
+                                    } else {
+                                        $scope.model[relation] = data;
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+    
                 $scope.updateInternal = function (value, forceReload) {
                     function isEmpty(a) {
                         return !a || a == '';
@@ -362,6 +425,7 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.showOther = $el.find("data[name=show_other]").text().trim() == "Yes" ? true : false;
                 $scope.otherLabel = $el.find("data[name=other_label]").html();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
+                $scope.relModelClass = $el.find("data[name=rel_model_class]").html();
                 $scope.value = $el.find("data[name=value]").html().trim();
                 $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
                 $scope.relClass = $el.find("data[name=rel_class]:eq(0)").attr('rel_class').trim();

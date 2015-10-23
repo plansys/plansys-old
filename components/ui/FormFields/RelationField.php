@@ -740,6 +740,19 @@ class RelationField extends FormField {
         $this->builder = $fb;
         echo json_encode($this->query(@$s, $this->params));
     }
+    
+    public function actionGetDetail($m, $id) {
+        if (strpos($m, ".") > 0) {
+            Yii::import($m);
+            $m = Helper::explodeLast(".", $m);
+        }
+        
+        if (class_exists($m)) {
+            $data = $m::model()->findByPk($id);
+            echo json_encode($data->attributes);
+        }
+        
+    }
 
     public function actionFindId() {
         $postdata = file_get_contents("php://input");
