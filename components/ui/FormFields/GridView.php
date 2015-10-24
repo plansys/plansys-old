@@ -127,15 +127,14 @@ type="checkbox" /></label>';
          ng-model="row.' . $fieldName . '" ng-keydown="editKey($event)"></div>
     <span ng-show="row.$rowState == \'insert\'">' . $template . '</span>';
                     break;
-
                 case "del-button":
                     if (!isset($col['options']['delUrl'])) {
                         $style    = ' style="width:20px;"';
-                        $template = '<div ng-if="!row.$rowState" ng-click="removeRow(row)"
+                        $template = '<div ng-if="!row.$rowState" ng-click="removeRow(row)" title="Remove" 
     class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></div>
 
-    <div ng-if="[\'edit\',\'remove\'].indexOf(row.$rowState) >= 0" ng-click="undoRemoveRow(row)"
-    class="btn btn-default btn-xs"><i class="fa fa-undo"></i></div>';
+    <div ng-if="[\'edit\',\'remove\'].indexOf(row.$rowState) >= 0" ng-click="undoRemoveRow(row)" title="Undo Remove" 
+         class="btn btn-default btn-xs"><i class="fa fa-undo"></i></div>';
                     } else {
                         $style    = ' style="width:20px;"';
                         $template = '<a ng-url="' . $col['options']['delUrl'] . '"
@@ -148,7 +147,7 @@ type="checkbox" /></label>';
                     $template = '<div ng-if="!row.$rowState || row.$rowState == \'insert\'" ng-click="removeRow(row)"
     class="btn btn-danger btn-xs"><i class="fa fa-times"></i></div>
 
-    <div ng-if="[\'remove\'].indexOf(row.$rowState) >= 0" ng-click="undoRemoveRow(row)"
+    <div ng-if="[\'remove\'].indexOf(row.$rowState) >= 0" ng-click="undoRemoveRow(row)" title="Remove"
     class="btn btn-default btn-xs"><i class="fa fa-undo"></i></div>
     ';
                     break;
@@ -161,8 +160,12 @@ type="checkbox" /></label>';
                     break;
                 case 'edit-button':
                     $style    = ' style="width:20px;"';
-                    $template = '<a ng-url="' . $col['options']['editUrl'] . '"
+                    $template = '<a ng-url="' . $col['options']['editUrl'] . '" title="Update" 
     class="btn-block btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>';
+                    break;
+                case 'sequence':
+                    $style    = ' style="width:20px;"';
+                    $template = '{{ $index + 1}}';
                     break;
             }
         }

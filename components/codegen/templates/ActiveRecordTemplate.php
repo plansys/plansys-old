@@ -755,7 +755,16 @@ class="btn btn-sm btn-default">
         $return[] = [
             'linkBar' => [
                 [
-                    'label' => 'Simpan ' . $basicTitle,
+                    'label' => 'Tambah ' . $basicTitle,
+                    'buttonType' => 'default',
+                    'icon' => 'plus',
+                    'options' => [
+                        'ng-click' => "gridView1.addRow(true)",
+                    ],
+                    'type' => 'LinkButton',
+                ],
+                [
+                    'label' => 'Simpan ',
                     'buttonType' => 'success',
                     'icon' => 'check',
                     'options' => [
@@ -799,14 +808,18 @@ class="btn btn-sm btn-default">
 
             if ($i['name'] != $primaryKey) {
                 $gv->columns[]             = $column;
-                $column['cellMode']        = 'custom';
                 $column['options']['mode'] = 'editable';
                 $cols[]                    = $column;
-            } else {
-                $pkCol = $column;
             }
         }
-        array_unshift($cols, $pkCol);
+        array_unshift($cols, [
+            'name' => '',
+            'label' => '#',
+            'columnType' => "string",
+            'options' => [
+                'mode' => 'sequence'
+            ]
+        ]);
 
         $delButtonCol  = [
             'name' => '',
@@ -846,7 +859,7 @@ class="btn btn-sm btn-default">
                 'distinct' => 'false',
                 'alias' => 't',
                 'condition' => $condition,
-                'order' => '{[order]}',
+                'order' => '{[order], '.$primaryKey.' desc}',
                 'paging' => '{[paging]}',
                 'group' => '',
                 'having' => '',
@@ -859,14 +872,6 @@ class="btn btn-sm btn-default">
             'datasource' => 'dataSource1',
             'type' => 'GridView',
             'columns' => $cols
-        ];
-        $return[] = [
-            'renderInEditor' => 'Yes',
-            'type' => 'Text',
-            'value' => '<div style="margin-top:5px;text-align:center;\">
-    <div ng-click="gridView1.addRow()"
-    class="btn btn-sm btn-success"><i class="fa fa-plus"></i> New Record</div>
-</div>',
         ];
         return $return;
     }

@@ -129,12 +129,21 @@ app.directive('gridView', function ($timeout, $http) {
                     }
                 }
 
-                $scope.addRow = function () {
+                $scope.addRow = function (focus) {
                     var newModel = {};
                     if (!!$scope.model) {
                         newModel = angular.copy($scope.model);
                     }
-                    $scope.datasource.data.push(newModel);
+                    $scope.datasource.data.unshift(newModel);
+                    
+                    if (!!focus) {
+                        $scope.focusAddRow();
+                    }
+                }
+                $scope.focusAddRow = function() {
+                    $timeout(function() {
+                        $el.find("table tr.row-state-insert:eq(0) div[contenteditable]")[0].focus();
+                    },100);
                 }
 
                 $scope.removeRow = function (row) {
