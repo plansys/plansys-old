@@ -14,8 +14,8 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 $scope.postData = $el.find("data[name=post_data]").text().trim();
                 $scope.primaryKey = $el.find("data[name=primary_key]:eq(0)").text().trim();
                 $scope.relationTo = $el.find("data[name=relation_to]").text().trim();
-                $scope.insertData = JSON.parse($el.find("data[name=insert_data]").text()) || [];
-                $scope.updateData = JSON.parse($el.find("data[name=update_data]").text()) || [];
+                $scope.insertData = [];
+                $scope.updateData = [];
                 $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text()) || [];
                 $scope.httpRequest = false;
                 $scope.loading = false;
@@ -293,6 +293,13 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     });
                 } else {
                     $scope.data = JSON.parse($el.find("data[name=data]:eq(0)").text());
+                }
+                
+                for(i in $scope.data) {
+                    if (!!$scope.data[i].$rowState) {
+                        if ($scope.data[i].$rowState == 'insert') $scope.insertData.push($scope.data[i]);
+                        if ($scope.data[i].$rowState == 'edit') $scope.updateData.push($scope.data[i]);
+                    } 
                 }
 
                 $scope.enableTrackChanges = function () {

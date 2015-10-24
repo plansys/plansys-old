@@ -325,12 +325,14 @@ class ActiveRecord extends CActiveRecord {
         $deleteArr = [];
         $updateArr = [];
 
+        $pk = $model::model()->tableSchema->primaryKey;
+
         foreach ($old as $k => $v) {
             $is_deleted = true;
             $is_updated = false;
 
             foreach ($new as $i => $j) {
-                if (@$j['id'] == @$v['id']) {
+                if (@$j[$pk] == @$v[$pk]) {
                     $is_deleted = false;
                     if (count(array_diff_assoc($j, $v)) > 0) {
                         $is_updated  = true;
@@ -347,7 +349,7 @@ class ActiveRecord extends CActiveRecord {
         $insertArr = [];
         $insertIds = [];
         foreach ($new as $i => $j) {
-            if (@$j['id'] == '' || is_null(@$j['id'])) {
+            if (@$j[$pk] == '' || is_null(@$j[$pk])) {
                 $insertArr[] = $j;
                 $insertIds[] = $i;
             } else if (count($old) == 0) {
@@ -653,10 +655,11 @@ class ActiveRecord extends CActiveRecord {
     }
 
     private function applyRelChange($name) {
+        $pk = $this->tableSchema->primaryKey;
         if (count(@$this->__relDelete[$name]) > 0) {
             foreach ($this->__relDelete[$name] as $i) {
                 foreach ($this->__relations[$name] as $q => $r) {
-                    if (@$r['id'] == $i) {
+                    if (@$r[$pk] == $i) {
                         array_splice($this->__relations[$name], $q, 1);
                     }
                 }
@@ -673,7 +676,7 @@ class ActiveRecord extends CActiveRecord {
             foreach ($this->__relUpdate[$name] as $k => $i) {
                 $found = false;
                 foreach ($this->__relations[$name] as $q => $r) {
-                    if (isset($i['id']) && isset($r['id']) && $r['id'] == $i['id']) {
+                    if (isset($i[$pk]) && isset($r[$pk]) && $r[$pk] == $i[$pk]) {
                         $this->__relations[$name][$q] = $i;
                         $found                        = true;
                     }
@@ -833,6 +836,12 @@ class ActiveRecord extends CActiveRecord {
             'delete' => count(@$this->__relDelete[$name]) > 0 ? @$this->__relDelete[$name] : [],
         ];
     }
+        
+    public function resetRelChanges($relation) {
+        $this->__relInsert[$relation] = [];
+        $this->__relUpdate[$relation] = [];
+        $this->__relDelete[$relation] = [];
+    }
 
     public function resetRel($relation, $data = null) {
         $this->__relInsert[$relation] = [];
@@ -984,7 +993,7 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function beforeValidate() {
-        $validator     = new CInlineValidator;
+        $validator = new CInlineValidator;
         $validator->method = 'relationValidator';
         foreach ($this->__relations as $k => $new) { 
             if (!empty($this->{$k})) {
@@ -999,29 +1008,26 @@ class ActiveRecord extends CActiveRecord {
         return parent::beforeValidate();
     }
     
-    public function relationValidator($a, $b) {
-        $rel = @$this->metaData->relations[$a];
+    public function relationValidator($relName) {
+        $rel = @$this->metaData->relations[$relName];
         
         if (!!$rel) {
             switch (get_class($rel)) {
                 case 'CHasManyRelation': 
                     $modelClass = $rel->className;
                     $model = new $modelClass;
+                    $isError = false;
                     
-                    foreach ($this->__relations[$a] as $r) {
+                    foreach ($this->__relations[$relName] as $r) {
                         $model->attributes = $r;
-                        
                         if (!$model->validate()) {
-                            foreach ($model->errors as $index=>$err) {
-                                $this->addError($a . '[' . $index . ']', $err);
-                            }
-                        }
+                            $isError = true;
+                            $this->addError($relName, $model->errors);
+                        } 
                     }
                 break;
             }
         }
-        
-        // $this->addError('cities[]', 'mantab');
     }
 
     public function save($runValidation = true, $attributes = null) {
@@ -1335,6 +1341,7 @@ class ActiveRecord extends CActiveRecord {
     public function deleteResetedRelations() {
         ## delete all relation data that not included in relUpdate..
         $rels = $this->getMetaData()->relations;
+        $pk = $this->tableSchema->primaryKey;
         foreach ($this->__relReset as $r) {
             if (!isset($rels[$r])) {
                 continue;
@@ -1350,11 +1357,11 @@ class ActiveRecord extends CActiveRecord {
 
                         $ids = [];
                         foreach ($this->__relUpdate[$r] as $u) {
-                            $ids[] = $u['id'];
+                            $ids[] = $u[$pk];
                         }
                         if (!empty($ids)) {
                             $ids   = implode(",", $ids);
-                            $where = "where id not in ($ids) AND {$rel->foreignKey} = {$this->id}";
+                            $where = "where {$pk} not in ($ids) AND {$rel->foreignKey} = " . $this->{$pk};
                         }
                     } ## todo: with through
                     else {
