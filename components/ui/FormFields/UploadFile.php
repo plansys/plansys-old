@@ -287,8 +287,6 @@ class UploadFile extends FormField {
 //    }
 
     public function actionThumb($t) {
-
-
         $file = base64_decode($t);
         if (!is_file($file)) {
             $file = RepoManager::resolve($file);
@@ -307,8 +305,7 @@ class UploadFile extends FormField {
             return;
         }
 
-
-        $img = Yii::app()->img->init($file);
+        $img = Yii::app()->img->load($file);
         $img->resizeToWidth(250);
 
         $dir = Yii::getPathOfAlias('webroot.assets.thumb.' . date('Y-m-d'));
@@ -372,8 +369,7 @@ class UploadFile extends FormField {
     }
 
     public function getFieldColClass() {
-        return "col-sm-" . $this->
-                fieldWidth;
+        return "col-sm-" . $this->fieldWidth;
     }
 
     public function render() {
@@ -384,6 +380,7 @@ class UploadFile extends FormField {
         $this->addClass('form-control', 'fieldOptions');
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        $this->setDefaultOption('style', "min-width:275px;", $this->options);
         return $this->renderInternal('template_render.php');
     }
 

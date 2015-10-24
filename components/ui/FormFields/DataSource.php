@@ -809,7 +809,16 @@ class DataSource extends FormField {
         }
 
         $rawData = $this->model->{$this->relationTo}($criteria, false);
-
+        
+        ## cleanup rawData from relation
+        // foreach ($rawData as $dataIdx=>$data) {
+        //     foreach ($data as $fieldIdx => $field) {
+        //         if (is_array($field)) {
+        //             unset($rawData[$dataIdx][$fieldIdx]);
+        //         }
+        //     }
+        // }
+        
         if (count($rawData) == 0 && $isGenerate) {
             if ($this->relationTo != 'currentModel') {
                 $rels     = $this->model->relations();
@@ -820,7 +829,7 @@ class DataSource extends FormField {
 
             $rawData = [$relClass::model()->getAttributes(true, false)];
         }
-
+        
         if ($this->maxAggregateLevel <= count($this->aggregateGroups)) {
             $max          = $this->maxAggregateLevel - 1;
             $rawDataCount = count($rawData) - 1;

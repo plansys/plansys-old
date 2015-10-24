@@ -995,9 +995,17 @@ class ActiveRecord extends CActiveRecord {
     public function beforeValidate() {
         $validator = new CInlineValidator;
         $validator->method = 'relationValidator';
+        
+        
         foreach ($this->__relations as $k => $new) { 
-            if (!empty($this->{$k})) {
-                $validator->attributes[] = $k;
+            $rel = @$this->metaData->relations[$k];
+            if (!!$rel) {
+                $modelClass = $rel->className;
+                if (class_exists($modelClass)) {
+                    if (!empty($this->{$k})) {
+                        $validator->attributes[] = $k;
+                    }
+                }
             }
         }
         
@@ -1012,10 +1020,10 @@ class ActiveRecord extends CActiveRecord {
         $rel = @$this->metaData->relations[$relName];
         
         if (!!$rel) {
+            $modelClass = $rel->className;
+            $model = new $modelClass;
             switch (get_class($rel)) {
                 case 'CHasManyRelation': 
-                    $modelClass = $rel->className;
-                    $model = new $modelClass;
                     $isError = false;
                     
                     foreach ($this->__relations[$relName] as $r) {
@@ -1114,7 +1122,8 @@ class ActiveRecord extends CActiveRecord {
                                 if (is_null($model)) {
                                     $model = new $relClass;
                                 }
-                                if (array_diff($model->attributes, $new)) {
+                                
+                                if (array_diff($model->getAttributesWithoutRelation(), $new)) {
                                     $model->attributes = $new;
                                     if ($relType == 'CHasOneRelation') {
                                         $model->{$relForeignKey} = $this->{$pk};
@@ -1372,6 +1381,13 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
+    public function getAttributesWithoutRelation($names = true) {
+        $attributes = parent::getAttributes($names);
+        $attributes = array_merge($this->attributeProperties, $attributes);
+
+        return $attributes;
+    }
+    
     public function getAttributes($names = true) {
         $attributes = parent::getAttributes($names);
         $attributes = array_merge($this->attributeProperties, $attributes);

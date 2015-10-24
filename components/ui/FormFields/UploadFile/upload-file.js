@@ -186,6 +186,9 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                             data: {file: file}
                         }).success(function (html) {
                             $scope.choose('');
+                            $scope.file = null;
+                            $scope.value = '';
+                            ctrl.$setViewValue('');
                             $scope.loading = false;
                         }).error(function () {
                             $scope.loading = false;
@@ -281,6 +284,8 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                                 }
                             } else {
                                 $scope.file = null;
+                                $scope.value = '';
+                                ctrl.$setViewValue('');
                             }
                             $scope.loading = false;
                         });
