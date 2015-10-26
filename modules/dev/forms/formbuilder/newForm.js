@@ -32,11 +32,10 @@ $scope.form.submit = function (f) {
     if ($scope.model.formName != '') {
         var baseClass = $scope.model.baseClass;
         if (baseClass == '--model--') {
-            baseClass = $scope.model.model;
+            baseClass = $scope.model.modelName;
         } else if (baseClass == '--custom--') {
-            baseClass = $scope.model.custom;
+            baseClass = $scope.model.customClassName;
         }
-
         activeScope.addForm($scope.params.prefix + $scope.model.formName, baseClass, activeScope.activeItem);
         window.close();
     }

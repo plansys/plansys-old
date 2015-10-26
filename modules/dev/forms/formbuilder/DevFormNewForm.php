@@ -3,6 +3,8 @@
 class DevFormNewForm extends Form {
 
     public $formName = '';
+    public $modelName = '';
+    public $customClassName = '';
     public $baseClass = 'Form';
 
     public function getForm() {
@@ -68,7 +70,7 @@ class DevFormNewForm extends Form {
             ),
             array (
                 'label' => 'ActiveRecord Model',
-                'name' => 'model',
+                'name' => 'modelName',
                 'options' => array (
                     'ng-if' => 'model.baseClass == \'--model--\'',
                 ),
@@ -80,10 +82,10 @@ class DevFormNewForm extends Form {
             ),
             array (
                 'label' => 'Class Name',
-                'name' => 'custom',
+                'name' => 'customClassName',
                 'layout' => 'Vertical',
                 'options' => array (
-                    'ng-if' => 'model.baseClass == \'--custom--\'',
+                    'ng-show' => 'model.baseClass == \'--custom--\'',
                 ),
                 'type' => 'TextField',
             ),

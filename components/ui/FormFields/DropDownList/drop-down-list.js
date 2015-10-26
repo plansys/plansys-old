@@ -349,8 +349,13 @@ app.directive('dropDownList', function ($timeout) {
                             initialValue = ngModelValue;
                         }
                     }
+
                     if ($scope.defaultType == 'first' && !initialValue && !!$scope.renderedFormList[0].value) {
                         initialValue = $scope.renderedFormList[0].value;
+                        
+                        if (angular.isArray(initialValue)) {
+                            initialValue = initialValue[0].value;
+                        }
                     }
 
                     if (!!initialValue) {
@@ -360,7 +365,6 @@ app.directive('dropDownList', function ($timeout) {
                     if ($scope.defaultType == 'first') {
                         ctrl.$setViewValue(initialValue);
                     }
-
                     $timeout(function () {
                         if (typeof ctrl.$viewValue == 'undefined') {
                             if (!$scope.formList['']) {
