@@ -997,8 +997,6 @@ class ActiveRecord extends CActiveRecord {
         $validator = new CInlineValidator;
         $validator->method = 'relationValidator';
         
-        // var_dump("ASD", $this->__relations);
-        // die();
         foreach ($this->__relations as $k => $new) { 
             $rel = @$this->metaData->relations[$k];
             if (!!$rel) {
