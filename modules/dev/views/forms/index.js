@@ -59,12 +59,13 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                 item.alias = item.alias.slice(0, -1);
             }
             var module = item.module.replace('Plansys: ', '');
-            $http.get(Yii.app.createUrl('/dev/forms/addForm', {
+            var params = {
                 c: classname,
                 e: extendsname,
                 p: item.alias,
                 m: module
-            })).success(function (data) {
+            };
+            $http.get(Yii.app.createUrl('/dev/forms/addForm', params)).success(function (data) {
                 if (data) {
                     if (data.success) {
                         item.items.push({
