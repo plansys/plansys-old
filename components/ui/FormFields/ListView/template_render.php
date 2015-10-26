@@ -1,6 +1,15 @@
     
 <div list-view <?= $this->expandAttributes($this->options) ?>>
 
+    <!-- label -->
+    <?php if ($this->label != ""): ?>
+        <label <?= $this->expandAttributes($this->labelOptions) ?>
+            class="<?= $this->labelClass ?>" for="<?= $this->renderID; ?>">
+                <?= $this->label ?>
+        </label>
+    <?php endif; ?>
+    <!-- /label -->
+    
     <div ng-controller="ListViewController" class="<?= $this->fieldColClass ?>">
         <!-- data -->
         <data name="name" class="hide"><?= $this->name; ?></data>

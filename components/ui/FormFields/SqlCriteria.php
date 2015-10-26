@@ -122,8 +122,10 @@ class SqlCriteria extends FormField {
                 $rf->attributes       = $field;
                 $rf->relationCriteria = $criteria;
 
-                $rf->params = $post['params'];
-
+                if (isset($post['params'])) {
+                    $rf->params = $post['params'];
+                }
+                
                 $criteria = $rf->generateCriteria('', []);
                 $criteria = new CDbCriteria($criteria);
 

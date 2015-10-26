@@ -1,4 +1,6 @@
 <div class="form-group form-group-sm {{ field.layout == 'Vertical' ? 'form-vertical' : ''}}">
+    <label for="{{field.name}}"  expand-attributes="field.labelOptions"  ng-show="field.label != ''" 
+           class="col-sm-{{field.listViewLayout == 'Vertical' ? 12 :  field.labelWidth}} control-label">{{field.label}}</label>
     <div class="col-sm-{{field.fieldWidth}}">
         <div class="list-view-item" style='margin-bottom:-1px;'>
             <div style="float:right;margin-top:7px;">

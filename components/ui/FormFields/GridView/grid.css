@@ -120,7 +120,7 @@
 [grid-view] tr:hover td {
     background-color: #FFFFAA !important;
 }
-
+  
 [grid-view] .row-group-padding {
     display: inline-block;
 }

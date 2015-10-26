@@ -19,13 +19,6 @@ app.directive('subForm', function ($timeout) {
                 $scope.templateAttr = JSON.parse($el.find("data[name=template_attr]").html().trim());
                 $scope.options = JSON.parse($el.find("data[name=options]").html().trim());
 
-                if ($scope.mode == 'single') {
-                    $scope.model = parent.model[$scope.name];
-                    if (Array.isArray($scope.model)) {
-                        $scope.model = parent.model[$scope.name] = {};
-                    }
-                }
-
                 // when ng-model is changed from outside directive
                 if (!!ctrl) {
                     ctrl.$ctrlView = $scope.$eval(attrs.ngModel);

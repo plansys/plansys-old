@@ -13,12 +13,14 @@ class ListView extends FormField {
     public        $templateForm       = '';
     public        $value              = '';
     public        $layout             = 'Horizontal';
+    public        $label              = '';
     public        $labelWidth         = 0;
     public        $inlineJS           = '';
     public        $fieldWidth         = 12;
     public        $datasource         = '';
     public        $options            = [];
     public        $fieldOptions       = [];
+    public        $labelOptions       = [];
     public        $sortable           = 'yes';
     public        $singleView         = 'TextField';
     public        $singleViewOption   = null;
@@ -48,6 +50,15 @@ class ListView extends FormField {
             array (
                 'type' => 'Text',
                 'value' => '<hr>',
+            ),
+            array (
+                'label' => 'Label',
+                'name' => 'label',
+                'options' => array (
+                    'ng-model' => 'active.label',
+                    'ng-delay' => '500',
+                ),
+                'type' => 'TextField',
             ),
             array (
                 'label' => 'Field Name',
@@ -289,6 +300,11 @@ class ListView extends FormField {
             array (
                 'label' => 'Options',
                 'name' => 'options',
+                'type' => 'KeyValueGrid',
+            ),
+            array (
+                'label' => 'Label Options',
+                'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
             ),
             array (
