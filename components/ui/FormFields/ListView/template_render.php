@@ -1,5 +1,5 @@
     
-<div list-view  <?= $this->expandAttributes($this->options) ?>>
+<div list-view <?= $this->expandAttributes($this->options) ?>>
 
     <div ng-controller="ListViewController" class="<?= $this->fieldColClass ?>">
         <!-- data -->
@@ -32,7 +32,7 @@
                     <li <?= $this->expandAttributes($this->fieldOptions) ?>>
                         <div style="float:right;">
                             <div ng-click="removeItem($index)" class="list-view-item-remove btn btn-xs">
-                                <i class="fa fa-times"></i>
+                                <i class="fa fa-times fa-nm"></i>
                             </div>
                         </div>
 

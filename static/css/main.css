@@ -1330,26 +1330,8 @@ li:hover > .item-btn {
 }
 
 /********************************* LIST VIEW ***********************************/
-.list-view-item {
-    padding: 3px 3px 2px 3px;
-    width: 100%;
-    margin-bottom: 5px;
-    border: 1px solid #ececeb;
-    padding: 0px;
-    background: #fafafa;
-    border-radius: 3px;
-}
-
-.list-view-loading {
-    padding: 10px;
-    text-align: center;
-    color: #999;
-    font-size: 13px;
-    width: 100%;
-    margin-bottom: 5px;
-    border: 1px solid #ececeb;
-    background: #fafafa;
-    border-radius: 3px;
+div[list-view] {
+    margin-top:5px;
 }
 
 div[list-view] .angular-ui-tree-empty {
@@ -1369,12 +1351,34 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     border-left: 0px;
 }
 
+.list-view-item {
+    padding: 3px 3px 2px 3px;
+    width: 100%;
+    margin-bottom: 5px;
+    border: 1px solid #ddd;
+    padding: 0px;
+    background: #fafafa;
+    border-radius: 3px;
+}
+
+.list-view-loading {
+    padding: 10px;
+    text-align: center;
+    color: #999;
+    font-size: 13px;
+    width: 100%;
+    margin-bottom: 5px;
+    border: 1px solid #ddd;
+    background: #fafafa;
+    border-radius: 3px;
+}
+
 .list-view-item-remove {
     opacity: .5;
     border: 0px;
     background: none;
     position: absolute;
-    margin-left: -21px;
+    margin-left: -22px;
     z-index: 1;
     margin-top: 2px;
 }
@@ -1397,14 +1401,19 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
 }
 
 .list-view-item-container {
-    margin-right: 22px;
+    margin-right: 23px;
     margin-left: 22px;
     padding: 4px 4px 0px 4px;
-    border-left: 1px solid #ececeb;
-    border-right: 1px solid #ececeb;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
     background: white;
     min-height: 25px;
     opacity: 0;
+}
+
+
+.list-view-item-container > .column-field {
+    margin-top:-4px;
 }
 
 div[list-view] .list-view-item-container {

@@ -673,16 +673,16 @@ class ActiveRecord extends CActiveRecord {
         }
 
         if (count(@$this->__relUpdate[$name]) > 0) {
+            $relHash = [];
+            foreach ($this->__relations[$name] as $q => $r) {
+                $relHash['_' . $r[$pk]] = ['idx' => $q, 'data' => $r];
+            }
+            
             foreach ($this->__relUpdate[$name] as $k => $i) {
-                $found = false;
-                foreach ($this->__relations[$name] as $q => $r) {
-                    if (isset($i[$pk]) && isset($r[$pk]) && $r[$pk] == $i[$pk]) {
-                        $this->__relations[$name][$q] = $i;
-                        $found                        = true;
-                    }
-                }
-
-                if (!$found) {
+                $rpk = '_' . $i[$pk];
+                if (isset($relHash[$rpk])) {
+                    $this->__relations[$name][$relHash[$rpk]['idx']] = $i;
+                } else {
                     $this->__relations[$name][] = $i;
                 }
             }
@@ -868,7 +868,7 @@ class ActiveRecord extends CActiveRecord {
     public function setAttributes($values, $safeOnly = false, $withRelation = true) {
         parent::setAttributes($values, $safeOnly);
         $this->initRelation();
-        foreach ($this->__relations as $k => $r) {
+        foreach ($this->__relations as $k => $r) { 
             if ($k != 'currentModel' && isset($values[$k])) {
                 $rel                   = $this->getMetaData()->relations[$k];
                 $this->__relations[$k] = $values[$k];
@@ -923,8 +923,9 @@ class ActiveRecord extends CActiveRecord {
             }
 
             $this->applyRelChange($k);
+            
         }
-
+        
         $ap = $this->getAttributeProperties();
         foreach ($ap as $k => $r) {
             if (isset($values[$k])) {
@@ -996,7 +997,8 @@ class ActiveRecord extends CActiveRecord {
         $validator = new CInlineValidator;
         $validator->method = 'relationValidator';
         
-        
+        // var_dump("ASD", $this->__relations);
+        // die();
         foreach ($this->__relations as $k => $new) { 
             $rel = @$this->metaData->relations[$k];
             if (!!$rel) {
@@ -1020,20 +1022,51 @@ class ActiveRecord extends CActiveRecord {
         $rel = @$this->metaData->relations[$relName];
         
         if (!!$rel) {
+            $pk = $this->tableSchema->primaryKey;
             $modelClass = $rel->className;
             $model = new $modelClass;
+            $relPK = $model->tableSchema->primaryKey;
+            $errors = [
+                'type' => get_class($rel),
+                'list' => []
+            ];
+            
+            $idx = ['insert'=>0,'edit'=>0];
             switch (get_class($rel)) {
                 case 'CHasManyRelation': 
-                    $isError = false;
+                    // $relData = $this->getRelated($relName);
+                    // $relHash = [];
+                    // foreach ($relData as $k=>$h) {
+                    //     $relHash['_' . $h->{$relPK}] = $h->attributes; 
+                    // }
                     
-                    foreach ($this->__relations[$relName] as $r) {
+                    foreach ($this->__relations[$relName] as $k=>$r) {
                         $model->attributes = $r;
+                        $model->{$rel->foreignKey} = $this->isNewRecord ? '0' : $this->{$pk};
+                        
                         if (!$model->validate()) {
-                            $isError = true;
-                            $this->addError($relName, $model->errors);
-                        } 
+                            if (isset($r['$rowState'])) {
+                                $errors['list'][] = [
+                                    'index' => $idx[$r['$rowState']] ,
+                                    'mode' => $r['$rowState'],
+                                    'errors' => $model->errors
+                                ];
+                                $idx[$r['$rowState']]++;
+                                
+                                if ($r['$rowState'] == 'edit') {
+                                    $relHash['_' . $r[$relPK]] = $r;
+                                }
+                            }
+                        }
                     }
+                    // $this->__relations[$relName] = array_values($relHash);
                 break;
+                case 'CManyManyRelation':
+                break;
+            }
+            
+            if (!empty($errors['list'])) {
+                $this->addError($relName, $errors);
             }
         }
     }

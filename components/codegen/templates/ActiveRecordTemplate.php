@@ -223,26 +223,31 @@ class ActiveRecordTemplate extends CComponent {
             case "CBelongsToRelation":
                 if ($generatorParams['relation']['formType'] == "PopUp") {
                     self::generateRelBelongsToForm($return, $params);
-                } else {
+                } else if ($generatorParams['relation']['formType'] == "SubForm") {
                     self::generateRelSubForm($return, $params);
                 }
                 break;
             case "CHasManyRelation":
             case "CManyManyRelation":
-                if ($generatorParams['type'] == "relform") {
-                    if ($generatorParams['relation']['editable'] == "PopUp" ||
-                        $generatorParams['relation']['insertable'] == "PopUp"
-                    ) {
-                        self::generateRelManyForm($return, $params);
+                if ($generatorParams['relation']['formType'] == "Table") {
+                    if ($generatorParams['type'] == "relform") {
+                        if ($generatorParams['relation']['editable'] == "PopUp" ||
+                            $generatorParams['relation']['insertable'] == "PopUp"
+                        ) {
+                            self::generateRelManyForm($return, $params);
+                        }
                     }
-                }
-
-                if ($generatorParams['type'] == "chooserelform") {
-                    if ($generatorParams['relation']['type'] == "CManyManyRelation") {
-                        self::generateRelManyManyIndex($return, $params);
+    
+                    if ($generatorParams['type'] == "chooserelform") {
+                        if ($generatorParams['relation']['type'] == "CManyManyRelation") {
+                            self::generateRelManyManyIndex($return, $params);
+                        }
                     }
+                    break;
+                } else if ($generatorParams['relation']['formType'] == "SubForm") {
+                    $params['generatorParams']['relation']['editable'] = 'Yes';
+                    self::generateRelSubForm($return, $params);
                 }
-                break;
         }
 
         return $return;
@@ -575,10 +580,19 @@ class="btn btn-sm btn-default">
         $fieldList_id = null;
         foreach ($fieldList as $k => $i) {
             if (isset($fieldList[$k]['name'])) {
-                if ($fieldList[$k]['name'] == $primaryKey) {
-                    $fieldList_id = $fieldList[$k];
-                    continue;
+                if ($generatorParams['relation']['type'] != 'CManyManyRelation') {
+                    if ($fieldList[$k]['name'] == $primaryKey) {
+                        $fieldList_id = $fieldList[$k];
+                        continue;
+                    }
                 }
+                
+                if ($generatorParams['relation']['type'] == 'CHasManyRelation') {
+                    if ($fieldList[$k]['name'] == $generatorParams['relation']['foreignKey']) {
+                        continue;
+                    }
+                }
+                
                 if (isset($fieldList[$k]['label'])) {
                     $fieldList[$k]['label'] = ucfirst(implode(" ", array_map('ucfirst', explode("_", $fieldList[$k]['label']))));
                 }
@@ -1055,6 +1069,11 @@ class="btn btn-sm btn-default">
                                 'parentPrimaryKey' => $primaryKey
                             ]);
                             break;
+                        case "SubForm":
+                            self::insertRelSubForm($rel, $return, [
+                                'parentPrimaryKey' => $primaryKey,
+                                'generatorParams' => $generatorParams
+                            ]);
                     }
                 }
             }
@@ -1300,6 +1319,38 @@ class="btn btn-sm btn-default">
 
 
         return $return;
+    }
+    
+    private static function insertRelSubForm($rel, &$return, $params) {
+        $generatorParams = [];
+        $parentPrimaryKey = '';
+        $model         = $rel['className']::model();
+        $relName       = ucfirst($rel['name']);
+        extract($params);
+        
+        $return[] = [
+            'name' => 'ds' . $relName,
+            'relationTo' => $rel['name'],
+            'relationCriteria' => array(
+                'select' => '',
+                'distinct' => 'false',
+                'alias' => 't',
+                'condition' => self::criteriaCondition($model),
+                'order' => '{[order]}',
+                'paging' => '{[paging]}',
+                'group' => '',
+                'having' => '',
+                'join' => '',
+            ),
+            'type' => 'DataSource',
+        ];
+        
+        $return[] = [
+            'name' => 'lv' . $relName,
+            'templateForm' => $generatorParams['path'] . '.' . $rel['subFormClass'],
+            'datasource' => 'ds' . $relName,
+            'type' => 'ListView',
+        ];
     }
 
     private static function criteriaCondition($model) {

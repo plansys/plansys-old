@@ -50,8 +50,6 @@ app.directive('subForm', function ($timeout) {
                         }
                     }
                 }
-
-
             };
         }
     };

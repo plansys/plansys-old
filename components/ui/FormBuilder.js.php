@@ -35,13 +35,35 @@ ob_start();
         $scope.strtotime = strtotime;
         $scope.angular = angular;
 
+        // Process Relation Error Message
+        for (i in $scope.errors) {
+            if ($scope.errors[i].length > 0 && angular.isObject($scope.errors[i][0])) {
+                var err = [];
+                var error = $scope.errors[i][0];
+                if (!error.type || !error.list) continue;
+                
+                switch (error.type) {
+                    case "CHasManyRelation":
+                    case "CManyManyRelation":
+                        for (li in error.list) {
+                            for (er in error.list[li].errors) {
+                                err.push(error.list[li].errors[er]);
+                            }
+                        }
+                        break;
+                }
+                
+                $scope.errors['relationErrorText'] = ['Terdapat kesalahan entri, mohon periksa kembali kelengkapan data anda'];
+            }
+        }
+
+        // PopUp Window Helper
         $scope.closeWindow = function() {
             window.close();
         }
         if (!!window.opener) {
             $scope.parentWindow = window.opener.formScope;
         }
-
         if ($scope.pageInfo.ctrl == 'formfield' && $scope.pageInfo.action == 'subform') {
             if (!!$scope.params.f && !!window.opener.popupScope) {
                 $scope.popupScope = window.opener.popupScope[$scope.params.f];

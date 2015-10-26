@@ -125,6 +125,32 @@ app.directive('listView', function ($timeout) {
 
                     $scope.showUndoDelete = true;
                 };
+                
+                $scope.initItem = function(value, idx) {
+                    this.model = value[idx];
+                    if ($scope.fieldTemplate == 'datasource' && !!$scope.datasource.relationTo) {
+                        var errors = $scope.errors[$scope.datasource.relationTo];
+                        if (!!errors && angular.isObject(errors[0])) {
+                            errors = errors[0];
+                            if  (errors.type == "CHasManyRelation" || errors.type == "CManyManyRelation") {
+                                if (!errors.idx) {
+                                    errors.idx = {
+                                        insert: 0,
+                                        edit: 0,
+                                    };
+                                }
+                                if (value[idx].$rowState == 'insert' || value[idx].$rowState == 'edit') {
+                                    for (i in errors.list) {
+                                        if (errors.idx.insert == errors.list[i].index) {
+                                            this.errors = errors.list[i].errors;
+                                        }
+                                    }
+                                    errors.idx[value[idx].$rowState]++;
+                                }
+                            }
+                        }
+                    }
+                }
 
                 $scope.addItem = function (e) {
                     e.preventDefault();

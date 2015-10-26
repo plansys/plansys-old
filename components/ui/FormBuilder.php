@@ -1310,12 +1310,25 @@ EOF;
 
             $formAttr = array_merge($formOptions, $formDefaultAttr);
             $formAttr = Helper::expandAttributes($formAttr);
-            $html .= "<div style='opacity:0' {$ngctrl}><form {$formAttr}>";
-            $html .= "<div ng-show='!!flash' ng-if='!!flash' class='flash-container alert alert-success text-center' style='margin:0px'>
-    <div href='#' class='close' ng-click='flash = false' aria-label='close' title='close'>&times;</div>
-    {{flash}}
-</div>";
-            $html .= "<div ng-if='objectSize(errors) > 0' class='error-container alert alert-danger' style='margin:0px'><ul><li ng-repeat='(k,e) in errors' style='white-space:pre-wrap;' ng-bind-html='e[0]'></li></ul></div>";
+            
+            ## Add flash and error message to html
+            $html = <<<HTML
+<div style='opacity:0' {$ngctrl}>
+<form {$formAttr}>
+    <div ng-show='!!flash' ng-if='!!flash' 
+         class='flash-container alert alert-success text-center'>
+        <div href='#' class='close' ng-click='flash = false' 
+        aria-label='close' title='close'>&times;</div>
+        {{flash}}
+    </div>
+    <div class='error-container alert alert-danger' 
+         style='margin:0px' ng-if='objectSize(errors) > 0'>
+         <ul ng-repeat='(fieldName,errorList) in errors' ng-if="angular.isString(errorList[0])">
+            <li ng-repeat='error in errorList'
+                style='white-space:pre-wrap;' ng-bind-html='error'></li>
+         </ul>
+    </div>
+HTML;
         }
 
         ## define formdata

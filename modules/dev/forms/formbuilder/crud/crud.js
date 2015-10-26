@@ -149,10 +149,8 @@ $scope.form.submit = function (f) {
         
         for (i in $scope.model.relations) {
             var rel = $scope.model.relations[i];
-            if (rel.type == "CBelongsToRelation") {
-                if (rel.formType == "SubForm") {
-                    rel.subFormClass = $scope.params.prefix + modelName + ucfirst(rel.name) + 'Subform';
-                }
+            if (rel.formType == "SubForm") {
+                rel.subFormClass = $scope.params.prefix + modelName + ucfirst(rel.name) + 'Subform';
             }
         }
         
@@ -208,7 +206,13 @@ $scope.form.submit = function (f) {
                 case "CHasManyRelation":
                 case "CManyManyRelation":
                     if (rel.formType == "SubForm") {
-                        
+                        $scope.data.files.push({
+                            name: $scope.params.prefix + modelName + ucfirst(rel.name) + 'Subform.php',
+                            className: $scope.params.prefix + modelName + ucfirst(rel.name) + 'Subform',
+                            extendsName: rel.className,
+                            type: 'subform',
+                            relation: rel
+                        });
                     } else if (rel.formType == "Table") {
                         if (rel.editable == "PopUp" || rel.insertable == "PopUp") {
                             $scope.data.files.push({

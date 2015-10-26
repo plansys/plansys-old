@@ -363,7 +363,7 @@ class ListView extends FormField {
 
         $this->fieldOptions['ui-tree-node'] = '';
         $this->fieldOptions['ng-repeat']    = 'item in value';
-        $this->fieldOptions['ng-init']      = 'model = value[$index];';
+        $this->fieldOptions['ng-init']      = 'initItem(value, $index)';
         $this->addClass('list-view-item', 'fieldOptions');
 
         Yii::import(FormBuilder::classPath($this->templateForm));
