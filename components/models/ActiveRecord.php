@@ -109,7 +109,7 @@ class ActiveRecord extends CActiveRecord {
         return parent::model($className);
     }
 
-    public static function batchPost(&$model, $post, $name, $attr = []) {
+    public static function batchPost($model, $post, $name, $attr = []) {
         if (is_object($model) && is_subclass_of($model, 'ActiveRecord')) {
             $model->attributes = [
                 'currentModelInsert' => $post[$name . 'Insert'],
@@ -118,9 +118,9 @@ class ActiveRecord extends CActiveRecord {
             ];
             if ($model->validate()) {
                 $model->saveRelation();
-                return true;
+                return $model;
             } else {
-                return false;
+                return $model;
             }
         } elseif (is_string($model)) {
             $cols = array_keys($attr);

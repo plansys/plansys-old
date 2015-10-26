@@ -16,7 +16,8 @@ class TplMasterController extends Controller {
     public function actionIndex() {
         $model = new TemplateIndex;
         if (!empty($_POST)) {
-            if (ActiveRecord::batchPost($model, $_POST, 'dataSource1')) {
+            $model = ActiveRecord::batchPost($model, $_POST, 'dataSource1');
+            if ($model->hasErrors()) {
                 $this->flash('Data Berhasil Di-update');
                 $this->redirect(['index']);
             }
