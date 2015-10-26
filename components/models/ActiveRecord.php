@@ -109,70 +109,84 @@ class ActiveRecord extends CActiveRecord {
         return parent::model($className);
     }
 
-    public static function batchPost($model, $post, $name, $attr = []) {
-        $cols = array_keys($attr);
-
-        ## insert
-        if (isset($post[$name . 'Insert']) && is_string($post[$name . 'Insert'])) {
-            $post[$name . 'Insert'] = json_decode($post[$name . 'Insert'], true);
-        }
-        if (count(@$post[$name . 'Insert']) > 0) {
-            if (count($attr) > 0) {
-                foreach ($post[$name . 'Insert'] as $k => $i) {
-                    if (isset($i['id']) && is_numeric($i['id'])) {
-                        if (!is_array($post[$name . 'Update'])) {
-                            $post[$name . 'Update'] = [];
-                        }
-                        $post[$name . 'Update'][] = $i;
-                        unset($post[$name . 'Insert'][$k]);
-                        continue;
-                    }
-
-                    foreach ($attr as $a => $b) {
-                        if (isset($post[$name . 'Insert'][$k])) {
-                            $post[$name . 'Insert'][$k][$a] = $b;
-                        }
-                    }
-                }
+    public static function batchPost(&$model, $post, $name, $attr = []) {
+        if (is_object($model) && is_subclass_of($model, 'ActiveRecord')) {
+            $model->attributes = [
+                'currentModelInsert' => $post[$name . 'Insert'],
+                'currentModelUpdate' => $post[$name . 'Update'],
+                'currentModelDelete' => $post[$name . 'Delete'],
+            ];
+            if ($model->validate()) {
+                $model->saveRelation();
+                return true;
             } else {
-                foreach ($post[$name . 'Insert'] as $k => $i) {
-                    if (isset($i['id']) && is_numeric($i['id'])) {
-                        if (!is_array($post[$name . 'Update'])) {
-                            $post[$name . 'Update'] = [];
+                return false;
+            }
+        } elseif (is_string($model)) {
+            $cols = array_keys($attr);
+    
+            ## insert
+            if (isset($post[$name . 'Insert']) && is_string($post[$name . 'Insert'])) {
+                $post[$name . 'Insert'] = json_decode($post[$name . 'Insert'], true);
+            }
+            if (count(@$post[$name . 'Insert']) > 0) {
+                if (count($attr) > 0) {
+                    foreach ($post[$name . 'Insert'] as $k => $i) {
+                        if (isset($i['id']) && is_numeric($i['id'])) {
+                            if (!is_array($post[$name . 'Update'])) {
+                                $post[$name . 'Update'] = [];
+                            }
+                            $post[$name . 'Update'][] = $i;
+                            unset($post[$name . 'Insert'][$k]);
+                            continue;
                         }
-                        $post[$name . 'Update'][] = $i;
-                        unset($post[$name . 'Insert'][$k]);
-                        continue;
+    
+                        foreach ($attr as $a => $b) {
+                            if (isset($post[$name . 'Insert'][$k])) {
+                                $post[$name . 'Insert'][$k][$a] = $b;
+                            }
+                        }
+                    }
+                } else {
+                    foreach ($post[$name . 'Insert'] as $k => $i) {
+                        if (isset($i['id']) && is_numeric($i['id'])) {
+                            if (!is_array($post[$name . 'Update'])) {
+                                $post[$name . 'Update'] = [];
+                            }
+                            $post[$name . 'Update'][] = $i;
+                            unset($post[$name . 'Insert'][$k]);
+                            continue;
+                        }
                     }
                 }
+                ActiveRecord::batchInsert($model, $post[$name . 'Insert']);
             }
-            ActiveRecord::batchInsert($model, $post[$name . 'Insert']);
-        }
-
-        ## update
-        if (isset($post[$name . 'Update']) && is_string($post[$name . 'Update'])) {
-            $post[$name . 'Update'] = json_decode($post[$name . 'Update'], true);
-        }
-        if (count(@$post[$name . 'Update']) > 0) {
-            if (count($attr) > 0) {
-                foreach ($post[$name . 'Update'] as $k => $i) {
-                    foreach ($attr as $a => $b) {
-                        if (isset($post[$name . 'Update'][$k])) {
-                            $post[$name . 'Update'][$k][$a] = $b;
+    
+            ## update
+            if (isset($post[$name . 'Update']) && is_string($post[$name . 'Update'])) {
+                $post[$name . 'Update'] = json_decode($post[$name . 'Update'], true);
+            }
+            if (count(@$post[$name . 'Update']) > 0) {
+                if (count($attr) > 0) {
+                    foreach ($post[$name . 'Update'] as $k => $i) {
+                        foreach ($attr as $a => $b) {
+                            if (isset($post[$name . 'Update'][$k])) {
+                                $post[$name . 'Update'][$k][$a] = $b;
+                            }
                         }
                     }
                 }
+    
+                ActiveRecord::batchUpdate($model, $post[$name . 'Update']);
             }
-
-            ActiveRecord::batchUpdate($model, $post[$name . 'Update']);
-        }
-
-        ## delete
-        if (isset($post[$name . 'Delete']) && is_string($post[$name . 'Delete'])) {
-            $post[$name . 'Delete'] = json_decode($post[$name . 'Delete'], true);
-        }
-        if (count(@$post[$name . 'Delete']) > 0) {
-            ActiveRecord::batchDelete($model, $post[$name . 'Delete']);
+            
+            ## delete
+            if (isset($post[$name . 'Delete']) && is_string($post[$name . 'Delete'])) {
+                $post[$name . 'Delete'] = json_decode($post[$name . 'Delete'], true);
+            }
+            if (count(@$post[$name . 'Delete']) > 0) {
+                ActiveRecord::batchDelete($model, $post[$name . 'Delete']);
+            }
         }
     }
 
@@ -255,7 +269,7 @@ class ActiveRecord extends CActiveRecord {
             try {
                 $command->execute();
             } catch (Exception $e) {
-                var_dump($data);
+                var_dump($data, $e);
                 die();
             }
         }
@@ -998,12 +1012,16 @@ class ActiveRecord extends CActiveRecord {
         $validator->method = 'relationValidator';
         
         foreach ($this->__relations as $k => $new) { 
-            $rel = @$this->metaData->relations[$k];
-            if (!!$rel) {
-                $modelClass = $rel->className;
-                if (class_exists($modelClass)) {
-                    if (!empty($this->{$k})) {
-                        $validator->attributes[] = $k;
+            if ($k == 'currentModel' && count($this->__relations[$k]) > 0) {
+                $validator->attributes[] = $k;
+            } else {
+                $rel = @$this->metaData->relations[$k];
+                if (!!$rel) {
+                    $modelClass = $rel->className;
+                    if (class_exists($modelClass)) {
+                        if (count($this->__relations[$k]) > 0) {
+                            $validator->attributes[] = $k;
+                        }
                     }
                 }
             }
@@ -1017,10 +1035,14 @@ class ActiveRecord extends CActiveRecord {
     }
     
     public function relationValidator($relName) {
-        $rel = @$this->metaData->relations[$relName];
+        $pk = $this->tableSchema->primaryKey;
+        if ($relName == 'currentModel')  {
+            $rel = new CHasManyRelation('currentModel', get_class($this), $pk);
+        } else {
+            $rel = @$this->metaData->relations[$relName];
+        }
         
         if (!!$rel) {
-            $pk = $this->tableSchema->primaryKey;
             $modelClass = $rel->className;
             $model = new $modelClass;
             $relPK = $model->tableSchema->primaryKey;
@@ -1103,6 +1125,167 @@ class ActiveRecord extends CActiveRecord {
         return $this->doAfterSave();
     }
 
+    public function saveRelation() {
+        $pk = $this->tableSchema->primaryKey;
+        foreach ($this->__relations as $k => $new) {
+            if ($k == 'currentModel') {
+                $rel = new CHasManyRelation('currentModel', get_class($this), $pk);
+            } else {
+                $rel = $this->getMetaData()->relations[$k];
+            }
+
+            $relClass = $rel->className;
+            if (!class_exists($relClass))
+                continue;
+
+            $relType       = get_class($rel);
+            $relForeignKey = $rel->foreignKey;
+            $relTableModel = $relClass::model();
+            $relTable      = $relTableModel->tableName();
+            $relPK         = $relTableModel->metadata->tableSchema->primaryKey;
+
+            switch ($relType) {
+                case 'CHasOneRelation':
+                case 'CBelongsToRelation':
+                    if (!empty($new)) {
+                        $relForeignKey = $rel->foreignKey;
+                        if ($this->{$relForeignKey} == $new[$relPK]) {
+                            $model = $relClass::model()->findByPk($this->{$relForeignKey});
+                            if (is_null($model)) {
+                                $model = new $relClass;
+                            }
+                            
+                            if (array_diff($model->getAttributesWithoutRelation(), $new)) {
+                                $model->attributes = $new;
+                                if ($relType == 'CHasOneRelation') {
+                                    $model->{$relForeignKey} = $this->{$pk};
+                                }
+                                $model->save();
+                            }
+                        } else {
+                            $this->loadRelation($rel->name);
+                        }
+                    }
+                    break;
+                case 'CManyManyRelation':
+                case 'CHasManyRelation':
+                    ## if relation type is Many to Many, prepare required variable
+                    $relMM = [];
+                    if ($relType == 'CManyManyRelation') {
+                        $parser = new PhpParser\Parser(new PhpParser\Lexer\Emulative);
+                        $stmts  = $parser->parse('<?php ' . $relForeignKey . ';');
+                        if (count($stmts) > 0) {
+                            $relMM = [
+                                'tableName' => $stmts[0]->name->parts[0],
+                                'from' => $stmts[0]->args[0]->value->name->parts[0],
+                                'to' => $stmts[0]->args[1]->value->name->parts[0]
+                            ];
+                        }
+                    }
+
+                    ## Handle Insert
+                    if (isset($this->__relInsert[$k])) {
+                        if ($k != 'currentModel') {
+                            if (is_string($relForeignKey)) { ## without through
+                                if ($relType != 'CManyManyRelation') {
+                                    foreach ($this->__relInsert[$k] as $n => $m) {
+                                        $this->__relInsert[$k][$n][$relForeignKey] = $this->{$pk};
+                                    }
+                                }
+                            } else if (is_array($relForeignKey)) { ## with through
+                                foreach ($this->__relInsert[$k] as $n => $m) {
+                                    foreach ($relForeignKey as $rk => $fk) {
+                                        $this->__relInsert[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
+                                    }
+                                }
+                            }
+                        }
+
+                        if (count($this->__relInsert[$k]) > 0) {
+                            if ($relType == "CHasManyRelation") {
+                                ActiveRecord::batchInsert($relClass, $this->__relInsert[$k]);
+                            }
+
+                            ## if current relation is many to many
+                            if ($relType == 'CManyManyRelation' && !empty($relMM)) {
+                                $manyRel = [];
+                                foreach ($this->__relInsert[$k] as $item) {
+                                    $manyRel[] = [
+                                        $relMM['from'] => $this->{$pk},
+                                        $relMM['to'] => $item[$relPK]
+                                    ];
+                                }
+
+                                ## if relinsert is already exist, then do not insert it again
+                                foreach ($this->__relInsert[$k] as $insIdx => &$ins) {
+                                    if (!!@$ins[$relPK]) {
+                                        unset($this->__relInsert[$k]);
+                                    }
+                                }
+                                ActiveRecord::batchInsert($relClass, $this->__relInsert[$k]);
+
+                                ## create transaction entry to link between
+                                ## related model and current model
+                                ActiveRecord::batchInsert($relMM['tableName'], $manyRel, false);
+
+                            }
+                        }
+                        $this->__relInsert[$k] = [];
+                    }
+
+                    ## Handle Update
+                    if (isset($this->__relUpdate[$k])) {
+                        if ($k != 'currentModel') {
+                            if (is_string($relForeignKey)) { ## without through
+                                if ($relType == 'CManyManyRelation') {
+
+                                } else {
+                                    foreach ($this->__relUpdate[$k] as $n => $m) {
+                                        $this->__relUpdate[$k][$n][$relForeignKey] = $this->{$pk};
+                                    }
+                                }
+                            } else if (is_array($relForeignKey)) { ## with through
+                                foreach ($this->__relUpdate[$k] as $n => $m) {
+                                    foreach ($relForeignKey as $rk => $fk) {
+                                        $this->__relUpdate[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
+                                    }
+                                }
+                            }
+                        }
+
+                        if (count($this->__relUpdate[$k]) > 0) {
+                            ActiveRecord::batchUpdate($relClass, $this->__relUpdate[$k]);
+                        }
+                        $this->__relUpdate[$k] = [];
+                    }
+
+                    ## Handle Delete
+                    if (isset($this->__relDelete[$k])) {
+                        if (count($this->__relDelete[$k]) > 0) {
+                            if ($relType == 'CManyManyRelation') {
+                                if (!empty($relMM)) {
+                                    //first remove entry in transaction table first
+                                    ActiveRecord::batchDelete($relMM['tableName'], $this->__relDelete[$k], [
+                                        'table' => $relMM['tableName'],
+                                        'pk' => $relPK,
+                                        'condition' => "{$relMM['from']} = {$this->{$pk}} AND {$relMM['to']} IN (:ids)",
+                                        'integrityError' => false
+                                    ]);
+
+                                    //and then remove entry in actual table
+                                    //ActiveRecord::batchDelete($relClass, $this->__relDelete[$k]);
+                                }
+                            } else {
+                                ActiveRecord::batchDelete($relClass, $this->__relDelete[$k]);
+                            }
+                        }
+                        $this->__relDelete[$k] = [];
+                    }
+                    break;
+            }
+        }
+    }
+
     public function doAfterSave($withRelation = true) {
         $pk = $this->tableSchema->primaryKey;
 
@@ -1126,163 +1309,7 @@ class ActiveRecord extends CActiveRecord {
         }
 
         if ($withRelation) {
-            foreach ($this->__relations as $k => $new) {
-                if ($k == 'currentModel') {
-                    $rel = new CHasManyRelation('currentModel', get_class($this), $pk);
-                } else {
-                    $rel = $this->getMetaData()->relations[$k];
-                }
-
-                $relClass = $rel->className;
-                if (!class_exists($relClass))
-                    continue;
-
-                $relType       = get_class($rel);
-                $relForeignKey = $rel->foreignKey;
-                $relTableModel = $relClass::model();
-                $relTable      = $relTableModel->tableName();
-                $relPK         = $relTableModel->metadata->tableSchema->primaryKey;
-
-                switch ($relType) {
-                    case 'CHasOneRelation':
-                    case 'CBelongsToRelation':
-                        if (!empty($new)) {
-                            $relForeignKey = $rel->foreignKey;
-                            if ($this->{$relForeignKey} == $new[$relPK]) {
-                                $model = $relClass::model()->findByPk($this->{$relForeignKey});
-                                if (is_null($model)) {
-                                    $model = new $relClass;
-                                }
-                                
-                                if (array_diff($model->getAttributesWithoutRelation(), $new)) {
-                                    $model->attributes = $new;
-                                    if ($relType == 'CHasOneRelation') {
-                                        $model->{$relForeignKey} = $this->{$pk};
-                                    }
-                                    $model->save();
-                                }
-                            } else {
-                                $this->loadRelation($rel->name);
-                            }
-                        }
-                        break;
-                    case 'CManyManyRelation':
-                    case 'CHasManyRelation':
-                        ## if relation type is Many to Many, prepare required variable
-                        $relMM = [];
-                        if ($relType == 'CManyManyRelation') {
-                            $parser = new PhpParser\Parser(new PhpParser\Lexer\Emulative);
-                            $stmts  = $parser->parse('<?php ' . $relForeignKey . ';');
-                            if (count($stmts) > 0) {
-                                $relMM = [
-                                    'tableName' => $stmts[0]->name->parts[0],
-                                    'from' => $stmts[0]->args[0]->value->name->parts[0],
-                                    'to' => $stmts[0]->args[1]->value->name->parts[0]
-                                ];
-                            }
-                        }
-
-                        ## Handle Insert
-                        if (isset($this->__relInsert[$k])) {
-                            if ($k != 'currentModel') {
-                                if (is_string($relForeignKey)) { ## without through
-                                    if ($relType != 'CManyManyRelation') {
-                                        foreach ($this->__relInsert[$k] as $n => $m) {
-                                            $this->__relInsert[$k][$n][$relForeignKey] = $this->{$pk};
-                                        }
-                                    }
-                                } else if (is_array($relForeignKey)) { ## with through
-                                    foreach ($this->__relInsert[$k] as $n => $m) {
-                                        foreach ($relForeignKey as $rk => $fk) {
-                                            $this->__relInsert[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (count($this->__relInsert[$k]) > 0) {
-                                if ($relType == "CHasManyRelation") {
-                                    ActiveRecord::batchInsert($relClass, $this->__relInsert[$k]);
-                                }
-
-                                ## if current relation is many to many
-                                if ($relType == 'CManyManyRelation' && !empty($relMM)) {
-                                    $manyRel = [];
-                                    foreach ($this->__relInsert[$k] as $item) {
-                                        $manyRel[] = [
-                                            $relMM['from'] => $this->{$pk},
-                                            $relMM['to'] => $item[$relPK]
-                                        ];
-                                    }
-
-                                    ## if relinsert is already exist, then do not insert it again
-                                    foreach ($this->__relInsert[$k] as $insIdx => &$ins) {
-                                        if (!!@$ins[$relPK]) {
-                                            unset($this->__relInsert[$k]);
-                                        }
-                                    }
-                                    ActiveRecord::batchInsert($relClass, $this->__relInsert[$k]);
-
-                                    ## create transaction entry to link between
-                                    ## related model and current model
-                                    ActiveRecord::batchInsert($relMM['tableName'], $manyRel, false);
-
-                                }
-                            }
-                            $this->__relInsert[$k] = [];
-                        }
-
-                        ## Handle Update
-                        if (isset($this->__relUpdate[$k])) {
-                            if ($k != 'currentModel') {
-                                if (is_string($relForeignKey)) { ## without through
-                                    if ($relType == 'CManyManyRelation') {
-
-                                    } else {
-                                        foreach ($this->__relUpdate[$k] as $n => $m) {
-                                            $this->__relUpdate[$k][$n][$relForeignKey] = $this->{$pk};
-                                        }
-                                    }
-                                } else if (is_array($relForeignKey)) { ## with through
-                                    foreach ($this->__relUpdate[$k] as $n => $m) {
-                                        foreach ($relForeignKey as $rk => $fk) {
-                                            $this->__relUpdate[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (count($this->__relUpdate[$k]) > 0) {
-                                ActiveRecord::batchUpdate($relClass, $this->__relUpdate[$k]);
-                            }
-                            $this->__relUpdate[$k] = [];
-                        }
-
-                        ## Handle Delete
-                        if (isset($this->__relDelete[$k])) {
-                            if (count($this->__relDelete[$k]) > 0) {
-                                if ($relType == 'CManyManyRelation') {
-                                    if (!empty($relMM)) {
-                                        //first remove entry in transaction table first
-                                        ActiveRecord::batchDelete($relMM['tableName'], $this->__relDelete[$k], [
-                                            'table' => $relMM['tableName'],
-                                            'pk' => $relPK,
-                                            'condition' => "{$relMM['from']} = {$this->{$pk}} AND {$relMM['to']} IN (:ids)",
-                                            'integrityError' => false
-                                        ]);
-
-                                        //and then remove entry in actual table
-                                        //ActiveRecord::batchDelete($relClass, $this->__relDelete[$k]);
-                                    }
-                                } else {
-                                    ActiveRecord::batchDelete($relClass, $this->__relDelete[$k]);
-                                }
-                            }
-                            $this->__relDelete[$k] = [];
-                        }
-                        break;
-                }
-            }
+            $this->saveRelation();
         }
 
         ## handling untuk file upload

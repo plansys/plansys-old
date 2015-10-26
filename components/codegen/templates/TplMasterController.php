@@ -2,12 +2,24 @@
 
 ##IMPORT-PLACEHOLDER##
 
-class TplMasterController extends Controller {
+class TplMasterController extends Controller { 
+    public function filters() {
+        // Use access control filter
+        return ['accessControl'];
+    }
+
+    public function accessRules() {
+        // Only allow authenticated users
+        return [['allow', 'users' => ['@']],['deny']];
+    }
+    
     public function actionIndex() {
         $model = new TemplateIndex;
         if (!empty($_POST)) {
-            ActiveRecord::batchPost('TemplateIndex',$_POST, 'dataSource1');
-            $this->flash('Data Berhasil Di-update');
+            if (ActiveRecord::batchPost($model, $_POST, 'dataSource1')) {
+                $this->flash('Data Berhasil Di-update');
+                $this->redirect(['index']);
+            }
         }
         $this->renderForm('TemplateIndex', $model);
     }
