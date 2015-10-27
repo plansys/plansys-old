@@ -154,7 +154,7 @@ EOF;
 
                     case "CHasManyRelation":
                     case "CManyManyRelation":
-                        if ($rel['editable'] == "PopUp" || $rel['insertable'] == 'PopUp') {
+                        if (@$rel['editable'] == "PopUp" || @$rel['insertable'] == 'PopUp') {
                             $foreignKey = $rel['foreignKey'];
                             if ($rel['type'] == "CManyManyRelation") {
                                 $token   = token_get_all("<?php " . str_replace(" ", "", $rel['foreignKey']));
