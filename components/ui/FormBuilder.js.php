@@ -18,6 +18,8 @@ ob_start();
 ?>
 <script type = "text/javascript">
     <?php ob_start(); ?>
+    var plansys = <?php echo json_encode(Setting::get('app')); ?>;
+    
     app.controller("<?= $modelClass ?>Controller", function ($scope, $parse, $timeout, $http, $localStorage, $filter) {
         $scope.form = <?php echo json_encode($this->form); ?>;
         $scope.model = <?php echo @json_encode($data['data'], JSON_PARTIAL_OUTPUT_ON_ERROR); ?>;

@@ -751,7 +751,6 @@ class RelationField extends FormField {
             $data = $m::model()->findByPk($id);
             echo json_encode($data->attributes);
         }
-        
     }
 
     public function actionFindId() {

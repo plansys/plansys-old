@@ -7,9 +7,12 @@ class DevSettingApp extends Form {
     public $host = 'http://localhost';
     public $mode = 'dev';
     
+    public $dateFormat = 'd M Y';
+    public $timeFormat = 'H:i';
+    public $dateTimeFormat = 'd M Y - H:i';
+    
     public function __construct() {
         parent::__construct();
-        
         $this->attributes = Setting::get('app');
     }
     
@@ -41,6 +44,7 @@ class DevSettingApp extends Form {
                     ),
                 ),
             ),
+            'inlineJS' => 'DevSettingApp.js',
         );
     }
 
@@ -105,8 +109,38 @@ class DevSettingApp extends Form {
                 'type' => 'ColumnField',
             ),
             array (
-                'type' => 'Text',
-                'value' => '<hr style=\\"margin:0px -15px;\\">',
+                'title' => 'Locale Setting',
+                'type' => 'SectionHeader',
+            ),
+            array (
+                'showBorder' => 'Yes',
+                'column1' => array (
+                    array (
+                        'label' => 'Date Format',
+                        'name' => 'dateFormat',
+                        'postfix' => '{{ timestamp | dateFormat:model.dateFormat }}',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Time Format',
+                        'name' => 'timeFormat',
+                        'postfix' => '{{ timestamp | dateFormat:model.timeFormat }}',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'label' => 'Date Time Format',
+                        'name' => 'dateTimeFormat',
+                        'postfix' => '{{ timestamp | dateFormat:model.dateTimeFormat }}',
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
+                ),
+                'w1' => '50%',
+                'w2' => '50%',
+                'type' => 'ColumnField',
             ),
         );
     }

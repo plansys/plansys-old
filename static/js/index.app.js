@@ -128,8 +128,12 @@ app.filter('hourFormat', function () {
 });
 app.filter('dateFormat', function (dateFilter) {
     return function (input, format) {
+        if (!format && plansys && plansys.dateFormat) {
+            format = plansys.dateFormat;
+        }
+        
         if (input != "0000-00-00") {
-            return date(format, strtotime(input));
+            return date(format, strtotime(input + ""));
         } else {
             return "";
         }

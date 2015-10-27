@@ -11,7 +11,10 @@ class Setting {
             'host' => 'localhost',
             'username' => 'root',
             'password' => '',
-            'dbname' => ''
+            'dbname' => '',
+            'dateFormat' => 'd M Y',
+            'timeFormat' => 'H:i',
+            'dateTimeFormat' => 'd M Y - H:i'
         ],
         'repo' => [
             'path' => 'repo'

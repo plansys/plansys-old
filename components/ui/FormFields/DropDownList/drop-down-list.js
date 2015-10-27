@@ -350,7 +350,7 @@ app.directive('dropDownList', function ($timeout) {
                         }
                     }
 
-                    if ($scope.defaultType == 'first' && !initialValue && !!$scope.renderedFormList[0].value) {
+                    if ($scope.defaultType == 'first' && !initialValue && !!$scope.renderedFormList[0] && !!$scope.renderedFormList[0].value) {
                         initialValue = $scope.renderedFormList[0].value;
                         
                         if (angular.isArray(initialValue)) {
