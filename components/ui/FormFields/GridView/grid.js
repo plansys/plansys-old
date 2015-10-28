@@ -331,7 +331,9 @@ app.directive('gridView', function ($timeout, $http) {
                         if (typeof oldpaging != "undefined" && paging.pageSize == oldpaging.pageSize) {
                             ds.queryWithoutCount();
                         } else {
-                            ds.query();
+                            ds.query(function(){
+                                
+                            });
                         }
                         $scope.savePageSetting();
                     }

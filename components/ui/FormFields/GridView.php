@@ -167,6 +167,15 @@ type="checkbox" /></label>';
                     $style    = ' style="width:20px;"';
                     $template = '{{ $index + 1}}';
                     break;
+                case 'date':
+                    $template = '{{row.' . $fieldName . ' | dateFormat:"date" }}';
+                    break;
+                case 'time':
+                    $template = '{{row.' . $fieldName . ' | dateFormat:"time" }}';
+                    break;
+                case 'datetime':
+                    $template = '{{row.' . $fieldName . ' | dateFormat:"datetime" }}';
+                    break;
             }
         }
 

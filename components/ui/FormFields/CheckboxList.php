@@ -12,17 +12,61 @@ class CheckboxList extends FormField {
     public function getFieldProperties() {
         return array (
             array (
+                'label' => 'Checkbox Mode',
+                'name' => 'mode',
+                'options' => array (
+                    'ng-model' => 'active.mode',
+                    'ng-change' => 'active.name = \'\';',
+                ),
+                'listExpr' => '[\'Default\',\'Relation\']',
+                'type' => 'DropDownList',
+            ),
+            array (
                 'label' => 'Field Name',
                 'name' => 'name',
                 'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
+                    'ng-if' => 'active.mode == \'Default\'',
                 ),
                 'list' => array (),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Relation Name',
+                'name' => 'name',
+                'options' => array (
+                    'ng-model' => 'active.name',
+                    'ng-change' => 'generateRelCheckbox();changeActiveName()',
+                    'ps-list' => 'relFieldList',
+                    'ng-if' => 'active.mode == \'Relation\'',
+                    'ng-init' => 'generateRelCheckbox();',
+                ),
+                'list' => array (),
+                'searchable' => 'Yes',
+                'showOther' => 'Yes',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Target Field',
+                'name' => 'relField',
+                'options' => array (
+                    'ng-model' => 'active.relField',
+                    'ng-change' => 'save()',
+                    'ps-list' => 'relationFieldList',
+                    'ng-show' => 'active.mode == \'Relation\'',
+                ),
+                'list' => array (),
+                'searchable' => 'Yes',
+                'showOther' => 'Yes',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<hr/>',
             ),
             array (
                 'label' => 'Label',
@@ -71,12 +115,13 @@ class CheckboxList extends FormField {
                 'type' => 'TextField',
             ),
             array (
-                'label' => 'Convert List to String ?',
+                'label' => 'Convert List to String',
                 'name' => 'convertToString',
                 'options' => array (
                     'ng-model' => 'active.convertToString',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
+                    'ng-if' => 'active.mode == \'Default\'',
                 ),
                 'listExpr' => 'array(\'Yes\',\'No\')',
                 'fieldWidth' => '4',
@@ -158,6 +203,10 @@ class CheckboxList extends FormField {
 
     /** @var array $fieldOptions */
     public $fieldOptions = [];
+
+    public $mode = 'Default';
+    
+    public $relField = '';
 
     /** @var string $toolbarName */
     public static $toolbarName = "Checkbox List";
@@ -263,6 +312,26 @@ class CheckboxList extends FormField {
         return in_array($value, $list) ? 'checked="checked"' : '';
     }
 
+    public function getRelationInfo() {
+        if ($this->mode == "Relation") {
+            $rel = $this->model->metaData->relations[$this->name];
+            $class = $rel->className;
+            $model = $class::model();
+            return [
+                'foreignKey' => $rel->foreignKey,
+                'type' => get_class($rel),
+                'className' => $class,
+                'parentPrimaryKey' => $this->model->tableSchema->primaryKey,
+                'targetKey' => $this->relField,
+                'attributes' => $model->getAttributesWithoutRelation()
+            ];
+        }
+    }
+
+    public function getPostName($mode = '') {
+        return str_replace("]", $mode . "]", $this->renderName);
+    }
+    
     /**
      * render
      * Fungsi ini untuk me-render field dan atributnya
@@ -279,7 +348,6 @@ class CheckboxList extends FormField {
         }
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
-
         $this->processExpr();
         return $this->renderInternal('template_render.php');
     }

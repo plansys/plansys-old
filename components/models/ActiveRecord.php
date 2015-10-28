@@ -1056,9 +1056,9 @@ class ActiveRecord extends CActiveRecord {
                 case 'CHasManyRelation':
                 case 'CManyManyRelation': 
                     foreach ($this->__relations[$relName] as $k=>$r) {
+                        $model = new $modelClass;
                         $model->attributes = $r;
                         $model->{$rel->foreignKey} = $this->isNewRecord ? '0' : $this->{$pk};
-                        
                         if (!$model->validate()) {
                             if (isset($r['$rowState'])) {
                                 $errors['list'][] = [

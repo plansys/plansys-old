@@ -261,11 +261,11 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         parent.$watchCollection(watch, function (newv, oldv) {
                             if (newv != oldv) {
                                 $scope.updateParam(key, newv);
-                                $scope.trackChanges = false;
-                                $scope.internalQuery = true;
+                                
                                 $scope.query(function () {
-                                    $scope.trackChanges = true;
-                                    $scope.internalQuery = false;
+                                    $scope.trackChanges = false;
+                                    $scope.internalQuery = true;
+                                    $scope.resetOriginal();
                                 });
                             }
                         });
@@ -283,13 +283,10 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 }
 
                 if (jsParamExist) {
-                    $scope.data = [];
-                    $scope.trackChanges = false;
-                    $scope.internalQuery = true;
                     $scope.query(function () {
+                        $scope.trackChanges = false;
+                        $scope.internalQuery = true;
                         $scope.resetOriginal();
-                        $scope.trackChanges = true;
-                        $scope.internalQuery = false;
                     });
                 } else {
                     $scope.data = JSON.parse($el.find("data[name=data]:eq(0)").text());
@@ -374,16 +371,9 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         if (typeof $scope.data == "undefined") {
                             $scope.data = [];
                         }
-
-                        if ($scope.trackChanges && !angular.equals($scope.original, newval)) {
+                        
+                        if ($scope.trackChanges) {
                             var df = diff($scope.original, newval);
-
-                            // Handle Insert Data
-                            for (i in df.insert) {
-                                if ($scope.insertData.indexOf(df.insert[i]) < 0) {
-                                    $scope.insertData.push(df.insert[i]);
-                                }
-                            }
 
                             // Generate UpdateData Hash (to enable faster primary key look up)
                             var updateHash = {};
@@ -400,6 +390,13 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                     data: $scope.deleteData[i],
                                     idx: i
                                 };
+                            }
+                            
+                            // Handle Insert Data
+                            for (i in df.insert) {
+                                if ($scope.insertData.indexOf(df.insert[i]) < 0) {
+                                    $scope.insertData.push(df.insert[i]);
+                                }
                             }
 
                             // Handle Update Data
@@ -432,6 +429,13 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                     }
                                 }
                             }
+                            
+                            console.log($scope.insertData);
+                        }
+                        
+                        if ($scope.trackChanges === false && $scope.internalQuery === true) {
+                            $scope.trackChanges = true;
+                            $scope.internalQuery = false;
                         }
                     }, true);
                 }

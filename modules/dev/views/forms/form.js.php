@@ -369,6 +369,14 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
     $scope.saving = false;
     /************************ RELATION FIELD  ****************************/
     $scope.relationFieldList = {};
+    $scope.generateRelCheckbox = function () {
+        $http.get(Yii.app.createUrl('/formfield/RelationField.listFieldByRel', {
+            class: $scope.classPath,
+            rel: $scope.active.name
+        })).success(function (data) {
+            $scope.relationFieldList = data;
+        });
+    }
     $scope.generateRelationField = function (modelClass, parentScope) {
         modelClass = modelClass || $scope.active.modelClass;
         $http.get(Yii.app.createUrl('/formfield/RelationField.listField', {
