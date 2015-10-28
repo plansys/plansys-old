@@ -79,52 +79,53 @@ app.directive('checkBoxList', function ($timeout) {
                             $scope.selected = [];
                         }
                         var ar = $scope.selected;
-                        if ($scope.mode == "Default") {
-                            if (ar.indexOf(value) >= 0) {
-                                ar.splice(ar.indexOf(value), 1);
-                                $scope.selectedText = ar.join(",");
-                            } else {
-                                ar.push(value.replace(/,/g, ''));
-                                $scope.selectedText = ar.join(",");
-                            }
-                        } else if ($scope.mode == "Relation") {
-                            if ($scope.isChecked(value)) {
-                                for (i in ar) {
-                                    if (ar[i][rel.targetKey] == value) {
-                                        var item = ar.splice(i, 1);
-                                        if (!$scope.deleteHash[value]) {
-                                            if (!!$scope.relOriginalHash[value]) {
-                                                $scope.deleteData.push(item[0]);
+                        
+                        if (angular.isArray(ar)) {
+                            if ($scope.mode == "Default") {
+                                if (ar.indexOf(value) >= 0) {
+                                    ar.splice(ar.indexOf(value), 1);
+                                    $scope.selectedText = ar.join(",");
+                                } else {
+                                    ar.push(value.replace(/,/g, ''));
+                                    $scope.selectedText = ar.join(",");
+                                }
+                            } else if ($scope.mode == "Relation") {
+                                if ($scope.isChecked(value)) {
+                                    for (i in ar) {
+                                        if (ar[i][rel.targetKey] == value) {
+                                            var item = ar.splice(i, 1);
+                                            if (!$scope.deleteHash[value]) {
+                                                if (!!$scope.relOriginalHash[value]) {
+                                                    $scope.deleteData.push(item[0]);
+                                                }
                                             }
+                                            if (!!$scope.insertHash[value]) {
+                                                $scope.insertData.splice($scope.insertHash[value].idx, 1);
+                                            }
+                                            break;
                                         }
-                                        if (!!$scope.insertHash[value]) {
-                                            $scope.insertData.splice($scope.insertHash[value].idx, 1);
+                                    }
+                                    
+                                } else {
+                                    var item = $scope.relOriginalHash[value];
+                                    if (!item) {
+                                        item = angular.copy(rel.attributes);
+                                        item[rel.foreignKey] = $scope.model[rel.parentPrimaryKey];
+                                        item[rel.targetKey] = value;
+                                    }
+                                    ar.push(item);
+                                    
+                                    if (!!$scope.deleteHash[value]) {
+                                        $scope.deleteData.splice($scope.deleteHash[value].idx, 1);
+                                    }
+                                    if (!$scope.insertHash[value]) {
+                                        if (!$scope.relOriginalHash[value]) {
+                                            $scope.insertData.push(item);
                                         }
-                                        break;
                                     }
                                 }
-                                
-                            } else {
-                                var item = $scope.relOriginalHash[value];
-                                if (!item) {
-                                    item = angular.copy(rel.attributes);
-                                    item[rel.foreignKey] = $scope.model[rel.parentPrimaryKey];
-                                    item[rel.targetKey] = value;
-                                }
-                                ar.push(item);
-                                
-                                if (!!$scope.deleteHash[value]) {
-                                    $scope.deleteData.splice($scope.deleteHash[value].idx, 1);
-                                }
-                                if (!$scope.insertHash[value]) {
-                                    if (!$scope.relOriginalHash[value]) {
-                                        $scope.insertData.push(item);
-                                    }
-                                }
+                                $scope.resetRelHash();
                             }
-                            
-                            
-                            $scope.resetRelHash();
                         }
                     }
                 }

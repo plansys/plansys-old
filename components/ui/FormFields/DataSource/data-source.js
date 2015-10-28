@@ -429,8 +429,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                     }
                                 }
                             }
-                            
-                            console.log($scope.insertData);
                         }
                         
                         if ($scope.trackChanges === false && $scope.internalQuery === true) {
