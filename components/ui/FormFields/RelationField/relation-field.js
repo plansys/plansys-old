@@ -168,7 +168,7 @@ app.directive('relationField', function ($timeout, $http) {
                     $scope.updateInternal(item.key);
                 };
 
-                $scope.updateDetail = function(relation) {
+                $scope.updateDetail = function(relation, func) {
                     if (!!$scope.value) {
                         $http.get(Yii.app.createUrl('formfield/RelationField.getDetail',{
                             'm': $scope.relModelClass,
@@ -182,6 +182,10 @@ app.directive('relationField', function ($timeout, $http) {
                                         }
                                     } else {
                                         $scope.model[relation] = data;
+                                    }
+                                    
+                                    if (typeof func == "function") {
+                                        func(data);
                                     }
                                 });
                             }
