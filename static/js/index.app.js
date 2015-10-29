@@ -332,7 +332,7 @@ app.directive('autoGrow', ['$timeout', '$window', function ($timeout, $window) {
         append: ''
     };
     return {
-        require: 'ngModel',
+        require: '?ngModel',
         restrict: 'A, C',
         link: function (scope, element, attrs, ngModel) {
 
