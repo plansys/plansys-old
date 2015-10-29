@@ -854,7 +854,9 @@ class RelationField extends FormField {
             $this->relationCriteria['offset'] = $start;
         }
         
-        $this->modelClass = $m;
+        if ($this->modelClass == '') {
+            $this->modelClass = $m;
+        }
 
         if (is_array(@$field['params'])) {
             foreach ($field['params'] as $k => $ff) {
