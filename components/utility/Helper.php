@@ -25,6 +25,25 @@ class Helper {
     public static function timeToSec($time) {
         return strtotime('1970-01-01 ' . $time . 'GMT');
     }
+    
+    public static function angkaRomawi($integer, $upcase = true)  { 
+        $table = array('M'=>1000, 'CM'=>900, 'D'=>500, 'CD'=>400, 'C'=>100, 'XC'=>90, 'L'=>50, 'XL'=>40, 'X'=>10, 'IX'=>9, 'V'=>5, 'IV'=>4, 'I'=>1); 
+        $return = ''; 
+        while($integer > 0) 
+        { 
+            foreach($table as $rom=>$arb) 
+            { 
+                if($integer >= $arb) 
+                { 
+                    $integer -= $arb; 
+                    $return .= $rom; 
+                    break; 
+                } 
+            } 
+        } 
+    
+        return $return; 
+    } 
 
     public static function hash($password) {
         return password_hash($password, PASSWORD_DEFAULT);

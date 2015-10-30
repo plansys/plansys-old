@@ -320,7 +320,10 @@ app.directive('listView', function ($timeout) {
                             }
                         }
 
-                        $scope.datasource.enableTrackChanges();
+                        if (!!$scope.datasource) {
+                            $scope.datasource.enableTrackChanges();
+                        }
+                        
                         if (!$scope.inEditor) {
                             parent[$scope.name] = $scope;
                         }

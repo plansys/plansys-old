@@ -312,6 +312,7 @@ class ActiveRecord extends CActiveRecord {
             if (empty($instance->_softDelete)) {
                 $sql     = "DELETE FROM {$table} WHERE $condition;";
                 $command = Yii::app()->db->createCommand($sql);
+                
                 try {
                     $command->execute();
                 } catch (CDbException $e) {

@@ -110,6 +110,8 @@ ob_start();
                 }
             }
 
+            
+
             if ($scope.user != null) {
                 // track create or update in audit trail
                 $http.post(Yii.app.createUrl('/sys/auditTrail/track'), $scope.pageInfo);
@@ -199,6 +201,10 @@ ob_start();
                         $scope.pageInfo['form_class'] = $scope.formClass;
                         $scope.pageInfo['model_class'] = $scope.modelBaseClass;
                         $scope.pageInfo['model_id'] = $scope.model.id;
+                        
+                        if ($scope.pageInfo['data'].length > 5000) {
+                            $scope.pageInfo['data'] = "";
+                        }
                     }
 
                     var type = $scope.isNewRecord ? 'create' : 'update';
