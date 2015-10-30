@@ -1,5 +1,9 @@
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="<?= $this->staticUrl('/css/bootstrap.min.css'); ?>" type="text/css" />
+    <link rel="stylesheet" href="<?= $this->staticUrl('/css/non-responsive.css'); ?>" type="text/css" />
+    <link rel="stylesheet" href="<?= $this->staticUrl('/css/font-awesome.min.css'); ?>" type="text/css" />
+    <link rel="stylesheet" href="<?= $this->staticUrl('/css/main.css'); ?>" type="text/css" />
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
     <?php
     Yii::app()->clientScript->registerCoreScript('jquery');
@@ -10,10 +14,5 @@
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/lib/ngStorage.js'));
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/index.app.js'));
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/index.ctrl.js'));
-
-    Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/bootstrap.min.css'));
-    Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/non-responsive.css'));
-    Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/font-awesome.min.css'));
-    Yii::app()->clientScript->registerCSSFile($this->staticUrl('/css/main.css'));
     ?> 
 </head>

@@ -61,4 +61,35 @@ class Asset extends CComponent {
             }
         }
     }
+    
+    public static function registerCSS($includeCSS) {
+        if (is_string($includeCSS)) {
+            $includeCSS = [$includeCSS];
+        }
+
+        if (!empty($includeCSS)) {
+            foreach ($includeCSS as $css) {
+                $path = Asset::resolveAlias($css);
+                $csspath = realpath($path);
+                
+                if (is_dir($csspath)) {
+                    $path = Asset::publish($csspath);
+                    $files = glob($csspath . "/*");
+                    foreach ($files as $p) {
+                        if (pathinfo($p, PATHINFO_EXTENSION) != "css") {
+                            continue;
+                        }
+
+                        $p = str_replace($csspath, '', realpath($p));
+                        
+                        Yii::app()->clientScript->registerCssFile($path . str_replace("\\", "/", $p));
+                    }
+                } else if (is_file($csspath)) {
+                    Yii::app()->clientScript->registerCssFile(
+                        Asset::publish($csspath)
+                    );
+                }
+            }
+        }
+    }
 }
