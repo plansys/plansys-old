@@ -332,6 +332,11 @@ class CheckboxList extends FormField {
         return str_replace("]", $mode . "]", $this->renderName);
     }
     
+    public function getDeleteData() {
+        $relChanges   = $this->model->getRelChanges($this->name);
+    
+        return $relChanges['delete'];
+    }
     /**
      * render
      * Fungsi ini untuk me-render field dan atributnya

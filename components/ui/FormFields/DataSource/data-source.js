@@ -275,7 +275,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     }
                 });
 
-
                 $scope.internalQuery = false;
                 $scope.trackChanges = true;
                 $scope.resetOriginal = function () {
@@ -365,6 +364,8 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
 
                     return diff;
                 };
+
+                
                 if ($scope.postData == 'Yes') {
                     $scope.resetOriginal();
                     $scope.$watch('data', function (newval, oldval) {

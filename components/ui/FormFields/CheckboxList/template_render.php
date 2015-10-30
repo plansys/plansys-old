@@ -21,6 +21,7 @@
         <!-- /data -->
 
         <?php if ($this->mode == 'Relation'): ?>
+            <data name="delete_data" class="hide"><?= @json_encode($this->deleteData); ?></data>
             <input name="<?= $this->getPostName('Insert'); ?>" type="hidden" value="{{ insertData | json }}"/>
             <input name="<?= $this->getPostName('Delete'); ?>" type="hidden" value="{{ deleteData | json }}"/>
         <?php endif; ?>
@@ -36,11 +37,11 @@
             </label>
         </span>
 
-        <?php if ($this->convertToString == "Yes"): ?>
+        <?php if ($this->convertToString == "Yes" && $this->mode == 'Default'): ?>
             <input type="text" class="invisible"
                    ng-model="selectedText" id="<?= $this->renderID ?>"
                    name="<?= $this->renderName ?>" value='<?= $this->value ?>'/>
-               <?php endif; ?>
+        <?php endif; ?>
         <!-- /field -->
 
         <!-- error -->
