@@ -71,8 +71,6 @@
             </ul>
         </div>
 
-
-
         <!-- error -->
         <div ng-if="errors[name]" class="alert error alert-danger">
             {{ errors[name][0]}}

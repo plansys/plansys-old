@@ -132,6 +132,18 @@ app.filter('dateFormat', function (dateFilter) {
             format = plansys.dateFormat;
         }
         
+        if (format == "date") {
+            format = plansys.dateFormat;
+        }
+        
+        if (format == "time") {
+            format = plansys.timeFormat;
+        }
+        
+        if (format == "datetime") {
+            format = plansys.dateTimeFormat;
+        }
+        
         if (input != "0000-00-00") {
             return date(format, strtotime(input + ""));
         } else {
@@ -320,7 +332,7 @@ app.directive('autoGrow', ['$timeout', '$window', function ($timeout, $window) {
         append: ''
     };
     return {
-        require: 'ngModel',
+        require: '?ngModel',
         restrict: 'A, C',
         link: function (scope, element, attrs, ngModel) {
 

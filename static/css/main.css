@@ -1411,6 +1411,11 @@ div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container 
     opacity: 0;
 }
 
+.list-view-item-container.disable-delete {
+    margin-right:-1px;
+    padding-right:28px;
+}
+
 
 .list-view-item-container > .column-field {
     margin-top:-4px;

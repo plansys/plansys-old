@@ -124,8 +124,10 @@ class AuditTrail extends ActiveRecord {
                 $at['type']    = $type;
                 $at['stamp']   = date("Y-m-d H:i:s");
                 $at['user_id'] = Yii::app()->user->id;
-
-                ActiveRecord::batch('AuditTrail', [$at]);
+                
+                if (@$at['model_id'] != '') {
+                    ActiveRecord::batch('AuditTrail', [$at]);
+                }
             }
         }
     }

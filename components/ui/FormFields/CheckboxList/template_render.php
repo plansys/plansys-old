@@ -14,16 +14,23 @@
         <!-- data -->
         <data name="model_class" class="hide"><?= @get_class($model) ?></data>
         <data name="name" class="hide"><?= $this->name; ?></data>
+        <data name="mode" class="hide"><?= $this->mode; ?></data>
         <data name="selected" class="hide"><?= json_encode($this->value); ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list); ?></data>
+        <data name="rel_info" class="hide"><?= json_encode($this->getRelationInfo()); ?></data>
         <!-- /data -->
 
+        <?php if ($this->mode == 'Relation'): ?>
+            <input name="<?= $this->getPostName('Insert'); ?>" type="hidden" value="{{ insertData | json }}"/>
+            <input name="<?= $this->getPostName('Delete'); ?>" type="hidden" value="{{ deleteData | json }}"/>
+        <?php endif; ?>
+        
         <!-- field -->
         <span ng-repeat="(value, text) in formList track by $index">
             <label <?= $this->expandAttributes($this->fieldOptions) ?>>
                 <input type="checkbox" id="<?= $this->renderID ?>_{{value}}"
                        name="<?= $this->name ?>[{{value}}]"
-                       ng-checked="selected.indexOf(value) > -1"
+                       ng-checked="isChecked(value)"
                        ng-click="updateItem(value)"
                        /> {{ text}}
             </label>

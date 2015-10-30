@@ -168,7 +168,7 @@ app.directive('relationField', function ($timeout, $http) {
                     $scope.updateInternal(item.key);
                 };
 
-                $scope.updateDetail = function(relation) {
+                $scope.updateDetail = function(relation, func) {
                     if (!!$scope.value) {
                         $http.get(Yii.app.createUrl('formfield/RelationField.getDetail',{
                             'm': $scope.relModelClass,
@@ -182,6 +182,10 @@ app.directive('relationField', function ($timeout, $http) {
                                         }
                                     } else {
                                         $scope.model[relation] = data;
+                                    }
+                                    
+                                    if (typeof func == "function") {
+                                        func(data);
                                     }
                                 });
                             }
@@ -424,7 +428,7 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.searchable = true;
                 $scope.showOther = $el.find("data[name=show_other]").text().trim() == "Yes" ? true : false;
                 $scope.otherLabel = $el.find("data[name=other_label]").html();
-                $scope.modelClass = $el.find("data[name=model_class]").html();
+                $scope.modelClass = $el.find("data[name=model_class]:eq(0)").html();
                 $scope.relModelClass = $el.find("data[name=rel_model_class]").html();
                 $scope.value = $el.find("data[name=value]").html().trim();
                 $scope.name = $el.find("data[name=name]:eq(0)").text().trim();

@@ -7,6 +7,11 @@
               ng-repeat="(key,value) in field.list track by $index">
             <input type="checkbox" name="{{field.name}}" id="{{field.name}}" value="{{key}}"> {{value}}
         </label>
+        
 
+        <label class="input-group " ng-if="!field.list" style="margin-right:5px;">
+            <input type="checkbox"> Checkbox
+        </label>
+        
     </div>
 </div>

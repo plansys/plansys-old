@@ -1053,17 +1053,12 @@ class ActiveRecord extends CActiveRecord {
             
             $idx = ['insert'=>0,'edit'=>0];
             switch (get_class($rel)) {
-                case 'CHasManyRelation': 
-                    // $relData = $this->getRelated($relName);
-                    // $relHash = [];
-                    // foreach ($relData as $k=>$h) {
-                    //     $relHash['_' . $h->{$relPK}] = $h->attributes; 
-                    // }
-                    
+                case 'CHasManyRelation':
+                case 'CManyManyRelation': 
                     foreach ($this->__relations[$relName] as $k=>$r) {
+                        $model = new $modelClass;
                         $model->attributes = $r;
                         $model->{$rel->foreignKey} = $this->isNewRecord ? '0' : $this->{$pk};
-                        
                         if (!$model->validate()) {
                             if (isset($r['$rowState'])) {
                                 $errors['list'][] = [
@@ -1079,9 +1074,6 @@ class ActiveRecord extends CActiveRecord {
                             }
                         }
                     }
-                    // $this->__relations[$relName] = array_values($relHash);
-                break;
-                case 'CManyManyRelation':
                 break;
             }
             

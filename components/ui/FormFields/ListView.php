@@ -15,6 +15,7 @@ class ListView extends FormField {
     public        $layout             = 'Horizontal';
     public        $label              = '';
     public        $labelWidth         = 0;
+    public        $minItem            = 0;
     public        $inlineJS           = '';
     public        $fieldWidth         = 12;
     public        $datasource         = '';
@@ -22,6 +23,8 @@ class ListView extends FormField {
     public        $fieldOptions       = [];
     public        $labelOptions       = [];
     public        $sortable           = 'yes';
+    public        $deletable          = 'Yes';
+    public        $insertable         = 'Yes';
     public        $singleView         = 'TextField';
     public        $singleViewOption   = null;
     protected     $renderTemplateForm;
@@ -226,6 +229,40 @@ class ListView extends FormField {
                 ),
                 'fieldWidth' => '5',
                 'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Deletable',
+                'name' => 'deletable',
+                'options' => array (
+                    'ng-model' => 'active.deletable',
+                    'ng-change' => 'save();',
+                ),
+                'listExpr' => '[\'Yes\',\'No\']',
+                'fieldWidth' => '5',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Insertable',
+                'name' => 'insertable',
+                'options' => array (
+                    'ng-model' => 'active.insertable',
+                    'ng-change' => 'save();',
+                ),
+                'listExpr' => '[\'Yes\',\'No\']',
+                'fieldWidth' => '5',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Minimum Item',
+                'name' => 'minItem',
+                'fieldType' => 'number',
+                'fieldWidth' => '3',
+                'options' => array (
+                    'ng-model' => 'active.minItem',
+                    'ng-change' => 'save()',
+                    'ng-delay' => '500',
+                ),
+                'type' => 'TextField',
             ),
             array (
                 'label' => 'Layout',

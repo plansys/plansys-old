@@ -18,6 +18,8 @@ app.directive('listView', function ($timeout) {
                 $scope.modelClass = $el.find("data[name=model_class]").html().trim();
                 $scope.fieldTemplate = $el.find("data[name=field_template]").html().trim();
                 $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
+                $scope.minItem = $el.find("data[name=min_item]:eq(0)").text().trim();
+                $scope.deletable = $el.find("data[name=deletable]:eq(0)").text().trim();
                 $scope.renderID = $el.find("data[name=render_id]").text();
                 $scope.datasource = $scope.parent[$el.find("data[name=datasource]:eq(0)").text()];
                 $scope.templateAttr = JSON.parse($el.find("data[name=template_attr]").html().trim());
@@ -50,6 +52,23 @@ app.directive('listView', function ($timeout) {
                         ctrl.$setViewValue(value);
                     });
                 };
+                
+                $scope.isDeleteDisabled = function(idx) {
+                    if ($scope.deletable == "No") {
+                        return true;
+                    }
+                    
+                    if ($scope.minItem > idx) {
+                        return true;
+                    }
+                    
+                    return false;
+                }
+
+                $scope.items = [];
+                $scope.initScopeItem = function(scope, idx) {
+                    $scope.items[idx] = scope;
+                }
 
                 $scope.processValue = function (func) {
                     if (typeof $scope.options['unique'] == "string") {
@@ -122,7 +141,12 @@ app.directive('listView', function ($timeout) {
                         data: d[0]
                     };
                     ctrl.$setViewValue(angular.copy($scope.value));
-
+                    
+                    if ($scope.fieldTemplate == "datasource") {
+                        var idx = $scope.datasource.insertData.indexOf(d[0]);
+                        $scope.datasource.insertData.splice(idx, 1);
+                    }
+                    
                     $scope.showUndoDelete = true;
                 };
                 
@@ -153,14 +177,19 @@ app.directive('listView', function ($timeout) {
                 }
 
                 $scope.addItem = function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
+                    if (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                    
                     if ($scope.value === null || typeof $scope.value === "undefined" || $scope.value === "") {
                         $scope.value = [];
                     }
 
                     var value = angular.extend({}, $scope.templateAttr);
+                    if ($scope.fieldTemplate == "datasource") {
+                        value = {};
+                    }
 
                     //before add
                     var beforeAdd = $scope.options['ps-before-add'] || '';
@@ -262,6 +291,7 @@ app.directive('listView', function ($timeout) {
                                     $scope.value = $scope.datasource.data;
                                     $timeout(function () {
                                         $scope.loading = false;
+                                        $scope.datasource.enableTrackChanges();
                                     }, 100);
                                 }
                             }
@@ -283,7 +313,14 @@ app.directive('listView', function ($timeout) {
                                 $scope.value = ngModelValue;
                             }
                         }
+                        
+                        if ($scope.minItem > 0) {
+                            while ($scope.value.length < $scope.minItem) {
+                                $scope.addItem();
+                            }
+                        }
 
+                        $scope.datasource.enableTrackChanges();
                         if (!$scope.inEditor) {
                             parent[$scope.name] = $scope;
                         }
