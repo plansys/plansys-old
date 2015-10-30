@@ -535,6 +535,7 @@ app.directive('gridView', function ($timeout, $http) {
 
                 // checkbox handling
                 $scope.checkbox = {};
+                $scope.lastCheckbox = null;
                 $scope.getModifyDS = function (col) {
                     if (!!col.options && !!col.options.modifyDataSource && col.options.modifyDataSource == 'false') {
                         return false;
@@ -555,13 +556,34 @@ app.directive('gridView', function ($timeout, $http) {
                     if (typeof $scope.checkbox[colName] == "undefined") {
                         $scope.checkbox[colName] = [];
                     }
-                    var isChecked = $(e.target).is(":checked");
+                    var isChecked = $scope.checkbox[colName].indexOf(row);
                     var rowFound = -1;
                     for (a in $scope.checkbox[colName]) {
                         if ($scope.checkbox[colName][a][$scope.datasource.primaryKey] == row[$scope.datasource.primaryKey]) {
                             rowFound = a;
                         }
                     }
+                    
+                    if (typeof e !== "boolean") {
+                        isChecked = $(e.target).is(":checked");
+                        if ($scope.lastCheckbox !== null) {
+                            if (e.shiftKey) {
+                                var from = Math.min($scope.lastCheckbox.idx, this.$index);
+                                var to = Math.max($scope.lastCheckbox.idx, this.$index);
+                                for (var i = from; i<to; i++) {
+                                    $scope.checkboxRow($scope.datasource.data[i], colName, colIdx, $scope.lastCheckbox.checked);
+                                }
+                            }
+                        } 
+                        $scope.lastCheckbox = {
+                            idx: this.$index,
+                            data: row,
+                            checked: isChecked
+                        };
+                    } else {
+                        isChecked = e;
+                    }
+                    
                     if (isChecked) {
                         if (rowFound < 0) {
                             $scope.checkbox[colName].push(row);
@@ -712,6 +734,7 @@ app.directive('gridView', function ($timeout, $http) {
                                 $scope.gridOptions.pageInfo.currentPage = 1;
                             }
                             $scope.datasource.disableTrackChanges();
+                            $scope.lastCheckbox = null;
                         }
                         $scope.datasource.afterQueryInternal[$scope.renderID] = function () {
                             $scope.loading = false;
@@ -722,6 +745,7 @@ app.directive('gridView', function ($timeout, $http) {
                                 $scope.datasource.resetOriginal();
                                 $scope.datasource.enableTrackChanges();
                             }
+                            $scope.lastCheckbox = null;
                             $scope.onGridRender('query');
                         };
                         $scope.loadPageSetting();
