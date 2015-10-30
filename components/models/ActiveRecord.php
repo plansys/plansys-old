@@ -670,15 +670,27 @@ class ActiveRecord extends CActiveRecord {
 
     private function applyRelChange($name) {
         $pk = $this->tableSchema->primaryKey;
+        $relHash = [];
+        foreach ($this->__relations[$name] as $q => $r) {
+            if (is_array($r) && isset($r[$pk])) {
+                $relHash['_' . $r[$pk]] = ['idx' => $q, 'data' => $r];
+            }
+        }
         if (count(@$this->__relDelete[$name]) > 0) {
-            foreach ($this->__relDelete[$name] as $i) {
-                foreach ($this->__relations[$name] as $q => $r) {
-                    if (@$r[$pk] == $i) {
-                        array_splice($this->__relations[$name], $q, 1);
+            foreach ($this->__relDelete[$name] as $item) {
+                if (is_array($item)) {
+                    $rpk = '_' . $item[$pk];
+                    if (isset($relHash[$rpk])) {
+                        array_splice($this->__relations[$name], $relHash[$rpk]['idx'], 1);
+                    }
+                } else {
+                    if (isset($relHash[$item])) {
+                        array_splice($this->__relations[$name], $relHash[$item]['idx'], 1);
                     }
                 }
             }
         }
+        
 
         if (count(@$this->__relInsert[$name]) > 0) {
             foreach ($this->__relInsert[$name] as $k => $i) {
@@ -687,11 +699,6 @@ class ActiveRecord extends CActiveRecord {
         }
 
         if (count(@$this->__relUpdate[$name]) > 0) {
-            $relHash = [];
-            foreach ($this->__relations[$name] as $q => $r) {
-                $relHash['_' . $r[$pk]] = ['idx' => $q, 'data' => $r];
-            }
-            
             foreach ($this->__relUpdate[$name] as $k => $i) {
                 $rpk = '_' . $i[$pk];
                 if (isset($relHash[$rpk])) {

@@ -93,7 +93,7 @@ class DataGrid extends FormField {
                 $query = str_replace("[" . $syntax . "]", implode(" , ", $sql), $tmpl);
                 $query = trim(trim($query), ",");
 
-                if (strpos($query, "order by") === false) {
+                if (strpos($query, "order by") === false && $query != "") {
                     $query = $addSql . $query;
                 }
             }

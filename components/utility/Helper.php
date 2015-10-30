@@ -66,6 +66,19 @@ class Helper {
         return $period;
     }
 
+    public function base32Encode( $base10 ) {
+        return strtr( base_convert( $base10, 10, 32 ),
+                      "abcdefghijklmnopqrstuv",
+                      "ABCDEFGHJKMNPQRSTVWXYZ" );
+    }
+    
+    public function base32Decode( $base32 ) {
+        $base32 = strtr( strtoupper( $base32 ), 
+                         "ABCDEFGHJKMNPQRSTVWXYZILO",
+                         "abcdefghijklmnopqrstuv110" );
+        return base_convert( $base32, 32, 10 );
+    }
+
     public static function exportExcel($data, $file) {
 
         ## add header

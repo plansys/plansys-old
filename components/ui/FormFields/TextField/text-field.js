@@ -184,6 +184,7 @@ app.directive('textField', function ($timeout, $http) {
                     $el.find("input[type=text]").focus();
 
                     $timeout(function () {
+                        ctrl.$setViewValue($scope.value);
                         $scope.dropdownHover = false;
                     });
                 }

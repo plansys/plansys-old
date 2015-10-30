@@ -46,7 +46,10 @@ app.directive('checkBoxList', function ($timeout) {
                     if ($scope.relOriginalHash === null) {
                         $scope.relOriginalHash = {};
                         for (i in $scope.originalData) {
-                            $scope.relOriginalHash[$scope.originalData[i][rel.targetKey]] = $scope.originalData[i];
+                            $scope.relOriginalHash[$scope.originalData[i][rel.targetKey]] = {
+                                idx: i,
+                                data: $scope.originalData[i]
+                            }
                         }
                     }
                 }
@@ -78,7 +81,12 @@ app.directive('checkBoxList', function ($timeout) {
                         if ($scope.selected == null) {
                             $scope.selected = [];
                         }
+                        
                         var ar = $scope.selected;
+                        if (!angular.isArray(ar) && $scope.mode == "Relation") {
+                            $scope.selected = ar = [];
+                            console.log($scope.selected);
+                        }
                         
                         if (angular.isArray(ar)) {
                             if ($scope.mode == "Default") {
@@ -90,12 +98,14 @@ app.directive('checkBoxList', function ($timeout) {
                                     $scope.selectedText = ar.join(",");
                                 }
                             } else if ($scope.mode == "Relation") {
+                                // uncheck item
                                 if ($scope.isChecked(value)) {
                                     for (i in ar) {
                                         if (ar[i][rel.targetKey] == value) {
                                             var item = ar.splice(i, 1);
                                             if (!$scope.deleteHash[value]) {
-                                                if (!!$scope.relOriginalHash[value]) {
+                                                if (!!$scope.relOriginalHash[value] && item[0].$rowState != "insert") {
+                                                    item[0].$rowState = "remove";
                                                     $scope.deleteData.push(item[0]);
                                                 }
                                             }
@@ -105,14 +115,17 @@ app.directive('checkBoxList', function ($timeout) {
                                             break;
                                         }
                                     }
-                                    
                                 } else {
+                                    // check item
                                     var item = $scope.relOriginalHash[value];
                                     if (!item) {
                                         item = angular.copy(rel.attributes);
                                         item[rel.foreignKey] = $scope.model[rel.parentPrimaryKey];
                                         item[rel.targetKey] = value;
+                                    } else {
+                                        item = item.data;
                                     }
+                                    item.$rowState = "insert";
                                     ar.push(item);
                                     
                                     if (!!$scope.deleteHash[value]) {
@@ -161,10 +174,24 @@ app.directive('checkBoxList', function ($timeout) {
                     // set default value
                     $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
                     $scope.selected = JSON.parse($el.find("data[name=selected]").text());
+                    $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text());
                     $scope.modelClass = $el.find("data[name=model_class]").html();
                     
                     if ($scope.mode == 'Relation') {
+                        $scope.selected = ctrl.$viewValue;
                         $scope.originalData = angular.copy(ctrl.$viewValue);
+                        
+                        for (i in $scope.originalData) {
+                            if ($scope.originalData[i].$rowState == 'insert') $scope.insertData.push($scope.originalData[i]);
+                        }
+                        
+                        for (i in $scope.deleteData) {
+                            $scope.deleteData.push($scope.deleteData[i]);
+                            if (!!$scope.relOriginalHash[$scope.deleteData[i][$scope.targetKey]]) {
+                                $scope.selected.splice($scope.relOriginalHash[$scope.deleteData[i][$scope.targetKey]].idx, 1);
+                            }
+                        }
+                        
                         $scope.resetRelHash();
                     } else {
                         if (attrs.ngModel) {
