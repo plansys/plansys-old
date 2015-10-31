@@ -219,20 +219,30 @@ class ActiveRecord extends CActiveRecord {
     public static function batchUpdate($model, $data) {
         if (!is_array($data) || count($data) == 0)
             return;
-        $pk    = $model::model()->tableSchema->primaryKey;
-        $table = $model::model()->tableSchema->name;
-        $field = $model::model()->tableSchema->columns;
-        unset($field['id']);
+        
+        $isModelExist = class_exists($model);
+        if (!$isModelExist) {
+            $schema = Yii::app()->db->schema->tables[$model];
+        } else {
+            $schema = $model::model()->tableSchema;
+        }
+            
+        $pk    = $schema->primaryKey;
+        $table = $schema->name;
+        $field = $schema->columns;
+        unset($field[$pk]);
 
         $columnCount = count($field);
         $columnName  = array_keys($field);
         $update      = "";
 
-        $rels        = $model::model()->relations();
-        $foreignKeys = [];
-        foreach ($rels as $r) {
-            if ($r[0] == 'CBelongsToRelation' && is_string($r[2])) {
-                $foreignKeys[] = $r[2];
+        if ($isModelExist) {
+            $rels        = $model::model()->relations();
+            $foreignKeys = [];
+            foreach ($rels as $r) {
+                if ($r[0] == 'CBelongsToRelation' && is_string($r[2])) {
+                    $foreignKeys[] = $r[2];
+                }
             }
         }
 
@@ -246,7 +256,7 @@ class ActiveRecord extends CActiveRecord {
                 if (isset($columnName[$i]) && array_key_exists($columnName[$i], $d)) {
 
                     ## jika yg kolom itu foreign key DAN kolom nya kosong, maka set NULL (karena foreign_key ga boleh string kosong)
-                    if (in_array($columnName[$i], $foreignKeys) && $d[$columnName[$i]] == '') {
+                    if ($isModelExist && in_array($columnName[$i], $foreignKeys) && $d[$columnName[$i]] == '') {
                         $updatearr[] = '`' . $columnName[$i] . "` = NULL";
                     } else {
                         ## selain itu, hajar seperti biasa...
@@ -258,7 +268,6 @@ class ActiveRecord extends CActiveRecord {
                     }
                 }
             }
-
             $updatesql = implode(",", $updatearr);
             if ($updatesql != '') {
                 $update .= "UPDATE {$table} SET {$updatesql} WHERE {$pk}='{$cond}';";
@@ -673,7 +682,7 @@ class ActiveRecord extends CActiveRecord {
         $pk = $this->tableSchema->primaryKey;
         $relHash = [];
         foreach ($this->__relations[$name] as $q => $r) {
-            if (is_array($r) && isset($r[$pk])) {
+            if (is_array($r) && is_string($pk) && isset($r[$pk])) {
                 $relHash['_' . $r[$pk]] = ['idx' => $q, 'data' => $r];
             }
         }
@@ -1239,9 +1248,7 @@ class ActiveRecord extends CActiveRecord {
                     if (isset($this->__relUpdate[$k])) {
                         if ($k != 'currentModel') {
                             if (is_string($relForeignKey)) { ## without through
-                                if ($relType == 'CManyManyRelation') {
-
-                                } else {
+                                if ($relType == 'CHasManyRelation') {
                                     foreach ($this->__relUpdate[$k] as $n => $m) {
                                         $this->__relUpdate[$k][$n][$relForeignKey] = $this->{$pk};
                                     }
@@ -1257,6 +1264,18 @@ class ActiveRecord extends CActiveRecord {
 
                         if (count($this->__relUpdate[$k]) > 0) {
                             ActiveRecord::batchUpdate($relClass, $this->__relUpdate[$k]);
+                            
+                            ## update transaction entry to link between
+                            ## related model and current model
+                            if ($relType == 'CManyManyRelation' && !empty($relMM)) {
+                                $manyRel = [];
+                                foreach ($this->__relUpdate[$k] as $item) {
+                                    $item[$relMM['from']] = $this->{$pk};
+                                    $item[$relMM['to']] = $item[$relPK];
+                                    $manyRel[] = $item;
+                                }
+                                ActiveRecord::batchUpdate($relMM['tableName'], $manyRel);
+                            }
                         }
                         $this->__relUpdate[$k] = [];
                     }
