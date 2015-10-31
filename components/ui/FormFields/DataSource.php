@@ -180,7 +180,7 @@ class DataSource extends FormField {
             if (count($attachedParams[0]) > 0) {
                 $inParams = 0;
                 foreach ($attachedParams[0] as $ap) {
-                    if (isset($returnParams[$ap])) {
+                    if (isset($returnParams[$ap]) && $returnParams[$ap] != "") {
                         $inParams++;
 
                         ## if current params is an ARRAY then convert to multiple params
@@ -196,7 +196,7 @@ class DataSource extends FormField {
                         }
                     }
                 }
-
+                
                 if ($inParams == count($attachedParams)) {
                     $renderBracket = true;
                 }

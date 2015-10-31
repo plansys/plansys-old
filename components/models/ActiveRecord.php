@@ -673,7 +673,7 @@ class ActiveRecord extends CActiveRecord {
         $pk = $this->tableSchema->primaryKey;
         $relHash = [];
         foreach ($this->__relations[$name] as $q => $r) {
-            if (is_array($r) && isset($r[$pk])) {
+            if (is_array($r) && is_string($pk) && isset($r[$pk])) {
                 $relHash['_' . $r[$pk]] = ['idx' => $q, 'data' => $r];
             }
         }
