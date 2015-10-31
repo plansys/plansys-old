@@ -195,7 +195,7 @@ class DevUserIndex extends User {
                         'label' => 'last_login',
                         'options' => array (),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                         'inputMask' => '',
                         'stringAlias' => array (),
                     ),

@@ -170,8 +170,44 @@ class ProcessHelper extends CComponent {
             return 'process.exe';
         } else if (strtoupper(substr(PHP_OS, 0, 6)) === 'DARWIN'){
             return './process.osx';
+        } else if (strtoupper(substr(PHP_OS, 0, 5)) === 'LINUX') {
+            if (!getenv('PATH')) {
+                putenv('PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games');
+            }
+            
+            return './process.linux';
+        } 
+    }
+
+    public static function startProcessManager() {
+        $pid = null;
+        $process = ProcessHelper::getProcessCommand();
+        
+        Setting::set('processManager.isRunning', true);
+        chdir(Yii::getPathOfAlias('application'));
+        exec($process . ' run php yiic.php pm', $pid);
+        
+        if(!empty($pid)){
+            Setting::set('processManager.pid', $pid[0]);
         }
     }
+    
+    public static function stopProcessManager() {
+        $pid = Setting::get('processManager.pid');
+        chdir(Yii::getPathOfAlias('application'));            
+
+        //Stopping processManager
+        Setting::set('processManager.isRunning', false);
+        ProcessHelper::kill($pid);
+        Setting::set('processManager.pid', null);
+
+        //Stopping running child process
+        $prcs = Setting::get('process', []);
+        foreach ($prcs as $id=>$prc) {
+            $this->actionStopProcess($id);
+        }
+    }
+
 
     public static function run($name, $command, $runOnce = TRUE) {
         if(!ProcessHelper::isPMRunning()){
@@ -180,13 +216,10 @@ class ProcessHelper extends CComponent {
 
         $pid     = [];
         $process = ProcessHelper::getProcessCommand();
-
-
         $id = ProcessHelper::createSettingsId($name);        
 
         chdir(Yii::getPathOfAlias('application'));
         exec($process . ' run ' . $command, $pid);
-        echo $process . ' run ' . $command;
 
         if (!empty($pid)){ 
             # Default value of Processes

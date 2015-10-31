@@ -6,13 +6,11 @@ class PMCommand extends CConsoleCommand {
         $isPMRunning = null;
 
         while(true){   
-
             if(!$force) $isPMRunning = ProcessHelper::isPMRunning();
-            
             if(!$isPMRunning) break;
-
-            $cmds           = Setting::get('process', null, true);            
-
+            
+            $cmds           = Setting::get('process', [], true);            
+            
             foreach ($cmds as $id => $cmd) {                        
                 $curTime = time();
                 $isStillRunning = false;                

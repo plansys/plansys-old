@@ -65,7 +65,7 @@
                      style="text-align:center;padding:15px;font-size:12px;color:#999;">
                     &mdash; NOT FOUND &mdash;
                 </div>
-                <ul class="dropdown-menu inner" role="menu">
+                <ul class="dropdown-menu inner"  style="overflow-x:hidden" role="menu">
                     <li ng-repeat-start="item in renderedFormList track by $index"
                         ng-if="item.value != '---'" class="dropdown-item"
                         ng-class="{'dropdown-header': isObject(item.value)}">

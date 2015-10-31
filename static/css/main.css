@@ -3152,6 +3152,7 @@ div[dropdown] .dropdown-other-type {
 
 div[dropdown] .btn-dropdown-field {
     text-align: left;
+    overflow-x: hidden;
 }
 
 div[dropdown] .btn-dropdown-field .dropdown-text {

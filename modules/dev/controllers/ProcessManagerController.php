@@ -16,16 +16,7 @@ class ProcessManagerController extends Controller {
     public function actionStart() {    
         $isRunning = Setting::get('processManager.isRunning', false);
         if(!$isRunning){
-            $pid = null;
-            chdir(Yii::getPathOfAlias('application'));
-
-            //Starting processManager
-            Setting::set('processManager.isRunning', true);
-            exec('process run yiic pm', $pid);
-
-            if(isset($pid)){
-                Setting::set('processManager.pid', $pid[0]);
-            }
+            ProcessHelper::startProcessManager();
         }     
         $this->redirect(['/dev/processManager/']);
     }
@@ -33,19 +24,7 @@ class ProcessManagerController extends Controller {
     public function actionStop() {    
         $isRunning = Setting::get('processManager.isRunning', false);
         if($isRunning){
-            $pid = Setting::get('processManager.pid');
-            chdir(Yii::getPathOfAlias('application'));            
-
-            //Stopping processManager
-            Setting::set('processManager.isRunning', false);
-            ProcessHelper::kill($pid);
-            Setting::set('processManager.pid', null);
-
-            //Stopping running child process
-            $prcs = Setting::get('process');
-            foreach ($prcs as $id=>$prc) {
-                $this->actionStopProcess($id);
-            }
+            ProcessHelper::stopProcessManager();
         }     
         $this->redirect(['/dev/processManager/']);
     }

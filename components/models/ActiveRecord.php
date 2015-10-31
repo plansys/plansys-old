@@ -1100,13 +1100,15 @@ class ActiveRecord extends CActiveRecord {
                     preg_match("/FOREIGN\sKEY\s\(\`(.*)\`\)\sREFERENCES/", $e->errorInfo[2], $match);
                     $attribute = explode("`", $match[1]);
                     $attribute = @$attribute[0];
-
+                    
                     if ($this->hasAttribute($attribute)) {
-                        $message = Yii::t('yii', '{attribute} cannot be blank.');
+                        $message = Yii::t('yii', 'Referensi {attribute} tidak ditemukan.');
                         $message = strtr($message, array(
                             '{attribute}' => $this->getAttributeLabel($attribute),
                         ));
                         $this->addError($attribute, $message);
+                    } else {
+                        throw $e;
                     }
                 } else {
                     throw $e;
