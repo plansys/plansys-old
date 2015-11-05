@@ -3,6 +3,7 @@
   "prefer-stable": true,
   "require": {
     "nikic/php-parser": "^1.4",
-    "leeoniya/dump-r": "*"	
+    "leeoniya/dump-r": "*",
+    "phpmailer/phpmailer": "*"
   }
 }

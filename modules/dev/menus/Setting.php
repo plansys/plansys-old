@@ -21,18 +21,18 @@ return array (
         'label' => 'Application Setting',
         'icon' => 'fa-home',
         'url' => '/dev/setting/app',
-        'formattedUrl' => '/smuhrd/index.php?r=dev/setting/app',
+        'formattedUrl' => '/egrc/index.php?r=dev/setting/app',
     ),
     array (
         'label' => 'Database Setting',
         'icon' => 'fa-database',
         'url' => '/dev/setting/database',
-        'formattedUrl' => '/smuhrd/index.php?r=dev/setting/database',
+        'formattedUrl' => '/egrc/index.php?r=dev/setting/database',
     ),
     array (
         'label' => 'Process Manager',
         'icon' => 'fa-briefcase',
         'url' => 'dev/processManager/index',
-        'formattedUrl' => '/smuhrd/index.php?r=dev/command/index',
+        'formattedUrl' => '/egrc/index.php?r=dev/processManager/index',
     ),
 );
