@@ -2,7 +2,7 @@
 
 class ProcessHelper extends CComponent {
 
-    public static function listAllCmdForGridView() {
+    public static function getAllServices() {
         $prcs = Setting::get("process");
         $data = [];
         foreach ($prcs as $id => $prc) {
@@ -165,19 +165,6 @@ class ProcessHelper extends CComponent {
     }
 
 
-    public static function getProcessCommand() {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            return 'process.exe';
-        } else if (strtoupper(substr(PHP_OS, 0, 6)) === 'DARWIN'){
-            return './process.osx';
-        } else if (strtoupper(substr(PHP_OS, 0, 5)) === 'LINUX') {
-            if (!getenv('PATH')) {
-                putenv('PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games');
-            }
-            
-            return './process.linux';
-        } 
-    }
 
     public static function startProcessManager() {
         $pid = null;

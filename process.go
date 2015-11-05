@@ -3,7 +3,6 @@ package main
 import "fmt"
 import "os"
 import "os/exec"
-import "strings"
 import "strconv"
 import "log"
 
@@ -13,6 +12,7 @@ func main() {
 		fmt.Println("   process find  [PID]");
 		fmt.Println("   process kill  [PID]");
 		fmt.Println("   process run   [command]");
+		fmt.Println("   process runLog [logPath] [command]");
 		fmt.Println("   process debug [command]\n\n");
 	} else {
 		if os.Args[1] == "find"{
@@ -53,17 +53,15 @@ func main() {
 					fmt.Println(cmd.Process.Pid)
 				}
 			}else{
-				log.Fatal(err)		
+				fmt.Println(err);	
 			}
 			
-		}else if os.Args[1] == "debug"{
+		} else if os.Args[1] == "debug"{
 			//cmd := exec.Command(os.Args[2], strings.Join(os.Args[3:], " "))
 			cmd := exec.Command(os.Args[2], os.Args[3:]...)
-			out, err := cmd.Output()
-			//fmt.Printf("%s %s\n", os.Args[2],strings.Join(os.Args[3:], " "))
-			fmt.Printf("%s\n", strings.Join(os.Args[3:], " "))
-			fmt.Printf("%s\n", out)
-			fmt.Println(err)
+			cmd.Stdout = os.Stdout
+		    cmd.Stderr = os.Stderr
+		    cmd.Run()
 		}
 	}
 

@@ -291,25 +291,34 @@ class Helper {
             }
         });
     }
-
-    public static function arrayDiffAssocRecursive($array1, $array2) {
-        foreach ($array1 as $key => $value) {
-            if (is_array($value)) {
-                if (!isset($array2[$key])) {
-                    $difference[$key] = $value;
-                } elseif (!is_array($array2[$key])) {
-                    $difference[$key] = $value;
-                } else {
-                    $new_diff = Helper::arrayDiffAssocRecursive($value, $array2[$key]);
-                    if ($new_diff != FALSE) {
-                        $difference[$key] = $new_diff;
-                    }
+    
+    public static  function ReadFromEndByLine($filename, $lines, $revers = false) {
+        $offset = -1;
+        $c = '';
+        $read = '';
+        $i = 0;
+        $fp = @fopen($filename, "r");
+        while( $lines && fseek($fp, $offset, SEEK_END) >= 0 ) {
+            $c = fgetc($fp);
+            if($c == "\n" || $c == "\r"){
+                $lines--;
+                if( $revers ){
+                    $read[$i] = strrev($read[$i]);
+                    $i++;
                 }
-            } elseif (!isset($array2[$key]) || $array2[$key] != $value) {
-                $difference[$key] = $value;
             }
+            if( $revers ) $read[$i] .= $c;
+            else $read .= $c;
+            $offset--;
         }
-        return !isset($difference) ? 0 : $difference;
+        fclose ($fp);
+        if( $revers ){
+            if($read[$i] == "\n" || $read[$i] == "\r")
+                array_pop($read);
+            else $read[$i] = strrev($read[$i]);
+            return implode('',$read);
+        }
+        return strrev(rtrim($read,"\n\r"));
     }
 
     public static function startsWith($haystack, $needle, $case = false) {

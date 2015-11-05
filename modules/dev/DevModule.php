@@ -20,6 +20,7 @@ class DevModule extends CWebModule {
             'application.modules.dev.forms.genmenu.*',
             'application.modules.dev.forms.genmodel.*',
             'application.modules.dev.forms.genmodule.*',
+            'application.modules.dev.forms.service.*',
             'application.modules.dev.forms.settings.*',
             'application.modules.dev.forms.settings.js.*',
             'application.modules.dev.forms.users.*',

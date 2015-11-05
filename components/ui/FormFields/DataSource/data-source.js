@@ -155,6 +155,9 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         } else {
                             $scope.original = angular.copy($scope.data);
                             $scope.isDataReloaded = true;
+                            if (!$scope.data) {
+                                $scope.data = [];
+                            }
                             $scope.data.splice(0, $scope.data.length);
                             $scope.data = $scope.data.concat(data.data);
                             $scope.totalItems = data.count * 1;

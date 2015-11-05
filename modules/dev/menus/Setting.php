@@ -27,12 +27,6 @@ return array (
         'label' => 'Database Setting',
         'icon' => 'fa-database',
         'url' => '/dev/setting/database',
-        'formattedUrl' => '/egrc/index.php?r=dev/setting/database',
-    ),
-    array (
-        'label' => 'Process Manager',
-        'icon' => 'fa-briefcase',
-        'url' => 'dev/processManager/index',
-        'formattedUrl' => '/egrc/index.php?r=dev/processManager/index',
+        'formattedUrl' => '/etis/index.php?r=dev/setting/database',
     ),
 );

@@ -351,10 +351,10 @@ app.directive('dropDownList', function ($timeout) {
                     }
 
                     if ($scope.defaultType == 'first' && !initialValue && !!$scope.renderedFormList[0] && !!$scope.renderedFormList[0].value) {
-                        initialValue = $scope.renderedFormList[0].value;
+                        initialValue = $scope.renderedFormList[0].key;
                         
                         if (angular.isArray(initialValue)) {
-                            initialValue = initialValue[0].value;
+                            initialValue = initialValue[0].key;
                         }
                     }
 

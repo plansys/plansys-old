@@ -247,6 +247,7 @@ class Setting {
     }
 
     public static function initPath() {
+        Yii::setPathOfAlias('root', Setting::getRootPath());
         Yii::setPathOfAlias('app', Setting::getAppPath());
         Yii::setPathOfAlias('application', Setting::getApplicationPath());
         Yii::setPathOfAlias('repo', Setting::get('repo.path'));

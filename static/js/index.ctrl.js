@@ -34,6 +34,9 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
         var ret = $.extend({
             useWrapMode: true,
             showGutter: true,
+            onLoad: function(ed) {
+                $scope.aceEditor = ed;
+            },
             theme: 'monokai',
             mode: 'php',
             require: ['ace/ext/emmet'],
@@ -43,6 +46,11 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
         }, options);
         return ret;
     }
+    $timeout(function() {
+        if ($scope.aceEditor) {
+            $scope.aceEditor.focus();
+        }
+    });
 
     /************************** Plansys Widget *********************************/
     if (!$storage.widget) {
