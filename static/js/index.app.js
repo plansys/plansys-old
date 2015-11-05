@@ -1,3 +1,5 @@
+/* global angular, plansys, Yii */
+
 if (!Array.prototype.filter) {
     Array.prototype.filter = function (fn, context) {
         var i,
@@ -183,7 +185,7 @@ app.filter("timeago", function () {
     //local: compared to what time? default: now
     //raw: wheter you want in a format of "5 minutes ago", or "5 minutes"
     return function (time, local, raw) {
-        var usePlural = false;
+        var usePlural = true;
 
         if (!time)
             return "never";
@@ -220,21 +222,21 @@ app.filter("timeago", function () {
             DECADE = 315569260;
 
         if (offset <= MINUTE)
-            span = ['', raw ? 'now' : 'beberapa saat'];
+            span = ['', raw ? 'now' : 'a minute'];
         else if (offset < (MINUTE * 60))
-            span = [Math.round(Math.abs(offset / MINUTE)), 'menit'];
+            span = [Math.round(Math.abs(offset / MINUTE)), 'minute'];
         else if (offset < (HOUR * 24))
-            span = [Math.round(Math.abs(offset / HOUR)), 'jam'];
+            span = [Math.round(Math.abs(offset / HOUR)), 'hour'];
         else if (offset < (DAY * 7))
-            span = [Math.round(Math.abs(offset / DAY)), 'hari'];
+            span = [Math.round(Math.abs(offset / DAY)), 'day'];
         else if (offset < (WEEK * 52))
-            span = [Math.round(Math.abs(offset / WEEK)), 'minggu'];
+            span = [Math.round(Math.abs(offset / WEEK)), 'week'];
         else if (offset < (YEAR * 10))
-            span = [Math.round(Math.abs(offset / YEAR)), 'tahun'];
+            span = [Math.round(Math.abs(offset / YEAR)), 'year'];
         else if (offset < (DECADE * 100))
-            span = [Math.round(Math.abs(offset / DECADE)), 'dekade'];
+            span = [Math.round(Math.abs(offset / DECADE)), 'decade'];
         else
-            span = ['', 'dulu'];
+            span = ['', 'a long time'];
 
         if (usePlural) {
             span[1] += (span[0] === 0 || span[0] > 1) ? 's' : '';
@@ -244,7 +246,7 @@ app.filter("timeago", function () {
         if (raw === true) {
             return span;
         }
-        return (time <= local) ? span + ' yang lalu' : 'pada ' + span;
+        return (time <= local) ? span + ' ago' : 'in ' + span;
     }
 });
 app.directive("contenteditable", function ($timeout) {
@@ -748,8 +750,8 @@ function PopupCenter(url, title, w, h) {
     var dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : screen.left;
     var dualScreenTop = window.screenTop != undefined ? window.screenTop : screen.top;
 
-    width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
-    height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+    var width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+    var height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
 
     var left = ((width / 2) - (w / 2)) + dualScreenLeft;
     var top = ((height / 2) - (h / 2)) + dualScreenTop;

@@ -33,11 +33,11 @@ class Export extends CComponent {
             exit();
         } 
 
-        spl_autoload_unregister(array('YiiBase','autoload'));
+        // spl_autoload_unregister(array('YiiBase','autoload'));
         // Include classes
         require_once Yii::getPathOfAlias('ext.ertong.tbs.opentbs.demo.tbs_class') . '.php';
         require_once Yii::getPathOfAlias('ext.ertong.tbs.opentbs.tbs_plugin_opentbs') . '.php';
-		spl_autoload_register(array('YiiBase','autoload')); 
+// 		spl_autoload_register(array('YiiBase','autoload')); 
         
         // prevent from a PHP configuration problem when using mktime() and date()
         if (version_compare(PHP_VERSION, '5.1.0') >= 0) {

@@ -131,13 +131,9 @@ class DevUserForm extends User {
            <table class=\"table\" style=\"font-size:12px;border:1px solid #ccc;\">
                <tr>
                    <th style=\"padding:2px 5px 0px 5px;background:#ececeb;\">Role</th>
-                   <th style=\"padding:2px 5px 0px 5px;background:#ececeb;text-align:center;width:100px\">Notification</th>
                </tr>
                <tr ng-repeat=\"ur in model.roles\">
                    <td style=\"padding:2px 5px 0px 5px;\">{{ ur.role_description }}</td>
-                   <td style=\"padding:0px;text-align:center;\">
-                       <input name=\"DevUserForm[subscriptionCategories][]\" value=\"{{ur.role_name}}\" type=\"checkbox\" ng-checked=\"ur.subscribed\">
-                   </td>
                </tr>
            </table>
         </div>
