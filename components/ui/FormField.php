@@ -635,7 +635,7 @@ class FormField extends CComponent {
      */
      
     public function isRequired() {
-        if($this->model instanceof ActiveRecord) {
+        if($this->model instanceof ActiveRecord && !isset($this->name)) {
             foreach($this->model->getValidators($this->name) as $validator) {
                 if($validator instanceof CRequiredValidator)
                 {
