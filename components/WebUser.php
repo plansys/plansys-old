@@ -117,5 +117,19 @@ class WebUser extends CWebUser {
         }
         return $attr;
     }
-
+    
+    public function getPositionGroup() {
+        $model = ErisPositionGroup::model()->findAll();
+        
+        return $model;
+    }
+    
+    public function getLastEvent() {
+        $criteria = new CDbCriteria();
+        $criteria->order = 'tgl_selesai DESC';
+        $criteria->limit = '5';
+        $model = ErisChannel::model()->findAll($criteria);
+        
+        return $model;
+    }
 }

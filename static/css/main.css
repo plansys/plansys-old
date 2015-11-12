@@ -2484,6 +2484,11 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
 }
 
 /********************************** FORMS **************************************/
+.required {
+    display:inline-block;
+    color: red;
+}
+
 .label-field-value {
     font-size: 13px;
     margin-top: 6px;

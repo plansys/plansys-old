@@ -57,7 +57,9 @@ app.directive('checkBoxList', function ($timeout) {
                 $scope.updateItem = function (value) {
                     $scope.updateItemInternal(value);
                     if (typeof ctrl != 'undefined' && value) {
-                        $scope.resetRelHash();
+                        if ($scope.mode == "Relation") {
+                            $scope.resetRelHash();
+                        }
                         $timeout(function () {
                             if ($scope.mode == "Default") {
                                 ctrl.$setViewValue($scope.selectedText);
@@ -70,6 +72,8 @@ app.directive('checkBoxList', function ($timeout) {
                 
                 $scope.isChecked = function(value) {
                     if ($scope.mode == "Default") {
+                        if ($scope.selected == null) return false;
+                        
                         return ($scope.selected.indexOf(value) > -1)
                     } else if ($scope.mode == "Relation") {
                         return !!$scope.relHash[value];
@@ -85,7 +89,6 @@ app.directive('checkBoxList', function ($timeout) {
                         var ar = $scope.selected;
                         if (!angular.isArray(ar) && $scope.mode == "Relation") {
                             $scope.selected = ar = [];
-                            console.log($scope.selected);
                         }
                         
                         if (angular.isArray(ar)) {
@@ -174,10 +177,10 @@ app.directive('checkBoxList', function ($timeout) {
                     // set default value
                     $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
                     $scope.selected = JSON.parse($el.find("data[name=selected]").text());
-                    $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text());
-                    $scope.modelClass = $el.find("data[name=model_class]").html();
-                    
                     if ($scope.mode == 'Relation') {
+                        $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text());
+                        $scope.modelClass = $el.find("data[name=model_class]").html();
+                        
                         $scope.selected = ctrl.$viewValue;
                         $scope.originalData = angular.copy(ctrl.$viewValue);
                         

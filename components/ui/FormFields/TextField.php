@@ -398,5 +398,4 @@ class TextField extends FormField {
 
         return $this->renderInternal('template_render.php');
     }
-
 }

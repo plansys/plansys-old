@@ -449,6 +449,14 @@ class Helper {
         $s -= $m * 60;
         return $h . ':' . sprintf('%02d', $m) . ':' . sprintf('%02d', $s);
     }
+    
+    public static function getYear() {
+        $year_start = '1900';
+        $year_end = date('Y');
+        
+        $years = array_combine(range($year_end, $year_start), range($year_end, $year_start));
+        return $years;
+    }
 
     public static function iconList() {
         $icon = [

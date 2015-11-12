@@ -628,4 +628,22 @@ class FormField extends CComponent {
         return $list;
     }
 
+    /**
+     * Fungsi ini digunakan untuk memberikan informasi form harus diisi (required) 
+     * dengan informasi tanda bintang
+     * 
+     */
+     
+    public function isRequired() {
+        if($this->model instanceof ActiveRecord) {
+            foreach($this->model->getValidators($this->name) as $validator) {
+                if($validator instanceof CRequiredValidator)
+                {
+                    return true;
+                }
+            }    
+        }
+        
+        return false;
+    }
 }
