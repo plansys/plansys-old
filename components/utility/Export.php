@@ -1,13 +1,6 @@
 <?php
 class Export extends CComponent {
 
-    /**
-     * For Excel and Word
-     * @param string $fileNameResource namafile resourse 'moduleName.fileName'
-     * @param string $fileNameResult namaFile dari result
-     * @param string $extResource extension file dari resource, eg : 'docx'
-     * @param array $data use array level 1
-     */
     public static function download($fileNameResource, $extResource,  $fileNameResult, $data) {
         $fileNameResult = $fileNameResult.'.'.$extResource;
 
@@ -32,6 +25,12 @@ class Export extends CComponent {
             echo ('The specified file cannot be found.');
             exit();
         } 
+        
+        $allow_ext = array('odt', 'ods', 'odp', 'odg', 'odf', 'docx', 'xlsx', 'pptx');
+        if(!in_array($extResource, $allow_ext)) {
+            echo ('Extension File yang diijinkan hanya [odt, ods, odp, odg, odf, docx, xlsx, pptx]');
+            exit();
+        }
 
         // spl_autoload_unregister(array('YiiBase','autoload'));
         // Include classes

@@ -1060,6 +1060,10 @@ class ActiveRecord extends CActiveRecord {
         }
         
         if (!!$rel) {
+            if (is_array($rel->foreignKey)) {
+                return;
+            }
+            
             $modelClass = $rel->className;
             $model = new $modelClass;
             $relPK = $model->tableSchema->primaryKey;

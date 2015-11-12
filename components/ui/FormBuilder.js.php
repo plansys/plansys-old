@@ -36,6 +36,12 @@ ob_start();
         $scope.date = date;
         $scope.strtotime = strtotime;
         $scope.angular = angular;
+        
+        if (window.plansys) {
+            window.plansys.rootPath = "<?php echo Setting::getRootPath(); ?>";
+            window.plansys.baseUrl = "<?php echo Yii::app()->baseUrl ?>";
+        }
+
 
         // Process Relation Error Message
         for (i in $scope.errors) {

@@ -10,6 +10,7 @@ app.directive('popupWindow', function ($timeout, $http, $interpolate) {
                 $scope.title = $el.find("data[name=title]:eq(0)").text();
                 $scope.url = $el.find("data[name=url]:eq(0)").text();
                 $scope.mode = $el.find("data[name=mode]:eq(0)").text();
+                $scope.parentForm = $el.find("data[name=parent_form]:eq(0)").text();
                 $scope.options = JSON.parse($el.find("data[name=options]:eq(0)").text());
 
                 if (!$scope.options.width) {
@@ -21,7 +22,7 @@ app.directive('popupWindow', function ($timeout, $http, $interpolate) {
 
                 $scope.open = function () {
                     var url = Yii.app.createUrl('/formfield/PopupWindow.subform', {
-                        c: $scope.formClassPath,
+                        c: $scope.parentForm || $scope.formClassPath,
                         f: $scope.name
                     });
 

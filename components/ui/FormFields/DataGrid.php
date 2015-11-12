@@ -146,23 +146,23 @@ class DataGrid extends FormField {
      * @return array me-return array property DataGrid.
      */
     public function getFieldProperties() {
-        return array(
-            array(
+        return array (
+            array (
                 'label' => 'Data Grid Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Data Source Name',
                 'name' => 'datasource',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.datasource',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -172,52 +172,50 @@ class DataGrid extends FormField {
                 'fieldWidth' => '7',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
                 'label' => 'Generate Columns',
                 'buttonType' => 'success',
                 'icon' => 'magic',
                 'buttonSize' => 'btn-xs',
-                'options' => array(
+                'options' => array (
                     'style' => 'float:right;margin:0px 0px 5px 0px',
                     'ng-show' => 'active.datasource != \'\'',
                     'ng-click' => 'generateColumns()',
                 ),
                 'type' => 'LinkButton',
             ),
-            array(
+            array (
                 'type' => 'Text',
                 'value' => '<div class=\'clearfix\'></div>',
             ),
-            array(
+            array (
                 'label' => 'Grid Options',
                 'name' => 'gridOptions',
                 'show' => 'Show',
                 'type' => 'KeyValueGrid',
             ),
-            array(
+            array (
                 'title' => 'Columns',
                 'type' => 'SectionHeader',
             ),
-            array(
+            array (
                 'type' => 'Text',
                 'value' => '<div style=\'margin-top:5px\'></div>',
             ),
-            array(
+            array (
                 'name' => 'columns',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.DataGridListForm',
-                'labelWidth' => '0',
-                'fieldWidth' => '12',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.columns',
                     'ng-change' => 'save()',
                 ),
-                'singleViewOption' => array(
+                'singleViewOption' => array (
                     'name' => 'val',
                     'fieldType' => 'text',
                     'labelWidth' => 0,
                     'fieldWidth' => 12,
-                    'fieldOptions' => array(
+                    'fieldOptions' => array (
                         'ng-delay' => 500,
                     ),
                 ),

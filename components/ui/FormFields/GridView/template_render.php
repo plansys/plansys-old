@@ -4,19 +4,7 @@
     foreach ($columnsWithoutHTML as $k => $c) {
         unset($columnsWithoutHTML[$k]['html']);
     } ?>
-
-    <script type="text/ng-template" id="row-state-template">
-        <div ng-if='!!row.$rowState' class="row-state-detail row-state-{{ row.$rowState }}">
-            <i class="fa fa-pencil" ng-if="row.$rowState == 'edit'"></i>
-            <i class="fa fa-plus" ng-if="row.$rowState == 'insert'"></i>
-            <i class="fa fa-trash" ng-if="row.$rowState == 'remove'"></i>
-
-            <div class="row-state-options">
-                <div class="btn btn-xs btn-default" ng-click="rowUndoState(row)"> Cancel {{ row.$rowState }}</div>
-            </div>
-        </div>
-    </script>
-
+    
     <!-- info -->
     <data name="name" class="hide"><?= $this->name ?></data>
     <data name="model_class" class="hide"><?= Helper::getAlias($model) ?></data>
@@ -126,19 +114,11 @@
         </div>
         <div class="clearfix"></div>
     </div>
-
     <div class="thead">
         <div class="tr">
             <?php foreach ($this->columns as $idx => $col) {
                 echo $this->getHeaderTemplate($col, $idx);
             } ?>
-        </div>
-        <div style="position:absolute;right:0px;">
-            <div class="btn btn-default btn-small"
-                 ng-click="scrollTop()"
-                 style="margin:10px;font-size:11px;font-weight:bold;opacity:.9;">
-                <i class="fa fa-arrow-up"></i>
-            </div>
         </div>
     </div>
     <table ng-class="{loaded:loaded}" <?= $this->expandAttributes($this->tableOptions); ?>>

@@ -10,14 +10,15 @@ class SectionHeader extends FormField {
     public function getFieldProperties() {
         return array (
             array (
-                'label' => 'Title',
+                'label' => 'Section Header Title (HTML Allowed):',
                 'name' => 'title',
                 'fieldWidth' => '12',
                 'layout' => 'Vertical',
                 'options' => array (
                     'ng-model' => 'active.title',
-                    'ng-change' => 'save();',
-                    'ng-delay' => '500',
+                ),
+                'fieldOptions' => array (
+                    'auto-grow' => 'true',
                 ),
                 'type' => 'TextArea',
             ),

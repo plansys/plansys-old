@@ -118,7 +118,7 @@ class Controller extends CController {
         }
 
         ## set page title & layout to options
-        $this->pageTitle = isset($options['pageTitle']) ? $options['pageTitle'] : $fb->form['title'];
+        $this->pageTitle = isset($options['pageTitle']) ? $options['pageTitle'] : @$fb->form['title'];
         $this->layout    = isset($options['layout']) ? $options['layout'] : $this->layout;
 
         $renderOptions = [

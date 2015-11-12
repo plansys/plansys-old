@@ -12,6 +12,7 @@ class PopupWindow extends FormField {
     public        $subForm     = '';
     public        $url         = '';
     public        $title       = '';
+    public        $parentForm  = '';
 
     public function includeJS() {
         return ['popup-window.js'];
@@ -36,6 +37,7 @@ class PopupWindow extends FormField {
             ## render
             Yii::import($this->subForm);
             $ctrl = Yii::app()->controller;
+            
             $ctrl->renderForm($class, null, [], [
                 'layout' => '//layouts/blank'
             ]);
@@ -61,6 +63,7 @@ class PopupWindow extends FormField {
                     'ng-model' => 'active.title',
                     'ng-delay' => '500',
                     'ng-change' => 'save()',
+                    'ng-if' => 'active.mode == \'url\'',
                 ),
                 'type' => 'TextField',
             ),
@@ -106,10 +109,16 @@ class PopupWindow extends FormField {
             ),
             array (
                 'type' => 'Text',
+                'value' => '<div ng-init=\\"active.parentForm = classPath\\"></div>',
+            ),
+            array (
+                'type' => 'Text',
                 'value' => '<div class=\\"clearfix\\"></div>',
             ),
             array (
                 'label' => 'Url',
+                'fieldname' => 'url',
+                'language' => 'js',
                 'options' => array (
                     'ng-model' => 'active.url',
                     'ng-delay' => '500',
@@ -117,8 +126,6 @@ class PopupWindow extends FormField {
                     'ng-change' => 'save()',
                 ),
                 'type' => 'ExpressionField',
-                'fieldname' => 'url',
-                'language' => 'js',
             ),
             array (
                 'label' => 'Options',

@@ -6,6 +6,14 @@
  */
 class Text extends FormField {
 
+    public function actionCodePopUp() {
+        
+        Asset::registerJS('application.static.js.lib.ace');
+        Yii::app()->controller->renderForm('TextPopUp',null,[],[
+            'layout'=>'//layouts/blank'
+        ]);
+    }
+
     /**
      * @return array me-return array property Text.
      */
@@ -13,7 +21,16 @@ class Text extends FormField {
         return array (
             array (
                 'type' => 'Text',
-                'value' => '<div style=\'width:70px;\' class=\'pull-right\'>',
+                'value' => '<a href=\"#\" 
+    ng-click=\"popup.open()\"
+    style=\'width:10%;padding:5px\' 
+    class=\'pull-right\'>
+    <div class=\"btn btn-xs btn-info\" 
+    style=\"width:100%\">
+        <i class=\"fa fa-expand\"></i>
+    </div>
+</a>
+<div style=\'width:20%;\' class=\'pull-right\'>',
             ),
             array (
                 'name' => 'display',
@@ -32,6 +49,22 @@ class Text extends FormField {
                 'value' => '</div>',
             ),
             array (
+                'type' => 'PopupWindow',
+                'name' => 'popup',
+                'options' => array (
+                    'width' => '1000',
+                    'height' => '500',
+                ),
+                'mode' => 'url',
+                'subForm' => 'application.components.ui.FormFields.TextPopUp',
+                'url' => '/formfield/Text.codePopUp',
+                'parentForm' => 'application.components.ui.FormFields.Text',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<div style=\'width:70%;\' class=\'pull-left\'>',
+            ),
+            array (
                 'label' => 'Render In Editor',
                 'name' => 'renderInEditor',
                 'options' => array (
@@ -42,13 +75,15 @@ class Text extends FormField {
                     'style' => 'text-align:left;',
                 ),
                 'listExpr' => 'array(\'Yes\',\'No\')',
-                'labelWidth' => '5',
-                'fieldWidth' => '3',
+                'labelWidth' => '7',
+                'fieldWidth' => '5',
                 'type' => 'DropDownList',
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div class=\"text-editor-builder\">
+                'value' => '</div>
+<div class=\"clearfix\"></div>
+<div class=\"text-editor-builder\">
   <div class=\"text-editor\" ui-ace=\"aceConfig({
   mode: \'html\',
   onLoad: aceLoaded

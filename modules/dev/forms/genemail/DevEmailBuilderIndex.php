@@ -15,6 +15,8 @@ class DevEmailBuilderIndex extends Form {
                         'name' => 'col1',
                         'file' => 'application.modules.dev.menus.GenEmail',
                         'inlineJS' => 'GenEmail.js',
+                        'title' => 'Email Template',
+                        'icon' => 'fa-envelope-o',
                     ),
                     'col2' => array (
                         'size' => '',
@@ -47,8 +49,6 @@ class DevEmailBuilderIndex extends Form {
             array (
                 'type' => 'Text',
                 'value' => '<!-- EMPTY MODULE -->
-
-
 <div ng-if=\'!params.active\'>
     <div class=\"empty-box-container\">
         <div class=\"message\">

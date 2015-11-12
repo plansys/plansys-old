@@ -18,8 +18,16 @@ class GridView extends FormField {
     public        $gridOptions  = [];
     public        $genOptions   = [];
     public        $columns      = [];
+    public        $columnsFunc  = "";
     public        $hasEditable  = false;
 
+    public function actionEditHeader() {
+        Asset::registerCSS(['application.components.ui.FormFields.GridView.grid-header-editor']);
+        Yii::app()->controller->renderForm('GridViewHeader',null,[],[
+            'layout'=>'//layouts/blank'
+        ]);    
+    }
+    
     public function getErrorClass() {
         return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
     }
@@ -34,6 +42,16 @@ class GridView extends FormField {
 
     public function render() {
         $this->processColumns();
+        
+        if (@$this->gridOptions['dynamicColumns'] == 'true'
+            && $this->columnsFunc != '') {
+                
+            $this->columns = $this->evaluateExpression($this->columnsFunc,[
+                'columns' => $this->columns,
+                'data' => @$GLOBALS['dataSourceCache'][$this->datasource]
+            ]);
+        }
+        
         return $this->renderInternal('template_render.php');
     }
 
@@ -74,6 +92,10 @@ class GridView extends FormField {
         $fieldName = $col['name'];
         if ($fieldName == "" && !@$col['options']['mode']) return "";
 
+        $attr      = [];
+        if (isset($col['options']['ng-if'])) {
+            $attr['ng-if'] = $col['options']['ng-if'];
+        }
 
         switch ($col['columnType']) {
             case "string":
@@ -178,9 +200,13 @@ type="checkbox" /></label>';
                     break;
             }
         }
+        
+        if (is_array($attr)) {
+            $attr = $this->expandAttributes($attr);
+        }
 
         return <<<EOF
-<td{$style} ng-class="rowClass(row, '{$fieldName}', '{$col['columnType']}')">
+<td{$style} ng-class="rowClass(row, '{$fieldName}', '{$col['columnType']}')" {$attr}>
     {$rowState}{$template}
 </td>
 EOF;
@@ -207,9 +233,17 @@ EOF;
                 break;
         }
 
+        $attr      = [];
+        if (isset($col['options']['ng-if'])) {
+            $attr['ng-if'] = $col['options']['ng-if'];
+        }
+        if (is_array($attr)) {
+            $attr = $this->expandAttributes($attr);
+        }
+
         if ($idx == $this->getStartingColumnGroup()) {
             $template = '
-<td class="t-' . $col['columnType'] . '" ng-click="hideGroup(row, $event)">
+<td class="t-' . $col['columnType'] . '" ng-click="hideGroup(row, $event)" '.$attr.'>
     <div class="row-g" style="white-space:pre;cursor:pointer;"><span style="display:inline-block;width:{{row.$level*10}}px;float:"></span><i ng-if="!row.$hide" class="fa fa-caret-down"></i><i ng-if="!!row.$hide" class="fa fa-caret-right"></i>&nbsp; {{ row[row.$group] }}</div>
 </td>
 ';
@@ -221,6 +255,14 @@ EOF;
         $fieldName = isset($col['fieldName']) ? $col['fieldName'] : $col['name'];
         if ($fieldName == "" && !@$col['options']['mode']) return "";
 
+        $attr      = [];
+        if (isset($col['options']['ng-if'])) {
+            $attr['ng-if'] = $col['options']['ng-if'];
+        }
+        if (is_array($attr)) {
+            $attr = $this->expandAttributes($attr);
+        }
+        
         switch ($col['columnType']) {
             case "string":
                 $sortable = "ng-click=\"sort('{$fieldName}')\"";
@@ -235,7 +277,7 @@ EOF;
                 }
 
                 return <<<EOF
-<th><div class="th">
+<th {$attr}><div class="th">
     <div class="row-header" {$sortable}>
         {$col['label']}
         {$caret}
@@ -245,7 +287,7 @@ EOF;
                 break;
             case "checkbox":
                 return <<<EOL
-<th><div class="th">
+<th {$attr}><div class="th">
     <label><input type="checkbox"
 ng-click="checkboxAll('{$col['name']}','{$idx}', \$event)" /></label>
 </div></th>
@@ -255,23 +297,23 @@ EOL;
     }
 
     public function getFieldProperties() {
-        return array(
-            array(
+        return array (
+            array (
                 'label' => 'GridView Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array(
+            array (
                 'label' => 'Data Source Name',
                 'name' => 'datasource',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.datasource',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -281,60 +323,103 @@ EOL;
                 'fieldWidth' => '7',
                 'type' => 'DropDownList',
             ),
-            array(
+            array (
+                'type' => 'Text',
+                'value' => '<div class=\'clearfix\'></div>',
+            ),
+            array (
+                'label' => 'Grid Options',
+                'name' => 'gridOptions',
+                'type' => 'KeyValueGrid',
+            ),
+            array (
+                'label' => 'Container Element Options',
+                'name' => 'options',
+                'type' => 'KeyValueGrid',
+            ),
+            array (
+                'label' => 'Table Element Options',
+                'name' => 'tableOptions',
+                'type' => 'KeyValueGrid',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<div ng-if=\\"active.gridOptions[\'dynamicColumns\'] == \'true\'\\">',
+            ),
+            array (
+                'label' => 'Columns Function',
+                'fieldname' => 'columnsFunc',
+                'desc' => 'Use $columns and $data to get columns and data.<br/>
+ e.g: YourClass::function($columns, $data)
+<br/><br/>
+NOTE: to use $data, you must set \'cache\' = \'true\' <br/>
+in your DataSource Options',
+                'type' => 'ExpressionField',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '</div>',
+            ),
+            array (
+                'title' => 'Header',
+                'type' => 'SectionHeader',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<div ng-click=\"headerPopUp.open()\" 
+     style=\'margin-top:-25px\'
+     class=\"btn btn-xs pull-right btn-info\">
+    <b><i class=\"fa fa-pencil\"></i> Edit Header</b>
+</div>',
+            ),
+            array (
+                'type' => 'PopupWindow',
+                'name' => 'headerPopUp',
+                'options' => array (
+                    'width' => '800',
+                    'height' => '400',
+                ),
+                'mode' => 'url',
+                'subForm' => 'application.components.ui.FormFields.GridViewHeader',
+                'url' => '/formfield/GridView.editHeader',
+                'title' => 'GridView Header Setting',
+                'parentForm' => 'application.components.ui.FormFields.GridView',
+            ),
+            array (
+                'title' => 'Columns',
+                'type' => 'SectionHeader',
+            ),
+            array (
                 'label' => 'Generate Columns',
                 'buttonType' => 'success',
                 'icon' => 'magic',
                 'buttonSize' => 'btn-xs',
-                'options' => array(
-                    'style' => 'float:right;margin:0px 0px 5px 0px',
+                'options' => array (
+                    'style' => 'float:right;margin:-25px 0px 0px 0px;',
                     'ng-show' => 'active.datasource != \'\'',
                     'ng-click' => 'generateColumns()',
                 ),
                 'type' => 'LinkButton',
             ),
-            array(
-                'type' => 'Text',
-                'value' => '<div class=\'clearfix\'></div>',
-            ),
-            array(
-                'label' => 'Grid Options',
-                'name' => 'gridOptions',
-                'type' => 'KeyValueGrid',
-            ),
-            array(
-                'label' => 'Container Element Options',
-                'name' => 'options',
-                'type' => 'KeyValueGrid',
-            ),
-            array(
-                'label' => 'Table Element Options',
-                'name' => 'tableOptions',
-                'type' => 'KeyValueGrid',
-            ),
-            array(
-                'title' => 'Columns',
-                'type' => 'SectionHeader',
-            ),
-            array(
+            array (
                 'type' => 'Text',
                 'value' => '<div style=\'margin-top:5px\'></div>',
             ),
-            array(
+            array (
                 'name' => 'columns',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.GridViewCol',
                 'inlineJS' => 'GridView/grid-builder.js',
-                'options' => array(
+                'options' => array (
                     'ng-model' => 'active.columns',
                     'ng-change' => 'save()',
                 ),
-                'singleViewOption' => array(
+                'singleViewOption' => array (
                     'name' => 'val',
                     'fieldType' => 'text',
                     'labelWidth' => 0,
                     'fieldWidth' => 12,
-                    'fieldOptions' => array(
+                    'fieldOptions' => array (
                         'ng-delay' => 500,
                     ),
                 ),

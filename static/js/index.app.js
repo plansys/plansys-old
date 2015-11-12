@@ -80,6 +80,17 @@ app.filter('capitalize', function () {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
 });
+app.filter('relativePath', function() {
+    return function(input, scope) {
+        if (window.plansys && window.plansys.rootPath) {
+            if (input.indexOf(window.plansys.rootPath) === 0) {
+                return window.plansys.baseUrl + input.substr(window.plansys.rootPath.length);
+            }
+        }
+        
+        return input;
+    }
+});
 app.filter('ucfirst', function () {
     return function (input, arg) {
         return ucfirst(input);

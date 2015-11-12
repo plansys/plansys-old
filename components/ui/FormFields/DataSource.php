@@ -36,6 +36,7 @@ class DataSource extends FormField {
     public        $aggregateGroups   = [];
     public        $aggregateColumns  = [];
     public        $maxAggregateLevel = 99;
+    public        $options           = [];
     private       $postedParams      = [];
     private       $lastCount         = 0;
     private       $command;
@@ -597,15 +598,17 @@ class DataSource extends FormField {
             ),
             array (
                 'type' => 'Text',
-                'value' => '</div>',
+                'value' => '    </div>
+</div>',
             ),
             array (
                 'type' => 'Text',
                 'value' => '</div>',
             ),
             array (
-                'type' => 'Text',
-                'value' => '</div>',
+                'label' => 'DataSource Options',
+                'name' => 'options',
+                'type' => 'KeyValueGrid',
             ),
         );
     }
@@ -846,7 +849,6 @@ class DataSource extends FormField {
             }
         }
 
-
         $data = [
             'data' => $rawData,
             'debug' => [
@@ -980,8 +982,18 @@ class DataSource extends FormField {
                 'rel' => ''
             ];
         }
-
+        
+        if (@$this->options['cache'] == 'true') {
+            $this->setCache();
+        }
+        
         return $this->renderInternal('template_render.php');
+    }
+    
+    public function setCache() {
+        if (!isset($GLOBALS['dataSourceCache'])) {
+            $GLOBALS['dataSourceCache'][$this->name] = $this->data;
+        }
     }
 
     public function processQuery() {

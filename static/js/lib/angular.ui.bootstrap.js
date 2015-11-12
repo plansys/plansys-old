@@ -906,7 +906,6 @@ angular.module('ui.bootstrap.position', [])
        * Provides coordinates for the targetEl in relation to hostEl
        */
       positionElements: function (hostEl, targetEl, positionStr, appendToBody) {
-
         var positionStrParts = positionStr.split('-');
         var pos0 = positionStrParts[0], pos1 = positionStrParts[1] || 'center';
 
@@ -2373,7 +2372,7 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
   // The default options tooltip and popover.
   var defaultOptions = {
     placement: 'top',
-    animation: true,
+    animation: false,
     popupDelay: 0
   };
 
@@ -2480,7 +2479,7 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
             var hasEnableExp = angular.isDefined(attrs[prefix+'Enable']);
 
             var positionTooltip = function () {
-
+              scope.tt_placement = scope.tt_placement || 'top';
               var ttPosition = $position.positionElements(element, tooltip, scope.tt_placement, appendToBody);
               ttPosition.top += 'px';
               ttPosition.left += 'px';
@@ -2642,11 +2641,11 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
               element.unbind(triggers.show, showTooltipBind);
               element.unbind(triggers.hide, hideTooltipBind);
             };
-
-            attrs.$observe( prefix+'Trigger', function ( val ) {
+            
+            // attrs.$observe( prefix+'Trigger', function ( val ) {
               unregisterTriggers();
 
-              triggers = getTriggers( val );
+              triggers = getTriggers( undefined );
 
               if ( triggers.show === triggers.hide ) {
                 element.bind( triggers.show, toggleTooltipBind );
@@ -2654,7 +2653,7 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
                 element.bind( triggers.show, showTooltipBind );
                 element.bind( triggers.hide, hideTooltipBind );
               }
-            });
+            // });
 
             var animation = scope.$eval(attrs[prefix + 'Animation']);
             scope.tt_animation = angular.isDefined(animation) ? !!animation : options.animation;

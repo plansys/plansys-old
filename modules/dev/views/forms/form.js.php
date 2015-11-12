@@ -63,7 +63,6 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
     $scope.editor = editor;
     $scope.activeEditor = null;
 
-
     window.$(document).keydown(function (event) {
         if (!( String.fromCharCode(event.which).toLowerCase() == 's' && (event.metaKey || event.ctrlKey)) && !(event.which == 19)) return true;
         $scope.save();
@@ -222,7 +221,7 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
         $(window).resize();
     };
     $(window).resize(function () {
-        $(".text-editor").height($(".form-builder-properties [ui-content]").height() - 45);
+        $(".text-editor").height($(".form-builder-properties [ui-content]").height() - 50);
     });
     /*********************** LAYOUT ********************************/
     $scope.layout = null;
@@ -948,12 +947,10 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
                         if ($el.next().length > 0) {
                             $el.next().find(".form-field:eq(0)").click();
                         }
-                        break;
+                    break;
                 }
             }
         }
-
-
     });
     $('body').on('mouseenter', '.form-field', function (e) {
         var formfields = $(this).parentsUntil('div[ui-tree]', '.form-field');
@@ -974,5 +971,8 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
 
         e.stopPropagation();
     });
+    
+    
+    window.parentScope = $scope;
 });
 </script >

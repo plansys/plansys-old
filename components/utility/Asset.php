@@ -70,6 +70,17 @@ class Asset extends CComponent {
         if (!empty($includeCSS)) {
             foreach ($includeCSS as $css) {
                 $path = Asset::resolveAlias($css);
+                if (is_file($path . ".css")) {
+                    $file = $path . ".css";
+                    if (strpos($file, Setting::getRootPath()) === 0) {
+                        $file = substr($file, strlen(Setting::getRootPath()));
+                        $file = Yii::app()->baseUrl . $file;
+                    }
+                    
+                    Yii::app()->clientScript->registerCssFile($file);
+                    continue;
+                }
+                
                 $csspath = realpath($path);
                 
                 if (is_dir($csspath)) {

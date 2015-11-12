@@ -105,7 +105,7 @@ class GridViewColString extends Form {
                     'ng-model' => 'item.html',
                     'ng-change' => 'updateListView();',
                     'ng-delay' => '500',
-                    'style' => 'height:100px;width:100%;position:relative !important;font-size:12px;border:1px solid #ddd;',
+                    'style' => 'height:100px;width:100%;position:relative !important;font-size:12px;border:1px solid #ddd;margin-bottom:5px',
                 ),
                 'containerOptions' => array (
                     'ng-if' => 'item.cellMode == \'custom\'',

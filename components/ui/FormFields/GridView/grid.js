@@ -395,8 +395,12 @@ app.directive('gridView', function ($timeout, $http) {
                         rect.left < $container.width() &&
                         rect.top < 0
                     );
-                }
+                } 
+                $scope.firstColWidth = $header.find("th:eq(0)").outerWidth();
                 $scope.recalcHeaderWidth = function () {
+                    $scope.firstColWidth = $header.find("th:eq(0)").outerWidth();
+                    if ($scope.firstColWidth == 0) return;
+                    
                     var count = $(".thead .th").length;
                     $el.find(".thead .th").each(function (i) {
                         var offset = (count - 1 == i ? 1 : 0);
@@ -411,8 +415,12 @@ app.directive('gridView', function ($timeout, $http) {
                         $scope.checkMode();
                     }, 400);
                 });
-
+                
                 $container.scroll(function () {
+                    if ($scope.firstColWidth == 0) {
+                        $scope.recalcHeaderWidth();
+                    }
+                    
                     var $thead = $el.find(".thead");
                     var elOffset = parseInt($el.css('padding-top'));
                     var headerOffset = elOffset + $header.height();
