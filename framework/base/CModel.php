@@ -532,6 +532,9 @@ abstract class CModel extends CComponent implements IteratorAggregate, ArrayAcce
 	 */
 	public function setScenario($value)
 	{
+		if (!is_string($value)) {
+		throw new CException("ASD");
+		}
 		$this->_scenario=$value;
 	}
 

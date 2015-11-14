@@ -1315,20 +1315,10 @@ EOF;
             $html = <<<HTML
 <div style='opacity:0' {$ngctrl}>
 <form {$formAttr}>
-    <div ng-show='!!flash' ng-if='!!flash' 
-         class='flash-container alert alert-success text-center'>
-        <div href='#' class='close' ng-click='flash = false' 
-        aria-label='close' title='close'>&times;</div>
-        {{flash}}
-    </div>
-    <div class='error-container alert alert-danger' 
-         style='margin:0px' ng-if='objectSize(errors) > 0'>
-         <ul ng-repeat='(fieldName,errorList) in errors' ng-if="angular.isString(errorList[0])">
-            <li ng-repeat='error in errorList'
-                style='white-space:pre-wrap;' ng-bind-html='error'></li>
-         </ul>
-    </div>
 HTML;
+            if (@$formOptions['customErrorPlacement'] != "true") {
+                $html .= '<div ng-include="\'flash_message\'"></div>';
+            }
         }
 
         ## define formdata
@@ -1413,7 +1403,25 @@ HTML;
             }
         }
 
-        return $html;
+        $flashMsg = <<<HTML
+    <script type='text/ng-template' id='flash_message' style='display:none;'>
+        <div ng-show='!!flash' ng-if='!!flash' 
+             class='flash-container alert alert-success text-center'>
+            <div href='#' class='close' ng-click='flash = false' 
+            aria-label='close' title='close'>&times;</div>
+            {{flash}}
+        </div>
+        <div class='error-container alert alert-danger' 
+             style='margin:0px' ng-if='objectSize(errors) > 0'>
+             <ul ng-repeat='(fieldName,errorList) in errors' ng-if="angular.isString(errorList[0])">
+                <li ng-repeat='error in errorList'
+                    style='white-space:pre-wrap;' ng-bind-html='error'></li>
+             </ul>
+        </div>
+    </script>
+HTML;
+
+        return $html . $flashMsg;
     }
 
     /**
@@ -1425,7 +1433,7 @@ HTML;
 
         if (count(@$this->form['includeJS']) > 0):
             foreach ($this->form['includeJS'] as $script):
-                $src = $formDir . $script;
+                $src = $flashMsg. $script;
                 if (is_file($src)) {
                     $scriptUrl = Asset::publish($src);
 

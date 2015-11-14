@@ -424,7 +424,7 @@ class ListView extends FormField {
 
         if (($this->fieldTemplate == 'form' || $this->fieldTemplate == 'datasource') && class_exists($class)) {
             $fb    = FormBuilder::load($class);
-            $model = new $class($this->model);
+            $model = new $class();
 
             if ($this->value == "") {
                 $this->value = [];

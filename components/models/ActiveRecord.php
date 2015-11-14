@@ -681,6 +681,11 @@ class ActiveRecord extends CActiveRecord {
     private function applyRelChange($name) {
         $pk = $this->tableSchema->primaryKey;
         $relHash = [];
+        
+        if (!is_array($this->__relations[$name])) {
+            throw new CException("Isi Relasi `$name` harus berupa array! ");
+        }
+        
         foreach ($this->__relations[$name] as $q => $r) {
             if (is_array($r) && is_string($pk) && isset($r[$pk])) {
                 $relHash['_' . $r[$pk]] = ['idx' => $q, 'data' => $r];
@@ -1043,7 +1048,6 @@ class ActiveRecord extends CActiveRecord {
                 }
             }
         }
-        
         if (!empty($validator->attributes)) {
             $this->validatorList->add($validator);
         }
@@ -1076,28 +1080,29 @@ class ActiveRecord extends CActiveRecord {
             switch (get_class($rel)) {
                 case 'CHasManyRelation':
                 case 'CManyManyRelation': 
-                    foreach ($this->__relations[$relName] as $k=>$r) {
+                    foreach ($this->__relations[$relName] as $k=>$attr) {
                         $model = new $modelClass;
-                        $model->attributes = $r;
+                        $model->attributes = $attr;
                         $model->{$rel->foreignKey} = $this->isNewRecord ? '0' : $this->{$pk};
+                        
                         if (!$model->validate()) {
-                            if (isset($r['$rowState'])) {
+                            if (isset($attr['$rowState'])) {
+                                
                                 $errors['list'][] = [
-                                    'index' => $idx[$r['$rowState']] ,
-                                    'mode' => $r['$rowState'],
+                                    'index' => $idx[$attr['$rowState']] ,
+                                    'mode' => $attr['$rowState'],
                                     'errors' => $model->errors
                                 ];
-                                $idx[$r['$rowState']]++;
+                                $idx[$attr['$rowState']]++;
                                 
-                                if ($r['$rowState'] == 'edit') {
-                                    $relHash['_' . $r[$relPK]] = $r;
+                                if ($attr['$rowState'] == 'edit') {
+                                    $relHash['_' . $attr[$relPK]] = $attr;
                                 }
                             }
                         }
                     }
                 break;
             }
-            
             if (!empty($errors['list'])) {
                 $this->addError($relName, $errors);
             }
