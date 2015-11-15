@@ -748,6 +748,7 @@ class RelationField extends FormField {
         
         if (class_exists($m)) {
             $data = $m::model()->findByPk($id);
+            $data->loadAllRelations();
             echo json_encode($data->attributes);
         }
     }
