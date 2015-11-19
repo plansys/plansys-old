@@ -80,6 +80,18 @@ app.filter('capitalize', function () {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
 });
+
+app.filter('repoPath', function() {
+    return function(input, scope) {
+        if (window.plansys && window.plansys.repoPath) {
+            if (input.indexOf(window.plansys.repoPath) === 0) {
+                return window.plansys.baseUrl + input.substr(window.plansys.repoPath.length);
+            }
+        }
+        
+        return input;
+    }
+});
 app.filter('relativePath', function() {
     return function(input, scope) {
         if (window.plansys && window.plansys.rootPath) {
