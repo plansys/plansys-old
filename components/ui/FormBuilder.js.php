@@ -39,6 +39,7 @@ ob_start();
         
         if (window.plansys) {
             window.plansys.rootPath = "<?php echo Setting::getRootPath(); ?>";
+            window.plansys.repoPath = "<?php echo Setting::getRootPath() . DIRECTORY_SEPARATOR . Setting::get('repo.path'); ?>";
             window.plansys.baseUrl = "<?php echo Yii::app()->baseUrl ?>";
         }
 

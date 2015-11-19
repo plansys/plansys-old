@@ -275,12 +275,12 @@ class ActiveRecord extends CActiveRecord {
         }
         if ($update != '') {
             $command = Yii::app()->db->createCommand($update);
-            try {
+            // try {
                 $command->execute();
-            } catch (Exception $e) {
-                var_dump($data, $e);
-                die();
-            }
+            // } catch (Exception $e) {
+            //     var_dump($data, $e);
+            //     die();
+            // }
         }
     }
 
@@ -1395,7 +1395,10 @@ class ActiveRecord extends CActiveRecord {
                 if (!is_file($new) && is_file($old)) {
                     rename($old, $new);
                     $this->{$f['name']} = trim($evalDir, "/") . "/" . $newname;
-                    $attrs[]            = $f['name'];
+                    
+                    if ($this->hasAttribute($f['name'])) {
+                        $attrs[]            = $f['name'];
+                    }
                 }
             }
 

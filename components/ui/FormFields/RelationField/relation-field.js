@@ -174,20 +174,19 @@ app.directive('relationField', function ($timeout, $http) {
                             'm': $scope.relModelClass,
                             'id': $scope.value
                         })).success(function (data) {
+                            console.log(data);
                             if (!!data) { 
-                                $timeout(function() {
-                                    if (angular.isObject($scope.model[relation])) {
-                                        for (i in data) {
-                                            $scope.model[relation][i] = data[i];
-                                        }
-                                    } else {
-                                        $scope.model[relation] = data;
+                                if (angular.isObject($scope.model[relation])) {
+                                    for (i in data) {
+                                        $scope.model[relation][i] = data[i];
                                     }
-                                    
-                                    if (typeof func == "function") {
-                                        func(data);
-                                    }
-                                });
+                                } else {
+                                    $scope.model[relation] = data;
+                                }
+                                
+                                if (typeof func == "function") {
+                                    func(data);
+                                }
                             }
                         });
                     }
