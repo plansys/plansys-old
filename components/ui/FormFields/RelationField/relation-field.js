@@ -420,7 +420,7 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.params = JSON.parse($el.find("data[name=params]").text());
                 $scope.renderedFormList = [];
                 $scope.renderFormList();
-                $scope.loading = false;
+                $scope.loading = true;
                 $scope.count = $el.find("data[name=count]").html().trim();
                 $scope.includeEmpty = $el.find("data[name=include_empty]").html().trim();
                 $scope.emptyValue = $el.find("data[name=empty_value]").html().trim();
@@ -438,6 +438,7 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.isOpen = false;
                 $scope.identifier = $el.find("data[name=identifier]").text().trim();
                 $scope.openedInField = false;
+                $scope.jsParamsInitialized = true;
 
                 $timeout(function () {
                     angular.forEach($scope.params, function (p, i) {
@@ -446,14 +447,18 @@ app.directive('relationField', function ($timeout, $http) {
                             var value = $scope.$parent.$eval(p.replace('js:', ''));
                             var key = i;
                             var searchTimeout = null;
+                            $scope.jsParamsInitialized = false;
                             $scope.paramValue[key] = value;
 
                             searchTimeout = $timeout(function () {
-                                $scope.doSearch();
+                                $scope.doSearch(function() {
+                                    $scope.jsParamsInitialized = true;
+                                });
                             }, 1000);
 
                             $scope.$watch(p.replace('js:', ''), function (newv, oldv) {
                                 if (newv != oldv) {
+                                    $scope.loading = true;
                                     if (searchTimeout) {
                                         $timeout.cancel(searchTimeout);
                                     }
@@ -464,6 +469,7 @@ app.directive('relationField', function ($timeout, $http) {
                                         }
                                     }
                                     $scope.doSearch(function (data) {
+                                        $scope.jsParamsInitialized = true;
 //         WARNING: kalo di uncomment, infinite loop..
 //                                        if (data.count == 0) {
 //                                            $scope.value = '';
@@ -475,8 +481,6 @@ app.directive('relationField', function ($timeout, $http) {
                                     });
                                 }
                             }, true);
-
-
                         }
                     });
                 });
@@ -497,6 +501,7 @@ app.directive('relationField', function ($timeout, $http) {
                     if (attrs.searchable) {
                         $scope.searchable = $scope.$parent.$eval(attrs.searchable);
                     }
+                    $scope.loading = false;
                 }, 100);
 
                 parent[$scope.name] = $scope;
