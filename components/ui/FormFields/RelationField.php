@@ -149,7 +149,7 @@ class RelationField extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'JS Variable',
+                'label' => 'Field Identifier',
                 'name' => 'identifier',
                 'prefix' => 'js: rel.',
                 'options' => array (
@@ -399,13 +399,14 @@ class RelationField extends FormField {
         $class = Helper::explodeLast(".", $this->modelClass);
         if (!class_exists($class))
             return;
+            
+            
 
         $model    = new $class;
         $table    = $model->tableName();
         $criteria = $this->generateCriteria($search, $params);
         $rawlist  = $model->currentModel($criteria);
         
-
         if (!is_null($initialID) && $initialID != "") {
             $found = false;
 
@@ -534,7 +535,7 @@ class RelationField extends FormField {
 
     public function generateCondition($search = '', &$jsparams = []) {
         $sql = @$this->relationCriteria['condition'] ? $this->relationCriteria['condition'] : "";
-
+        
         preg_match_all("/\[(.*?)\]/", $sql, $blocks);
         preg_match_all("/\{(.*?)\}/", $this->labelField, $fields);
 
@@ -841,6 +842,7 @@ class RelationField extends FormField {
         } else {
             $field = $fb->findField(['name' => $f]);
         }
+        
 
         $this->attributes = $field;
         $this->builder    = $fb;
@@ -866,6 +868,7 @@ class RelationField extends FormField {
                 }
             }
         }
+
 
         echo json_encode([
             'list' => $this->query($s, $p),

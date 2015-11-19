@@ -454,7 +454,7 @@ class Helper {
     
     public static function getYear() {
         $year_start = '1900';
-        $year_end = date('Y');
+        $year_end = date('Y') + 10;
         
         $years = array_combine(range($year_end, $year_start), range($year_end, $year_start));
         return $years;
