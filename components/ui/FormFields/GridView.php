@@ -116,7 +116,9 @@ type="checkbox" /></label>';
         $rowState = '';
         if ($idx == 0) {
             $rowStateCss = $this->hasEditable ? "class='editable'" : "";
-            $rowState = "<div {$rowStateCss} ng-include='\"row-state-template\"'></div>\n    ";
+            if (@$this->gridOptions['showRowState'] != 'false') {
+                $rowState = "<div {$rowStateCss} ng-include='\"row-state-template\"'></div>\n    ";
+            }
             if (!@$col['options']['mode']) {
                 $template = "<span class='row-group-padding' ng-if='!!row.\$level'
         style='width:{{row.\$level*10}}px;'></span>

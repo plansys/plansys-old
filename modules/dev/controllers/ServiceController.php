@@ -65,14 +65,14 @@ class ServiceController extends Controller {
     public function actionStartDaemon() {    
         $isRunning = Setting::get('services.daemon.isRunning', false);
         if(!$isRunning){
-            serviceManager::startDaemon();
+            ServiceManager::startDaemon();
         }     
     }
 
     public function actionStopDaemon() {    
         $isRunning = Setting::get('services.daemon.isRunning', false);
         if(!!$isRunning){
-            serviceManager::stopDaemon();
+            ServiceManager::stopDaemon();
         }     
     }
 

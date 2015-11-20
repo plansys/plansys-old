@@ -95,7 +95,7 @@ app.directive('gridView', function ($timeout, $http) {
                     }
                 }
                 $scope.rowStateClass = function (row) {
-                    if (!row.$rowState) {
+                    if (!row.$rowState || $scope.gridOptions.showRowState == 'false') {
                         return '';
                     } else {
                         return 'row-state-' + row.$rowState;
