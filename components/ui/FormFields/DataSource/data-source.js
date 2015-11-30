@@ -155,9 +155,13 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         } else {
                             $scope.original = angular.copy($scope.data);
                             $scope.isDataReloaded = true;
-                            if (!$scope.data) {
+                            if (!$scope.data || $scope.data === null) {
                                 $scope.data = [];
                             }
+                            if (!$scope.data.splice) {
+                                alert($scope.name + " data is not an array!");
+                            }
+                            
                             $scope.data.splice(0, $scope.data.length);
                             $scope.data = $scope.data.concat(data.data);
                             $scope.totalItems = data.count * 1;
@@ -295,7 +299,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 }
                 
                 for(i in $scope.data) {
-                    if (!!$scope.data[i].$rowState) {
+                    if (!!$scope.data[i] && !!$scope.data[i].$rowState) {
                         if ($scope.data[i].$rowState == 'insert') $scope.insertData.push($scope.data[i]);
                         if ($scope.data[i].$rowState == 'edit') $scope.updateData.push($scope.data[i]);
                     } 

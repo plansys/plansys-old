@@ -133,7 +133,13 @@ app.directive('listView', function ($timeout) {
                         $scope.showUndoDelete = false;
                     }
                 };
-
+                
+                $scope.removeAll = function() {
+                    for (var i in $scope.items) {
+                        $scope.removeItem(i);
+                    }
+                }
+                
                 $scope.removeItem = function (index) {
                     var d = $scope.value.splice(index, 1);
                     $scope.deleted = {

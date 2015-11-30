@@ -317,6 +317,7 @@ class CheckboxList extends FormField {
             $rel = $this->model->metaData->relations[$this->name];
             $class = $rel->className;
             $model = $class::model();
+            
             return [
                 'foreignKey' => $rel->foreignKey,
                 'type' => get_class($rel),

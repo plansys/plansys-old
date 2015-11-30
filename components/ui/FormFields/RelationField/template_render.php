@@ -27,9 +27,14 @@
         <data name="rel_model_class" class="hide"><?= $this->modelClass ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
         <data name="params" class="hide"><?= json_encode($this->params) ?></data>
-
+        <data name="is_disabled" class="hide"><?php
+            if (isset($this->fieldOptions['disabled'])) {
+                echo $this->fieldOptions['disabled'];
+            } else if (isset($this->fieldOptions['ng-disabled'])) {
+                echo $this->fieldOptions['ng-disabled'];
+            }
+        ?></data>
         <!-- /data -->
-
         <!-- field -->
         <div class="<?= $this->fieldClass ?>"
              ng-keydown="dropdownKeypress($event)"
@@ -40,18 +45,16 @@
             <button
                 ng-if="!showOther || (showOther && itemExist())" type="button"
                 <?= $this->expandAttributes($this->fieldOptions) ?>
-                <?php if (@$this->fieldOptions['disabled']): ?>style="opacity:1;background:#fff;border:1px solid #ececeb;"<?php endif; ?>
-                >
+                style="{{ isRelFieldDisabled() ? 'opacity:1;background:#fff;border:1px solid #ececeb;' : ''}}">
                 <i ng-show='loading' class="fa fa-spin fa-refresh"
                    style="position:absolute;right:25px;top:8px;"></i>
-                <span <?php if (@$this->fieldOptions['disabled']): ?>style="display:none"<?php endif; ?>
-                      class="caret pull-right"></span>
+                <span style="{{ isRelFieldDisabled() ? 'display:none' : '' }}" class="caret pull-right"></span>
                 <span class="dropdown-text" ng-bind-html="text"></span>
             </button>
 
 
             <!-- dropdown item -->
-            <div class="dropdown-menu open">
+            <div class="dropdown-menu open <?= $this->menuPos; ?>">
                 <div class="search" ng-show="searchable" style="margin-bottom:0px;">
                     <input type="text"
                            ng-model="search"

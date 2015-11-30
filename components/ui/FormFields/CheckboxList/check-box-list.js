@@ -73,7 +73,6 @@ app.directive('checkBoxList', function ($timeout) {
                 $scope.isChecked = function(value) {
                     if ($scope.mode == "Default") {
                         if ($scope.selected == null) return false;
-                        
                         return ($scope.selected.indexOf(value) > -1)
                     } else if ($scope.mode == "Relation") {
                         return !!$scope.relHash[value];

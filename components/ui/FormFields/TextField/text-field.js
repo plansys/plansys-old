@@ -134,7 +134,6 @@ app.directive('textField', function ($timeout, $http) {
                     });
                 }
                 $scope.closeDropdown = function () {
-                    $el.find('[dropdown]').removeClass('open');
                     $scope.showDropDown = false;
                 }
                 $scope.openDropdown = function (scroll) {
@@ -144,7 +143,7 @@ app.directive('textField', function ($timeout, $http) {
 
                         var isOpened = $scope.showDropDown == true;
                         if (!$scope.blurred && $scope.list && $scope.list.length > 0 && (!isOpened || scroll)) {
-                            $el.find('[dropdown]').addClass('open');
+                            $el.find('.tf-list').addClass('open');
                             $scope.showDropDown = true;
 
                             if (scroll) {
@@ -158,7 +157,38 @@ app.directive('textField', function ($timeout, $http) {
                         }
                     });
                 }
-
+                
+                $scope.isFocused = false;
+                $scope.tfFocus = function() {
+                    if (!$scope.isFocused && !$scope.dropdownHover) {
+                        if ($scope.acMode == "comma") {
+                            var val = $scope.value.trim();
+                            if (val[val.length -1] != ",") {
+                                $scope.value = $scope.value + ", ";
+                            }
+                            $scope.search = "";
+                            $scope.doSearch();
+                        }
+                        $timeout(function() {
+                            $scope.showDropDown = true;
+                        });
+                    }
+                    $scope.isFocused = true;
+                }
+                
+                $scope.tfBlur = function() {
+                    $timeout(function() {
+                        if (!$scope.isFocused && !$scope.dropdownHover) {
+                            var val = $scope.value.trim();
+                            if (val[val.length -1] == ",") {
+                                $scope.value = val.substr(0, val.length -1);
+                            }
+                        }
+                    }, 200);
+                    $scope.isFocused = false;
+                }
+                
+                
                 $scope.choose = function (choice) {
                     $scope.dropdownHover = true;
                     var val = choice || $el.find(".dropdown-menu li.hover a").text();
@@ -173,14 +203,15 @@ app.directive('textField', function ($timeout, $http) {
                             for (i in vr) {
                                 vr[i] = vr[i].trim();
                             }
-                            $scope.value = vr.join(", ");
-                            $scope.search = val;
+                            $scope.value = vr.join(", ") + ",";
+                            $scope.search = val ;
+                            $scope.openDropdown();
                             break;
                         default:
+                            $scope.closeDropdown();
                             $scope.value = val;
                             break;
                     }
-                    $scope.closeDropdown();
                     $el.find("input[type=text]").focus();
 
                     $timeout(function () {
@@ -213,9 +244,8 @@ app.directive('textField', function ($timeout, $http) {
                     }, 100);
                 }
 
-
                 if ($scope.autocomplete != '') {
-                    $el.find("[dropdown]").hover(function (e) {
+                    $el.find(".tf-list").hover(function (e) {
                         $scope.dropdownHover = true;
                     }, function (e) {
                         $scope.dropdownHover = false;
@@ -256,6 +286,8 @@ app.directive('textField', function ($timeout, $http) {
                                 break;
                             case 13:
                                 $scope.choose();
+                                $scope.search = "";
+                                $scope.doSearch();
                                 e.preventDefault();
                                 e.stopPropagation();
                                 return true;
@@ -271,7 +303,7 @@ app.directive('textField', function ($timeout, $http) {
                                 }
                                 break;
                             case 38:
-                                if (!$el.find('[dropdown]').hasClass('open')) {
+                                if (!$el.find('.tf-list').hasClass('open')) {
                                     $scope.dropdownHover = false;
                                     $timeout(function () {
                                         $scope.openDropdown();
@@ -297,14 +329,16 @@ app.directive('textField', function ($timeout, $http) {
 
                                 $timeout(function () {
                                     $el.find("input[type=text]").focus();
-                                    $scope.dropdownHover = false;
+                                    $timeout(function() {
+                                        $scope.dropdownHover = false;
+                                    });
                                 });
 
                                 e.preventDefault();
                                 e.stopPropagation();
                                 break;
                             case 40:
-                                if (!$el.find('[dropdown]').hasClass('open')) {
+                                if (!$el.find('.tf-list').hasClass('open')) {
                                     $scope.dropdownHover = false;
                                     $timeout(function () {
                                         $scope.openDropdown();
@@ -331,7 +365,9 @@ app.directive('textField', function ($timeout, $http) {
 
                                 $timeout(function () {
                                     $el.find("input[type=text]").focus();
-                                    $scope.dropdownHover = false;
+                                    $timeout(function() {
+                                        $scope.dropdownHover = false;
+                                    });
                                 });
                                 e.preventDefault();
                                 e.stopPropagation();

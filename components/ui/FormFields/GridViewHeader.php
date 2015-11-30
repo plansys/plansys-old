@@ -7,7 +7,14 @@ class GridViewHeader extends Form {
             array (
                 'renderInEditor' => 'Yes',
                 'type' => 'Text',
-                'value' => '<div style=\'padding:10px 15px;margin:0px -15px;border-bottom:1px solid #ddd\'>
+                'value' => '<div style=\'
+position:fixed;
+top:0px;
+right:0px;
+left:0px;
+height:50px;
+padding:10px 15px;
+border-bottom:1px solid #ddd\'>
     <div class=\"btn-group\" style=\"float:right;\" dropdown>
       <button id=\"split-button\" type=\"button\" dropdown-toggle
               class=\"btn btn-xs btn-default\">
@@ -26,44 +33,49 @@ class GridViewHeader extends Form {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<table 
-    style=\"width:auto;margin-top:20px;\"
-    class=\"table table-condensed\">
-    <tr ng-repeat=\"r in rowHeadersArray\">
-        <td class=\"th-head\">
-            Row Header {{r}}:
-        </td>
-        <td class=\'th\' tooltip=\"{{c.label}}\"
-            ng-class=\"{active: isActive(r, $index)}\"
-            ng-click=\"select(r, $index, $event)\"
-            ng-repeat=\"c in active.columns\">
-            {{ $index }}
-        </td>
-    </tr>
-    
-    <tr onclick=\"return false;\">
-        <td style=\"border:0px;\"></td>
-        <td 
-            ng-repeat=\"c in active.columns\"
-            style=\"width:30px;color:#999;font-size:11px;text-align:center;
-            user-select:none;-webkit-user-select:none;-moz-user-select:none;\">
-            {{ getWidth(c) }}
-        </td>
-    </tr>
-</table>',
+                'value' => '<div style=\"padding-right:20px;width:100%;overflow-x:auto;\">
+    <table 
+        style=\"width:auto;margin-top:70px;\"
+        class=\"table table-condensed\">
+        <tr ng-repeat=\"r in rowHeadersArray\">
+            <td class=\"th-head\" style=\"min-width:100px\">
+                Row Header {{r}}:
+            </td>
+            <td class=\'th\' tooltip=\"{{ r == 1 ? c.label : c.headers[\'r\' + r].label }}\"
+                ng-class=\"{active: isActive(r, $index)}\"
+                ng-click=\"select(r, $index, $event)\"
+                ng-if=\"r == 1 || (r > 1 && c.headers[\'r\' + r].colSpan >= 1)\"
+                colspan=\"{{ c.headers[\'r\' + r].colSpan }} \"
+                ng-repeat=\"c in active.columns\">
+                <div style=\"width:{{ r == 1 ? \'20px\' : \'auto\' }};overflow-x:hidden\">
+                    {{ r == 1 ? c.label : c.headers[\'r\' + r].label }}
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick=\"return false;\">
+            <td style=\"border:0px;\"></td>
+            <td 
+                ng-repeat=\"c in active.columns\"
+                style=\"width:30px;color:#999;font-size:11px;text-align:center;
+                user-select:none;-webkit-user-select:none;-moz-user-select:none;\">
+                {{ getWidth(c) }}
+            </td>
+        </tr>
+    </table>
+</div>',
             ),
             array (
                 'type' => 'Text',
                 'value' => '<div style=\"
     position:fixed;
-    bottom:0px;
+    bottom:20px;
     right:0px;
     left:0px;
     height:150px;
     border-top:1px solid #ccc;
     padding:10px;
-\">
-   ',
+\">',
             ),
             array (
                 'totalColumns' => '3',
@@ -75,6 +87,14 @@ class GridViewHeader extends Form {
                         'fieldType' => 'number',
                         'labelWidth' => '5',
                         'fieldWidth' => '4',
+                        'options' => array (
+                            'ng-if' => 'activeRow > 1',
+                            'ng-model' => 'selected.colSpan',
+                            'ng-change' => 'scanColSpan(activeRow)',
+                        ),
+                        'fieldOptions' => array (
+                            'min' => '1',
+                        ),
                         'type' => 'TextField',
                     ),
                     array (
@@ -82,7 +102,15 @@ class GridViewHeader extends Form {
                         'name' => 'width',
                         'fieldType' => 'number',
                         'labelWidth' => '5',
-                        'fieldWidth' => '4',
+                        'fieldWidth' => '6',
+                        'postfix' => 'px',
+                        'options' => array (
+                            'ng-if' => 'activeRow == 1',
+                            'ng-model' => 'selected.options.width',
+                        ),
+                        'fieldOptions' => array (
+                            'min' => '0',
+                        ),
                         'type' => 'TextField',
                     ),
                     array (
@@ -92,8 +120,11 @@ class GridViewHeader extends Form {
                 ),
                 'column2' => array (
                     array (
-                        'label' => 'Header',
-                        'name' => 'header',
+                        'label' => 'Label',
+                        'name' => 'label',
+                        'options' => array (
+                            'ng-model' => 'selected.label',
+                        ),
                         'fieldOptions' => array (
                             'auto-grow' => 'true',
                         ),
@@ -108,7 +139,7 @@ class GridViewHeader extends Form {
                 'w2' => '33%',
                 'w3' => '33%',
                 'options' => array (
-                    'ng-if' => '!!activeCol && !!activeRow',
+                    'ng-if' => 'activeCol >= 0&& !!activeRow',
                 ),
                 'perColumnOptions' => array (
                     'style' => 'padding:0px',
@@ -117,7 +148,7 @@ class GridViewHeader extends Form {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div class=\"text-center\">
+                'value' => '<div class=\"text-center\" ng-if=\"!selected\">
     &nbsp; Please choose column header above &nbsp;
 </div>',
             ),

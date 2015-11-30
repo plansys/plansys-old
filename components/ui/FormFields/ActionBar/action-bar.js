@@ -102,6 +102,10 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
             $scope.resize = function (st) {
                 var height = Math.min($scope.originalHeight, $el.height());
                 var $container = $el.parents('.container-fluid').parent();
+                
+                if (!$container || !$container.offset()) {
+                    return;
+                }
 
                 $el.css({
                     top: $container.offset().top - $container.css('marginTop').replace('px', '') * 1,

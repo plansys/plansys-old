@@ -55,7 +55,6 @@ class ServiceController extends Controller {
                 }
             }
             
-            
             if (count($results) > 2 || $n == "t") {
                 echo json_encode($results);
             }

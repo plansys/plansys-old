@@ -164,7 +164,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'ng-model' => 'value[$index].queryOperator',
                     'ng-change' => 'updateListView()',
                     'ng-delay' => '500',
-                    'ng-if' => 'item.filterType == \'check\' && item.filterType == \'list\'',
+                    'ng-if' => 'item.filterType == \'check\'',
                 ),
                 'labelOptions' => array (
                     'style' => 'text-align:left;',

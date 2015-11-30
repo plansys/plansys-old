@@ -253,6 +253,12 @@ i {
     font-size: 13px;
 }
 
+.label {
+    font-size: 11px;
+    margin-bottom:3px;
+    display:inline-block;
+}
+
 /************************************ NAVBAR ***************************************/
 
 .navbar-main {

@@ -27,15 +27,33 @@ class Service extends CConsoleCommand {
                 return "";
             }, 1);
         } else {
-            exit("\nYou must start this service from Plansys Service Manager\n");
+            echo <<<EOF
+============================ WARNING ==========================
+  You should start this service from Plansys Service Manager
+===============================================================
+
+EOF;
         }
     }
     
-    
     protected function afterAction($action, $params, $exitCode=0) {
-        $this->log("SERVICE: Service {$this->service['name']} exited with code {$exitCode} [PID: {$this->pid}] ");
-        ServiceManager::markAsStopped($this->service['name'], $this->id);
+        if (isset($this->service['name'])) {
+            $this->log("SERVICE: Service {$this->service['name']} exited with code {$exitCode} [PID: {$this->pid}] ");
+            ServiceManager::markAsStopped($this->service['name'], $this->id);
+        }
         return parent::afterAction($action, $params, $exitCode);
+    }
+    
+    public function setView($key, $value) {
+        if (!isset($this->service['view'])) {
+            $this->service['view'] = [];
+        }
+        $this->service['view'][$key] = $value;
+        $path = Yii::getPathOfAlias('root.assets.services.init') . DIRECTORY_SEPARATOR . $this->id;
+        
+        if (is_file($path)) {
+            file_put_contents($path, json_encode($this->service, JSON_PRETTY_PRINT));
+        }
     }
     
     public function log($msg) {

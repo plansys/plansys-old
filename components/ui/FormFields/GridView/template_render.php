@@ -32,8 +32,10 @@
         <i class="fa fa-refresh fa-spin"></i>
         Loading Data...
     </div>
-
-    <div class="data-grid-paging" ng-if="loaded && gridOptions.controlBar">
+    
+    <div ng-if="isCbFreezed" class="control-bar-spacer"></div>
+    
+    <div class="data-grid-paging" ng-class="{freeze:isCbFreezed}" ng-if="loaded && gridOptions.controlBar">
         <div class="data-grid-pagination" ng-init="checkMode()">
             <div class="pull-left" style="margin:5px;" ng-if="mode == 'full'">Page:</div>
             <div class="pull-left data-grid-page-selector">
@@ -128,19 +130,11 @@
         <div class="clearfix"></div>
     </div>
     <div class="thead">
-        <div class="tr">
-            <?php foreach ($this->columns as $idx => $col) {
-                echo $this->getHeaderTemplate($col, $idx);
-            } ?>
-        </div>
+        <?php echo $this->generateHeaders('class'); ?>
     </div>
     <table ng-class="{loaded:loaded}" <?= $this->expandAttributes($this->tableOptions); ?>>
         <thead>
-        <tr>
-            <?php foreach ($this->columns as $idx => $col) {
-                echo $this->getHeaderTemplate($col, $idx);
-            } ?>
-        </tr>
+            <?php echo $this->generateHeaders('tag'); ?>
         </thead>
         <tbody>
         <tr ng-repeat-start="row in datasource.data track by $index" ng-if="row.$type=='g'" lv="{{row.$level}}"

@@ -87,14 +87,14 @@
             </div>
 
             <div ng-if="!loading && file !== null" class="form-control"
-                 style="padding:5px 5px 3px 0px;height:auto;box-shadow:none; border-color:#ececeb;">
+                 style="padding:5px 5px 3px 0px;height:auto;box-shadow:none; border-color:#ececeb;text-align:left;">
                 <div ng-if="file.name">
                     <a  href="{{ Yii.app.createUrl('/formfield/UploadFile.download', {
                             f: file.downloadPath,
                             n: file.name
                         })}}" class="btn btn-success btn-xs" style="margin:-2px 0px 0px 4px;">
                         <i class="fa fa-download"></i>
-                        Download - {{ formatName(file.name) | elipsisMiddle:10}} 
+                        Download 
                     </a>
 
                     <div class="btn btn-xs btn-default pull-right" 
@@ -104,7 +104,7 @@
                     </div>
                     <div class="btn btn-xs btn-default pull-right" style="margin-right:0px;margin-top:-2px;"
                          ng-if="allowOverwrite == 'Yes'" ng-click="choose('')">
-                        <i class="fa fa-pencil"></i> Edit
+                         <i class="fa fa-folder-open"></i> Choose File
                     </div>
                     <div class="clearfix"></div>
                     <div style="font-size:12px;color:#999;">{{ json}}</div>

@@ -77,6 +77,13 @@
 [grid-view] .data-grid-paging {
     padding-bottom: 10px;
 }
+[grid-view] .control-bar-spacer {
+    height: 38px;
+}
+[grid-view] .data-grid-paging.freeze {
+    position:absolute;
+    margin-top:-38px;
+}
 
 [grid-view] tr.g td {
     cursor: default;

@@ -62,7 +62,7 @@ ob_start();
                         break;
                 }
                 
-                $scope.errors['relationErrorText'] = ['Terdapat kesalahan entri, mohon periksa kembali kelengkapan data anda'];
+                $scope.errors['relationErrorText'] = ['Terdapat kesalahan entri, mohon periksa kembali kelengkapan data anda:<br/><div style="font-size:80%;padding-left:10px;">' + err.join("<br/>") + '</div>'];
             }
         }
 

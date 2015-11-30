@@ -150,12 +150,14 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                             if (['jpg', 'gif', 'png', 'jpeg'].indexOf(ext) >= 0) {
                                 $scope.getThumb();
                             }
+                            ctrl.$setViewValue(data.path);
                         } else {
                             alert("Error Uploading File. \n");
                         }
 
                         $scope.loading = false;
                         $scope.progress = -1;
+                        
 
                         var index = $scope.$parent.uploading.indexOf($scope.name);
                         if (index > -1) {

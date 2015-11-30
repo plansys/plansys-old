@@ -65,7 +65,7 @@ class DevServiceForm extends DevService {
         <i id=\'log\' class=\"fa fa-bars\"></i>
         Service Log
         <div
-        style=\"margin:1px -3px 0px 5px\"
+        style=\"margin:-1px -3px 0px 5px;font-size:10px;\"
         class=\"pull-right label\"
         ng-class=\"{
             \'label-success\': params.isRunning,
@@ -140,10 +140,11 @@ ng-model=\"model.content\">
             <option value=\"15\">15</option>
             <option value=\"20\">20</option>
             <option value=\"25\">25</option>
+            <option value=\"35\">35</option>
             <option value=\"50\">50</option>
         </select>
         &nbsp;|&nbsp; 
-        <a ng-show=\"params.isRunning\" ng-url=\"sys/service/view&name={{ model.name }}\"
+        <a ng-show=\"params.isRunning\" ng-url=\"sys/service/view&name={{ model.name }}&id={{selectedInstance}}\"
         target=\"_blank\" class=\"btn btn-success btn-xs\">
              View Controller <i class=\"fa fa-share\"></i>
         </a>

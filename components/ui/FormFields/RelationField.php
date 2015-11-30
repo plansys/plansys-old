@@ -58,6 +58,7 @@ class RelationField extends FormField {
     public $modelClass = '';
     public $idField    = '';
     public $labelField = '';
+    public $menuPos = '';
     public $queryParams;
 
     public static function listModel($includeEmpty = false) {
@@ -241,6 +242,17 @@ class RelationField extends FormField {
                 ),
                 'listExpr' => 'array(\'Horizontal\',\'Vertical\')',
                 'fieldWidth' => '6',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Menu Position',
+                'name' => 'menuPos',
+                'options' => array (
+                    'ng-model' => 'active.menuPos',
+                    'ng-change' => 'save();',
+                ),
+                'listExpr' => '[\'\'=>\'Left\',\'pull-right\'=>\'Right\']',
+                'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
             array (
@@ -634,7 +646,6 @@ class RelationField extends FormField {
                                 $hasil = str_replace($f, '{LOWER(IFNULL(' . $fieldArray[1][$k] . ', ""))}', $hasil);
                             }
                         }
-
 
                         $hasil = str_replace('{', "',", $hasil);
                         $hasil = str_replace('}', ",'", $hasil);

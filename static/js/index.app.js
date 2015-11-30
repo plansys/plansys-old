@@ -169,7 +169,7 @@ app.filter('dateFormat', function (dateFilter) {
             format = plansys.dateTimeFormat;
         }
         
-        if (input != "0000-00-00") {
+        if (input != "0000-00-00" && !!input && input != null) {
             return date(format, strtotime(input + ""));
         } else {
             return "";

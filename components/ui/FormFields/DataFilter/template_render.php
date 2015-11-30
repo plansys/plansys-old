@@ -6,6 +6,7 @@
     <data name="datasources" class="hide"><?= json_encode($this->datasources()); ?></data>
     <data name="render_id" class="hide"><?= $this->renderID; ?></data>
     <data name="name" class="hide"><?= $this->name; ?></data>
+    <data name="options" class="hide"><?= json_encode($this->options); ?></data>
 
     <script type="text/ng-template" id="filter_text"><?php include('filter_text.php'); ?></script>
     <script type="text/ng-template" id="filter_date"><?php include('filter_date.php'); ?></script>

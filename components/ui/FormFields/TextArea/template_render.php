@@ -1,5 +1,6 @@
 <div text-area <?= $this->expandAttributes($this->options) ?>>
-
+    <data name="name" class="hide"><?= $this->name ?></data>
+    
     <!-- label -->
     <?php if ($this->label != ""): ?>
         <label <?= $this->expandAttributes($this->labelOptions) ?>
@@ -26,4 +27,5 @@
         </div>
         <!-- /error -->
     </div>
+    
 </div>

@@ -1009,7 +1009,18 @@ class DataSource extends FormField {
                     break;
                 case "phpsql":
                     $this->sql = $this->execute($this->params);
-                    $data      = $this->query($this->params);
+                    
+                    if ($this->sql != '') {
+                        $data = $this->query($this->params);
+                    } else {
+                        $data = [
+                            'data' => [],
+                            'debug' => [
+                                'count' => 0,
+                                'params' => $this->params
+                            ]
+                        ];
+                    }
                     break;
                 case "php":
                     $data = $this->execute($this->params);
@@ -1027,6 +1038,7 @@ class DataSource extends FormField {
             'debug' => ($this->debugSql == 'Yes' ? @$data['debug'] : []),
             'rel' => @$data['rel']
         ];
+        
     }
 
 }

@@ -293,6 +293,8 @@ class Helper {
     }
     
     public static  function ReadFromEndByLine($filename, $lines, $revers = false) {
+        if (!is_file($filename)) return "";
+        
         $offset = -1;
         $c = '';
         $read = '';

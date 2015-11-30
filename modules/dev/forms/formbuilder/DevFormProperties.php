@@ -57,6 +57,7 @@ class DevFormProperties extends Form {
                     'ng-change' => 'saveForm();',
                     'ng-delay' => '500',
                 ),
+                'menuPos' => 'pull-right',
                 'listExpr' => 'ModelGenerator::listModels();',
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',

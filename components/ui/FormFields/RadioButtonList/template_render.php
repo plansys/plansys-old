@@ -20,7 +20,8 @@
         <!-- field -->
         <span ng-repeat="(val, text) in formList track by $index">
             <label <?= $this->expandAttributes($this->fieldOptions) ?>>
-                <input type="radio" id="<?= $this->renderID ?>_{{val}}"
+                <input <?= $this->expandAttributes($this->fieldOptions) ?> 
+                    type="radio" id="<?= $this->renderID ?>_{{val}}"
                        ng-checked="value == val"
                        ng-click="update(val)"
                        /> {{ text}}

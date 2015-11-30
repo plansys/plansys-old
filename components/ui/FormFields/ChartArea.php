@@ -156,12 +156,19 @@ class ChartArea extends FormField {
                 'name' => 'series',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.ChartSeriesForm',
-                'labelWidth' => '0',
-                'fieldWidth' => '12',
                 'options' => array (
                     'ng-model' => 'active.series',
                     'ng-change' => 'save(); setTickSeries();',
                     'ps-after-add' => 'value.show = true',
+                ),
+                'singleViewOption' => array (
+                    'name' => 'val',
+                    'fieldType' => 'text',
+                    'labelWidth' => 0,
+                    'fieldWidth' => 12,
+                    'fieldOptions' => array (
+                        'ng-delay' => 500,
+                    ),
                 ),
                 'type' => 'ListView',
             ),

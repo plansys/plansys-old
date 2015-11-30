@@ -167,14 +167,17 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.update = function (item, f) {
                     $scope.updateInternal(item.key);
                 };
-
+                
+                $scope.isRelFieldDisabled = function() {
+                    return $scope.$eval($scope.disabledCondition);
+                }
+                
                 $scope.updateDetail = function(relation, func) {
                     if (!!$scope.value) {
                         $http.get(Yii.app.createUrl('formfield/RelationField.getDetail',{
                             'm': $scope.relModelClass,
                             'id': $scope.value
                         })).success(function (data) {
-                            console.log(data);
                             if (!!data) { 
                                 if (angular.isObject($scope.model[relation])) {
                                     for (i in data) {
@@ -197,7 +200,7 @@ app.directive('relationField', function ($timeout, $http) {
                         return !a || a == '';
                     }
 
-                    $scope.value = typeof value != "string" ? '' : value;
+                    $scope.value = typeof value != "string" && typeof value != 'number' ? '' : value.toString();
 
                     if ($scope.showOther && !$scope.itemExist()) {
                         $scope.value = $el.find("li a").attr('value');
@@ -212,7 +215,7 @@ app.directive('relationField', function ($timeout, $http) {
                             isFound = true;
                         }
                     });
-
+                    
                     if ((!isFound || !!forceReload) && typeof $el.find("li:eq(0) a").attr('value') != "undefined") {
 
                         // when current value not found in renderedFormList, then search it on server...
@@ -392,6 +395,14 @@ app.directive('relationField', function ($timeout, $http) {
 
                     $scope.$watch(attrs.psList, changeFieldList);
                 }
+                
+                $scope.reset = function() {
+                    $scope.formList = null;
+                    $scope.renderedFormList = null;
+                    $scope.value = "";
+                    $scope.text = "";
+                    ctrl.$setViewValue('');
+                }
 
                 // watch form list
                 $scope.$watch('formList', function (n, o) {
@@ -406,9 +417,9 @@ app.directive('relationField', function ($timeout, $http) {
                     ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;
-
+                            
                         if (typeof ctrl.$viewValue != "undefined") {
-                            $scope.updateInternal(ctrl.$viewValue);
+                            $scope.updateInternal(ctrl.$viewValue, true);
                         }
                     };
                 }
@@ -435,6 +446,7 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.modelField = JSON.parse($el.find("data[name=model_field]").text());
                 $scope.paramValue = {};
                 $scope.isOpen = false;
+                $scope.disabledCondition = $el.find("data[name=is_disabled]").text().trim();
                 $scope.identifier = $el.find("data[name=identifier]").text().trim();
                 $scope.openedInField = false;
                 $scope.jsParamsInitialized = true;

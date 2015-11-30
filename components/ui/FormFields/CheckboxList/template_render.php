@@ -29,7 +29,8 @@
         <!-- field -->
         <span ng-repeat="(value, text) in formList track by $index">
             <label <?= $this->expandAttributes($this->fieldOptions) ?>>
-                <input type="checkbox" id="<?= $this->renderID ?>_{{value}}"
+                <input <?= $this->expandAttributes($this->fieldOptions) ?> 
+                    type="checkbox" id="<?= $this->renderID ?>_{{value}}"
                        name="<?= $this->name ?>[{{value}}]"
                        ng-checked="isChecked(value)"
                        ng-click="updateItem(value)"

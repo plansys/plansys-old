@@ -32,6 +32,7 @@ app.directive('textArea', function($timeout) {
 
                 // set default value
                 $scope.value = $el.find("data[name=value]").html();
+                $scope.name = $el.find("data[name=name]:eq(0)").html().trim();
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                
                 //if ngModel is present, use that instead of value from php

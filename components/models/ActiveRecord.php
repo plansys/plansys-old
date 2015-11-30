@@ -693,12 +693,12 @@ class ActiveRecord extends CActiveRecord {
         }
         if (count(@$this->__relDelete[$name]) > 0) {
             foreach ($this->__relDelete[$name] as $item) {
-                if (is_array($item)) {
+                if (is_array($item) && isset($item[$pk])) {
                     $rpk = '_' . $item[$pk];
                     if (isset($relHash[$rpk])) {
                         array_splice($this->__relations[$name], $relHash[$rpk]['idx'], 1);
                     }
-                } else {
+                } else if (is_string($item)) {
                     if (isset($relHash[$item])) {
                         array_splice($this->__relations[$name], $relHash[$item]['idx'], 1);
                     }
@@ -1087,7 +1087,6 @@ class ActiveRecord extends CActiveRecord {
                         
                         if (!$model->validate()) {
                             if (isset($attr['$rowState'])) {
-                                
                                 $errors['list'][] = [
                                     'index' => $idx[$attr['$rowState']] ,
                                     'mode' => $attr['$rowState'],
@@ -1104,6 +1103,8 @@ class ActiveRecord extends CActiveRecord {
                 break;
             }
             if (!empty($errors['list'])) {
+                // var_dump($relName, $model->attributes);
+                // die();
                 $this->addError($relName, $errors);
             }
         }
@@ -1118,13 +1119,14 @@ class ActiveRecord extends CActiveRecord {
                     preg_match("/FOREIGN\sKEY\s\(\`(.*)\`\)\sREFERENCES/", $e->errorInfo[2], $match);
                     $attribute = explode("`", $match[1]);
                     $attribute = @$attribute[0];
-                    
+                   
                     if ($this->hasAttribute($attribute)) {
                         $message = Yii::t('yii', 'Referensi {attribute} tidak ditemukan.');
                         $message = strtr($message, array(
                             '{attribute}' => $this->getAttributeLabel($attribute),
                         ));
                         $this->addError($attribute, $message);
+                        return false;
                     } else {
                         throw $e;
                     }

@@ -1,6 +1,8 @@
 <?php
 
 class ServiceManager extends CComponent {
+    const MAX_LOG_COUNT = 10;
+    
     public static function getAllServices() {
         $services = Setting::get('services.list');
         $results = [];
@@ -67,14 +69,14 @@ class ServiceManager extends CComponent {
     }
     
     public static function getInstance($id) {
-        $initPath = Yii::getPathOfAlias('root.assets.services.init');
-        $init = $initPath . $id;
+        $init = ServiceManager::getInitLogPath($id);
         if (is_file($init)) {
             $svc = json_decode(file_get_contents($init), true);
             if (!is_null($svc)) {
                 return $svc;
             }
         }
+        
         return null;
     }
     
@@ -120,9 +122,36 @@ class ServiceManager extends CComponent {
         return $results;
     }
     
+    public static function start($serviceName, $params = null) {
+        $pid = ServiceManager::run($serviceName, $params);
+        $controller = Yii::app()->controller;
+        if (is_null($pid)) {
+            $msg = "Service {$serviceName} not found";
+            
+            if (!is_null($controller)) {
+                $controller->renderForm("SysServiceNotFound", null, [
+                    'msg' => $msg
+                ]);
+            } else {
+                echo $msg;
+            }
+        } else {
+            $full = 0;
+            if (isset($_GET['full'])) {
+                $full = $_GET['full'];
+            }
+            
+            if (!is_null($controller)) {
+                $controller->redirect(['/sys/service/view', 'name' => $serviceName, 'id' => $pid, 'full' => $full]);
+            } else {
+                echo "OK";
+            }
+        }
+    }
+    
     public static function run($serviceName, $params = null) {
         $service = Setting::get('services.list.' . $serviceName);
-        
+                
         if ($service) {
             if (!is_null($params)) {
                 $service['params'] = $params;
@@ -258,36 +287,50 @@ class ServiceManager extends CComponent {
         }
     }
     
-    public static function markAsStopped($serviceName, $id) {
-        $path = Yii::getPathOfAlias('root.assets.services.stopped.' . $serviceName);
-        $new  = $path . DIRECTORY_SEPARATOR . $id;
-        if (!is_dir($path)) {
-            mkdir($path, 0777, true);
+    public static function getStoppedInstance($serviceName, $id) {
+        $initPath = self::getStoppedInitPath($serviceName, $id);
+        $logPath = self::getStoppedInitPath($serviceName, $id);
+        
+        if ($initPath != "") {
+            $init = file_get_contents($initPath);
+            return json_decode($init, true);
         }
         
-        $old = ServiceManager::getLogPath($serviceName, $id);
-        if (is_file($old)) {
-            $initPath = Yii::getPathOfAlias('root.assets.services.init');
-            $init = $initPath . DIRECTORY_SEPARATOR . $id;
-            if(is_file($init)) {
-                unlink($init);
-            }
-            
-            ## only retain maximum 30 logs 
-            $logs = glob($path . DIRECTORY_SEPARATOR . "*");
-            natsort($logs);
-            $logs = array_values($logs);
-
-            $count = count($logs);
-            $file = str_replace($path  . DIRECTORY_SEPARATOR, "", $new);
-            if ($count > 0) {
-                $count = explode(".", str_replace($path  . DIRECTORY_SEPARATOR , "", $logs[$count -1]))[0]; 
-            }
-            $new = $path . DIRECTORY_SEPARATOR . ($count + 1) . "." . $file;
-            rename($old, $new);
-            if ($count > 30) {
-                unlink($logs[0]);
-            }
+        return false;
+    }
+    
+    private static function saveStoppedLog($serviceName, $id, $path, $old) {
+        ## only retain maximum X stopped logs 
+        $logs = glob($path . DIRECTORY_SEPARATOR . "*");
+        natsort($logs);
+        $logs = array_values($logs);
+        $count = count($logs);
+        if ($count > 0) {
+            $count = explode(".", str_replace($path  . DIRECTORY_SEPARATOR , "", $logs[$count -1]))[0]; 
+        }
+        $new = $path . DIRECTORY_SEPARATOR . ($count + 1) . "." . $id;
+        rename($old, $new);
+        if ($count > ServiceManager::MAX_LOG_COUNT) {
+            unlink($logs[0]);
+        }
+    }
+    
+    public static function markAsStopped($serviceName, $id) {
+        $logPath = Yii::getPathOfAlias('root.assets.services.stopped.' . $serviceName . ".log");
+        $initPath = Yii::getPathOfAlias('root.assets.services.stopped.' . $serviceName . ".init");
+        if (!is_dir($logPath)) {
+            mkdir($logPath, 0777, true);
+        }
+        
+        if (!is_dir($initPath)) {
+            mkdir($initPath, 0777, true);
+        }
+        $oldLog  = ServiceManager::getLogPath($serviceName, $id);
+        $oldInit = Yii::getPathOfAlias('root.assets.services.init') .DIRECTORY_SEPARATOR . $id;
+        
+        if (is_file($oldLog) && is_file($oldInit)) {
+            self::saveStoppedLog($serviceName, $id, $initPath, $oldInit);
+            self::saveStoppedLog($serviceName, $id, $logPath, $oldLog);
         }
     }
     
@@ -324,8 +367,23 @@ class ServiceManager extends CComponent {
         return $file;
     }
     
+    
+    private static function getStoppedInitPath($serviceName, $id) {
+        $path = Yii::getPathOfAlias('root.assets.services.stopped.' . $serviceName . ".init");
+        $files = glob($path . DIRECTORY_SEPARATOR . "*." . $id);
+        if (!is_dir($path)) {
+            mkdir($path, 0777, true);
+        }
+        
+        if (!empty($files)) {
+            return $files[0];
+        }
+        return "";
+    }
+    
+    
     private static function getStoppedLogPath($serviceName, $id) {
-        $path = Yii::getPathOfAlias('root.assets.services.stopped.' . $serviceName);
+        $path = Yii::getPathOfAlias('root.assets.services.stopped.' . $serviceName . ".log");
         $files = glob($path . DIRECTORY_SEPARATOR . "*." . $id);
         if (!is_dir($path)) {
             mkdir($path, 0777, true);
@@ -339,7 +397,7 @@ class ServiceManager extends CComponent {
     
     public static function readLog($serviceName, $id = null, $lines = 20) {
         if (is_null($id)) {
-            $path = Yii::getPathOfAlias('root.assets.services.stopped.' . $serviceName);
+            $path = Yii::getPathOfAlias('root.assets.services.stopped.' . $serviceName . ".log");
             $files = glob($path . DIRECTORY_SEPARATOR . "*");
             if (!empty($files)) {
                 natsort($files);
@@ -367,14 +425,17 @@ class ServiceManager extends CComponent {
     
     public static function logAppend($serviceName, $id, $msg) {
         $file = self::getLogPath($serviceName, $id);
-        file_put_contents($file, "{$msg}", FILE_APPEND);
+        if (is_file($file)) {
+            file_put_contents($file, "{$msg}", FILE_APPEND);
+        }
     }
     
     public static function log($serviceName, $id, $msg) {
         $file = self::getLogPath($serviceName, $id);
         $date = date("Y-m-d H:i:s");
-        
-        file_put_contents($file, "\n[{$date}] {$msg}", FILE_APPEND);
+        if (is_file($file)) {
+            file_put_contents($file, "\n[{$date}] {$msg}", FILE_APPEND);
+        }
     }
     
     private static function getProcessCommand() {

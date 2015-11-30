@@ -33,7 +33,7 @@ window.$(document).keydown(function (event) {
 $scope.isMonitoring = false;
 $scope.instances = {};
 $scope.log = "";
-$scope.maxLines = 20;
+$scope.maxLines = 35;
 $scope.selectedInstance = false;
 $scope.tab = "code";
 $scope.changeTab = function(tab) {

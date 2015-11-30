@@ -874,12 +874,13 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         };
                     }, 0);
                 }
-
+                
                 $scope.focusDatePicker = function (filter, from) {
                     filter[from + "Open"] = true;
                 }
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.operators = JSON.parse($el.find("data[name=operators]").text());
+                $scope.options = JSON.parse($el.find("data[name=options]").text());
                 $scope.filters = $scope.initFilters(JSON.parse($el.find("data[name=filters]").text()));
                 $scope.oldFilters = null;
                 $scope.datasource = $el.find("data[name=datasource]").text();
@@ -900,6 +901,29 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 }
                 parent[$scope.name] = $scope;
                 $scope.available = false;
+
+
+                if (!!$scope.options.freeze) {
+                    var $container = $el.parents('.container-full');
+                    var paddingLeft = $el.offset().left;
+                    var width = $container.width() ;
+                    $scope.freeze = function() {
+                        var pl  =(($el.offset().left  *-1) + paddingLeft);
+                        $el.css({
+                            paddingLeft: pl + 'px',
+                            width: (pl + width) + 'px'
+                        });
+                    }
+                    $(window).resize(function () {
+                        $timeout(function () {
+                            width = $container.width();
+                            $scope.freeze();
+                        }, 400);
+                    });
+                    $container.scroll(function () {
+                        $scope.freeze();
+                    });
+                }
 
                 $scope.evalValue = function (value) {
                     if (typeof value == "string" && value.substr(0, 3) == "js:") {
@@ -972,6 +996,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 }
                                 else {
                                     f.value = $scope.evalValue(f.defaultValue);
+                                    console.log(f.value, f.defaultValue);
                                     if (!f.value) {
                                         var fclone = $.extend({}, f, true);
                                         watchDefaultValue.push({

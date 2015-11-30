@@ -86,6 +86,7 @@ class GridView extends FormField {
         echo $this->getRowTemplate($post['item'], $post['idx']);
     }
 
+
     public function getRowTemplate($col, $idx) {
         $template  = '';
         $style     = '';
@@ -116,10 +117,10 @@ type="checkbox" /></label>';
         $rowState = '';
         if ($idx == 0) {
             $rowStateCss = $this->hasEditable ? "class='editable'" : "";
-            if (@$this->gridOptions['showRowState'] != 'false') {
+            if (@$this->gridOptions['showRowState'] != 'false' && @$this->gridOptions['showRowStateBtn'] != 'false') {
                 $rowState = "<div {$rowStateCss} ng-include='\"row-state-template\"'></div>\n    ";
             }
-            if (!@$col['options']['mode']) {
+            if (!@$col['options']['mode'] && $col['columnType'] != 'checkbox') {
                 $template = "<span class='row-group-padding' ng-if='!!row.\$level'
         style='width:{{row.\$level*10}}px;'></span>
     {$template}";
@@ -203,6 +204,11 @@ type="checkbox" /></label>';
             }
         }
         
+        $width = $this->getWidth($col);
+        if ($width != '') {
+            $attr['style'] = $width;
+        }
+        
         if (is_array($attr)) {
             $attr = $this->expandAttributes($attr);
         }
@@ -239,6 +245,10 @@ EOF;
         if (isset($col['options']['ng-if'])) {
             $attr['ng-if'] = $col['options']['ng-if'];
         }
+        $width = $this->getWidth($col, false);
+        if ($width != '') {
+            $attr['style'] = $width;
+        }
         if (is_array($attr)) {
             $attr = $this->expandAttributes($attr);
         }
@@ -253,14 +263,90 @@ EOF;
         return $template;
     }
 
+    public function generateHeaders($mode) {
+        $rowHeaders = isset($this->gridOptions['rowHeaders']) ? $this->gridOptions['rowHeaders'] * 1: 1; 
+        ob_start();
+        for($i = $rowHeaders; $i >=1; $i--) {
+            echo ($mode== 'class' ? '<div class="tr">' : '<tr>'); 
+            foreach ($this->columns as $idx => $col) {
+                if ($i == 1) {
+                    echo $this->getHeaderTemplate($col, $idx);
+                } else {
+                    echo $this->getSuperHeaderTemplate($i, $col, $idx);
+                }
+            }
+            echo ($mode == 'class' ? '</div>' : '</tr>');
+        }
+        return ob_get_clean();
+    }
+    
+    private function getWidth($col, $overflow = true) {
+        if (@$col['options']['width'] != "") {
+            $style = 'width:' .$col['options']['width'] . 'px;';
+            $style .= 'min-width:' .$col['options']['width'] . 'px;';
+            $style .= 'max-width:' .$col['options']['width'] . 'px;';
+            if ($overflow) {
+                $style .= 'overflow-x: hidden;';
+            }
+            return $style;
+        }
+        
+        return '';
+    }
+    
+    public function getSuperHeaderTemplate($row, $col, $idx) {
+        $attr      = [];
+        if (isset($col['options']['ng-if'])) {
+            $attr['ng-if'] = $col['options']['ng-if'];
+        }
+        
+        if (!isset($col['headers'])) {
+            $col['headers'] = [];
+        }
+        
+        if (!isset($col['headers']['r'. $row])) {
+            $col['headers']['r'. $row] = [
+                'label' => '',
+                'colSpan' => '1'
+            ];
+        }
+        
+        $headers = $col['headers']['r'. $row];
+        $width = $this->getWidth($col);
+        if ($width != '') {
+            $attr['style'] = $width;
+        }
+        
+        if ($headers['colSpan'] < 1) {
+            return "";
+        } else if ($headers['colSpan'] > 1) {
+            $attr['colspan'] = $headers['colSpan']; 
+        }
+        if (is_array($attr)) {
+            $attr = $this->expandAttributes($attr);
+        }
+        
+        return <<<EOF
+<th {$attr}><div class="th">
+    {$headers['label']}
+</div></th>
+EOF;
+    }
+
     public function getHeaderTemplate($col, $idx) {
         $fieldName = isset($col['fieldName']) ? $col['fieldName'] : $col['name'];
         if ($fieldName == "" && !@$col['options']['mode']) return "";
 
         $attr      = [];
-        if (isset($col['options']['ng-if'])) {
+        if (@$col['options']['ng-if'] != "") {
             $attr['ng-if'] = $col['options']['ng-if'];
         }
+        
+        $width = $this->getWidth($col);
+        if ($width != '') {
+            $attr['style'] = $width;
+        }
+        
         if (is_array($attr)) {
             $attr = $this->expandAttributes($attr);
         }

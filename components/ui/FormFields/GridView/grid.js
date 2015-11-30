@@ -389,10 +389,17 @@ app.directive('gridView', function ($timeout, $http) {
                 var $header = $el.find("table > thead");
                 var inViewport = function (el, offset) {
                     var rect = el[0].getBoundingClientRect();
+                    var leftBoundary = $container.width();
+                    var rightBoundary = 0;
+                    
+                    if ($header.width() > leftBoundary) {
+                        rightBoundary = leftBoundary - $header.width();
+                    }
+                    
                     return (
                         rect.bottom >= parseInt($container.css('margin-top')) + offset &&
-                        rect.right >= 0 &&
-                        rect.left < $container.width() &&
+                        rect.right >= rightBoundary &&
+                        rect.left < leftBoundary &&
                         rect.top < 0
                     );
                 } 
@@ -409,10 +416,24 @@ app.directive('gridView', function ($timeout, $http) {
 
                     //$el.parents('.container-fluid').width(Math.max($el.parents('.container-fluid').width(), $el.width() + 15));
                 }
+                
+                $scope.isCbFreezed = false;
+                var paddingLeft = $el.offset().left;
+                $scope.freezeControlBar = function() {
+                    if (!!$scope.gridOptions.freezeControlBar || !!$scope.gridOptions.freeze) {
+                        $el.find('.data-grid-paging').css({
+                            marginLeft: (($el.offset().left  *-1) + paddingLeft) + 'px',
+                            width: ($container.width() - (paddingLeft * 3)) + 'px'
+                        });
+                    }
+                    $scope.isCbFreezed = !!$scope.gridOptions.freezeControlBar || !!$scope.gridOptions.freeze;
+                };
+                
                 $(window).resize(function () {
                     $timeout(function () {
                         $scope.recalcHeaderWidth();
                         $scope.checkMode();
+                        $scope.freezeControlBar();
                     }, 400);
                 });
                 
@@ -425,6 +446,9 @@ app.directive('gridView', function ($timeout, $http) {
                     var elOffset = parseInt($el.css('padding-top'));
                     var headerOffset = elOffset + $header.height();
                     var fixedHeader = inViewport($el, headerOffset);
+                    
+                    $scope.freezeControlBar();
+                    
                     if (fixedHeader) {
                         $thead.css({
                             top: $container.offset().top + 'px',
@@ -551,6 +575,12 @@ app.directive('gridView', function ($timeout, $http) {
                         return false;
                     }
                     return true;
+                }
+                $scope.clearCheckbox = function() {
+                    $timeout(function() {
+                        $scope.checkbox = {};
+                        $scope.lastCheckbox = null;
+                    });
                 }
                 $scope.checkboxValues = function (colName, column) {
                     var ret = [];

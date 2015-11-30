@@ -337,6 +337,11 @@ class DataFilter extends FormField {
                 'value' => '<div class=\'clearfix\'></div>',
             ),
             array (
+                'label' => 'DataFilter Options',
+                'name' => 'options',
+                'type' => 'KeyValueGrid',
+            ),
+            array (
                 'title' => 'Filters',
                 'type' => 'SectionHeader',
             ),
@@ -430,8 +435,9 @@ class DataFilter extends FormField {
         $postdata = file_get_contents("php://input");
         $post     = CJSON::decode($postdata);
 
-        if (count($post) == 0)
+        if (count($post) == 0) {
             die();
+        }
 
         $start = @$post['i'];
 

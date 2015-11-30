@@ -4,6 +4,7 @@
   "require": {
     "nikic/php-parser": "^1.4",
     "leeoniya/dump-r": "*",
-    "phpmailer/phpmailer": "*"
+    "phpmailer/phpmailer": "*",
+    "box/spout": "dev-master"
   }
 }

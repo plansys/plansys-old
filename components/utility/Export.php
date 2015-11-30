@@ -1,7 +1,7 @@
 <?php
 class Export extends CComponent {
 
-    public static function download($fileNameResource, $extResource,  $fileNameResult, $data) {
+    public static function download($fileNameResource, $extResource,  $fileNameResult, $data, $mode = []) {
         $fileNameResult = $fileNameResult.'.'.$extResource;
 
         # checking tmp directory for save result
@@ -56,6 +56,11 @@ class Export extends CComponent {
         # get Key of array data
         foreach (array_keys($data) as $key) {
             $TBS->MergeBlock($key, $data[$key]);
+        }
+        
+        if (isset($mode['x_picture'])) {
+            $x_picture = $mode['x_picture'];
+            $TBS->PlugIn(OPENTBS_MERGE_SPECIAL_ITEMS);
         }
         
         $save_as = (isset($_POST['save_as']) && (trim($_POST['save_as']) !== '') && ($_SERVER['SERVER_NAME'] == 'localhost')) ? trim($_POST['save_as']) : '';

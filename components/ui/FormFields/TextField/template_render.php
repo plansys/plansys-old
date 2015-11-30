@@ -54,20 +54,17 @@
             <!-- value -->
             <input type="<?= $this->fieldType ?>" <?= $this->expandAttributes($this->fieldOptions) ?>
                    <?php if ($this->autocomplete != ''): ?>autocomplete="off"<?php endif; ?>
-                   ng-model="value" ng-change="update()" value="<?= $this->value ?>"/>
+                   ng-model="value" ng-focus="tfFocus()" ng-blur="tfBlur()" ng-change="update()" value="<?= $this->value ?>"/>
 
         <?php endif; ?>
         <!-- /field -->
 
-        <div class="col-sm-12" dropdown>
-            <ul ng-if="list.length > 0" style="max-height:150px;overflow-y:auto;" class="dropdown-menu">
-                <li class="{{ choice.value == value ? 'hover' : ''}}" ng-repeat="choice in list" style="font-size:13px;">
-                    <a href=""  ng-click="choose(choice.value)">{{ autocomplete == 'php' ? choice : choice.label}}</a>
+        <div ng-if="list.length > 0" class="col-sm-12 tf-list" ng-class="{open: showDropDown}">
+            <ul style="max-height:150px;overflow-y:auto;width:100%;" class="dropdown-menu">
+                <li class="{{ choice.value == value ? 'hover' : ''}}" ng-click="choose(choice.value)" 
+                    ng-repeat="choice in list" style="font-size:13px;">
+                    <a href="">{{ autocomplete == 'php' ? choice : choice.label}}</a>
                 </li>
-            </ul>
-
-            <ul ng-if="(list.length == 0)" class="dropdown-menu" style="max-height:150px;overflow-y:auto;">
-                <li style="text-align:center;padding:10px;font-size:12px;color:#999;">&mdash; Not Found &mdash;</li>
             </ul>
         </div>
 

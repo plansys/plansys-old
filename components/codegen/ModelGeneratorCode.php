@@ -42,9 +42,15 @@ class ModelGeneratorCode extends ModelCode {
                 'relations' => isset($this->relations[$className]) ? $this->relations[$className] : array(),
                 'connectionId' => $this->connectionId,
             );
+            
+            $filePath = Yii::getPathOfAlias($this->modelPath) . '/' . $className . '.php';
+            
+            if (is_file($filePath)) {
+                unlink($filePath);
+            }
 
             $this->files[] = new CCodeFile(
-                Yii::getPathOfAlias($this->modelPath) . '/' . $className . '.php', $this->render($templatePath . '/TplModel.php', $params)
+                $filePath, $this->render($templatePath . '/TplModel.php', $params)
             );
         }
     }
