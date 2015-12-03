@@ -195,10 +195,18 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                 $scope.monthList = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
                     "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
                 $scope.modelClass = $el.find("data[name=model_class]").html();
-
+                $scope.disabledCondition = $el.find("data[name=is_disabled]").text().trim();
                 $scope.fieldType = $el.find("data[name=field_type]").text();
                 $scope.dateOptions = JSON.parse($el.find("data[name=date_options]").text());
-
+                
+                $scope.$watch($scope.disabledCondition, function() {
+                    $scope.isDPDisabled = $scope.$eval($scope.disabledCondition);
+                });
+                $scope.isDPDisabled = false;
+                $scope.isDatePickerDisabled = function() {
+                    return $scope.isDPDisabled;
+                }
+                
                 // if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {
                     $timeout(function () {

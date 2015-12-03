@@ -996,16 +996,25 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 }
                                 else {
                                     f.value = $scope.evalValue(f.defaultValue);
-                                    console.log(f.value, f.defaultValue);
-                                    if (!f.value) {
-                                        var fclone = $.extend({}, f, true);
-                                        watchDefaultValue.push({
-                                            name: f.name,
-                                            watch: fclone.defaultValue.substr(3)
-                                        });
-
-                                    } else {
+                                    
+                                    if (f.filterType === 'check') {
+                                        if (typeof f.value === 'string') {
+                                            f.valueText = f.value;
+                                            f.value = f.value.trim().replace(/[\s,]+/g, ',').split(",");
+                                            f.checked = f.value;
+                                        }
                                         $scope.updateFilter(f, null, false);
+                                    } else {
+                                        if (!f.value) {
+                                            var fclone = $.extend({}, f, true);
+                                            watchDefaultValue.push({
+                                                name: f.name,
+                                                watch: fclone.defaultValue.substr(3)
+                                            });
+    
+                                        } else {
+                                            $scope.updateFilter(f, null, false);
+                                        }
                                     }
                                 }
                             }

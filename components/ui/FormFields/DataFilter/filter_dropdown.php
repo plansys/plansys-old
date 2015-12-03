@@ -4,8 +4,8 @@
 
     <button type="button" class="btn btn-default btn-sm dropdown-toggle">
         <span style="font-size:13px;"> 
-            {{filter.label}}<span ng-hide="filter.label == '' || filter.filterType == 'check'">:</span></span>
-        <b ng-hide="filter.filterType == 'check'">{{filter.valueText}}</b>
+            {{filter.label}}<span ng-hide="filter.label == ''">:</span></span>
+        <b>{{filter.valueText | more:15}}</b>
         <span class="caret" style="margin-left:5px;"></span>
     </button>
     <button type="button" ng-click="resetFilter(filter);"

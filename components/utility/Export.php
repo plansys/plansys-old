@@ -1,6 +1,9 @@
 <?php
 class Export extends CComponent {
-
+    public static function toExcel($model, $config = null) {
+        
+    }
+    
     public static function download($fileNameResource, $extResource,  $fileNameResult, $data, $mode = []) {
         $fileNameResult = $fileNameResult.'.'.$extResource;
 

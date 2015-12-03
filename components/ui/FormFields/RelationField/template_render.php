@@ -52,9 +52,8 @@
                 <span class="dropdown-text" ng-bind-html="text"></span>
             </button>
 
-
             <!-- dropdown item -->
-            <div class="dropdown-menu open <?= $this->menuPos; ?>">
+            <div class="dropdown-menu open <?= $this->menuPos; ?>" ng-show="!isRelFieldDisabled()">
                 <div class="search" ng-show="searchable" style="margin-bottom:0px;">
                     <input type="text"
                            ng-model="search"

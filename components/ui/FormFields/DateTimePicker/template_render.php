@@ -17,34 +17,38 @@
         <data name="field_type" class="hide"><?= $this->fieldType ?></data>
         <data name="default_today" class="hide"><?= $this->defaultToday ?></data>
         <data name="date_options" class="hide"><?= json_encode($this->datepickerOptions) ?></data>
+        <data name="is_disabled" class="hide"><?php
+            if (isset($this->fieldOptions['disabled'])) {
+                echo $this->fieldOptions['disabled'];
+            } else if (isset($this->fieldOptions['ng-disabled'])) {
+                echo $this->fieldOptions['ng-disabled'];
+            }
+        ?></data>
         <!-- /data -->
 
         <!-- field -->
         <!-- date field -->
         <div ng-if="['date', 'datetime'].indexOf(fieldType) >= 0" 
-             class="date-field <?php if (!@$this->fieldOptions['disabled']): ?>input-group<?php endif; ?>"
-             <?php if (!!@$this->fieldOptions['disabled']): ?>style="text-align:left !important;width:90px;"<?php endif; ?>
-             >
+             class="date-field {{ !isDPDisabled ? 'input-group' : ''}}"
+             style="{{ !isDPDisabled ? 'text-align:left !important;width:90px;' : '' }}">
             <!-- value -->
             <input type="text" <?= $this->expandAttributes($this->fieldOptions) ?>
-                   <?php if (!!@$this->fieldOptions['disabled']): ?>style="text-align:left !important;width:90px;color:#000;"<?php endif; ?>
+                   style="{{ !isDPDisabled ? 'text-align:left !important;width:90px;color:#000;' : ''}}"
                    ng-model="date" ng-change="changeDate(this)" value="<?= $this->value ?>"
                    />
 
-            <?php if (!@$this->fieldOptions['disabled']): ?>
                 <!-- btn icon -->
-                <span class="input-group-btn" >
+                <span class="input-group-btn" ng-if='!isDPDisabled'>
                     <div ng-click="openDatePicker($event)" class="btn btn-sm btn-default">
                         <i class="glyphicon glyphicon-calendar"></i>
                     </div>
                 </span>
-            <?php endif; ?>
         </div>
 
         <!-- time field -->
         <div ng-if="['time', 'datetime'].indexOf(fieldType) >= 0" class="time-field">
             <timepicker ng-model="time" 
-                        <?php if (!!@$this->fieldOptions['disabled']): ?>readonly-input="true"<?php endif; ?> 
+                        readonly-input="$eval(disabledCondition)"
                         ng-change="changeTime(this)" 
                         hour-step="1" minute-step="15" show-meridian="false"></timepicker>
         </div>
@@ -52,7 +56,7 @@
         <!-- Month Year -->
         <div ng-if="['monthyear'].indexOf(fieldType) >= 0"  >
             <div class="btn-group" dropdown>
-                <button type="button" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="disabled">
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="isDPDisabled">
                     {{ monthList[month]}} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" dropdown-toggle role="menu">
@@ -60,7 +64,7 @@
                 </ul>
             </div>
             <div class="btn-group" dropdown>
-                <button type="button" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="disabled">
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="isDPDisabled">
                     {{ year}} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" dropdown-toggle role="menu">

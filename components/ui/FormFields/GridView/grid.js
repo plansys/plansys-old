@@ -648,17 +648,23 @@ app.directive('gridView', function ($timeout, $http) {
                     if (level < 0) {
                         cursor = $el.find("table tbody tr:eq(0)");
                     }
-
                     var isChecked = $(e.target).is(":checked");
+                    
+                    //loop through all rows
                     while (loop) {
                         var row = $scope.datasource.data[++rowIdx];
+                        if (row.$type =='a' && row.$aggr == false) {
+                            continue;
+                        }
+                        
                         if (typeof $scope.checkbox[colName] == "undefined") {
                             $scope.checkbox[colName] = [];
                         }
+                        
                         if (cursor.attr("lv") > level) {
                             if (cursor.hasClass("r")) {
                                 var rowFound = -1;
-                                for (a in $scope.checkbox[colName]) {
+                                for (var a in $scope.checkbox[colName]) {
                                     if ($scope.checkbox[colName][a][$scope.datasource.primaryKey] == row[$scope.datasource.primaryKey]) {
                                         rowFound = a;
                                     }

@@ -110,6 +110,14 @@ EOF;
         $reader = ReaderFactory::create(Type::XLSX);
         $reader->open($file);
         
+        ## get first sheet
+        foreach ($reader->getSheetIterator() as $sheet) {
+            foreach ($sheet->getRowIterator() as $r=>$row) {
+                var_dump($row);
+            }
+        }
+        die();
+        
         $transaction = Yii::app()->db->beginTransaction();
         
         ## get first sheet

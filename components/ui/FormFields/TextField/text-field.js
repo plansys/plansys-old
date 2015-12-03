@@ -201,7 +201,9 @@ app.directive('textField', function ($timeout, $http) {
                                 vr[0] = val;
                             }
                             for (i in vr) {
-                                vr[i] = vr[i].trim();
+                                if (typeof vr[i] === "string") {
+                                    vr[i] = vr[i].trim();
+                                }
                             }
                             $scope.value = vr.join(", ") + ",";
                             $scope.search = val ;

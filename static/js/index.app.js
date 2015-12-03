@@ -176,6 +176,16 @@ app.filter('dateFormat', function (dateFilter) {
         }
     }
 });
+app.filter('more', function() {
+    return function (input, len) {
+        if (input) {
+            if (input.length > len) {
+                return input.substring(0, len).trim() + '...';
+            }
+        }
+        return input;
+    }
+});
 app.filter('elipsisMiddle', function () {
     return function (fullStr, strLen, separator) {
         if (fullStr.length <= strLen)

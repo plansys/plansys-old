@@ -1171,6 +1171,8 @@ class ActiveRecord extends CActiveRecord {
                 case 'CBelongsToRelation':
                     if (!empty($new)) {
                         $relForeignKey = $rel->foreignKey;
+                        if (is_array($relForeignKey)) continue;
+                        
                         if ($this->{$relForeignKey} == $new[$relPK]) {
                             $model = $relClass::model()->findByPk($this->{$relForeignKey});
                             if (is_null($model)) {

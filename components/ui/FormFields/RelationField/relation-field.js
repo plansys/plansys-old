@@ -168,10 +168,6 @@ app.directive('relationField', function ($timeout, $http) {
                     $scope.updateInternal(item.key);
                 };
                 
-                $scope.isRelFieldDisabled = function() {
-                    return $scope.$eval($scope.disabledCondition);
-                }
-                
                 $scope.updateDetail = function(relation, func) {
                     if (!!$scope.value) {
                         $http.get(Yii.app.createUrl('formfield/RelationField.getDetail',{
@@ -451,6 +447,10 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.openedInField = false;
                 $scope.jsParamsInitialized = true;
 
+                $scope.isRelFieldDisabled = function() {
+                    return $scope.$parent.$eval($scope.disabledCondition);
+                }
+                
                 $timeout(function () {
                     angular.forEach($scope.params, function (p, i) {
                         var p = $scope.params[i];
