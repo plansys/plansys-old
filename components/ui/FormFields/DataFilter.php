@@ -76,6 +76,7 @@ class DataFilter extends FormField {
             foreach ($params as $column => $filter) {
 
                 $param = DataFilter::buildSingleParam($paramName, $column, $filter);
+                
                 $sql[] = $param['sql'];
                 if (is_array($param['param'])) {
                     foreach ($param['param'] as $key => $value) {

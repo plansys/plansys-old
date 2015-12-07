@@ -67,7 +67,7 @@ class DataSource extends FormField {
         $params    = array_merge($params, $this->queryParams);
         if (trim($this->sql) == "")
             return [];
-
+            
         $db       = Yii::app()->db;
         $template = DataSource::generateTemplate($this->sql, $params, $this, $paramDefs);
 
@@ -136,7 +136,7 @@ class DataSource extends FormField {
                         if (stripos($postParam, 'php:') === 0) {
                             $postParam = substr($postParam, 4);
                         }
-                        if (!!$postParam) {
+                        if (is_string($postParam) && $postParam != "") {
                             $returnParams[$p] = $field->evaluate($postParam, true, [
                                 'model' => $model
                             ]);
@@ -151,7 +151,7 @@ class DataSource extends FormField {
                 }
             }
         }
-
+        
         ## find all blocks
         preg_match_all("/\{(.*?)\}/", $sql, $blocks);
         foreach ($blocks[1] as $block) {
@@ -177,6 +177,7 @@ class DataSource extends FormField {
 
             ## check if there is another params
             preg_match_all("/\:[\w\d_]+/", $bracket['sql'], $attachedParams);
+
 
             if (count($attachedParams[0]) > 0) {
                 $inParams = 0;
@@ -223,6 +224,7 @@ class DataSource extends FormField {
                 unset($returnParams[$k]);
             }
         }
+        
 
         return [
             'sql' => trim($sql),
@@ -274,7 +276,6 @@ class DataSource extends FormField {
                     'template' => $template,
                     'paramOptions' => $paramOptions
                 ]);
-
                 if (!isset($template['generateTemplate'])) {
                     $sql = str_replace("[{$param}]", $template['sql'], $sql);
                 } else {
@@ -284,7 +285,7 @@ class DataSource extends FormField {
                 if ($template['sql'] != '') {
                     $parsed[$param] = $template['params'];
                 }
-
+        
                 if (isset($template['render'])) {
                     return ['sql' => $sql, 'params' => $parsed, 'render' => $template['render']];
                 }
@@ -681,8 +682,6 @@ class DataSource extends FormField {
             if (is_string($this->params)) {
                 $this->params = [];
             }
-
-
             if ($this->postData == 'No' || $this->relationTo == '' || $this->relationTo == '-- NONE --') {
                 ## without relatedTo
 
@@ -760,8 +759,11 @@ class DataSource extends FormField {
         $criteria     = DataSource::generateCriteria($postedParams, $this->relationCriteria, $this);
 
         if (@$criteria['params']) {
-            $criteria['params'] = array_filter($criteria['params']);
+            $criteria['params'] = array_filter($criteria['params'], function($value) {
+                return ($value !== null && $value !== false && $value !== ''); 
+            });
         }
+        
 
         $criteriaCount = $criteria;
         if ($this->relationTo == 'currentModel') {
