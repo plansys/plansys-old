@@ -298,6 +298,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                     if (typeof $scope.afterQuery == 'function') {
                                         $scope.afterQuery(ds);
                                     }
+                                    
+                                    if (!!filter.options['ng-change']) {
+                                        $scope.$eval(filter.options['ng-change']);
+                                    }
 
                                 });
                             }
@@ -1000,7 +1004,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                     if (f.filterType === 'check') {
                                         if (typeof f.value === 'string') {
                                             f.valueText = f.value;
-                                            f.value = f.value.trim().replace(/[\s,]+/g, ',').split(",");
+                                            f.value = f.value.trim().split(",");
+                                            for (var fv in f.value) {
+                                                f.value[fv] = f.value[fv].trim();
+                                            }
                                             f.checked = f.value;
                                         }
                                         $scope.updateFilter(f, null, false);

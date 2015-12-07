@@ -4,27 +4,9 @@ $scope.contextMenu = [
         label: "New Email",
         click: function (item, e) {
             window.activeItem = item;
-            PopupCenter(Yii.app.createUrl('/dev/email/newEmail'), "Create New Email", '400', '250');
+            PopupCenter(Yii.app.createUrl('/dev/genEmail/newEmail'), "Create New Email", '350', '150');
         }
     },
-    //{
-    //    icon: "fa fa-fw fa-edit",
-    //    label: "Rename Model",
-    //    visible: function (item) {
-    //        return !!item.$parent;
-    //    },
-    //    click: function (item, e) {
-    //        var name = prompt('Please enter new module name:', item.label);
-    //        if (!!name) {
-    //            $http.get(Yii.app.createUrl('/dev/genModel/rename', {})).success(function (status) {
-    //                if (status != "SUCCESS") {
-    //                    alert(status);
-    //                } else {
-    //                }
-    //            });
-    //        }
-    //    }
-    //},
     {
         hr: true,
         visible: function (item) {

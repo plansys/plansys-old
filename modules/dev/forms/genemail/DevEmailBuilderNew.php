@@ -2,6 +2,8 @@
 
 class DevEmailBuilderNew extends Form {
 
+    public $module;
+
     public function getForm() {
         return array (
             'title' => 'Email Builder',
@@ -22,22 +24,30 @@ class DevEmailBuilderNew extends Form {
     public function getFields() {
         return array (
             array (
-                'linkBar' => array (),
-                'title' => 'New Email Builder',
+                'linkBar' => array (
+                    array (
+                        'label' => 'Save',
+                        'buttonType' => 'success',
+                        'buttonSize' => 'btn-sm',
+                        'buttonPosition' => 'right',
+                        'type' => 'SubmitButton',
+                    ),
+                ),
+                'title' => 'New Email Template',
                 'showSectionTab' => 'No',
                 'type' => 'ActionBar',
             ),
             array (
-                'label' => 'Email Template Name',
+                'label' => 'Template Name',
                 'name' => 'templateName',
+                'options' => array (
+                    'style' => 'margin-top:15px',
+                ),
                 'type' => 'TextField',
             ),
             array (
-                'label' => 'Save',
-                'buttonType' => 'success',
-                'buttonSize' => 'btn-sm',
-                'buttonPosition' => 'right',
-                'type' => 'SubmitButton',
+                'name' => 'module',
+                'type' => 'HiddenField',
             ),
         );
     }

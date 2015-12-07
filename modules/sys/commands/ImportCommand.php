@@ -5,6 +5,10 @@ use Box\Spout\Common\Type;
 class ImportCommand extends Service {
     const MAX_ERRORS = 20;
     
+    public function finished($msg) {
+        $this->setView('finished', $msg. "\n");
+        echo $msg;
+    }
     public function failed($msg) {
         $this->setView('failed', $msg. "\n");
         echo $msg;
@@ -20,7 +24,7 @@ class ImportCommand extends Service {
             $html = <<<EOF
 <table class='table table-condensed table-bordered' style="margin:0px;">
         <tr>
-            <th>Row #</th>
+            <th>Row Num.</th>
             <th>Error(s)</th>
         </tr>
         [data]
@@ -31,16 +35,17 @@ EOF;
             $toomany = false;
             foreach ($errors as $r=>$e) {
                 $msg = json_encode($e, JSON_PRETTY_PRINT);
-                $err = "<table class='table table-condensed table-bordered' style='margin:0px;'>
-                    <tr>";
+                $err = "<table class='table table-condensed table-bordered' style='margin:0px;'>";
                 foreach ($e as $k=>$v) {
-                    $err = $err . "<td>" . $k ."</td>";
-                    $err = $err . "<td>" . implode("<br/>",$v) ."</td>";
+                    $err .= "<tr>";
+                    $err .=  "<td>" . $k ."</td>";
+                    $err .= "<td>" . implode("<br/>",$v) ."</td>";
+                    $err .= "</tr>";
                 }
-                $err = $err . "</tr></table>";
+                $err = $err . "</table>";
                 $data[] = "
         <tr>
-            <th class='text-center' style='vertical-align:middle'><div class='label label-danger'>{$r}</div></th>
+            <th class='text-center' style='vertical-align:middle'>{$r}</th>
             <th>{$err}</th>
         </tr>
 ";              
@@ -109,24 +114,15 @@ EOF;
 
         $reader = ReaderFactory::create(Type::XLSX);
         $reader->open($file);
-        
-        ## get first sheet
-        foreach ($reader->getSheetIterator() as $sheet) {
-            foreach ($sheet->getRowIterator() as $r=>$row) {
-                var_dump($row);
-            }
-        }
-        die();
-        
         $transaction = Yii::app()->db->beginTransaction();
         
         ## get first sheet
+        $import = new Import($this->params['model']);
         foreach ($reader->getSheetIterator() as $sheet) {
             
             ## loop each row in first sheet
             $rowCount = count($sheet->getRowIterator());
             foreach ($sheet->getRowIterator() as $r=>$row) {
-                
                 ## first row is always column name, assign it then skip it
                 if ($r == 1) { 
                     foreach ($row as $k=>$v) {
@@ -135,61 +131,47 @@ EOF;
                     continue;
                 }
                 
-                ## assign value to model attribute
-                $model = new $modelClass;
-                foreach ($modelColumns as $c=>$v) {
-                    $model->$c = $row[$excelColumns[$c]];
-                }
-                
-                ## before lookup
-                foreach ($modelColumns as $c=>$v) {
-                    if (is_array($config['columns'][$c]) && 
-                        $config['columns'][$c]['type'] == 'function' && 
-                        is_string($config['columns'][$c]['value'])) {
-                            
-                        $model->$c = Helper::evaluate($config['columns'][$c]['value'], [
-                            'row' => $model->attributes
-                        ]);
-                    } 
-                }
-                
-                ## process lookup
-                
-                ## after lookup
-                foreach ($modelColumns as $c=>$v) {
-                    if (is_array($config['columns'][$c]) && 
-                        $config['columns'][$c]['type'] == 'function' && 
-                        is_string($config['columns'][$c]['value'])) {
-                            
-                        $model->$c = Helper::evaluate($config['columns'][$c]['value'], [
-                            'row' => $model->attributes
-                        ]);
+                ## do import 
+                $rowImport = [];
+                foreach ($import->columns as $c=>$v) {
+                    $col = is_string($v) ? ['type' => $v] : $v;
+                    if ($col['type'] == 'function') {
+                        continue;
                     }
+                    $rowImport[$c] = $row[$excelColumns[$c]];
+                }
+                try {
+                    $res = $import->importRow($rowImport);
+                } catch (Exception $e) {
+                    $res = [['error' => $e->getMessage()]];
                 }
                 
-                ## save model
-                $model->save();
-                if (count($model->errors) > 0) {
+                ## mark errors
+                if ($res !== true) {
                     if (count($errors) <= ImportCommand::MAX_ERRORS) {
-                        $errors[$r] = $model->errors;
+                        $errors[$r - 1] = $res;
                     } else {
-                        $this->failed('Too Many Errors...');
+                        $this->failed('Import Failed');
                         break;
                     }
                 }
                 
-                
-                $this->msg('Importing ' . $r . ' Row...<br/><br/>' . $this->formatErrors($errors));
-                
+                $this->msg('Importing ' . ($r - 1) . ' Row...<br/><br/>' . $this->formatErrors($errors));
             }
             break;
         }
     
         if (empty($errors)) {
-            $transaction->commit();
+            $this->msg('<a style="margin-top:10px;" href="'.$import->saveExcel().'" class="btn btn-success btn-sm">
+                            <i class="fa fa-download"></i> Download Excel
+                        </a>');
+            $transaction->commit(); 
+            $this->finished("Done");
         } else {
+            $this->failed('Import Failed');
             $transaction->rollback();
         }
+        
         
         $reader->close();
     }

@@ -579,7 +579,10 @@ app.directive('gridView', function ($timeout, $http) {
                 $scope.clearCheckbox = function() {
                     $timeout(function() {
                         $scope.checkbox = {};
-                        $scope.lastCheckbox = null;
+                        $scope.lastCheckbox = null; 
+                        $timeout(function() {
+                            $el.find(".cb-chk:checked,.cb-th-chk:checked").prop('checked',false);
+                        });
                     });
                 }
                 $scope.checkboxValues = function (colName, column) {

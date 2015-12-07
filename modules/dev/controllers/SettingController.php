@@ -24,4 +24,17 @@ class SettingController extends Controller {
         
         $this->renderForm('DevSettingDatabase', $model);
     }
+    
+    public function actionEmail() {
+        $model = new DevSettingEmail;
+        
+        if (isset($_POST['DevSettingEmail'])) {
+            $model->attributes = $_POST['DevSettingEmail'];
+            $model->save();
+            $this->flash('Email Setting Updated!');
+        }
+        
+        $this->renderForm('DevSettingEmail', $model);
+        
+    }
 }

@@ -1,7 +1,80 @@
 <?php
+
+use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Common\Type;
 class Export extends CComponent {
-    public static function toExcel($model, $config = null) {
+    
+    public static function getSampleText($c) {
+        switch ($c->dbType) {
+            case "date":
+                return '2016-10-23';
+                break;
+            case "datetime":
+                return '2016-10-23 14:54:43';
+                break;
+            case "time":
+                return '14:54:32';
+                break;
+            default:
+                return  'text';
+            default:
+                if ($c->type == "integer") {
+                    return '123';
+                } else {
+                    return 'text';
+                }
+        }
+        return '';
+    }
+    
+    public static function downloadSample($model, $config = null) {
+        $import = new Import($model, $config);
+        $data = $import->model->find();
         
+        $header = [];
+        $sample = [];
+        $modelCols= $import->model->tableSchema->columns;
+        foreach ($import->columns as $key=>$col) {
+            $col = is_string($col) ? ['type' => $col] : $col;
+            switch ($col['type']) {
+                case "pk":
+                case "default":
+                    $header[] = $key;
+                    if (isset($col['sample'])) {
+                            $sample[] = $col['sample'];
+                    } else {
+                        if (isset($modelCols[$key])) {
+                                if ($col['type'] == 'pk') {
+                                    $sample[] = '';
+                                } else {
+                                    if (isset($data)) {
+                                        $sample[] = $data->{$key};
+                                    } else {
+                                        $sample[] = Export::getSampleText($modelCols[$key]);
+                                    }
+                                }
+                        } else {
+                            $sample[] = "text";
+                        }
+                    }
+                    break;
+                case "lookup":
+                    if (@$col['show'] !== false) {
+                        $header[] = $key;
+                        if (isset($col['sample'])) {
+                            $sample[] = $col['sample'];
+                        } else {
+                            $sample[] = 'text';
+                        }
+                    }
+                    break;
+            }
+        }
+        
+        $writer = WriterFactory::create(Type::XLSX);
+        $writer->openToBrowser("import-". Helper::camelToSnake($model) . '.xlsx'); // stream data directly to the browser
+        $writer->addRows([$header, $sample]); // add multiple rows at a time
+        $writer->close();
     }
     
     public static function download($fileNameResource, $extResource,  $fileNameResult, $data, $mode = []) {

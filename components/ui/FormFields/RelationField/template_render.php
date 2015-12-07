@@ -27,6 +27,7 @@
         <data name="rel_model_class" class="hide"><?= $this->modelClass ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
         <data name="params" class="hide"><?= json_encode($this->params) ?></data>
+        <data name="id_field" class="hide"><?= $this->idField ?></data>
         <data name="is_disabled" class="hide"><?php
             if (isset($this->fieldOptions['disabled'])) {
                 echo $this->fieldOptions['disabled'];

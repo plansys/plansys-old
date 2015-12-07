@@ -377,7 +377,7 @@ EOF;
                 return <<<EOL
 <th {$attr}><div class="th">
     <label><input type="checkbox"
-ng-click="checkboxAll('{$col['name']}','{$idx}', \$event)" /></label>
+ng-click="checkboxAll('{$col['name']}','{$idx}', \$event)" class="cb-th-{$col['name']}" /></label>
 </div></th>
 EOL;
                 break;

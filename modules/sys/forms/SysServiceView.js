@@ -15,6 +15,7 @@ $scope.poolCount = function() {
         location.href = Yii.app.createUrl('/sys/service/instanceNotFound', {full: $scope.params.full || 0});
     }
 }
+
 $scope.pool = function() {
     $timeout(function() {
         $http.get(Yii.app.createUrl('/sys/service/pool',{
@@ -23,8 +24,8 @@ $scope.pool = function() {
             })
         ).success(function(data) {
             $scope.params.svc = data.svc;
-            if ($scope.params.svc == "finished" || 
-                (!!$scope.params.svc && !!$scope.params.svc.view && !!$scope.params.svc.view.failed)) {
+            if (!!$scope.params.svc && !!$scope.params.svc.view && 
+                (!!$scope.params.svc.view.failed || !!$scope.params.svc.view.finished)) {
                 return true;
             } 
             if (!!$scope.params.svc && !!$scope.params.svc.view && !!$scope.params.svc.view.redirect) {

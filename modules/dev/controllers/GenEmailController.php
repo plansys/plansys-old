@@ -2,19 +2,17 @@
 	/**
 	* 
 	*/
-	class EmailController extends Controller
+	class GenEmailController extends Controller
 	{
+	    
+	    public function actionTest() {
+	        Email::send();
+	    }
 
 		public function actionIndex($value='')
         {	
-        	//var_dump($_POST);
-        	//die();
-
         	if( isset($_POST['DevEmailBuilderIndex']) ){
 				 $template = Yii::getPathOfAlias(($path[0] == 'plansys' ? 'application' : 'app') . ".views.layouts.email." . $path[1]) . ".php";
-
-
-				//$this->renderForm($template);        		
         	}
 
         	if(  isset($_GET['active'])){
@@ -32,12 +30,8 @@
 		        ]);
 
 		     }else{
-		         //echo "haha";
 		     	$this->renderForm("genemail.DevEmailBuilderIndex");
 		     }
-
-			//$this->renderForm("emailbuilder.DevNewEmailBuilder");
-        
         }
 	
 
@@ -69,19 +63,27 @@
 		
 		if(isset($_POST['DevEmailBuilderNew'])){
 			$templateName = $_POST['DevEmailBuilderNew']['templateName'];
-			$href = Yii::app()->createUrl('/dev/email/index&active=plansys.'.$templateName);
+			$module = $_POST['DevEmailBuilderNew']['module'];
+			$href = Yii::app()->createUrl('/dev/email/index&active='.$module.'.'.$templateName);
 
 			//create file
 			$html = "<html>\n&emsp<head></head>&emsp\n<body></body>\n</html>";
-			$path = Yii::getPathOfAlias('application.views.layouts.email.'.$templateName).'.php';
+			$dir = Yii::getPathOfAlias($module . '.views.layouts.email');
+			if (!is_dir($dir)) {
+			    mkdir($dir, 0777, true);
+			}
+			
+			
+			$path = $dir . DIRECTORY_SEPARATOR .$templateName .'.php';
 			$file = fopen($path, 'w');
 			fwrite($file,$default_tag);
 			fclose($file);
-			//file_put_contents($path, "<html><head></head><body></body></html>");
 		}
         
-        $this->renderForm("genemail.DevEmailBuilderNew",  ['href' => $href,
-            'template' => $templateName], [ 
+        $this->renderForm("genemail.DevEmailBuilderNew",  [
+            'href' => $href,
+            'template' => $templateName
+            ], [ 
             'layout' => '//layouts/blank'
         ]);
     

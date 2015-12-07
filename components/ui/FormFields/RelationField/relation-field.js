@@ -172,7 +172,8 @@ app.directive('relationField', function ($timeout, $http) {
                     if (!!$scope.value) {
                         $http.get(Yii.app.createUrl('formfield/RelationField.getDetail',{
                             'm': $scope.relModelClass,
-                            'id': $scope.value
+                            'id': $scope.value,
+                            'fd': $scope.idField
                         })).success(function (data) {
                             if (!!data) { 
                                 if (angular.isObject($scope.model[relation])) {
@@ -444,6 +445,7 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.isOpen = false;
                 $scope.disabledCondition = $el.find("data[name=is_disabled]").text().trim();
                 $scope.identifier = $el.find("data[name=identifier]").text().trim();
+                $scope.idField = $el.find("data[name=id_field]").text().trim();
                 $scope.openedInField = false;
                 $scope.jsParamsInitialized = true;
 

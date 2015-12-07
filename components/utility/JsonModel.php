@@ -4,7 +4,6 @@ class JsonModel{
     public $path;
     public $default = [];
     
-    
     public function setPath($path) {
         $this->path = $path;
     }

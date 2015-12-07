@@ -752,14 +752,14 @@ class RelationField extends FormField {
         echo json_encode($this->query(@$s, $this->params));
     }
     
-    public function actionGetDetail($m, $id) {
+    public function actionGetDetail($m, $id, $fd) {
         if (strpos($m, ".") > 0) {
             Yii::import($m);
             $m = Helper::explodeLast(".", $m);
         }
         
         if (class_exists($m)) {
-            $data = $m::model()->findByPk($id);
+            $data = $m::model()->findByAttributes([$fd=>$id]);
             $data->loadAllRelations();
             echo json_encode($data->attributes);
         }

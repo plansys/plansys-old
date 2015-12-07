@@ -10,24 +10,6 @@ $scope.contextMenu = [
             PopupCenter(Yii.app.createUrl('/dev/genCtrl/newCtrl'), "Create New Controller", '400', '500');
         }
     },
-    //{
-    //    icon: "fa fa-fw fa-edit",
-    //    label: "Rename Ctrl",
-    //    visible: function (item) {
-    //        return !!item.$parent;
-    //    },
-    //    click: function (item, e) {
-    //        var name = prompt('Please enter new module name:', item.label);
-    //        if (!!name) {
-    //            $http.get(Yii.app.createUrl('/dev/genCtrl/rename', {})).success(function (status) {
-    //                if (status != "SUCCESS") {
-    //                    alert(status);
-    //                } else {
-    //                }
-    //            });
-    //        }
-    //    }
-    //},
     {
         icon: "fa fa-fw fa-sign-in",
         label: "Open New Tab",

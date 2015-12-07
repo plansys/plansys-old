@@ -1326,7 +1326,7 @@ class ActiveRecord extends CActiveRecord {
         if ($this->isNewRecord) {
             $this->{$pk} = $this->dbConnection->getLastInsertID(); ## this is hack
             ## UPDATE AUDIT TRAIL 'CREATE' ID
-            if (!!Yii::app()->user && !Yii::app()->user->isGuest) {
+            if (isset(Yii::app()->user) && !Yii::app()->user->isGuest) {
                 $a = $this->dbConnection->createCommand("
                 update p_audit_trail set model_id = :model_id
                 WHERE user_id = :user_id and

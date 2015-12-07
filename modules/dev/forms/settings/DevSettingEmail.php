@@ -1,23 +1,21 @@
 <?php
 
-class DevSettingDatabase extends Form {
-
-    public $driver = 'mysql';
-    public $host = 'localhost';
-    public $port = '3306';
-    public $username = 'root';
+class DevSettingEmail extends Form {
+    public $from = '';
+    public $transport = 'smtp';
+    public $host = '';
+    public $port = '25';
+    public $username = '';
     public $password = '';
-    public $dbname = '';
-    
     
     public function __construct() {
         parent::__construct();
         
-        $this->attributes = Setting::get('db');
+        $this->attributes = Setting::get('email');
     }
     
     public function save() {
-        Setting::set('db', $this->attributes);
+        Setting::set('email', $this->attributes);
         return true;
     }
     
@@ -30,34 +28,23 @@ class DevSettingDatabase extends Form {
                         'buttonType' => 'success',
                         'icon' => 'check-square',
                         'options' => array (
-                            'confirm' => 'Are you sure want to change database setting ?',
                             'ng-click' => 'form.submit(this);',
                         ),
                         'type' => 'LinkButton',
                     ),
                 ),
-                'title' => '<i class=\\"fa fa-database\\"></i> {{form.title}}',
+                'title' => '<i class=\\"fa fa-envelope\\"></i> {{form.title}}',
                 'showSectionTab' => 'No',
                 'type' => 'ActionBar',
-            ),
-            array (
-                'type' => 'Text',
-                'value' => '<div class=\"alert alert-warning text-center\">
-    <i class=\"fa fa-warning\"></i> <b>WARNING:</b> Database errors will cause your application to stop working
-</div>',
-            ),
-            array (
-                'type' => 'Text',
-                'value' => '<hr style=\\"margin:0px -15px;\\">',
             ),
             array (
                 'showBorder' => 'Yes',
                 'column1' => array (
                     array (
-                        'label' => 'Driver',
-                        'name' => 'driver',
+                        'label' => 'Transport',
+                        'name' => 'transport',
                         'list' => array (
-                            'mysql' => 'MySQL',
+                            'smtp' => 'SMTP',
                         ),
                         'type' => 'DropDownList',
                     ),
@@ -69,7 +56,6 @@ class DevSettingDatabase extends Form {
                     array (
                         'label' => 'Port',
                         'name' => 'port',
-                        'fieldWidth' => '3',
                         'type' => 'TextField',
                     ),
                     array (
@@ -90,8 +76,8 @@ class DevSettingDatabase extends Form {
                         'type' => 'TextField',
                     ),
                     array (
-                        'label' => 'Database',
-                        'name' => 'dbname',
+                        'label' => 'From Address',
+                        'name' => 'from',
                         'type' => 'TextField',
                     ),
                     array (
@@ -103,16 +89,12 @@ class DevSettingDatabase extends Form {
                 'w2' => '50%',
                 'type' => 'ColumnField',
             ),
-            array (
-                'type' => 'Text',
-                'value' => '<hr style=\\"margin:0px -15px;\\">',
-            ),
         );
     }
 
     public function getForm() {
         return array (
-            'title' => 'Database Setting',
+            'title' => 'Email Setting',
             'layout' => array (
                 'name' => '2-cols',
                 'data' => array (

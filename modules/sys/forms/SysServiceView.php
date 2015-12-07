@@ -26,7 +26,7 @@ class SysServiceView extends Form {
                 'value' => '<div class=\"panel panel-default\"
     style=\"width:500px;margin:40px auto;\">
     <div class=\"panel-body\">
-       <div ng-if=\"!!params.svc && params.svc == \'finished\'\" style=\"padding:30px 20px;color:green;text-align:center;\">
+       <div ng-if=\"!!params.svc && !!params.svc.view.finished\" style=\"padding:30px 20px;color:green;text-align:center;\">
             <i 
             class=\"fa fa-check-circle fa-4x\">
             </i>
@@ -37,6 +37,7 @@ class SysServiceView extends Form {
             \">
                 Process Finished
             </h4>
+            <div ng-bind-html=\"params.svc.view.body\"></div>
         </div>
         <div ng-if=\"!!params.svc && !!params.svc.view.failed\" style=\"padding:30px 20px;text-align:center;color:rgba(233, 79, 47,1)\">
             <i 
@@ -51,7 +52,7 @@ class SysServiceView extends Form {
             </h4>
             <div ng-bind-html=\"params.svc.view.body\"></div>
         </div>
-       <div ng-if=\"!!params.svc && params.svc != \'finished\' && !params.svc.view.failed\">
+       <div ng-if=\"!!params.svc  && !params.svc.view.failed  && !params.svc.view.finished\">
             <div ng-bind-html=\"params.svc.view.title\"></div>
             <div class=\"progress\" ng-if=\"params.svc.view.progress >= 1\" style=\"margin-top: 10px;\">
              <div class=\"progress-bar progress-bar-success\"
