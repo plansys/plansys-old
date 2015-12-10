@@ -23,10 +23,11 @@
         <data name="show_other" class="hide"><?= $this->showOther ?></data>
         <data name="other_label" class="hide"><?= $this->otherLabel ?></data>
         <data name="model_class" class="hide"><?= Helper::getAlias($model) ?></data>
-        <data name="model_field" class="hide"><?= json_encode($model->attributes, JSON_PARTIAL_OUTPUT_ON_ERROR) ?></data>
+        <data name="model_field" class="hide"><?= htmlentities(json_encode($model->attributes, JSON_PARTIAL_OUTPUT_ON_ERROR)) ?></data>
         <data name="rel_model_class" class="hide"><?= $this->modelClass ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
         <data name="params" class="hide"><?= json_encode($this->params) ?></data>
+        <data name="show_unselect" class="hide"><?= $this->showUnselect; ?></data>
         <data name="id_field" class="hide"><?= $this->idField ?></data>
         <data name="is_disabled" class="hide"><?php
             if (isset($this->fieldOptions['disabled'])) {
@@ -43,15 +44,21 @@
              dropdown on-toggle="toggled(open)">
 
             <!-- default button -->
-            <button
-                ng-if="!showOther || (showOther && itemExist())" type="button"
-                <?= $this->expandAttributes($this->fieldOptions) ?>
-                style="{{ isRelFieldDisabled() ? 'opacity:1;background:#fff;border:1px solid #ececeb;' : ''}}">
-                <i ng-show='loading' class="fa fa-spin fa-refresh"
-                   style="position:absolute;right:25px;top:8px;"></i>
-                <span style="{{ isRelFieldDisabled() ? 'display:none' : '' }}" class="caret pull-right"></span>
-                <span class="dropdown-text" ng-bind-html="text"></span>
-            </button>
+            <div style="{{showUnselect && !!value? 'padding-right:30px' : ''}}">
+                <div ng-if="showUnselect && !!value" style="float: right;margin-right:-30px;margin-bottom:-30px;width:33px;border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;" class="btn btn-default btn-sm" ng-click="unselect()">
+                    <i class="fa fa-times"></i>
+                </div>
+                <button
+                    ng-if="!showOther || (showOther && itemExist())" type="button"
+                    <?= $this->expandAttributes($this->fieldOptions) ?>
+                    style="{{ isRelFieldDisabled() ? 'opacity:1;background:#fff;border:1px solid #ececeb;' : ''}}">
+                    <i ng-show='loading' class="fa fa-spin fa-refresh"
+                       style="position:absolute;right:25px;top:8px;"></i>
+                    <span style="{{ isRelFieldDisabled() ? 'display:none' : '' }}" class="caret pull-right"></span>
+                    <span class="dropdown-text" ng-bind-html="text"></span>
+                </button>
+            </div>
 
             <!-- dropdown item -->
             <div class="dropdown-menu open <?= $this->menuPos; ?>" ng-show="!isRelFieldDisabled()">

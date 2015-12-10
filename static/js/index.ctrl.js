@@ -46,6 +46,7 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
         }, options);
         return ret;
     }
+    
     $timeout(function() {
         if ($scope.aceEditor) {
             $scope.aceEditor.focus();

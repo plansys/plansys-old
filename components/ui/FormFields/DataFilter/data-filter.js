@@ -299,7 +299,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                         $scope.afterQuery(ds);
                                     }
                                     
-                                    if (!!filter.options['ng-change']) {
+                                    if (!!filter.options && !!filter.options['ng-change']) {
                                         $scope.$eval(filter.options['ng-change']);
                                     }
 

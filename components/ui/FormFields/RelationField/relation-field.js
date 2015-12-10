@@ -189,6 +189,11 @@ app.directive('relationField', function ($timeout, $http) {
                                 }
                             }
                         });
+                    } else {
+                        $scope.model[relation] = null;
+                        if (typeof func == "function") {
+                            func(null);
+                        }
                     }
                 }
     
@@ -434,6 +439,7 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.emptyLabel = $el.find("data[name=empty_label]").html().trim();
                 $scope.searchable = true;
                 $scope.showOther = $el.find("data[name=show_other]").text().trim() == "Yes" ? true : false;
+                $scope.showUnselect = $el.find("data[name=show_unselect]").text().trim() == "Yes" ? true : false;
                 $scope.otherLabel = $el.find("data[name=other_label]").html();
                 $scope.modelClass = $el.find("data[name=model_class]:eq(0)").html();
                 $scope.relModelClass = $el.find("data[name=rel_model_class]").html();

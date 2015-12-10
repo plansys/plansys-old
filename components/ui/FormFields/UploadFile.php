@@ -243,7 +243,7 @@ class UploadFile extends FormField {
 
     public function actionUpload($path = null) {
         if (!isset($_FILES['file'])) {
-            echo json_encode(["success" => "No"]);
+            echo json_encode(["success" => "No", "files" => json_encode($_FILES)]);
             die();
         }
         $file = $_FILES["file"];

@@ -17,7 +17,7 @@ class DevEmailBuilderNew extends Form {
                     ),
                 ),
             ),
-            'inlineJS' => 'popUpEmail.js',
+            'inlineJS' => 'DevEmailBuilderNew.js',
         );
     }
 
@@ -42,6 +42,7 @@ class DevEmailBuilderNew extends Form {
                 'name' => 'templateName',
                 'options' => array (
                     'style' => 'margin-top:15px',
+                    'ng-change' => 'model.templateName = formatClass(model.templateName)',
                 ),
                 'type' => 'TextField',
             ),

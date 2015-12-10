@@ -80,11 +80,13 @@ class DateTimePicker extends FormField
                     'ng-change' => 'save();',
                 ),
                 'listExpr' => '[\'Yes\',\'No\']',
+                'labelWidth' => '6',
+                'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),
             array (
-                'value' => '<hr/>',
                 'type' => 'Text',
+                'value' => '<hr/>',
             ),
             array (
                 'label' => 'Options',

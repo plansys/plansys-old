@@ -4,7 +4,7 @@ class DevEmailBuilderIndex extends Form {
 
     public function getForm() {
         return array (
-            'title' => 'Daftar Email Builder ',
+            'title' => 'Email Builder',
             'layout' => array (
                 'name' => '2-cols',
                 'data' => array (
@@ -25,26 +25,19 @@ class DevEmailBuilderIndex extends Form {
                     ),
                 ),
             ),
-            'inlineJS' => 'indexEmail.js',
+            'inlineJS' => 'DevEmailBuilderIndex.js',
         );
     }
 
     public function getFields() {
         return array (
             array (
-                'label' => 'Preview',
-                'buttonType' => 'success',
-                'icon' => 'save',
-                'position' => 'right',
-                'options' => array (
-                    'href' => 'url:/dev/email/preview&template={params.template}',
-                    'target' => '_blank',
-                    'ng-click' => 'emailvaluePopUp.open()',
-                ),
-                'type' => 'LinkButton',
-            ),
-            array (
                 'type' => 'Text',
+                'value' => '<a style=\"font-size:11px;font-weight:bold;margin:4px -11px 0px 0px;\" ng-url=\'/dev/genEmail/preview&template={{params.active}}\' ng-if=\'params.active\'
+    target=\"_blank\"
+   class=\"btn btn-xs btn-success pull-right\">
+    <i class=\"fa fa-play\"></i> Preview 
+</a>',
             ),
             array (
                 'type' => 'Text',
@@ -64,14 +57,14 @@ class DevEmailBuilderIndex extends Form {
 <tab active=\"true\">
     <tab-heading>
         <i class=\"fa fa-cube\"></i>
-        {{params.name}} Model &bull; {{status}}
+        {{params.name}} &bull; {{status}}
     </tab-heading>
     <div style=\'padding:0px 0px;\'>
         ',
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div class=\"text-editor-builder\">
+                'value' => ' <div class=\"text-editor-builder\">
   <div class=\"text-editor\" ui-ace=\"aceConfig({
   mode: \'php\'
   })\" 
@@ -79,7 +72,7 @@ style=\"position:absolute;top:28px;font-size:14px;left:0px;right:0px;bottom:0px\
 ng-model=\"params.content\">
     </div>
 </div>
-',
+ ',
             ),
             array (
                 'type' => 'Text',
@@ -89,9 +82,8 @@ ng-model=\"params.content\">
             ),
             array (
                 'type' => 'PopupWindow',
-                'name' => 'emailvaluePopUp',
-                'mode' => 'url',
-                'url' => '/dev/email/emailvalue?apa=ls&auhsj&',
+                'name' => 'edPopup',
+                'parentForm' => 'application.modules.dev.forms.genemail.DevEmailBuilderIndex',
             ),
         );
     }

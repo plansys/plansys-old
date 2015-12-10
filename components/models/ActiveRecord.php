@@ -902,6 +902,19 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function setAttributes($values, $safeOnly = false, $withRelation = true) {
+        $cols = $this->tableSchema->columns;
+        foreach ($values as $k=>$v) {
+            if (isset($cols[$k])) {
+                if ($cols[$k]->dbType == 'datetime' || $cols[$k]->dbType == 'date' || $cols[$k]->dbType == 'time') {
+                    if ($values[$k] == '') {
+                        $values[$k] = null;
+                    } else {
+                        $values[$k] = $values[$k];
+                    }
+                }
+            }
+        }
+        
         parent::setAttributes($values, $safeOnly);
         $this->initRelation();
         foreach ($this->__relations as $k => $r) { 

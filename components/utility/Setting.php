@@ -35,6 +35,33 @@ class Setting {
         'ldap' => [
             'enable' => false
         ],
+        "services"=> [
+            "list"=> [
+                "SendEmail" => [
+                    "name"=> "SendEmail",
+                    "commandPath"=> "application.commands",
+                    "command"=> "EmailCommand",
+                    "action"=> "actionSend",
+                    "schedule"=> "manual",
+                    "period"=> "",
+                    "instance"=> "single",
+                    "singleInstanceMode"=> "wait"
+                ],
+                "ImportData"=> [
+                    "name"=> "ImportData",
+                    "commandPath"=> "application.commands",
+                    "command"=> "ImportCommand",
+                    "action"=> "actionIndex",
+                    "schedule"=> "manual",
+                    "period"=> "",
+                    "instance"=> "parallel",
+                    "singleInstanceMode"=> "wait",
+                ]
+            ],
+            "daemon"=> [
+                "isRunning"=> false
+            ]
+        ]
     ];
     public static  $mode        = null;
     public static  $entryScript = "";

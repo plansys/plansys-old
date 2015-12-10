@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4d9551f1a9c20bcaa3bedd994d5a709c",
-    "content-hash": "4e9dee7be2beca7a50876c5c65cc83ba",
+    "hash": "e0cb625ffb389e0a84c3459f963e89eb",
+    "content-hash": "0eb006113fa6b978c6e9836806460a3c",
     "packages": [
         {
             "name": "box/spout",
@@ -17,7 +17,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/box/spout/zipball/05a9a1b60a7016297f1ee31003a3c6df47e9f7dd",
+                "url": "https://api.github.com/repos/box/spout/zipball/22daea5f9ad755c5d5e6270c588bfc843900a7e4",
                 "reference": "05a9a1b60a7016297f1ee31003a3c6df47e9f7dd",
                 "shasum": ""
             },
@@ -71,6 +71,53 @@
                 "xlsx"
             ],
             "time": "2015-11-13 18:36:40"
+        },
+        {
+            "name": "inlinestyle/inlinestyle",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/christiaan/InlineStyle.git",
+                "reference": "c0af5330ba346c245c4e2b167e3c9c45f4945113"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/christiaan/InlineStyle/zipball/c0af5330ba346c245c4e2b167e3c9c45f4945113",
+                "reference": "c0af5330ba346c245c4e2b167e3c9c45f4945113",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "symfony/css-selector": "~2.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "InlineStyle": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christiaan Baartse"
+                },
+                {
+                    "name": "Michael Tibben"
+                }
+            ],
+            "description": "Apply CSS stylesheets directly as inline styles to a HTML document",
+            "keywords": [
+                "css",
+                "email",
+                "inline"
+            ],
+            "time": "2015-09-25 09:15:38"
         },
         {
             "name": "leeoniya/dump-r",
@@ -230,13 +277,67 @@
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
             "time": "2015-11-01 10:15:28"
+        },
+        {
+            "name": "symfony/css-selector",
+            "version": "v2.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/css-selector.git",
+                "reference": "b600fec37c0efca08046d481d79e7eabc07108ff"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/css-selector/zipball/b600fec37c0efca08046d481d79e7eabc07108ff",
+                "reference": "b600fec37c0efca08046d481d79e7eabc07108ff",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.8-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\CssSelector\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jean-François Simon",
+                    "email": "jeanfrancois.simon@sensiolabs.com"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony CssSelector Component",
+            "homepage": "https://symfony.com",
+            "time": "2015-10-30 20:15:42"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "box/spout": 20
+        "box/spout": 20,
+        "inlinestyle/inlinestyle": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

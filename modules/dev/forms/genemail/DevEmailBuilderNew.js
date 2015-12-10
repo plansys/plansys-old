@@ -10,3 +10,7 @@ if (!!window.opener.activeItem) {
     
     $scope.model.module = window.opener.activeItem.type;
 }
+
+$scope.formatClass = function(str) {
+    return ucfirst(str.replace(/\W/g, ''));
+}

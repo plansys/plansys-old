@@ -53,6 +53,7 @@ class RelationField extends FormField {
     public $searchable = 'No';
     /** @var string $showOther */
     public $showOther = 'No';
+    public $showUnselect = 'No';
     /** @var string $otherLabel */
     public $otherLabel = 'Lainnya';
     public $modelClass = '';
@@ -252,6 +253,17 @@ class RelationField extends FormField {
                     'ng-change' => 'save();',
                 ),
                 'listExpr' => '[\'\'=>\'Left\',\'pull-right\'=>\'Right\']',
+                'fieldWidth' => '4',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Show Unselect',
+                'name' => 'showUnselect',
+                'options' => array (
+                    'ng-model' => 'active.showUnselect',
+                    'ng-change' => 'save();',
+                ),
+                'listExpr' => '[\'No\', \'Yes\']',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
             ),

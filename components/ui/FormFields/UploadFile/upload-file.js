@@ -66,9 +66,11 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     ctrl.$render = function () {
                         if (typeof ctrl.$viewValue != "undefined") {
                             if (ctrl.$viewValue != null && ctrl.$viewValue != '') {
+                               
                                 $scope.value = ctrl.$viewValue;
                                 $scope.file = {
-                                    name: $scope.value
+                                    name: $scope.formatName($scope.value),
+                                    downloadPath: btoa($scope.value)
                                 };
                                 $scope.checkFile();
                             }
@@ -107,7 +109,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                             if ($.inArray(ext, type) > -1) {
                                 $scope.upload(file);
                             } else {
-                                $scope.errors.push("Tipe file tidak diijinkan, File yang diijinkan adalah " + $scope.fileType);
+                                $scope.errors[$scope.name] = ["Tipe file tidak diijinkan, File yang diijinkan adalah " + $scope.fileType];
                             }
                         }
                     }
@@ -152,13 +154,12 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                             }
                             ctrl.$setViewValue(data.path);
                         } else {
-                            alert("Error Uploading File. \n");
+                            alert("Error Uploading File. File size too big!. \n");
                         }
 
                         $scope.loading = false;
                         $scope.progress = -1;
                         
-
                         var index = $scope.$parent.uploading.indexOf($scope.name);
                         if (index > -1) {
                             $scope.$parent.uploading.splice(index, 1);
@@ -172,7 +173,6 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                             $scope.$parent.uploading.splice(index, 1);
                         }
                         alert("Upload Failed");
-
                     });
                 };
 
@@ -219,10 +219,10 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                         type = file.split('.');
                     }
 
-                    if (type.length === 1 || (type[0] === "" && type.length === 2)) {
+                    if (!type || type.length === 1 || (type[0] === "" && type.length === 2)) {
                         return "";
                     }
-
+                    
                     return type.pop().toLowerCase();
                 };
 

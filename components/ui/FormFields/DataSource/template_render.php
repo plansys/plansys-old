@@ -1,5 +1,5 @@
 <div ps-data-source name="<?= $this->renderName ?>">
-    <data name="data" class="hide"><?= json_encode($this->data['data'], JSON_PARTIAL_OUTPUT_ON_ERROR); ?></data>
+    <data name="data" class="hide"><?= htmlentities(json_encode($this->data['data'], JSON_PARTIAL_OUTPUT_ON_ERROR)); ?></data>
     <data name="total_item" class="hide"><?= $this->data['count']; ?></data>
     <data name="params" class="hide"><?= json_encode($this->params); ?></data>
     <data name="name" class="hide"><?= $this->name; ?></data>

@@ -69,7 +69,7 @@ return array (
                 'label' => 'Email Builder',
                 'icon' => 'fa-envelope',
                 'url' => '/dev/genEmail/index',
-                'formattedUrl' => '/eris/index.php?r=dev/email/index',
+                'formattedUrl' => '/eris/index.php?r=dev/genEmail/index',
             ),
             array (
                 'label' => '---',

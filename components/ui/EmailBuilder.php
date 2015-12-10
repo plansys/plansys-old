@@ -1,35 +1,41 @@
 <?php
-	/**
-	* 
-	*/
-	class EmailBuilder extends CComponent
-	{
-		public static $text = array();		//text from template
-		public static $imgs = array();		//image from template
-		public static $img = array();		//image from template
-		
-		public static function render($template,$params=null)
-		{
-		
-			if( $params != null ){
-				extract($params);	
-			}
-			$pathRender = Yii::getPathOfAlias("application.views.layouts.email." .$template).'.php';
-			
-			ob_start();
-			include($pathRender);
-			$result = ob_get_clean();
+use \InlineStyle\InlineStyle;
 
-			return $result;
-		}
-
-		public static function img($file){
-			$ext = explode(".",$file);
-			$pathImg = Yii::getPathOfAlias("application.views.layouts.email.images.".$ext[0]).'.'.end($ext);
-			$data = file_get_contents($pathImg);
-			$base64 = 'data:image/' . end($ext) . ';base64,' . base64_encode($data);
-			return $base64;
-		}
-			
+class EmailBuilder extends CComponent {
+	public $template;
+	private $renderCache = "";
+	
+	public  function render($params=[]) {
+        $path = explode('.', $this->template);
+        
+		$filePath = Yii::getPathOfAlias($this->template) . '.php';
+        if (count($path) == 2) {
+			$filePath = Yii::getPathOfAlias(($path[0] == 'plansys' ? 'application' : 'app') . ".views.layouts.email." . $path[1]) . ".php";
+        }
+    	
+    	if (!is_file($filePath)) {
+    		throw new CException('File `' . $filePath . '` not found');
+    	}
+    	
+    	extract($params);
+    	
+		ob_start();
+		include($filePath);
+		$result = ob_get_clean();
+		
+		$htmldoc = new InlineStyle($result);
+		$htmldoc->applyStylesheet($htmldoc->extractStylesheets());
+		return $this->renderCache = $htmldoc->getHTML();
 	}
+	
+	public function getSubject() {
+		return trim(Helper::getStringBetween($this->renderCache, "<title>", "</title>"));
+	}
+	
+	public function load($template) {
+		$eb = new EmailBuilder;
+		$eb->template = $template;
+		return $eb;
+	}
+}
 ?>
