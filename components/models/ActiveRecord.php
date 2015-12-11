@@ -1363,7 +1363,11 @@ class ActiveRecord extends CActiveRecord {
             }
 
             ## get oldname
-            $old      = $this->{$f['name']};
+            if (is_object($obj)) {
+                $old      = $obj->{$f['name']};
+            } else if (is_array($obj)) {
+                $old      = $obj[$f['name']];
+            }
             $ext      = pathinfo($old, PATHINFO_EXTENSION);
             $filename = pathinfo($old, PATHINFO_FILENAME);
 
@@ -1382,13 +1386,19 @@ class ActiveRecord extends CActiveRecord {
             if (is_file($new) && $f['allowOverwrite'] == 'Yes' && is_file($old)) {
                 unlink($new);
             }
-
+            
             if (!is_file($new) && is_file($old)) {
                 rename($old, $new);
                 if (is_object($obj) && is_subclass_of($obj, 'ActiveRecord')) {
-                    $obj->{$f['name']} = trim($evalDir, "/") . "/" . $newname;
+                    $obj->{$f['name']} = $new;
                     
                     if ($obj->hasAttribute($f['name'])) {
+                        $attrs[]            = $f['name'];
+                    }
+                }
+                if (is_array($obj)) {
+                    if (isset($obj[$f['name']])) {
+                        $obj[$f['name']] = $new;
                         $attrs[]            = $f['name'];
                     }
                 }
@@ -1421,7 +1431,8 @@ class ActiveRecord extends CActiveRecord {
 
         ## handling untuk file upload
         if (method_exists($this, 'getFields')) {
-            $attrs = $this->handleFileUpload(get_class($this), $this);
+            $currentClass = get_class($this);
+            $attrs = $this->handleFileUpload($currentClass, $this);
 
             if (count($attrs) > 0) {
                 if ($this->isNewRecord) {
@@ -1430,6 +1441,28 @@ class ActiveRecord extends CActiveRecord {
                     $this->isNewRecord = true;
                 } else {
                     $this->update($attrs);
+                }
+            }
+            
+            ## handle listview
+            $fb           = FormBuilder::load($currentClass);
+            $listView = $fb->findAllField(['type' => 'ListView']);
+            foreach($listView as $k => $lv) {
+                
+                ## if listview is valid
+                if ($lv['fieldTemplate'] == "datasource" && @$lv['datasource'] != '' && @$lv['templateForm'] != '') {
+                    $ds = $fb->findField(['name'=>$lv['datasource']]);
+                    
+                    ## if datasource is saved via relation and data is posted
+                    if (@$ds['postData'] == 'Yes' && @$ds['relationTo'] != '') {
+                        foreach ($this->__relUpdate[$ds['relationTo']] as $k => $rel) {
+                            $this->handleFileUpload($lv['templateForm'], $this->__relUpdate[$ds['relationTo']][$k]);
+                        }
+                        
+                        foreach ($this->__relInsert[$ds['relationTo']] as $k => $rel) {
+                            $this->handleFileUpload($lv['templateForm'], $this->__relInsert[$ds['relationTo']][$k]);
+                        }
+                    }
                 }
             }
         }
