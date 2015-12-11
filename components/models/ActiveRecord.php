@@ -13,6 +13,7 @@ class ActiveRecord extends CActiveRecord {
     private   $__relDelete        = [];
     private   $__relReset         = [];
     private   $__tempVar          = [];
+    private   $__relUploadField   = [];
 
     public static function execute($sql, $params = []) {
         return Yii::app()->db->createCommand($sql)->execute($params);
@@ -1333,6 +1334,69 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
+    private function handleFileUpload($className, &$obj) {
+        $fb           = FormBuilder::load($className);
+        $uploadFields = $fb->findAllField(['type' => 'UploadFile']);
+        $attrs        = [];
+        $model        = $this;
+
+        foreach ($uploadFields as $k => $f) {
+            if (@$f['name'] == '' || @$f['uploadPath'] == '') {
+                continue;
+            }
+
+            ## create directory
+            ## Jika disini gagal, berarti ada yang salah dengan format uploadPath di FormBuilder-nya
+            $evalDir = '';
+            eval('$evalDir = "' . $f['uploadPath'] . '";');
+            $evalDir    = str_replace(["\n", "\r"], "", $evalDir);
+            $repopath   = realpath(Yii::getPathOfAlias("repo"));
+            $evalDirArr = explode("/", $evalDir);
+            foreach ($evalDirArr as $i => $j) {
+                $evalDirArr[$i] = preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $j);
+            }
+            $evalDir = implode("/", $evalDirArr);
+            $dir     = $repopath . "/" . $evalDir . "/";
+            $dir     = str_replace(["\n", "\r"], "", $dir);
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+
+            ## get oldname
+            $old      = $this->{$f['name']};
+            $ext      = pathinfo($old, PATHINFO_EXTENSION);
+            $filename = pathinfo($old, PATHINFO_FILENAME);
+
+            if (@$f['filePattern']) {
+                ## get newname
+                ## Jika disini gagal, berarti ada yang salah dengan format filePattern di FormBuilder-nya
+                eval('$newname = "' . $f['filePattern'] . '";');
+            } else {
+                $newname = $filename . "." . $ext;
+            }
+
+            $new = $dir . preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $newname);
+            $new = str_replace(["\n", "\r"], "", $new);
+
+            ## delete file if already exist and allowed to overwrite
+            if (is_file($new) && $f['allowOverwrite'] == 'Yes' && is_file($old)) {
+                unlink($new);
+            }
+
+            if (!is_file($new) && is_file($old)) {
+                rename($old, $new);
+                if (is_object($obj) && is_subclass_of($obj, 'ActiveRecord')) {
+                    $obj->{$f['name']} = trim($evalDir, "/") . "/" . $newname;
+                    
+                    if ($obj->hasAttribute($f['name'])) {
+                        $attrs[]            = $f['name'];
+                    }
+                }
+            }
+        }
+        return $attrs;
+    }
+    
     public function doAfterSave($withRelation = true) {
         $pk = $this->tableSchema->primaryKey;
 
@@ -1355,70 +1419,9 @@ class ActiveRecord extends CActiveRecord {
             $this->deleteResetedRelations();
         }
 
-        if ($withRelation) {
-            $this->saveRelation();
-        }
-
         ## handling untuk file upload
         if (method_exists($this, 'getFields')) {
-            $fb           = FormBuilder::load(get_class($this));
-            $uploadFields = $fb->findAllField(['type' => 'UploadFile']);
-            $attrs        = [];
-            $model        = $this;
-
-            foreach ($uploadFields as $k => $f) {
-                if (@$f['name'] == '' || @$f['uploadPath'] == '') {
-                    continue;
-                }
-
-                ## create directory
-                ## Jika disini gagal, berarti ada yang salah dengan format uploadPath di FormBuilder-nya
-                $evalDir = '';
-                eval('$evalDir = "' . $f['uploadPath'] . '";');
-                $evalDir    = str_replace(["\n", "\r"], "", $evalDir);
-                $repopath   = realpath(Yii::getPathOfAlias("repo"));
-                $evalDirArr = explode("/", $evalDir);
-                foreach ($evalDirArr as $i => $j) {
-                    $evalDirArr[$i] = preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $j);
-                }
-                $evalDir = implode("/", $evalDirArr);
-                $dir     = $repopath . "/" . $evalDir . "/";
-                $dir     = str_replace(["\n", "\r"], "", $dir);
-                if (!is_dir($dir)) {
-                    mkdir($dir, 0777, true);
-                }
-
-                ## get oldname
-                $old      = $this->{$f['name']};
-                $ext      = pathinfo($old, PATHINFO_EXTENSION);
-                $filename = pathinfo($old, PATHINFO_FILENAME);
-
-                if (@$f['filePattern']) {
-                    ## get newname
-                    ## Jika disini gagal, berarti ada yang salah dengan format filePattern di FormBuilder-nya
-                    eval('$newname = "' . $f['filePattern'] . '";');
-                } else {
-                    $newname = $filename . "." . $ext;
-                }
-
-                $new = $dir . preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $newname);
-                $new = str_replace(["\n", "\r"], "", $new);
-
-                ## delete file if already exist and allowed to overwrite
-                if (is_file($new) && $f['allowOverwrite'] == 'Yes' && is_file($old)) {
-                    unlink($new);
-                }
-
-                if (!is_file($new) && is_file($old)) {
-                    rename($old, $new);
-                    $this->{$f['name']} = trim($evalDir, "/") . "/" . $newname;
-                    
-                    if ($this->hasAttribute($f['name'])) {
-                        $attrs[]            = $f['name'];
-                    }
-                }
-            }
-
+            $attrs = $this->handleFileUpload(get_class($this), $this);
 
             if (count($attrs) > 0) {
                 if ($this->isNewRecord) {
@@ -1429,6 +1432,11 @@ class ActiveRecord extends CActiveRecord {
                     $this->update($attrs);
                 }
             }
+        }
+        
+
+        if ($withRelation) {
+            $this->saveRelation();
         }
 
         return true;

@@ -5,7 +5,7 @@ class EmailBuilder extends CComponent {
 	public $template;
 	private $renderCache = "";
 	
-	public  function render($params=[]) {
+	public function render($params=[]) {
         $path = explode('.', $this->template);
         
 		$filePath = Yii::getPathOfAlias($this->template) . '.php';
@@ -32,7 +32,7 @@ class EmailBuilder extends CComponent {
 		return trim(Helper::getStringBetween($this->renderCache, "<title>", "</title>"));
 	}
 	
-	public function load($template) {
+	public static function load($template) {
 		$eb = new EmailBuilder;
 		$eb->template = $template;
 		return $eb;
