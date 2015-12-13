@@ -17,8 +17,6 @@ class SettingController extends Controller {
         $model = new DevSettingDatabase;
         $posted = false;
         
-        $all = Yii::app()->dbEris->createCommand("Select * from etis_user")->queryAll();
-        
         if (isset($_POST['DevSettingDatabase'])) {
             $model->attributes = $_POST['DevSettingDatabase'];
             if ($model->save()) {
