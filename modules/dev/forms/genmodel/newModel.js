@@ -14,6 +14,18 @@ $scope.updateTable = function () {
         $scope.model.modelName = snakeToCamel($scope.model.tableName);
     });
 }
+$scope.changeConn = function() {
+    $scope.tableList = {'Loading ...': 'Loading ...'};
+    $scope.model.tableName = 'Loading ...';
+    $scope.model.modelName = '';
+    $http.get(Yii.app.createUrl('/dev/genModel/tableList', {'conn':$scope.model.conn}))
+        .success(function(res) {
+            $scope.tableList = res;
+            $scope.model.tableName = '';
+        });
+}
+
+$scope.tableList = $scope.params.tableList;
 
 $scope.getListField = function() {
     $http.get(Yii.app.createUrl('/dev/genModel/fieldList', {'table':$scope.model.tableName}))

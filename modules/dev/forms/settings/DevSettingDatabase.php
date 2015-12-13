@@ -8,17 +8,21 @@ class DevSettingDatabase extends Form {
     public $username = 'root';
     public $password = '';
     public $dbname = '';
+    public $items = [];
     
     
     public function __construct() {
         parent::__construct();
-        
         $this->attributes = Setting::get('db');
     }
     
     public function save() {
-        Setting::set('db', $this->attributes);
-        return true;
+        if ($this->validate()) {
+            Setting::set('db', $this->attributes);
+            return true;
+        } else {
+            return false;
+        }
     }
     
     public function getFields() {
@@ -42,13 +46,13 @@ class DevSettingDatabase extends Form {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div class=\"alert alert-warning text-center\">
+                'value' => '<div ng-if=\"!params.posted\" class=\"alert alert-warning text-center\">
     <i class=\"fa fa-warning\"></i> <b>WARNING:</b> Database errors will cause your application to stop working
 </div>',
             ),
             array (
-                'type' => 'Text',
-                'value' => '<hr style=\\"margin:0px -15px;\\">',
+                'title' => 'Primary Database',
+                'type' => 'SectionHeader',
             ),
             array (
                 'showBorder' => 'Yes',
@@ -104,8 +108,24 @@ class DevSettingDatabase extends Form {
                 'type' => 'ColumnField',
             ),
             array (
-                'type' => 'Text',
-                'value' => '<hr style=\\"margin:0px -15px;\\">',
+                'title' => 'Optional Database',
+                'type' => 'SectionHeader',
+            ),
+            array (
+                'name' => 'items',
+                'fieldTemplate' => 'form',
+                'templateForm' => 'application.modules.dev.forms.settings.DevSettingDatabaseItem',
+                'inlineJS' => 'DevSettingDatabaseItem.js',
+                'singleViewOption' => array (
+                    'name' => 'val',
+                    'fieldType' => 'text',
+                    'labelWidth' => 0,
+                    'fieldWidth' => 12,
+                    'fieldOptions' => array (
+                        'ng-delay' => 500,
+                    ),
+                ),
+                'type' => 'ListView',
             ),
         );
     }

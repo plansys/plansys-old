@@ -3,6 +3,7 @@
 class DevGenNewModel extends Form {
 
     public $module;
+    public $conn = 'db';
     public $modelName;
     public $tableName;
     public $softDelete = 'No';
@@ -50,12 +51,28 @@ class DevGenNewModel extends Form {
                 'type' => 'HiddenField',
             ),
             array (
+                'label' => 'DB Connection',
+                'name' => 'conn',
+                'options' => array (
+                    'ng-change' => 'changeConn()',
+                ),
+                'listExpr' => 'array_keys(Setting::getDBListAll())',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<hr>',
+            ),
+            array (
                 'label' => 'Table Name',
                 'name' => 'tableName',
                 'options' => array (
                     'ng-change' => 'updateTable(); getListField();',
+                    'ps-list' => 'tableList;',
                 ),
-                'listExpr' => 'ModelGenerator::listTables()',
+                'fieldOptions' => array (
+                    'ng-disabled' => 'model.tableName == \'Loading ...\'',
+                ),
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',

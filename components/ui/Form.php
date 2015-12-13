@@ -14,6 +14,39 @@ class Form extends CFormModel {
         $this->parent = $modelParent;
     }
 
+    public function beforeValidate() {
+        $this->validateSubForm();
+        return parent::beforeValidate();
+    }
+    
+    public function validateSubForm() {
+        $class = get_class($this);
+        $fb = FormBuilder::load($class);
+        $listView = $fb->findAllField(['type' => 'ListView']);
+        foreach($listView as $k => $lv) {
+            ## if listview is valid
+            if ((@$lv['fieldTemplate'] == "datasource" || @$lv["fieldTemplate"] == "form")  
+                && @$lv['templateForm'] != '') {
+                
+                if (isset($this->attributes[$lv['name']])) {
+                    $items = $this->attributes[$lv['name']];
+                    foreach ($items as $k=>$item) {
+                        Yii::import($lv['templateForm']);
+                        $newClass = Helper::explodeLast(".", $lv['templateForm']);
+                        $new = new $newClass;
+                        $new->attributes = $item;
+                        $new->validate();
+                        if ($new->hasErrors()) {
+                            foreach ($new->errors as $name=>$errors) {
+                                $this->addError($name, implode("<br> &bull; ", $errors));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * @return array me-return attributes dari form tersebut.
      */

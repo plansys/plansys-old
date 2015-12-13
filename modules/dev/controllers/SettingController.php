@@ -15,14 +15,21 @@ class SettingController extends Controller {
     
     public function actionDatabase() {
         $model = new DevSettingDatabase;
+        $posted = false;
+        
+        $all = Yii::app()->dbEris->createCommand("Select * from etis_user")->queryAll();
         
         if (isset($_POST['DevSettingDatabase'])) {
             $model->attributes = $_POST['DevSettingDatabase'];
-            $model->save();
-            $this->flash('Database Setting Updated!');
+            if ($model->save()) {
+                $posted = true;
+                $this->flash('Database Setting Updated!');
+            }
         }
         
-        $this->renderForm('DevSettingDatabase', $model);
+        $this->renderForm('DevSettingDatabase', $model, [
+            'posted' => $posted
+        ]);
     }
     
     public function actionEmail() {

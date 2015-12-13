@@ -635,9 +635,7 @@ class FormField extends CComponent {
      */
      
     public function isRequired() {
-        if($this->model instanceof ActiveRecord && $this->model->hasAttribute($this->name)) {
-           
-        
+        if (method_exists($this->model, 'getValidators')) {
             foreach($this->model->getValidators($this->name) as $validator) {
                 if($validator instanceof CRequiredValidator)
                 {
@@ -645,7 +643,6 @@ class FormField extends CComponent {
                 }
             }    
         }
-        
         return false;
     }
 }

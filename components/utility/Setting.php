@@ -343,7 +343,6 @@ class Setting {
         } else {
             $config['components']['curl'] = array(
                 'class' => 'ext.curl.Curl',
-//                'options' => array(CURLOPT_HEADER => true),
             );
 
             if ($type == "main" && Setting::getThemePath() != "") {
@@ -483,34 +482,57 @@ class Setting {
         return $controllers;
     }
 
-    public static function getDB() {
-        if (Setting::get('db.port') == null) {
+    public static function getDBList() {
+        $items = Setting::get('db.items');
+        $result = [];
+        foreach ($items as $i) {
+            $result['db' . $i['conn']] = Setting::getDB($i);
+        }
+        
+        return $result;
+    }
+    
+    public static function getDBListAll() {
+        return ['db'=>Setting::getDB(),'---'=>'---'] +  Setting::getDBList() ;
+    }
+
+    public static function getDB($db = null) {
+        if (is_null($db)) {
+            $db = Setting::get('db');
+        }
+        
+        if (@$db['port'] == null) {
             $connection = [
-                'connectionString' => Setting::get('db.driver') . ':host=' . Setting::get('db.host') . ';dbname=' . Setting::get('db.dbname'),
+                'connectionString' => $db['driver'] . ':host=' . $db['host'] . ';dbname=' . $db['dbname'],
                 'emulatePrepare' => true,
-                'username' => Setting::get('db.username'),
-                'password' => Setting::get('db.password'),
+                'username' => $db['username'],
+                'password' => $db['password'],
                 'charset' => 'utf8',
             ];
         } else {
             $connection = [
-                'connectionString' => Setting::get('db.driver') . ':host=' . Setting::get('db.host') . ';port=' . Setting::get('db.port') . ';dbname=' . Setting::get('db.dbname'),
+                'connectionString' => $db['driver'] . ':host=' . $db['host'] . ';port=' . $db['port'] . ';dbname=' . $db['dbname'],
                 'emulatePrepare' => true,
-                'username' => Setting::get('db.username'),
-                'password' => Setting::get('db.password'),
+                'username' => $db['username'],
+                'password' => $db['password'],
                 'charset' => 'utf8',
             ];
         }
+        
+        if (isset($db['conn'])) {
+            $connection['class'] = 'CDbConnection';
+        }
+        
         return $connection;
     }
 
     public static function getDBDriverList() {
         return [
             'mysql' => 'MySQL',
-            //                  'pgsql' => 'PostgreSQL',
-            //                  'sqlsrv' => 'SQL Server',
-            //                  'sqlite' => 'SQLite',
-            //                  'oci' => 'Oracle'
+            //  'pgsql' => 'PostgreSQL',
+            //  'sqlsrv' => 'SQL Server',
+            //  'sqlite' => 'SQLite',
+            //  'oci' => 'Oracle'
         ];
     }
 

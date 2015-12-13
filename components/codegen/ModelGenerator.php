@@ -4,7 +4,19 @@ class ModelGenerator extends CComponent {
 
     public static function create($tableName, $modelName, $module, $options = []) {
         $mc               = new ModelGeneratorCode();
-        $mc->modelPath    = $module . ".models";
+        
+        if (!isset($options['conn']) && @$options['conn'] == 'db') { 
+            $mc->modelPath    = $module . ".models";
+        } else if (isset($options['conn']) && $options['conn'] != 'db') {
+            $mc->modelPath    = $module . ".models.{$options['conn']}"; 
+            $mc->connectionId = $options['conn'];
+        }
+        
+        $modelDir = Yii::getPathOfAlias($mc->modelPath);
+        if (!is_dir($modelDir)) {
+            mkdir($modelDir, 0777, true);
+        }
+        
         $mc->template     = 'TplModel.php';
 
         $mc->tableName  = $tableName;
@@ -40,8 +52,8 @@ class ModelGenerator extends CComponent {
         ];
     }
 
-    public static function listTables() {
-        $rawTables     = Yii::app()->db->createCommand("show tables")->queryColumn();
+    public static function listTables($conn = 'db') {
+        $rawTables     = Yii::app()->{$conn}->createCommand("show tables")->queryColumn();
         $appTables     = [];
         $plansysTables = [];
         foreach ($rawTables as $key => $value) {
@@ -132,29 +144,63 @@ class ModelGenerator extends CComponent {
             ];
         }
 
+        $items = [];
         foreach ($appItems as $k => $m) {
             $m = str_replace($appDir . DIRECTORY_SEPARATOR, "", $m);
             $m = str_replace('.php', "", $m);
-
-            $appItems[$k] = [
-                'type' => 'app',
-                'label' => $m,
-                'icon' => 'fa fa-cube',
-                'class' => 'app.models.' . $m,
-                'class_path' => 'app.models',
-                'exist' => (class_exists($m)) ? 'yes' : 'no',
-                'type' => 'app',
-                'active' => @$_GET['active'] == 'app.' . $m,
-                'url' => Yii::app()->controller->createUrl('/dev/genModel/index', [
-                    'active' => 'app.' . $m,
-                ]),
-                'target' => 'col2',
-            ];
+            if (is_dir($appItems[$k])) {
+                $subitems = glob($appItems[$k] . DIRECTORY_SEPARATOR . "*.php");
+                foreach ($subitems as $sk => $sm) {
+                    $sm = str_replace($appItems[$k] . DIRECTORY_SEPARATOR, "", $sm);
+                    $sm = str_replace('.php', "", $sm);
+                    $subitems[$sk] = [
+                        'type' => 'app',
+                        'label' => $sm,
+                        'icon' => 'fa fa-cube',
+                        'class' => "app.models.{$m}." . $sm,
+                        'class_path' => 'app.models',
+                        'exist' => (class_exists($sm)) ? 'yes' : 'no',
+                        'type' => 'app',
+                        'active' => @$_GET['active'] == "app.{$m}." . $sm,
+                        'url' => Yii::app()->controller->createUrl('/dev/genModel/index', [
+                            'active' => "app.{$m}." . $sm,
+                        ]),
+                        'target' => 'col2',
+                    ];
+                }
+                
+                array_unshift($items,[
+                    'type' => 'app',
+                    'label' => $m,
+                    'class' => 'app.models.' . $m,
+                    'class_path' => 'app.models',
+                    'exist' => (class_exists($m)) ? 'yes' : 'no',
+                    'type' => 'app',
+                    'active' => @$_GET['active'] == 'app.' . $m,
+                    'target' => 'col2',
+                    'items' => $subitems
+                ]);
+            } else {
+                $items[] = [
+                    'type' => 'app',
+                    'label' => $m,
+                    'icon' => 'fa fa-cube',
+                    'class' => 'app.models.' . $m,
+                    'class_path' => 'app.models',
+                    'exist' => (class_exists($m)) ? 'yes' : 'no',
+                    'type' => 'app',
+                    'active' => @$_GET['active'] == 'app.' . $m,
+                    'url' => Yii::app()->controller->createUrl('/dev/genModel/index', [
+                        'active' => 'app.' . $m,
+                    ]),
+                    'target' => 'col2',
+                ];
+            }
         }
         $models[] = [
             'type' => 'app',
             'label' => 'App',
-            'items' => $appItems,
+            'items' => $items,
         ];
         return $models;
     }
