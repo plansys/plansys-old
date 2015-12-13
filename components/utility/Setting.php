@@ -485,6 +485,9 @@ class Setting {
     public static function getDBList() {
         $items = Setting::get('db.items');
         $result = [];
+        if (is_null($items)) {
+            $items = [];
+        }
         foreach ($items as $i) {
             $result['db' . $i['conn']] = Setting::getDB($i);
         }
