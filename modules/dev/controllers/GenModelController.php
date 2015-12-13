@@ -89,7 +89,7 @@ class GenModelController extends Controller {
                         'value' => $s['softDeleteValue']
                     ];
                 }
-    
+                
                 ModelGenerator::create($tableName, $modelName, $module, $options);
                 $href = Yii::app()->createUrl('/dev/genModel/index', ['active' => $s['module'] . "." . $modelName]);
         }

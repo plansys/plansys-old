@@ -4,10 +4,9 @@ class ModelGenerator extends CComponent {
 
     public static function create($tableName, $modelName, $module, $options = []) {
         $mc               = new ModelGeneratorCode();
+        $mc->modelPath    = $module . ".models";
         
-        if (!isset($options['conn']) && @$options['conn'] == 'db') { 
-            $mc->modelPath    = $module . ".models";
-        } else if (isset($options['conn']) && $options['conn'] != 'db') {
+        if (isset($options['conn']) && $options['conn'] != 'db') {
             $mc->modelPath    = $module . ".models.{$options['conn']}"; 
             $mc->connectionId = $options['conn'];
         }
@@ -22,6 +21,9 @@ class ModelGenerator extends CComponent {
         $mc->tableName  = $tableName;
         $mc->baseClass  = 'ActiveRecord';
         $mc->modelClass = $modelName;
+        if (isset($options['conn'])) {
+            unset($options['conn']);
+        }
         $mc->options    = $options;
 
         $mc->prepare();
