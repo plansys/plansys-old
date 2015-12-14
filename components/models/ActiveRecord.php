@@ -1429,6 +1429,7 @@ class ActiveRecord extends CActiveRecord {
             $this->deleteResetedRelations();
         }
 
+
         ## handling untuk file upload
         if (method_exists($this, 'getFields')) {
             $currentClass = get_class($this);

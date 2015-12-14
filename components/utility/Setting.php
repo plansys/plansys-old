@@ -284,6 +284,10 @@ class Setting {
         return Setting::$rootPath . DIRECTORY_SEPARATOR . Setting::get('app.dir');
     }
 
+    public static function getRepoPath() {
+        return Setting::$rootPath . DIRECTORY_SEPARATOR . Setting::get('repo.path');
+    }
+    
     public static function getApplicationPath() {
         return Setting::$rootPath . DIRECTORY_SEPARATOR . 'plansys';
     }
