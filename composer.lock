@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/box/spout.git",
-                "reference": "05a9a1b60a7016297f1ee31003a3c6df47e9f7dd"
+                "reference": "8d27b3097d60769c21be713c6867e23855dc326e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/box/spout/zipball/22daea5f9ad755c5d5e6270c588bfc843900a7e4",
-                "reference": "05a9a1b60a7016297f1ee31003a3c6df47e9f7dd",
+                "url": "https://api.github.com/repos/box/spout/zipball/8d27b3097d60769c21be713c6867e23855dc326e",
+                "reference": "8d27b3097d60769c21be713c6867e23855dc326e",
                 "shasum": ""
             },
             "require": {
@@ -70,7 +70,7 @@
                 "write",
                 "xlsx"
             ],
-            "time": "2015-11-13 18:36:40"
+            "time": "2015-12-08 18:35:49"
         },
         {
             "name": "inlinestyle/inlinestyle",
@@ -78,17 +78,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/christiaan/InlineStyle.git",
-                "reference": "c0af5330ba346c245c4e2b167e3c9c45f4945113"
+                "reference": "66ad09318c9f120cc3246d4f1c728848258154b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/christiaan/InlineStyle/zipball/c0af5330ba346c245c4e2b167e3c9c45f4945113",
-                "reference": "c0af5330ba346c245c4e2b167e3c9c45f4945113",
+                "url": "https://api.github.com/repos/christiaan/InlineStyle/zipball/66ad09318c9f120cc3246d4f1c728848258154b5",
+                "reference": "66ad09318c9f120cc3246d4f1c728848258154b5",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "symfony/css-selector": "~2.1"
+                "symfony/css-selector": ">=2.1"
             },
             "require-dev": {
                 "phpunit/phpunit": "3.7.*"
@@ -117,7 +117,7 @@
                 "email",
                 "inline"
             ],
-            "time": "2015-09-25 09:15:38"
+            "time": "2015-12-13 20:30:25"
         },
         {
             "name": "leeoniya/dump-r",
@@ -280,25 +280,25 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v2.8.0",
+            "version": "v3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
-                "reference": "b600fec37c0efca08046d481d79e7eabc07108ff"
+                "reference": "2563cd23b8822eac1b2a4a47d99de160b58492c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/css-selector/zipball/b600fec37c0efca08046d481d79e7eabc07108ff",
-                "reference": "b600fec37c0efca08046d481d79e7eabc07108ff",
+                "url": "https://api.github.com/repos/symfony/css-selector/zipball/2563cd23b8822eac1b2a4a47d99de160b58492c1",
+                "reference": "2563cd23b8822eac1b2a4a47d99de160b58492c1",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.9"
+                "php": ">=5.5.9"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8-dev"
+                    "dev-master": "3.0-dev"
                 }
             },
             "autoload": {
@@ -329,7 +329,7 @@
             ],
             "description": "Symfony CssSelector Component",
             "homepage": "https://symfony.com",
-            "time": "2015-10-30 20:15:42"
+            "time": "2015-10-30 23:35:59"
         }
     ],
     "packages-dev": [],
