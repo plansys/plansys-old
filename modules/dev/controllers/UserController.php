@@ -36,7 +36,6 @@ class UserController extends Controller {
         $user->is_deleted = 1;
         $user->username = $user->username . " (DELETED - " . time() . ")";
         $user->update(['is_deleted', 'username']);
-        Yii::app()->nfy->unsubscribe($user->id, null, true);
         Yii::app()->user->setFlash('info', 'User berhasil dihapus');
         $this->redirect(['/dev/user/index']);
     }

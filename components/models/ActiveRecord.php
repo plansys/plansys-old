@@ -1393,13 +1393,13 @@ class ActiveRecord extends CActiveRecord {
                     $obj->{$f['name']} = $new;
                     
                     if ($obj->hasAttribute($f['name'])) {
-                        $attrs[]            = $f['name'];
+                        $attrs[$f['name']]            = $new;
                     }
                 }
                 if (is_array($obj)) {
                     if (isset($obj[$f['name']])) {
                         $obj[$f['name']] = $new;
-                        $attrs[]            = $f['name'];
+                        $attrs[$f['name']]            = $new;
                     }
                 }
             }
@@ -1440,7 +1440,7 @@ class ActiveRecord extends CActiveRecord {
                     $this->updateByPk($this->id, $this->getAttributes($attrs));
                     $this->isNewRecord = true;
                 } else {
-                    $this->update($attrs);
+                    $this->saveAttributes($attrs);
                 }
             }
             
@@ -1454,7 +1454,7 @@ class ActiveRecord extends CActiveRecord {
                     $ds = $fb->findField(['name'=>$lv['datasource']]);
                     
                     ## if datasource is saved via relation and data is posted
-                    if (@$ds['postData'] == 'Yes' && @$ds['relationTo'] != '') {
+                    if (@$ds['postData'] == 'Yes' && @$ds['relationTo'] != '' && !empty($this->__relUpdate)) {
                         foreach ($this->__relUpdate[$ds['relationTo']] as $k => $rel) {
                             $this->handleFileUpload($lv['templateForm'], $this->__relUpdate[$ds['relationTo']][$k]);
                         }

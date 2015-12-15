@@ -25,7 +25,7 @@
         <!-- /data -->
         <!-- field -->
         <?php if ($this->insertable == 'Yes'): ?>
-        <button type="button" ng-if="value.length > 5" ng-click="addItem($event)" 
+        <button type="button" ng-if="value.length > 5 && isInsertable()" ng-click="addItem($event)" 
                 style="margin:0px 0px 5px 0px;"
                 class="btn list-view-add btn-default btn-sm">
             <i class="fa fa-nm fa-plus"></i> <b>Add</b>
@@ -77,7 +77,7 @@
         <input ng-if="value.length == 0" name="<?= $this->renderName ?>" type="hidden" value='' />
         
         <?php if ($this->insertable == 'Yes'): ?>
-        <button type="button" ng-click="addItem($event)" 
+        <button type="button" ng-if="isInsertable()" ng-click="addItem($event)" 
                 style="margin:0px;"
                 class="btn list-view-add btn-default btn-sm">
             <i class="fa fa-nm fa-plus"></i> <b>Add</b>

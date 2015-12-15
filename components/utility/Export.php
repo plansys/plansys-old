@@ -86,21 +86,25 @@ class Export extends CComponent {
         if (!is_dir($tmpDir)) {
             mkdir($tmpDir, 0777, TRUE);
         }
-
-        # checking fileNameResourse
-        $fileNameResourceExplode = explode('.', $fileNameResource);
-        if (count($fileNameResourceExplode) == 2) {
-            $pathResources = Yii::getPathOfAlias('app.modules.' . $fileNameResourceExplode[0] . '.reports.' . $fileNameResourceExplode[1]);
-        } else {
-            $pathResources = Yii::getPathOfAlias('app.reports.' . $fileNameResourceExplode[0]);
-        }
-        $pathResources.='.' . $extResource;
         
-        if(file_exists($pathResources) != true) {
-            // throw new CDbException('The specified file cannot be found.');
-            echo ('The specified file cannot be found.');
-            exit();
-        } 
+        if (is_file($fileNameResource)) {
+            $pathResources = realpath($fileNameResource);
+        } else {
+            # checking fileNameResourse
+            $fileNameResourceExplode = explode('.', $fileNameResource);
+            if (count($fileNameResourceExplode) == 2) {
+                $pathResources = Yii::getPathOfAlias('app.modules.' . $fileNameResourceExplode[0] . '.reports.' . $fileNameResourceExplode[1]);
+            } else {
+                $pathResources = Yii::getPathOfAlias('app.reports.' . $fileNameResourceExplode[0]);
+            }
+            $pathResources.='.' . $extResource;
+            
+            if(file_exists($pathResources) != true) {
+                // throw new CDbException('The specified file cannot be found.');
+                echo ('The specified file cannot be found.');
+                exit();
+            } 
+        }
         
         $allow_ext = array('odt', 'ods', 'odp', 'odg', 'odf', 'docx', 'xlsx', 'pptx');
         if(!in_array($extResource, $allow_ext)) {
@@ -124,10 +128,8 @@ class Export extends CComponent {
         // Initialize the TBS instance
         $TBS = new clsTinyButStrong; // new instance of TBS
         $TBS->Plugin(TBS_INSTALL, OPENTBS_PLUGIN); // load the OpenTBS plugin
+        $TBS->LoadTemplate($pathResources, OPENTBS_ALREADY_UTF8); // Also merge some [onload] automatic fields (depends of the type of document).
         
-        $template = $pathResources;
-        
-         $TBS->LoadTemplate($template, OPENTBS_ALREADY_UTF8); // Also merge some [onload] automatic fields (depends of the type of document).
         
         # get Key of array data
         foreach (array_keys($data) as $key) {

@@ -25,6 +25,13 @@ app.directive('listView', function ($timeout) {
                 $scope.templateAttr = JSON.parse($el.find("data[name=template_attr]").html().trim());
                 $scope.options = JSON.parse($el.find("data[name=options]").html().trim());
 
+                $scope.isInsertable = function() {
+                    if ($scope.options['insertable-if']) {
+                        return $scope.$eval($scope.options['insertable-if']);
+                    }
+                    return true;
+                };
+
                 // when ng-model is changed from inside directive
                 $scope.updateListView = function () {
                     if (!!ctrl) {
@@ -54,6 +61,11 @@ app.directive('listView', function ($timeout) {
                 };
                 
                 $scope.isDeleteDisabled = function(idx) {
+                    
+                    if ($scope.options['deletable-if']) {
+                        return $scope.$eval($scope.options['deletable-if']);
+                    }
+                    
                     if ($scope.deletable == "No") {
                         return true;
                     }

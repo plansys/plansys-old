@@ -1,7 +1,7 @@
 <?php
         
 class ImportController extends Controller {
-    public function beforeAction() {
+    public function beforeAction($action) {
         if (isset($_GET['m'])) {
             if (class_exists($_GET['m']) && is_subclass_of($_GET['m'], 'ActiveRecord')) { 
                 return true;

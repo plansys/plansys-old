@@ -51,12 +51,6 @@ class Role extends ActiveRecord {
 
     public function afterSave() {
         parent::afterSave();
-
-
-        $sql = "UPDATE p_nfy_subscription_categories "
-            . "set category = 'role_{$this->role_name}.' "
-            . "where category = 'role_{$this->oldName}.';";
-        Yii::app()->db->createCommand($sql)->execute();
         return true;
     }
 
