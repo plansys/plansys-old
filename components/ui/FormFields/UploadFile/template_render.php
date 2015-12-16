@@ -103,7 +103,7 @@
                         <i class="fa fa-trash fa-nm"></i>
                     </div>
                     <div class="btn btn-xs btn-default pull-right" style="margin-right:0px;margin-top:-2px;"
-                         ng-if="allowOverwrite == 'Yes'" ng-click="choose('')">
+                         ng-if="allowOverwrite == 'Yes' && mode != 'Download Only'" ng-click="choose('')">
                          <i class="fa fa-folder-open"></i> Choose File
                     </div>
                     <div class="clearfix"></div>

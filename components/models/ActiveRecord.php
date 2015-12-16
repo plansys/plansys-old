@@ -1232,8 +1232,13 @@ class ActiveRecord extends CActiveRecord {
                                 }
                             } else if (is_array($relForeignKey)) { ## with through
                                 foreach ($this->__relInsert[$k] as $n => $m) {
+                                    
                                     foreach ($relForeignKey as $rk => $fk) {
-                                        $this->__relInsert[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
+                                        if (is_null($rel->through)) {
+                                            $this->__relInsert[$k][$n][$fk] = $this->{$rk};
+                                        } else {
+                                            $this->__relInsert[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
+                                        }
                                     }
                                 }
                             }
@@ -1283,7 +1288,11 @@ class ActiveRecord extends CActiveRecord {
                             } else if (is_array($relForeignKey)) { ## with through
                                 foreach ($this->__relUpdate[$k] as $n => $m) {
                                     foreach ($relForeignKey as $rk => $fk) {
-                                        $this->__relUpdate[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
+                                        if (is_null($rel->through)) {
+                                            $this->__relUpdate[$k][$n][$fk] = $this->{$rk};
+                                        } else {
+                                            $this->__relUpdate[$k][$n][$fk] = $this->__relations[$rel->through][$rk];
+                                        }
                                     }
                                 }
                             }

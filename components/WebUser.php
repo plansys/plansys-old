@@ -71,6 +71,8 @@ class WebUser extends CWebUser {
     }
 
     public function getRoleInfo() {
+        
+        
         foreach ($this->info['roles'] as $k => $i) {
             if (@$i['role_name'] == $this->fullRole) {
                 return $i;
@@ -96,7 +98,6 @@ class WebUser extends CWebUser {
     }
 
     public function getInfo() {
-
         if (Setting::$mode == "init" || Setting::$mode == "install") {
             return "{}";
         }
@@ -105,16 +106,27 @@ class WebUser extends CWebUser {
             return "{}";
         }
 
-        if (!isset(Yii::app()->session['userinfo'])) {
+        $attr = false;
+        if (isset(Yii::app()->session['userinfo'])) {
+            $attr = Yii::app()->session['userinfo'];
+        }
+        
+        if (!!$attr) {
+            if (@$attr['db_name'] != Setting::get('db.dbname')) {
+                $attr = false;
+            }
+        }
+        
+        if (!$attr) {
             $attr = $this->model->getAttributes(true, false);
             unset($attr['password']);
             $attr['role']                   = $this->role;
             $attr['roles']                  = $this->model->roles;
             $attr['full_role']              = $this->fullRole;
+            $attr['db_name']                = Setting::get('db.dbname');
             Yii::app()->session['userinfo'] = $attr;
-        } else {
-            $attr = Yii::app()->session['userinfo'];
-        }
+        } 
+        
         return $attr;
     }
     

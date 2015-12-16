@@ -9,6 +9,41 @@ class Email extends CComponent {
 		$this->validator = new CEmailValidator();
 	}
 	
+	public static function preview($from, $template, $params = [], $options = []) {
+		if (!isset(self::$instance)) {
+			self::$instance = new Email();
+		}
+		
+		if (is_string($from)) {
+			$from = [$from];
+		}
+		
+		$currentUserId = null;
+		if (isset(Yii::app()->user)) {
+			$currentUserId = Yii::app()->user->id; 
+		}
+		$eb = EmailBuilder::load($template);
+		$mails = [];
+		foreach ($from as $key=>$value) {
+			$email = $key;
+			if (is_numeric($key)) {
+				$email = $value;
+			}
+			
+			## merge local parameters
+			if (is_array($value)) {
+				$params = array_merge($params, $value);
+			}
+			$params['to'] = $email;
+			
+			if (!self::$instance->validator->validateValue($email)) {
+				return "Failed to render email..";
+			}
+			
+			return $eb->render($params);
+		}
+	}
+	
 	public static function send($from, $template, $params = [], $options = []) {
 		if (!isset(self::$instance)) {
 			self::$instance = new Email();
