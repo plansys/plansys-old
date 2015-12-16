@@ -1390,7 +1390,12 @@ class ActiveRecord extends CActiveRecord {
 
             $new = $dir . preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $newname);
             $new = str_replace(["\n", "\r"], "", $new);
+            $new = str_replace(["//", "\\\\"], ["/", "\\"], $new);
 
+            if ($old == $new) {
+                continue;
+            }
+    
             ## delete file if already exist and allowed to overwrite
             if (is_file($new) && $f['allowOverwrite'] == 'Yes' && is_file($old)) {
                 unlink($new);
@@ -1443,7 +1448,7 @@ class ActiveRecord extends CActiveRecord {
         if (method_exists($this, 'getFields')) {
             $currentClass = get_class($this);
             $attrs = $this->handleFileUpload($currentClass, $this);
-
+            
             if (count($attrs) > 0) {
                 if ($this->isNewRecord) {
                     $this->isNewRecord = false;
