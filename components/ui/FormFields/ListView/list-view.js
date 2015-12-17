@@ -61,17 +61,15 @@ app.directive('listView', function ($timeout) {
                 };
                 
                 $scope.isDeleteDisabled = function(idx) {
-                    
-                    if ($scope.options['deletable-if']) {
-                        return $scope.$eval($scope.options['deletable-if']);
-                    }
-                    
                     if ($scope.deletable == "No") {
                         return true;
                     }
-                    
                     if ($scope.minItem > idx) {
                         return true;
+                    }
+                    
+                    if ($scope.options['deletable-if']) {
+                        return !$scope.$eval($scope.options['deletable-if']);
                     }
                     
                     return false;

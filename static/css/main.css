@@ -285,6 +285,19 @@ i {
     z-index: 999;
 }
 
+.navbar-main .navbar-nav .badge {
+    background: #DC4C2F;
+    border-radius: 4px;
+    margin: -2px -4px 0px 4px;
+    padding: 2px 0px;
+    min-width: 13px;
+    font-size: 9px;
+    font-weight: normal;
+    float: right;
+    border: 1px solid rgba(255,255,255,0.7);
+    line-height: 10px;
+}
+
 .navbar-nav .dropdown-menu > li > a {
     font-size: 12px;
     padding-left: 10px;
@@ -2492,6 +2505,15 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
 .required {
     display:inline-block;
     color: red;
+}
+
+.label-purple{
+    background:#9C27B0;
+}
+
+.label-white {
+    background: white;
+    color: #333;
 }
 
 .label-field-value {

@@ -287,7 +287,8 @@ class MenuTree extends CComponent {
                 if ($v['url'] != '#' && substr($v['url'], 0, 4) != 'http') {
                     $list[$k]['formattedUrl'] = str_replace(["\n", "\r"], "", str_replace('?', '&', $v['url']));
                     $list[$k]['formattedUrl'] = Yii::app()->createUrl($list[$k]['url']);
-
+                    
+                    
                     if (isset(Yii::app()->request) && Yii::app()->request->requestUri == $list[$k]['formattedUrl']) {
                         $v['active'] = true;
                     }

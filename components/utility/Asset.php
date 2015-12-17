@@ -40,6 +40,9 @@ class Asset extends CComponent {
         if (!empty($includeJS)) {
             foreach ($includeJS as $js) {
                 $jspath = realpath(Asset::resolveAlias($js));
+                if (!$jspath) {
+                    $jspath = realpath(Asset::resolveAlias($js) . ".js");
+                }
                 if (is_dir($jspath)) {
                     $path = Asset::publish($jspath);
                     $files = glob($jspath . "/*");

@@ -32,16 +32,24 @@ class EmailCommand extends Service {
 		    )
 		);
 		$mails = $this->params['mails'];
-		foreach ($mails as $m) {
-			$mail->Subject = $m['subject'];
-			$mail->AltBody    = "To view the message, please use an HTML compatible email viewer!";
-			$mail->MsgHTML($m['body']);
-			$mail->IsHTML(true);
-			$mail->AddAddress($m['to']);
-			if (!$mail->Send()) {
-				$this->log("Failed to send email to: " . $m['to']);
+		if (is_array($mails)) {
+			foreach ($mails as $m) {
+				$mail->Subject = $m['subject'];
+				$mail->AltBody    = "To view the message, please use an HTML compatible email viewer!";
+				$mail->MsgHTML($m['body']);
+				$mail->IsHTML(true);
+				$mail->AddAddress($m['to']);
+				if (!$mail->Send()) {
+					$this->log("Failed to send email to: " . $m['to']);
+				}
+				$mail->ClearAddresses();
 			}
-			$mail->ClearAddresses();
+		} else {
+			echo " ";
+			echo "               ######## ERROR RUNING EMAIL SERVICE ##########";
+			echo "               ### You should run this from Email::send() ###";
+			echo "               ##############################################";
+			echo " ";
 		}
     }
 }

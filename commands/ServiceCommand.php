@@ -7,7 +7,7 @@ class ServiceCommand extends CConsoleCommand {
         while(true){   
             $services = Setting::get('services.list', [], true);
             $curTime = time();
-            foreach ($services as $name => $service) {
+            foreach ($services as $serviceName => $service) {
                 $lastRun = strtotime(@$service['lastRun']);
                 
                 if ($service['schedule'] != 'manual') {
@@ -21,13 +21,14 @@ class ServiceCommand extends CConsoleCommand {
                         case "minute":
                             $period = $service['period'] * 60;
                             break;
+                        case "second":
+                            $period = $service['period'] ;
+                            break;
                     }
                     if((!isset($service['lastRun']) || abs($curTime-$lastRun)% $period==0)){
                         ServiceManager::runInternal($serviceName, $service);
                     }
-                } else {
-                    ServiceManager::runInternal($serviceName, $service);
-                }
+                } 
             }
             sleep(1);
         }
