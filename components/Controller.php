@@ -275,6 +275,7 @@ class Controller extends CController {
                 ]);
             }
         }
+        
 
         $default = [
             [
@@ -292,7 +293,12 @@ class Controller extends CController {
                 'visible' => !Yii::app()->user->isGuest
             ],
         ];
-
+        
+        $baseMenu = Yii::getPathOfAlias('app.menus.BaseMenu') . ".php";
+        if (is_file($baseMenu)) {
+            include($baseMenu);
+        }
+        
         if (Yii::app()->user->isGuest) {
             return $default;
         } else {

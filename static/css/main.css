@@ -318,6 +318,8 @@ i {
     margin: 8px 8px 0px 5px;
 }
 
+
+
 .navbar-nav > li a i {
     margin-left: -6px;
     font-size: 13px;
@@ -373,6 +375,13 @@ i {
     border-radius: 0 6px 6px 0px;
 }
 
+.dropdown-submenu .dropdown-submenu > .dropdown-menu.pull-left {
+    left:-100%;
+    -webkit-border-radius: 6px 0px 0px 6px;
+    -moz-border-radius: 6px 0px 0px 6px;
+    border-radius: 6px 0px 0px 6px;
+}
+
 .dropdown-submenu .dropdown-submenu:hover > .dropdown-menu {
     display: block;
 }
@@ -389,6 +398,19 @@ i {
     border-left-color: #cccccc;
     margin-top: 5px;
     margin-right: 0px;
+}
+.dropdown-submenu .dropdown-submenu.caret-left > a:before {
+    display: block;
+    content: " ";
+    float: left;
+    width: 0;
+    height: 0;
+    margin-top: 5px;
+    margin-left: 0px;
+    border:0px;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-right: 5px solid #ccc;
 }
 
 .dropdown-submenu .dropdown-submenu.no-menu > a:before {
