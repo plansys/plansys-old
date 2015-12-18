@@ -93,10 +93,10 @@ class DevServiceIndex extends Form {
     <div  ng-include=\'\"row-state-template\"\'></div>
     <span class=\'row-group-padding\' ng-if=\'!!row.$level\'
         style=\'width:{{row.$level*10}}px;\'></span>
-    {{row.name}}
+    <div ng-if=\"row.is_plansys\" class=\"label label-warning\"><i class=\"fa fa-warning\"></i> Plansys Service</div> {{row.name}}
 </td>',
                         'columnType' => 'string',
-                        'show' => false,
+                        'show' => true,
                         'mergeSameRow' => 'No',
                         'cellMode' => 'custom',
                     ),
@@ -145,7 +145,7 @@ class DevServiceIndex extends Form {
     <div ng-if=\"row.status != \'running\'\" class=\"label label-default\">STOPPED</div>
 </td>',
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
                         'mergeSameRow' => 'No',
                         'cellMode' => 'custom',
                     ),

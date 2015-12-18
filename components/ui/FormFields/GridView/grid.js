@@ -775,6 +775,7 @@ app.directive('gridView', function ($timeout, $http) {
                             $scope.loaded = true;
                             $scope.onGridRender('timeout');
                         }
+                        window.resize();
                     }, 500);
                     $timeout(function () {
                         $scope.datasource.beforeQueryInternal[$scope.renderID] = function () {
@@ -796,6 +797,7 @@ app.directive('gridView', function ($timeout, $http) {
                             }
                             $scope.lastCheckbox = null;
                             $scope.onGridRender('query');
+                            window.resize();
                         };
                         $scope.loadPageSetting();
                     });

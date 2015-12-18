@@ -21,10 +21,7 @@ class WebUser extends CWebUser {
             return false;
         }
 
-        $role = $this->getState("role");
-        if ($role === 'admin') {
-            return true; // admin role has access to everything
-        }
+        $role = $this->getState("fullRole");
         // allow access if the operation request is the current user's role
         return ($operation === $role);
     }
@@ -71,8 +68,6 @@ class WebUser extends CWebUser {
     }
 
     public function getRoleInfo() {
-        
-        
         foreach ($this->info['roles'] as $k => $i) {
             if (@$i['role_name'] == $this->fullRole) {
                 return $i;

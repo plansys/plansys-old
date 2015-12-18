@@ -150,7 +150,7 @@ ng-model=\"model.content\">
         </a>
     </div>
     
-    <pre ng-if=\"tab == \'log\'\">{{log }}</pre>
+    <pre ng-if=\"tab == \'log\'\" style=\'margin-top:15px;border-radius:0px;\'>{{log }}</pre>
 ',
             ),
             array (

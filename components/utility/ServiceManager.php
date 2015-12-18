@@ -20,6 +20,7 @@ class ServiceManager extends CComponent {
             }
             
             $res = [
+                'is_plansys' => strpos($svc['commandPath'], 'application.') === 0, 
                 'name' => $svc['name'],
                 'command' => $svc['command'],
                 'action' => $svc['action'],
