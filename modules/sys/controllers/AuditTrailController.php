@@ -5,9 +5,9 @@ class AuditTrailController extends Controller {
     public function actionTrack($t = "view") {
         $postdata = file_get_contents("php://input");
         $path     = json_decode($postdata, true);
-        $tracking = Setting::get('auditTrail.enable');
-
-        if ($tracking != null && $tracking != true) {
+        $tracking = Setting::get('app.auditTrail') == "Enabled";
+        
+        if ($tracking != null || $tracking != true) {
             return;
         }
 

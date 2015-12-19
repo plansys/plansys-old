@@ -894,7 +894,6 @@ class RelationField extends FormField {
             }
         }
 
-
         echo json_encode([
             'list' => $this->query($s, $p),
             'count' => $this->count($s, $p)

@@ -11,6 +11,8 @@ class DevSettingApp extends Form {
     public $timeFormat = 'H:i';
     public $dateTimeFormat = 'd M Y - H:i';
     
+    public $auditTrail = 'Enabled';
+    
     public function __construct() {
         parent::__construct();
         $this->attributes = Setting::get('app');
@@ -136,6 +138,19 @@ class DevSettingApp extends Form {
                     array (
                         'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
+                    ),
+                ),
+                'column2' => array (
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
+                    array (
+                        'label' => 'Audit Trail',
+                        'name' => 'auditTrail',
+                        'onLabel' => 'Enabled',
+                        'offLabel' => 'Disabled',
+                        'type' => 'ToggleSwitch',
                     ),
                 ),
                 'w1' => '50%',
