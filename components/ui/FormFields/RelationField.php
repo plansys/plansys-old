@@ -887,7 +887,9 @@ class RelationField extends FormField {
         if (is_array(@$field['params'])) {
             foreach ($field['params'] as $k => $ff) {
                 if (substr($ff, 0, 3) == "js:" && isset($p[$k])) {
-                    $p[$k] = "'" . $p[$k] . "'";
+                    if (is_string($p[$k])) {
+                        $p[$k] = "'" . $p[$k] . "'";
+                    }
                 }
             }
         }

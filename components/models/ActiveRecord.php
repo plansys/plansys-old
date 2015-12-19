@@ -1469,7 +1469,7 @@ class ActiveRecord extends CActiveRecord {
                     $ds = $fb->findField(['name'=>$lv['datasource']]);
                     
                     ## if datasource is saved via relation and data is posted
-                    if (@$ds['postData'] == 'Yes' && @$ds['relationTo'] != '' && !empty($this->__relUpdate)) {
+                    if (@$ds['postData'] == 'Yes' && @$ds['relationTo'] != '' && isset($this->__relUpdate[$ds['relationTo']])) {
                         foreach ($this->__relUpdate[$ds['relationTo']] as $k => $rel) {
                             $this->handleFileUpload($lv['templateForm'], $this->__relUpdate[$ds['relationTo']][$k]);
                         }

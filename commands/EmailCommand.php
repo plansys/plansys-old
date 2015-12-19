@@ -46,7 +46,7 @@ class EmailCommand extends Service {
 			}
 		} else {
 			echo " ";
-			echo "               ######## ERROR RUNING EMAIL SERVICE ##########";
+			echo "               ######## ERROR RUNNING EMAIL SERVICE #########";
 			echo "               ### You should run this from Email::send() ###";
 			echo "               ##############################################";
 			echo " ";

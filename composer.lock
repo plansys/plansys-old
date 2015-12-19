@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/box/spout.git",
-                "reference": "8d27b3097d60769c21be713c6867e23855dc326e"
+                "reference": "9a85d84a2ee40ed0c06f2ad1658a638f317fe017"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/box/spout/zipball/8d27b3097d60769c21be713c6867e23855dc326e",
-                "reference": "8d27b3097d60769c21be713c6867e23855dc326e",
+                "url": "https://api.github.com/repos/box/spout/zipball/9a85d84a2ee40ed0c06f2ad1658a638f317fe017",
+                "reference": "9a85d84a2ee40ed0c06f2ad1658a638f317fe017",
                 "shasum": ""
             },
             "require": {
@@ -70,7 +70,7 @@
                 "write",
                 "xlsx"
             ],
-            "time": "2015-12-08 18:35:49"
+            "time": "2015-12-17 18:59:45"
         },
         {
             "name": "inlinestyle/inlinestyle",
