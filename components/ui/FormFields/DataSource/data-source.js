@@ -20,7 +20,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 $scope.httpRequest = false;
                 $scope.loading = false;
                 $scope.untrackColumns = [];
-
+                
                 if (!$scope.primaryKey) {
                     $scope.primaryKey = 'id';
                 }
@@ -260,27 +260,29 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 }
 
                 var jsParamExist = false;
-                angular.forEach($scope.params, function (p, i) {
-                    if (p.indexOf('js:') === 0) {
-                        var value = parent.$eval(p.replace('js:', ''));
-                        var watch = parent.$eval('"' + p.replace('js:', '') + '"');
-                        var key = i;
-                        parent.$watchCollection(watch, function (newv, oldv) {
-                            if (newv != oldv) {
-                                $scope.updateParam(key, newv);
-                                
-                                $scope.query(function () {
-                                    $scope.trackChanges = false;
-                                    $scope.internalQuery = true;
-                                    $scope.resetOriginal();
-                                });
-                            }
-                        });
-
-                        $scope.updateParam(i, value)
-                        jsParamExist = true;
-                    }
-                });
+                if (!!$scope.params) {
+                    angular.forEach($scope.params, function (p, i) {
+                        if (p != null && p.indexOf('js:') === 0) {
+                            var value = parent.$eval(p.replace('js:', ''));
+                            var watch = parent.$eval('"' + p.replace('js:', '') + '"');
+                            var key = i;
+                            parent.$watchCollection(watch, function (newv, oldv) {
+                                if (newv != oldv) {
+                                    $scope.updateParam(key, newv);
+                                    
+                                    $scope.query(function () {
+                                        $scope.trackChanges = false;
+                                        $scope.internalQuery = true;
+                                        $scope.resetOriginal();
+                                    });
+                                }
+                            });
+    
+                            $scope.updateParam(i, value)
+                            jsParamExist = true;
+                        }
+                    });
+                }
 
                 $scope.internalQuery = false;
                 $scope.trackChanges = true;

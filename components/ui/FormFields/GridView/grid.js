@@ -752,18 +752,21 @@ app.directive('gridView', function ($timeout, $http) {
                         if (paging != oldpaging) {
                             var maxPage = Math.ceil($scope.datasource.totalItems / $scope.gridOptions.pageInfo.pageSize);
 
-                            if (isNaN($scope.gridOptions.pageInfo.currentPage) || $scope.gridOptions.pageInfo.currentPage == '') {
+                            if (isNaN($scope.gridOptions.pageInfo.currentPage) 
+                                || $scope.gridOptions.pageInfo.currentPage == '' 
+                                || $scope.gridOptions.pageInfo.currentPage <= 0) {
                                 $scope.gridOptions.pageInfo.currentPage = 1;
                             }
 
                             if ($scope.gridOptions.pageInfo.currentPage > maxPage) {
-                                $scope.gridOptions.pageInfo.currentPage = maxPage;
+                                $scope.gridOptions.pageInfo.currentPage = Math.max(maxPage, 1);
                             }
 
                             if (typeof $scope.datasource != "undefined" && typeof paging != "undefined") {
                                 if ($scope.pagingTimeout != null) {
                                     clearTimeout($scope.pagingTimeout);
                                 }
+                                
                                 $scope.pagingTimeout = setTimeout(function () {
                                     $scope.updatePaging(paging, true, oldpaging);
                                 }, 100);
@@ -775,7 +778,7 @@ app.directive('gridView', function ($timeout, $http) {
                             $scope.loaded = true;
                             $scope.onGridRender('timeout');
                         }
-                        if (typeof window.resize == "function") {
+                        if (typeof window.resize == 'function') {
                             window.resize();
                         }
                     }, 500);

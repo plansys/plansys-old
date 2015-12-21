@@ -79,8 +79,8 @@ class DataSource extends FormField {
         if ($this->lastCount == 0) {
             if ($this->enablePaging == 'Yes') {
                 $tc    = DataSource::generateTemplate($this->pagingSQL, $params, $this);
+                
                 $count = $db->createCommand($tc['sql'])->queryAll(true, $tc['params']);
-
                 if (count($count) > 0) {
                     $count = array_values($count[0]);
                     $count = $count[0];
@@ -684,6 +684,7 @@ class DataSource extends FormField {
             }
             if ($this->postData == 'No' || $this->relationTo == '' || $this->relationTo == '-- NONE --') {
                 ## without relatedTo
+                $this->prepareGeneratedParams();
 
                 switch ($this->fieldType) {
                     case "sql":
@@ -951,6 +952,39 @@ class DataSource extends FormField {
     public function includeJS() {
         return ['data-source.js'];
     }
+    
+    private function prepareGeneratedParams() {
+        $where = null;
+        $paging = null;
+        $order = null;
+        if ($this->relationTo == '' || $this->postData == 'No') {
+            if (!isset($this->params['where'])) {
+                $where = $this->builder->findField(['datasource'=>$this->name, 'type' => 'DataFilter']);
+                $this->params['where'] = $where['name'];
+            }
+            
+            if (!isset($this->params['order']) || !isset($this->params['paging'])) {
+                if (!isset($this->params['paging'])) {
+                    $paging = $this->builder->findField(['datasource'=>$this->name, 'type' => 'GridView']);
+                    $this->params['paging'] = $paging['name'];
+                }
+                
+                if (!isset($this->params['order'])) {
+                    if ($paging) {
+                        $order = $paging;
+                    } else {
+                        $order = $this->builder->findField(['datasource'=>$this->name, 'type' => 'GridView']);
+                    }
+                    $this->params['order'] = $order['name'];
+                }
+            }
+        } 
+        return [
+            'where' => $where,
+            'paging' => $paging,
+            'order' => $order
+        ];
+    }
 
     /**
      * render
@@ -959,8 +993,15 @@ class DataSource extends FormField {
      */
     public function render() {
         $execQuery = true;
+        
+        $gParams = $this->prepareGeneratedParams();
         if (isset($this->params['where'])) {
-            $field = $this->builder->findField(['name' => $this->params['where']]);
+            if ($gParams['where']) {
+                $field = $gParams['where'];
+            } else {
+                $field = $this->builder->findField(['name' => $this->params['where']]);
+            }
+            
             if ($field) {
                 foreach ($field['filters'] as $f) {
                     $dateCondition = @$f['defaultOperator'] != '' && @$f['filterType'] == 'date';
@@ -1028,6 +1069,7 @@ class DataSource extends FormField {
                     $data = $this->execute($this->params);
                     break;
             }
+            
         } else {
             ## with relatedTo
             $data = $this->getRelated($this->params);

@@ -80,12 +80,6 @@
             <div ng-if="mode=='full'" class="pull-left" style="margin:5px">
                 of {{ Math.ceil(datasource.totalItems / gridOptions.pageInfo.pageSize) | number}}
             </div>
-            <div ng-if="mode=='full' && datasource.totalItems  > 0"
-                 style="float:left; border-left:1px solid #ccc;margin:2px 4px 2px 5px;padding:3px 0px 3px 8px;">
-                {{ (gridOptions.pageInfo.pageSize * (gridOptions.pageInfo.currentPage -1)) + 1| number }}
-                &nbsp;<i class="fa fa-caret-right"></i>
-                {{ Math.min(gridOptions.pageInfo.pageSize * gridOptions.pageInfo.currentPage, datasource.totalItems) }}
-            </div>
             <div class="pull-left"
                  style="border-left:1px solid #ccc;margin:2px 5px;padding:3px 8px;">
                 <div ng-if="datasource.loading">
@@ -103,28 +97,35 @@
                     <i class="fa fa-refresh {{datasource.loading ? 'fa-spin' : ''}}"></i> Refresh
                 </button>
                 <button ng-click="reset()" ng-if="!!resetPageSetting"
+                        tooltip="Reset Grid" tooltip-placement="bottom"
                         type="button" class="btn btn-default">
                     <i class="fa fa-flash"></i>
                 </button>
             </div>
 
-            <div class="btn-group pull-right" style="padding-top:2px;" dropdown>
+            <div class="btn-group pull-right" style="padding-top:2px;margin-left:5px;" dropdown>
                 <button type="button" class="btn btn-default dropdown-toggle">
                     <span class="caret pull-right" style="margin:7px 0px 0px 5px;"></span>
-                    {{gridOptions.pageInfo.pageSize}}
+                    {{gridOptions.pageInfo.pageSize}} rows / page
                 </button>
                 <ul class="dropdown-menu" role="menu">
                     <li class="dropdown-toggle"
                         ng-click="gridOptions.pageInfo.pageSize = page"
                         ng-repeat="page in gridOptions.pageInfo.pageSizes">
-                        <a href="#">{{page}}</a>
+                        <a href="#">{{page}} rows</a>
                     </li>
                 </ul>
-
             </div>
-
-            <div ng-if="mode=='full'" class="pull-right" style="margin:5px;">
-                View Per Page:
+            
+            <div class="btn-group pull-right" style="padding-top:2px;">
+                <button type="button" class="btn btn-default">
+                    <span class="caret pull-right" style="margin:7px 0px 0px 5px;"></span>
+                    Options
+                </button>
+                <button type="button" class="btn btn-default" 
+                        tooltip="Download Excel" tooltip-placement="bottom">
+                    <i class="fa fa-download"></i>
+                </button>
             </div>
         </div>
         <div class="clearfix"></div>
