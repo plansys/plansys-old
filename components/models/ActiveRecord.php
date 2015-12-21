@@ -1192,7 +1192,14 @@ class ActiveRecord extends CActiveRecord {
                                 $model = new $relClass;
                             }
                             
-                            if (array_diff($model->getAttributesWithoutRelation(), $new)) {
+                            $attr = $model->getAttributesWithoutRelation();
+                            foreach ($attr as $k => $n) {
+                                if (is_array($n)) {
+                                    unset($attr[$k]);
+                                }
+                            }
+                            
+                            if (array_diff($attr, $new)) {
                                 $model->attributes = $new;
                                 if ($relType == 'CHasOneRelation') {
                                     $model->{$relForeignKey} = $this->{$pk};
