@@ -1451,7 +1451,7 @@ class ActiveRecord extends CActiveRecord {
             if (count($attrs) > 0) {
                 if ($this->isNewRecord) {
                     $this->isNewRecord = false;
-                    $this->updateByPk($this->id, $this->getAttributes($attrs));
+                    $this->updateByPk($this->{$pk}, $attrs);
                     $this->isNewRecord = true;
                 } else {
                     $this->saveAttributes($attrs);
