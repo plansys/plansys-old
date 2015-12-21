@@ -73,6 +73,7 @@ class DataSource extends FormField {
 
         ## execute SQL
         $this->command = $db->createCommand($template['sql']);
+        
         $data          = $this->command->queryAll(true, $template['params']);
 
         ## if should count, then count..
@@ -216,15 +217,19 @@ class DataSource extends FormField {
             $sql = DataSource::concatSql($sql, "AND");
             $sql = DataSource::concatSql($sql, "OR");
         }
-
+        
         ## remove uneeded return params
         preg_match_all("/\:[\w\d_]+/", $sql, $cp);
+        
         foreach ($returnParams as $k => $p) {
-            if (!in_array($k, $cp[0]) && !in_array(':' . $k, $cp[0])) {
+            if (!in_array($k, $cp[0]) && ($k[0] != ":" && !in_array(':' . $k, $cp[0]))) {
+                unset($returnParams[$k]);
+            }
+            
+            if ((is_null($p) && strpos(@$postedParams[$k], "js:") === 0) || strpos($sql, $k) === false) {
                 unset($returnParams[$k]);
             }
         }
-        
 
         return [
             'sql' => trim($sql),
@@ -894,6 +899,11 @@ class DataSource extends FormField {
             $sql               = $criteria['order'];
             $bracket           = DataSource::generateTemplate($sql, $postedParams, $field);
             $criteria['order'] = str_replace("order by", "", $bracket['sql']);
+            if (isset($bracket['params'])) {
+                foreach ($bracket['params'] as $k=> $p) {
+                    $postedParams['params'][$k] = $p;
+                }
+            }
         }
 
         ## condition criteria

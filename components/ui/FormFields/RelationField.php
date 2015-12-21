@@ -424,8 +424,6 @@ class RelationField extends FormField {
         if (!class_exists($class))
             return;
             
-            
-
         $model    = new $class;
         $table    = $model->tableName();
         $criteria = $this->generateCriteria($search, $params);
@@ -508,10 +506,10 @@ class RelationField extends FormField {
 
         $nolimit                             = false;
         $this->relationCriteria['condition'] = $condition["sql"];
-
+        
         $this->params = array_merge(is_null($this->params) ? [] : $this->params, $condition['params']);
         $criteria     = DataSource::generateCriteria($this->params, $this->relationCriteria, $this);
-
+        
         ##clean criteria condition
         if (isset($criteria['condition'])) {
             if (stripos($criteria['condition'], "and ") === 0) {
@@ -889,7 +887,7 @@ class RelationField extends FormField {
                 if (substr($ff, 0, 3) == "js:" && isset($p[$k])) {
                     if (is_string($p[$k])) {
                         $p[$k] = "'" . $p[$k] . "'";
-                    }
+                    } 
                 }
             }
         }

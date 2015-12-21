@@ -579,7 +579,7 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function getRelatedArray($criteria = [], $rel = null) {
-
+        
         ## clean criteria array
         if (isset($criteria['page'])) {
             $criteria['offset'] = ($criteria['page'] - 1) * $criteria['pageSize'];
@@ -608,7 +608,6 @@ class ActiveRecord extends CActiveRecord {
         if (!@$criteria['distinct'] && !trim(@$criteria['select'])) {
             $cdbCriteria->select = '*';
         }
-
         ## generate sql;
         $command = $builder->createFindCommand($tableSchema, $cdbCriteria);
         $sql     = $command->text;

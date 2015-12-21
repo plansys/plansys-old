@@ -85,7 +85,12 @@ app.filter('repoPath', function() {
     return function(input, scope) {
         if (window.plansys && window.plansys.repoPath) {
             if (input.indexOf(window.plansys.repoPath) === 0) {
-                return window.plansys.baseUrl + input.substr(window.plansys.repoPath.length);
+                if (window.plansys.repoPath.indexOf(window.plansys.rootPath) == 0) {
+                    var repoDir = window.plansys.repoPath.substr(window.plansys.rootPath.length);
+                    return window.plansys.baseUrl + repoDir + input.substr(window.plansys.repoPath.length);
+                } else {
+                    return window.plansys.baseUrl + input.substr(window.plansys.repoPath.length);
+                }
             }
         }
         
