@@ -119,7 +119,8 @@
             
             <div class="btn-group pull-right" style="padding-top:2px;">
                 <button type="button" class="btn btn-default" 
-                        tooltip="Download Excel" tooltip-placement="bottom">
+                        ng-click="downloadExcel()"
+                        tooltip="Download Excel" tooltip-placement="left">
                     <i class="fa fa-download"></i>
                 </button>
             </div>

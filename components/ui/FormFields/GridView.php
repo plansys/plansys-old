@@ -1,5 +1,7 @@
 <?php
 
+use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Common\Type;
 class GridView extends FormField {
 
     public static $toolbarName  = "GridView";
@@ -20,6 +22,24 @@ class GridView extends FormField {
     public        $columns      = [];
     public        $columnsFunc  = "";
     public        $hasEditable  = false;
+
+    public function actionDownloadExcel() {
+        $postdata = file_get_contents("php://input");
+        $post     = CJSON::decode($postdata);
+        if (isset($post['rows'])) {
+            $writer = WriterFactory::create(Type::XLSX);
+            $dir = Yii::getPathOfAlias('root.assets.gvExport') ."/";
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777);
+            }
+            $file = "export-". time() .".xlsx";
+            $writer->openToFile($dir . $file); // stream data directly to the browser
+            $writer->addRows($post['rows']); // add multiple rows at a time
+            $writer->close();
+            echo Yii::app()->baseUrl . '/assets/gvExport/' . $file;
+        }
+        
+    }
 
     public function actionEditHeader() {
         Asset::registerCSS(['application.components.ui.FormFields.GridView.grid-header-editor']);

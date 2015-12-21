@@ -643,6 +643,32 @@ app.directive('gridView', function ($timeout, $http) {
                         }
                     }
                 }
+                $scope.downloadExcel = function() {
+                    var availableHeader = [];
+                    var rows = [];
+                    var row = [];
+                    $el.find('table thead tr th').each(function(i, e) {
+                        if ($(e).text().trim() != "") {
+                            availableHeader.push(i);
+                            row.push($(e).text().trim());
+                        }
+                    });
+                    rows.push(row);
+                    
+                    $el.find('table tbody tr').each(function(i, e) {
+                        var row = [];
+                        $(e).find('td').each(function(j, f) {
+                            if (availableHeader.indexOf(j) >= 0) {
+                                row.push($(f).text().trim());
+                            }
+                        });
+                        rows.push(row);
+                    });
+                    
+                    $http.post(Yii.app.createUrl('/formfield/GridView.downloadExcel'), {rows:rows}).success(function(e) {
+                        location.href = e;
+                    });
+                }
                 $scope.checkboxGroup = function (rowIdx, colName, colIdx, e) {
                     var loop = true;
                     var modify = $scope.getModifyDS($scope.columns[colIdx]);
