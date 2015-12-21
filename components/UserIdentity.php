@@ -19,13 +19,15 @@ class UserIdentity extends CUserIdentity {
             'user_id'         => $this->id,
             'is_default_role' => 'Yes'
         ]);
-        $this->setState('fullRole', $role->role['role_name']);
-        $rootRole = Helper::explodeFirst(".", $role->role['role_name']);
-        $this->setState('role', $rootRole);
-        $this->setState('roleId', $role->id);
-
-        ## reset error code
-        $this->errorCode = self::ERROR_NONE;
+        if (!!$role) {
+            $this->setState('fullRole', $role->role['role_name']);
+            $rootRole = Helper::explodeFirst(".", $role->role['role_name']);
+            $this->setState('role', $rootRole);
+            $this->setState('roleId', $role->id);
+    
+            ## reset error code
+            $this->errorCode = self::ERROR_NONE;
+        }
     }
 
     public function authenticate() {
