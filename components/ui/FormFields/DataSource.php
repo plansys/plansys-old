@@ -115,14 +115,20 @@ class DataSource extends FormField {
     public static function generateTemplate($sql, $postedParams = [], $field, $paramDefs = []) {
         $returnParams = [];
 
+
         ## find all params
         preg_match_all("/\:[\w\d_]+/", $sql, $params);
+        $originalSql = $sql;
         $model = $field->model;
         foreach ($params[0] as $idx => $p) {
             if (isset($postedParams[$p])) {
                 if (is_string($postedParams[$p])) {
                     $isJs = strpos($postedParams[$p], 'js:') !== false || (isset($paramDefs[$p]) && strpos($paramDefs[$p], 'js:') !== false);
-
+                    
+                    if (!$isJs && isset($field->params[$p]) && strpos($field->params[$p], 'js:') === 0) {
+                        $isJs = true;
+                    }
+                    
                     if ($isJs) {
                         switch (get_class($field)) {
                             case "DataSource":
@@ -182,7 +188,7 @@ class DataSource extends FormField {
 
             if (count($attachedParams[0]) > 0) {
                 $inParams = 0;
-                foreach ($attachedParams[0] as $ap) {
+                foreach ($attachedParams[0] as $ap) {  
                     if (isset($returnParams[$ap]) && $returnParams[$ap] != "") {
                         $inParams++;
 
@@ -198,12 +204,13 @@ class DataSource extends FormField {
                             $bracket['sql'] = Helper::strReplaceFirst($ap, implode(",", $newParamString), $bracket['sql']);
                         }
                     }
-                }
+                }     
                 
                 if ($inParams == count($attachedParams)) {
                     $renderBracket = true;
                 }
             }
+            
 
             if ($renderBracket) {
                 $sql = str_replace("{{$block}}", $bracket['sql'], $sql);
@@ -763,7 +770,7 @@ class DataSource extends FormField {
         $postedParams = array_merge($params, $this->queryParams);
         $relChanges   = $this->model->getRelChanges($this->relationTo);
         $criteria     = DataSource::generateCriteria($postedParams, $this->relationCriteria, $this);
-
+        
         if (@$criteria['params']) {
             $criteria['params'] = array_filter($criteria['params'], function($value) {
                 return ($value !== null && $value !== false && $value !== ''); 
@@ -910,7 +917,7 @@ class DataSource extends FormField {
         if (isset($criteria['condition']) && is_string($criteria['condition'])) {
             $sql     = $criteria['condition'];
             $bracket = DataSource::generateTemplate($sql, $postedParams, $field);
-
+            
             if ($bracket['sql'] != '') {
                 if (substr($bracket['sql'], 0, 5) == 'where') {
                     $criteria['condition'] = substr($bracket['sql'], 5);
