@@ -16,6 +16,12 @@ class Email extends CComponent {
 		
 		if (is_string($from)) {
 			$from = [$from];
+		} else {
+			array_walk_recursive($from, function (&$value) {
+			    if (is_string($value)) {
+			    	$value = htmlentities($value);
+			    }
+			});
 		}
 		array_walk_recursive($params, function (&$value) {
 		    if (is_string($value)) {
@@ -56,7 +62,14 @@ class Email extends CComponent {
 		
 		if (is_string($from)) {
 			$from = [$from];
+		} else {
+			array_walk_recursive($from, function (&$value) {
+			    if (is_string($value)) {
+			    	$value = htmlentities($value);
+			    }
+			});
 		}
+		
 		array_walk_recursive($params, function (&$value) {
 		    if (is_string($value)) {
 		    	$value = htmlentities($value);

@@ -118,10 +118,6 @@
             </div>
             
             <div class="btn-group pull-right" style="padding-top:2px;">
-                <button type="button" class="btn btn-default">
-                    <span class="caret pull-right" style="margin:7px 0px 0px 5px;"></span>
-                    Options
-                </button>
                 <button type="button" class="btn btn-default" 
                         tooltip="Download Excel" tooltip-placement="bottom">
                     <i class="fa fa-download"></i>
