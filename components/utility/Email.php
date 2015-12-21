@@ -17,6 +17,11 @@ class Email extends CComponent {
 		if (is_string($from)) {
 			$from = [$from];
 		}
+		array_walk_recursive($params, function (&$value) {
+		    if (is_string($value)) {
+		    	$value = htmlentities($value);
+		    }
+		});
 		
 		$currentUserId = null;
 		if (isset(Yii::app()->user)) {
@@ -52,7 +57,12 @@ class Email extends CComponent {
 		if (is_string($from)) {
 			$from = [$from];
 		}
-		
+		array_walk_recursive($params, function (&$value) {
+		    if (is_string($value)) {
+		    	$value = htmlentities($value);
+		    }
+		});
+
 		$currentUserId = null;
 		if (isset(Yii::app()->user)) {
 			$currentUserId = Yii::app()->user->id; 
