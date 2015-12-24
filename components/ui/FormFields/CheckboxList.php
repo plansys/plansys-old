@@ -176,6 +176,7 @@ class CheckboxList extends FormField {
 
     /** @var string $list */
     public $list = '';
+    public $formattedList = '';
 
     /** @var string $listExpr */
     public $listExpr = '';
@@ -243,6 +244,16 @@ class CheckboxList extends FormField {
             }
         } else if (is_array($this->list) && !Helper::is_assoc($this->list)) {
             $this->list = Helper::toAssoc($this->list);
+        }
+
+        $this->formattedList = [];
+        if (is_array($this->list)) {
+            foreach ($this->list as $k=>$v) {
+                $this->formattedList[] = [
+                    'text' => $v,
+                    'value' => $k
+                ];
+            }
         }
 
         return [
@@ -349,6 +360,7 @@ class CheckboxList extends FormField {
         $this->addClass($this->errorClass);
 
         $this->addClass('input-group', 'fieldOptions');
+        $this->addClass('input-list', 'fieldOptions');
         if ($this->itemLayout == "Horizontal") {
             $this->addClass('inline', 'fieldOptions');
         }

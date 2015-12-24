@@ -118,6 +118,7 @@ class RadioButtonList extends FormField {
 
     /** @var string $list */
     public $list = '';
+    public $formattedList = '';
 
     /** @var string $listExpr digunakan pada function processExpr */
     public $listExpr = '';
@@ -177,6 +178,17 @@ class RadioButtonList extends FormField {
             $this->list = Helper::toAssoc($this->list);
         }
 
+    
+        $this->formattedList = [];
+        if (is_array($this->list)) {
+            foreach ($this->list as $k=>$v) {
+                $this->formattedList[] = [
+                    'text' => $v,
+                    'value' => $k
+                ];
+            }
+        }
+        
         return [
             'list' => $this->list
         ];
@@ -245,6 +257,7 @@ class RadioButtonList extends FormField {
         $this->addClass($this->errorClass);
 
         $this->addClass('input-group', 'fieldOptions');
+        $this->addClass('input-list', 'fieldOptions');
         if ($this->itemLayout == "Horizontal") {
             $this->addClass('inline', 'fieldOptions');
         }

@@ -3327,6 +3327,15 @@ label input[type=checkbox], label input[type=radio] {
     float: left;
 }
 
+label.input-list {
+    display:block;
+    padding-left:20px !important;
+}
+label.input-list input.input-list {
+    margin:2px 2px 2px -16px;
+    display:block;
+}
+
 .input-group.inline {
     display: block;
     float: left;

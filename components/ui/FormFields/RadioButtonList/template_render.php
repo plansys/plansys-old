@@ -14,17 +14,17 @@
         <data name="name" class="hide"><?= $this->name; ?></data>
         <data name="value" class="hide" ><?= $this->value ?></data>
         <data name="model_class" class="hide"><?= @get_class($model) ?></data>
-        <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
+        <data name="form_list" class="hide"><?= json_encode($this->formattedList) ?></data>
         <!-- /data -->
 
         <!-- field -->
-        <span ng-repeat="(val, text) in formList track by $index">
+        <span ng-repeat="item in formList track by $index" class="input-list-outer">
             <label <?= $this->expandAttributes($this->fieldOptions) ?>>
                 <input <?= $this->expandAttributes($this->fieldOptions) ?> 
-                    type="radio" id="<?= $this->renderID ?>_{{val}}"
-                       ng-checked="value == val"
-                       ng-click="update(val)"
-                       /> {{ text}}
+                    type="radio" id="<?= $this->renderID ?>_{{item.value}}"
+                       ng-checked="value == item.value"
+                       ng-click="update(item.value)"
+                       /> {{ item.text}}
             </label>
         </span>
         <input type="hidden" name="<?= $this->renderName ?>" value="{{ value}}" />

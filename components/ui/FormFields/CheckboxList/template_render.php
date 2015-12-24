@@ -16,7 +16,7 @@
         <data name="name" class="hide"><?= $this->name; ?></data>
         <data name="mode" class="hide"><?= $this->mode; ?></data>
         <data name="selected" class="hide"><?= json_encode($this->value); ?></data>
-        <data name="form_list" class="hide"><?= json_encode($this->list); ?></data>
+        <data name="form_list" class="hide"><?= json_encode($this->formattedList); ?></data>
         <data name="rel_info" class="hide"><?= json_encode($this->getRelationInfo()); ?></data>
         <!-- /data -->
 
@@ -27,14 +27,14 @@
         <?php endif; ?>
         
         <!-- field -->
-        <span ng-repeat="(value, text) in formList track by $index">
+        <span ng-repeat="item in formList track by $index" class="input-list-outer">
             <label <?= $this->expandAttributes($this->fieldOptions) ?>>
                 <input <?= $this->expandAttributes($this->fieldOptions) ?> 
-                    type="checkbox" id="<?= $this->renderID ?>_{{value}}"
-                       name="<?= $this->name ?>[{{value}}]"
-                       ng-checked="isChecked(value)"
-                       ng-click="updateItem(value)"
-                       /> {{ text}}
+                    type="checkbox" id="<?= $this->renderID ?>_{{item.value}}"
+                       name="<?= $this->name ?>[{{item.value}}]"
+                       ng-checked="isChecked(item.value)"
+                       ng-click="updateItem(item.value)"
+                       /> {{ item.text }}
             </label>
         </span>
 

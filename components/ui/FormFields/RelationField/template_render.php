@@ -34,6 +34,7 @@
                 echo $this->fieldOptions['disabled'];
             } else if (isset($this->fieldOptions['ng-disabled'])) {
                 echo $this->fieldOptions['ng-disabled'];
+                unset($this->fieldOptions['ng-disabled']);
             }
         ?></data>
         <!-- /data -->

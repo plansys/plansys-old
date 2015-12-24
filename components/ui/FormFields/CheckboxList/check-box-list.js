@@ -150,7 +150,14 @@ app.directive('checkBoxList', function ($timeout) {
                     //ps-list, replace entire list using js instead of rendered from server
                     function changeFieldList() {
                         $timeout(function () {
-                            $scope.formList = $scope.$eval(attrs.psList);
+                            var list = $scope.$eval(attrs.psList);
+                            $scope.formList = [];
+                            for (var i in list) {
+                                $scope.formList.push({
+                                    'text' : list[i],
+                                    'value': i
+                                });
+                            }
                             $scope.updateItemInternal($scope.value);
                         }, 0);
                     }

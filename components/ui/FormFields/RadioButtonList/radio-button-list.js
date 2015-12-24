@@ -22,7 +22,14 @@ app.directive('radioButtonList', function ($timeout) {
                 if (attrs.psList) {
                     function changeFieldList() {
                         $timeout(function () {
-                            $scope.formList = $scope.$eval(attrs.psList);
+                            var list = $scope.$eval(attrs.psList);
+                            $scope.formList = [];
+                            for (var i in list) {
+                                $scope.formList.push({
+                                    'text' : list[i],
+                                    'value': i
+                                });
+                            }
                         }, 0);
                     }
                     $scope.$watch(attrs.psList, changeFieldList);
