@@ -6,8 +6,10 @@ class User extends ActiveRecord {
 
     public function afterFind() {
         parent::afterFind();
-        $this->useLdap = Yii::app()->user->useLdap;
-        $this->getRoles();
+        if (get_class(Yii::app()) != "CConsoleApplication") {
+            $this->useLdap = Yii::app()->user->useLdap;
+            $this->getRoles();
+        }
         return true;
     }
 
