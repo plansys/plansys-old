@@ -20,7 +20,7 @@ class Controller extends CController {
             $dir    = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
             $static = "/" . array_pop($dir) . "/static";
         }
-
+        
         return $this->url($static . $path);
     }
 

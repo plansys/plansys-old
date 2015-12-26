@@ -10,6 +10,10 @@ class ServiceController extends Controller {
         $this->renderForm('DevServiceIndex', $model);
     }
     
+    public function actionDelete($m) {
+        Setting::remove('services.list.' . $m);
+    }
+    
     public function actionListCommand($m) {
         $path = Yii::getPathOfAlias($m) . DIRECTORY_SEPARATOR;
         if (!is_dir($path)) {
@@ -160,14 +164,6 @@ EOF;
             'instances' => $instances,
             'log' => ServiceManager::readLog($id)
         ]);
-    }
-
-    public function actionDelete($id = null){
-        if(isset($id)){            
-            Setting::remove('process.'.$id);            
-        }
-
-        $this->redirect(['/dev/processManager/']);
     }
 
     public function actionSave(){

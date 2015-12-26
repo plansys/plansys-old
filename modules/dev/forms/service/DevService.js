@@ -6,6 +6,15 @@ if($scope.params.href != ""){
 $scope.listCommand = false;
 $scope.listAction = false;
 
+$scope.deleteService = function() {
+    if (prompt("Type 'DELETE' to permanently delete this service: ") === "DELETE") {
+       $http.get(Yii.app.createUrl('/dev/service/delete', {m: $scope.model.name})).success(function() {
+        	window.close();
+        	window.opener.location.href = Yii.app.createUrl('/dev/service/index');
+       });
+    }
+}
+
 $scope.formatClass = function(str) {
     return ucfirst(str.replace(/\W/g, ''));
 }

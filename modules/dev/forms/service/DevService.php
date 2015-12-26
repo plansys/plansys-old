@@ -336,6 +336,13 @@ EOF;
                     ),
                     array (
                         'type' => 'Text',
+                        'value' => '<div ng-if=\"!$newCommand\" class=\"alert alert-warning text-center\" style=\"margin-top:20px\">
+    <div ng-click=\"deleteService();\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-warning\"></i> Delete This Service
+    </div>
+</div>',
+                    ),
+                    array (
+                        'type' => 'Text',
                         'value' => '</div>',
                     ),
                     array (

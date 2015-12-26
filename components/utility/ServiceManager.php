@@ -52,7 +52,6 @@ class ServiceManager extends CComponent {
         return [];
     }
     
-    
     public static function getInstanceByName($name) {
         $path = Yii::getPathOfAlias('root.assets.services.running.' . $name);
         $initPath = Yii::getPathOfAlias('root.assets.services.init');
@@ -182,7 +181,6 @@ class ServiceManager extends CComponent {
             $id = ServiceManager::initInstance();
             $logPath = ServiceManager::getLogPath($serviceName, $id);
             $command = "runLog \"{$logPath}\" php yiic.php service execute --id={$id}";
-            
             $pid = ServiceManager::process($command);
             
             $service['pid'] = $pid[0];

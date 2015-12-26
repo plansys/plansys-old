@@ -32,12 +32,11 @@ class DevGenNewCtrl extends Form {
                     ),
                 ),
                 'showSectionTab' => 'No',
-                'showOptionsBar' => 'No',
                 'type' => 'ActionBar',
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div style=\\\'height:15px\\\'></div>',
+                'value' => '<div style=\'height:15px\'></div>',
             ),
             array (
                 'name' => 'module',

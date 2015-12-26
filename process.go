@@ -4,6 +4,8 @@ import "fmt"
 import "os"
 import "os/exec"
 import "strconv"
+import "io"
+import "bufio"
 import "log"
 
 func main() {	
@@ -51,6 +53,32 @@ func main() {
 			if err == nil {
 				if cmd.Process != nil {
 					fmt.Println(cmd.Process.Pid)
+				}
+			}else{
+				fmt.Println(err);	
+			}
+			
+		} else if os.Args[1] == "runLog"{
+			cmd := exec.Command(os.Args[3], os.Args[4:]...)
+		    stdout, err := cmd.StdoutPipe()
+		    stderr, err := cmd.StderrPipe()
+
+			cmd.Start()	
+    		
+			if err == nil {
+				f, err := os.OpenFile(os.Args[2], os.O_APPEND | os.O_CREATE, 0666) 
+				writer := bufio.NewWriter(f)
+			    defer writer.Flush()
+
+				if (err == nil) {
+				    go io.Copy(writer, stdout)
+				    go io.Copy(writer, stderr)
+
+					if cmd.Process != nil {
+						fmt.Println(cmd.Process.Pid)
+					}
+				} else{
+					fmt.Println(err);	
 				}
 			}else{
 				fmt.Println(err);	

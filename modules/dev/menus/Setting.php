@@ -21,18 +21,18 @@ return array (
         'label' => 'Application Setting',
         'icon' => 'fa-home',
         'url' => '/dev/setting/app',
-        'formattedUrl' => '/eris/index.php?r=dev/setting/app',
+        'formattedUrl' => '/index.php?r=dev/setting/app',
     ),
     array (
         'label' => 'Database Setting',
         'icon' => 'fa-database',
         'url' => '/dev/setting/database',
-        'formattedUrl' => '/eris/index.php?r=dev/setting/database',
+        'formattedUrl' => '/index.php?r=dev/setting/database',
     ),
     array (
         'label' => 'Email Setting',
         'icon' => 'fa-envelope',
         'url' => '/dev/setting/email',
-        'formattedUrl' => '/eris/index.php?r=dev/setting/email',
+        'formattedUrl' => '/index.php?r=dev/setting/email',
     ),
 );
