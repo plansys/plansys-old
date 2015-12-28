@@ -3402,7 +3402,6 @@ div[icon-picker] .popover-content {
 }
 
 .column-field > div {
-    height: 100%;
     display: inline-block;
     vertical-align: top;
     margin-left: -5px
