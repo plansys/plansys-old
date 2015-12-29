@@ -6,7 +6,11 @@ class EmailBuilder extends CComponent {
 	private $renderCache = "";
 	
 	public function url($url) {
-		return Yii::app()->getRequest()->getHostInfo() . Yii::app()->getRequest()->getBaseUrl(). '/' . trim($url,'/');
+		return Setting::get('app.url'). '/' . trim($url,'/');
+	}
+	
+	public function getUrl() {
+		return $this->url('');
 	}
 	
 	public function render($params=[]) {

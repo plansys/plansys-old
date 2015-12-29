@@ -393,6 +393,10 @@ class Controller extends CController {
                 return false;
             }
         }
+        
+        if (!Setting::get('app.url')) {
+            Setting::set('app.url', Yii::app()->getRequest()->getHostInfo() . Yii::app()->getRequest()->getBaseUrl());
+        }
 
         parent::beforeAction($action);
         return true;
