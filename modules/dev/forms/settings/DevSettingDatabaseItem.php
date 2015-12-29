@@ -37,9 +37,6 @@ class DevSettingDatabaseItem extends DevSettingDatabase {
                         'options' => array (
                             'ng-change' => 'model.conn = formatName(model.conn)',
                         ),
-                        'fieldOptions' => array (
-                            'ng-disabled' => 'model.$rowState != \'insert\'',
-                        ),
                         'type' => 'TextField',
                     ),
                     array (

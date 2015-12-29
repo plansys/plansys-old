@@ -8,21 +8,11 @@ class ProfileController extends Controller {
 
         if (isset($_POST["DevUserForm"])) {
             $model->attributes = $_POST["DevUserForm"];
-            $model->subscribed = "on";
-
-            if ($model->subscriptionCategories == 'EMPTY') {
-                $model->subscriptionCategories = [];
-            }
 
             if ($model->save()) {
                 Yii::app()->user->setFlash('info', 'Profil Anda Tersimpan.');
+                $model = $this->loadModel(Yii::app()->user->id, "DevUserForm");
             }
-
-            $model = $this->loadModel(Yii::app()->user->id, "DevUserForm");
-        }
-
-        if (isset($_GET['e']) && $_GET['e'] && !isset($_POST["DevUserForm"])) {
-            $model->addError('email', 'Isi e-mail untuk menerima notifikasi');
         }
 
         $this->renderForm("DevUserForm", $model);

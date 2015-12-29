@@ -466,6 +466,7 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
     public function beforeSave() {
         parent::beforeSave();
 
+            echo("CH: " . $this->password . "<Br/>");
         $p = $this->getAttributes();
         $p['userRoles'] = Helper::uniqueArray($p['userRoles'], 'role_id');
         
