@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "de08129d34429b075324ee47db8833bd",
-    "content-hash": "0eb006113fa6b978c6e9836806460a3c",
+    "hash": "fc82c94c26c1e11c9d188492a015d56e",
+    "content-hash": "f2893896f85b5c8f0efc826d242b20c3",
     "packages": [
         {
             "name": "box/spout",
@@ -125,59 +125,6 @@
             "time": "2015-12-13 20:30:25"
         },
         {
-            "name": "leeoniya/dump-r",
-            "version": "2.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/leeoniya/dump_r.php.git",
-                "reference": "f6d3694f4ddd7dc08d7b3900875116eaf600034d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/leeoniya/dump_r.php/zipball/f6d3694f4ddd7dc08d7b3900875116eaf600034d",
-                "reference": "f6d3694f4ddd7dc08d7b3900875116eaf600034d",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4.0"
-            },
-            "suggest": {
-                "jdorn/sql-formatter": "Pretty-print dumped SQL strings"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "dump_r.php"
-                ],
-                "psr-4": {
-                    "dump_r\\": "src/dump_r"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Leon Sorokin",
-                    "email": "leeoniya@gmail.com",
-                    "homepage": "https://github.com/leeoniya",
-                    "role": "Developer"
-                }
-            ],
-            "description": "a cleaner, leaner mix of print_r() and var_dump()",
-            "homepage": "https://github.com/leeoniya/dump_r.php",
-            "keywords": [
-                "debug",
-                "dump",
-                "pretty",
-                "print",
-                "print_r",
-                "var_dump"
-            ],
-            "time": "2015-09-04 22:05:16"
-        },
-        {
             "name": "nikic/php-parser",
             "version": "v1.4.1",
             "source": {
@@ -285,16 +232,16 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v3.0.0",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
-                "reference": "2563cd23b8822eac1b2a4a47d99de160b58492c1"
+                "reference": "4613311fd46e146f506403ce2f8a0c71d402d2a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/css-selector/zipball/2563cd23b8822eac1b2a4a47d99de160b58492c1",
-                "reference": "2563cd23b8822eac1b2a4a47d99de160b58492c1",
+                "url": "https://api.github.com/repos/symfony/css-selector/zipball/4613311fd46e146f506403ce2f8a0c71d402d2a3",
+                "reference": "4613311fd46e146f506403ce2f8a0c71d402d2a3",
                 "shasum": ""
             },
             "require": {
@@ -334,7 +281,7 @@
             ],
             "description": "Symfony CssSelector Component",
             "homepage": "https://symfony.com",
-            "time": "2015-10-30 23:35:59"
+            "time": "2015-12-05 17:45:07"
         }
     ],
     "packages-dev": [],
