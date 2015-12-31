@@ -394,8 +394,11 @@ class Controller extends CController {
             }
         }
         
-        if (!Setting::get('app.url')) {
-            Setting::set('app.url', Yii::app()->getRequest()->getHostInfo() . Yii::app()->getRequest()->getBaseUrl());
+        ## Setup actual url reference, for console command...
+        $appUrl = Setting::get('app.url');
+        $actualUrl = Yii::app()->getRequest()->getHostInfo() . Yii::app()->getRequest()->getBaseUrl();
+        if ($appUrl != $actualUrl) {
+            Setting::set('app.url', $actualUrl);
         }
 
         parent::beforeAction($action);

@@ -138,7 +138,7 @@ EOF;
                     if ($col['type'] == 'function') {
                         continue;
                     }
-                    $rowImport[$c] = $row[$excelColumns[$c]];
+                    $rowImport[$c] = @$row[$excelColumns[$c]];
                 }
                 try {
                     $res = $import->importRow($rowImport);

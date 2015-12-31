@@ -290,6 +290,11 @@ class Import extends CComponent {
                     $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
                         function($var) use($key, $row) {
                             $ref = $var[1] == 'row' ? $row : $this->parentData;
+                            if (is_object(@$ref[$var[2]]) ) {
+                                if ($ref[$var[2]] instanceof DateTime) {
+                                    $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
+                                }
+                            }
                             return @$ref[$var[2]];
                         }, $col['value']);
                     
@@ -356,6 +361,13 @@ class Import extends CComponent {
                     $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
                         function($var) use($key, $row) {
                             $ref = $var[1] == 'row' ? $row : $this->parentData;
+                            
+                            if (is_object(@$ref[$var[2]]) ) {
+                                if ($ref[$var[2]] instanceof DateTime) {
+                                    $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
+                                }
+                            }
+                    
                             return @$ref[$var[2]];
                         }, $col['value']);
                         
@@ -385,6 +397,14 @@ class Import extends CComponent {
         }
         
         ## assign row vars, then save it
+        foreach ($attrs as $k=>$a) {
+            if (is_object(@$attrs[$k]) ) {
+                if ($attrs[$k] instanceof DateTime) {
+                    $attrs[$k] = $attrs[$k]->format('Y-m-d H:i:s');
+                }
+            }
+        }
+        
         $model->attributes = $attrs;
         if ($model->save()) {
             foreach ($resolveCol as $rc) {
@@ -454,6 +474,15 @@ class Import extends CComponent {
             
             $writer = WriterFactory::create(Type::XLSX);
             $writer->openToFile($this->resultFile); 
+            foreach ($data as $k=>$d) {
+                foreach ($d as $dk => $dd) {
+                    if (is_object(@$data[$k][$dk]) ) {
+                        if ($data[$k][$dk] instanceof DateTime) {
+                            $data[$k][$dk] = $data[$k][$dk]->format('Y-m-d H:i:s');
+                        }
+                    }
+                }
+            }
             $writer->addRows($data); 
             $writer->close();
             
