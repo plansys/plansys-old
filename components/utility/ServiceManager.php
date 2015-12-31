@@ -183,10 +183,14 @@ class ServiceManager extends CComponent {
             $command = "runLog \"{$logPath}\" php yiic.php service execute --id={$id}";
             $pid = ServiceManager::process($command);
             
-            $service['pid'] = $pid[0];
-            ServiceManager::sendMsg($id, $service);
-            
-            return $id;
+            if (!empty($pid)) {
+                $service['pid'] = $pid[0];
+                ServiceManager::sendMsg($id, $service);
+                
+                return $id;
+            } else {
+                return false;
+            }
         } 
     }
     
