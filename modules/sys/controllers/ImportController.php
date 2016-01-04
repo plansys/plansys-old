@@ -18,7 +18,13 @@ class ImportController extends Controller {
             return;
         }
         
-        $this->renderForm("SysImportData", $model);
+        $options = [];
+        
+        if (@$_GET['mode'] == "blank") {
+            $options['layout'] = "//layouts/blank";
+        }
+        
+        $this->renderForm("SysImportData", $model, [], $options);
     }
     
     public function actionDownloadTemplate() {

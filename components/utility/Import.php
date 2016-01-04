@@ -239,7 +239,12 @@ class Import extends CComponent {
                             } else if (is_string($i)) {
                                 $insert[$k] = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
                                     function($var) use($key, $row) {
-                                        $ref = $var[1] == 'row' ? $row : $this->parentData;
+                                        $ref = $this->parentData;
+                                        switch ($var[1]) {
+                                            case 'row': $ref = $row; break;
+                                            case 'lastRow': $ref = $this->lastRow; break;
+                                        }
+                                        
                                         return @$ref[$var[2]];
                                     }, $i);
                             }
@@ -262,6 +267,7 @@ class Import extends CComponent {
                         ## evaluate function, using parameters
                         $attrs[$into] = Helper::evaluate($col['notfound']['value'], [
                             'row'=> $row,
+                            'lastRow' => $this->lastRow
                         ] + $params);
                         break;
                 }
@@ -282,6 +288,10 @@ class Import extends CComponent {
         $data = [];
         $resolveCol = [];
         
+        $skipIf = false;
+        $skipParentIf = false;
+        $skipChildIf = false;
+        
         ## execute function when beforeLookup
         foreach ($this->columns as $key => $col) {
             if (@$col['type'] == 'function') {
@@ -289,7 +299,12 @@ class Import extends CComponent {
                     ## evaluate function, using parameters
                     $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
                         function($var) use($key, $row) {
-                            $ref = $var[1] == 'row' ? $row : $this->parentData;
+                            $ref = $this->parentData;
+                            switch ($var[1]) {
+                                case 'row': $ref = $row; break;
+                                case 'lastRow': $ref = $this->lastRow; break;
+                            }
+                    
                             if (is_object(@$ref[$var[2]]) ) {
                                 if ($ref[$var[2]] instanceof DateTime) {
                                     $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
@@ -300,6 +315,7 @@ class Import extends CComponent {
                     
                     $attrs[$key] = Helper::evaluate($expr, [
                         'row'=> $row,
+                        'lastRow' => $this->lastRow
                     ] + $params);
                     
                     if (@$col['show'] === true) {
@@ -319,7 +335,15 @@ class Import extends CComponent {
                     } 
                     $resolveCol[] = $key;
                     $data[$key] = @$row[$key];
-                    
+                    if (isset($col['skipIf'])) {
+                        $skipIf = $col['skipIf'];
+                    }
+                    if (isset($col['skipParentIf'])) {
+                        $skipParentIf = $col['skipParentIf'];
+                    }
+                    if (isset($col['skipChildIf'])) {
+                        $skipChildIf = $col['skipChildIf'];
+                    }
                     break;
                 case 'default':
                     if (!isset($row[$key])) {
@@ -329,7 +353,7 @@ class Import extends CComponent {
                     }
                     
                     $resolveCol[] = $key;
-                    if ($row[$key] == '' && $this->model->tableSchema->columns[$key]->isForeignKey) {
+                    if (isset($this->model->tableSchema->columns[$key]) && ($row[$key] == '' && $this->model->tableSchema->columns[$key]->isForeignKey)) {
                         continue;
                     }
                     $attrs[$key] = $row[$key];
@@ -353,14 +377,18 @@ class Import extends CComponent {
                     break;
             }
         }
-        
+
         ## execute function when afterLookup
         foreach ($this->columns as $key => $col) {
             if (@$col['type'] == 'function') {
                 if (@$col['when'] == 'afterLookup' || !isset($col['when'])) {
                     $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
-                        function($var) use($key, $row) {
-                            $ref = $var[1] == 'row' ? $row : $this->parentData;
+                        function($var) use($key, $row, $col) {
+                            $ref = $this->parentData;
+                            switch ($var[1]) {
+                                case 'row': $ref = $row; break;
+                                case 'lastRow': $ref = $this->lastRow; break;
+                            }
                             
                             if (is_object(@$ref[$var[2]]) ) {
                                 if ($ref[$var[2]] instanceof DateTime) {
@@ -370,14 +398,10 @@ class Import extends CComponent {
                     
                             return @$ref[$var[2]];
                         }, $col['value']);
-                        
-                    if ($expr =='Pass') {
-                        var_dump($expr, $col);
-                        die();
-                    }
                     
                     $attrs[$key] = Helper::evaluate($expr, [
                         'row'=> $row,
+                        'lastRow' => $this->lastRow
                     ] + $params);
                     
                     if (@$col['show'] === true) {
@@ -405,11 +429,103 @@ class Import extends CComponent {
             }
         }
         
+        if (is_string($skipIf)) {
+            $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
+                function($var) use($key, $attrs) {
+                    $ref = $this->parentData;
+                    switch ($var[1]) {
+                        case 'row': $ref = $attrs; break;
+                        case 'lastRow': $ref = $this->lastRow; break;
+                    }
+                            
+                    if (is_object(@$ref[$var[2]]) ) {
+                        if ($ref[$var[2]] instanceof DateTime) {
+                            $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
+                        }
+                    }
+                    return @$ref[$var[2]];
+                }, $skipIf);
+            
+            $skipIf = Helper::evaluate($expr, [
+                'row'=> $row,
+                'lastRow' => $this->lastRow
+            ] + $params);
+        }
+        
         $model->attributes = $attrs;
-        if ($model->save()) {
-            foreach ($resolveCol as $rc) {
-                if (isset($this->ignoreCols[$rc])) continue;
-                $data[$rc] = $model->{$rc};
+        $executeChild = true;
+        
+        if ($skipIf === true) {
+            $executeChild = false;
+        } else if (is_string($skipParentIf)) {
+            $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
+                function($var) use($key, $attrs) {
+                    $ref = $this->parentData;
+                    switch ($var[1]) {
+                        case 'row': $ref = $attrs; break;
+                        case 'lastRow': $ref = $this->lastRow; break;
+                    }
+                    
+                    if (is_object(@$ref[$var[2]]) ) {
+                        if ($ref[$var[2]] instanceof DateTime) {
+                            $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
+                        }
+                    }
+                    return @$ref[$var[2]];
+                }, $skipParentIf);
+            $skipParentIf = Helper::evaluate($expr, [
+                'row'=> $row,
+                'lastRow' => $this->lastRow
+            ] + $params);
+        }
+        
+        if ($executeChild) {
+            if ($skipParentIf !== true) { 
+                $model->save();
+            }
+        }
+        //         var_dump(get_class($model),$model->errors, $this->lastRow);
+        // echo "<hr/>";
+        
+        foreach ($resolveCol as $rc) {
+            if (isset($this->ignoreCols[$rc])) continue;
+            $data[$rc] = $model->{$rc};
+        }
+        
+        if ($executeChild) {
+            ## execute function when afterSave
+            if ($skipParentIf !== true) {
+                foreach ($this->columns as $key => $col) {
+                    if (@$col['type'] == 'function') {
+                        if (@$col['when'] == 'afterSave') {
+                            $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
+                                function($var) use($key, $data, $col) {
+                                    $ref = $this->parentData;
+                                    switch ($var[1]) {
+                                        case 'row': $ref = $data; break;
+                                        case 'lastRow': $ref = $this->lastRow; break;
+                                    }
+                                    
+                                    if (is_object(@$ref[$var[2]]) ) {
+                                        if ($ref[$var[2]] instanceof DateTime) {
+                                            $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
+                                        }
+                                    }
+                            
+                                    return @$ref[$var[2]];
+                                }, $col['value']);
+                            
+                            $attrs[$key] = Helper::evaluate($expr, [
+                                'row'=> $row,
+                                'lastRow' => $this->lastRow
+                            ] + $params);
+                            
+                            if (@$col['show'] === true) {
+                                $data[$key] = $row[$key];
+                            }
+                        }
+                    }
+                }
             }
             
             foreach ($this->relations as $rname=>$rel) {
@@ -433,8 +549,8 @@ class Import extends CComponent {
                         $relAttrs[$key] = $row[$rkey];
                     }
                 }
-                
                 $rel['import']->parentData = array_merge($model->attributes, $initData);
+                $rel['import']->lastRow = $this->lastRow;
                 $res = $rel['import']->importRow($relAttrs);
                 if ($res !== true) {
                     
@@ -447,10 +563,15 @@ class Import extends CComponent {
                         'relation ' . $rname => $errors
                     ];
                 }
-                $data = $data + $rel['import']->lastRow;
             }
+        } 
+        
+        if (!$model->hasErrors()) {
             $this->data[] = $data;
-            $this->lastRow = $data;
+            if (!$skipIf && !$skipParentIf) {
+                $this->lastRow = $data;
+            }
+            
             return true;
         } else {
             return $model->errors;
