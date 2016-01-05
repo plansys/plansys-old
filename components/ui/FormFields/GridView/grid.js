@@ -35,6 +35,9 @@ app.directive('gridView', function ($timeout, $http) {
                 $scope.url = function (a, b, c) {
                     return Yii.app.createUrl(a, b, c);
                 };
+                $scope.getSequence = function(row) {
+                    
+                }
 
                 $scope.gridOptions.controlBar = $scope.gridOptions.controlBar !== 'false';
                 $scope.rowClass = function (row, colName, colType) {
@@ -471,22 +474,23 @@ app.directive('gridView', function ($timeout, $http) {
                         if (c.$prevText === 'INITIAL-PREV-TEXT') {
                             c.$newRow = $(el);
                         }
-
-                        if (text != c.$prevText) {
-                            if (c.$totalSpan > 1) {
-                                c.$newRow.attr('rowspan', c.$totalSpan);
-                                c.$prevRow.forEach(function (r) {
-                                    r.addClass('rowSpanned');
-                                });
+                        if (!c.mergeSameRowMethod || c.mergeSameRowMethod == 'default') {
+                            if (text != c.$prevText) {
+                                if (c.$totalSpan > 1) {
+                                    c.$newRow.attr('rowspan', c.$totalSpan);
+                                    c.$prevRow.forEach(function (r) {
+                                        r.addClass('rowSpanned');
+                                    });
+                                }
+                                
+                                // reset new Row
+                                c.$newRow = $(el);
+                                c.$totalSpan = 1;
+                                c.$prevRow.length = 0;
+                            } else if (!$(el).parent().prev().hasClass('group') && $(el).parent().hasClass('r')) {
+                                c.$prevRow.push($(el));
+                                c.$totalSpan++;
                             }
-
-                            // reset new Row
-                            c.$newRow = $(el);
-                            c.$totalSpan = 1;
-                            c.$prevRow.length = 0;
-                        } else if (!$(el).parent().prev().hasClass('group') && $(el).parent().hasClass('r')) {
-                            c.$prevRow.push($(el));
-                            c.$totalSpan++;
                         }
 
                         if (totalRow - 1 == row) {
@@ -497,9 +501,64 @@ app.directive('gridView', function ($timeout, $http) {
                                 });
                             }
                         }
+                        
+                        if(!!c.mergeSameRowMethod){
+                            if(c.$values.length==0){
+                                c.$values.push(c.$prevText);
+                            }
+                            c.$values.push(text);
+                            
+                        }
 
                         c.$prevText = text;
+                        c.$prevRowIndex = c.$rowIndex;
                         c.$rowIndex = row;
+                    }
+                    
+                    $scope.mergeRowMethods = {
+                        'Sum': function(values) {
+                            var total = 0;
+                            values.forEach(function(v){
+                                total+=(v | 0)
+                            });
+                            return total;
+                        },
+                        'Average': function(values) {
+                            var total = 0;
+                            values.forEach(function(v){
+                                total+=(v | 0)
+                            });
+                            return Math.round((total/values.length)*100)/100;
+                        },
+                        'Max': function(values) {
+                            var max;
+                            values.forEach(function(v,i){
+                                if(i==0){
+                                    max = (v | 0);
+                                }else{
+                                    max = Math.max(max, (v | 0));
+                                }
+                            });
+                            return max;
+                        },
+                        'Count': function(values) {
+                            return values.length;
+                        },
+                        'Min': function(values) {
+                            var min;
+                            values.forEach(function(v,i){
+                                if(i==0){
+                                    min = (v | 0);
+                                }else{
+                                    min = Math.min(min, (v | 0));
+                                }
+                            });
+                            return min;
+                        },
+                        'Join': function(values, separator) {
+                            separator = separator || ',';
+                            return values.join(separator);
+                        },
                     }
 
                     // loop each row to merge
@@ -510,11 +569,12 @@ app.directive('gridView', function ($timeout, $http) {
                                 if (rowIndex == 0) {
                                     c.$newRow = null;
                                     c.$prevRow = [];
+                                    c.$values = [];
+                                    c.$execValues = [];
                                     c.$prevText = 'INITIAL-PREV-TEXT';
                                     c.$totalSpan = 1;
                                 }
 
-                                // if mergeWith != none
                                 if (!!c.mergeSameRowWith && c.mergeSameRowWith != c.name) {
                                     if (!c.$anchorCol) {
                                         $scope.columns.forEach(function (e, ei) {
@@ -524,31 +584,52 @@ app.directive('gridView', function ($timeout, $http) {
                                             }
                                         }.bind(c));
                                     }
-
+                                    
                                     if (!!c.$anchorCol && c.$anchorCol.mergeSameRow == 'Yes') {
+                                        var el = $(this).find("td").eq(i);
+                                        
                                         if (c.$anchorCol.$rowIndex != rowIndex) {
                                             mergeRow(c.$anchorCol, $(this).find("td").eq(c.$anchorIdx), c.$anchorIdx);
                                         }
-
-                                        var el = $(this).find("td").eq(i);
+                                        
                                         if (c.$anchorCol.$totalSpan > 1) {
                                             mergeRow(c, el, rowIndex);
                                         } else {
-                                            if (c.$totalSpan > 1) {
+                                            if(c.$totalSpan > 1){
                                                 c.$newRow.attr('rowspan', c.$totalSpan);
                                                 c.$prevRow.forEach(function (r) {
                                                     r.addClass('rowSpanned');
                                                 });
                                             }
-
+                                            
+                                            c.$newRow = $(el);
+                                            if (!!c.mergeSameRowMethod && c.mergeSameRowMethod != "default") {
+                                                if (!!c.$values && c.$values.length > 0) {
+                                                    var colIdx = c.$newRow.index();
+                                                    var lastRow = c.$newRow.parent().prev().find("td:eq(" + colIdx + ")");
+                                                    c.$values.forEach(function(item, i) {
+                                                        if (i < c.$values.length - 1) {
+                                                            lastRow.addClass('rowSpanned');
+                                                        } else {
+                                                            lastRow.attr('rowspan', c.$values.length);
+                                                            lastRow.text($scope.mergeRowMethods[c.mergeSameRowMethod](c.$values));
+                                                        }
+                                                        lastRow = lastRow.parent().prev().find("td:eq(" + colIdx + ")");
+                                                    });
+                                                    c.$values = [];
+                                                }
+                                            }
+                                            
                                             //reset row
                                             var text = $(el).text();
                                             c.$prevText = text;
+                                            c.$prevRowIndex = c.$rowIndex;
                                             c.$rowIndex = rowIndex;
-                                            c.$newRow = $(el);
                                             c.$totalSpan = 1;
+                                            
                                         }
                                     }
+                                    
                                 }
 
                                 // if mergeWith == none (AND it is not merged yet)
@@ -698,19 +779,21 @@ app.directive('gridView', function ($timeout, $http) {
                                         rowFound = a;
                                     }
                                 }
-                                if (isChecked) {
-                                    if (rowFound < 0) {
-                                        $scope.checkbox[colName].push(row);
-                                    }
-                                    if (modify) {
-                                        row[colName] = $scope.columns[colIdx].checkedValue;
-                                    }
-                                } else {
-                                    if (rowFound >= 0) {
-                                        $scope.checkbox[colName].splice(rowFound, 1);
-                                    }
-                                    if (modify) {
-                                        row[colName] = $scope.columns[colIdx].uncheckedValue;
+                                if (cursor.find(".cbl-" + colName).length > 0) {
+                                    if (isChecked) {
+                                        if (rowFound < 0) {
+                                            $scope.checkbox[colName].push(row);
+                                        }
+                                        if (modify) {
+                                            row[colName] = $scope.columns[colIdx].checkedValue;
+                                        }
+                                    } else {
+                                        if (rowFound >= 0) {
+                                            $scope.checkbox[colName].splice(rowFound, 1);
+                                        }
+                                        if (modify) {
+                                            row[colName] = $scope.columns[colIdx].uncheckedValue;
+                                        }
                                     }
                                 }
                             } else if (cursor.hasClass("g")) {

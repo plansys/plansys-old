@@ -506,7 +506,7 @@ class RelationField extends FormField {
 
         $nolimit                             = false;
         $this->relationCriteria['condition'] = $condition["sql"];
-        
+
         $this->params = array_merge(is_null($this->params) ? [] : $this->params, $condition['params']);
         $criteria     = DataSource::generateCriteria($this->params, $this->relationCriteria, $this);
         

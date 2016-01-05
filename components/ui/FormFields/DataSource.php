@@ -115,46 +115,49 @@ class DataSource extends FormField {
     public static function generateTemplate($sql, $postedParams = [], $field, $paramDefs = []) {
         $returnParams = [];
 
-
         ## find all params
         preg_match_all("/\:[\w\d_]+/", $sql, $params);
         $originalSql = $sql;
         $model = $field->model;
-        foreach ($params[0] as $idx => $p) {
+        foreach ($params[0] as $idx => $p) { 
             if (isset($postedParams[$p])) {
-                if (is_string($postedParams[$p])) {
-                    $isJs = strpos($postedParams[$p], 'js:') !== false || (isset($paramDefs[$p]) && strpos($paramDefs[$p], 'js:') !== false);
-                    
-                    if (!$isJs && isset($field->params[$p]) && strpos($field->params[$p], 'js:') === 0) {
-                        $isJs = true;
-                    }
-                    
-                    if ($isJs) {
-                        switch (get_class($field)) {
-                            case "DataSource":
-                                $returnParams[$p] = @$field->queryParams[$p];
-                                break;
-                            default:
-                                $returnParams[$p] = '';
-                                break;
-                        }
-                    } else {
-                        $postParam = $postedParams[$p];
-                        if (stripos($postParam, 'php:') === 0) {
-                            $postParam = substr($postParam, 4);
-                        }
-                        if (is_string($postParam) && $postParam != "") {
-                            $returnParams[$p] = $field->evaluate($postParam, true, [
-                                'model' => $model
-                            ]);
-                        }
-                    }
-                } else if (is_array($postedParams[$p]) && !empty($postedParams[$p])) {
+                if (is_numeric($postedParams[$p])) {
                     $returnParams[$p] = $postedParams[$p];
-                    $params[0][$idx]  = [
-                        'name' => $p,
-                        'length' => count($postedParams[$p])
-                    ];
+                } else {
+                    if (is_string($postedParams[$p])) {
+                        $isJs = strpos($postedParams[$p], 'js:') !== false || (isset($paramDefs[$p]) && strpos($paramDefs[$p], 'js:') !== false);
+                        
+                        if (!$isJs && isset($field->params[$p]) && strpos($field->params[$p], 'js:') === 0) {
+                            $isJs = true;
+                        }
+                     
+                        if ($isJs) {
+                            switch (get_class($field)) {
+                                case "DataSource":
+                                    $returnParams[$p] = @$field->queryParams[$p];
+                                    break;
+                                default:
+                                    $returnParams[$p] = '';
+                                    break;
+                            }
+                        } else {
+                            $postParam = $postedParams[$p];
+                            if (stripos($postParam, 'php:') === 0) {
+                                $postParam = substr($postParam, 4);
+                            }
+                            if (is_string($postParam) && $postParam != "") {
+                                $returnParams[$p] = $field->evaluate($postParam, true, [
+                                    'model' => $model
+                                ]);
+                            }  
+                        }
+                    } else if (is_array($postedParams[$p]) && !empty($postedParams[$p])) {
+                        $returnParams[$p] = $postedParams[$p];
+                        $params[0][$idx]  = [
+                            'name' => $p,
+                            'length' => count($postedParams[$p])
+                        ];
+                    }
                 }
             }
         }
@@ -916,6 +919,8 @@ class DataSource extends FormField {
         ## condition criteria
         if (isset($criteria['condition']) && is_string($criteria['condition'])) {
             $sql     = $criteria['condition'];
+        
+        
             $bracket = DataSource::generateTemplate($sql, $postedParams, $field);
             
             if ($bracket['sql'] != '') {

@@ -7,6 +7,7 @@ class GridViewCol extends Form {
     public $options          = [];
     public $mergeSameRow     = '';
     public $mergeSameRowWith = '';
+    public $mergeSameRowMethod = 'Default';
     public $html             = '';
     public $columnType       = 'string';
     public $typeOptions      = [

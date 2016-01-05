@@ -147,7 +147,7 @@ class GridView extends FormField {
                     $ngdisabled = "ng-disabled=\"{$col['options']['ng-checkbox-disabled']};\"";
                 }
                 
-                $template = '<label ng-if="(row.$type == \'r\' || !row.$type) '.$ngif.'" '.$ngshow.'><input
+                $template = '<label class="cbl-'.$fieldName.'" ng-if="(row.$type == \'r\' || !row.$type) '.$ngif.'" '.$ngshow.'><input
 ng-click="checkboxRow(row, \'' . $fieldName . '\', ' . $idx . ', $event);'.$ngchange.'"
 ng-checked="checkboxRowChecked(row, \'' . $fieldName . '\', ' . $idx . ')"
 '.$ngdisabled.'
@@ -231,7 +231,7 @@ type="checkbox" /></label>';
                     break;
                 case 'sequence':
                     $style    = ' style="width:20px;"';
-                    $template = '{{ $index + 1}}';
+                    $template = '{{ row.$index + 1}}';
                     break;
                 case 'date':
                     $template = '{{row.' . $fieldName . ' | dateFormat:"date" }}';

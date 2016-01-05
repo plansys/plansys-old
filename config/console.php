@@ -9,61 +9,61 @@ Setting::initPath();
 $basePath = Setting::getBasePath();
 $modules = Setting::getModules();
 
-## define config
-$config = array(
-    'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
-    'name' => 'Plansys Console',
-    'preload' => array('log', 'EJSUrlManager'),
-    // autoloading model and component classes
-    'import' => array(
-        'app.models.*',
-        'application.models.*',
-        'application.forms.*',
-        'application.components.*',
-        'application.components.ui.*',
-        'application.components.ui.FormFields.*',
-        'application.components.ui.Widgets.*',
-        'application.components.utility.*',
-        'application.components.models.*',
-        'application.components.codegen.*',
-        'application.components.repo.*',
-        'application.behaviors.*',
+## components
+$components = array(
+    'assetManager' => array(
+        'basePath' => Setting::getAssetPath()
     ),
-    'runtimePath' => Setting::getRuntimePath(),
-    // preloading 'log' component
-    'preload' => array('log'),
-    'modules' => array_merge($modules, array(
-        'nfy'
-    )),
-    'aliases' => array(
-        'nfy' => realpath(__DIR__ . '/../modules/nfy'),
-    ),
-    // command map
-    'commandMap' => Setting::getCommandMap($modules),
-    // application components
-    'components' => array(
-        'assetManager' => array(
-            'basePath' => Setting::getAssetPath()
-        ),
-        'db' => Setting::getDB(),
-        'nfy' => array(
-            'class' => 'nfy.components.NfyDbQueue',
-            'id' => 'Notifications',
-            'timeout' => 30,
-        ),
-        'log' => array(
-            'class' => 'CLogRouter',
-            'routes' => array(
-                array(
-                    'class' => 'CFileLogRoute',
-                    'levels' => 'error, warning',
-                ),
+    'db' => Setting::getDB(),
+    'log' => array(
+        'class' => 'CLogRouter',
+        'routes' => array(
+            array(
+                'class' => 'CFileLogRoute',
+                'levels' => 'error, warning',
             ),
         ),
     ),
 );
 
+$dbLists = Setting::getDBList();
+$components = $dbLists + $components;
 
-$config = Setting::finalizeConfig($config, "console");
+$imports = array(
+    'app.models.*',
+    'application.models.*',
+    'application.forms.*',
+    'application.components.*',
+    'application.components.ui.*',
+    'application.components.ui.FormFields.*',
+    'application.components.ui.Widgets.*',
+    'application.components.utility.*',
+    'application.components.models.*',
+    'application.components.codegen.*',
+    'application.components.repo.*',
+    'application.behaviors.*',
+);
+
+foreach ($dbLists as $db=>$val) {
+    array_splice($imports, 1, 0, "app.models.$db.*");
+}
+
+## define config
+$config = array(
+    'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
+    'name' => 'Plansys Console',
+    'preload' => array('log', 'EJSUrlManager'),
+    'import' => $imports,
+    'runtimePath' => Setting::getRuntimePath(),
+    'sourceLanguage' => 'en_us',
+    'language' => 'id',
+    'modulePath' => Setting::getModulePath(),
+    'commandMap' => Setting::getCommandMap($modules),
+    'modules' => $modules,
+    'components' => $components,
+    'params' => array(),
+);
+
+$config = Setting::finalizeConfig($config);
 
 return $config;

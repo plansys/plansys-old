@@ -346,7 +346,7 @@ class Import extends CComponent {
                     }
                     break;
                 case 'default':
-                    if (!isset($row[$key])) {
+                    if (!isset($row[$key]) && !is_null($row[$key])) {
                         return [[
                             $key => 'Field ' . $key . ' tidak ada!'
                         ]];

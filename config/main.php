@@ -109,14 +109,7 @@ $config = array(
     'language' => 'id',
     'modulePath' => Setting::getModulePath(),
     'controllerMap' => Setting::getControllerMap(),
-    'modules' => array_merge($modules, array(
-        'nfy' => array(
-            'class' => 'nfy.NfyModule'
-        )
-    )),
-    'aliases' => array(
-        'nfy' => Setting::getBasePath() . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'nfy',
-    ),
+    'modules' => $modules,
     'components' => $components,
     'params' => array(),
 );
