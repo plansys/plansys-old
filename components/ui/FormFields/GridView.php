@@ -231,7 +231,7 @@ type="checkbox" /></label>';
                     break;
                 case 'sequence':
                     $style    = ' style="width:20px;"';
-                    $template = '{{ row.$index + 1}}';
+                    $template = '{{ getSequence(row, $index + 1); }}';
                     break;
                 case 'date':
                     $template = '{{row.' . $fieldName . ' | dateFormat:"date" }}';

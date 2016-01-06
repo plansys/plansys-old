@@ -35,8 +35,12 @@ app.directive('gridView', function ($timeout, $http) {
                 $scope.url = function (a, b, c) {
                     return Yii.app.createUrl(a, b, c);
                 };
-                $scope.getSequence = function(row) {
-                    
+                
+                $scope.getSequence = function(row, idx) {
+                    if (!!row.$type && row.$type == 'r') {
+                        return row.$index;
+                    }
+                    else return idx;
                 }
 
                 $scope.gridOptions.controlBar = $scope.gridOptions.controlBar !== 'false';

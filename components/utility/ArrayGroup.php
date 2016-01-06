@@ -7,6 +7,7 @@ class ArrayGroup {
     private $cols;
     private $groupCount = 0;
     private $flatted;
+    private $rIdx = 1;
 
     public function __construct($data, $groups, $cols) {
         $this->data   = $data;
@@ -37,6 +38,7 @@ class ArrayGroup {
                 } else {
                     $this->flatted[] = array_merge($r, [
                         '$type' => 'r',
+                        '$index' => $this->rIdx++,
                         '$level' => $lvl,
                     ]);
                 }
