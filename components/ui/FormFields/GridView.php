@@ -176,6 +176,10 @@ type="checkbox" /></label>';
             }
 
             switch ($col['options']['mode']) {
+                case "html":
+                    $template = '
+    <div ng-bind-html="row.' . $fieldName . '"></div>';
+                    break;
                 case "editable":
                     $template = '
     <div contenteditable="true" ' . $editableCss . ' ng-model="row.' . $fieldName . '"

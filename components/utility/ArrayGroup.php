@@ -79,6 +79,8 @@ class ArrayGroup {
             if (!isset($cursor['$items'][$data[$group['col']]]['$items'])) {
                 $cursor['$items'][$data[$group['col']]] = [
                     '$items' => [],
+                    '$lvl' => $lvl,
+                    '$gcol' => $group['col'],
                     '$aggregate' => [],
                     '$parent' => &$cursor
                 ];
@@ -114,6 +116,11 @@ class ArrayGroup {
         switch ($agg['type']) {
             case 'custom':
                 $params = [
+                    'text' => function ($col = '') use ($colName, $agg, &$cursor, &$data) {
+                        $agg['type'] = 'text';
+                        if ($col != '') $agg['col'] = $col;
+                        return $this->aggregateCell('$custom_' . $colName, $agg, $cursor, $data);
+                    },
                     'sum' => function ($col = '') use ($colName, $agg, &$cursor, &$data) {
                         $agg['type'] = 'sum';
                         if ($col != '') $agg['col'] = $col;
@@ -143,6 +150,13 @@ class ArrayGroup {
                 extract($params);
                 $code = '$cursor[\'$aggregate\'][$colName] = ' . $agg['custom'] . ';';
                 eval($code);
+                break;
+            case 'text': 
+                if (isset($cursor['$gcol'])) {
+                    $cursor['$aggregate'][$colName] = $data[$cursor['$gcol']];
+                } else {
+                    $cursor['$aggregate'][$colName] = "All";
+                }
                 break;
             case 'count':
                 $cursor['$aggregate'][$colName] += 1;

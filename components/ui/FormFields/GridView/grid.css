@@ -108,12 +108,19 @@
     border-right: 1px solid #ddd !important;
 }
 
+[grid-view] tr.a td {
+    background: #fff;
+    border:0px;
+}
+
+
 [grid-view] td.aggregate {
-    border-top: 2px solid #666;
+    border:1px solid #ddd !important;
+    font-weight:bold;
 }
 
 [grid-view] td.aggregate.lv-0 {
-    background: #ddd;
+    background: #fafafa;
 }
 
 [grid-view] td.aggregate.lv-1 {
@@ -121,10 +128,10 @@
 }
 
 [grid-view] td.aggregate.lv-2 {
-    background: #fafafa;
+    background: #e2e2e2;
 }
 
-[grid-view] tr:hover td {
+[grid-view] tr.r:hover td {
     background-color: #FFFFAA !important;
 }
   

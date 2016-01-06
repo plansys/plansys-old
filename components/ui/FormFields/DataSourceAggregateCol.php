@@ -89,7 +89,7 @@ class DataSourceAggregateCol extends Form {
                     'ng-model' => 'item.customType',
                 ),
                 'desc' => 'Example:<pre style=\"margin:5px 0px;font-size:11px;color:#555;background:white\">\"TOTAL:\" . $sum(\'column\')</pre> 
-Available Function: $sum(), $avg(), $count(), $max(), $min(), $first(), $last()',
+Available Function: $sum(), $avg(), $count(), $max(), $min(), $first(), $last(), $text()',
                 'type' => 'ExpressionField',
             ),
             array (

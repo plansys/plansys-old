@@ -37,8 +37,10 @@ app.directive('gridView', function ($timeout, $http) {
                 };
                 
                 $scope.getSequence = function(row, idx) {
-                    if (!!row.$type && row.$type == 'r') {
-                        return row.$index;
+                    if (!!row.$type) {
+                        if (row.$type === 'r') {
+                            return row.$index;
+                        }
                     }
                     else return idx;
                 }
