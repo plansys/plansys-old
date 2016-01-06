@@ -148,8 +148,12 @@ class ArrayGroup {
                     },
                 ];
                 extract($params);
-                $code = '$cursor[\'$aggregate\'][$colName] = ' . $agg['custom'] . ';';
-                eval($code);
+                if (trim(@$agg['custom']) != '') {
+                    $code = '$cursor[\'$aggregate\'][$colName] = ' . $agg['custom'] . ';';
+                    eval($code);
+                } else {
+                    $cursor['$aggregate'][$colName] = '';
+                }
                 break;
             case 'text': 
                 if (isset($cursor['$gcol'])) {
