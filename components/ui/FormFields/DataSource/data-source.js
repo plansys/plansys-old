@@ -238,7 +238,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                             return false;
                         }
                     }
-
+                    
                     $http.post(Yii.app.createUrl('/formfield/DataSource.query', $scope.paramsGet), {
                         model_id: model_id,
                         name: $scope.name,

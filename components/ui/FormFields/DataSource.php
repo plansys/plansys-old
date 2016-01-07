@@ -188,7 +188,6 @@ class DataSource extends FormField {
             ## check if there is another params
             preg_match_all("/\:[\w\d_]+/", $bracket['sql'], $attachedParams);
 
-
             if (count($attachedParams[0]) > 0) {
                 $inParams = 0;
                 foreach ($attachedParams[0] as $ap) {  
@@ -209,7 +208,7 @@ class DataSource extends FormField {
                     }
                 }     
                 
-                if ($inParams == count($attachedParams)) {
+                if ($inParams >= count($attachedParams)) {
                     $renderBracket = true;
                 }
             }
