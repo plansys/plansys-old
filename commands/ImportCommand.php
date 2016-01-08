@@ -116,10 +116,10 @@ EOF;
         $reader->open($file);
         $transaction = Yii::app()->db->beginTransaction();
         
+        
         ## get first sheet
         $import = new Import($this->params['model']);
         foreach ($reader->getSheetIterator() as $sheet) {
-            
             ## loop each row in first sheet
             $rowCount = count($sheet->getRowIterator());
             foreach ($sheet->getRowIterator() as $r=>$row) {
@@ -131,6 +131,11 @@ EOF;
                     continue;
                 }
                 
+                foreach ($row as $k=>$v) {
+                    $row[$k] = (string)$v;
+                }
+                
+                
                 ## do import 
                 $rowImport = [];
                 foreach ($import->columns as $c=>$v) {
@@ -140,6 +145,7 @@ EOF;
                     }
                     $rowImport[$c] = @$row[$excelColumns[$c]];
                 }
+                
                 try {
                     $res = $import->importRow($rowImport);
                 } catch (Exception $e) {

@@ -14,6 +14,7 @@ class Import extends CComponent {
     public $resultFile = '';
     public $resultUrl = '';
     public $lastRow = [];
+    public $skipIfStatus = false;
     public $parentData = [];
     private $loaded = false;
     private $lookup = [];
@@ -292,6 +293,12 @@ class Import extends CComponent {
         $skipParentIf = false;
         $skipChildIf = false;
         
+        foreach ($row as $k=>$r) {
+            if (is_string($r)) {
+                $row[$k] = trim($r);
+            }
+        }
+        
         ## execute function when beforeLookup
         foreach ($this->columns as $key => $col) {
             if (@$col['type'] == 'function') {
@@ -479,6 +486,10 @@ class Import extends CComponent {
             ] + $params);
         }
         
+        if($this->skipIfStatus){
+            $executeChild = false;
+        }
+        
         if ($executeChild) {
             if ($skipParentIf !== true) {
                 $model->save();
@@ -570,8 +581,13 @@ class Import extends CComponent {
         if (!$model->hasErrors()) {
             $this->data[] = $data;
             if (!$skipIf && !$skipParentIf) {
+                $this->skipIfStatus = false;
                 $this->lastRow = $data;
             }
+            if($skipIf){
+                $this->skipIfStatus = true;
+            }
+            
             
             return true;
         } else {
