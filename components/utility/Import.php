@@ -215,15 +215,20 @@ class Import extends CComponent {
                         $attrs[$into] = $row[$key];
                         break;
                     case 'insert':
-                        if (!isset($this->lookup[$col['from']])) {
-                            $this->lookup[$col['from']] = [
-                                'schema' => Yii::app()->db->schema->tables[$col['from']],
+                        $from = $col['from'];
+                        if (isset($col['notfound']['to'])) {
+                            $from = $col['notfound']['to'];
+                        }
+                        
+                        if (!isset($this->lookup[$from])) {
+                            $this->lookup[$from] = [
+                                'schema' => Yii::app()->db->schema->tables[$from],
                                 'hash' => [
                                     $key => []
                                 ]
                             ];
                         }
-                        $pk = $this->lookup[$col['from']]['schema']->primaryKey;
+                        $pk = $this->lookup[$from]['schema']->primaryKey;
                         if (!is_string($pk)) {
                             return 'Import does not support inserting multiple primary key in lookup!';
                         }
@@ -251,10 +256,10 @@ class Import extends CComponent {
                             }
                         }
                         
-                        Yii::app()->db->createCommand()->insert($col['from'], $insert);
+                        Yii::app()->db->createCommand()->insert($from, $insert);
                         $insert[$pk] = Yii::app()->db->getLastInsertID(); 
                         
-                        $this->lookup[$col['from']]['hash'][$hashKey] = $insert;
+                        $this->lookup[$from]['hash'][$hashKey] = $insert;
                         
                         ## assign inserted id into attrs
                         $attrs[$into] = $insert[$col['return']];
@@ -462,7 +467,9 @@ class Import extends CComponent {
         
         $model->attributes = $attrs;
         $executeChild = true;
-        
+        if (!is_bool($skipIf)) {
+            var_dump($skipIf); die();
+        }
         if ($skipIf === true) {
             $executeChild = false;
         } else if (is_string($skipParentIf)) {
