@@ -283,6 +283,15 @@ class Setting {
     public static function getAppPath() {
         return Setting::$rootPath . DIRECTORY_SEPARATOR . Setting::get('app.dir');
     }
+    
+    public static function getViewPath() {
+        $appView = Setting::getAppPath() . DIRECTORY_SEPARATOR . "views";
+        if (is_dir($appView)) {
+            return $appView;
+        } else {
+            return Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "views";
+        }
+    }
 
     public static function getRepoPath() {
         return Setting::$rootPath . DIRECTORY_SEPARATOR . Setting::get('repo.path');

@@ -101,6 +101,7 @@ foreach ($dbLists as $db=>$val) {
 ## define config
 $config = array(
     'basePath' => $basePath,
+    'viewPath' => Setting::getViewPath(),
     'name' => (!Setting::get('app.name') ? "Plansys" : Setting::get('app.name')),
     'preload' => array('log', 'EJSUrlManager'),
     'import' => $imports,
