@@ -31,7 +31,9 @@ class DevModule extends CWebModule {
         
         if (in_array($roleId, $rolesRule["deny"]))  { 
             $allowed = false; 
+            echo "A";
         }
+        
         if (in_array($roleId, $rolesRule["allow"])) { 
             $allowed = true; 
         }
@@ -39,7 +41,7 @@ class DevModule extends CWebModule {
             call_user_func($rolesRule["custom"][$roleId], $controller, $action); 
         }
         if (in_array($userId, $usersRule["deny"]))  { 
-            $allowed = false; 
+            $allowed = false;
         }
         if (in_array($userId, $usersRule["allow"])) { 
             $allowed = true;

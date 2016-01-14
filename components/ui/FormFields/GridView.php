@@ -137,6 +137,10 @@ class GridView extends FormField {
                     $ngshow = "ng-show=\"{$col['options']['ng-checkbox-show']}\"";
                 }
                 
+                if (isset($col['options']['ng-change'])) {
+                    $col['options']['ng-checkbox-change'] = $col['options']['ng-change'];
+                }
+                
                 $ngchange = "";
                 if (isset($col['options']['ng-checkbox-change'])) {
                     $ngchange = "{$col['options']['ng-checkbox-change']};";
