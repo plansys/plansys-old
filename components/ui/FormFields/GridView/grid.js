@@ -769,6 +769,11 @@ app.directive('gridView', function ($timeout, $http) {
                     //loop through all rows
                     while (loop) {
                         var row = $scope.datasource.data[++rowIdx];
+                        if (!row) {
+                            loop = false;
+                            continue;
+                        }
+                        
                         if (row.$type =='a' && row.$aggr == false) {
                             continue;
                         }
