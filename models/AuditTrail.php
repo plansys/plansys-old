@@ -85,8 +85,14 @@ class AuditTrail extends ActiveRecord {
                 return;
 
             ## get last audit trail
-            $sql       = "select * from p_audit_trail where user_id = {$uid} order by id desc";
-            $lastTrail = Yii::app()->db->createCommand($sql)->queryRow();
+            $lastTrail = AuditTrail::model()->find([
+                'order' => '"id" desc'
+            ]);
+            if (!is_null($lastTrail)) {
+                $lastTrail = $lastTrail->attributes;
+            } else {
+                return;
+            }
 
             ## detect duplicate
             $isDuplicate     = $lastTrail['pathinfo'] == $pathInfo['pathinfo'] && $lastTrail['params'] == $pathInfo['params'];

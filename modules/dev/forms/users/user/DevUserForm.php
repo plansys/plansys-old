@@ -338,11 +338,11 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                 'pagingSQL' => 'select count(*) from (select count(1) from p_audit_trail where user_id = :id {AND [where]} group by action, model, user_id, model_id, stamp) a',
                 'relationTo' => 'auditTrail',
                 'relationCriteria' => array (
-                    'select' => 't.*, \'L\' as link',
+                    'select' => '|t|.*',
                     'distinct' => 'false',
                     'alias' => 't',
                     'condition' => '{[where]}',
-                    'order' => '{[order], id desc}',
+                    'order' => '{[order], |id| desc}',
                     'paging' => '{[paging]}',
                     'group' => '',
                     'having' => '',

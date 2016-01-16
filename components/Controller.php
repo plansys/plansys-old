@@ -392,7 +392,7 @@ class Controller extends CController {
             $attr  = $class;
             $class = $temp;
         }
-
+        
         if (trim($class) == '') {
             throw new CHttpException(404, 'The requested page does not exist.');
         }

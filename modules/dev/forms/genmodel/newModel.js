@@ -11,7 +11,7 @@ if (!!window.opener.activeItem) {
 
 $scope.updateTable = function () {
     $timeout(function () {
-        $scope.model.modelName = snakeToCamel($scope.model.tableName);
+        $scope.model.modelName = snakeToCamel($scope.model.tableName.toLowerCase());
     });
 }
 $scope.changeConn = function() {

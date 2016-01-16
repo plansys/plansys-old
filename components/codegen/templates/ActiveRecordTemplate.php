@@ -133,7 +133,7 @@ class ActiveRecordTemplate extends CComponent {
             $gridColumns[]   = $column;
             $gv->columns[]   = $column;
         }
-
+        
         $editUrl       = "{$prefixUrl}/update";
         $editButtonCol = [
             'name' => '',

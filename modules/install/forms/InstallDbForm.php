@@ -2,6 +2,7 @@
 
 class InstallDbForm extends Form {
 
+    public $driver;
     public $host;
     public $username;
     public $password;
@@ -38,10 +39,19 @@ class InstallDbForm extends Form {
         <img src=\"<?= Yii::app()->controller->staticUrl(\"/img/logo.png\"); ?>\" alt=\"Logo Plansys\" />
     </div>
     
-    <div ng-if=\"!params.error\" style=\"margin-top:15px;\" class=\"alert alert-info\"><?= Setting::t(\"Please enter your MySQL server information \") ?></div>
+    <div ng-if=\"!params.error\" style=\"margin-top:15px;\" class=\"alert alert-info\"><?= Setting::t(\"Please enter your database server information \") ?></div>
     
     <div ng-if=\"params.error\" style=\"margin-top:15px;\" class=\"alert alert-danger\">{{params.error}}</div>
     ',
+            ),
+            array (
+                'label' => 'Driver',
+                'name' => 'driver',
+                'listExpr' => 'Setting::getDBDriverList()',
+                'type' => 'DropDownList',
+                'layout' => 'Vertical',
+                'labelWidth' => '0',
+                'fieldWidth' => '12',
             ),
             array (
                 'label' => 'Host:',

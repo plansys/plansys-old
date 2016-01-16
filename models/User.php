@@ -44,9 +44,9 @@ class User extends ActiveRecord {
     public function relations() {
         return array(
             'auditTrail' => array(self::HAS_MANY, 'AuditTrail', 'user_id'),
-            'userRoles' => array(self::HAS_MANY, 'UserRole', 'user_id', 'order' => 'is_default_role ASC'),
+            'userRoles' => array(self::HAS_MANY, 'UserRole', 'user_id', 'order' => '|is_default_role| ASC'),
             'role' => array(self::HAS_ONE, 'Role', array('role_id' => 'id'), 'through' => 'userRoles',
-                'condition' => 'is_default_role = "Yes"'),
+                'condition' => '|is_default_role| = \'Yes\''),
         );
     }
 
@@ -60,10 +60,14 @@ class User extends ActiveRecord {
         }
 
         ## get roles
-        $sql = "select *,r.id from p_role r"
-                . " inner join p_user_role p on r.id = p.role_id "
-                . " where p.user_id = {$uid} order by is_default_role asc";
-        $roles = Yii::app()->db->createCommand($sql)->queryAll();
+        $roles = Role::model()->with('userRoles')->findAll([
+            'condition' => '"user_id" = :p',
+            'order' => '"is_default_role"',
+            'params' => [
+                ':p' => $uid
+            ]
+        ]);
+        $roles = ActiveRecord::toArray($roles);
 
         if (empty($roles)) {
             return false;

@@ -8,20 +8,25 @@ class DataFilter extends FormField {
 
     /** @var string $toolbarName */
     public static $toolbarName = "Data Filter";
+
     /** @var string $category */
     public static $category = "Data & Tables";
+
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-filter";
+
     /** @var string $name */
     public $name;
+
     /** @var string $datasource */
     public $datasource;
+
     /** @var string $filters */
-    public $filters         = [];
-    public $options         = [];
-    public $includeEmpty    = 'No';
-    public $emptyValue      = '';
-    public $emptyLabel      = '';
+    public $filters = [];
+    public $options = [];
+    public $includeEmpty = 'No';
+    public $emptyValue = '';
+    public $emptyLabel = '';
     public $filterOperators = [
         'string' => [
             'Is Any Of',
@@ -55,11 +60,11 @@ class DataFilter extends FormField {
     ];
 
     public static function getFilterOperators($date = "") {
-        $a       = new DataFilter;
+        $a = new DataFilter;
         $filters = $a->filterOperators;
         if ($date != "") {
             $filters = $filters[$date];
-            $result  = [];
+            $result = [];
             foreach ($filters as $i => $k) {
                 $result[$k] = $k;
             }
@@ -68,22 +73,22 @@ class DataFilter extends FormField {
     }
 
     public static function generateParams($paramName, $params, $template = '', $paramOptions = []) {
-        $sql        = [];
+        $sql = [];
         $flatParams = [];
-        $paramName  = preg_replace('/[^\da-z]/i', '_', $paramName);
+        $paramName = preg_replace('/[^\da-z]/i', '_', $paramName);
 
         if (is_array($params) && count($params) > 0) {
             foreach ($params as $column => $filter) {
 
                 $param = DataFilter::buildSingleParam($paramName, $column, $filter);
-                
+
                 $sql[] = $param['sql'];
                 if (is_array($param['param'])) {
                     foreach ($param['param'] as $key => $value) {
                         $flatParams[$key] = $value;
                     }
                 } else {
-                    $column                                 = preg_replace('/[^\da-z]/i', '_', $column);
+                    $column = preg_replace('/[^\da-z]/i', '_', $column);
                     $flatParams[$paramName . "_" . $column] = $param['param'];
                 }
             }
@@ -109,62 +114,101 @@ class DataFilter extends FormField {
         return $template;
     }
 
+    public static function toSQLDateTime($val, $driver) {
+        switch ($driver) {
+            case "oci";
+                return "TO_DATE({$val}, 'YYYY-MM-DD HH24:MI:SS')";
+                break;
+            default:
+                return $val;
+                break;
+        }
+    }
+
+    public static function toSQLStr($val, $driver) {
+        switch ($driver) {
+            case "oci";
+                return "UPPER({$val})";
+                break;
+            default:
+                return $val;
+                break;
+        }
+    }
+
+    public static function toSQLDate($val, $driver) {
+        switch ($driver) {
+            case "oci";
+                return "TO_DATE({$val}, 'YYYY-MM-DD')";
+                break;
+            default:
+                return $val;
+                break;
+        }
+    }
+
     protected static function buildSingleParam($paramName, $column, $filter) {
-        $sql     = "";
-        $param   = "";
+        $sql = "";
+        $param = "";
         $pcolumn = preg_replace('/[^\da-z]/i', '_', $column);
+        $driver = Setting::get('db.driver');
 
         ## quote field if it is containing illegal char
         if (!preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", str_replace(".", "", $column))) {
-            $column = "`{$column}`";
+            $column = "|{$column}|";
         }
 
         switch ($filter['type']) {
             case "string":
                 if ($filter['value'] != "" || $filter['operator'] == 'Is Empty') {
+                    $sCol = DataFilter::toSQLStr("|{$column}|", $driver);
+                    $spCol = DataFilter::toSQLStr(":{$paramName}_{$pcolumn}", $driver);
+
                     switch ($filter['operator']) {
                         case "Contains":
-                            $sql   = "{$column} LIKE :{$paramName}_{$pcolumn}";
+                            $sql = "{$sCol} LIKE {$spCol}";
                             $param = "%{$filter['value']}%";
                             break;
                         case "Does Not Contain":
-                            $sql   = "{$column} NOT LIKE :{$paramName}_{$pcolumn}";
+                            $sql = "{$sCol} NOT LIKE {$spCol}";
                             $param = "%{$filter['value']}%";
                             break;
                         case "Is Equal To":
-                            $sql   = "{$column} LIKE :{$paramName}_{$pcolumn}";
+                            $sql = "{$sCol} LIKE {$spCol}";
                             $param = "{$filter['value']}";
                             break;
                         case "Starts With":
-                            $sql   = "{$column} LIKE :{$paramName}_{$pcolumn}";
+                            $sql = "{$sCol} LIKE {$spCol}";
                             $param = "{$filter['value']}%";
                             break;
                         case "Ends With":
-                            $sql   = "{$column} LIKE :{$paramName}_{$pcolumn}";
+                            $sql = "{$sCol} LIKE {$spCol}";
                             $param = "%{$filter['value']}";
                             break;
                         case "Is Any Of":
                             $param_raw = preg_split('/\s+/', trim($filter['value']));
-                            $param     = [];
-                            $psql      = [];
+                            $param = [];
+                            $psql = [];
                             foreach ($param_raw as $k => $p) {
                                 $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
-                                $psql[]                                 = "{$column} LIKE :{$paramName}_{$pcolumn}_{$k}";
+                                $spCol = DataFilter::toSQLStr(":{$paramName}_{$pcolumn}_{$k}", $driver);
+                                $psql[] = "{$sCol} LIKE {$spCol}";
                             }
                             $sql = "(" . implode(" OR ", $psql) . ")";
                             break;
                         case "Is Not Any Of":
                             $param_raw = preg_split('/\s+/', trim($filter['value']));
-                            $param     = [];
-                            $psql      = [];
+                            $param = [];
+                            $psql = [];
                             foreach ($param_raw as $k => $p) {
                                 $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
-                                $psql[]                                 = "{$column} NOT LIKE :{$paramName}_{$pcolumn}_{$k}";
+                                $spCol = DataFilter::toSQLStr(":{$paramName}_{$pcolumn}_{$k}", $driver);
+                                $psql[] = "{$sCol} LIKE {$spCol}";
                             }
                             $sql = "(" . implode(" AND ", $psql) . ")";
                             break;
                         case "Is Empty":
-                            $sql = "({$column} LIKE '' OR {$column} IS NULL)";
+                            $sql = "(|{$column}| LIKE '' OR |{$column}| IS NULL)";
                             break;
                     }
                 }
@@ -179,11 +223,11 @@ class DataFilter extends FormField {
                         case '>=':
                         case '<=':
                         case '<':
-                            $sql   = "{$column} {$filter['operator']} :{$paramName}_{$pcolumn}";
+                            $sql = "|{$column}| {$filter['operator']} :{$paramName}_{$pcolumn}";
                             $param = "{$filter['value']}";
                             break;
                         case "Is Empty":
-                            $sql = "({$column} IS NULL)";
+                            $sql = "(|{$column}| IS NULL)";
                             break;
                     }
                 }
@@ -195,9 +239,12 @@ class DataFilter extends FormField {
                     case "Monthly":
                     case "Yearly":
                         if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
-                            $sql           = "({$column} BETWEEN :{$paramName}_{$pcolumn}_from AND :{$paramName}_{$pcolumn}_to)";
+                            $a = self::toSQLDateTime(":{$paramName}_{$pcolumn}_from", $driver);
+                            $b = self::toSQLDateTime(":{$paramName}_{$pcolumn}_to", $driver);
+
+                            $sql = "(|{$column}| BETWEEN {$a} AND {$b})";
                             $fromStartHour = date('Y-m-d 23:59:00', strtotime('-1 day', strtotime(@$filter['value']['from'])));
-                            $toLastHour    = date('Y-m-d 23:59:00', strtotime(@$filter['value']['to']));
+                            $toLastHour = date('Y-m-d 23:59:00', strtotime(@$filter['value']['to']));
 
                             $param = [
                                 ":{$paramName}_{$pcolumn}_from" => $fromStartHour,
@@ -207,9 +254,13 @@ class DataFilter extends FormField {
                         break;
                     case "Not Between":
                         if (@$filter['value']['from'] != '' && @$filter['value']['to'] != '') {
-                            $sql        = "({$column} NOT BETWEEN :{$paramName}_{$pcolumn}_from AND :{$paramName}_{$pcolumn}_to)";
+                            $a = self::toSQLDateTime(":{$paramName}_{$pcolumn}_from", $driver);
+                            $b = self::toSQLDateTime(":{$paramName}_{$pcolumn}_to", $driver);
+
+                            $sql = "(|{$column}| NOT BETWEEN {$a} AND {$b})";
+
                             $toLastHour = date('Y-m-d 23:59:00', strtotime(@$filter['value']['to']));
-                            $param      = [
+                            $param = [
                                 ":{$paramName}_{$pcolumn}_from" => @$filter['value']['from'],
                                 ":{$paramName}_{$pcolumn}_to" => $toLastHour,
                             ];
@@ -221,19 +272,23 @@ class DataFilter extends FormField {
                         break;
                     case "More Than":
                         if (@$filter['value']['from'] != '') {
-                            $sql   = "{$column} > :{$paramName}_{$pcolumn}";
+                            $sql = "|{$column}| > " . self::toSQLDate(":{$paramName}_{$pcolumn}", $driver);
                             $param = @$filter['value']['from'];
                         }
                         break;
                     case "Less Than":
                         if (@$filter['value']['to'] != '') {
-                            $sql   = "{$column} < :{$paramName}_{$pcolumn}";
+                            $sql = "|{$column}| < " . self::toSQLDate(":{$paramName}_{$pcolumn}", $driver);
                             $param = @$filter['value']['to'];
                         }
                         break;
                     case "Daily":
                         if (@$filter['value'] != '') {
-                            $sql   = "DATE({$column}) = DATE(:{$paramName}_{$pcolumn})";
+                            if ($driver == "mysql") {
+                                $sql = "DATE(|{$column}|) = DATE(:{$paramName}_{$pcolumn})";
+                            } else if ($driver == "oci") {
+                                $sql = "|{$column}| = TO_DATE('YY-MM-DD',:{$paramName}_{$pcolumn})";
+                            }
                             $param = @$filter['value'];
                         }
                         break;
@@ -241,7 +296,7 @@ class DataFilter extends FormField {
                 break;
             case "list":
                 if (isset($filter['value']) && $filter['value'] != '') {
-                    $sql   = "{$column} LIKE :{$paramName}_{$pcolumn}";
+                    $sql = "|{$column}| LIKE :{$paramName}_{$pcolumn}";
                     $param = @$filter['value'];
                 }
                 break;
@@ -249,16 +304,16 @@ class DataFilter extends FormField {
                 switch ($filter['operator']) {
                     case 'empty':
                         if ($filter['value'] == 'null') {
-                            $sql   = "{$column} is null";
+                            $sql = "|{$column}| is null";
                             $param = @$filter['value'];
                         } else {
-                            $sql   = "{$column} = :{$paramName}_{$pcolumn}";
+                            $sql = "|{$column}| = :{$paramName}_{$pcolumn}";
                             $param = @$filter['value'];
                         }
                         break;
                     default:
                         if ($filter['value'] != '') {
-                            $sql   = "{$column} = :{$paramName}_{$pcolumn}";
+                            $sql = "|{$column}| = :{$paramName}_{$pcolumn}";
                             $param = @$filter['value'];
                         }
                         break;
@@ -269,19 +324,19 @@ class DataFilter extends FormField {
                     if (@$filter['operator'] == 'in') {
                         // USING IN...
                         $param = [];
-                        $psql  = [];
+                        $psql = [];
                         foreach ($filter['value'] as $k => $p) {
                             $param[":{$paramName}_{$pcolumn}_{$k}"] = "{$p}";
-                            $psql[]                                 = ":{$paramName}_{$pcolumn}_{$k}";
+                            $psql[] = ":{$paramName}_{$pcolumn}_{$k}";
                         }
-                        $sql = "{$column} IN (" . implode(", ", $psql) . ")";
+                        $sql = "|{$column}| IN (" . implode(", ", $psql) . ")";
                     } else {
                         // USING LIKE...
                         $param = [];
-                        $psql  = [];
+                        $psql = [];
                         foreach ($filter['value'] as $k => $p) {
                             $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
-                            $psql[]                                 = "{$column} LIKE :{$paramName}_{$pcolumn}_{$k}";
+                            $psql[] = "|{$column}| LIKE :{$paramName}_{$pcolumn}_{$k}";
                         }
                         $sql = "(" . implode(" AND ", $psql) . ")";
                     }
@@ -295,23 +350,23 @@ class DataFilter extends FormField {
      * @return array me-return array property DataFilter.
      */
     public function getFieldProperties() {
-        return array (
-            array (
+        return array(
+            array(
                 'label' => 'Data Filter Name',
                 'name' => 'name',
                 'labelWidth' => '5',
                 'fieldWidth' => '7',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ng-delay' => '500',
                 ),
                 'type' => 'TextField',
             ),
-            array (
+            array(
                 'label' => 'Data Source Name',
                 'name' => 'datasource',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.datasource',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
@@ -321,51 +376,51 @@ class DataFilter extends FormField {
                 'fieldWidth' => '7',
                 'type' => 'DropDownList',
             ),
-            array (
+            array(
                 'label' => 'Generate Filters',
                 'buttonType' => 'success',
                 'icon' => 'magic',
                 'buttonSize' => 'btn-xs',
-                'options' => array (
+                'options' => array(
                     'style' => 'float:right;margin:0px 0px 5px 0px',
                     'ng-show' => 'active.datasource != \'\'',
                     'ng-click' => 'generateFilters()',
                 ),
                 'type' => 'LinkButton',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '<div class=\'clearfix\'></div>',
             ),
-            array (
+            array(
                 'label' => 'DataFilter Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
             ),
-            array (
+            array(
                 'title' => 'Filters',
                 'type' => 'SectionHeader',
             ),
-            array (
+            array(
                 'type' => 'Text',
                 'value' => '<div style=\'margin-top:5px;\'></div>',
             ),
-            array (
+            array(
                 'name' => 'filters',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.DataFilterListForm',
                 'inlineJS' => 'DataFilter/inlinejs/dfr-init.js',
-                'options' => array (
+                'options' => array(
                     'ng-model' => 'active.filters',
                     'ng-change' => 'save()',
                     'ps-after-add' => 'value.show = true;',
                 ),
-                'singleViewOption' => array (
+                'singleViewOption' => array(
                     'name' => 'val',
                     'fieldType' => 'text',
                     'labelWidth' => 0,
                     'fieldWidth' => 12,
-                    'fieldOptions' => array (
+                    'fieldOptions' => array(
                         'ng-delay' => 500,
                     ),
                 ),
@@ -386,7 +441,7 @@ class DataFilter extends FormField {
     }
 
     public function datasources() {
-        $ds     = $this->builder->findAllField(['type' => 'DataSource']);
+        $ds = $this->builder->findAllField(['type' => 'DataSource']);
         $return = [];
         foreach ($ds as $d) {
             if (@$d['params']['where'] == $this->name || $d['name'] == $this->datasource) {
@@ -400,7 +455,7 @@ class DataFilter extends FormField {
     public function actionRelInit() {
 
         $postdata = file_get_contents("php://input");
-        $post     = CJSON::decode($postdata);
+        $post = CJSON::decode($postdata);
 
         if (count($post) == 0)
             die();
@@ -412,19 +467,19 @@ class DataFilter extends FormField {
             if ($filter['name'] != $post['n'])
                 continue;
 
-            $rf                             = new RelationField;
-            $rf->params                     = $filter['relParams'];
-            $rf->modelClass                 = $filter['relModelClass'];
-            $rf->relationCriteria           = $filter['relCriteria'];
-            $rf->relationCriteria['limit']  = ActiveRecord::DEFAULT_PAGE_SIZE;
+            $rf = new RelationField;
+            $rf->params = $filter['relParams'];
+            $rf->modelClass = $filter['relModelClass'];
+            $rf->relationCriteria = $filter['relCriteria'];
+            $rf->relationCriteria['limit'] = ActiveRecord::DEFAULT_PAGE_SIZE;
             $rf->relationCriteria['offset'] = 0;
 
-            $rf->idField    = $filter['relIdField'];
+            $rf->idField = $filter['relIdField'];
             $rf->labelField = $filter['relLabelField'];
 
             $rf->relationCriteria['condition'] = $rf->idField . ' = :dataFilterID';
-            $rf->params[':dataFilterID']       = $post['v'];
-            $rf->builder                       = $this->builder;
+            $rf->params[':dataFilterID'] = $post['v'];
+            $rf->builder = $this->builder;
 
             $rawList = $rf->query(@$post['s'], $rf->params);
             echo json_encode($rawList);
@@ -434,7 +489,7 @@ class DataFilter extends FormField {
     public function actionRelnext() {
 
         $postdata = file_get_contents("php://input");
-        $post     = CJSON::decode($postdata);
+        $post = CJSON::decode($postdata);
 
         if (count($post) == 0) {
             die();
@@ -449,16 +504,16 @@ class DataFilter extends FormField {
             if ($filter['name'] != $post['n'])
                 continue;
 
-            $rf                             = new RelationField;
-            $rf->params                     = $filter['relParams'];
-            $rf->modelClass                 = $filter['relModelClass'];
-            $rf->relationCriteria           = $filter['relCriteria'];
-            $rf->relationCriteria['limit']  = ActiveRecord::DEFAULT_PAGE_SIZE;
+            $rf = new RelationField;
+            $rf->params = $filter['relParams'];
+            $rf->modelClass = $filter['relModelClass'];
+            $rf->relationCriteria = $filter['relCriteria'];
+            $rf->relationCriteria['limit'] = ActiveRecord::DEFAULT_PAGE_SIZE;
             $rf->relationCriteria['offset'] = $start;
 
-            $rf->idField    = $filter['relIdField'];
+            $rf->idField = $filter['relIdField'];
             $rf->labelField = $filter['relLabelField'];
-            $rf->builder    = $this->builder;
+            $rf->builder = $this->builder;
 
             $rf->params = is_null($filter['relParams']) ? [] : $filter['relParams'];
             if (is_array($rf->params)) {
@@ -469,7 +524,7 @@ class DataFilter extends FormField {
                 }
             }
 
-            $list    = [];
+            $list = [];
             $rawList = $rf->query(@$post['s'], $rf->params);
             $rawList = is_null($rawList) ? [] : $rawList;
 
@@ -513,7 +568,7 @@ class DataFilter extends FormField {
                 case "list":
                 case "check":
                     $listExpr = @$filter['listExpr'];
-                    $list     = [];
+                    $list = [];
 
                     if ($listExpr != "") {
                         ## evaluate expression
@@ -532,18 +587,18 @@ class DataFilter extends FormField {
                     $this->filters[$k]['list'] = $list;
                     break;
                 case "relation":
-                    $rf                             = new RelationField;
-                    $rf->params                     = @$filter['relParams'];
-                    $rf->modelClass                 = @$filter['relModelClass'];
-                    $rf->relationCriteria           = @$filter['relCriteria'];
-                    $rf->relationCriteria['limit']  = ActiveRecord::DEFAULT_PAGE_SIZE;
+                    $rf = new RelationField;
+                    $rf->params = @$filter['relParams'];
+                    $rf->modelClass = @$filter['relModelClass'];
+                    $rf->relationCriteria = @$filter['relCriteria'];
+                    $rf->relationCriteria['limit'] = ActiveRecord::DEFAULT_PAGE_SIZE;
                     $rf->relationCriteria['offset'] = 0;
 
-                    $rf->idField    = @$filter['relIdField'];
+                    $rf->idField = @$filter['relIdField'];
                     $rf->labelField = @$filter['relLabelField'];
-                    $rf->builder    = $this->builder;
+                    $rf->builder = $this->builder;
 
-                    $this->filters[$k]['list']  = 0;
+                    $this->filters[$k]['list'] = 0;
                     $this->filters[$k]['count'] = 0;
                     break;
             }
