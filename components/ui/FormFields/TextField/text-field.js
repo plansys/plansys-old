@@ -182,7 +182,7 @@ app.directive('textField', function ($timeout, $http) {
                 
                 $scope.tfBlur = function() {
                     $timeout(function() {
-                        if (!$scope.isFocused && !$scope.dropdownHover) {
+                        if (!$scope.isFocused && !$scope.dropdownHover && !!$scope.value && !!$scope.value.trim) {
                             var val = $scope.value.trim();
                             if (val[val.length -1] == ",") {
                                 $scope.value = val.substr(0, val.length -1);

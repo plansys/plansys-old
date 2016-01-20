@@ -114,7 +114,11 @@ class DataFilter extends FormField {
         return $template;
     }
 
-    public static function toSQLDateTime($val, $driver) {
+    public static function toSQLDateTime($val, $driver = null) {
+        if (is_null($driver)) {
+            $driver = Setting::get('db.driver');
+        }
+
         switch ($driver) {
             case "oci";
                 return "TO_DATE({$val}, 'YYYY-MM-DD HH24:MI:SS')";
@@ -125,7 +129,11 @@ class DataFilter extends FormField {
         }
     }
 
-    public static function toSQLStr($val, $driver) {
+    public static function toSQLStr($val, $driver = null) {
+        if (is_null($driver)) {
+            $driver = Setting::get('db.driver');
+        }
+
         switch ($driver) {
             case "oci";
                 return "UPPER({$val})";
@@ -136,7 +144,11 @@ class DataFilter extends FormField {
         }
     }
 
-    public static function toSQLDate($val, $driver) {
+    public static function toSQLDate($val, $driver = null) {
+        if (is_null($driver)) {
+            $driver = Setting::get('db.driver');
+        }
+
         switch ($driver) {
             case "oci";
                 return "TO_DATE({$val}, 'YYYY-MM-DD')";

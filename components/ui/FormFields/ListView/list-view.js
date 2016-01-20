@@ -28,7 +28,7 @@ app.directive('listView', function ($timeout) {
                 $scope.isInsertable = true;
                 if ($scope.options['insertable-if']) {
                     $scope.$watch($scope.options['insertable-if'], function(n, o) {
-                        return n;
+                        $scope.isInsertable = n;
                     }, true)
                 };
 
