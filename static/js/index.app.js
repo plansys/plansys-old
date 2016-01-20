@@ -366,6 +366,20 @@ app.directive('ngUrl', function ($interpolate) {
         }
     };
 });
+app.directive('ngAssign', function($timeout) {
+    return {
+        require: 'ngModel',
+        restrict: 'A',
+        link: function ($scope, el, attrs, ngModel) {
+            el.assignWatcher = $scope.$watch(attrs.ngAssign, function(n, o) {
+                if (!!n.toString) {
+                    $scope.$eval(attrs.ngModel + ' = "' + n.toString() + '"' );
+                }
+            },true);
+            
+        }
+    }; 
+});
 app.directive('autoGrow', ['$timeout', '$window', function ($timeout, $window) {
     'use strict';
     var config = {

@@ -39,9 +39,12 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
             },
             theme: 'monokai',
             mode: 'php',
-            require: ['ace/ext/emmet'],
+            require: ['ace/ext/emmet', 'ace/ext/language_tools'],
             advanced: {
                 enableEmmet: true,
+                enableBasicAutocompletion: true,
+                enableSnippets: true,
+                enableLiveAutocompletion: true
             }
         }, options);
         return ret;

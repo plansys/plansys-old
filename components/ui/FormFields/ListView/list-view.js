@@ -25,11 +25,11 @@ app.directive('listView', function ($timeout) {
                 $scope.templateAttr = JSON.parse($el.find("data[name=template_attr]").html().trim());
                 $scope.options = JSON.parse($el.find("data[name=options]").html().trim());
 
-                $scope.isInsertable = function() {
-                    if ($scope.options['insertable-if']) {
-                        return $scope.$eval($scope.options['insertable-if']);
-                    }
-                    return true;
+                $scope.isInsertable = true;
+                if ($scope.options['insertable-if']) {
+                    $scope.$watch($scope.options['insertable-if'], function(n, o) {
+                        return n;
+                    }, true)
                 };
 
                 // when ng-model is changed from inside directive

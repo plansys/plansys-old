@@ -7,6 +7,10 @@
            $this->options['ng-value'] = "model." . $this->name;
        }
 
+       if (!isset($this->options['ng-model'])) {
+           $this->options['ng-model'] = "model." . $this->name;
+       }
+
        echo $this->expandAttributes($this->options)
        ?>
        />
