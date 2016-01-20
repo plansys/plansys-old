@@ -79,6 +79,26 @@ class GridViewColString extends Form {
                 'type' => 'DropDownList',
             ),
             array (
+                'label' => 'Merge Row Method',
+                'name' => 'mergeSameRowMethod',
+                'options' => array (
+                    'ng-if' => '!!item.mergeSameRowWith && item.mergeSameRow == \'Yes\'',
+                    'ng-model' => 'item.mergeSameRowMethod',
+                    'ng-change' => 'updateListView()',
+                ),
+                'menuPos' => 'pull-right',
+                'defaultType' => 'first',
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
+                ),
+                'listExpr' => '[\'Default\',\'Sum\',\'Count\',\'Average\',\'Min\',\'Max\',\'Join\']',
+                'labelWidth' => '5',
+                'fieldWidth' => '7',
+                'searchable' => 'Yes',
+                'otherLabel' => 'Custom Column',
+                'type' => 'DropDownList',
+            ),
+            array (
                 'label' => 'Cell Mode',
                 'name' => 'cellMode',
                 'options' => array (

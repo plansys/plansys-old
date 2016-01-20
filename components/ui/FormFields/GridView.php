@@ -137,6 +137,10 @@ class GridView extends FormField {
                     $ngshow = "ng-show=\"{$col['options']['ng-checkbox-show']}\"";
                 }
                 
+                if (isset($col['options']['ng-change'])) {
+                    $col['options']['ng-checkbox-change'] = $col['options']['ng-change'];
+                }
+                
                 $ngchange = "";
                 if (isset($col['options']['ng-checkbox-change'])) {
                     $ngchange = "{$col['options']['ng-checkbox-change']};";
@@ -147,7 +151,7 @@ class GridView extends FormField {
                     $ngdisabled = "ng-disabled=\"{$col['options']['ng-checkbox-disabled']};\"";
                 }
                 
-                $template = '<label ng-if="(row.$type == \'r\' || !row.$type) '.$ngif.'" '.$ngshow.'><input
+                $template = '<label class="cbl-'.$fieldName.'" ng-if="(row.$type == \'r\' || !row.$type) '.$ngif.'" '.$ngshow.'><input
 ng-click="checkboxRow(row, \'' . $fieldName . '\', ' . $idx . ', $event);'.$ngchange.'"
 ng-checked="checkboxRowChecked(row, \'' . $fieldName . '\', ' . $idx . ')"
 '.$ngdisabled.'
@@ -176,6 +180,10 @@ type="checkbox" /></label>';
             }
 
             switch ($col['options']['mode']) {
+                case "html":
+                    $template = '
+    <div ng-bind-html="row.' . $fieldName . '"></div>';
+                    break;
                 case "editable":
                     $template = '
     <div contenteditable="true" ' . $editableCss . ' ng-model="row.' . $fieldName . '"
@@ -231,7 +239,7 @@ type="checkbox" /></label>';
                     break;
                 case 'sequence':
                     $style    = ' style="width:20px;"';
-                    $template = '{{ $index + 1}}';
+                    $template = '{{ getSequence(row, $index + 1); }}';
                     break;
                 case 'date':
                     $template = '{{row.' . $fieldName . ' | dateFormat:"date" }}';

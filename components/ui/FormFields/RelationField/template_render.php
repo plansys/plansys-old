@@ -45,8 +45,8 @@
              dropdown on-toggle="toggled(open)">
 
             <!-- default button -->
-            <div style="{{showUnselect && !!value? 'padding-right:30px' : ''}}">
-                <div ng-if="showUnselect && !!value" style="float: right;margin-right:-30px;margin-bottom:-30px;width:33px;border-top-left-radius: 0px;
+            <div style="{{showUnselect && !!value && !isRelFieldDisabled() ? 'padding-right:30px' : ''}}">
+                <div ng-if="showUnselect && !!value && !isRelFieldDisabled() " style="float: right;margin-right:-30px;margin-bottom:-30px;width:33px;border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;" class="btn btn-default btn-sm" ng-click="unselect()">
                     <i class="fa fa-times"></i>
                 </div>

@@ -506,7 +506,7 @@ class RelationField extends FormField {
 
         $nolimit                             = false;
         $this->relationCriteria['condition'] = $condition["sql"];
-        
+
         $this->params = array_merge(is_null($this->params) ? [] : $this->params, $condition['params']);
         $criteria     = DataSource::generateCriteria($this->params, $this->relationCriteria, $this);
         
@@ -752,7 +752,9 @@ class RelationField extends FormField {
                 if (is_array(@$this->params)) {
                     foreach ($this->params as $k => $ff) {
                         if (substr($ff, 0, 3) == "js:" && isset($p[$k])) {
-                            $this->params[$k] = "'" . $p[$k] . "'";
+                            if (is_string($p[$k])) {
+                                $this->params[$k] = "'" . $p[$k] . "'";
+                            }
                         }
                     }
                 }
@@ -806,7 +808,9 @@ class RelationField extends FormField {
         if (is_array(@$field['params'])) {
             foreach ($field['params'] as $k => $ff) {
                 if (substr($ff, 0, 3) == "js:" && isset($p[$k])) {
-                    $p[$k] = "'" . $p[$k] . "'";
+                    if (is_string($p[$k])) {
+                        $p[$k] = "'" . $p[$k] . "'";
+                    } 
                 }
             }
         }

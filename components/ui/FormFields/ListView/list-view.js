@@ -168,7 +168,7 @@ app.directive('listView', function ($timeout) {
                 
                 $scope.initItem = function(value, idx) {
                     this.model = value[idx];
-                    if ($scope.fieldTemplate == 'datasource' && !!$scope.datasource.relationTo) {
+                    if ($scope.fieldTemplate == 'datasource' && !!$scope.datasource && !!$scope.datasource.relationTo) {
                         if ($scope.errors) {
                             var errors = $scope.errors[$scope.datasource.relationTo];
                             if (!!errors && angular.isObject(errors[0])) {

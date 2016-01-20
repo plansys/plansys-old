@@ -52,18 +52,16 @@ class DefaultController extends Controller {
         if (isset($_POST['InstallUserForm'])) {
             $model->attributes = $_POST['InstallUserForm'];
             if ($model->validate()) {
-                ActiveRecord::execute("
-                set foreign_key_checks = 0;
-                UPDATE `p_user` SET
-                    `id` = '1',
-                    `email` = '-',
-                    `username` = '{$model->username}',
-                    `password` = '".Helper::hash($model->password)."',
-                    `last_login` = '2015-02-26 07:06:32',
-                    `is_deleted` = '0'
-                WHERE `id` = '1';
-                ");
-
+                $user = User::model()->find();
+                if (!is_null($user)) {
+                    $user->username = $model->username;
+                    $user->password = Helper::hash($model->password);
+                    $user->is_deleted = 0;
+                    $user->update(['username', 'password', 'is_deleted']);
+                } else {
+                    ## TODO: throw error: failed to update username & password
+                }
+                
                 Installer::createIndexFile("running");
                 $this->redirect(['/install/default/finish']);
             }
@@ -79,6 +77,7 @@ class DefaultController extends Controller {
 
     public function actionDb() {
         $model = new InstallDbForm();
+        $model->driver = Setting::get('db.driver');
         $model->host = Setting::get('db.host');
         $model->username = Setting::get('db.username');
         $model->password = Setting::get('db.password');
@@ -92,17 +91,27 @@ class DefaultController extends Controller {
             if ($model->validate()) {
                 $error = false;
                         
-                        
                 try {
-                    $dbh = new pdo("mysql:host={$model->host};dbname={$model->dbname}", 
-                        $model->username, $model->password, array(
-                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    ));
+                    switch ($model->driver) {
+                        case "mysql":
+                            $dbh = new pdo("mysql:host={$model->host};dbname={$model->dbname}", 
+                                $model->username, $model->password, array(
+                                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                            ));
+                        break;
+                        case "oci":
+                            $dbh = new pdo("oci:dbname={$model->host}/{$model->dbname}", 
+                                $model->username, $model->password, array(
+                                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                            ));
+                        break;
+                    }
                 } catch (PDOException $ex) {
                     $error = $ex->getMessage();
                 }
 
                 if (!$error) {
+                    Setting::set('db.driver', $model->driver, false);
                     Setting::set('db.host', $model->host, false);
                     Setting::set('db.username', $model->username, false);
                     Setting::set('db.password', $model->password, false);

@@ -14,6 +14,7 @@ class Import extends CComponent {
     public $resultFile = '';
     public $resultUrl = '';
     public $lastRow = [];
+    public $skipIfStatus = false;
     public $parentData = [];
     private $loaded = false;
     private $lookup = [];
@@ -214,15 +215,20 @@ class Import extends CComponent {
                         $attrs[$into] = $row[$key];
                         break;
                     case 'insert':
-                        if (!isset($this->lookup[$col['from']])) {
-                            $this->lookup[$col['from']] = [
-                                'schema' => Yii::app()->db->schema->tables[$col['from']],
+                        $from = $col['from'];
+                        if (isset($col['notfound']['to'])) {
+                            $from = $col['notfound']['to'];
+                        }
+                        
+                        if (!isset($this->lookup[$from])) {
+                            $this->lookup[$from] = [
+                                'schema' => Yii::app()->db->schema->tables[$from],
                                 'hash' => [
                                     $key => []
                                 ]
                             ];
                         }
-                        $pk = $this->lookup[$col['from']]['schema']->primaryKey;
+                        $pk = $this->lookup[$from]['schema']->primaryKey;
                         if (!is_string($pk)) {
                             return 'Import does not support inserting multiple primary key in lookup!';
                         }
@@ -250,10 +256,10 @@ class Import extends CComponent {
                             }
                         }
                         
-                        Yii::app()->db->createCommand()->insert($col['from'], $insert);
+                        Yii::app()->db->createCommand()->insert($from, $insert);
                         $insert[$pk] = Yii::app()->db->getLastInsertID(); 
                         
-                        $this->lookup[$col['from']]['hash'][$hashKey] = $insert;
+                        $this->lookup[$from]['hash'][$hashKey] = $insert;
                         
                         ## assign inserted id into attrs
                         $attrs[$into] = $insert[$col['return']];
@@ -291,6 +297,12 @@ class Import extends CComponent {
         $skipIf = false;
         $skipParentIf = false;
         $skipChildIf = false;
+        
+        foreach ($row as $k=>$r) {
+            if (is_string($r)) {
+                $row[$k] = trim($r);
+            }
+        }
         
         ## execute function when beforeLookup
         foreach ($this->columns as $key => $col) {
@@ -346,7 +358,8 @@ class Import extends CComponent {
                     }
                     break;
                 case 'default':
-                    if (!isset($row[$key])) {
+                    
+                    if (!isset($row[$key]) && !is_null($row[$key])) {
                         return [[
                             $key => 'Field ' . $key . ' tidak ada!'
                         ]];
@@ -454,7 +467,9 @@ class Import extends CComponent {
         
         $model->attributes = $attrs;
         $executeChild = true;
-        
+        if (!is_bool($skipIf)) {
+            var_dump($skipIf); die();
+        }
         if ($skipIf === true) {
             $executeChild = false;
         } else if (is_string($skipParentIf)) {
@@ -479,55 +494,25 @@ class Import extends CComponent {
             ] + $params);
         }
         
+        if($this->skipIfStatus){
+            $executeChild = false;
+        }
+        
         if ($executeChild) {
-            if ($skipParentIf !== true) { 
+            if ($skipParentIf !== true) {
                 $model->save();
             }
         }
+        
         //         var_dump(get_class($model),$model->errors, $this->lastRow);
         // echo "<hr/>";
         
-        foreach ($resolveCol as $rc) {
+        foreach ($resolveCol as $rc){
             if (isset($this->ignoreCols[$rc])) continue;
             $data[$rc] = $model->{$rc};
         }
         
         if ($executeChild) {
-            ## execute function when afterSave
-            if ($skipParentIf !== true) {
-                foreach ($this->columns as $key => $col) {
-                    if (@$col['type'] == 'function') {
-                        if (@$col['when'] == 'afterSave') {
-                            $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
-                                function($var) use($key, $data, $col) {
-                                    $ref = $this->parentData;
-                                    switch ($var[1]) {
-                                        case 'row': $ref = $data; break;
-                                        case 'lastRow': $ref = $this->lastRow; break;
-                                    }
-                                    
-                                    if (is_object(@$ref[$var[2]]) ) {
-                                        if ($ref[$var[2]] instanceof DateTime) {
-                                            $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
-                                        }
-                                    }
-                            
-                                    return @$ref[$var[2]];
-                                }, $col['value']);
-                            
-                            $attrs[$key] = Helper::evaluate($expr, [
-                                'row'=> $row,
-                                'lastRow' => $this->lastRow
-                            ] + $params);
-                            
-                            if (@$col['show'] === true) {
-                                $data[$key] = $row[$key];
-                            }
-                        }
-                    }
-                }
-            }
-            
             foreach ($this->relations as $rname=>$rel) {
                 $initData =  array_merge($row, $attrs, $data);
                 if (isset($rel['condition'])) {
@@ -564,13 +549,53 @@ class Import extends CComponent {
                     ];
                 }
             }
+            
+            ## execute function when afterSave
+            if ($skipParentIf !== true) {
+                foreach ($this->columns as $key => $col) {
+                    if (@$col['type'] == 'function') {
+                        if (@$col['when'] == 'afterSave') {
+                            $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
+                                function($var) use($key, $data, $col) {
+                                    $ref = $this->parentData;
+                                    switch ($var[1]) {
+                                        case 'row': $ref = $data; break;
+                                        case 'lastRow': $ref = $this->lastRow; break;
+                                    }
+                                    
+                                    if (is_object(@$ref[$var[2]]) ) {
+                                        if ($ref[$var[2]] instanceof DateTime) {
+                                            $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
+                                        }
+                                    }
+                            
+                                    return @$ref[$var[2]];
+                                }, $col['value']);
+                            
+                            $attrs[$key] = Helper::evaluate($expr, [
+                                'row'=> $row,
+                                'lastRow' => $this->lastRow
+                            ] + $params);
+                            
+                            if (@$col['show'] === true) {
+                                $data[$key] = $row[$key];
+                            }
+                        }
+                    }
+                }
+            }
         } 
         
         if (!$model->hasErrors()) {
             $this->data[] = $data;
             if (!$skipIf && !$skipParentIf) {
+                $this->skipIfStatus = false;
                 $this->lastRow = $data;
             }
+            if($skipIf){
+                $this->skipIfStatus = true;
+            }
+            
             
             return true;
         } else {

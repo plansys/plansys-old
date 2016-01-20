@@ -23,7 +23,7 @@ class UserIdentity extends CUserIdentity {
             $this->setState('fullRole', $role->role['role_name']);
             $rootRole = Helper::explodeFirst(".", $role->role['role_name']);
             $this->setState('role', $rootRole);
-            $this->setState('roleId', $role->id);
+            $this->setState('roleId', $role->role['id']);
     
             ## reset error code
             $this->errorCode = self::ERROR_NONE;

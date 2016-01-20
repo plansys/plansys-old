@@ -98,8 +98,17 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                 }
 
                 $scope.splitDateTime = function () {
-                    if ($scope.value == null || ($scope.value != null && $scope.value.trim() == '')
-                        || $scope.value == '0000-00-00' || $scope.value == '0000-00-00 00:00:00') {
+                    var isWrongValue = false;
+                    if (typeof $scope.value === "string") {
+                        if ($scope.value.trim() == '') {
+                            isWrongValue = true;
+                        }
+                    } else {
+                        isWrongValue = true;
+                    }
+                    
+                    if (isWrongValue || $scope.value == '0000-00-00' 
+                        || $scope.value == '0000-00-00 00:00:00') {
                         if ($scope.defaultToday == 'Yes') {
                             switch ($scope.fieldType) {
                                 case 'datetime':
@@ -118,7 +127,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                             $scope.value = '';
                         }
                     }
-
+                            
                     var split = $scope.value.trim().split(' ');
 
                     // switch it based on fieldType

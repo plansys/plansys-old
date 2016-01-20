@@ -7,6 +7,7 @@ class SiteController extends Controller {
      * when an action is not explicitly requested by users.
      */
     public function actionIndex() {
+        
         if (Yii::app()->user->isGuest) {
             $this->redirect(array("login"));
         } else {
@@ -114,9 +115,15 @@ class SiteController extends Controller {
             if ($model->validate() && $model->login()) {
 
                 ## update last_login user
-                $sql = "update p_user set last_login = '" . date("Y-m-d H:i:s") . "' where id = " . Yii::app()->user->id;
-                Yii::app()->db->createCommand($sql)->execute();
-
+                Yii::app()->db->commandBuilder->createUpdateCommand("p_user", [
+                    'last_login' => DataFilter::toSQLDateTime(date("Y-m-d H:i:s"))
+                ], new CDbCriteria([
+                    'condition' => '"id" = :p',
+                    'params' => [
+                        ':p' => Yii::app()->user->id
+                    ]
+                ]));
+                
                 ## audit trail tracker
                 AuditTrail::login();
 

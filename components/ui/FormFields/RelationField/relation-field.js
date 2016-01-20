@@ -456,7 +456,7 @@ app.directive('relationField', function ($timeout, $http) {
                 $scope.jsParamsInitialized = true;
 
                 $scope.isRelFieldDisabled = function() {
-                    console.log($scope.$parent.$eval($scope.disabledCondition));
+                    //console.log($scope.$parent.$eval($scope.disabledCondition));
                     return $scope.$parent.$eval($scope.disabledCondition);
                 }
                 

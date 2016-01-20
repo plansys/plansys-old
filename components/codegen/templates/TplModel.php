@@ -51,7 +51,9 @@ foreach ($relations as $n => $r) {
 }
 
 foreach($relations as $name=>$relation): ?>
-			<?php echo "'$name' => $relation,\n"; ?>
+			<?php
+                        $name = strtolower($name);
+                        echo "'$name' => $relation,\n"; ?>
 <?php endforeach; ?>
 		);
 	}

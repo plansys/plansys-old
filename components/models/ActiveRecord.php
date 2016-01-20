@@ -1,19 +1,23 @@
 <?php
 
 class ActiveRecord extends CActiveRecord {
+
     const DEFAULT_PAGE_SIZE = 25;
-    protected $_softDelete        = [];
-    private   $__relations        = [];
-    private   $__relationsObj     = [];
-    private   $__isRelationLoaded = false;
-    private   $__pageSize         = [];
-    private   $__page             = [];
-    private   $__relInsert        = [];
-    private   $__relUpdate        = [];
-    private   $__relDelete        = [];
-    private   $__relReset         = [];
-    private   $__tempVar          = [];
-    private   $__relUploadField   = [];
+
+    protected $_softDelete = [];
+    private $__relations = [];
+    private $__relationsObj = [];
+    private $__isRelationLoaded = false;
+    private $__pageSize = [];
+    private $__page = [];
+    private $__relInsert = [];
+    private $__relUpdate = [];
+    private $__relDelete = [];
+    private $__relReset = [];
+    private $__tempVar = [];
+    private $__relUploadField = [];
+    
+    private static $_md = array();                // class name => meta data
 
     public static function execute($sql, $params = []) {
         return Yii::app()->db->createCommand($sql)->execute($params);
@@ -55,6 +59,60 @@ class ActiveRecord extends CActiveRecord {
                 ActiveRecord::flattenPost($post, $key);
             }
         }
+    }
+
+    private static function formatSingleCriteria($str, $driver) {
+        switch ($driver) {
+            case "oci":
+                $split = explode(".", $str);
+                foreach ($split as $k => $s) {
+                    $split[$k] = '"' . $s . '"';
+                }
+                $str = implode(".", $split);
+                return $str;
+                break;
+            default:
+                $split = explode(".", $str);
+                foreach ($split as $k => $s) {
+                    $split[$k] = '`' . $s . '`';
+                }
+                $str = implode(".", $split);
+                return $str;
+                break;
+                return $str;
+        }
+    }
+
+    public static function formatCriteria($criteria, $driver = null) {
+        if (is_null($driver)) {
+            $driver = Setting::get('db.driver');
+        }
+        foreach ($criteria as $k => $c) {
+            if (is_string($c)) {
+                preg_match_all("/\|([\w.]+)\|/", $c, $segment);
+                foreach ($segment[1] as $l => $e) {
+                    $e = preg_replace('/[\s]+/', ' ', $e);
+                    $e = explode(" ", $e);
+                    foreach ($e as $m => $f) {
+                        $e[$m] = self::formatSingleCriteria($f, $driver);
+                    }
+                    $e = implode(" ", $e);
+                    $criteria[$k] = str_replace("|{$segment[1][$l]}|", $e, $criteria[$k]);
+                }
+            }
+        }
+        return $criteria;
+    }
+
+    public static function formatRelationDef($relations, $driver = null) {
+        if (is_null($driver)) {
+            $driver = Setting::get('db.driver');
+        }
+
+        foreach ($relations as $k => $c) {
+            $relations[$k] = self::formatCriteria($c, $driver);
+        }
+        return $relations;
     }
 
     public static function flattenPost(&$post, $key, $shouldReturn = false) {
@@ -125,7 +183,7 @@ class ActiveRecord extends CActiveRecord {
             }
         } elseif (is_string($model)) {
             $cols = array_keys($attr);
-    
+
             ## insert
             if (isset($post[$name . 'Insert']) && is_string($post[$name . 'Insert'])) {
                 $post[$name . 'Insert'] = json_decode($post[$name . 'Insert'], true);
@@ -141,7 +199,7 @@ class ActiveRecord extends CActiveRecord {
                             unset($post[$name . 'Insert'][$k]);
                             continue;
                         }
-    
+
                         foreach ($attr as $a => $b) {
                             if (isset($post[$name . 'Insert'][$k])) {
                                 $post[$name . 'Insert'][$k][$a] = $b;
@@ -162,7 +220,7 @@ class ActiveRecord extends CActiveRecord {
                 }
                 ActiveRecord::batchInsert($model, $post[$name . 'Insert']);
             }
-    
+
             ## update
             if (isset($post[$name . 'Update']) && is_string($post[$name . 'Update'])) {
                 $post[$name . 'Update'] = json_decode($post[$name . 'Update'], true);
@@ -177,10 +235,10 @@ class ActiveRecord extends CActiveRecord {
                         }
                     }
                 }
-    
+
                 ActiveRecord::batchUpdate($model, $post[$name . 'Update']);
             }
-            
+
             ## delete
             if (isset($post[$name . 'Delete']) && is_string($post[$name . 'Delete'])) {
                 $post[$name . 'Delete'] = json_decode($post[$name . 'Delete'], true);
@@ -220,25 +278,25 @@ class ActiveRecord extends CActiveRecord {
     public static function batchUpdate($model, $data) {
         if (!is_array($data) || count($data) == 0)
             return;
-        
+
         $isModelExist = class_exists($model);
         if (!$isModelExist) {
             $schema = Yii::app()->db->schema->tables[$model];
         } else {
             $schema = $model::model()->tableSchema;
         }
-            
-        $pk    = $schema->primaryKey;
+
+        $pk = $schema->primaryKey;
         $table = $schema->name;
         $field = $schema->columns;
         unset($field[$pk]);
 
         $columnCount = count($field);
-        $columnName  = array_keys($field);
-        $update      = "";
+        $columnName = array_keys($field);
+        $update = "";
 
         if ($isModelExist) {
-            $rels        = $model::model()->relations();
+            $rels = $model::model()->relations();
             $foreignKeys = [];
             foreach ($rels as $r) {
                 if ($r[0] == 'CBelongsToRelation' && is_string($r[2])) {
@@ -277,7 +335,7 @@ class ActiveRecord extends CActiveRecord {
         if ($update != '') {
             $command = Yii::app()->db->createCommand($update);
             // try {
-                $command->execute();
+            $command->execute();
             // } catch (Exception $e) {
             //     var_dump($data, $e);
             //     die();
@@ -294,7 +352,7 @@ class ActiveRecord extends CActiveRecord {
             $table = $options['table'];
         } else {
             $instance = $model::model();
-            $table    = $instance->tableSchema->name;
+            $table = $instance->tableSchema->name;
         }
 
         if (isset($options['pk'])) {
@@ -320,9 +378,9 @@ class ActiveRecord extends CActiveRecord {
             $condition = str_replace(":ids", $idsString, $condition);
 
             if (empty($instance->_softDelete)) {
-                $sql     = "DELETE FROM {$table} WHERE $condition;";
+                $sql = "DELETE FROM {$table} WHERE $condition;";
                 $command = Yii::app()->db->createCommand($sql);
-                
+
                 try {
                     $command->execute();
                 } catch (CDbException $e) {
@@ -342,7 +400,6 @@ class ActiveRecord extends CActiveRecord {
                 }
                 ActiveRecord::batchUpdate($model, $params);
             }
-
         }
     }
 
@@ -360,7 +417,7 @@ class ActiveRecord extends CActiveRecord {
                 if (@$j[$pk] == @$v[$pk]) {
                     $is_deleted = false;
                     if (count(array_diff_assoc($j, $v)) > 0) {
-                        $is_updated  = true;
+                        $is_updated = true;
                         $updateArr[] = $j;
                     }
                 }
@@ -399,8 +456,8 @@ class ActiveRecord extends CActiveRecord {
 
     public static function listTables() {
         $connection = Yii::app()->db;
-        $dbSchema   = $connection->schema;
-        $tables     = $dbSchema->getTables();
+        $dbSchema = $connection->schema;
+        $tables = $dbSchema->getTables();
         return array_keys($tables);
     }
 
@@ -465,19 +522,28 @@ class ActiveRecord extends CActiveRecord {
                 $this->__relations[$k] = [];
             }
             $this->__relations['currentModel'] = [];
-            $this->__isRelationLoaded          = true;
+            $this->__isRelationLoaded = true;
         }
     }
 
     private function relPagingCriteria($name) {
-        $page     = @$this->__page[$name] ? $this->__page[$name] : 1;
+        $page = @$this->__page[$name] ? $this->__page[$name] : 1;
         $pageSize = $this->{$name . 'PageSize'};
-        $start    = ($page - 1) * $pageSize;
+        $start = ($page - 1) * $pageSize;
 
         return [
             'limit' => $pageSize,
             'offset' => $start
         ];
+    }
+
+    public function getMetaData() {
+        $className = get_class($this);
+        if (!array_key_exists($className, self::$_md)) {
+            self::$_md[$className] = null; // preventing recursive invokes of {@link getMetaData()} via {@link __get()}
+            self::$_md[$className] = new ActiveRecordMetaData($this);
+        }
+        return self::$_md[$className];
     }
 
     public function loadRelation($name, $criteria = []) {
@@ -491,16 +557,16 @@ class ActiveRecord extends CActiveRecord {
         if ($name == 'currentModel' || is_null($name)) {
             $this->__relations['currentModel'] = $this->getRelatedArray($criteria);
         } else {
-            $rel   = $this->getMetaData()->relations[$name];
+            $rel = $this->getMetaData()->relations[$name];
             $class = $rel->className;
             if (!class_exists($class)) {
                 return [];
             }
 
             $relClassType = get_class($rel);
-            $tableModel   = $class::model();
-            $table        = $tableModel->tableName();
-            $tablePKCol   = $tableModel->metadata->tableSchema->primaryKey;
+            $tableModel = $class::model();
+            $table = $tableModel->tableName();
+            $tablePKCol = $tableModel->metadata->tableSchema->primaryKey;
 
             switch ($relClassType) {
                 case 'CHasOneRelation':
@@ -510,7 +576,18 @@ class ActiveRecord extends CActiveRecord {
                             if ($rel->joinType == 'LEFT OUTER JOIN') {
                                 $tableModel->tableName();
                                 if (!is_null($this[$rel->foreignKey]) && $this[$rel->foreignKey] !== '') {
-                                    $this->__relations[$name] = ActiveRecord::queryRow("select * from `{$table}` where `{$tablePKCol}` = {$this[$rel->foreignKey]}");
+                                    switch ($this->dbConnection->driverName) {
+                                        case "oci":
+                                            $sql = "select * from \"{$table}\" "
+                                                    . " where \"{$tablePKCol}\" = :p";
+                                            break;
+                                        default:
+                                            $sql = "select * from `{$table}` "
+                                                    . " where `{$tablePKCol}` = :p";
+                                    }
+                                    $this->__relations[$name] = ActiveRecord::queryRow($sql, [
+                                        ':p' => $this[$rel->foreignKey]
+                                    ]);
                                 } else {
                                     $this->__relations[$name] = [];
                                 }
@@ -550,7 +627,16 @@ class ActiveRecord extends CActiveRecord {
 
                     if (($criteria === false || empty($criteria)) && is_string($rel->foreignKey) && is_numeric($relKey)) {
                         if ($rel->joinType == 'LEFT OUTER JOIN') {
-                            $this->__relations[$name] = ActiveRecord::queryAll("select * from `{$table}` where `{$rel->foreignKey}` = {$this->id} limit 10");
+                            switch ($this->dbConnection->driverName) {
+                                case "oci":
+                                    $sql = "select * from \"{$table}\" "
+                                            . " where \"{$rel->foreignKey}\" = {$this->id} limit 10";
+                                    break;
+                                default:
+                                    $sql = "select * from `{$table}` "
+                                            . "where `{$rel->foreignKey}` = {$this->id} limit 10";
+                            }
+                            $this->__relations[$name] = ActiveRecord::queryAll($sql);
                         }
                     } else {
                         $this->__relationsObj[$name] = $this->getRelated($name, true, $criteria);
@@ -578,12 +664,11 @@ class ActiveRecord extends CActiveRecord {
         return $this->__relations[$name];
     }
 
-    public function getRelatedArray($criteria = [], $rel = null) {
-        
+    public static function convertPagingCriteria($criteria) {
         ## clean criteria array
         if (isset($criteria['page'])) {
             $criteria['offset'] = ($criteria['page'] - 1) * $criteria['pageSize'];
-            $criteria['limit']  = $criteria['pageSize'];
+            $criteria['limit'] = $criteria['pageSize'];
             unset($criteria['page'], $criteria['pageSize']);
         }
 
@@ -594,8 +679,14 @@ class ActiveRecord extends CActiveRecord {
         if (isset($criteria['paging']))
             unset($criteria['paging']);
 
-        $tableSchema       = $this->tableSchema;
-        $builder           = $this->commandBuilder;
+        return $criteria;
+    }
+
+    public function getRelatedArray($criteria = [], $rel = null) {
+
+        $criteria = ActiveRecord::convertPagingCriteria($criteria);
+        $tableSchema = $this->tableSchema;
+        $builder = $this->commandBuilder;
         $criteriaAggregate = null;
 
         if (isset($criteria['aggregate'])) {
@@ -610,7 +701,7 @@ class ActiveRecord extends CActiveRecord {
         }
         ## generate sql;
         $command = $builder->createFindCommand($tableSchema, $cdbCriteria);
-        $sql     = $command->text;
+        $sql = $command->text;
 
         ## execute query
         $rawData = $this->dbConnection->createCommand($sql)->queryAll(true, $cdbCriteria->params);
@@ -631,12 +722,12 @@ class ActiveRecord extends CActiveRecord {
             if ($group['mode'] == 'sql' && isset($group['sql']) && trim($group['sql']) != '') {
                 $cdbCriteria->limit = -1;
                 $cdbCriteria->order = '';
-                $builder            = $this->commandBuilder;
-                $tableSchema        = $this->tableSchema;
-                $command            = $builder->createFindCommand($tableSchema, $cdbCriteria);
-                $sql                = $command->text;
-                $sql                = str_replace("{sql}", $sql, $group['sql']);
-                $sqlGroup           = $this->dbConnection->createCommand($sql)->queryAll(true, $cdbCriteria->params);
+                $builder = $this->commandBuilder;
+                $tableSchema = $this->tableSchema;
+                $command = $builder->createFindCommand($tableSchema, $cdbCriteria);
+                $sql = $command->text;
+                $sql = str_replace("{sql}", $sql, $group['sql']);
+                $sqlGroup = $this->dbConnection->createCommand($sql)->queryAll(true, $cdbCriteria->params);
 
                 foreach ($sqlGroup as $sg) {
                     $cursor = &$ag->grouped;
@@ -644,7 +735,7 @@ class ActiveRecord extends CActiveRecord {
                     if ($lvl > 0) {
                         $skip = false;
                         for ($clvl = 1; $clvl <= $lvl; $clvl++) {
-                            $sgval  = $sg[$criteriaAggregate['groups'][$clvl]['col']];
+                            $sgval = $sg[$criteriaAggregate['groups'][$clvl]['col']];
                             $cursor = &$cursor['$items'];
 
                             if (isset($cursor[$sgval])) {
@@ -655,7 +746,8 @@ class ActiveRecord extends CActiveRecord {
                             }
                         }
 
-                        if ($skip) continue;
+                        if ($skip)
+                            continue;
                     }
 
                     $aggregate = &$cursor['$aggregate'];
@@ -681,11 +773,11 @@ class ActiveRecord extends CActiveRecord {
     private function applyRelChange($name) {
         $pk = $this->tableSchema->primaryKey;
         $relHash = [];
-        
+
         if (!is_array($this->__relations[$name])) {
             throw new CException("Isi Relasi `$name` harus berupa array! ");
         }
-        
+
         foreach ($this->__relations[$name] as $q => $r) {
             if (is_array($r) && is_string($pk) && isset($r[$pk])) {
                 $relHash['_' . $r[$pk]] = ['idx' => $q, 'data' => $r];
@@ -705,7 +797,7 @@ class ActiveRecord extends CActiveRecord {
                 }
             }
         }
-        
+
 
         if (count(@$this->__relInsert[$name]) > 0) {
             foreach ($this->__relInsert[$name] as $k => $i) {
@@ -741,8 +833,8 @@ class ActiveRecord extends CActiveRecord {
                     } else if (Helper::is_assoc($rel)) {
                         return 1;
                     } else if ($name == 'currentModel') {
-                        $tableSchema  = $this->tableSchema;
-                        $builder      = $this->commandBuilder;
+                        $tableSchema = $this->tableSchema;
+                        $builder = $this->commandBuilder;
                         $countCommand = $builder->createCountCommand($tableSchema, new CDbCriteria);
                         return $countCommand->queryScalar();
                     } else {
@@ -800,7 +892,7 @@ class ActiveRecord extends CActiveRecord {
         $this->initRelation();
         switch (true) {
             case Helper::isLastString($name, 'PageSize'):
-                $name                    = substr_replace($name, '', -8);
+                $name = substr_replace($name, '', -8);
                 $this->__pageSize[$name] = $value;
                 break;
             case Helper::isLastString($name, 'Insert'):
@@ -872,7 +964,7 @@ class ActiveRecord extends CActiveRecord {
             'delete' => count(@$this->__relDelete[$name]) > 0 ? @$this->__relDelete[$name] : [],
         ];
     }
-        
+
     public function resetRelChanges($relation) {
         $this->__relInsert[$relation] = [];
         $this->__relUpdate[$relation] = [];
@@ -882,7 +974,7 @@ class ActiveRecord extends CActiveRecord {
     public function resetRel($relation, $data = null) {
         $this->__relInsert[$relation] = [];
         $this->__relUpdate[$relation] = [];
-        $this->__relReset[]           = $relation;
+        $this->__relReset[] = $relation;
 
         if (is_null($data)) {
             if (isset($this->__relations[$relation])) {
@@ -903,7 +995,7 @@ class ActiveRecord extends CActiveRecord {
 
     public function setAttributes($values, $safeOnly = false, $withRelation = true) {
         $cols = $this->tableSchema->columns;
-        foreach ($values as $k=>$v) {
+        foreach ($values as $k => $v) {
             if (isset($cols[$k])) {
                 if ($cols[$k]->dbType == 'datetime' || $cols[$k]->dbType == 'date' || $cols[$k]->dbType == 'time') {
                     if ($values[$k] == '') {
@@ -914,12 +1006,12 @@ class ActiveRecord extends CActiveRecord {
                 }
             }
         }
-        
+
         parent::setAttributes($values, $safeOnly);
         $this->initRelation();
-        foreach ($this->__relations as $k => $r) { 
+        foreach ($this->__relations as $k => $r) {
             if ($k != 'currentModel' && isset($values[$k])) {
-                $rel                   = $this->getMetaData()->relations[$k];
+                $rel = $this->getMetaData()->relations[$k];
                 $this->__relations[$k] = $values[$k];
 
                 if (is_string($values[$k]) || (is_array($values[$k]))) {
@@ -954,27 +1046,26 @@ class ActiveRecord extends CActiveRecord {
             }
 
             if (isset($values[$k . 'Insert'])) {
-                $value                 = $values[$k . 'Insert'];
-                $value                 = is_string($value) ? json_decode($value, true) : $value;
+                $value = $values[$k . 'Insert'];
+                $value = is_string($value) ? json_decode($value, true) : $value;
                 $this->__relInsert[$k] = $value;
             }
 
             if (isset($values[$k . 'Update'])) {
-                $value                 = $values[$k . 'Update'];
-                $value                 = is_string($value) ? json_decode($value, true) : $value;
+                $value = $values[$k . 'Update'];
+                $value = is_string($value) ? json_decode($value, true) : $value;
                 $this->__relUpdate[$k] = $value;
             }
 
             if (isset($values[$k . 'Delete'])) {
-                $value                 = $values[$k . 'Delete'];
-                $value                 = is_string($value) ? json_decode($value, true) : $value;
+                $value = $values[$k . 'Delete'];
+                $value = is_string($value) ? json_decode($value, true) : $value;
                 $this->__relDelete[$k] = $value;
             }
 
             $this->applyRelChange($k);
-            
         }
-        
+
         $ap = $this->getAttributeProperties();
         foreach ($ap as $k => $r) {
             if (isset($values[$k])) {
@@ -984,8 +1075,8 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function getAttributeProperties() {
-        $props      = [];
-        $class      = new ReflectionClass($this);
+        $props = [];
+        $class = new ReflectionClass($this);
         $properties = Helper::getClassProperties($this);
 
         foreach ($this->__tempVar as $k => $p) {
@@ -1006,10 +1097,10 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function getAttributesList($names = true) {
-        $fields    = [];
-        $props     = [];
+        $fields = [];
+        $props = [];
         $relations = [];
-        $attrs     = parent::getAttributes($names);
+        $attrs = parent::getAttributes($names);
         foreach ($attrs as $k => $i) {
             $fields[$k] = $k;
         }
@@ -1045,8 +1136,8 @@ class ActiveRecord extends CActiveRecord {
     public function beforeValidate() {
         $validator = new CInlineValidator;
         $validator->method = 'relationValidator';
-        
-        foreach ($this->__relations as $k => $new) { 
+
+        foreach ($this->__relations as $k => $new) {
             if ($k == 'currentModel' && count($this->__relations[$k]) > 0) {
                 $validator->attributes[] = $k;
             } else {
@@ -1064,23 +1155,23 @@ class ActiveRecord extends CActiveRecord {
         if (!empty($validator->attributes)) {
             $this->validatorList->add($validator);
         }
-        
+
         return parent::beforeValidate();
     }
-    
+
     public function relationValidator($relName) {
         $pk = $this->tableSchema->primaryKey;
-        if ($relName == 'currentModel')  {
+        if ($relName == 'currentModel') {
             $rel = new CHasManyRelation('currentModel', get_class($this), $pk);
         } else {
             $rel = @$this->metaData->relations[$relName];
         }
-        
+
         if (!!$rel) {
             if (is_array($rel->foreignKey)) {
                 return;
             }
-            
+
             $modelClass = $rel->className;
             $model = new $modelClass;
             $relPK = $model->tableSchema->primaryKey;
@@ -1088,32 +1179,32 @@ class ActiveRecord extends CActiveRecord {
                 'type' => get_class($rel),
                 'list' => []
             ];
-            
-            $idx = ['insert'=>0,'edit'=>0];
+
+            $idx = ['insert' => 0, 'edit' => 0];
             switch (get_class($rel)) {
                 case 'CHasManyRelation':
-                case 'CManyManyRelation': 
-                    foreach ($this->__relations[$relName] as $k=>$attr) {
+                case 'CManyManyRelation':
+                    foreach ($this->__relations[$relName] as $k => $attr) {
                         $model = new $modelClass;
                         $model->attributes = $attr;
                         $model->{$rel->foreignKey} = $this->isNewRecord ? '0' : $this->{$pk};
-                        
+
                         if (!$model->validate()) {
                             if (isset($attr['$rowState'])) {
                                 $errors['list'][] = [
-                                    'index' => $idx[$attr['$rowState']] ,
+                                    'index' => $idx[$attr['$rowState']],
                                     'mode' => $attr['$rowState'],
                                     'errors' => $model->errors
                                 ];
-                                $idx[$attr['$rowState']]++;
-                                
+                                $idx[$attr['$rowState']] ++;
+
                                 if ($attr['$rowState'] == 'edit') {
                                     $relHash['_' . $attr[$relPK]] = $attr;
                                 }
                             }
                         }
                     }
-                break;
+                    break;
             }
             if (!empty($errors['list'])) {
                 // var_dump($relName, $model->attributes);
@@ -1132,7 +1223,7 @@ class ActiveRecord extends CActiveRecord {
                     preg_match("/FOREIGN\sKEY\s\(\`(.*)\`\)\sREFERENCES/", $e->errorInfo[2], $match);
                     $attribute = explode("`", $match[1]);
                     $attribute = @$attribute[0];
-                   
+
                     if ($this->hasAttribute($attribute)) {
                         $message = Yii::t('yii', 'Referensi {attribute} tidak ditemukan.');
                         $message = strtr($message, array(
@@ -1160,6 +1251,210 @@ class ActiveRecord extends CActiveRecord {
         return $this->doAfterSave();
     }
 
+    public function doAfterSave($withRelation = true) {
+        $pk = $this->tableSchema->primaryKey;
+
+        if ($this->isNewRecord) {
+            if (Setting::get('db.driver') == "mysql") {
+                $this->{$pk} = $this->dbConnection->getLastInsertID(); ## this is hack
+                ## UPDATE AUDIT TRAIL 'CREATE' ID
+                if (isset(Yii::app()->user) && !Yii::app()->user->isGuest) {
+                    $a = $this->dbConnection->createCommand("
+            update p_audit_trail set model_id = :model_id
+            WHERE user_id = :user_id and
+            model_class = :model_class and
+            type = 'create' and
+            model_id is null")->execute([
+                        'model_class' => ActiveRecord::baseClass($this),
+                        'model_id' => $this->{$pk},
+                        'user_id' => Yii::app()->user->id
+                    ]);
+                }
+            }
+        } else {
+            $this->deleteResetedRelations();
+        }
+
+
+        ## handling untuk file upload
+        if (method_exists($this, 'getFields')) {
+            $currentClass = get_class($this);
+            $attrs = $this->handleFileUpload($currentClass, $this);
+
+            if (count($attrs) > 0) {
+                if ($this->isNewRecord) {
+                    $this->isNewRecord = false;
+                    $this->updateByPk($this->{$pk}, $attrs);
+                    $this->isNewRecord = true;
+                } else {
+                    $this->saveAttributes($attrs);
+                }
+            }
+
+            ## handle listview
+            $fb = FormBuilder::load($currentClass);
+            $listView = $fb->findAllField(['type' => 'ListView']);
+            foreach ($listView as $k => $lv) {
+
+                ## if listview is valid
+                if ($lv['fieldTemplate'] == "datasource" && @$lv['datasource'] != '' && @$lv['templateForm'] != '') {
+                    $ds = $fb->findField(['name' => $lv['datasource']]);
+
+                    ## if datasource is saved via relation and data is posted
+                    if (@$ds['postData'] == 'Yes' && @$ds['relationTo'] != '' && isset($this->__relUpdate[$ds['relationTo']])) {
+                        foreach ($this->__relUpdate[$ds['relationTo']] as $k => $rel) {
+                            $this->handleFileUpload($lv['templateForm'], $this->__relUpdate[$ds['relationTo']][$k]);
+                        }
+
+                        foreach ($this->__relInsert[$ds['relationTo']] as $k => $rel) {
+                            $this->handleFileUpload($lv['templateForm'], $this->__relInsert[$ds['relationTo']][$k]);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        if ($withRelation) {
+            $this->saveRelation();
+        }
+
+        return true;
+    }
+
+    public static function baseClass($object) {
+        $class = new ReflectionClass($object);
+        $lineage = array();
+        $prev = "";
+        $c = $class->getParentClass()->name;
+
+        if ($c == "ActiveRecord" || $c == "CActiveRecord")
+            return get_class($object);
+
+        while ($class = $class->getParentClass()) {
+            $c = $class->getName();
+
+            if ($c == "ActiveRecord" || $c == "CActiveRecord")
+                return $prev;
+
+            $prev = $c;
+        }
+
+        return false;
+    }
+
+    public function deleteResetedRelations() {
+        ## delete all relation data that not included in relUpdate..
+        $rels = $this->getMetaData()->relations;
+        $pk = $this->tableSchema->primaryKey;
+        foreach ($this->__relReset as $r) {
+            if (!isset($rels[$r])) {
+                continue;
+            }
+            $rel = $rels[$r];
+            switch (get_class($rel)) {
+                case 'CManyManyRelation':
+                case 'CHasManyRelation':
+                    ## without through
+                    if (is_string($rel->foreignKey)) {
+                        $class = $rel->className;
+                        $tableName = $class::model()->tableName();
+
+                        $ids = [];
+                        foreach ($this->__relUpdate[$r] as $u) {
+                            $ids[] = $u[$pk];
+                        }
+                        if (!empty($ids)) {
+                            $ids = implode(",", $ids);
+                            $where = "where {$pk} not in ($ids) AND {$rel->foreignKey} = " . $this->{$pk};
+                        }
+                    } ## todo: with through
+                    else {
+                        
+                    }
+                    break;
+            }
+        }
+    }
+
+    private function handleFileUpload($className, &$obj) {
+        $fb = FormBuilder::load($className);
+        $uploadFields = $fb->findAllField(['type' => 'UploadFile']);
+        $attrs = [];
+        $model = $this;
+
+        foreach ($uploadFields as $k => $f) {
+            if (@$f['name'] == '' || @$f['uploadPath'] == '') {
+                continue;
+            }
+
+            ## create directory
+            ## Jika disini gagal, berarti ada yang salah dengan format uploadPath di FormBuilder-nya
+            $evalDir = '';
+            eval('$evalDir = "' . $f['uploadPath'] . '";');
+            $evalDir = str_replace(["\n", "\r"], "", $evalDir);
+            $repopath = realpath(Yii::getPathOfAlias("repo"));
+            $evalDirArr = explode("/", $evalDir);
+            foreach ($evalDirArr as $i => $j) {
+                $evalDirArr[$i] = preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $j);
+            }
+            $evalDir = implode("/", $evalDirArr);
+            $dir = $repopath . "/" . $evalDir . "/";
+            $dir = str_replace(["\n", "\r"], "", $dir);
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+
+            ## get oldname
+            if (is_object($obj)) {
+                $old = $obj->{$f['name']};
+            } else if (is_array($obj)) {
+                $old = $obj[$f['name']];
+            }
+            $ext = pathinfo($old, PATHINFO_EXTENSION);
+            $filename = pathinfo($old, PATHINFO_FILENAME);
+
+            if (@$f['filePattern']) {
+                ## get newname
+                ## Jika disini gagal, berarti ada yang salah dengan format filePattern di FormBuilder-nya
+                eval('$newname = "' . $f['filePattern'] . '";');
+            } else {
+                $newname = $filename . "." . $ext;
+            }
+
+            $new = $dir . preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $newname);
+            $new = str_replace(["\n", "\r"], "", $new);
+            $new = str_replace(["//", "\\\\"], ["/", "\\"], $new);
+
+            if ($old == $new) {
+                continue;
+            }
+
+            ## delete file if already exist and allowed to overwrite
+            if (is_file($new) && $f['allowOverwrite'] == 'Yes' && is_file($old)) {
+                unlink($new);
+            }
+
+            if (!is_file($new) && is_file($old)) {
+                rename($old, $new);
+                if (is_object($obj) && is_subclass_of($obj, 'ActiveRecord')) {
+                    $obj->{$f['name']} = $new;
+
+                    if ($obj->hasAttribute($f['name'])) {
+                        $attrs[$f['name']] = $new;
+                    }
+                }
+                if (is_array($obj)) {
+                    if (isset($obj[$f['name']])) {
+                        $obj[$f['name']] = $new;
+                        $attrs[$f['name']] = $new;
+                    }
+                }
+            }
+        }
+        return $attrs;
+    }
+
     public function saveRelation() {
         $pk = $this->tableSchema->primaryKey;
         foreach ($this->__relations as $k => $new) {
@@ -1173,32 +1468,33 @@ class ActiveRecord extends CActiveRecord {
             if (!class_exists($relClass))
                 continue;
 
-            $relType       = get_class($rel);
+            $relType = get_class($rel);
             $relForeignKey = $rel->foreignKey;
             $relTableModel = $relClass::model();
-            $relTable      = $relTableModel->tableName();
-            $relPK         = $relTableModel->metadata->tableSchema->primaryKey;
+            $relTable = $relTableModel->tableName();
+            $relPK = $relTableModel->metadata->tableSchema->primaryKey;
 
             switch ($relType) {
                 case 'CHasOneRelation':
                 case 'CBelongsToRelation':
                     if (!empty($new)) {
                         $relForeignKey = $rel->foreignKey;
-                        if (is_array($relForeignKey)) continue;
-                        
+                        if (is_array($relForeignKey))
+                            continue;
+
                         if ($this->{$relForeignKey} == $new[$relPK]) {
                             $model = $relClass::model()->findByPk($this->{$relForeignKey});
                             if (is_null($model)) {
                                 $model = new $relClass;
                             }
-                            
+
                             $attr = $model->getAttributesWithoutRelation();
                             foreach ($attr as $k => $n) {
                                 if (is_array($n)) {
                                     unset($attr[$k]);
                                 }
                             }
-                            
+
                             if (array_diff($attr, $new)) {
                                 $model->attributes = $new;
                                 if ($relType == 'CHasOneRelation') {
@@ -1217,7 +1513,7 @@ class ActiveRecord extends CActiveRecord {
                     $relMM = [];
                     if ($relType == 'CManyManyRelation') {
                         $parser = new PhpParser\Parser(new PhpParser\Lexer\Emulative);
-                        $stmts  = $parser->parse('<?php ' . $relForeignKey . ';');
+                        $stmts = $parser->parse('<?php ' . $relForeignKey . ';');
                         if (count($stmts) > 0) {
                             $relMM = [
                                 'tableName' => $stmts[0]->name->parts[0],
@@ -1238,7 +1534,7 @@ class ActiveRecord extends CActiveRecord {
                                 }
                             } else if (is_array($relForeignKey)) { ## with through
                                 foreach ($this->__relInsert[$k] as $n => $m) {
-                                    
+
                                     foreach ($relForeignKey as $rk => $fk) {
                                         if (is_null($rel->through)) {
                                             $this->__relInsert[$k][$n][$fk] = $this->{$rk};
@@ -1276,7 +1572,6 @@ class ActiveRecord extends CActiveRecord {
                                 ## create transaction entry to link between
                                 ## related model and current model
                                 ActiveRecord::batchInsert($relMM['tableName'], $manyRel, false);
-
                             }
                         }
                         $this->__relInsert[$k] = [];
@@ -1306,7 +1601,7 @@ class ActiveRecord extends CActiveRecord {
 
                         if (count($this->__relUpdate[$k]) > 0) {
                             ActiveRecord::batchUpdate($relClass, $this->__relUpdate[$k]);
-                            
+
                             ## update transaction entry to link between
                             ## related model and current model
                             if ($relType == 'CManyManyRelation' && !empty($relMM)) {
@@ -1349,215 +1644,13 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    private function handleFileUpload($className, &$obj) {
-        $fb           = FormBuilder::load($className);
-        $uploadFields = $fb->findAllField(['type' => 'UploadFile']);
-        $attrs        = [];
-        $model        = $this;
-
-        foreach ($uploadFields as $k => $f) {
-            if (@$f['name'] == '' || @$f['uploadPath'] == '') {
-                continue;
-            }
-
-            ## create directory
-            ## Jika disini gagal, berarti ada yang salah dengan format uploadPath di FormBuilder-nya
-            $evalDir = '';
-            eval('$evalDir = "' . $f['uploadPath'] . '";');
-            $evalDir    = str_replace(["\n", "\r"], "", $evalDir);
-            $repopath   = realpath(Yii::getPathOfAlias("repo"));
-            $evalDirArr = explode("/", $evalDir);
-            foreach ($evalDirArr as $i => $j) {
-                $evalDirArr[$i] = preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $j);
-            }
-            $evalDir = implode("/", $evalDirArr);
-            $dir     = $repopath . "/" . $evalDir . "/";
-            $dir     = str_replace(["\n", "\r"], "", $dir);
-            if (!is_dir($dir)) {
-                mkdir($dir, 0777, true);
-            }
-
-            ## get oldname
-            if (is_object($obj)) {
-                $old      = $obj->{$f['name']};
-            } else if (is_array($obj)) {
-                $old      = $obj[$f['name']];
-            }
-            $ext      = pathinfo($old, PATHINFO_EXTENSION);
-            $filename = pathinfo($old, PATHINFO_FILENAME);
-
-            if (@$f['filePattern']) {
-                ## get newname
-                ## Jika disini gagal, berarti ada yang salah dengan format filePattern di FormBuilder-nya
-                eval('$newname = "' . $f['filePattern'] . '";');
-            } else {
-                $newname = $filename . "." . $ext;
-            }
-
-            $new = $dir . preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $newname);
-            $new = str_replace(["\n", "\r"], "", $new);
-            $new = str_replace(["//", "\\\\"], ["/", "\\"], $new);
-
-            if ($old == $new) {
-                continue;
-            }
-    
-            ## delete file if already exist and allowed to overwrite
-            if (is_file($new) && $f['allowOverwrite'] == 'Yes' && is_file($old)) {
-                unlink($new);
-            }
-            
-            if (!is_file($new) && is_file($old)) {
-                rename($old, $new);
-                if (is_object($obj) && is_subclass_of($obj, 'ActiveRecord')) {
-                    $obj->{$f['name']} = $new;
-                    
-                    if ($obj->hasAttribute($f['name'])) {
-                        $attrs[$f['name']]            = $new;
-                    }
-                }
-                if (is_array($obj)) {
-                    if (isset($obj[$f['name']])) {
-                        $obj[$f['name']] = $new;
-                        $attrs[$f['name']]            = $new;
-                    }
-                }
-            }
-        }
-        return $attrs;
-    }
-    
-    public function doAfterSave($withRelation = true) {
-        $pk = $this->tableSchema->primaryKey;
-
-        if ($this->isNewRecord) {
-            $this->{$pk} = $this->dbConnection->getLastInsertID(); ## this is hack
-            ## UPDATE AUDIT TRAIL 'CREATE' ID
-            if (isset(Yii::app()->user) && !Yii::app()->user->isGuest) {
-                $a = $this->dbConnection->createCommand("
-                update p_audit_trail set model_id = :model_id
-                WHERE user_id = :user_id and
-                model_class = :model_class and
-                type = 'create' and
-                model_id is null")->execute([
-                    'model_class' => ActiveRecord::baseClass($this),
-                    'model_id' => $this->{$pk},
-                    'user_id' => Yii::app()->user->id
-                ]);
-            }
-        } else {
-            $this->deleteResetedRelations();
-        }
-
-
-        ## handling untuk file upload
-        if (method_exists($this, 'getFields')) {
-            $currentClass = get_class($this);
-            $attrs = $this->handleFileUpload($currentClass, $this);
-            
-            if (count($attrs) > 0) {
-                if ($this->isNewRecord) {
-                    $this->isNewRecord = false;
-                    $this->updateByPk($this->{$pk}, $attrs);
-                    $this->isNewRecord = true;
-                } else {
-                    $this->saveAttributes($attrs);
-                }
-            }
-            
-            ## handle listview
-            $fb           = FormBuilder::load($currentClass);
-            $listView = $fb->findAllField(['type' => 'ListView']);
-            foreach($listView as $k => $lv) {
-                
-                ## if listview is valid
-                if ($lv['fieldTemplate'] == "datasource" && @$lv['datasource'] != '' && @$lv['templateForm'] != '') {
-                    $ds = $fb->findField(['name'=>$lv['datasource']]);
-                    
-                    ## if datasource is saved via relation and data is posted
-                    if (@$ds['postData'] == 'Yes' && @$ds['relationTo'] != '' && isset($this->__relUpdate[$ds['relationTo']])) {
-                        foreach ($this->__relUpdate[$ds['relationTo']] as $k => $rel) {
-                            $this->handleFileUpload($lv['templateForm'], $this->__relUpdate[$ds['relationTo']][$k]);
-                        }
-                        
-                        foreach ($this->__relInsert[$ds['relationTo']] as $k => $rel) {
-                            $this->handleFileUpload($lv['templateForm'], $this->__relInsert[$ds['relationTo']][$k]);
-                        }
-                    }
-                }
-            }
-        }
-        
-
-        if ($withRelation) {
-            $this->saveRelation();
-        }
-
-        return true;
-    }
-
-    public static function baseClass($object) {
-        $class   = new ReflectionClass($object);
-        $lineage = array();
-        $prev    = "";
-        $c       = $class->getParentClass()->name;
-
-        if ($c == "ActiveRecord" || $c == "CActiveRecord")
-            return get_class($object);
-
-        while ($class = $class->getParentClass()) {
-            $c = $class->getName();
-
-            if ($c == "ActiveRecord" || $c == "CActiveRecord")
-                return $prev;
-
-            $prev = $c;
-        }
-
-        return false;
-    }
-
-    public function deleteResetedRelations() {
-        ## delete all relation data that not included in relUpdate..
-        $rels = $this->getMetaData()->relations;
-        $pk = $this->tableSchema->primaryKey;
-        foreach ($this->__relReset as $r) {
-            if (!isset($rels[$r])) {
-                continue;
-            }
-            $rel = $rels[$r];
-            switch (get_class($rel)) {
-                case 'CManyManyRelation':
-                case 'CHasManyRelation':
-                    ## without through
-                    if (is_string($rel->foreignKey)) {
-                        $class     = $rel->className;
-                        $tableName = $class::model()->tableName();
-
-                        $ids = [];
-                        foreach ($this->__relUpdate[$r] as $u) {
-                            $ids[] = $u[$pk];
-                        }
-                        if (!empty($ids)) {
-                            $ids   = implode(",", $ids);
-                            $where = "where {$pk} not in ($ids) AND {$rel->foreignKey} = " . $this->{$pk};
-                        }
-                    } ## todo: with through
-                    else {
-
-                    }
-                    break;
-            }
-        }
-    }
-
     public function getAttributesWithoutRelation($names = true) {
         $attributes = parent::getAttributes($names);
         $attributes = array_merge($this->attributeProperties, $attributes);
 
         return $attributes;
     }
-    
+
     public function getAttributes($names = true) {
         $attributes = parent::getAttributes($names);
         $attributes = array_merge($this->attributeProperties, $attributes);
@@ -1607,6 +1700,5 @@ class ActiveRecord extends CActiveRecord {
         Yii::import("application.components.codegen.templates.ActiveRecordTemplate");
         return ActiveRecordTemplate::generateFields($this, $options);
     }
-
 
 }

@@ -297,105 +297,25 @@ class Installer {
             }
         }
 
-
         return $config;
     }
 
     public static function resetDB() {
-        $sql = <<<EOF
-SET NAMES utf8;
-SET time_zone = '+00:00';
-SET foreign_key_checks = 0;
-SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
+        $driver = Setting::get('db.driver');
+        if (is_null($driver)) {
+            $driver = "mysql";
+        }
 
-DROP TABLE IF EXISTS `p_audit_trail`;
-CREATE TABLE `p_audit_trail` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `url` text COLLATE utf8_unicode_ci,
-  `description` text COLLATE utf8_unicode_ci,
-  `pathinfo` text COLLATE utf8_unicode_ci,
-  `module` text COLLATE utf8_unicode_ci,
-  `ctrl` text COLLATE utf8_unicode_ci,
-  `action` text COLLATE utf8_unicode_ci,
-  `params` text COLLATE utf8_unicode_ci,
-  `data` text COLLATE utf8_unicode_ci,
-  `stamp` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `user_id` int(11) DEFAULT NULL,
-  `key` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `form_class` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `model_class` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `model_id` int(10) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `p_audit_trail_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `p_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+        Setting::set('devInstallPassword', Helper::hash('dev'));
 
-DROP TABLE IF EXISTS `p_role`;
-CREATE TABLE `p_role` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `role_name` varchar(255) NOT NULL,
-  `role_description` varchar(255) NOT NULL,
-  `menu_path` varchar(255) DEFAULT NULL,
-  `home_url` varchar(255) DEFAULT NULL,
-  `repo_path` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        $runner = new CConsoleCommandRunner();
+        $commandPath = Yii::app()->getBasePath() . DIRECTORY_SEPARATOR . 'commands';
+        $runner->addCommands($commandPath);
 
+        $args = array('yiic', 'installDb', '--interactive=0');
+        $runner->run($args);
 
-DROP TABLE IF EXISTS `p_todo`;
-CREATE TABLE `p_todo` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` varchar(30) NOT NULL DEFAULT 'todo',
-  `note` text NOT NULL,
-  `options` text NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `status` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `p_todo_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `p_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
-DROP TABLE IF EXISTS `p_user`;
-CREATE TABLE `p_user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `email` varchar(255) NOT NULL COMMENT 'E-Mail',
-  `username` varchar(255) NOT NULL COMMENT 'Username',
-  `password` varchar(255) NOT NULL COMMENT 'Password',
-  `last_login` datetime DEFAULT NULL,
-  `is_deleted` tinyint(4) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-DROP TABLE IF EXISTS `p_user_role`;
-CREATE TABLE `p_user_role` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `user_id` int(11) DEFAULT NULL COMMENT 'User ID',
-  `role_id` int(11) DEFAULT NULL,
-  `is_default_role` enum('Yes','No') NOT NULL DEFAULT 'No',
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `role_id` (`role_id`),
-  CONSTRAINT `p_user_role_ibfk_5` FOREIGN KEY (`role_id`) REFERENCES `p_role` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `p_user_role_ibfk_7` FOREIGN KEY (`user_id`) REFERENCES `p_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-INSERT INTO `p_role` (`id`, `role_name`, `role_description`, `menu_path`, `home_url`, `repo_path`) VALUES
-(1,	'dev',	'IT - Developer',	'',	'',	'');
-
-INSERT INTO `p_user_role` (`id`, `user_id`, `role_id`, `is_default_role`) VALUES
-(1,	1,	1,	'Yes');
-
-INSERT INTO `p_user` (`id`, `email`, `username`, `password`, `last_login`, `is_deleted`) VALUES
-(1,	'-',	'dev',	'{{{password}}}',	now(),	0);
-                
-EOF;
-
-        $sql = str_replace("{{{password}}}", Helper::hash('dev'), $sql);
-        Yii::import('application.components.model.*');
-        ActiveRecord::execute($sql);
+        return true;
     }
 
 }

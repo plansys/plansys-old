@@ -275,6 +275,19 @@ Isi field disamping untuk mengubah password.
                         'resetable' => 'Yes',
                         'defaultValue' => '',
                         'show' => true,
+                        'list' => array (
+                            'general' => array (
+                                'view' => 'View',
+                                'create' => 'Create',
+                                'update' => 'Update',
+                                'delete' => 'Delete',
+                            ),
+                            'other' => array (
+                                'login' => 'Login',
+                                'logout' => 'Logout',
+                                'other' => 'Other',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'description',
@@ -325,11 +338,11 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                 'pagingSQL' => 'select count(*) from (select count(1) from p_audit_trail where user_id = :id {AND [where]} group by action, model, user_id, model_id, stamp) a',
                 'relationTo' => 'auditTrail',
                 'relationCriteria' => array (
-                    'select' => 't.*, \'L\' as link',
+                    'select' => '|t|.*',
                     'distinct' => 'false',
                     'alias' => 't',
                     'condition' => '{[where]}',
-                    'order' => '{[order], id desc}',
+                    'order' => '{[order], |id| desc}',
                     'paging' => '{[paging]}',
                     'group' => '',
                     'having' => '',

@@ -100,6 +100,40 @@ class Controller extends CController {
         }
     }
 
+	public function getLayoutFile($layoutName)
+	{
+		if($layoutName===false)
+			return false;
+		
+		if(($theme=Yii::app()->getTheme())!==null && ($layoutFile=$theme->getLayoutFile($this,$layoutName))!==false)
+			return $layoutFile;
+
+		if(empty($layoutName))
+		{
+			$module=$this->getModule();
+			while($module!==null)
+			{
+				if($module->layout===false)
+					return false;
+				if(!empty($module->layout))
+					break;
+				$module=$module->getParentModule();
+			}
+			if($module===null)
+				$module=Yii::app();
+			$layoutName=$module->layout;
+		}
+		elseif(($module=$this->getModule())===null)
+			$module=Yii::app();
+
+        $appPath = Yii::getPathOfAlias('app.views');
+        if (!is_dir($appPath)) {
+            $appPath = Yii::app()->getViewPath();
+        }
+
+		return $this->resolveViewFile($layoutName,$module->getLayoutPath(),$appPath,$module->getViewPath());
+	}
+
     public function renderForm($class, $model = null, $params = [], $options = []) {
         if (is_array($model)) {
             $options = $params;
@@ -358,7 +392,7 @@ class Controller extends CController {
             $attr  = $class;
             $class = $temp;
         }
-
+        
         if (trim($class) == '') {
             throw new CHttpException(404, 'The requested page does not exist.');
         }

@@ -38,11 +38,10 @@ ob_start();
         $scope.angular = angular;
         
         if (window.plansys) {
-            window.plansys.rootPath = "<?php echo Setting::getRootPath(); ?>";
-            window.plansys.repoPath = "<?php echo Setting::getRootPath() . DIRECTORY_SEPARATOR . Setting::get('repo.path'); ?>";
+            window.plansys.rootPath = '<?php echo str_replace("\\","/",Setting::getRootPath()); ?>';
+            window.plansys.repoPath = '<?php echo str_replace("\\","/",Setting::getRootPath() . DIRECTORY_SEPARATOR . Setting::get("repo.path")); ?>';
             window.plansys.baseUrl = "<?php echo Yii::app()->baseUrl ?>";
         }
-
 
         // Process Relation Error Message
         for (i in $scope.errors) {

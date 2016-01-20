@@ -1,6 +1,6 @@
 <?php
 
-class DevRoleIndex extends Form {
+class DevRoleIndex extends Role {
      
     public function getFields() {
         return array (
@@ -19,18 +19,6 @@ class DevRoleIndex extends Form {
                 ),
                 'showSectionTab' => 'No',
                 'type' => 'ActionBar',
-            ),
-            array (
-                'name' => 'dataSource1',
-                'sql' => 'select * from p_role {[where]} {order by role_name asc, [order]} {[paging]}',
-                'params' => array (
-                    'where' => 'dataFilter1',
-                    'order' => 'dataGrid1',
-                    'paging' => 'dataGrid1',
-                ),
-                'enablePaging' => 'Yes',
-                'pagingSQL' => 'select count(1) from p_role {where [where]}',
-                'type' => 'DataSource',
             ),
             array (
                 'name' => 'dataFilter1',
@@ -56,44 +44,73 @@ class DevRoleIndex extends Form {
                 'type' => 'DataFilter',
             ),
             array (
-                'name' => 'dataGrid1',
+                'name' => 'dataSource1',
+                'sql' => 'select * from p_role {[where]} {order by role_name asc, [order]} {[paging]}',
+                'params' => array (
+                    'where' => 'dataFilter1',
+                    'order' => 'dataGrid1',
+                    'paging' => 'dataGrid1',
+                ),
+                'enablePaging' => 'Yes',
+                'pagingSQL' => 'select count(1) from p_role {where [where]}',
+                'relationTo' => 'currentModel',
+                'type' => 'DataSource',
+            ),
+            array (
+                'type' => 'GridView',
+                'name' => 'gridView1',
+                'label' => 'GridView',
                 'datasource' => 'dataSource1',
                 'columns' => array (
                     array (
                         'name' => 'role_name',
-                        'label' => 'Role',
-                        'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
+                        'label' => 'Role Name',
+                        'html' => '',
                         'columnType' => 'string',
                         'show' => false,
                     ),
                     array (
                         'name' => 'role_description',
-                        'label' => 'Description',
-                        'options' => array (),
-                        'buttonCollapsed' => 'Yes',
-                        'buttons' => array (
-                            array (
-                                '',
-                                'label' => '',
-                            ),
-                        ),
+                        'label' => 'Role Description',
+                        'html' => '',
                         'columnType' => 'string',
                         'show' => false,
                     ),
+                    array (
+                        'name' => 'menu_path',
+                        'label' => 'Menu Path',
+                        'html' => '',
+                        'columnType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'home_url',
+                        'label' => 'Home Url',
+                        'html' => '',
+                        'columnType' => 'string',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'edit',
+                        'label' => '',
+                        'options' => array (
+                            'mode' => 'edit-button',
+                            'editUrl' => '/dev/user/role&id={{row.id}}',
+                        ),
+                        'mergeSameRow' => 'No',
+                        'mergeSameRowWith' => '',
+                        'mergeSameRowMethod' => 'Default',
+                        'html' => '',
+                        'columnType' => 'string',
+                        'typeOptions' => array (
+                            'string' => array (
+                                'html',
+                            ),
+                        ),
+                        'show' => true,
+                        'cellMode' => 'default',
+                    ),
                 ),
-                'gridOptions' => array (
-                    'afterSelectionChange' => 'url:/dev/user/role?id={id}',
-                    'useExternalSorting' => 'true',
-                    'enablePaging' => 'true',
-                ),
-                'type' => 'DataGrid',
             ),
         );
     }

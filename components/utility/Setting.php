@@ -283,6 +283,15 @@ class Setting {
     public static function getAppPath() {
         return Setting::$rootPath . DIRECTORY_SEPARATOR . Setting::get('app.dir');
     }
+    
+    public static function getViewPath() {
+        $appView = Setting::getAppPath() . DIRECTORY_SEPARATOR . "views";
+        if (is_dir($appView)) {
+            return $appView;
+        } else {
+            return Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "views";
+        }
+    }
 
     public static function getRepoPath() {
         return Setting::$rootPath . DIRECTORY_SEPARATOR . Setting::get('repo.path');
@@ -424,6 +433,13 @@ class Setting {
             }
         }
 
+        $commands['migrate'] = [
+            'class'=>'system.cli.commands.MigrateCommand',
+            'migrationPath'=>'application.migrations',
+            'connectionID'=>'db',
+            'migrationTable'=>'p_migration',
+        ];
+
         return $commands;
     }
 
@@ -508,24 +524,35 @@ class Setting {
             $db = Setting::get('db');
         }
         
-        if (@$db['port'] == null) {
-            $connection = [
-                'connectionString' => $db['driver'] . ':host=' . $db['host'] . ';dbname=' . $db['dbname'],
-                'emulatePrepare' => true,
-                'username' => $db['username'],
-                'password' => $db['password'],
-                'charset' => 'utf8',
-            ];
-        } else {
-            $connection = [
-                'connectionString' => $db['driver'] . ':host=' . $db['host'] . ';port=' . $db['port'] . ';dbname=' . $db['dbname'],
-                'emulatePrepare' => true,
-                'username' => $db['username'],
-                'password' => $db['password'],
-                'charset' => 'utf8',
-            ];
+        switch ($db['driver']) {
+            case "oci":
+                if (@$db['port'] == null) {
+                    $connectionString = "oci:dbname={$db['host']}/{$db['dbname']};charset=UTF8";
+                } else {
+                    $connectionString = "oci:dbname={$db['host']}:{$db['port']}/{$db['dbname']};charset=UTF8";
+                }
+                $connection = [
+                    'connectionString' => $connectionString,
+                    'emulatePrepare' => true,
+                    'username' => $db['username'],
+                    'password' => $db['password'],
+                ];
+            break;
+            default:
+                if (@$db['port'] == null) {
+                    $connectionString =  'mysql:host=' . $db['host'] . ';dbname=' . $db['dbname'];
+                } else {
+                    $connectionString =  'mysql:host=' . $db['host'] . ';port=' . $db['port'] . ';dbname=' . $db['dbname'];
+                }
+                $connection = [
+                    'connectionString' => $connectionString,
+                    'emulatePrepare' => true,
+                    'username' => $db['username'],
+                    'password' => $db['password'],
+                    'charset' => 'utf8',
+                ];
         }
-        
+
         if (isset($db['conn'])) {
             $connection['class'] = 'CDbConnection';
         }
@@ -536,10 +563,10 @@ class Setting {
     public static function getDBDriverList() {
         return [
             'mysql' => 'MySQL',
+            'oci' => 'Oracle'
             //  'pgsql' => 'PostgreSQL',
             //  'sqlsrv' => 'SQL Server',
             //  'sqlite' => 'SQLite',
-            //  'oci' => 'Oracle'
         ];
     }
 

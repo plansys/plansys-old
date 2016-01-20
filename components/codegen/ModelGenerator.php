@@ -55,7 +55,7 @@ class ModelGenerator extends CComponent {
     }
 
     public static function listTables($conn = 'db') {
-        $rawTables     = Yii::app()->{$conn}->createCommand("show tables")->queryColumn();
+        $rawTables     = array_keys(Yii::app()->{$conn}->schema->tables);;
         $appTables     = [];
         $plansysTables = [];
         foreach ($rawTables as $key => $value) {

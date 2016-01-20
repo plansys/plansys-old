@@ -7,6 +7,7 @@ class ArrayGroup {
     private $cols;
     private $groupCount = 0;
     private $flatted;
+    private $rIdx = 1;
 
     public function __construct($data, $groups, $cols) {
         $this->data   = $data;
@@ -37,6 +38,7 @@ class ArrayGroup {
                 } else {
                     $this->flatted[] = array_merge($r, [
                         '$type' => 'r',
+                        '$index' => $this->rIdx++,
                         '$level' => $lvl,
                     ]);
                 }
@@ -77,6 +79,8 @@ class ArrayGroup {
             if (!isset($cursor['$items'][$data[$group['col']]]['$items'])) {
                 $cursor['$items'][$data[$group['col']]] = [
                     '$items' => [],
+                    '$lvl' => $lvl,
+                    '$gcol' => $group['col'],
                     '$aggregate' => [],
                     '$parent' => &$cursor
                 ];
@@ -112,6 +116,11 @@ class ArrayGroup {
         switch ($agg['type']) {
             case 'custom':
                 $params = [
+                    'text' => function ($col = '') use ($colName, $agg, &$cursor, &$data) {
+                        $agg['type'] = 'text';
+                        if ($col != '') $agg['col'] = $col;
+                        return $this->aggregateCell('$custom_' . $colName, $agg, $cursor, $data);
+                    },
                     'sum' => function ($col = '') use ($colName, $agg, &$cursor, &$data) {
                         $agg['type'] = 'sum';
                         if ($col != '') $agg['col'] = $col;
@@ -139,8 +148,19 @@ class ArrayGroup {
                     },
                 ];
                 extract($params);
-                $code = '$cursor[\'$aggregate\'][$colName] = ' . $agg['custom'] . ';';
-                eval($code);
+                if (trim(@$agg['custom']) != '') {
+                    $code = '$cursor[\'$aggregate\'][$colName] = ' . $agg['custom'] . ';';
+                    eval($code);
+                } else {
+                    $cursor['$aggregate'][$colName] = '';
+                }
+                break;
+            case 'text': 
+                if (isset($cursor['$gcol'])) {
+                    $cursor['$aggregate'][$colName] = $data[$cursor['$gcol']];
+                } else {
+                    $cursor['$aggregate'][$colName] = "All";
+                }
                 break;
             case 'count':
                 $cursor['$aggregate'][$colName] += 1;

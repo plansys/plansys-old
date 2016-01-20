@@ -143,71 +143,97 @@ class DevUserIndex extends User {
  {where [where]}) a) b',
                 'relationTo' => 'currentModel',
                 'relationCriteria' => array (
-                    'select' => 'u.*,r.role_description',
+                    'select' => '|u|.*, |r.role_description|',
                     'distinct' => 'false',
                     'alias' => 'u',
-                    'condition' => 'is_deleted = 0 {AND [where]}',
+                    'condition' => '|is_deleted| = 0 {AND [where]}',
                     'order' => '{[order]}',
                     'paging' => '{[paging]}',
                     'group' => '',
                     'having' => '',
                     'join' => 'inner join 
-   p_user_role p on u.id = p.user_id 
-   and p.is_default_role = \'Yes\' 
+   |p_user_role| |p| on |u.id| = |p.user_id| and |p.is_default_role| = \'Yes\' 
  left outer join 
-   p_role r on r.id = p.role_id',
+   |p_role| |r| on |r.id| = |p.role_id|',
                 ),
                 'type' => 'DataSource',
             ),
             array (
-                'name' => 'dataGrid1',
+                'type' => 'GridView',
+                'name' => 'gridView1',
+                'label' => 'GridView',
                 'datasource' => 'dataSource1',
                 'columns' => array (
                     array (
-                        'name' => 'username',
-                        'label' => 'username',
+                        'name' => 'id',
+                        'label' => '#',
                         'options' => array (),
+                        'mergeSameRow' => 'No',
+                        'mergeSameRowWith' => '',
+                        'mergeSameRowMethod' => 'Default',
+                        'html' => '',
+                        'columnType' => 'string',
+                        'typeOptions' => array (
+                            'string' => array (
+                                'html',
+                            ),
+                        ),
+                        'show' => false,
+                        'cellMode' => 'default',
+                    ),
+                    array (
+                        'name' => 'username',
+                        'label' => 'Username',
+                        'html' => '',
                         'columnType' => 'string',
                         'show' => false,
-                        'inputMask' => '',
-                        'stringAlias' => array (),
                     ),
                     array (
                         'name' => 'email',
-                        'label' => 'email',
-                        'options' => array (),
+                        'label' => 'Email',
+                        'html' => '',
                         'columnType' => 'string',
                         'show' => false,
-                        'inputMask' => '',
-                        'stringAlias' => array (),
-                    ),
-                    array (
-                        'name' => 'role_description',
-                        'label' => 'role',
-                        'options' => array (),
-                        'columnType' => 'string',
-                        'show' => false,
-                        'inputMask' => '',
-                        'stringAlias' => array (),
                     ),
                     array (
                         'name' => 'last_login',
-                        'label' => 'last_login',
-                        'options' => array (),
+                        'label' => 'Last Login',
+                        'html' => '',
                         'columnType' => 'string',
                         'show' => false,
-                        'inputMask' => '',
-                        'stringAlias' => array (),
+                    ),
+                    array (
+                        'name' => 'role_description',
+                        'label' => 'Role',
+                        'html' => '<td ng-class=\"rowClass(row, \'role_description\', \'string\')\" >
+    {{row.role_description}}
+</td>',
+                        'columnType' => 'string',
+                        'show' => false,
+                        'mergeSameRow' => 'No',
+                        'cellMode' => 'default',
+                    ),
+                    array (
+                        'name' => 'edit',
+                        'label' => '',
+                        'options' => array (
+                            'mode' => 'edit-button',
+                            'editUrl' => '/dev/user/update&id={{row.id}}',
+                        ),
+                        'mergeSameRow' => 'No',
+                        'mergeSameRowWith' => '',
+                        'mergeSameRowMethod' => 'Default',
+                        'html' => '',
+                        'columnType' => 'string',
+                        'typeOptions' => array (
+                            'string' => array (
+                                'html',
+                            ),
+                        ),
+                        'show' => true,
+                        'cellMode' => 'default',
                     ),
                 ),
-                'gridOptions' => array (
-                    'useExternalSorting' => 'true',
-                    'enablePaging' => 'true',
-                    'afterSelectionChange' => 'url:/dev/user/update?id={id}',
-                    'enableColumnResize' => 'true',
-                    'fullWidth' => 'true',
-                ),
-                'type' => 'DataGrid',
             ),
         );
     }
