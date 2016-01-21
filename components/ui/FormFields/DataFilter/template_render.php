@@ -30,6 +30,11 @@
                                 </label>
                             </a>
                         </li>
+                        <li ng-click="reset()" style="border-top:1px solid #ddd;margin-top:5px">
+                            <a href=""><label>
+                             Reset Page
+                            </label></a>
+                        </li>
                     </ul>
                 </div>
             </td>

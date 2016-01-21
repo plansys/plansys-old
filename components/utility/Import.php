@@ -122,6 +122,12 @@ class Import extends CComponent {
                 }
                 $this->columns[$key] = $col;
             }
+            
+            if (!isset($col['type'])) {
+                echo "ERROR!<br/>Key: {$key} does not have type";
+                die();
+            }
+            
             switch ($col['type']) {
                 case 'function':
                     if (!isset($col['value'])) {
@@ -202,10 +208,15 @@ class Import extends CComponent {
         
         ## if lookup row are found, then
         $into = isset($col['into']) ? $col['into'] : $key;
-        if (isset($lrow[$col['return']])) {
-            
+        if (!empty($lrow)) {
             ## assign it into attributes
-            $attrs[$into] = $lrow[$col['return']];
+            if (is_string($col['return'])) {
+                $attrs[$into] = $lrow[$col['return']];
+            } else if (is_array($col['return'])) {
+                foreach ($col['return'] as $k=>$r) {
+                    $attrs[$r] = $lrow[$k];
+                }
+            }
             $this->lookup[$col['from']]['hash'][$hashKey] = $lrow;
         } else {
             ## lookup is NOT found, if there is notfound stetement then execute it

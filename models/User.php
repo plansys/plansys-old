@@ -53,22 +53,20 @@ class User extends ActiveRecord {
     public $roles = [''];
 
     public function getRoles($originalSorting = false) {
-
         $uid = $this->id;
         if (!$uid) {
             return [$this->role];
         }
 
         ## get roles
-        $roles = Role::model()->with('userRoles')->findAll([
-            'condition' => '"user_id" = :p',
-            'order' => '"is_default_role"',
+        $roles = Role::model()->with('userRoles')->findAll(ActiveRecord::formatCriteria([
+            'condition' => '|user_id| = :p',
+            'order' => '|is_default_role|',
             'params' => [
                 ':p' => $uid
             ]
-        ]);
+        ]));
         $roles = ActiveRecord::toArray($roles);
-
         if (empty($roles)) {
             return false;
         }
@@ -78,9 +76,8 @@ class User extends ActiveRecord {
             if ($role['role_name'] == Yii::app()->user->getState('role') && $idx == 0) {
                 $idx = $k;
             }
-
         }
-
+        
         if ($originalSorting) {
             return $roles;
         }

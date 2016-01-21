@@ -274,20 +274,7 @@ Isi field disamping untuk mengubah password.
                         'options' => array (),
                         'resetable' => 'Yes',
                         'defaultValue' => '',
-                        'show' => true,
-                        'list' => array (
-                            'general' => array (
-                                'view' => 'View',
-                                'create' => 'Create',
-                                'update' => 'Update',
-                                'delete' => 'Delete',
-                            ),
-                            'other' => array (
-                                'login' => 'Login',
-                                'logout' => 'Logout',
-                                'other' => 'Other',
-                            ),
-                        ),
+                        'show' => false,
                     ),
                     array (
                         'name' => 'description',

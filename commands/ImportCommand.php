@@ -9,6 +9,7 @@ class ImportCommand extends Service {
         $this->setView('finished', $msg. "\n");
         echo $msg;
     }
+    
     public function failed($msg) {
         $this->setView('failed', $msg. "\n");
         echo $msg;

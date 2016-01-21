@@ -241,12 +241,12 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         $scope.toggleFilterCriteria(e);
                     }
 
-
                     if (filter.filterType == "date" && ['Between', 'Not Between'].indexOf(filter.operator) >= 0) {
                         if (!filter.value.from || !filter.value.to) {
                             shouldExec = false;
                         }
                     }
+                    
 
                     $scope.datasources.map(function (dataSourceName) {
                         var ds = parent[dataSourceName];
@@ -584,7 +584,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
 
                 $scope.changeValueText = function (filter) {
                     var dateCondition = filter.filterType == "date" && ['Between', 'Not Between', 'More Than', 'Less Than'].indexOf(filter.operator) >= 0;
-
                     if (filter.operator == 'Is Empty') {
                         filter.valueText = 'Is Empty';
                         filter.value = '- Empty -';
@@ -632,6 +631,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 if (typeof to == "undefined") {
                                     to = "";
                                 }
+                                
                                 switch (filter.operator) {
                                     case "Between":
                                         filter.valueText = filter.operator + " " + from + " - " + to;
@@ -928,6 +928,11 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         $scope.freeze();
                     });
                 }
+                
+                $scope.reset = function () {
+                    $scope.resetPageSetting();
+                    location.reload();
+                }
 
                 $scope.evalValue = function (value) {
                     if (typeof value == "string" && value.substr(0, 3) == "js:") {
@@ -992,10 +997,23 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                             } else {
                                                 f.from = $scope.evalValue(f.defaultValue);
                                             }
+                                            
+                                            f.value = {};
+                                            if (typeof f.from == "string") {
+                                                f.from = new Date(strtotime(f.from)  * 1000);
+                                                f.value.from = f.from;
+                                            }
+                                            
+                                            if (typeof f.to == "string") {
+                                                f.to = new Date(strtotime(f.to) * 1000);
+                                                f.value.to = f.to;
+                                            }
+                                            
                                         } else {
                                             f.value = $scope.evalValue(f.defaultValue);
                                         }
                                     }
+                                    
                                     $scope.updateFilter(f, null, false);
                                 }
                                 else {
