@@ -38,8 +38,10 @@ app.directive('toggleSwitch', function ($timeout) {
                 }
 
                 $scope.switch = function () {
-                    $scope.valueCheckbox = !$scope.valueCheckbox;
-                    $scope.update();
+                    if (!$($el).find('input[type=checkbox]').attr('disabled')) {
+                        $scope.valueCheckbox = !$scope.valueCheckbox;
+                        $scope.update();
+                    }
                 };
 
                 // set default value

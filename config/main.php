@@ -80,7 +80,6 @@ $imports = array(
 foreach ($dbLists as $db=>$val) {
     array_splice($imports, 1, 0, "app.models.$db.*");
 }
-
 ## define config
 $config = array(
     'basePath' => $basePath,

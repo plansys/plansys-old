@@ -43,7 +43,7 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
             advanced: {
                 enableEmmet: true,
                 enableBasicAutocompletion: true,
-                enableSnippets: true,
+                // enableSnippets: true,
                 enableLiveAutocompletion: true
             }
         }, options);
