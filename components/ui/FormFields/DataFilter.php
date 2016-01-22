@@ -129,20 +129,6 @@ class DataFilter extends FormField {
         }
     }
 
-    public static function toSQLColumn($val, $driver) {
-        if (is_null($driver)) {
-            $driver = Setting::get('db.driver');
-        }
-
-        switch ($driver) {
-            case "oci";
-                return "\"{$val}\"";
-                break;
-            default:
-                return "`{$val}`";
-                break;
-        }
-    }
 
     public static function toSQLStr($val, $driver = null) {
         if (is_null($driver)) {
@@ -180,7 +166,7 @@ class DataFilter extends FormField {
         $pcolumn = preg_replace('/[^\da-z]/i', '_', $column);
         $driver = Setting::get('db.driver');
         
-        $column = DataFilter::toSQLColumn($column, $driver);
+        $column = ActiveRecord::formatSingleCriteria($column, $driver);
         
         ## quote field if it is containing illegal char
         if (!preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", str_replace(".", "", $column))) {

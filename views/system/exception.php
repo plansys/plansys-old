@@ -27,3 +27,4 @@ if (Setting::$mode == "init" || Setting::$mode == "install") {
         include(Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "framework" . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "exception.php");
     }
 }
+

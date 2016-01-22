@@ -61,7 +61,7 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
-    private static function formatSingleCriteria($str, $driver) {
+    public static function formatSingleCriteria($str, $driver) {
         switch ($driver) {
             case "oci":
                 $split = explode(".", $str);
@@ -1008,62 +1008,65 @@ class ActiveRecord extends CActiveRecord {
         }
 
         parent::setAttributes($values, $safeOnly);
-        $this->initRelation();
-        foreach ($this->__relations as $k => $r) {
-            if ($k != 'currentModel' && isset($values[$k])) {
-                $rel = $this->getMetaData()->relations[$k];
-                $this->__relations[$k] = $values[$k];
-
-                if (is_string($values[$k]) || (is_array($values[$k]))) {
-                    if (is_string($values[$k])) {
-                        $attr = json_decode($values[$k], true);
-                        if (!is_array($attr)) {
-                            $attr = [];
+        
+        if ($withRelation) {
+            $this->initRelation();
+            foreach ($this->__relations as $k => $r) {
+                if ($k != 'currentModel' && isset($values[$k])) {
+                    $rel = $this->getMetaData()->relations[$k];
+                    $this->__relations[$k] = $values[$k];
+    
+                    if (is_string($values[$k]) || (is_array($values[$k]))) {
+                        if (is_string($values[$k])) {
+                            $attr = json_decode($values[$k], true);
+                            if (!is_array($attr)) {
+                                $attr = [];
+                            }
+                        } else {
+                            $attr = $values[$k];
                         }
-                    } else {
-                        $attr = $values[$k];
-                    }
-
-                    if (Helper::is_assoc($values[$k])) {
-                        switch (get_class($rel)) {
-                            case 'CHasOneRelation':
-                            case 'CBelongsToRelation':
-                                foreach ($attr as $i => $j) {
-                                    if (is_array($j)) {
-                                        unset($attr[$i]);
+    
+                        if (Helper::is_assoc($values[$k])) {
+                            switch (get_class($rel)) {
+                                case 'CHasOneRelation':
+                                case 'CBelongsToRelation':
+                                    foreach ($attr as $i => $j) {
+                                        if (is_array($j)) {
+                                            unset($attr[$i]);
+                                        }
                                     }
-                                }
-
-                                $relArr = $this->$k;
-                                if (is_object($relArr)) {
-                                    $relArr->setAttributes($attr, false, false);
-                                }
-                                $this->__relations[$k] = $attr;
-                                break;
+    
+                                    $relArr = $this->$k;
+                                    if (is_object($relArr)) {
+                                        $relArr->setAttributes($attr, false, false);
+                                    }
+                                    $this->__relations[$k] = $attr;
+                                    break;
+                            }
                         }
                     }
                 }
+    
+                if (isset($values[$k . 'Insert'])) {
+                    $value = $values[$k . 'Insert'];
+                    $value = is_string($value) ? json_decode($value, true) : $value;
+                    $this->__relInsert[$k] = $value;
+                }
+    
+                if (isset($values[$k . 'Update'])) {
+                    $value = $values[$k . 'Update'];
+                    $value = is_string($value) ? json_decode($value, true) : $value;
+                    $this->__relUpdate[$k] = $value;
+                }
+    
+                if (isset($values[$k . 'Delete'])) {
+                    $value = $values[$k . 'Delete'];
+                    $value = is_string($value) ? json_decode($value, true) : $value;
+                    $this->__relDelete[$k] = $value;
+                }
+    
+                $this->applyRelChange($k);
             }
-
-            if (isset($values[$k . 'Insert'])) {
-                $value = $values[$k . 'Insert'];
-                $value = is_string($value) ? json_decode($value, true) : $value;
-                $this->__relInsert[$k] = $value;
-            }
-
-            if (isset($values[$k . 'Update'])) {
-                $value = $values[$k . 'Update'];
-                $value = is_string($value) ? json_decode($value, true) : $value;
-                $this->__relUpdate[$k] = $value;
-            }
-
-            if (isset($values[$k . 'Delete'])) {
-                $value = $values[$k . 'Delete'];
-                $value = is_string($value) ? json_decode($value, true) : $value;
-                $this->__relDelete[$k] = $value;
-            }
-
-            $this->applyRelChange($k);
         }
 
         $ap = $this->getAttributeProperties();
@@ -1481,7 +1484,7 @@ class ActiveRecord extends CActiveRecord {
                         $relForeignKey = $rel->foreignKey;
                         if (is_array($relForeignKey))
                             continue;
-
+                        
                         if ($this->{$relForeignKey} == $new[$relPK]) {
                             $model = $relClass::model()->findByPk($this->{$relForeignKey});
                             if (is_null($model)) {
