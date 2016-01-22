@@ -480,7 +480,8 @@ app.directive('gridView', function ($timeout, $http) {
                         if (c.$prevText === 'INITIAL-PREV-TEXT') {
                             c.$newRow = $(el);
                         }
-                        if (!c.mergeSameRowMethod || c.mergeSameRowMethod == 'default') {
+
+                        if (!c.mergeSameRowMethod || c.mergeSameRowMethod.toLowerCase() == 'default') {
                             if (text != c.$prevText) {
                                 if (c.$totalSpan > 1) {
                                     c.$newRow.attr('rowspan', c.$totalSpan);

@@ -436,6 +436,15 @@ class Controller extends CController {
         }
 
         parent::beforeAction($action);
+
+        return true;
+    }
+
+    public function afterAction($action) {
+        ## Make sure service daemon is started
+        ServiceManager::startDaemon();
+
+        parent::afterAction($action);
         return true;
     }
 

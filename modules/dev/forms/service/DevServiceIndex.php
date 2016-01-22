@@ -33,6 +33,9 @@ class DevServiceIndex extends Form {
                             'style' => 'display:inline-block;margin: 0px -5px -5px 0px;',
                             'ng-change' => 'daemonChange()',
                         ),
+                        'fieldOptions' => array (
+                            'ng-disabled' => 'true',
+                        ),
                         'size' => 'small',
                         'type' => 'ToggleSwitch',
                     ),

@@ -80,7 +80,22 @@ class ServiceManager extends CComponent {
         return null;
     }
     
-    
+    public static function isDaemonStarted() {
+        $daemon = Setting::get('services.daemon', [
+            'isRunning' => false,
+            'pid' => 0
+        ]); 
+        if ($daemon['isRunning'] && $daemon['pid'] != 0) {
+            if (!ServiceManager::checkPid($daemon['pid'])) {
+                Setting::set('services.daemon.isRunning', false);
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static function startDaemon() {
         $daemon = Setting::get('services.daemon', [
             'isRunning' => false,
@@ -93,6 +108,16 @@ class ServiceManager extends CComponent {
                     'isRunning' => true,
                     'pid' => $pid[0]
                 ]);
+            }
+        } else {
+            if (!ServiceManager::checkPid($daemon['pid'])) {
+                $pid = ServiceManager::process("run php yiic.php service startDaemon");
+                if(!empty($pid)){
+                    Setting::set('services.daemon', [
+                        'isRunning' => true,
+                        'pid' => $pid[0]
+                    ]);
+                }
             }
         }
     }
@@ -148,7 +173,7 @@ class ServiceManager extends CComponent {
             }
         }
     }
-    
+
     public static function run($serviceName, $params = null) {
         $service = Setting::get('services.list.' . $serviceName);
                 
@@ -159,6 +184,15 @@ class ServiceManager extends CComponent {
             
             return ServiceManager::runInternal($serviceName, $service);
         }
+    }
+
+    public static function checkPid($pid) {
+        $command = "find {$pid}";
+        $ret = ServiceManager::process($command);
+        if (@$ret[0] === "false") {
+            return false;
+        }
+        return true;
     }
     
     public static function runInternal($serviceName, $service = null) {
