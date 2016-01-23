@@ -735,12 +735,13 @@ app.directive('gridView', function ($timeout, $http) {
                     var availableHeader = [];
                     var rows = [];
                     var row = [];
-                    $el.find('table thead tr th').each(function(i, e) {
+                    $el.find('table thead tr:last-child th').each(function(i, e) {
                         if ($(e).text().trim() != "") {
                             availableHeader.push(i);
                             row.push($(e).text().trim());
                         }
                     });
+                    
                     rows.push(row);
                     
                     $el.find('table tbody tr').each(function(i, e) {

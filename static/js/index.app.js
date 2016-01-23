@@ -372,7 +372,7 @@ app.directive('ngAssign', function($timeout) {
         restrict: 'A',
         link: function ($scope, el, attrs, ngModel) {
             el.assignWatcher = $scope.$watch(attrs.ngAssign, function(n, o) {
-                if (!!n.toString) {
+                if (!!n.toString()) {
                     $scope.$eval(attrs.ngModel + ' = "' + n.toString() + '"' );
                 }
             },true);
