@@ -121,6 +121,8 @@ class Setting {
             $oldConfig = $bp . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
             if (is_file($oldConfig)) {
                 rename($oldConfig, Setting::$path);
+                header("Location: " . $_SERVER['DOCUMENT_URI']);
+                die();
             }
 
             $json   = Setting::$default;
