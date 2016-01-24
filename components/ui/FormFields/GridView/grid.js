@@ -738,21 +738,40 @@ app.directive('gridView', function ($timeout, $http) {
                     $el.find('table thead tr:last-child th').each(function(i, e) {
                         if ($(e).text().trim() != "") {
                             availableHeader.push(i);
-                            row.push($(e).text().trim());
                         }
                     });
                     
-                    rows.push(row);
+                    $el.find('table thead tr').each(function(i, e) {
+                        var row = [];
+                        console.log("--------TH---------" + $(e).find('th').length);
+                        $(e).find('th').each(function(j, f) {
+                            if (availableHeader.indexOf(j) >= 0 || j == 0) {
+                                if (availableHeader.indexOf(j) >= 0) {
+                                    row.push($(f).text().trim());
+                                }
+                                if ($(f).attr('colspan') > 0) {
+                                    var cp = $(f).attr('colspan');
+                                    for (var x= 0;x < cp -1;x++) {
+                                        row.push('');
+                                    }
+                                }
+                            }
+                        });
+                        rows.push(row);
+                    });
                     
                     $el.find('table tbody tr').each(function(i, e) {
                         var row = [];
                         $(e).find('td').each(function(j, f) {
                             if (availableHeader.indexOf(j) >= 0) {
+                                console.log("k" + j);
                                 row.push($(f).text().trim());
                             }
                         });
                         rows.push(row);
                     });
+                    
+                    console.log(rows);
                     
                     $http.post(Yii.app.createUrl('/formfield/GridView.downloadExcel'), {rows:rows}).success(function(e) {
                         location.href = e;
