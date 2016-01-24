@@ -25,6 +25,7 @@ $composer = require ($root . '/vendor/autoload.php');
 require_once ($setting);
 Setting::init($config, $mode, __FILE__);
 
+
 ## Initialize Yii
 require_once ($yii);
 Yii::createWebApplication($config)->run();

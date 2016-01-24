@@ -609,9 +609,6 @@ class CComponent
 		if(is_string($_expression_))
 		{
 			extract($_data_);
-                        var_dump(eval('return '.$_expression_.';'));
-                        die();
-                        
 			return eval('return '.$_expression_.';');
 		}
 		else

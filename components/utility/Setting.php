@@ -1,5 +1,9 @@
 <?php
 
+function vdump($var) {
+    CVarDumper::dump($var, 10, true);
+}
+
 class Setting {
 
     public static  $basePath;

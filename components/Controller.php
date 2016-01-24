@@ -64,9 +64,7 @@ class Controller extends CController {
 
     public function renderReport($file, $data = null, $return = false) {
         $report = new Report;
-
         $filePath = $this->getReportFile($file);
-
         $output = $report->load($filePath, $data);
 
         if (($layoutFile = $this->getLayoutFile($this->reportLayout)) !== false) {
