@@ -129,6 +129,7 @@ class DataFilter extends FormField {
         }
     }
 
+
     public static function toSQLStr($val, $driver = null) {
         if (is_null($driver)) {
             $driver = Setting::get('db.driver');
@@ -164,16 +165,18 @@ class DataFilter extends FormField {
         $param = "";
         $pcolumn = preg_replace('/[^\da-z]/i', '_', $column);
         $driver = Setting::get('db.driver');
-
+        
+        $column = ActiveRecord::formatSingleCriteria($column, $driver);
+        
         ## quote field if it is containing illegal char
         if (!preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", str_replace(".", "", $column))) {
-            $column = "|{$column}|";
+            $column = "{$column}";
         }
 
         switch ($filter['type']) {
             case "string":
                 if ($filter['value'] != "" || $filter['operator'] == 'Is Empty') {
-                    $sCol = DataFilter::toSQLStr("|{$column}|", $driver);
+                    $sCol = DataFilter::toSQLStr("{$column}", $driver);
                     $spCol = DataFilter::toSQLStr(":{$paramName}_{$pcolumn}", $driver);
 
                     switch ($filter['operator']) {
@@ -220,7 +223,7 @@ class DataFilter extends FormField {
                             $sql = "(" . implode(" AND ", $psql) . ")";
                             break;
                         case "Is Empty":
-                            $sql = "(|{$column}| LIKE '' OR |{$column}| IS NULL)";
+                            $sql = "({$column} LIKE '' OR {$column} IS NULL)";
                             break;
                     }
                 }
@@ -235,11 +238,11 @@ class DataFilter extends FormField {
                         case '>=':
                         case '<=':
                         case '<':
-                            $sql = "|{$column}| {$filter['operator']} :{$paramName}_{$pcolumn}";
+                            $sql = "{$column} {$filter['operator']} :{$paramName}_{$pcolumn}";
                             $param = "{$filter['value']}";
                             break;
                         case "Is Empty":
-                            $sql = "(|{$column}| IS NULL)";
+                            $sql = "({$column} IS NULL)";
                             break;
                     }
                 }
@@ -254,7 +257,7 @@ class DataFilter extends FormField {
                             $a = self::toSQLDateTime(":{$paramName}_{$pcolumn}_from", $driver);
                             $b = self::toSQLDateTime(":{$paramName}_{$pcolumn}_to", $driver);
 
-                            $sql = "(|{$column}| BETWEEN {$a} AND {$b})";
+                            $sql = "({$column} BETWEEN {$a} AND {$b})";
                             $fromStartHour = date('Y-m-d 23:59:00', strtotime('-1 day', strtotime(@$filter['value']['from'])));
                             $toLastHour = date('Y-m-d 23:59:00', strtotime(@$filter['value']['to']));
 
@@ -269,7 +272,7 @@ class DataFilter extends FormField {
                             $a = self::toSQLDateTime(":{$paramName}_{$pcolumn}_from", $driver);
                             $b = self::toSQLDateTime(":{$paramName}_{$pcolumn}_to", $driver);
 
-                            $sql = "(|{$column}| NOT BETWEEN {$a} AND {$b})";
+                            $sql = "({$column} NOT BETWEEN {$a} AND {$b})";
 
                             $toLastHour = date('Y-m-d 23:59:00', strtotime(@$filter['value']['to']));
                             $param = [
@@ -284,22 +287,22 @@ class DataFilter extends FormField {
                         break;
                     case "More Than":
                         if (@$filter['value']['from'] != '') {
-                            $sql = "|{$column}| > " . self::toSQLDate(":{$paramName}_{$pcolumn}", $driver);
+                            $sql = "{$column} > " . self::toSQLDate(":{$paramName}_{$pcolumn}", $driver);
                             $param = @$filter['value']['from'];
                         }
                         break;
                     case "Less Than":
                         if (@$filter['value']['to'] != '') {
-                            $sql = "|{$column}| < " . self::toSQLDate(":{$paramName}_{$pcolumn}", $driver);
+                            $sql = "{$column} < " . self::toSQLDate(":{$paramName}_{$pcolumn}", $driver);
                             $param = @$filter['value']['to'];
                         }
                         break;
                     case "Daily":
                         if (@$filter['value'] != '') {
                             if ($driver == "mysql") {
-                                $sql = "DATE(|{$column}|) = DATE(:{$paramName}_{$pcolumn})";
+                                $sql = "DATE({$column}) = DATE(:{$paramName}_{$pcolumn})";
                             } else if ($driver == "oci") {
-                                $sql = "|{$column}| = TO_DATE('YY-MM-DD',:{$paramName}_{$pcolumn})";
+                                $sql = "{$column} = TO_DATE('YY-MM-DD',:{$paramName}_{$pcolumn})";
                             }
                             $param = @$filter['value'];
                         }
@@ -308,7 +311,7 @@ class DataFilter extends FormField {
                 break;
             case "list":
                 if (isset($filter['value']) && $filter['value'] != '') {
-                    $sql = "|{$column}| LIKE :{$paramName}_{$pcolumn}";
+                    $sql = "{$column} LIKE :{$paramName}_{$pcolumn}";
                     $param = @$filter['value'];
                 }
                 break;
@@ -316,16 +319,16 @@ class DataFilter extends FormField {
                 switch ($filter['operator']) {
                     case 'empty':
                         if ($filter['value'] == 'null') {
-                            $sql = "|{$column}| is null";
+                            $sql = "{$column} is null";
                             $param = @$filter['value'];
                         } else {
-                            $sql = "|{$column}| = :{$paramName}_{$pcolumn}";
+                            $sql = "{$column} = :{$paramName}_{$pcolumn}";
                             $param = @$filter['value'];
                         }
                         break;
                     default:
                         if ($filter['value'] != '') {
-                            $sql = "|{$column}| = :{$paramName}_{$pcolumn}";
+                            $sql = "{$column} = :{$paramName}_{$pcolumn}";
                             $param = @$filter['value'];
                         }
                         break;
@@ -341,14 +344,14 @@ class DataFilter extends FormField {
                             $param[":{$paramName}_{$pcolumn}_{$k}"] = "{$p}";
                             $psql[] = ":{$paramName}_{$pcolumn}_{$k}";
                         }
-                        $sql = "|{$column}| IN (" . implode(", ", $psql) . ")";
+                        $sql = "{$column} IN (" . implode(", ", $psql) . ")";
                     } else {
                         // USING LIKE...
                         $param = [];
                         $psql = [];
                         foreach ($filter['value'] as $k => $p) {
                             $param[":{$paramName}_{$pcolumn}_{$k}"] = "%{$p}%";
-                            $psql[] = "|{$column}| LIKE :{$paramName}_{$pcolumn}_{$k}";
+                            $psql[] = "{$column} LIKE :{$paramName}_{$pcolumn}_{$k}";
                         }
                         $sql = "(" . implode(" AND ", $psql) . ")";
                     }

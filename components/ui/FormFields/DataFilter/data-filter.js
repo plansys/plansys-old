@@ -872,10 +872,22 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 $scope.changeValueFromDate = function (filter, from) {
                     filter[from + "Open"] = false;
                     $timeout(function () {
-                        filter.value = {
-                            from: dateFilter(filter.from, 'yyyy-MM-dd HH:mm:00'),
-                            to: dateFilter(filter.to, 'yyyy-MM-dd HH:mm:00')
-                        };
+                        if (filter.operator == 'Less Than') {
+                            filter.value = {
+                                from: null,
+                                to: dateFilter(filter.to, 'yyyy-MM-dd HH:mm:00')
+                            };
+                        } else if (filter.operator == 'More Than') {
+                            filter.value = {
+                                from: dateFilter(filter.from, 'yyyy-MM-dd HH:mm:00'),
+                                to: null
+                            };
+                        } else {
+                            filter.value = {
+                                from: dateFilter(filter.from, 'yyyy-MM-dd HH:mm:00'),
+                                to: dateFilter(filter.to, 'yyyy-MM-dd HH:mm:00')
+                            };
+                        }
                     }, 0);
                 }
                 
@@ -994,8 +1006,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                                 f.to = $scope.evalValue(f.defaultValueTo);
                                             } else if (f.defaultOperator == 'Less Than') {
                                                 f.to = $scope.evalValue(f.defaultValueTo);
+                                                f.from = null;
                                             } else {
                                                 f.from = $scope.evalValue(f.defaultValue);
+                                                f.to = null;
                                             }
                                             
                                             f.value = {};

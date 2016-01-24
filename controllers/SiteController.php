@@ -61,6 +61,7 @@ class SiteController extends Controller {
                     $this->render('error', $error);
                 }
             }
+            
         } else {
             switch ($id) {
                 case "integrity":

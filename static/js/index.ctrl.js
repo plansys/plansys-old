@@ -42,9 +42,11 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
             require: ['ace/ext/emmet', 'ace/ext/language_tools'],
             advanced: {
                 enableEmmet: true,
-                enableBasicAutocompletion: true,
+                // enableBasicAutocompletion: true,
                 // enableSnippets: true,
-                enableLiveAutocompletion: true
+                enableLiveAutocompletion: true,
+                liveAutocompletionDelay: 100,
+                liveAutocompletionThreshold: 3
             }
         }, options);
         return ret;
