@@ -226,11 +226,13 @@ class MenuTree extends CComponent {
                 $list[$k]['url'] = ['#'];
             } else {
                 if (!is_array($v['url'])) {
-                    if ($v['url'] == '#') {
+                    if ($v['url'] == '') {
+                        $list[$k]['url'] = ['#'];
+                    } else if ($v['url'] == '#') {
                         $list[$k]['url'] = ['#'];
                     } else if (substr($v['url'], 0, 4) != 'http') {
                         $list[$k]['url'] = [str_replace(["\n", "\r"], "", str_replace('?', '&', $v['url']))];
-                    }
+                    } 
                 }
             }
 
