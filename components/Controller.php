@@ -14,13 +14,14 @@ class Controller extends CController {
     public $reportLayout = '//layouts/report';
 
     public function staticUrl($path = '') {
+        
         $static = "/static";
 
         if (!isset($_GET['errorBeforeInstall'])) {
             $dir    = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
             $static = "/" . array_pop($dir) . "/static";
         }
-        
+
         return $this->url($static . $path);
     }
 

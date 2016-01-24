@@ -164,16 +164,26 @@ app.filter('dateFormat', function (dateFilter) {
         
         if (format == "date") {
             format = plansys.dateFormat;
+            if (!format) {
+                format = 'd M Y';
+            }
         }
         
         if (format == "time") {
             format = plansys.timeFormat;
+            if (!format) {
+                format = 'H:i';
+            }
         }
         
         if (format == "datetime") {
             format = plansys.dateTimeFormat;
+            if (!format) {
+                format = 'd M Y - H:i';
+            }
+
         }
-        
+
         if (input != "0000-00-00" && !!input && input != null) {
             return date(format, strtotime(input + ""));
         } else {
@@ -780,6 +790,7 @@ function date(format, timestamp) {
     this.date = function (format, timestamp) {
         that = this;
         jsdate = (timestamp === undefined ? new Date() : (timestamp instanceof Date) ? new Date(timestamp) : new Date(timestamp * 1000));
+
         return format.replace(formatChr, formatChrCb)
     };
     return this.date(format, timestamp)

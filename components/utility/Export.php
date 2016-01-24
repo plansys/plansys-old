@@ -16,8 +16,6 @@ class Export extends CComponent {
                 return '14:54:32';
                 break;
             default:
-                return  'text';
-            default:
                 if ($c->type == "integer") {
                     return '123';
                 } else {

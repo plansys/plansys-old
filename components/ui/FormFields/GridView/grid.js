@@ -743,7 +743,6 @@ app.directive('gridView', function ($timeout, $http) {
                     
                     $el.find('table thead tr').each(function(i, e) {
                         var row = [];
-                        console.log("--------TH---------" + $(e).find('th').length);
                         $(e).find('th').each(function(j, f) {
                             if (availableHeader.indexOf(j) >= 0 || j == 0) {
                                 if (availableHeader.indexOf(j) >= 0) {
@@ -770,8 +769,6 @@ app.directive('gridView', function ($timeout, $http) {
                         });
                         rows.push(row);
                     });
-                    
-                    console.log(rows);
                     
                     $http.post(Yii.app.createUrl('/formfield/GridView.downloadExcel'), {rows:rows}).success(function(e) {
                         location.href = e;

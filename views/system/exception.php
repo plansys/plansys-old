@@ -13,7 +13,6 @@ if (Setting::$mode == "init" || Setting::$mode == "install") {
     if (strpos(@$data['message'], 'Application Runtime Path') === 0) {
         $msg = null;
     }
-
     $controller->action->runWithParams([
         'msg' => $msg
     ]);
