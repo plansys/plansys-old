@@ -5,7 +5,6 @@ function vdump($var) {
 }
 
 class Setting {
-
     public static  $basePath;
     public static  $rootPath;
     public static  $path        = "";
@@ -110,12 +109,24 @@ class Setting {
 
         date_default_timezone_set("Asia/Jakarta");
         $bp            = Setting::setupBasePath($configfile);
-        Setting::$path = $bp . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
-
+        $ap            = Setting::$rootPath . DIRECTORY_SEPARATOR . "app";
+        
+        Setting::$path = $ap . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
         if (!is_file(Setting::$path)) {
+            $configdir = dirname(Setting::$path);
+            if (!is_dir($configdir)) {
+                mkdir($configdir, 777, true);
+            }
+
+            $oldConfig = $bp . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
+            if (is_file($oldConfig)) {
+                rename($oldConfig, Setting::$path);
+            }
+
             $json   = Setting::$default;
             $json   = json_encode($json, JSON_PRETTY_PRINT);
             $result = @file_put_contents(Setting::$path, $json);
+
 
             require_once("Installer.php");
             Installer::createIndexFile("install");

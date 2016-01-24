@@ -3,7 +3,6 @@
 class DefaultController extends Controller {
 
     public function beforeAction($action) {
-
         if (!in_array(Setting::$mode, ["install", "init"])) {
             $this->redirect(['/site/login']);
             die();
@@ -27,7 +26,13 @@ class DefaultController extends Controller {
         return str_replace("static", "modules/install/views/default/", $this->staticUrl(""));
     }
 
-    public function actionIndex($msg = null) {
+    public function actionIndex($msg = null) { 
+        $base = explode("/", Yii::app()->baseUrl);
+        if (array_pop($base) == "plansys") {
+            header("Location: " . implode("/", $base));
+            die();
+        }
+
         $content = $this->renderPartial('index', ['msg' => $msg], true);
         $html = $this->renderPartial('_layout', ['content' => $content], true);
         echo $html;
