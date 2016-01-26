@@ -3,7 +3,12 @@
 class ImportController extends Controller {
     public function beforeAction($action) {
         if (isset($_GET['m'])) {
-            if (class_exists($_GET['m']) && is_subclass_of($_GET['m'], 'ActiveRecord')) { 
+            
+            $m = explode(".", $_GET['m']);
+            $model = @$m[0];
+            $submodel = @$m[1];
+            
+            if (class_exists($model) && is_subclass_of($model, 'ActiveRecord')) { 
                 return true;
             }
         }
@@ -12,6 +17,7 @@ class ImportController extends Controller {
     
     public function actionIndex() {
         $model = new SysImportData;
+        $submodel = '';
         if (isset($_POST["SysImportData"])) {
             $_POST['SysImportData']['model'] = $_GET['m'];
             ServiceManager::start('ImportData', $_POST["SysImportData"]);
@@ -24,7 +30,9 @@ class ImportController extends Controller {
             $options['layout'] = "//layouts/blank";
         }
         
-        $this->renderForm("SysImportData", $model, [], $options);
+        $this->renderForm("SysImportData", $model, [
+            's' => $submodel
+        ], $options);
     }
     
     public function actionDownloadTemplate() {

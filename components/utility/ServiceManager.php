@@ -117,6 +117,7 @@ class ServiceManager extends CComponent {
                         'isRunning' => true,
                         'pid' => $pid[0]
                     ]);
+                    
                 }
             }
         }

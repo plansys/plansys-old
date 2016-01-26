@@ -216,13 +216,13 @@ class Helper {
         return $arr;
     }
 
-    public static function sortArray(&$array, $subfield) {
+    public static function sortArray(&$array, $subfield, $mode='asc') {
         $sortarray = array();
         foreach ($array as $key => $row) {
             $sortarray[$key] = $row[$subfield];
         }
 
-        array_multisort($sortarray, SORT_ASC, $array);
+        array_multisort($sortarray, ($mode == 'asc' ? SORT_ASC : SORT_DESC), $array);
     }
 
     // Does not support flag GLOB_BRACE

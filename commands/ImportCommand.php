@@ -97,12 +97,17 @@ EOF;
             $this->failed('You should run this from `Import Controller`');
             return;
         }
-        if (!class_exists($this->params['model'])) {
-            $this->failed('Model ' . $this->params['model'] . ' does not exist!');
+        
+        
+        $paramsModel = explode(".", $this->params['model']);
+        $modelClass = @$paramsModel[0];
+        $modelConfig = @$paramsModel[1];
+        
+        if (!class_exists($modelClass)) {
+            $this->failed('Model ' . $modelClass . ' does not exist!');
             return;
         }
         $file = $this->params['file'];
-        $modelClass = $this->params['model'];
         
         $errors = [];
         $excelColumns = [];
@@ -116,7 +121,6 @@ EOF;
         $reader = ReaderFactory::create(Type::XLSX);
         $reader->open($file);
         $transaction = Yii::app()->db->beginTransaction();
-        
         
         ## get first sheet
         $import = new Import($this->params['model']);

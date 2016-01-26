@@ -54,6 +54,10 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 }
 
                 $scope.updateParam = function (key, value, name) {
+                    if (!$scope.sqlParams) {
+                        $scope.sqlParams = {};
+                    }
+                    
                     if (typeof name === "undefined") {
                         $scope.sqlParams[key] = value;
                         return true;

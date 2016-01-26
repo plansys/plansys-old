@@ -807,11 +807,13 @@ class ActiveRecord extends CActiveRecord {
 
         if (count(@$this->__relUpdate[$name]) > 0) {
             foreach ($this->__relUpdate[$name] as $k => $i) {
-                $rpk = '_' . $i[$pk];
-                if (isset($relHash[$rpk])) {
-                    $this->__relations[$name][$relHash[$rpk]['idx']] = $i;
-                } else {
-                    $this->__relations[$name][] = $i;
+                if (isset($i[$pk])) {
+                    $rpk = '_' . $i[$pk];
+                    if (isset($relHash[$rpk])) {
+                        $this->__relations[$name][$relHash[$rpk]['idx']] = $i;
+                    } else {
+                        $this->__relations[$name][] = $i;
+                    }
                 }
             }
         }
@@ -1052,7 +1054,7 @@ class ActiveRecord extends CActiveRecord {
                     $value = is_string($value) ? json_decode($value, true) : $value;
                     $this->__relInsert[$k] = $value;
                 }
-    
+                
                 if (isset($values[$k . 'Update'])) {
                     $value = $values[$k . 'Update'];
                     $value = is_string($value) ? json_decode($value, true) : $value;
@@ -1178,12 +1180,32 @@ class ActiveRecord extends CActiveRecord {
             $modelClass = $rel->className;
             $model = new $modelClass;
             $relPK = $model->tableSchema->primaryKey;
+            
+            // Dokumentasi:
+            // 
+            // $errors = [
+            //     'type' => 'CHasManyRelation',
+            //     'list' => [
+            //         [
+            //             'index' => 1,
+            //             'mode' => 'edit',
+            //             'errors' => [
+            //                    'kandidat_id' => ['Tidak boleh kosong']
+            //              ]
+            //         ]
+            //     ]
+            // ];
+            
+            
             $errors = [
                 'type' => get_class($rel),
                 'list' => []
             ];
+            
+
 
             $idx = ['insert' => 0, 'edit' => 0];
+            
             switch (get_class($rel)) {
                 case 'CHasManyRelation':
                 case 'CManyManyRelation':
@@ -1191,7 +1213,7 @@ class ActiveRecord extends CActiveRecord {
                         $model = new $modelClass;
                         $model->attributes = $attr;
                         $model->{$rel->foreignKey} = $this->isNewRecord ? '0' : $this->{$pk};
-
+                    
                         if (!$model->validate()) {
                             if (isset($attr['$rowState'])) {
                                 $errors['list'][] = [
@@ -1492,13 +1514,14 @@ class ActiveRecord extends CActiveRecord {
                             }
 
                             $attr = $model->getAttributesWithoutRelation();
+                            
                             foreach ($attr as $k => $n) {
                                 if (is_array($n)) {
                                     unset($attr[$k]);
                                 }
                             }
-
-                            if (array_diff($attr, $new)) {
+                            
+                            if (array_diff($new, $attr) || array_diff($attr, $new)) {
                                 $model->attributes = $new;
                                 if ($relType == 'CHasOneRelation') {
                                     $model->{$relForeignKey} = $this->{$pk};
