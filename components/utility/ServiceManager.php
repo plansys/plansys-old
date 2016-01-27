@@ -96,16 +96,7 @@ class ServiceManager extends CComponent {
         if (!$lastrun || time() - $lastrun > 10) {
             return false;
         } else {
-            if (!ServiceManager::checkPid($daemon['pid'])) {
-                $pid = ServiceManager::process("run php yiic.php service startDaemon");
-                if(!empty($pid)){
-                    Setting::set('services.daemon', [
-                        'isRunning' => true,
-                        'pid' => $pid[0]
-                    ]);
-                    
-                }
-            }
+            return true;
         }
     }
 
