@@ -319,9 +319,9 @@ EOF;
             echo ($mode== 'class' ? '<div class="tr">' : '<tr>'); 
             foreach ($this->columns as $idx => $col) {
                 if ($i == 1) {
-                    echo $this->getHeaderTemplate($col, $idx);
+                    echo $this->getHeaderTemplate($col, $idx, $mode);
                 } else {
-                    echo $this->getSuperHeaderTemplate($i, $col, $idx);
+                    echo $this->getSuperHeaderTemplate($i, $col, $idx, $mode);
                 }
             }
             echo ($mode == 'class' ? '</div>' : '</tr>');
@@ -343,7 +343,7 @@ EOF;
         return '';
     }
     
-    public function getSuperHeaderTemplate($row, $col, $idx) {
+    public function getSuperHeaderTemplate($row, $col, $idx, $mode) {
         $attr      = [];
         if (isset($col['options']['ng-if'])) {
             $attr['ng-if'] = $col['options']['ng-if'];
@@ -375,14 +375,23 @@ EOF;
             $attr = $this->expandAttributes($attr);
         }
         
-        return <<<EOF
-<th {$attr}><div class="th">
-    {$headers['label']}
-</div></th>
-EOF;
+        $content = $headers['label'];
+        if ($mode == 'class') {
+            return <<<EOL
+<div class="th" {$attr}>
+{$content}
+</div>
+EOL;
+        } else {
+            return <<<EOL
+<th {$attr}>
+{$content}
+</div>
+EOL;
+        }
     }
 
-    public function getHeaderTemplate($col, $idx) {
+    public function getHeaderTemplate($col, $idx, $mode) {
         $fieldName = isset($col['fieldName']) ? $col['fieldName'] : $col['name'];
         if ($fieldName == "" && !@$col['options']['mode']) return "";
 
@@ -413,13 +422,11 @@ EOF;
                     $caret    = '';
                 }
 
-                return <<<EOF
-<th {$attr}><div class="th">
+                 $content = <<<EOF
     <div class="row-header" {$sortable}>
         {$col['label']}
         {$caret}
     </div>
-</div></th>
 EOF;
                 break;
             case "checkbox":
@@ -428,14 +435,30 @@ EOF;
                     $ngif = "ng-if=\"({$col['options']['ng-checkbox-head-if']})\"";
                 }
                 
-                return <<<EOL
-<th {$attr}><div class="th">
+                $content =  <<<EOL
     <label {$ngif}><input type="checkbox"
 ng-click="checkboxAll('{$col['name']}','{$idx}', \$event)" class="cb-th-{$col['name']}" /></label>
-</div></th>
 EOL;
+
+                
                 break;
         }
+        
+        
+        if ($mode == 'class') {
+            return <<<EOL
+<div class="th" {$attr}>
+{$content}
+</div>
+EOL;
+        } else {
+            return <<<EOL
+<th {$attr}>
+{$content}
+</div>
+EOL;
+        }
+        
     }
 
     public function getFieldProperties() {

@@ -412,15 +412,20 @@ app.directive('gridView', function ($timeout, $http) {
                         rect.top < 0
                     );
                 } 
-                $scope.firstColWidth = $header.find("th:eq(0)").outerWidth();
+                
                 $scope.recalcHeaderWidth = function () {
                     $scope.firstColWidth = $header.find("th:eq(0)").outerWidth();
                     if ($scope.firstColWidth == 0) return;
                     
-                    var count = $(".thead .th").length;
-                    $el.find(".thead .th").each(function (i) {
-                        var offset = (count - 1 == i ? 1 : 0);
-                        $(this).width($header.find("th:eq(" + i + ")").outerWidth() - offset);
+                    $el.find('.thead .tr').each(function(tr) {
+                        $('.thead .tr:eq(' + tr + ') .th').each(function(th) {
+                            var w = $header.find("tr:eq(" + tr + ") th:eq(" + th + ")").outerWidth();
+                            $(this).css({
+                                width:w,
+                                minWidth: w,
+                                maxWidth: w
+                            });
+                        });
                     });
 
                     //$el.parents('.container-fluid').width(Math.max($el.parents('.container-fluid').width(), $el.width() + 15));
