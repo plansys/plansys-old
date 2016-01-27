@@ -101,6 +101,7 @@ class WebUser extends CWebUser {
             return "{}";
         }
 
+
         $attr = false;
         if (isset(Yii::app()->session['userinfo'])) {
             $attr = Yii::app()->session['userinfo'];
@@ -110,8 +111,13 @@ class WebUser extends CWebUser {
             if (@$attr['db_name'] != Setting::get('db.dbname')) {
                 $attr = false;
             }
-        }
+        }    
+
         if (!$attr) {
+            if (is_null($this->model)) {
+                return false;
+            }
+
             $attr = $this->model->getAttributes(true, false);
             unset($attr['password']);
             $attr['role']                   = $this->role;
@@ -120,6 +126,7 @@ class WebUser extends CWebUser {
             $attr['db_name']                = Setting::get('db.dbname');
             Yii::app()->session['userinfo'] = $attr;
         } 
+
         return $attr;
     }
     

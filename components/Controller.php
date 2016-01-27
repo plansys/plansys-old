@@ -265,7 +265,6 @@ class Controller extends CController {
             ];
         }
 
-
         $name = "";
         if (!Yii::app()->user->isGuest) {
             if (isset(Yii::app()->user->model)) {
@@ -441,9 +440,12 @@ class Controller extends CController {
 
     public function afterAction($action) {
         ## Make sure service daemon is started
-        ServiceManager::startDaemon();
+        if (!ServiceManager::checkDaemon()) {
+            ServiceManager::startDaemon();
+        }
 
         parent::afterAction($action);
+        
         return true;
     }
 

@@ -79,47 +79,35 @@ class ServiceManager extends CComponent {
         
         return null;
     }
-    
-    public static function isDaemonStarted() {
-        $daemon = Setting::get('services.daemon', [
-            'isRunning' => false,
-            'pid' => 0
-        ]); 
-        if ($daemon['isRunning'] && $daemon['pid'] != 0) {
-            if (!ServiceManager::checkPid($daemon['pid'])) {
-                Setting::set('services.daemon.isRunning', false);
-                return false;
-            } else {
-                return true;
-            }
+
+    public static function markDaemonAsRun() {
+        $file = Setting::getRuntimePath() . DIRECTORY_SEPARATOR . "daemon_lastrun.txt";
+        file_put_contents($file, time());
+    }
+
+    public static function checkDaemon() {
+        $file = Setting::getRuntimePath() . DIRECTORY_SEPARATOR . "daemon_lastrun.txt";
+        $lastrun = false;
+        if (is_file($file)) {
+            $lastrun = file_get_contents($file);
+        } 
+
+        ## run marker treshold, in seconds
+        if (!$lastrun || time() - $lastrun > 10) {
+            return false;
+        } else {
+            return true;
         }
-        return false;
     }
 
     public static function startDaemon() {
-        $daemon = Setting::get('services.daemon', [
-            'isRunning' => false,
-            'pid' => 0
-        ]); 
-        if (!$daemon['isRunning']) {
-            $pid = ServiceManager::process("run php yiic.php service startDaemon");
-            if(!empty($pid)){
-                Setting::set('services.daemon', [
-                    'isRunning' => true,
-                    'pid' => $pid[0]
-                ]);
-            }
-        } else {
-            if (!ServiceManager::checkPid($daemon['pid'])) {
-                $pid = ServiceManager::process("run php yiic.php service startDaemon");
-                if(!empty($pid)){
-                    Setting::set('services.daemon', [
-                        'isRunning' => true,
-                        'pid' => $pid[0]
-                    ]);
-                }
-            }
-        }
+        $pid = ServiceManager::process("run php yiic.php service startDaemon");
+        if(!empty($pid)){
+            Setting::set('services.daemon', [
+                'isRunning' => true,
+                'pid' => $pid[0]
+            ]);
+        }        
     }
     
     public static function stopDaemon() {
@@ -184,15 +172,6 @@ class ServiceManager extends CComponent {
             
             return ServiceManager::runInternal($serviceName, $service);
         }
-    }
-
-    public static function checkPid($pid) {
-        $command = "find {$pid}";
-        $ret = ServiceManager::process($command);
-        if (@$ret[0] === "false") {
-            return false;
-        }
-        return true;
     }
     
     public static function runInternal($serviceName, $service = null) {
