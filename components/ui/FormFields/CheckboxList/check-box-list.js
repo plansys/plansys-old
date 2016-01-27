@@ -186,6 +186,7 @@ app.directive('checkBoxList', function ($timeout) {
                     if ($scope.mode == 'Relation') {
                         $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text());
                         $scope.modelClass = $el.find("data[name=model_class]").html();
+                        console.log(ctrl.$viewValue);
                         
                         $scope.selected = ctrl.$viewValue;
                         $scope.originalData = angular.copy(ctrl.$viewValue);

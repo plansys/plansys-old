@@ -429,7 +429,7 @@ app.directive('relationField', function ($timeout, $http) {
                 // set default value
                 $scope.search = "";
                 $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
-                $scope.params = JSON.parse($el.find("data[name=params]").text());
+                $scope.internalParams = JSON.parse($el.find("data[name=internal_params]").text());
                 $scope.renderedFormList = [];
                 $scope.renderFormList();
                 $scope.loading = true;
@@ -461,8 +461,8 @@ app.directive('relationField', function ($timeout, $http) {
                 }
                 
                 $timeout(function () {
-                    angular.forEach($scope.params, function (p, i) {
-                        var p = $scope.params[i];
+                    angular.forEach($scope.internalParams, function (p, i) {
+                        var p = $scope.internalParams[i];
                         if (p.indexOf('js:') === 0) {
                             var value = $scope.$parent.$eval(p.replace('js:', ''));
                             var key = i;
@@ -482,8 +482,8 @@ app.directive('relationField', function ($timeout, $http) {
                                     if (searchTimeout) {
                                         $timeout.cancel(searchTimeout);
                                     }
-                                    for (i in $scope.params) {
-                                        var x = $scope.params[i];
+                                    for (i in $scope.internalParams) {
+                                        var x = $scope.internalParams[i];
                                         if (x == p) {
                                             $scope.paramValue[i] = newv;
                                         }

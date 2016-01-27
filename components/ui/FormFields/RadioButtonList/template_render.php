@@ -24,7 +24,7 @@
                     type="radio" id="<?= $this->renderID ?>_{{item.value}}"
                        ng-checked="value == item.value"
                        ng-click="update(item.value)"
-                       /> {{ item.text}}
+                       /> <span bind-html-compile="item.text"></span>
             </label>
         </span>
         <input type="hidden" name="<?= $this->renderName ?>" value="{{ value}}" />
