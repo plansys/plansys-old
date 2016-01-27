@@ -5,10 +5,11 @@ class EmailGenerator extends CComponent {
     public static function listMenuTree() {
         $dir = Yii::getPathOfAlias("application.views.layouts.email");
         $appDir = Yii::getPathOfAlias("app.views.layouts.email");
+        
 
         $devItems = glob($dir.DIRECTORY_SEPARATOR. "*");
         $appItems = glob($appDir.DIRECTORY_SEPARATOR. "*");
-
+        
         $items = [];
         $models = [];
         if (Setting::get('app.mode') == "plansys") {
@@ -48,7 +49,6 @@ class EmailGenerator extends CComponent {
                 'icon' => 'fa fa-cube',
                 'class' => 'app.views.layouts.email.'.$m,
                 'class_path' => 'app.views.layouts.email',
-                'exist' => (class_exists($m)) ? 'yes' : 'no',
                 'type' => 'app',
                 'active' => @$_GET['active'] == 'app.'.$m,
                 'url' => Yii::app()->controller->createUrl('/dev/genEmail/index', [

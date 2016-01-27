@@ -304,10 +304,12 @@ class Setting {
     public static function getViewPath() {
         $appView = Setting::getAppPath() . DIRECTORY_SEPARATOR . "views";
         if (is_dir($appView)) {
-            return $appView;
-        } else {
-            return Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "views";
-        }
+            if (is_dir(Setting::getAppPath() . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "forms")) {
+                return $appView;
+            } 
+        } 
+        
+        return Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "views";
     }
 
     public static function getRepoPath() {

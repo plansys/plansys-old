@@ -180,14 +180,28 @@ app.directive('listView', function ($timeout) {
                                             edit: 0,
                                         };
                                     }
-                                    if (value[idx].$rowState == 'insert' || value[idx].$rowState == 'edit') {
-                                        for (i in errors.list) {
-                                            if (errors.idx.insert == errors.list[i].index) {
-                                                this.errors = errors.list[i].errors;
+                                    
+                                    var addError = function(value, idx, errors) {
+                                        if (value[idx].$rowState == 'insert' || value[idx].$rowState == 'edit') {
+                                            for (i in errors.list) {
+                                                if (errors.idx.insert == errors.list[i].index || errors.idx.edit == errors.list[i].index) {
+                                                    this.errors = errors.list[i].errors;
+                                                }
                                             }
+                                            errors.idx[value[idx].$rowState]++;
                                         }
-                                        errors.idx[value[idx].$rowState]++;
+                                    }.bind(this);
+                                    
+                                    if (!!value[idx] && !!value[idx].$rowState) {
+                                        addError(value, idx, errors);
+                                    } else {
+                                        $timeout(function() {
+                                            if (!!value[idx]) {
+                                                addError(value, idx, errors);
+                                            }
+                                        }.bind(value, idx, this));
                                     }
+                                    
                                 }
                             }
                         }

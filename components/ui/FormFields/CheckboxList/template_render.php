@@ -34,7 +34,7 @@
                        name="<?= $this->name ?>[{{item.value}}]"
                        ng-checked="isChecked(item.value)"
                        ng-click="updateItem(item.value)"
-                       /> {{ item.text }}
+                       /> <span bind-html-compile="item.text"></span>
             </label>
         </span>
 

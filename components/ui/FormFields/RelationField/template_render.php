@@ -9,6 +9,7 @@
         </label>
     <?php endif; ?>
     <!-- /label -->
+    
 
     <div class="<?= $this->fieldColClass ?>">
         <!-- data -->
@@ -26,7 +27,7 @@
         <data name="model_field" class="hide"><?= htmlentities(json_encode($model->attributes, JSON_PARTIAL_OUTPUT_ON_ERROR)) ?></data>
         <data name="rel_model_class" class="hide"><?= $this->modelClass ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
-        <data name="params" class="hide"><?= json_encode($this->params) ?></data>
+        <data name="internal_params" class="hide"><?= json_encode($this->params) ?></data>
         <data name="show_unselect" class="hide"><?= $this->showUnselect; ?></data>
         <data name="id_field" class="hide"><?= $this->idField ?></data>
         <data name="is_disabled" class="hide"><?php
@@ -74,8 +75,8 @@
                 </div>
                 <div ng-if="renderedFormList.length == 0"
                      style="text-align:center;padding:15px;font-size:12px;color:#999;">
-                    <div ng-if="!loading && jsParamsInitialized">&mdash; NOT FOUND &mdash;</div>
-                    <div ng-if="loading || !jsParamsInitialized">&mdash; LOADING &mdash;</div>
+                    <div ng-if="!loading && jsinternalParamsInitialized">&mdash; NOT FOUND &mdash;</div>
+                    <div ng-if="loading || !jsinternalParamsInitialized">&mdash; LOADING &mdash;</div>
                 </div>
                 <ul ng-if="renderedFormList.length > 0" class="dropdown-menu inner"  style="overflow-x:hidden" role="menu">
                     <li ng-repeat-start="item in renderedFormList track by $index"

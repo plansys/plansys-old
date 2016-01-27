@@ -1,5 +1,5 @@
 <?php
-class JsonModel{
+class JsonModel {
     private $data;
     public $path;
     public $default = [];
