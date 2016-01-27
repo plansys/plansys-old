@@ -63,41 +63,23 @@ class Controller extends CController {
         return @$_POST[$class];
     }
 
-    public function renderReport($file, $data = null, $return = false) {
-        $report = new Report;
-        $filePath = $this->getReportFile($file);
-        $output = $report->load($filePath, $data);
+    public function getViewFile($viewName)
+    {
+        if(($theme=Yii::app()->getTheme())!==null && ($viewFile=$theme->getViewFile($this,$viewName))!==false)
+            return $viewFile;
 
-        if (($layoutFile = $this->getLayoutFile($this->reportLayout)) !== false) {
-            $output = $this->renderFile($layoutFile, array('content' => $output), true);
+
+        $appPath = Yii::getPathOfAlias('app.views');
+        if (!is_dir($appPath)) {
+            $appPath = Yii::app()->getViewPath();
         }
+        $moduleViewPath=$basePath=$appPath;
+        if(($module=$this->getModule())!==null)
+            $moduleViewPath=$module->getViewPath();
 
-        $output = $this->processOutput($output);
-
-        $report->createPdf($output);
+        return $this->resolveViewFile($viewName,$this->getViewPath(),$basePath,$moduleViewPath);
     }
 
-    public function getReportFile($reportFile) {
-        $ds = DIRECTORY_SEPARATOR;
-        if (strpos($reportFile, '.')) {
-            $filePath = Yii::getPathOfAlias($reportFile) . '.php';
-        } else {
-            if ($this->getModule() !== null) {
-                $basePath = $this->module->basePath;
-                $filePath = $basePath . $ds . "reports" . $ds . $reportFile . ".php";
-            } else {
-                $alias       = Helper::getAlias($this);
-                $location    = Helper::explodeFirst('.', $alias);
-                $reportAlias = $location . '.reports';
-                $filePath    = Yii::getPathOfAlias($reportAlias) . $ds . $reportFile . '.php';
-            }
-        }
-        if (is_file($filePath)) {
-            return $filePath;
-        } else {
-            throw new CException(Yii::t('yii', '{controller} cannot find the requested report "{view}".', array('{controller}' => get_class($this), '{view}' => $reportFile)));
-        }
-    }
 
 	public function getLayoutFile($layoutName)
 	{
