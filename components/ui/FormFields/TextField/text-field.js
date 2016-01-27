@@ -167,7 +167,7 @@ app.directive('textField', function ($timeout, $http) {
                     if (!$scope.isFocused && !$scope.dropdownHover) {
                         if ($scope.acMode == "comma") {
                             var val = $scope.value.trim();
-                            if (val[val.length -1] != ",") {
+                            if (val[val.length -1] != "," && val.length > 0) {
                                 $scope.value = $scope.value + ", ";
                             }
                             $scope.search = "";
@@ -181,12 +181,17 @@ app.directive('textField', function ($timeout, $http) {
                 }
                 
                 $scope.tfBlur = function() {
+                    $scope.dropdownHover = false;
                     $timeout(function() {
                         if (!$scope.isFocused && !$scope.dropdownHover && !!$scope.value && !!$scope.value.trim) {
                             var val = $scope.value.trim();
                             if (val[val.length -1] == ",") {
                                 $scope.value = val.substr(0, val.length -1);
                             }
+                        }
+                        
+                        if (!$scope.dropdownHover) {
+                            $scope.showDropDown = false;
                         }
                     }, 200);
                     $scope.isFocused = false;
@@ -209,7 +214,7 @@ app.directive('textField', function ($timeout, $http) {
                                     vr[i] = vr[i].trim();
                                 }
                             }
-                            $scope.value = vr.join(", ") + ",";
+                            $scope.value = vr.join(", ").trim() + ", ";
                             $scope.search = val ;
                             $scope.openDropdown();
                             break;
@@ -222,7 +227,6 @@ app.directive('textField', function ($timeout, $http) {
 
                     $timeout(function () {
                         ctrl.$setViewValue($scope.value);
-                        $scope.dropdownHover = false;
                     });
                 }
 
@@ -262,19 +266,6 @@ app.directive('textField', function ($timeout, $http) {
                             $scope.doSearch('');
                         });
                     }
-                    $el.find("input[type=text]").focus(function (e) {
-                        if (!$scope.dropdownHover) {
-                            $scope.openDropdown($scope.value ? false : true);
-                        }
-                        e.preventDefault();
-                    });
-
-                    $el.find("input[type=text]").blur(function (e) {
-                        if (!$scope.dropdownHover) {
-                            $scope.closeDropdown();
-                        }
-                        e.preventDefault();
-                    });
                     $el.find("input[type=text]").keydown(function (e) {
                         if ($scope.autocomplete == '')
                             return true;
