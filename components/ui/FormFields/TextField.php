@@ -383,10 +383,6 @@ class TextField extends FormField {
         $this->fieldOptions['name'] = $this->renderName;
         $this->addClass('form-control', 'fieldOptions');
 
-        if (isset($this->fieldOptions['disabled'])) {
-            $this->addClass('disabled', 'fieldOptions');
-        }
-
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
 
         if (!is_string($this->value))
@@ -397,5 +393,14 @@ class TextField extends FormField {
         }
 
         return $this->renderInternal('template_render.php');
+    }
+    
+    public function isDisabled() {
+        if (isset($this->fieldOptions['ng-disabled'])) {
+            return $this->fieldOptions['ng-disabled'];
+        }
+        if (isset($this->fieldOptions['disabled'])) {
+            return "true";
+        }
     }
 }

@@ -21,6 +21,7 @@
         <data name="render_id" class="hide"><?= $this->renderID; ?></data>
         <data name="min_item" class="hide"><?= $this->minItem; ?></data>
         <data name="deletable" class="hide"><?= $this->deletable; ?></data>
+        <data name="sortable" class="hide"><?= $this->sortable; ?></data>
         <data name="options" class="hide"><?= json_encode($this->options) ?></data>
         <!-- /data -->
         <!-- field -->
@@ -50,12 +51,13 @@
                         </div>
 
                         <div ui-tree-handle class="list-view-item-move " 
-                             style="float:left;<?php if ($this->sortable == 'No'): ?>display:none !important;<?php endif ?>">
+                             ng-show="isSortable"
+                             style="float:left;">
                             <i class="fa fa-arrows"></i>
                         </div>
 
                         <div ng-class="{'disable-delete':isDeleteDisabled($index)}" 
-                            class='list-view-item-container <?php if ($this->sortable == 'No'): ?>unsorted<?php endif ?>'>
+                            class='list-view-item-container {{ !isSortable ? "unsorted" : "" }}'>
                             <?= $this->renderTemplateForm; ?>
                             <div class="clearfix"></div>
                         </div>

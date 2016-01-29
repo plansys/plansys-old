@@ -20,6 +20,7 @@ app.directive('listView', function ($timeout) {
                 $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
                 $scope.minItem = $el.find("data[name=min_item]:eq(0)").text().trim();
                 $scope.deletable = $el.find("data[name=deletable]:eq(0)").text().trim();
+                $scope.sortable = $el.find("data[name=sortable]:eq(0)").text().trim();
                 $scope.renderID = $el.find("data[name=render_id]").text();
                 $scope.datasource = $scope.parent[$el.find("data[name=datasource]:eq(0)").text()];
                 $scope.templateAttr = JSON.parse($el.find("data[name=template_attr]").html().trim());
@@ -29,6 +30,16 @@ app.directive('listView', function ($timeout) {
                 if ($scope.options['insertable-if']) {
                     $scope.$watch($scope.options['insertable-if'], function(n, o) {
                         $scope.isInsertable = n;
+                    }, true)
+                };
+                
+                $scope.isSortable = true;
+                if ($scope.sortable == 'No') {
+                    $scope.isSortable = false;
+                }
+                if ($scope.options['sortable-if']) {
+                    $scope.$watch($scope.options['sortable-if'], function(n, o) {
+                        $scope.isSortable = n;
                     }, true)
                 };
 

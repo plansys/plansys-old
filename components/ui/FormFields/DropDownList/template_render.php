@@ -20,6 +20,7 @@
         <data name="default_type" class="hide"><?= $this->defaultType ?></data>
         <data name="default_value" class="hide"><?= $this->defaultValue ?></data>
         <data name="form_list" class="hide"><?= json_encode($this->list) ?></data>
+        <data name="ng_disabled" class="hide"><?= $this->isDisabled(); ?></data>
         <!-- /data -->
 
         <!-- field -->
@@ -29,12 +30,14 @@
              dropdown on-toggle="toggled(open)">
 
             <!-- default button -->
-            <button type="button" 
-            <?= $this->expandAttributes($this->fieldOptions) ?>
-                    <?php if (@$this->fieldOptions['disabled']): ?>style="opacity:1;background:#fff;border:1px solid #ececeb;"<?php endif; ?> 
-                    >
-                <span <?php if (@$this->fieldOptions['disabled']): ?>style="display:none"<?php endif; ?> 
-                                                                     class="caret pull-right"></span>
+            <button type="button" <?= $this->expandAttributes($this->fieldOptions) ?>
+                ng-style="dropdownDisabled && {
+                    'opacity': 1,
+                    'background': '#fff',
+                    'border': '1px solid #ececeb',
+                    'box-shadow': 'none'
+                }">
+                <span ng-if="!dropdownDisabled" class="caret pull-right"></span>
                 <span class="dropdown-text" ng-bind-html="text"></span>
             </button>
 

@@ -383,4 +383,12 @@ class DropDownList extends FormField {
         return $this->renderInternal('template_render.php');
     }
 
+    public function isDisabled() {
+        if (isset($this->fieldOptions['ng-disabled'])) {
+            return $this->fieldOptions['ng-disabled'];
+        }
+        if (isset($this->fieldOptions['disabled'])) {
+            return "true";
+        }
+    }
 }

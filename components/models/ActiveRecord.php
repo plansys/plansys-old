@@ -276,8 +276,9 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public static function batchUpdate($model, $data) {
-        if (!is_array($data) || count($data) == 0)
-            return;
+        if (!is_array($data) || count($data) == 0) {
+            throw new Exception("\$data is not an Array.");
+        }
 
         $isModelExist = class_exists($model);
         if (!$isModelExist) {
@@ -332,6 +333,7 @@ class ActiveRecord extends CActiveRecord {
                 $update .= "UPDATE {$table} SET {$updatesql} WHERE {$pk}='{$cond}';";
             }
         }
+        
         if ($update != '') {
             $command = Yii::app()->db->createCommand($update);
             // try {

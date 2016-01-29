@@ -20,6 +20,7 @@
         <data name="rel_model_class" class="hide"><?= $this->modelClass ?></data>
         <data name="params" class="hide"><?= json_encode($this->params) ?></data>
         <data name="list" class="hide"><?= json_encode($this->acList) ?></data>
+        <data name="ng_disabled" class="hide"><?= $this->isDisabled(); ?></data>
         <!-- /data -->
 
         <!-- field -->
@@ -28,10 +29,8 @@
                 <!-- prefix -->
                 <?php if ($this->prefix != ""): ?>
                     <span class="input-group-addon"
-                    <?php if (@$this->fieldOptions['disabled']): ?>
-                              style="background:#fff;border:1px solid #ececeb; border-right:0px;"
-                          <?php endif; ?>>
-                              <?= $this->prefix ?>
+                    style="{{ textFieldDisabled ? 'background:#fff;border:1px solid #ececeb;border-right:0px' : '' }}">
+                    <?= $this->prefix ?>
                     </span>
                 <?php endif; ?>
 
@@ -43,10 +42,8 @@
                 <!-- postfix -->
                 <?php if ($this->postfix != ""): ?>
                     <span class="input-group-addon"
-                    <?php if (@$this->fieldOptions['disabled']): ?>
-                              style="background:#fff;border:1px solid #ececeb; border-left:0px;"
-                          <?php endif; ?>>
-                              <?= $this->postfix ?>
+                    style="{{ textFieldDisabled ? 'background:#fff;border:1px solid #ececeb;border-left:0px' : '' }}">>
+                    <?= $this->postfix ?>
                     </span>
                 <?php endif; ?>
             </div>

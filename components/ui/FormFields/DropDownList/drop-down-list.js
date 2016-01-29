@@ -339,6 +339,13 @@ app.directive('dropDownList', function ($timeout) {
                 $scope.isOpen = false;
                 $scope.text = "";
                 $scope.openedInField = false;
+                $scope.ngDisabled = $el.find("data[name=ng_disabled]:eq(0)").html();
+                $scope.dropdownDisabled = false;
+                if (!!$scope.ngDisabled) {
+                    $scope.$watch($scope.ngDisabled, function(n, o) {
+                        $scope.dropdownDisabled = n;
+                    }, true)
+                };
 
                 $scope.search = "";
                 $timeout(function () {

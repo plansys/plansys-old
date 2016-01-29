@@ -50,11 +50,17 @@
                 <div ng-if="showUnselect && !!value && !isRelFieldDisabled() " style="float: right;margin-right:-30px;margin-bottom:-30px;width:33px;border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;" class="btn btn-default btn-sm" ng-click="unselect()">
                     <i class="fa fa-times"></i>
+                    
                 </div>
                 <button
                     ng-if="!showOther || (showOther && itemExist())" type="button"
                     <?= $this->expandAttributes($this->fieldOptions) ?>
-                    style="{{ isRelFieldDisabled() ? 'opacity:1;background:#fff;border:1px solid #ececeb;' : ''}}">
+                    ng-style="isRelFieldDisabled() && {
+                        'opacity': 1,
+                        'background': '#fff',
+                        'border': '1px solid #ececeb',
+                        'box-shadow': 'none'
+                    }">
                     <i ng-show='loading' class="fa fa-spin fa-refresh"
                        style="position:absolute;right:25px;top:8px;"></i>
                     <span style="{{ isRelFieldDisabled() ? 'display:none' : '' }}" class="caret pull-right"></span>

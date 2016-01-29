@@ -61,6 +61,13 @@ app.directive('textField', function ($timeout, $http) {
                 $scope.acMode = $el.find("data[name=ac_mode]").html();
                 $scope.paramValue = {};
                 $scope.showDropdown = false;
+                $scope.ngDisabled = $el.find("data[name=ng_disabled]:eq(0)").html();
+                $scope.textFieldDisabled = false;
+                if (!!$scope.ngDisabled) {
+                    $scope.$watch($scope.ngDisabled, function(n, o) {
+                        $scope.textFieldDisabled = n;
+                    }, true)
+                };
                 if ($scope.autocomplete == 'php') {
                     $scope.originalList = JSON.parse($el.find("data[name=list]").text());
                     $scope.list = [];
@@ -68,7 +75,7 @@ app.directive('textField', function ($timeout, $http) {
                 } else {
                     $scope.list = [];
                 }
-
+                
                 
                 for (i in $scope.params) {
                     var p = $scope.params[i];
