@@ -796,9 +796,9 @@ class DataSource extends FormField {
             $countCommand = $builder->createCountCommand($tableSchema, new CDbCriteria($criteriaCount));
             $count = $countCommand->queryScalar();
         } else {
-            
-            $relClass = $this->model->metaData->relations[$this->relationTo]->className;
-            $count = $relClass::model()->count(ActiveRecord::convertPagingCriteria($criteria));
+            $rel = $this->model->metaData->relations[$this->relationTo];
+            $this->model->metaData->relations[$rel->name . "__psCount"] =  new CStatRelation($rel->name . "__psCount", $rel->className, $rel->foreignKey);
+            $count = $this->model->getRelated($rel->name . "__psCount");
         }
 
         if (!empty($this->aggregateGroups) && !$isGenerate) {
