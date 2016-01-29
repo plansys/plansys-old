@@ -327,7 +327,9 @@ class ServiceManager extends CComponent {
         $new = $path . DIRECTORY_SEPARATOR . ($count + 1) . "." . $id;
         rename($old, $new);
         if ($count > ServiceManager::MAX_LOG_COUNT) {
-            unlink($logs[0]);
+            if (is_file($logs[0])) {
+                unlink($logs[0]);
+            }
         }
     }
     
