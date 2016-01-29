@@ -81,8 +81,8 @@
                 </div>
                 <div ng-if="renderedFormList.length == 0"
                      style="text-align:center;padding:15px;font-size:12px;color:#999;">
-                    <div ng-if="!loading && jsinternalParamsInitialized">&mdash; NOT FOUND &mdash;</div>
-                    <div ng-if="loading || !jsinternalParamsInitialized">&mdash; LOADING &mdash;</div>
+                    <div ng-if="!loading && jsParamsInitialized">&mdash; NOT FOUND &mdash;</div>
+                    <div ng-if="loading || !jsParamsInitialized">&mdash; LOADING &mdash;</div>
                 </div>
                 <ul ng-if="renderedFormList.length > 0" class="dropdown-menu inner"  style="overflow-x:hidden" role="menu">
                     <li ng-repeat-start="item in renderedFormList track by $index"
