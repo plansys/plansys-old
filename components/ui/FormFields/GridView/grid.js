@@ -418,7 +418,7 @@ app.directive('gridView', function ($timeout, $http) {
                     if ($scope.firstColWidth == 0) return;
                     
                     $el.find('.thead .tr').each(function(tr) {
-                        $('.thead .tr:eq(' + tr + ') .th').each(function(th) {
+                        $el.find('.thead .tr:eq(' + tr + ') .th').each(function(th) {
                             var w = $header.find("tr:eq(" + tr + ") th:eq(" + th + ")").outerWidth();
                             $(this).css({
                                 width:w,
