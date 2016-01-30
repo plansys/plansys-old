@@ -14,7 +14,6 @@ class Controller extends CController {
     public $reportLayout = '//layouts/report';
 
     public function staticUrl($path = '') {
-        
         $static = "/static";
 
         if (!isset($_GET['errorBeforeInstall'])) {
