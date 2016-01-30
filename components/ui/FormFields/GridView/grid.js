@@ -362,14 +362,17 @@ app.directive('gridView', function ($timeout, $http) {
                         }
                     });
                 }
+                
                 $scope.changePage = function () {
                     $scope.gridOptions.pageInfo.currentPage = $scope.gridOptions.pageInfo.typingPage;
                     $scope.savePageSetting();
                 }
+                
                 $scope.firstPage = function () {
                     $scope.gridOptions.pageInfo.currentPage = 1;
                     $scope.savePageSetting();
                 }
+                
                 $scope.prevPage = function () {
                     $scope.gridOptions.pageInfo.currentPage -= 1;
                     if ($scope.gridOptions.pageInfo.currentPage <= 1) {
@@ -377,6 +380,7 @@ app.directive('gridView', function ($timeout, $http) {
                     }
                     $scope.savePageSetting();
                 }
+                
                 $scope.nextPage = function () {
                     $scope.gridOptions.pageInfo.currentPage += 1;
                     if ($scope.gridOptions.pageInfo.currentPage > $scope.datasource.totalItems) {

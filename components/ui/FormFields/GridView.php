@@ -444,6 +444,11 @@ EOL;
                 break;
         }
         
+        if (isset($col['options']['labelHtml'])) {
+            $content = $col['options']['labelHtml'];
+        } else {
+            $col['options']['labelHtml'] = $content;
+        }
         
         if ($mode == 'class') {
             return <<<EOL
