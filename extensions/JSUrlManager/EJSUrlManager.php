@@ -17,10 +17,10 @@ class EJSUrlManager extends CApplicationComponent {
 
         $encodedVars = CJSON::encode($managerVars);
 
-        $asset = Yii::getPathOfAlias('application.static.js.lib');
         $cs = Yii::app()->getClientScript();
 
         $baseUrl = Yii::app()->getRequest()->getBaseUrl();
+        $asset = $baseUrl . '/plansys/static/js/lib';
         $scriptUrl = Yii::app()->getRequest()->getScriptUrl();
         $hostInfo = Yii::app()->getRequest()->getHostInfo();
 
