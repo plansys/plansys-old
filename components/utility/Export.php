@@ -21,6 +21,7 @@ class Export extends CComponent {
                 } else {
                     return 'text';
                 }
+            break;
         }
         return '';
     }
