@@ -162,6 +162,10 @@ app.filter('dateFormat', function (dateFilter) {
             format = plansys.dateFormat;
         }
         
+        if (!format || format === null) {
+            format = "date";
+        }
+        
         if (format == "date") {
             format = plansys.dateFormat;
             if (!format) {
