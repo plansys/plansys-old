@@ -9,7 +9,7 @@ $modules = Setting::getModules();
 $components = array(
     'assetManager' => array(
         'basePath' => Setting::getAssetPath()
-    ),
+    ),        
     'img' => array(
         'class' => 'application.extensions.simpleimage.CSimpleImage',
     ),

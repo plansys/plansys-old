@@ -159,7 +159,6 @@ class Setting {
             Setting::$data = Setting::arrayMergeRecursiveReplace(Setting::$default, $setting);
         }
 
-
         ## set host
         if (!Setting::get('app.host')) {
             $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
@@ -167,10 +166,13 @@ class Setting {
             Setting::set('app.host', $protocol . $_SERVER['HTTP_HOST'] . $port);
         }
 
-
         ## set debug
         if (Setting::$mode == null) {
             Setting::$mode = $mode;
+        }
+        
+        if ($mode == 'testing') {
+            Setting::$mode = 'testing';
         }
 
         if (Setting::get('app.mode') != 'production') {
@@ -383,6 +385,12 @@ class Setting {
                 );
 
                 $config['theme'] = 'default';
+            }
+            
+            if (Setting::$mode == 'testing') {
+                $config['components']['request'] = array(
+                    'class' => 'CodeceptionHttpRequest'
+                ); 
             }
         }
 
