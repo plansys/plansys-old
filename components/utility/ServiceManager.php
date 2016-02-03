@@ -104,7 +104,7 @@ class ServiceManager extends CComponent {
     }
 
     public static function startDaemon() {
-        $pid = ServiceManager::process("run php yiic.php service startDaemon");
+        $pid = ServiceManager::process("run php yiic.php service startDaemon \"".__DIR__."\"");
         if(!empty($pid)){
             Setting::set('services.daemon', [
                 'isRunning' => true,

@@ -26,6 +26,13 @@ class WebUser extends CWebUser {
         return ($operation === $role);
     }
 
+    protected function changeIdentity($id,$name,$states) {
+        @Yii::app()->getSession()->regenerateID(true);
+        $this->setId($id);
+        $this->setName($name);
+        $this->loadIdentityStates($states);
+    }
+    
     public function getModel() {
         try {
             if (is_null($this->_model)) {
