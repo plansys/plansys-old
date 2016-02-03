@@ -88,8 +88,8 @@ class ServiceManager extends CComponent {
 
     public static function checkDaemon() {
         $new = new Block(100);
-        $lastrun = $new->read();
-        if ($lastrun == "") {
+        $lastrun = @$new->read();
+        if ($lastrun == "" || $lastrun == null) {
             $lastrun = false;
         } 
 
