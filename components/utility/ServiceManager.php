@@ -1,4 +1,5 @@
 <?php
+use Simple\SHM\Block;
 
 class ServiceManager extends CComponent {
     const MAX_LOG_COUNT = 10;
@@ -81,18 +82,18 @@ class ServiceManager extends CComponent {
     }
 
     public static function markDaemonAsRun() {
-        $file = Setting::getRuntimePath() . DIRECTORY_SEPARATOR . "daemon_lastrun.txt";
-        file_put_contents($file, time());
+        $new = new Block(100);
+        $new->write(time());
     }
 
     public static function checkDaemon() {
-        $file = Setting::getRuntimePath() . DIRECTORY_SEPARATOR . "daemon_lastrun.txt";
-        $lastrun = false;
-        if (is_file($file)) {
-            $lastrun = file_get_contents($file);
+        $new = new Block(100);
+        $lastrun = $new->read();
+        if ($lastrun == "") {
+            $lastrun = false;
         } 
 
-        ## run marker treshold, in seconds
+        ## if current time 
         if (!$lastrun || time() - $lastrun > 10) {
             return false;
         } else {

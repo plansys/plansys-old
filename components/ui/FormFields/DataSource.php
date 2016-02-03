@@ -797,7 +797,29 @@ class DataSource extends FormField {
             $count = $countCommand->queryScalar();
         } else {
             $rel = $this->model->metaData->relations[$this->relationTo];
-            $this->model->metaData->relations[$rel->name . "__psCount"] =  new CStatRelation($rel->name . "__psCount", $rel->className, $rel->foreignKey);
+            $fkey = $rel->foreignKey;
+            if (is_array($rel->foreignKey)) { 
+                if (isset($rel->through)) {
+                    if (isset($this->model->metaData->relations[$rel->through])) {
+                        $relt = $this->model->metaData->relations[$rel->through];
+                        if (is_string($relt->foreignKey) && get_class($relt) != 'CManyManyRelation') {
+                            $reltClass = $relt->className;
+                            $reltTable = $reltClass::model()->tableName();
+                            $reltFrom = $relt->foreignKey;
+                            $reltTo = array_keys($rel->foreignKey)[0];
+                            
+                            $fkey = "{$reltTable}({$reltFrom},{$reltTo})";
+                        } else {
+                            throw new Exception('Plansys DataSource does not support nested through relation in `' . $rel->name . '`.');
+                        }
+                    } else {
+                        throw new Exception('Relation `' . $rel->name . '` `through` key is not found. ');
+                    }
+                } else {
+                    throw new Exception('Relation `' . $rel->name . '` missing `through` key. You should specify `through` key when using array foreign key');
+                }
+            } 
+            $this->model->metaData->relations[$rel->name . "__psCount"] = new CStatRelation($rel->name . "__psCount", $rel->className, $fkey);
             $count = $this->model->getRelated($rel->name . "__psCount");
         }
 

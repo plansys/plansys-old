@@ -13,8 +13,6 @@
     "phpmailer/phpmailer": "*",
     "box/spout": "dev-master",
     "inlinestyle/inlinestyle": "dev-master",
-    "codeception/codeception": "*",
-    "codeception/YiiBridge": "*",
-    "site5/phantoman": "^1.0"
+    "klaussilveira/simple-shm": "^1.0"
   }
 }
