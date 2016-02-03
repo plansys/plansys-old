@@ -12,7 +12,6 @@
     "nikic/php-parser": "^1.4",
     "phpmailer/phpmailer": "*",
     "box/spout": "dev-master",
-    "inlinestyle/inlinestyle": "dev-master",
-    "klaussilveira/simple-shm": "^1.0"
+    "inlinestyle/inlinestyle": "dev-master"
   }
 }

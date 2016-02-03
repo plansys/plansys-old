@@ -1,5 +1,4 @@
 <?php
-use Simple\SHM\Block;
 
 class ServiceManager extends CComponent {
     const MAX_LOG_COUNT = 10;
@@ -82,16 +81,19 @@ class ServiceManager extends CComponent {
     }
 
     public static function markDaemonAsRun() {
-        $new = new Block(100);
+        $new = new SHMBlock(100);
         $new->write(time());
     }
 
     public static function checkDaemon() {
-        $new = new Block(100);
-        $lastrun = @$new->read();
-        if ($lastrun == "" || $lastrun == null) {
-            $lastrun = false;
-        } 
+        $new = new SHMBlock(100);
+        $lastrun = false;
+        if ($new->exists(100)) {
+            $lastrun = @$new->read();
+            if ($lastrun == "" || $lastrun == null) {
+                $lastrun = false;
+            } 
+        }
 
         ## if current time 
         if (!$lastrun || time() - $lastrun > 10) {

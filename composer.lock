@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e8ae12b95730cf4e56cdaaac7e3149b2",
-    "content-hash": "0200392e7ecd2c72b76ebf4cb56f7a7d",
+    "hash": "263c10de0a326ff0986a73b4e9e4a6e8",
+    "content-hash": "a1c11ec5fdab9b4c30c3f7cf661eb1c7",
     "packages": [
         {
             "name": "box/spout",
@@ -123,36 +123,6 @@
                 "inline"
             ],
             "time": "2015-12-13 20:30:25"
-        },
-        {
-            "name": "klaussilveira/simple-shm",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/klaussilveira/SimpleSHM.git",
-                "reference": "ea8b5bde8366cc449b1acff9b8727fdc2d6a9831"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/klaussilveira/SimpleSHM/zipball/ea8b5bde8366cc449b1acff9b8727fdc2d6a9831",
-                "reference": "ea8b5bde8366cc449b1acff9b8727fdc2d6a9831",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "type": "project",
-            "autoload": {
-                "psr-0": {
-                    "Simple\\SHM": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-2-Clause"
-            ],
-            "description": "SimpleSHM is a simple and small abstraction layer for shared memory manipulation using PHP.",
-            "time": "2014-03-29 01:37:57"
         },
         {
             "name": "nikic/php-parser",
