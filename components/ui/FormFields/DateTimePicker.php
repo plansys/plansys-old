@@ -41,7 +41,8 @@ class DateTimePicker extends FormField
                     'ng-change' => 'save();',
                 ),
                 'list' => array (
-                    'datetime' => 'Date Time',
+                    'datedd' => 'Date Time Dropdown',
+                    'datetime' => 'Date Time Picker',
                     'date' => 'Date',
                     'monthyear' => 'Month Year',
                     'time' => 'Time',
@@ -142,7 +143,7 @@ class DateTimePicker extends FormField
     public $labelOptions = [];
     
     /** @var string $fieldType */
-    public $fieldType = "date";
+    public $fieldType = "datedd";
 	
     /** @var array $fieldOptions */
     public $fieldOptions = [];

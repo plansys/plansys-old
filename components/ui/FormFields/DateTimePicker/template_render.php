@@ -67,11 +67,10 @@
                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="isDPDisabled">
                     {{ year}} <span class="caret"></span>
                 </button>
-                <ul class="dropdown-menu" dropdown-toggle role="menu">
+                <ul class="dropdown-menu pull-right" dropdown-toggle role="menu" style="max-height:150px;width:80px;">
                     <li ng-repeat="i in yearList"><a href="#" ng-click="changeYear(i)">{{ i}}</a></li>
                 </ul>
             </div>
-
         </div>
 
 
