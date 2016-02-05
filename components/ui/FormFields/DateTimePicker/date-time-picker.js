@@ -15,10 +15,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                             var time = dateFilter($scope.time, 'HH:mm:00');
                             $scope.value = $scope.date + " " + time;
                             break;
-                        case 'date':
-                            $scope.value = $scope.date;
-                            break;
-                        case 'monthyear':
+                        case 'datepicker':
                             $scope.value = $scope.date;
                             break;
                         case 'time':
@@ -43,6 +40,27 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                 $scope.changeTime = function (e) {
                     $scope.time = dateFilter(e.time, 'HH:mm:00');
                     $scope.update();
+                }
+
+                $scope.changeDropdown = function () {
+                    if ($scope.dd.year == 'Other') {
+                        $scope.dd.year = prompt('What year?');
+                        if (isNaN($scope.dd.year) || $scope.dd.year === null) {
+                            $scope.dd.year = $scope.yearList[0];
+                        } else if ($scope.yearList.indexOf($scope.dd.year) < 0) {
+                            $scope.yearList.unshift($scope.dd.year);
+                        }
+                    }
+
+                    var maxDay = (new Date($scope.dd.year, $scope.dd.month + 1, 0)).getDate();
+                    if ($scope.dd.day * 1 > maxDay) {
+                        $scope.dd.day = maxDay;
+                    }
+
+                    $scope.dd.day = $scope.dd.day < 10 ? "0" + ($scope.dd.day * 1) : $scope.dd.day + "";
+                    var month = $scope.dd.month + 1 < 10 ? "0" + ($scope.dd.month + 1) : $scope.dd.month + 1;
+                    $scope.value = $scope.dd.year + "-" + month + "-" + $scope.dd.day;
+                    ctrl.$setViewValue($scope.value);
                 }
 
                 $scope.openDatePicker = function ($event) {
@@ -126,6 +144,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                                     $scope.value = dateFilter(new Date(), 'yyyy-MM-dd HH:mm:00');
                                     break;
                                 case 'date':
+                                case 'datepicker':
                                     $scope.value = dateFilter(new Date(), 'yyyy-MM-dd');
                                     break;
                                 case 'time':
@@ -143,7 +162,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
 
                     // switch it based on fieldType
                     switch ($scope.fieldType) {
-                        case "date":
+                        case "datepicker":
                             if (split.length == 1) {
                                 $scope.date = split[0];
                             } else if (split.length == 2) {
@@ -165,20 +184,33 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                             if (split.length > 1) {
                                 $scope.time = $scope.parseTime(split[1]);
                             }
-
                             break;
                         case "monthyear":
+                        case "date":
                             var dd = split[0].split("-");
                             if (dd.length > 1) {
-                                $scope.month = dd[1] - 1;
-                                $scope.year = dd[0];
+                                $scope.dd.month = dd[1] - 1;
+                                $scope.dd.year = dd[0];
+                                $scope.dd.day = (dd.length > 2 ? dd[2] : 1);
+
+                                var maxDay = (new Date($scope.dd.year, $scope.dd.month + 1, 0)).getDate();
+                                if ($scope.dd.day *1 > maxDay) {
+                                    $scope.dd.day = maxDay;
+                                    $scope.value = $scope.dd.year + "-" + ($scope.dd.month +1) + '-' + $scope.dd.day;
+                                    ctrl.$setViewValue($scope.value);
+                                }
                             } else {
-                                $scope.month = window.date("m") -1;
-                                $scope.year = window.date("Y"); 
+                                $scope.dd.month = window.date("m") -1;
+                                $scope.dd.year = window.date("Y"); 
+                                $scope.dd.day = window.date("d");
                                 $scope.value = window.date("Y-m-d");
                                 ctrl.$setViewValue($scope.value);
                             }
-                            var y = $scope.year * 1;
+                            if ($scope.dd.day < 10) {
+                                $scope.dd.day = "0" + ($scope.dd.day * 1);
+                            }
+
+                            var y = $scope.dd.year * 1;
                             var startYear = y-1;
                             var endYear = y+1;
                             if (!!$scope.dateOptions['start-year']) {
@@ -192,36 +224,24 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                                 startYear = endYear;
                                 endYear = tempYear;
                             }
-                            
                             $scope.yearList = [];
-                            for (var i = startYear; i < endYear; i++) {
-                                $scope.yearList.push(i);
+                            for (var i = startYear; i <= endYear; i++) {
+                                $scope.yearList.push(i + "");
+                            }
+
+                            if ($scope.dateOptions['hide-other-year'] !== 'true') {
+                                $scope.yearList.push('Other');
                             }
                     }
                 }
 
-                $scope.changeMonth = function (m) {
-                    $scope.month = m;
-
-                    var month = $scope.month < 10 ? "0" + ($scope.month + 1) : $scope.month + 1;
-                    $scope.value = $scope.year + "-" + month + "-01";
-                    ctrl.$setViewValue($scope.value);
-                }
-
-                $scope.changeYear = function (y) {
-                    $scope.year = y;
-
-                    var month = $scope.month < 10 ? "0" + ($scope.month + 1) : $scope.month + 1;
-                    $scope.value = $scope.year + "-" + month + "-01";
-                    ctrl.$setViewValue($scope.value);
-                }
 
                 // when ng-model is changed from outside directive
                 if (!!ctrl) {
                     ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;
-                            
+
                         if (!ctrl.$viewValue) {
                             ctrl.$setViewValue(window.date("Y-m-d"));
                         }
@@ -240,9 +260,29 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                 $scope.date = null;
                 $scope.time = "";
                 $scope.splitDateTime();
-                $scope.monthList = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
-                    "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-                    
+                $scope.dd = {
+                    day: "",
+                    month: "",
+                    year: ""
+                };
+                $scope.dayList = ["01","02","03","04","05","06","07","08","09","10",
+                                  "11","12","13","14","15","16","17","18","19","20",
+                                  "21","22","23","24","25","26","27","28","29","30",
+                                  "31"];
+                $scope.monthList = [
+                    {i:0,n:"Januari"}, 
+                    {i:1,n:"Februari"},
+                    {i:2,n:"Maret"},
+                    {i:3,n:"April"},
+                    {i:4,n:"Mei"},
+                    {i:5,n:"Juni"},
+                    {i:6,n:"Juli"},
+                    {i:7,n:"Agustus"},
+                    {i:8,n:"September"},
+                    {i:9,n:"Oktober"},
+                    {i:10,n:"November"},
+                    {i:11,n:"Desember"}
+                ];
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.disabledCondition = $el.find("data[name=is_disabled]").text().trim();
                 $scope.fieldType = $el.find("data[name=field_type]").text();

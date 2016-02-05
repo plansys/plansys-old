@@ -27,8 +27,20 @@
         <!-- /data -->
 
         <!-- field -->
+        <div ng-if="['monthyear', 'date'].indexOf(fieldType) >= 0" >
+            <select ng-options="item for item in dayList" ng-show="fieldType == 'date'"
+                    name="<?= $this->renderName ?>[day]" id="<?= $this->renderID ?>_day"
+                    ng-model="dd.day" ng-change="changeDropdown()"></select>
+            <select ng-options="item.i as item.n for item in monthList"
+                    name="<?= $this->renderName ?>[month]" id="<?= $this->renderID ?>_month"
+                    ng-model="dd.month" ng-change="changeDropdown()"></select>
+            <select ng-options="item for item in yearList"
+                    name="<?= $this->renderName ?>[year]" id="<?= $this->renderID ?>_year"
+                    ng-model="dd.year" ng-change="changeDropdown()"></select>
+        </div>
+
         <!-- date field -->
-        <div ng-if="['date', 'datetime'].indexOf(fieldType) >= 0" 
+        <div ng-if="['datepicker', 'datetime'].indexOf(fieldType) >= 0" 
              class="date-field {{ !isDPDisabled ? 'input-group' : ''}}"
              style="{{ !isDPDisabled ? 'text-align:left !important;width:90px;' : '' }}">
             <!-- value -->
@@ -72,7 +84,6 @@
                 </ul>
             </div>
         </div>
-
 
         <input id="<?= $this->renderID ?>" name="<?= $this->renderName ?>" type="hidden" ng-value="value"/>
         <!-- /field -->
