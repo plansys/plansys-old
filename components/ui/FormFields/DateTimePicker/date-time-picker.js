@@ -51,7 +51,6 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                             $scope.yearList.unshift($scope.dd.year);
                         }
                     }
-
                     var maxDay = (new Date($scope.dd.year, $scope.dd.month + 1, 0)).getDate();
                     if ($scope.dd.day * 1 > maxDay) {
                         $scope.dd.day = maxDay;
@@ -60,6 +59,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                     $scope.dd.day = $scope.dd.day < 10 ? "0" + ($scope.dd.day * 1) : $scope.dd.day + "";
                     var month = $scope.dd.month + 1 < 10 ? "0" + ($scope.dd.month + 1) : $scope.dd.month + 1;
                     $scope.value = $scope.dd.year + "-" + month + "-" + $scope.dd.day;
+                    
                     ctrl.$setViewValue($scope.value);
                 }
 
@@ -200,38 +200,51 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                                     ctrl.$setViewValue($scope.value);
                                 }
                             } else {
-                                $scope.dd.month = window.date("m") -1;
-                                $scope.dd.year = window.date("Y"); 
-                                $scope.dd.day = window.date("d");
-                                $scope.value = window.date("Y-m-d");
+                                if ($scope.defaultToday == 'Yes') {
+                                    $scope.dd.month = window.date("m") -1;
+                                    $scope.dd.year = window.date("Y"); 
+                                    $scope.dd.day = window.date("d");
+                                    $scope.value = window.date("Y-m-d");
+                                } else {
+                                    $scope.dd.month = '';
+                                    $scope.dd.year = ''; 
+                                    $scope.dd.day = '';
+                                    $scope.value = null;                                    
+                                }
                                 ctrl.$setViewValue($scope.value);
                             }
                             if ($scope.dd.day < 10) {
                                 $scope.dd.day = "0" + ($scope.dd.day * 1);
                             }
 
-                            var y = $scope.dd.year * 1;
+                            var y = window.date("Y") * 1;
                             var startYear = y-1;
                             var endYear = y+1;
                             if (!!$scope.dateOptions['start-year']) {
                                 startYear = $scope.parseYear($scope.dateOptions['start-year']);
                             }  
-                            if (!!$scope.dateOptions['start-year']) {
+                            if (!!$scope.dateOptions['end-year']) {
                                 endYear = $scope.parseYear($scope.dateOptions['end-year']);
                             }
-                            if (startYear > endYear) {
-                                var tempYear = startYear;
-                                startYear = endYear;
-                                endYear = tempYear;
-                            }
                             $scope.yearList = [];
-                            for (var i = startYear; i <= endYear; i++) {
-                                $scope.yearList.push(i + "");
+                            if ($scope.defaultToday != 'Yes') {
+                                $scope.yearList.push('');
+                            }
+                            
+                            if (startYear >= endYear) {
+                                for (var i = endYear; i > startYear; i--) {
+                                    $scope.yearList.push(i + "");
+                                }
+                            } else {
+                                for (var i = startYear; i <= endYear; i++) {
+                                    $scope.yearList.push(i + "");
+                                }
                             }
 
                             if ($scope.dateOptions['hide-other-year'] !== 'true') {
                                 $scope.yearList.push('Other');
                             }
+                        break;
                     }
                 }
 
@@ -242,7 +255,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;
 
-                        if (!ctrl.$viewValue) {
+                        if (!ctrl.$viewValue && $scope.defaultToday == 'Yes') {
                             ctrl.$setViewValue(window.date("Y-m-d"));
                         }
 
@@ -255,6 +268,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                 }
 
                 // set default value
+                $scope.name = $el.find("data[name=name]").html().trim();
                 $scope.value = $el.find("data[name=value]").html().trim();
                 $scope.defaultToday = $el.find("data[name=default_today]").html().trim();
                 $scope.date = null;
@@ -265,28 +279,51 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                     month: "",
                     year: ""
                 };
-                $scope.dayList = ["01","02","03","04","05","06","07","08","09","10",
-                                  "11","12","13","14","15","16","17","18","19","20",
-                                  "21","22","23","24","25","26","27","28","29","30",
-                                  "31"];
-                $scope.monthList = [
-                    {i:0,n:"Januari"}, 
-                    {i:1,n:"Februari"},
-                    {i:2,n:"Maret"},
-                    {i:3,n:"April"},
-                    {i:4,n:"Mei"},
-                    {i:5,n:"Juni"},
-                    {i:6,n:"Juli"},
-                    {i:7,n:"Agustus"},
-                    {i:8,n:"September"},
-                    {i:9,n:"Oktober"},
-                    {i:10,n:"November"},
-                    {i:11,n:"Desember"}
-                ];
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.disabledCondition = $el.find("data[name=is_disabled]").text().trim();
                 $scope.fieldType = $el.find("data[name=field_type]").text();
                 $scope.dateOptions = JSON.parse($el.find("data[name=date_options]").text());
+                
+                $scope.dayList = ["01","02","03","04","05","06","07","08","09","10",
+                                  "11","12","13","14","15","16","17","18","19","20",
+                                  "21","22","23","24","25","26","27","28","29","30",
+                                  "31"];
+                
+                if ($scope.dateOptions['short-month'] == 'true') {
+                    $scope.monthList = [
+                        {i:0,n:"Jan"}, 
+                        {i:1,n:"Feb"},
+                        {i:2,n:"Mar"},
+                        {i:3,n:"Apr"},
+                        {i:4,n:"Mei"},
+                        {i:5,n:"Jun"},
+                        {i:6,n:"Jul"},
+                        {i:7,n:"Ags"},
+                        {i:8,n:"Sep"},
+                        {i:9,n:"Okt"},
+                        {i:10,n:"Nov"},
+                        {i:11,n:"Des"}
+                    ];
+                } else {
+                    $scope.monthList = [
+                        {i:0,n:"Januari"}, 
+                        {i:1,n:"Februari"},
+                        {i:2,n:"Maret"},
+                        {i:3,n:"April"},
+                        {i:4,n:"Mei"},
+                        {i:5,n:"Juni"},
+                        {i:6,n:"Juli"},
+                        {i:7,n:"Agustus"},
+                        {i:8,n:"September"},
+                        {i:9,n:"Oktober"},
+                        {i:10,n:"November"},
+                        {i:11,n:"Desember"}
+                    ];
+                }
+                
+                if ($scope.defaultToday != 'Yes') {
+                    $scope.monthList.unshift({i:'',n:''});
+                }
                 
                 $scope.$watch($scope.disabledCondition, function() {
                     $scope.isDPDisabled = $scope.$eval($scope.disabledCondition);
@@ -298,6 +335,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                 
                 // if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {
+                            
                     $timeout(function () {
                         var ngModelValue = $scope.$eval(attrs.ngModel);
                         if (typeof ngModelValue != "undefined") {

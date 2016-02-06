@@ -1282,20 +1282,23 @@ class ActiveRecord extends CActiveRecord {
         $pk = $this->tableSchema->primaryKey;
 
         if ($this->isNewRecord) {
-            if (Setting::get('db.driver') == "mysql") {
+            if ($this->dbConnection->driverName == "mysql") {
                 $this->{$pk} = $this->dbConnection->getLastInsertID(); ## this is hack
-                ## UPDATE AUDIT TRAIL 'CREATE' ID
-                if (isset(Yii::app()->user) && !Yii::app()->user->isGuest) {
-                    $a = $this->dbConnection->createCommand("
-            update p_audit_trail set model_id = :model_id
-            WHERE user_id = :user_id and
-            model_class = :model_class and
-            type = 'create' and
-            model_id is null")->execute([
-                        'model_class' => ActiveRecord::baseClass($this),
-                        'model_id' => $this->{$pk},
-                        'user_id' => Yii::app()->user->id
-                    ]);
+                
+                if (isset($this->dbConnection->schema->tables['p_audit_trail'])) {
+                    ## UPDATE AUDIT TRAIL 'CREATE' ID
+                    if (isset(Yii::app()->user) && !Yii::app()->user->isGuest) {
+                        $a = $this->dbConnection->createCommand("
+                update p_audit_trail set model_id = :model_id
+                WHERE user_id = :user_id and
+                model_class = :model_class and
+                type = 'create' and
+                model_id is null")->execute([
+                            'model_class' => ActiveRecord::baseClass($this),
+                            'model_id' => $this->{$pk},
+                            'user_id' => Yii::app()->user->id
+                        ]);
+                    }
                 }
             }
         } else {
