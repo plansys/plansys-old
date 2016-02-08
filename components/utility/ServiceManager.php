@@ -210,6 +210,13 @@ class ServiceManager extends CComponent {
         } 
     }
     
+    public static function getJson() {
+        
+    }
+    
+    public static function setJson() {
+        
+    }
     
     public static function kill($name) {
         $result = ServiceManager::getRunningInstance($name);
