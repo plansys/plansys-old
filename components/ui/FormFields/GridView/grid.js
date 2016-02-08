@@ -182,6 +182,7 @@ app.directive('gridView', function ($timeout, $http) {
                         case 'edit':
                             var idx = $scope.datasource.updateData.indexOf(row);
                             $scope.datasource.updateData.splice(idx, 1);
+                            $scope.datasource.internalQuery = true;
                             $scope.datasource.query();
                             break;
                     }
@@ -245,10 +246,9 @@ app.directive('gridView', function ($timeout, $http) {
                     }
 
                     if (changing) {
+                        $scope.datasource.internalQuery = true;
                         $scope.datasource.query();
-                    } else {
-                        $scope.datasource.disableTrackChanges(false);
-                    }
+                    } 
                 }
 
                 // update sorting
@@ -930,6 +930,11 @@ app.directive('gridView', function ($timeout, $http) {
                         }
                     }, 500);
                     $timeout(function () {
+                        if (!$scope.datasource.trackChanges) {
+                            $scope.datasource.resetOriginal();
+                            $scope.datasource.enableTrackChanges();
+                        }
+                        
                         $scope.datasource.beforeQueryInternal[$scope.renderID] = function () {
                             $scope.loading = true;
                             if ($scope.datasource.lastQueryFrom == "DataFilter" && !!$scope.gridOptions.pageInfo) {

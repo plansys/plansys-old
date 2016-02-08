@@ -3,6 +3,7 @@ class RepoProperties extends Form{
     public function getFields() {
         return array (
             array (
+                'type' => 'Text',
                 'value' => '<div style=\"border-top:1px solid #ccc;text-align:center;padding-top:30px;color:#888;\">
 <div ng-if=\"selected\">
     <div style=\"{{selected.type == \'dir\' ? \'margin:30px 0px -30px 0px\' : \'\' }}\" ng-bind-html=\"thumb\"></div>
@@ -13,9 +14,14 @@ class RepoProperties extends Form{
     <i class=\"fa fa-download\"></i>
         Download
     </a>
+    
+    <a ng-click=\"onRemove(selected,dirs)\" style=\"margin-top:10px\" ng-if=\"selected.type != \'loading\'\" class=\"btn btn-danger\">
+    <i class=\"fa fa-trash\"></i>
+        Delete
+    </a>
+    
 </div>
 </div>',
-                'type' => 'Text',
             ),
         );
     }

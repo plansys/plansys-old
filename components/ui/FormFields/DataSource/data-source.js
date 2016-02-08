@@ -268,19 +268,57 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     angular.forEach($scope.params, function (p, i) {
                         if (p != null && p.indexOf('js:') === 0) {
                             var value = parent.$eval(p.replace('js:', ''));
-                            var watch = parent.$eval('"' + p.replace('js:', '') + '"');
+                            var watchValue = parent.$eval('"' + p.replace('js:', '') + '"');
                             var key = i;
-                            parent.$watchCollection(watch, function (newv, oldv) {
-                                if (newv != oldv) {
-                                    $scope.updateParam(key, newv);
+                            var updateWatched = function(newv) {
+                                $scope.updateParam(key, newv);
+                                
+                                $scope.query(function () {
+                                    $scope.trackChanges = false;
+                                    $scope.internalQuery = true;
+                                    $scope.resetOriginal();
+                                });
+                            }
+                            
+                            if (typeof value == 'undefined') {
+                                // when datasource is placed INSIDE listview
+                                $timeout(function() {
+                                    value = parent.$eval(p.replace('js:', ''));
+                                    watchValue = parent.$eval('"' + p.replace('js:', '') + '"');
                                     
-                                    $scope.query(function () {
-                                        $scope.trackChanges = false;
-                                        $scope.internalQuery = true;
-                                        $scope.resetOriginal();
-                                    });
-                                }
-                            });
+                                    if (typeof value == 'undefined') {
+                                        var sval = watchValue.split('.');
+                                        if (sval.length > 1) {
+                                            var watched = sval.pop();
+                                            var parentVal = sval.join(".");
+                                            if (!!$scope.$eval(parentVal)) {
+                                                $scope.$watch(parentVal, function (newv, oldv) {
+                                                    if (newv[watched] !== oldv[watched]) {
+                                                        updateWatched(newv[watched]);
+                                                    }
+                                                }, true);
+                                            } else {
+                                                alert("Failed to assign parameter `" + p + "`. variable is not defined!");
+                                            }
+                                        } else {
+                                            alert("Failed to assign parameter `" + p + "`. variable is not defined!");
+                                        }
+                                    } else {
+                                        parent.$watchCollection(watchValue, function (newv, oldv) {
+                                            if (newv != oldv) {
+                                                updateWatched(newv)
+                                            }
+                                        });
+                                    }
+                                });
+                            } else {
+                                parent.$watchCollection(watchValue, function (newv, oldv) {
+                                    if (newv != oldv) {
+                                        updateWatched(newv)
+                                    }
+                                });
+                            }
+                            
     
                             $scope.updateParam(i, value)
                             jsParamExist = true;
@@ -319,6 +357,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
 
                 $scope.disableTrackChanges = function () {
                     $scope.trackChanges = false;
+                    console.log("DISABLED");
                 }
 
                 var diff = function (oldArray, newArray) {
@@ -378,7 +417,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     return diff;
                 };
 
-                
                 if ($scope.postData == 'Yes') {
                     $scope.resetOriginal();
                     $scope.$watch('data', function (newval, oldval) {
