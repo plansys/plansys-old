@@ -83,27 +83,6 @@ class Setting {
         }
     }
 
-    public static function get($key, $default = null, $forceRead = false) {
-        $keys = explode('.', $key);
-
-        if ($forceRead) {
-            $file = @file_get_contents(Setting::$path);   
-            $setting       = json_decode($file, true);
-            Setting::$data = Setting::arrayMergeRecursiveReplace(Setting::$default, $setting);
-        }
-
-        $arr = Setting::$data;
-        while ($k = array_shift($keys)) {
-            $arr = &$arr[$k];
-        }
-
-        if ($arr == null) {
-            $arr = $default;
-        }
-
-        return $arr;
-    }
-
     public static function init($configfile, $mode = "running", $entryScript = "") {
         require_once("Installer.php");
 
@@ -270,6 +249,27 @@ class Setting {
         return $paArray1;
     }
 
+    public static function get($key, $default = null, $forceRead = false) {
+        $keys = explode('.', $key);
+        
+        if ($forceRead) {
+            $file = @file_get_contents(Setting::$path);   
+            $setting       = json_decode($file, true);
+            Setting::$data = Setting::arrayMergeRecursiveReplace(Setting::$default, $setting);
+        }
+
+        $arr = Setting::$data;
+        while ($k = array_shift($keys)) {
+            $arr = &$arr[$k];
+        }
+
+        if ($arr == null) {
+            $arr = $default;
+        }
+
+        return $arr;
+    }
+    
     public static function set($key, $value, $flushSetting = true) {
         Setting::setInternal(Setting::$data, $key, $value);
 
@@ -289,6 +289,14 @@ class Setting {
     }
 
     public static function write() {
+        if (@Setting::$data['db']['username'] == "" || @Setting::$data['db']['password'] == "") {
+            $data = date("Y-m-d H:i:s");
+            $data .= "\n\n";
+            $data .= var_export($_SERVER, true);
+            
+            @file_put_contents(Setting::getAssetPath() . "/setting_json_error.txt", $data);
+        }
+        
         $result = @file_put_contents(Setting::$path, json_encode(Setting::$data, JSON_PRETTY_PRINT));
     }
 

@@ -30,15 +30,17 @@ class Form extends CFormModel {
                 
                 if (isset($this->attributes[$lv['name']])) {
                     $items = $this->attributes[$lv['name']];
-                    foreach ($items as $k=>$item) {
-                        Yii::import($lv['templateForm']);
-                        $newClass = Helper::explodeLast(".", $lv['templateForm']);
-                        $new = new $newClass;
-                        $new->attributes = $item;
-                        $new->validate();
-                        if ($new->hasErrors()) {
-                            foreach ($new->errors as $name=>$errors) {
-                                $this->addError($name, implode("<br> &bull; ", $errors));
+                    if (is_array($items)) {
+                        foreach ($items as $k=>$item) {
+                            Yii::import($lv['templateForm']);
+                            $newClass = Helper::explodeLast(".", $lv['templateForm']);
+                            $new = new $newClass;
+                            $new->attributes = $item;
+                            $new->validate();
+                            if ($new->hasErrors()) {
+                                foreach ($new->errors as $name=>$errors) {
+                                    $this->addError($name, implode("<br> &bull; ", $errors));
+                                }
                             }
                         }
                     }
