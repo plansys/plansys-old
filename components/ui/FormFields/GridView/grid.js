@@ -182,7 +182,6 @@ app.directive('gridView', function ($timeout, $http) {
                         case 'edit':
                             var idx = $scope.datasource.updateData.indexOf(row);
                             $scope.datasource.updateData.splice(idx, 1);
-                            $scope.datasource.internalQuery = true;
                             $scope.datasource.query();
                             break;
                     }
@@ -246,7 +245,6 @@ app.directive('gridView', function ($timeout, $http) {
                     }
 
                     if (changing) {
-                        $scope.datasource.internalQuery = true;
                         $scope.datasource.query();
                     } 
                 }
@@ -772,7 +770,6 @@ app.directive('gridView', function ($timeout, $http) {
                         var row = [];
                         $(e).find('td').each(function(j, f) {
                             if (availableHeader.indexOf(j) >= 0) {
-                                console.log("k" + j);
                                 row.push($(f).text().trim());
                             }
                         });
@@ -940,7 +937,7 @@ app.directive('gridView', function ($timeout, $http) {
                             if ($scope.datasource.lastQueryFrom == "DataFilter" && !!$scope.gridOptions.pageInfo) {
                                 $scope.gridOptions.pageInfo.currentPage = 1;
                             }
-                            $scope.datasource.disableTrackChanges();
+                            $scope.datasource.disableTrackChanges('944');
                             $scope.lastCheckbox = null;
                         }
                         $scope.datasource.afterQueryInternal[$scope.renderID] = function () {
@@ -951,6 +948,7 @@ app.directive('gridView', function ($timeout, $http) {
                             if (!$scope.datasource.trackChanges) {
                                 $scope.datasource.resetOriginal();
                                 $scope.datasource.enableTrackChanges();
+                                $scope.datasource.trackChanges = true;
                             }
                             $scope.lastCheckbox = null;
                             $scope.onGridRender('query');
@@ -961,7 +959,7 @@ app.directive('gridView', function ($timeout, $http) {
                         $scope.loadPageSetting();
                     });
                 };
-                $scope.datasource.disableTrackChanges();
+                $scope.datasource.disableTrackChanges('965');
                 $scope.gridRenderTimeout = null;
                 $scope.onGridRender = function (flag) {
                     if ($scope.gridRenderTimeout !== null) {

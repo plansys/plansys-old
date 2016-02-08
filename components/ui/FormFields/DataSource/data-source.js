@@ -275,7 +275,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                 
                                 $scope.query(function () {
                                     $scope.trackChanges = false;
-                                    $scope.internalQuery = true;
                                     $scope.resetOriginal();
                                 });
                             }
@@ -326,7 +325,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     });
                 }
 
-                $scope.internalQuery = false;
                 $scope.trackChanges = true;
                 $scope.resetOriginal = function () {
                     $scope.original = angular.copy($scope.data);
@@ -335,7 +333,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 if (jsParamExist) {
                     $scope.query(function () {
                         $scope.trackChanges = false;
-                        $scope.internalQuery = true;
                         $scope.resetOriginal();
                     });
                 } else {
@@ -350,14 +347,11 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 }
 
                 $scope.enableTrackChanges = function () {
-                    if (!$scope.internalQuery) {
-                        $scope.trackChanges = true;
-                    }
+                    $scope.trackChanges = true;
                 }
 
                 $scope.disableTrackChanges = function () {
                     $scope.trackChanges = false;
-                    console.log("DISABLED");
                 }
 
                 var diff = function (oldArray, newArray) {
@@ -416,6 +410,9 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
 
                     return diff;
                 };
+                
+                
+                
 
                 if ($scope.postData == 'Yes') {
                     $scope.resetOriginal();
@@ -483,10 +480,10 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                             }
                         }
                         
-                        if ($scope.trackChanges === false && $scope.internalQuery === true) {
+                        if ($scope.trackChanges === false) {
                             $scope.trackChanges = true;
-                            $scope.internalQuery = false;
                         }
+                        
                     }, true);
                 }
 
