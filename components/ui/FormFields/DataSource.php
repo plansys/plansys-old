@@ -73,7 +73,6 @@ class DataSource extends FormField {
 
         ## execute SQL
         $this->command = $db->createCommand($template['sql']);
-
         $data = $this->command->queryAll(true, $template['params']);
 
         ## if should count, then count..

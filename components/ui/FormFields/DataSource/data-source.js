@@ -333,11 +333,12 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
 
                 if (jsParamExist) {
                     $scope.query(function () {
-                        $scope.trackChanges = false;
+                        $scope.trackChanges = true;
                         $scope.resetOriginal();
                     });
                 } else {
                     $scope.data = JSON.parse($el.find("data[name=data]:eq(0)").text());
+                    $scope.trackChanges = true;
                 }
                 
                 for(i in $scope.data) {

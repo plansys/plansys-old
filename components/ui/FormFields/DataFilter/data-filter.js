@@ -265,7 +265,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         }
 
                         if (dsParamName != "") {
-                            if (filter.value != "") {
+                            if (!!filter.value && filter.value != "") {
                                 var prepared = $scope.prepareDSParams(filter);
                                 ds.updateParam(prepared.name, {
                                     value: prepared.value,
