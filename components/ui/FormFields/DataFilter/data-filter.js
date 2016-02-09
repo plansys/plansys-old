@@ -920,8 +920,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 }
                 parent[$scope.name] = $scope;
                 $scope.available = false;
-
-
+                
                 if (!!$scope.options.freeze) {
                     var $container = $el.parents('.container-full');
                     var paddingLeft = $el.offset().left;
