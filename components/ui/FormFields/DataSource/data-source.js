@@ -411,8 +411,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     return diff;
                 };
                 
-                
-                
 
                 if ($scope.postData == 'Yes') {
                     $scope.resetOriginal();
@@ -478,10 +476,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                     }
                                 }
                             }
-                        }
-                        
-                        if ($scope.trackChanges === false) {
-                            $scope.trackChanges = true;
                         }
                         
                     }, true);

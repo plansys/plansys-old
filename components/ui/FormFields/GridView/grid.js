@@ -939,12 +939,14 @@ app.directive('gridView', function ($timeout, $http) {
                             }
                             $scope.datasource.disableTrackChanges('944');
                             $scope.lastCheckbox = null;
+                            console.log($scope.datasource.trackChanges);
                         }
                         $scope.datasource.afterQueryInternal[$scope.renderID] = function () {
                             $scope.loading = false;
                             if (!$scope.loaded) {
                                 $scope.loaded = true;
                             }
+                            console.log($scope.datasource.trackChanges);
                             if (!$scope.datasource.trackChanges) {
                                 $scope.datasource.resetOriginal();
                                 $scope.datasource.enableTrackChanges();

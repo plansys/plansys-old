@@ -159,8 +159,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                         paging.currentPage = 1;
                                     }
                                 }
+                                ds.enableTrackChanges();
                             }
-
+                            
+                            ds.disableTrackChanges();
                             ds.lastQueryFrom = "DataFilter";
                             ds.query(function () {
                                 delete ds.afterQueryInternal[$scope.renderID];
@@ -289,8 +291,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                             paging.currentPage = 1;
                                         }
                                     }
+                                    ds.enableTrackChanges();
                                 }
-
+                                
+                                ds.disableTrackChanges();
                                 ds.lastQueryFrom = "DataFilter";
                                 ds.query(function () {
                                     delete ds.afterQueryInternal[$scope.renderID];
@@ -302,7 +306,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                     if (!!filter.options && !!filter.options['ng-change']) {
                                         $scope.$eval(filter.options['ng-change']);
                                     }
-
                                 });
                             }
                         }
@@ -979,7 +982,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                             var ds = parent[dataSourceName];
                             if (ds) {
                                 ds.lastQueryFrom = "DataFilter";
-                                ds.query();
+                                ds.disableTrackChanges();
+                                ds.query(function() {
+                                    ds.enableTrackChanges();
+                                });
                             }
                         });
 
@@ -1078,7 +1084,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                             var ds = parent[dataSourceName];
                             if (ds) {
                                 ds.lastQueryFrom = "DataFilter";
-                                ds.query();
+                                ds.disableTrackChanges();
+                                ds.query(function() {
+                                    ds.enableTrackChanges();
+                                });
                             }
                         });
                     }
