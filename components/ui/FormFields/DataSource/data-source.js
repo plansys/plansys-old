@@ -303,6 +303,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                             alert("Failed to assign parameter `" + p + "`. variable is not defined!");
                                         }
                                     } else {
+                                        updateWatched(value);
                                         parent.$watchCollection(watchValue, function (newv, oldv) {
                                             if (newv != oldv) {
                                                 updateWatched(newv)
@@ -325,7 +326,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     });
                 }
 
-                $scope.trackChanges = true;
+                $scope.trackChanges = false;
                 $scope.resetOriginal = function () {
                     $scope.original = angular.copy($scope.data);
                 }
@@ -348,7 +349,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
 
                 $scope.enableTrackChanges = function (from) {
                     // if (!!from) {
-                    //     console.log(from);
+                    //     console.log('ENABLED', from);
                     // }
                     
                     $scope.trackChanges = true;
@@ -356,7 +357,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
 
                 $scope.disableTrackChanges = function (from) {
                     // if (!!from) {
-                    //     console.log(from);
+                    //     console.log('DISABLED', from);
                     // }
                     
                     $scope.trackChanges = false;

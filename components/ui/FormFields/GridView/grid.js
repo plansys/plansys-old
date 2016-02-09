@@ -246,9 +246,7 @@ app.directive('gridView', function ($timeout, $http) {
 
                     if (changing) {
                         $scope.datasource.query();
-                    } else {
-                        $scope.datasource.enableTrackChanges();
-                    }
+                    } 
                 }
 
                 // update sorting
@@ -945,7 +943,6 @@ app.directive('gridView', function ($timeout, $http) {
                             if (!$scope.datasource.trackChanges) {
                                 $scope.datasource.resetOriginal();
                                 $scope.datasource.enableTrackChanges('grid 948');
-                                $scope.datasource.trackChanges = true;
                             }
                             $scope.lastCheckbox = null;
                             $scope.onGridRender('query');
