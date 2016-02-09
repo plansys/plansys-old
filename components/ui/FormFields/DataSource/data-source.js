@@ -346,7 +346,11 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     } 
                 }
 
-                $scope.enableTrackChanges = function () {
+                $scope.enableTrackChanges = function (from) {
+                    if (!!from) {
+                        console.log(from);
+                    }
+                    
                     $scope.trackChanges = true;
                 }
 
