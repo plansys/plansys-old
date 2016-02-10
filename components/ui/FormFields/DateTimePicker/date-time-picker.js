@@ -4,10 +4,16 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
         scope: true,
         compile: function (element, attrs, transclude) {
             if (attrs.ngModel && !attrs.ngDelay) {
-                attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
+                var fieldType = element.find("data[name=field_type]").text();
+                // if (fieldType == 'date') {
+                //     attrs.$set('ngModel', '$parent.$parent.' + attrs.ngModel, false);
+                // } else {
+                    attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
+                // }
             }
 
             return function ($scope, $el, attrs, ctrl) {
+                
                 // when ng-model is changed from inside directive
                 $scope.update = function () {
                     switch ($scope.fieldType) {
@@ -60,7 +66,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                     var month = $scope.dd.month + 1 < 10 ? "0" + ($scope.dd.month + 1) : $scope.dd.month + 1;
                     $scope.value = $scope.dd.year + "-" + month + "-" + $scope.dd.day;
                     
-                    ctrl.$setViewValue($scope.value);
+                    $scope.update();
                 }
 
                 $scope.openDatePicker = function ($event) {
@@ -213,7 +219,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                                 }
                                 ctrl.$setViewValue($scope.value);
                             }
-                            if ($scope.dd.day < 10) {
+                            if ($scope.dd.day < 10 && $scope.dd.day > 0) {
                                 $scope.dd.day = "0" + ($scope.dd.day * 1);
                             }
 
@@ -284,10 +290,39 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                 $scope.fieldType = $el.find("data[name=field_type]").text();
                 $scope.dateOptions = JSON.parse($el.find("data[name=date_options]").text());
                 
-                $scope.dayList = ["01","02","03","04","05","06","07","08","09","10",
-                                  "11","12","13","14","15","16","17","18","19","20",
-                                  "21","22","23","24","25","26","27","28","29","30",
-                                  "31"];
+                $scope.dayList = [
+                    {i:"01",n:"01"},
+                    {i:"02",n:"02"},
+                    {i:"03",n:"03"},
+                    {i:"04",n:"04"},
+                    {i:"05",n:"05"},
+                    {i:"06",n:"06"},
+                    {i:"07",n:"07"},
+                    {i:"08",n:"08"},
+                    {i:"09",n:"09"},
+                    {i:"10",n:"10"},
+                    {i:"11",n:"11"},
+                    {i:"12",n:"12"},
+                    {i:"13",n:"13"},
+                    {i:"14",n:"14"},
+                    {i:"15",n:"15"},
+                    {i:"16",n:"16"},
+                    {i:"17",n:"17"},
+                    {i:"18",n:"18"},
+                    {i:"19",n:"19"},
+                    {i:"20",n:"20"},
+                    {i:"21",n:"21"},
+                    {i:"22",n:"22"},
+                    {i:"23",n:"23"},
+                    {i:"24",n:"24"},
+                    {i:"25",n:"25"},
+                    {i:"26",n:"26"},
+                    {i:"27",n:"27"},
+                    {i:"28",n:"28"},
+                    {i:"29",n:"29"},
+                    {i:"30",n:"30"},
+                    {i:"31",n:"31"}
+                ];
                 
                 if ($scope.dateOptions['short-month'] == 'true') {
                     $scope.monthList = [
@@ -323,6 +358,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                 
                 if ($scope.defaultToday != 'Yes') {
                     $scope.monthList.unshift({i:'',n:''});
+                    $scope.dayList.unshift({i:'',n:''});
                 }
                 
                 $scope.$watch($scope.disabledCondition, function() {
@@ -337,11 +373,11 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                 if (attrs.ngModel) {
                             
                     $timeout(function () {
-                        var ngModelValue = $scope.$eval(attrs.ngModel);
+                        var ngModelValue = $scope.$parent.$eval(attrs.ngModel);
                         if (typeof ngModelValue != "undefined") {
                             $scope.value = ngModelValue;
-                            $scope.splitDateTime();
                         }
+                        $scope.splitDateTime();
                     }, 0);
                 }
             }

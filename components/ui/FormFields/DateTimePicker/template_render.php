@@ -29,11 +29,16 @@
 
         <!-- field -->
         <div ng-if="['monthyear', 'date'].indexOf(fieldType) >= 0" style="padding-top:5px;">
-            <select ng-disabled="isDPDisabled" ng-options="item for item in dayList" ng-show="fieldType == 'date'"
+            <select
+                    ng-disabled="isDPDisabled" ng-options="item.i as item.n for item in dayList" ng-show="fieldType == 'date'"
                     name="<?= $this->renderName ?>[day]" id="<?= $this->renderID ?>_day"
-                    ng-model="dd.day" ng-change="<?= @$this->options['ng-change']; ?>;changeDropdown()"></select>&nbsp;<select ng-disabled="isDPDisabled" ng-options="item.i as item.n for item in monthList"
+                    ng-model="dd.day" ng-change="<?= @$this->options['ng-change']; ?>;changeDropdown()"></select>&nbsp;<select
+                    
+                    ng-disabled="isDPDisabled" ng-options="item.i as item.n for item in monthList"
                     name="<?= $this->renderName ?>[month]" id="<?= $this->renderID ?>_month"
-                    ng-model="dd.month" ng-change="<?= @$this->options['ng-change']; ?>;changeDropdown()"></select>&nbsp;<select ng-disabled="isDPDisabled" ng-options="item for item in yearList"
+                    ng-model="dd.month" ng-change="<?= @$this->options['ng-change']; ?>;changeDropdown()"></select>&nbsp;<select 
+                    
+                    ng-disabled="isDPDisabled" ng-options="item for item in yearList"
                     name="<?= $this->renderName ?>[year]" id="<?= $this->renderID ?>_year"
                     ng-model="dd.year" ng-change="<?= @$this->options['ng-change']; ?>;changeDropdown()"></select>
         </div>
