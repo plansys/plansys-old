@@ -38,33 +38,6 @@ class Setting {
         'ldap' => [
             'enable' => false
         ],
-        "services"=> [
-            "list"=> [
-                "SendEmail" => [
-                    "name"=> "SendEmail",
-                    "commandPath"=> "application.commands",
-                    "command"=> "EmailCommand",
-                    "action"=> "actionSend",
-                    "schedule"=> "manual",
-                    "period"=> "",
-                    "instance"=> "single",
-                    "singleInstanceMode"=> "wait"
-                ],
-                "ImportData"=> [
-                    "name"=> "ImportData",
-                    "commandPath"=> "application.commands",
-                    "command"=> "ImportCommand",
-                    "action"=> "actionIndex",
-                    "schedule"=> "manual",
-                    "period"=> "",
-                    "instance"=> "parallel",
-                    "singleInstanceMode"=> "wait",
-                ]
-            ],
-            "daemon"=> [
-                "isRunning"=> false
-            ]
-        ]
     ];
     public static  $mode        = null;
     public static  $entryScript = "";
@@ -105,9 +78,9 @@ class Setting {
             }
 
             $json   = Setting::$default;
+            
             $json   = json_encode($json, JSON_PRETTY_PRINT);
             $result = @file_put_contents(Setting::$path, $json);
-
 
             require_once("Installer.php");
             Installer::createIndexFile("install");
@@ -137,6 +110,7 @@ class Setting {
             $setting       = json_decode($file, true);
             Setting::$data = Setting::arrayMergeRecursiveReplace(Setting::$default, $setting);
         }
+        
 
         ## set host
         if (!Setting::get('app.host')) {
@@ -152,6 +126,10 @@ class Setting {
         
         if ($mode == 'testing') {
             Setting::$mode = 'testing';
+        }
+        
+        if (!isset(Setting::$data['app']['shmblock'])) {
+            Setting::set('app.shmblock', rand(100, 800));
         }
 
         if (Setting::get('app.mode') != 'production') {

@@ -15,7 +15,6 @@ class Controller extends CController {
 
     public function staticUrl($path = '') {
         $static = "/static";
-
         if (!isset($_GET['errorBeforeInstall'])) {
             $dir    = explode(DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
             $static = "/" . array_pop($dir) . "/static";
@@ -415,6 +414,7 @@ class Controller extends CController {
         }
 
         parent::beforeAction($action);
+
 
         return true;
     }
