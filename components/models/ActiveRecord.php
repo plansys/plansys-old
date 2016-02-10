@@ -1198,14 +1198,11 @@ class ActiveRecord extends CActiveRecord {
             //     ]
             // ];
             
-            
             $errors = [
                 'type' => get_class($rel),
                 'list' => []
             ];
             
-
-
             $idx = ['insert' => 0, 'edit' => 0];
             
             switch (get_class($rel)) {

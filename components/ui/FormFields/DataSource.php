@@ -797,6 +797,7 @@ class DataSource extends FormField {
         } else {
             $rel = $this->model->metaData->relations[$this->relationTo];
             $fkey = $rel->foreignKey;
+            $useStat = true;
             if (is_array($rel->foreignKey)) { 
                 if (isset($rel->through)) {
                     if (isset($this->model->metaData->relations[$rel->through])) {
@@ -809,17 +810,22 @@ class DataSource extends FormField {
                             
                             $fkey = "{$reltTable}({$reltFrom},{$reltTo})";
                         } else {
-                            throw new Exception('Plansys DataSource does not support nested through relation in `' . $rel->name . '`.');
+                            $useStat = false;
                         }
                     } else {
-                        throw new Exception('Relation `' . $rel->name . '` `through` key is not found. ');
+                        $useStat = false;
                     }
                 } else {
-                    throw new Exception('Relation `' . $rel->name . '` missing `through` key. You should specify `through` key when using array foreign key');
+                    $useStat = false;
                 }
             } 
-            $this->model->metaData->relations[$rel->name . "__psCount"] = new CStatRelation($rel->name . "__psCount", $rel->className, $fkey);
-            $count = $this->model->getRelated($rel->name . "__psCount");
+            if ($useStat) {
+                $this->model->metaData->relations[$rel->name . "__psCount"] = new CStatRelation($rel->name . "__psCount", $rel->className, $fkey);
+                $count = $this->model->getRelated($rel->name . "__psCount");
+            } else {
+                $rawCount = $this->model->getRelated($this->relationTo, true, $criteria);
+                $count = count($rawCount) > 0 ? $rawCount[0]->id : 0;
+            }
         }
 
         if (!empty($this->aggregateGroups) && !$isGenerate) {
