@@ -275,7 +275,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                 
                                 $scope.query(function () {
                                     $scope.trackChanges = false;
-                                    $scope.internalQuery = true;
                                     $scope.resetOriginal();
                                 });
                             }
@@ -304,6 +303,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                             alert("Failed to assign parameter `" + p + "`. variable is not defined!");
                                         }
                                     } else {
+                                        updateWatched(value);
                                         parent.$watchCollection(watchValue, function (newv, oldv) {
                                             if (newv != oldv) {
                                                 updateWatched(newv)
@@ -326,20 +326,19 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     });
                 }
 
-                $scope.internalQuery = false;
-                $scope.trackChanges = true;
+                $scope.trackChanges = false;
                 $scope.resetOriginal = function () {
                     $scope.original = angular.copy($scope.data);
                 }
 
                 if (jsParamExist) {
                     $scope.query(function () {
-                        $scope.trackChanges = false;
-                        $scope.internalQuery = true;
+                        $scope.trackChanges = true;
                         $scope.resetOriginal();
                     });
                 } else {
                     $scope.data = JSON.parse($el.find("data[name=data]:eq(0)").text());
+                    $scope.trackChanges = true;
                 }
                 
                 for(i in $scope.data) {
@@ -349,15 +348,20 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     } 
                 }
 
-                $scope.enableTrackChanges = function () {
-                    if (!$scope.internalQuery) {
-                        $scope.trackChanges = true;
-                    }
+                $scope.enableTrackChanges = function (from) {
+                    // if (!!from) {
+                    //     console.log('ENABLED', from);
+                    // }
+                    
+                    $scope.trackChanges = true;
                 }
 
-                $scope.disableTrackChanges = function () {
+                $scope.disableTrackChanges = function (from) {
+                    // if (!!from) {
+                    //     console.log('DISABLED', from);
+                    // }
+                    
                     $scope.trackChanges = false;
-                    console.log("DISABLED");
                 }
 
                 var diff = function (oldArray, newArray) {
@@ -416,6 +420,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
 
                     return diff;
                 };
+                
 
                 if ($scope.postData == 'Yes') {
                     $scope.resetOriginal();
@@ -483,10 +488,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                             }
                         }
                         
-                        if ($scope.trackChanges === false && $scope.internalQuery === true) {
-                            $scope.trackChanges = true;
-                            $scope.internalQuery = false;
-                        }
                     }, true);
                 }
 

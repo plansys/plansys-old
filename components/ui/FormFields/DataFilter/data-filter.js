@@ -159,8 +159,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                         paging.currentPage = 1;
                                     }
                                 }
+                                ds.enableTrackChanges('filter 162');
                             }
-
+                            
+                            ds.disableTrackChanges();
                             ds.lastQueryFrom = "DataFilter";
                             ds.query(function () {
                                 delete ds.afterQueryInternal[$scope.renderID];
@@ -263,7 +265,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         }
 
                         if (dsParamName != "") {
-                            if (filter.value != "") {
+                            if (!!filter.value && filter.value != "") {
                                 var prepared = $scope.prepareDSParams(filter);
                                 ds.updateParam(prepared.name, {
                                     value: prepared.value,
@@ -289,8 +291,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                             paging.currentPage = 1;
                                         }
                                     }
+                                    ds.enableTrackChanges('filter 294');
                                 }
-
+                                
+                                ds.disableTrackChanges();
                                 ds.lastQueryFrom = "DataFilter";
                                 ds.query(function () {
                                     delete ds.afterQueryInternal[$scope.renderID];
@@ -302,7 +306,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                     if (!!filter.options && !!filter.options['ng-change']) {
                                         $scope.$eval(filter.options['ng-change']);
                                     }
-
                                 });
                             }
                         }
@@ -917,8 +920,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 }
                 parent[$scope.name] = $scope;
                 $scope.available = false;
-
-
+                
                 if (!!$scope.options.freeze) {
                     var $container = $el.parents('.container-full');
                     var paddingLeft = $el.offset().left;
