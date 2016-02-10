@@ -263,13 +263,14 @@ class ActiveRecord extends CActiveRecord {
 
         $builder = Yii::app()->db->schema->commandBuilder;
         $command = $builder->createMultipleInsertCommand($table, $data);
-        $command->execute();
-
+        $result = $command->execute();
+        
+        
         if ($assignNewID && !!$model) {
             $id = Yii::app()->db->getLastInsertID();
             $pk = $model->tableSchema->primaryKey;
-            foreach ($data as &$d) {
-                $d[$pk] = $id;
+            foreach ($data as $k=>$d) {
+                $data[$k][$pk] = $id * 1;
                 $id++;
             }
         }
@@ -1231,8 +1232,6 @@ class ActiveRecord extends CActiveRecord {
                     break;
             }
             if (!empty($errors['list'])) {
-                // var_dump($relName, $model->attributes);
-                // die();
                 $this->addError($relName, $errors);
             }
         }

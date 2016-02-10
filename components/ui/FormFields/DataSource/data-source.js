@@ -30,6 +30,11 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     $scope.updateData.length = 0;
                     $scope.insertData.length = 0;
                 }
+                
+                $scope.reset = function() {
+                    $scope.data.splice(0, $scope.data.length);
+                    $scope.resetData();
+                }
 
                 $scope.resetParam = function (key, name) {
                     if (typeof key == "undefined") {
@@ -319,7 +324,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                 });
                             }
                             
-    
                             $scope.updateParam(i, value)
                             jsParamExist = true;
                         }
@@ -421,7 +425,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     return diff;
                 };
                 
-
                 if ($scope.postData == 'Yes') {
                     $scope.resetOriginal();
                     $scope.$watch('data', function (newval, oldval) {
@@ -431,7 +434,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         
                         if ($scope.trackChanges && !angular.equals($scope.original, newval)) {
                             var df = diff($scope.original, newval);
-
+                            
                             // Generate UpdateData Hash (to enable faster primary key look up)
                             var updateHash = {};
                             for (i in $scope.updateData) {

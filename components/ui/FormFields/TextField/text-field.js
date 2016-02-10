@@ -172,7 +172,7 @@ app.directive('textField', function ($timeout, $http) {
                 $scope.isFocused = false;
                 $scope.tfFocus = function() {
                     if (!$scope.isFocused && !$scope.dropdownHover) {
-                        if ($scope.acMode == "comma") {
+                        if ($scope.acMode == "comma" && !!$scope.value) {
                             var val = $scope.value.trim();
                             if (val[val.length -1] != "," && val.length > 0) {
                                 $scope.value = $scope.value + ", ";
