@@ -233,9 +233,6 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                                 endYear = $scope.parseYear($scope.dateOptions['end-year']);
                             }
                             $scope.yearList = [];
-                            if ($scope.defaultToday != 'Yes') {
-                                $scope.yearList.push('');
-                            }
                             
                             if (startYear >= endYear) {
                                 for (var i = endYear; i > startYear; i--) {
@@ -245,6 +242,14 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                                 for (var i = startYear; i <= endYear; i++) {
                                     $scope.yearList.push(i + "");
                                 }
+                            }
+                            
+                            if ($scope.yearList.indexOf($scope.dd.year) < 0) {
+                                $scope.yearList.unshift($scope.dd.year);
+                            }
+                            
+                            if ($scope.defaultToday != 'Yes') {
+                                $scope.yearList.unshift('');
                             }
 
                             if ($scope.dateOptions['hide-other-year'] !== 'true') {
