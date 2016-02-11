@@ -5,11 +5,11 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
         compile: function (element, attrs, transclude) {
             if (attrs.ngModel && !attrs.ngDelay) {
                 var fieldType = element.find("data[name=field_type]").text();
-                // if (fieldType == 'date') {
-                //     attrs.$set('ngModel', '$parent.$parent.' + attrs.ngModel, false);
-                // } else {
+                if (fieldType == 'date') {
+                    attrs.$set('ngModel', '$parent.$parent.' + attrs.ngModel, false);
+                } else {
                     attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
-                // }
+                }
             }
 
             return function ($scope, $el, attrs, ctrl) {

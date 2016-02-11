@@ -26,9 +26,9 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 }
 
                 $scope.resetData = function () {
-                    $scope.deleteData.length = 0;
-                    $scope.updateData.length = 0;
-                    $scope.insertData.length = 0;
+                    $scope.deleteData.splice(0, $scope.deleteData.length);
+                    $scope.updateData.splice(0, $scope.updateData.length);
+                    $scope.insertData.splice(0, $scope.insertData.length);
                 }
                 
                 $scope.reset = function() {
@@ -273,57 +273,19 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     angular.forEach($scope.params, function (p, i) {
                         if (p != null && p.indexOf('js:') === 0) {
                             var value = parent.$eval(p.replace('js:', ''));
-                            var watchValue = parent.$eval('"' + p.replace('js:', '') + '"');
+                            var watch = parent.$eval('"' + p.replace('js:', '') + '"');
                             var key = i;
-                            var updateWatched = function(newv) {
-                                $scope.updateParam(key, newv);
-                                
-                                $scope.query(function () {
-                                    $scope.trackChanges = false;
-                                    $scope.resetOriginal();
-                                });
-                            }
-                            
-                            if (typeof value == 'undefined') {
-                                // when datasource is placed INSIDE listview
-                                $timeout(function() {
-                                    value = parent.$eval(p.replace('js:', ''));
-                                    watchValue = parent.$eval('"' + p.replace('js:', '') + '"');
+                            parent.$watch(watch, function (newv, oldv) {
+                                if (newv !== oldv) {
+                                    $scope.updateParam(key, newv);
                                     
-                                    if (typeof value == 'undefined') {
-                                        var sval = watchValue.split('.');
-                                        if (sval.length > 1) {
-                                            var watched = sval.pop();
-                                            var parentVal = sval.join(".");
-                                            if (!!$scope.$eval(parentVal)) {
-                                                $scope.$watch(parentVal, function (newv, oldv) {
-                                                    if (newv[watched] !== oldv[watched]) {
-                                                        updateWatched(newv[watched]);
-                                                    }
-                                                }, true);
-                                            } else {
-                                                alert("Failed to assign parameter `" + p + "`. variable is not defined!");
-                                            }
-                                        } else {
-                                            alert("Failed to assign parameter `" + p + "`. variable is not defined!");
-                                        }
-                                    } else {
-                                        updateWatched(value);
-                                        parent.$watchCollection(watchValue, function (newv, oldv) {
-                                            if (newv != oldv) {
-                                                updateWatched(newv)
-                                            }
-                                        });
-                                    }
-                                });
-                            } else {
-                                parent.$watchCollection(watchValue, function (newv, oldv) {
-                                    if (newv != oldv) {
-                                        updateWatched(newv)
-                                    }
-                                });
-                            }
-                            
+                                    $scope.query(function () {
+                                        $scope.trackChanges = false;
+                                        $scope.resetOriginal();
+                                    });
+                                }
+                            },true);
+    
                             $scope.updateParam(i, value)
                             jsParamExist = true;
                         }
@@ -435,6 +397,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         if ($scope.trackChanges && !angular.equals($scope.original, newval)) {
                             var df = diff($scope.original, newval);
                             
+                            
                             // Generate UpdateData Hash (to enable faster primary key look up)
                             var updateHash = {};
                             for (i in $scope.updateData) {
@@ -491,7 +454,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                             }
                         }
                         
-                    }, true);
+                    },true);
                 }
 
                 parent[$scope.name] = $scope;
