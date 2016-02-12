@@ -945,12 +945,17 @@ class DataSource extends FormField {
                 }
 
                 $params = isset($postedParams['params']) ? $postedParams['params'] : [];
+                
+                ## special params case, query from datafilter
+                if (isset($postedParams[':dataFilterID'])) {
+                    $bracket['params'][':dataFilterID'] = $postedParams[':dataFilterID'];
+                }
+                
                 $criteria['params'] = array_merge($params, $bracket['params']);
             } else if ($bracket['sql'] == '') {
                 unset($criteria['condition']);
             }
         }
-
         $criteria['distinct'] = (@$criteria['distinct'] == 'true' ? true : false);
         if (isset($criteria['paging'])) {
             unset($criteria['paging']);
