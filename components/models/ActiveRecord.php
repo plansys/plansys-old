@@ -3,6 +3,11 @@
 class ActiveRecord extends CActiveRecord {
 
     const DEFAULT_PAGE_SIZE = 25;
+	const BELONGS_TO='CBelongsToRelation';
+	const HAS_ONE='CHasOneRelation';
+	const HAS_MANY='CHasManyRelation';
+	const MANY_MANY='ManyManyRelation';
+	const STAT='CStatRelation';
 
     protected $_softDelete = [];
     private $__relations = [];
@@ -17,7 +22,7 @@ class ActiveRecord extends CActiveRecord {
     private $__tempVar = [];
     private $__relUploadField = [];
     
-    private static $_md = array();                // class name => meta data
+    private static $_md = array();   // class name => meta data
 
     public static function execute($sql, $params = []) {
         return Yii::app()->db->createCommand($sql)->execute($params);
@@ -620,7 +625,7 @@ class ActiveRecord extends CActiveRecord {
                         }
                     }
                     break;
-                case 'CManyManyRelation':
+                case 'ManyManyRelation':
                 case 'CHasManyRelation':
                     //without Criteria
                     $relKey = null;
@@ -1208,9 +1213,9 @@ class ActiveRecord extends CActiveRecord {
             
             switch (get_class($rel)) {
                 case 'CHasManyRelation':
-                case 'CManyManyRelation':
                     foreach ($this->__relations[$relName] as $k => $attr) {
                         $model = new $modelClass;
+                        
                         $model->attributes = $attr;
                         $model->{$rel->foreignKey} = $this->isNewRecord ? '0' : $this->{$pk};
                     
@@ -1379,7 +1384,7 @@ class ActiveRecord extends CActiveRecord {
             }
             $rel = $rels[$r];
             switch (get_class($rel)) {
-                case 'CManyManyRelation':
+                case 'ManyManyRelation':
                 case 'CHasManyRelation':
                     ## without through
                     if (is_string($rel->foreignKey)) {
@@ -1534,11 +1539,11 @@ class ActiveRecord extends CActiveRecord {
                         }
                     }
                     break;
-                case 'CManyManyRelation':
+                case 'ManyManyRelation':
                 case 'CHasManyRelation':
                     ## if relation type is Many to Many, prepare required variable
                     $relMM = [];
-                    if ($relType == 'CManyManyRelation') {
+                    if ($relType == 'ManyManyRelation') {
                         $parser = new PhpParser\Parser(new PhpParser\Lexer\Emulative);
                         $stmts = $parser->parse('<?php ' . $relForeignKey . ';');
                         if (count($stmts) > 0) {
@@ -1554,7 +1559,7 @@ class ActiveRecord extends CActiveRecord {
                     if (isset($this->__relInsert[$k])) {
                         if ($k != 'currentModel') {
                             if (is_string($relForeignKey)) { ## without through
-                                if ($relType != 'CManyManyRelation') {
+                                if ($relType != 'ManyManyRelation') {
                                     foreach ($this->__relInsert[$k] as $n => $m) {
                                         $this->__relInsert[$k][$n][$relForeignKey] = $this->{$pk};
                                     }
@@ -1579,13 +1584,17 @@ class ActiveRecord extends CActiveRecord {
                             }
 
                             ## if current relation is many to many
-                            if ($relType == 'CManyManyRelation' && !empty($relMM)) {
+                            if ($relType == 'ManyManyRelation' && !empty($relMM)) {
                                 $manyRel = [];
                                 foreach ($this->__relInsert[$k] as $item) {
                                     $manyRel[] = [
                                         $relMM['from'] => $this->{$pk},
                                         $relMM['to'] => $item[$relPK]
                                     ];
+                                }
+
+                                if (!is_null($rel->beforeSave)) {
+                                    $manyRel = $this->{$rel->beforeSave}($manyRel);
                                 }
 
                                 ## if relinsert is already exist, then do not insert it again
@@ -1631,7 +1640,7 @@ class ActiveRecord extends CActiveRecord {
 
                             ## update transaction entry to link between
                             ## related model and current model
-                            if ($relType == 'CManyManyRelation' && !empty($relMM)) {
+                            if ($relType == 'ManyManyRelation' && !empty($relMM)) {
                                 $manyRel = [];
                                 foreach ($this->__relUpdate[$k] as $item) {
                                     $item[$relMM['from']] = $this->{$pk};
@@ -1647,7 +1656,7 @@ class ActiveRecord extends CActiveRecord {
                     ## Handle Delete
                     if (isset($this->__relDelete[$k])) {
                         if (count($this->__relDelete[$k]) > 0) {
-                            if ($relType == 'CManyManyRelation') {
+                            if ($relType == 'ManyManyRelation') {
                                 if (!empty($relMM)) {
                                     //first remove entry in transaction table first
                                     ActiveRecord::batchDelete($relMM['tableName'], $this->__relDelete[$k], [

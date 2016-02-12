@@ -228,7 +228,7 @@ class ActiveRecordTemplate extends CComponent {
                 }
                 break;
             case "CHasManyRelation":
-            case "CManyManyRelation":
+            case "ManyManyRelation":
                 if ($generatorParams['relation']['formType'] == "Table") {
                     if ($generatorParams['type'] == "relform") {
                         if ($generatorParams['relation']['editable'] == "PopUp" ||
@@ -239,7 +239,7 @@ class ActiveRecordTemplate extends CComponent {
                     }
     
                     if ($generatorParams['type'] == "chooserelform") {
-                        if ($generatorParams['relation']['type'] == "CManyManyRelation") {
+                        if ($generatorParams['relation']['type'] == "ManyManyRelation") {
                             self::generateRelManyManyIndex($return, $params);
                         }
                     }
@@ -303,7 +303,7 @@ ng-disabled="!gridView1.checkbox.chk
             ],
         ];
 
-        if ($generatorParams['relation']['type'] == "CManyManyRelation" && $generatorParams['relation']['insertable'] == "PopUp") {
+        if ($generatorParams['relation']['type'] == "ManyManyRelation" && $generatorParams['relation']['insertable'] == "PopUp") {
             $relName = ucfirst($generatorParams['relation']['name']);
             array_unshift($linkBar,
                 [
@@ -580,7 +580,7 @@ class="btn btn-sm btn-default">
         $fieldList_id = null;
         foreach ($fieldList as $k => $i) {
             if (isset($fieldList[$k]['name'])) {
-                if ($generatorParams['relation']['type'] != 'CManyManyRelation') {
+                if ($generatorParams['relation']['type'] != 'ManyManyRelation') {
                     if ($fieldList[$k]['name'] == $primaryKey) {
                         $fieldList_id = $fieldList[$k];
                         continue;
@@ -1036,13 +1036,13 @@ class="btn btn-sm btn-default">
                             ]
                         ];
                     }
-                } else if ($rel['type'] == 'CHasManyRelation' || $rel['type'] == 'CManyManyRelation') {
+                } else if ($rel['type'] == 'CHasManyRelation' || $rel['type'] == 'ManyManyRelation') {
                     $return[] = [
                         'title' => $relName,
                         'type' => 'SectionHeader',
                     ];
 
-                    if ($rel['type'] == "CManyManyRelation") {
+                    if ($rel['type'] == "ManyManyRelation") {
                         if ($rel['chooseable'] == "Yes") {
                             self::appendChooseButton($return, [
                                 'primaryKey' => $primaryKey,
@@ -1227,7 +1227,7 @@ class="btn btn-sm btn-default">
             array_push($gridColumns, $editButtonCol);
         }
 
-        if ($rel['type'] == "CManyManyRelation" && $rel['chooseable'] == "Yes") {
+        if ($rel['type'] == "ManyManyRelation" && $rel['chooseable'] == "Yes") {
             $delButtonCol  = [
                 'name' => '',
                 'label' => '',

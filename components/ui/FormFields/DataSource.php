@@ -802,7 +802,7 @@ class DataSource extends FormField {
                 if (isset($rel->through)) {
                     if (isset($this->model->metaData->relations[$rel->through])) {
                         $relt = $this->model->metaData->relations[$rel->through];
-                        if (is_string($relt->foreignKey) && get_class($relt) != 'CManyManyRelation') {
+                        if (is_string($relt->foreignKey) && get_class($relt) != 'ManyManyRelation') {
                             $reltClass = $relt->className;
                             $reltTable = $reltClass::model()->tableName();
                             $reltFrom = $relt->foreignKey;

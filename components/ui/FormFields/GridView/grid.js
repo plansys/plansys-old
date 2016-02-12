@@ -953,7 +953,13 @@ app.directive('gridView', function ($timeout, $http) {
                         $scope.loadPageSetting();
                     });
                 };
-                $scope.datasource.disableTrackChanges();
+                
+                if (!$scope.datasource) {
+                    alert("Error: " + $scope.name + " Please choose datasource!!")
+                } else {
+                    $scope.datasource.disableTrackChanges();
+                }
+                
                 $scope.gridRenderTimeout = null;
                 $scope.onGridRender = function (flag) {
                     if ($scope.gridRenderTimeout !== null) {

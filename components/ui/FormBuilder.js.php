@@ -52,7 +52,7 @@ ob_start();
                 
                 switch (error.type) {
                     case "CHasManyRelation":
-                    case "CManyManyRelation":
+                    case "ManyManyRelation":
                         for (li in error.list) {
                             for (er in error.list[li].errors) {
                                 err.push(error.list[li].errors[er]);
