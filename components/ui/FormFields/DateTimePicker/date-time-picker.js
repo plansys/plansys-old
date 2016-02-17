@@ -214,7 +214,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                                     $scope.dd.day = '';
                                     $scope.value = null;                                    
                                 }
-                                ctrl.$setViewValue($scope.value);
+                                
                             }
                             if ($scope.dd.day < 10 && $scope.dd.day > 0) {
                                 $scope.dd.day = "0" + ($scope.dd.day * 1);
