@@ -62,6 +62,25 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                     var month = $scope.dd.month + 1 < 10 ? "0" + ($scope.dd.month + 1) : $scope.dd.month + 1;
                     $scope.value = $scope.dd.year + "-" + month + "-" + $scope.dd.day;
                     
+                    if (isNaN($scope.dd.day)) {
+                        if (!$scope.defaultToday) {
+                            $scope.dd.day = '';
+                        } else {
+                            $scope.dd.day = $scope.dayList[0].i;
+                        }
+                    }
+                    
+                    if (isNaN($scope.dd.year)) {
+                        if (!$scope.defaultToday) {
+                            $scope.dd.year = '';
+                        } else {
+                            $scope.dd.year = $scope.yearList[0];
+                        }
+                    }
+                    
+                    if ($scope.dd.day === '' || $scope.dd.day == '00' || $scope.dd.month === '' || $scope.dd.year === '') {
+                        $scope.value = null;
+                    }
                     $scope.update();
                 }
 
@@ -199,8 +218,10 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                                 var maxDay = (new Date($scope.dd.year, $scope.dd.month + 1, 0)).getDate();
                                 if ($scope.dd.day *1 > maxDay) {
                                     $scope.dd.day = maxDay;
-                                    $scope.value = $scope.dd.year + "-" + ($scope.dd.month +1) + '-' + $scope.dd.day;
-                                    ctrl.$setViewValue($scope.value);
+                                    if ($scope.dd.month != "" && $scope.dd.year != "" && $scope.dd.day != "") {
+                                        $scope.value = $scope.dd.year + "-" + ($scope.dd.month +1) + '-' + $scope.dd.day;
+                                        ctrl.$setViewValue($scope.value);
+                                    }
                                 }
                             } else {
                                 if ($scope.defaultToday == 'Yes') {
