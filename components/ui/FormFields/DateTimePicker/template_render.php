@@ -12,6 +12,7 @@
 
     <div class="<?= $this->fieldColClass ?>" >
         <!-- data -->
+        <data name="name" class="hide"><?= $this->name ?></data>
         <data name="value" class="hide"><?= $this->value ?></data>
         <data name="model_class" class="hide"><?= @get_class($model) ?></data>
         <data name="field_type" class="hide"><?= $this->fieldType ?></data>
@@ -27,8 +28,23 @@
         <!-- /data -->
 
         <!-- field -->
+        <div ng-if="['monthyear', 'date'].indexOf(fieldType) >= 0" style="padding-top:5px;">
+            <select
+                    ng-disabled="isDPDisabled" ng-options="item.i as item.n for item in dayList" ng-show="fieldType == 'date'"
+                    name="<?= $this->renderName ?>[day]" id="<?= $this->renderID ?>_day"
+                    ng-model="dd.day" ng-change="<?= @$this->options['ng-change']; ?>;changeDropdown()"></select>&nbsp;<select
+                    
+                    ng-disabled="isDPDisabled" ng-options="item.i as item.n for item in monthList"
+                    name="<?= $this->renderName ?>[month]" id="<?= $this->renderID ?>_month"
+                    ng-model="dd.month" ng-change="<?= @$this->options['ng-change']; ?>;changeDropdown()"></select>&nbsp;<select 
+                    
+                    ng-disabled="isDPDisabled" ng-options="item for item in yearList"
+                    name="<?= $this->renderName ?>[year]" id="<?= $this->renderID ?>_year"
+                    ng-model="dd.year" ng-change="<?= @$this->options['ng-change']; ?>;changeDropdown()"></select>
+        </div>
+
         <!-- date field -->
-        <div ng-if="['date', 'datetime'].indexOf(fieldType) >= 0" 
+        <div ng-if="['datepicker', 'datetime'].indexOf(fieldType) >= 0" 
              class="date-field {{ !isDPDisabled ? 'input-group' : ''}}"
              style="{{ !isDPDisabled ? 'text-align:left !important;width:90px;' : '' }}">
             <!-- value -->
@@ -52,28 +68,6 @@
                         ng-change="changeTime(this)" 
                         hour-step="1" minute-step="15" show-meridian="false"></timepicker>
         </div>
-
-        <!-- Month Year -->
-        <div ng-if="['monthyear'].indexOf(fieldType) >= 0"  >
-            <div class="btn-group" dropdown>
-                <button type="button" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="isDPDisabled">
-                    {{ monthList[month]}} <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" dropdown-toggle role="menu">
-                    <li ng-repeat="i in monthList"><a href="#" ng-click="changeMonth($index)">{{ i}}</a></li>
-                </ul>
-            </div>
-            <div class="btn-group" dropdown>
-                <button type="button" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="isDPDisabled">
-                    {{ year}} <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" dropdown-toggle role="menu">
-                    <li ng-repeat="i in yearList"><a href="#" ng-click="changeYear(i)">{{ i}}</a></li>
-                </ul>
-            </div>
-
-        </div>
-
 
         <input id="<?= $this->renderID ?>" name="<?= $this->renderName ?>" type="hidden" ng-value="value"/>
         <!-- /field -->

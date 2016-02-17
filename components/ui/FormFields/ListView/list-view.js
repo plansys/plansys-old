@@ -184,7 +184,7 @@ app.directive('listView', function ($timeout) {
                             var errors = $scope.errors[$scope.datasource.relationTo];
                             if (!!errors && angular.isObject(errors[0])) {
                                 errors = errors[0];
-                                if  (errors.type == "CHasManyRelation" || errors.type == "CManyManyRelation") {
+                                if  (errors.type == "CHasManyRelation" || errors.type == "ManyManyRelation") {
                                     if (!errors.idx) {
                                         errors.idx = {
                                             insert: 0,

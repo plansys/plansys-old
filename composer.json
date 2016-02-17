@@ -1,6 +1,13 @@
 {
   "minimum-stability": "dev",
   "prefer-stable": true,
+  "repositories": [
+      {
+           "type" : "vcs",
+           "url" : "https://github.com/Codeception/YiiBridge",
+           "reference": "origin/master"
+      }
+  ],
   "require": {
     "nikic/php-parser": "^1.4",
     "phpmailer/phpmailer": "*",

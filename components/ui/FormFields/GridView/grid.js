@@ -246,9 +246,7 @@ app.directive('gridView', function ($timeout, $http) {
 
                     if (changing) {
                         $scope.datasource.query();
-                    } else {
-                        $scope.datasource.disableTrackChanges(false);
-                    }
+                    } 
                 }
 
                 // update sorting
@@ -772,7 +770,6 @@ app.directive('gridView', function ($timeout, $http) {
                         var row = [];
                         $(e).find('td').each(function(j, f) {
                             if (availableHeader.indexOf(j) >= 0) {
-                                console.log("k" + j);
                                 row.push($(f).text().trim());
                             }
                         });
@@ -945,7 +942,7 @@ app.directive('gridView', function ($timeout, $http) {
                             }
                             if (!$scope.datasource.trackChanges) {
                                 $scope.datasource.resetOriginal();
-                                $scope.datasource.enableTrackChanges();
+                                $scope.datasource.enableTrackChanges('grid 948');
                             }
                             $scope.lastCheckbox = null;
                             $scope.onGridRender('query');
@@ -956,7 +953,13 @@ app.directive('gridView', function ($timeout, $http) {
                         $scope.loadPageSetting();
                     });
                 };
-                $scope.datasource.disableTrackChanges();
+                
+                if (!$scope.datasource) {
+                    alert("Error: " + $scope.name + " Please choose datasource!!")
+                } else {
+                    $scope.datasource.disableTrackChanges();
+                }
+                
                 $scope.gridRenderTimeout = null;
                 $scope.onGridRender = function (flag) {
                     if ($scope.gridRenderTimeout !== null) {

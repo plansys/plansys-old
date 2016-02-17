@@ -7,7 +7,7 @@ class ServiceCommand extends CConsoleCommand {
         ServiceManager::markDaemonAsRun();
         $i = 1;
         while(true){   
-            $services = Setting::get('services.list', [], true);
+            $services = ServiceSetting::get('list', [], true);
             $curTime = time();
             foreach ($services as $serviceName => $service) {
                 $lastRun = strtotime(@$service['lastRun']);

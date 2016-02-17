@@ -65,6 +65,10 @@ class GridView extends FormField {
         
         if (@$this->gridOptions['dynamicColumns'] == 'true'
             && $this->columnsFunc != '') {
+            
+            foreach ($this->columns as $idx => $col) {
+                $this->getHeaderTemplate($this->columns[$idx], $idx, 'tag');
+            }
                 
             $this->columns = $this->evaluateExpression($this->columnsFunc,[
                 'columns' => $this->columns,
@@ -391,7 +395,7 @@ EOL;
         }
     }
 
-    public function getHeaderTemplate($col, $idx, $mode) {
+    public function getHeaderTemplate(&$col, $idx, $mode) {
         $fieldName = isset($col['fieldName']) ? $col['fieldName'] : $col['name'];
         if ($fieldName == "" && !@$col['options']['mode']) return "";
 
@@ -444,10 +448,10 @@ EOL;
                 break;
         }
         
-        if (isset($col['options']['labelHtml'])) {
-            $content = $col['options']['labelHtml'];
+        if (isset($col['labelHtml'])) {
+            $content = $col['labelHtml'];
         } else {
-            $col['options']['labelHtml'] = $content;
+            $col['labelHtml'] = $content;
         }
         
         if ($mode == 'class') {

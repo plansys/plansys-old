@@ -3,7 +3,7 @@
 class ServiceController extends Controller {
     
     public function actionIndex() {                         
-        $isRunning = Setting::get('services.daemon.isRunning', false);
+        $isRunning = ServiceManager::checkDaemon();
         
         $model = new DevServiceIndex();
         $model->status = $isRunning ? "Service Daemon Running" : "Service Daemon Stopped";
@@ -11,7 +11,7 @@ class ServiceController extends Controller {
     }
     
     public function actionDelete($m) {
-        Setting::remove('services.list.' . $m);
+        ServiceSetting::remove('list.' . $m);
     }
     
     public function actionListCommand($m) {
@@ -63,20 +63,6 @@ class ServiceController extends Controller {
                 echo json_encode($results);
             }
         }
-    }
-
-    public function actionStartDaemon() {    
-        $isRunning = Setting::get('services.daemon.isRunning', false);
-        if(!$isRunning){
-            ServiceManager::startDaemon();
-        }     
-    }
-
-    public function actionStopDaemon() {    
-        $isRunning = Setting::get('services.daemon.isRunning', false);
-        if(!!$isRunning){
-            ServiceManager::stopDaemon();
-        }     
     }
 
     public function actionStart($n){
@@ -152,11 +138,12 @@ EOF;
         ]);
     }
     
-    public function actionUpdate($id = null){      
+    public function actionUpdate($id = null){
         $model = DevServiceForm::load($id);
         if (!$model) {
             throw new CHttpException(404);
         }
+        
         Asset::registerJS('application.static.js.lib.ace');
         $instances = ServiceManager::getRunningInstance($id);
         $this->renderForm('DevServiceForm',$model, [

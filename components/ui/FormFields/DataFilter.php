@@ -492,8 +492,10 @@ class DataFilter extends FormField {
             $rf->idField = $filter['relIdField'];
             $rf->labelField = $filter['relLabelField'];
 
-            $rf->relationCriteria['condition'] = $rf->idField . ' = :dataFilterID';
-            $rf->params[':dataFilterID'] = $post['v'];
+            if (isset($post['v'])) {
+                $rf->relationCriteria['condition'] = $rf->idField . ' = :dataFilterID';
+                $rf->params[':dataFilterID'] = $post['v'];
+            }
             $rf->builder = $this->builder;
 
             $rawList = $rf->query(@$post['s'], $rf->params);

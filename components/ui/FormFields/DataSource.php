@@ -73,7 +73,6 @@ class DataSource extends FormField {
 
         ## execute SQL
         $this->command = $db->createCommand($template['sql']);
-
         $data = $this->command->queryAll(true, $template['params']);
 
         ## if should count, then count..
@@ -797,8 +796,36 @@ class DataSource extends FormField {
             $count = $countCommand->queryScalar();
         } else {
             $rel = $this->model->metaData->relations[$this->relationTo];
-            $this->model->metaData->relations[$rel->name . "__psCount"] =  new CStatRelation($rel->name . "__psCount", $rel->className, $rel->foreignKey);
-            $count = $this->model->getRelated($rel->name . "__psCount");
+            $fkey = $rel->foreignKey;
+            $useStat = true;
+            if (is_array($rel->foreignKey)) { 
+                if (isset($rel->through)) {
+                    if (isset($this->model->metaData->relations[$rel->through])) {
+                        $relt = $this->model->metaData->relations[$rel->through];
+                        if (is_string($relt->foreignKey) && get_class($relt) != 'ManyManyRelation') {
+                            $reltClass = $relt->className;
+                            $reltTable = $reltClass::model()->tableName();
+                            $reltFrom = $relt->foreignKey;
+                            $reltTo = array_keys($rel->foreignKey)[0];
+                            
+                            $fkey = "{$reltTable}({$reltFrom},{$reltTo})";
+                        } else {
+                            $useStat = false;
+                        }
+                    } else {
+                        $useStat = false;
+                    }
+                } else {
+                    $useStat = false;
+                }
+            } 
+            if ($useStat) {
+                $this->model->metaData->relations[$rel->name . "__psCount"] = new CStatRelation($rel->name . "__psCount", $rel->className, $fkey);
+                $count = $this->model->getRelated($rel->name . "__psCount");
+            } else {
+                $rawCount = $this->model->getRelated($this->relationTo, true, $criteria);
+                $count = count($rawCount) > 0 ? $rawCount[0]->id : 0;
+            }
         }
 
         if (!empty($this->aggregateGroups) && !$isGenerate) {
@@ -918,12 +945,17 @@ class DataSource extends FormField {
                 }
 
                 $params = isset($postedParams['params']) ? $postedParams['params'] : [];
+                
+                ## special params case, query from datafilter
+                if (isset($postedParams[':dataFilterID'])) {
+                    $bracket['params'][':dataFilterID'] = $postedParams[':dataFilterID'];
+                }
+                
                 $criteria['params'] = array_merge($params, $bracket['params']);
             } else if ($bracket['sql'] == '') {
                 unset($criteria['condition']);
             }
         }
-
         $criteria['distinct'] = (@$criteria['distinct'] == 'true' ? true : false);
         if (isset($criteria['paging'])) {
             unset($criteria['paging']);

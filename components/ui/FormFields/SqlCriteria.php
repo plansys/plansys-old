@@ -186,7 +186,7 @@ class SqlCriteria extends FormField {
                             $isRelated = true;
                         }
                         break;
-                    case 'CManyManyRelation':
+                    case 'ManyManyRelation':
                         $parser      = new PhpParser\Parser(new PhpParser\Lexer\Emulative);
                         $stmts       = $parser->parse('<?php ' . $relMeta->foreignKey . ';');
                         $bridgeTable = $stmts[0]->name->parts[0];

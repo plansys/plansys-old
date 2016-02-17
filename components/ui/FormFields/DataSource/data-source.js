@@ -26,9 +26,14 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 }
 
                 $scope.resetData = function () {
-                    $scope.deleteData.length = 0;
-                    $scope.updateData.length = 0;
-                    $scope.insertData.length = 0;
+                    $scope.deleteData.splice(0, $scope.deleteData.length);
+                    $scope.updateData.splice(0, $scope.updateData.length);
+                    $scope.insertData.splice(0, $scope.insertData.length);
+                }
+                
+                $scope.reset = function() {
+                    $scope.data.splice(0, $scope.data.length);
+                    $scope.resetData();
                 }
 
                 $scope.resetParam = function (key, name) {
@@ -270,17 +275,20 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                             var value = parent.$eval(p.replace('js:', ''));
                             var watch = parent.$eval('"' + p.replace('js:', '') + '"');
                             var key = i;
-                            parent.$watchCollection(watch, function (newv, oldv) {
-                                if (newv != oldv) {
+                            parent.$watch(watch, function (newv, oldv) {
+                                if (newv !== oldv) {
                                     $scope.updateParam(key, newv);
                                     
-                                    $scope.query(function () {
-                                        $scope.trackChanges = false;
-                                        $scope.internalQuery = true;
+                                    $scope.trackChanges = false;
+                                    $scope.afterQueryInternal['params-' + watch] = function () {
                                         $scope.resetOriginal();
-                                    });
+                                        $scope.trackChanges = true
+                                        delete $scope.afterQueryInternal['params-' + watch];
+                                    }
+                                    
+                                    $scope.query();
                                 }
-                            });
+                            },true);
     
                             $scope.updateParam(i, value)
                             jsParamExist = true;
@@ -288,20 +296,22 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     });
                 }
 
-                $scope.internalQuery = false;
-                $scope.trackChanges = true;
+                $scope.trackChanges = false;
                 $scope.resetOriginal = function () {
                     $scope.original = angular.copy($scope.data);
                 }
 
                 if (jsParamExist) {
-                    $scope.query(function () {
-                        $scope.trackChanges = false;
-                        $scope.internalQuery = true;
+                    
+                    $scope.afterQueryInternal['params-init'] = function () {
                         $scope.resetOriginal();
-                    });
+                        $scope.trackChanges = true
+                        delete $scope.afterQueryInternal['params-init'];
+                    }
+                    $scope.query();
                 } else {
                     $scope.data = JSON.parse($el.find("data[name=data]:eq(0)").text());
+                    $scope.trackChanges = true;
                 }
                 
                 for(i in $scope.data) {
@@ -311,13 +321,19 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     } 
                 }
 
-                $scope.enableTrackChanges = function () {
-                    if (!$scope.internalQuery) {
-                        $scope.trackChanges = true;
-                    }
+                $scope.enableTrackChanges = function (from) {
+                    // if (!!from) {
+                    //     console.log('ENABLED', from);
+                    // }
+                    
+                    $scope.trackChanges = true;
                 }
 
-                $scope.disableTrackChanges = function () {
+                $scope.disableTrackChanges = function (from) {
+                    // if (!!from) {
+                    //     console.log('DISABLED', from);
+                    // }
+                    
                     $scope.trackChanges = false;
                 }
 
@@ -377,7 +393,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
 
                     return diff;
                 };
-
                 
                 if ($scope.postData == 'Yes') {
                     $scope.resetOriginal();
@@ -388,7 +403,8 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         
                         if ($scope.trackChanges && !angular.equals($scope.original, newval)) {
                             var df = diff($scope.original, newval);
-
+                            
+                            
                             // Generate UpdateData Hash (to enable faster primary key look up)
                             var updateHash = {};
                             for (i in $scope.updateData) {
@@ -445,11 +461,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                             }
                         }
                         
-                        if ($scope.trackChanges === false && $scope.internalQuery === true) {
-                            $scope.trackChanges = true;
-                            $scope.internalQuery = false;
-                        }
-                    }, true);
+                    },true);
                 }
 
                 parent[$scope.name] = $scope;

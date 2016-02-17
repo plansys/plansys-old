@@ -161,7 +161,7 @@ class ModelGenerator extends CComponent {
                         'icon' => 'fa fa-cube',
                         'class' => "app.models.{$m}." . $sm,
                         'class_path' => 'app.models',
-                        'exist' => (class_exists($sm)) ? 'yes' : 'no',
+                        'exist' => (@class_exists($sm)) ? 'yes' : 'no',
                         'type' => 'app',
                         'active' => @$_GET['active'] == "app.{$m}." . $sm,
                         'url' => Yii::app()->controller->createUrl('/dev/genModel/index', [
@@ -171,12 +171,13 @@ class ModelGenerator extends CComponent {
                     ];
                 }
                 
+                
                 array_unshift($items,[
                     'type' => 'app',
                     'label' => $m,
                     'class' => 'app.models.' . $m,
                     'class_path' => 'app.models',
-                    'exist' => (class_exists($m)) ? 'yes' : 'no',
+                    'exist' => (@class_exists($m)) ? 'yes' : 'no',
                     'type' => 'app',
                     'active' => @$_GET['active'] == 'app.' . $m,
                     'target' => 'col2',
@@ -189,7 +190,7 @@ class ModelGenerator extends CComponent {
                     'icon' => 'fa fa-cube',
                     'class' => 'app.models.' . $m,
                     'class_path' => 'app.models',
-                    'exist' => (class_exists($m)) ? 'yes' : 'no',
+                    'exist' => (@class_exists($m)) ? 'yes' : 'no',
                     'type' => 'app',
                     'active' => @$_GET['active'] == 'app.' . $m,
                     'url' => Yii::app()->controller->createUrl('/dev/genModel/index', [

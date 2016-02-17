@@ -57,14 +57,6 @@ app.directive('relationField', function ($timeout, $http) {
                     });
                 }
 
-                $scope.unselect = function () {
-                    $scope.value = '';
-                    $scope.text = '';
-                    $scope.renderedFormList.splice(0, $scope.renderedFormList.length);
-                    $scope.doSearch();
-                    ctrl.$setViewValue($scope.value);
-                }
-
                 $scope.dropdownKeypress = function (e) {
                     if (e.which === 13) {
                         if ($scope.isOpen) {
@@ -398,9 +390,16 @@ app.directive('relationField', function ($timeout, $http) {
                     $scope.$watch(attrs.psList, changeFieldList);
                 }
                 
+                $scope.unselect = function () {
+                    $scope.value = '';
+                    $scope.text = '';
+                    $scope.renderedFormList.splice(0, $scope.renderedFormList.length);
+                    $scope.doSearch();
+                    ctrl.$setViewValue($scope.value);
+                }
+
                 $scope.reset = function() {
-                    $scope.formList = null;
-                    $scope.renderedFormList = null;
+                    $scope.renderedFormList.splice(0, $scope.renderedFormList.length);
                     $scope.value = "";
                     $scope.text = "";
                     ctrl.$setViewValue('');

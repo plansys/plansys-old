@@ -4,7 +4,7 @@ class ServiceManager extends CComponent {
     const MAX_LOG_COUNT = 10;
     
     public static function getAllServices() {
-        $services = Setting::get('services.list');
+        $services = ServiceSetting::get('list');
         $results = [];
         foreach ($services as $svc) {
             $instances = ServiceManager::getRunningInstance($svc['name']);
@@ -80,19 +80,18 @@ class ServiceManager extends CComponent {
         return null;
     }
 
-    public static function markDaemonAsRun() {
-        $file = Setting::getRuntimePath() . DIRECTORY_SEPARATOR . "daemon_lastrun.txt";
-        file_put_contents($file, time());
-    }
 
     public static function checkDaemon() {
-        $file = Setting::getRuntimePath() . DIRECTORY_SEPARATOR . "daemon_lastrun.txt";
+        $new = new SHMBlock(Setting::get('app.shmblock'));
         $lastrun = false;
-        if (is_file($file)) {
-            $lastrun = file_get_contents($file);
-        } 
-
-        ## run marker treshold, in seconds
+        if ($new->exists(Setting::get('app.shmblock'))) {
+            $lastrun = @$new->read();
+            if ($lastrun == "" || $lastrun == null) {
+                $lastrun = false;
+            } 
+        }
+        
+        ## if current time 
         if (!$lastrun || time() - $lastrun > 10) {
             return false;
         } else {
@@ -100,33 +99,28 @@ class ServiceManager extends CComponent {
         }
     }
 
-    public static function startDaemon() {
-        $pid = ServiceManager::process("run php yiic.php service startDaemon");
-        if(!empty($pid)){
-            Setting::set('services.daemon', [
-                'isRunning' => true,
-                'pid' => $pid[0]
-            ]);
-        }        
+    public static function markDaemonAsRun() {
+        $new = new SHMBlock(Setting::get('app.shmblock'));
+        $new->write(time());
     }
     
-    public static function stopDaemon() {
-        $daemon = Setting::get('services.daemon', [
-            'isRunning' => false,
-            'pid' => 0
-        ]);
-        
-        if (!!$daemon['isRunning'] && $daemon['pid'] != 0) {
-            if (self::isProcessRunning($daemon['pid'])) {
-                $output = self::process("kill {$daemon['pid']}");
-            }
-            
-            Setting::set('services.daemon', [
-                'isRunning' => false,
-                'pid' => 0
-            ]);
-        }
+    public static function startDaemon() {
+        ServiceManager::process("run php yiic.php service startDaemon \"".__DIR__."\"");
     }
+    
+    ## daemon never meant to be stopped
+    // public static function stopDaemon() {
+    //     if (!!$daemon['isRunning'] && $daemon['pid'] != 0) {
+    //         if (self::isProcessRunning($daemon['pid'])) {
+    //             $output = self::process("kill {$daemon['pid']}");
+    //         }
+            
+    //         ServiceSetting::set('daemon', [
+    //             'isRunning' => false,
+    //             'pid' => 0
+    //         ]);
+    //     }
+    // }
     
     public static function process($command) {
         chdir(Yii::getPathOfAlias('application'));
@@ -163,7 +157,7 @@ class ServiceManager extends CComponent {
     }
 
     public static function run($serviceName, $params = null) {
-        $service = Setting::get('services.list.' . $serviceName);
+        $service = ServiceSetting::get('list.' . $serviceName);
                 
         if ($service) {
             if (!is_null($params)) {
@@ -176,7 +170,7 @@ class ServiceManager extends CComponent {
     
     public static function runInternal($serviceName, $service = null) {
         if (is_null($service)) {
-            $service = Setting::get('services.list.' . $serviceName);
+            $service = ServiceSetting::get('list.' . $serviceName);
         }
         
         if ($service) {
@@ -194,6 +188,7 @@ class ServiceManager extends CComponent {
             $id = ServiceManager::initInstance();
             $logPath = ServiceManager::getLogPath($serviceName, $id);
             $command = "runLog \"{$logPath}\" php yiic.php service execute --id={$id}";
+            
             $pid = ServiceManager::process($command);
             
             if (!empty($pid)) {
@@ -207,6 +202,13 @@ class ServiceManager extends CComponent {
         } 
     }
     
+    public static function getJson() {
+        
+    }
+    
+    public static function setJson() {
+        
+    }
     
     public static function kill($name) {
         $result = ServiceManager::getRunningInstance($name);
@@ -298,7 +300,7 @@ class ServiceManager extends CComponent {
         
         if (is_file($old)) {
             copy($old, $new);
-            Setting::set('services.list.' . $serviceName . '.lastRun', date("Y-m-d H:i:s"));
+            ServiceSetting::set('list.' . $serviceName . '.lastRun', date("Y-m-d H:i:s"));
             file_put_contents($old, json_encode($service, JSON_PRETTY_PRINT));
         }
     }

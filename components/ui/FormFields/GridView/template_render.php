@@ -2,7 +2,12 @@
     <?php
     $columnsWithoutHTML = $this->columns;
     foreach ($columnsWithoutHTML as $k => $c) {
-        unset($columnsWithoutHTML[$k]['html']);
+        if (isset($columnsWithoutHTML[$k]['html'])) {
+            unset($columnsWithoutHTML[$k]['html']);
+        }
+        if (isset($columnsWithoutHTML[$k]['labelHtml'])) {
+            unset($columnsWithoutHTML[$k]['labelHtml']);
+        }
     } ?>
     
     <!-- row state template -->

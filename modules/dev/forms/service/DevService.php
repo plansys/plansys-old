@@ -20,13 +20,13 @@ class DevService extends Form {
     }
     
     public function serviceValidator() {
-        if ($this->isNewRecord && !is_null(Setting::get('services.list.' .$this->name))) {
+        if ($this->isNewRecord && !is_null(ServiceSetting::get('list.' .$this->name))) {
             $this->addError('name', 'Service name already exists, choose another name');
         }
     }
 
     public static function load($id) {
-        $svc = Setting::get('services.list.' . $id);
+        $svc = ServiceSetting::get('list.' . $id);
         if (is_null($svc)) {
             return false;
         }
@@ -67,7 +67,7 @@ class DevService extends Form {
         if ($this->isNewRecord) {
             $this->create();
         } else {
-            Setting::set('services.list.' . $this->name, $this->attributes);
+            ServiceSetting::set('list.' . $this->name, $this->attributes);
         }
     }
     
@@ -104,7 +104,7 @@ EOF;
         }
         
         ## Setup Process Entry in Setting            
-        Setting::set("services.list.".$this->name, $this->attributes);
+        ServiceSetting::set("list.".$this->name, $this->attributes);
     }
 
     public function getForm() {

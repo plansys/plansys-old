@@ -5,7 +5,7 @@ class DevServiceForm extends DevService {
     public $content;
 
     public static function load($id) {
-        $svc = Setting::get('services.list.' . $id);
+        $svc = ServiceSetting::get('list.' . $id);
         if (is_null($svc)) {
             return false;
         }

@@ -1,3 +1,7 @@
+<?php 
+Yii::import('application.components.utility.Asset');
+?> 
+
 <div ng-controller="PageController">
     <div ui-layout options="{ flow : 'column',dividerSize:1}">
         <div ui-layout-container size='20%' min-size="200px" class="sidebar">

@@ -48,7 +48,11 @@ class Email extends CComponent {
 			$params['to'] = $email;
 			
 			if (!self::$instance->validator->validateValue($email)) {
-				return "Failed to render email..";
+				if (trim($email) == "") {
+					return "Cannot render e-mail. E-mail address is empty!.";
+				} else {
+					return "Cannot render e-mail. Invalid email address ($email).";
+				}
 			}
 			
 			return $eb->render($params);

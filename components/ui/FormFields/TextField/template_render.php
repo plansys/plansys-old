@@ -42,7 +42,7 @@
                 <!-- postfix -->
                 <?php if ($this->postfix != ""): ?>
                     <span class="input-group-addon"
-                    style="{{ textFieldDisabled ? 'background:#fff;border:1px solid #ececeb;border-left:0px' : '' }}">>
+                    style="{{ textFieldDisabled ? 'background:#fff;border:1px solid #ececeb;border-left:0px' : '' }}">
                     <?= $this->postfix ?>
                     </span>
                 <?php endif; ?>

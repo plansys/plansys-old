@@ -38,33 +38,6 @@ class Setting {
         'ldap' => [
             'enable' => false
         ],
-        "services"=> [
-            "list"=> [
-                "SendEmail" => [
-                    "name"=> "SendEmail",
-                    "commandPath"=> "application.commands",
-                    "command"=> "EmailCommand",
-                    "action"=> "actionSend",
-                    "schedule"=> "manual",
-                    "period"=> "",
-                    "instance"=> "single",
-                    "singleInstanceMode"=> "wait"
-                ],
-                "ImportData"=> [
-                    "name"=> "ImportData",
-                    "commandPath"=> "application.commands",
-                    "command"=> "ImportCommand",
-                    "action"=> "actionIndex",
-                    "schedule"=> "manual",
-                    "period"=> "",
-                    "instance"=> "parallel",
-                    "singleInstanceMode"=> "wait",
-                ]
-            ],
-            "daemon"=> [
-                "isRunning"=> false
-            ]
-        ]
     ];
     public static  $mode        = null;
     public static  $entryScript = "";
@@ -81,27 +54,6 @@ class Setting {
         } else {
             return [];
         }
-    }
-
-    public static function get($key, $default = null, $forceRead = false) {
-        $keys = explode('.', $key);
-
-        if ($forceRead) {
-            $file = @file_get_contents(Setting::$path);   
-            $setting       = json_decode($file, true);
-            Setting::$data = Setting::arrayMergeRecursiveReplace(Setting::$default, $setting);
-        }
-
-        $arr = Setting::$data;
-        while ($k = array_shift($keys)) {
-            $arr = &$arr[$k];
-        }
-
-        if ($arr == null) {
-            $arr = $default;
-        }
-
-        return $arr;
     }
 
     public static function init($configfile, $mode = "running", $entryScript = "") {
@@ -126,9 +78,9 @@ class Setting {
             }
 
             $json   = Setting::$default;
+            
             $json   = json_encode($json, JSON_PRETTY_PRINT);
             $result = @file_put_contents(Setting::$path, $json);
-
 
             require_once("Installer.php");
             Installer::createIndexFile("install");
@@ -158,7 +110,7 @@ class Setting {
             $setting       = json_decode($file, true);
             Setting::$data = Setting::arrayMergeRecursiveReplace(Setting::$default, $setting);
         }
-
+        
 
         ## set host
         if (!Setting::get('app.host')) {
@@ -167,10 +119,17 @@ class Setting {
             Setting::set('app.host', $protocol . $_SERVER['HTTP_HOST'] . $port);
         }
 
-
         ## set debug
         if (Setting::$mode == null) {
             Setting::$mode = $mode;
+        }
+        
+        if ($mode == 'testing') {
+            Setting::$mode = 'testing';
+        }
+        
+        if (!isset(Setting::$data['app']['shmblock'])) {
+            Setting::set('app.shmblock', rand(100, 800));
         }
 
         if (Setting::get('app.mode') != 'production') {
@@ -268,6 +227,27 @@ class Setting {
         return $paArray1;
     }
 
+    public static function get($key, $default = null, $forceRead = false) {
+        $keys = explode('.', $key);
+        
+        if ($forceRead) {
+            $file = @file_get_contents(Setting::$path);   
+            $setting       = json_decode($file, true);
+            Setting::$data = Setting::arrayMergeRecursiveReplace(Setting::$default, $setting);
+        }
+
+        $arr = Setting::$data;
+        while ($k = array_shift($keys)) {
+            $arr = &$arr[$k];
+        }
+
+        if ($arr == null) {
+            $arr = $default;
+        }
+
+        return $arr;
+    }
+    
     public static function set($key, $value, $flushSetting = true) {
         Setting::setInternal(Setting::$data, $key, $value);
 
@@ -287,6 +267,14 @@ class Setting {
     }
 
     public static function write() {
+        if (@Setting::$data['db']['username'] == "" || @Setting::$data['db']['password'] == "") {
+            $data = date("Y-m-d H:i:s");
+            $data .= "\n\n";
+            $data .= var_export($_SERVER, true);
+            
+            @file_put_contents(Setting::getAssetPath() . "/setting_json_error.txt", $data);
+        }
+        
         $result = @file_put_contents(Setting::$path, json_encode(Setting::$data, JSON_PRETTY_PRINT));
     }
 
@@ -383,6 +371,12 @@ class Setting {
                 );
 
                 $config['theme'] = 'default';
+            }
+            
+            if (Setting::$mode == 'testing') {
+                $config['components']['request'] = array(
+                    'class' => 'CodeceptionHttpRequest'
+                ); 
             }
         }
 
