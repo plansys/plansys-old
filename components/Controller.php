@@ -414,7 +414,7 @@ class Controller extends CController {
         }
 
         parent::beforeAction($action);
-
+        
         return true;
     }
 
