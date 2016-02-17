@@ -279,10 +279,14 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                 if (newv !== oldv) {
                                     $scope.updateParam(key, newv);
                                     
-                                    $scope.query(function () {
-                                        $scope.trackChanges = false;
+                                    $scope.trackChanges = false;
+                                    $scope.afterQueryInternal['params-' + watch] = function () {
                                         $scope.resetOriginal();
-                                    });
+                                        $scope.trackChanges = true
+                                        delete $scope.afterQueryInternal['params-' + watch];
+                                    }
+                                    
+                                    $scope.query();
                                 }
                             },true);
     
@@ -298,10 +302,13 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 }
 
                 if (jsParamExist) {
-                    $scope.query(function () {
-                        $scope.trackChanges = true;
+                    
+                    $scope.afterQueryInternal['params-init'] = function () {
                         $scope.resetOriginal();
-                    });
+                        $scope.trackChanges = true
+                        delete $scope.afterQueryInternal['params-init'];
+                    }
+                    $scope.query();
                 } else {
                     $scope.data = JSON.parse($el.find("data[name=data]:eq(0)").text());
                     $scope.trackChanges = true;
