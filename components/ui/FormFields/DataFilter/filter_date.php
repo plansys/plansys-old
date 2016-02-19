@@ -17,7 +17,7 @@
                                 && filter.valueText != 'All'
                                 && filter.operator != 'Is Empty') || filter.label == ''
                 ">:</span></span>
-        <b>{{filter.valueText}}
+        <b>{{filter.valueText}} 
         </b>
         <span style="margin-left:5px;display:inline-block;"></span><span class="caret" ng-if="!filter.options.lockOperator" ></span>
     </button>
@@ -87,7 +87,6 @@
         <div class="filter-date-dropdown">
 
         </div>
-
-
+        
     </div>
 </div>
