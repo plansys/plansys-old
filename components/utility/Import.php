@@ -336,7 +336,9 @@ class Import extends CComponent {
                             return @$ref[$var[2]];
                         }, $col['value']);
                     
-                    $attrs[$key] = Helper::evaluate($expr, [
+                    $into = isset($col['into']) ? $col['into'] : $key;
+                    
+                    $attrs[$into] = Helper::evaluate($expr, [
                         'row'=> $row,
                         'lastRow' => $this->lastRow
                     ] + $params);
@@ -423,7 +425,9 @@ class Import extends CComponent {
                             return @$ref[$var[2]];
                         }, $col['value']);
                     
-                    $attrs[$key] = Helper::evaluate($expr, [
+                    $into = isset($col['into']) ? $col['into'] : $key;
+                    
+                    $attrs[$into] = Helper::evaluate($expr, [
                         'row'=> $row,
                         'lastRow' => $this->lastRow
                     ] + $params);
@@ -481,6 +485,7 @@ class Import extends CComponent {
         if (!is_bool($skipIf)) {
             var_dump($skipIf); die();
         }
+        
         if ($skipIf === true) {
             $executeChild = false;
         } else if (is_string($skipParentIf)) {
@@ -515,7 +520,7 @@ class Import extends CComponent {
             }
         }
         
-        //         var_dump(get_class($model),$model->errors, $this->lastRow);
+        // var_dump(get_class($model),$model->errors, $this->lastRow);
         // echo "<hr/>";
         
         foreach ($resolveCol as $rc){
@@ -583,7 +588,9 @@ class Import extends CComponent {
                                     return @$ref[$var[2]];
                                 }, $col['value']);
                             
-                            $attrs[$key] = Helper::evaluate($expr, [
+                            $into = isset($col['into']) ? $col['into'] : $key;
+                            
+                            $attrs[$into] = Helper::evaluate($expr, [
                                 'row'=> $row,
                                 'lastRow' => $this->lastRow
                             ] + $params);
