@@ -626,7 +626,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 break;
                             case "date":
                                 var from = dateFilter(filter.from, 'dd/MM/yyyy');
-                                if (typeof from == "undefined") {
+                                if (typeof from == "undefined" || from == '01/01/1970') {
                                     from = "";
                                 }
 

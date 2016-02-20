@@ -84,7 +84,7 @@ class ServiceManager extends CComponent {
     public static function checkDaemon() {
         $new = new SHMBlock(Setting::get('app.shmblock'));
         $lastrun = false;
-        if ($new->exists(100)) {
+        if ($new->exists(Setting::get('app.shmblock'))) {
             $lastrun = @$new->read();
             if ($lastrun == "" || $lastrun == null) {
                 $lastrun = false;

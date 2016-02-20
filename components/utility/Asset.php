@@ -53,7 +53,6 @@ class Asset extends CComponent {
                         }
 
                         $p = str_replace($jspath, '', realpath($p));
-
                         Yii::app()->clientScript->registerScriptFile($path . str_replace("\\", "/", $p), CClientScript::POS_END);
                     }
                 } else if (is_file($jspath)) {

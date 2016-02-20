@@ -5,11 +5,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
         compile: function (element, attrs, transclude) {
             if (attrs.ngModel && !attrs.ngDelay) {
                 var fieldType = element.find("data[name=field_type]").text();
-                if (fieldType == 'date') {
-                    attrs.$set('ngModel', '$parent.$parent.' + attrs.ngModel, false);
-                } else {
-                    attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
-                }
+                attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
             }
 
             return function ($scope, $el, attrs, ctrl) {
@@ -66,6 +62,25 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                     var month = $scope.dd.month + 1 < 10 ? "0" + ($scope.dd.month + 1) : $scope.dd.month + 1;
                     $scope.value = $scope.dd.year + "-" + month + "-" + $scope.dd.day;
                     
+                    if (isNaN($scope.dd.day)) {
+                        if (!$scope.defaultToday) {
+                            $scope.dd.day = '';
+                        } else {
+                            $scope.dd.day = $scope.dayList[0].i;
+                        }
+                    }
+                    
+                    if (isNaN($scope.dd.year)) {
+                        if (!$scope.defaultToday) {
+                            $scope.dd.year = '';
+                        } else {
+                            $scope.dd.year = $scope.yearList[0];
+                        }
+                    }
+                    
+                    if ($scope.dd.day === '' || $scope.dd.day == '00' || $scope.dd.month === '' || $scope.dd.year === '') {
+                        $scope.value = null;
+                    }
                     $scope.update();
                 }
 
@@ -142,8 +157,9 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                         isWrongValue = true;
                     }
                     
-                    if (isWrongValue || $scope.value == '0000-00-00' 
-                        || $scope.value == '0000-00-00 00:00:00') {
+                    if (isWrongValue || $scope.value == '0000-00-00'
+                        || $scope.value == '0000-00-00 00:00:00' 
+                        || ($scope.fieldType == 'datetime' && $scope.value.split(' ').length <2)) {
                         if ($scope.defaultToday == 'Yes') {
                             switch ($scope.fieldType) {
                                 case 'datetime':
@@ -202,8 +218,10 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                                 var maxDay = (new Date($scope.dd.year, $scope.dd.month + 1, 0)).getDate();
                                 if ($scope.dd.day *1 > maxDay) {
                                     $scope.dd.day = maxDay;
-                                    $scope.value = $scope.dd.year + "-" + ($scope.dd.month +1) + '-' + $scope.dd.day;
-                                    ctrl.$setViewValue($scope.value);
+                                    if ($scope.dd.month != "" && $scope.dd.year != "" && $scope.dd.day != "") {
+                                        $scope.value = $scope.dd.year + "-" + ($scope.dd.month +1) + '-' + $scope.dd.day;
+                                        ctrl.$setViewValue($scope.value);
+                                    }
                                 }
                             } else {
                                 if ($scope.defaultToday == 'Yes') {
@@ -217,7 +235,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                                     $scope.dd.day = '';
                                     $scope.value = null;                                    
                                 }
-                                ctrl.$setViewValue($scope.value);
+                                
                             }
                             if ($scope.dd.day < 10 && $scope.dd.day > 0) {
                                 $scope.dd.day = "0" + ($scope.dd.day * 1);
@@ -257,6 +275,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                             }
                         break;
                     }
+                    
                 }
 
 
@@ -376,7 +395,6 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                 
                 // if ngModel is present, use that instead of value from php
                 if (attrs.ngModel) {
-                            
                     $timeout(function () {
                         var ngModelValue = $scope.$parent.$eval(attrs.ngModel);
                         if (typeof ngModelValue != "undefined") {
