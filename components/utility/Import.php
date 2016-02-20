@@ -134,6 +134,7 @@ class Import extends CComponent {
                         throw new CException('Invalid columns configuration  in `' . $filePath . '`.
                         Missing `value` key, please provide function name to execute in `value` key!');
                     }
+
                     break;
                 case 'lookup':
                     if (!isset($col['from'])) {
@@ -336,7 +337,9 @@ class Import extends CComponent {
                             return @$ref[$var[2]];
                         }, $col['value']);
                     
-                    $attrs[$key] = Helper::evaluate($expr, [
+                    $into = isset($col['into']) ? $col['into'] : $key;
+                    
+                    $attrs[$into] = Helper::evaluate($expr, [
                         'row'=> $row,
                         'lastRow' => $this->lastRow
                     ] + $params);
@@ -423,7 +426,9 @@ class Import extends CComponent {
                             return @$ref[$var[2]];
                         }, $col['value']);
                     
-                    $attrs[$key] = Helper::evaluate($expr, [
+                    $into = isset($col['into']) ? $col['into'] : $key;
+                    
+                    $attrs[$into] = Helper::evaluate($expr, [
                         'row'=> $row,
                         'lastRow' => $this->lastRow
                     ] + $params);
@@ -481,6 +486,7 @@ class Import extends CComponent {
         if (!is_bool($skipIf)) {
             var_dump($skipIf); die();
         }
+        
         if ($skipIf === true) {
             $executeChild = false;
         } else if (is_string($skipParentIf)) {
@@ -515,7 +521,7 @@ class Import extends CComponent {
             }
         }
         
-        //         var_dump(get_class($model),$model->errors, $this->lastRow);
+        // var_dump(get_class($model),$model->errors, $this->lastRow);
         // echo "<hr/>";
         
         foreach ($resolveCol as $rc){
@@ -523,81 +529,83 @@ class Import extends CComponent {
             $data[$rc] = $model->{$rc};
         }
         
-        if ($executeChild) {
-            foreach ($this->relations as $rname=>$rel) {
-                $initData =  array_merge($row, $attrs, $data);
-                if (isset($rel['condition'])) {
-                    $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
-                        function($var) use($initData) {
-                            return @$initData[$var[2]];
-                        }, $rel['condition']);
+        if (!$model->hasErrors() || $skipParentIf === true) {
+            if ($executeChild) {
+                foreach ($this->relations as $rname=>$rel) {
+                    $initData =  array_merge($row, $attrs, $data);
+                    if (isset($rel['condition'])) {
+                        $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
+                            function($var) use($initData) {
+                                return @$initData[$var[2]];
+                            }, $rel['condition']);
+                        
+                        if (!Helper::evaluate($expr)) {
+                            continue;
+                        }
+                    }
                     
-                    if (!Helper::evaluate($expr)) {
-                        continue;
+                    $relAttrs = $initData;
+                    foreach ($rel['columns'] as $key=>$col) {
+                        $rkey = $rname . '_' . $key;
+                        
+                        if (isset($row[$rkey])) {
+                            $relAttrs[$key] = $row[$rkey];
+                        }
+                    }
+                    $rel['import']->parentData = array_merge($model->attributes, $initData);
+                    $rel['import']->lastRow = $this->lastRow;
+                    $res = $rel['import']->importRow($relAttrs);
+                    if ($res !== true) {
+                        
+                        $errors = [];
+                        foreach ($res as $k=>$e) {
+                            $errors[] = $k . " => " . @$e[0];
+                        }
+                        
+                        return [
+                            'relation ' . $rname => $errors
+                        ];
                     }
                 }
                 
-                $relAttrs = $initData;
-                foreach ($rel['columns'] as $key=>$col) {
-                    $rkey = $rname . '_' . $key;
-                    
-                    if (isset($row[$rkey])) {
-                        $relAttrs[$key] = $row[$rkey];
-                    }
-                }
-                $rel['import']->parentData = array_merge($model->attributes, $initData);
-                $rel['import']->lastRow = $this->lastRow;
-                $res = $rel['import']->importRow($relAttrs);
-                if ($res !== true) {
-                    
-                    $errors = [];
-                    foreach ($res as $k=>$e) {
-                        $errors[] = $k . " => " . @$e[0];
-                    }
-                    
-                    return [
-                        'relation ' . $rname => $errors
-                    ];
-                }
-            }
-            
-            ## execute function when afterSave
-            if ($skipParentIf !== true) {
-                foreach ($this->columns as $key => $col) {
-                    if (@$col['type'] == 'function') {
-                        if (@$col['when'] == 'afterSave') {
-                            $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
-                                function($var) use($key, $data, $col) {
-                                    $ref = $this->parentData;
-                                    switch ($var[1]) {
-                                        case 'row': $ref = $data; break;
-                                        case 'lastRow': $ref = $this->lastRow; break;
-                                    }
-                                    
-                                    if (is_object(@$ref[$var[2]]) ) {
-                                        if ($ref[$var[2]] instanceof DateTime) {
-                                            $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
+                ## execute function when afterSave
+                if ($skipParentIf !== true) {
+                    foreach ($this->columns as $key => $col) {
+                        if (@$col['type'] == 'function') {
+                            if (@$col['when'] == 'afterSave') {
+                                $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
+                                    function($var) use($key, $data, $col) {
+                                        $ref = $this->parentData;
+                                        switch ($var[1]) {
+                                            case 'row': $ref = $data; break;
+                                            case 'lastRow': $ref = $this->lastRow; break;
                                         }
-                                    }
-                            
-                                    return @$ref[$var[2]];
-                                }, $col['value']);
-                            
-                            $attrs[$key] = Helper::evaluate($expr, [
-                                'row'=> $row,
-                                'lastRow' => $this->lastRow
-                            ] + $params);
-                            
-                            if (@$col['show'] === true) {
-                                $data[$key] = $row[$key];
+                                        
+                                        if (is_object(@$ref[$var[2]]) ) {
+                                            if ($ref[$var[2]] instanceof DateTime) {
+                                                $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
+                                            }
+                                        }
+                                
+                                        return @$ref[$var[2]];
+                                    }, $col['value']);
+                                
+                                $into = isset($col['into']) ? $col['into'] : $key;
+                                
+                                $attrs[$into] = Helper::evaluate($expr, [
+                                    'row'=> $row,
+                                    'lastRow' => $this->lastRow
+                                ] + $params);
+                                
+                                if (@$col['show'] === true) {
+                                    $data[$key] = $row[$key];
+                                }
                             }
                         }
                     }
                 }
-            }
-        } 
+            } 
         
-        if (!$model->hasErrors()) {
             $this->data[] = $data;
             if (!$skipIf && !$skipParentIf) {
                 $this->skipIfStatus = false;
