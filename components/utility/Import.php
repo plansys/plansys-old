@@ -386,8 +386,29 @@ class Import extends CComponent {
                     if (isset($this->model->tableSchema->columns[$key]) && ($row[$key] == '' && $this->model->tableSchema->columns[$key]->isForeignKey)) {
                         continue;
                     }
-                    $attrs[$key] = $row[$key];
-                    $data[$key] = $row[$key];
+                    
+                    $rowVal = $row[$key];
+                    if (isset($col['format'])) {
+                        switch ($col['format']) {
+                            case "date":
+                                $rowVal = date('Y-m-d', strtotime($rowVal));
+                                if ($rowVal == '1970-01-01') {
+                                    $rowVal = null;    
+                                }
+                            break;
+                            case "datetime":
+                                $test = date('Y-m-d', strtotime($rowVal));
+                                if ($test == '1970-01-01') {
+                                    $rowVal = null;    
+                                } else {
+                                    $rowVal = date('Y-m-d H:i:s', strtotime($rowVal));
+                                }
+                            break;
+                        }
+                    }
+                    
+                    $attrs[$key] = $rowVal;
+                    $data[$key] = $rowVal;
                     break;
                 case 'lookup':
                     $result = $this->lookup($attrs, $col, $key, array_merge($row, $attrs, $data));

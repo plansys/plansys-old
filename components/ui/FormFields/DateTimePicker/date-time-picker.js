@@ -4,7 +4,6 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
         scope: true,
         compile: function (element, attrs, transclude) {
             if (attrs.ngModel && !attrs.ngDelay) {
-                var fieldType = element.find("data[name=field_type]").text();
                 attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
             }
 
@@ -235,7 +234,6 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                                     $scope.dd.day = '';
                                     $scope.value = null;                                    
                                 }
-                                
                             }
                             if ($scope.dd.day < 10 && $scope.dd.day > 0) {
                                 $scope.dd.day = "0" + ($scope.dd.day * 1);
@@ -393,16 +391,14 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                     return $scope.isDPDisabled;
                 }
                 
-                // if ngModel is present, use that instead of value from php
-                if (attrs.ngModel) {
-                    $timeout(function () {
-                        var ngModelValue = $scope.$parent.$eval(attrs.ngModel);
-                        if (typeof ngModelValue != "undefined") {
-                            $scope.value = ngModelValue;
-                        }
-                        $scope.splitDateTime();
-                    }, 0);
-                }
+                // if (attrs.ngModel) {
+                //     $timeout(function () {
+                //         var ngModelValue = $scope.$parent.$eval(attrs.ngModel);
+                //         if (typeof ngModelValue != "undefined") {
+                //             $scope.value = ngModelValue;
+                //         }
+                //     }, 0);
+                // }
             }
         }
     };
