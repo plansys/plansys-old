@@ -287,6 +287,8 @@ class Import extends CComponent {
                             'row'=> $row,
                             'lastRow' => $this->lastRow
                         ] + $params);
+                        //var_dump($attrs[$into]);
+                        //die();
                         break;
                 }
             }
@@ -296,6 +298,7 @@ class Import extends CComponent {
     }
     
     public function importRow($row, $params = []) {
+
         if (!$this->loaded) {
             throw new CException('Import configuration must be loaded before importing!');
         }
@@ -315,7 +318,7 @@ class Import extends CComponent {
                 $row[$k] = trim($r);
             }
         }
-        
+        //var_dump($row); die();
         ## execute function when beforeLookup
         foreach ($this->columns as $key => $col) {
             if (@$col['type'] == 'function') {
@@ -501,12 +504,10 @@ class Import extends CComponent {
                 'lastRow' => $this->lastRow
             ] + $params);
         }
-        
+
+
         $model->attributes = $attrs;
         $executeChild = true;
-        if (!is_bool($skipIf)) {
-            var_dump($skipIf); die();
-        }
         
         if ($skipIf === true) {
             $executeChild = false;
