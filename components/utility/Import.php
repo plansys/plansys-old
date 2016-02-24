@@ -274,7 +274,17 @@ class Import extends CComponent {
                         $this->lookup[$from]['hash'][$hashKey] = $insert;
                         
                         ## assign inserted id into attrs
-                        $attrs[$into] = $insert[$col['return']];
+                        if (!isset($col['notfound']['return'])) {
+                            $attrs[$into] = $insert[$col['return']];
+                        } else {
+                            if (is_string($col['notfound']['return'])) {
+                                $attrs[$into] = $insert[$col['notfound']['return']];
+                            } else if (is_array($col['notfound']['return'])) {
+                                foreach ($col['notfound']['return'] as $nk => $nr) {
+                                    $attrs[$nk] = $insert[$nr];
+                                }
+                            }
+                        }
                     break;
                     case 'lookup':
                         $coldef= $col['notfound'];
