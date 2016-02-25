@@ -69,9 +69,14 @@ ob_start();
         $scope.closeWindow = function() {
             window.close();
         }
-        if (!!window.opener) {
-            $scope.parentWindow = window.opener.formScope;
-        }
+        
+        // Define parentWindow for popup
+        try { 
+            if (window.opener && window.opener.formScope) {
+                $scope.parentWindow = window.opener.formScope;
+            }
+        } catch (e) {}
+        
         if ($scope.pageInfo.ctrl == 'formfield' && $scope.pageInfo.action == 'subform') {
             if (!!$scope.params.f && !!window.opener.popupScope) {
                 $scope.popupScope = window.opener.popupScope[$scope.params.f];
