@@ -37,6 +37,10 @@ ob_start();
         $scope.strtotime = strtotime;
         $scope.angular = angular;
         
+        if ($scope.model == null || !$scope.model) {
+            $scope.model = {};
+        }
+        
         if (window.plansys) {
             window.plansys.rootPath = '<?php echo str_replace("\\","/",Setting::getRootPath()); ?>';
             window.plansys.repoPath = '<?php echo str_replace("\\","/",Setting::getRootPath() . DIRECTORY_SEPARATOR . Setting::get("repo.path")); ?>';
