@@ -137,7 +137,13 @@ EOF;
                 }
                 
                 foreach ($row as $k=>$v) {
-                    $row[$k] = (string)$v;
+                    if (is_object($v)) {
+                        if (get_class($v) == 'DateTime') {
+                            $row[$k] = $v->format('Y-m-d');
+                        }
+                    } else {
+                        $row[$k] = (string)$v;
+                    }
                 }
                 
                 
