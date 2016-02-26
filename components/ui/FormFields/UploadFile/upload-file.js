@@ -197,8 +197,8 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                         });
                     }
                 };
-                
-                $scope.reset = function() {
+
+                $scope.reset = function(){
                     $scope.choose('');
                     $scope.file = null;
                     $scope.value = '';
