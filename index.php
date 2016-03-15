@@ -20,6 +20,9 @@ if (!file_exists($root . '/vendor/autoload.php')) {
     die();
 }
 $composer = require ($root . '/vendor/autoload.php');
+if (is_file($root . '/../app/vendor/autoload.php')) {
+    $composerApp = require ($root . '/../app/vendor/autoload.php');
+}
 
 ## Initialize settings
 require_once ($setting);
