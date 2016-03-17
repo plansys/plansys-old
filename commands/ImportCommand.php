@@ -124,6 +124,8 @@ EOF;
         
         ## get first sheet
         $import = new Import($this->params['model']);
+        
+        
         foreach ($reader->getSheetIterator() as $sheet) {
             ## loop each row in first sheet
             $rowCount = count($sheet->getRowIterator());
@@ -145,7 +147,6 @@ EOF;
                         $row[$k] = (string)$v;
                     }
                 }
-                
                 
                 ## do import 
                 $rowImport = [];
@@ -172,7 +173,6 @@ EOF;
                         break;
                     }
                 }
-                
                 $this->msg('Importing ' . ($r - 1) . ' Row...<br/><br/>' . $this->formatErrors($errors));
             }
             break;

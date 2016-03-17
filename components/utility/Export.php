@@ -27,7 +27,9 @@ class Export extends CComponent {
     }
     
     public static function downloadSample($model, $config = null) {
+        
         $import = new Import($model, $config);
+      
         $data = $import->model->find();
         
         $header = [];
