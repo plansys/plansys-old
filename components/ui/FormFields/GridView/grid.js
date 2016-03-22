@@ -246,7 +246,9 @@ app.directive('gridView', function ($timeout, $http) {
 
                     if (changing) {
                         $scope.datasource.query();
-                    } 
+                    } else {
+                        $scope.datasource.enableTrackChanges();
+                    }
                 }
 
                 // update sorting
