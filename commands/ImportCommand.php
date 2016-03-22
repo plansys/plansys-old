@@ -124,6 +124,8 @@ EOF;
         
         ## get first sheet
         $import = new Import($this->params['model']);
+        
+        
         foreach ($reader->getSheetIterator() as $sheet) {
             ## loop each row in first sheet
             $rowCount = count($sheet->getRowIterator());
@@ -137,9 +139,14 @@ EOF;
                 }
                 
                 foreach ($row as $k=>$v) {
-                    $row[$k] = (string)$v;
+                    if (is_object($v)) {
+                        if (get_class($v) == 'DateTime') {
+                            $row[$k] = $v->format('Y-m-d');
+                        }
+                    } else {
+                        $row[$k] = (string)$v;
+                    }
                 }
-                
                 
                 ## do import 
                 $rowImport = [];
@@ -166,7 +173,6 @@ EOF;
                         break;
                     }
                 }
-                
                 $this->msg('Importing ' . ($r - 1) . ' Row...<br/><br/>' . $this->formatErrors($errors));
             }
             break;

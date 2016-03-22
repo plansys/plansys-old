@@ -31,6 +31,10 @@ class Import extends CComponent {
             $m = explode(".", $model);
             $model = $m[0];
             $configSuffix = $m[1];
+            
+            if(!empty($configSuffix)){
+                $configSuffix = ".".$configSuffix;
+            }
         }
         
         $filePath = $dir . DIRECTORY_SEPARATOR . $model . $configSuffix . ".php";
@@ -171,6 +175,7 @@ class Import extends CComponent {
         
         $this->config = $config;
         $this->loaded = true;
+        
         return true;
     }
     

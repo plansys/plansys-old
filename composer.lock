@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/box/spout.git",
-                "reference": "e4cc8b4eaa91727f6b0ae8fe726f13a3f0dc6155"
+                "reference": "0c90d102efc3c7326882598ab927dd9bcbac41d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/box/spout/zipball/e4cc8b4eaa91727f6b0ae8fe726f13a3f0dc6155",
-                "reference": "e4cc8b4eaa91727f6b0ae8fe726f13a3f0dc6155",
+                "url": "https://api.github.com/repos/box/spout/zipball/0c90d102efc3c7326882598ab927dd9bcbac41d4",
+                "reference": "0c90d102efc3c7326882598ab927dd9bcbac41d4",
                 "shasum": ""
             },
             "require": {
@@ -75,7 +75,7 @@
                 "write",
                 "xlsx"
             ],
-            "time": "2016-01-27 21:26:18"
+            "time": "2016-02-22 02:11:03"
         },
         {
             "name": "inlinestyle/inlinestyle",
@@ -232,7 +232,7 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v3.0.2",
+            "version": "v3.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
