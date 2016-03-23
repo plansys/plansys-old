@@ -21,6 +21,7 @@ class ActiveRecord extends CActiveRecord {
     private $__relReset = [];
     private $__tempVar = [];
     private $__relUploadField = [];
+    private $__subrelations = [];
     
     private static $_md = array();   // class name => meta data
 
@@ -553,8 +554,61 @@ class ActiveRecord extends CActiveRecord {
         }
         return self::$_md[$className];
     }
+    
+    
+    // private function loadSubRelation($tree, $result = [], $srel = "") {
+    //      foreach ($tree as $k=>$v) {
+    //         $rel = $k;
+    //         if (is_string($v)) {
+    //             $rel = $v;
+    //         }
+            
+    //         if ($srel != "") {
+    //             foreach ($result as $rk => $rv) {
+    //                 if (is_array($result[$rk])) {
+    //                     var_dump($result, $tree, $srel);
+    //                     die();
+    //                 }
+    //                 $result[$rk][$rel] = $result[$rk]->getRelated($rel);
+
+    //                 if (is_array($v)) {
+    //                     foreach ($v as $sk => $sv) {
+    //                         foreach ($result[$rk][$rel] as $rrk => $rrv) {
+    //                             $result[$rk][$rel][$rrk][$sv] = $result[$rk][$rel][$rrk]->loadSubRelation($v, $result[$rk][$rel][$rrk][$sv], $sv);
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         } else {
+    //             $result[$rel] = $this->getRelated($rel);
+            
+    //             if (is_array($v)) {
+    //                 foreach ($v as $sk => $sv) {
+    //                     $srel = $sk;
+    //                     if (is_string($sv)) {
+    //                         $srel = $sv;
+    //                     }
+                        
+    //                     foreach ($result[$rel] as $rk => $rv) {
+    //                         $rv->getRelated($srel);
+    //                         $result[$rel][$rk][$srel] = $result[$rel][$rk]->loadSubRelation($sv, $result[$rel][$rk][$srel], $srel);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return $result;
+    // }
+
+    public function setRelation($name, $value) {
+        $this->_related[$name] = $value;
+    }
 
     public function loadRelation($name, $criteria = []) {
+        if (is_array($name)) {
+            return $this->loadSubRelation($name);
+        }
+        
         if (!isset($this->__relations[$name]))
             return [];
 

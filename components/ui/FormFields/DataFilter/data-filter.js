@@ -109,7 +109,34 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                     }
                 }
 
+                
+                $scope.setFirst = function(filter) {
+                    if (!isNaN(filter)) {
+                        filter = $scope.filters[filter];
+                    }
+                    if (filter.filterType == 'relation') {
+                        filter.loading = true;
+                        filter.list = [];
+                        filter.initRel = false;
+                        filter.value = "";
+                        $scope.relationNext(false, filter, function(data) {
+                            if (data.count > 0) {
+                                filter.value = data.list[0].key;
+                                $scope.updateFilter(filter);
+                            } else {
+                                filter.value = "";
+                                filter.valueText = "";
+                            }
+                        });
+                    }
+                }
+                
                 $scope.resetFilter = function (filter) {
+                    
+                    if (!isNaN(filter)) {
+                        filter = $scope.filters[filter];
+                    }
+                    
                     filter.value = '';
                     if (filter.filterType == 'date') {
                         filter.from = '';
@@ -128,6 +155,12 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
 
                     $scope.changeValueText(filter);
 
+                    if (filter.filterType == 'relation') {
+                        filter.loading = true;
+                        filter.list = [];
+                        filter.initRel = false;
+                    }
+                    
                     $scope.datasources.map(function (dataSourceName) {
                         var ds = parent[dataSourceName];
                         var dsParamName = "";
@@ -201,7 +234,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 f.checked = [];
                                 f.checkedLength = f.checked.length;
                             }
-                            // todo: fix search focus
+                            
                         }
                     }
                     return filters;
@@ -236,7 +269,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 };
                 $scope.updateFilter = function (filter, e, shouldExec) {
                     $scope.changeValueText(filter);
-
+                    
                     shouldExec = typeof shouldExec == "undefined" ? true : shouldExec;
                     if (typeof e != "undefined" && e != null &&
                         ['list', 'check', 'relation'].indexOf(filter.filterType) < 0) {
@@ -249,7 +282,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         }
                     }
                     
-
                     $scope.datasources.map(function (dataSourceName) {
                         var ds = parent[dataSourceName];
                         if (!ds) {
@@ -302,7 +334,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                     if (typeof $scope.afterQuery == 'function') {
                                         $scope.afterQuery(ds);
                                     }
-                                    
                                     if (!!filter.options && !!filter.options['ng-change']) {
                                         $scope.$eval(filter.options['ng-change']);
                                     }
@@ -399,9 +430,12 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                     return false;
                 }
 
-                $scope.relationNext = function (e, filter) {
-                    e.stopPropagation();
-                    e.preventDefault();
+                $scope.relationNext = function (e, filter, f) {
+                    if (!!e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }
+                    
                     if (!filter) return;
                     $scope.loading = true;
 
@@ -434,7 +468,10 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         if (filter.list.length > 5) {
                             filter.searchable = true;
                         }
-
+                        
+                        if (typeof f == "function") {
+                            f(data);
+                        }
                     });
 
                     return false;
