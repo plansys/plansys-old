@@ -10,6 +10,7 @@ class Email extends CComponent {
 	}
 	
 	public static function preview($from, $template, $params = [], $options = []) {
+	
 		if (!isset(self::$instance)) {
 			self::$instance = new Email();
 		}
@@ -60,6 +61,7 @@ class Email extends CComponent {
 	}
 	
 	public static function send($from, $template, $params = [], $options = []) {
+
 		if (!isset(self::$instance)) {
 			self::$instance = new Email();
 		}
@@ -68,7 +70,7 @@ class Email extends CComponent {
 			$from = [$from];
 		} else {
 			array_walk_recursive($from, function (&$value) {
-			    if (is_string($value)) {
+			    if (is_string($value) && strlen($value)<5000) {
 			    	$value = htmlentities($value);
 			    }
 			});

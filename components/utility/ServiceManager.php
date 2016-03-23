@@ -188,9 +188,8 @@ class ServiceManager extends CComponent {
             $id = ServiceManager::initInstance();
             $logPath = ServiceManager::getLogPath($serviceName, $id);
             $command = "runLog \"{$logPath}\" php yiic.php service execute --id={$id}";
-            
+          
             $pid = ServiceManager::process($command);
-            
             if (!empty($pid)) {
                 $service['pid'] = $pid[0];
                 ServiceManager::sendMsg($id, $service);
@@ -236,11 +235,11 @@ class ServiceManager extends CComponent {
         if (!is_dir($path)) {
             mkdir($path, 0777, true);
         }
-        
+      
         if (is_array($msg)) {
-            file_put_contents($file . ".json", json_encode($msg));
+            file_put_contents($file . ".json", serialize($msg));
         } else if (is_string($msg)) {
-            file_put_contents($file . ".txt", json_encode($msg));
+            file_put_contents($file . ".txt", serialize($msg));
         }
     }
     
@@ -269,7 +268,7 @@ class ServiceManager extends CComponent {
         if ($fileExist) {
             $content = file_get_contents($file);
             if ($fileExist == "json")  {
-                $content = json_decode($content, true);
+                $content = unserialize($content);
             }
             unlink($file);
             return $content;
