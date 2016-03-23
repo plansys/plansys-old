@@ -50,6 +50,7 @@ class ServiceCommand extends CConsoleCommand {
         ServiceManager::initLogAppend($id, "[OK]");
         
         $running = true;
+        $i = 0;
         while ($running) {
             if (ServiceManager::hasMsg($id)) {
                 $svc = ServiceManager::readMsg($id);
@@ -67,6 +68,13 @@ class ServiceCommand extends CConsoleCommand {
                     $runner->addCommands($commandPath);
                     $runner->run(['yiic', $commandName, $actionName]);
                 }
+            }
+
+	    $i++;
+	    if ($i < 5) {
+                 sleep(1);
+            } else {
+		 break;
             }
         }
     }

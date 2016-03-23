@@ -3,7 +3,6 @@
 class EmailCommand extends Service {
     public function actionSend() {
         $config = Setting::get('email');
-        
 		$mail  = new PHPMailer();
 		
 		if ($config['transport'] == "smtp") {
@@ -31,8 +30,9 @@ class EmailCommand extends Service {
 		        'allow_self_signed' => true
 		    )
 		);
+		
 		$mails = $this->params['mails'];
-		if (is_array($mails)) {
+		if (is_array($mails)) {		    
 			foreach ($mails as $m) {
 				$mail->Subject = $m['subject'];
 				$mail->AltBody    = "To view the message, please use an HTML compatible email viewer!";
@@ -51,5 +51,6 @@ class EmailCommand extends Service {
 			echo "               ##############################################";
 			echo " ";
 		}
+
     }
 }
