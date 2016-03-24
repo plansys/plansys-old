@@ -36,7 +36,21 @@ class MenuTree extends CComponent {
             }
         }
 
+
         ## app
+        $dir     = Yii::getPathOfAlias('app')  . DIRECTORY_SEPARATOR . 'menus';
+        $app     = glob($dir . DIRECTORY_SEPARATOR . "*");
+        $items   = MenuTree::listFile($app, [
+            'path' => 'app.menus',
+            'dir' => $dir
+        ]);
+        $files[] = [
+            'label' => 'app',
+            'module' => 'app',
+            'items' => $items
+        ];
+
+        ## app's modules
         $dir     = Yii::getPathOfAlias('app.modules');
         $modules = glob($dir . DIRECTORY_SEPARATOR . "*");
         foreach ($modules as $m) {
@@ -51,14 +65,22 @@ class MenuTree extends CComponent {
         return $files;
     }
 
-    public static function listFile($module) {
-        $path = "application.modules." . lcfirst($module) . ".menus";
-        $dir  = Yii::getPathOfAlias($path);
-
-        if (!is_dir($dir)) {
-            $path = "app.modules." . lcfirst($module) . ".menus";
+    public static function listFile($module, $basedir = "") {
+        
+        if ($basedir == "") {
+            $path = "application.modules." . lcfirst($module) . ".menus";
             $dir  = Yii::getPathOfAlias($path);
+    
+            if (!is_dir($dir)) {
+                $path = "app.modules." . lcfirst($module) . ".menus";
+                $dir  = Yii::getPathOfAlias($path);
+            }
+        } else {
+            $path = $basedir['path'];
+            $dir = $basedir['dir'];
         }
+        
+        
         $result = [];
         $items  = glob($dir . DIRECTORY_SEPARATOR . "*");
         foreach ($items as $k => $m) {

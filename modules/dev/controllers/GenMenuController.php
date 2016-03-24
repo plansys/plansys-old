@@ -65,21 +65,26 @@ class GenMenuController extends Controller {
 
     public function actionAddMenu($n, $m, $p) {
         if (Helper::isValidVar($n)) {
-            $n = ucfirst($n);
-            $module = ucfirst($m . "Module");
-
-            Yii::import($p . "." . $module);
-            if (!class_exists($module)) {
-                echo json_encode([
-                    'success' => false,
-                    'error'   => "ERROR: Invalid Module Name"
-                ]);
-                die();
+            if ($m == 'app') {
+                $path = Yii::getPathOfAlias('app.menus');
+                $filePath = $path . DIRECTORY_SEPARATOR . $n . '.php';
+            } else {
+                $n = ucfirst($n);
+                $module = ucfirst($m . "Module");
+    
+                Yii::import($p . "." . $module);
+                if (!class_exists($module)) {
+                    echo json_encode([
+                        'success' => false,
+                        'error'   => "ERROR: Invalid Module Name"
+                    ]);
+                    die();
+                }
+    
+                $ref = new ReflectionClass($module);
+                $path = dirname($ref->getFileName()) . DIRECTORY_SEPARATOR . "menus" . DIRECTORY_SEPARATOR;
+                $filePath = $path . $n . ".php";
             }
-
-            $ref = new ReflectionClass($module);
-            $path = dirname($ref->getFileName()) . DIRECTORY_SEPARATOR . "menus" . DIRECTORY_SEPARATOR;
-            $filePath = $path . $n . ".php";
 
             if (!is_file($filePath)) {
                 if (!is_dir($path)) {
