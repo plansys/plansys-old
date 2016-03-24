@@ -26,6 +26,28 @@ class Helper {
         return strtotime('1970-01-01 ' . $time . 'GMT');
     }
     
+    // copy recursive
+    public static function copyRecursive($source, $dest){
+        if(is_dir($source)) {
+            $dir_handle=opendir($source);
+            while($file=readdir($dir_handle)){
+                if($file!="." && $file!=".."){
+                    if(is_dir($source."/".$file)){
+                        if(!is_dir($dest."/".$file)){
+                            mkdir($dest."/".$file);
+                        }
+                        Helper::copyRecursive($source."/".$file, $dest."/".$file);
+                    } else {
+                        copy($source."/".$file, $dest."/".$file);
+                    }
+                }
+            }
+            closedir($dir_handle);
+        } else {
+            copy($source, $dest);
+        }
+    }
+        
     public static function angkaRomawi($integer, $upcase = true)  { 
         $table = array('M'=>1000, 'CM'=>900, 'D'=>500, 'CD'=>400, 'C'=>100, 'XC'=>90, 'L'=>50, 'XL'=>40, 'X'=>10, 'IX'=>9, 'V'=>5, 'IV'=>4, 'I'=>1); 
         $return = ''; 

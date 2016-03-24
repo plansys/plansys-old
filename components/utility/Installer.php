@@ -264,8 +264,12 @@ class Installer {
         $from = Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "views/layouts";
         $to = Setting::getRootPath() . DIRECTORY_SEPARATOR . "app/views/layouts";
         
-        var_dump($from, $to);
-        die();
+        if (!is_dir($to)) {
+            mkdir($to, 0777, true);
+        }
+        Yii::import("application.components.utility.Helper");
+        Helper::copyRecursive($from, $to);
+        return true;
     }
 
     public static function createIndexFile($mode = "install") {
@@ -301,7 +305,6 @@ class Installer {
         $config['components']['errorHandler'] = ['errorAction' => 'install/default/index'];
 
         Installer::checkInstall();
-        
         if (Setting::$mode == "init") {
             $url = preg_replace('/\/?plansys\/?$/', '', Setting::fullPath());
             if (is_file(Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php")) {
@@ -314,11 +317,16 @@ class Installer {
                     '{path}' => Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php"
                 ]);
                 
-                return $config;    
-            } else if (Installer::copyAppLayouts()) {
-                header("Location: " . $url . "/index.php?r=install/default/index");
-                die();
-            }
+            } 
+            
+            header("Location: " . $url . "/index.php?r=install/default/index");
+            die();
+        } else if (Setting::$mode == "install") {
+            if (!Installer::copyAppLayouts()) {
+                Setting::redirError("Failed to write in \"{path}\" <br/> Permission denied", [
+                    '{path}' => Setting::getRootPath() . DIRECTORY_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "views"
+                ]);
+            } 
         }
 
         return $config;
