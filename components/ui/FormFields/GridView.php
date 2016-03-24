@@ -211,18 +211,18 @@ type="checkbox" /></label>';
                         $template = '<div ng-if="!row.$rowState" ng-click="removeRow(row)" title="Remove" 
     class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></div>
 
-    <div ng-if="[\'edit\',\'remove\'].indexOf(row.$rowState) >= 0" ng-click="undoRemoveRow(row)" title="Undo Remove" 
+    <div ng-if="row.$type === \'r\' && [\'edit\',\'remove\'].indexOf(row.$rowState) >= 0" ng-click="undoRemoveRow(row)" title="Undo Remove" 
          class="btn btn-default btn-xs"><i class="fa fa-undo"></i></div>';
                     } else {
                         $style    = ' style="width:20px;"';
-                        $template = '<a ng-url="' . $col['options']['delUrl'] . '"
+                        $template = '<a ng-if="row.$type === \'r\'" ng-url="' . $col['options']['delUrl'] . '"
     onClick="return confirm(\'Are you sure?\')"
     class="btn-block btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>';
                     }
                     break;
                 case "unchoose-button":
                     $style    = ' style="width:20px;"';
-                    $template = '<div ng-if="!row.$rowState || row.$rowState == \'insert\'" ng-click="removeRow(row)"
+                    $template = '<div ng-if="row.$type === \'r\' && (!row.$rowState || row.$rowState == \'insert\')" ng-click="removeRow(row)"
     class="btn btn-danger btn-xs"><i class="fa fa-times"></i></div>
 
     <div ng-if="[\'remove\'].indexOf(row.$rowState) >= 0" ng-click="undoRemoveRow(row)" title="Remove"
@@ -238,7 +238,7 @@ type="checkbox" /></label>';
                     break;
                 case 'edit-button':
                     $style    = ' style="width:20px;"';
-                    $template = '<a ng-url="' . $col['options']['editUrl'] . '" title="Update" 
+                    $template = '<a ng-if="row.$type === \'r\'" ng-url="' . $col['options']['editUrl'] . '" title="Update" 
     class="btn-block btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>';
                     break;
                 case 'sequence':

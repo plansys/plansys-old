@@ -146,7 +146,7 @@ class DevUserIndex extends User {
                     'select' => '|u|.*, |r.role_description|',
                     'distinct' => 'false',
                     'alias' => 'u',
-                    'condition' => '|is_deleted| = 0 {AND [where]}',
+                    'condition' => '|is_deleted| = 0 {OR} |is_deleted| is null {AND [where]}',
                     'order' => '{[order]}',
                     'paging' => '{[paging]}',
                     'group' => '',

@@ -83,7 +83,15 @@
                                         if (data.success) {
                                             item.items.push(data.item);
                                         } else {
-                                            alert(data.error)
+                                            if (!data.error) {
+                                                $http.get(Yii.app.createUrl("/dev/genMenu/addMenu", {
+                                                    n: name,
+                                                    m: item.module,
+                                                    p: modulePath
+                                                })).success(function (data) {
+                                                    item.items.push(data.item);
+                                                });
+                                            }
                                         }
                                     });
                                 }
