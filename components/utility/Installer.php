@@ -261,6 +261,7 @@ class Installer {
     }
 
     public static function copyAppLayouts() {
+        ## copy layout
         $from = Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "views/layouts";
         $to = Setting::getRootPath() . DIRECTORY_SEPARATOR . "app/views/layouts";
         
@@ -269,6 +270,15 @@ class Installer {
         }
         Yii::import("application.components.utility.Helper");
         Helper::copyRecursive($from, $to);
+        
+        ## copy SiteController
+        $from = Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "controllers/SiteController.php";
+        $to = Setting::getRootPath() . DIRECTORY_SEPARATOR . "app/controllers/SiteController.php";
+        if (!is_dir(dirname($to))) {
+            mkdir(dirname($to), 0777, true);
+        }
+        copy($from, $to);
+        
         return true;
     }
 
