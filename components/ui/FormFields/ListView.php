@@ -27,8 +27,10 @@ class ListView extends FormField {
     public        $insertable         = 'Yes';
     public        $singleView         = 'TextField';
     public        $singleViewOption   = null;
+    public        $subRels            = [];
     protected     $renderTemplateForm;
     protected     $templateAttributes = [];
+    
 
     /**
      * @return array me-return array property TextField.
@@ -433,7 +435,32 @@ class ListView extends FormField {
             $this->templateAttributes = $model->attributes;
             $fb->model                = $model;
             $this->renderTemplateForm = $fb->render($model, ['wrapForm' => false]);
-
+            
+            
+            ## find SubRelation in Child ListView
+            $fields = $model->getFields();
+            $dss = [];
+            $this->subRels = [];
+            foreach ($fields as $k=>$f) {
+                if ($f['type'] == 'DataSource') {
+                    $dss[$f['name']] = $f;
+                }
+            }
+            foreach ($fields as $k=>$f) {
+                if ($f['type'] == 'ListView') {
+                    if (!isset($f['fieldTemplate']) || $f['fieldTemplate'] == 'datasource') {
+                        if (@$f['datasource'] != '') {
+                            $ds = @$dss[@$f['datasource']];
+                            if (@$ds['relationTo'] != '' && @$ds['options']['watchModel'] == 'true') {
+                                $this->subRels[$ds['relationTo']] = [
+                                    'listview' => $f['name'],
+                                    'datasource' => $ds['name']
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
         } else if ($this->fieldTemplate == 'default') {
             $field                 = new $this->singleView;
             $field->attributes     = $this->singleViewOption;
@@ -459,7 +486,7 @@ class ListView extends FormField {
         } else {
             $inlineJS = '';
         }
-
+        
         return $this->renderInternal('template_render.php', ['inlineJS' => $inlineJS]);
     }
 

@@ -9,18 +9,22 @@ class Import extends CComponent {
     public $columns = [];
     public $relations = [];
     public $model = null;
-    public $data= [];
     public $modelClass = null;
     public $resultFile = '';
     public $resultUrl = '';
+    
+    public $currentRow = [];
     public $lastRow = [];
-    public $skipIfStatus = false;
-    public $parentData = [];
+    public $rowHistory = [];
+    public $skip = [];
+    
+    private $root = null;
+    private $parent = null;
     private $loaded = false;
     private $lookup = [];
     private $ignoreCols = [];
     
-    public function loadConfig($model, $defaultConfig = []) {
+    public function loadConfig($model, $defaultConfig = [], &$root = null, &$parent = null) {
         $dir = Yii::getPathOfAlias(Import::ETL_PATH);
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
@@ -45,6 +49,14 @@ class Import extends CComponent {
         
         if (!is_subclass_of($model, 'ActiveRecord')) {
             throw new CException('Failed to load `' . $model . '`. Model must extends from ActiveRecord Class!');
+        }
+        
+        if (!is_null($root)) {
+            $this->root = $root;
+        }
+        
+        if (!is_null($parent)) {
+            $this->parent = $parent;
         }
         
         ## instantiate model class
@@ -91,6 +103,18 @@ class Import extends CComponent {
             }
         }
         
+        if (isset($config['skipParentIf'])) {
+            $this->skip['parentIf'] = $config['skipParentIf'];
+        }
+        
+        if (isset($config['skipIf'])) {
+            $this->skip['if'] = $config['skipIf'];
+        }
+        
+        if (isset($config['skipChildIf'])) {
+            $this->skip['childIf'] = $config['skipChildIf'];
+        }
+        
         ## ignore columns that is unavailable in model
         foreach ($this->columns as $k=>$c) {
             if (!isset($cols[$k])) {
@@ -109,7 +133,12 @@ class Import extends CComponent {
                     }
                     $relModel = $rel['model'];
                     unset($rel['model']);
-                    $this->relations[$rname]['import'] = new Import($relModel, $rel);
+                    
+                    if (!is_null($this->root)) {
+                        $this->relations[$rname]['import'] = new Import($relModel, $rel, $this->root, $this);
+                    } else {
+                        $this->relations[$rname]['import'] = new Import($relModel, $rel, $this, $this);
+                    }
                 }
             }
         }
@@ -183,12 +212,14 @@ class Import extends CComponent {
         $errors = [];
         $hashKey = [];
         
+        $rowParams = $this->rowParams($row);
+        
         ## replace condition
-        $condition = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", function($var) use($key, $row, &$errors, &$hashKey) {
-            $ref = $var[1] == 'row' ? $row : $this->parentData;
+        $condition = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", function($var) use($key, $rowParams, &$errors, &$hashKey) {
+            $ref = $rowParams[$var[1]];
             
             if (!isset($ref[$var[2]])) {
-                $errors[$var[2]] = "Error in `{$key}`. key '{$var[0]}' untuk kondisi lookup tidak ditemukan!";
+                $errors[$var[2]] = "Error in column `{$key}`. key '{$var[0]}' untuk kondisi lookup tidak ditemukan!";
             } else {
                 $hashKey[$var[2]] = $ref[$var[2]];
             }
@@ -214,7 +245,8 @@ class Import extends CComponent {
         
         ## if lookup row are found, then
         $into = isset($col['into']) ? $col['into'] : $key;
-        if (!empty($lrow)) {
+        
+        if ($lrow !== false && !empty($lrow)) {
             ## assign it into attributes
             if (is_string($col['return'])) {
                 $attrs[$into] = $lrow[$col['return']];
@@ -223,100 +255,173 @@ class Import extends CComponent {
                     $attrs[$r] = $lrow[$k];
                 }
             }
+            
             $this->lookup[$col['from']]['hash'][$hashKey] = $lrow;
         } else {
+            if (!isset($col['notfound'])) {
+                throw new CException($this->lookupError($row, $col, $key));
+            }
+            
             ## lookup is NOT found, if there is notfound stetement then execute it
-            if (isset($col['notfound'])) {
-                switch ($col['notfound']['action']) {
-                    case 'return':
-                        $attrs[$into] = $row[$key];
-                        break;
-                    case 'insert':
-                        $from = $col['from'];
-                        if (isset($col['notfound']['to'])) {
-                            $from = $col['notfound']['to'];
-                        }
-                        
-                        if (!isset($this->lookup[$from])) {
-                            $this->lookup[$from] = [
-                                'schema' => Yii::app()->db->schema->tables[$from],
-                                'hash' => [
-                                    $key => []
-                                ]
-                            ];
-                        }
-                        $pk = $this->lookup[$from]['schema']->primaryKey;
-                        if (!is_string($pk)) {
-                            return 'Import does not support inserting multiple primary key in lookup!';
-                        }
-                        
-                        ## insert data
-                        $insert = $col['notfound']['data'];
-                        foreach ($insert as $k=>$i) {
-                            if (is_array($i)) {
-                                switch ($i['type']) {
-                                    case 'lookup':
-                                        $this->lookup($insert, $i, $k, array_merge($row, $attrs));
-                                        break;
-                                }
-                            } else if (is_string($i)) {
-                                $insert[$k] = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
-                                    function($var) use($key, $row) {
-                                        $ref = $this->parentData;
-                                        switch ($var[1]) {
-                                            case 'row': $ref = $row; break;
-                                            case 'lastRow': $ref = $this->lastRow; break;
-                                        }
-                                        
-                                        return @$ref[$var[2]];
-                                    }, $i);
-                            }
-                        }
-                        
-                        Yii::app()->db->createCommand()->insert($from, $insert);
-                        $insert[$pk] = Yii::app()->db->getLastInsertID(); 
-                        
-                        $this->lookup[$from]['hash'][$hashKey] = $insert;
-                        
-                        ## assign inserted id into attrs
-                        if (!isset($col['notfound']['return'])) {
-                            $attrs[$into] = $insert[$col['return']];
-                        } else {
-                            if (is_string($col['notfound']['return'])) {
-                                $attrs[$into] = $insert[$col['notfound']['return']];
-                            } else if (is_array($col['notfound']['return'])) {
-                                foreach ($col['notfound']['return'] as $nk => $nr) {
-                                    $attrs[$nk] = $insert[$nr];
-                                }
-                            }
-                        }
+            switch (@$col['notfound']['action']) {
+                case 'return':
+                    $attrs[$into] = $row[$key];
                     break;
-                    case 'lookup':
-                        $coldef= $col['notfound'];
-                        unset($coldef['action']);
-                        return $this->lookup($attrs, $coldef, $key, array_merge($row, $attrs));
-                        break;
-                    case 'function': 
-                        ## evaluate function, using parameters
-                        $attrs[$into] = Helper::evaluate($col['notfound']['value'], [
-                            'row'=> $row,
-                            'lastRow' => $this->lastRow
-                        ] + $params);
-                        //var_dump($attrs[$into]);
-                        //die();
-                        break;
-                }
+                case 'insert':
+                    $from = $col['from'];
+                    if (isset($col['notfound']['to'])) {
+                        $from = $col['notfound']['to'];
+                    }
+                    
+                    if (!isset($this->lookup[$from])) {
+                        $this->lookup[$from] = [
+                            'schema' => Yii::app()->db->schema->tables[$from],
+                            'hash' => [
+                                $key => []
+                            ]
+                        ];
+                    }
+                    $pk = $this->lookup[$from]['schema']->primaryKey;
+                    if (!is_string($pk)) {
+                        return 'Import does not support inserting multiple primary key in lookup!';
+                    }
+                    
+                    ## insert data
+                    $insert = $col['notfound']['data'];
+                    foreach ($insert as $k=>$i) {
+                        if (is_array($i)) {
+                            switch ($i['type']) {
+                                case 'lookup':
+                                    $this->lookup($insert, $i, $k, array_merge($row, $attrs));
+                                    break;
+                            }
+                        } else if (is_string($i)) {
+                            $rowParams = $this->rowParams(array_merge($row, $attrs));
+                            
+                            try {
+                                $insert[$k] = $this->evalExpr($i, $rowParams);
+                            } catch (Exception $e) {
+                                throw new CException("
+Kolom " . $key . " tidak ditemukan, <br/>
+akan menambahkan kolom " . $key . " dengan data sebagai berikut:<br/>
+<br/>
+<pre>" . json_encode($insert, JSON_PRETTY_PRINT) . "</pre>
+<br/>
+penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan");
+                            }
+                        }
+                    }
+                    
+                    Yii::app()->db->createCommand()->insert($from, $insert);
+                    $insert[$pk] = Yii::app()->db->getLastInsertID(); 
+                    $this->lookup[$from]['hash'][$hashKey] = $insert;
+                    
+                    ## assign inserted id into attrs
+                    if (!isset($col['notfound']['return'])) {
+                        $attrs[$into] = $insert[$col['return']];
+                    } else {
+                        if (is_string($col['notfound']['return'])) {
+                            $attrs[$into] = $insert[$col['notfound']['return']];
+                        } else if (is_array($col['notfound']['return'])) {
+                            foreach ($col['notfound']['return'] as $nk => $nr) {
+                                $attrs[$nk] = $insert[$nr];
+                            }
+                        }
+                    }
+                break;
+                case 'lookup':
+                    $coldef= $col['notfound'];
+                    unset($coldef['action']);
+                    return $this->lookup($attrs, $coldef, $key, array_merge($row, $attrs));
+                    break;
+                case 'function': 
+                    ## evaluate function, using parameters
+                    $attrs[$into] = Helper::evaluate($col['notfound']['value'], [
+                        'row'=> $row,
+                        'lastRow' => $this->lastRow
+                    ] + $params);
+                    break;
+                case 'error':
+                    return $this->lookupError($row, $col, $key);
+                    break;
             }
         }
         
         return true;
     }
     
+    private function lookupError($row, $col, $key) {
+        $msg = @$col['notfound']['msg'];
+        
+        if ($msg == "") {
+            $msg = "'<br/> tidak dapat menemukan {$key} dengan data `{row.$key}`'";
+        }
+        $rowParams = $this->rowParams($row);
+        return $this->evalExpr($msg, $rowParams);
+    }
+    
+    private function rowParams($row) {
+        $parent = null;
+        if (!is_null($this->parent)) {
+            $parent = $this->parent->currentRow;
+            $pk = $this->parent->model->tableSchema->primaryKey;
+            
+            if (!isset($parent[$pk]) && $this->parent->lastRow[$pk]) {
+                $parent[$pk] = $this->parent->lastRow[$pk]; 
+            }
+        }
+        
+        $lastRow = $this->lastRow;
+        
+        $root = null;
+        if (!is_null($this->root)) {
+            $root = $this->root->currentRow;
+            $lastRow = $this->root->lastRow;
+        }
+        
+        return [
+            'row' => $row,
+            'lastRow' => $lastRow,
+            'parent' => $parent,
+            'root' => $root
+        ];
+    }
+    
+    private function evalExpr($expr, $rowParams, $addQuote = true) {
+        $eval =  preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
+                function($var) use($rowParams) {
+                     $ref = $rowParams[$var[1]];
+        
+                    if (is_object(@$ref[$var[2]]) ) {
+                        if ($ref[$var[2]] instanceof DateTime) {
+                            $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
+                        }
+                    }
+                    
+                    if (!isset($ref[$var[2]])) {
+                        throw new CException("Undefined index `{$var[2]}`");
+                    }
+                    
+                    return $ref[$var[2]];
+                }, $expr);
+        
+        
+        
+        if ($addQuote && $expr[0] == "{" && $expr[strlen($expr) -1] == "}" ) {
+            return $eval;
+        }
+        
+        return Helper::evaluate($eval, $rowParams);
+    }
+    
     public function importRow($row, $params = []) {
-
         if (!$this->loaded) {
             throw new CException('Import configuration must be loaded before importing!');
         }
+        
+        if (!is_null($this->root)) {
+            $this->lastRow = $this->root->lastRow;
+        } 
         
         $modelClass = $this->modelClass;
         $attrs = [];
@@ -324,43 +429,48 @@ class Import extends CComponent {
         $data = [];
         $resolveCol = [];
         
+        ## skip data if needed
         $skipIf = false;
         $skipParentIf = false;
         $skipChildIf = false;
-        
+        if (isset($this->skip['if'])) $skipIf = $this->skip['if'];
+        if (isset($this->skip['parentIf'])) $skipParentIf = $this->skip['parentIf'];
+        if (isset($this->skip['childIf'])) $skipChildIf = $this->skip['childIf'];
+
+        ## assign current row
         foreach ($row as $k=>$r) {
             if (is_string($r)) {
                 $row[$k] = trim($r);
             }
         }
-        //var_dump($row); die();
+        $this->currentRow = $row;
+        
+        ## execute child if needed
+        $executeChild = true;
+        if ($skipIf === true) {
+            $executeChild = false;
+        } else if (is_string($skipParentIf)) {
+            $rowParams = $this->rowParams($row);
+            $skipParentIf = $this->evalExpr($skipParentIf, $rowParams + $params); 
+        }
+        
+        if (!empty($this->lastRow) && $skipParentIf === true) {
+            foreach ($this->lastRow as $k => $r) {
+                if (!isset($row[$k]) || @$row[$k] === "") {
+                    if (isset($this->lastRow[$k])) {
+                        $row[$k] = $this->lastRow[$k];
+                    }
+                }
+            }
+        }
+        
         ## execute function when beforeLookup
         foreach ($this->columns as $key => $col) {
             if (@$col['type'] == 'function') {
                 if (@$col['when'] == 'beforeLookup') {
-                    ## evaluate function, using parameters
-                    $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
-                        function($var) use($key, $row) {
-                            $ref = $this->parentData;
-                            switch ($var[1]) {
-                                case 'row': $ref = $row; break;
-                                case 'lastRow': $ref = $this->lastRow; break;
-                            }
-                    
-                            if (is_object(@$ref[$var[2]]) ) {
-                                if ($ref[$var[2]] instanceof DateTime) {
-                                    $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
-                                }
-                            }
-                            return @$ref[$var[2]];
-                        }, $col['value']);
-                    
+                    $rowParams = $this->rowParams($row);
                     $into = isset($col['into']) ? $col['into'] : $key;
-                    
-                    $attrs[$into] = Helper::evaluate($expr, [
-                        'row'=> $row,
-                        'lastRow' => $this->lastRow
-                    ] + $params);
+                    $attrs[$into] = $this->evalExpr($col['value'], $rowParams + $params); 
                     
                     if (@$col['show'] === true) {
                         $data[$key] = $row[$key];
@@ -368,6 +478,7 @@ class Import extends CComponent {
                 }
             }
         }
+        $this->currentRow = $data;
         
         ## loop each column, and determine how to fill it's value
         foreach ($this->columns as $key => $col) {
@@ -426,10 +537,15 @@ class Import extends CComponent {
                     $data[$key] = $rowVal;
                     break;
                 case 'lookup':
-                    $result = $this->lookup($attrs, $col, $key, array_merge($row, $attrs, $data));
-                    if ($result !== true) {
-                        return $result;
+                    try {
+                        $result = $this->lookup($attrs, $col, $key, array_merge($row, $attrs, $data));
+                    } catch (Exception $e) {
+                        return [[
+                            $key => "Error in column {$key}: " .  $e->getMessage()
+                        ]];
                     }
+                    
+                    
                     if (@$col['show'] !== false) {
                         $into = isset($col['into']) ? $col['into'] : $key;
                         if (isset($attrs[$into])) {
@@ -443,34 +559,16 @@ class Import extends CComponent {
                     break;
             }
         }
+        $this->currentRow = $data;
 
         ## execute function when afterLookup
         foreach ($this->columns as $key => $col) {
             if (@$col['type'] == 'function') {
                 if (@$col['when'] == 'afterLookup' || !isset($col['when'])) {
-                    $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
-                        function($var) use($key, $row, $col) {
-                            $ref = $this->parentData;
-                            switch ($var[1]) {
-                                case 'row': $ref = $row; break;
-                                case 'lastRow': $ref = $this->lastRow; break;
-                            }
-                            
-                            if (is_object(@$ref[$var[2]]) ) {
-                                if ($ref[$var[2]] instanceof DateTime) {
-                                    $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
-                                }
-                            }
-                    
-                            return @$ref[$var[2]];
-                        }, $col['value']);
-                    
+                    $rowParams = $this->rowParams($data);
                     $into = isset($col['into']) ? $col['into'] : $key;
                     
-                    $attrs[$into] = Helper::evaluate($expr, [
-                        'row'=> $row,
-                        'lastRow' => $this->lastRow
-                    ] + $params);
+                    $attrs[$into] = $this->evalExpr($col['value'], $rowParams + $params);
                     
                     if (@$col['show'] === true) {
                         $data[$key] = $row[$key];
@@ -478,6 +576,7 @@ class Import extends CComponent {
                 }
             }
         }
+        $this->currentRow = $data;
         
         ## load model class when available, insert it when not exist
         $model = null;
@@ -498,68 +597,21 @@ class Import extends CComponent {
         }
         
         if (is_string($skipIf)) {
-            $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
-                function($var) use($key, $attrs) {
-                    $ref = $this->parentData;
-                    switch ($var[1]) {
-                        case 'row': $ref = $attrs; break;
-                        case 'lastRow': $ref = $this->lastRow; break;
-                    }
-                            
-                    if (is_object(@$ref[$var[2]]) ) {
-                        if ($ref[$var[2]] instanceof DateTime) {
-                            $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
-                        }
-                    }
-                    return @$ref[$var[2]];
-                }, $skipIf);
-            
-            $skipIf = Helper::evaluate($expr, [
-                'row'=> $row,
-                'lastRow' => $this->lastRow
-            ] + $params);
+            $rowParams = $this->rowParams($data);
+            $skipIf = $this->evalExpr($skipIf, $rowParams + $params);
         }
-
-
         $model->attributes = $attrs;
-        $executeChild = true;
-        
-        if ($skipIf === true) {
-            $executeChild = false;
-        } else if (is_string($skipParentIf)) {
-            $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
-                function($var) use($key, $attrs) {
-                    $ref = $this->parentData;
-                    switch ($var[1]) {
-                        case 'row': $ref = $attrs; break;
-                        case 'lastRow': $ref = $this->lastRow; break;
-                    }
-                    
-                    if (is_object(@$ref[$var[2]]) ) {
-                        if ($ref[$var[2]] instanceof DateTime) {
-                            $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
-                        }
-                    }
-                    return @$ref[$var[2]];
-                }, $skipParentIf);
-            $skipParentIf = Helper::evaluate($expr, [
-                'row'=> $row,
-                'lastRow' => $this->lastRow
-            ] + $params);
-        }
-        
-        if($this->skipIfStatus){
-            $executeChild = false;
-        }
         
         if ($executeChild) {
             if ($skipParentIf !== true) {
                 $model->save();
+                
+                if (is_string($this->model->tableSchema->primaryKey)) {
+                    $data[$model->tableSchema->primaryKey] = $model->{$model->tableSchema->primaryKey};
+                }
             }
         }
-        
-        // var_dump(get_class($model),$model->errors, $this->lastRow);
-        // echo "<hr/>";
+        $this->currentRow = $data;
         
         foreach ($resolveCol as $rc){
             if (isset($this->ignoreCols[$rc])) continue;
@@ -589,7 +641,7 @@ class Import extends CComponent {
                             $relAttrs[$key] = $row[$rkey];
                         }
                     }
-                    $rel['import']->parentData = array_merge($model->attributes, $initData);
+                    
                     $rel['import']->lastRow = $this->lastRow;
                     $res = $rel['import']->importRow($relAttrs);
                     if ($res !== true) {
@@ -612,7 +664,6 @@ class Import extends CComponent {
                             if (@$col['when'] == 'afterSave') {
                                 $expr = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
                                     function($var) use($key, $data, $col) {
-                                        $ref = $this->parentData;
                                         switch ($var[1]) {
                                             case 'row': $ref = $data; break;
                                             case 'lastRow': $ref = $this->lastRow; break;
@@ -629,6 +680,10 @@ class Import extends CComponent {
                                 
                                 $into = isset($col['into']) ? $col['into'] : $key;
                                 
+                                if ($col['value'][0] == "{" && $col['value'][strlen($col['value']) - 1] == "}") {
+                                    $expr = '"' . $expr . '"';
+                                }
+                                
                                 $attrs[$into] = Helper::evaluate($expr, [
                                     'row'=> $row,
                                     'lastRow' => $this->lastRow
@@ -643,15 +698,12 @@ class Import extends CComponent {
                 }
             } 
         
-            $this->data[] = $data;
+            $this->rowHistory[] = $row;
             if (!$skipIf && !$skipParentIf) {
-                $this->skipIfStatus = false;
-                $this->lastRow = $data;
+                if (!isset($this->root)) {
+                    $this->lastRow = array_merge($data, $row);
+                }
             }
-            if($skipIf){
-                $this->skipIfStatus = true;
-            }
-            
             
             return true;
         } else {
@@ -660,8 +712,8 @@ class Import extends CComponent {
     }
     
     public function saveExcel() {
-        if (!empty($this->data)) {
-            $data = $this->data;
+        if (!empty($this->rowHistory)) {
+            $data = $this->rowHistory;
             array_unshift($data, array_keys($data[0]));
             
             $path = Yii::getPathOfAlias('root.assets.import');
@@ -692,8 +744,8 @@ class Import extends CComponent {
         }
     }
     
-    public function __construct($model, $defaultConfig = []) {
-        $this->loadConfig($model, $defaultConfig);
+    public function __construct($model, $defaultConfig = [], $root = null, $parent = null) {
+        $this->loadConfig($model, $defaultConfig, $root, $parent);
     }
     
 }

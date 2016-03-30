@@ -455,6 +455,20 @@ app.directive('gridView', function ($timeout, $http) {
                     }, 400);
                 });
                 
+                function getScrollbarWidth() {
+                  var div, body, W = window.browserScrollbarWidth;
+                  if (W === undefined) {
+                    body = document.body, div = document.createElement('div');
+                    div.innerHTML = '<div style="width: 50px; height: 50px; position: absolute; left: -100px; top: -100px; overflow: auto;"><div style="width: 1px; height: 100px;"></div></div>';
+                    div = div.firstChild;
+                    body.appendChild(div);
+                    W = window.browserScrollbarWidth = div.offsetWidth - div.clientWidth;
+                    body.removeChild(div);
+                  }
+                  return W;
+                };
+                $scope.scrollBarWidth = getScrollbarWidth();
+                
                 $container.scroll(function () {
                     if ($scope.firstColWidth == 0) {
                         $scope.recalcHeaderWidth();
@@ -470,7 +484,9 @@ app.directive('gridView', function ($timeout, $http) {
                     if (fixedHeader) {
                         $thead.css({
                             top: $container.offset().top + 'px',
-                            left: $el.offset().left + 'px'
+                            left: $el.offset().left + 'px',
+                            right: $scope.scrollBarWidth + 'px',
+                            overflow: 'hidden'
                         });
                         $thead.addClass("show");
                     } else {

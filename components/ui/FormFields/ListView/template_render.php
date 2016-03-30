@@ -23,6 +23,7 @@
         <data name="deletable" class="hide"><?= $this->deletable; ?></data>
         <data name="sortable" class="hide"><?= $this->sortable; ?></data>
         <data name="options" class="hide"><?= json_encode($this->options) ?></data>
+        <data name="sub_rels" class="hide"><?= json_encode($this->subRels) ?></data>
         <!-- /data -->
         <!-- field -->
         <?php if ($this->insertable == 'Yes'): ?>

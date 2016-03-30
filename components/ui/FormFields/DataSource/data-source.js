@@ -14,6 +14,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 $scope.postData = $el.find("data[name=post_data]").text().trim();
                 $scope.primaryKey = $el.find("data[name=primary_key]:eq(0)").text().trim();
                 $scope.relationTo = $el.find("data[name=relation_to]").text().trim();
+                $scope.options = JSON.parse($el.find("data[name=options]:eq(0)").text().trim());
                 $scope.insertData = [];
                 $scope.updateData = [];
                 $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text()) || [];
@@ -255,16 +256,14 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         params: params,
                         modelParams: $scope.model,
                         lc: $scope.shouldCount ? 0 : $scope.totalItems
-                    }, {
-                        timeout: $scope.httpRequest.promise
-                    })
-                        .success(executeSuccess)
-                        .error(function (data) {
-                            if (typeof f == "function") {
-                                f(false, data);
-                            }
-                            $scope.showError(data);
-                        });
+                    }, { timeout: $scope.httpRequest.promise }).success(executeSuccess)
+                    .error(function (data) {
+                        if (typeof f == "function") {
+                            f(false, data);
+                        }
+                        $scope.showError(data);
+                    });
+                    
                     $scope.shouldCount = true;
                 }
 
@@ -302,7 +301,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 }
 
                 if (jsParamExist) {
-                    
                     $scope.afterQueryInternal['params-init'] = function () {
                         $scope.resetOriginal();
                         $scope.trackChanges = true
@@ -310,9 +308,20 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     }
                     $scope.query();
                 } else {
-                    $scope.data = JSON.parse($el.find("data[name=data]:eq(0)").text());
+                    var relationAvailable = ($scope.options.watchModel == "true" 
+                                            && $scope.postData 
+                                            && $scope.relationTo != "currentModel" 
+                                            && !!$scope.model[$scope.relationTo]);
+                    
+                    if (relationAvailable) {
+                        $scope.data = $scope.model[$scope.relationTo];
+                    } else {
+                        $scope.data = JSON.parse($el.find("data[name=data]:eq(0)").text());
+                    }
+                    
                     $scope.trackChanges = true;
                 }
+                
                 
                 for(i in $scope.data) {
                     if (!!$scope.data[i] && !!$scope.data[i].$rowState) {

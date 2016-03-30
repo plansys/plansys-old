@@ -21,7 +21,7 @@ class ActiveRecord extends CActiveRecord {
     private $__relReset = [];
     private $__tempVar = [];
     private $__relUploadField = [];
-    private $__subrelations = [];
+    private $__subRelations = [];
     
     private static $_md = array();   // class name => meta data
 
@@ -556,49 +556,46 @@ class ActiveRecord extends CActiveRecord {
     }
     
     
-    // private function loadSubRelation($tree, $result = [], $srel = "") {
-    //      foreach ($tree as $k=>$v) {
-    //         $rel = $k;
-    //         if (is_string($v)) {
-    //             $rel = $v;
-    //         }
+    private function loadSubRelation($tree, $first = true) {
+        $result = [];
+        foreach ($tree as $k=>$v) {
+            $rel = $k;
+            if (is_string($v)) {
+                $rel = $v;
+            }
             
-    //         if ($srel != "") {
-    //             foreach ($result as $rk => $rv) {
-    //                 if (is_array($result[$rk])) {
-    //                     var_dump($result, $tree, $srel);
-    //                     die();
-    //                 }
-    //                 $result[$rk][$rel] = $result[$rk]->getRelated($rel);
-
-    //                 if (is_array($v)) {
-    //                     foreach ($v as $sk => $sv) {
-    //                         foreach ($result[$rk][$rel] as $rrk => $rrv) {
-    //                             $result[$rk][$rel][$rrk][$sv] = $result[$rk][$rel][$rrk]->loadSubRelation($v, $result[$rk][$rel][$rrk][$sv], $sv);
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         } else {
-    //             $result[$rel] = $this->getRelated($rel);
+            if ($first == true) {
+                $this->__subRelations[$k] = $v;
+            }
             
-    //             if (is_array($v)) {
-    //                 foreach ($v as $sk => $sv) {
-    //                     $srel = $sk;
-    //                     if (is_string($sv)) {
-    //                         $srel = $sv;
-    //                     }
-                        
-    //                     foreach ($result[$rel] as $rk => $rv) {
-    //                         $rv->getRelated($srel);
-    //                         $result[$rel][$rk][$srel] = $result[$rel][$rk]->loadSubRelation($sv, $result[$rel][$rk][$srel], $srel);
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     return $result;
-    // }
+            $rels = $this->getRelated($rel);
+            $result[$rel] = self::toArray($rels);
+            
+            if (is_array($v)) {
+                foreach ($v as $sk => $sv) {
+                    $relname = $sk;
+                    if (is_string($sv)) {
+                        $relname = $sv;
+                    }
+                    
+                    foreach ($rels as $rk => $rv) {
+                        $subrel = $rv->loadSubRelation($v, false);
+                        foreach ($subrel as $srk => $srv) {
+                            $result[$rel][$rk][$srk] = $srv;
+                            
+                            foreach ($result[$rel][$rk] as $zk => $zv) {
+                                if (is_array($zv) && empty($zv)) {
+                                    unset($result[$rel][$rk][$zk]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return $result;
+    }
 
     public function setRelation($name, $value) {
         $this->_related[$name] = $value;
@@ -606,7 +603,11 @@ class ActiveRecord extends CActiveRecord {
 
     public function loadRelation($name, $criteria = []) {
         if (is_array($name)) {
-            return $this->loadSubRelation($name);
+            $result = $this->loadSubRelation($name);
+            foreach ($result as $k => $v) {
+                $this->__relations[$k] = $result[$k]; 
+            }
+            return $result;
         }
         
         if (!isset($this->__relations[$name]))
@@ -667,6 +668,12 @@ class ActiveRecord extends CActiveRecord {
                             }
                         }
                     } else {
+                        ## limit relation result by 25
+                        if (!isset($criteria['limit']) || !isset($criteria['offset'])) {
+                            $criteria['offset'] = 0;
+                            $criteria['limit'] = 25;
+                        }
+                        
                         $this->__relationsObj[$name] = $this->getRelated($name, true, $criteria);
                         if (isset($this->__relationsObj[$name])) {
                             $this->__relations[$name] = $this->__relationsObj[$name]->attributes;
@@ -1491,57 +1498,201 @@ class ActiveRecord extends CActiveRecord {
             }
 
             ## get oldname
+            $old = false;
             if (is_object($obj)) {
                 $old = $obj->{$f['name']};
-            } else if (is_array($obj)) {
+            } else if (is_array($obj) && isset($obj[$f['name']])) {
                 $old = $obj[$f['name']];
             }
-            $ext = pathinfo($old, PATHINFO_EXTENSION);
-            $filename = pathinfo($old, PATHINFO_FILENAME);
-
-            if (@$f['filePattern']) {
-                ## get newname
-                ## Jika disini gagal, berarti ada yang salah dengan format filePattern di FormBuilder-nya
-                eval('$newname = "' . $f['filePattern'] . '";');
-            } else {
-                $newname = $filename . "." . $ext;
-            }
-
-            $new = $dir . preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $newname);
-            $new = str_replace(["\n", "\r"], "", $new);
-            $new = str_replace(["//", "\\\\"], ["/", "\\"], $new);
-
-            if ($old == $new) {
-                continue;
-            }
-
-            ## delete file if already exist and allowed to overwrite
-            if (is_file($new) && $f['allowOverwrite'] == 'Yes' && is_file($old)) {
-                unlink($new);
-            }
-
-            if (!is_file($new) && is_file($old)) {
-                rename($old, $new);
-                if (is_object($obj) && is_subclass_of($obj, 'ActiveRecord')) {
-                    $obj->{$f['name']} = $new;
-
-                    if ($obj->hasAttribute($f['name'])) {
-                        $attrs[$f['name']] = $new;
-                    }
+            
+            if (is_file($old)) {
+                $ext = pathinfo($old, PATHINFO_EXTENSION);
+                $filename = pathinfo($old, PATHINFO_FILENAME);
+                
+                if (@$f['filePattern']) {
+                    ## get newname
+                    ## Jika disini gagal, berarti ada yang salah dengan format filePattern di FormBuilder-nya
+                    eval('$newname = "' . $f['filePattern'] . '";');
+                } else {
+                    $newname = $filename . "." . $ext;
                 }
-                if (is_array($obj)) {
-                    if (isset($obj[$f['name']])) {
-                        $obj[$f['name']] = $new;
-                        $attrs[$f['name']] = $new;
+    
+                $new = $dir . preg_replace('/[\/\?\:\*\"\<\>\|\\\]*/', "", $newname);
+                $new = str_replace(["\n", "\r"], "", $new);
+                $new = str_replace(["//", "\\\\"], ["/", "\\"], $new);
+    
+                if ($old == $new) {
+                    continue;
+                }
+    
+                ## delete file if already exist and allowed to overwrite
+                if (is_file($new) && $f['allowOverwrite'] == 'Yes' && is_file($old)) {
+                    unlink($new);
+                }
+    
+                if (!is_file($new) && is_file($old)) {
+                    rename($old, $new);
+                    if (is_object($obj) && is_subclass_of($obj, 'ActiveRecord')) {
+                        $obj->{$f['name']} = $new;
+    
+                        if ($obj->hasAttribute($f['name'])) {
+                            $attrs[$f['name']] = $new;
+                        }
+                    }
+                    if (is_array($obj)) {
+                        if (isset($obj[$f['name']])) {
+                            $obj[$f['name']] = $new;
+                            $attrs[$f['name']] = $new;
+                        }
                     }
                 }
             }
         }
         return $attrs;
     }
+    
+    public function saveSubRelation($subRel, $data, $model) {
+        $rels = [];
+        $subs = [];
+        
+        $metaRel = $model->metaData->relations;
+        $class = get_class($model);
+        $pk = $model->tableSchema->primaryKey;
+        
+        foreach ($subRel as $k => $v) {
+            if (is_numeric($k)) $rels[] = $v;
+            else {
+                $rels[] = $k;
+                if (is_array($v)) {
+                    foreach ($v as $vk =>$vd) {
+                        if (is_numeric($vk)) $rel = $vd;
+                        else $rel = $vk;
+                        
+                        $smr = $metaRel[$rel];
+                        $subs[$rel] = $smr;
+                    }
+                } 
+            }
+        }
+        
+        foreach ($rels as $r) {
+            $insert = [];
+            $update = [];
+            $delete = [];
+            foreach ($data[$r] as $k=>$d) {
+                foreach ($d as $dk=> $dv) {
+                    if (is_array($dv)) {
+                        unset($d[$dk]);
+                    }
+                }
+                
+                if (!isset($d['$rowState'])) {
+                    $d['$rowState'] = 'insert';
+                    if (isset($d[$pk])) {
+                        $d['$rowState'] = 'update';
+                    }
+                }
+                
+                if ($d['$rowState'] == 'insert') {
+                    $insert[$k] = $d;
+                } else if ($d['$rowState'] == 'edit') {
+                    $update[$k] = $d;
+                }
+            }
+            
+            if (!empty($insert)) {
+                ActiveRecord::batchInsert($class, $insert);
+                
+                if (is_string($pk)) {
+                    foreach ($insert as $k=>$d) {
+                        $data[$r][$k][$pk] = $d[$pk];
+                    }
+                } else if (is_array($pk)) {
+                    foreach ($insert as $k=>$d) {
+                        foreach ($pk as $p) {
+                            $data[$r][$k][$p] = $d[$p];
+                        }
+                    } 
+                }
+            }
+            
+            if (!empty($update)) {
+                ActiveRecord::batchUpdate($class, $update);
+            }
+            
+            foreach ($data[$r] as $d) {
+                foreach ($subs as $s => $v) {
+                    $relClass = $v->className;
+                    $relData = @$d[$s];
+                    if (isset($d['$' .$s])) {
+                        if (isset($d[$d['$' .$s]])) {
+                            $relData = $d[$d['$' . $s]];
+                        }
+                        
+                        if (!empty($d['$' .$s . 'Deleted'])) {
+                            $willDelete = [];
+                            foreach ($d['$' .$s . 'Deleted'] as $del) {
+                                $valid = false;
+                                if (is_string($pk)) {
+                                    if (isset($del[$pk])) {
+                                        $valid = true;
+                                    }
+                                }
+                                
+                                if ($valid) {
+                                    $willDelete[$del[$pk]] = $del;
+                                }
+                            }
+                            
+                            if (!empty($willDelete)) {
+                                foreach ($relData as $k => $d) {
+                                    if ($d[$pk]) {
+                                        unset($relData[$k]);
+                                    }
+                                }
+                                
+                                ActiveRecord::batchDelete($relClass, array_values($willDelete));
+                            }
+                        }
+                    }
+                    
+                    ## foreign key checks
+                    if (is_array($relData)) {
+                        $relForeignKey = $v->foreignKey;
+                        $relType = get_class($v); 
+                        if (is_string($relForeignKey)) { ## without through
+                            if ($relType != 'ManyManyRelation') {
+                                foreach ($relData as $n => $m) {
+                                    $relData[$n][$relForeignKey] = $d[$pk];
+                                }
+                            }
+                        } else if (is_array($relForeignKey)) { ## with through
+                            foreach ($relData  as $n => $m) {
+                                foreach ($relForeignKey as $rk => $fk) {
+                                    if (is_null($v->through)) {
+                                        $relData[$n][$fk] = $d[$rk];
+                                    } else {
+                                        $relData[$n][$fk] = $this->__relations[$rel->through][$rk];
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if (isset($subRel[$r][$s])) {
+                            $subRelData = $subRel[$r][$s];
+                        }  else {
+                            $subRelData = $s;
+                        }
+                        $this->saveSubRelation([$s => $subRelData], [$s => $relData], new $relClass);
+                    }
+                }
+            }
+        }
+    }
 
     public function saveRelation() {
         $pk = $this->tableSchema->primaryKey;
+        
         foreach ($this->__relations as $k => $new) {
             if ($k == 'currentModel') {
                 $rel = new CHasManyRelation('currentModel', get_class($this), $pk);
@@ -1654,17 +1805,22 @@ class ActiveRecord extends CActiveRecord {
                                     $manyRel = $this->{$rel->beforeSave}($manyRel);
                                 }
 
-                                ## if relinsert is already exist, then do not insert it again
-                                foreach ($this->__relInsert[$k] as $insIdx => &$ins) {
-                                    if (!!@$ins[$relPK]) {
-                                        unset($this->__relInsert[$k]);
+                                if (empty($this->__subRelations[$k])) {
+                                    ## if relinsert is already exist, then do not insert it again
+                                    foreach ($this->__relInsert[$k] as $insIdx => &$ins) {
+                                        if (!!@$ins[$relPK]) {
+                                            unset($this->__relInsert[$k]);
+                                        }
                                     }
+                                    ActiveRecord::batchInsert($relClass, $this->__relInsert[$k]);
+    
+                                    ## create transaction entry to link between
+                                    ## related model and current model
+                                    ActiveRecord::batchInsert($relMM['tableName'], $manyRel, false);
+                                } else {
+                                    $tableName = (isset($relMM['tableName']) ? $relMM['tableName'] : $relTable);
+                                    $this->saveSubRelation([$k => $this->__subRelations[$k]],[$k => $this->__relUpdate[$k]], new $relClass);
                                 }
-                                ActiveRecord::batchInsert($relClass, $this->__relInsert[$k]);
-
-                                ## create transaction entry to link between
-                                ## related model and current model
-                                ActiveRecord::batchInsert($relMM['tableName'], $manyRel, false);
                             }
                         }
                         $this->__relInsert[$k] = [];
@@ -1692,20 +1848,25 @@ class ActiveRecord extends CActiveRecord {
                             }
                         }
 
-                        if (count($this->__relUpdate[$k]) > 0) {
-                            ActiveRecord::batchUpdate($relClass, $this->__relUpdate[$k]);
-
-                            ## update transaction entry to link between
-                            ## related model and current model
-                            if ($relType == 'ManyManyRelation' && !empty($relMM)) {
-                                $manyRel = [];
-                                foreach ($this->__relUpdate[$k] as $item) {
-                                    $item[$relMM['from']] = $this->{$pk};
-                                    $item[$relMM['to']] = $item[$relPK];
-                                    $manyRel[] = $item;
+                        if (empty($this->__subRelations[$k])) {
+                            if (count($this->__relUpdate[$k]) > 0) {
+                                ActiveRecord::batchUpdate($relClass, $this->__relUpdate[$k]);
+    
+                                ## update transaction entry to link between
+                                ## related model and current model
+                                if ($relType == 'ManyManyRelation' && !empty($relMM)) {
+                                    $manyRel = [];
+                                    foreach ($this->__relUpdate[$k] as $item) {
+                                        $item[$relMM['from']] = $this->{$pk};
+                                        $item[$relMM['to']] = $item[$relPK];
+                                        $manyRel[] = $item;
+                                    }
+                                    ActiveRecord::batchUpdate($relMM['tableName'], $manyRel);
                                 }
-                                ActiveRecord::batchUpdate($relMM['tableName'], $manyRel);
                             }
+                        } else {
+                            $tableName = (isset($relMM['tableName']) ? $relMM['tableName'] : $relTable);
+                            $this->saveSubRelation([$k => $this->__subRelations[$k]],[$k => $this->__relUpdate[$k]], new $relClass);
                         }
                         $this->__relUpdate[$k] = [];
                     }
@@ -1734,6 +1895,7 @@ class ActiveRecord extends CActiveRecord {
                     }
                     break;
             }
+            
         }
     }
 

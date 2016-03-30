@@ -2,7 +2,9 @@
      style="margin-right:7px;"
      is-open="filter.operatorDropdownOpen">
 
-    <button type="button" class="btn btn-default btn-sm dropdown-toggle">
+    <button type="button" tooltip-placement="bottom"
+            tooltip-enable=" filter.valueText.length >= 15"
+            tooltip="{{ filter.valueText }}" class="btn btn-default btn-sm dropdown-toggle">
         <span style="font-size:13px;"> 
             {{filter.label}}<span ng-hide="filter.label == ''">:</span></span>
         <b>{{filter.valueText | more:15}}</b>

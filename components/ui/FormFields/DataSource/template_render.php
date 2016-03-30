@@ -12,7 +12,9 @@
     <data name="params_get" class="hide"><?= json_encode($_GET); ?></data>
     <data name="params_default" class="hide"><?= @json_encode($this->data['params']); ?></data>
     <data name="delete_data" class="hide"><?= @json_encode(@$this->data['rel']['delete_data']); ?></data>
-
+    <data name="options" class="hide"><?= @json_encode($this->options); ?></data>
+    
+    
     <?php if ($this->postData == 'Yes'): ?>
         <input name="<?= $this->getPostName('Insert'); ?>" type="hidden" value="{{ insertData | json }}"/>
         <input name="<?= $this->getPostName('Update'); ?>" type="hidden" value="{{ updateData | json }}"/>

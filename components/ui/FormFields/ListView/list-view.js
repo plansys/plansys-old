@@ -25,6 +25,7 @@ app.directive('listView', function ($timeout) {
                 $scope.datasource = $scope.parent[$el.find("data[name=datasource]:eq(0)").text()];
                 $scope.templateAttr = JSON.parse($el.find("data[name=template_attr]").html().trim());
                 $scope.options = JSON.parse($el.find("data[name=options]").html().trim());
+                $scope.subRels = JSON.parse($el.find("data[name=sub_rels]").html().trim());
 
                 $scope.isInsertable = true;
                 if ($scope.options['insertable-if']) {
@@ -65,8 +66,7 @@ app.directive('listView', function ($timeout) {
                             }
                             value = newVal;
                         }
-
-
+                        
                         ctrl.$setViewValue(value);
                     });
                 };
@@ -172,6 +172,24 @@ app.directive('listView', function ($timeout) {
                     if ($scope.fieldTemplate == "datasource") {
                         var idx = $scope.datasource.insertData.indexOf(d[0]);
                         $scope.datasource.insertData.splice(idx, 1);
+                        
+                        if (!!$scope.datasource.relationTo) {
+                            var im = $scope[$scope.model.$listViewName].$internalModel;
+                            if (!im['$' + $scope.datasource.relationTo + 'Deleted']) {
+                                im['$' + $scope.datasource.relationTo + 'Deleted'] = [];
+                            }
+                            
+                            var deleted = {};
+                            for (var i in $scope.deleted.data) {
+                                if (typeof $scope.deleted.data[i] != 'object') {
+                                    deleted[i] = $scope.deleted.data[i];
+                                }
+                            }
+                            
+                            im['$' + $scope.datasource.relationTo + 'Deleted'].push(deleted);
+                            
+                            console.log(im);
+                        }
                     }
                     
                     $scope.showUndoDelete = true;
@@ -179,7 +197,14 @@ app.directive('listView', function ($timeout) {
                 
                 $scope.initItem = function(value, idx) {
                     this.model = value[idx];
+                    this.model.$listViewName = $scope.name;
+                    $scope.$internalModel = this.model;
+                    
                     if ($scope.fieldTemplate == 'datasource' && !!$scope.datasource && !!$scope.datasource.relationTo) {
+                        for (var i in $scope.subRels) {
+                            this.model['$' + i] = $scope.subRels[i].listview;
+                        }
+                        
                         if ($scope.errors) {
                             var errors = $scope.errors[$scope.datasource.relationTo];
                             if (!!errors && angular.isObject(errors[0])) {
@@ -212,7 +237,6 @@ app.directive('listView', function ($timeout) {
                                             }
                                         }.bind(value, idx, this));
                                     }
-                                    
                                 }
                             }
                         }

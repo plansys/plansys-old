@@ -40,7 +40,12 @@ EOF;
                 foreach ($e as $k=>$v) {
                     $err .= "<tr>";
                     $err .=  "<td>" . $k ."</td>";
-                    $err .= "<td>" . implode("<br/>",$v) ."</td>";
+                    
+                    if (is_array($v)) {
+                        $err .= "<td>" . implode("<br/>",$v) ."</td>";
+                    } else {
+                        $err .= "<td>" . $v ."</td>";
+                    }
                     $err .= "</tr>";
                 }
                 $err = $err . "</table>";
@@ -98,7 +103,6 @@ EOF;
             return;
         }
         
-        
         $paramsModel = explode(".", $this->params['model']);
         $modelClass = @$paramsModel[0];
         $modelConfig = @$paramsModel[1];
@@ -124,11 +128,10 @@ EOF;
         
         ## get first sheet
         $import = new Import($this->params['model']);
-        
-        
         foreach ($reader->getSheetIterator() as $sheet) {
             ## loop each row in first sheet
             $rowCount = count($sheet->getRowIterator());
+            
             foreach ($sheet->getRowIterator() as $r=>$row) {
                 ## first row is always column name, assign it then skip it
                 if ($r == 1) { 
@@ -137,25 +140,30 @@ EOF;
                     }
                     continue;
                 }
+                   
                 
                 foreach ($row as $k=>$v) {
-                    if (is_object($v)) {
-                        if (get_class($v) == 'DateTime') {
-                            $row[$k] = $v->format('Y-m-d');
-                        }
-                    } else {
-                        $row[$k] = (string)$v;
-                    }
+                    $row[$k] = (string)$v;
                 }
                 
                 ## do import 
                 $rowImport = [];
+                $emptyCount = 0;
                 foreach ($import->columns as $c=>$v) {
                     $col = is_string($v) ? ['type' => $v] : $v;
                     if ($col['type'] == 'function') {
                         continue;
                     }
                     $rowImport[$c] = @$row[$excelColumns[$c]];
+                    
+                    if (@$row[$excelColumns[$c]] == "") {
+                        $emptyCount++;
+                    }
+                }
+                
+                if ($emptyCount + 1 >= count($import->columns)) {
+                    $errors[$r - 1] = "Skipping " . ($r - 1) . ' Row... (Empty Row)';
+                    continue;
                 }
                 
                 try {
@@ -173,6 +181,7 @@ EOF;
                         break;
                     }
                 }
+                
                 $this->msg('Importing ' . ($r - 1) . ' Row...<br/><br/>' . $this->formatErrors($errors));
             }
             break;
