@@ -66,16 +66,21 @@ class Controller extends CController {
         if(($theme=Yii::app()->getTheme())!==null && ($viewFile=$theme->getViewFile($this,$viewName))!==false)
             return $viewFile;
 
-
         $appPath = Yii::getPathOfAlias('app.views');
         if (!is_dir($appPath)) {
             $appPath = Yii::app()->getViewPath();
         }
-        $moduleViewPath=$basePath=$appPath;
+        $moduleViewPath=null;
+        $basePath = $appPath;
         if(($module=$this->getModule())!==null)
             $moduleViewPath=$module->getViewPath();
-
-        return $this->resolveViewFile($viewName,$this->getViewPath(),$basePath,$moduleViewPath);
+        
+        $result = $this->resolveViewFile($viewName,$appPath,$basePath,$moduleViewPath);
+        if (!$result) {
+            return $this->resolveViewFile($viewName,$this->getViewPath(),$basePath,$moduleViewPath);
+        } 
+        
+        return $result;
     }
 
 

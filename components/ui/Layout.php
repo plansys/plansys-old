@@ -52,6 +52,7 @@ class Layout extends CComponent {
                 }
             }
         }
+        
         return Yii::app()->controller->renderPartial($formpath . $layout, $sections, $return);
     }
 

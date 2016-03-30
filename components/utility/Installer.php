@@ -260,6 +260,28 @@ class Installer {
         return $success;
     }
 
+    public static function copyAppLayouts() {
+        ## copy layout
+        $from = Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "views/layouts";
+        $to = Setting::getRootPath() . DIRECTORY_SEPARATOR . "app/views/layouts";
+        
+        if (!is_dir($to)) {
+            mkdir($to, 0777, true);
+        }
+        Yii::import("application.components.utility.Helper");
+        Helper::copyRecursive($from, $to);
+        
+        ## copy SiteController
+        $from = Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "controllers/SiteController.php";
+        $to = Setting::getRootPath() . DIRECTORY_SEPARATOR . "app/controllers/SiteController.php";
+        if (!is_dir(dirname($to))) {
+            mkdir(dirname($to), 0777, true);
+        }
+        copy($from, $to);
+        
+        return true;
+    }
+
     public static function createIndexFile($mode = "install") {
         $path = Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "index.php";
         $file = file_get_contents($path);
@@ -270,9 +292,8 @@ class Installer {
             '$mode = "running"'
                 ], '$mode = "' . $mode . '"', $file);
 
-
         Setting::$mode = $mode;
-
+        
         if (!is_file($path)) {
             return @file_put_contents(Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php", $file);
         } else {
@@ -294,23 +315,28 @@ class Installer {
         $config['components']['errorHandler'] = ['errorAction' => 'install/default/index'];
 
         Installer::checkInstall();
-
         if (Setting::$mode == "init") {
             $url = preg_replace('/\/?plansys\/?$/', '', Setting::fullPath());
             if (is_file(Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php")) {
                 header("Location: " . $url . "/index.php");
                 die();
             }
-
+            
             if (!Installer::createIndexFile()) {
                 Setting::redirError("Failed to write in \"{path}\" <br/> Permission denied", [
                     '{path}' => Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php"
                 ]);
-                return $config;
-            } else {
-                header("Location: " . $url . "/index.php?r=install/default/index");
-                die();
-            }
+                
+            } 
+            
+            header("Location: " . $url . "/index.php?r=install/default/index");
+            die();
+        } else if (Setting::$mode == "install") {
+            if (!Installer::copyAppLayouts()) {
+                Setting::redirError("Failed to write in \"{path}\" <br/> Permission denied", [
+                    '{path}' => Setting::getRootPath() . DIRECTORY_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "views"
+                ]);
+            } 
         }
 
         return $config;
