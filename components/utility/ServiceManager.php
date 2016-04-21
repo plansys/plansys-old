@@ -79,54 +79,32 @@ class ServiceManager extends CComponent {
         
         return null;
     }
-
-
-    public static function checkDaemon() {
-        $new = new SHMBlock(Setting::get('app.shmblock'));
-        $lastrun = false;
-        if ($new->exists(Setting::get('app.shmblock'))) {
-            $lastrun = @$new->read();
-            if ($lastrun == "" || $lastrun == null) {
-                $lastrun = false;
-            } 
-        }
-        
-        ## if current time 
-        if (!$lastrun || time() - $lastrun > 10) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    public static function markDaemonAsRun() {
-        $new = new SHMBlock(Setting::get('app.shmblock'));
-        $new->write(time());
-    }
     
     public static function startDaemon() {
-        ServiceManager::process("run php yiic.php service startDaemon \"".__DIR__."\"");
+        $port = Setting::get('app.daemonport');
+        $process = self::getProcessCommand();
+        ServiceManager::process("exec $process service {$port} php yiic.php service startDaemon \"".__DIR__."\"");
     }
-    
-    ## daemon never meant to be stopped
-    // public static function stopDaemon() {
-    //     if (!!$daemon['isRunning'] && $daemon['pid'] != 0) {
-    //         if (self::isProcessRunning($daemon['pid'])) {
-    //             $output = self::process("kill {$daemon['pid']}");
-    //         }
-            
-    //         ServiceSetting::set('daemon', [
-    //             'isRunning' => false,
-    //             'pid' => 0
-    //         ]);
-    //     }
-    // }
     
     public static function process($command) {
         chdir(Yii::getPathOfAlias('application'));
         $process = self::getProcessCommand();
         exec("{$process} {$command}", $results);
         return $results;
+    }
+    
+    private static function getProcessCommand() {
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            return 'process.exe';
+        } else if (strtoupper(substr(PHP_OS, 0, 6)) === 'DARWIN'){
+            return './process.osx';
+        } else if (strtoupper(substr(PHP_OS, 0, 5)) === 'LINUX') {
+            if (!getenv('PATH')) {
+                putenv('PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games');
+            }
+            
+            return './process.linux';
+        } 
     }
     
     public static function start($serviceName, $params = null) {
@@ -187,7 +165,7 @@ class ServiceManager extends CComponent {
             
             $id = ServiceManager::initInstance();
             $logPath = ServiceManager::getLogPath($serviceName, $id);
-            $command = "runLog \"{$logPath}\" php yiic.php service execute --id={$id}";
+            $command = "run \"{$logPath}\" php yiic.php service execute --id={$id}";
           
             $pid = ServiceManager::process($command);
             if (!empty($pid)) {
@@ -199,14 +177,6 @@ class ServiceManager extends CComponent {
                 return false;
             }
         } 
-    }
-    
-    public static function getJson() {
-        
-    }
-    
-    public static function setJson() {
-        
     }
     
     public static function kill($name) {
@@ -455,20 +425,6 @@ class ServiceManager extends CComponent {
         if (is_file($file)) {
             file_put_contents($file, "\n[{$date}] {$msg}", FILE_APPEND);
         }
-    }
-    
-    private static function getProcessCommand() {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            return 'process.exe';
-        } else if (strtoupper(substr(PHP_OS, 0, 6)) === 'DARWIN'){
-            return './process.osx';
-        } else if (strtoupper(substr(PHP_OS, 0, 5)) === 'LINUX') {
-            if (!getenv('PATH')) {
-                putenv('PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games');
-            }
-            
-            return './process.linux';
-        } 
     }
     
     private static function isProcessRunning($pid) {

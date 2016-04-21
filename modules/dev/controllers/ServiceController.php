@@ -2,11 +2,10 @@
 
 class ServiceController extends Controller {
     
-    public function actionIndex() {                         
-        $isRunning = ServiceManager::checkDaemon();
-        
+    public function actionIndex() {                  
+
         $model = new DevServiceIndex();
-        $model->status = $isRunning ? "Service Daemon Running" : "Service Daemon Stopped";
+        $model->status = "Service Daemon Running" ;
         $this->renderForm('DevServiceIndex', $model);
     }
     
@@ -33,7 +32,7 @@ class ServiceController extends Controller {
                 $results[$class] = $class;
             }
             echo json_encode($results);
-        } 
+        }
     }
     
     public function actionListAction($m, $c, $n = "t"){

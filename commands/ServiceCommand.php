@@ -4,8 +4,6 @@ class ServiceCommand extends CConsoleCommand {
     public $defaultAction = 'startDaemon';
     
     public function actionStartDaemon(){
-        ServiceManager::markDaemonAsRun();
-        $i = 1;
         while(true){   
             $services = ServiceSetting::get('list', [], true);
             $curTime = time();
@@ -32,13 +30,7 @@ class ServiceCommand extends CConsoleCommand {
                     }
                 } 
             }
-            if ($i == 5) {
-                $i = 0;
-                ServiceManager::markDaemonAsRun();
-            }
-
             sleep(1);
-            $i++;
         }
     }
     

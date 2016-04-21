@@ -425,9 +425,7 @@ class Controller extends CController {
 
     public function afterAction($action) {
         ## Make sure service daemon is started
-        if (!ServiceManager::checkDaemon()) {
-            ServiceManager::startDaemon();
-        }
+        ServiceManager::startDaemon();
 
         parent::afterAction($action);
         

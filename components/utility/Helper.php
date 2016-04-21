@@ -1076,28 +1076,3 @@ if (!defined('HTTP_URL_STRIP_ALL')) {
     define('HTTP_URL_STRIP_ALL', 1024);
 }
 
-
-function dump() {
-    if (func_num_args() > 0) {
-        $args = func_get_args();
-
-        // get the input arg passed to the function
-        $src  = debug_backtrace();
-        $idx  = strpos($src[0]['file'], 'Setting.php') ? 1 : 0;
-        $src  = (object)$src[$idx];
-        $file = file($src->file);
-        $i    = 1;
-        do {
-            $line = $file[$src->line - $i++];
-        } while (strpos($line, 'dump') === false);
-        preg_match('/dump\((.+?)\)?(?:$|;|\?>)/', $line, $m);
-        $key  = $m[1];
-        $key  = explode(',', $key);
-        $dump = [];
-        foreach ($args as $k => $n) {
-            $dump[$key[trim($k)]] = $n;
-        }
-        echo '<pre class="dump_r" style="margin-bottom:-17px;position:absolute;width:100%;border-right:0px;border-bottom:0px;"><div class="file-line" style="border:0px;">' . $src->file . " (line {$src->line})</div></pre>";
-        dump_r($dump);
-    }
-}

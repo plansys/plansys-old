@@ -39,7 +39,6 @@ class ActiveRecord extends CActiveRecord {
 
     public static function jsonToArray(&$post, $key, $shouldReturn = false, $flattenPost = false) {
         $new = [];
-
         if (isset($post[$key . 'Insert']) && is_string($post[$key . 'Insert']))
             $new[$key . 'Insert'] = json_decode($post[$key . 'Insert'], true);
 
@@ -93,17 +92,31 @@ class ActiveRecord extends CActiveRecord {
         if (is_null($driver)) {
             $driver = Setting::get('db.driver');
         }
-        foreach ($criteria as $k => $c) {
-            if (is_string($c)) {
-                preg_match_all("/\|([\w.]+)\|/", $c, $segment);
-                foreach ($segment[1] as $l => $e) {
-                    $e = preg_replace('/[\s]+/', ' ', $e);
-                    $e = explode(" ", $e);
-                    foreach ($e as $m => $f) {
-                        $e[$m] = self::formatSingleCriteria($f, $driver);
+        
+        if (is_string($criteria)) {
+            preg_match_all("/\|([\w.]+)\|/", $criteria, $segment);
+            foreach ($segment[1] as $l => $e) {
+                $e = preg_replace('/[\s]+/', ' ', $e);
+                $e = explode(" ", $e);
+                foreach ($e as $m => $f) {
+                    $e[$m] = self::formatSingleCriteria($f, $driver);
+                }
+                $e = implode(" ", $e);
+                $criteria = str_replace("|{$segment[1][$l]}|", $e, $criteria);
+            }
+        } else if (is_array($criteria)) {
+            foreach ($criteria as $k => $c) {
+                if (is_string($c)) {
+                    preg_match_all("/\|([\w.]+)\|/", $c, $segment);
+                    foreach ($segment[1] as $l => $e) {
+                        $e = preg_replace('/[\s]+/', ' ', $e);
+                        $e = explode(" ", $e);
+                        foreach ($e as $m => $f) {
+                            $e[$m] = self::formatSingleCriteria($f, $driver);
+                        }
+                        $e = implode(" ", $e);
+                        $criteria[$k] = str_replace("|{$segment[1][$l]}|", $e, $criteria[$k]);
                     }
-                    $e = implode(" ", $e);
-                    $criteria[$k] = str_replace("|{$segment[1][$l]}|", $e, $criteria[$k]);
                 }
             }
         }
@@ -324,32 +337,26 @@ class ActiveRecord extends CActiveRecord {
 
                     ## jika yg kolom itu foreign key DAN kolom nya kosong, maka set NULL (karena foreign_key ga boleh string kosong)
                     if ($isModelExist && in_array($columnName[$i], $foreignKeys) && $d[$columnName[$i]] == '') {
-                        $updatearr[] = '`' . $columnName[$i] . "` = NULL";
+                        $updatearr[] = '|' . $columnName[$i] . "| = NULL";
                     } else {
                         ## selain itu, hajar seperti biasa...
                         if (is_null($d[$columnName[$i]])) {
-                            $updatearr[] = '`' . $columnName[$i] . "` = NULL";
+                            $updatearr[] = '|' . $columnName[$i] . "| = NULL";
                         } else {
-                            $updatearr[] = '`' . $columnName[$i] . "` = '{$d[$columnName[$i]]}'";
+                            $updatearr[] = '|' . $columnName[$i] . "| = '{$d[$columnName[$i]]}'";
                         }
                     }
                 }
             }
             $updatesql = implode(",", $updatearr);
             if ($updatesql != '') {
-                $update .= "UPDATE {$table} SET {$updatesql} WHERE {$pk}='{$cond}';";
+                $update = "UPDATE |{$table}| SET {$updatesql} WHERE |{$pk}| ='{$cond}'";
+                $update = ActiveRecord::formatCriteria($update);
+	            $command = Yii::app()->db->createCommand($update);
+            	$command->execute();
             }
         }
         
-        if ($update != '') {
-            $command = Yii::app()->db->createCommand($update);
-            // try {
-            $command->execute();
-            // } catch (Exception $e) {
-            //     var_dump($data, $e);
-            //     die();
-            // }
-        }
     }
 
     public static function batchDelete($model, $data, $options = []) {
@@ -1206,6 +1213,15 @@ class ActiveRecord extends CActiveRecord {
 
         return $attributes;
     }
+
+	public function findAllByAttributes($attributes,$condition='',$params=array()) {
+	    $attr = [];
+	    foreach ($attributes as $k => $v) {
+	        $attr[ActiveRecord::formatCriteria($k)] = $v;
+	    }
+	    
+	    return parent::findAllByAttributes($attr, $condition, $params);
+	}
 
     public function beforeValidate() {
         $validator = new CInlineValidator;

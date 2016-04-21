@@ -61,6 +61,7 @@ $dbLists = Setting::getDBList();
 $components = $dbLists + $components;
 
 $imports = array(
+    'application.components.models.CDbCommandBuilder',
     'app.models.*',
     'application.models.*',
     'application.forms.*',

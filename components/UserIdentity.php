@@ -39,9 +39,6 @@ class UserIdentity extends CUserIdentity {
             $useLdap = true;
             $ldapSuccess = Yii::app()->ldap->authenticate($this->username, $this->password);
             if ($ldapSuccess) {
-                $record->password = Helper::hash($this->password);
-                $record->save();
-
                 $this->loggedIn($record);
                 return true;
             }
@@ -54,9 +51,6 @@ class UserIdentity extends CUserIdentity {
             if ($useLdap) {
                 $ldapSuccess = Yii::app()->ldap->authenticate($this->username, $this->password);
                 if ($ldapSuccess) {
-                    $record->password = Helper::hash($this->password);
-                    $record->save();
-
                     $this->loggedIn($record);
                     return true;
                 } else {

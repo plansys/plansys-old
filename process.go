@@ -7,14 +7,17 @@ import "strconv"
 import "io"
 import "bufio"
 import "log"
+import "net"
+import "strings"
 
 func main() {	
 	if (len(os.Args) < 3) {
 		fmt.Println("Usage: \n");
 		fmt.Println("   process find  [PID]");
 		fmt.Println("   process kill  [PID]");
-		fmt.Println("   process run   [command]");
-		fmt.Println("   process runLog [logPath] [command]");
+		fmt.Println("   process run [logPath] [command]");
+		fmt.Println("   process service [port] [command]");
+		fmt.Println("   process exec [command]\n\n");
 		fmt.Println("   process debug [command]\n\n");
 	} else {
 		if os.Args[1] == "find"{
@@ -47,7 +50,7 @@ func main() {
 			}else{
 				log.Fatal(false)		
 			}
-		} else if os.Args[1] == "run"{
+		} else if os.Args[1] == "exec" {
 			cmd := exec.Command(os.Args[2], os.Args[3:]...)
 			err := cmd.Start()	
 			if err == nil {
@@ -57,8 +60,39 @@ func main() {
 			}else{
 				fmt.Println(err);	
 			}
+		}else if os.Args[1] == "service" {
+			port := os.Args[2]
+			listener, err := net.Listen("tcp", ":" + port)
 			
-		} else if os.Args[1] == "runLog"{
+			if (err == nil) {
+				cmd := exec.Command(os.Args[3], os.Args[4:]...)
+				err := cmd.Start()	
+				if err == nil {
+					if cmd.Process != nil {
+						fmt.Println(cmd.Process.Pid)
+					}
+				}else{
+					fmt.Println(err);	
+				}
+				
+				for {
+					// echo message
+					conn, err := listener.Accept()
+			        if err != nil {
+			            println("Error accept:", err.Error())
+			            return
+			        } else {
+					    message, _ := bufio.NewReader(conn).ReadString('\n')      
+					    fmt.Print("Message Received:", string(message))     
+					    newmessage := strings.ToUpper(message)  
+					    conn.Write([]byte(newmessage + "\n")) 
+			        }
+				}
+			} else {
+			    println("Error: ", err.Error())
+			}
+			
+		} else if os.Args[1] == "run" {
 			cmd := exec.Command(os.Args[3], os.Args[4:]...)
 		    stdout, err := cmd.StdoutPipe()
 		    stderr, err := cmd.StderrPipe()

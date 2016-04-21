@@ -162,7 +162,7 @@ EOF;
                 }
                 
                 if ($emptyCount + 1 >= count($import->columns)) {
-                    $errors[$r - 1] = "Skipping " . ($r - 1) . ' Row... (Empty Row)';
+                    $this->msg("Skipping " . ($r - 1) . ' Row... (Empty Row)');
                     continue;
                 }
                 

@@ -13,6 +13,7 @@ class Import extends CComponent {
     public $resultFile = '';
     public $resultUrl = '';
     
+    public $originalRow = [];
     public $currentRow = [];
     public $lastRow = [];
     public $rowHistory = [];
@@ -428,7 +429,7 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan");
         $pks = [];
         $data = [];
         $resolveCol = [];
-        
+
         ## skip data if needed
         $skipIf = false;
         $skipParentIf = false;
@@ -440,10 +441,20 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan");
         ## assign current row
         foreach ($row as $k=>$r) {
             if (is_string($r)) {
-                $row[$k] = trim($r);
+                if (function_exists('iconv')) {
+                    $row[$k] = trim(iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $r));
+                } else {
+                    $row[$k] = trim($r);
+                }
+                
+                if ($k == "nama_dokumen") {
+                    
+                }
             }
         }
+        
         $this->currentRow = $row;
+        $this->originalRow = $row;
         
         ## execute child if needed
         $executeChild = true;
@@ -545,7 +556,6 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan");
                         ]];
                     }
                     
-                    
                     if (@$col['show'] !== false) {
                         $into = isset($col['into']) ? $col['into'] : $key;
                         if (isset($attrs[$into])) {
@@ -642,8 +652,11 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan");
                         }
                     }
                     
+                    $rel['import']->originalRow = $this->originalRow;
                     $rel['import']->lastRow = $this->lastRow;
-                    $res = $rel['import']->importRow($relAttrs);
+                    $ro = $this->originalRow;
+                    
+                    $res = $rel['import']->importRow($this->originalRow);
                     if ($res !== true) {
                         
                         $errors = [];

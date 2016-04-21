@@ -13,7 +13,7 @@ class DataGrid extends FormField {
     public        $name;
     public        $datasource;
     public        $columns     = [];
-    public        $gridOptions = [];
+    public        $gridOptions = [];    
 
     public static function generateParams($paramName, $params, $template, $paramOptions = []) {
         switch ($paramName) {
@@ -73,12 +73,13 @@ class DataGrid extends FormField {
         if (isset($params['order_by']) && count($params['order_by']) > 0) {
             foreach ($params['order_by'] as $k => $o) {
                 $direction = $o['direction'] == 'asc' ? 'asc' : 'desc';
-                $field     = preg_replace("[^a-zA-Z0-9]", "", $o['field']);
+                $field     = "|" . preg_replace("[^a-zA-Z0-9]", "", $o['field']) . "|";
 
                 ## quote field if it is containing illegal char
-                if (!preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", str_replace(".", "", $field))) {
-                    $field = "`{$field}`";
-                }
+                // if (!preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", str_replace(".", "", $field))) {
+                //     $field = "`{$field}`";
+                // }
+                $field = ActiveRecord::formatCriteria($field);
                 $sql[] = "{$field} {$direction}";
             }
         }
