@@ -13,6 +13,8 @@ class DevSettingApp extends Form {
     
     public $auditTrail = 'Enabled';
     
+    public $phpPath = '';
+    
     public function __construct() {
         parent::__construct();
         $this->attributes = Setting::get('app');
@@ -151,6 +153,29 @@ class DevSettingApp extends Form {
                         'onLabel' => 'Enabled',
                         'offLabel' => 'Disabled',
                         'type' => 'ToggleSwitch',
+                    ),
+                ),
+                'w1' => '50%',
+                'w2' => '50%',
+                'type' => 'ColumnField',
+            ),
+            array (
+                'title' => 'System Setting',
+                'type' => 'SectionHeader',
+            ),
+            array (
+                'column1' => array (
+                    array (
+                        'label' => 'PHP Path',
+                        'name' => 'phpPath',
+                        'fieldOptions' => array (
+                            'placeholder' => 'ex: /usr/bin/php -or- c:\\\\xampp\\\\php\\\\php.exe',
+                        ),
+                        'type' => 'TextArea',
+                    ),
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),
                 'w1' => '50%',

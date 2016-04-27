@@ -253,7 +253,7 @@ class Import extends CComponent {
                 $attrs[$into] = $lrow[$col['return']];
             } else if (is_array($col['return'])) {
                 foreach ($col['return'] as $k=>$r) {
-                    $attrs[$r] = $lrow[$k];
+                    $attrs[$k] = $lrow[$r];
                 }
             }
             
@@ -308,7 +308,7 @@ akan menambahkan kolom " . $key . " dengan data sebagai berikut:<br/>
 <br/>
 <pre>" . json_encode($insert, JSON_PRETTY_PRINT) . "</pre>
 <br/>
-penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan");
+penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
                             }
                         }
                     }
@@ -389,8 +389,10 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan");
     }
     
     private function evalExpr($expr, $rowParams, $addQuote = true) {
+        
+        $markNull = false;
         $eval =  preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
-                function($var) use($rowParams) {
+                function($var) use($rowParams, &$markNull) {
                      $ref = $rowParams[$var[1]];
         
                     if (is_object(@$ref[$var[2]]) ) {
@@ -399,14 +401,20 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan");
                         }
                     }
                     
-                    if (!isset($ref[$var[2]])) {
+                    if (!isset($ref[$var[2]]) && !is_null($ref[$var[2]])) {
                         throw new CException("Undefined index `{$var[2]}`");
+                    }
+                    
+                    if (is_null($ref[$var[2]])) {
+                        $markNull = true;
                     }
                     
                     return $ref[$var[2]];
                 }, $expr);
         
-        
+        if ($markNull) {
+            return null;
+        }
         
         if ($addQuote && $expr[0] == "{" && $expr[strlen($expr) -1] == "}" ) {
             return $eval;

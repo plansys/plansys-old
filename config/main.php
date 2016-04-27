@@ -62,6 +62,8 @@ $components = $dbLists + $components;
 
 $imports = array(
     'application.components.models.CDbCommandBuilder',
+    'application.components.models.COciColumnSchema',
+    'application.components.models.CMysqlColumnSchema',
     'app.models.*',
     'application.models.*',
     'application.forms.*',

@@ -3245,7 +3245,7 @@ div[dropdown] .split-button {
 
 textarea {
     word-wrap: break-word;
-    white-space: pre;
+    white-space: pre-wrap;
 }
 
 textarea.form-control {

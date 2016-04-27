@@ -87,7 +87,7 @@ class InstallDbForm extends Form {
             array (
                 'name' => 'resetdb',
                 'list' => array (
-                    'yes' => 'Reset Plansys table',
+                    'yes' => 'Re-Create Plansys table',
                 ),
                 'labelWidth' => '0',
                 'labelOptions' => array (
@@ -98,7 +98,7 @@ class InstallDbForm extends Form {
             array (
                 'type' => 'Text',
                 'value' => '<div class=\"info text-left\" style=\"margin:-20px 0px 0px -3px\">
-    only tables with prefix p_ (e.g. p_user, p_role, etc)<br/> that will be reset.
+    only tables with prefix p_ (e.g. p_user, p_role, etc)<br/> that will be recretaed.
 </div>
 
 <br/>',

@@ -83,7 +83,13 @@ class ServiceManager extends CComponent {
     public static function startDaemon() {
         $port = Setting::get('app.daemonport');
         $process = self::getProcessCommand();
-        ServiceManager::process("exec $process service {$port} php yiic.php service startDaemon \"".__DIR__."\"");
+        $php = Setting::get('app.phpPath');
+
+        if ($php == '' || $php == null) {
+            $php = 'php';
+        }
+
+        ServiceManager::process("exec $process service {$port} {$php} yiic.php service startDaemon \"".__DIR__."\"");
     }
     
     public static function process($command) {
@@ -165,7 +171,12 @@ class ServiceManager extends CComponent {
             
             $id = ServiceManager::initInstance();
             $logPath = ServiceManager::getLogPath($serviceName, $id);
-            $command = "run \"{$logPath}\" php yiic.php service execute --id={$id}";
+            $php = Setting::get('app.phpPath');
+
+            if ($php == '' || $php == null) {
+                $php = 'php';
+            }
+            $command = "run \"{$logPath}\" {$php} yiic.php service execute --id={$id}";
           
             $pid = ServiceManager::process($command);
             if (!empty($pid)) {
