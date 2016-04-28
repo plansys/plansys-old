@@ -60,11 +60,18 @@ class DevGenModelIndex extends Form {
             array (
                 'type' => 'Text',
                 'value' => '
-<tabset class=\'single-tab tab-set\' ng-if=\'!!params.active\'>
-<tab active=\"true\">
-    <tab-heading>
-        <i class=\"fa fa-cube\"></i>
-        {{params.name}} Model &bull; {{status}}
+<tabset class=\'single-tab tab-set\' ng-if=\'!!params.active\'>',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<!-- TAB MODEL CODE -->
+<tab active=\"tabCode\">
+    <tab-heading ng-click=\"tabSelect()\">
+        <i class=\"fa fa-code\"></i>
+        {{params.name}} Code 
+        <span ng-if=\"!!tabCode\">
+            &bull; {{status}}
+        </span>
     </tab-heading>
     <div style=\'padding:0px 0px;\'>
         ',
@@ -85,6 +92,82 @@ ng-model=\"params.content\">
                 'type' => 'Text',
                 'value' => '    </div>
 </tab>
+',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<!-- TAB Rel -->
+<tab active=\"tabRel\">
+    <tab-heading ng-click=\"tabRelSelect()\">
+       <span> <i class=\"fa fa-link\"></i>
+           Relations
+           <span ng-if=\"!!tabRel\">
+               &bull; {{status}}
+           </span></span>
+    </tab-heading>
+    <div style=\'padding:0px 0px;\'>',
+            ),
+            array (
+                'name' => 'tabRelations',
+                'subForm' => 'application.modules.dev.forms.genmodel.DevGenModelRelations',
+                'type' => 'SubForm',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '    </div>
+</tab>',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<!-- TAB RULES -->
+<tab active=\"tabRules\">
+    <tab-heading>
+        <i class=\"fa fa-unlock-alt\"></i>
+        Rules
+        <span ng-if=\"!!tabRules\">
+            &bull; {{status}}
+        </span>
+    </tab-heading>
+    <div style=\'padding:0px 0px;\'>',
+            ),
+            array (
+                'name' => 'tabRules',
+                'subForm' => 'application.modules.dev.forms.genmodel.DevGenModelRules',
+                'type' => 'SubForm',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '    </div>
+</tab>',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<!-- TAB IMPORTER -->
+<tab active=\"tabImporter\">
+    <tab-heading>
+        <i class=\"fa fa-upload\"></i>
+        Importer
+        <span ng-if=\"!!tabImporter\">
+            &bull; {{status}}
+        </span>
+    </tab-heading>
+    <div style=\'padding:0px 0px;\'>
+',
+            ),
+            array (
+                'name' => 'tabImporter',
+                'subForm' => 'application.modules.dev.forms.genmodel.DevDevGenModelImporter',
+                'type' => 'SubForm',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '    </div>
+</tab>',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '
+
 </tabset>',
             ),
         );

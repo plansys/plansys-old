@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "263c10de0a326ff0986a73b4e9e4a6e8",
+    "hash": "e11a130a12f4fe5c2932d060c8224a8e",
     "content-hash": "a1c11ec5fdab9b4c30c3f7cf661eb1c7",
     "packages": [
         {
@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/box/spout.git",
-                "reference": "b69e28050bb3c00ec7c2a3c9ebea384f0b5dc905"
+                "reference": "e9cd7a397e91e4f6b624a37c3fb73ea605f08e90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/box/spout/zipball/b69e28050bb3c00ec7c2a3c9ebea384f0b5dc905",
-                "reference": "b69e28050bb3c00ec7c2a3c9ebea384f0b5dc905",
+                "url": "https://api.github.com/repos/box/spout/zipball/e9cd7a397e91e4f6b624a37c3fb73ea605f08e90",
+                "reference": "e9cd7a397e91e4f6b624a37c3fb73ea605f08e90",
                 "shasum": ""
             },
             "require": {
@@ -75,7 +75,7 @@
                 "write",
                 "xlsx"
             ],
-            "time": "2016-03-24 00:02:42"
+            "time": "2016-04-12 18:03:15"
         },
         {
             "name": "inlinestyle/inlinestyle",
@@ -232,16 +232,16 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v3.0.3",
+            "version": "v3.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
-                "reference": "6605602690578496091ac20ec7a5cbd160d4dff4"
+                "reference": "65e764f404685f2dc20c057e889b3ad04b2e2db0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/css-selector/zipball/6605602690578496091ac20ec7a5cbd160d4dff4",
-                "reference": "6605602690578496091ac20ec7a5cbd160d4dff4",
+                "url": "https://api.github.com/repos/symfony/css-selector/zipball/65e764f404685f2dc20c057e889b3ad04b2e2db0",
+                "reference": "65e764f404685f2dc20c057e889b3ad04b2e2db0",
                 "shasum": ""
             },
             "require": {
@@ -281,7 +281,7 @@
             ],
             "description": "Symfony CssSelector Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-27 05:14:46"
+            "time": "2016-03-04 07:55:57"
         }
     ],
     "packages-dev": [],

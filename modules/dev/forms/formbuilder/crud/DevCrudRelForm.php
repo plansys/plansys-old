@@ -94,7 +94,7 @@ FK    : {{ relationList[model.name].foreignKey }}</pre>
                 'w1' => '50%',
                 'w2' => '50%',
                 'options' => array (
-                    'style' => 'margin-top:-5px;',
+                    'style' => 'margin-top:-4px;',
                 ),
                 'perColumnOptions' => array (
                     'style' => 'padding:5px 10px 0px 0px;',

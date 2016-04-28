@@ -1028,6 +1028,12 @@ li:hover > .item-btn {
     background: rgba(255, 255, 255, 1);
 }
 
+.tab-set .nav-tabs > li.active > a > tab-heading {
+    padding-bottom: 1px;
+    background: white;
+    display:block;
+}
+
 .tab-set.single-tab .nav-tabs > li {
     margin-top: -1px;
     margin-bottom: 0px;

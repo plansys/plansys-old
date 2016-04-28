@@ -41,6 +41,45 @@ $scope.contextMenu = [
             return !!item.$parent;
         }
     },
+//    {
+//        icon: "fa fa-fw fa-play-circle",
+//        label: function(item) {
+//            return item.label + " Workflow";
+//        },
+//        visible: function (item) {
+//            return !!item.$parent;
+//        },
+//        click: function (item) {
+//        }
+//    },
+//    {
+//        icon: "fa fa-fw fa-unlock-alt",
+//        label: function(item) {
+//            return item.label + " Rules";
+//        },
+//        visible: function (item) {
+//            return !!item.$parent;
+//        },
+//        click: function (item) {
+//        }
+//    },
+//    {
+//        icon: "fa fa-fw fa-upload",
+//        label: function(item) {
+//            return item.label + " Importer";
+//        },
+//        visible: function (item) {
+//            return !!item.$parent;
+//        },
+//        click: function (item) {
+//        }
+//    },
+//    {
+//        hr: true,
+//        visible: function (item) {
+//            return !!item.$parent;
+//        }
+//    },
     {
         icon: "fa fa-fw fa-trash",
         label: "Delete Model",

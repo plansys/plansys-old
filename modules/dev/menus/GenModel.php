@@ -9,6 +9,8 @@ $options = array (
         'type' => 'menu',
         'name' => 'col1',
         'file' => 'application.modules.dev.menus.GenModel',
+        'title' => 'Model',
+        'icon' => 'fa-cube',
         'inlineJS' => 'GenModel.js',
     ),
 );
