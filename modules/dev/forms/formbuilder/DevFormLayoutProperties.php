@@ -99,7 +99,40 @@ class DevFormLayoutProperties extends Form {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<hr ng-show=\\"layout.type == \'menu\'\\"/>',
+                'value' => '<div ng-show=\\"layout.type == \'menu\'\\">',
+            ),
+            array (
+                'label' => 'Inline JS File',
+                'options' => array (
+                    'ng-model' => 'layout.inlineJS',
+                    'ng-change' => 'changeLayoutProperties()',
+                    'ng-delay' => '500',
+                    'ng-show' => 'layout.type == \'menu\'',
+                ),
+                'type' => 'TextField',
+            ),
+            array (
+                'renderInEditor' => 'Yes',
+                'type' => 'Text',
+                'value' => '<a ng-href=\"{{Yii.app.createUrl(\'/dev/forms/code\', {
+    c: layout.file,
+    s: layout.inlineJS,
+    m: 1
+})}}\" 
+    style=\"margin-bottom:5px;\"
+    class=\"pull-right btn btn-default btn-xs\">
+    <i class=\"fa fa-sign-in\"></i>
+    Edit Inline JS
+</a>
+<div class=\"clearfix\"></div>',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '</div>',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<div ng-show=\\"layout.type != \'menu\'\\">',
             ),
             array (
                 'label' => 'Inline JS File',
@@ -125,6 +158,10 @@ class DevFormLayoutProperties extends Form {
     Edit Inline JS
 </a>
 <div class=\"clearfix\"></div>',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '</div>',
             ),
             array (
                 'type' => 'Text',

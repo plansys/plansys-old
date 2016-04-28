@@ -32,7 +32,8 @@ class GenModelController extends Controller {
         Asset::registerJS('application.static.js.lib.ace');
         $this->renderForm('DevGenModelIndex', [
             'content' => $content,
-            'name' => $name
+            'name' => $name,
+            'models' => ModelGenerator::listModels(true)
         ]);
     }
 

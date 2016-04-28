@@ -23,32 +23,10 @@ class DevGenModelRules extends Form {
     public function getFields() {
         return array (
             array (
-                'type' => 'TagField',
-                'name' => 'fields',
-                'label' => 'qweqwe',
-                'layout' => 'Horizontal',
-            ),
-            array (
-                'column1' => array (
-                    array (
-                        'type' => 'Text',
-                        'value' => '<column-placeholder></column-placeholder>',
-                    ),
-                ),
-                'column2' => array (
-                    array (
-                        'label' => 'Rule',
-                        'name' => 'rule',
-                        'type' => 'DropDownList',
-                    ),
-                    array (
-                        'type' => 'Text',
-                        'value' => '<column-placeholder></column-placeholder>',
-                    ),
-                ),
-                'w1' => '70%',
-                'w2' => '30%',
-                'type' => 'ColumnField',
+                'type' => 'Text',
+                'value' => '<div class=\"alert alert-info\">
+    INI RULES
+</div>',
             ),
         );
     }

@@ -100,27 +100,6 @@ class DevFormProperties extends Form {
 <div class=\"clearfix\"></div>',
             ),
             array (
-                'name' => 'includeJS',
-                'options' => array (
-                    'ng-model' => '$parent.form.includeJS',
-                    'ng-change' => 'saveForm()',
-                    'class' => 'flat',
-                    'unique' => 'true',
-                ),
-                'singleView' => 'DropDownList',
-                'singleViewOption' => array (
-                    'name' => 'val',
-                    'fieldType' => 'text',
-                    'labelWidth' => 0,
-                    'fieldWidth' => 12,
-                    'fieldOptions' => array (
-                        'ng-delay' => 500,
-                    ),
-                    'list' => array (),
-                ),
-                'type' => 'ListView',
-            ),
-            array (
                 'label' => 'Form Options',
                 'show' => 'Show',
                 'options' => array (
