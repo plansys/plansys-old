@@ -356,12 +356,13 @@ app.directive('dropDownList', function ($timeout) {
                             initialValue = ngModelValue;
                         }
                     }
+                    
 
                     if ($scope.defaultType == 'first' && !initialValue && !!$scope.renderedFormList[0] && !!$scope.renderedFormList[0].value) {
                         initialValue = $scope.renderedFormList[0].key;
                         
-                        if (angular.isArray(initialValue)) {
-                            initialValue = initialValue[0].key;
+                        if (angular.isArray($scope.renderedFormList[0].value)) {
+                            initialValue = $scope.renderedFormList[0].value[0].key;
                         }
                     }
 
