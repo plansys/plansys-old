@@ -5,23 +5,32 @@ class DevGenModelRelations extends Form {
     public static function getRels($pathModel) {
         if ($pathModel != "") {
             $modelClass = end(explode(".", $pathModel));
-            $model = $modelClass::model();
-            if (method_exists($model, "relations")) {
-                $rels = ($model->relations());
-                $return = [];
-                foreach ($rels as $k=>$r) {
-                    $ret = [
-                        'name' => $k,
-                        'type' => $r[0],
-                        'modelClass' => $r[1],
-                        'fk' => $r[2],
-                        'raw' => $r 
-                    ];
-                    $return[] = $ret;
+            
+            if (method_exists($modelClass, 'model')) {
+                $model = $modelClass::model();
+                if (is_subclass_of($model, 'ActiveRecord')) {
+                    if (method_exists($model, "relations")) {
+                        $rels = ($model->relations());
+                        $return = [];
+                        foreach ($rels as $k=>$r) {
+                            $ret = [
+                                'name' => $k,
+                                'type' => $r[0],
+                                'modelClass' => $r[1],
+                                'fk' => $r[2],
+                                'raw' => $r 
+                            ];
+                            $return[] = $ret;
+                        }
+                        return $return;
+                    }
+                    return [];
+                } else {
+                    return false;
                 }
-                return $return;
+            } else {
+                return false;
             }
-            return [];
         }
     }
 
@@ -51,6 +60,12 @@ class DevGenModelRelations extends Form {
                 'fieldType' => 'php',
                 'php' => 'DevGenModelRelations::getRels(@$_GET[\\"active\\"]);',
                 'type' => 'DataSource',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<div class=\"alert alert-warning\" ng-if=\"dsRel.data[0] === false\" style=\"margin-top:15px;text-align:center;\">
+    This model does not have database relations
+</div>',
             ),
             array (
                 'showBorder' => 'Yes',
@@ -89,6 +104,9 @@ class DevGenModelRelations extends Form {
                 ),
                 'w1' => '50%',
                 'w2' => '50%',
+                'options' => array (
+                    'ng-if' => 'dsRel.data[0] !== false',
+                ),
                 'perColumnOptions' => array (
                     'style' => 'padding',
                 ),

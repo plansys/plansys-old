@@ -134,6 +134,7 @@ class SubForm extends FormField {
     public function renderHtml() {
         Yii::import($this->subForm);
         $class = $this->subFormClass;
+        
         if (!class_exists($class)) {
             return '';
         }
@@ -149,6 +150,7 @@ class SubForm extends FormField {
         $html .= $fb->render(null, [
             'wrapForm' => false
         ]);
+        
 
         $html .= '</div>';
         return $html;

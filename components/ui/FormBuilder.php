@@ -1283,9 +1283,14 @@ EOF;
     private function renderInternal($formdata = null, $options = [], $fb, $fields) {
         $html = "";
 
+
+
+
         $form       = $fb->form;
         $moduleName = $fb->module;
         $modelClass = get_class($fb->model);
+
+
 
         ## setup default options
         $wrapForm          = isset($options['wrapForm']) ? $options['wrapForm'] : true;
