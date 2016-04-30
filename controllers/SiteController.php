@@ -28,7 +28,7 @@ class SiteController extends Controller {
                     case 403:
                         if (Yii::app()->user->isGuest) {
                             $this->redirect(['/site/login',
-                                'redir' => "//$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"
+                                'redir' => "//" . $_SERVER[HTTP_HOST] . $_SERVER[REQUEST_URI]
                             ]);
                         } else {
                             $msg = 'Anda tidak memiliki hak akses terhadap URL ini. <br/>'
