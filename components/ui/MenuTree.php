@@ -65,21 +65,24 @@ class MenuTree extends CComponent {
         return $files;
     }
 
-    public static function listFile($module, $basedir = "") {
-        
+    public static function listFile($module = null, $basedir = "") {
         if ($basedir == "") {
-            $path = "application.modules." . lcfirst($module) . ".menus";
-            $dir  = Yii::getPathOfAlias($path);
-    
-            if (!is_dir($dir)) {
-                $path = "app.modules." . lcfirst($module) . ".menus";
+            if (!is_null($module)) {
+                $path = "application.modules." . lcfirst($module) . ".menus";
                 $dir  = Yii::getPathOfAlias($path);
+        
+                if (!is_dir($dir)) {
+                    $path = "app.modules." . lcfirst($module) . ".menus";
+                    $dir  = Yii::getPathOfAlias($path);
+                }
+            } else {
+                $path = "app.menus";
+                $dir = Yii::getPathOfAlias($path);
             }
         } else {
             $path = $basedir['path'];
             $dir = $basedir['dir'];
         }
-        
         
         $result = [];
         $items  = glob($dir . DIRECTORY_SEPARATOR . "*");
@@ -103,7 +106,7 @@ class MenuTree extends CComponent {
         return $result;
     }
 
-    public static function listDropdown($module, $includeEmpty = true, $withClass = true) {
+    public static function listDropdown($module, $includeEmpty = true, $withClass = true, $withRootMenus = false) {
         $raw  = MenuTree::listFile($module);
         $list = [];
         if ($includeEmpty) {
@@ -113,6 +116,20 @@ class MenuTree extends CComponent {
                 $list[''] = "-- Empty --";
             }
             $list['---'] = '---';
+        }
+        
+        if ($withRootMenus) {
+            $rawApp  = MenuTree::listFile();
+            if (!empty($rawApp)) {
+                foreach ($rawApp as $r) {
+                    if ($withClass) {
+                        $list[$r['class']] = $r['label'];
+                    } else {
+                        $list[$r['label']] = $r['label'];
+                    }
+                }
+                $list['----'] = '---';
+            }
         }
 
         foreach ($raw as $r) {

@@ -102,7 +102,7 @@ class DevRoleForm extends Role {
                         'options' => array (
                             'ng-if' => '!isNewRecord',
                         ),
-                        'listExpr' => 'MenuTree::listDropdown($model->rootRole,\'Default\',true);',
+                        'listExpr' => 'MenuTree::listDropdown($model->rootRole ,\'Default\',true, true);',
                         'type' => 'DropDownList',
                     ),
                     array (
