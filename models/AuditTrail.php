@@ -85,14 +85,10 @@ class AuditTrail extends ActiveRecord {
                 return;
 
             ## get last audit trail
-            $lastTrail = AuditTrail::model()->find([
-                'order' => '"id" desc'
-            ]);
+            $lastTrail = AuditTrail::model()->find([ 'order' => '"id" desc' ]);
             if (!is_null($lastTrail)) {
                 $lastTrail = $lastTrail->attributes;
-            } else {
-                return;
-            }
+            } 
 
             ## detect duplicate
             $isDuplicate     = $lastTrail['pathinfo'] == $pathInfo['pathinfo'] && $lastTrail['params'] == $pathInfo['params'];
@@ -131,9 +127,7 @@ class AuditTrail extends ActiveRecord {
                 $at['stamp']   = date("Y-m-d H:i:s");
                 $at['user_id'] = Yii::app()->user->id;
                 
-                if (@$at['model_id'] != '') {
-                    ActiveRecord::batch('AuditTrail', [$at]);
-                }
+                ActiveRecord::batch('AuditTrail', [$at]);
             }
         }
     }

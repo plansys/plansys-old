@@ -60,7 +60,7 @@ var app = angular.module("main", [
     'ngStorage',
     'oc.lazyLoad'
 ]);
-app.config(function ($sceProvider, $controllerProvider, $provide) {
+app.config(function ($sceProvider, $controllerProvider, $provide, $compileProvider) {
     $provide.decorator('$browser', ['$delegate', function ($delegate) {
         $delegate.onUrlChange = function () {
         };
@@ -72,6 +72,7 @@ app.config(function ($sceProvider, $controllerProvider, $provide) {
     ]);
     controllerProvider = $controllerProvider;
     $sceProvider.enabled(false);
+    $compileProvider.debugInfoEnabled(false);
 });
 app.filter('capitalize', function () {
     return function (input, scope) {

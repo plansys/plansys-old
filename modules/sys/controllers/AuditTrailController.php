@@ -7,7 +7,8 @@ class AuditTrailController extends Controller {
         $path     = json_decode($postdata, true);
         $tracking = Setting::get('app.auditTrail') == "Enabled";
         
-        if ($tracking != null || $tracking != true) {
+        ## do not track, if tracking is disabled
+        if ($tracking != true) {
             return;
         }
 

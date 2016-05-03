@@ -170,12 +170,6 @@ class DevUserForm extends User {
                         'type' => 'LabelField',
                     ),
                     array (
-                        'label' => 'Notification',
-                        'name' => 'subscribed',
-                        'labelWidth' => '2',
-                        'type' => 'ToggleSwitch',
-                    ),
-                    array (
                         'type' => 'Text',
                         'value' => '</div>',
                     ),
@@ -275,6 +269,19 @@ Isi field disamping untuk mengubah password.
                         'resetable' => 'Yes',
                         'defaultValue' => '',
                         'show' => false,
+                        'list' => array (
+                            'general' => array (
+                                'view' => 'View',
+                                'create' => 'Create',
+                                'update' => 'Update',
+                                'delete' => 'Delete',
+                            ),
+                            'other' => array (
+                                'login' => 'Login',
+                                'logout' => 'Logout',
+                                'other' => 'Other',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'description',
