@@ -37,6 +37,9 @@ ob_start();
         $scope.strtotime = strtotime;
         $scope.angular = angular;
         
+        // init scope on current element
+        window.appScope = $scope;
+        
         if ($scope.model == null || !$scope.model) {
             $scope.model = {};
         }
@@ -124,8 +127,6 @@ ob_start();
                     $scope.pageInfo['description'] += " [#" + $scope.model.id + "]";
                 }
             }
-
-            
 
             if ($scope.user != null) {
                 // track create or update in audit trail

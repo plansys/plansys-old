@@ -34,6 +34,8 @@ class SysAuditTrailIndex extends AuditTrail {
                         'options' => array (
                             'width' => '130px',
                         ),
+                        'isCustom' => 'No',
+                        'resetable' => 'Yes',
                     ),
                     array (
                         'filterType' => 'check',
@@ -42,12 +44,8 @@ class SysAuditTrailIndex extends AuditTrail {
                         'show' => false,
                         'defaultValue' => '',
                         'listExpr' => 'AuditTrail::typeDropdown(false)',
-                        'list' => array (
-                            'view' => 'View',
-                            'create' => 'Create',
-                            'update' => 'Update',
-                            'delete' => 'Delete',
-                        ),
+                        'isCustom' => 'No',
+                        'resetable' => 'Yes',
                     ),
                     array (
                         'filterType' => 'relation',
@@ -67,13 +65,14 @@ class SysAuditTrailIndex extends AuditTrail {
                         'relLabelField' => 'fullname',
                         'name' => 'user_id',
                         'label' => 'User',
-                        'show' => false,
+                        'show' => true,
                         'defaultValue' => '',
                         'options' => array (
                             'width' => '150px',
                         ),
-                        'list' => 0,
-                        'count' => 0,
+                        'isCustom' => 'No',
+                        'resetable' => 'Yes',
+                        'relIncludeEmpty' => 'No',
                     ),
                     array (
                         'name' => 'description',
@@ -127,6 +126,7 @@ class SysAuditTrailIndex extends AuditTrail {
                         'stringAlias' => array (),
                         'columnType' => 'string',
                         'show' => false,
+                        '$listViewName' => 'columns',
                     ),
                     array (
                         'columnType' => 'string',
@@ -135,7 +135,7 @@ class SysAuditTrailIndex extends AuditTrail {
                         ),
                         'name' => 'type',
                         'label' => 'Type',
-                        'show' => true,
+                        'show' => false,
                         'inputMask' => '',
                         'stringAlias' => array (
                             'view' => '<div class=\'label label-default text-center\' style=\'display:block;width:100%;\'> VIEW </div>',
@@ -145,6 +145,7 @@ class SysAuditTrailIndex extends AuditTrail {
                             'create' => '<div class=\'label label-success text-center\' style=\'display:block;width:100%;\'> CREATE </div>',
                             'delete' => '<div class=\'label label-danger text-center\' style=\'display:block;width:100%;\'> DELETE </div>',
                         ),
+                        '$listViewName' => 'columns',
                     ),
                     array (
                         'columnType' => 'string',
@@ -157,6 +158,7 @@ class SysAuditTrailIndex extends AuditTrail {
                         'show' => false,
                         'inputMask' => '',
                         'stringAlias' => array (),
+                        '$listViewName' => 'columns',
                     ),
                     array (
                         'relModelClass' => 'application.models.User',
@@ -180,6 +182,7 @@ class SysAuditTrailIndex extends AuditTrail {
                         'options' => array (
                             'width' => '100px',
                         ),
+                        '$listViewName' => 'columns',
                     ),
                 ),
                 'gridOptions' => array (

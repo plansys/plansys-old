@@ -72,6 +72,8 @@ app.config(function ($sceProvider, $controllerProvider, $provide, $compileProvid
     ]);
     controllerProvider = $controllerProvider;
     $sceProvider.enabled(false);
+    
+    // enable to get 33% performance boost, WARNING: will disable angular.element().scope() function!!
     $compileProvider.debugInfoEnabled(false);
 });
 app.filter('capitalize', function () {

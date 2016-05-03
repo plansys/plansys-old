@@ -35,8 +35,7 @@
             </a>
             <!-- form-builder-toolbar -->
             <tabset class="toolbar">
-                <tab ng-click="tabs.toolbar = true" active="tabs.toolbar"
-                     ng-controller="ToolbarController">
+                <tab ng-click="tabs.toolbar = true" active="tabs.toolbar">
                     <tab-heading>
                         <i class="fa fa-bars"></i> Toolbar
                     </tab-heading>

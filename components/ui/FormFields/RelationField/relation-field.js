@@ -45,14 +45,16 @@ app.directive('relationField', function ($timeout, $http) {
 
                 $scope.reload = function () {
                     $scope.doSearch(function () {
-                        $("[relation-field] > data[rel_class='" + $scope.relClass + "']").each(function (idx, item) {
-                            var itemScope = angular.element(item).scope();
-                            if (!!itemScope && itemScope != $scope) {
-                                itemScope.doSearch(function() {
+                        // TODO: seharus nya ga perlu doSearch untuk semua relation-field....
+                        //
+                        // $("[relation-field] > data[rel_class='" + $scope.relClass + "']").each(function (idx, item) {
+                        //     var itemScope = angular.element(item).scope();
+                        //     if (!!itemScope && itemScope != $scope) {
+                        //         itemScope.doSearch(function() {
 
-                                });
-                            }
-                        });
+                        //         });
+                        //     }
+                        // });
                         $scope.updateInternal($scope.value, true);
                     });
                 }

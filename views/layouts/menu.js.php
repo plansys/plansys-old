@@ -143,6 +143,7 @@ app.controller("<?php echo $class ?>MenuTree", ["$scope", "$compile", "$http", "
                     // sementara di-redirect biasa dulu, ga usah pake ajax
                     location.href = item.url;
 
+
 //                          TODO: find performance degradation bug...
 //                          
 //                            var url = $scope.UpdateQueryString('render_section', item.target, item.url);
