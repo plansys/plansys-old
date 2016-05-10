@@ -19,6 +19,13 @@ $scope.formatClass = function(str) {
     return ucfirst(str.replace(/\W/g, ''));
 }
 
+$scope.onNameChange = function() {
+    $scope.model.name = $scope.formatClass($scope.model.name);
+    if (!!$scope.$newCommand) {
+        $scope.model.command = $scope.model.name;
+    }
+}
+
 $scope.onModuleChange = function() {
     $http.get(Yii.app.createUrl('/dev/service/listCommand', {m: $scope.model.commandPath}))
     .success(function(result) {
@@ -31,6 +38,8 @@ $scope.onModuleChange = function() {
             $scope.$newCommand = true;
             $scope.listCommand = false;
             $scope.listAction = false;
+            $scope.model.command = $scope.model.name;
+            $scope.model.action = 'Index';
         }
     });
 }
