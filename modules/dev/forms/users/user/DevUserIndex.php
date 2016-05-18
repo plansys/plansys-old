@@ -239,12 +239,12 @@ class DevUserIndex extends User {
     }
 
     public function getForm() {
-        return array(
+        return array (
             'title' => 'User List',
-            'layout' => array(
+            'layout' => array (
                 'name' => 'full-width',
-                'data' => array(
-                    'col1' => array(
+                'data' => array (
+                    'col1' => array (
                         'type' => 'mainform',
                         'size' => '100',
                     ),

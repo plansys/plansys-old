@@ -23,9 +23,9 @@ class FormField extends CComponent {
         'Data & Tables' => [
             'icon' => 'fa-th-large',
         ],
-        'Charts' => [
-            'icon' => 'fa-bar-chart',
-        ]
+        // 'Charts' => [
+        //     'icon' => 'fa-bar-chart',
+        // ]
     ]; //to distinguish one field to another, will be filled when rendering, -NOT- in editor
     public static $deprecated         = false;
     public        $parseField         = [];

@@ -24,7 +24,8 @@ class ChartLine extends FormField {
 	/** @var string $retrieveMode */
     public $retrieveMode = 'by Column';
 	
-
+    public static $deprecated  = true;
+    
 	/** @var string $name */
     public $name;
 

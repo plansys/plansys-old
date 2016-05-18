@@ -132,6 +132,8 @@ class ChartGroup extends FormField {
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-columns";
 	
+    public static $deprecated  = true;
+    
     /**
      * @return integer me-return width dari column yang akan dirender.
      */

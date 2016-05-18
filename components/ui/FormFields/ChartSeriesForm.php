@@ -14,6 +14,8 @@ class ChartSeriesForm extends Form {
 	/** @var bool $isTick */
     public $isTick;
 	
+    public static $deprecated  = true;
+    
 	/** @var string $columnOptions */
     public $columnOptions = [];  
 	

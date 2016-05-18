@@ -40,6 +40,18 @@ class SettingController extends Controller {
         }
         
         $this->renderForm('DevSettingEmail', $model);
-        
     }
+    
+    public function actionLdap() {
+        $model = new DevSettingLdap;
+        
+        if (isset($_POST['DevSettingLdap'])) {
+            $model->attributes = $_POST['DevSettingLdap'];
+            $model->save();
+            $this->flash('LDAP Setting Updated!');
+        }
+        
+        $this->renderForm('DevSettingLdap', $model);
+    }
+    
 }
