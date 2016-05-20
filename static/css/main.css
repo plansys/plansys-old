@@ -3408,23 +3408,30 @@ div[icon-picker] .popover-content {
 .column-field {
     width: 100%;
     vertical-align: top;
+    display: table;
+    border-collapse:collapse;
 }
 
-.column-field > div {
-    display: inline-block;
+.column-field > .column-field-row {
+    display: table-row;
+}
+
+.column-field > .column-field-row  > .column-field-cell {
+    display:table-cell;
     vertical-align: top;
-    background:white;
     margin-left: -5px;
 }
 
-.column-field > div > .column-field-inner {
+.column-field > .column-field-row > .column-field-cell > .column-field-inner {
     padding: 25px 50px 25px 25px;
 }
 
-#toolbar-properties .column-field > div > .column-field-inner {
+#toolbar-properties .column-field > .column-field-row > .column-field-cell > .column-field-inner {
     padding: 5px 5px 10px 5px;
 }
 
 .input-group-addon {
     font-size: 12px;
 }
+
+

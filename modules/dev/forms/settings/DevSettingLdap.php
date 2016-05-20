@@ -36,7 +36,9 @@ class DevSettingLdap extends Form {
         
         $dc = [];
         foreach ($setting['domain_controllers'] as $k) {
-            $dc[] = $k['val'];
+            if (isset($k['val'])) {
+                $dc[] = $k['val'];
+            }
         }
         $setting['account_suffix'] = '@' . $setting['account_suffix'];
         $setting['domain_controllers'] = $dc;

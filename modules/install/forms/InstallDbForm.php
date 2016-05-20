@@ -48,10 +48,10 @@ class InstallDbForm extends Form {
                 'label' => 'Driver',
                 'name' => 'driver',
                 'listExpr' => 'Setting::getDBDriverList()',
-                'type' => 'DropDownList',
                 'layout' => 'Vertical',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
+                'type' => 'DropDownList',
             ),
             array (
                 'label' => 'Host:',

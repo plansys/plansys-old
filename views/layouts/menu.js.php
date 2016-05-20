@@ -16,6 +16,11 @@ app.controller("<?php echo $class ?>MenuTree", ["$scope", "$compile", "$http", "
     $scope.originalContextMenu = null;
     $scope.options = <?php echo json_encode($options); ?>;
 
+    /******************* INLINEJS SECTION ********************/
+    <?php echo $inlineJS ?>
+
+    /******************* MENU FUNCTION ***********************/
+
     $scope.executeMenu = function (func, item, e) {
         if (typeof func == "function") {
             $timeout(function () {
@@ -204,9 +209,6 @@ app.controller("<?php echo $class ?>MenuTree", ["$scope", "$compile", "$http", "
         return active;
     };
 
-
-    /******************* INLINEJS SECTION ********************/
-    <?php echo $inlineJS ?>
 
 
 }

@@ -48,6 +48,17 @@ class DevGenModelIndex extends Form {
         return array (
             array (
                 'type' => 'Text',
+                'value' => '<style>
+    tab-heading {
+        margin: -4px -8px -5px -8px;
+        padding: 4px 8px 5px 8px;
+        height: 23px;
+    }
+    
+</style>',
+            ),
+            array (
+                'type' => 'Text',
                 'value' => '<!-- EMPTY MODULE -->
 <div ng-if=\'!params.active\'>
     <div class=\"empty-box-container\">
@@ -120,8 +131,8 @@ ng-model=\"params.content\">
             array (
                 'type' => 'Text',
                 'value' => '<!-- TAB RULES -->
-<tab active=\"tabRules\">
-    <tab-heading>
+<tab active=\"tabRules\" style=\"display:none;\">
+    <tab-heading ng-click=\"tabRulesSelect();\">
         <i class=\"fa fa-unlock-alt\"></i>
         Rules
         <span ng-if=\"!!tabRules\">
@@ -144,7 +155,7 @@ ng-model=\"params.content\">
                 'type' => 'Text',
                 'value' => '<!-- TAB IMPORTER -->
 <tab active=\"tabImporter\">
-    <tab-heading>
+    <tab-heading ng-click=\"tabImporterSelect();\">
         <i class=\"fa fa-upload\"></i>
         Importer
         <span ng-if=\"!!tabImporter\">
@@ -156,7 +167,7 @@ ng-model=\"params.content\">
             ),
             array (
                 'name' => 'tabImporter',
-                'subForm' => 'application.modules.dev.forms.genmodel.DevDevGenModelImporter',
+                'subForm' => 'application.modules.dev.forms.genmodel.DevGenModelImporter',
                 'type' => 'SubForm',
             ),
             array (

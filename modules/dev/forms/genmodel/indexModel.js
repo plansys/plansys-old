@@ -27,15 +27,28 @@ if (!!$scope.params.name) {
 
 $scope.isChanged = true;
 
-$scope.tabSelect = function() {
-    $scope.isChanged = true;
+$scope.select = function () {
+    console.log('asdas');
 }
 
 $scope.markUnchange = function() {
     $scope.isChanged = false;
 }
 
+$scope.tabSelect = function() {
+    $scope.isChanged = true;
+    location.hash = '';
+}
+
+$scope.tabRulesSelect = function() {
+    location.hash = '#rules';
+}
+
 $scope.tabRelSelect = function() {
-    angular.element($('[name="DevGenModelRelations[dsRel]"]')[0]).scope().query();
-    $scope.markUnchange();
+    location.hash = '#rel';
+    var scope = angular.element($('[name="DevGenModelRelations[dsRel]"]')[0]).scope(); 
+    if (scope) {
+        scope.query();
+        $scope.markUnchange();
+    } 
 }
