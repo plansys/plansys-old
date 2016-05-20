@@ -76,10 +76,20 @@ class RelationField extends FormField {
         }
 
         foreach ($appItems as $k => $m) {
+            $mm = $m;
             $m = str_replace($appDir . DIRECTORY_SEPARATOR, "", $m);
             $m = str_replace('.php', "", $m);
+            if (is_dir($mm)) {
+                $dirs = glob($mm . DIRECTORY_SEPARATOR . "*");
+                foreach ($dirs as $d => $n) {
+                    $n = str_replace($mm . DIRECTORY_SEPARATOR, "", $n);
+                    $n = str_replace('.php', "", $n);
 
-            $items['Application']['app.models.' . $m] = $m;
+                    $items[$m]['app.models.' . $m . "." . $n] = $n;
+                }
+            } else {
+                $items['Application']['app.models.' . $m] = $m;
+            }
         }
 
         foreach ($devItems as $k => $m) {
