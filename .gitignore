@@ -3,3 +3,5 @@
 /.vim_auto_ses
 /.idea
 /vendor/
+/repo/
+/messages/
