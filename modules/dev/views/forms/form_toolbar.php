@@ -2,7 +2,7 @@
 <div ng-controller="ToolbarController">
     <div oc-lazy-load="{name: 'ui.tree', files: ['<?= $this->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
         <div ui-tree="toolbarOptions"  style="overflow-x:hidden;">
-            <ol ui-tree-nodes data-nodrop ng-model="toolbar" class="toolbar-item">
+            <ol ui-tree-nodes data-nodrop data-clone-enabled="true" ng-model="toolbar" class="toolbar-item">
                 <span ng-repeat="item in toolbar">
                     {{category(settings.category[item.type])}}
                     <li ng-if="isCategory && settings.category[item.type]" class="item.type"
@@ -59,21 +59,23 @@
                         $(scope.dest.nodesScope.$element).find(".form-field:eq(" + scope.dest.index + ")").click();
                         var model = scope.dest.nodesScope.$modelValue[scope.dest.index];
 
-                        // generate model name
-                        if (typeof model.name != "undefined") {
-                            model.name = model.name.charAt(0).toLowerCase() + model.name.slice(1); // letter first letter
-                            model.name = model.name.replace(/\s/, "") + "" + $(".form-builder ." + model.type).length;
-                        }
+                        if (!!model) {
+                            // generate model name
+                            if (typeof model.name != "undefined") {
+                                model.name = model.name.charAt(0).toLowerCase() + model.name.slice(1); // letter first letter
+                                model.name = model.name.replace(/\s/, "") + "" + $(".form-builder ." + model.type).length;
+                            }
 
-                        // action bar should always be placed on first array
-                        if (model.type == 'ActionBar') {
-                            var clone = angular.copy(scope.dest.nodesScope.$modelValue[scope.dest.index]);
-                            scope.dest.nodesScope.$modelValue.splice(scope.dest.index, 1);
-                            $scope.$parent.fields.unshift(clone);
-                        }
+                            // action bar should always be placed on first array
+                            if (model.type == 'ActionBar' || $scope.$parent.fields.length == 0) {
+                                var clone = angular.copy(scope.dest.nodesScope.$modelValue[scope.dest.index]);
+                                scope.dest.nodesScope.$modelValue.splice(scope.dest.index, 1);
+                                $scope.$parent.fields.unshift(clone);
+                            }
 
-                        // save it
-                        $scope.$parent.save();
+                            // save it
+                            $scope.$parent.save();
+                        }
                     }, 0);
                 }
             };
