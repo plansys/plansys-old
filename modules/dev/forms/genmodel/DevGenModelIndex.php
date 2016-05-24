@@ -48,17 +48,6 @@ class DevGenModelIndex extends Form {
         return array (
             array (
                 'type' => 'Text',
-                'value' => '<style>
-    tab-heading {
-        margin: -4px -8px -5px -8px;
-        padding: 4px 8px 5px 8px;
-        height: 23px;
-    }
-    
-</style>',
-            ),
-            array (
-                'type' => 'Text',
                 'value' => '<!-- EMPTY MODULE -->
 <div ng-if=\'!params.active\'>
     <div class=\"empty-box-container\">

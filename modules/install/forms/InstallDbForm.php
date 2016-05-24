@@ -87,7 +87,7 @@ class InstallDbForm extends Form {
             array (
                 'name' => 'resetdb',
                 'list' => array (
-                    'yes' => 'Re-Create Plansys table',
+                    'yes' => 'Create Plansys table',
                 ),
                 'labelWidth' => '0',
                 'labelOptions' => array (

@@ -25,7 +25,6 @@ class DevGenModelImporter extends Form {
                 'value' => '<style>
     .importer-head {
         border-bottom:1px solid #ddd;
-        background:#fafafa;
         padding:0px;
         margin:0px -15px;
     }
@@ -53,7 +52,7 @@ class DevGenModelImporter extends Form {
                     'class' => 'importer-head',
                 ),
                 'perColumnOptions' => array (
-                    'style' => 'padding:10px 2px 2px 2px',
+                    'style' => 'padding:5px 2px 0px 2px',
                 ),
                 'type' => 'ColumnField',
             ),

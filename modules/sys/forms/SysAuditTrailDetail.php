@@ -6,7 +6,7 @@ class SysAuditTrailDetail extends AuditTrail {
         return array (
             array (
                 'linkBar' => array (),
-                'title' => 'Audit Trail Detail #{{model.id}}',
+                'title' => 'Audit Trail Detail #{{model.id}} asdas',
                 'type' => 'ActionBar',
             ),
             array (

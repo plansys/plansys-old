@@ -1029,8 +1029,12 @@ li:hover > .item-btn {
     background: rgba(255, 255, 255, 1);
 }
 
-.tab-set .nav-tabs > li.active > a > tab-heading {
-    padding-bottom: 1px;
+.tab-set .nav-tabs > li.active > a > tab-heading {    
+    margin: -4px -8px -5px -8px;
+    padding: 4px 8px 3px 8px;
+    height: 25px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
     background: white;
     display:block;
 }

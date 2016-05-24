@@ -89,6 +89,14 @@ class DefaultController extends Controller {
         return false;
     }
 
+    public function beforeLogin($model) {}
+
+    public function afterLogin($model) {}
+
+    public function beforeLogout($model) {}
+
+    public function afterLogout($model) {}
+
     /**
      * Displays the login page
      */
@@ -111,9 +119,11 @@ class DefaultController extends Controller {
         // collect user input data
         if (isset($_POST['LoginForm'])) {
             $model->attributes = $_POST['LoginForm'];
+            $this->beforeLogin($model);
 
             // validate user input and redirect to the previous page if valid
             if ($model->validate() && $model->login()) {
+                $this->afterLogin($model);
 
                 ## update last_login user
                 Yii::app()->db->commandBuilder->createUpdateCommand("p_user", [
@@ -142,12 +152,33 @@ class DefaultController extends Controller {
      * Logs out the current user and redirect to homepage.
      */
     public function actionLogout() {
-        ## audit trail tracker
-        AuditTrail::logout();
+        if (!Yii::app()->user->isGuest) {
+            $model = new LoginForm;
+            $model->username = Yii::app()->user->name;
+            $this->beforeLogout($model);
 
-        ## logout user
-        Yii::app()->user->logout();
+            ## audit trail tracker
+            AuditTrail::logout();
 
+            ## logout user
+            Yii::app()->user->logout();
+
+            $this->afterLogout($model);
+        }
+
+        $_SESSION = array();
+
+        // unset cookies
+        if (isset($_SERVER['HTTP_COOKIE'])) {
+            $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+            foreach($cookies as $cookie) {
+                $parts = explode('=', $cookie);
+                $name = trim($parts[0]);
+                setcookie($name, '', time()-1000);
+                setcookie($name, '', time()-1000, '/');
+            }
+        }
+        
         $this->redirect(Yii::app()->homeUrl);
     }
 
