@@ -8,6 +8,7 @@ class InstallDbForm extends Form {
     public $password;
     public $dbname;
     public $resetdb = "yes";
+    public $phpPath = '';
 
     public function rules() {
         return [
@@ -74,6 +75,7 @@ class InstallDbForm extends Form {
                 'name' => 'password',
                 'fieldType' => 'password',
                 'layout' => 'Vertical',
+                'labelWidth' => '0',
                 'fieldWidth' => '12',
                 'type' => 'TextField',
             ),
@@ -81,6 +83,7 @@ class InstallDbForm extends Form {
                 'label' => 'Database name:',
                 'name' => 'dbname',
                 'layout' => 'Vertical',
+                'labelWidth' => '0',
                 'fieldWidth' => '12',
                 'type' => 'TextField',
             ),
@@ -102,6 +105,16 @@ class InstallDbForm extends Form {
 </div>
 
 <br/>',
+            ),
+            array (
+                'label' => 'PHP Executable Path',
+                'name' => 'phpPath',
+                'labelWidth' => '0',
+                'fieldWidth' => '12',
+                'fieldOptions' => array (
+                    'placeholder' => '',
+                ),
+                'type' => 'TextField',
             ),
             array (
                 'label' => 'Next Step',
