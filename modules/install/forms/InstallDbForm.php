@@ -8,6 +8,7 @@ class InstallDbForm extends Form {
     public $password;
     public $dbname;
     public $resetdb = "yes";
+    public $phpPath = '';
 
     public function rules() {
         return [
@@ -48,10 +49,10 @@ class InstallDbForm extends Form {
                 'label' => 'Driver',
                 'name' => 'driver',
                 'listExpr' => 'Setting::getDBDriverList()',
-                'type' => 'DropDownList',
                 'layout' => 'Vertical',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
+                'type' => 'DropDownList',
             ),
             array (
                 'label' => 'Host:',
@@ -74,6 +75,7 @@ class InstallDbForm extends Form {
                 'name' => 'password',
                 'fieldType' => 'password',
                 'layout' => 'Vertical',
+                'labelWidth' => '0',
                 'fieldWidth' => '12',
                 'type' => 'TextField',
             ),
@@ -81,13 +83,14 @@ class InstallDbForm extends Form {
                 'label' => 'Database name:',
                 'name' => 'dbname',
                 'layout' => 'Vertical',
+                'labelWidth' => '0',
                 'fieldWidth' => '12',
                 'type' => 'TextField',
             ),
             array (
                 'name' => 'resetdb',
                 'list' => array (
-                    'yes' => 'Re-Create Plansys table',
+                    'yes' => 'Create Plansys table',
                 ),
                 'labelWidth' => '0',
                 'labelOptions' => array (
@@ -102,6 +105,16 @@ class InstallDbForm extends Form {
 </div>
 
 <br/>',
+            ),
+            array (
+                'label' => 'PHP Executable Path',
+                'name' => 'phpPath',
+                'labelWidth' => '0',
+                'fieldWidth' => '12',
+                'fieldOptions' => array (
+                    'placeholder' => '',
+                ),
+                'type' => 'TextField',
             ),
             array (
                 'label' => 'Next Step',

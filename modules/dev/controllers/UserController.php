@@ -91,7 +91,7 @@ class UserController extends Controller {
 
             if ($model->save()) {
                 $model->subscribed = "on";
-                Yii::app()->user->setFlash('info', 'User Berhasil dibuat! Silakan search untuk menambah user lain.');
+                Yii::app()->user->setFlash('info', 'User Berhasil dibuat!');
 
                 if (isset($_GET['ldap'])) {
                     $this->redirect(array("ldap"));
@@ -112,8 +112,13 @@ class UserController extends Controller {
         try {
             $data = Yii::app()->ldap->user()->searchRaw('*');
         } catch (Exception $ex) {
-
-            throw new CHttpException('403', 'Gagal menyambungkan ke Server Active Directory');
+            throw new CHttpException('403', 
+                "<pre style='text-align:left;width:850px;margin:0px auto;display:block;'>" . $ex . "</pre>");
+        }
+        
+        if ($data === false) {
+            throw new CHttpException('403', 
+                "Gagal Menyambungkan ke server LDAP / Active Directory");
         }
 
         $this->renderForm("users.user.DevUserLdap", [

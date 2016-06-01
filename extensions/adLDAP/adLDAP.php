@@ -637,7 +637,7 @@ class adLDAP {
         if ($this->useTLS) {
             ldap_start_tls($this->ldapConnection);
         }
-               
+        
         // Bind as a domain admin if they've set it up
         if ($this->adminUsername !== NULL && $this->adminPassword !== NULL) {
             $this->ldapBind = @ldap_bind($this->ldapConnection, $this->adminUsername . $this->accountSuffix, $this->adminPassword);

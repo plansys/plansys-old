@@ -307,7 +307,7 @@ class Setting {
     public static function getApplicationPath() {
         return Setting::$rootPath . DIRECTORY_SEPARATOR . 'plansys';
     }
-
+    
     public static function remove($key, $flushSetting = true) {
         $keys = explode('.', $key);
 

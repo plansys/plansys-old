@@ -772,7 +772,7 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
         dragStart: function (scope) {
             if ($scope.isCloning) {
                 $scope.isCloneDragging = true;
-                scope.elements.placeholder.replaceWith(scope.elements.dragging.clone().find('li:eq(0)'));
+                // scope.elements.placeholder.replaceWith(scope.elements.dragging.clone().find('li:eq(0)'));
             }
         },
         dragStop: function (scope) {
@@ -831,6 +831,7 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
     var selectTimeout = null;
     $scope.propMsg = 'Welcome To Form Builder';
     $scope.select = function (item, event) {
+        
         event.stopPropagation();
         event.preventDefault();
         $(".form-field.active").removeClass("active");

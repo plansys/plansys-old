@@ -23,8 +23,6 @@ class ChartPie extends FormField {
 	
 	/** @var string $retrieveMode */
     public $retrieveMode = 'by Row';
-	
-	
 
 	/** @var string $name */
     public $name;

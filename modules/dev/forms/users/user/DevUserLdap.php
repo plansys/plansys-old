@@ -74,6 +74,7 @@ Search menggunakan kotak disamping, gunakan * (bintang) sebagai Wildcard<Br/> &n
                         'stringAlias' => array (),
                         'columnType' => 'string',
                         'show' => false,
+                        '$listViewName' => 'columns',
                     ),
                     array (
                         'name' => 'fullname',
@@ -83,6 +84,7 @@ Search menggunakan kotak disamping, gunakan * (bintang) sebagai Wildcard<Br/> &n
                         'stringAlias' => array (),
                         'columnType' => 'string',
                         'show' => false,
+                        '$listViewName' => 'columns',
                     ),
                     array (
                         'name' => 'cn',
@@ -92,6 +94,7 @@ Search menggunakan kotak disamping, gunakan * (bintang) sebagai Wildcard<Br/> &n
                         'stringAlias' => array (),
                         'columnType' => 'string',
                         'show' => false,
+                        '$listViewName' => 'columns',
                     ),
                     array (
                         'name' => 'ou',
@@ -101,6 +104,7 @@ Search menggunakan kotak disamping, gunakan * (bintang) sebagai Wildcard<Br/> &n
                         'stringAlias' => array (),
                         'columnType' => 'string',
                         'show' => false,
+                        '$listViewName' => 'columns',
                     ),
                     array (
                         'name' => 'dc',
@@ -110,6 +114,7 @@ Search menggunakan kotak disamping, gunakan * (bintang) sebagai Wildcard<Br/> &n
                         'stringAlias' => array (),
                         'columnType' => 'string',
                         'show' => false,
+                        '$listViewName' => 'columns',
                     ),
                 ),
                 'gridOptions' => array (

@@ -239,6 +239,10 @@ Isi field disamping untuk mengubah password.
                 'value' => '</div>',
             ),
             array (
+                'type' => 'Text',
+                'value' => '<div ng-if=\\"!isNewRecord\\">',
+            ),
+            array (
                 'title' => 'Audit Trail',
                 'type' => 'SectionHeader',
             ),
@@ -422,6 +426,10 @@ from p_audit_trail where user_id = :id {AND [where]} group by action, model, use
                     'useExternalSorting' => 'true',
                 ),
                 'type' => 'DataGrid',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '</div>',
             ),
         );
     }

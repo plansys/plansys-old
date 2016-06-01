@@ -23,8 +23,7 @@ class ChartLine extends FormField {
 	
 	/** @var string $retrieveMode */
     public $retrieveMode = 'by Column';
-	
-
+    
 	/** @var string $name */
     public $name;
 

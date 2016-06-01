@@ -18,7 +18,7 @@ if (Setting::$mode == "init" || Setting::$mode == "install") {
     ]);
 } else {
     Yii::import("application.controllers.*");
-    $controller = new SiteController("site");
+    $controller = new DefaultController("site");
     $controller->action = $controller->createAction("error");
     $controller->action->run();
 

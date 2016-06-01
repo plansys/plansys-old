@@ -101,15 +101,15 @@ class ServiceManager extends CComponent {
     
     private static function getProcessCommand() {
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            return 'process.exe';
+            return 'plansys_process.exe';
         } else if (strtoupper(substr(PHP_OS, 0, 6)) === 'DARWIN'){
-            return './process.osx';
+            return './plansys_process.osx';
         } else if (strtoupper(substr(PHP_OS, 0, 5)) === 'LINUX') {
             if (!getenv('PATH')) {
                 putenv('PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games');
             }
             
-            return './process.linux';
+            return './plansys_process.linux';
         } 
     }
     

@@ -175,6 +175,16 @@ class DevSettingApp extends Form {
                     ),
                     array (
                         'type' => 'Text',
+                        'value' => '<div class=\"col-md-4\"></div>
+<div class=\"col-md-8\">
+    <small>
+        <i class=\"fa fa-info-circle \"></i>
+        if not filled, plansys will search php binary in the environment variable
+    </small>
+</div>',
+                    ),
+                    array (
+                        'type' => 'Text',
                         'value' => '<column-placeholder></column-placeholder>',
                     ),
                 ),

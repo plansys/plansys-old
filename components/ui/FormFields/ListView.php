@@ -127,7 +127,7 @@ class ListView extends FormField {
                     'ng-change' => 'activeEditor.fieldTypeChange(active)',
                     'ng-model' => 'active.singleView',
                 ),
-                'listExpr' => '[\'TextField\',\'DropDownList\']',
+                'listExpr' => '[\'TextField\',\'DropDownList\',\'RelationField\']',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
             ),

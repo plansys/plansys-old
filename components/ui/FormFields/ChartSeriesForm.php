@@ -13,7 +13,7 @@ class ChartSeriesForm extends Form {
 	
 	/** @var bool $isTick */
     public $isTick;
-	
+    
 	/** @var string $columnOptions */
     public $columnOptions = [];  
 	

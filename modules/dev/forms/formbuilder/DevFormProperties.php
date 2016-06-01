@@ -100,7 +100,50 @@ class DevFormProperties extends Form {
 <div class=\"clearfix\"></div>',
             ),
             array (
+                'name' => 'includeJS',
+                'fieldTemplate' => 'default',
+                'label' => 'External JS (Alias)<br/><small>without .js </small>',
+                'labelWidth' => '4',
+                'fieldWidth' => '8',
+                'singleViewOption' => array (
+                    'name' => 'val',
+                    'fieldType' => 'text',
+                    'labelWidth' => 0,
+                    'fieldWidth' => 12,
+                    'fieldOptions' => array (
+                        'ng-delay' => '500',
+                        'placeholder' => 'app.static.script',
+                    ),
+                    'options' => array (
+                        'ng-change' => 'saveForm();',
+                    ),
+                ),
+                'type' => 'ListView',
+            ),
+            array (
+                'name' => 'includeCSS',
+                'fieldTemplate' => 'default',
+                'label' => 'External CSS (Alias)<br/><small>without .css </small>',
+                'labelWidth' => '4',
+                'fieldWidth' => '8',
+                'singleViewOption' => array (
+                    'name' => 'val',
+                    'fieldType' => 'text',
+                    'labelWidth' => 0,
+                    'fieldWidth' => 12,
+                    'fieldOptions' => array (
+                        'ng-delay' => '500',
+                        'placeholder' => 'ex: app.static.style',
+                    ),
+                    'options' => array (
+                        'ng-change' => 'saveForm();',
+                    ),
+                ),
+                'type' => 'ListView',
+            ),
+            array (
                 'label' => 'Form Options',
+                'name' => '1',
                 'show' => 'Show',
                 'options' => array (
                     'ng-model' => '$parent.form.options',

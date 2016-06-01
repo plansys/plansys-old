@@ -39,9 +39,9 @@ class LoginForm extends Form
     public function getFields() {
         return array (
             array (
+                'type' => 'Text',
                 'value' => '<div class=\"login form\">
 <h1>System Login</h1>',
-                'type' => 'Text',
             ),
             array (
                 'label' => 'Username',
@@ -59,12 +59,12 @@ class LoginForm extends Form
                 'type' => 'TextField',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<label style=\"display:none;float:right;margin-top:17px;font-weight:normal;font-size:12px;\">
 <input type=\"checkbox\" name=\"LoginForm[rememberMe]\" /> Remember Me<br/>
 
 <div style=\"margin-left:17px;font-size:10px;color:#999;\">(30 Days)</div>
 </label>',
-                'type' => 'Text',
             ),
             array (
                 'label' => 'Submit',
@@ -77,8 +77,8 @@ class LoginForm extends Form
                 'type' => 'SubmitButton',
             ),
             array (
-                'value' => '</div>',
                 'type' => 'Text',
+                'value' => '</div>',
             ),
         );
     }

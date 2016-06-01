@@ -114,7 +114,7 @@ class DevGenModelRelations extends Form {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<hr>',
+                'value' => '<hr style=\\"margin:0px\\">',
             ),
         );
     }

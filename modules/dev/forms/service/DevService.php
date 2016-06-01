@@ -150,7 +150,7 @@ EOF;
                         'label' => 'Service Name',
                         'name' => 'name',
                         'options' => array (
-                            'ng-change' => 'model.name = formatClass(model.name)',
+                            'ng-change' => 'onNameChange()',
                         ),
                         'fieldOptions' => array (
                             'ng-disabled' => '!params.isNewRecord',
