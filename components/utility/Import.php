@@ -16,8 +16,10 @@ class Import extends CComponent {
     public $originalRow = [];
     public $currentRow = [];
     public $lastRow = [];
+    public $lastFilledRow = [];
     public $rowHistory = [];
     public $skip = [];
+    public $rowIndex = 0;
     
     private $root = null;
     private $parent = null;
@@ -209,7 +211,7 @@ class Import extends CComponent {
         return true;
     }
     
-    private function lookup(&$attrs, $col, $key, $row) {
+    private function lookup(&$attrs, $col, $key, $row, &$returnRows = null) {
         $errors = [];
         $hashKey = [];
         
@@ -257,6 +259,10 @@ class Import extends CComponent {
                 }
             }
             
+            if (!is_null($returnRows)) {
+                $returnRows = $lrow;
+            }
+            
             $this->lookup[$col['from']]['hash'][$hashKey] = $lrow;
         } else {
             if (!isset($col['notfound'])) {
@@ -267,6 +273,7 @@ class Import extends CComponent {
             switch (@$col['notfound']['action']) {
                 case 'return':
                     $attrs[$into] = $row[$key];
+                    $returnRows[$into] = $attrs[$into];
                     break;
                 case 'insert':
                     $from = $col['from'];
@@ -290,6 +297,10 @@ class Import extends CComponent {
                     ## insert data
                     $insert = $col['notfound']['data'];
                     foreach ($insert as $k=>$i) {
+                        if (is_array($i) && $i['type'] == 'function' && isset($i['value'])) {
+                            $i = $i['value'];
+                        }
+                        
                         if (is_array($i)) {
                             switch ($i['type']) {
                                 case 'lookup':
@@ -320,12 +331,15 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
                     ## assign inserted id into attrs
                     if (!isset($col['notfound']['return'])) {
                         $attrs[$into] = $insert[$col['return']];
+                        $returnRows[$into] = $attrs[$into];
                     } else {
                         if (is_string($col['notfound']['return'])) {
                             $attrs[$into] = $insert[$col['notfound']['return']];
+                            $returnRows[$into] = $attrs[$into];
                         } else if (is_array($col['notfound']['return'])) {
                             foreach ($col['notfound']['return'] as $nk => $nr) {
                                 $attrs[$nk] = $insert[$nr];
+                                $returnRows[$nk] = $attrs[$nk];
                             }
                         }
                     }
@@ -337,10 +351,16 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
                     break;
                 case 'function': 
                     ## evaluate function, using parameters
-                    $attrs[$into] = Helper::evaluate($col['notfound']['value'], [
-                        'row'=> $row,
-                        'lastRow' => $this->lastRow
-                    ] + $params);
+                    if (is_array($col['notfound']['value'])) {
+                        foreach ($col['notfound']['value'] as $k=>$v) {
+                            $attrs[$k] = $this->evalExpr($v, $this->rowParams($row));
+                            $returnRows[$k] = $attrs[$k];
+                        }
+                        
+                    } else {
+                        $attrs[$into] = $this->evalExpr($col['notfound']['value'], $this->rowParams($row));
+                        $returnRows[$into] = $attrs[$into];
+                    }
                     break;
                 case 'error':
                     return $this->lookupError($row, $col, $key);
@@ -367,12 +387,13 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
             $parent = $this->parent->currentRow;
             $pk = $this->parent->model->tableSchema->primaryKey;
             
-            if (!isset($parent[$pk]) && $this->parent->lastRow[$pk]) {
+            if (!isset($parent[$pk]) && isset($this->parent->lastRow[$pk])) {
                 $parent[$pk] = $this->parent->lastRow[$pk]; 
             }
         }
         
         $lastRow = $this->lastRow;
+        $lastFilledRow = $this->lastFilledRow;
         
         $root = null;
         if (!is_null($this->root)) {
@@ -383,6 +404,7 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
         return [
             'row' => $row,
             'lastRow' => $lastRow,
+            'lastFilledRow' => $lastFilledRow,
             'parent' => $parent,
             'root' => $root
         ];
@@ -392,25 +414,30 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
         
         $markNull = false;
         $eval =  preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
-                function($var) use($rowParams, &$markNull) {
+                function($var) use($expr, $rowParams, &$markNull) {
                      $ref = $rowParams[$var[1]];
         
-                    if (is_object(@$ref[$var[2]]) ) {
+                    if (!isset($ref[$var[2]])) {
+                        if ($var[1] == "lastFilledRow") {
+                            $ref[$var[2]] = null;
+                        } else {
+                            throw new CException("Undefined index `{$var[2]}`");
+                        }
+                    }
+                    
+                    if (is_object($ref[$var[2]]) ) {
                         if ($ref[$var[2]] instanceof DateTime) {
                             $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
                         }
                     }
                     
-                    if (!isset($ref[$var[2]]) && !is_null($ref[$var[2]])) {
-                        throw new CException("Undefined index `{$var[2]}`");
-                    }
-                    
-                    if (is_null($ref[$var[2]])) {
+                    if (is_null($ref[$var[2]]) && $var[1] != "lastFilledRow") {
                         $markNull = true;
                     }
                     
                     return $ref[$var[2]];
                 }, $expr);
+        
         
         if ($markNull) {
             return null;
@@ -428,10 +455,31 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
             throw new CException('Import configuration must be loaded before importing!');
         }
         
-        if (!is_null($this->root)) {
+        if (is_null($this->root)) {
+            $this->parent = null;
+            $this->lastRow = $this->currentRow;
+            $this->currentRow = null;
+            $this->rowIndex++;
+            
+            if (!is_null($this->lastRow)) {
+                foreach ($this->lastRow as $k => $r) {
+                    if (function_exists('iconv')) {
+                        $r = trim(iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $r));
+                    } else {
+                        $r = trim($r);
+                    }
+                    
+                    if ($r != "" && !is_null($r)) {
+                        $this->lastFilledRow[$k] = $r;
+                    }
+                }
+            }
+            
+        } else {
             $this->lastRow = $this->root->lastRow;
-        } 
-        
+            $this->lastFilledRow = $this->root->lastFilledRow;
+        }
+
         $modelClass = $this->modelClass;
         $attrs = [];
         $pks = [];
@@ -454,15 +502,18 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
                 } else {
                     $row[$k] = trim($r);
                 }
-                
-                if ($k == "nama_dokumen") {
-                    
-                }
             }
         }
         
         $this->currentRow = $row;
         $this->originalRow = $row;
+        if (is_null($this->root)) {
+            foreach ($this->currentRow as $k => $r) {
+                if ($this->currentRow[$k] != "" && !is_null($this->currentRow[$k])) {
+                    $this->lastFilledRow[$k] = $this->currentRow[$k];
+                }
+            }
+        }
         
         ## execute child if needed
         $executeChild = true;
@@ -471,16 +522,6 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
         } else if (is_string($skipParentIf)) {
             $rowParams = $this->rowParams($row);
             $skipParentIf = $this->evalExpr($skipParentIf, $rowParams + $params); 
-        }
-        
-        if (!empty($this->lastRow) && $skipParentIf === true) {
-            foreach ($this->lastRow as $k => $r) {
-                if (!isset($row[$k]) || @$row[$k] === "") {
-                    if (isset($this->lastRow[$k])) {
-                        $row[$k] = $this->lastRow[$k];
-                    }
-                }
-            }
         }
         
         ## execute function when beforeLookup
@@ -493,6 +534,14 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
                     
                     if (@$col['show'] === true) {
                         $data[$key] = $row[$key];
+                        
+                        if ($row[$key] != '' && !is_null($row[$key])) {
+                            if (is_null($this->root)) {
+                                $this->lastFilledRow[$key] = $row[$key];
+                            } else {
+                                $this->root->lastFilledRow[$key] = $row[$key];
+                            }
+                        }
                     }
                 }
             }
@@ -506,6 +555,11 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
                     if (@$row[$key] != '') {
                         $pks[$key] = $row[$key];
                         $attrs[$key] = $row[$key];
+                        if (is_null($this->root)) {
+                            $this->lastFilledRow[$key] = $row[$key];
+                        } else {
+                            $this->root->lastFilledRow[$key] = $row[$key];
+                        }
                     } 
                     $resolveCol[] = $key;
                     $data[$key] = @$row[$key];
@@ -554,24 +608,60 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
                     
                     $attrs[$key] = $rowVal;
                     $data[$key] = $rowVal;
+                    
+                    if ($rowVal != '' && $rowVal != null) {
+                        if (is_null($this->root)) {
+                            $this->lastFilledRow[$key] = $rowVal;
+                        } else {
+                            $this->root->lastFilledRow[$key] = $rowVal;
+                        }
+                    }
                     break;
                 case 'lookup':
+                    $retResult = [];
                     try {
-                        $result = $this->lookup($attrs, $col, $key, array_merge($row, $attrs, $data));
+                        $result = $this->lookup($attrs, $col, $key, array_merge($row, $attrs, $data), $retResult);
                     } catch (Exception $e) {
                         return [[
                             $key => "Error in column {$key}: " .  $e->getMessage()
                         ]];
                     }
                     
+                    if (is_array($col['return'])) {
+                        foreach($col['return'] as $k => $r) {
+                            if (is_null($this->root)) {
+                                $this->lastFilledRow[$k] = @$retResult[$r];
+                            } else {
+                                $this->root->lastFilledRow[$k] = @$retResult[$r];
+                            }
+                        }
+                    }
+                    
                     if (@$col['show'] !== false) {
                         $into = isset($col['into']) ? $col['into'] : $key;
                         if (isset($attrs[$into])) {
                             $data[$into] = $attrs[$into];
+                            
+                            if ($attrs[$into] != '' && $attrs[$into] != null) {
+                                if (is_null($this->root)) {
+                                    $this->lastFilledRow[$into] = $attrs[$into];
+                                } else {
+                                    $this->root->lastFilledRow[$into] = $attrs[$into];
+                                }
+                            }
                         } 
                         else if (isset($row[$into])) {
                             $data[$key] = $row[$into];
+                            
+                            if ($row[$into] != '' && $row[$into] != null) {
+                                if (is_null($this->root)) {
+                                    $this->lastFilledRow[$key] = $row[$into];
+                                } else {
+                                    $this->root->lastFilledRow[$key] = $row[$into];
+                                }
+                            }
                         } 
+                        
                     }
                     
                     break;
@@ -590,6 +680,11 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
                     
                     if (@$col['show'] === true) {
                         $data[$key] = $row[$key];
+                        if (is_null($this->root)) {
+                            $this->lastFilledRow[$key] = $row[$key];
+                        } else {
+                            $this->root->lastFilledRow[$key] = $row[$key];
+                        }
                     }
                 }
             }
@@ -613,7 +708,6 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
                 }
             }
         }
-        
         if (is_string($skipIf)) {
             $rowParams = $this->rowParams($data);
             $skipIf = $this->evalExpr($skipIf, $rowParams + $params);
@@ -626,10 +720,23 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
                 
                 if (is_string($this->model->tableSchema->primaryKey)) {
                     $data[$model->tableSchema->primaryKey] = $model->{$model->tableSchema->primaryKey};
+                    if (is_null($this->root)) {
+                        $this->lastFilledRow[$model->tableSchema->primaryKey] = $model->{$model->tableSchema->primaryKey};
+                    } else {
+                        $this->root->lastFilledRow['_' . $modelClass . '_id'] = $model->{$model->tableSchema->primaryKey}; 
+                    }
+                }
+                
+                if (is_null($this->root)) {
+                    foreach ($this->currentRow as $k => $r) {
+                        if ($this->currentRow[$k] != "" && !is_null($this->currentRow[$k])) {
+                            $this->lastFilledRow[$k] = $this->currentRow[$k];
+                        }
+                    }
                 }
             }
         }
-        $this->currentRow = $data;
+        $this->currentRow =  array_merge($row, $attrs, $data);
         
         foreach ($resolveCol as $rc){
             if (isset($this->ignoreCols[$rc])) continue;
@@ -662,7 +769,9 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
                     
                     $rel['import']->originalRow = $this->originalRow;
                     $rel['import']->lastRow = $this->lastRow;
+                    $rel['import']->lastFilledRow = $this->lastFilledRow;
                     $ro = $this->originalRow;
+                    
                     
                     $res = $rel['import']->importRow($this->originalRow);
                     if ($res !== true) {
@@ -720,12 +829,6 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
             } 
         
             $this->rowHistory[] = $row;
-            if (!$skipIf && !$skipParentIf) {
-                if (!isset($this->root)) {
-                    $this->lastRow = array_merge($data, $row);
-                }
-            }
-            
             return true;
         } else {
             return $model->errors;
