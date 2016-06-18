@@ -67,7 +67,7 @@ class Setting {
         if (!is_file(Setting::$path)) {
             $configdir = dirname(Setting::$path);
             if (!is_dir($configdir)) {
-                mkdir($configdir, 777, true);
+                mkdir($configdir, 0777, true);
             }
 
             $oldConfig = $bp . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
