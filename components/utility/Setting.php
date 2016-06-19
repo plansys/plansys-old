@@ -549,6 +549,9 @@ class Setting {
                     'emulatePrepare' => true,
                     'username' => $db['username'],
                     'password' => $db['password'],
+                    'attributes' => [
+                        PDO::ATTR_STRINGIFY_FETCHES => true,
+                    ],
                 ];
             break;
             default:

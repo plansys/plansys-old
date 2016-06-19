@@ -65,6 +65,7 @@ class DataSource extends FormField {
     public function query($params = []) {
         $paramDefs = $params;
         $params = array_merge($params, $this->queryParams);
+        
         if (trim($this->sql) == "")
             return [];
 
@@ -695,9 +696,11 @@ class DataSource extends FormField {
             if (is_string($this->params)) {
                 $this->params = [];
             }
+            
             if ($this->postData == 'No' || $this->relationTo == '' || $this->relationTo == '-- NONE --') {
                 ## without relatedTo
                 $this->prepareGeneratedParams();
+                
 
                 switch ($this->fieldType) {
                     case "sql":
@@ -798,32 +801,45 @@ class DataSource extends FormField {
             $rel = $this->model->metaData->relations[$this->relationTo];
             $fkey = $rel->foreignKey;
             $useStat = true;
-            if (is_array($rel->foreignKey)) { 
-                if (isset($rel->through)) {
-                    if (isset($this->model->metaData->relations[$rel->through])) {
-                        $relt = $this->model->metaData->relations[$rel->through];
-                        if (is_string($relt->foreignKey) && get_class($relt) != 'ManyManyRelation') {
-                            $reltClass = $relt->className;
-                            $reltTable = $reltClass::model()->tableName();
-                            $reltFrom = $relt->foreignKey;
-                            $reltTo = array_keys($rel->foreignKey)[0];
-                            
-                            $fkey = "{$reltTable}({$reltFrom},{$reltTo})";
+            
+            if (trim($criteria['condition']) != "") {
+                $useStat = false;
+            }
+            
+            if ($useStat) {
+                if (is_array($rel->foreignKey)) { 
+                    if (isset($rel->through)) {
+                        if (isset($this->model->metaData->relations[$rel->through])) {
+                            $relt = $this->model->metaData->relations[$rel->through];
+                            if (is_string($relt->foreignKey) && get_class($relt) != 'ManyManyRelation') {
+                                $reltClass = $relt->className;
+                                $reltTable = $reltClass::model()->tableName();
+                                $reltFrom = $relt->foreignKey;
+                                $reltTo = array_keys($rel->foreignKey)[0];
+                                
+                                $fkey = "{$reltTable}({$reltFrom},{$reltTo})";
+                            } else {
+                                $useStat = false;
+                            }
                         } else {
                             $useStat = false;
                         }
                     } else {
                         $useStat = false;
                     }
-                } else {
-                    $useStat = false;
-                }
-            } 
+                } 
+            }
+            
+            
             if ($useStat) {
                 $this->model->metaData->relations[$rel->name . "__psCount"] = new CStatRelation($rel->name . "__psCount", $rel->className, $fkey);
                 $count = $this->model->getRelated($rel->name . "__psCount");
             } else {
-                $rawCount = $this->model->getRelated($this->relationTo, true, $criteria);
+                $criteriaCount['select'] = array_keys($this->model->tableSchema->columns)[0];
+                unset($criteriaCount['pageSize']);
+                unset($criteriaCount['page']);
+                
+                $rawCount = $this->model->getRelated($this->relationTo, true, $criteriaCount);
                 $count = count($rawCount) > 0 ? $rawCount[0]->id : 0;
             }
         }
@@ -845,6 +861,7 @@ class DataSource extends FormField {
                 }
             }
         }
+
 
         $rawData = $this->model->{$this->relationTo}($criteria, false);
 
@@ -880,7 +897,8 @@ class DataSource extends FormField {
                 }
             }
         }
-
+        
+    
         $data = [
             'data' => $rawData,
             'debug' => [

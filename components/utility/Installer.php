@@ -351,8 +351,10 @@ class Installer {
         $runner->addCommands($commandPath);
 
         $args = array('yiic', 'installDb', '--interactive=0');
+        ob_start();
         $runner->run($args);
-
+        ob_get_clean();
+        
         return true;
     }
 

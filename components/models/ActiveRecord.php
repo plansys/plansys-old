@@ -25,6 +25,22 @@ class ActiveRecord extends CActiveRecord {
     
     private static $_md = array();   // class name => meta data
 
+    /**
+    * Return properly quoted/escaped column name
+    * @param string $col column name like "id" or "t.id"
+    */
+    public function quoteCol($col){
+        return $this->getDbConnection()->quoteColumnName($col);
+    }
+    
+    /**
+    * Return properly quoted table name
+    * @param string $name Table name
+    */
+    public function quoteTable($t){
+        return $this->getDbConnection()->quoteTableName($t);
+    }
+
     public static function execute($sql, $params = []) {
         return Yii::app()->db->createCommand($sql)->execute($params);
     }
@@ -36,7 +52,7 @@ class ActiveRecord extends CActiveRecord {
     public static function queryColumn($sql, $params = []) {
         return Yii::app()->db->createCommand($sql)->queryColumn($params);
     }
-
+        
     public static function jsonToArray(&$post, $key, $shouldReturn = false, $flattenPost = false) {
         $new = [];
         if (isset($post[$key . 'Insert']) && is_string($post[$key . 'Insert']))
@@ -63,6 +79,16 @@ class ActiveRecord extends CActiveRecord {
             if ($flattenPost) {
                 ActiveRecord::flattenPost($post, $key);
             }
+        }
+    }
+    
+    public static function formatSingleDataCol($str, $type, $driver) {
+        switch ($type) {
+            case "datetime":
+                if ($driver == "oci") {
+                    return date('j-M-y h.i.s.u A', strtotime($str));
+                }
+            break;
         }
     }
 
@@ -273,24 +299,47 @@ class ActiveRecord extends CActiveRecord {
             return;
 
         $model = null;
+        
+        
+        $formattedData = $data;
         if (!@class_exists($modelClass)) {
             $table = $modelClass;
         } else {
             $model = $modelClass::model();
-            $table = $model->tableSchema->name;
+            $schema = $model->tableSchema;
+            $table = $schema->name;
+            
+            if (get_class($schema) == 'COciTableSchema') {
+                
+                $formatType = [];
+                foreach ($schema->columns as $k=> $c) {
+                    if (substr($c->dbType,0,9) == "TIMESTAMP") {
+                        $formatType[$k] = 'datetime';
+                    }
+                }
+                
+                foreach ($formattedData as $idx=>$row) {
+                    foreach ($row as $k => $d) {
+                        if (isset($formatType[$k])) {
+                            $formattedData[$idx][$k] = ActiveRecord::formatSingleDataCol($d, $formatType[$k], "oci");
+                        }
+                    }
+                }
+            }
         }
-
+        
         $builder = Yii::app()->db->schema->commandBuilder;
-        $command = $builder->createMultipleInsertCommand($table, $data);
+        $command = $builder->createMultipleInsertCommand($table, $formattedData);
         $result = $command->execute();
         
-        
         if ($assignNewID && !!$model) {
-            $id = Yii::app()->db->getLastInsertID();
-            $pk = $model->tableSchema->primaryKey;
-            foreach ($data as $k=>$d) {
-                $data[$k][$pk] = $id * 1;
-                $id++;
+            if (get_class($schema) != 'COciTableSchema') {
+                $id = Yii::app()->db->getLastInsertID();
+                $pk = $model->tableSchema->primaryKey;
+                foreach ($data as $k=>$d) {
+                    $data[$k][$pk] = $id * 1;
+                    $id++;
+                }
             }
         }
     }
@@ -348,6 +397,7 @@ class ActiveRecord extends CActiveRecord {
                     }
                 }
             }
+            
             $updatesql = implode(",", $updatearr);
             if ($updatesql != '') {
                 $update = "UPDATE |{$table}| SET {$updatesql} WHERE |{$pk}| ='{$cond}'";
@@ -424,6 +474,7 @@ class ActiveRecord extends CActiveRecord {
         $updateArr = [];
 
         $pk = $model::model()->tableSchema->primaryKey;
+
 
         foreach ($old as $k => $v) {
             $is_deleted = true;
@@ -757,9 +808,8 @@ class ActiveRecord extends CActiveRecord {
 
         return $criteria;
     }
-
+    
     public function getRelatedArray($criteria = [], $rel = null) {
-
         $criteria = ActiveRecord::convertPagingCriteria($criteria);
         $tableSchema = $this->tableSchema;
         $builder = $this->commandBuilder;

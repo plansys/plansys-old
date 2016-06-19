@@ -62,7 +62,7 @@ class DefaultController extends Controller {
                     $user->username = $model->username;
                     $user->password = Helper::hash($model->password);
                     $user->is_deleted = 0;
-                    $user->update(['username', 'password', 'is_deleted']);
+                    $status = $user->update(['username', 'password', 'is_deleted']);
                 } else {
                     ## TODO: throw error: failed to update username & password
                 }

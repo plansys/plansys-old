@@ -287,13 +287,13 @@ class DataFilter extends FormField {
                         break;
                     case "More Than":
                         if (@$filter['value']['from'] != '') {
-                            $sql = "{$column} > " . self::toSQLDate(":{$paramName}_{$pcolumn}", $driver);
+                            $sql = "{$column} > " . self::toSQLDateTime(":{$paramName}_{$pcolumn}", $driver);
                             $param = @$filter['value']['from'];
                         }
                         break;
                     case "Less Than":
                         if (@$filter['value']['to'] != '') {
-                            $sql = "{$column} < " . self::toSQLDate(":{$paramName}_{$pcolumn}", $driver);
+                            $sql = "{$column} < " . self::toSQLDateTime(":{$paramName}_{$pcolumn}", $driver);
                             $param = @$filter['value']['to'];
                         }
                         break;
@@ -302,7 +302,7 @@ class DataFilter extends FormField {
                             if ($driver == "mysql") {
                                 $sql = "DATE({$column}) = DATE(:{$paramName}_{$pcolumn})";
                             } else if ($driver == "oci") {
-                                $sql = "{$column} = TO_DATE('YY-MM-DD',:{$paramName}_{$pcolumn})";
+                                $sql = "TO_CHAR({$column},'YY-MM-DD') = TO_CHAR(" . self::toSQLDateTime(":{$paramName}_{$pcolumn}", $driver) . ", 'YY-MM-DD')";
                             }
                             $param = @$filter['value'];
                         }

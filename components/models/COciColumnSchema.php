@@ -49,7 +49,7 @@ class COciColumnSchema extends CDbColumnSchema
 		    	$stamp = strtotime($value);
 		    	return new CDbExpression("TO_DATE('" . date("Y-m-d", $stamp) . "', 'YYYY-MM-DD')");
 		    } else if (substr($this->dbType,0,6) == "NUMBER") {
-		    	return $value * 1;
+		    	return ((int)$value) * 1;
 		    } else {
 		        $value = str_replace("'","", $value);
 		        $value = trim($value);

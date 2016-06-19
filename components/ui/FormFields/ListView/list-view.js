@@ -358,7 +358,7 @@ app.directive('listView', function ($timeout) {
                                     $scope.value = $scope.datasource.data;
                                     $timeout(function () {
                                         $scope.loading = false;
-                                        $scope.datasource.enableTrackChanges();
+                                        $scope.datasource.enableTrackChanges("ListView:initWhenDS");
                                     }, 100);
                                 }
                             }
@@ -388,7 +388,7 @@ app.directive('listView', function ($timeout) {
                         }
 
                         if (!!$scope.datasource) {
-                            $scope.datasource.enableTrackChanges();
+                            $scope.datasource.enableTrackChanges("ListView:init");
                         }
                         
                         if (!$scope.inEditor) {

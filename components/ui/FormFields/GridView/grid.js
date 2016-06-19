@@ -247,7 +247,9 @@ app.directive('gridView', function ($timeout, $http) {
                     if (changing) {
                         $scope.datasource.query();
                     } else {
-                        $scope.datasource.enableTrackChanges();
+                        if ($scope.datasource.lastQueryFrom != "DataFilter") {
+                            $scope.datasource.enableTrackChanges('GridView:LoadPageSetting');
+                        }
                     }
                 }
 
@@ -960,7 +962,7 @@ app.directive('gridView', function ($timeout, $http) {
                             }
                             if (!$scope.datasource.trackChanges) {
                                 $scope.datasource.resetOriginal();
-                                $scope.datasource.enableTrackChanges('grid 948');
+                                $scope.datasource.enableTrackChanges('GridView:init');
                             }
                             $scope.lastCheckbox = null;
                             $scope.onGridRender('query');

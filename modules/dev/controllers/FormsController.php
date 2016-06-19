@@ -409,11 +409,7 @@ EOF;
     public function renderAllToolbar($formType) {
         FormField::$inEditor = false;
 
-        $toolbarData = Yii::app()->cache->get('toolbarData');
-        if (!$toolbarData) {
-            $toolbarData = FormField::allSorted();
-            Yii::app()->cache->set('toolbarData', $toolbarData, 0);
-        }
+        $toolbarData = FormField::allSorted();
 
         foreach ($toolbarData as $k => $f) {
             $ff      = new $f['type'];

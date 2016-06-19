@@ -172,13 +172,15 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                 alert($scope.name + " data is not an array!");
                             }
                             
+                            //callback
+                            if (typeof f == "function") {
+                                f(true, data);
+                            }
+                            
                             $scope.data.splice(0, $scope.data.length);
                             $scope.data = $scope.data.concat(data.data);
                             $scope.totalItems = data.count * 1;
                             $scope.setDebug(data.debug);
-                            if (typeof f == "function") {
-                                f(true, data);
-                            }
                             $scope.loading = false;
 
                             // Retain editing result between paging/sorting query
@@ -237,6 +239,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                             if ($scope.afterQuery != null) {
                                 $scope.afterQuery($scope);
                             }
+                            
                         }
                     }
 
@@ -256,7 +259,8 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         params: params,
                         modelParams: $scope.model,
                         lc: $scope.shouldCount ? 0 : $scope.totalItems
-                    }, { timeout: $scope.httpRequest.promise }).success(executeSuccess)
+                    }, { timeout: $scope.httpRequest.promise })
+                    .success(executeSuccess)
                     .error(function (data) {
                         if (typeof f == "function") {
                             f(false, data);
@@ -303,7 +307,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 if (jsParamExist) {
                     $scope.afterQueryInternal['params-init'] = function () {
                         $scope.resetOriginal();
-                        $scope.trackChanges = true
+                        $scope.trackChanges = true;
                         delete $scope.afterQueryInternal['params-init'];
                     }
                     $scope.query();
@@ -331,17 +335,17 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 }
 
                 $scope.enableTrackChanges = function (from) {
-                    // if (!!from) {
-                    //     console.log('ENABLED', from);
-                    // }
+                    if (!!from) {
+                        console.log('DS WATCH [✓] from:', from);
+                    }
                     
                     $scope.trackChanges = true;
                 }
 
                 $scope.disableTrackChanges = function (from) {
-                    // if (!!from) {
-                    //     console.log('DISABLED', from);
-                    // }
+                    if (!!from) {
+                        console.log('DS WATCH [✗] from:', from);
+                    }
                     
                     $scope.trackChanges = false;
                 }
@@ -409,10 +413,8 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         if (typeof $scope.data == "undefined") {
                             $scope.data = [];
                         }
-                        
                         if ($scope.trackChanges && !angular.equals($scope.original, newval)) {
                             var df = diff($scope.original, newval);
-                            
                             
                             // Generate UpdateData Hash (to enable faster primary key look up)
                             var updateHash = {};

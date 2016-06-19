@@ -19,7 +19,7 @@ class SqlCriteria extends FormField {
     public        $options      = [];
     public        $modelClassJS = ''; //digunakan untuk menggenerate Preview SQL
 
-    public function getFieldProperties() {
+    public function getFieldProperties() {        
         return array(
             array(
                 'label' => 'Base Class',
@@ -182,7 +182,7 @@ class SqlCriteria extends FormField {
                     case 'CHasOneRelation':
                     case 'CBelongsToRelation':
                         if (is_string($relMeta->foreignKey)) {
-                            $criteria->addColumnCondition([$relMeta->foreignKey => $parent->{$parentPrimaryKey}]);
+                            $criteria->addColumnCondition([$model->quoteCol($relMeta->foreignKey) => $parent->{$parentPrimaryKey}]);
                             $isRelated = true;
                         }
                         break;
@@ -197,10 +197,10 @@ class SqlCriteria extends FormField {
                     case 'CHasManyRelation':
                         //without through
                         if (is_string($relMeta->foreignKey)) {
-                            $criteria->addColumnCondition([$relMeta->foreignKey => $parent->{$parentPrimaryKey}]);
+                            $criteria->addColumnCondition([$model->quoteCol($relMeta->foreignKey) => $parent->{$parentPrimaryKey}]);
                             $isRelated = true;
                         }
-
+                        
                         //with through
                         //todo..
                         break;
@@ -211,7 +211,7 @@ class SqlCriteria extends FormField {
         $command     = $builder->createFindCommand($tableSchema, $criteria);
         $commandText = $command->text;
         if ($isRelated) {
-            $commandText = str_replace(":ycp0", "\n" . '"{$model->' . $relMeta->foreignKey . '}"', $commandText);
+            $commandText = str_replace(":ycp0", "\n" . '"{{model.' . $relMeta->foreignKey . '}}"', $commandText);
         }
         $commandText = SqlFormatter::highlight($commandText);
 
