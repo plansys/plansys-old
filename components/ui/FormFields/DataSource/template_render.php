@@ -39,7 +39,10 @@
              font-size:24px;left:0px;right:0px;height:50px;
              text-align:center;z-index:999;
              background:#fff;border-bottom:1px solid #ddd;">
-            <i class="fa fa-warning"></i> <?= $this->name; ?> Debug Info:
+            <i class="fa fa-warning"></i> <?= $this->name; ?> Debug Info
+            
+            <div class="btn btn-xs btn-warning" ng-click="resetPage()">
+                <i class="fa fa-refresh"></i> Reset Page</div>
         </div>
         <iframe style="position:absolute;top:50px;left:0px;bottom:0px;
                 right:0px;width:100%;height:100%;

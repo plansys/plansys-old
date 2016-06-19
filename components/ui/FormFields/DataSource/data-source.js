@@ -48,6 +48,11 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         }
                     }
                 }
+                
+                $scope.resetPage = function() {
+                    $scope.resetPageSetting();
+                    window.location.reload();
+                }
 
                 $scope.isRowEmpty = function (row, except) {
                     except = except || [];

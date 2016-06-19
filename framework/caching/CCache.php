@@ -102,6 +102,7 @@ abstract class CCache extends CApplicationComponent implements ICache, ArrayAcce
 	public function get($id)
 	{
 		$value = $this->getValue($this->generateUniqueKey($id));
+		
 		if($value===false || $this->serializer===false)
 			return $value;
 		if($this->serializer===null)

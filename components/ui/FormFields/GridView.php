@@ -95,6 +95,9 @@ class GridView extends FormField {
         if (isset($c['options']['mode']) && strpos($c['options']['mode'], "editable") === 0) {
             $this->hasEditable = true;
         }
+        
+        
+        $c['options']['sortable'] = false;
 
         return $c;
     }

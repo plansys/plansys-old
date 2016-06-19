@@ -79,6 +79,7 @@ class CStatePersister extends CApplicationComponent implements IStatePersister
 		if($this->cacheID!==false && ($cache=Yii::app()->getComponent($this->cacheID))!==null)
 		{
 			$cacheKey='Yii.CStatePersister.'.$stateFile;
+			
 			if(($value=$cache->get($cacheKey))!==false)
 				return unserialize($value);
 			else

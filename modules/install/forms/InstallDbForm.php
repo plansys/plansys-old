@@ -101,20 +101,10 @@ class InstallDbForm extends Form {
             array (
                 'type' => 'Text',
                 'value' => '<div class=\"info text-left\" style=\"margin:-20px 0px 0px -3px\">
-    only tables with prefix p_ (e.g. p_user, p_role, etc)<br/> that will be recretaed.
+    only tables with prefix p_ (e.g. p_user, p_role, etc)<br/> that will be created.
 </div>
 
 <br/>',
-            ),
-            array (
-                'label' => 'PHP Executable Path',
-                'name' => 'phpPath',
-                'labelWidth' => '0',
-                'fieldWidth' => '12',
-                'fieldOptions' => array (
-                    'placeholder' => '',
-                ),
-                'type' => 'TextField',
             ),
             array (
                 'label' => 'Next Step',

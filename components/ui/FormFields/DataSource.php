@@ -802,7 +802,7 @@ class DataSource extends FormField {
             $fkey = $rel->foreignKey;
             $useStat = true;
             
-            if (trim($criteria['condition']) != "") {
+            if (isset($criteria['condition']) && trim($criteria['condition']) != "") {
                 $useStat = false;
             }
             

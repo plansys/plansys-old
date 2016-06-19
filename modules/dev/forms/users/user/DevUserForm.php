@@ -355,6 +355,24 @@ Isi field disamping untuk mengubah password.
                 'datasource' => 'dataSource1',
                 'columns' => array (
                     array (
+                        'name' => 'stamp',
+                        'label' => 'Date/Time',
+                        'html' => '<td ng-class=\"rowClass(row, \'stamp\', \'string\')\" >
+    <div  ng-include=\'\"row-state-template\"\'></div>
+    <span class=\'row-group-padding\' ng-if=\'!!row.$level\'
+        style=\'width:{{row.$level*10}}px;\'></span>
+    {{row.stamp}}
+</td>',
+                        'columnType' => 'string',
+                        '$listViewName' => 'columns',
+                        'show' => true,
+                        'mergeSameRow' => 'No',
+                        'cellMode' => 'default',
+                        'options' => array (
+                            'mode' => 'datetime',
+                        ),
+                    ),
+                    array (
                         'name' => 'id',
                         'label' => 'Id',
                         'html' => '',
@@ -405,6 +423,70 @@ Isi field disamping untuk mengubah password.
                     array (
                         'name' => 'ctrl',
                         'label' => 'Ctrl',
+                        'html' => '',
+                        'columnType' => 'string',
+                        '$listViewName' => 'columns',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'action',
+                        'label' => 'Action',
+                        'html' => '',
+                        'columnType' => 'string',
+                        '$listViewName' => 'columns',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'params',
+                        'label' => 'Params',
+                        'html' => '',
+                        'columnType' => 'string',
+                        '$listViewName' => 'columns',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'data',
+                        'label' => 'Data',
+                        'html' => '',
+                        'columnType' => 'string',
+                        '$listViewName' => 'columns',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'user_id',
+                        'label' => 'User Id',
+                        'html' => '',
+                        'columnType' => 'string',
+                        '$listViewName' => 'columns',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'key',
+                        'label' => 'Key',
+                        'html' => '',
+                        'columnType' => 'string',
+                        '$listViewName' => 'columns',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'form_class',
+                        'label' => 'Form Class',
+                        'html' => '',
+                        'columnType' => 'string',
+                        '$listViewName' => 'columns',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'model_class',
+                        'label' => 'Model Class',
+                        'html' => '',
+                        'columnType' => 'string',
+                        '$listViewName' => 'columns',
+                        'show' => false,
+                    ),
+                    array (
+                        'name' => 'model_id',
+                        'label' => 'Model Id',
                         'html' => '',
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
