@@ -1,36 +1,6 @@
 <?php
 
 class AuditTrail extends ActiveRecord {
-
-    public static function indexQuery($params) {
-        $model = AuditTrail::model()->findByAttributes(['key' => @$_GET['key']]);
-        $where = AuditTrail::queryWhere($params, $model);
-
-        $sql = "SELECT id, stamp, type, user_id, description, url
-            FROM p_audit_trail {$where}  {id desc, [order]} {[paging]}";
-
-        return $sql;
-    }
-
-    public static function queryWhere($params, $model) {
-        $sql = "WHERE {[where] AND}  (`key` = '{$model->key}'";
-
-        if (Helper::endsWith($model->form_class, "Index")) {
-            $sql .= "{OR} (model_class = '{$model->model_class}' AND ctrl = '{$model->ctrl}' AND module = '{$model->module}'))";
-        } else {
-            $sql .= ')';
-        }
-
-        return $sql;
-    }
-
-    public static function countQuery($params) {
-        $model = AuditTrail::model()->findByAttributes(['key' => @$_GET['key']]);
-        $where = AuditTrail::queryWhere($params, $model);
-        $sql   = "SELECT count(1) FROM p_audit_trail {$where}";
-        return $sql;
-    }
-
     public static function typeDropdown($all = true) {
         if ($all) {
             return [

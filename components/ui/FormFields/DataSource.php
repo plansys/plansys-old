@@ -840,7 +840,7 @@ class DataSource extends FormField {
                 unset($criteriaCount['page']);
                 
                 $rawCount = $this->model->getRelated($this->relationTo, true, $criteriaCount);
-                $count = count($rawCount) > 0 ? $rawCount[0]->id : 0;
+                $count = count($rawCount);
             }
         }
 

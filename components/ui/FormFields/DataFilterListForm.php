@@ -168,7 +168,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'labelOptions' => array (
                     'style' => 'text-align:left;',
                 ),
-                'listExpr' => '[\'\'=>\'Like\', \'in\'=>\'In\']',
+                'listExpr' => '[\'\'=>\'AND\', \'in\'=>\'OR\']',
                 'labelWidth' => '6',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',

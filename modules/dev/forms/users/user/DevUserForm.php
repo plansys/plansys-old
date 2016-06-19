@@ -308,20 +308,8 @@ Isi field disamping untuk mengubah password.
                         'options' => array (),
                         'resetable' => 'Yes',
                         'defaultValue' => '',
-                        'show' => false,
-                        'list' => array (
-                            'general' => array (
-                                'view' => 'View',
-                                'create' => 'Create',
-                                'update' => 'Update',
-                                'delete' => 'Delete',
-                            ),
-                            'other' => array (
-                                'login' => 'Login',
-                                'logout' => 'Logout',
-                                'other' => 'Other',
-                            ),
-                        ),
+                        'show' => true,
+                        'queryOperator' => 'in',
                     ),
                     array (
                         'name' => 'description',
@@ -346,6 +334,9 @@ Isi field disamping untuk mengubah password.
                         'show' => false,
                     ),
                 ),
+                'options' => array (
+                    'freeze' => 'true',
+                ),
                 'type' => 'DataFilter',
             ),
             array (
@@ -365,11 +356,23 @@ Isi field disamping untuk mengubah password.
 </td>',
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
-                        'show' => true,
+                        'show' => false,
                         'mergeSameRow' => 'No',
                         'cellMode' => 'default',
                         'options' => array (
                             'mode' => 'datetime',
+                            'width' => '200',
+                            'freeze' => 'true',
+                        ),
+                        'headers' => array (
+                            'r1' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                            'r2' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
                         ),
                     ),
                     array (
@@ -379,6 +382,16 @@ Isi field disamping untuk mengubah password.
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
                         'show' => false,
+                        'headers' => array (
+                            'r1' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                            'r2' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'type',
@@ -387,6 +400,16 @@ Isi field disamping untuk mengubah password.
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
                         'show' => false,
+                        'headers' => array (
+                            'r1' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                            'r2' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'url',
@@ -395,6 +418,16 @@ Isi field disamping untuk mengubah password.
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
                         'show' => false,
+                        'headers' => array (
+                            'r1' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                            'r2' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'description',
@@ -403,6 +436,16 @@ Isi field disamping untuk mengubah password.
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
                         'show' => false,
+                        'headers' => array (
+                            'r1' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                            'r2' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'pathinfo',
@@ -411,6 +454,16 @@ Isi field disamping untuk mengubah password.
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
                         'show' => false,
+                        'headers' => array (
+                            'r1' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                            'r2' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'module',
@@ -419,6 +472,16 @@ Isi field disamping untuk mengubah password.
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
                         'show' => false,
+                        'headers' => array (
+                            'r1' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                            'r2' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'ctrl',
@@ -427,6 +490,16 @@ Isi field disamping untuk mengubah password.
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
                         'show' => false,
+                        'headers' => array (
+                            'r1' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                            'r2' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'action',
@@ -435,6 +508,16 @@ Isi field disamping untuk mengubah password.
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
                         'show' => false,
+                        'headers' => array (
+                            'r1' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                            'r2' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'params',
@@ -443,6 +526,16 @@ Isi field disamping untuk mengubah password.
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
                         'show' => false,
+                        'headers' => array (
+                            'r1' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                            'r2' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'data',
@@ -451,6 +544,16 @@ Isi field disamping untuk mengubah password.
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
                         'show' => false,
+                        'headers' => array (
+                            'r1' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                            'r2' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'user_id',
@@ -459,6 +562,16 @@ Isi field disamping untuk mengubah password.
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
                         'show' => false,
+                        'headers' => array (
+                            'r1' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                            'r2' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'key',
@@ -467,6 +580,16 @@ Isi field disamping untuk mengubah password.
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
                         'show' => false,
+                        'headers' => array (
+                            'r1' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                            'r2' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'form_class',
@@ -475,6 +598,16 @@ Isi field disamping untuk mengubah password.
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
                         'show' => false,
+                        'headers' => array (
+                            'r1' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                            'r2' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'model_class',
@@ -483,6 +616,16 @@ Isi field disamping untuk mengubah password.
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
                         'show' => false,
+                        'headers' => array (
+                            'r1' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                            'r2' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'model_id',
@@ -491,6 +634,16 @@ Isi field disamping untuk mengubah password.
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
                         'show' => false,
+                        'headers' => array (
+                            'r1' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                            'r2' => array (
+                                'colSpan' => 1,
+                                'label' => '',
+                            ),
+                        ),
                     ),
                 ),
             ),
