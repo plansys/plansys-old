@@ -835,12 +835,15 @@ class DataSource extends FormField {
                 $this->model->metaData->relations[$rel->name . "__psCount"] = new CStatRelation($rel->name . "__psCount", $rel->className, $fkey);
                 $count = $this->model->getRelated($rel->name . "__psCount");
             } else {
-                $criteriaCount['select'] = array_keys($this->model->tableSchema->columns)[0];
+                $countCol = array_keys($this->model->tableSchema->columns)[0];
                 unset($criteriaCount['pageSize']);
                 unset($criteriaCount['page']);
                 
+                // set special flag for counting in criteria
+                $criteriaCount['dsCountCol'] = $this->model->quoteCol(array_keys($this->model->tableSchema->columns)[0]);
+                
                 $rawCount = $this->model->getRelated($this->relationTo, true, $criteriaCount);
-                $count = count($rawCount);
+                $count = @$rawCount[0]->{$countCol};
             }
         }
 

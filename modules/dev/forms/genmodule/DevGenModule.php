@@ -339,6 +339,10 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
 <div ng-if=\"model.accessType == \'DEFAULT\'\">',
             ),
             array (
+                'type' => 'Text',
+                'value' => '<div style=\\"margin:0px -15px\\">',
+            ),
+            array (
                 'showBorder' => 'Yes',
                 'column1' => array (
                     array (
@@ -410,6 +414,10 @@ Access Control <span ng-bind-html=\'acStatus\'></span>
                 'w2' => '50%',
                 'w3' => '33%',
                 'type' => 'ColumnField',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '</div>',
             ),
             array (
                 'type' => 'Text',

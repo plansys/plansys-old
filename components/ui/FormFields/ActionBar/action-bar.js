@@ -151,19 +151,20 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                     $scope.init = true;
                     $el.show();
                 }
-
             };
-
+            
 
             $(window).resize(function () {
                 $scope.resize();
             });
 
             // add action tab link
-            $(".section-header").each(function () {
-                $('<a href="#' + $(this).attr('scrollTo') + '">' + $(this).text() + '</a>')
-                    .insertBefore(".action-bar:eq(0) .action-tab .clearfix");
-            })
+            $timeout(function() {
+                $(".section-header").each(function () {
+                    $('<a href="#' + $(this).attr('scrollTo') + '">' + $(this).text() + '</a>')
+                        .insertBefore(".action-bar:eq(0) .action-tab .clearfix");
+                })
+            },250);
 
             // on action tab click
             var container = $(".action-bar:eq(0)").parents(".container-full");

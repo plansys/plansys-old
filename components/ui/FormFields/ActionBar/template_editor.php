@@ -1,4 +1,3 @@
-
 <div class="action-bar-editor">
     <div class="ab-editor-title-bar">
         <span class="title" dynamic="field.title"></span>

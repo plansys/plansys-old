@@ -77,7 +77,7 @@ class DefaultController extends Controller {
 
     public function actionResetdb() {
         Installer::resetDB();
-        $this->redirect(['/install/default/user']);
+        // $this->redirect(['/install/default/user']);
     }
 
     public function actionDb() {

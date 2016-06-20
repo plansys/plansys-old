@@ -180,6 +180,7 @@ class DevUserIndex extends User {
                         ),
                         'show' => false,
                         'cellMode' => 'default',
+                        '$listViewName' => 'columns',
                     ),
                     array (
                         'name' => 'username',
@@ -187,6 +188,7 @@ class DevUserIndex extends User {
                         'html' => '',
                         'columnType' => 'string',
                         'show' => false,
+                        '$listViewName' => 'columns',
                     ),
                     array (
                         'name' => 'email',
@@ -194,6 +196,7 @@ class DevUserIndex extends User {
                         'html' => '',
                         'columnType' => 'string',
                         'show' => false,
+                        '$listViewName' => 'columns',
                     ),
                     array (
                         'name' => 'last_login',
@@ -201,6 +204,7 @@ class DevUserIndex extends User {
                         'html' => '',
                         'columnType' => 'string',
                         'show' => false,
+                        '$listViewName' => 'columns',
                     ),
                     array (
                         'name' => 'role_description',
@@ -212,6 +216,7 @@ class DevUserIndex extends User {
                         'show' => false,
                         'mergeSameRow' => 'No',
                         'cellMode' => 'default',
+                        '$listViewName' => 'columns',
                     ),
                     array (
                         'name' => 'edit',
@@ -230,8 +235,9 @@ class DevUserIndex extends User {
                                 'html',
                             ),
                         ),
-                        'show' => true,
+                        'show' => false,
                         'cellMode' => 'default',
+                        '$listViewName' => 'columns',
                     ),
                 ),
             ),

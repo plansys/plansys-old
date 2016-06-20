@@ -809,6 +809,11 @@ class ActiveRecord extends CActiveRecord {
         return $criteria;
     }
     
+	public function getActiveFinder($with)
+	{
+		return new ActiveFinder($this,$with);
+	}
+	
     public function getRelatedArray($criteria = [], $rel = null) {
         $criteria = ActiveRecord::convertPagingCriteria($criteria);
         $tableSchema = $this->tableSchema;

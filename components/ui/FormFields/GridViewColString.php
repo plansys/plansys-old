@@ -105,6 +105,7 @@ class GridViewColString extends Form {
                     'ng-model' => 'item.cellMode',
                     'ng-change' => 'getCellTemplate(item, $index);updateListView();',
                 ),
+                'menuPos' => 'pull-right',
                 'defaultType' => 'first',
                 'labelOptions' => array (
                     'style' => 'text-align:left;',

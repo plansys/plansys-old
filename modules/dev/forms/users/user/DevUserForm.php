@@ -308,8 +308,21 @@ Isi field disamping untuk mengubah password.
                         'options' => array (),
                         'resetable' => 'Yes',
                         'defaultValue' => '',
-                        'show' => true,
+                        'show' => false,
                         'queryOperator' => 'in',
+                        'list' => array (
+                            'general' => array (
+                                'view' => 'View',
+                                'create' => 'Create',
+                                'update' => 'Update',
+                                'delete' => 'Delete',
+                            ),
+                            'other' => array (
+                                'login' => 'Login',
+                                'logout' => 'Logout',
+                                'other' => 'Other',
+                            ),
+                        ),
                     ),
                     array (
                         'name' => 'description',
@@ -347,7 +360,7 @@ Isi field disamping untuk mengubah password.
                 'columns' => array (
                     array (
                         'name' => 'stamp',
-                        'label' => 'Date/Time',
+                        'label' => 'Date / Time',
                         'html' => '<td ng-class=\"rowClass(row, \'stamp\', \'string\')\" >
     <div  ng-include=\'\"row-state-template\"\'></div>
     <span class=\'row-group-padding\' ng-if=\'!!row.$level\'
@@ -361,7 +374,7 @@ Isi field disamping untuk mengubah password.
                         'cellMode' => 'default',
                         'options' => array (
                             'mode' => 'datetime',
-                            'width' => '200',
+                            'width' => '150',
                             'freeze' => 'true',
                         ),
                         'headers' => array (
@@ -376,30 +389,19 @@ Isi field disamping untuk mengubah password.
                         ),
                     ),
                     array (
-                        'name' => 'id',
-                        'label' => 'Id',
-                        'html' => '',
-                        'columnType' => 'string',
-                        '$listViewName' => 'columns',
-                        'show' => false,
-                        'headers' => array (
-                            'r1' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                            'r2' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                        ),
-                    ),
-                    array (
                         'name' => 'type',
                         'label' => 'Type',
-                        'html' => '',
+                        'html' => '<td ng-class=\"rowClass(row, \'type\', \'string\')\" >
+    <div ng-if=\"row.type == \'view\'\" class=\'label label-default text-center\' style=\'display:block;width:100%;\'> VIEW </div>
+    <div ng-if=\"row.type == \'login\'\" class=\'label label-info text-center\' style=\'display:block;width:100%;\'> LOGIN</div>
+    <div ng-if=\"row.type == \'logout\'\" class=\'label label-warning text-center\' style=\'display:block;width:100%;\'> LOGOUT</div>
+    <div ng-if=\"row.type == \'update\'\" class=\'label label-primary text-center\' style=\'display:block;width:100%;\'> UPDATE </div>
+    <div ng-if=\"row.type == \'create\'\" class=\'label label-success text-center\' style=\'display:block;width:100%;\'> CREATE </div>
+    <div ng-if=\"row.type == \'delete\'\" class=\'label label-danger text-center\' style=\'display:block;width:100%;\'> DELETE </div>
+</td>',
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
-                        'show' => false,
+                        'show' => true,
                         'headers' => array (
                             'r1' => array (
                                 'colSpan' => 1,
@@ -410,32 +412,21 @@ Isi field disamping untuk mengubah password.
                                 'label' => '',
                             ),
                         ),
-                    ),
-                    array (
-                        'name' => 'url',
-                        'label' => 'Url',
-                        'html' => '',
-                        'columnType' => 'string',
-                        '$listViewName' => 'columns',
-                        'show' => false,
-                        'headers' => array (
-                            'r1' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                            'r2' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
+                        'mergeSameRow' => 'No',
+                        'cellMode' => 'custom',
+                        'options' => array (
+                            'width' => '75',
                         ),
                     ),
                     array (
                         'name' => 'description',
                         'label' => 'Description',
-                        'html' => '',
+                        'html' => '<td ng-class=\"rowClass(row, \'description\', \'string\')\" >
+    <a ng-url=\"/sys/auditTrail/detail&id={{row.id}}\">{{row.description}}</a>
+</td>',
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
-                        'show' => false,
+                        'show' => true,
                         'headers' => array (
                             'r1' => array (
                                 'colSpan' => 1,
@@ -446,14 +437,18 @@ Isi field disamping untuk mengubah password.
                                 'label' => '',
                             ),
                         ),
+                        'mergeSameRow' => 'No',
+                        'cellMode' => 'custom',
                     ),
                     array (
                         'name' => 'pathinfo',
-                        'label' => 'Pathinfo',
-                        'html' => '',
+                        'label' => 'Path',
+                        'html' => '<td ng-class=\"rowClass(row, \'pathinfo\', \'string\')\" >
+    {{row.pathinfo}}
+</td>',
                         'columnType' => 'string',
                         '$listViewName' => 'columns',
-                        'show' => false,
+                        'show' => true,
                         'headers' => array (
                             'r1' => array (
                                 'colSpan' => 1,
@@ -464,185 +459,10 @@ Isi field disamping untuk mengubah password.
                                 'label' => '',
                             ),
                         ),
-                    ),
-                    array (
-                        'name' => 'module',
-                        'label' => 'Module',
-                        'html' => '',
-                        'columnType' => 'string',
-                        '$listViewName' => 'columns',
-                        'show' => false,
-                        'headers' => array (
-                            'r1' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                            'r2' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                        ),
-                    ),
-                    array (
-                        'name' => 'ctrl',
-                        'label' => 'Ctrl',
-                        'html' => '',
-                        'columnType' => 'string',
-                        '$listViewName' => 'columns',
-                        'show' => false,
-                        'headers' => array (
-                            'r1' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                            'r2' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                        ),
-                    ),
-                    array (
-                        'name' => 'action',
-                        'label' => 'Action',
-                        'html' => '',
-                        'columnType' => 'string',
-                        '$listViewName' => 'columns',
-                        'show' => false,
-                        'headers' => array (
-                            'r1' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                            'r2' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                        ),
-                    ),
-                    array (
-                        'name' => 'params',
-                        'label' => 'Params',
-                        'html' => '',
-                        'columnType' => 'string',
-                        '$listViewName' => 'columns',
-                        'show' => false,
-                        'headers' => array (
-                            'r1' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                            'r2' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                        ),
-                    ),
-                    array (
-                        'name' => 'data',
-                        'label' => 'Data',
-                        'html' => '',
-                        'columnType' => 'string',
-                        '$listViewName' => 'columns',
-                        'show' => false,
-                        'headers' => array (
-                            'r1' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                            'r2' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                        ),
-                    ),
-                    array (
-                        'name' => 'user_id',
-                        'label' => 'User Id',
-                        'html' => '',
-                        'columnType' => 'string',
-                        '$listViewName' => 'columns',
-                        'show' => false,
-                        'headers' => array (
-                            'r1' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                            'r2' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                        ),
-                    ),
-                    array (
-                        'name' => 'key',
-                        'label' => 'Key',
-                        'html' => '',
-                        'columnType' => 'string',
-                        '$listViewName' => 'columns',
-                        'show' => false,
-                        'headers' => array (
-                            'r1' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                            'r2' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                        ),
-                    ),
-                    array (
-                        'name' => 'form_class',
-                        'label' => 'Form Class',
-                        'html' => '',
-                        'columnType' => 'string',
-                        '$listViewName' => 'columns',
-                        'show' => false,
-                        'headers' => array (
-                            'r1' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                            'r2' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                        ),
-                    ),
-                    array (
-                        'name' => 'model_class',
-                        'label' => 'Model Class',
-                        'html' => '',
-                        'columnType' => 'string',
-                        '$listViewName' => 'columns',
-                        'show' => false,
-                        'headers' => array (
-                            'r1' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                            'r2' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                        ),
-                    ),
-                    array (
-                        'name' => 'model_id',
-                        'label' => 'Model Id',
-                        'html' => '',
-                        'columnType' => 'string',
-                        '$listViewName' => 'columns',
-                        'show' => false,
-                        'headers' => array (
-                            'r1' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
-                            'r2' => array (
-                                'colSpan' => 1,
-                                'label' => '',
-                            ),
+                        'mergeSameRow' => 'No',
+                        'cellMode' => 'default',
+                        'options' => array (
+                            'width' => '200',
                         ),
                     ),
                 ),
@@ -681,7 +501,7 @@ Isi field disamping untuk mengubah password.
 
     public function getForm() {
         return array (
-            'title' => 'UserForm',
+            'title' => 'Detail User',
             'layout' => array (
                 'name' => 'full-width',
                 'data' => array (
