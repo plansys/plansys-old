@@ -25,6 +25,7 @@ app.directive('gridView', function ($timeout, $http) {
                 $scope.columns = JSON.parse(columnRaw);
                 $scope.defaultPageSize = $el.find("data[name=dpz]:eq(0)").text();
                 $scope.datasource = $scope.parent[$el.find("data[name=datasource]:eq(0)").text()];
+                $scope.checkboxCol = false;
                 $scope.checkMode = function () {
                     if ($el.width() < 750) {
                         $scope.mode = 'small';
@@ -104,10 +105,31 @@ app.directive('gridView', function ($timeout, $http) {
                     }
                 }
                 $scope.rowStateClass = function (row) {
+                    if ($scope.checkboxCol === false) {
+                        $scope.checkboxCol = {};
+                        for (var i in $scope.columns) {
+                            if ($scope.columns[i].columnType == 'checkbox') {
+                                $scope.checkboxCol[$scope.columns[i].name] = $scope.columns[i].checkedValue;
+                            }
+                        }
+                    }
+                    
+                    var checkboxClass = [];
+                    for (var i in $scope.checkboxCol) {
+                        if (row[i] == $scope.checkboxCol[i]) {
+                            if (checkboxClass.length == 0) {
+                                checkboxClass.push('row-checked');
+                            }
+                            
+                            checkboxClass.push(i);
+                        }
+                    }
+                    checkboxClass = checkboxClass.join(" ");
+                    
                     if (!row.$rowState || $scope.gridOptions.showRowState == 'false') {
-                        return '';
+                        return checkboxClass + ' ';
                     } else {
-                        return 'row-state-' + row.$rowState;
+                        return checkboxClass + ' row-state-' + row.$rowState;
                     }
                 }
                 $scope.rowUndoState = function (row) {

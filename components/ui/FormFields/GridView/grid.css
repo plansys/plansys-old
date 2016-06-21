@@ -182,7 +182,7 @@
     background-color: #e6ffc9;
 }
 
-[grid-view] .row-state-edit {
+[grid-view] .row-state-edit,[grid-view] .row-checked {
     background-color: #ddf2ff;
 }
 

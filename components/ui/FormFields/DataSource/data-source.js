@@ -17,6 +17,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 $scope.options = JSON.parse($el.find("data[name=options]:eq(0)").text().trim());
                 $scope.insertData = [];
                 $scope.updateData = [];
+                $scope.originalHash = {};
                 $scope.deleteData = JSON.parse($el.find("data[name=delete_data]").text()) || [];
                 $scope.httpRequest = false;
                 $scope.loading = false;
@@ -27,22 +28,12 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 }
                 
                 $scope.enableTrackChanges = function (from) {
-                    if (!!from) {
-                        console.log('DS WATCH [✓] from:', from);
-                    } else {
-                        console.log('DS WATCH [✓]:');
-                    }
-                    
+                    // console.log('DS WATCH [✓] from:', from);
                     $scope.trackChanges = true;
                 }
 
                 $scope.disableTrackChanges = function (from) {
-                    if (!!from) {
-                        console.log('DS WATCH [✗] from:', from);
-                    } else {
-                        console.log('DS WATCH [✗]');
-                    }
-                    
+                    // console.log('DS WATCH [✗] from:', from);
                     $scope.trackChanges = false;
                 }
 
@@ -384,7 +375,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         var item = newArray[i];
                         if (!!newHash[item[pk]]) {
                             alert("ERROR!!!\nPrimary Key Column ("+pk+"): Data is not UNIQUE!");
-                            return;
                         } else {
                             newHash[item[pk]] = item;
                         }
@@ -392,6 +382,12 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         var pkIsEmpty = !item[pk];
                         if (!!item[pk] && !!item[pk].toString) {
                             pkIsEmpty = (item[pk].toString() === '');
+                        }
+                        
+                        if (item.$rowState == 'edit') {
+                            if (angular.equals(oldHash[item[pk]], item)) {
+                                delete item.$rowState;
+                            }
                         }
 
                         //if pk is empty --OR-- pk is not in old hash
@@ -403,9 +399,24 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                             // if pk is NOT empty --AND-- pk is IN old hash
                             // then maybe it is updated?
                             if (!angular.equals(item, oldHash[item[pk]])) {
-                                // if item is different so it's definitely updated
-                                item.$rowState = 'edit';
-                                diff.update.push(item);
+                                if (!$scope.originalHash[item[pk]]) {
+                                    $scope.originalHash[item[pk]] = angular.copy(oldHash[item[pk]]);
+                                    
+                                    item.$rowState = 'edit';
+                                    diff.update.push(item);
+                                } else if (angular.equals(item, $scope.originalHash[item[pk]])) {
+                                    // if current item is equal to original item, then it is not updated
+                                    delete item.$rowState;
+                                    for (var i in $scope.updateData) {
+                                        if ($scope.updateData[i][pk] == item[pk]) {
+                                            $scope.updateData.splice(i,1);
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    item.$rowState = 'edit';
+                                    diff.update.push(item);
+                                }
                             }
                         }
                     }
@@ -428,7 +439,12 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         if (typeof $scope.data == "undefined") {
                             $scope.data = [];
                         }
-                        if ($scope.trackChanges && !angular.equals($scope.original, newval)) {
+                        
+                        if (angular.equals($scope.original, newval)) {
+                            for (var i in newval) {
+                                delete newval[i].$rowState;
+                            }  
+                        } else if ($scope.trackChanges) {
                             var df = diff($scope.original, newval);
                             
                             // Generate UpdateData Hash (to enable faster primary key look up)
