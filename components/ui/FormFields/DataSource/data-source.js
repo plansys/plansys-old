@@ -383,7 +383,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
 
                         var item = newArray[i];
                         if (!!newHash[item[pk]]) {
-                            alert("ERROR!:\nPrimary Key Column ("+pk+") is not UNIQUE!");
+                            alert("ERROR!!!\nPrimary Key Column ("+pk+"): Data is not UNIQUE!");
                             return;
                         } else {
                             newHash[item[pk]] = item;
