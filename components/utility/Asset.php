@@ -24,9 +24,12 @@ class Asset extends CComponent {
         if ($isAlias) {
             $path = Asset::resolveAlias($path);
         }
-
+		
         if (strpos($path, Yii::getPathOfAlias('webroot')) == 0) {
-            $path = Yii::app()->baseUrl . substr($path, strlen(Yii::getPathOfAlias('webroot')));
+			$webroot = str_replace('//','/',Yii::getPathOfAlias('webroot'));
+			$path = str_replace("\\","/",$path);
+			$p = explode( $webroot, $path);
+            $path = Yii::app()->baseUrl . substr($path, strlen($webroot));
         }
         $result = str_replace("\\", "/", $path);
         return $result;
