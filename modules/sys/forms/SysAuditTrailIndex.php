@@ -46,6 +46,12 @@ class SysAuditTrailIndex extends AuditTrail {
                         'listExpr' => 'AuditTrail::typeDropdown(false)',
                         'isCustom' => 'No',
                         'resetable' => 'Yes',
+                        'list' => array (
+                            'view' => 'View',
+                            'create' => 'Create',
+                            'update' => 'Update',
+                            'delete' => 'Delete',
+                        ),
                     ),
                     array (
                         'filterType' => 'relation',
@@ -73,6 +79,8 @@ class SysAuditTrailIndex extends AuditTrail {
                         'isCustom' => 'No',
                         'resetable' => 'Yes',
                         'relIncludeEmpty' => 'No',
+                        'list' => 0,
+                        'count' => 0,
                     ),
                     array (
                         'name' => 'description',
@@ -104,7 +112,7 @@ class SysAuditTrailIndex extends AuditTrail {
                     'distinct' => 'false',
                     'alias' => 't',
                     'condition' => '{[where]} {AND} `key` = :key',
-                    'order' => '{id desc, [order]}',
+                    'order' => '{|id| desc, [order]}',
                     'paging' => '{[paging]}',
                     'group' => '',
                     'having' => '',

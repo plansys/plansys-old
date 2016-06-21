@@ -60,8 +60,6 @@ class DevUserIndex extends User {
                         'relModelClass' => 'application.models.Role',
                         'relIdField' => 'role_description',
                         'relLabelField' => 'role_description',
-                        'list' => 0,
-                        'count' => 0,
                     ),
                     array (
                         'name' => 'username',
@@ -146,7 +144,7 @@ class DevUserIndex extends User {
                     'select' => '|u|.*, |r.role_description|',
                     'distinct' => 'false',
                     'alias' => 'u',
-                    'condition' => '|is_deleted| = 0 {OR} |is_deleted| is null {AND [where]}',
+                    'condition' => '(|is_deleted| = 0 {OR} |is_deleted| is null) {AND [where]}',
                     'order' => '{[order]}',
                     'paging' => '{[paging]}',
                     'group' => '',

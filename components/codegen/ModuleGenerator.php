@@ -69,6 +69,21 @@ class ModuleGenerator extends CodeGenerator {
         ];
         return $list;
     }
+    
+    public static function listAppModules() {
+        
+        $dir = Yii::getPathOfAlias("app.modules") . DIRECTORY_SEPARATOR;
+        $items = glob($dir . "*", GLOB_ONLYDIR);
+        $appList = [];
+        foreach ($items as $k => $f) {
+            $label = str_replace($dir, "", $f);
+            $classPath = $f . DIRECTORY_SEPARATOR . ucfirst($label) . 'Module.php';
+            if (is_file($classPath)) {
+                $appList[$label] = $label;
+            }
+        }
+        return $appList;
+    }
 
     public static function create($classAlias) {
         $module = ModuleGenerator::init($classAlias);

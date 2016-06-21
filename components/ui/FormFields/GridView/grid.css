@@ -198,7 +198,7 @@
 
 [grid-view] .row-state-detail {
     position: absolute;
-    margin-left: -18px;
+    margin-left: -19px;
     margin-top: -4px;
     padding: 6px 4px 5px 4px;
     border-top-left-radius: 3px;
@@ -209,7 +209,7 @@
 }
 
 [grid-view] .editable .row-state-detail {
-    margin-top: -1px;
+    margin-top: -2px;
 }
 
 [grid-view] .row-state-detail i {

@@ -192,7 +192,7 @@ app.filter('dateFormat', function (dateFilter) {
         }
 
         if (input != "0000-00-00" && !!input && input != null) {
-            // split the date
+            input = input + "";
             var pinput = input.split(" ");
             
             // determine if it is oracle date

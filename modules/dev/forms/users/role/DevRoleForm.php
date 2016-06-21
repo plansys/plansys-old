@@ -1,7 +1,7 @@
 <?php
 
 class DevRoleForm extends Role {
-    
+    public $module;
     public function getForm() {
         return array (
             'title' => 'Role',
@@ -65,6 +65,16 @@ class DevRoleForm extends Role {
             ),
             array (
                 'column1' => array (
+                    array (
+                        'label' => 'Module',
+                        'name' => 'module',
+                        'options' => array (
+                            'ng-change' => 'roleNameChange()',
+                        ),
+                        'listExpr' => '[\'\'=>\'App\',
+\'---\' => \'---\'] + ModuleGenerator::listAppModules()',
+                        'type' => 'DropDownList',
+                    ),
                     array (
                         'label' => 'Role Name',
                         'name' => 'role_name',
@@ -159,7 +169,7 @@ class DevRoleForm extends Role {
                         'name' => 'last_login',
                         'label' => 'Last login',
                         'filterType' => 'date',
-                        'show' => true,
+                        'show' => false,
                         'defaultOperator' => '',
                         'defaultValue' => '',
                         'defaultValueFrom' => '',

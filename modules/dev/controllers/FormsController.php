@@ -350,23 +350,48 @@ EOF;
         $fb->resetTimestamp();
         $fb->updateExtendsFrom('Blog');
 
-
         $classPath = $class;
         $class     = Helper::explodeLast(".", $class);
-
+        
+        $methods = [];
+        $refl = new ReflectionClass($fb->model);
+        foreach ($refl->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+            if (strlen($method->name) > 3 && $method->class == $refl->getName()) {
+                $dm = substr($method->name, 0, 3);
+                if ($method->name != "getForm" && $method->name != "getFields" && 
+                    ($dm == "get" || $dm == "set")) {
+                    $methods[lcfirst(substr($method->name, 3))] = lcfirst(substr($method->name, 3));
+                }
+            }
+        }
+        
         if (is_subclass_of($fb->model, 'ActiveRecord')) {
             $formType = "ActiveRecord";
-            FormsController::setModelFieldList($class::model()->getAttributesList(), "AR", $class);
+            
+            $props = $class::model()->getAttributesList();
+            if (!empty($methods)) 
+                $props['Dynamic Properties'] = $methods; 
+                
+            FormsController::setModelFieldList($props, "AR", $class);
         } else if (is_subclass_of($fb->model, 'FormField')) {
             $formType = "FormField";
             $mf       = new $class;
-            FormsController::setModelFieldList($mf->attributes, "FF");
+            
+            $props = $mf->attributes;
+            if (!empty($methods)) 
+                $props['Dynamic Properties'] = $methods; 
+                
+            FormsController::setModelFieldList($props, "FF");
         } else if (is_subclass_of($fb->model, 'Form')) {
             $formType = "Form";
             $mf       = new $class;
-            FormsController::setModelFieldList($mf->attributes, "FF");
+            
+            $props = $mf->attributes;
+            if (!empty($methods)) 
+                $props['Dynamic Properties'] = $methods; 
+                
+            FormsController::setModelFieldList($props, "FF");
         }
-
 
         $fieldData                   = $fb->fields;
         FormsController::$modelField = $fieldData;
