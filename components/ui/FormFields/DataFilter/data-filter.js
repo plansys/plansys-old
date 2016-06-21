@@ -195,7 +195,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 ds.enableTrackChanges('DataFilter:ResetFilter');
                             }
                             
-                            ds.disableTrackChanges('filter reset');
+                            ds.disableTrackChanges('DataFilter:reset');
                             ds.lastQueryFrom = "DataFilter";
                             ds.query(function () {
                                 delete ds.afterQueryInternal[$scope.renderID];

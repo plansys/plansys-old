@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/box/spout.git",
-                "reference": "8edd8e24016945d5d2b6838ac838f78ed2644c56"
+                "reference": "192659cb24697e0cc361c15d5d9b903b069c40d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/box/spout/zipball/8edd8e24016945d5d2b6838ac838f78ed2644c56",
-                "reference": "8edd8e24016945d5d2b6838ac838f78ed2644c56",
+                "url": "https://api.github.com/repos/box/spout/zipball/192659cb24697e0cc361c15d5d9b903b069c40d6",
+                "reference": "192659cb24697e0cc361c15d5d9b903b069c40d6",
                 "shasum": ""
             },
             "require": {
@@ -74,7 +74,7 @@
                 "write",
                 "xlsx"
             ],
-            "time": "2016-06-08 20:53:41"
+            "time": "2016-06-20 03:20:49"
         },
         {
             "name": "inlinestyle/inlinestyle",
@@ -230,16 +230,16 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v3.1.0",
+            "version": "v3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
-                "reference": "e17f386efef7258ac671c24e727673abd086b0cf"
+                "reference": "c526d7b3cb4fe1673c6a34e13be2ff63f519df99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/css-selector/zipball/e17f386efef7258ac671c24e727673abd086b0cf",
-                "reference": "e17f386efef7258ac671c24e727673abd086b0cf",
+                "url": "https://api.github.com/repos/symfony/css-selector/zipball/c526d7b3cb4fe1673c6a34e13be2ff63f519df99",
+                "reference": "c526d7b3cb4fe1673c6a34e13be2ff63f519df99",
                 "shasum": ""
             },
             "require": {
@@ -279,7 +279,7 @@
             ],
             "description": "Symfony CssSelector Component",
             "homepage": "https://symfony.com",
-            "time": "2016-03-04 07:56:56"
+            "time": "2016-06-06 11:42:41"
         }
     ],
     "packages-dev": [],

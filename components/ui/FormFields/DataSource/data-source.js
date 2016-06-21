@@ -25,6 +25,27 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 if (!$scope.primaryKey) {
                     $scope.primaryKey = 'id';
                 }
+                
+                $scope.enableTrackChanges = function (from) {
+                    if (!!from) {
+                        console.log('DS WATCH [✓] from:', from);
+                    } else {
+                        console.log('DS WATCH [✓]:');
+                    }
+                    
+                    $scope.trackChanges = true;
+                }
+
+                $scope.disableTrackChanges = function (from) {
+                    if (!!from) {
+                        console.log('DS WATCH [✗] from:', from);
+                    } else {
+                        console.log('DS WATCH [✗]');
+                    }
+                    
+                    $scope.trackChanges = false;
+                }
+
 
                 $scope.resetData = function () {
                     $scope.deleteData.splice(0, $scope.deleteData.length);
@@ -287,10 +308,10 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                 if (newv !== oldv) {
                                     $scope.updateParam(key, newv);
                                     
-                                    $scope.trackChanges = false;
+                                    $scope.disableTrackChanges("DataSource:paramChangesBeforeQuery");
                                     $scope.afterQueryInternal['params-' + watch] = function () {
                                         $scope.resetOriginal();
-                                        $scope.trackChanges = true
+                                        $scope.enableTrackChanges("DataSource:paramChangesAfterQuery");
                                         delete $scope.afterQueryInternal['params-' + watch];
                                     }
                                     
@@ -304,7 +325,8 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     });
                 }
 
-                $scope.trackChanges = false;
+                
+                $scope.enableTrackChanges("DataSource:init");
                 $scope.resetOriginal = function () {
                     $scope.original = angular.copy($scope.data);
                 }
@@ -312,7 +334,8 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 if (jsParamExist) {
                     $scope.afterQueryInternal['params-init'] = function () {
                         $scope.resetOriginal();
-                        $scope.trackChanges = true;
+                        
+                        $scope.enableTrackChanges("DataSource:initParamAfterQuery");
                         delete $scope.afterQueryInternal['params-init'];
                     }
                     $scope.query();
@@ -327,8 +350,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     } else {
                         $scope.data = JSON.parse($el.find("data[name=data]:eq(0)").text());
                     }
-                    
-                    $scope.trackChanges = true;
                 }
                 
                 
@@ -337,22 +358,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         if ($scope.data[i].$rowState == 'insert') $scope.insertData.push($scope.data[i]);
                         if ($scope.data[i].$rowState == 'edit') $scope.updateData.push($scope.data[i]);
                     } 
-                }
-
-                $scope.enableTrackChanges = function (from) {
-                    if (!!from) {
-                        console.log('DS WATCH [✓] from:', from);
-                    }
-                    
-                    $scope.trackChanges = true;
-                }
-
-                $scope.disableTrackChanges = function (from) {
-                    if (!!from) {
-                        console.log('DS WATCH [✗] from:', from);
-                    }
-                    
-                    $scope.trackChanges = false;
                 }
 
                 var diff = function (oldArray, newArray) {
@@ -377,8 +382,13 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         }
 
                         var item = newArray[i];
-                        newHash[item[pk]] = item;
-
+                        if (!!newHash[item[pk]]) {
+                            alert("ERROR!:\nPrimary Key Column ("+pk+") is not UNIQUE!");
+                            return;
+                        } else {
+                            newHash[item[pk]] = item;
+                        }
+                        
                         var pkIsEmpty = !item[pk];
                         if (!!item[pk] && !!item[pk].toString) {
                             pkIsEmpty = (item[pk].toString() === '');

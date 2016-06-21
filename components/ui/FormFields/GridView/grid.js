@@ -952,7 +952,7 @@ app.directive('gridView', function ($timeout, $http) {
                             if ($scope.datasource.lastQueryFrom == "DataFilter" && !!$scope.gridOptions.pageInfo) {
                                 $scope.gridOptions.pageInfo.currentPage = 1;
                             }
-                            $scope.datasource.disableTrackChanges();
+                            $scope.datasource.disableTrackChanges("GridView:initBeforeQuery");
                             $scope.lastCheckbox = null;
                         }
                         $scope.datasource.afterQueryInternal[$scope.renderID] = function () {
@@ -962,7 +962,7 @@ app.directive('gridView', function ($timeout, $http) {
                             }
                             if (!$scope.datasource.trackChanges) {
                                 $scope.datasource.resetOriginal();
-                                $scope.datasource.enableTrackChanges('GridView:init');
+                                $scope.datasource.enableTrackChanges('GridView:initAfterQuery');
                             }
                             $scope.lastCheckbox = null;
                             $scope.onGridRender('query');
@@ -977,7 +977,7 @@ app.directive('gridView', function ($timeout, $http) {
                 if (!$scope.datasource) {
                     alert("Error: " + $scope.name + " Please choose datasource!!")
                 } else {
-                    $scope.datasource.disableTrackChanges();
+                    $scope.datasource.disableTrackChanges("Gridview:beforeInit");
                 }
                 
                 $scope.gridRenderTimeout = null;
