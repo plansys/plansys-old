@@ -3,11 +3,13 @@
      is-open="filter.operatorDropdownOpen">
 
     <button type="button" tooltip-placement="bottom"
-            tooltip-enable=" filter.valueText.length >= 15"
+            tooltip-enable="!filter.options.html && filter.valueText.length >= 15"
             tooltip="{{ filter.valueText }}" class="btn btn-default btn-sm dropdown-toggle">
         <span style="font-size:13px;"> 
             {{filter.label}}<span ng-hide="filter.label == ''">:</span></span>
-        <b>{{filter.valueText | more:15}}</b>
+        <b ng-if="!filter.options.html" ng-bind-html="filter.valueText | more:15"></b>
+        <b ng-if="filter.options.html" ng-bind-html="filter.valueText"></b>
+        
         <span class="caret" style="margin-left:5px;"></span>
     </button>
     <button type="button" ng-click="resetFilter(filter);"
@@ -52,8 +54,7 @@
                 <a ng-if="!isObject(item.value) &&
                                 (filter.filterType == 'list' || filter.filterType == 'relation')"
                    dropdown-toggle href="#" ng-click="updateDropdown($event, filter, item);"
-                   value="{{item.key}}">
-                    {{ item.value}}
+                   value="{{item.key}}" ng-bind-html="item.value">
                 </a>
 
                 <a ng-if="!isObject(item.value) && filter.filterType == 'check'" href="#"

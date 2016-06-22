@@ -1,5 +1,8 @@
 <div ps-data-filter class="data-filter">
-    <data name="filters" class="hide"><?= json_encode($this->filters); ?></data>
+    <data name="filters" class="hide"><?= str_replace(
+        ['&quot;','&lt;','&gt;'], 
+        ['%quot%','%lt%','%gt%'],
+        json_encode($this->filters)); ?></data>
     <data name="operators" class="hide"><?= json_encode($this->filterOperators); ?></data>
     <data name="datasource" class="hide"><?= $this->datasource; ?></data>
     <data name="model_class" class="hide"><?= Helper::getAlias($model) ?></data>

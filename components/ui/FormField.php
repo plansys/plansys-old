@@ -243,8 +243,9 @@ class FormField extends CComponent {
         if (is_string($_expression_)) {
             extract($_data_);
             $return = '';
+            
             try {
-                $return = @eval('return ' . $_expression_ . ';');
+                @eval('$return =  ' . $_expression_ . ';');
             } catch (Exception $e) {
                 $return = $_expression_;
             }

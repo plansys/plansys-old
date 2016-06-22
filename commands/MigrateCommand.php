@@ -597,7 +597,7 @@ EOD;
 			return <<<EOD
 <?php
 
-class {ClassName} extends Migration
+class {ClassName} extends CDbMigration
 {
 	public function up()
 	{

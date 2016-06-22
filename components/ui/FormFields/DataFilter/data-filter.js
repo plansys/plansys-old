@@ -934,13 +934,20 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 $scope.focusDatePicker = function (filter, from) {
                     filter[from + "Open"] = true;
                 }
+                
                 $scope.modelClass = $el.find("data[name=model_class]").html();
-                $scope.operators = JSON.parse($el.find("data[name=operators]").text());
-                $scope.options = JSON.parse($el.find("data[name=options]").text());
-                $scope.filters = $scope.initFilters(JSON.parse($el.find("data[name=filters]").text()));
+                $scope.operators = JSON.parse($el.find("data[name=operators]").html());
+                $scope.options = JSON.parse($el.find("data[name=options]").html());
+                
+                var filterRaw = $el.find("data[name=filters]").html();
+                filterRaw = filterRaw.replace(/\%quot\%/gi,'\\"');
+                filterRaw = filterRaw.replace(/\%lt\%/gi,'<');
+                filterRaw = filterRaw.replace(/\%gt\%/gi,'>');
+                $scope.filters = $scope.initFilters(JSON.parse(filterRaw));
+                
                 $scope.oldFilters = null;
                 $scope.datasource = $el.find("data[name=datasource]").text();
-                $scope.datasources = JSON.parse($el.find("data[name=datasources]").text());
+                $scope.datasources = JSON.parse($el.find("data[name=datasources]").html());
 
                 $scope.name = $el.find("data[name=name]:eq(0)").text();
                 $scope.renderID = $el.find("data[name=render_id]").text();

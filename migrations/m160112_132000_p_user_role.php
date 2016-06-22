@@ -12,6 +12,7 @@ class m160112_132000_p_user_role extends Migration {
 
         $this->addForeignKey('p_user_has_p_role', 'p_user_role', 'user_id', 'p_user', 'id');
         $this->addForeignKey('p_role_has_p_user', 'p_user_role', 'role_id', 'p_role', 'id');
+        
         $this->addAutoIncrement('p_user_role', 'id');
         
         $this->insert('p_user_role', [

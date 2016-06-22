@@ -445,10 +445,14 @@ class Setting {
                 }
             }
         }
+        
+        if (Setting::$mode == 'running' && !is_dir(Yii::getPathOfAlias('app.migrations'))) {
+            mkdir(Yii::getPathOfAlias('app.migrations'), 0755, true);
+        }
 
         $commands['migrate'] = [
             'class'=>'system.cli.commands.MigrateCommand',
-            'migrationPath'=>'application.migrations',
+            'migrationPath'=> Setting::$mode == 'install' ? 'application.migrations' : 'app.migrations',
             'connectionID'=>'db',
             'migrationTable'=>'p_migration',
         ];

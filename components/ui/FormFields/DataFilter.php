@@ -580,28 +580,37 @@ class DataFilter extends FormField {
             return [];
 
         foreach ($this->filters as $k => $filter) {
-
             switch ($filter['filterType']) {
                 case "list":
                 case "check":
-                    $listExpr = @$filter['listExpr'];
-                    $list = [];
-
-                    if ($listExpr != "") {
+                    if (isset($filter['listExpr']) && trim($filter['listExpr']) != '') {
                         ## evaluate expression
-                        $list = $this->evaluate($listExpr, true);
+                        $list = $this->evaluate($filter['listExpr'], true);
 
+                        ## kalau listExpr ini berisi html, nanti bakal menghancurkan layout
+                        ## karena html nya itu masuk ke dalam json, dan bakal di render
+                        ## jadinya kita unset saja setelah di proses biar ga masuk ke json
+                        unset($this->filters[$k]['listExpr']); 
+                    
                         ## change sequential array to associative array
                         if (is_array($list) && !Helper::is_assoc($list)) {
                             if (!isset($list[0]['key'])) {
                                 $list = Helper::toAssoc($list);
                             }
                         }
-                    } else if (is_array($list) && !Helper::is_assoc($list)) {
-                        $list = Helper::toAssoc($this->list);
-                    }
-
-                    $this->filters[$k]['list'] = $list;
+                        
+                        foreach ($list as $i=>$listItem) {
+                            if (is_array($listItem)) {
+                                foreach ($listItem as $l => $listSubItem) {
+                                    $list[$i][$l] = htmlentities($listSubItem);
+                                }
+                            } else {
+                                $list[$i] = htmlentities($listItem);
+                            }
+                        }
+    
+                        $this->filters[$k]['list'] = $list;
+                    } 
                     break;
                 case "relation":
                     $rf = new RelationField;
