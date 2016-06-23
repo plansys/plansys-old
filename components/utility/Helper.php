@@ -362,7 +362,7 @@ class Helper {
         $wr = $withWebroot ? "webroot" : '';
 
         $fn      = $reflector->getFileName();
-        $webroot = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('webroot'));
+        $webroot = str_replace("/", DIRECTORY_SEPARATOR, preg_replace('~/+~', '/', Yii::getPathOfAlias('webroot')));
         $alias   = str_replace(DIRECTORY_SEPARATOR, ".", str_replace(".php", "", str_ireplace($webroot, $wr, $fn)));
 
         return trim($alias, ".");
