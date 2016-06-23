@@ -126,7 +126,7 @@ return array (
             array (
                 'label' => 'Selamat Datang di Plansys',
                 'icon' => 'fa-flag-checkered',
-                'url' => '#',
+                'url' => '/help/welcome',
             ),
             array (
                 'label' => 'Tutorial Plansys',
