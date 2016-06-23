@@ -6,10 +6,12 @@ class HelpModule extends WebModule {
         ####### PLANSYS GENERATED CODE: START #######
         #######    DO NOT EDIT CODE BELOW     #######
         $accessType = "DEFAULT";
-        $defaultRule = "deny";
+        $defaultRule = "allow";
         $rolesRule = [
             "deny" => [],
-            "allow" => [],
+            "allow" => [
+                "1"
+            ],
             "custom" => []
         ];
         $usersRule = [

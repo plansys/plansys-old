@@ -1,0 +1,45 @@
+.daftar_isi{	
+	float: left;
+	padding: 10px;	
+	width: 205px;	
+	background-color: white;
+	box-shadow: 3px 3px 3px #888888;						
+	margin:10px;	
+	font-size:12px;	
+	
+}
+a:hover{
+	font-size: 110%;
+	background-color: yellow;	
+
+}
+h3{
+	color : blue;
+	font-size:16px;
+}
+h4{	
+	font-size:15px;
+	font-weight: bold;
+}
+h5{
+	font-weight: bold;
+	font-style: italic;
+	font-size:14px;
+}
+h6{
+	color : blue;
+	font-size:13px;
+}
+.isi {			
+	float: right;	
+	padding: 10px;		
+	max-width: 1075px;		
+	background-color: white;
+	box-shadow: 3px 3px 3px #888888;						
+	text-align: justify;
+	font-size:12px;	
+}		
+img {
+    max-width: 60%;
+    height: auto;
+}
