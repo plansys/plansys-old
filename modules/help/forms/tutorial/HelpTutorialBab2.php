@@ -68,14 +68,11 @@ class HelpTutorialBab2 extends Form {
 						<li>Many to One
 						<li>Many to Many
 					</ul>
-
 					<h4 id="2.3">2.3. Create Tabel</h4><a href="#bab2"><i> back to top >></i></a>
 					<p>Sebelum mengembangkan sistem informasi, struktur dan relasi tabel harus didesain dengan baik agar pengelolaan data dalam database dapat berjalan dengan baik.
-				</div>
-				
+				</div>				
 				',
             ),
         );
     }
-
 }

@@ -111,14 +111,10 @@ class HelpTutorialBab4 extends Form {
 						<li>Maka akan muncul kotak konfirmasi penghapusan Model, ketikkan DELETE
 						<p><img src="plansys/modules/help/img/4-4-3.png">
 						<li>Lalu klik OK untuk menghapus Model tersebut. 
-					</ol>
-
-					
-				</div>
-				
+					</ol>					
+				</div>				
 				',
             ),
         );
     }
-
 }

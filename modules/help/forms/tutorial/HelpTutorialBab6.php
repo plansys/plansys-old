@@ -377,13 +377,10 @@ class HelpTutorialBab6 extends Form {
 					<h6 id="6.5.4.8">6.5.4.8. Sub Form</h6><a href="#bab6"><i> back to top >></i></a>	
 					<h4 id="6.6">6.6. Dashboard</h4><a href="#bab6"><i> back to top >></i></a>	
 					<h5 id="6.6.1">6.6.1. Create Dashboard Page</h5><a href="#bab6"><i> back to top >></i></a>	
-					<h4 id="6.7">6.7. Customize Login Form</h4><a href="#bab6"><i> back to top >></i></a>
-					
-				</div>
-				
+					<h4 id="6.7">6.7. Customize Login Form</h4><a href="#bab6"><i> back to top >></i></a>					
+				</div>				
 				',
             ),
         );
     }
-
 }

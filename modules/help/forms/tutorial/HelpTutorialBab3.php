@@ -93,12 +93,9 @@ class HelpTutorialBab3 extends Form {
 						<li>Pada kotak pop up selanjutnya ketikkan DELETE >> Klik OK untuk menghapus modul tersebut.
 						<p><img src="plansys/modules/help/img/3-4-4.png">
 					</ol>
-
-				</div>
-				
+				</div>				
 				',
             ),
         );
     }
-
 }

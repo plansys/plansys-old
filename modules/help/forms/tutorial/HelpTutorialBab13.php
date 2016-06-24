@@ -43,21 +43,34 @@ class HelpTutorialBab13 extends Form {
 					<p><a ng-url="/help/tutorial/bab16">SETTING MANAGEMENT</a> 	
 					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>											
 				</div>
+				<div class=\"judul_bab\">					
+					<h3 id="bab13">Bab XIII. EMAIL BUILDER</h3>		
+				</div>
+				<div class=\"sub_daftar_isi\">		
+					<table>
+						<td style="width:20%">
+							<a href="#13.1">13.1. Konsep Email Builder</a><br>
+							<a href="#13.2">13.2. Create Email Template<</a><br>
+							<a href="#13.3">13.3. Update Email Template</a><br>
+							<a href="#13.4">13.4. Delete Email Template</a><br>
+						</td>					
+					</table>
+				</div>				
 				<div class=\"isi\">
-					<h3>Bab XIII. EMAIL BUILDER</h3>
-					<h4>13.1. Konsep Email Builder</h4>
+					<hr>					
+					<h4 id="13.1">13.1. Konsep Email Builder</h4><a href="#bab13"><i> back to top >></i></a>
 					<p>Email Builder digunakan untuk membuat template email. Template email berisi script HTML dan dapat di Preview langsung dari Plansys. Untuk proses pengiriman email dihandle oleh controller. Dalam controller tersebut akan mendefinisikan Subject Email, To (penerima email), dan Parameter (parameter dapat berisi : konten email, footer, ataupun informasi lainnya yang ditampung dalam sebuah variabel).
 
-					<h4>13.2. Create Email Template</h4>
+					<h4 id="13.2">13.2. Create Email Template</h4><a href="#bab13"><i> back to top >></i></a>
 					<p>Langkah-langkah untuk membuat Email Template adalah sebagai berikut :
 					<ol><li>Login sebagai Dev
 						<li>Pada menu Builder, pilih Email Builder.
 						 	<p><img src="plansys/modules/help/img/13-2-2.png"> 
-						<li>Lalu klik kanan App  Klik New Email.
+						<li>Lalu klik kanan App >> Klik New Email.
 						 	<p><img src="plansys/modules/help/img/13-2-3.png"> 
-						<li>Pada kotak New Email Template, isikan nama template email  klik Save. 
+						<li>Pada kotak New Email Template, isikan nama template email >> klik Save. 
 						 	<p><img src="plansys/modules/help/img/13-2-4.png"> 
-						<li>Pada daftar Email Template  App, akan ditambahkan template email yang telah dibuat. Lalu klik template email  Edit script template email tersebut melalui editor yang disediakan, bagian yang perlu diEdit antara lain :
+						<li>Pada daftar Email Template >> App, akan ditambahkan template email yang telah dibuat. Lalu klik template email >> Edit script template email tersebut melalui editor yang disediakan, bagian yang perlu diEdit antara lain :
 							<ul><li>Bagian Title	: isi title menjadi Subject Email
 								<li>Bagian Style	: mengatur design style (script CSS)
 								<li>Bagian Body	: berisi konten email yang didapatkan dari isi variable dimana variabel 
@@ -84,23 +97,23 @@ class HelpTutorialBab13 extends Form {
 							<p><img src="plansys/modules/help/img/13-2-11.png"> 
 					</ol>	 
 
-					<h4>13.3. Update Email Template</h4>
+					<h4 id="13.3">13.3. Update Email Template</h4><a href="#bab13"><i> back to top >></i></a>
 					<p>Langkah-langkah untuk mengubah/memperbarui email template adalah sebagai berikut :
 					<ol><li>Login sebagai Dev.
-						<li>Pada menu Builder  submenu Email Builder  Pada bagian App, klik template email yang akan diEdit. Edit script template email sesuai kebutuhan.
+						<li>Pada menu Builder >> submenu Email Builder >> Pada bagian App, klik template email yang akan diEdit. Edit script template email sesuai kebutuhan.
 						 	<p><img src="plansys/modules/help/img/13-3-2.png"> 
 						<li>Setelah mengedit script, lalu tekan  CTRL + S untuk  menyimpannya.
 					</ol>
 					
-					<h4>13.4. Delete Email Template</h4>
+					<h4 id="13.4">13.4. Delete Email Template</h4><a href="#bab13"><i> back to top >></i></a>
 					<p>Langkah-langkah untuk menghapus email template adalah sebagai berikut :
 					<ol><li>Pada halaman yang sama dengan halaman untuk Update email template.
-						<li>Klik kanan pada email template yang akan dihapus  pilih Delete Email.	
+						<li>Klik kanan pada email template yang akan dihapus >> pilih Delete Email.	
 						 	<p><img src="plansys/modules/help/img/13-4-2.png"> 
-						<li>Maka muncul pop up konfirmasi, ketikkan DELETE untuk mengkonfirmasi penghapusan  klik OK.
+						<li>Maka muncul pop up konfirmasi, ketikkan DELETE untuk mengkonfirmasi penghapusan >> klik OK.
 							<p><img src="plansys/modules/help/img/13-2-3.png"> 						 
- 					</ol>
-				<div>				
+					</ol>
+				</div>				
 				',
             ),
         );

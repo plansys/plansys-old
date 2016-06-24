@@ -43,9 +43,19 @@ class HelpTutorialBab17 extends Form {
 					<p><a ng-url="/help/tutorial/bab16">SETTING MANAGEMENT</a> 	
 					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>											
 				</div>
+				<div class=\"judul_bab\">					
+					<h3 id="bab17">Bab XVII. REPOSITORY</h3>
+				</div>
+				<div class=\"sub_daftar_isi\">		
+					<table>
+						<td style="width:20%">
+							<a href="#17.1">17.1. Konsep Repository</a><br>							
+						</td>					
+					</table>
+				</div>				
 				<div class=\"isi\">
-					<h3>Bab XVII. REPOSITORY</h3>
-					<h4>17.1. Konsep Repository</h4>
+					<hr>					
+					<h4 id="17.1">17.1. Konsep Repository</h4><a href="#bab17"><i> back to top >></i></a>
 					<p>Repository merupakan direktori untuk penyimpanan semua data yang telah diupload user. User –user tersebut mengakses module yang sama dalam sistem aplikasi. Atau dengan arti lain, repository merupakan direktori penyimpanan yang diberikan untuk masing-masing module dalam sistem aplikasi ini. 
 				<div>				
 				',

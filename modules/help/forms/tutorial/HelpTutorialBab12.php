@@ -43,9 +43,19 @@ class HelpTutorialBab12 extends Form {
 					<p><a ng-url="/help/tutorial/bab16">SETTING MANAGEMENT</a> 	
 					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>											
 				</div>
+				<div class=\"judul_bab\">					
+					<h3 id="bab12">Bab XII. REPORT MANAGEMENT</h3>
+				</div>
+				<div class=\"sub_daftar_isi\">		
+					<table>
+						<td style="width:20%">
+							<a href="#12.1">12.1. Create Report Word File (docx)</a><br>							
+						</td>					
+					</table>
+				</div>				
 				<div class=\"isi\">
-					<h3>Bab XII. REPORT MANAGEMENT</h3>
-					<h4>12.1. Create Report Word File (docx)</h4>
+					<hr>					
+					<h4 id="12.1">12.1. Create Report Word File (docx)</h4><a href="#bab12"><i> back to top >></i></a>
 					<p>Langkah-langkah untuk membuat report (laporan ) berupa word file (.docx) adalah sebagai berikut :
 					<ol><li>Buat template laporan
  							<p><img src="plansys/modules/help/img/12-1-1.png"> 
@@ -65,7 +75,7 @@ class HelpTutorialBab12 extends Form {
 						<li>Ketika sudah didownload, isi file dokumen word (docx) akan seperti berikut :
 					 		<p><img src="plansys/modules/help/img/12-1-8.png"> 
 					</ol>
-				<div>
+				</div>
 				',
             ),
         );

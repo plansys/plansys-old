@@ -43,12 +43,26 @@ class HelpTutorialBab9 extends Form {
 					<p><a ng-url="/help/tutorial/bab16">SETTING MANAGEMENT</a> 	
 					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>											
 				</div>
+				<div class=\"judul_bab\">					
+					<h3 id="bab9">Bab IX. USER MANAGEMENT</h3>
+				</div>
+				<div class=\"sub_daftar_isi\">		
+					<table>
+						<td style="width:20%">
+							<a href="#9.1">9.1. Konsep User</a><br>
+							<a href="#9.2">9.2. Create User</a><br>
+							<a href="#9.3">9.3. Update User</a><br>
+							<a href="#9.4">9.4. Delete User</a><br>
+							<a href="#9.5">9.5. Audit Trail</a><br>							
+						</td>					
+					</table>
+				</div>				
 				<div class=\"isi\">
-					<h3>Bab IX. USER MANAGEMENT</h3>
-					<h4>9.1. Konsep User</h4>
+					<hr>
+					<h4 id="9.1">9.1. Konsep User</h4><a href="#bab9"><i> back to top >></i></a>
 					<p>Setelah dibuatkan role-role dalam sistem informasi, selanjutnya perlu dibuatkan user dan diberikan role yang sesuai dengan hak aksesnya dalam sistem informasi tersebut.
 
-					<h4>9.2. Create User</h4>
+					<h4 id="9.2">9.2. Create User</h4><a href="#bab9"><i> back to top >></i></a>
 					<p>Langkah-langkah untuk membuat user baru adalah sebagai berikut :
 					<ol><li>Pilh menu User >> pilih submenu User List
 							<p><img src="plansys/modules/help/img/9-2-1.png">
@@ -64,7 +78,7 @@ class HelpTutorialBab9 extends Form {
 						<li>Jika berhasil maka akan menuju halaman default page dari role yang ditempelkan pada user tersebut.
 					</ol>
 
-					<h4>9.3. Update User</h4>
+					<h4 id="9.3">9.3. Update User</h4><a href="#bab9"><i> back to top >></i></a>
 					<p>Langkah-langkah untuk memperbarui (update) user adalah sebagai berikut :
 					<ol><li>Pada halaman User List, tekan tombol Edit di sebelah kanan user yang akan perbarui
 							<p><img src="plansys/modules/help/img/9-3-1.png">
@@ -72,7 +86,7 @@ class HelpTutorialBab9 extends Form {
 							<p><img src="plansys/modules/help/img/9-3-2.png">
 					</ol>
 					 
-					<h4>9.4. Delete User</h4>
+					<h4 id="9.4">9.4. Delete User</h4><a href="#bab9"><i> back to top >></i></a>
 					<p>Langkah-langkah untuk menghapus user adalah sebagai berikut :
 					<ol><li>Pada halaman yang sama dengan halaman untuk Update User.
 						<li>Lalu klik tombol Hapus ( ) >> maka akan muncul pop up konfirmasi menghapus role, ketik DELETE >> klik OK	
@@ -80,7 +94,7 @@ class HelpTutorialBab9 extends Form {
 					</ol>
 					 
 
-					<h4>9.5. Audit Trail</h4>
+					<h4 id="9.5">9.5. Audit Trail</h4><a href="#bab9"><i> back to top >></i></a>
 					<p>Audit Trail digunakan untuk menyimpan history aktifitas user dalam aplikasi sistem informasi ini. Sehingga setiap aktifitas user dalam membuat/menambahkan data baru, mengedit, menghapus data akan terekam dalam sistem termasuk kapan waktu aktifitas tersebut dilakukan. Audit Trail ini hanya digunakan untuk menyimpan history aktifitas user selain user yang memiliki role Developer. Jadi, aktifitas user dengan role Developer tidak akan ada history aktifitasnya dalam aplikasi sistem informasi ini.
 					<p>Untuk melihat history aktifitas user adalah sebagai berikut :
 					<ol><li>Setelah user berhasil login, pilih Nama User di sebelah kiri pojok atas >> pilih Edit Profile.
@@ -89,12 +103,9 @@ class HelpTutorialBab9 extends Form {
 							<p><img src="plansys/modules/help/img/9-5-2.png">
 						<li>Daftar history aktifitas tersebut dapat difilter berdasarkan Date, Type, Description, atau Pathinfo.
 					</ol>
-
-				<div>
-				
+				</div>				
 				',
             ),
         );
     }
-
 }

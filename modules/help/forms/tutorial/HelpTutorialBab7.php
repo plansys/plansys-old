@@ -43,22 +43,34 @@ class HelpTutorialBab7 extends Form {
 					<p><a ng-url="/help/tutorial/bab16">SETTING MANAGEMENT</a> 	
 					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>											
 				</div>
+				<div class=\"judul_bab\">					
+					<h3 id="bab7">Bab VII. CONTROLLER MANAGEMENT</h3>	
+				</div>
+				<div class=\"sub_daftar_isi\">		
+					<table>
+						<td style="width:20%">
+							<a href="#7.1">7.1. Konsep Controller</a><br>
+							<a href="#7.2">7.2. Create Controller</a><br>
+							<a href="#7.3">7.3. Delete Controller</a><br>							
+						</td>
+					</table>
+				</div>				
 				<div class=\"isi\">
-					<h3>Bab VII. CONTROLLER MANAGEMENT</h3>
-					<h4>7.1. Konsep Controller</h4>
+					<hr>
+					<h4 id="7.1">7.1. Konsep Controller</h4><a href="#bab7"><i> back to top >></i></a>
 					<p>Controller bertugas untuk merender Form dari alamat URL yang didefinisikan. Controller berisi beberapa Action yang dimana masing-masing Action berisi perintah untuk merender sebuah Form. Sehingga pada sebuah Controller dapat berisi beberapa Action. Susunan pada url yang dipanggil melalui web browser adalah :
 server/nama_si/index.php?r=/nama_module/nama_controller/nama_action
 					<p><img src="plansys/modules/help/img/7-1.png">
 
-					<h4>7.2. Create Controller</h4>
+					<h4 id="7.2">7.2. Create Controller</h4><a href="#bab7"><i> back to top >></i></a>
 					<p>Sama seperti View, Plansys dapat membuatkan Controller secara otomatis melalui CRUD generator. Akan tetapi, tidak menutup kemungkinan perlu ada perubahan ataupun penambahan. 
 					<h5>(a). Menggunakan Module</h5>
 					<p>Langkah untuk membuat controller adalah sebagai berikut :
-					<ol><li>Pilih menu Form Builder  pilih Controller Builder
+					<ol><li>Pilih menu Form Builder >> pilih Controller Builder
 						<p><img src="plansys/modules/help/img/7-2-a-1.png">
-						<li>Buka App  lalu klik kanan pada module (misal sdm)  klik New Controller 
+						<li>Buka App >> lalu klik kanan pada module (misal sdm) >> klik New Controller 
 						<p><img src="plansys/modules/help/img/7-2-a-2.png">
-						<li>Muncul kotak Generate New Controller, isikan nama controller pada Controller Name  klik Save.
+						<li>Muncul kotak Generate New Controller, isikan nama controller pada Controller Name >> klik Save.
 						<p><img src="plansys/modules/help/img/7-2-a-3.png">
 						<li>Jika berhasil, akan tampil Controller yang telah dibuat pada daftar controller (sebelah kiri) dan isi script controller tersebut dapat diEdit pada editor (sebelah kanan).
 						<li>Tekan CTRL + S untuk menyimpan perubahan script.
@@ -66,21 +78,21 @@ server/nama_si/index.php?r=/nama_module/nama_controller/nama_action
 
 					<h5>(b). Tanpa Menggunakan Module</h5>
 					<p>Langkah untuk membuat controller adalah sebagai berikut :
-					<ol><li>Pilih menu Form Builder  pilih Controller Builder
+					<ol><li>Pilih menu Form Builder >> pilih Controller Builder
 							<p><img src="plansys/modules/help/img/7-2-b-1.png">
-						<li>Lalu klik kanan pada App  klik New Controller 
+						<li>Lalu klik kanan pada App >> klik New Controller 
 							<p><img src="plansys/modules/help/img/7-2-b-2.png">
-						<li>Muncul kotak Generate New Controller, isikan nama controller pada Controller Name  klik Save.
+						<li>Muncul kotak Generate New Controller, isikan nama controller pada Controller Name >> klik Save.
 							<p><img src="plansys/modules/help/img/7-2-b-3.png">
 						<li>Jika berhasil, akan tampil Controller yang telah dibuat pada daftar controller (sebelah kiri) dan isi script controller tersebut dapat diEdit pada editor (sebelah kanan).
 							<p><img src="plansys/modules/help/img/7-2-b-4.png">
 						<li>Tekan CTRL + S untuk menyimpan perubahan script.
 					</ol>
 					
-					<h4>7.3. Delete Controller</h4>
+					<h4 id="7.3">7.3. Delete Controller</h4><a href="#bab7"><i> back to top >></i></a>
 					<h5>(a). Menggunakan Module</h5>
 					<p>Langkah untuk menghapus (Delete) Controller yang tidak digunakan, caranya adalah sebagai berikut :
-					<ol><li>Buka Controller List  buka App  pilih module.
+					<ol><li>Buka Controller List >> buka App >> pilih module.
 						<li>Klik kanan pada controller yang akan dihapus.
 							<p><img src="plansys/modules/help/img/7-3-a-2.png">
 						<li>Pilih Delete.
@@ -90,20 +102,17 @@ server/nama_si/index.php?r=/nama_module/nama_controller/nama_action
 
 					<h5>(b). Tanpa Menggunakan Module</h5>
 					<p>Langkah untuk menghapus (Delete) Controller yang tidak digunakan, caranya adalah sebagai berikut :
-					<ol><li>Buka Controller List  buka App.
+					<ol><li>Buka Controller List >> buka App.
 						<li>Klik kanan pada controller yang akan dihapus.
 							<p><img src="plansys/modules/help/img/7-3-b-2.png">
 						<li>Pilih Delete.
 						<li>Akan muncul kotak konfirmasi penghapusan, ketikkan DELETE.
 							<p><img src="plansys/modules/help/img/7-3-b-4.png">
 						<li>Lalu klik OK untuk menghapus Controller tersebut.
-					</ol>
-					
-				</div>
-				
+					</ol>					
+				</div>				
 				',
             ),
         );
     }
-
 }

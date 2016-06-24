@@ -183,7 +183,6 @@ class HelpTutorialBab5 extends Form {
 						<li>Pilih icon Change untuk mengubah data tersebut, pada halaman Update ganti data yang diperlukan >> Klik Save.
 						<p><img src="plansys/modules/help/img/5-5-3-2.png">
 					</ol>
-
 					<h5>5.5.4. Delete</h5>
 					<p>Langkah-langkah untuk menghapus data (Delete) sebagai berikut :
 					<ol><li>Pada halaman halaman Divisi Index, di sebelah kanan data dalam tabel pilih icon Delete untuk menghapus data. Akan muncul pop up konfirmasi penghapusan data, klik OK.
@@ -191,14 +190,9 @@ class HelpTutorialBab5 extends Form {
 						<li>Sistem akan kembali ke halaman index, dan terdapat pesan bahwa data berhasil dihapus.
 						<p><img src="plansys/modules/help/img/5-5-4-2.png">
 					</ol>
-
-
-
-				</div>
-				
+				</div>				
 				',
             ),
         );
     }
-
 }

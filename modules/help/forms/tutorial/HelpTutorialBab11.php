@@ -43,9 +43,20 @@ class HelpTutorialBab11 extends Form {
 					<p><a ng-url="/help/tutorial/bab16">SETTING MANAGEMENT</a> 	
 					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>											
 				</div>
+				<div class=\"judul_bab\">					
+					<h3 id="bab11">Bab XI. ACCESS PERMISSIONS </h3>
+				</div>
+				<div class=\"sub_daftar_isi\">		
+					<table>
+						<td style="width:20%">
+							<a href="#11.1">11.1. Membatasi Akses Module</a><br>
+							<a href="#11.2">11.2. Membatasi Akses View (Form/Index)</a><br>							
+						</td>					
+					</table>
+				</div>				
 				<div class=\"isi\">
-					<h3>Bab XI. ACCESS PERMISSIONS </h3>
-					<h4>11.1. Membatasi Akses Module</h4>
+					<hr>					
+					<h4 id="11.1">11.1. Membatasi Akses Module</h4><a href="#bab11"><i> back to top >></i></a>
 					<p>Selain dengan menutup akses module secara default, perlu mengatur/memilih role dan user mana saja yang  diperbolehkan mengakses suatu module. Langkah-langkah untuk mengatur akses suatu module adalah sebagai berikut :
 					<ol><li>Buka Module Builder  buka App  klik kanan pada module (misal: gudang)  klik Open New Tab maka akan menuju halaman module gudang.
 					 		<p><img src="plansys/modules/help/img/11-1-1.png"> 
@@ -78,7 +89,7 @@ class HelpTutorialBab11 extends Form {
 								<li>Jika role Allow, tapi ingin membantasi sebagin user ya pilih user unutuk Deny. Jik tidak ada user yg di deny, maka semua user akan allow
 					</ol>
 					
-					<h4>11.2. Membatasi Akses View (Form/Index)
+					<h4 id="11.2">11.2. Membatasi Akses View (Form/Index)</h4><a href="#bab11"><i> back to top >></i></a>
 					<p>Setelah mematasi akses suatu modul, pembatasn akses juga perlu diberikan ke suatu view (form/index). Misalnya, dalam satu module terdapat 2 role (kepala dan admin). Tentunya perlu ada perbedaan view (form/index) untuk kepala dan admin. Sebagai contoh, berikut pemberian batasan akses ke user kagud1 dan admin1. 
 						<ul><li>Menu user kagud1 : Dashboard, Dashboard, Stok, Brg Masuk, Brg Keluar, Supplier, Laporan.
 							<li>Menu user admin1 : Stok, Brg Masuk, Brg Keluar, Supplier, Laporan.
@@ -108,7 +119,7 @@ class HelpTutorialBab11 extends Form {
 						<li>Maka ketika user yang tidak memiliki role gudang.kagud (misal: user admin1) maka akan muncul tampilan berikut dan view (form/index) supplier tidak akan dapat diakses oleh user tersebut dengan melalui url.
 							<p><img src="plansys/modules/help/img/11-2-8.png"> 
 					 </ol>
-				<div>		
+				</div>		
 				',
             ),
         );

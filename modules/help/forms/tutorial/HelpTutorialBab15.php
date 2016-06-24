@@ -43,9 +43,20 @@ class HelpTutorialBab15 extends Form {
 					<p><a ng-url="/help/tutorial/bab16">SETTING MANAGEMENT</a> 	
 					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>											
 				</div>
+				<div class=\"judul_bab\">					
+					<h3 id="bab15">Bab XV. DATABASE MANAGEMENT</h3>
+				</div>
+				<div class=\"sub_daftar_isi\">		
+					<table>
+						<td style="width:20%">
+							<a href="#15.1">15.1. Backup</a><br>
+							<a href="#15.2">15.2. Import</a><br>							
+						</td>					
+					</table>
+				</div>				
 				<div class=\"isi\">
-					<h3>Bab XV. DATABASE MANAGEMENT</h3>
-					<h4>15.1. Backup</h4>
+					<hr>					
+					<h4 id="15.1">15.1. Backup</h4><a href="#bab15"><i> back to top >></i></a>
 					<p>Langkah-langkah untuk melakukan proses backup database adalah sebagai berikut :
 					<ol><li>Buka server/phpmyadmin/adminer.php kemudian login dengan mengisi username, password, dan database  tekan tombol Login.
 					 		<p><img src="plansys/modules/help/img/15-1-1.png"> 
@@ -57,7 +68,7 @@ class HelpTutorialBab15 extends Form {
 						<li>Klik tombol Export.
 					</ol>			
 
-					<h4>15.2. Import</h4>
+					<h4 id="15.2">15.2. Import</h4><a href="#bab15"><i> back to top >></i></a>
 					<p>Langkah-langkah untuk melakukan proses import database adalah sebagai berikut :
 					<ol><li>Buka server/phpmyadmin/adminer.php kemudian login dengan mengisi username, dan password  tekan Login
 							<p><img src="plansys/modules/help/img/15-2-1.png"> 
@@ -67,7 +78,7 @@ class HelpTutorialBab15 extends Form {
 					 		<p><img src="plansys/modules/help/img/15-2-3.png"> 
 						<li>Tekan Execute untuk menjalankan proses import database.
 					</ol>
-				<div>				
+				</div>				
 				',
             ),
         );

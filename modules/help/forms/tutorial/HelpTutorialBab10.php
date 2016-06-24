@@ -43,13 +43,27 @@ class HelpTutorialBab10 extends Form {
 					<p><a ng-url="/help/tutorial/bab16">SETTING MANAGEMENT</a> 	
 					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>											
 				</div>
+				<div class=\"judul_bab\">					
+					<h3 id="bab10">Bab X. MENU TREE EDITOR</h3>
+				</div>
+				<div class=\"sub_daftar_isi\">		
+					<table>
+						<td style="width:20%">
+							<a href="#10.1">10.1. Konsep Menu Tree</a><br>
+							<a href="#10.2">10.2. Create Menu</a><br>
+							<a href="#10.3">10.3. Update Menu</a><br>
+							<a href="#10.4">10.4. Delete Menu</a><br>
+							<a href="#10.5">10.5. Memasang Menu pada Role</a><br>							
+						</td>					
+					</table>
+				</div>				
 				<div class=\"isi\">
-					<h3>Bab X. MENU TREE EDITOR</h3>
-					<h4>10.1. Konsep Menu Tree Editor</h4>
+					<hr>					
+					<h4 id="10.1">10.1. Konsep Menu Tree Editor</h4><a href="#bab10"><i> back to top >></i></a>
 					<p>Sebelum dibuatkan menu, setiap user yang akan dibuatkan nantinya hanya dapat log ini tapi tidak memiliki menu dalam aplikasi sistem informasi ini. Jika belum dibuatkan menu, setelah user berhasil login, halaman yang akan menuju halaman dengna url Home Page. Sebagai contoh log in user Manjaer SDM dengan role manajersdm dimana role tersebut memiliki Home Page /sdm/anggota, maka setelah user manajersdm log in akan menuju halaman seperti di bawah ini :
 					<p><img src="plansys/modules/help/img/10-1.png"> 
 
-					<h4>10.2. Create Menu</h4>
+					<h4 id="10.2">10.2. Create Menu</h4><a href="#bab10"><i> back to top >></i></a>
 					<h5>(a). Menggunakan Module</h5>
 					<p>Langkah-langkah untuk membuat menu adalah sebagai berikut :
 					<ol><li>Login sebagai Dev.
@@ -108,7 +122,7 @@ class HelpTutorialBab10 extends Form {
 						<li>Langkah selanjutnya, menempelkan menu ini ke role agar user yang memiliki role tersebut dapat membuka menu ini.  <silahkan lihat Bagian 10.5. Memasang Menu pada Role>
 					</ol>
 					
-					<h4>10.3. Update Menu</h4>
+					<h4 id="10.3">10.3. Update Menu</h4><a href="#bab10"><i> back to top >></i></a>
 					<h5>(a). Menggunakan Module</h5>
 					<p>Untuk mengupdate menu, buka halaman yang sama dengan membuat menu. Langkah-langkahnya adalah sebagai berikut :					
 					<ol><li>Login sebagai Dev >> buka menu Builder >> pilih Menu Tree Editor >> buka induk menu yang akan diEdit (misal menu SDM).
@@ -137,7 +151,7 @@ class HelpTutorialBab10 extends Form {
 							<p><img src="plansys/modules/help/img/10-3-b-5.png"> 
 					</ol> 
 
-					<h4>10.4. Delete Menu</h4>
+					<h4 id="10.4">10.4. Delete Menu</h4><a href="#bab10"><i> back to top >></i></a>
 					<h5>(a). Menggunakan Module</h5>
 					<p>Langkah untuk menghapus menu adalah sebagai berikut :
 					<ol><li>Login sebagai Dev >> buka menu Builder >> pilih Menu Tree Editor.
@@ -164,7 +178,7 @@ class HelpTutorialBab10 extends Form {
 						<li>Klik OK pada dialog konfirmasi penghapusan menu.
 					</ol>
 
-					<h4>10.5. Memasang Menu pada Role</h4>
+					<h4 id="10.5">10.5. Memasang Menu pada Role</h4><a href="#bab10"><i> back to top >></i></a>
 					<p>Menu yang telah dibuat harus dipasangkan/ditempelkan pada role agar dapat dibuka di halaman web. 
 					<ol><li>Buka halaman daftar role, klik pada tombol Edit (tombol biru   di sebelah kanan) pada salah satu role yang akan diupdate.
 							<p><img src="plansys/modules/help/img/10-5-1.png"> 
@@ -178,7 +192,7 @@ class HelpTutorialBab10 extends Form {
 						<li>Log in dengan user yang memiliki role manajersdm maka akan memiliki menu SDM yang telah dipasangkan/ditempelkan tadi seperti di bawah ini :
 							<p><img src="plansys/modules/help/img/10-5-6.png"> 
 					</ol> 
-				<div>				
+				</div>				
 				',
             ),
         );

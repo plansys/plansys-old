@@ -43,12 +43,25 @@ class HelpTutorialBab8 extends Form {
 					<p><a ng-url="/help/tutorial/bab16">SETTING MANAGEMENT</a> 	
 					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>											
 				</div>
+				<div class=\"judul_bab\">					
+					<h3 id="bab8">Bab VIII. ROLE MANAGEMENT</h3>
+				</div>
+				<div class=\"sub_daftar_isi\">		
+					<table>
+						<td style="width:20%">
+							<a href="#8.1">8.1. Konsep Role</a><br>
+							<a href="#8.2">8.2. Create Role</a><br>
+							<a href="#8.3">8.3. Update Role</a><br>
+							<a href="#8.4">8.4. Delete Role</a><br>
+						</td>					
+					</table>
+				</div>		
 				<div class=\"isi\">
-					<h3>Bab VIII. ROLE MANAGEMENT</h3>
-					<h4>8.1. Konsep Role</h4>
+					<hr>
+					<h4 id="8.1">8.1. Konsep Role</h4><a href="#bab8"><i> back to top >></i></a>
 					<p>Role merupakan peran seorang user. Sistem informasi yang akan diakses oleh beberapa user akan diatur hak akses masing-masing user berdasarkan peran (role) yang menjadi haknya. Sebelum mengatur role untuk user, role yang akan digunakan dalam sistem informasi tersebut harus didefinisikan dan dibuatkan dengan jelas dalam sistem.
 
-					<h4>8.2. Create Role</h4>
+					<h4 id="8.2">8.2. Create Role</h4><a href="#bab8"><i> back to top >></i></a>
 					<p>Untuk membuat role baru, langkah-langkahnya adalah sebagai berikut : 
 					<ol><li>Pilih menu Users >> pilih submenu Role Manager.
 						<p><img src="plansys/modules/help/img/8-2-1.png">
@@ -60,24 +73,22 @@ class HelpTutorialBab8 extends Form {
 						<p><img src="plansys/modules/help/img/8-2-4.png">
 					</ol>
 
-					<h4>8.3. Update Role</h4>
+					<h4 id="8.3">8.3. Update Role</h4><a href="#bab8"><i> back to top >></i></a>
 					<p>User dapat melakukan update Role, langkahnya sebagai berikut :					
 					<ol><li>Buka halaman daftar role, klik pada tombol Edit (tombol biru di sebelah kanan) pada salah satu role yang akan diupdate.
 						<p><img src="plansys/modules/help/img/8-3-1.png">
 						<li>Setelah melakukan Edit, klik Save untuk menyimpan perubahan tersebut.
 					</ol>
 						 
-					<h4>8.4. Delete Role</h4>
+					<h4 id="8.4">8.4. Delete Role</h4><a href="#bab8"><i> back to top >></i></a>
 					<p>User menghapus role, langkahnya adalah sebagai berikut :
 					<ol><li>Tekan tombol Edit (tombol biru di sebelah kanan) pada salah satu role yang akan dihapus.
 						<li>Akan menuju halaman yang sama dengan update Role, lalu klik tombol Hapus >> maka akan muncul pop up konfirmasi menghapus role, ketik DELETE >> klik OK	
 						<p><img src="plansys/modules/help/img/8-4-2.png">
 					</ol>
-				<div>
-				
+				</div>				
 				',
             ),
         );
     }
-
 }

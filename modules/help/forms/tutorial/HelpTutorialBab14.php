@@ -43,12 +43,26 @@ class HelpTutorialBab14 extends Form {
 					<p><a ng-url="/help/tutorial/bab16">SETTING MANAGEMENT</a> 	
 					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>											
 				</div>
+				<div class=\"judul_bab\">					
+					<h3 id="bab14">Bab XIV. SERVICE MANAGEMENT </h3>
+				</div>
+				<div class=\"sub_daftar_isi\">		
+					<table>
+						<td style="width:20%">
+							<a href="#14.1">14.1. Konsep Service Management</a><br>
+							<a href="#14.2">14.2. Create Service</a><br>
+							<a href="#14.3">14.3. Run & Stop Service</a><br>
+							<a href="#14.4">14.4. Update Service</a><br>
+							<a href="#14.5">14.5. Delete Service</a><br>
+						</td>					
+					</table>
+				</div>				
 				<div class=\"isi\">
-					<h3>Bab XIV. SERVICE MANAGEMENT </h3>
-					<h4>14.1. Konsep Service Management</h4>
+					<hr>
+					<h4 id="14.1">14.1. Konsep Service Management</h4><a href="#bab14"><i> back to top >></i></a>
 					<p>Service management merupakan suatu tools untuk mengelola background process untuk membantu berjalannya sistem informasi yang dikembangkan. 
 
-					<h4>14.2. Create Service</h4>
+					<h4 id="14.2">14.2. Create Service</h4><a href="#bab14"><i> back to top >></i></a>
 					<p>Langkah-langkah untuk membuat Service baru adalah sebagai berikut :
 					<ol><li>Login sebagai Dev
 						<li>Pada meu Builder, pilih submenu Service Manager. 
@@ -90,8 +104,9 @@ class HelpTutorialBab14 extends Form {
 							<p>Sebagai contoh isi service untuk mengirimkan email yang isinya mengambil dari email template berikut :
 							<p><img src="plansys/modules/help/img/14-2-11-ii.png"> 	 
 							<p>Setelah selesai mengedit script dan simpan dengan menekan CTRL + S.
+					</ol>
 
-					<h4>14.3. Run & Stop Service</h4>
+					<h4 id="14.3">14.3. Run & Stop Service</h4><a href="#bab14"><i> back to top >></i></a>
 					<p>Buka Service Manager >> pilih service yang akan dijalankan atau dimatikan, klik Edit Code. Lalu akan membuka script service melalui editor. Untuk menjalankan (Run) atau menghentikan (Stop) service, caranya sebagai berikut :
 					<ol><li>Tekan Run untuk menjalankan service.
 						 	<p><img src="plansys/modules/help/img/14-3-1.png"> 	 
@@ -99,9 +114,9 @@ class HelpTutorialBab14 extends Form {
 							<p><img src="plansys/modules/help/img/14-3-1.png"> 	 
 					 </ol>
 
-					<h4>14.4. Update Service</h4>
+					<h4 id="14.4">14.4. Update Service</h4><a href="#bab14"><i> back to top >></i></a>
 					<p>Langkah-langkah untuk memperbarui/mengupdate service adalah sebagai berikut :
-					<lo><li>Buka Service Manager
+					<ol><li>Buka Service Manager
 						<li>Pilih service yang akan diUpdate >>klik Edit Code
 						<li>Jika service sedang berjalan, matikan service terlebih dahulu dengan menekan tombol Stop.
 					 		<p><img src="plansys/modules/help/img/14-4-3.png"> 	 
@@ -111,7 +126,7 @@ class HelpTutorialBab14 extends Form {
 					 		<p><img src="plansys/modules/help/img/14-4-3.png"> 	 
 					</ol>
 					
-					<h4>14.5. Delete Service</h4>
+					<h4 id="14.5">14.5. Delete Service</h4><a href="#bab14"><i> back to top >></i></a>
 					<p>Untuk menghapus Service yang tidak dipakai adalah sebagai berikut :
 					<ol><li>Buka Service Manager >> pilih Service yang akan dihapus, klik Edit Code.
 					 		<p><img src="plansys/modules/help/img/14-5-1.png"> 	 
@@ -122,7 +137,7 @@ class HelpTutorialBab14 extends Form {
 						<li>Akan muncul pop up konfirmasi delete service, ketikkan DELETE >> klik OK.
 							<p><img src="plansys/modules/help/img/14-5-4.png"> 	 
 					 </ol>
-				<div>				
+				</div>				
 				',
             ),
         );
