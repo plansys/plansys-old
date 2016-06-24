@@ -43,9 +43,22 @@ class HelpTutorialBab4 extends Form {
 					<p><a ng-url="/help/tutorial/bab16">SETTING MANAGEMENT</a> 	
 					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>											
 				</div>
+				<div class=\"judul_bab\">					
+					<h3 id="bab4">Bab IV. MODEL MANAGEMENT</h3>
+				</div>
+				<div class=\"sub_daftar_isi\">		
+					<table>
+						<td style="width:20%">
+							<a href="#4.1">4.1. Konsep Model</a><br>
+							<a href="#4.2">4.2. Create Model</a><br>
+							<a href="#4.3">4.3. Update Model</a><br>
+							<a href="#4.4">4.4. Delete Model</a><br>
+						</td>
+					</table>	
+				</div>
 				<div class=\"isi\">
-					<h3>Bab IV. MODEL MANAGEMENT</h3>
-					<h4>4.1. Konsep Model</h4>
+					<hr>					
+					<h4 id="4.1">4.1. Konsep Model</h4><a href="#bab4"><i> back to top >></i></a>
 					<p>Model merupakan representative dari Reational Database yang terbentuk dari relasi antar tabel (termasuk Primary Key, Foreign Key, dan lainnya). Model berisi informasi kolom-kolom dan tiap kolom dapat diberikan rule. Model terdiri dari beberapa bagian sebagai berikut : 
 					<table>
 						<tr><td>~</td><td>Rule</td>
@@ -68,7 +81,7 @@ class HelpTutorialBab4 extends Form {
 						</tr>
 					</table>
 
-					<h4>4.2.	Create Model</h4>
+					<h4 id="4.2">4.2. Create Model</h4><a href="#bab4"><i> back to top >></i></a>
 					<p>Setelah login dengan username ‘dev’ yang memiliki akses sebagai developer, kita harus membuat Model sebelum View/Form dan Controller. Langkah-langkahnya sebagai berikut :
 					<ol>
 						<li>Pada halaman Plansys, pilih menu Builder, pilih submenu Model Builder.
@@ -80,7 +93,7 @@ class HelpTutorialBab4 extends Form {
 					</ol>
 
 					
-					<h4>4.3.	Update Model</h4>
+					<h4 id="4.3">4.3. Update Model</h4><a href="#bab4"><i> back to top >></i></a>
 					<p>Cara memperbarui (update) Model dapat dilakukan dengan 2 cara yaitu :
 					<ul><li>Jika ingin melakukan update untuk beberapa data, dapat dilakukan dengan cara mengedit secara manual melalui editor yang disediakan.
 						<li>Jika ingin melakukan memperbarui seluruh data dalam Model tersebut, dapat dilakukan dengan cara membuat baru Model yang sama dan sistem akan me-replace Model yang lama tersebut. Pilihan ini juga berlaku ketika ada perubahan kolom dalam tabel database berupa penambahan relasi.
@@ -91,7 +104,7 @@ class HelpTutorialBab4 extends Form {
 						<li>Model ini digenerate langsung dari table yang telah dibuat di database. Tekan Ctrl+S untuk menyimpan perubahan/melakukan update. 
 					</ol>
 					
-					<h4>4.4.	Delete Model</h4>
+					<h4 id="4.4">4.4. Delete Model</h4><a href="#bab4"><i> back to top >></i></a>
 					<p>Langkah untuk menghapus (Delete) Model yang tidak digunakan sebagai berikut :
 					<ol><li>Masuk ke menu Builder >> sub menu Model
 						<li>Klik App >> Klik kanan pada model yang ingin dihapus >> pilih Delete Model.

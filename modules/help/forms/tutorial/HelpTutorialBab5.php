@@ -43,12 +43,26 @@ class HelpTutorialBab5 extends Form {
 					<p><a ng-url="/help/tutorial/bab16">SETTING MANAGEMENT</a> 	
 					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>											
 				</div>
+				<div class=\"judul_bab\">					
+					<h3 id="bab5">Bab V. CRUD GENERATOR</h3>
+				</div>
+				<div class=\"sub_daftar_isi\">		
+					<table>
+						<td style="width:20%">
+							<a href="#5.1">5.1. Konsep CRUD Generator</a><br>
+							<a href="#5.2">5.2. Create CRUD</a><br>
+							<a href="#5.3">5.3. Re-Create CRUD</a><br>
+							<a href="#5.4">5.4. Create RelForm</a><br>
+							<a href="#5.5">5.5. Pengelolaan CRUD</a><br>
+						</td>
+					</table>
+				</div>
 				<div class=\"isi\">
-					<h3>Bab V. CRUD GENERATOR</h3>
-					<h4>5.1.	Konsep CRUD Generator</h4>
+					<hr>
+					<h4 id="5.1">5.1. Konsep CRUD Generator</h4><a href="#bab5"><i> back to top >></i></a>
 					<p>Fungsi manipulasi data mencakup Create (Membuat data baru), Read (membaca data yang sudah ada), Update (memperbarui data), Delete (menghapus data). Agar fungsi CRUD dapat berjalan dengan baik, pada sistem informasi yang menggunakan framework MVC, perlu dibuatkan View dan Controllernya. Dengan menggunakan Plansys, View dan Controller untuk menjalankan fungsi CRUD tersebut akan dibuatkan secara otomatis oleh CRUD Generator.
 					
-					<h4>5.2.	Create CRUD</h4>
+					<h4 id="5.2">5.2. Create CRUD</h4><a href="#bab5"><i> back to top >></i></a>
 					<h5>(a). Menggunakan Module</h5>
 					<p>Langkah-langkahnya untuk membuat CRUD menggunakan CRUD Generator adalah sebagai berikut:
 					<ol><li>Sebelum menjalankan CRUD Generator, pastikan bahwa Model yang akan dibuatkan CRUD nya sudah dibuat melalui menu Model Builder.
@@ -92,7 +106,7 @@ class HelpTutorialBab5 extends Form {
 							</ul>
 					</ol>
 					
-					<h4>5.3.	Re-Create CRUD</h4>
+					<<h4 id="5.3">5.3. Re-Create CRUD</h4><a href="#bab5"><i> back to top >></i></a>
 					<h5>(a). Menggunakan Module</h5>
 					<p>Langkah-langkah untuk Re-Create CRUD adalah sebagai berikut :
 					<ol><li>Sebelum menjalankan CRUD Generator ulang, pastikan bahwa Model yang baru sudah dibuat  melalui menu Model Builder.
@@ -128,7 +142,7 @@ class HelpTutorialBab5 extends Form {
 							</ul>
 					</ol>
 					
-					<h4>5.4.	Create RelForm</h4>
+					<h4 id="5.4">5.4. Create RelForm</h4><a href="#bab5"><i> back to top >></i></a>
 					<p>RelForm merupakan form sekunder yang dipanggil melalui button dalam suatu form dan tidak dapat dibuka tanpa form primer tersebut. Sebagai contoh, ada 2 tabel yaitu tabel blog dan kategori. Dalam tabel blog  terdapat kolom kategori_id sebagai penghubung dalam relasi tabel blog dengan tabel kategori. Berikut adalah langkah-langkah untuk membuat RelForm tabel blog dengan tabel kategori : 
 					<ol><li>Jalankan CRUD generator melalui menu Form Builder. Pilih model yang menjadi model utama (misal: Blog).
 						<p><img src="plansys/modules/help/img/5-4-1.png">
@@ -148,7 +162,7 @@ class HelpTutorialBab5 extends Form {
 					</ol> 
 
 					
-					<h4>5.5.	Pengelolaan CRUD</h4>
+					<h4 id="5.5">5.5. Pengelolaan CRUD</h4><a href="#bab5"><i> back to top >></i></a>
 					<h5>5.5.1. Create</h5>
 					<p>Langkah-langkah untuk membuat data baru (Create) sebagai berikut :
 					<ol><li>Pada halaman halaman Divisi Index, klik tombol Tambah Divisi 

@@ -43,15 +43,27 @@ class HelpTutorialBab1 extends Form {
 					<p><a ng-url="/help/tutorial/bab16">SETTING MANAGEMENT</a> 	
 					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>											
 				</div>
+				<div class=\"judul_bab\">					
+					<h3 id="bab1">Bab I. INTRODUCTION</h3>				
+				</div>
+				<div class=\"sub_daftar_isi\">		
+					<table>
+						<td style="width:20%">
+							<a href="#1.1">1.1. Framework MVC</a><br>
+							<a href="#1.2">1.2. Plansys Beta</a><br>
+							<a href="#1.3">1.3. Plansys Installation</a><br>
+						</td>					
+					</table>
+				</div>				
 				<div class=\"isi\">
-					<h3>Bab I. INTRODUCTION</h3>
-					<h4>1.1. Framework MVC</h4>
+					<hr>
+					<h4 id="1.1">1.1. Framework MVC</h4><a href="#bab1"><i> back to top >></i></a>
 					<p>Framework MVC (Model, View, Controller) merupakan kerangka kerja dalam mengembangkan sebuah sistem informasi yang menggunakan bahasa pemrograman PHP. MVC adalah singkatan dari Model, View, Controller. Tanpa menggunakan framework MVC, proses pengembangan sistem informasi akan membutuhkan waktu lebih lama. Dengan menggunakan kerangka kerja, proses pengembangan sistem informasi akan lebih mudah, efektif, dan efisien. Kerangka kerja ini sangat membantu apalagi jika sistem informasi yang akan dikembangkan bersifat kompleks yang akan membutuhkan resource waktu yang lama. Ada beberapa framework PHP yang menerapkan pola MVC antara lain Yii, Laravel, Code Igniter, Symphony, dan lainnya.
 	
-					<h4>1.2. Plansys Beta</h4>
+					<h4 id="1.2">1.2. Plansys Beta</h4><a href="#bab1"><i> back to top >></i></a>
 					<p>Plansys merupakan tool untuk mengembangkan sistem informasi. Plansys ini dibangun menggunakan framework Yii versi 1. Kunci utama Plansys terletak pada Relational Database artinya modal awal dalam mengembangkan sistem informasi dengan menggunakan Plansys adalah relasi antar table dalam database sistem informasi tersebut. Sampai saat ini pengembangan tool ini masih dalam tahap Plansys Beta.
 
-					<h4>1.3. Plansys Installation</h4>
+					<h4 id="1.3">1.3. Plansys Installation</h4><a href="#bab1"><i> back to top >></i></a>
 					<p>Langkah untuk menginstall plansys cukup mudah. Sebagai contoh dalam Plansys Guide ini diinstall pada Personal Computer dan menggunakan localhost sebagai server. 
 					Sistem yang digunakan dalam panduan ini adalah sebagai berikut :
 						<ul> 

@@ -5,11 +5,23 @@
 	background-color: white;
 	box-shadow: 3px 3px 3px #888888;						
 	margin:10px;	
-	font-size:12px;	
-	
+	font-size:12px;		
 }
-a:hover{
-	font-size: 110%;
+.judul_bab{	
+	float: left;	
+	padding:10px;
+	margin-left:10px;	
+	font-size:12px;	
+}
+.sub_daftar_isi{		
+	float: left;
+	width: 1070px;		
+	background-color: white;	
+	margin-left:20px;
+	font-size:12px;			
+}
+
+a:hover{	
 	background-color: yellow;	
 
 }
@@ -42,4 +54,16 @@ h6{
 img {
     max-width: 60%;
     height: auto;
+}
+.home_screen{
+	padding: 10px;	
+	max-width:100%;	
+	max-height:100%;
+	background-color: white;
+	box-shadow: 3px 3px 3px #888888;						
+	margin-top:100px;	
+	margin-bottom:100px;						
+	margin-right:300px;	
+	margin-left:300px;	
+	font-size:12px;		
 }

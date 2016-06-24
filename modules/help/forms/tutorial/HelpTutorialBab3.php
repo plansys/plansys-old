@@ -43,12 +43,24 @@ class HelpTutorialBab3 extends Form {
 					<p><a ng-url="/help/tutorial/bab16">SETTING MANAGEMENT</a> 	
 					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>											
 				</div>
+				<div class=\"judul_bab\">					
+					<h3 id="bab3">Bab III. MODULE MANAGEMENT</h3>
+				</div>
+				<div class=\"sub_daftar_isi\">		
+					<table>
+						<td><a href="#3.1">3.1. Konsep Module</a><br>
+							<a href="#3.2">3.2. Create Module</a><br>
+							<a href="#3.3">3.3. Update Module</a><br>
+							<a href="#3.4">3.4. Delete Module</a><br>
+						</td>					
+					</table>
+				</div>
 				<div class=\"isi\">
-					<h3>Bab III. MODULE MANAGEMENT</h3>
-					<h4>3.1.	Konsep Module Management</h4>
+					<hr>
+					<h4 id="3.1">3.1. Konsep Module Management</h4><a href="#bab3"><i> back to top >></i></a>   
 					<p>Modul merupakan pengelompokkan satu paket model, view, dan controller (MVC). Dalam pengembangan aplikasi sistem informasi menggunakan tool Plansys, dapat menerapkan penggunaan module maupun tidak. Dengan menggunakan Module, pengembangan aplikasi sistem informasi selanjutnya akan lebih mudah karena struktur sistem sudah terstruktur. Dalam sistem informasi, module dapat mewakili sebuah bagian dalam organisasi perusahaan. Misalnya dalam perusahaan terdapat bagian SDM, Keuangan, Pemasaran, dan lain sebagainya. Penggunaan module dalam aplikasi sistem informasi berdasarkan masing-masing bagian tersebut dapat membangun sistem aplikasi yang terstruktur, yaitu terdapat module SDM, module Keuangan, dan modul lainnya. Maka dari itu, kami sangat merekomendasikan untuk menggunakan Module dalam pengembangan aplikasi system informasi.
 	
-					<h4>3.2.	Create Module</h4>
+					<h4 id="3.2">3.2. Create Module</h4><a href="#bab3"><i> back to top >></i></a>   
 					<p>Langkah-langkah untuk membuat module adalah sebagai berikut :
 					<ol>
 						<li>Buka menu Builder >> pilih Module Builder
@@ -61,7 +73,7 @@ class HelpTutorialBab3 extends Form {
 						<li>Untuk pembahasan access permissions terhadap suatu module, silahkan lihat di BAB XI. Access Permissions.
 					</ol>
 
-					<h4>3.3. Update Module</h4>
+					<h4 id="3.3">3.3. Update Module</h4><a href="#bab3"><i> back to top >></i></a>   
 					<p>Langkah-langkah untuk memperbarui (update) module adalah sebagai berikut :
 					<ol>
 						<li>Buka menu Builder >> pilih Module Builder >> klik App >> klik kanan pada module yang akan diEdit >> pilih Open New Tab.
@@ -72,7 +84,7 @@ class HelpTutorialBab3 extends Form {
 						<li>Pada tab Access Control berisi pengaturan hak akses, baik pengaturan Role Access maupun User Access.
 					</ol>
 					
-					<h4>3.4. Delete Module</h4>   
+					<h4 id="3.4">3.4. Delete Module</h4><a href="#bab3"><i> back to top >></i></a>   
 					<p>Langkah-langkah untuk menghapus module adalah sebagai berikut :
 					<ol>
 						<li>Buka menu Builder >> pilih Module Builder >> klik App.

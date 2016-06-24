@@ -42,12 +42,83 @@ class HelpTutorialBab6 extends Form {
 					<p><a ng-url="/help/tutorial/bab15">DATABASE MANAGEMENT</a> 
 					<p><a ng-url="/help/tutorial/bab16">SETTING MANAGEMENT</a> 	
 					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>											
+				</div>							
+				<div class=\"judul_bab\">
+					<h3 id="bab6">Bab VI. VIEW MANAGEMENT</h3>
+				</div>
+				<div class=\"sub_daftar_isi\">		
+					<table>
+						<td style="width:20%">
+							<a href="#6.1">6.1. Konsep View</a><br>
+							<a href="#6.2">6.2. Create View</a><br>	
+							<a href="#6.3">6.3. Delete View</a><br>
+							<a href="#6.4">6.4. Customize Index</a><br>
+							<a href="#6.4.1">6.4.1. Column Width</a><br>
+							<a href="#6.4.2">6.4.2. Change & Delete Button</a><br>
+							<a href="#6.4.3">6.4.3. Agregat (Count)</a>	<br>
+							<a href="#6.4.4">6.4.4. Show Data Source Result</a><br>
+							<a href="#6.4.5">6.4.5. Custom GridView</a><br>
+							<a href="#6.5">6.5. Toolbar components</a><br>	
+							<a href="#6.5.1">6.5.1. Layout</a><br>	
+							<a href="#6.5.1.1">6.5.1.1. Ace Editor</a><br>							
+						</td>
+						<td style="width:20%">						
+							<a href="#6.5.1.2">6.5.1.2. Action Bar</a><br>	
+							<a href="#6.5.1.3">6.5.1.3. Columns</a><br>	
+							<a href="#6.5.1.4">6.5.1.4. Example Field</a><br>
+							<a href="#6.5.1.5">6.5.1.5. Popup Window</a><br>	
+							<a href="#6.5.1.6">6.5.1.6. Section Header</a><br>
+							<a href="#6.5.1.7">6.5.1.7. Text / HTML</a><br>	
+							<a href="#6.5.2">6.5.2. Charts</a><br>	
+							<a href="#6.5.2.1">6.5.2.1. Area Chart</a><br>							
+							<a href="#6.5.2.2">6.5.2.2. Bar Chart</a><br>	
+							<a href="#6.5.2.3">6.5.2.3. Chart Group</a><br>	
+							<a href="#6.5.2.4">6.5.2.4. Line Chart</a><br>	
+							<a href="#6.5.2.5">6.5.2.5. Pie Chart</a><br>	
+						</td>
+						<td style="width:20%">							
+							<a href="#6.5.3">6.5.3. User Interface</a><br>	
+							<a href="#6.5.3.1">6.5.3.1. Checkbox List</a><br>	
+							<a href="#6.5.3.2">6.5.3.2. Color Picker</a><br>
+							<a href="#6.5.3.3">6.5.3.3. Date Time Picker</a><br>	
+							<a href="#6.5.3.4">6.5.3.4. Drop Down List</a><br>	
+							<a href="#">6.5.3.5. Hidden Field</a><br>							
+							<a href="#">6.5.3.6. Icon Picker</a><br>	
+							<a href="#">6.5.3.7. Label Field</a><br>	
+							<a href="#">6.5.3.8. Link Button</a><br>	
+							<a href="#">6.5.3.9. Radio Button List</a><br>	
+							<a href="#">6.5.3.10. Relation Field</a><br>	
+							<a href="#">6.5.3.11. Repo Browser</a><br>	
+						</td>
+						<td style="width:20%">							
+							<a href="#">6.5.3.12. Submit</a><br>	
+							<a href="#">6.5.3.13. Tag Field</a><br>	
+							<a href="#">6.5.3.14. Text Area</a><br>	
+							<a href="#">6.5.3.15. Text Field</a><br>
+							<a href="#">6.5.3.16. Toggle Switch</a><br>	
+							<a href="#">6.5.3.17. Upload File</a><br>	
+							<a href="#6.5.4">6.5.4. Data & Tables</a><br>	
+							<a href="#6.5.4.1">6.5.4.1. Data Filter</a><br>	
+							<a href="#6.5.4.2">6.5.4.2. Data Source</a><br>	
+							<a href="#6.5.4.3">6.5.4.3. Expression Field</a><br>	
+							<a href="#6.5.4.4">6.5.4.4. GridView</a><br>	
+							<a href="#6.5.4.5">6.5.4.5. Key Value Grid</a><br>	
+						</td>											
+						<td style="width:20%">						
+							<a href="#6.5.4.6">6.5.4.6. List View</a><br>	
+							<a href="#6.5.4.7">6.5.4.7. Sql Criteria</a><br>														
+							<a href="#6.5.4.8">6.5.4.8. Sub Form</a><br>	
+							<a href="#6.6">6.6. Dashboard</a><br>	
+							<a href="#6.6.1">6.6.1. Create Dashboard Page</a><br>	
+							<a href="#6.7">6.7. Customize Login Form</a><br>
+						</td>					
+					</table>	
 				</div>
 				<div class=\"isi\">
-					<h3>Bab VI. VIEW MANAGEMENT</h3>
-					<h4>6.1. Konsep View</h4>
+					<hr>				
+					<h4 id="6.1">6.1. Konsep View</h4><a href="#bab6"><i> back to top >></i></a>
 					<p>View dalam Plansys  disajikan dalam 2 bentuk halaman yaitu Form dan Index. Halaman Form digunakan untuk menambahkan data (Create) dan halaman View digunakan untuk menampilkan data (Read) dari database. Form ini menampilkan field isian informasi yang didapatkan melalui Model. Form merupakan class PHP yang mengextend dari sebuah Model, maka kolom-kolom yang ada pada Model juga akan ada pada View (Form dan Index).
-					<h4>6.2. Create View</h4>
+					<h4 id="6.2">6.2. Create View</h4><a href="#bab6"><i> back to top >></i></a>
 					<p>Dengan menggunakan Plansys, View  (Index dan Form) dan Controller dapat di generate otomatis dari model yang dipilih dengan CRUD Generator. Akan tetapi jika ada kebutuhan untuk membuat form tambahan dapat dibuatkan form tambahan lagi. Sebelum membuat View (Form/Index) secara manual, Model dan Controllernya juga harus sudah dibuat terlebih dahulu.
 					<h5>(a). Menggunakan Module</h5>
 					<p>Langkah-langkah untuk membuat View tanpa menggunakan CRUD generator adalah sebagai berikut :
@@ -80,7 +151,7 @@ class HelpTutorialBab6 extends Form {
 						<p><img src="plansys/modules/help/img/6-2-a-i-11.png">
 						<li>Tambahkan field-field yang lain dan atur Properties dari masing-masing field-field tersebut. 
 					</ol>
-					<h6>a.ii. Membuat Index</h6>
+					<h6>a.ii. Membuat Index</h6><a href="#bab6"><i> back to top >></i></a>
 					<ol><li>Buka menu Form Builder >> pilih module >> pilih folder (misal: keahlian) >> pilih index (misal: SdmKeahlianIndex).
 						<p><img src="plansys/modules/help/img/6-2-a-ii-1.png">
 						<li>Tambahkan Action Bar dari Properties ke halaman index.
@@ -104,7 +175,7 @@ class HelpTutorialBab6 extends Form {
 						<li>Klik pada kolom, maka akan muncul beberapa pengaturan kolom tersebut.
 						<p><img src="plansys/modules/help/img/6-2-a-ii-12.png">
 					</ol>	
-					<h5>(b). Tanpa Menggunakan Module</h5>
+					<h5>(b). Tanpa Menggunakan Module</h5><a href="#bab6"><i> back to top >></i></a>
 					<p>Langkah-langkah untuk membuat View tanpa menggunakan CRUD generator adalah sebagai berikut :
 					<h6>b.i. Membuat Form</h6>
 					<ol><li>Pilih menu Builder, pilih submenu  Form Builder.
@@ -158,7 +229,7 @@ class HelpTutorialBab6 extends Form {
 						<p><img src="plansys/modules/help/img/6-2-b-ii-12.png">
 					</ol>
 					
-					<h4>6.3. Delete View</h4>
+					<h4 id="6.3">6.3. Delete View</h4><a href="#bab6"><i> back to top >></i></a>
 					<h5>(a) Menggunakan Module</h5>
 					<p>Langkah untuk menghapus (Delete) View, baik Form maupun View caranya adalah sebagai berikut :
 					<ol><li>Buka Form Builder >> pilih modul >> pilih folder.
@@ -178,8 +249,8 @@ class HelpTutorialBab6 extends Form {
 						<li>Klik OK.
 					</ol>
 					
-					<h4>6.4. Customize Index</h4>
-					<h5>6.4.1. Column Width</h5>
+					<h4 id="6.4">6.4. Customize Index</h4><a href="#bab6"><i> back to top >></i></a>
+					<h5 id="6.4.1>6.4.1. Column Width</h5><a href="#bab6"><i> back to top >></i></a>
 					<p>Langkah-langkah untuk mengatur lebar kolom pada halaman index adalah sebagai berikut :
 					<ol><li>Pada Form Builder, buka file Index yang akan diatur lebar kolomnya.
 						<li>Klik GridView (jika halaman index menggunakan jenis GridView).
@@ -189,7 +260,7 @@ class HelpTutorialBab6 extends Form {
 						<p><img src="plansys/modules/help/img/6-1-4-5.png">
 					</ol>
  
-					<h5>6.4.2. Change & Delete Button</h5>
+					<h5 id="6.4.2">6.4.2. Change & Delete Button</h5>
 					<p>Langkah-langkah untuk menambahkan icon link Change (Update) dan Delete seperti ini  untuk mengelola data yang dimaksud adalah sebagai berikut.
 					<ol><li>Pada Form Builder, buka file Index yang akan diatur lebar kolomnya.
 						<li>Klik GridView (jika halaman index menggunakan jenis GridView).
@@ -208,7 +279,7 @@ class HelpTutorialBab6 extends Form {
 							<p><img src="plansys/modules/help/img/6-4-2-5.png">
 					</ol>
 					
-					<h5>6.4.3. Agregat (Count)</h5>
+					<h5 id="6.4.3">6.4.3. Agregat (Count)</h5>
 					<p>Langkah-langkah untuk membuat agregat (count) pada halaman index adalah sebagai berikut :
 					<ol><li>Buka Form Builder >> pilih file index yang akan diberikan agregat.
 						<li>Klik pada DataSource.
@@ -231,7 +302,7 @@ class HelpTutorialBab6 extends Form {
 							<p><img src="plansys/modules/help/img/6-4-3-9.png">
 					</ol>
 					
-					<h5>6.4.4. Show Data Source Result</h5>
+					<h5 id="6.4.4">6.4.4. Show Data Source Result</h5><a href="#bab6"><i> back to top >></i></a>
 					<p>Untuk menampilkan isi data dari DataSource dalam bentuk teks tanpa tabel maupun datagrid, langkah-langkahnya sebagai berikut :
 					<ol><li>Buka Form Builder
 						<li>Buka halaman index yang akan diatur.
@@ -244,7 +315,7 @@ class HelpTutorialBab6 extends Form {
 							<p><img src="plansys/modules/help/img/6-4-4-5-ii.png">					
 					</ol>
 					
-					<h5>6.4.5. Custom GridView</h5>
+					<h5 id="6.4.5">6.4.5. Custom GridView</h5><a href="#bab6"><i> back to top >></i></a>
 					<p>Halaman Form dan View dapat ditampilkan dalam satu halaman. Kebutuhan ini biasanya digunakan untuk form isian dengan kolom yang banyak, seperti form isian nilai siswa. Langkah-langkah untuk membuatnya adalah sebagai berikut :
 					<ol><li>Pastikan Modelnya sudah dibuat.
 						<li>Bukan menu Form Builder.
@@ -262,6 +333,51 @@ class HelpTutorialBab6 extends Form {
 						<li>Untuk menyimpan data, klik tombol hijau Simpan.
 							<p><img src="plansys/modules/help/img/6-4-5-9.png">
 					</ol>
+					<h4 id="6.5">6.5. Toolbar components</h4><a href="#bab6"><i> back to top >></i></a>	
+					<h5 id="6.5.1">6.5.1. Layout</h5><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.1.1">6.5.1.1. Ace Editor</h6><a href="#bab6"><i> back to top >></i></a>											
+					<h6 id="6.5.1.2">6.5.1.2. Action Bar</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.1.3">6.5.1.3. Columns</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.1.4">6.5.1.4. Example Field</h6><a href="#bab6"><i> back to top >></i></a>
+					<h6 id="6.5.1.5">6.5.1.5. Popup Window</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.1.6">6.5.1.6. Section Header</h6><a href="#bab6"><i> back to top >></i></a>
+					<h6 id="6.5.1.7">6.5.1.7. Text / HTML</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h5 id="6.5.2">6.5.2. Charts</h5><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.2.1">6.5.2.1. Area Chart</h6><a href="#bab6"><i> back to top >></i></a>							
+					<h6 id="6.5.2.2">6.5.2.2. Bar Chart</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.2.3">6.5.2.3. Chart Group</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.2.4">6.5.2.4. Line Chart</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.2.5">6.5.2.5. Pie Chart</h6><a href="#bab6"><i> back to top >></i></a>							
+					<h5 id="6.5.3">6.5.3. User Interface</h5><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.3.1">6.5.3.1. Checkbox List</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.3.2">6.5.3.2. Color Picker</h6><a href="#bab6"><i> back to top >></i></a>
+					<h6 id="6.5.3.3">6.5.3.3. Date Time Picker</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.3.4">6.5.3.4. Drop Down List</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="">6.5.3.5. Hidden Field</h6><a href="#bab6"><i> back to top >></i></a>							
+					<h6 id="">6.5.3.6. Icon Picker</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="">6.5.3.7. Label Field</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="">6.5.3.8. Link Button</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="">6.5.3.9. Radio Button List</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="">6.5.3.10. Relation Field</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="">6.5.3.11. Repo Browser</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="">6.5.3.12. Submit</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="">6.5.3.13. Tag Field</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="">6.5.3.14. Text Area</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="">6.5.3.15. Text Field</h6><a href="#bab6"><i> back to top >></i></a>
+					<h6 id="">6.5.3.16. Toggle Switch</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="">6.5.3.17. Upload File</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h3 id="6.5.4">6.5.4. Data & Tables</h5><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.4.1">6.5.4.1. Data Filter</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.4.2">6.5.4.2. Data Source</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.4.3">6.5.4.3. Expression Field</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.4.4">6.5.4.4. GridView</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.4.5">6.5.4.5. Key Value Grid</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.4.6">6.5.4.6. List View</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h6 id="6.5.4.7">6.5.4.7. Sql Criteria</h6><a href="#bab6"><i> back to top >></i></a>														
+					<h6 id="6.5.4.8">6.5.4.8. Sub Form</h6><a href="#bab6"><i> back to top >></i></a>	
+					<h4 id="6.6">6.6. Dashboard</h4><a href="#bab6"><i> back to top >></i></a>	
+					<h5 id="6.6.1">6.6.1. Create Dashboard Page</h5><a href="#bab6"><i> back to top >></i></a>	
+					<h4 id="6.7">6.7. Customize Login Form</h4><a href="#bab6"><i> back to top >></i></a>
 					
 				</div>
 				
