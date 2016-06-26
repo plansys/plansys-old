@@ -13,7 +13,7 @@ class Repo extends Form {
                     ),
                 ),
             ),
-            'inlineJS' => 'repo/repo.js',
+            'inlineJS' => 'repo.js',
         );
     }
 

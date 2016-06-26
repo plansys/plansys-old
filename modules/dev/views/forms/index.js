@@ -4,19 +4,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
 
     $scope.menuSelect = null;
     $scope.getIcon = function (item) {
-        if (item.name.lastIndexOf('Index') == item.name.length - 5 && item.name.length > 5) {
-            return 'fa-file-text-o ';
-        }
-        if (item.name.lastIndexOf('Form') == item.name.length - 4 && item.name.length > 4) {
-            return 'fa-file-powerpoint-o';
-        }
-
-        if (item.name.lastIndexOf('Dashboard') == item.name.length - 9 && item.name.length > 9) {
-            return 'fa-file-image-o';
-        }
-
-
-        return 'fa-file-o';
+        return 'fa-file-text-o ';
     }
 
     $scope.getType = function (sel) {
@@ -104,7 +92,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                             items: []
                         });
                     } else {
-                        alert(data);
+                        alert(data.error);
                     }
                     return;
                 }
@@ -151,7 +139,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         label: "New CRUD",
                         click: function (item) {
                             $scope.activeItem = item;
-                            PopupCenter(Yii.app.createUrl('/dev/crud/new'), "Create New CRUD" , '800', '550');
+                            PopupCenter(Yii.app.createUrl('/dev/crud/new'), "Create New CRUD", '800', '550');
                         }
                     },
                 ];
@@ -186,7 +174,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         label: "New CRUD",
                         click: function (item) {
                             $scope.activeItem = item;
-                            PopupCenter(Yii.app.createUrl('/dev/crud/new'), "Create New CRUD" , '800', '550');
+                            PopupCenter(Yii.app.createUrl('/dev/crud/new'), "Create New CRUD", '800', '550');
                         }
                     },
                     {
@@ -231,11 +219,11 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         label: "Open New Tab",
                         click: function (item) {
                             window.open(
-                                Yii.app.createUrl('/dev/forms/update', {
-                                    'class': item.alias
-                                }),
-                                '_blank'
-                            );
+                                    Yii.app.createUrl('/dev/forms/update', {
+                                        'class': item.alias
+                                    }),
+                                    '_blank'
+                                    );
                         }
                     },
                     {
@@ -243,11 +231,11 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         label: "Edit Code",
                         click: function (item) {
                             window.open(
-                                Yii.app.createUrl('/dev/forms/code', {
-                                    'c': item.alias
-                                }),
-                                'iframe'
-                            );
+                                    Yii.app.createUrl('/dev/forms/code', {
+                                        'c': item.alias
+                                    }),
+                                    'iframe'
+                                    );
                         }
                     },
                     {
@@ -274,7 +262,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                         icon: "fa fa-fw  fa-trash",
                         label: "Delete",
                         click: function (item) {
-                            if (confirm("Are you sure want to delete this folder ?"))    {
+                            if (confirm("Are you sure want to delete this item ?")) {
                                 $scope.delForm(sel, item);
                             }
                         }

@@ -25,20 +25,20 @@ class Helper {
     public static function timeToSec($time) {
         return strtotime('1970-01-01 ' . $time . 'GMT');
     }
-    
+
     // copy recursive
-    public static function copyRecursive($source, $dest){
-        if(is_dir($source)) {
-            $dir_handle=opendir($source);
-            while($file=readdir($dir_handle)){
-                if($file!="." && $file!=".."){
-                    if(is_dir($source."/".$file)){
-                        if(!is_dir($dest."/".$file)){
-                            mkdir($dest."/".$file);
+    public static function copyRecursive($source, $dest) {
+        if (is_dir($source)) {
+            $dir_handle = opendir($source);
+            while ($file = readdir($dir_handle)) {
+                if ($file != "." && $file != "..") {
+                    if (is_dir($source . "/" . $file)) {
+                        if (!is_dir($dest . "/" . $file)) {
+                            mkdir($dest . "/" . $file);
                         }
-                        Helper::copyRecursive($source."/".$file, $dest."/".$file);
+                        Helper::copyRecursive($source . "/" . $file, $dest . "/" . $file);
                     } else {
-                        copy($source."/".$file, $dest."/".$file);
+                        copy($source . "/" . $file, $dest . "/" . $file);
                     }
                 }
             }
@@ -47,25 +47,22 @@ class Helper {
             copy($source, $dest);
         }
     }
-        
-    public static function angkaRomawi($integer, $upcase = true)  { 
-        $table = array('M'=>1000, 'CM'=>900, 'D'=>500, 'CD'=>400, 'C'=>100, 'XC'=>90, 'L'=>50, 'XL'=>40, 'X'=>10, 'IX'=>9, 'V'=>5, 'IV'=>4, 'I'=>1); 
-        $return = ''; 
-        while($integer > 0) 
-        { 
-            foreach($table as $rom=>$arb) 
-            { 
-                if($integer >= $arb) 
-                { 
-                    $integer -= $arb; 
-                    $return .= $rom; 
-                    break; 
-                } 
-            } 
-        } 
-    
-        return $return; 
-    } 
+
+    public static function angkaRomawi($integer, $upcase = true) {
+        $table = array('M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400, 'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40, 'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1);
+        $return = '';
+        while ($integer > 0) {
+            foreach ($table as $rom => $arb) {
+                if ($integer >= $arb) {
+                    $integer -= $arb;
+                    $return .= $rom;
+                    break;
+                }
+            }
+        }
+
+        return $return;
+    }
 
     public static function hash($password) {
         return password_hash($password, PASSWORD_DEFAULT);
@@ -73,14 +70,14 @@ class Helper {
 
     public static function generateMonthInterval($start, $end) {
         $startInt = new DateTime($start);
-        $endInt   = new DateTime($end);
+        $endInt = new DateTime($end);
         $interval = DateInterval::createFromDateString('1 month');
-        $period   = new DatePeriod($startInt, $interval, $endInt);
+        $period = new DatePeriod($startInt, $interval, $endInt);
         return $period;
     }
 
     public static function getStringBetween($string, $start, $finish) {
-        $string   = " " . $string;
+        $string = " " . $string;
         $position = strpos($string, $start);
         if ($position == 0)
             return "";
@@ -100,30 +97,26 @@ class Helper {
 
     public static function generateDayInterval($start, $end) {
         $startInt = new DateTime($start);
-        $endInt   = (new DateTime($end))->modify('+1 day');
+        $endInt = (new DateTime($end))->modify('+1 day');
         $interval = DateInterval::createFromDateString('1 day');
-        $period   = new DatePeriod($startInt, $interval, $endInt);
+        $period = new DatePeriod($startInt, $interval, $endInt);
 
         return $period;
     }
 
-    public function base32Encode( $base10 ) {
-        return strtr( base_convert( $base10, 10, 32 ),
-                      "abcdefghijklmnopqrstuv",
-                      "ABCDEFGHJKMNPQRSTVWXYZ" );
+    public function base32Encode($base10) {
+        return strtr(base_convert($base10, 10, 32), "abcdefghijklmnopqrstuv", "ABCDEFGHJKMNPQRSTVWXYZ");
     }
-    
-    public function base32Decode( $base32 ) {
-        $base32 = strtr( strtoupper( $base32 ), 
-                         "ABCDEFGHJKMNPQRSTVWXYZILO",
-                         "abcdefghijklmnopqrstuv110" );
-        return base_convert( $base32, 32, 10 );
+
+    public function base32Decode($base32) {
+        $base32 = strtr(strtoupper($base32), "ABCDEFGHJKMNPQRSTVWXYZILO", "abcdefghijklmnopqrstuv110");
+        return base_convert($base32, 32, 10);
     }
 
     public static function getLastModified($class) {
         if (class_exists($class)) {
             $reflector = new ReflectionClass($class);
-            $fn        = $reflector->getFileName();
+            $fn = $reflector->getFileName();
             return filemtime($fn);
         } else {
             return 0;
@@ -168,19 +161,19 @@ class Helper {
      * @return array
      */
     public static function getClassProperties($className, $types = 'public') {
-        $ref       = new ReflectionClass($className);
-        $props     = $ref->getProperties();
+        $ref = new ReflectionClass($className);
+        $props = $ref->getProperties();
         $props_arr = [];
         foreach ($props as $prop) {
             $f = $prop->getName();
 
-            if ($prop->isPublic() and (stripos($types, 'public') === FALSE))
+            if ($prop->isPublic() and ( stripos($types, 'public') === FALSE))
                 continue;
-            if ($prop->isPrivate() and (stripos($types, 'private') === FALSE))
+            if ($prop->isPrivate() and ( stripos($types, 'private') === FALSE))
                 continue;
-            if ($prop->isProtected() and (stripos($types, 'protected') === FALSE))
+            if ($prop->isProtected() and ( stripos($types, 'protected') === FALSE))
                 continue;
-            if ($prop->isStatic() and (stripos($types, 'static') === FALSE))
+            if ($prop->isStatic() and ( stripos($types, 'static') === FALSE))
                 continue;
 
             $props_arr[$f] = $prop;
@@ -198,10 +191,10 @@ class Helper {
             $a1 = Yii::getPathOfAlias('app');
             $a2 = Yii::getPathOfAlias('application');
             if (strpos($object, $a1) === 0) {
-                $alias    = 'app';
+                $alias = 'app';
                 $filepath = str_replace($a1, '', $object);
             } else if (strpos($object, $a2) === 0) {
-                $alias    = 'application';
+                $alias = 'application';
                 $filepath = str_replace($a2, '', $object);
             }
 
@@ -210,13 +203,13 @@ class Helper {
             $r = new ReflectionClass($object);
             $f = $r->getFileName();
 
-            $path     = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
+            $path = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('app'));
             $filepath = str_replace($path . DIRECTORY_SEPARATOR, '', $f);
-            $alias    = 'app';
+            $alias = 'app';
             if (strlen($f) == strlen($filepath)) {
-                $path     = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
+                $path = str_replace("/", DIRECTORY_SEPARATOR, Yii::getPathOfAlias('application'));
                 $filepath = str_replace($path . DIRECTORY_SEPARATOR, '', $f);
-                $alias    = 'application';
+                $alias = 'application';
             }
         }
 
@@ -230,7 +223,7 @@ class Helper {
                 if (array_values($val) === $val) {
                     $arr[$key] = Helper::arrayValuesRecursive($val);
                 } else if (count(@$arr[$key]['items']) > 0) {
-                    $flatten            = array_values($val['items']);
+                    $flatten = array_values($val['items']);
                     $arr[$key]['items'] = Helper::arrayValuesRecursive($flatten);
                 }
             }
@@ -238,7 +231,7 @@ class Helper {
         return $arr;
     }
 
-    public static function sortArray(&$array, $subfield, $mode='asc') {
+    public static function sortArray(&$array, $subfield, $mode = 'asc') {
         $sortarray = array();
         foreach ($array as $key => $row) {
             $sortarray[$key] = $row[$subfield];
@@ -253,7 +246,10 @@ class Helper {
         if ($returnCount) {
             $count = count($files);
         }
-        foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR | GLOB_NOSORT) as $dir) {
+        $dirs = glob(dirname($pattern) . '/*', GLOB_ONLYDIR);
+        $dirs = array_reverse($dirs);
+        foreach ($dirs as $dir) {
+            array_unshift($files, str_replace('/', DIRECTORY_SEPARATOR, $dir));
             $recureGlob = Helper::globRecursive($dir . '/' . basename($pattern), $flags, $returnCount);
             if ($returnCount) {
                 $files = array_merge($files, $recureGlob['files']);
@@ -285,36 +281,40 @@ class Helper {
             }
         });
     }
-    
-    public static  function ReadFromEndByLine($filename, $lines, $revers = false) {
-        if (!is_file($filename)) return "";
-        
+
+    public static function ReadFromEndByLine($filename, $lines, $revers = false) {
+        if (!is_file($filename))
+            return "";
+
         $offset = -1;
         $c = '';
         $read = '';
         $i = 0;
         $fp = @fopen($filename, "r");
-        while( $lines && fseek($fp, $offset, SEEK_END) >= 0 ) {
+        while ($lines && fseek($fp, $offset, SEEK_END) >= 0) {
             $c = fgetc($fp);
-            if($c == "\n" || $c == "\r"){
+            if ($c == "\n" || $c == "\r") {
                 $lines--;
-                if( $revers ){
+                if ($revers) {
                     $read[$i] = strrev($read[$i]);
                     $i++;
                 }
             }
-            if( $revers ) $read[$i] .= $c;
-            else $read .= $c;
+            if ($revers)
+                $read[$i] .= $c;
+            else
+                $read .= $c;
             $offset--;
         }
-        fclose ($fp);
-        if( $revers ){
-            if($read[$i] == "\n" || $read[$i] == "\r")
+        fclose($fp);
+        if ($revers) {
+            if ($read[$i] == "\n" || $read[$i] == "\r")
                 array_pop($read);
-            else $read[$i] = strrev($read[$i]);
-            return implode('',$read);
+            else
+                $read[$i] = strrev($read[$i]);
+            return implode('', $read);
         }
-        return strrev(rtrim($read,"\n\r"));
+        return strrev(rtrim($read, "\n\r"));
     }
 
     public static function startsWith($haystack, $needle, $case = false) {
@@ -332,8 +332,9 @@ class Helper {
     }
 
     public static function is_assoc($arr) {
-        if (!is_array($arr)) return false;
-        
+        if (!is_array($arr))
+            return false;
+
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
@@ -361,9 +362,9 @@ class Helper {
 
         $wr = $withWebroot ? "webroot" : '';
 
-        $fn      = $reflector->getFileName();
+        $fn = $reflector->getFileName();
         $webroot = str_replace("/", DIRECTORY_SEPARATOR, preg_replace('~/+~', '/', Yii::getPathOfAlias('webroot')));
-        $alias   = str_replace(DIRECTORY_SEPARATOR, ".", str_replace(".php", "", str_ireplace($webroot, $wr, $fn)));
+        $alias = str_replace(DIRECTORY_SEPARATOR, ".", str_replace(".php", "", str_ireplace($webroot, $wr, $fn)));
 
         return trim($alias, ".");
     }
@@ -378,16 +379,16 @@ class Helper {
 
 
         return join(' ', array_map(function ($key) use ($attributes) {
-            if (is_bool($attributes[$key])) {
-                return $attributes[$key] ? $key : '';
-            }
-            return $key . '="' . $attributes[$key] . '"';
-        }, array_keys($attributes)));
+                    if (is_bool($attributes[$key])) {
+                        return $attributes[$key] ? $key : '';
+                    }
+                    return $key . '="' . $attributes[$key] . '"';
+                }, array_keys($attributes)));
     }
 
     public static function minifyHtml($text) {
 
-        $re   = '%# Collapse whitespace everywhere but in blacklisted elements.
+        $re = '%# Collapse whitespace everywhere but in blacklisted elements.
         (?>             # Match all whitespans other than single space.
           [^\S ]\s*     # Either one [\t\r\n\f\v] and zero or more ws,
         | \s{2,}        # or two or more consecutive-any-whitespace.
@@ -447,11 +448,11 @@ class Helper {
         $s -= $m * 60;
         return $h . ':' . sprintf('%02d', $m) . ':' . sprintf('%02d', $s);
     }
-    
+
     public static function getYear() {
         $year_start = '1900';
         $year_end = date('Y') + 10;
-        
+
         $years = array_combine(range($year_end, $year_start), range($year_end, $year_start));
         return $years;
     }
@@ -961,8 +962,8 @@ class Helper {
             if (isset($parts['path']) && ($flags & HTTP_URL_JOIN_PATH)) {
                 if (isset($url['path']) && substr($parts['path'], 0, 1) !== '/') {
                     $url['path'] = rtrim(
-                            str_replace(basename($url['path']), '', $url['path']), '/'
-                        ) . '/' . ltrim($parts['path'], '/');
+                                    str_replace(basename($url['path']), '', $url['path']), '/'
+                            ) . '/' . ltrim($parts['path'], '/');
                 } else {
                     $url['path'] = $parts['path'];
                 }
@@ -974,9 +975,9 @@ class Helper {
                     parse_str($parts['query'], $parts_query);
 
                     $url['query'] = http_build_query(
-                        array_replace_recursive(
-                            $url_query, $parts_query
-                        )
+                            array_replace_recursive(
+                                    $url_query, $parts_query
+                            )
                     );
                 } else {
                     $url['query'] = $parts['query'];

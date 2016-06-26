@@ -2,7 +2,7 @@
     <div ng-show="!saving" class="layout-properties-btn">
         <div class="btn btn-xs btn-default" ng-click="selectLayout('<?= $active ?>')">
             <i class="fa fa-cube fa-nm"></i>
-            <span class="label label-default "><?= strtoupper($active) ?></span>
+            <span class="label label-default "><?php var_dump($_GET); ?><?= strtoupper($active) ?></span>
         </div>
     </div>
     <div ng-if="form.layout.name == 'dashboard'" class="layout-properties-btn" style="left:62px;">

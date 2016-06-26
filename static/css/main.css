@@ -709,6 +709,22 @@ div[ui-content] {
 .form-builder-layout > div:hover > .layout-properties-btn {
     display: block;
 }
+.form-builder-file-item-full {
+    display:none;
+    text-align:right;
+    max-width:90px;
+    height:23px;
+    overflow:hidden;
+    float:right;
+    color:#999
+}
+.form-builder-file-item.active .form-builder-file-item-full {
+    color:#fafafa;
+}
+.form-builder-file-item:hover .form-builder-file-item-full {
+    display:block;
+}
+
 
 .no-render {
     position: fixed;
@@ -1854,9 +1870,9 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
     width: 100%;
     padding: 0px !important;
     box-shadow: 0px 0px 0px 1px #ddd,
-    inset -1px 0px 0px 0px #ddd,
-    inset 1px 0px 0px 0px #ddd,
-    inset 0px -1px 0px 0px #ddd;
+        inset -1px 0px 0px 0px #ddd,
+        inset 1px 0px 0px 0px #ddd,
+        inset 0px -1px 0px 0px #ddd;
     cursor: pointer;
 }
 

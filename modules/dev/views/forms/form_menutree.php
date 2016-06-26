@@ -18,14 +18,14 @@
     </div>
 </div>
 
-<a ng-if='item.class' target="iframe"
+<a ng-if='item.class' target="iframe" class="form-builder-file-item"
    href="<?php echo $this->createUrl('update', array('class' => '')); ?>{{item.alias}}"
    ui-tree-handle ng-click="select(this)" ng-class="isSelected(this)">
     <div style="margin:-1px 0px;padding:1px 0px 1px 16px;" 
          context-menu="formTreeOpen(this, $event, item)"
          data-target="FormTreeMenu">
         <i class="fa {{ getIcon(item) }} fa-nm" style="float:left;margin:2px 0px 0px -18px;"></i>
-        <div style="word-break:break-all;">{{item.name}}</div>
+        <div style="word-break:break-all;">{{item.shortName || item.name }}<span ng-if="item.shortName" class="form-builder-file-item-full">{{item.name}}</span></div>
     </div>
 </a>
 <div class="dropdown menu-tree" id="FormTreeMenu">

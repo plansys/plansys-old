@@ -44,9 +44,9 @@ class UserIdentity extends CUserIdentity {
             }
         }
 
-        if ($record === null)
+        if ($record === null) {
             $this->errorCode = self::ERROR_USERNAME_INVALID;
-
+        }
         else if (!password_verify($this->password, $record->password)) {
             if ($useLdap) {
                 $ldapSuccess = Yii::app()->ldap->authenticate($this->username, $this->password);

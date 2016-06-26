@@ -2,10 +2,10 @@
 
 class FormsController extends Controller {
 
-    public static $modelField     = array();
+    public static $modelField = array();
     public static $modelFieldList = array();
-    public static $relFieldList   = array(); // list of all fields in current model
-    public        $countRenderID  = 1;
+    public static $relFieldList = array(); // list of all fields in current model
+    public $countRenderID = 1;
 
     public function actionDelFolder($p) {
         $dir = Yii::getPathOfAlias($p);
@@ -36,19 +36,27 @@ class FormsController extends Controller {
         $dir = Yii::getPathOfAlias($p);
         if (is_dir($dir) && Helper::isValidVar($n)) {
             $dirname = $dir . DIRECTORY_SEPARATOR . $n;
-            if (!!@mkdir($dirname)) {
-                echo json_encode([
-                    "success" => true,
-                    "id" => time(),
-                    "name" => $n,
-                    "alias" => Helper::getAlias($dirname) . "."
-                ]);
-            } else {
+            $lastErrorHandler = set_error_handler(function ($errno, $errstr, $errfile, $errline ) {
+                throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+            });
+
+            try {
+                mkdir($dirname);
+            } catch (ErrorException $ex) {
                 echo json_encode([
                     "success" => false,
-                    "error" => "ERROR: Failed to create folder (permission denied).\n" . $dirname
+                    "error" => $ex->getMessage() . " [$dirname]"
                 ]);
+                die();
             }
+            
+            echo json_encode([
+                "success" => true,
+                "id" => time(),
+                "name" => $n,
+                "alias" => Helper::getAlias($dirname) . "."
+            ]);
+            set_error_handler($lastErrorHandler);
         } else {
             echo json_encode([
                 "success" => false,
@@ -58,15 +66,15 @@ class FormsController extends Controller {
     }
 
     public function actionCode($c, $s = null) {
-        $ext    = ".php";
+        $ext = ".php";
         $script = null;
 
         if (isset($s)) {
-            $file        = explode(".", $c);
+            $file = explode(".", $c);
             $scriptToken = explode(".", $s);
-            $ext         = "." . array_pop($scriptToken);
+            $ext = "." . array_pop($scriptToken);
             array_pop($file);
-            $script   = implode(".", $file) . "." . implode(".", $scriptToken);
+            $script = implode(".", $file) . "." . implode(".", $scriptToken);
             $filePath = Yii::getPathOfAlias(implode(".", $file)) . DIRECTORY_SEPARATOR . $s;
             if (!file_exists($filePath)) {
                 file_put_contents($filePath, "");
@@ -87,14 +95,14 @@ class FormsController extends Controller {
             'script' => $script,
             'ext' => $ext,
             'shortname' => isset($s) ? $s : Helper::explodeLast('.', $c)
-        ], [
+                ], [
             'layout' => '//layouts/blank'
         ]);
     }
 
     public function actionCodeSave() {
         $postdata = file_get_contents("php://input");
-        $post     = CJSON::decode($postdata);
+        $post = CJSON::decode($postdata);
         $filePath = Yii::getPathOfAlias($post['name']) . $post['ext'];
 
         if (is_file($filePath)) {
@@ -112,8 +120,8 @@ class FormsController extends Controller {
             $class = $this->prepareFormName($c, $m);
             if (Helper::isValidVar($c)) {
                 $extends = $e;
-                $dir     = Yii::getPathOfAlias($p);
-                $path    = $dir . DIRECTORY_SEPARATOR . $class . ".php";
+                $dir = Yii::getPathOfAlias($p);
+                $path = $dir . DIRECTORY_SEPARATOR . $class . ".php";
                 if (!is_file($path)) {
                     $source = <<<EOF
 <?php
@@ -152,8 +160,8 @@ EOF;
             return true;
         }
 
-        $a             = new $class;
-        $field         = $a->attributes;
+        $a = new $class;
+        $field = $a->attributes;
         $field['name'] = $class::$toolbarName;
         if (isset($array['label'])) {
             $field['label'] = $class::$toolbarName;
@@ -163,10 +171,10 @@ EOF;
 
     public function renderPropertiesForm($field) {
         FormField::$inEditor = false;
-        $fbp                 = FormBuilder::load($field['type']);
+        $fbp = FormBuilder::load($field['type']);
         return $fbp->render($field, array(
-            'wrapForm' => false,
-            'FormFieldRenderID' => $this->countRenderID++
+                    'wrapForm' => false,
+                    'FormFieldRenderID' => $this->countRenderID++
         ));
     }
 
@@ -180,23 +188,23 @@ EOF;
 
     public function actionRenderBuilder($class, $layout) {
         $postdata = file_get_contents("php://input");
-        $post     = CJSON::decode($postdata);
+        $post = CJSON::decode($postdata);
         if (isset($post['form'])) {
             $form = $post['form'];
         } else {
-            $fb   = FormBuilder::load($class);
+            $fb = FormBuilder::load($class);
             $form = $fb->form;
         }
 
-        $builder         = $this->renderPartial('form_builder', array(), true);
+        $builder = $this->renderPartial('form_builder', array(), true);
         $mainFormSection = Layout::getMainFormSection($form['layout']['data']);
-        $data            = $form['layout']['data'];
+        $data = $form['layout']['data'];
         if ($layout != $form['layout']['name']) {
             unset($data[$mainFormSection]);
             $mainFormSection = Layout::defaultSection($layout);
         }
 
-        $data['editor']                    = true;
+        $data['editor'] = true;
         $data[$mainFormSection]['content'] = $builder;
 
         Layout::render($layout, $data);
@@ -251,16 +259,16 @@ EOF;
     }
 
     public function actionDashboard($f) {
-        $postdata            = file_get_contents("php://input");
-        $post                = CJSON::decode($postdata);
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
         FormField::$inEditor = true;
 
         $classPath = FormBuilder::classPath($f);
-        $fb        = FormBuilder::load($classPath);
+        $fb = FormBuilder::load($classPath);
         if (isset($post['save'])) {
             switch ($post['save']) {
                 case "portlet":
-                    $fields     = $fb->updateField(['name' => $post['name']], $post['data']);
+                    $fields = $fb->updateField(['name' => $post['name']], $post['data']);
                     $fb->fields = $fields;
                     break;
             }
@@ -277,9 +285,9 @@ EOF;
     public function actionSave($class, $timestamp) {
         FormField::$inEditor = true;
 
-        $class   = FormBuilder::classPath($class);
+        $class = FormBuilder::classPath($class);
         $session = Yii::app()->session['FormBuilder_' . $class];
-        $file    = file(Yii::getPathOfAlias($class) . ".php", FILE_IGNORE_NEW_LINES);
+        $file = file(Yii::getPathOfAlias($class) . ".php", FILE_IGNORE_NEW_LINES);
 
         $changed = false;
         if ($timestamp != @$session['timestamp']) {
@@ -297,9 +305,9 @@ EOF;
         if (!$changed) {
 
             $postdata = file_get_contents("php://input");
-            $post     = CJSON::decode($postdata);
-            $session  = Yii::app()->session['FormBuilder_' . $class];
-            $fb       = FormBuilder::load($class);
+            $post = CJSON::decode($postdata);
+            $session = Yii::app()->session['FormBuilder_' . $class];
+            $fb = FormBuilder::load($class);
 
             if (isset($post['fields'])) {
                 if (is_subclass_of($fb->model, 'FormField')) {
@@ -317,7 +325,7 @@ EOF;
                     ## save menutree to menutree file
                     foreach ($post['form']['layout']['data'] as $d) {
                         if (@$d['type'] == "menu" && !!@$d['file']) {
-                            $menuOptions           = MenuTree::getOptions($d['file']);
+                            $menuOptions = MenuTree::getOptions($d['file']);
                             $menuOptions['layout'] = $d;
                             MenuTree::writeOptions($d['file'], $menuOptions);
                         }
@@ -336,10 +344,10 @@ EOF;
 
     public function actionUpdate($class) {
         FormField::$inEditor = true;
-        $isPHP               = Helper::explodeLast(".", $class);
-        $class               = $isPHP == "php" ? substr($class, 0, -4) : $class;
-        $class               = FormBuilder::classPath($class);
-        $this->layout        = "//layouts/blank";
+        $isPHP = Helper::explodeLast(".", $class);
+        $class = $isPHP == "php" ? substr($class, 0, -4) : $class;
+        $class = FormBuilder::classPath($class);
+        $this->layout = "//layouts/blank";
 
         ## reset form builder session
         FormBuilder::resetSession($class);
@@ -351,49 +359,49 @@ EOF;
         $fb->updateExtendsFrom('Blog');
 
         $classPath = $class;
-        $class     = Helper::explodeLast(".", $class);
-        
+        $class = Helper::explodeLast(".", $class);
+
         $methods = [];
         $refl = new ReflectionClass($fb->model);
         foreach ($refl->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             if (strlen($method->name) > 3 && $method->class == $refl->getName()) {
                 $dm = substr($method->name, 0, 3);
-                if ($method->name != "getForm" && $method->name != "getFields" && 
-                    ($dm == "get" || $dm == "set")) {
+                if ($method->name != "getForm" && $method->name != "getFields" &&
+                        ($dm == "get" || $dm == "set")) {
                     $methods[lcfirst(substr($method->name, 3))] = lcfirst(substr($method->name, 3));
                 }
             }
         }
-        
+
         if (is_subclass_of($fb->model, 'ActiveRecord')) {
             $formType = "ActiveRecord";
-            
+
             $props = $class::model()->getAttributesList();
-            if (!empty($methods)) 
-                $props['Dynamic Properties'] = $methods; 
-                
+            if (!empty($methods))
+                $props['Dynamic Properties'] = $methods;
+
             FormsController::setModelFieldList($props, "AR", $class);
         } else if (is_subclass_of($fb->model, 'FormField')) {
             $formType = "FormField";
-            $mf       = new $class;
-            
+            $mf = new $class;
+
             $props = $mf->attributes;
-            if (!empty($methods)) 
-                $props['Dynamic Properties'] = $methods; 
-                
+            if (!empty($methods))
+                $props['Dynamic Properties'] = $methods;
+
             FormsController::setModelFieldList($props, "FF");
         } else if (is_subclass_of($fb->model, 'Form')) {
             $formType = "Form";
-            $mf       = new $class;
-            
+            $mf = new $class;
+
             $props = $mf->attributes;
-            if (!empty($methods)) 
-                $props['Dynamic Properties'] = $methods; 
-                
+            if (!empty($methods))
+                $props['Dynamic Properties'] = $methods;
+
             FormsController::setModelFieldList($props, "FF");
         }
 
-        $fieldData                   = $fb->fields;
+        $fieldData = $fb->fields;
         FormsController::$modelField = $fieldData;
 
         $toolbar = $this->renderAllToolbar($formType);
@@ -407,21 +415,21 @@ EOF;
             'moduleName' => Helper::explodeFirst(".", $classPath),
             'toolbarData' => @$toolbar['data'],
             'fieldData' => $fieldData,
-        ), true);
+                ), true);
     }
 
     public static function setModelFieldList($data, $type = "AR", $class = "") {
         if (count(FormsController::$modelFieldList) == 0) {
             if ($type == "AR") {
                 FormsController::$modelFieldList = $data;
-                $rel                             = isset($data['Relations']) ? $data['Relations'] : array();
+                $rel = isset($data['Relations']) ? $data['Relations'] : array();
 
                 FormsController::$relFieldList = array_merge(array(
                     '' => '-- None --',
                     '---' => '---',
                     'currentModel' => 'Current Model',
                     '--' => '---',
-                ), $rel);
+                        ), $rel);
             } else {
                 foreach ($data as $name => $field) {
                     FormsController::$modelFieldList[$name] = $name;
@@ -437,7 +445,7 @@ EOF;
         $toolbarData = FormField::allSorted();
 
         foreach ($toolbarData as $k => $f) {
-            $ff      = new $f['type'];
+            $ff = new $f['type'];
             $scripts = array_merge($ff->renderScript(), $ff->renderEditorScript());
 
             foreach ($scripts as $script) {

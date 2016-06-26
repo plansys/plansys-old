@@ -504,6 +504,7 @@ class CDbCommand extends CComponent
 				Yii::beginProfile('system.db.CDbCommand.query('.$this->getText().$par.')','system.db.CDbCommand.query');
 
 			$this->prepare();
+
 			if($params===array())
 				$this->_statement->execute();
 			else

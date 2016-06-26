@@ -1096,6 +1096,7 @@ abstract class CActiveRecord extends CModel
 							}
 						}
 					}
+                                        
 				}
 				$this->_pk=$this->getPrimaryKey();
 				$this->afterSave();
