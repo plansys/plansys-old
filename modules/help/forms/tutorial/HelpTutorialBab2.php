@@ -41,7 +41,9 @@ class HelpTutorialBab2 extends Form {
 					<p><a ng-url="/help/tutorial/bab14">SERVICE MANAGEMENT</a> 	
 					<p><a ng-url="/help/tutorial/bab15">DATABASE MANAGEMENT</a> 
 					<p><a ng-url="/help/tutorial/bab16">SETTING MANAGEMENT</a> 	
-					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>											
+					<p><a ng-url="/help/tutorial/bab17">REPOSITORY</a>	
+					<hr>
+					<p align="right"><a href="https://drive.google.com/folderview?id=0B1jwrrSeSILiNDh3eWc5RkYtcHM&usp=sharing" target="_blank"> <strong><i> >>> Download PDF</strong> </i></a>					
 				</div>				
 				<div class=\"judul_bab\">					
 					<h3 id="bab2">Bab II. TABEL DATABASE</h3>
