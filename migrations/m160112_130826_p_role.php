@@ -15,7 +15,8 @@ class m160112_130826_p_role extends Migration {
 
         $this->insert('p_role', [
             'role_name' => "dev",
-            'role_description' => 'IT - Developer'
+            'role_description' => 'IT - Developer',
+			'home_url' => '/help/welcome'			
         ]);
     }
 
