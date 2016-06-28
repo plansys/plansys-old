@@ -186,10 +186,10 @@ class Import extends CComponent {
                         ['.$key.'] Missing `condition` key, please provide lookup condition !');
                     }
                     
-                    if (isset(Yii::app()->db->schema->tables[$col['from']])) {
+                    if (isset(Yii::app()->db->schema->getTable([$col['from']]))) {
                         if (!isset($this->lookup[$col['from']])) {
                             $this->lookup[$col['from']] = [
-                                'schema' => Yii::app()->db->schema->tables[$col['from']],
+                                'schema' => Yii::app()->db->schema->getTable([$col['from']]),
                                 'hash' => [
                                     $key => []
                                 ]

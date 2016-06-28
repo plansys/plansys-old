@@ -351,7 +351,7 @@ class ActiveRecord extends CActiveRecord {
 
         $isModelExist = class_exists($model);
         if (!@$isModelExist) {
-            $schema = Yii::app()->db->schema->tables[$model];
+            $schema = Yii::app()->db->schema->getTable($model);
         } else {
             $schema = $model::model()->tableSchema;
         }

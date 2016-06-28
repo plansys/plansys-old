@@ -87,24 +87,6 @@ class DevUserIndex extends User {
                         'defaultOperator' => '',
                         'defaultValue' => '',
                     ),
-                    array (
-                        'name' => 'is_deleted',
-                        'label' => 'del',
-                        'listExpr' => '[
-  \'1\'=>\'<img style=\"height:20px;width:130px;\" src=\"https://support.files.wordpress.com/2009/07/pigeony.jpg?w=688\">\'
-]',
-                        'filterType' => 'list',
-                        'isCustom' => 'No',
-                        'options' => array (
-                            'html' => 'true',
-                        ),
-                        'resetable' => 'Yes',
-                        'defaultValue' => '',
-                        'showOther' => 'No',
-                        'otherLabel' => '',
-                        'queryOperator' => '',
-                        'show' => true,
-                    ),
                 ),
                 'filterOperators' => array (
                     'string' => array (

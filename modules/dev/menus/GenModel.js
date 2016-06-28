@@ -1,10 +1,18 @@
 $scope.contextMenu = [
     {
-        icon: "fa fa-fw fa-plus",
+        icon: "fa fa-fw fa-plus-square-o",
         label: "New Model",
         click: function (item, e) {
             window.activeItem = item;
             PopupCenter(Yii.app.createUrl('/dev/genModel/newModel'), "Create New Model", '400', '500');
+        }
+    },
+    {
+        icon: "fa fa-fw fa-plus-square",
+        label: "Create All Model",
+        click: function (item, e) {
+            window.activeItem = item;
+            PopupCenter(Yii.app.createUrl('/dev/genModel/newAllModel'), "Create All Model", '600', '500');
         }
     },
     //{

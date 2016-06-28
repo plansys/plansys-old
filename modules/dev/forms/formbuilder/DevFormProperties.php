@@ -28,6 +28,11 @@ class DevFormProperties extends Form {
     public function getFields() {
         return array (
             array (
+                'label' => 'Class Name',
+                'js' => 'params.class.split(\\".\\").pop()',
+                'type' => 'LabelField',
+            ),
+            array (
                 'label' => 'Form Title',
                 'name' => 'title',
                 'options' => array (

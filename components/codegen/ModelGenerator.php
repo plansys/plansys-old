@@ -3,28 +3,28 @@
 class ModelGenerator extends CComponent {
 
     public static function create($tableName, $modelName, $module, $options = []) {
-        $mc               = new ModelGeneratorCode();
-        $mc->modelPath    = $module . ".models";
-        
+        $mc = new ModelGeneratorCode();
+        $mc->modelPath = $module . ".models";
+
         if (isset($options['conn']) && $options['conn'] != 'db') {
-            $mc->modelPath    = $module . ".models.{$options['conn']}"; 
+            $mc->modelPath = $module . ".models.{$options['conn']}";
             $mc->connectionId = $options['conn'];
         }
-        
+
         $modelDir = Yii::getPathOfAlias($mc->modelPath);
         if (!is_dir($modelDir)) {
             mkdir($modelDir, 0777, true);
         }
-        
-        $mc->template     = 'TplModel.php';
 
-        $mc->tableName  = $tableName;
-        $mc->baseClass  = 'ActiveRecord';
+        $mc->template = 'TplModel.php';
+
+        $mc->tableName = $tableName;
+        $mc->baseClass = 'ActiveRecord';
         $mc->modelClass = $modelName;
         if (isset($options['conn'])) {
             unset($options['conn']);
         }
-        $mc->options    = $options;
+        $mc->options = $options;
 
         $mc->prepare();
         $mc->save();
@@ -55,8 +55,8 @@ class ModelGenerator extends CComponent {
     }
 
     public static function listTables($conn = 'db') {
-        $rawTables     = array_keys(Yii::app()->{$conn}->schema->tables);;
-        $appTables     = [];
+        $rawTables = Yii::app()->{$conn}->schema->tableNames;
+        $appTables = [];
         $plansysTables = [];
         foreach ($rawTables as $key => $value) {
             if (strpos($value, "p_") === 0) {
@@ -77,13 +77,36 @@ class ModelGenerator extends CComponent {
         return $tables;
     }
 
+    public static function listTablesGrid($params) {
+        if (is_array($params)) {
+            if (isset($params['where']['db']['value'])) {
+                $conn = $params['where']['db']['value'];
+            } else {
+                $conn = 'db';
+            }
+        }
+        $rawTables = Yii::app()->{$conn}->schema->tableNames;
+        $tables = [];
+
+        foreach ($rawTables as $key => $value) {
+            if (strpos($value, "p_") === 0) {
+                continue;
+            } else {
+                $tables[] = [
+                    'name' => $value
+                ];
+            }
+        }
+        return $tables;
+    }
+
     public static function listModels($includePlansys = false) {
-        $dir    = Yii::getPathOfAlias("application.models");
+        $dir = Yii::getPathOfAlias("application.models");
         $appDir = Yii::getPathOfAlias("app.models");
 
         $devItems = glob($dir . DIRECTORY_SEPARATOR . "*");
         $appItems = glob($appDir . DIRECTORY_SEPARATOR . "*");
-        $models   = [];
+        $models = [];
 
         $items = [];
         foreach ($appItems as $k => $m) {
@@ -110,13 +133,13 @@ class ModelGenerator extends CComponent {
     }
 
     public static function listMenuTree() {
-        $dir    = Yii::getPathOfAlias("application.models");
+        $dir = Yii::getPathOfAlias("application.models");
         $appDir = Yii::getPathOfAlias("app.models");
 
         $devItems = glob($dir . DIRECTORY_SEPARATOR . "*");
         $appItems = glob($appDir . DIRECTORY_SEPARATOR . "*");
 
-        $items  = [];
+        $items = [];
         $models = [];
         if (Setting::get('app.mode') == "plansys") {
             foreach ($devItems as $k => $m) {
@@ -170,9 +193,9 @@ class ModelGenerator extends CComponent {
                         'target' => 'col2',
                     ];
                 }
-                
-                
-                array_unshift($items,[
+
+
+                array_unshift($items, [
                     'type' => 'app',
                     'label' => $m,
                     'class' => 'app.models.' . $m,

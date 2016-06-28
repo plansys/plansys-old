@@ -590,7 +590,7 @@ class DataFilter extends FormField {
                         ## kalau listExpr ini berisi html, nanti bakal menghancurkan layout
                         ## karena html nya itu masuk ke dalam json, dan bakal di render
                         ## jadinya kita unset saja setelah di proses biar ga masuk ke json
-                        unset($this->filters[$k]['listExpr']); 
+                        $this->filters[$k]['listExpr'] = htmlentities($this->filters[$k]['listExpr']); 
                     
                         ## change sequential array to associative array
                         if (is_array($list) && !Helper::is_assoc($list)) {

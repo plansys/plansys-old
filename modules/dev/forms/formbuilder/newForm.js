@@ -3,15 +3,16 @@ var activeScope = window.opener.activeScope;
 function generateClassPrefix(s) {
     var parts = s.split(".");
 
+    console.log(parts);
     if (parts[1] == "forms") {
         var module = parts.shift();
-        parts = parts.splice(1);
+        parts = parts.splice(0);
         parts.unshift(module);
         parts = parts.join(" ").trim().replace(/\s+/g, '.');
     } else if (parts[1] == "modules") {
         parts = parts.splice(2);
         var module = parts.shift();
-        parts = parts.splice(2);
+        parts = parts.splice(1);
         parts.unshift(module);
         parts = parts.join(" ").trim().replace(/\s+/g, '.');
     }
@@ -19,7 +20,7 @@ function generateClassPrefix(s) {
     var result = parts.replace(/(\.\w)/g, function (m) {
         return m[1].toUpperCase();
     });
-
+    
     return result.charAt(0).toUpperCase() + result.slice(1);
 }
 

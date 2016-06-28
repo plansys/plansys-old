@@ -1,69 +1,69 @@
 .daftar_isi{	
-	float: left;
-	padding: 10px;	
-	width: 205px;	
-	background-color: white;
-	box-shadow: 3px 3px 3px #888888;						
-	margin:10px;	
-	font-size:12px;		
+    float: left;
+    padding: 10px;	
+    width: 205px;	
+    background-color: white;
+    box-shadow: 3px 3px 3px #888888;						
+    margin:10px;	
+    font-size:12px;		
 }
 .judul_bab{	
-	float: left;	
-	padding:10px;
-	margin-left:10px;	
-	font-size:12px;	
+    float: left;	
+    padding:10px;
+    margin-left:10px;	
+    font-size:12px;	
 }
 .sub_daftar_isi{		
-	float: left;
-	width: 1070px;		
-	background-color: white;	
-	margin-left:20px;
-	font-size:12px;			
+    float: left;
+    width: 1070px;		
+    background-color: white;	
+    margin-left:20px;
+    font-size:12px;			
 }
 
 a:hover{	
-	background-color: yellow;	
+    background-color: yellow;	
 
 }
 h3{
-	color : blue;
-	font-size:16px;
+    color : blue;
+    font-size:16px;
 }
 h4{	
-	font-size:15px;
-	font-weight: bold;
+    font-size:15px;
+    font-weight: bold;
 }
 h5{
-	font-weight: bold;
-	font-style: italic;
-	font-size:14px;
+    font-weight: bold;
+    font-style: italic;
+    font-size:14px;
 }
 h6{
-	color : blue;
-	font-size:13px;
+    color : blue;
+    font-size:13px;
 }
 .isi {			
-	float: right;	
-	padding: 10px;		
-	max-width: 1075px;		
-	background-color: white;
-	box-shadow: 3px 3px 3px #888888;						
-	text-align: justify;
-	font-size:12px;	
+    float: right;	
+    padding: 10px;		
+    max-width: 1075px;		
+    background-color: white;
+    box-shadow: 3px 3px 3px #888888;						
+    text-align: justify;
+    font-size:12px;	
 }		
 img {
     max-width: 60%;
     height: auto;
 }
 .home_screen{
-	padding: 10px;	
-	max-width:100%;	
-	max-height:100%;
-	background-color: white;
-	box-shadow: 3px 3px 3px #888888;						
-	margin-top:100px;	
-	margin-bottom:100px;						
-	margin-right:300px;	
-	margin-left:300px;	
-	font-size:12px;		
+    padding: 10px;	
+    max-width:100%;	
+    max-height:100%;
+    background-color: white;
+    box-shadow: 3px 3px 3px #888888;						
+    margin-top:100px;	
+    margin-bottom:100px;						
+    margin-right:300px;	
+    margin-left:300px;	
+    font-size:12px;		
 }

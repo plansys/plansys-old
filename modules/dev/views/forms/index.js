@@ -56,8 +56,26 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
             $http.get(Yii.app.createUrl('/dev/forms/addForm', params)).success(function (data) {
                 if (data) {
                     if (data.success) {
+                        var sp = item.alias.split(".");
+                        var shortName = data.class + "";
+                        if (sp[1] == 'modules') {
+                            sp = sp.splice(2);
+                            if (shortName.toLowerCase().indexOf(sp[0].toLowerCase()) === 0) {
+                                shortName = shortName.substr(sp[0].length);
+                                sp.shift();
+                            }
+                            
+                            sp = sp.splice(1);
+                            for (var s in sp) {
+                                if (shortName.toLowerCase().indexOf(sp[s].toLowerCase()) === 0) {
+                                    shortName = shortName.substr(sp[s].length);
+                                }
+                            }
+                        }
+                        
                         item.items.push({
                             name: data.class,
+                            shortName: shortName,
                             class: data.class,
                             module: item.module,
                             alias: item.alias + "." + data.class,

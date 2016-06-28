@@ -713,12 +713,16 @@ app.directive('gridView', function ($timeout, $http) {
                     }
                     return true;
                 }
-                $scope.clearCheckbox = function() {
+                $scope.clearCheckbox = function(col) {
                     $timeout(function() {
                         $scope.checkbox = {};
                         $scope.lastCheckbox = null; 
                         $timeout(function() {
-                            $el.find(".cb-chk:checked,.cb-th-chk:checked").prop('checked',false);
+                            $el.find("input[class^='cb-'],input[class*=' cb-']").prop('checked',false);
+                            $el.find(".row-checked").each(function() {
+                                $(this).removeClass("row-checked");
+                                $(this).find(".t-checkbox input").prop('checked', false);
+                            });
                         });
                     });
                 }

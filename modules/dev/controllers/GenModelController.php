@@ -7,11 +7,11 @@ class GenModelController extends Controller {
     public function actionIndex() {
         $content = '';
         $name = '';
-        $path    = [];
+        $path = [];
         if (isset($_GET['active'])) {
             $path = explode(".", $_GET['active']);
             if (count($path) < 2) {
-                $ref      = new ReflectionClass($_GET['active']);
+                $ref = new ReflectionClass($_GET['active']);
                 $filename = $ref->getFileName();
                 if (strpos($filename, Yii::getPathOfAlias('app')) === 0) {
                     $this->redirect(['/dev/genModel/index', 'active' => 'app.' . $_GET['active']]);
@@ -22,7 +22,7 @@ class GenModelController extends Controller {
                 return false;
             }
             $module = array_shift($path);
-            $name = $path[count($path) -1];
+            $name = $path[count($path) - 1];
             $path = implode(".", $path);
             $filePath = Yii::getPathOfAlias(($module == 'plansys' ? 'application' : 'app') . ".models." . $path) . ".php";
 
@@ -39,8 +39,8 @@ class GenModelController extends Controller {
 
     public function actionSave() {
         $postdata = file_get_contents("php://input");
-        $post     = CJSON::decode($postdata);
-        $path     = explode(".", $post['active']);
+        $post = CJSON::decode($postdata);
+        $path = explode(".", $post['active']);
         $filePath = Yii::getPathOfAlias(($path[0] == 'plansys' ? 'application' : 'app') . ".models." . $path[1]) . ".php";
 
         if (is_file($filePath)) {
@@ -49,11 +49,11 @@ class GenModelController extends Controller {
     }
 
     public function actionFieldList($table) {
-        $schema = Yii::app()->db->schema->tables;
-        if (isset($schema[$table])) {
-            $fields = $schema[$table]->columns;
-            $array  = [];
-            foreach ($fields as $k=>$a) {
+        $schema = Yii::app()->db->schema->getTable($table);
+        if (isset($schema)) {
+            $fields = $schema->columns;
+            $array = [];
+            foreach ($fields as $k => $a) {
                 $array[$k] = $k;
             }
 
@@ -65,44 +65,63 @@ class GenModelController extends Controller {
         echo json_encode(ModelGenerator::listTables($conn));
     }
 
+    public function actionNewAllModel() {
+        if (isset($_GET['gen'])) {
+            $postdata = file_get_contents("php://input");
+            $post = CJSON::decode($postdata);
+
+            ModelGenerator::create($post['item']['name'], $post['item']['model'], 'app', [
+                'conn' => $post['conn']
+            ]);
+            echo json_encode(['success']);
+            die();
+        }
+
+        $model = new DevGenmodelGenAllModel();
+        $href = "";
+        $this->renderForm("DevGenmodelGenAllModel", $model, [
+            'href' => $href
+                ], [
+            'layout' => '//layouts/blank'
+        ]);
+    }
+
     public function actionNewModel() {
         $this->templates['model.php'] = Yii::getPathOfAlias('application.components.codegen.templates');
 
         $model = new DevGenNewModel();
-        $href  = "";
+        $href = "";
 
-        if (isset($_POST['DevGenNewModel'])
-            && $_POST['DevGenNewModel']['tableName'] != ""
-            && $_POST['DevGenNewModel']['modelName'] != "") {
-                
-                $s         = $_POST['DevGenNewModel'];
-                $conn      = $s['conn'];
-                $tableName = $s['tableName'];
-                $modelName = $s['modelName'];
-                $module    = $s['module'] == 'plansys' ? 'application' : 'app';
-                $options   = [
-                    'conn' => $conn
+        if (isset($_POST['DevGenNewModel']) && $_POST['DevGenNewModel']['tableName'] != "" && $_POST['DevGenNewModel']['modelName'] != "") {
+
+            $s = $_POST['DevGenNewModel'];
+            $conn = $s['conn'];
+            $tableName = $s['tableName'];
+            $modelName = $s['modelName'];
+            $module = $s['module'] == 'plansys' ? 'application' : 'app';
+            $options = [
+                'conn' => $conn
+            ];
+
+            if ($s['softDelete'] == 'Yes') {
+                $options['softDelete'] = [
+                    'column' => $s['softDeleteColumn'],
+                    'value' => $s['softDeleteValue']
                 ];
-    
-                if ($s['softDelete'] == 'Yes') {
-                    $options['softDelete'] = [
-                        'column' => $s['softDeleteColumn'],
-                        'value' => $s['softDeleteValue']
-                    ];
-                }
+            }
 
-                $sub = $conn == 'db' ? '' : $conn . ".";
-                
-                ModelGenerator::create($tableName, $modelName, $module, $options);
-                $href = Yii::app()->createUrl('/dev/genModel/index', [
-                    'active' => $s['module'] . "."  . $sub . $modelName
-                ]);
+            $sub = $conn == 'db' ? '' : $conn . ".";
+
+            ModelGenerator::create($tableName, $modelName, $module, $options);
+            $href = Yii::app()->createUrl('/dev/genModel/index', [
+                'active' => $s['module'] . "." . $sub . $modelName
+            ]);
         }
 
         $this->renderForm("DevGenNewModel", $model, [
             'href' => $href,
             'tableList' => ModelGenerator::listTables()
-        ], [
+                ], [
             'layout' => '//layouts/blank'
         ]);
     }

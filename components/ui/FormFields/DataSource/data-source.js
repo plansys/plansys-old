@@ -23,6 +23,10 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 $scope.loading = false;
                 $scope.untrackColumns = [];
                 
+                if (!!$scope.options['primaryKey']) {
+                    $scope.primaryKey = $scope.options['primaryKey'];
+                }
+                
                 if (!$scope.primaryKey) {
                     $scope.primaryKey = 'id';
                 }

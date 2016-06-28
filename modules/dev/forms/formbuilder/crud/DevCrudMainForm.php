@@ -95,7 +95,8 @@ class DevCrudMainForm extends Form {
                         'options' => array (
                             'ng-change' => 'model.name = model.model; onNameChange();',
                         ),
-                        'listExpr' => 'array_merge([\'\'=>\'Choose Model\'], ModelGenerator::listModels(true))',
+                        'listExpr' => 'array_merge(
+[\'\'=>\'Choose Model\'], ModelGenerator::listModels(true))',
                         'searchable' => 'Yes',
                         'type' => 'DropDownList',
                     ),

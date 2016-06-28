@@ -243,11 +243,13 @@ class Helper {
     // Does not support flag GLOB_BRACE
     public static function globRecursive($pattern, $flags = 0, $returnCount = false, $count = 0) {
         $files = glob($pattern, $flags);
+        natsort($files);
         if ($returnCount) {
             $count = count($files);
         }
         $dirs = glob(dirname($pattern) . '/*', GLOB_ONLYDIR);
         $dirs = array_reverse($dirs);
+        
         foreach ($dirs as $dir) {
             array_unshift($files, str_replace('/', DIRECTORY_SEPARATOR, $dir));
             $recureGlob = Helper::globRecursive($dir . '/' . basename($pattern), $flags, $returnCount);

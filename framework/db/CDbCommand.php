@@ -215,6 +215,8 @@ class CDbCommand extends CComponent
 			{
 				Yii::log('Error in preparing SQL: '.$this->getText(),CLogger::LEVEL_ERROR,'system.db.CDbCommand');
 				$errorInfo=$e instanceof PDOException ? $e->errorInfo : null;
+                                var_dump($this->getText());
+                                die();
 				throw new CDbException(Yii::t('yii','CDbCommand failed to prepare the SQL statement: {error}',
 					array('{error}'=>$e->getMessage())),(int)$e->getCode(),$errorInfo);
 			}
@@ -469,6 +471,12 @@ class CDbCommand extends CComponent
 	 */
 	private function queryInternal($method,$mode,$params=array())
 	{
+            $textql = <<<EOD
+SELECT table_name as table_name , '' as table_schema FROM user_tables 
+UNION
+SELECT view_name as table_name, '' as table_schema from user_views
+EOD;
+                
 		$params=array_merge($this->params,$params);
 
 		if($this->_connection->enableParamLogging && ($pars=array_merge($this->_paramLog,$params))!==array())
@@ -498,6 +506,7 @@ class CDbCommand extends CComponent
 			}
 		}
 
+                
 		try
 		{
 			if($this->_connection->enableProfiling)
@@ -518,6 +527,7 @@ class CDbCommand extends CComponent
 				call_user_func_array(array($this->_statement, 'setFetchMode'), $mode);
 				$result=$this->_statement->$method();
 				$this->_statement->closeCursor();
+                                
 			}
 
 			if($this->_connection->enableProfiling)
