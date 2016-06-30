@@ -124,6 +124,7 @@ EOF;
 
         $reader = ReaderFactory::create(Type::XLSX);
         $reader->open($file);
+        
         $transaction = Yii::app()->db->beginTransaction();
         
         ## get first sheet
