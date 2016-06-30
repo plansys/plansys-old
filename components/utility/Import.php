@@ -186,10 +186,11 @@ class Import extends CComponent {
                         ['.$key.'] Missing `condition` key, please provide lookup condition !');
                     }
                     
-                    if (isset(Yii::app()->db->schema->getTable([$col['from']]))) {
+                    $table = Yii::app()->db->schema->getTable($col['from']);
+                    if (isset($table)) {
                         if (!isset($this->lookup[$col['from']])) {
                             $this->lookup[$col['from']] = [
-                                'schema' => Yii::app()->db->schema->getTable([$col['from']]),
+                                'schema' => Yii::app()->db->schema->getTable($col['from']),
                                 'hash' => [
                                     $key => []
                                 ]
@@ -309,9 +310,9 @@ class Import extends CComponent {
                             }
                         } else if (is_string($i)) {
                             $rowParams = $this->rowParams(array_merge($row, $attrs));
-                            
                             try {
                                 $insert[$k] = $this->evalExpr($i, $rowParams);
+                                
                             } catch (Exception $e) {
                                 throw new CException("
 Kolom " . $key . " tidak ditemukan, <br/>
@@ -413,9 +414,15 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
     private function evalExpr($expr, $rowParams, $addQuote = true) {
         
         $markNull = false;
-        $eval =  preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
+        $eval = preg_replace_callback( "/{([^.}]*)\.?([^}]*)}/", 
                 function($var) use($expr, $rowParams, &$markNull) {
-                     $ref = $rowParams[$var[1]];
+                    $nullable = false;
+                    if ($var[1][0] == '*') {
+                        $var[1] = trim($var[1], '*');
+                        $nullable = true;
+                    }
+                    
+                    $ref = $rowParams[$var[1]];
         
                     if (!isset($ref[$var[2]])) {
                         if ($var[1] == "lastFilledRow") {
@@ -429,6 +436,11 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
                         if ($ref[$var[2]] instanceof DateTime) {
                             $ref[$var[2]] = $ref[$var[2]]->format('Y-m-d H:i:s');
                         }
+                    }
+                    
+                    if ($ref[$var[2]] == '' && $nullable) {
+                        $ref[$var[2]] = null;
+                        $markNull = true;
                     }
                     
                     if (is_null($ref[$var[2]]) && $var[1] != "lastFilledRow") {
@@ -712,7 +724,11 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
             $rowParams = $this->rowParams($data);
             $skipIf = $this->evalExpr($skipIf, $rowParams + $params);
         }
+        foreach ($attrs as $k =>$v) {
+            $attrs[$k] = iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $v);
+        }
         $model->attributes = $attrs;
+        
         
         if ($executeChild) {
             if ($skipParentIf !== true) {

@@ -648,7 +648,7 @@ class ActiveJoinElement {
 					$columns[]=$prefix.$schema->quoteColumnName($key).' AS '.$schema->quoteColumnName($this->_columnAliases[$key]);
 					$selected[$this->_columnAliases[$key]]=1;
 				}
-				elseif(preg_match('/^(.*?)\s+AS\s+("[^"]+"|[\.\w]+)$/im',$name,$matches)) // if the column is already aliased
+				elseif(preg_match('/^(.*?)\s+AS\s+([`"][^"`]+["`]|[\.\w]+)$/im',$name,$matches)) // if the column is already aliased
 				{
 					$oldAlias=$matches[2];
 					$alias = trim($oldAlias, '"\'`');

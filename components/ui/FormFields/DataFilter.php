@@ -585,8 +585,8 @@ class DataFilter extends FormField {
                 case "check":
                     if (isset($filter['listExpr']) && trim($filter['listExpr']) != '') {
                         ## evaluate expression
-                        $list = $this->evaluate($filter['listExpr'], true);
-
+                        $list = $this->evaluate(html_entity_decode($filter['listExpr']), true);
+                        
                         ## kalau listExpr ini berisi html, nanti bakal menghancurkan layout
                         ## karena html nya itu masuk ke dalam json, dan bakal di render
                         ## jadinya kita unset saja setelah di proses biar ga masuk ke json
