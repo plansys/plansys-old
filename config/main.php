@@ -3,69 +3,75 @@
 ## Setting initialization
 Setting::initPath();
 $basePath = Setting::getBasePath();
-$modules = Setting::getModules();
+$modules  = Setting::getModules();
 
 ## components
 $components = array(
-    'assetManager' => array(
+    'assetManager'  => array(
         'basePath' => Setting::getAssetPath()
-    ),        
-    'img' => array(
+    ),
+    'img'           => array(
         'class' => 'application.extensions.simpleimage.CSimpleImage',
     ),
-    'ldap' => Setting::getLDAP(),
-    'nfy' => array(
-        'class' => 'nfy.components.NfyDbQueue',
-        'id' => 'Notifications',
-        'timeout' => 30,
-    ),
-    'todo' => array(
-        'class' => 'application.components.ui.Widgets.TodoWidget',
-    ),
+    'ldap'          => Setting::getLDAP(),
     'EJSUrlManager' => array(
         'class' => 'ext.JSUrlManager.EJSUrlManager'
     ),
-    'user' => array(
+    'user'          => array(
         'allowAutoLogin' => true,
-        'class' => 'WebUser',
+        'class'          => 'WebUser',
     ),
-    'db' => Setting::getDB(),
-    'errorHandler' => array(
+    'db'            => Setting::getDB(),
+    'errorHandler'  => array(
         'class' => 'ErrorHandler',
     ),
-    'log' => array(
-        'class' => 'CLogRouter',
-        'routes' => array(
-            array(
-                'class' => 'CFileLogRoute',
-                'levels' => 'error, warning',
-            ),
-        ),
-    ),
     'widgetFactory' => array(),
-    'cache' => array(
+    'cache'         => array(
         'class' => 'system.caching.CFileCache'
     ),
-    'clientScript' => array(
+    'clientScript'  => array(
         'packages' => array(
             'jquery' => array(
-                'basePath' => "application.static.js.lib",
-                'js' => array('jquery.js'),
+                'basePath'           => "application.static.js.lib",
+                'js'                 => array('jquery.js'),
                 'coreScriptPosition' => CClientScript::POS_HEAD
             )
         )
     ),
+    'log'           => array(
+        'class'  => 'CLogRouter',
+        'routes' => array(
+            array(
+                'class'  => 'CFileLogRoute',
+                'levels' => 'error, warning',
+            ),
+        ),
+    ),
 );
 
-$dbLists = Setting::getDBList();
+$dbLists    = Setting::getDBList();
 $components = $dbLists + $components;
 
+if (Setting::get('app.debug') == "ON") {
+    $components['log']['routes'][] = array(
+        'class'         => 'DbProfiler',
+        'report'        => 'summary',
+    );
+    $components['log']['routes'][] = array(
+        'class' => 'WebProfiler',
+    );
+}
+
+
 $imports = array(
+    'application.components.models.CDbCommand',
     'application.components.models.CDbCommandBuilder',
-    'application.components.models.CMysqlColumnSchema',
-    'application.components.models.COciSchema',
-    'application.components.models.COciColumnSchema',
-    'application.components.models.COciCommandBuilder',
+    'application.components.models.mysql.CMysqlColumnSchema',
+    'application.components.models.oci.COciSchema',
+    'application.components.models.oci.COciColumnSchema',
+    'application.components.models.oci.COciCommandBuilder',
+    'application.components.logging.DbProfiler',
+    'application.components.logging.WebProfiler',
     'app.models.*',
     'application.models.*',
     'application.forms.*',
@@ -82,24 +88,26 @@ $imports = array(
     'application.behaviors.*',
 );
 
-foreach ($dbLists as $db=>$val) {
+foreach ($dbLists as $db => $val) {
     array_splice($imports, 1, 0, "app.models.$db.*");
 }
+
+
 ## define config
 $config = array(
-    'basePath' => $basePath,
-    'viewPath' => Setting::getViewPath(),
-    'name' => (!Setting::get('app.name') ? "Plansys" : Setting::get('app.name')),
-    'preload' => array('log', 'EJSUrlManager'),
-    'import' => $imports,
-    'runtimePath' => Setting::getRuntimePath(),
+    'basePath'       => $basePath,
+    'viewPath'       => Setting::getViewPath(),
+    'name'           => (!Setting::get('app.name') ? "Plansys" : Setting::get('app.name')),
+    'preload'        => array('log', 'EJSUrlManager'),
+    'import'         => $imports,
+    'runtimePath'    => Setting::getRuntimePath(),
     'sourceLanguage' => 'en_us',
-    'language' => 'id',
-    'modulePath' => Setting::getModulePath(),
-    'controllerMap' => Setting::getControllerMap(),
-    'modules' => $modules,
-    'components' => $components,
-    'params' => array(),
+    'language'       => 'id',
+    'modulePath'     => Setting::getModulePath(),
+    'controllerMap'  => Setting::getControllerMap(),
+    'modules'        => $modules,
+    'components'     => $components,
+    'params'         => array(),
 );
 
 $config = Setting::finalizeConfig($config);

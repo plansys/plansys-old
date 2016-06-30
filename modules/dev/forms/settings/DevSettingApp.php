@@ -6,7 +6,7 @@ class DevSettingApp extends Form {
     public $dir = 'app';
     public $host = 'http://localhost';
     public $mode = 'dev';
-    
+    public $debug = 'ON';
     public $dateFormat = 'd M Y';
     public $timeFormat = 'H:i';
     public $dateTimeFormat = 'd M Y - H:i';
@@ -79,6 +79,20 @@ class DevSettingApp extends Form {
                         'type' => 'TextField',
                     ),
                     array (
+                        'label' => 'Main Dir',
+                        'name' => 'dir',
+                        'fieldOptions' => array (
+                            'disabled' => 'true',
+                        ),
+                        'type' => 'TextField',
+                    ),
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
+                ),
+                'column2' => array (
+                    array (
                         'label' => 'Mode',
                         'name' => 'mode',
                         'list' => array (
@@ -90,18 +104,12 @@ class DevSettingApp extends Form {
                         'type' => 'DropDownList',
                     ),
                     array (
-                        'type' => 'Text',
-                        'value' => '<column-placeholder></column-placeholder>',
-                    ),
-                ),
-                'column2' => array (
-                    array (
-                        'label' => 'Main Dir',
-                        'name' => 'dir',
-                        'fieldOptions' => array (
-                            'disabled' => 'true',
+                        'label' => 'Debug',
+                        'name' => 'debug',
+                        'options' => array (
+                            'ng-if' => 'model.mode != \'prod\'',
                         ),
-                        'type' => 'TextField',
+                        'type' => 'ToggleSwitch',
                     ),
                     array (
                         'type' => 'Text',

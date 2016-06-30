@@ -5,42 +5,40 @@ function vdump($var) {
 }
 
 class Setting {
-    public static  $basePath;
-    public static  $rootPath;
-    public static  $path        = "";
-    public static  $default     = [
-        'db' => [
-            'driver' => 'mysql',
-            'host' => 'localhost',
+
+    public static $basePath;
+    public static $rootPath;
+    public static $path        = "";
+    public static $default     = [
+        'db'    => [
+            'driver'   => 'mysql',
+            'host'     => 'localhost',
             'username' => 'root',
             'password' => '',
-            'dbname' => '',
-            'dateFormat' => 'd M Y',
-            'timeFormat' => 'H:i',
-            'dateTimeFormat' => 'd M Y - H:i'
+            'dbname'   => '',
         ],
-        'repo' => [
+        'repo'  => [
             'path' => 'repo'
         ],
-        'app' => [
-            'dir' => 'app',
-            'mode' => 'development'
-        ],
-        'notif' => [
-            'enable' => true,
-            'email' => true
+        'app'   => [
+            'dir'            => 'app',
+            'dateFormat'     => 'd M Y',
+            'timeFormat'     => 'H:i',
+            'dateTimeFormat' => 'd M Y - H:i',
+            'mode'           => 'dev',
+            'debug'          => 'ON'
         ],
         'email' => [
             'transport' => [
                 'service' => 'none'
             ],
         ],
-        'ldap' => [
+        'ldap'  => [
             'enable' => false
         ],
     ];
-    public static  $mode        = null;
-    public static  $entryScript = "";
+    public static $mode        = null;
+    public static $entryScript = "";
     private static $data;
 
     public static function getLDAP() {
@@ -48,7 +46,7 @@ class Setting {
 
         if (!is_null($ldap)) {
             return [
-                'class' => 'application.extensions.adLDAP.YiiLDAP',
+                'class'   => 'application.extensions.adLDAP.YiiLDAP',
                 'options' => $ldap
             ];
         } else {
@@ -60,9 +58,9 @@ class Setting {
         require_once("Installer.php");
 
         date_default_timezone_set("Asia/Jakarta");
-        $bp            = Setting::setupBasePath($configfile);
-        $ap            = Setting::$rootPath . DIRECTORY_SEPARATOR . "app";
-        
+        $bp = Setting::setupBasePath($configfile);
+        $ap = Setting::$rootPath . DIRECTORY_SEPARATOR . "app";
+
         Setting::$path = $ap . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
         if (!is_file(Setting::$path)) {
             $configdir = dirname(Setting::$path);
@@ -77,8 +75,8 @@ class Setting {
                 die();
             }
 
-            $json   = Setting::$default;
-            
+            $json = Setting::$default;
+
             $json   = json_encode($json, JSON_PRETTY_PRINT);
             $result = @file_put_contents(Setting::$path, $json);
 
@@ -110,7 +108,7 @@ class Setting {
             $setting       = json_decode($file, true);
             Setting::$data = Setting::arrayMergeRecursiveReplace(Setting::$default, $setting);
         }
-        
+
 
         ## set host
         if (!Setting::get('app.host')) {
@@ -123,18 +121,26 @@ class Setting {
         if (Setting::$mode == null) {
             Setting::$mode = $mode;
         }
-        
+
         if ($mode == 'testing') {
             Setting::$mode = 'testing';
         }
-        
+
         if (!isset(Setting::$data['app']['daemonport'])) {
             Setting::set('app.daemonport', ('50' . rand(100, 999)) * 1);
         }
 
         if (Setting::get('app.mode') != 'production') {
-            defined('YII_DEBUG') or define('YII_DEBUG', true);
-            defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL', 3);
+            //debug
+            defined('YII_DEBUG') or define('YII_DEBUG',true );
+            //show profiler
+            defined('YII_DEBUG_SHOW_PROFILER') or define('YII_DEBUG_SHOW_PROFILER',true);
+            //enable profiling
+            defined('YII_DEBUG_PROFILING') or define('YII_DEBUG_PROFILING',true);
+            //trace level
+            defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);
+            //execution time
+            defined('YII_DEBUG_DISPLAY_TIME') or define('YII_DEBUG_DISPLAY_TIME',true);
         }
     }
 
@@ -181,7 +187,7 @@ class Setting {
 
         if ($messages === null) {
             $messages = array();
-            if (($lang = Setting::getPreferredLanguage()) !== false) {
+            if (($lang     = Setting::getPreferredLanguage()) !== false) {
                 $file = dirname(__FILE__) . "/messages/$lang/yii.php";
                 if (is_file($file)) {
                     $messages = include($file);
@@ -199,16 +205,16 @@ class Setting {
 
     public static function getPreferredLanguage() {
         if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) && ($n = preg_match_all('/([\w\-]+)\s*(;\s*q\s*=\s*(\d*\.\d*))?/', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches)) > 0) {
-            $languages = array();
+            $languages                  = array();
             for ($i = 0; $i < $n; ++$i)
                 $languages[$matches[1][$i]] = empty($matches[3][$i]) ? 1.0 : floatval($matches[3][$i]);
             arsort($languages);
             foreach ($languages as $language => $pref) {
-                $lang = strtolower(str_replace('-', '_', $language));
+                $lang     = strtolower(str_replace('-', '_', $language));
                 if (preg_match("/^en\_?/", $lang))
                     return false;
                 if (!is_file($viewFile = dirname(__FILE__) . "/views/$lang/index.php"))
-                    $lang = false;
+                    $lang     = false;
                 else
                     break;
             }
@@ -218,7 +224,7 @@ class Setting {
     }
 
     private static function arrayMergeRecursiveReplace($paArray1, $paArray2) {
-        if (!is_array($paArray1) or !is_array($paArray2)) {
+        if (!is_array($paArray1) or ! is_array($paArray2)) {
             return $paArray2;
         }
         foreach ($paArray2 AS $sKey2 => $sValue2) {
@@ -229,15 +235,15 @@ class Setting {
 
     public static function get($key, $default = null, $forceRead = false) {
         $keys = explode('.', $key);
-        
+
         if ($forceRead) {
-            $file = @file_get_contents(Setting::$path);   
+            $file          = @file_get_contents(Setting::$path);
             $setting       = json_decode($file, true);
             Setting::$data = Setting::arrayMergeRecursiveReplace(Setting::$default, $setting);
         }
 
         $arr = Setting::$data;
-        while ($k = array_shift($keys)) {
+        while ($k   = array_shift($keys)) {
             $arr = &$arr[$k];
         }
 
@@ -247,7 +253,7 @@ class Setting {
 
         return $arr;
     }
-    
+
     public static function set($key, $value, $flushSetting = true) {
         Setting::setInternal(Setting::$data, $key, $value);
 
@@ -271,10 +277,10 @@ class Setting {
             $data = date("Y-m-d H:i:s");
             $data .= "\n\n";
             $data .= var_export($_SERVER, true);
-            
+
             @file_put_contents(Setting::getAssetPath() . "/setting_json_error.txt", $data);
         }
-        
+
         $result = @file_put_contents(Setting::$path, json_encode(Setting::$data, JSON_PRETTY_PRINT));
     }
 
@@ -288,31 +294,31 @@ class Setting {
     public static function getAppPath() {
         return Setting::$rootPath . DIRECTORY_SEPARATOR . Setting::get('app.dir');
     }
-    
+
     public static function getViewPath() {
         $appView = Setting::getAppPath() . DIRECTORY_SEPARATOR . "views";
         if (is_dir($appView)) {
             if (is_dir(Setting::getAppPath() . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "forms")) {
                 return $appView;
-            } 
-        } 
-        
+            }
+        }
+
         return Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "views";
     }
 
     public static function getRepoPath() {
         return Setting::$rootPath . DIRECTORY_SEPARATOR . Setting::get('repo.path');
     }
-    
+
     public static function getApplicationPath() {
         return Setting::$rootPath . DIRECTORY_SEPARATOR . 'plansys';
     }
-    
+
     public static function remove($key, $flushSetting = true) {
         $keys = explode('.', $key);
 
         $arr = &Setting::$data;
-        while ($k = array_shift($keys)) {
+        while ($k   = array_shift($keys)) {
             $arr    = &$arr[$k];
             $length = count($keys);
 
@@ -333,7 +339,7 @@ class Setting {
                 $error   = error_get_last();
                 $message = Setting::t("Failed to create directory <br/>'{path}'<br/>because: {error}");
                 $message = strtr($message, [
-                    '{path}' => $path,
+                    '{path}'  => $path,
                     '{error}' => $error['message']
                 ]);
 
@@ -345,7 +351,7 @@ class Setting {
             if (!is_writable($path)) {
                 $message = Setting::t("Failed to write in <br/>'{path}'<br/>because: {error}");
                 $message = strtr($message, [
-                    '{path}' => $path,
+                    '{path}'  => $path,
                     '{error}' => 'Permission Denied'
                 ]);
 
@@ -372,11 +378,11 @@ class Setting {
 
                 $config['theme'] = 'default';
             }
-            
+
             if (Setting::$mode == 'testing') {
                 $config['components']['request'] = array(
                     'class' => 'CodeceptionHttpRequest'
-                ); 
+                );
             }
         }
 
@@ -427,9 +433,9 @@ class Setting {
         foreach ($modules as $m) {
             $moduleClass = explode(".", $m['class']);
             array_pop($moduleClass);
-            $moduleName = array_pop($moduleClass);
+            $moduleName  = array_pop($moduleClass);
             array_push($moduleClass, $moduleName);
-            $modulePath = implode(".", $moduleClass);
+            $modulePath  = implode(".", $moduleClass);
 
             $path = Yii::getPathOfAlias($modulePath . ".commands");
             if (is_dir($path)) {
@@ -445,16 +451,16 @@ class Setting {
                 }
             }
         }
-        
+
         if (Setting::$mode == 'running' && !is_dir(Yii::getPathOfAlias('app.migrations'))) {
             mkdir(Yii::getPathOfAlias('app.migrations'), 0755, true);
         }
 
         $commands['migrate'] = [
-            'class'=>'system.cli.commands.MigrateCommand',
-            'migrationPath'=> Setting::$mode == 'install' ? 'application.migrations' : 'app.migrations',
-            'connectionID'=>'db',
-            'migrationTable'=>'p_migration',
+            'class'          => 'system.cli.commands.MigrateCommand',
+            'migrationPath'  => Setting::$mode == 'install' ? 'application.migrations' : 'app.migrations',
+            'connectionID'   => 'db',
+            'migrationTable' => 'p_migration',
         ];
 
         return $commands;
@@ -520,7 +526,7 @@ class Setting {
     }
 
     public static function getDBList() {
-        $items = Setting::get('db.items');
+        $items  = Setting::get('db.items');
         $result = [];
         if (is_null($items)) {
             $items = [];
@@ -528,19 +534,19 @@ class Setting {
         foreach ($items as $i) {
             $result['db' . $i['conn']] = Setting::getDB($i);
         }
-        
+
         return $result;
     }
-    
+
     public static function getDBListAll() {
-        return ['db'=>Setting::getDB(),'---'=>'---'] +  Setting::getDBList() ;
+        return ['db' => Setting::getDB(), '---' => '---'] + Setting::getDBList();
     }
 
     public static function getDB($db = null) {
         if (is_null($db)) {
             $db = Setting::get('db');
         }
-        
+
         switch ($db['driver']) {
             case "oci":
                 if (@$db['port'] == null) {
@@ -550,26 +556,26 @@ class Setting {
                 }
                 $connection = [
                     'connectionString' => $connectionString,
-                    'emulatePrepare' => true,
-                    'username' => $db['username'],
-                    'password' => $db['password'],
-                    'attributes' => [
+                    'emulatePrepare'   => true,
+                    'username'         => $db['username'],
+                    'password'         => $db['password'],
+                    'attributes'       => [
                         PDO::ATTR_STRINGIFY_FETCHES => true,
                     ],
                 ];
-            break;
+                break;
             default:
                 if (@$db['port'] == null) {
-                    $connectionString =  'mysql:host=' . $db['host'] . ';dbname=' . $db['dbname'];
+                    $connectionString = 'mysql:host=' . $db['host'] . ';dbname=' . $db['dbname'];
                 } else {
-                    $connectionString =  'mysql:host=' . $db['host'] . ';port=' . $db['port'] . ';dbname=' . $db['dbname'];
+                    $connectionString = 'mysql:host=' . $db['host'] . ';port=' . $db['port'] . ';dbname=' . $db['dbname'];
                 }
                 $connection = [
                     'connectionString' => $connectionString,
-                    'emulatePrepare' => true,
-                    'username' => $db['username'],
-                    'password' => $db['password'],
-                    'charset' => 'utf8',
+                    'emulatePrepare'   => true,
+                    'username'         => $db['username'],
+                    'password'         => $db['password'],
+                    'charset'          => 'utf8',
                 ];
         }
 
@@ -577,16 +583,19 @@ class Setting {
             $connection['class'] = 'CDbConnection';
         }
         
+        $connection['schemaCachingDuration'] = 1000;
+        $connection['enableProfiling'] = true;
+
         return $connection;
     }
 
     public static function getDBDriverList() {
         return [
             'mysql' => 'MySQL',
-            'oci' => 'Oracle'
-            //  'pgsql' => 'PostgreSQL',
-            //  'sqlsrv' => 'SQL Server',
-            //  'sqlite' => 'SQLite',
+            'oci'   => 'Oracle'
+                //  'pgsql' => 'PostgreSQL',
+                //  'sqlsrv' => 'SQL Server',
+                //  'sqlite' => 'SQLite',
         ];
     }
 

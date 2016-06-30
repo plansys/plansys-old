@@ -61,62 +61,57 @@ class Controller extends CController {
         return @$_POST[$class];
     }
 
-    public function getViewFile($viewName)
-    {
-        if(($theme=Yii::app()->getTheme())!==null && ($viewFile=$theme->getViewFile($this,$viewName))!==false)
+    public function getViewFile($viewName) {
+        if (($theme    = Yii::app()->getTheme()) !== null && ($viewFile = $theme->getViewFile($this, $viewName)) !== false)
             return $viewFile;
 
         $appPath = Yii::getPathOfAlias('app.views');
         if (!is_dir($appPath)) {
             $appPath = Yii::app()->getViewPath();
         }
-        $moduleViewPath=null;
-        $basePath = $appPath;
-        if(($module=$this->getModule())!==null)
-            $moduleViewPath=$module->getViewPath();
-        
-        $result = $this->resolveViewFile($viewName,$appPath,$basePath,$moduleViewPath);
+        $moduleViewPath = null;
+        $basePath       = $appPath;
+        if (($module         = $this->getModule()) !== null)
+            $moduleViewPath = $module->getViewPath();
+
+        $result = $this->resolveViewFile($viewName, $appPath, $basePath, $moduleViewPath);
         if (!$result) {
-            return $this->resolveViewFile($viewName,$this->getViewPath(),$basePath,$moduleViewPath);
-        } 
-        
+            return $this->resolveViewFile($viewName, $this->getViewPath(), $basePath, $moduleViewPath);
+        }
+
         return $result;
     }
 
+    public function getLayoutFile($layoutName) {
+        if ($layoutName === false)
+            return false;
 
-	public function getLayoutFile($layoutName)
-	{
-		if($layoutName===false)
-			return false;
-		
-		if(($theme=Yii::app()->getTheme())!==null && ($layoutFile=$theme->getLayoutFile($this,$layoutName))!==false)
-			return $layoutFile;
+        if (($theme      = Yii::app()->getTheme()) !== null && ($layoutFile = $theme->getLayoutFile($this, $layoutName)) !== false)
+            return $layoutFile;
 
-		if(empty($layoutName))
-		{
-			$module=$this->getModule();
-			while($module!==null)
-			{
-				if($module->layout===false)
-					return false;
-				if(!empty($module->layout))
-					break;
-				$module=$module->getParentModule();
-			}
-			if($module===null)
-				$module=Yii::app();
-			$layoutName=$module->layout;
-		}
-		elseif(($module=$this->getModule())===null)
-			$module=Yii::app();
+        if (empty($layoutName)) {
+            $module = $this->getModule();
+            while ($module !== null) {
+                if ($module->layout === false)
+                    return false;
+                if (!empty($module->layout))
+                    break;
+                $module = $module->getParentModule();
+            }
+            if ($module === null)
+                $module     = Yii::app();
+            $layoutName = $module->layout;
+        }
+        elseif (($module = $this->getModule()) === null)
+            $module = Yii::app();
 
         $appPath = Yii::getPathOfAlias('app.views');
         if (!is_dir($appPath)) {
             $appPath = Yii::app()->getViewPath();
         }
 
-		return $this->resolveViewFile($layoutName,$module->getLayoutPath(),$appPath,$module->getViewPath());
-	}
+        return $this->resolveViewFile($layoutName, $module->getLayoutPath(), $appPath, $module->getViewPath());
+    }
 
     public function renderForm($class, $model = null, $params = [], $options = []) {
         if (is_array($model)) {
@@ -141,7 +136,7 @@ class Controller extends CController {
 
         $renderOptions = [
             'wrapForm' => true,
-            'action' => $this->action->id,
+            'action'   => $this->action->id,
         ];
 
         if (is_object($model)) {
@@ -165,9 +160,19 @@ class Controller extends CController {
                 unset($data[$k]);
             }
         }
+        Yii::trace('Rendering Form: ' . $class);
 
-        $layout = Layout::render($fb->form['layout']['name'], $data, $model, true);
-        $this->renderText($layout, false);
+        if ($this->beforeRender($class)) {
+            $layout = Layout::render($fb->form['layout']['name'], $data, $model, true);
+            $this->renderText($layout, false);
+        }
+    }
+
+    public function beforeRender($view) {
+        if (Setting::get('app.debug') == 'ON') {
+            Asset::registerJS('application.static.js.debugbar');
+        }
+        return true;
     }
 
     public function prepareFormName($class, $module = null) {
@@ -263,14 +268,14 @@ class Controller extends CController {
         $userItems = [
             [
                 'label' => 'Edit Profile',
-                'url' => ['/sys/profile/index'],
+                'url'   => ['/sys/profile/index'],
             ],
             [
                 'label' => '---',
             ],
             [
                 'label' => 'Logout',
-                'url' => ['/site/logout'],
+                'url'   => ['/site/logout'],
             ]
         ];
 
@@ -283,7 +288,7 @@ class Controller extends CController {
 
                     array_push($roleItems, [
                         'label' => '&nbsp; <i class="fa ' . $rc . '"></i> &nbsp;' . $r['role_description'],
-                        'url' => ['/sys/profile/changeRole', 'id' => $r['id']]
+                        'url'   => ['/sys/profile/changeRole', 'id' => $r['id']]
                     ]);
                 }
                 array_unshift($userItems, [
@@ -292,30 +297,30 @@ class Controller extends CController {
                 ]);
             }
         }
-        
+
 
         $default = [
             [
-                'label' => 'Login',
-                'url' => ['/site/login'],
+                'label'   => 'Login',
+                'url'     => ['/site/login'],
                 'visible' => Yii::app()->user->isGuest
             ],
             [
-                'label' => ucfirst($name),
-                'url' => '#',
-                'items' => $userItems,
+                'label'       => ucfirst($name),
+                'url'         => '#',
+                'items'       => $userItems,
                 'itemOptions' => [
                     'style' => 'border-right:1px solid rgba(0,0,0,.1)'
                 ],
-                'visible' => !Yii::app()->user->isGuest
+                'visible'     => !Yii::app()->user->isGuest
             ],
         ];
-        
+
         $baseMenu = Yii::getPathOfAlias('app.menus.BaseMenu') . ".php";
         if (is_file($baseMenu)) {
             include($baseMenu);
         }
-        
+
         if (Yii::app()->user->isGuest) {
             return $default;
         } else {
@@ -375,7 +380,7 @@ class Controller extends CController {
             $attr  = $class;
             $class = $temp;
         }
-        
+
         if (trim($class) == '') {
             throw new CHttpException(404, 'The requested page does not exist.');
         }
@@ -410,16 +415,18 @@ class Controller extends CController {
                 return false;
             }
         }
-        
+
         ## Setup actual url reference, for console command...
-        $appUrl = Setting::get('app.url');
+        $appUrl    = Setting::get('app.url');
         $actualUrl = Yii::app()->getRequest()->getHostInfo() . Yii::app()->getRequest()->getBaseUrl();
         if ($appUrl != $actualUrl) {
             Setting::set('app.url', $actualUrl);
         }
 
+
         parent::beforeAction($action);
-        
+
+        Yii::beginProfile('PlansysRenderForm');
         return true;
     }
 
@@ -427,8 +434,9 @@ class Controller extends CController {
         ## Make sure service daemon is started
         ServiceManager::startDaemon();
 
+        Yii::endProfile('PlansysRenderForm');
         parent::afterAction($action);
-        
+
         return true;
     }
 

@@ -30,11 +30,12 @@ $dbLists = Setting::getDBList();
 $components = $dbLists + $components;
 
 $imports = array(
+    'application.components.models.CDbCommand',
     'application.components.models.CDbCommandBuilder',
-    'application.components.models.CMysqlColumnSchema',
-    'application.components.models.COciSchema',
-    'application.components.models.COciColumnSchema',
-    'application.components.models.COciCommandBuilder',
+    'application.components.models.mysql.CMysqlColumnSchema',
+    'application.components.models.oci.COciSchema',
+    'application.components.models.oci.COciColumnSchema',
+    'application.components.models.oci.COciCommandBuilder',
     'app.models.*',
     'application.models.*',
     'application.forms.*',
