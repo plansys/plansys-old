@@ -16,7 +16,7 @@ foreach ($data as $index => $entry) {
         'ellapsed' => $entry[3] - $startTime
     ];
 
-    $firstline    = trim(explode("\n", substr($item['trace'], 0, 50))[0]);
+    $firstline = trim(explode("\n", substr($item['trace'], 0, 50))[0]);
     if (strpos($firstline, 'Querying SQL') === 0) {
         $firstline = 'Querying SQL';
     }
@@ -36,6 +36,18 @@ foreach ($data as $index => $entry) {
             if (window.response) {
                 url = " [" + window.response.config.url + "]";
                 window.response = undefined;
+            }
+
+            function isframe() {
+                try {
+                    return window.self !== window.top;
+                } catch (e) {
+                    return true;
+                }
+            }
+            
+            if (isframe()) {
+                url += "-iframe-";
             }
 
             var data = <?php echo json_encode($items); ?>;

@@ -168,13 +168,6 @@ class Controller extends CController {
         }
     }
 
-    public function beforeRender($view) {
-        if (Setting::get('app.debug') == 'ON') {
-            Asset::registerJS('application.static.js.debugbar');
-        }
-        return true;
-    }
-
     public function prepareFormName($class, $module = null) {
         if (isset($module)) {
             if (is_string($module)) {

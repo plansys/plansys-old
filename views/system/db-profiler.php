@@ -45,6 +45,18 @@ array_shift($items);
                 time += item.total * 1;
             });
 
+            function isframe() {
+                try {
+                    return window.self !== window.top;
+                } catch (e) {
+                    return true;
+                }
+            }
+            
+            if (isframe()) {
+                url += "-iframe-";
+            }
+            
             if (data.length > 0) {
                 console.groupCollapsed("DB Query Report [" + Math.round(time * 1000) + "ms] [" + data.length + " Query]" + url + ":");
                 data.forEach(function (item, i) {
