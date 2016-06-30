@@ -583,7 +583,7 @@ class Setting {
             $connection['class'] = 'CDbConnection';
         }
         
-        $connection['schemaCachingDuration'] = 1000;
+        $connection['schemaCachingDuration'] = 86400; // cache schema for a day
         $connection['enableProfiling'] = true;
 
         return $connection;

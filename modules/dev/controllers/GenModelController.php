@@ -5,9 +5,12 @@ class GenModelController extends Controller {
     public $templates = [];
 
     public function actionIndex() {
+        Yii::app()->db->schema->refresh();
+        
         $content = '';
         $name = '';
         $path = [];
+        
         if (isset($_GET['active'])) {
             $path = explode(".", $_GET['active']);
             if (count($path) < 2) {
