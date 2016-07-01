@@ -366,7 +366,7 @@ class Controller extends CController {
         return $model;
     }
 
-    public function loadModel($class, $attr) {
+    public function loadModel($attr, $class) {
         ## kalo ternyata $form dan $attr kebalik
         if (is_array($class) || is_numeric($class)) {
             $temp  = $attr;

@@ -12,6 +12,7 @@
     "nikic/php-parser": "^1.4",
     "phpmailer/phpmailer": "*",
     "box/spout": "dev-master",
-    "inlinestyle/inlinestyle": "dev-master"
+    "inlinestyle/inlinestyle": "dev-master",
+    "cti/saprfc": "^2.0"
   }
 }

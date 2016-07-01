@@ -27,7 +27,11 @@ $components = array(
     ),
     'widgetFactory' => array(),
     'cache'         => array(
-        'class' => 'system.caching.CFileCache'
+        'class' => 'system.caching.CRedisCache',
+        'hostname'=>'localhost',
+        'port'=>6379,
+        'database'=>0,
+        'options'=>STREAM_CLIENT_CONNECT,
     ),
     'clientScript'  => array(
         'packages' => array(

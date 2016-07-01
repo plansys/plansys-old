@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d157516c962f943133befa34b890d439",
-    "content-hash": "a1c11ec5fdab9b4c30c3f7cf661eb1c7",
+    "hash": "9477a7389b9a03a5cbeaad88bdab84a1",
+    "content-hash": "1e1d50d72826f72319cccd02d73e9a56",
     "packages": [
         {
             "name": "box/spout",
@@ -75,6 +75,43 @@
                 "xlsx"
             ],
             "time": "2016-06-20 03:20:49"
+        },
+        {
+            "name": "cti/saprfc",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cti/saprfc.git",
+                "reference": "a0a9966025e44bf01fd4b711b2a948789966af2a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cti/saprfc/zipball/a0a9966025e44bf01fd4b711b2a948789966af2a",
+                "reference": "a0a9966025e44bf01fd4b711b2a948789966af2a",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.0.*",
+                "satooshi/php-coveralls": "0.7.*@dev"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cti\\SapRfc\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry.Krokhin",
+                    "email": "nekufa@gmail.com"
+                }
+            ],
+            "description": "Saprfc abstraction layer",
+            "time": "2014-04-09 09:56:10"
         },
         {
             "name": "inlinestyle/inlinestyle",
