@@ -336,10 +336,25 @@ class HelpTutorialBab6 extends Form {
 							<p><img src="plansys/modules/help/img/6-4-5-9.png">
 					</ol>
 					<h4 id="6.5">6.5. Toolbar components</h4><a href="#bab6"><i> back to top >></i></a>	
+					<p>Pada halaman Form Builder terdapat bagian Toolbar dan Properties. Bagian Toolbar berisi kumpulan pilihan item sedangkan bagian Properties berisi pengaturan dari masing-masing item toolbar tersebut.
 					<h5 id="6.5.1">6.5.1. Layout</h5><a href="#bab6"><i> back to top >></i></a>	
 					<h6 id="6.5.1.1">6.5.1.1. Ace Editor</h6><a href="#bab6"><i> back to top >></i></a>											
 					<h6 id="6.5.1.2">6.5.1.2. Action Bar</h6><a href="#bab6"><i> back to top >></i></a>	
 					<h6 id="6.5.1.3">6.5.1.3. Columns</h6><a href="#bab6"><i> back to top >></i></a>	
+					<p>Langkah-langkah membuat menambahkan/mengatur kolom adalah sebagai berikut :
+					<ol><li>Buka Form Builder >> buka halaman form yang akan diedit.
+						<li>Drag and Drop komponen Columns   untuk menambahkan komponen kolom baru. Defaultnya hasil CRUD Generator adalah 2 kolom.
+						<li>Pilih/select kolom yang dimaksud.
+							<p><img src="plansys/modules/help/img/6-5-1-3-3.png">
+						<li>Pilih Total Columns (1/2/3/4/5) >> pilih untuk menampilkan border kolom atau tidak >> tentukan Width Columns.  
+							<p><img src="plansys/modules/help/img/6-5-1-3-4.png">
+						<li>Hasil tampilan jika menggunakan 1 kolom adalah sebagai berikut :
+							<p><img src="plansys/modules/help/img/6-5-1-3-5.png">
+						<li>Hasil tampilan jika menggunakan 2 kolom adalah sebagai berikut :
+							<p><img src="plansys/modules/help/img/6-5-1-3-6.png">
+					</ul>
+					 
+
 					<h6 id="6.5.1.4">6.5.1.4. Example Field</h6><a href="#bab6"><i> back to top >></i></a>
 					<h6 id="6.5.1.5">6.5.1.5. Popup Window</h6><a href="#bab6"><i> back to top >></i></a>	
 					<h6 id="6.5.1.6">6.5.1.6. Section Header</h6><a href="#bab6"><i> back to top >></i></a>
