@@ -52,12 +52,12 @@ $components = array(
         'enableCsrfValidation' => true,
         'enableCookieValidation'=>true,
         'csrfCookie'=>array(
-            'httponly'=>true,
+            'httpOnly'=>true,
         ),
     ),
     'session' => array(
         'cookieParams' => array(
-            'httponly' => true,
+            'httpOnly' => true,
         ),
     ),
 );

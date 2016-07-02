@@ -274,7 +274,7 @@ class Setting {
 
     public static function write() {
         $settings = json_encode(Setting::$data, JSON_PRETTY_PRINT);
-        if ($data == "") {
+        if ($settings == "") {
             $data = date("Y-m-d H:i:s");
             $data .= "\n\n";
             $data .= var_export($_SERVER, true);

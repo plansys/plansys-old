@@ -66,7 +66,9 @@ class UserController extends Controller {
                 Yii::app()->user->setFlash('info', 'User berhasil disimpan');
             }
         }
-        $this->renderForm("users.user.DevUserForm", $model);
+        $this->renderForm("users.user.DevUserForm", $model, [
+            'auditTrailEnabled' => Setting::get('app.auditTrail') == 'Enabled'
+        ]);
     }
 
     public function actionNew() {

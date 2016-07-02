@@ -2,7 +2,15 @@
     <div ng-show="!saving" class="layout-properties-btn">
         <div class="btn btn-xs btn-default" ng-click="selectLayout('<?= $active ?>')">
             <i class="fa fa-cube fa-nm"></i>
-            <span class="label label-default "><?php var_dump($_GET); ?><?= strtoupper($active) ?></span>
+            <div class="label label-default pull-right" style="margin:2px 1px -2px 3px;"><?php 
+            if (isset($_GET['class'])) {                
+                $layoutCol = explode(".", $_GET['class']);
+                $layoutCol = end($layoutCol);
+                echo "{$layoutCol}";
+            } else {
+                echo $active;
+            }
+            ?></div>
         </div>
     </div>
     <div ng-if="form.layout.name == 'dashboard'" class="layout-properties-btn" style="left:62px;">
