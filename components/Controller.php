@@ -271,23 +271,25 @@ class Controller extends CController {
                 'url'   => ['/site/logout'],
             ]
         ];
-
-        if (Yii::app()->user->model) {
-            $roles = Yii::app()->user->model->getRoles(true);
-            if (count($roles) > 1) {
-                $roleItems = [];
-                foreach ($roles as $k => $r) {
-                    $rc = ($r['role_name'] == Yii::app()->user->fullRole ? 'fa-check-square-o' : 'fa-square-o');
-
-                    array_push($roleItems, [
-                        'label' => '&nbsp; <i class="fa ' . $rc . '"></i> &nbsp;' . $r['role_description'],
-                        'url'   => ['/sys/profile/changeRole', 'id' => $r['id']]
+        
+        if (!Yii::app()->user->isGuest) {
+            if (Yii::app()->user->model) {
+                $roles = Yii::app()->user->model->getRoles(true);
+                if (count($roles) > 1) {
+                    $roleItems = [];
+                    foreach ($roles as $k => $r) {
+                        $rc = ($r['role_name'] == Yii::app()->user->fullRole ? 'fa-check-square-o' : 'fa-square-o');
+    
+                        array_push($roleItems, [
+                            'label' => '&nbsp; <i class="fa ' . $rc . '"></i> &nbsp;' . $r['role_description'],
+                            'url'   => ['/sys/profile/changeRole', 'id' => $r['id']]
+                        ]);
+                    }
+                    array_unshift($userItems, [
+                        'label' => 'Switch Role',
+                        'items' => $roleItems
                     ]);
                 }
-                array_unshift($userItems, [
-                    'label' => 'Switch Role',
-                    'items' => $roleItems
-                ]);
             }
         }
 

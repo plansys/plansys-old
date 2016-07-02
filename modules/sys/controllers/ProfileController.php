@@ -14,8 +14,10 @@ class ProfileController extends Controller {
                 $model = $this->loadModel(Yii::app()->user->id, "DevUserForm");
             }
         }
-
-        $this->renderForm("DevUserForm", $model);
+        
+        $this->renderForm("DevUserForm", $model, [
+            'auditTrailEnabled' => Setting::get('app.auditTrail') == 'Enabled'
+        ]);
     }
 
     public function actionChangeRole($id) {

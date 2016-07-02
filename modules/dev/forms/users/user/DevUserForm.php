@@ -157,6 +157,12 @@ class DevUserForm extends User {
                         'type' => 'TextField',
                     ),
                     array (
+                        'label' => 'Last Login',
+                        'name' => 'last_login',
+                        'labelWidth' => '2',
+                        'type' => 'LabelField',
+                    ),
+                    array (
                         'type' => 'Text',
                         'value' => '<div ng-if=\\"module == \'dev\' && !isNewRecord\\">',
                     ),
@@ -276,7 +282,7 @@ Isi field disamping untuk mengubah password.
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div ng-if=\\"!isNewRecord\\">',
+                'value' => '<div ng-if=\\"!isNewRecord && params.auditTrailEnabled\\">',
             ),
             array (
                 'title' => 'Audit Trail',

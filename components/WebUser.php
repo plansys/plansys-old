@@ -2,7 +2,7 @@
 
 class WebUser extends CWebUser {
 
-    private $_model;
+    private $_model = null;
 
     /**
      * Overrides a Yii method that is used for roles in controllers (accessRules).
@@ -33,13 +33,13 @@ class WebUser extends CWebUser {
         $this->loadIdentityStates($states);
     }
     
+    public function getCacheDep() {
+        return new CExpressionDependency('Yii::app()->session->get("user_cache_time")');
+    }
+    
     public function getModel() {
-        try {
-            if (is_null($this->_model)) {
-                $this->_model = User::model()->findByPk($this->id);
-            }
-        } catch (CdbException $e) {
-            $this->_model = null;
+        if (is_null($this->_model)) {
+            $this->_model = User::model()->cache(1000, $this->cacheDep)->findByPk($this->id);
         }
 
         return $this->_model;

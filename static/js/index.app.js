@@ -83,7 +83,12 @@ app.config(function ($sceProvider, $controllerProvider, $provide, $compileProvid
     $httpProvider.interceptors.push(function ($q) {
         return {
             'request': function (request) {
-                $q.request = request;
+                if (!!request) {
+                    if (request.method != "GET" && !!window.csrf && typeof request.data == "object") {
+                        request.data[window.csrf.name] = window.csrf.token;
+                    }
+                }
+                
                 return request;
             },
             'response': function (response) {

@@ -764,6 +764,12 @@ class ActiveRecord extends CActiveRecord {
                             $this->__relations[$name] = ActiveRecord::queryAll($sql);
                         }
                     } else {
+                        
+                        if (!isset($criteria['limit'])) {
+                            $criteria['limit'] = ActiveRecord::DEFAULT_PAGE_SIZE;
+                            $criteria['offset'] = 0;
+                        }
+                        
                         $this->__relationsObj[$name] = $this->getRelated($name, true, $criteria);
                         if (is_array($this->__relationsObj[$name])) {
                             $this->__relations[$name] = [];

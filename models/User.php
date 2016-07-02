@@ -59,7 +59,7 @@ class User extends ActiveRecord {
         }
 
         ## get roles
-        $roles = Role::model()->with('userRoles')->findAll(ActiveRecord::formatCriteria([
+        $roles = Role::model()->cache(1000, Yii::app()->user->cacheDep)->with('userRoles')->findAll(ActiveRecord::formatCriteria([
             'condition' => '|user_id| = :p',
             'order' => '|is_default_role|',
             'params' => [

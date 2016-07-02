@@ -235,7 +235,7 @@ class Setting {
 
     public static function get($key, $default = null, $forceRead = false) {
         $keys = explode('.', $key);
-
+        
         if ($forceRead) {
             $file          = @file_get_contents(Setting::$path);
             $setting       = json_decode($file, true);
@@ -273,15 +273,16 @@ class Setting {
     }
 
     public static function write() {
-        if (@Setting::$data['db']['username'] == "" || @Setting::$data['db']['password'] == "") {
+        $settings = json_encode(Setting::$data, JSON_PRETTY_PRINT);
+        if ($data == "") {
             $data = date("Y-m-d H:i:s");
             $data .= "\n\n";
             $data .= var_export($_SERVER, true);
 
             @file_put_contents(Setting::getAssetPath() . "/setting_json_error.txt", $data);
+        } else {
+            $result = @file_put_contents(Setting::$path, $settings);
         }
-
-        $result = @file_put_contents(Setting::$path, json_encode(Setting::$data, JSON_PRETTY_PRINT));
     }
 
     public static function initPath() {

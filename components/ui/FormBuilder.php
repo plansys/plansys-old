@@ -1386,6 +1386,12 @@ HTML;
                 $html .= $f;
             }
         }
+        
+
+        ## include Yii CSRF Token
+        $csrfName = Yii::app()->request->csrfTokenName;
+        $csrf = Yii::app()->request->csrfToken;
+        $html .= "<input type='hidden' name='{$csrfName}' value='{$csrf}' />";
 
         ## wrap form
         if ($wrapForm) {

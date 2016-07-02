@@ -60,6 +60,8 @@ class DevUserIndex extends User {
                         'relModelClass' => 'application.models.Role',
                         'relIdField' => 'role_description',
                         'relLabelField' => 'role_description',
+                        'list' => 0,
+                        'count' => 0,
                     ),
                     array (
                         'name' => 'username',
@@ -199,10 +201,17 @@ class DevUserIndex extends User {
                     array (
                         'name' => 'last_login',
                         'label' => 'Last Login',
-                        'html' => '',
+                        'html' => '<td ng-class=\"rowClass(row, \'last_login\', \'string\')\" >
+    {{row.last_login}}
+</td>',
                         'columnType' => 'string',
-                        'show' => false,
+                        'show' => true,
                         '$listViewName' => 'columns',
+                        'mergeSameRow' => 'No',
+                        'cellMode' => 'default',
+                        'options' => array (
+                            'mode' => 'datetime',
+                        ),
                     ),
                     array (
                         'name' => 'role_description',

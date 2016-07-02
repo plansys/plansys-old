@@ -27,11 +27,7 @@ $components = array(
     ),
     'widgetFactory' => array(),
     'cache'         => array(
-        'class' => 'system.caching.CRedisCache',
-        'hostname'=>'localhost',
-        'port'=>6379,
-        'database'=>0,
-        'options'=>STREAM_CLIENT_CONNECT,
+        'class' => 'system.caching.CFileCache'
     ),
     'clientScript'  => array(
         'packages' => array(
@@ -49,6 +45,19 @@ $components = array(
                 'class'  => 'CFileLogRoute',
                 'levels' => 'error, warning',
             ),
+        ),
+    ),
+    'request'=>array(
+        'class' => 'WebRequest',
+        'enableCsrfValidation' => true,
+        'enableCookieValidation'=>true,
+        'csrfCookie'=>array(
+            'httponly'=>true,
+        ),
+    ),
+    'session' => array(
+        'cookieParams' => array(
+            'httponly' => true,
         ),
     ),
 );

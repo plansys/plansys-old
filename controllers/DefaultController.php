@@ -125,15 +125,18 @@ class DefaultController extends Controller {
             if ($model->validate() && $model->login()) {
                 $this->afterLogin($model);
 
+                $lastLogin = DataFilter::toSQLDateTime("'" . date("Y-m-d H:i:s") . "'");
+                Yii::app()->session->add('user_cache_time', $lastLogin);
+                
                 ## update last_login user
                 Yii::app()->db->commandBuilder->createUpdateCommand("p_user", [
-                    'last_login' => DataFilter::toSQLDateTime(date("Y-m-d H:i:s"))
+                    'last_login' => new CDbExpression($lastLogin)
                 ], new CDbCriteria([
                     'condition' => '"id" = :p',
                     'params' => [
                         ':p' => Yii::app()->user->id
                     ]
-                ]));
+                ]))->execute();
                 
                 ## audit trail tracker
                 AuditTrail::login();

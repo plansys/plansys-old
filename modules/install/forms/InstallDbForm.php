@@ -12,7 +12,7 @@ class InstallDbForm extends Form {
 
     public function rules() {
         return [
-            ['host, username, dbname', 'required']
+            ['host, username', 'required']
         ];
     }
 
