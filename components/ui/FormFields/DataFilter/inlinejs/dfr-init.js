@@ -4,7 +4,7 @@ var templateAttr = JSON.parse($("#toolbar-properties div[list-view] data[name=te
 for (i in $scope.$parent.value) {
     var item = $scope.$parent.value[i];
     for (k in item) {
-        if (['filterType', 'name', 'label', 'show', 'isCustom', 'listExpr', 'resetable', 'options', 'showOther', 'otherLabel', 'queryOperator'].indexOf(k) < 0
+        if (['filterType', 'name', 'label', '$showDF', '$showDFR', 'isCustom', 'listExpr', 'resetable', 'options', 'showOther', 'otherLabel', 'queryOperator'].indexOf(k) < 0
                 && templateAttr.typeOptions[item.filterType].indexOf(k) < 0) {
             
             delete item[k];

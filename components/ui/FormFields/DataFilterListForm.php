@@ -48,7 +48,7 @@ class DataFilterListForm extends Form {
         return array (
             array (
                 'type' => 'Text',
-                'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
+                'value' => '<div ng-init=\"value[$index].$showDF = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"selectDataField(value, $index)\">
 <div class=\"label data-filter-name pull-right\"> {{value[$index].filterType}}</div>
 
 {{value[$index].label}}
@@ -57,12 +57,12 @@ class DataFilterListForm extends Form {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<hr ng-show=\"value[$index].show\"
+                'value' => '<hr ng-show=\"value[$index].$showDF\"
 style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div ng-if=\'value[$index].show\'>',
+                'value' => '<div ng-if=\'value[$index].$showDF\'>',
             ),
             array (
                 'label' => 'Type',
@@ -172,6 +172,72 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'labelWidth' => '6',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<div ng-if=\"value[$index].filterType == \'relation\'\">
+    <div style=\"margin-top:15px;\">
+        <hr/>
+        <div style=\"background:white;margin-top:-19px;color:#aaa;padding:5px 5px 5px 3px;width:50px;margin-left:-4px;\">
+            Relation
+        </div>
+    </div>
+    
+    <div style=\"padding-bottom:15px\" ng-if=\"!value[$index].$showDFR\">
+        ',
+            ),
+            array (
+                'label' => 'Model',
+                'name' => 'relModelClass',
+                'labelWidth' => '3',
+                'fieldWidth' => '9',
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
+                ),
+                'type' => 'LabelField',
+            ),
+            array (
+                'label' => 'Value',
+                'name' => 'relIdField',
+                'labelWidth' => '3',
+                'fieldWidth' => '9',
+                'options' => array (
+                    'ng-if' => 'value[$index].relModelClass',
+                ),
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
+                ),
+                'type' => 'LabelField',
+            ),
+            array (
+                'label' => 'Label',
+                'name' => 'relLabelField',
+                'labelWidth' => '3',
+                'fieldWidth' => '9',
+                'options' => array (
+                    'ng-if' => 'value[$index].relModelClass',
+                ),
+                'labelOptions' => array (
+                    'style' => 'text-align:left;',
+                ),
+                'type' => 'LabelField',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '        <div class=\"pull-right btn btn-xs btn-default\" ng-click=\"value[$index].$showDFR = true\">
+            Edit Relation <i class=\"fa fa-pencil\"></i>
+        </div>
+    </div>
+</div>',
+            ),
+            array (
+                'name' => 'TypeRelation',
+                'subForm' => 'application.components.ui.FormFields.DataFilterListFormRelation',
+                'options' => array (
+                    'ng-if' => 'value[$index].filterType == \'relation\' && value[$index].$showDFR',
+                ),
+                'inlineJS' => 'DataFilter/inlinejs/dfr-init.js',
+                'type' => 'SubForm',
             ),
             array (
                 'type' => 'Text',
@@ -300,15 +366,6 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                     'ng-model' => 'model.listExpr',
                 ),
                 'type' => 'ExpressionField',
-            ),
-            array (
-                'name' => 'TypeRelation',
-                'subForm' => 'application.components.ui.FormFields.DataFilterListFormRelation',
-                'options' => array (
-                    'ng-if' => 'value[$index].filterType == \'relation\'',
-                ),
-                'inlineJS' => 'DataFilter/inlinejs/dfr-init.js',
-                'type' => 'SubForm',
             ),
             array (
                 'type' => 'Text',

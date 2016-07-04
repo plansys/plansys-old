@@ -585,9 +585,7 @@ class RelationField extends FormField {
         $class  = end($class);
         $model  = new $class;
         $driver = $model->dbConnection->driverName;
-
-
-
+        
         $sql = @$this->relationCriteria['condition'] ? $this->relationCriteria['condition'] : "";
 
         preg_match_all("/\[(.*?)\]/", $sql, $blocks);

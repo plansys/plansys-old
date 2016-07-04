@@ -167,10 +167,21 @@ padding-left:0px;',
                 'showBorder' => 'Yes',
                 'column1' => array (
                     array (
-                        'label' => 'Master Data',
+                        'label' => 'Single View',
                         'name' => 'masterData',
                         'listExpr' => '[\'No\', \'Yes\']',
                         'type' => 'DropDownList',
+                    ),
+                    array (
+                        'type' => 'Text',
+                        'value' => '<div class=\"row\">
+    <div class=\"col-sm-4\"></div>
+    <div class=\"col-sm-8\">
+        <div class=\"info\">
+            <i class=\"fa fa-info-circle\"></i>
+            Use single page to<br/> insert, update and delete data</div>
+    </div>
+</div>',
                     ),
                     array (
                         'type' => 'Text',

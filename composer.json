@@ -9,10 +9,9 @@
     }
   ],
   "require": {
-    "nikic/php-parser": "^1.4",
+    "nikic/php-parser": "dev-master",
     "phpmailer/phpmailer": "*",
     "box/spout": "dev-master",
-    "inlinestyle/inlinestyle": "dev-master",
-    "cti/saprfc": "^2.0"
+    "inlinestyle/inlinestyle": "dev-master"
   }
 }

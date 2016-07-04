@@ -13,12 +13,13 @@ class FormBuilder extends CComponent {
     public $timestamp;
     public $fieldNameTemplate = "";
     private $countRenderID = 1;
-    private $methods = [];
-    private $file = [];
     private $sourceFile = '';
     private $originalClass = '';
     private $findFieldCache = null;
     private $crudGeneratorOptions = [];
+    
+    private $methods = [];
+    private $file = [];
 
     public static function resetSession($class) {
         Yii::app()->session['FormBuilder_' . $class] = null;
@@ -529,6 +530,8 @@ class FormBuilder extends CComponent {
     }
 
     public function updateField($findAttr, $values, &$fields = null, $level = 0) {
+        throw new Exception("WOW");
+        
         if ($fields == null) {
             $fields = $this->getFields();
         }

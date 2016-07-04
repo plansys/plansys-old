@@ -118,6 +118,7 @@ class SqlCriteria extends FormField {
                 $fb                   = FormBuilder::load($classPath);
                 $field                = $fb->findField(['name' => $name]);
                 $rf                   = new RelationField();
+                $rf->modelClass       = $modelClassPath;
                 $rf->builder          = $fb;
                 $rf->attributes       = $field;
                 $rf->relationCriteria = $criteria;

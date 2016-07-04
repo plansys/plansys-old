@@ -18,7 +18,7 @@ class GridViewCol extends Form {
         return array (
             array (
                 'type' => 'Text',
-                'value' => '<div ng-init=\"value[$index].show = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"value[$index].show = !value[$index].show\">
+                'value' => '<div ng-init=\"value[$index].$showDF = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"selectDataField(value, $index)\">
 <div class=\"label data-filter-name pull-right\">
 {{value[$index].columnType}}</div>
 {{value[$index].label}}
@@ -27,12 +27,12 @@ class GridViewCol extends Form {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<hr ng-if=\"value[$index].show\"
+                'value' => '<hr ng-if=\"value[$index].$showDF\"
 style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div ng-if=\'value[$index].show\'>',
+                'value' => '<div ng-if=\'value[$index].$showDF\'>',
             ),
             array (
                 'label' => 'Type',

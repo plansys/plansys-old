@@ -38,10 +38,6 @@ class DataFilterListFormRelation extends Form {
     public function getFields() {
         return array (
             array (
-                'type' => 'Text',
-                'value' => '<Hr/>',
-            ),
-            array (
                 'label' => 'Model',
                 'name' => 'relModelClass',
                 'options' => array (
@@ -65,7 +61,7 @@ class DataFilterListFormRelation extends Form {
                 'value' => '<div ng-show=\\"!!item.relModelClass\\">',
             ),
             array (
-                'label' => 'ID Field',
+                'label' => 'Value',
                 'name' => 'relIdField',
                 'options' => array (
                     'ng-model' => 'item.relIdField',

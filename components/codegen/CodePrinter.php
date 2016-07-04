@@ -12,9 +12,23 @@ use PhpParser\Node\Stmt;
 use PhpParser\Node\Name;
 
 class CodePrinter extends PhpParser\PrettyPrinter\Standard {
+    
+    
+    public function save(array $stmts, $file) {
+        $code = $this->prettyPrint($stmts);
+        require_once Yii::getPathOfAlias('application.extensions.phpcf.phpcf-src.phpcf') . ".php";
+        
+        $options = new Phpcf\Options();
+        $options->setQuiet(true);
+        $options->usePure(true);
+        $formatter = new Phpcf\Formatter($options);
+        $result = $formatter->formatFile($file);
+        file_put_contents($file, $result->getContent());
+    }
 
     public function pExpr_Array(PhpParser\Node\Expr\Array_ $node) {
-        return '[' . $this->pCommaSeparated($node->items) . ']';
+        $items = $this->pCommaSeparated($node->items);
+        return "[{$items}]";
     }
 
     public function pStmt_ClassMethod(Stmt\ClassMethod $node) {

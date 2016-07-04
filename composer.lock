@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9477a7389b9a03a5cbeaad88bdab84a1",
-    "content-hash": "1e1d50d72826f72319cccd02d73e9a56",
+    "hash": "408a4f04d114719d8c3ae9e3d27b95ce",
+    "content-hash": "47dcee15fc22f8f139276112cfc332bc",
     "packages": [
         {
             "name": "box/spout",
@@ -77,43 +77,6 @@
             "time": "2016-06-20 03:20:49"
         },
         {
-            "name": "cti/saprfc",
-            "version": "2.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cti/saprfc.git",
-                "reference": "a0a9966025e44bf01fd4b711b2a948789966af2a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cti/saprfc/zipball/a0a9966025e44bf01fd4b711b2a948789966af2a",
-                "reference": "a0a9966025e44bf01fd4b711b2a948789966af2a",
-                "shasum": ""
-            },
-            "require-dev": {
-                "phpunit/phpunit": "4.0.*",
-                "satooshi/php-coveralls": "0.7.*@dev"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Cti\\SapRfc\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Dmitry.Krokhin",
-                    "email": "nekufa@gmail.com"
-                }
-            ],
-            "description": "Saprfc abstraction layer",
-            "time": "2014-04-09 09:56:10"
-        },
-        {
             "name": "inlinestyle/inlinestyle",
             "version": "dev-master",
             "source": {
@@ -162,32 +125,38 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v1.4.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "f78af2c9c86107aa1a34cd1dbb5bbe9eeb0d9f51"
+                "reference": "96cbd48df6d1c6dae38ab2437bee71508947d5c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/f78af2c9c86107aa1a34cd1dbb5bbe9eeb0d9f51",
-                "reference": "f78af2c9c86107aa1a34cd1dbb5bbe9eeb0d9f51",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/96cbd48df6d1c6dae38ab2437bee71508947d5c8",
+                "reference": "96cbd48df6d1c6dae38ab2437bee71508947d5c8",
                 "shasum": ""
             },
             "require": {
                 "ext-tokenizer": "*",
-                "php": ">=5.3"
+                "php": ">=5.4"
             },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "bin": [
+                "bin/php-parse"
+            ],
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4-dev"
+                    "dev-master": "2.1-dev"
                 }
             },
             "autoload": {
-                "files": [
-                    "lib/bootstrap.php"
-                ]
+                "psr-4": {
+                    "PhpParser\\": "lib/PhpParser"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -203,7 +172,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2015-09-19 14:15:08"
+            "time": "2016-04-20 14:47:50"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -267,16 +236,16 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v3.1.1",
+            "version": "v3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
-                "reference": "c526d7b3cb4fe1673c6a34e13be2ff63f519df99"
+                "reference": "2851e1932d77ce727776154d659b232d061e816a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/css-selector/zipball/c526d7b3cb4fe1673c6a34e13be2ff63f519df99",
-                "reference": "c526d7b3cb4fe1673c6a34e13be2ff63f519df99",
+                "url": "https://api.github.com/repos/symfony/css-selector/zipball/2851e1932d77ce727776154d659b232d061e816a",
+                "reference": "2851e1932d77ce727776154d659b232d061e816a",
                 "shasum": ""
             },
             "require": {
@@ -316,13 +285,14 @@
             ],
             "description": "Symfony CssSelector Component",
             "homepage": "https://symfony.com",
-            "time": "2016-06-06 11:42:41"
+            "time": "2016-06-29 05:41:56"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "nikic/php-parser": 20,
         "box/spout": 20,
         "inlinestyle/inlinestyle": 20
     },

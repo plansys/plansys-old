@@ -1,57 +1,61 @@
 <script type = "text/javascript" >
-    /** jQuery Caret **/
-    (function ($) {
-        // Behind the scenes method deals with browser
-        // idiosyncrasies and such
-        $.caretTo = function (el, index) {
-            if (el.createTextRange) {
-                var range = el.createTextRange();
-                range.move("character", index);
-                range.select();
-            } else if (el.selectionStart != null) {
-                el.focus();
-                el.setSelectionRange(index, index);
-            }
-        };
+/** jQuery Caret **/
+(function ($) {
+    // Behind the scenes method deals with browser
+    // idiosyncrasies and such
+    $.caretTo = function (el, index) {
+        if (el.createTextRange) {
+            var range = el.createTextRange();
+            range.move("character", index);
+            range.select();
+        } else if (el.selectionStart != null) {
+            el.focus();
+            el.setSelectionRange(index, index);
+        }
+    };
 
-        // Set caret to a particular index
-        $.fn.setCaretPosition = function (index, offset) {
-            return this.queue(function (next) {
-                if (isNaN(index)) {
-                    var i = $(this).val().indexOf(index);
-                    if (offset === true) {
-                        i += index.length;
-                    } else if (offset) {
-                        i += offset;
-                    }
-
-                    $.caretTo(this, i);
-                } else {
-                    $.caretTo(this, index);
+    // Set caret to a particular index
+    $.fn.setCaretPosition = function (index, offset) {
+        return this.queue(function (next) {
+            if (isNaN(index)) {
+                var i = $(this).val().indexOf(index);
+                if (offset === true) {
+                    i += index.length;
+                } else if (offset) {
+                    i += offset;
                 }
 
-                next();
-            });
-        };
-        $.fn.getCaretPosition = function () {
-            var input = this.get(0);
-            if (!input)
-                return; // No (input) element found
-            if ('selectionStart' in input) {
-                // Standard-compliant browsers
-                return input.selectionStart;
-            } else if (document.selection) {
-                // IE
-                input.focus();
-                var sel = document.selection.createRange();
-                var selLen = document.selection.createRange().text.length;
-                sel.moveStart('character', -input.value.length);
-                return sel.text.length - selLen;
+                $.caretTo(this, i);
+            } else {
+                $.caretTo(this, index);
             }
+
+            next();
+        });
+    };
+    $.fn.getCaretPosition = function () {
+        var input = this.get(0);
+        if (!input)
+            return; // No (input) element found
+        if ('selectionStart' in input) {
+            // Standard-compliant browsers
+            return input.selectionStart;
+        } else if (document.selection) {
+            // IE
+            input.focus();
+            var sel = document.selection.createRange();
+            var selLen = document.selection.createRange().text.length;
+            sel.moveStart('character', -input.value.length);
+            return sel.text.length - selLen;
         }
-    })(jQuery);
+    }
+})(jQuery);
 
 var editor = {};
+window.csrf = {
+    name: "<?php echo Yii::app()->request->csrfTokenName; ?>",
+    token: "<?php echo Yii::app()->request->csrfToken; ?>"
+};
 
 app.controller("PageController", function ($scope, $http, $timeout, $window, $compile, $localStorage) {
     editor.$scope = $scope;
@@ -143,7 +147,9 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
             class: '<?= $classPath ?>',
             layout: $scope.form.layout.name
         });
-        $http.post(renderBuilderUrl, {form: $scope.form}).then(function (response) {
+        var postData = {form: $scope.form};
+        
+        $http.post(renderBuilderUrl, postData).then(function (response) {
             $("#render-builder").html(response.data);
             $compile($("#render-builder").contents())($scope);
         });
@@ -830,6 +836,18 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
     };
     var selectTimeout = null;
     $scope.propMsg = 'Welcome To Form Builder';
+    $scope.selectDataField = function(all, idx) {
+        var isHidden = !all[idx].$showDF;
+        for (var i in all) {
+            all[i].$showDF = false;
+        }
+        if (isHidden) {
+            all[idx].$showDF = true;
+        }
+        if (!!all[idx].$showDFR) {
+            delete all[idx].$showDFR;
+        }
+    }
     $scope.select = function (item, event) {
         
         event.stopPropagation();
