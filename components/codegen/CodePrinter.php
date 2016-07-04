@@ -16,6 +16,8 @@ class CodePrinter extends PhpParser\PrettyPrinter\Standard {
     
     public function save(array $stmts, $file) {
         $code = $this->prettyPrint($stmts);
+        file_put_contents($file,"<?php \n\n" . $code);
+        
         require_once Yii::getPathOfAlias('application.extensions.phpcf.phpcf-src.phpcf') . ".php";
         
         $options = new Phpcf\Options();
@@ -24,6 +26,7 @@ class CodePrinter extends PhpParser\PrettyPrinter\Standard {
         $formatter = new Phpcf\Formatter($options);
         $result = $formatter->formatFile($file);
         file_put_contents($file, $result->getContent());
+        echo $result->getContent();
     }
 
     public function pExpr_Array(PhpParser\Node\Expr\Array_ $node) {
