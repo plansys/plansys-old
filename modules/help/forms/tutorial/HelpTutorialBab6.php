@@ -96,7 +96,7 @@ class HelpTutorialBab6 extends Form {
 							<a href="#">6.5.3.12. Submit</a><br>	
 							<a href="#">6.5.3.13. Tag Field</a><br>	
 							<a href="#">6.5.3.14. Text Area</a><br>	
-							<a href="#">6.5.3.15. Text Field</a><br>
+							<a href="#6.5.3.15">6.5.3.15. Text Field</a><br>
 							<a href="#">6.5.3.16. Toggle Switch</a><br>	
 							<a href="#">6.5.3.17. Upload File</a><br>	
 							<a href="#6.5.4">6.5.4. Data & Tables</a><br>	
@@ -353,23 +353,111 @@ class HelpTutorialBab6 extends Form {
 						<li>Hasil tampilan jika menggunakan 2 kolom adalah sebagai berikut :
 							<p><img src="plansys/modules/help/img/6-5-1-3-6.png">
 					</ul>
-					 
-
 					<h6 id="6.5.1.4">6.5.1.4. Example Field</h6><a href="#bab6"><i> back to top >></i></a>
 					<h6 id="6.5.1.5">6.5.1.5. Popup Window</h6><a href="#bab6"><i> back to top >></i></a>	
 					<h6 id="6.5.1.6">6.5.1.6. Section Header</h6><a href="#bab6"><i> back to top >></i></a>
+					<p>Langkah-langkah menambahkan section header adalah sebagai berikut :
+					<ol><li>Buka halaman Dashboard melalui menu Form Builder.
+						<li>Drag and drop komponen Section Header  .
+						<li>Pada Properties, isikan nama section header tersebut.
+							<p><img src="plansys/modules/help/img/6-5-1-6-3.png">
+						<li>Maka pada tampilan form tersebut akan terdapat 2 section. Defaultnya dari Plansys, setiap form akan memiliki satu section yaitu General.
+					</ol>
 					<h6 id="6.5.1.7">6.5.1.7. Text / HTML</h6><a href="#bab6"><i> back to top >></i></a>	
+					<p>Langkah-langkah menambahkan komponen Text/HTML adalah sebagai berikut :
+					<ol><li>Buka halaman Dashboard melalui menu Form Builder.
+						<li>Drag and drop komponen Text/HTML.
+						<li>Pada Properties Text/HTML, isikan script HTML yang diperlukan.
+							<p><img src="plansys/modules/help/img/6-5-1-7-3.png">
+						<li>Pada pilihan Render in Editor, pilih Yes untuk melihat langsung tampilan hasil script HTML pada halaman form tersebut.
+					</ol>
+
 					<h5 id="6.5.2">6.5.2. Charts</h5><a href="#bab6"><i> back to top >></i></a>	
 					<h6 id="6.5.2.1">6.5.2.1. Area Chart</h6><a href="#bab6"><i> back to top >></i></a>							
 					<h6 id="6.5.2.2">6.5.2.2. Bar Chart</h6><a href="#bab6"><i> back to top >></i></a>	
+					<p>Langkah-langkah membuat diagram dalam bentuk BarChart adalah sebagai berikut :
+					<ol><li>Buka halaman Form yang berisi Chart melalui menu Form Builder.
+						<li>Tambahkan item Data Source.
+						<li>Pada Properties Datasource, klik Create Expression >> masukkan query sql. Pastikan query tersebut menghasilkan minimal satu row data agar dapat di-generate Series nya.
+							<p><img src="plansys/modules/help/img/6-5-2-2-3.png">
+						<li>Tambahkan komponen BarChart.
+							<p><img src="plansys/modules/help/img/6-5-2-2-4.png">
+						<li>Pada Properties Chart, isikan judul chart pada Chart Title.
+						<li>Pilih Chart Type (Bar atau Column).
+							<p><img src="plansys/modules/help/img/6-5-2-2-6.png">
+						<li>Lalu pilih DataSource >> klik Generate Series. Setiap ada perubahan query sql pada DataSource, maka series chart juga harus di-generate ulang.
+							<p><img src="plansys/modules/help/img/6-5-2-2-7.png">
+						<li>Lalu pada bagian Series, pilih field yang akan diposisikan dalam sumbu y (misal: nama) .
+							<p><img src="plansys/modules/help/img/6-5-2-2-8.png">
+						<li>Maka tes tampilan dashboard dengan memanggil url :
+							<p>http://localhost/inventory/index.php?r=gudang/dashboard/index
+						<li>Tampilan chart tergantung Chart Type yang dipilih, berikut adalah contoh barChart dengan type Bar dan Column.
+							<p>Chart Type : Bar
+								<p><img src="plansys/modules/help/img/6-5-2-2-10-i.png">
+							<p>Chart Type : Column
+								<p><img src="plansys/modules/help/img/6-5-2-2-10-ii.png">					 
+						<li>Jika tanda options   di klik, maka akan muncul beberapa pilihan download chart tersebut.
+							<p><img src="plansys/modules/help/img/6-5-2-2-11.png">
+					</ol>
 					<h6 id="6.5.2.3">6.5.2.3. Chart Group</h6><a href="#bab6"><i> back to top >></i></a>	
 					<h6 id="6.5.2.4">6.5.2.4. Line Chart</h6><a href="#bab6"><i> back to top >></i></a>	
 					<h6 id="6.5.2.5">6.5.2.5. Pie Chart</h6><a href="#bab6"><i> back to top >></i></a>							
+					<p>Langkah-langkah membuat diagram dalam bentuk PieChart adalah sebagai berikut :
+					<ol><li>Buka halaman Form yang berisi Chart melalui menu Form Builder.
+						<li>Tambahkan item Data Source.
+						<li>Pada Properties Datasource, klik Create Expression >> masukkan query sql. Pastikan query tersebut menghasilkan satu row data saja dan nilai harus dalam bentuk decimal prosentase agar dapat di-generate Series nya.
+							<p><img src="plansys/modules/help/img/6-5-2-5-3.png">
+						<li>Tambahkan komponen PieChart.
+							<p><img src="plansys/modules/help/img/6-5-2-5-4.png">
+						<li>Pada Properties Chart, isikan judul chart pada Chart Title >> pilih DataSource >> klik Generate Series. Setiap ada perubahan query sql pada DataSource, maka series chart juga harus di-generate ulang.
+							<p><img src="plansys/modules/help/img/6-5-2-5-5.png">
+						<li>Pada bagian Series, warna untuk per bagian PieChart dapat diubah warnanya.
+							<p><img src="plansys/modules/help/img/6-5-2-5-6.png">
+						<li>Maka tampilan PieChart tersebut akan seperti berikut :
+							<p><img src="plansys/modules/help/img/6-5-2-5-7.png">
+						<li>Jika tanda options   di klik, maka akan muncul beberapa pilihan download chart tersebut.
+							<p><img src="plansys/modules/help/img/6-5-2-5-8.png">
+					</ol>
 					<h5 id="6.5.3">6.5.3. User Interface</h5><a href="#bab6"><i> back to top >></i></a>	
 					<h6 id="6.5.3.1">6.5.3.1. Checkbox List</h6><a href="#bab6"><i> back to top >></i></a>	
 					<h6 id="6.5.3.2">6.5.3.2. Color Picker</h6><a href="#bab6"><i> back to top >></i></a>
 					<h6 id="6.5.3.3">6.5.3.3. Date Time Picker</h6><a href="#bab6"><i> back to top >></i></a>	
+					<p>Langkah-langkah untuk menambahkan/mengatur komponen Date Time Picker adalah sebagai berikut :
+					<ol><li>Drag and Drop komponen Date Time Picker atau ubah field yang ada. Defaultnya, CRUD Generator akan membuatkan field berupa Textfield maka jika perlu diubah caranya klik pada field tersebut.
+						<li>Maka akan membuka tab Properties, klik pada jenis field tersebut misal Text Field (komponen field dari hasil generate Plansys melalui CRUD Generator adalah text field)  pilih jenis field Date Time Picker.
+							<p><img src="plansys/modules/help/img/6-5-3-3-2.png">
+						<li>Pada Properties komponen, isikan label  pilih type (Date Dropdown / Date Picker / Date Time / Month Year / Time).
+							<p><img src="plansys/modules/help/img/6-5-3-3-3.png">
+						<li>Pilih Default To Today (Yes / No).
+							<p><img src="plansys/modules/help/img/6-5-3-3-4.png">
+						<li>Tampilan date time picker masing-masing type seperti berikut :							
+							<p>Date Dropdown :
+							<p><img src="plansys/modules/help/img/6-5-3-3-5-i.png">
+							<p>Date Picker :
+							<p><img src="plansys/modules/help/img/6-5-3-3-5-ii.png">
+							<p>Date Time :
+							<p><img src="plansys/modules/help/img/6-5-3-3-5-iii.png">
+							<p>Month Year :
+							<p><img src="plansys/modules/help/img/6-5-3-3-5-iv.png">
+							<p>Time :
+							<p><img src="plansys/modules/help/img/6-5-3-3-5-v.png">
+					 </ol>
+
 					<h6 id="6.5.3.4">6.5.3.4. Drop Down List</h6><a href="#bab6"><i> back to top >></i></a>	
+					<p>Langkah-langkah untuk menambahkan/mengatur komponen DropDownlist adalah sebagai berikut :
+					<ol><li>Drag and Drop komponen DropDownList atau ubah field yang ada. Defaultnya, CRUD Generator akan membuatkan field berupa Textfield maka jika perlu diubah caranya klik pada field tersebut.
+						<li>Maka akan membuka tab Properties, klik pada jenis field tersebut misal Text Field (komponen field dari hasil generate Plansys melalui CRUD Generator adalah text field)  pilih jenis field DropDownList.
+							<p><img src="plansys/modules/help/img/6-5-3-4-2.png">	
+						<li>Isikan label  pilih layout (Vertical atau Horizontal)  pilih menu position  tentukan label dan field width.
+							<p><img src="plansys/modules/help/img/6-5-3-4-3.png">
+						<li>Tentukan default value, dapat dipilih -None- atau First Item.
+							<p><img src="plansys/modules/help/img/6-5-3-4-4.png">
+						<li>Pada bagian DropDown Item, isikan value dan label untuk dropdown list tersebut. Pada kolom sebelah kiri adalah value / nilai yang akan dikirim dari field ke database, sedangkan kolom sebelah kanan adalah label yang akan ditampilkan oleh dropdown list.
+							<p><img src="plansys/modules/help/img/6-5-3-4-5.png">
+						<li>Maka jika dropdown list tersebut dibuka dalam form akan tampak seperti berikut :  
+							<p><img src="plansys/modules/help/img/6-5-3-4-6.png">
+					</ol>
+
 					<h6 id="">6.5.3.5. Hidden Field</h6><a href="#bab6"><i> back to top >></i></a>							
 					<h6 id="">6.5.3.6. Icon Picker</h6><a href="#bab6"><i> back to top >></i></a>	
 					<h6 id="">6.5.3.7. Label Field</h6><a href="#bab6"><i> back to top >></i></a>	
@@ -380,7 +468,46 @@ class HelpTutorialBab6 extends Form {
 					<h6 id="">6.5.3.12. Submit</h6><a href="#bab6"><i> back to top >></i></a>	
 					<h6 id="">6.5.3.13. Tag Field</h6><a href="#bab6"><i> back to top >></i></a>	
 					<h6 id="">6.5.3.14. Text Area</h6><a href="#bab6"><i> back to top >></i></a>	
-					<h6 id="">6.5.3.15. Text Field</h6><a href="#bab6"><i> back to top >></i></a>
+					
+					<h6 id="6.5.3.15">6.5.3.15. Text Field</h6><a href="#bab6"><i> back to top >></i></a>
+						<br><h7 id="6.5.3.15.1">6.5.3.15.1. Text Field - Auto Complete</h7><a href="#bab6"><br><i> back to top >></i></a>
+						<p>Langkah-langkah untuk menambahkan/mengatur komponen Text Field dengan fungsi Auto Complete:
+						<ol><li>Buka halaman form yang akan ditambahkan/diatur komponen text field.
+							<li>Drag and Drop komponen Text Field atau ubah field yang ada.
+							<li>Buka Properties text field tersebut.
+							<li>Pada Auto Complete, ada 2 pilihan :
+								<p>On Using Relation	: 	untuk menggunakan data pada kolom tabel (model yang sama dengan model yang digunakan Form tersebut.
+								<p>On Using PHP	:	untuk menggunakan data pada array PHP expression yang akan didefinisikan.
+								<p><img src="plansys/modules/help/img/6-5-3-15-1-4.png">
+							<li>Jika memilih On - Using Relation, maka langkah selanjutnya pilih Model  pilih Id Fied  pilih label (kolom mana yang akan digunakan).
+								<p><img src="plansys/modules/help/img/6-5-3-15-1-5.png">
+							<li>Jika memilih On – Using PHP, maka langkah selanjutnya tambahkan script yang berisi item-item data pada PHP Expression.
+								<p><img src="plansys/modules/help/img/6-5-3-15-1-6.png">
+							<li>Text Field tersebut jika dibuka pada halaman form akan tampak seperti berikut :
+								<p><img src="plansys/modules/help/img/6-5-3-15-1-7.png">
+							<li>On – Using Relation akan mendeteksi semua data pada kolom terkait secara unik (dinamis). Sedangkan On – Using PHP akan mendeteksi semua data yang didefinisikan pada PHP Expression (static). Jadi, jika ada penambahan data baru maka Auto Complete On - Using Relation adalah mendeteksi data baru trsebut juga sehingga lebih dinamis. Tapi jika pilihan data dalam Auto Complete sudah ditentukan tanpa perlu ada perubahan maka dapat menggunakan Auto Complete On – Using PHP.
+							<li>Sebagai contoh, ketika menambahkan data baru pada Form terkait sekalian mengisikan data hobi yang baru ‘Hobi Baru’. Lalu menambahkan data baru lagi pada Form tersebut, perbadaan Auto Complete di atas adalah sebagai berikut :
+								<p>Menggunakan Auto Complete – Using Relation
+								<p><img src="plansys/modules/help/img/6-5-3-15-1-9-i.png">						 
+								<p>Menggunakan Auto Complete – Using PHP
+								<p><img src="plansys/modules/help/img/6-5-3-15-1-9-ii.png">						 
+						</ol>
+						
+						<br><h7 id="6.5.3.15.2">6.5.3.15.2. Text Field - Prefix/Postfix</h7><a href="#bab6"><br><i> back to top >></i></a>
+						<p>Langkah-langkah untuk menambahkan prefix/postfix pada text field adalah sebagia berikut :
+						<ol><li>Buka halaman form yang akan ditambahkan/diatur komponen text field.
+							<li>Drag and Drop komponen Text Field atau ubah field yang ada.
+							<li>Buka Properties text field tersebut.
+							<li>Pada bagian Prefix, tambahkan string prefix yang diperlukan.
+								<p><img src="plansys/modules/help/img/6-5-3-15-2-4.png">						 
+							<li>Pada bagian Postfix, tambahkan string postfix yang diperlukan.
+								<p><img src="plansys/modules/help/img/6-5-3-15-2-5.png">						 
+							<li>Jika text field dengan prefix tersebut akan tampak seperti berikut :
+								<p><img src="plansys/modules/help/img/6-5-3-15-2-6.png">						 
+							<li>Jika text field dengan postfix tersebut akan tampak seperti berikut :
+								<p><img src="plansys/modules/help/img/6-5-3-15-2-7.png">						 
+							
+						</ol>
 					<h6 id="">6.5.3.16. Toggle Switch</h6><a href="#bab6"><i> back to top >></i></a>	
 					<h6 id="">6.5.3.17. Upload File</h6><a href="#bab6"><i> back to top >></i></a>	
 					<h3 id="6.5.4">6.5.4. Data & Tables</h5><a href="#bab6"><i> back to top >></i></a>	

@@ -42,6 +42,11 @@ h6{
     color : blue;
     font-size:13px;
 }
+h7{
+    font-weight: bold;
+    font-size:12px;
+	font-style: italic;
+}
 .isi {			
     float: right;	
     padding: 10px;		
