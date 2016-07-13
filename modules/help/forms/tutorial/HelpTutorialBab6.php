@@ -424,9 +424,9 @@ class HelpTutorialBab6 extends Form {
 					<h6 id="6.5.3.3">6.5.3.3. Date Time Picker</h6><a href="#bab6"><i> back to top >></i></a>	
 					<p>Langkah-langkah untuk menambahkan/mengatur komponen Date Time Picker adalah sebagai berikut :
 					<ol><li>Drag and Drop komponen Date Time Picker atau ubah field yang ada. Defaultnya, CRUD Generator akan membuatkan field berupa Textfield maka jika perlu diubah caranya klik pada field tersebut.
-						<li>Maka akan membuka tab Properties, klik pada jenis field tersebut misal Text Field (komponen field dari hasil generate Plansys melalui CRUD Generator adalah text field)  pilih jenis field Date Time Picker.
+						<li>Maka akan membuka tab Properties, klik pada jenis field tersebut misal Text Field (komponen field dari hasil generate Plansys melalui CRUD Generator adalah text field) >> pilih jenis field Date Time Picker.
 							<p><img src="plansys/modules/help/img/6-5-3-3-2.png">
-						<li>Pada Properties komponen, isikan label  pilih type (Date Dropdown / Date Picker / Date Time / Month Year / Time).
+						<li>Pada Properties komponen, isikan label >> pilih type (Date Dropdown / Date Picker / Date Time / Month Year / Time).
 							<p><img src="plansys/modules/help/img/6-5-3-3-3.png">
 						<li>Pilih Default To Today (Yes / No).
 							<p><img src="plansys/modules/help/img/6-5-3-3-4.png">
@@ -446,9 +446,9 @@ class HelpTutorialBab6 extends Form {
 					<h6 id="6.5.3.4">6.5.3.4. Drop Down List</h6><a href="#bab6"><i> back to top >></i></a>	
 					<p>Langkah-langkah untuk menambahkan/mengatur komponen DropDownlist adalah sebagai berikut :
 					<ol><li>Drag and Drop komponen DropDownList atau ubah field yang ada. Defaultnya, CRUD Generator akan membuatkan field berupa Textfield maka jika perlu diubah caranya klik pada field tersebut.
-						<li>Maka akan membuka tab Properties, klik pada jenis field tersebut misal Text Field (komponen field dari hasil generate Plansys melalui CRUD Generator adalah text field)  pilih jenis field DropDownList.
+						<li>Maka akan membuka tab Properties, klik pada jenis field tersebut misal Text Field (komponen field dari hasil generate Plansys melalui CRUD Generator adalah text field) >> pilih jenis field DropDownList.
 							<p><img src="plansys/modules/help/img/6-5-3-4-2.png">	
-						<li>Isikan label  pilih layout (Vertical atau Horizontal)  pilih menu position  tentukan label dan field width.
+						<li>Isikan label >> pilih layout (Vertical atau Horizontal) >> pilih menu position >> tentukan label dan field width.
 							<p><img src="plansys/modules/help/img/6-5-3-4-3.png">
 						<li>Tentukan default value, dapat dipilih -None- atau First Item.
 							<p><img src="plansys/modules/help/img/6-5-3-4-4.png">
@@ -479,7 +479,7 @@ class HelpTutorialBab6 extends Form {
 								<p>On Using Relation	: 	untuk menggunakan data pada kolom tabel (model yang sama dengan model yang digunakan Form tersebut.
 								<p>On Using PHP	:	untuk menggunakan data pada array PHP expression yang akan didefinisikan.
 								<p><img src="plansys/modules/help/img/6-5-3-15-1-4.png">
-							<li>Jika memilih On - Using Relation, maka langkah selanjutnya pilih Model  pilih Id Fied  pilih label (kolom mana yang akan digunakan).
+							<li>Jika memilih On - Using Relation, maka langkah selanjutnya pilih Model >> pilih Id Fied >> pilih label (kolom mana yang akan digunakan).
 								<p><img src="plansys/modules/help/img/6-5-3-15-1-5.png">
 							<li>Jika memilih On – Using PHP, maka langkah selanjutnya tambahkan script yang berisi item-item data pada PHP Expression.
 								<p><img src="plansys/modules/help/img/6-5-3-15-1-6.png">
@@ -521,7 +521,20 @@ class HelpTutorialBab6 extends Form {
 					<h6 id="6.5.4.8">6.5.4.8. Sub Form</h6><a href="#bab6"><i> back to top >></i></a>	
 					<h4 id="6.6">6.6. Dashboard</h4><a href="#bab6"><i> back to top >></i></a>	
 					<h5 id="6.6.1">6.6.1. Create Dashboard Page</h5><a href="#bab6"><i> back to top >></i></a>	
+					<p>Langkah-langkah membuat halaman dashboard adalah sebagai berikut :
+					<ol><li>Buka menu Form Builder
+						<li>Buat halaman form Dashboard, caranya :
+							<ul><li>Klik kanan pada app (jika tidak menggunakan module) atau
+								<li>Klik kanan pada module (jika menggunakan module)
+							</ul>
+						<li>Misal menggunakan module gudang, maka klik kanan pada module gudang >> Isikan nama (misal: Dashboard) pada kotak Create New Form).
+							<p><img src="plansys/modules/help/img/6-6-1-3.png">						 
+						<li>Maka pada halaman Form Builder akan ditambahkan GudangDashboard.
+							<p><img src="plansys/modules/help/img/6-6-1-4.png">						 		 
+						<li>Tambahkan komponen-komponen dashboard seperti chart-chart dengan beberapa type.
+					</ol>
 					<h4 id="6.7">6.7. Customize Login Form</h4><a href="#bab6"><i> back to top >></i></a>					
+										 		 
 				</div>				
 				',
             ),
