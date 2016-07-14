@@ -1,7 +1,5 @@
 <?php
 
-use PhpParser\ParserFactory;
-
 class FormsController extends Controller {
 
     public static $modelField = array();
@@ -259,85 +257,88 @@ EOF;
         $this->layout = "//layouts/blank";
         $this->render('empty');
     }
-    
-    
-    public function generateField($field, $parser) {
-        $keys = [];
-        $int = 0;
-        foreach ($field as $k=>$value) {
-            $stmt = [new PhpParser\Node\Scalar\String_("")];
-            if (!is_array($value)){
-                $value = str_replace("\"", "\\\"", $value);
-                $stmt = $parser->parse("<?php \"" . $value . "\";");
-            } else {
-                $items = $this->generateField($value, $parser);
-                $items = $items->value->items;
-                $stmt = [new PhpParser\Node\Expr\Array_($items)];
+
+    public function actionDashboard($f) {
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+        FormField::$inEditor = true;
+
+        $classPath = FormBuilder::classPath($f);
+        $fb = FormBuilder::load($classPath);
+        if (isset($post['save'])) {
+            switch ($post['save']) {
+                case "portlet":
+                    $fields = $fb->updateField(['name' => $post['name']], $post['data']);
+                    $fb->fields = $fields;
+                    break;
             }
-            
-           if (empty($stmt)) {
-                $stmt = [new PhpParser\Node\Scalar\Expr\ConstFetch(new PhpParser\Node\Scalar\Expr\Null)];
-            }
-            
-            if ($k === $int) {
-                $keys[] = new PhpParser\Node\Expr\ArrayItem(
-                    $stmt[0]
-                );
-            } else {
-                $keys[] = new PhpParser\Node\Expr\ArrayItem(
-                    $stmt[0],
-                    new PhpParser\Node\Scalar\String_($k)
-                );
-            }
-            
-            $int++;
+
+            return;
         }
-        
-        $ret = new PhpParser\Node\Expr\ArrayItem(
-            new PhpParser\Node\Expr\Array_($keys)
-        );
-        
-        return $ret;
+
+        $this->renderForm($f, [
+            'classPath' => $classPath,
+            'fields' => $fb->fields
+        ]);
     }
-    
-    public function generateAllFields($fields, $parser) {
-        $ret = [];
-        foreach ($fields as $key => $field) {
-            $ret[] = $this->generateField($field, $parser);
-        }
-        return $ret;
-    }
-    
+
     public function actionSave($class, $timestamp) {
-        $post = file_get_contents("php://input");
-        $post = json_decode($post, true);
-        $file = Yii::getPathOfAlias($class). ".php";
-        $fields = $post['fields'];
-        
-        ini_set('xdebug.max_nesting_level', 3000);
-        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
-        $stmts = $parser->parse(file_get_contents($file));
-        
-        if (!empty($stmts)) {
-            $getFields = new PhpParser\Node\Stmt\ClassMethod('getFields',[
-                'type'=>PhpParser\Node\Stmt\Class_::MODIFIER_PUBLIC,
-                'returnType' => null,
-                'stmts'=> [
-                    new PhpParser\Node\Stmt\Return_(
-                        new PhpParser\Node\Expr\Array_($this->generateAllFields($fields, $parser))
-                    )
-                ],
-            ]);
-            
-            
-            foreach ($stmts[0]->stmts as $k=>$s) {
-                if ($s->name == "getFields") {
-                    $stmts[0]->stmts[$k] = $getFields;
+        FormField::$inEditor = true;
+
+        $class = FormBuilder::classPath($class);
+        $session = Yii::app()->session['FormBuilder_' . $class];
+        $file = file(Yii::getPathOfAlias($class) . ".php", FILE_IGNORE_NEW_LINES);
+
+        $changed = false;
+        if ($timestamp != @$session['timestamp']) {
+            $changed = true;
+        }
+
+        if (!$changed) {
+            foreach ($file as $k => $f) {
+                if (trim($file[$k]) != trim(@$session['file'][$k])) {
+                    $changed = true;
                 }
             }
-            
-            $printer = new CodePrinter;
-            $code = $printer->save($stmts, $file);
+        }
+
+        if (!$changed) {
+
+            $postdata = file_get_contents("php://input");
+            $post = CJSON::decode($postdata);
+            $session = Yii::app()->session['FormBuilder_' . $class];
+            $fb = FormBuilder::load($class);
+
+            if (isset($post['fields'])) {
+                if (is_subclass_of($fb->model, 'FormField')) {
+                    Yii::app()->cache->delete('toolbarData');
+                    Yii::app()->cache->delete('toolbarHtml');
+                }
+
+                //save posted fields
+                if (!$fb->setFields($post['fields'])) {
+                    echo "FAILED: PERMISSION DENIED";
+                }
+            } else if (isset($post['form'])) {
+                if (is_array($post['form']['layout']['data'])) {
+
+                    ## save menutree to menutree file
+                    foreach ($post['form']['layout']['data'] as $d) {
+                        if (@$d['type'] == "menu" && !!@$d['file']) {
+                            $menuOptions = MenuTree::getOptions($d['file']);
+                            $menuOptions['layout'] = $d;
+                            MenuTree::writeOptions($d['file'], $menuOptions);
+                        }
+                    }
+                }
+
+                //save posted form
+                if (!$fb->setForm($post['form'])) {
+                    echo "FAILED: PERMISSION DENIED";
+                }
+            }
+        } else {
+            echo "FAILED";
         }
     }
 
