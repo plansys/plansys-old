@@ -534,7 +534,22 @@ class HelpTutorialBab6 extends Form {
 						<li>Tambahkan komponen-komponen dashboard seperti chart-chart dengan beberapa type.
 					</ol>
 					<h4 id="6.7">6.7. Customize Login Form</h4><a href="#bab6"><i> back to top >></i></a>					
-										 		 
+					<p>Secara default tampilan login form dalam tools Plansys adalah sebagai berikut :
+					<p><img src="plansys/modules/help/img/6-7.png">						 		 
+					<p>Langkah-langkah untuk mengubah tampilan login form tersebut adalah sebagai berikut :
+					<ol><li>Copy kan file LoginForm.php dari direktori  nama_si/plansys/forms/ ke direktori nama_si/app/form/. 
+							<p>Sebagai Catatan :
+							<p>Meskipun nama ada 2 file (case: custom Login Form) memiliki nama fiele yang sama maka yang dibaca system Plansys adalah file yang berada di direktori app/forms. Jika mengedit file yang ada direktori Plansys, ketika Plansys di-update maka akan diganti dengan file Plansys yang terbaru.
+							<p>Direktori nama_si/plansys/forms/ 
+							<p><img src="plansys/modules/help/img/6-7-1-i.png">						 		 
+							<p>Direktori nama_si/app/form/
+							<p><img src="plansys/modules/help/img/6-7-1-ii.png">						 		 
+						<li>Buka Form Builder  Klik pada app   pilh LoginForm
+							<p><img src="plansys/modules/help/img/6-7-2.png">						 		 
+						<li>Edit halaman LoginForm ini sesuai kebutuhan, dapat dengan menggunakan toolbar maupun ditambahkan CSS. Sebagai contoh mengubah label dan warna background menjadi merah.
+							<p><img src="plansys/modules/help/img/6-7-3.png">						 		 
+						<li>Maka halaman LoginForm tersebut akan seperti berikut :
+							<p><img src="plansys/modules/help/img/6-7-4.png">						 		 
 				</div>				
 				',
             ),
