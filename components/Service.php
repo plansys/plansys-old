@@ -6,6 +6,8 @@ class Service extends CConsoleCommand {
     public $id = "";
     public $params = null;
     
+    public static $shutdownVars = [];
+    
     public function init() {
         if (isset($GLOBALS['svc'])) {
             $this->service = $GLOBALS['svc'];
@@ -40,6 +42,11 @@ EOF;
         if (isset($this->service['name'])) {
             $this->log("SERVICE: Service {$this->service['name']} exited with code {$exitCode} [PID: {$this->pid}] ");
             ServiceManager::markAsStopped($this->service['name'], $this->id);
+            
+            
+            if (@$this->service['status'] != "ok") {
+                ServiceSetting::set('list.' . $this->service['name'] . '.status', 'ok');
+            }
         }
         return parent::afterAction($action, $params, $exitCode);
     }

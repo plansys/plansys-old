@@ -10,6 +10,7 @@ class DevService extends Form {
     public $period;
     public $instance = 'single';
     public $singleInstanceMode = 'wait';
+    public $status = 'draft';
     private $isNewRecord = true;
     
     public function rules() {
@@ -20,7 +21,8 @@ class DevService extends Form {
     }
     
     public function serviceValidator() {
-        if ($this->isNewRecord && !is_null(ServiceSetting::get('list.' .$this->name))) {
+        $svc = ServiceSetting::get('list.' .$this->name);
+        if ($this->isNewRecord && (count($svc) > 1)) {
             $this->addError('name', 'Service name already exists, choose another name');
         }
     }

@@ -26,7 +26,10 @@ class ServiceCommand extends CConsoleCommand {
                             break;
                     }
                     if((!isset($service['lastRun']) || abs($curTime-$lastRun)% $period==0)){
-                        ServiceManager::runInternal($serviceName, $service);
+                        
+                        if (@$service['status'] == "ok") {
+                            ServiceManager::runInternal($serviceName, $service);
+                        }
                     }
                 } 
             }
@@ -62,11 +65,11 @@ class ServiceCommand extends CConsoleCommand {
                 }
             }
 
-	    $i++;
-	    if ($i < 5) {
+	        $i++;
+	        if ($i < 5) {
                  sleep(1);
             } else {
-		 break;
+		        break;
             }
         }
     }

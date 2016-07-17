@@ -11,7 +11,8 @@ class ServiceSetting {
                 "schedule"=> "manual",
                 "period"=> "",
                 "instance"=> "single",
-                "singleInstanceMode"=> "wait"
+                "singleInstanceMode"=> "wait",
+                "status" => "ok"
             ],
             "ImportData"=> [
                 "name"=> "ImportData",
@@ -22,6 +23,7 @@ class ServiceSetting {
                 "period"=> "",
                 "instance"=> "parallel",
                 "singleInstanceMode"=> "wait",
+                "status" => "ok"
             ]
         ]
     ];
@@ -108,6 +110,11 @@ class ServiceSetting {
     }
     
     public static function set($key, $value, $flushSetting = true) {
+        if (empty(self::$data)) {
+            $file = @file_get_contents(self::getPath());
+            self::$data = json_decode($file, true);
+        }
+        
         self::setInternal(self::$data, $key, $value);
 
         if (Helper::isLastString($key, ".lastRun")) {

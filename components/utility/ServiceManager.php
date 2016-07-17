@@ -19,13 +19,20 @@ class ServiceManager extends CComponent {
                 $schedule = "Manual";
             }
             
+            $isPlansys = strpos($svc['commandPath'], 'application.') === 0;
+            if (@$svc['status'] != 'ok') {
+                $status = 'draft'; 
+            } else {
+                $status = empty($instances) ? "stopped" : "running";
+            }
+            
             $res = [
-                'is_plansys' => strpos($svc['commandPath'], 'application.') === 0, 
+                'is_plansys' => $isPlansys, 
                 'name' => $svc['name'],
                 'command' => $svc['command'],
                 'action' => $svc['action'],
                 'schedule' => $schedule,
-                'status' => empty($instances) ? "stopped" : "running",
+                'status' => $status,
                 'running_instances' => count($instances),
                 'last_run' => $svc['lastRun']
             ];

@@ -3,7 +3,6 @@
 class ServiceController extends Controller {
     
     public function actionIndex() {                  
-
         $model = new DevServiceIndex();
         $model->status = "Service Daemon Running" ;
         $this->renderForm('DevServiceIndex', $model);
@@ -160,6 +159,7 @@ EOF;
         if ($model !== false) {
             $filePath= $model->filePath;
             if (is_file($filePath)) {
+                ServiceSetting::set('list.' . $post['id'] . '.status', 'draft');
                 file_put_contents($filePath, $post['content']);
             }
         }
