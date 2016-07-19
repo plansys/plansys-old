@@ -9,8 +9,15 @@ class WebRequest extends CHttpRequest
             $this->getIsPatchRequest() ||
             $this->getIsDeleteRequest()
         ) {
+            $ctrl = Yii::app()->createController($this->getParam('r'));
+            if (count($ctrl) > 0) {
+                $ctrl  = $ctrl[0];
+                if (!$ctrl->enableCsrf) {
+                    return true;
+                }
+            }
+            
             $cookies = $this->getCookies();
-
             $method = $this->getRequestType();
             switch ($method) {
                 case 'POST':

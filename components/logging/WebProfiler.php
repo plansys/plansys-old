@@ -52,7 +52,9 @@ class WebProfiler extends CLogRoute {
      * @param array $logs list of log messages
      */
     public function processLogs($logs) {
-        $this->render('log', $logs);
+        if ($this->enabled) {
+            $this->render('log', $logs);
+        }
     }
 
     /**

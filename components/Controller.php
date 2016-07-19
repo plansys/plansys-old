@@ -12,6 +12,8 @@ class Controller extends CController {
      */
     public $layout       = '//layouts/main';
     public $reportLayout = '//layouts/report';
+    public $enableCsrf   = true;
+    public $enableDebug  = true;
 
     public function staticUrl($path = '') {
         $static = "/static";
@@ -402,7 +404,7 @@ class Controller extends CController {
         Yii::app()->user->setFlash('info', $info);
     }
 
-    public function beforeAction($action) {
+    protected function beforeAction($action) {
         ## when mode is init or install then redirect to installation mode
         if (Setting::$mode == "init" || Setting::$mode == "install") {
             if ($this->id != "default") {
@@ -410,7 +412,7 @@ class Controller extends CController {
                 return false;
             }
         }
-
+        
         ## Setup actual url reference, for console command...
         $appUrl    = Setting::get('app.url');
         $actualUrl = Yii::app()->getRequest()->getHostInfo() . Yii::app()->getRequest()->getBaseUrl();
@@ -418,18 +420,30 @@ class Controller extends CController {
             Setting::set('app.url', $actualUrl);
         }
 
+        if (!$this->enableDebug) {
+            foreach (Yii::app()->log->routes as $key=> $route)
+            {
+                $route->enabled = false;
+            }
+        }
 
         parent::beforeAction($action);
-
-        Yii::beginProfile('PlansysRenderForm');
+        
+        if ($this->enableDebug) {
+            Yii::beginProfile('PlansysRenderForm');
+        }
         return true;
     }
 
-    public function afterAction($action) {
+    protected function afterAction($action) {
+
+
         ## Make sure service daemon is started
         ServiceManager::startDaemon();
 
-        Yii::endProfile('PlansysRenderForm');
+        if ($this->enableDebug) {
+            Yii::endProfile('PlansysRenderForm');
+        }
         parent::afterAction($action);
 
         return true;
