@@ -1,5 +1,6 @@
 <?php
-
+use PhpParser\Error;
+use PhpParser\ParserFactory;
 class SqlCriteria extends FormField {
 
     /** @var string $toolbarName */
@@ -188,7 +189,7 @@ class SqlCriteria extends FormField {
                         }
                         break;
                     case 'ManyManyRelation':
-                        $parser      = new PhpParser\Parser(new PhpParser\Lexer\Emulative);
+                        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
                         $stmts       = $parser->parse('<?php ' . $relMeta->foreignKey . ';');
                         $bridgeTable = $stmts[0]->name->parts[0];
                         $arg0        = $stmts[0]->args[0]->value->name->parts[0];

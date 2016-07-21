@@ -159,14 +159,14 @@ abstract class CApplication extends CModule
 		}
 
 		$this->preinit();
-
+		
 		$this->initSystemHandlers();
 		$this->registerCoreComponents();
 
 		$this->configure($config);
 		$this->attachBehaviors($this->behaviors);
 		$this->preloadComponents();
-
+		
 		$this->init();
 	}
 
@@ -263,7 +263,7 @@ abstract class CApplication extends CModule
 	 */
 	public function setBasePath($path)
 	{
-		if(($this->_basePath=realpath($path))===false || !is_dir($this->_basePath))
+		if(($this->_basePath=$path)===false || !is_dir($this->_basePath))
 			throw new CException(Yii::t('yii','Application base path "{path}" is not a valid directory.',
 				array('{path}'=>$path)));
 	}
@@ -290,7 +290,7 @@ abstract class CApplication extends CModule
 	 */
 	public function setRuntimePath($path)
 	{
-		if(($runtimePath=realpath($path))===false || !is_dir($runtimePath) || !is_writable($runtimePath))
+		if(($runtimePath=$path)===false || !is_dir($runtimePath) || !is_writable($runtimePath))
 			throw new CException(Yii::t('yii','Application runtime path "{path}" is not valid. Please make sure it is a directory writable by the Web server process.',
 				array('{path}'=>$path)));
 		$this->_runtimePath=$runtimePath;
@@ -312,7 +312,7 @@ abstract class CApplication extends CModule
 	 */
 	public function setExtensionPath($path)
 	{
-		if(($extensionPath=realpath($path))===false || !is_dir($extensionPath))
+		if(($extensionPath=$path)===false || !is_dir($extensionPath))
 			throw new CException(Yii::t('yii','Extension path "{path}" does not exist.',
 				array('{path}'=>$path)));
 		Yii::setPathOfAlias('ext',$extensionPath);

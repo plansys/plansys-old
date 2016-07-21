@@ -5,7 +5,7 @@
 $mode = "init";
 
 ## Define Root Dir
-$root = $mode != "init" ? dirname(__FILE__) . '/plansys' : dirname(__FILE__);
+$root = $mode != "init" ? dirname($_SERVER["SCRIPT_FILENAME"]) . '/plansys' : dirname($_SERVER["SCRIPT_FILENAME"]);
 
 ## Define core lib path
 $yii      = $root . '/framework/yii.php';
@@ -26,7 +26,7 @@ if (is_file($root . '/../app/vendor/autoload.php')) {
 
 ## Initialize settings
 require_once ($setting);
-Setting::init($config, $mode, __FILE__);
+Setting::init($config, $mode, $_SERVER["SCRIPT_FILENAME"]);
 
 
 ## Initialize Yii

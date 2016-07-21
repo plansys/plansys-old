@@ -1,7 +1,6 @@
 <?php
 
 Yii::import("application.framework.gii.*");
-Yii::import("application.framework.gii.generators.model.ModelCode");
 
 class ModelGeneratorCode extends ModelCode {
     public $options = [];

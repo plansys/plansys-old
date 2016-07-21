@@ -141,6 +141,8 @@ class Setting {
             defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);
             //execution time
             defined('YII_DEBUG_DISPLAY_TIME') or define('YII_DEBUG_DISPLAY_TIME',true);
+        } else {
+            defined('YII_DEBUG') or define('YII_DEBUG',false );
         }
     }
 

@@ -1,9 +1,12 @@
 <?php
 
+use PhpParser\Error;
+use PhpParser\ParserFactory;
+
 class ControllerGenerator extends CComponent {
 
     public static function create($path, $name) {
-        $parser        = new PhpParser\Parser(new PhpParser\Lexer\Emulative);
+        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
         $prettyPrinter = new CodePrinter;
         $path          = explode(".", $path);
 
