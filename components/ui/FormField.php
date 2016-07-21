@@ -309,7 +309,7 @@ class FormField extends CComponent {
         if (count($includeJS) > 0) {
             foreach ($includeJS as $js) {
                 $class  = get_class($this);
-                $jspath = realpath(Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js);
+                $jspath = Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js;
                 
                 if (is_dir($jspath)) {
                     $path  = Asset::publish($jspath);
@@ -463,7 +463,7 @@ class FormField extends CComponent {
 
                 if (!$jspath) {
                     $class  = get_class($this);
-                    $jspath = realpath(Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js);
+                    $jspath = Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js;
                 } else {
                     if (!is_dir($jspath)) {
                         $jspath = realpath($js);
@@ -494,7 +494,7 @@ class FormField extends CComponent {
                 $csspath = Asset::resolveAlias($css);
                 if (!$csspath) {
                     $class   = get_class($this);
-                    $csspath = realpath(Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css);
+                    $csspath = Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $css;
                 } else {
                     $csspath = realpath($css);
                 }
