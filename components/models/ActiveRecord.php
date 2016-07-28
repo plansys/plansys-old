@@ -482,9 +482,11 @@ class ActiveRecord extends CActiveRecord {
             foreach ($new as $i => $j) {
                 if (@$j[$pk] == @$v[$pk]) {
                     $is_deleted = false;
-                    if (count(array_diff_assoc($j, $v)) > 0) {
-                        $is_updated = true;
-                        $updateArr[] = $j;
+                    if (is_array($j) && is_array($v)) {
+                        if (count(array_diff_assoc($j, $v)) > 0) {
+                            $is_updated = true;
+                            $updateArr[] = $j;
+                        }
                     }
                 }
             }
