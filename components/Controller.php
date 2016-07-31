@@ -119,7 +119,7 @@ class Controller extends CController {
             $params  = $model;
             $model   = null;
         }
-        $fb = FormBuilder::load($class);
+        $fb = FormRenderer::load($class);
 
         ## check if layout property is declared by rendering controller
         $reflection  = new ReflectionObject($this);

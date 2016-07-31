@@ -1349,7 +1349,7 @@ abstract class CActiveRecord extends CModel
 	{
 		$this->beforeFind();
 		$this->applyScopes($criteria);
-
+                
 		if(empty($criteria->with))
 		{
 			if(!$all)
@@ -1432,6 +1432,7 @@ abstract class CActiveRecord extends CModel
 			$alias=$criteria->alias;
 		else
 			$alias=$this->_alias;
+                
 		return $quote ? $this->getDbConnection()->getSchema()->quoteTableName($alias) : $alias;
 	}
 
@@ -1523,7 +1524,7 @@ abstract class CActiveRecord extends CModel
 		Yii::trace(get_class($this).'.findByAttributes()','system.db.ar.CActiveRecord');
 		$prefix=$this->getTableAlias(true).'.';
 		$criteria=$this->getCommandBuilder()->createColumnCriteria($this->getTableSchema(),$attributes,$condition,$params,$prefix);
-		return $this->query($criteria);
+                return $this->query($criteria);
 	}
 
 	/**

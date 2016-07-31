@@ -120,6 +120,7 @@ class DefaultController extends Controller {
         if (isset($_POST['LoginForm'])) {
             $model->attributes = $_POST['LoginForm'];
             $this->beforeLogin($model);
+            
 
             // validate user input and redirect to the previous page if valid
             if ($model->validate() && $model->login()) {

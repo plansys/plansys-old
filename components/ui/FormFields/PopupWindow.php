@@ -21,7 +21,7 @@ class PopupWindow extends FormField {
     public function actionSubform($c, $f) {
         Yii::import($c);
         $class = Helper::explodeLast(".", $c);
-        $fb    = FormBuilder::load($class);
+        $fb    = FormRenderer::load($class);
         $field = $fb->findField(['name' => $f]);
         if (!!$field) {
             $this->attributes = $field;
@@ -90,7 +90,7 @@ class PopupWindow extends FormField {
                     'ng-if' => 'active.mode == \'subform\'',
                 ),
                 'menuPos' => 'pull-right',
-                'listExpr' => 'FormBuilder::listForm()',
+                'listExpr' => 'FormRenderer::listForm()',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),

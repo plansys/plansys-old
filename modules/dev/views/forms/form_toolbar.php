@@ -1,12 +1,12 @@
 
-<div ng-controller="ToolbarController">
+<div ng-controller="FormBuilderToolbarController">
     <div oc-lazy-load="{name: 'ui.tree', files: ['<?= $this->staticUrl('/js/lib/angular.ui.tree.js') ?>']}">
-        <div ui-tree="toolbarOptions"  style="overflow-x:hidden;">
+        <div ui-tree="toolbarOptions" ng-init="treeName = 'formBuilder.fields'" style="overflow-x:hidden;">
             <ol ui-tree-nodes data-nodrop data-clone-enabled="true" ng-model="toolbar" class="toolbar-item">
                 <span ng-repeat="item in toolbar">
                     {{category(settings.category[item.type])}}
                     <li ng-if="isCategory && settings.category[item.type]" class="item.type"
-                        style="width:100%;color:#aaa;display:block;margin:10px -5px 0px -5px" >
+                        style="width:100%;color:#aaa;display:block;" >
                         <div class="properties-header" >
                             <i class="fa fa-nm {{categorySettings[settings.category[item.type]].icon}}"></i>
                             &nbsp;{{settings.category[item.type]}}
@@ -25,9 +25,10 @@
 </div>
 
 <script type="text/javascript">
-    app.controller("ToolbarController", ["$scope", "$http", "$timeout", function ($scope, $http, $timeout) {
-            var prev = "";
+    app.controller("FormBuilderToolbarController", ["$scope", "$http", "$timeout", function ($scope, $http, $timeout) {
             $scope.isCategory = false;
+            
+            var prev = "";
             $scope.category = function (category) {
                 if (prev != category) {
                     prev = category;
@@ -38,8 +39,7 @@
             }
 
             /*********************** TOOLBAR ***********************/
-            $scope.settings = $scope.$parent.toolbarSettings;
-
+            $scope.settings = <?php echo json_encode(FormField::settings()); ?>;
             $scope.categorySettings = <?php echo json_encode(FormField::$categorySettings); ?>;
             $scope.toolbar = <?php echo json_encode($toolbarData); ?>;
             $scope.toolbarDefault = angular.copy($scope.toolbar);
@@ -67,14 +67,14 @@
                             }
 
                             // action bar should always be placed on first array
-                            if (model.type == 'ActionBar' || $scope.$parent.fields.length == 0) {
+                            if (model.type == 'ActionBar' || editor.fields.length == 0) {
                                 var clone = angular.copy(scope.dest.nodesScope.$modelValue[scope.dest.index]);
                                 scope.dest.nodesScope.$modelValue.splice(scope.dest.index, 1);
-                                $scope.$parent.fields.unshift(clone);
+                                editor.fields.unshift(clone);
                             }
 
                             // save it
-                            $scope.$parent.save();
+                            editor.save();
                         }
                     }, 0);
                 }

@@ -12,7 +12,7 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
                 $scope.paramsField = $el.find("data[name=params_field]").text();
                 $scope.inlineJS = $el.find("pre[name=inline_js]:eq(0)").text();
                 $scope.baseClass = $el.find('data[name=base_class]').text();
-                $scope.value = $scope.$parent.active[$scope.name];
+                $scope.value = editor.activeTab.active[$scope.name];
                 $scope.isError = false;
                 $scope.isLoading = true;
                 $scope.errorMsg = '';
@@ -20,6 +20,10 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
                 $scope.modelClass = '';
 
                 $scope.getPreviewSQL = function () {
+                    $scope.active = $scope.model = editor.activeTab.active;
+                    if ($scope.active == null)
+                        return;
+
                     $scope.isLoading = true;
                     var postparam = {
                         criteria: $scope.value,
@@ -29,24 +33,24 @@ app.directive('sqlCriteria', function ($timeout, $compile, $http) {
 
                     switch ($scope.baseClass) {
                         case "DataSource":
-                            postparam.rel = $scope.$parent.active.relationTo;
-                            postparam.dsname = $scope.$parent.active.name;
+                            postparam.rel = editor.activeTab.active.relationTo;
+                            postparam.dsname = editor.activeTab.active.name;
                             postparam.dsclass = $scope.$parent.classPath;
                             break;
                         case "RelationField":
-                            postparam.rfname = $scope.$parent.active.name;
+                            postparam.rfname = editor.activeTab.active.name;
                             postparam.rfclass = $scope.$parent.classPath;
-                            postparam.rfmodel = $scope.$parent.active.modelClass;
+                            postparam.rfmodel = editor.activeTab.active.modelClass;
                             break;
                         case "TextField":
-                            postparam.rfname = $scope.$parent.active.name;
+                            postparam.rfname = editor.activeTab.active.name;
                             postparam.rfclass = $scope.$parent.classPath;
-                            postparam.rfmodel = $scope.$parent.active.modelClass;
+                            postparam.rfmodel = editor.activeTab.active.modelClass;
                             break;
                         case "DataGrid":
                         case "DataFilter":
                             postparam.params = $scope.item[$scope.paramsField] || {};
-                            postparam.rfname = $scope.$parent.active.name;
+                            postparam.rfname = editor.activeTab.active.name;
                             postparam.rfclass = $scope.$parent.classPath;
                             postparam.rfmodel = $scope.modelClass;
                             break;

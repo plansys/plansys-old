@@ -1,4 +1,4 @@
-editor.ListView = {
+editor.formBuilder.types.ListView = {
     toggleEdit: function (active) {
         active.edited = !editor.$scope.active.edited;
         editor.$timeout(function () {

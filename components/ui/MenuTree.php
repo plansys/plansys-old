@@ -216,7 +216,7 @@ class MenuTree extends CComponent {
                 }
             }
 
-            $optionsCode                          = explode("\n", '$options = ' . FormBuilder::formatCode($options, ""));
+            $optionsCode                          = explode("\n", '$options = ' . $options);
             $optionsCode[count($optionsCode) - 1] = $optionsCode[count($optionsCode) - 1] . ";";
 
             if (!$startLine) {

@@ -40,7 +40,7 @@ class RepoForm extends Form {
         $info = RepoManager::parse($dirpath, $this->repoDef['pattern']);
         $this->attributes = $info;
 
-        $fb = FormBuilder::load(get_class($this));
+        $fb = FormRenderer::load(get_class($this));
         $fb->model = $this;
         foreach ($this->fileFields as $fieldName) {
             $field = $fb->findField(['name' => $fieldName]);
@@ -96,7 +96,7 @@ class RepoForm extends Form {
             $this->_dirpath = $dir;
 
             ## move uploaded file
-            $fb = FormBuilder::load(get_class($this));
+            $fb = FormRenderer::load(get_class($this));
             $fb->model = $this;
             $model = $this;
             foreach ($this->repoDef['fileFields'] as $fieldName) {

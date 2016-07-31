@@ -16,7 +16,6 @@ class UserController extends Controller {
     }
 
     public function actionRole($id) {
-        
         $model = $this->loadModel($id, "DevRoleForm");
         if (isset($_POST["DevRoleForm"])) {
             $model->attributes = $_POST["DevRoleForm"];

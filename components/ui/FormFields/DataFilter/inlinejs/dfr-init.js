@@ -18,7 +18,6 @@ for (i in $scope.$parent.value) {
         }
     }
     
-    $scope.$parent.save();
 }
 
 delete $scope.$parent.$parent.filterRelation;

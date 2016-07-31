@@ -124,6 +124,7 @@ class DropDownList extends FormField {
                 'labelWidth' => '6',
                 'fieldWidth' => '4',
                 'type' => 'DropDownList',
+                'defaultType' => 'first'
             ),
             array (
                 'label' => 'Show \'Other\' Item',

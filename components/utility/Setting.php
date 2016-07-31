@@ -551,9 +551,9 @@ class Setting {
         switch ($db['driver']) {
             case "oci":
                 if (@$db['port'] == null) {
-                    $connectionString = "oci:dbname={$db['host']}/{$db['dbname']};charset=UTF8";
+                    $connectionString = "oci:dbname={$db['host']}/{$db['dbname']}";
                 } else {
-                    $connectionString = "oci:dbname={$db['host']}:{$db['port']}/{$db['dbname']};charset=UTF8";
+                    $connectionString = "oci:dbname={$db['host']}:{$db['port']}/{$db['dbname']}";
                 }
                 $connection = [
                     'connectionString' => $connectionString,

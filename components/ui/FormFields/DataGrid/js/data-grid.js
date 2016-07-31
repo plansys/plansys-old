@@ -1124,7 +1124,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                 parent[$scope.name] = $scope;
                 
                 // this is hack to prevent datagrid is fully loaded before page load
-                // check FormBuilder.js.php for more info
+                // check FormRenderer.js.php for more info
                 parent.dataGrids[$scope.name] = true;
                 parent.dataGrids.length--; 
             }

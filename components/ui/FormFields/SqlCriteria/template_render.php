@@ -39,7 +39,7 @@
     </table>
 
     <?php
-    echo FormBuilder::build('ModalDialog', [
+    echo FormRenderer::build('ModalDialog', [
         'name' => 'CriteriaDialog',
         'subForm' => 'SqlCriteriaForm',
     ]);

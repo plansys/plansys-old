@@ -522,13 +522,13 @@ div[ui-header] {
     font-size: 12px;
     font-weight: bold;
     background: #ffffff; /* Old browsers */
-    background: -moz-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #fafafa)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* IE10+ */
-    background: linear-gradient(to bottom, #ffffff 0%, #fafafa 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#fafafa', GradientType=0); /* IE6-9 */
+    background: -moz-linear-gradient(top, #ffffff 0%, #f7f7f7 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #f7f7f7)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #ffffff 0%, #f7f7f7 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #ffffff 0%, #f7f7f7 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #ffffff 0%, #f7f7f7 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #ffffff 0%, #f7f7f7 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f7f7f7', GradientType=0); /* IE6-9 */
 
     border-bottom: 1px solid #ccc;
 }
@@ -819,6 +819,7 @@ div[ui-content] {
     padding: 3px 0px;
     margin-top: -1px;
     margin-left: -7px;
+    display:none;
 }
 
 .ui-splitbar > a:hover {
@@ -1009,13 +1010,13 @@ li:hover > .item-btn {
     line-height: 28px;
     font-weight: bold;
     background: #ffffff; /* Old browsers */
-    background: -moz-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #fafafa)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* IE10+ */
-    background: linear-gradient(to bottom, #ffffff 0%, #fafafa 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#fafafa', GradientType=0); /* IE6-9 */
+    background: -moz-linear-gradient(top, #ffffff 0%, #f7f7f7 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #f7f7f7)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #ffffff 0%, #f7f7f7 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #ffffff 0%, #f7f7f7 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #ffffff 0%, #f7f7f7 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #ffffff 0%, #f7f7f7 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f7f7f7', GradientType=0); /* IE6-9 */
 
     border-bottom: 1px solid #ccc;
 }
@@ -1090,27 +1091,39 @@ li:hover > .item-btn {
     font-size: 11px;
     font-family: Verdana, Arial, Helvetica, sans-serif;
     padding-left: 10px;
-    background: url('../img/bgcolhead.png');
+    background:white;
     border-bottom: 1px solid rgb(197, 197, 197);
-    height: 28px;
-    line-height: 28px;
+    height: 27px;
+    line-height: 27px;
+    margin-left:-6px;
+    background: #fafafa;
 }
 
 .toolbar .nav-tabs > li > a {
-    padding: 4px 8px 3px 8px;
-    border-radius: 0px;
-    border: 1px solid #ccc !important;
+    padding: 4px 8px 2px 8px;
+    border: 1px solid #ddd !important;
     border-bottom: 0px !important;
-    margin-top: 5px;
+    margin-top: 4px;
     cursor: pointer;
-    background: rgba(255, 255, 255, .5);
+    background: #fafafa;
+    font-weight:normal;
+}
+
+.toolbar .nav-tabs > li> a > tab-heading {
+    margin: -4px -8px 0px -8px;
+    padding: 4px 8px 3px 8px;
+    height: 20px;
 }
 
 .toolbar .nav-tabs > li.active > a {
-    border: 1px solid #aaa !important;
+    border: 1px solid #ccc !important;
     border-bottom: 0px !important;
     color: rgb(8, 114, 164);
     background: rgba(255, 255, 255, 1);
+}
+
+.toolbar .tab-pane {
+    padding:0px;
 }
 
 #must-reload {
@@ -1158,7 +1171,7 @@ li:hover > .item-btn {
     background: #fafafa;
 }
 
-.form-builder li > .form-field.active {
+.form-builder li > .field-content > .form-field.active {
     background: #fafafa;
     border: 1px solid blue;
 }
@@ -1172,7 +1185,7 @@ li:hover > .item-btn {
     z-index: 99999;
 }
 
-.form-builder li:hover > .field > .field-info {
+.form-builder li:hover > .field-content > .field > .field-info {
     display: block;
 }
 
@@ -1208,9 +1221,9 @@ li:hover > .item-btn {
 }
 
 .properties-header {
-    margin: -5px -5px 10px -4px;
+    margin:6px 0px 5px -10px;
     font-size: 12px;
-    padding: 5px 8px;
+    padding: 5px 8px 3px 8px;
     font-weight: bold;
     background: #ffffff; /* Old browsers */
     background: -moz-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* FF3.6+ */
@@ -1527,24 +1540,24 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
 }
 
 /********************************* ACTION BAR **********************************/
-.field-move-left, .field-move-right {
-    display: none;
-}
-
-.ab-editor-link-bar .field-move, .ab-editor-link-bar .field-select {
-    display: none;
-}
-
-.ab-editor-link-bar .field-move-left,
-.ab-editor-link-bar .field-move-right {
-    display: block;
-}
 
 .ab-editor-link-bar {
-    padding: 0px 20px 7px 0px;
     float: right;
+    min-width: 500px;
+    height: 46px;
+    text-align: right;
+    border: 1px dashed #ececeb;
+    margin-top: -3px;
+    margin-bottom: 2px;
+    padding: 0px 15px 0px 0px;
 }
 
+.ab-editor-link-bar .angular-ui-tree-placeholder {
+    max-width:100px;
+}
+.action-bar-editor:hover .ab-editor-link-bar {
+    border:1px dashed #ececeb;
+}
 .ab-editor-link-bar li {
     display: inline-block;
 }
@@ -1602,8 +1615,8 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
     margin: 0px -26px;
 }
 
-.ActionBar > .field-info {
-    display: none !important;
+.ActionBar > .field > .field-info {
+    margin-top:-20px;
 }
 
 /********************************* LINK BUTTON  ********************************/

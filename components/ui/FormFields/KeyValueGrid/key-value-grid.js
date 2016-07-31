@@ -18,9 +18,6 @@ app.directive('keyValueGrid', function ($timeout) {
                         $timeout(function () {
                             ctrl.$setViewValue(unformatJSON($scope.value, true));
 
-                            if (typeof attrs.ngChange == "undefined") {
-                                $scope.$parent.save();
-                            }
                         }, 500);
                     }
                 };
@@ -36,10 +33,6 @@ app.directive('keyValueGrid', function ($timeout) {
                     if ($scope.json_error == '') {
                         $scope.value = formatJSON(JSON.parse($scope.json));
                         if (!!ctrl) {
-                            $timeout(function () {
-                                ctrl.$setViewValue(unformatJSON($scope.value, true));
-                                $scope.$parent.save();
-                            }, 0);
                         }
                     }
                 };

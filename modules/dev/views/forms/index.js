@@ -1,6 +1,7 @@
-app.controller("PageController", function ($scope, $http, $localStorage, $timeout) {
+app.controller("IndexController", function ($scope, $http, $localStorage, $timeout) {
     $scope.list = actionFormList;
     $scope.active = null;
+    $scope.editor = editor;
 
     $scope.menuSelect = null;
     $scope.getIcon = function (item) {
@@ -15,7 +16,6 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
         if (!sel.class) {
             return "dir";
         }
-
         return "form";
     };
     $scope.delForm = function (sel, item) {
@@ -64,7 +64,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                                 shortName = shortName.substr(sp[0].length);
                                 sp.shift();
                             }
-                            
+
                             sp = sp.splice(1);
                             for (var s in sp) {
                                 if (shortName.toLowerCase().indexOf(sp[s].toLowerCase()) === 0) {
@@ -72,7 +72,7 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
                                 }
                             }
                         }
-                        
+
                         item.items.push({
                             name: data.class,
                             shortName: shortName,
@@ -296,9 +296,12 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
         $scope.active = scope.$modelValue;
 
         if (!!$scope.active && $scope.getType($scope.active) == 'form') {
-            $("iframe").addClass('invisible');
-            $(".loading").removeClass('invisible');
-            $('.loading').removeAttr('style');
+            if (typeof $scope.selectInTreeCallback == "function") {
+                $scope.selectInTreeCallback();
+                $scope.selectInTreeCallback = false;
+            } else {
+                editor.load($scope.active.alias, $scope.active.shortName);
+            }
         }
 
         if (item && item.items && item.items.length > 0 && item.items[0].name == "Loading...") {
@@ -309,22 +312,15 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
 
                 if (typeof scope.expand == "function") {
                     scope.expand();
+
+                    if (typeof $scope.init == "function") {
+                        $scope.init();
+                    }
                 }
             });
-            $storage.formBuilder.selected = {
-                module: item.module
-            };
         }
     };
-    $scope.init = false;
     $scope.isSelected = function (item) {
-        var s = $storage.formBuilder.selected;
-        var m = item.$modelValue;
-        if (!!s && !!m && !$scope.active && m.module == s.module) {
-            $scope.init = true;
-            return "active";
-        }
-
         if (item.$modelValue === $scope.active) {
             return "active";
         } else {
@@ -332,25 +328,87 @@ app.controller("PageController", function ($scope, $http, $localStorage, $timeou
         }
     };
 
-    $scope.loading = false;
-    $storage = $localStorage;
-    $storage.formBuilder = $storage.formBuilder || {};
-
     $scope.treeOptions = {
         accept: function (sourceNodeScope, destNodesScope, destIndex) {
             return true;
         }
     };
 
+    $scope.init = true;
+    $scope.editor = editor;
+    $storage = $localStorage;
+    $storage.formBuilder = $storage.formBuilder || {};
+    $storage.modelBuilder = $storage.modelBuilder || {models:{}};
+
+    $scope.selectInTreeCallback = false;
+    editor.selectInTree = function (alias, callback) {
+        if (typeof alias === "function") {
+            var hash = location.hash.substr(1);
+            alias = hash;
+        }
+        var originalAlias = alias;
+        var alias = alias.split(".");
+        var lastAlias = "";
+        if (alias[1] == "modules") {
+            lastAlias = alias[0] + "." + alias[1] + "." + alias[2] + "." + alias[3];
+            alias = alias[0] + "." + alias[1] + "." + alias[2] + "." + alias[3] + ".";
+        } else if (alias[1] == "components") {
+            lastAlias = alias[0] + "." + alias[1] + "." + alias[2] + "." + alias[3];
+            alias = alias[0] + "." + alias[1] + "." + alias[2] + "." + alias[3];
+        } else {
+            lastAlias = alias[0] + "." + alias[1];
+            alias = alias[0] + "." + alias[1];
+        }
+
+        $scope.selectInTreeCallback = callback;
+
+        $(".angular-ui-tree-handle.active").removeClass("active");
+        $timeout(function () {
+            $scope.init = function () {
+                $timeout(function () {
+                    var path = originalAlias.substr(lastAlias.length + 1).split(".");
+                    var el = null;
+                    path.forEach(function (item, idx) {
+                        lastAlias += "." + item.trim();
+                        el = $("li[alias='" + lastAlias + "'] > .angular-ui-tree-handle");
+                        if (el.length > 0) {
+                            if (el.parent().attr('collapsed') === 'true') {
+                                el.click();
+                            }
+                        } else {
+                            el = $("a[href='#" + lastAlias + "']");
+                            el.click();
+                        }
+
+                        if (path.length - 1 === idx) {
+                            $("#menutree").scrollTop($("#menutree").scrollTop() + el.offset().top - 80);
+                        }
+                    });
+                    $scope.init = false;
+
+                }, 100);
+            };
+            if ($("li[alias='" + alias + "']").text().replace(/\s+/ig, ' ').replace('Plansys: ', '').trim().split(" ")[1] == "Loading...") {
+                $("li[alias='" + alias + "'] > .angular-ui-tree-handle").click();
+            } else {
+                if ($("li[alias='" + alias + "']").attr("collapsed") == 'true') {
+                    $("li[alias='" + alias + "'] > .angular-ui-tree-handle").click();
+                }
+                $scope.init();
+            }
+
+        });
+    }
+
     $timeout(function () {
-        $("[ui-tree-handle].active").click();
-    }, 100);
+        var hash = location.hash.substr(1);
+        if (hash.length > 1) {
+            editor.selectInTree(function () {
+                editor.load($scope.active.alias, $scope.active.shortName);
+            });
+        } else {
+            $scope.init = false;
+        }
+    }, 500);
 
-});
-
-$(document).ready(function () {
-    $('iframe').on('load', function () {
-        $('iframe').removeClass('invisible');
-        $('.loading').addClass('invisible');
-    });
 });

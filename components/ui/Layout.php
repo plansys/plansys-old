@@ -42,7 +42,7 @@ class Layout extends CComponent {
                             continue;
                         }
 
-                        $fb = FormBuilder::load(@$section['class']);
+                        $fb = FormRenderer::load(@$section['class']);
                         if ($fb != null) {
                             $sections[$k]['content'] = $fb->render($model, [
                                 'renderInAjax' => true

@@ -45,7 +45,7 @@ class DataSource extends FormField {
         $ds = new DataSource;
 
         if ($form != '') {
-            $fb = FormBuilder::load($form);
+            $fb = FormRenderer::load($form);
             $ds->builder = $fb;
 
             if ($dsname != '') {
@@ -671,7 +671,7 @@ class DataSource extends FormField {
         $this->lastCount = @$post['lc'] > 0 ? @$post['lc'] : 0;
 
         if (class_exists($class)) {
-            $fb = FormBuilder::load($class);
+            $fb = FormRenderer::load($class);
             $field = $fb->findField(['name' => $post['name']]);
             if ($field['fieldType'] != "php" && method_exists($class, 'model')) {
                 if (!is_null(@$post['model_id'])) {

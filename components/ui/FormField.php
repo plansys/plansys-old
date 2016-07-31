@@ -4,7 +4,6 @@
  * Class FormField
  * @author rizky
  */
-
 Yii::import('application.components.utility.Asset');
 
 class FormField extends CComponent {
@@ -12,31 +11,31 @@ class FormField extends CComponent {
     public static $toolbarName;
     public static $category;
     public static $toolbarIcon; // list of form fields to be parsed array('from'=>'to')
-    public static $inEditor           = false;
-    public static $categorySettings   = [
+    public static $inEditor         = false;
+    public static $categorySettings = [
         'User Interface' => [
             'icon' => 'fa-cubes',
         ],
-        'Layout' => [
+        'Layout'         => [
             'icon' => 'fa-image',
         ],
-        'Data & Tables' => [
+        'Data & Tables'  => [
             'icon' => 'fa-th-large',
         ],
-        'Charts' => [
+        'Charts'         => [
             'icon' => 'fa-bar-chart',
         ]
     ]; //to distinguish one field to another, will be filled when rendering, -NOT- in editor
-    public static $deprecated         = false;
-    public        $parseField         = [];
-    public        $renderParams       = [];
-    public        $renderID           = "";
-    public        $fieldNameTemplate = "";
-    public        $extendsForm        = '';
-    private       $_errors            = [];
-    private       $_form_properties   = [
+    public static $deprecated       = false;
+    public $parseField              = [];
+    public $renderParams            = [];
+    public $renderID                = "";
+    public $fieldNameTemplate       = "";
+    public $extendsForm             = '';
+    private $_errors                = [];
+    private $_form_properties       = [
         'formTitle' => '',
-        'layout' => [
+        'layout'    => [
             'name' => 'full-width',
             'data' => [
                 'col1' => [
@@ -45,7 +44,7 @@ class FormField extends CComponent {
             ]
         ],
     ];
-    private       $_builder           = null;
+    private $_builder               = null;
 
     public static function template() {
         return self::renderTemplate('template_editor.php');
@@ -80,7 +79,8 @@ class FormField extends CComponent {
         $cat = [];
 
         foreach ($all as $u) {
-            if ($u['type']::$deprecated) $u['deprecated'] = true;
+            if ($u['type']::$deprecated)
+                $u['deprecated'] = true;
 
             if (!isset($cat[$u['type']::$category])) {
                 $cat[$u['type']::$category] = [];
@@ -123,17 +123,11 @@ class FormField extends CComponent {
         return $return;
     }
 
-    ## model
-
-    /**
-     * @param string $formType
-     * @return array me-return array atribut formfield
-     */
-    public static function settings($formType) {
+    public static function settings() {
         $ffdir  = Yii::getPathOfAlias('application.components.ui.FormFields') . DIRECTORY_SEPARATOR;
         $dir    = glob($ffdir . "*.php");
         $result = [
-            'icon' => [],
+            'icon'     => [],
             'category' => []
         ];
         foreach ($dir as $d) {
@@ -145,7 +139,7 @@ class FormField extends CComponent {
                 $result['category'][$class] = $class::$category;
             }
         }
-
+        
         return $result;
     }
 
@@ -179,8 +173,7 @@ class FormField extends CComponent {
      * @return array me-return array value model.
      */
     public function getModel() {
-
-        if (!is_null($this->_builder) && get_class($this->_builder) == "FormBuilder") {
+        if (!is_null($this->_builder) && get_class($this->_builder) == "FormRenderer") {
             return $this->_builder->model;
         }
         return [];
@@ -244,11 +237,11 @@ class FormField extends CComponent {
             extract($_data_);
             $return = '';
             try {
-                $_expression_ = str_replace('\"','"', $_expression_);
-                
+                $_expression_ = str_replace('\"', '"', $_expression_);
+
                 @eval('$return =  ' . $_expression_ . ';');
             } catch (Exception $e) {
-                
+
                 $return = $_expression_;
             }
             return $return;
@@ -284,12 +277,12 @@ class FormField extends CComponent {
         $path      = str_replace(".php", DIRECTORY_SEPARATOR . $file, $reflector->getFileName());
 
         $attributes = $attr + [
-                'field' => $this->attributes,
-                'form' => $this->_form_properties,
-                'errors' => $this->_errors,
-                'model' => $this->model
-            ];
-
+            'field'  => $this->attributes,
+            'form'   => $this->_form_properties,
+            'errors' => $this->_errors,
+            'model'  => $this->model
+        ];
+        
         extract($attributes);
 
         $this->registerScript();
@@ -310,7 +303,7 @@ class FormField extends CComponent {
             foreach ($includeJS as $js) {
                 $class  = get_class($this);
                 $jspath = realpath(Yii::getPathOfAlias("application.components.ui.FormFields.{$class}") . '/' . $js);
-                
+
                 if (is_dir($jspath)) {
                     $path  = Asset::publish($jspath);
                     $files = glob($jspath . "/*");
@@ -325,7 +318,7 @@ class FormField extends CComponent {
                     }
                 } else {
                     Yii::app()->clientScript->registerScriptFile(
-                        Asset::publish($jspath), CClientScript::POS_END
+                            Asset::publish($jspath), CClientScript::POS_END
                     );
                 }
             }
@@ -368,7 +361,6 @@ class FormField extends CComponent {
     /**
      * @return string me-return string nama class
      */
-
     public function getRenderName() {
         if (property_exists($this, 'name')) {
             if ($this->fieldNameTemplate != "") {
@@ -569,9 +561,9 @@ class FormField extends CComponent {
      * @return null Fungsi ini untuk menambahkan class.
      */
     public function addClass($class, $fieldName = "options") {
-        $opt   = $this->$fieldName;
-        $array = explode(" ", @$opt['class']);
-        $array = array_unique(array_filter($array));
+        $opt              = $this->$fieldName;
+        $array            = explode(" ", @$opt['class']);
+        $array            = array_unique(array_filter($array));
         array_push($array, $class);
         $opt['class']     = implode(" ", $array);
         $this->$fieldName = $opt;
@@ -602,11 +594,11 @@ class FormField extends CComponent {
         if (count($attributes) == 0)
             return "";
         return join(' ', array_map(function ($key) use ($attributes) {
-            if (is_bool($attributes[$key])) {
-                return $attributes[$key] ? $key : '';
-            }
-            return $key . '="' . $attributes[$key] . '"';
-        }, array_keys($attributes)));
+                    if (is_bool($attributes[$key])) {
+                        return $attributes[$key] ? $key : '';
+                    }
+                    return $key . '="' . $attributes[$key] . '"';
+                }, array_keys($attributes)));
     }
 
     /**
@@ -636,16 +628,15 @@ class FormField extends CComponent {
      * dengan informasi tanda bintang
      * 
      */
-     
     public function isRequired() {
         if (method_exists($this->model, 'getValidators')) {
-            foreach($this->model->getValidators($this->name) as $validator) {
-                if($validator instanceof CRequiredValidator)
-                {
+            foreach ($this->model->getValidators($this->name) as $validator) {
+                if ($validator instanceof CRequiredValidator) {
                     return true;
                 }
-            }    
+            }
         }
         return false;
     }
+
 }

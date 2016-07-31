@@ -105,7 +105,7 @@ class GridView extends FormField {
     public function actionCellTemplate() {
         $postdata = file_get_contents("php://input");
         $post     = CJSON::decode($postdata);
-        $fb       = FormBuilder::load($post['class']);
+        $fb       = FormRenderer::load($post['class']);
         $field    = $fb->findField(['name' => $post['name']]);
 
         $this->attributes = $field;

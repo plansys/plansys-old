@@ -21,7 +21,7 @@ class Form extends CFormModel {
     
     public function validateSubForm() {
         $class = get_class($this);
-        $fb = FormBuilder::load($class);
+        $fb = FormRenderer::load($class);
         $listView = $fb->findAllField(['type' => 'ListView']);
         foreach($listView as $k => $lv) {
             ## if listview is valid

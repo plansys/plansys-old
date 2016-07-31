@@ -111,7 +111,7 @@ class ListView extends FormField {
                     'ng-change' => 'save();',
                 ),
                 'menuPos' => 'pull-right',
-                'listExpr' => 'FormBuilder::listForm()',
+                'listExpr' => 'FormRenderer::listForm()',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
@@ -421,11 +421,11 @@ class ListView extends FormField {
         $this->fieldOptions['ng-init']      = 'initItem(value, $index)';
         $this->addClass('list-view-item', 'fieldOptions');
 
-        Yii::import(FormBuilder::classPath($this->templateForm));
+        Yii::import(FormRenderer::classPath($this->templateForm));
         $class = Helper::explodeLast(".", $this->templateForm);
 
         if (($this->fieldTemplate == 'form' || $this->fieldTemplate == 'datasource') && class_exists($class)) {
-            $fb    = FormBuilder::load($class);
+            $fb    = FormRenderer::load($class);
             $model = new $class();
 
             if ($this->value == "") {
@@ -474,7 +474,7 @@ class ListView extends FormField {
 
         $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
 
-        $jspath = explode(".", FormBuilder::classPath($this->templateForm));
+        $jspath = explode(".", FormRenderer::classPath($this->templateForm));
         array_pop($jspath);
         $jspath = implode(".", $jspath);
 

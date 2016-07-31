@@ -29,7 +29,7 @@ class DevFormProperties extends Form {
         return array (
             array (
                 'label' => 'Class Name',
-                'js' => 'params.class.split(\\".\\").pop()',
+                'js' => '$editor.activeTab.class',
                 'type' => 'LabelField',
             ),
             array (
@@ -61,9 +61,9 @@ class DevFormProperties extends Form {
                     'ng-model' => '$parent.form.extendsFrom',
                     'ng-change' => 'saveForm();',
                     'ng-delay' => '500',
+                    'ps-list' => '$parent.$editor.modelList'
                 ),
                 'menuPos' => 'pull-right',
-                'listExpr' => 'ModelGenerator::listModels();',
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'otherLabel' => 'Custom Class',

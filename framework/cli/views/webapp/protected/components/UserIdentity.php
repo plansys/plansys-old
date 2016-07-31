@@ -28,6 +28,8 @@ class UserIdentity extends CUserIdentity
 			$this->errorCode=self::ERROR_PASSWORD_INVALID;
 		else
 			$this->errorCode=self::ERROR_NONE;
+                
+                
 		return !$this->errorCode;
 	}
 }

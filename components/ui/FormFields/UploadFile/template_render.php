@@ -135,7 +135,7 @@
         </div>
 
         <?php
-        echo FormBuilder::build('RepoBrowser', [
+        echo FormRenderer::build('RepoBrowser', [
             'name' => 'BrowseDialog',
             'showBrowseButton' => 'No',
         ]);

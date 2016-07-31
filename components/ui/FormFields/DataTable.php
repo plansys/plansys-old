@@ -116,7 +116,7 @@ class DataTable extends FormField {
     }
 
     public function actionResizeCol($col, $name, $size, $alias) {
-        $fb    = FormBuilder::load($alias);
+        $fb    = FormRenderer::load($alias);
         $field = $fb->findField(['name' => $name]);
 
         if (isset($field) && isset($field['columns'][$col])) {

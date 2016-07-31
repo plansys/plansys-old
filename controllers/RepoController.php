@@ -21,7 +21,7 @@ class RepoController extends Controller {
     }
 
     public function actionRenderProperties() {
-        $properties = FormBuilder::load('RepoProperties');
+        $properties = FormRenderer::load('RepoProperties');
 
         if ($this->beginCache('RepoProperties', array(
                     'dependency' => new CFileCacheDependency(Yii::getPathOfAlias('application.forms.RepoProperties') . ".php")

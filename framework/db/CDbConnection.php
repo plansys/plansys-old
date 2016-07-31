@@ -441,7 +441,7 @@ class CDbConnection extends CApplicationComponent
 		if(!class_exists($pdoClass))
 			throw new CDbException(Yii::t('yii','CDbConnection is unable to find PDO class "{className}". Make sure PDO is installed correctly.',
 				array('{className}'=>$pdoClass)));
-
+                
 		@$instance=new $pdoClass($this->connectionString,$this->username,$this->password,$this->_attributes);
 
 		if(!$instance)

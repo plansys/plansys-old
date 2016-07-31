@@ -83,6 +83,8 @@ class Text extends FormField {
                 'type' => 'Text',
                 'value' => '</div>
 <div class=\"clearfix\"></div>
+
+{{ aceLoaded | json }}
 <div class=\"text-editor-builder\">
   <div class=\"text-editor\" ui-ace=\"aceConfig({
   mode: \'html\',

@@ -49,18 +49,18 @@ app.directive('dropDownList', function ($timeout) {
                         if ($el.find("li.dropdown-item.hover").length == 0) {
                             $el.find("li.dropdown-item:eq(0)").addClass("hover");
                         }
-                        
+
                         $a = $el.find("li.dropdown-item.hover").next();
-                        
+
                         if ($a.length == 0) {
                             var ddParent = $el.find("li.dropdown-item.hover").parents("li.dropdown-header").next();
                             if (ddParent.length > 0) {
                                 $a = ddParent.find("li.dropdown-item:eq(0)");
                             }
                         } else if ($a.hasClass("dropdown-header")) {
-                            $a = $a.find("li.dropdown-item:eq(0)");            
-                        } 
-                        
+                            $a = $a.find("li.dropdown-item:eq(0)");
+                        }
+
                         if ($a.length == 0 && $scope.renderedFormList.length > 0) {
                             $scope.updateInternal($scope.renderedFormList[0].key);
                         } else {
@@ -73,10 +73,10 @@ app.directive('dropDownList', function ($timeout) {
                             if ($a.length > 0 && $a.is("li")) {
                                 $el.find("li.hover").removeClass("hover");
                                 $a.addClass("hover").find("a:eq(0)").focus();
-                                
-                                $timeout(function(){
+
+                                $timeout(function () {
                                     $el.find('.search-dropdown').focus();
-                                }); 
+                                });
                             }
                         }
                         e.preventDefault();
@@ -87,14 +87,14 @@ app.directive('dropDownList', function ($timeout) {
                         if ($el.find("li.dropdown-item.hover").length == 0) {
                             $el.find("li.dropdown-item:eq(0)").addClass("hover");
                         }
-                        
+
                         $a = $el.find("li.dropdown-item.hover").prev();
 
                         if ($a.length == 0) {
                             var ddParent = $el.find("li.dropdown-item.hover").parents("li.dropdown-header").prev();
                             if (ddParent.length > 0) {
                                 if (ddParent.hasClass("dropdown-header")) {
-                                    $a = ddParent.find("li.dropdown-item:last-child");            
+                                    $a = ddParent.find("li.dropdown-item:last-child");
                                 } else {
                                     $a = ddParent;
                                 }
@@ -113,8 +113,8 @@ app.directive('dropDownList', function ($timeout) {
                         if ($a.length && $a.length > 0 && $a.is("li")) {
                             $el.find("li.hover").removeClass("hover");
                             $a.addClass("hover").find("a:eq(0)").focus();
-                            
-                            $timeout(function(){
+
+                            $timeout(function () {
                                 $el.find('.search-dropdown').focus();
                             });
                         }
@@ -324,7 +324,7 @@ app.directive('dropDownList', function ($timeout) {
 
                 // set default value
                 $scope.name = $el.find("data[name=name]:eq(0)").html().trim();
-                $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
+                $scope.formList = JSON.parse($el.find("data[name=form_list]:eq(0)").text());
                 $scope.renderedFormList = [];
                 $scope.renderFormList();
 
@@ -342,10 +342,10 @@ app.directive('dropDownList', function ($timeout) {
                 $scope.ngDisabled = $el.find("data[name=ng_disabled]:eq(0)").html();
                 $scope.dropdownDisabled = false;
                 if (!!$scope.ngDisabled) {
-                    $scope.$watch($scope.ngDisabled, function(n, o) {
+                    $scope.$watch($scope.ngDisabled, function (n, o) {
                         $scope.dropdownDisabled = n;
                     }, true)
-                };
+                }
 
                 $scope.search = "";
                 $timeout(function () {
@@ -356,11 +356,11 @@ app.directive('dropDownList', function ($timeout) {
                             initialValue = ngModelValue;
                         }
                     }
-                    
+
 
                     if ($scope.defaultType == 'first' && !initialValue && !!$scope.renderedFormList[0] && !!$scope.renderedFormList[0].value) {
                         initialValue = $scope.renderedFormList[0].key;
-                        
+
                         if (angular.isArray($scope.renderedFormList[0].value)) {
                             initialValue = $scope.renderedFormList[0].value[0].key;
                         }
@@ -374,7 +374,7 @@ app.directive('dropDownList', function ($timeout) {
                         ctrl.$setViewValue(initialValue);
                     }
                     $timeout(function () {
-                        if (typeof ctrl.$viewValue == 'undefined') {
+                        if (typeof ctrl.$viewValue == 'undefined' && typeof $scope.formList == 'object') {
                             if (!$scope.formList['']) {
                                 $scope.text = '';
                             } else if (!!$scope.formList['']) {

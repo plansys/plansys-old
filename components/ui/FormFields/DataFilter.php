@@ -475,7 +475,7 @@ class DataFilter extends FormField {
         if (count($post) == 0)
             die();
 
-        $fb = FormBuilder::load($post['m']);
+        $fb = FormRenderer::load($post['m']);
         $ff = $fb->findField(['name' => $post['f']]);
 
         foreach ($ff['filters'] as $filter) {
@@ -514,7 +514,7 @@ class DataFilter extends FormField {
 
         $start = @$post['i'];
 
-        $fb = FormBuilder::load($post['m']);
+        $fb = FormRenderer::load($post['m']);
         $ff = $fb->findField(['name' => $post['f']]);
 
         foreach ($ff['filters'] as $filter) {

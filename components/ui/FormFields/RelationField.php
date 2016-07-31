@@ -387,7 +387,7 @@ class RelationField extends FormField {
             $attr['id'] = $post['model_id'];
         }
 
-        $fb            = FormBuilder::load($post['class'], $attr);
+        $fb            = FormRenderer::load($post['class'], $attr);
         $ff            = $fb->findField(['name' => $post['name']]);
         $this->builder = $fb;
         $return        = [];
@@ -801,7 +801,7 @@ class RelationField extends FormField {
         $f = '';
         extract($post);
 
-        $fb    = FormBuilder::load($m);
+        $fb    = FormRenderer::load($m);
         $field = $fb->findField(['name' => $f]);
 
         foreach ($field['columns'] as $column) {
@@ -854,7 +854,7 @@ class RelationField extends FormField {
         $p = '';
         extract($post);
 
-        $fb = FormBuilder::load($m);
+        $fb = FormRenderer::load($m);
         if (isset($i)) {
             $field = $fb->findField(['name' => $f, 'identifier' => @$i]);
         } else {
@@ -924,7 +924,7 @@ class RelationField extends FormField {
         $p = '';
         extract($post);
 
-        $fb = FormBuilder::load($m);
+        $fb = FormRenderer::load($m);
         if (isset($i)) {
             $field = $fb->findField(['name' => $f, 'identifier' => @$i]);
         } else {

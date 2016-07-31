@@ -41,7 +41,7 @@
                             class="fa fa-check"></i> Saved</span>
                 </span>
                 <?php
-                echo FormBuilder::build('ToggleSwitch', [
+                echo FormRenderer::build('ToggleSwitch', [
                     'name' => 'mode',
                     'size' => 'small',
                     'offLabel' => 'Custom Script',

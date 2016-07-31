@@ -214,10 +214,6 @@ class IconPicker extends FormField {
      */
     public function processExpr() {
         if ($this->listExpr != "") {
-            if (FormField::$inEditor) {
-                $this->list = '';
-                return ['list' => ''];
-            }
 
             ## evaluate expression
             $this->list = $this->evaluate($this->listExpr, true);

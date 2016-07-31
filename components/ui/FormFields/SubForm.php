@@ -69,7 +69,7 @@ class SubForm extends FormField {
                     'ng-change' => 'save()',
                 ),
                 'menuPos' => 'pull-right',
-                'listExpr' => 'FormBuilder::listForm(null, true)',
+                'listExpr' => 'FormRenderer::listForm(null, true)',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
@@ -139,7 +139,7 @@ class SubForm extends FormField {
             return '';
         }
         $model = new $class;
-        $fb    = FormBuilder::load($class);
+        $fb    = FormRenderer::load($class);
         $html  = '<div ng-controller="' . $this->ctrlName . 'Controller">';
 
         if ($this->mode == 'single') {

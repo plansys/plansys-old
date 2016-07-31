@@ -1,4 +1,4 @@
-editor.ColumnField = {
+editor.formBuilder.types.ColumnField = {
     calculateWidth: function (item) {
         var w = (100 / item.totalColumns).toFixed(0);
         for (var i = 1; i <= item.totalColumns; i++) {
@@ -6,15 +6,11 @@ editor.ColumnField = {
         }
     },
     changeTC: function () {
-        this.calculateWidth(editor.$scope.active);
-        editor.$scope.save(editor.$scope.active);
+        this.calculateWidth(editor.properties.active);
     },
     onSelect: function (item) {
         if (!item.w1) {
             this.calculateWidth(item);
-            editor.$timeout(function () {
-                editor.$scope.save();
-            });
         }
     },
     onLoad: function (item) {
@@ -22,7 +18,7 @@ editor.ColumnField = {
         this.refreshColumnPlaceholder(item);
     },
     refreshColumnPlaceholder: function () {
-        editor.$timeout(function () {
+        editor.formBuilder.$timeout(function () {
             $(".cpl").each(function () {
                 if ($(this).parent().find("li").length == 1) {
                     $(this).show();

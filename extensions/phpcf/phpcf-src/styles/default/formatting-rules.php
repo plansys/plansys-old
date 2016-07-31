@@ -394,7 +394,7 @@ $controls = [
             PHPCF_KEY_DESCR_LEFT => 'No whitespace before ","',
             PHPCF_KEY_LEFT => PHPCF_EX_DELETE_SPACES_STRONG,
             PHPCF_KEY_DESCR_RIGHT => 'nothing after "," on the same line in array item list and no empty lines',
-            PHPCF_KEY_RIGHT => PHPCF_EX_SHRINK_NLS,
+            PHPCF_KEY_RIGHT => PHPCF_EX_CHECK_NL,
         ],
     ],
     '[' => [
@@ -627,7 +627,7 @@ $controls = [
     'T_ARRAY_SHORT' => [
         'CTX_ARRAY_SHORT' => [
             PHPCF_KEY_DESCR_RIGHT => 'Nothing after "[" in short-syntax array',
-            PHPCF_KEY_RIGHT => PHPCF_EX_DELETE_SPACES_STRONG,
+            PHPCF_KEY_RIGHT => [PHPCF_EX_CHECK_NL],
         ],
     ],
     'T_ARRAY_SHORT_ML' => [

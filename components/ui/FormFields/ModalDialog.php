@@ -37,7 +37,7 @@ class ModalDialog extends FormField {
                     'ng-change' => 'save()',
                 ),
                 'menuPos' => 'pull-right',
-                'listExpr' => 'FormBuilder::listForm(null, true)',
+                'listExpr' => 'FormRenderer::listForm(null, true)',
                 'searchable' => 'Yes',
                 'type' => 'DropDownList',
             ),
@@ -80,7 +80,7 @@ class ModalDialog extends FormField {
         } else {
             ## render
             Yii::import($this->subForm);
-            $fb     = FormBuilder::load($this->subFormClass);
+            $fb     = FormRenderer::load($this->subFormClass);
             $render = $fb->render($fb->model, [
                 'wrapForm' => false
             ]);

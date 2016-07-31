@@ -128,7 +128,7 @@ class ModelGenerator extends CComponent {
 
             $models['Plansys Model'] = $items;
         }
-
+        
         return $models;
     }
 

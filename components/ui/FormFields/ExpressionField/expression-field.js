@@ -16,9 +16,6 @@ app.directive('expressionField', function($timeout, $http) {
                     if (!!ctrl) {
                         $timeout(function() {
                             ctrl.$setViewValue($scope.value);
-                            if (typeof attrs.ngChange == "undefined" && $scope.$parent.save) {
-                                $scope.$parent.save();
-                            }
                         }, 0);
                     }
                 }

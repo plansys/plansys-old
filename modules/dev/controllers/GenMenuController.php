@@ -10,7 +10,7 @@ class GenMenuController extends Controller {
     }
 
     public function actionRenderProperties() {
-        $properties = FormBuilder::load('DevMenuEditor');
+        $properties = FormRenderer::load('DevMenuEditor');
 
         if ($this->beginCache('DevMenuProperties', array(
                     'dependency' => new CFileCacheDependency(
@@ -156,9 +156,9 @@ class GenMenuController extends Controller {
 
             $code = "<?php \n
 " . MenuTree::OPTIONS_COMMENT_START . "
-\$options = " . FormBuilder::formatCode($options, '') . ";
+\$options = " . FormRenderer::formatCode($options, '') . ";
 " . MenuTree::OPTIONS_COMMENT_END . "
-\nreturn " . FormBuilder::formatCode($post['list'], '') . ";";
+\nreturn " . FormRenderer::formatCode($post['list'], '') . ";";
 
             file_put_contents(Yii::getPathOfAlias($class) . ".php", $code);
         }
@@ -247,7 +247,7 @@ class GenMenuController extends Controller {
 
         $class_path = explode(".", $class);
         $class = $class_path[count($class_path) - 1];
-        $properties = FormBuilder::load('DevMenuEditor');
+        $properties = FormRenderer::load('DevMenuEditor');
 
         $properties->registerScript();
         Asset::registerJS('application.static.js.lib.ace');
