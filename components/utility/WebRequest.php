@@ -2,6 +2,11 @@
 
 class WebRequest extends CHttpRequest
 {
+    
+    private function getTokenFromInput() {
+        $input = json_decode(file_get_contents('php://input'), true);
+        return $input[$this->csrfTokenName];
+    }
     public function validateCsrfToken($event)
     {
         if ($this->getIsPostRequest() ||
@@ -22,32 +27,29 @@ class WebRequest extends CHttpRequest
             switch ($method) {
                 case 'POST':
                     if (empty($this->getPost($this->csrfTokenName))) {
-                        $input = json_decode(file_get_contents('php://input'), true);;
-                        $userToken = $input[$this->csrfTokenName];
+                        $userToken = $this->getTokenFromInput();
                     } else {
                         $userToken = $this->getPost($this->csrfTokenName);
                     }
+                    
                     break;
                 case 'PUT':
                     if (empty($this->getPut($this->csrfTokenName))) {
-                        $input = json_decode(file_get_contents('php://input'), true);;
-                        $userToken = $input[$this->csrfTokenName];
+                        $userToken = $this->getTokenFromInput();
                     } else {
                         $userToken = $this->getPut($this->csrfTokenName);
                     }
                     break;
                 case 'PATCH':
                     if (empty($this->getPatch($this->csrfTokenName))) {
-                        $input = json_decode(file_get_contents('php://input'), true);;
-                        $userToken = $input[$this->csrfTokenName];
+                        $userToken = $this->getTokenFromInput();
                     } else {
                         $userToken = $this->getPatch($this->csrfTokenName);
                     }
                     break;
                 case 'DELETE':
                     if (empty($this->getDelete($this->csrfTokenName))) {
-                        $input = json_decode(file_get_contents('php://input'), true);;
-                        $userToken = $input[$this->csrfTokenName];
+                        $userToken = $this->getTokenFromInput();
                     } else {
                         $userToken = $this->getDelete($this->csrfTokenName);
                     }
@@ -59,7 +61,7 @@ class WebRequest extends CHttpRequest
                 $valid = $cookieToken === $userToken;
             } else
                 $valid = false;
-            if (!$valid)
+            if (!$valid && empty($_FILES))
                 throw new CHttpException(400, Yii::t('yii', 'The CSRF token could not be verified.'));
         }
     }

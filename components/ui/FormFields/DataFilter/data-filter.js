@@ -387,7 +387,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 'n': filter.name,
                                 'm': $scope.modelClass,
                                 'i': 0,
-                                'p': params
+                                'p': params,
+                                window.csrf.name: window.csrf.token
                             }).success(function (data) {
                                 $scope.loading = false;
                                 filter.list.length = 0;
@@ -416,7 +417,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         'v': filter.value,
                         'f': $scope.name,
                         'n': filter.name,
-                        'm': $scope.modelClass
+                        'm': $scope.modelClass,
+                        window.csrf.name: window.csrf.token
                     }).success(function (data) {
                         $scope.loading = false;
                         filter.list.push({
