@@ -59,6 +59,8 @@ class WebRequest extends CHttpRequest
                 $valid = $cookieToken === $userToken;
             } else
                 $valid = false;
+                
+                
             if (!$valid)
                 throw new CHttpException(400, Yii::t('yii', 'The CSRF token could not be verified.'));
         }

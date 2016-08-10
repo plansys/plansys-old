@@ -84,7 +84,8 @@ app.config(function ($sceProvider, $controllerProvider, $provide, $compileProvid
         return {
             'request': function (request) {
                 if (!!request) {
-                    if (request.method != "GET" && !!window.csrf && typeof request.data == "object") {
+                    if (request.method != "GET" && !!window.csrf) {
+                        request.data = request.data || {};
                         request.data[window.csrf.name] = window.csrf.token;
                     }
                 }
@@ -120,6 +121,7 @@ app.config(function ($sceProvider, $controllerProvider, $provide, $compileProvid
         };
     });
 });
+
 app.filter('capitalize', function () {
     return function (input, scope) {
         if (input != null)
@@ -155,11 +157,13 @@ app.filter('relativePath', function () {
         return input;
     }
 });
+
 app.filter('ucfirst', function () {
     return function (input, arg) {
         return ucfirst(input);
     };
 });
+
 app.filter('fileSize', function () {
     return function (size, precision) {
 
