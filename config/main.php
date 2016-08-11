@@ -99,6 +99,7 @@ $imports = array(
     'application.components.codegen.*',
     'application.components.repo.*',
     'application.behaviors.*',
+    'application.components.HttpRequest'
 );
 
 foreach ($dbLists as $db => $val) {
