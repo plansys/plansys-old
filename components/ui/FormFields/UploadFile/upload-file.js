@@ -128,11 +128,12 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     $scope.progress = 0;
                     $scope.$parent.uploading.push($scope.name);
                     $scope.thumb = '';
+                    var uploadobj = {
+                        class: $scope.classAlias,
+                        name: $scope.name
+                    };
                     $upload.upload({
-                        url: Yii.app.createUrl('/formfield/UploadFile.upload', {
-                            class: $scope.classAlias,
-                            name: $scope.name
-                        }),
+                        url: Yii.app.createUrl('/formfield/UploadFile.upload', uploadobj),
                         file: file
                     }).progress(function (evt) {
                         $scope.progress = parseInt(100.0 * evt.loaded / evt.total);

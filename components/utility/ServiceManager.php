@@ -34,7 +34,7 @@ class ServiceManager extends CComponent {
                 'schedule' => $schedule,
                 'status' => $status,
                 'running_instances' => count($instances),
-                'last_run' => $svc['lastRun']
+                'last_run' => Helper::timeAgo($svc['lastRun'])
             ];
             $results[] = $res;
         }

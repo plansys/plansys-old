@@ -1,6 +1,6 @@
 <div oc-lazy-load="{name: 'angularFileUpload', files: [
      '<?= Yii::app()->controller->staticUrl('/js/lib/afu/angular-file-upload-shim.min.js') ?>'
-     , '<?= Yii::app()->controller->staticUrl('/js/lib/afu/angular-file-upload.min.js') ?>' ]}">
+     , '<?= Yii::app()->controller->staticUrl('/js/lib/afu/angular-file-upload.js') ?>' ]}">
     <div upload-file <?= $this->expandAttributes($this->options) ?>>
 
         <!-- data -->

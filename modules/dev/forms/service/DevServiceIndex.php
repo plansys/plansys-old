@@ -160,20 +160,20 @@ class DevServiceIndex extends Form {
                         'mergeSameRow' => 'No',
                         'cellMode' => 'custom',
                         '$listViewName' => 'columns',
-                        '$showDF' => true,
+                        '$showDF' => false,
                     ),
                     array (
                         'name' => 'last_run',
                         'label' => 'Last Run',
                         'html' => '<td ng-class=\"rowClass(row, \'last_run\', \'string\')\" style=\"white-space:nowrap;\">
-    {{row.last_run | timeago }}
+    {{ row.last_run }}
 </td>',
                         'columnType' => 'string',
                         'show' => false,
                         'mergeSameRow' => 'No',
                         'cellMode' => 'custom',
                         '$listViewName' => 'columns',
-                        '$showDF' => false,
+                        '$showDF' => true,
                     ),
                     array (
                         'name' => 'action',

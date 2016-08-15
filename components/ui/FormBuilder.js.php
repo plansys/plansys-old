@@ -134,6 +134,7 @@ ob_start();
 
             if ($scope.user != null) {
                 // track create or update in audit trail
+                $scope.pageInfo[window.csrf.name] = window.csrf.token;
                 $http.post(Yii.app.createUrl('/sys/auditTrail/track'), $scope.pageInfo);
             }
         }, 1000);
