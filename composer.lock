@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "408a4f04d114719d8c3ae9e3d27b95ce",
-    "content-hash": "47dcee15fc22f8f139276112cfc332bc",
+    "hash": "530ce9ef51079d288b925ae26b8e52cb",
+    "content-hash": "53dfe47db64ba05d28ac7e46eb2f55d7",
     "packages": [
         {
             "name": "box/spout",
@@ -286,6 +286,42 @@
             "description": "Symfony CssSelector Component",
             "homepage": "https://symfony.com",
             "time": "2016-06-29 05:41:56"
+        },
+        {
+            "name": "yajra/laravel-pdo-via-oci8",
+            "version": "v1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yajra/pdo-via-oci8.git",
+                "reference": "8014386959fd29cb4c31215435f7895808bf298c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yajra/pdo-via-oci8/zipball/8014386959fd29cb4c31215435f7895808bf298c",
+                "reference": "8014386959fd29cb4c31215435f7895808bf298c",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.0.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Yajra\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Arjay Angeles",
+                    "email": "aqangeles@gmail.com"
+                }
+            ],
+            "description": "PDO userspace driver proxying calls to PHP OCI8 driver",
+            "time": "2016-08-10 00:05:02"
         }
     ],
     "packages-dev": [],

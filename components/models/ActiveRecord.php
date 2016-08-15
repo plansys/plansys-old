@@ -408,6 +408,7 @@ class ActiveRecord extends CActiveRecord {
         }
     }
 
+
     public static function batchDelete($model, $data, $options = []) {
         if (!is_array($data) || count($data) == 0)
             return;
