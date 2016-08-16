@@ -381,15 +381,16 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 }
                             }
 
-                            $http.post(Yii.app.createUrl('formfield/DataFilter.relnext'), {
+                            var postParams = {
                                 's': filter.search,
                                 'f': $scope.name,
                                 'n': filter.name,
                                 'm': $scope.modelClass,
                                 'i': 0,
-                                'p': params,
-                                window.csrf.name: window.csrf.token
-                            }).success(function (data) {
+                                'p': params
+                            };
+                            postParams[window.csrf.name] = window.csrf.token;
+                            $http.post(Yii.app.createUrl('formfield/DataFilter.relnext'), postParams).success(function (data) {
                                 $scope.loading = false;
                                 filter.list.length = 0;
 
@@ -413,13 +414,14 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
 
                 $scope.relationInit = function (filter) {
                     $scope.loading = true;
-                    $http.post(Yii.app.createUrl('formfield/DataFilter.relInit'), {
+                    var postParams = {
                         'v': filter.value,
                         'f': $scope.name,
                         'n': filter.name,
-                        'm': $scope.modelClass,
-                        window.csrf.name: window.csrf.token
-                    }).success(function (data) {
+                        'm': $scope.modelClass
+                    };
+                    postParams[window.csrf.name] = window.csrf.token;
+                    $http.post(Yii.app.createUrl('formfield/DataFilter.relInit'), postParams).success(function (data) {
                         $scope.loading = false;
                         filter.list.push({
                             key: data[0].value,
