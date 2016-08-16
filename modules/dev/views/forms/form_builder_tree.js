@@ -1,4 +1,5 @@
-app.controller("IndexController", function ($scope, $http, $localStorage, $timeout) {
+app.controller("FormBuilderTreeController", function ($scope, $http, $localStorage, $timeout) {
+    console.log(actionFormList);
     $scope.list = actionFormList;
     $scope.active = null;
     $scope.editor = editor;

@@ -135,10 +135,12 @@
             }
         };
 
-        $timeout(function () {
-            $(".editor-tab[alias='" + editor.activeTab.alias + "']").addClass("active");
-        }, 100);
         $scope.initTab = function (idx, tab) {
+            if(idx + 1 == editor.tabs.length) {
+                $timeout(function () {
+                    $(".editor-tab[alias='" + editor.activeTab.alias + "']").addClass("active");
+                }, 100);
+            }
         }
         editor.load = function (alias, shortName) {
             if (!editor.loadTab(alias)) {

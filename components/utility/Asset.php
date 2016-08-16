@@ -1,6 +1,8 @@
 <?php
 
 class Asset extends CComponent {
+    private static $activeScriptId;
+    private static $activeScriptPosition;
 
     public static function resolveAlias($path) {
         $pathArr = explode(".", $path);
@@ -18,6 +20,20 @@ class Asset extends CComponent {
         }
         
         return $path;
+    }
+    
+    public static function beginScript($id, $pos = CClientScript::POS_END) {
+        self::$activeScriptId = $id;
+        self::$activeScriptPosition = $pos;
+        
+        ob_start();
+        ob_implicit_flush(false);
+    }
+    
+    public static function endScript() {
+        $script = ob_get_clean();
+        $script = strip_tags($script);
+        Yii::app()->clientScript->registerScript(self::$activeScriptId, $script, self::$activeScriptPosition);
     }
 
     public static function publish($path, $isAlias = false) {
@@ -58,7 +74,7 @@ class Asset extends CComponent {
                         $p = str_replace($jspath, '', realpath($p));
                         Yii::app()->clientScript->registerScriptFile($path . str_replace("\\", "/", $p), CClientScript::POS_END);
                     }
-                } else if (is_file($jspath)) {
+                } else if (is_file($jspath)) {  
                     Yii::app()->clientScript->registerScriptFile(
                         Asset::publish($jspath), CClientScript::POS_END
                     );

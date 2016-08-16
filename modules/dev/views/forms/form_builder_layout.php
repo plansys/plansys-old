@@ -32,6 +32,7 @@
     <!-- /form-builder-content -->
 </div>
 <script type="text/javascript">
+    /* globals app,$,editor, */
     app.controller("FormBuilderLayoutController", function ($scope, $http, $timeout, $window, $compile, $localStorage) {
         editor.formBuilder.builder = $scope;
         editor.formBuilder.$scope = $scope;
@@ -130,8 +131,8 @@
             alert("SAVED");
         }
         $scope.deleteField = function () {
-            $el = $($scope.activeTree.$parent.$element);
-            $old = $scope.activeTree;
+            var $el = $($scope.activeTree.$parent.$element);
+            var $old = $scope.activeTree;
             $timeout(function () {
                 if ($el.next().length > 0 && !$el.next().hasClass('cpl')) {
                     $el.next().find(".form-field:eq(0)").click();
@@ -142,6 +143,10 @@
                 }
 
                 $old.remove();
+                
+                $timeout(function() {
+                    $scope.detectDuplicate();
+                });
             }, 0);
         }
         $scope.changeListViewMode = function () {
@@ -150,7 +155,7 @@
             }
         }
         $scope.changeActiveName = function () {
-            $el = $(":focus");
+            var $el = $(":focus");
             if (typeof $el != "undefined") {
                 var newName = $scope.formatName($scope.active.name);
                 var caretPos = $el.getCaretPosition() - ($scope.active.name.length - newName.length);
@@ -176,29 +181,32 @@
                     case "SubForm":
                     case "ModalDialog":
                         return "";
-                        break;
                     case "RelationField":
                         return name + field.identifier;
-                        break;
                     default:
                         return name;
-                        break;
                 }
             }
         }
         $scope.detectDuplicate = function () {
-            $(".duplicate").addClass('ng-hide').each(function () {
-                if ($(this).attr('fname') == '')
+            var names = {};
+            $(".duplicate").each(function () {
+                var fname = $(this).attr('fname');
+                if (fname == '') {
                     return;
-
-                var name = ".d-" + $scope.formatName($(this).attr('fname'));
-                var $name = $(name);
-                if (name.trim() != ".d-") {
-                    if ($name.length > 1) {
-                        $(this).removeClass('ng-hide');
-                    }
+                }
+                else {
+                    names[fname] = (names[fname] + 1) || 1;
                 }
             });
+            for (var key in names) {
+                var item = names[key];
+                if (item > 1) {
+                    $("[fname=" + key + "]").removeClass('ng-hide');
+                } else {
+                    $("[fname=" + key + "]").addClass('ng-hide');
+                }
+            }
         }
         $scope.fieldCount = 0;
         $scope.loadedFieldCount = 0;

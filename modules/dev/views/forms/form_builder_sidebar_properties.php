@@ -70,8 +70,6 @@
         $scope.editor = editor.formBuilder;
         $scope.$editor = editor;
         $scope.propertiesLoading = true;
-        
-        console.log(editor.activeTab);
 
         $scope.$watch('$editor.activeTab.form', function (n) {
             $scope.form = n;

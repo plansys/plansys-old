@@ -21,7 +21,7 @@
                             <i class="fa fa-bars"></i> Toolbar
                         </div>
                     </tab-heading>
-                    <?php include("form_toolbar.php"); ?>
+                    <?php include("form_builder_sidebar_toolbar.php"); ?>
                 </tab>
                 <tab ng-click="editor.activeTab.sidebar.properties = true" active="editor.activeTab.sidebar.properties">
                     <tab-heading>
@@ -29,7 +29,7 @@
                             <i class="fa fa-cogs"></i> Properties
                         </div>
                     </tab-heading>
-                    <?php include("form_properties.php"); ?>
+                    <?php include("form_builder_sidebar_properties.php"); ?>
                 </tab>
             </tabset>
             <!-- /form-builder-toolbar -->
