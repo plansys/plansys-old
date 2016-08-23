@@ -732,7 +732,8 @@ class RelationField extends FormField {
                     } else {
                         switch ($driver) {
                             case "oci":
-                                $sqlcond = "LOWER(" . $this->labelField . ') like ' . "LOWER([{$block}])";
+                                $sqlcond = "LOWER(|" . $this->relationCriteria['alias'] . "|.|" . $this->labelField . '|) like ' . "LOWER([{$block}])";
+
                                 break;
                             default:
                                 $sqlcond = "LOWER(" . $this->labelField . ') like ' . "LOWER([{$block}])";

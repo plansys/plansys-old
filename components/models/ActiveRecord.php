@@ -1,5 +1,7 @@
 <?php
 
+use PhpParser\ParserFactory;
+
 class ActiveRecord extends CActiveRecord {
 
     const DEFAULT_PAGE_SIZE = 25;
@@ -87,6 +89,11 @@ class ActiveRecord extends CActiveRecord {
             case "datetime":
                 if ($driver == "oci") {
                     return date('j-M-y h.i.s.u A', strtotime($str));
+                }
+                break;
+            case "date":
+                if ($driver == "oci") {
+                    return date('j-M-y', strtotime($str));
                 }
                 break;
         }
@@ -310,7 +317,6 @@ class ActiveRecord extends CActiveRecord {
             $table = $schema->name;
 
             if (get_class($schema) == 'COciTableSchema') {
-
                 $formatType = [];
                 foreach ($schema->columns as $k => $c) {
                     if (substr($c->dbType, 0, 9) == "TIMESTAMP") {
@@ -319,10 +325,14 @@ class ActiveRecord extends CActiveRecord {
                 }
 
                 foreach ($formattedData as $idx => $row) {
-                    foreach ($row as $k => $d) {
-                        if (isset($formatType[$k])) {
-                            $formattedData[$idx][$k] = ActiveRecord::formatSingleDataCol($d, $formatType[$k], "oci");
+                    if (is_array($row)) {
+                        foreach ($row as $k => $d) {
+                            if (isset($formatType[$k])) {
+                                $formattedData[$idx][$k] = ActiveRecord::formatSingleDataCol($d, $formatType[$k], "oci");
+                            }
                         }
+                    } else {
+                        throw new CException("data must be two-dimensional array");
                     }
                 }
             }
@@ -359,7 +369,14 @@ class ActiveRecord extends CActiveRecord {
         $pk = $schema->primaryKey;
         $table = $schema->name;
         $field = $schema->columns;
-        unset($field[$pk]);
+
+        if (is_array($pk)) {
+            foreach ($pk as $p) {
+                unset($field[$p]);
+            }
+        } else {
+            unset($field[$pk]);
+        }
 
         $columnCount = count($field);
         $columnName = array_keys($field);
@@ -374,10 +391,26 @@ class ActiveRecord extends CActiveRecord {
                 }
             }
         }
-
         foreach ($data as $d) {
-            $cond = $d[$pk];
-            unset($d[$pk]);
+            if (is_array($pk)) {
+                $cond = [];
+                foreach ($pk as $p) {
+                    if (is_string($d[$p])) {
+                        $cond[] = "|{$p}| = '{$d[$p]}'";
+                    } else if (is_object($d[$p]) && is_subclass_of($d[$p], 'CDbExpression')) {
+                        $cond[] = "|{$p}| = " . $d[$pk]->expression;
+                    }
+                    unset($d[$p]);
+                }
+            } else {
+                if (is_string($d[$pk])) {
+                    $cond[] = "|{$pk}| = '{$d[$pk]}'";
+                } else if (is_object($d[$pk]) && is_subclass_of($d[$pk], 'CDbExpression')) {
+                    $cond[] = "|{$pk}| = " . $d[$pk]->expression;
+                }
+                unset($d[$pk]);
+            }
+
             $updatearr = [];
             for ($i = 0; $i < $columnCount; $i++) {
 
@@ -392,7 +425,11 @@ class ActiveRecord extends CActiveRecord {
                         if (is_null($d[$columnName[$i]])) {
                             $updatearr[] = '|' . $columnName[$i] . "| = NULL";
                         } else {
-                            $updatearr[] = '|' . $columnName[$i] . "| = '{$d[$columnName[$i]]}'";
+                            if (is_string($d[$columnName[$i]])) {
+                                $updatearr[] = '|' . $columnName[$i] . "| = '{$d[$columnName[$i]]}'";
+                            } else if (is_object($d[$columnName[$i]]) && is_subclass_of($d[$columnName[$i]], 'CDbExpression')) {
+                                $updatearr[] = '|' . $columnName[$i] . "| = " . $d[$columnName[$i]]->expression;
+                            }
                         }
                     }
                 }
@@ -400,7 +437,10 @@ class ActiveRecord extends CActiveRecord {
 
             $updatesql = implode(",", $updatearr);
             if ($updatesql != '') {
-                $update = "UPDATE |{$table}| SET {$updatesql} WHERE |{$pk}| ='{$cond}'";
+                if (is_array($cond)) { 
+                    $cond = implode(" AND ", $cond);
+                }
+                $update = "UPDATE |{$table}| SET {$updatesql} WHERE $cond";
                 $update = ActiveRecord::formatCriteria($update);
                 $command = Yii::app()->db->createCommand($update);
                 $command->execute();
@@ -1874,7 +1914,7 @@ class ActiveRecord extends CActiveRecord {
                     ## if relation type is Many to Many, prepare required variable
                     $relMM = [];
                     if ($relType == 'ManyManyRelation') {
-                        $parser = new PhpParser\Parser(new PhpParser\Lexer\Emulative);
+                        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
                         $stmts = $parser->parse('<?php ' . $relForeignKey . ';');
                         if (count($stmts) > 0) {
                             $relMM = [

@@ -9,7 +9,7 @@
     }
   ],
   "require": {
-    "nikic/php-parser": "dev-master",
+    "nikic/php-parser": "^2.1",
     "phpmailer/phpmailer": "*",
     "box/spout": "dev-master",
     "inlinestyle/inlinestyle": "dev-master",

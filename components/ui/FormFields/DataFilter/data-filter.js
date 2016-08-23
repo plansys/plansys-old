@@ -1038,7 +1038,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         for (i in $scope.filters) {
                             var f = $scope.filters[i];
                             var dateCondition = (f.filterType == 'date'
-                            && ['Daily', 'Weekly', 'Monthly', 'Yearly']
+                            && ['Daily', 'Weekly', 'Monthly', 'Yearly', 'Between','Not Between','Less Than','More Than']
                                 .indexOf(f.defaultOperator) >= 0);
 
                             f.show = (typeof f.show == "boolean" ? f.show : (showCount > 5 ? false : true));

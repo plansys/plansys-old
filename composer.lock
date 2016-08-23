@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "530ce9ef51079d288b925ae26b8e52cb",
-    "content-hash": "53dfe47db64ba05d28ac7e46eb2f55d7",
+    "hash": "13f10673f225d5931a481c2012ab7c73",
+    "content-hash": "b774a4e10cb2625fe36ea082cc6cbde9",
     "packages": [
         {
             "name": "box/spout",
@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/box/spout.git",
-                "reference": "192659cb24697e0cc361c15d5d9b903b069c40d6"
+                "reference": "c94694cb60412844389d85864e2305845325954d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/box/spout/zipball/192659cb24697e0cc361c15d5d9b903b069c40d6",
-                "reference": "192659cb24697e0cc361c15d5d9b903b069c40d6",
+                "url": "https://api.github.com/repos/box/spout/zipball/c94694cb60412844389d85864e2305845325954d",
+                "reference": "c94694cb60412844389d85864e2305845325954d",
                 "shasum": ""
             },
             "require": {
@@ -37,7 +37,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.5.x-dev"
+                    "dev-master": "2.6.x-dev"
                 }
             },
             "autoload": {
@@ -74,7 +74,7 @@
                 "write",
                 "xlsx"
             ],
-            "time": "2016-06-20 03:20:49"
+            "time": "2016-08-17 04:18:44"
         },
         {
             "name": "inlinestyle/inlinestyle",
@@ -82,12 +82,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/christiaan/InlineStyle.git",
-                "reference": "66ad09318c9f120cc3246d4f1c728848258154b5"
+                "reference": "fbc76e857099413716ade4afff9178fe323f39b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/christiaan/InlineStyle/zipball/66ad09318c9f120cc3246d4f1c728848258154b5",
-                "reference": "66ad09318c9f120cc3246d4f1c728848258154b5",
+                "url": "https://api.github.com/repos/christiaan/InlineStyle/zipball/fbc76e857099413716ade4afff9178fe323f39b4",
+                "reference": "fbc76e857099413716ade4afff9178fe323f39b4",
                 "shasum": ""
             },
             "require": {
@@ -121,20 +121,20 @@
                 "email",
                 "inline"
             ],
-            "time": "2015-12-13 20:30:25"
+            "time": "2016-07-08 17:58:54"
         },
         {
             "name": "nikic/php-parser",
-            "version": "dev-master",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "96cbd48df6d1c6dae38ab2437bee71508947d5c8"
+                "reference": "47b254ea51f1d6d5dc04b9b299e88346bf2369e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/96cbd48df6d1c6dae38ab2437bee71508947d5c8",
-                "reference": "96cbd48df6d1c6dae38ab2437bee71508947d5c8",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/47b254ea51f1d6d5dc04b9b299e88346bf2369e3",
+                "reference": "47b254ea51f1d6d5dc04b9b299e88346bf2369e3",
                 "shasum": ""
             },
             "require": {
@@ -172,7 +172,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2016-04-20 14:47:50"
+            "time": "2016-04-19 13:41:41"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -236,7 +236,7 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v3.1.2",
+            "version": "v3.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
@@ -328,7 +328,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "nikic/php-parser": 20,
         "box/spout": 20,
         "inlinestyle/inlinestyle": 20
     },
