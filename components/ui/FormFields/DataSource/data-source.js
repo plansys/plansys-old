@@ -12,7 +12,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
                 $scope.class = $el.find("data[name=class_alias]").text().trim();
                 $scope.postData = $el.find("data[name=post_data]").text().trim();
-                $scope.primaryKey = $el.find("data[name=primary_key]:eq(0)").text().trim();
+                $scope.primaryKey = JSON.parse($el.find("data[name=primary_key]:eq(0)").text().trim());
                 $scope.relationTo = $el.find("data[name=relation_to]").text().trim();
                 $scope.options = JSON.parse($el.find("data[name=options]:eq(0)").text().trim());
                 $scope.insertData = [];
@@ -40,7 +40,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     // console.log('DS WATCH [✗] from:', from);
                     $scope.trackChanges = false;
                 }
-
 
                 $scope.resetData = function () {
                     $scope.deleteData.splice(0, $scope.deleteData.length);
@@ -79,7 +78,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     }
                     return true;
                 }
-
+                
                 $scope.updateParam = function (key, value, name) {
                     if (!$scope.sqlParams) {
                         $scope.sqlParams = {};
@@ -100,7 +99,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
 
                     $scope.sqlParams[name][key] = value;
                 }
-
+                
                 $scope.setDebug = function (debug) {
                     if (typeof debug == "undefined") {
                         $scope.debugHTML = "";
@@ -121,25 +120,25 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     }
                     $scope.debugHTML = JSON.stringify($scope.debug, undefined, 2);
                 };
-
+                
                 if ($el.find("data[name=debug]").length > 0) {
                     $scope.setDebug(JSON.parse($el.find("data[name=debug]").text()));
                 } else {
                     $scope.setDebug({});
                 }
-
+                
                 $scope.afterQueryInternal = {};
                 $scope.beforeQueryInternal = {};
                 $scope.beforeQuery = null;
                 $scope.afterQuery = null;
                 $scope.shouldCount = true;
                 $scope.lastQueryFrom = "";
-
+                
                 $scope.queryWithoutCount = function (f) {
                     $scope.shouldCount = false;
                     $scope.query(f);
                 }
-
+                
                 $scope.prepareParams = function () {
                     var params = $.extend({}, $scope.sqlParams);
                     for (i in $scope.params) {
@@ -203,6 +202,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                             $scope.totalItems = data.count * 1;
                             $scope.setDebug(data.debug);
                             $scope.loading = false;
+                            
 
                             // Retain editing result between paging/sorting query
                             if ($scope.updateData.length > 0 ||
@@ -347,7 +347,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     }
                 }
                 
-                
                 for(i in $scope.data) {
                     if (!!$scope.data[i] && !!$scope.data[i].$rowState) {
                         if ($scope.data[i].$rowState == 'insert') $scope.insertData.push($scope.data[i]);
@@ -362,6 +361,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                             update: [],
                             delete: []
                         };
+                        
 
                     for (i in oldArray) {
                         if (!!oldArray[i].$type && oldArray[i].$type != 'r') {
@@ -377,18 +377,17 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         }
 
                         var item = newArray[i];
-                        
-                        if (!item[pk]) return false;
-                        
-                        if (!!newHash[item[pk]]) {
-                            alert("ERROR!!!\nPrimary Key Column ("+pk+"): Data is not UNIQUE!");
-                        } else {
-                            newHash[item[pk]] = item;
-                        }
-                        
                         var pkIsEmpty = !item[pk];
                         if (!!item[pk] && !!item[pk].toString) {
                             pkIsEmpty = (item[pk].toString() === '');
+                        }
+                        
+                        if (!pkIsEmpty) {
+                            if (!!newHash[item[pk]]) {
+                                alert("ERROR!!!\nPrimary Key Column ("+pk+"): Data is not UNIQUE!");
+                            } else {
+                                newHash[item[pk]] = item;
+                            }
                         }
                         
                         if (item.$rowState == 'edit') {
@@ -436,7 +435,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                             diff.delete.push(oldHash[i]);
                         }
                     }
-
+                    
                     return diff;
                 };
                 
@@ -446,14 +445,12 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         if (typeof $scope.data == "undefined") {
                             $scope.data = [];
                         }
-                        
                         if (angular.equals($scope.original, newval)) {
                             for (var i in newval) {
                                 delete newval[i].$rowState;
                             }  
                         } else if ($scope.trackChanges) {
                             var df = diff($scope.original, newval);
-                            
                             // Generate UpdateData Hash (to enable faster primary key look up)
                             var updateHash = {};
                             for (i in $scope.updateData) {

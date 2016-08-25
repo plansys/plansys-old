@@ -174,21 +174,18 @@ app.directive('listView', function ($timeout) {
                         $scope.datasource.insertData.splice(idx, 1);
                         
                         if (!!$scope.datasource.relationTo) {
-                            var im = $scope[$scope.model.$listViewName].$internalModel;
-                            if (!im['$' + $scope.datasource.relationTo + 'Deleted']) {
-                                im['$' + $scope.datasource.relationTo + 'Deleted'] = [];
-                            }
-                            
-                            var deleted = {};
-                            for (var i in $scope.deleted.data) {
-                                if (typeof $scope.deleted.data[i] != 'object') {
-                                    deleted[i] = $scope.deleted.data[i];
-                                }
-                            }
-                            
-                            im['$' + $scope.datasource.relationTo + 'Deleted'].push(deleted);
-                            
-                            console.log(im);
+                            // var im = $scope[$scope.model.$listViewName].$internalModel;
+                            // if (!im['$' + $scope.datasource.relationTo + 'Deleted']) {
+                            //     im['$' + $scope.datasource.relationTo + 'Deleted'] = [];
+                            // }
+                            // var deleted = {};
+                            // for (var i in $scope.deleted.data) {
+                            //     if (typeof $scope.deleted.data[i] != 'object') {
+                            //         deleted[i] = $scope.deleted.data[i];
+                            //     }
+                            // }
+                            // im['$' + $scope.datasource.relationTo + 'Deleted'].push(deleted);
+                            console.log($scope.datasource.trackChanges);
                         }
                     }
                     
