@@ -113,6 +113,11 @@ class WebUser extends CWebUser {
         if (isset(Yii::app()->session['userinfo'])) {
             $attr = Yii::app()->session['userinfo'];
         }
+        $baseSession = "";
+        if (isset(Yii::app()->session['baseSession'])) {
+            $baseSession = Yii::app()->session['baseSession'];
+        }
+        
         
         if (!!$attr) {
             if (@$attr['db_name'] != Setting::get('db.dbname')) {
@@ -131,6 +136,7 @@ class WebUser extends CWebUser {
             $attr['roles']                  = $this->model->getRoles();
             $attr['full_role']              = $this->fullRole;
             $attr['db_name']                = Setting::get('db.dbname');
+            $attr['session']                = $baseSession;
             Yii::app()->session['userinfo'] = $attr;
         } 
 

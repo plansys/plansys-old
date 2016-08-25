@@ -49,6 +49,8 @@ class User extends ActiveRecord {
                 'condition' => '|is_default_role| = \'Yes\''),
         );
     }
+    
+    public $asem = 'dek';
 
     public $roles = [''];
 

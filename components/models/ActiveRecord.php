@@ -344,11 +344,13 @@ class ActiveRecord extends CActiveRecord {
 
         if ($assignNewID && !!$model) {
             if (get_class($schema) != 'COciTableSchema') {
-                $id = Yii::app()->db->getLastInsertID();
-                $pk = $model->tableSchema->primaryKey;
-                foreach ($data as $k => $d) {
-                    $data[$k][$pk] = $id * 1;
-                    $id++;
+                if (!is_array($pk)) {
+                    $id = Yii::app()->db->getLastInsertID();
+                    $pk = $model->tableSchema->primaryKey;
+                    foreach ($data as $k => $d) {
+                        $data[$k][$pk] = $id * 1;
+                        $id++;
+                    }
                 }
             }
         }
