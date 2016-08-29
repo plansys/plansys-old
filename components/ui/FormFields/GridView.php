@@ -131,7 +131,7 @@ class GridView extends FormField {
                     return @$col['html'];
                 }
 
-                $template = '{{row.' . $fieldName . '}}';
+                $template = '{{row[\'' . $fieldName . '\']}}';
                 break;
             case "checkbox":
                 $ngif = "";
@@ -189,23 +189,23 @@ type="checkbox" /></label>';
             switch ($col['options']['mode']) {
                 case "html":
                     $template = '
-    <div ng-bind-html="row.' . $fieldName . '"></div>';
+    <div ng-bind-html="row[\'' . $fieldName . '\']></div>';
                     break;
                 case "editable":
                     $template = '
-    <div contenteditable="true" ' . $editableCss . ' ng-model="row.' . $fieldName . '"
+    <div contenteditable="true" ' . $editableCss . ' ng-model="row[\'' . $fieldName . '\']"
          ng-keydown="editKey($event)"></div>';
                     break;
                 case "editable-insert":
                     $template = '
     <div contenteditable="true" ' . $editableCss . ' ng-if="row.$rowState == \'insert\'"
-         ng-model="row.' . $fieldName . '" ng-keydown="editKey($event)"></div>
+         ng-model="row[\'' . $fieldName . '\'] ng-keydown="editKey($event)"></div>
     <span ng-show="row.$rowState != \'insert\'">' . $template . '</span>';
                     break;
                 case "editable-update":
                     $template = '
     <div contenteditable="true" ' . $editableCss . ' ng-if="row.$rowState != \'insert\'"
-         ng-model="row.' . $fieldName . '" ng-keydown="editKey($event)"></div>
+         ng-model="row[\'' . $fieldName . '\'] ng-keydown="editKey($event)"></div>
     <span ng-show="row.$rowState == \'insert\'">' . $template . '</span>';
                     break;
                 case "del-button":
@@ -249,13 +249,13 @@ type="checkbox" /></label>';
                     $template = '{{ getSequence(row, $index + 1); }}';
                     break;
                 case 'date':
-                    $template = '{{row.' . $fieldName . ' | dateFormat:"date" }}';
+                    $template = '{{row[\'' . $fieldName . '\'] | dateFormat:"date" }}';
                     break;
                 case 'time':
-                    $template = '{{row.' . $fieldName . ' | dateFormat:"time" }}';
+                    $template = '{{row[\'' . $fieldName . '\'] | dateFormat:"time" }}';
                     break;
                 case 'datetime':
-                    $template = '{{row.' . $fieldName . ' | dateFormat:"datetime" }}';
+                    $template = '{{row[\'' . $fieldName . '\'] | dateFormat:"datetime" }}';
                     break;
             }
         }

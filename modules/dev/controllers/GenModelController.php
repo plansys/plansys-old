@@ -29,7 +29,11 @@ class GenModelController extends Controller {
             $path = implode(".", $path);
             $filePath = Yii::getPathOfAlias(($module == 'plansys' ? 'application' : 'app') . ".models." . $path) . ".php";
 
-            $content = file_get_contents($filePath);
+            if (is_file($filePath)) {
+                $content = file_get_contents($filePath);
+            } else {
+                $this->redirect(['/dev/genModel/index']);
+            }
         }
 
         Asset::registerJS('application.static.js.lib.ace');
