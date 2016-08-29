@@ -7,7 +7,6 @@ class ModelGenerator extends CComponent {
         $mc->modelPath = $module . ".models";
 
         if (isset($options['conn']) && $options['conn'] != 'db') {
-            $mc->modelPath = $module . ".models.{$options['conn']}";
             $mc->connectionId = $options['conn'];
         }
 
