@@ -1,608 +1,1030 @@
-<?php
-
-use Box\Spout\Writer\WriterFactory;
-use Box\Spout\Common\Type;
-class GridView extends FormField {
-
-    public static $toolbarName  = "GridView";
-    public static $category     = "Data & Tables";
-    public static $toolbarIcon  = "fa fa-table";
-    public        $type         = 'Grid';
-    public        $name         = '';
-    public        $mode         = 'normal';
-    public        $label        = '';
-    public        $layout       = 'Vertical';
-    public        $labelWidth   = 4;
-    public        $fieldWidth   = 8;
-    public        $options      = [];
-    public        $tableOptions = [];
-    public        $datasource   = '';
-    public        $gridOptions  = [];
-    public        $genOptions   = [];
-    public        $columns      = [];
-    public        $columnsFunc  = "";
-    public        $hasEditable  = false;
-
-    public function actionDownloadExcel() {
-        $postdata = file_get_contents("php://input");
-        $post     = CJSON::decode($postdata);
-        if (isset($post['rows'])) {
-            $writer = WriterFactory::create(Type::XLSX);
-            $dir = Yii::getPathOfAlias('root.assets.gvExport') ."/";
-            if (!is_dir($dir)) {
-                mkdir($dir, 0777);
+app.directive('gridView', function ($timeout, $http) {
+    return {
+        require: '?ngModel',
+        scope: true,
+        compile: function (element, attrs, transclude) {
+            if (attrs.ngModel && !attrs.ngDelay) {
+                attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
             }
-            $file = "export-". time() .".xlsx";
-            $writer->openToFile($dir . $file); // stream data directly to the browser
-            $writer->addRows($post['rows']); // add multiple rows at a time
-            $writer->close();
-            echo Yii::app()->baseUrl . '/assets/gvExport/' . $file;
-        }
-        
-    }
+            var columnRaw = element.find("data[name=columns]:eq(0)").text();
+            element.find("data[name=columns]:eq(0)").remove();
 
-    public function actionEditHeader() {
-        Asset::registerCSS(['application.components.ui.FormFields.GridView.grid-header-editor']);
-        Yii::app()->controller->renderForm('GridViewHeader',null,[],[
-            'layout'=>'//layouts/blank'
-        ]);    
-    }
-    
-    public function getErrorClass() {
-        return (count($this->errors) > 0 ? 'has-error has-feedback' : '');
-    }
+            return function ($scope, $el, attrs, ctrl) {
+                // define current form field in parent scope
+                $scope.parent = $scope.getParent($scope);
 
-    public function includeCSS() {
-        return ['grid.css'];
-    }
-
-    public function includeJS() {
-        return ['grid.js'];
-    }
-
-    public function render() {
-        $this->processColumns();
-        
-        if (@$this->gridOptions['dynamicColumns'] == 'true'
-            && $this->columnsFunc != '') {
-            
-            foreach ($this->columns as $idx => $col) {
-                $this->getHeaderTemplate($this->columns[$idx], $idx, 'tag');
-            }
-                
-            $this->columns = $this->evaluateExpression($this->columnsFunc,[
-                'columns' => $this->columns,
-                'data' => @$GLOBALS['dataSourceCache'][$this->datasource]
-            ]);
-        }
-        
-        return $this->renderInternal('template_render.php');
-    }
-
-    private function processColumns() {
-        foreach ($this->columns as $k => $c) {
-            $this->columns[$k] = $this->processSingleColumn($c);
-        }
-    }
-
-    private function processSingleColumn($c) {
-        $name = explode(".", $c['name']);
-        if (count($name) > 1) {
-            $c['fieldName'] = $c['name'];
-            $c['name']      = array_pop($name);
-        }
-        
-        if (isset($c['options']['mode']) && strpos($c['options']['mode'], "editable") === 0) {
-            $this->hasEditable = true;
-        }
-        
-        
-        $c['options']['sortable'] = false;
-
-        return $c;
-    }
-
-    public function actionCellTemplate() {
-        $postdata = file_get_contents("php://input");
-        $post     = CJSON::decode($postdata);
-        $fb       = FormBuilder::load($post['class']);
-        $field    = $fb->findField(['name' => $post['name']]);
-
-        $this->attributes = $field;
-        $post['item']     = $this->processSingleColumn($post['item']);
-        echo $this->getRowTemplate($post['item'], $post['idx']);
-    }
-
-
-    public function getRowTemplate($col, $idx) {
-        $template  = '';
-        $style     = '';
-        $fieldName = $col['name'];
-        if ($fieldName == "" && !@$col['options']['mode']) return "";
-
-        $attr      = [];
-        if (isset($col['options']['ng-if'])) {
-            $attr['ng-if'] = $col['options']['ng-if'];
-        }
-
-        switch ($col['columnType']) {
-            case "string":
-                if (@$col['cellMode'] == 'custom' && trim(@$col['html']) != '') {
-                    return @$col['html'];
-                }
-
-                $template = '{{row[\'' . $fieldName . '\']}}';
-                break;
-            case "checkbox":
-                $ngif = "";
-                if (isset($col['options']['ng-checkbox-if'])) {
-                    $ngif = " && ({$col['options']['ng-checkbox-if']})";
-                }
-                
-                $ngshow = "";
-                if (isset($col['options']['ng-checkbox-show'])) {
-                    $ngshow = "ng-show=\"{$col['options']['ng-checkbox-show']}\"";
-                }
-                
-                if (isset($col['options']['ng-change'])) {
-                    $col['options']['ng-checkbox-change'] = $col['options']['ng-change'];
-                }
-                
-                $ngchange = "";
-                if (isset($col['options']['ng-checkbox-change'])) {
-                    $ngchange = "{$col['options']['ng-checkbox-change']};";
-                }
-                
-                $ngdisabled = "";
-                if (isset($col['options']['ng-checkbox-disabled'])) {
-                    $ngdisabled = "ng-disabled=\"{$col['options']['ng-checkbox-disabled']};\"";
-                }
-                
-                $template = '<label class="cbl-'.$fieldName.'" ng-if="(row.$type == \'r\' || !row.$type) '.$ngif.'" '.$ngshow.'><input
-ng-click="checkboxRow(row, \'' . $fieldName . '\', ' . $idx . ', $event);'.$ngchange.'"
-ng-checked="checkboxRowChecked(row, \'' . $fieldName . '\', ' . $idx . ')"
-'.$ngdisabled.'
-type="checkbox" /></label>';
-                break;
-        }
-
-        $rowState = '';
-        if ($idx == 0) {
-            $rowStateCss = $this->hasEditable ? "class='editable'" : "";
-            if (@$this->gridOptions['showRowState'] != 'false' && @$this->gridOptions['showRowStateBtn'] != 'false') {
-                $rowState = "<div {$rowStateCss} ng-include='\"row-state-template\"'></div>\n    ";
-            }
-            if (!@$col['options']['mode'] && $col['columnType'] != 'checkbox') {
-                $template = "<span class='row-group-padding' ng-if='!!row.\$level'
-        style='width:{{row.\$level*10}}px;'></span>
-    {$template}";
-            }
-        }
-
-
-        if (!!@$col['options']['mode']) {
-            $editableCss = '';
-            if ($idx == 0) {
-                $editableCss = 'style="padding-right: 0px;padding-left: 8px;"';
-            }
-
-            switch ($col['options']['mode']) {
-                case "html":
-                    $template = '
-    <div ng-bind-html="row[\'' . $fieldName . '\']></div>';
-                    break;
-                case "editable":
-                    $template = '
-    <div contenteditable="true" ' . $editableCss . ' ng-model="row[\'' . $fieldName . '\']"
-         ng-keydown="editKey($event)"></div>';
-                    break;
-                case "editable-insert":
-                    $template = '
-    <div contenteditable="true" ' . $editableCss . ' ng-if="row.$rowState == \'insert\'"
-         ng-model="row[\'' . $fieldName . '\'] ng-keydown="editKey($event)"></div>
-    <span ng-show="row.$rowState != \'insert\'">' . $template . '</span>';
-                    break;
-                case "editable-update":
-                    $template = '
-    <div contenteditable="true" ' . $editableCss . ' ng-if="row.$rowState != \'insert\'"
-         ng-model="row[\'' . $fieldName . '\'] ng-keydown="editKey($event)"></div>
-    <span ng-show="row.$rowState == \'insert\'">' . $template . '</span>';
-                    break;
-                case "del-button":
-                    if (!isset($col['options']['delUrl'])) {
-                        $style    = ' style="width:20px;"';
-                        $template = '<div ng-if="!row.$rowState" ng-click="removeRow(row)" title="Remove" 
-    class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></div>
-
-    <div ng-if="(!row.$type || row.$type === \'r\') && [\'edit\',\'remove\'].indexOf(row.$rowState) >= 0" ng-click="undoRemoveRow(row)" title="Undo Remove" 
-         class="btn btn-default btn-xs"><i class="fa fa-undo"></i></div>';
+                // define vars
+                $scope.loading = false;
+                $scope.loaded = false;
+                $scope.Math = window.Math;
+                $scope.mode = 'full';
+                $scope.name = $el.find("data[name=name]:eq(0)").html().trim();
+                $scope.modelClass = $el.find("data[name=model_class]").text();
+                $scope.renderID = $el.find("data[name=render_id]").text();
+                $scope.gridOptions = JSON.parse($el.find("data[name=grid_options]:eq(0)").text());
+                $scope.columns = JSON.parse(columnRaw);
+                $scope.defaultPageSize = $el.find("data[name=dpz]:eq(0)").text();
+                $scope.datasource = $scope.parent[$el.find("data[name=datasource]:eq(0)").text()];
+                $scope.checkboxCol = false;
+                $scope.checkMode = function () {
+                    if ($el.width() < 750) {
+                        $scope.mode = 'small';
                     } else {
-                        $style    = ' style="width:20px;"';
-                        $template = '<a ng-if="(!row.$type || row.$type === \'r\')" ng-url="' . $col['options']['delUrl'] . '"
-    onClick="return confirm(\'Are you sure?\')"
-    class="btn-block btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>';
+                        $scope.mode = 'full';
                     }
-                    break;
-                case "unchoose-button":
-                    $style    = ' style="width:20px;"';
-                    $template = '<div ng-if="(!row.$type || row.$type === \'r\') && (!row.$rowState || row.$rowState == \'insert\')" ng-click="removeRow(row)"
-    class="btn btn-danger btn-xs"><i class="fa fa-times"></i></div>
+                }
+                $scope.url = function (a, b, c) {
+                    return Yii.app.createUrl(a, b, c);
+                };
+                
+                $scope.getSequence = function(row, idx) {
+                    if (!!row.$type) {
+                        if (row.$type === 'r') {
+                            return row.$index;
+                        }
+                    }
+                    else return idx;
+                }
 
-    <div ng-if="[\'remove\'].indexOf(row.$rowState) >= 0" ng-click="undoRemoveRow(row)" title="Remove"
-    class="btn btn-default btn-xs"><i class="fa fa-undo"></i></div>
-    ';
-                    break;
-                case 'edit-popup-button':
-                    $style    = ' style="width:20px;"';
-                    $template = '<a ng-if="row.$rowState != \'insert\'" ng-click="
-'.$col['options']['popupName'].'.editId = row[datasource.primaryKey];
-' . $col['options']['popupName'] . '.open()"
-    class="btn-block btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>';
-                    break;
-                case 'edit-button':
-                    $style    = ' style="width:20px;"';
-                    $template = '<a ng-if="(!row.$type || row.$type === \'r\')" ng-url="' . $col['options']['editUrl'] . '" title="Update" 
-    class="btn-block btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>';
-                    break;
-                case 'sequence':
-                    $style    = ' style="width:20px;"';
-                    $template = '{{ getSequence(row, $index + 1); }}';
-                    break;
-                case 'date':
-                    $template = '{{row[\'' . $fieldName . '\'] | dateFormat:"date" }}';
-                    break;
-                case 'time':
-                    $template = '{{row[\'' . $fieldName . '\'] | dateFormat:"time" }}';
-                    break;
-                case 'datetime':
-                    $template = '{{row[\'' . $fieldName . '\'] | dateFormat:"datetime" }}';
-                    break;
-            }
-        }
-        
-        $width = $this->getWidth($col);
-        if ($width != '') {
-            $attr['style'] = $width;
-        }
-        
-        if (is_array($attr)) {
-            $attr = $this->expandAttributes($attr);
-        }
+                $scope.gridOptions.controlBar = $scope.gridOptions.controlBar !== 'false';
+                $scope.rowClass = function (row, colName, colType) {
+                    var agrStr = '';
+                    if (typeof row[colName] !== "undefined" && row[colName] !== null && row[colName].toString) {
+                        agrStr = row[colName].toString();
+                    }
 
-        return <<<EOF
-<td{$style} ng-class="rowClass(row, '{$fieldName}', '{$col['columnType']}')" {$attr}>
-    {$rowState}{$template}
-</td>
-EOF;
-    }
+                    var rc = {
+                        aggregate: row.$type == 'a' && agrStr != ''
+                    };
 
-    private function getStartingColumnGroup() {
-        foreach ($this->columns as $k => $c) {
-            if ($c['columnType'] == 'string') return $k;
-        }
-    }
+                    rc['t-' + colType] = true;
+                    rc['row-' + (row.$type || 'r')] = true;
+                    rc['lv-' + (row.$level || 0)] = true;
 
-    public function getGroupTemplate($col, $idx) {
-        $template = '';
-        switch ($col['columnType']) {
-            case "string":
-                $template = '<td style="cursor:pointer;" ng-click="hideGroup(row, $event)"></td>';
-                break;
-            case
-            "checkbox":
-                $template = <<<EOF
-<td class="t-{$col['columnType']}"><label><input type="checkbox" class="cb-{$col['name']}"
-ng-click="checkboxGroup(\$index, '{$col['name']}', '$idx', \$event)" /></label></td>
-EOF;
-                break;
-        }
+                    return rc;
+                }
+                $scope.editKey = function (e) {
+                    var ngModel = $(e.target).attr('ng-model');
+                    var sel = window.getSelection();
+                    var textLength = $(e.target).text().length;
 
-        $attr      = [];
-        if (isset($col['options']['ng-if'])) {
-            $attr['ng-if'] = $col['options']['ng-if'];
-        }
-        $width = $this->getWidth($col, false);
-        if ($width != '') {
-            $attr['style'] = $width;
-        }
-        if (is_array($attr)) {
-            $attr = $this->expandAttributes($attr);
-        }
+                    if (textLength == sel.getRangeAt(0).endOffset || e.altKey) {
+                        if (e.which == 40) {
+                            var nextRow = $(e.target).parents("tr").next().find('[contenteditable][ng-model="' + ngModel + '"]');
+                            if (!!nextRow) {
+                                $timeout(function () {
+                                    nextRow.focus();
+                                });
+                            }
+                        } else if (e.which == 39) {
+                            var nextCol = $(e.target).parents("td").next().find('[contenteditable]');
+                            if (!!nextCol) {
+                                $timeout(function () {
+                                    nextCol.focus();
+                                });
+                            }
+                        }
+                    }
 
-        if ($idx == $this->getStartingColumnGroup()) {
-            $template = '
-<td class="t-' . $col['columnType'] . '" ng-click="hideGroup(row, $event)" '.$attr.'>
-    <div class="row-g" style="white-space:pre;cursor:pointer;"><span style="display:inline-block;width:{{row.$level*10}}px;float:"></span><i ng-if="!row.$hide" class="fa fa-caret-down"></i><i ng-if="!!row.$hide" class="fa fa-caret-right"></i>&nbsp; {{ row[row.$group] }}</div>
-</td>
-';
-        }
-        return $template;
-    }
+                    if (sel.getRangeAt(0).endOffset == 0 || e.altKey) {
+                        if (e.which == 38) {
+                            var prevRow = $(e.target).parents("tr").prev().find('[contenteditable][ng-model="' + ngModel + '"]');
+                            if (!!prevRow) {
+                                $timeout(function () {
+                                    prevRow.focus();
+                                });
+                            }
+                        } else if (e.which == 37) {
+                            var prevCol = $(e.target).parents("td").prev().find('[contenteditable]');
+                            if (!!prevCol) {
+                                $timeout(function () {
+                                    prevCol.focus();
+                                });
+                            }
+                        }
+                    }
+                }
+                $scope.rowStateClass = function (row) {
+                    if ($scope.checkboxCol === false) {
+                        $scope.checkboxCol = {};
+                        for (var i in $scope.columns) {
+                            if ($scope.columns[i].columnType == 'checkbox') {
+                                $scope.checkboxCol[$scope.columns[i].name] = $scope.columns[i].checkedValue;
+                            }
+                        }
+                    }
+                    
+                    var checkboxClass = [];
+                    for (var i in $scope.checkboxCol) {
+                        if (row[i] == $scope.checkboxCol[i]) {
+                            if (checkboxClass.length == 0) {
+                                checkboxClass.push('row-checked');
+                            }
+                            
+                            checkboxClass.push(i);
+                        }
+                    }
+                    checkboxClass = checkboxClass.join(" ");
+                    
+                    if (!row.$rowState || $scope.gridOptions.showRowState == 'false') {
+                        return checkboxClass + ' ';
+                    } else {
+                        return checkboxClass + ' row-state-' + row.$rowState;
+                    }
+                }
+                $scope.rowUndoState = function (row) {
+                    var hash = {}, trans = {
+                        insert: 'insertData',
+                        edit: 'updateData',
+                        remove: 'deleteData'
+                    }
 
-    public function generateHeaders($mode) {
-        $rowHeaders = isset($this->gridOptions['rowHeaders']) ? $this->gridOptions['rowHeaders'] * 1: 1; 
-        ob_start();
-        for($i = $rowHeaders; $i >=1; $i--) {
-            echo ($mode== 'class' ? '<div class="tr">' : '<tr>'); 
-            foreach ($this->columns as $idx => $col) {
-                if ($i == 1) {
-                    echo $this->getHeaderTemplate($col, $idx, $mode);
+                    var diffData = $scope.datasource[trans[row.$rowState]];
+                    if (row.$rowState == 'edit' || row.$rowState == 'remove') {
+                        var pk = $scope.datasource.primaryKey;
+                        for (i in diffData) {
+                            if (diffData[i][pk] == row[pk]) {
+                                diffData.splice(i, 1);
+                                break;
+                            }
+                        }
+
+                        $scope.updatePaging($scope.gridOptions.pageInfo);
+                    } else if (row.$rowState == 'insert') {
+                        var idx = diffData.indexOf(row);
+                        diffData.splice(idx, 1);
+
+                        var didx = $scope.datasource.data.indexOf(row);
+                        $scope.datasource.data.splice(didx, 1);
+                        return;
+                    }
+                }
+
+                $scope.addRow = function (focus) {
+                    var newModel = {};
+                    if (!!$scope.model) {
+                        newModel = angular.copy($scope.model);
+                    }
+                    $scope.datasource.data.unshift(newModel);
+                    
+                    if (!!focus) {
+                        $scope.focusAddRow();
+                    }
+                }
+                $scope.focusAddRow = function() {
+                    $timeout(function() {
+                        $el.find("table tr.row-state-insert:eq(0) div[contenteditable]")[0].focus();
+                    },100);
+                }
+
+                $scope.removeRow = function (row) {
+                    if (row.$rowState == 'insert') {
+                        var idx = $scope.datasource.insertData.indexOf(row);
+                        $scope.datasource.insertData.splice(idx, 1);
+
+                        var didx = $scope.datasource.data.indexOf(row);
+                        $scope.datasource.data.splice(didx, 1);
+                        return;
+                    } else {
+                        row.$rowState = 'remove';
+                        $scope.datasource.deleteData.push(row);
+                    }
+
+                    $timeout(function () {
+                        $scope.recalcHeaderWidth();
+                    });
+                }
+
+                $scope.undoRemoveRow = function (row) {
+                    switch (row.$rowState) {
+                        case 'remove':
+                            var idx = $scope.datasource.deleteData.indexOf(row);
+                            $scope.datasource.deleteData.splice(idx, 1);
+                            break;
+                        case 'edit':
+                            var idx = $scope.datasource.updateData.indexOf(row);
+                            $scope.datasource.updateData.splice(idx, 1);
+                            $scope.datasource.query();
+                            break;
+                    }
+                    row.$rowState = '';
+                    $timeout(function () {
+                        $scope.recalcHeaderWidth();
+                    });
+                }
+
+                // when ng-model is changed from inside directive
+                $scope.update = function () {
+                    if (!!ctrl) {
+                        ctrl.$setViewValue($scope.value);
+                    }
+                };
+
+                // page Setting
+                $scope.range = function (n) {
+                    return new Array(n);
+                };
+                $scope.scrollTop = function () {
+                    $container.scrollTop($container.scrollTop() + $el.position().top - 53);
+                };
+                $scope.reset = function () {
+                    $scope.resetPageSetting();
+                    location.reload();
+                }
+                $scope.savePageSetting = function () {
+                    if (!$scope.pageSetting) return;
+
+                    $scope.showChangePage = false;
+                    $scope.pageSetting.dataGrids = $scope.pageSetting.dataGrids || {};
+                    $scope.pageSetting.dataGrids[$scope.name] = {
+                        sort: $scope.gridOptions.sortInfo,
+                        paging: $scope.gridOptions.pageInfo
+                    };
+                }
+                $scope.loadPageSetting = function () {
+                    var changing = false;
+                    if (typeof $scope.gridOptions.pageSize != "undefined") {
+                        $scope.gridOptions.pageInfo.pageSize = $scope.gridOptions.pageSize * 1;
+                        $scope.updatePaging($scope.gridOptions.pageInfo, false);
+                        changing = true;
+                    }
+
+                    if (!!$scope.pageSetting && !!$scope.pageSetting.dataGrids && !!$scope.pageSetting.dataGrids[$scope.name]) {
+                        if (JSON.stringify($scope.gridOptions.sortInfo) != JSON.stringify($scope.pageSetting.dataGrids[$scope.name].sort)) {
+                            $scope.gridOptions.sortInfo = $scope.pageSetting.dataGrids[$scope.name].sort;
+                            $scope.updateSorting($scope.gridOptions.sortInfo, false);
+                            changing = true;
+                        }
+
+                        if (JSON.stringify($scope.gridOptions.pageInfo) != JSON.stringify($scope.pageSetting.dataGrids[$scope.name].paging)) {
+                            if (typeof $scope.pageSetting.dataGrids[$scope.name].paging != "undefined") {
+                                $scope.gridOptions.pageInfo = $scope.pageSetting.dataGrids[$scope.name].paging;
+
+                                $scope.updatePaging($scope.gridOptions.pageInfo, false);
+                                changing = true;
+                            }
+                        }
+                    }
+
+                    if (changing) {
+                        $scope.datasource.query();
+                    } else {
+                        if ($scope.datasource.lastQueryFrom != "DataFilter") {
+                            $scope.datasource.enableTrackChanges('GridView:LoadPageSetting');
+                        }
+                    }
+                }
+
+                // update sorting
+                $scope.sort = function (col) {
+                    if (col == '') return;
+
+                    var direction = $scope.isSort(col, 'asc') ? 'desc' : 'asc';
+                    $scope.gridOptions.sortInfo = {
+                        fields: [col],
+                        directions: [direction]
+                    };
+                    $scope.updateSorting($scope.gridOptions.sortInfo);
+                    $timeout(function () {
+                        $scope.recalcHeaderWidth();
+                    });
+                }
+                $scope.isSort = function (col, dir) {
+                    if (!$scope.gridOptions.sortInfo) return false;
+
+                    var idx = $scope.gridOptions.sortInfo.fields.indexOf(col);
+                    if (idx >= 0) {
+                        if ($scope.gridOptions.sortInfo.directions[idx] == dir) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                $scope.updateSorting = function (sort, executeQuery) {
+                    var ds = $scope.datasource;
+                    if (typeof ds != "undefined") {
+                        var order_by = [];
+                        for (i in sort.fields) {
+                            if (sort.fields[i] == '') {
+                                return;
+                            }
+                            order_by.push({
+                                field: sort.fields[i],
+                                direction: sort.directions[i]
+                            });
+                        }
+
+                        ds.lastQueryFrom = "GridView";
+                        ds.updateParam('order_by', order_by, 'order');
+                        if (typeof executeQuery == "undefined") {
+                            executeQuery = true;
+                        }
+                        if (executeQuery) {
+                            ds.queryWithoutCount();
+                            $scope.savePageSetting();
+                        }
+                    }
+                }
+
+                $scope.hideGroup = function (item, e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+
+                    item.$hide = !item.$hide;
+                    var loop = true;
+                    var cursor = $(e.target).parents('tr').next();
+                    while (loop) {
+                        if (cursor.attr('lv') > item.$level || (cursor.hasClass('a') && cursor.attr('lv') >= item.$level)) {
+                            if (item.$hide) {
+                                cursor.addClass('hide');
+                            } else {
+                                cursor.removeClass('hide');
+                            }
+                            cursor = cursor.next();
+                        } else {
+                            loop = false;
+                        }
+                    }
+                    $scope.recalcHeaderWidth();
+                }
+
+                // update paging
+                $scope.updatePaging = function (paging, executeQuery, oldpaging) {
+                    var ds = $scope.datasource;
+                    ds.updateParam('currentPage', paging.currentPage, 'paging');
+                    ds.updateParam('pageSize', paging.pageSize, 'paging');
+                    ds.updateParam('totalServerItems', paging.totalServerItems, 'paging');
+                    ds.lastQueryFrom = "GridView";
+
+                    paging.typingPage = paging.currentPage * 1;
+                    if (typeof executeQuery == "undefined") {
+                        executeQuery = true;
+                    }
+                    if (executeQuery) {
+                        if (typeof oldpaging != "undefined" && paging.pageSize == oldpaging.pageSize) {
+                            ds.queryWithoutCount();
+                        } else {
+                            ds.query(function(){
+                                
+                            });
+                        }
+                        $scope.savePageSetting();
+                    }
+                }
+
+                $scope.pagingKeyPress = function (e) {
+                    if (e.which == 13) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                    $timeout(function () {
+                        if (!$scope.loading) {
+                            $scope.showChangePage = true;
+                            if (e.which == 13) {
+                                $scope.changePage();
+                            }
+                        }
+                    });
+                }
+                
+                $scope.changePage = function () {
+                    $scope.gridOptions.pageInfo.currentPage = $scope.gridOptions.pageInfo.typingPage;
+                    $scope.savePageSetting();
+                }
+                
+                $scope.firstPage = function () {
+                    $scope.gridOptions.pageInfo.currentPage = 1;
+                    $scope.savePageSetting();
+                }
+                
+                $scope.prevPage = function () {
+                    $scope.gridOptions.pageInfo.currentPage -= 1;
+                    if ($scope.gridOptions.pageInfo.currentPage <= 1) {
+                        $scope.gridOptions.pageInfo.currentPage = 1;
+                    }
+                    $scope.savePageSetting();
+                }
+                
+                $scope.nextPage = function () {
+                    $scope.gridOptions.pageInfo.currentPage += 1;
+                    if ($scope.gridOptions.pageInfo.currentPage > $scope.datasource.totalItems) {
+                        $scope.gridOptions.pageInfo.currentPage = $scope.datasource.totalItems;
+                    }
+                    $scope.savePageSetting();
+                }
+                $scope.lastPage = function () {
+                    $scope.gridOptions.pageInfo.currentPage = $scope.datasource.totalItems;
+                    $scope.savePageSetting();
+                }
+
+                $scope.deleteRow = function (idx) {
+                    $scope.datasource.data.splice(idx, 1);
+                }
+
+                // fixed header on scroll
+                var $container = $el.parents('.container-full');
+                var $header = $el.find("table > thead");
+                var inViewport = function (el, offset) {
+                    var rect = el[0].getBoundingClientRect();
+                    var leftBoundary = $container.width();
+                    var rightBoundary = 0;
+                    
+                    if ($header.width() > leftBoundary) {
+                        rightBoundary = leftBoundary - $header.width();
+                    }
+                    
+                    return (
+                        rect.bottom >= parseInt($container.css('margin-top')) + offset &&
+                        rect.right >= rightBoundary &&
+                        rect.left < leftBoundary &&
+                        rect.top < 0
+                    );
+                } 
+                
+                $scope.recalcHeaderWidth = function () {
+                    $scope.firstColWidth = $header.find("th:eq(0)").outerWidth();
+                    if ($scope.firstColWidth == 0) return;
+                    
+                    $el.find('.thead .tr').each(function(tr) {
+                        $el.find('.thead .tr:eq(' + tr + ') .th').each(function(th) {
+                            var w = $header.find("tr:eq(" + tr + ") th:eq(" + th + ")").outerWidth();
+                            $(this).css({
+                                width:w,
+                                minWidth: w,
+                                maxWidth: w
+                            });
+                        });
+                    });
+
+                    //$el.parents('.container-fluid').width(Math.max($el.parents('.container-fluid').width(), $el.width() + 15));
+                }
+                
+                $scope.isCbFreezed = false;
+                var paddingLeft = $el.offset().left;
+                $scope.freezeControlBar = function() {
+                    if (!!$scope.gridOptions.freezeControlBar || !!$scope.gridOptions.freeze) {
+                        $el.find('.data-grid-paging').css({
+                            marginLeft: (($el.offset().left  *-1) + paddingLeft) + 'px',
+                            width: ($container.width() - (paddingLeft * 3)) + 'px'
+                        });
+                    }
+                    $scope.isCbFreezed = !!$scope.gridOptions.freezeControlBar || !!$scope.gridOptions.freeze;
+                };
+                
+                $(window).resize(function () {
+                    $timeout(function () {
+                        $scope.recalcHeaderWidth();
+                        $scope.checkMode();
+                        $scope.freezeControlBar();
+                    }, 400);
+                });
+                
+                function getScrollbarWidth() {
+                  var div, body, W = window.browserScrollbarWidth;
+                  if (W === undefined) {
+                    body = document.body, div = document.createElement('div');
+                    div.innerHTML = '<div style="width: 50px; height: 50px; position: absolute; left: -100px; top: -100px; overflow: auto;"><div style="width: 1px; height: 100px;"></div></div>';
+                    div = div.firstChild;
+                    body.appendChild(div);
+                    W = window.browserScrollbarWidth = div.offsetWidth - div.clientWidth;
+                    body.removeChild(div);
+                  }
+                  return W;
+                };
+                $scope.scrollBarWidth = getScrollbarWidth();
+                
+                $container.scroll(function () {
+                    if ($scope.firstColWidth == 0) {
+                        $scope.recalcHeaderWidth();
+                    }
+                    
+                    var $thead = $el.find(".thead");
+                    var elOffset = parseInt($el.css('padding-top'));
+                    var headerOffset = elOffset + $header.height();
+                    var fixedHeader = inViewport($el, headerOffset);
+                    
+                    $scope.freezeControlBar();
+                    
+                    if (fixedHeader) {
+                        $thead.css({
+                            top: $container.offset().top + 'px',
+                            left: $el.offset().left + 'px',
+                            right: $scope.scrollBarWidth + 'px',
+                            overflow: 'hidden'
+                        });
+                        $thead.addClass("show");
+                    } else {
+                        $thead.removeClass("show");
+                    }
+                }.bind($scope));
+
+                // merge same row value
+                $scope.mergeSameRowValue = function () {
+                    $el.find('table tbody tr.r td.rowSpanned').removeClass('rowSpanned');
+                    $el.find('table tbody tr.r td[rowspan]').removeAttr('rowspan');
+                    var totalRow = $el.find('table tbody tr.r').length;
+
+                    function mergeRow(c, el, row) {
+                        var text = $(el).text();
+                        if (c.$prevText === 'INITIAL-PREV-TEXT') {
+                            c.$newRow = $(el);
+                        }
+
+                        if (!c.mergeSameRowMethod || c.mergeSameRowMethod.toLowerCase() == 'default') {
+                            if (text != c.$prevText) {
+                                if (c.$totalSpan > 1) {
+                                    c.$newRow.attr('rowspan', c.$totalSpan);
+                                    c.$prevRow.forEach(function (r) {
+                                        r.addClass('rowSpanned');
+                                    });
+                                }
+                                
+                                // reset new Row
+                                c.$newRow = $(el);
+                                c.$totalSpan = 1;
+                                c.$prevRow.length = 0;
+                            } else if (!$(el).parent().prev().hasClass('group') && $(el).parent().hasClass('r')) {
+                                c.$prevRow.push($(el));
+                                c.$totalSpan++;
+                            }
+                        }
+
+                        if (totalRow - 1 == row) {
+                            if (c.$totalSpan > 1) {
+                                c.$newRow.attr('rowspan', c.$totalSpan);
+                                c.$prevRow.forEach(function (r) {
+                                    r.addClass('rowSpanned');
+                                });
+                            }
+                        }
+                        
+                        if(!!c.mergeSameRowMethod){
+                            if(c.$values.length==0){
+                                c.$values.push(c.$prevText);
+                            }
+                            c.$values.push(text);
+                            
+                        }
+
+                        c.$prevText = text;
+                        c.$prevRowIndex = c.$rowIndex;
+                        c.$rowIndex = row;
+                    }
+                    
+                    $scope.mergeRowMethods = {
+                        'Sum': function(values) {
+                            var total = 0;
+                            values.forEach(function(v){
+                                total+=(v | 0)
+                            });
+                            return total;
+                        },
+                        'Average': function(values) {
+                            var total = 0;
+                            values.forEach(function(v){
+                                total+=(v | 0)
+                            });
+                            return Math.round((total/values.length)*100)/100;
+                        },
+                        'Max': function(values) {
+                            var max;
+                            values.forEach(function(v,i){
+                                if(i==0){
+                                    max = (v | 0);
+                                }else{
+                                    max = Math.max(max, (v | 0));
+                                }
+                            });
+                            return max;
+                        },
+                        'Count': function(values) {
+                            return values.length;
+                        },
+                        'Min': function(values) {
+                            var min;
+                            values.forEach(function(v,i){
+                                if(i==0){
+                                    min = (v | 0);
+                                }else{
+                                    min = Math.min(min, (v | 0));
+                                }
+                            });
+                            return min;
+                        },
+                        'Join': function(values, separator) {
+                            separator = separator || ',';
+                            return values.join(separator);
+                        },
+                    }
+
+                    // loop each row to merge
+                    $el.find('table tbody tr.r').each(function (rowIndex) {
+                        for (var i = 0; i < $scope.columns.length; i++) {
+                            var c = $scope.columns[i];
+                            if (!!c.mergeSameRow && c.mergeSameRow == 'Yes') {
+                                if (rowIndex == 0) {
+                                    c.$newRow = null;
+                                    c.$prevRow = [];
+                                    c.$values = [];
+                                    c.$execValues = [];
+                                    c.$prevText = 'INITIAL-PREV-TEXT';
+                                    c.$totalSpan = 1;
+                                }
+
+                                if (!!c.mergeSameRowWith && c.mergeSameRowWith != c.name) {
+                                    if (!c.$anchorCol) {
+                                        $scope.columns.forEach(function (e, ei) {
+                                            if (e.name === c.mergeSameRowWith && !!e.$prevText) {
+                                                c.$anchorCol = e;
+                                                c.$anchorIdx = ei;
+                                            }
+                                        }.bind(c));
+                                    }
+                                    
+                                    if (!!c.$anchorCol && c.$anchorCol.mergeSameRow == 'Yes') {
+                                        var el = $(this).find("td").eq(i);
+                                        
+                                        if (c.$anchorCol.$rowIndex != rowIndex) {
+                                            mergeRow(c.$anchorCol, $(this).find("td").eq(c.$anchorIdx), c.$anchorIdx);
+                                        }
+                                        
+                                        if (c.$anchorCol.$totalSpan > 1) {
+                                            mergeRow(c, el, rowIndex);
+                                        } else {
+                                            if(c.$totalSpan > 1){
+                                                c.$newRow.attr('rowspan', c.$totalSpan);
+                                                c.$prevRow.forEach(function (r) {
+                                                    r.addClass('rowSpanned');
+                                                });
+                                            }
+                                            
+                                            c.$newRow = $(el);
+                                            if (!!c.mergeSameRowMethod && c.mergeSameRowMethod != "default") {
+                                                if (!!c.$values && c.$values.length > 0) {
+                                                    var colIdx = c.$newRow.index();
+                                                    var lastRow = c.$newRow.parent().prev().find("td:eq(" + colIdx + ")");
+                                                    c.$values.forEach(function(item, i) {
+                                                        if (i < c.$values.length - 1) {
+                                                            lastRow.addClass('rowSpanned');
+                                                        } else {
+                                                            lastRow.attr('rowspan', c.$values.length);
+                                                            lastRow.text($scope.mergeRowMethods[c.mergeSameRowMethod](c.$values));
+                                                        }
+                                                        lastRow = lastRow.parent().prev().find("td:eq(" + colIdx + ")");
+                                                    });
+                                                    c.$values = [];
+                                                }
+                                            }
+                                            
+                                            //reset row
+                                            var text = $(el).text();
+                                            c.$prevText = text;
+                                            c.$prevRowIndex = c.$rowIndex;
+                                            c.$rowIndex = rowIndex;
+                                            c.$totalSpan = 1;
+                                            
+                                        }
+                                    }
+                                    
+                                }
+
+                                // if mergeWith == none (AND it is not merged yet)
+                                else if (c.$rowIndex != rowIndex) {
+                                    mergeRow(c, $(this).find("td").eq(i), rowIndex);
+                                }
+                            }
+                        }
+                    });
+
+                    $scope.cleanRow();
+                }
+
+                $scope.cleanRow = function () {
+                    $el.find('table tbody tr.a .rowSpanned').removeClass('rowSpanned').removeAttr('rowspan');
+                    $el.find('table tbody tr.r.hide').removeClass('hide');
+                }
+
+                // checkbox handling
+                $scope.checkbox = {};
+                $scope.lastCheckbox = null;
+                $scope.getModifyDS = function (col) {
+                    if (!!col.options && !!col.options.modifyDataSource && col.options.modifyDataSource == 'false') {
+                        return false;
+                    }
+                    return true;
+                }
+                $scope.clearCheckbox = function(col) {
+                    $timeout(function() {
+                        $scope.checkbox = {};
+                        $scope.lastCheckbox = null; 
+                        $timeout(function() {
+                            $el.find("input[class^='cb-'],input[class*=' cb-']").prop('checked',false);
+                            $el.find(".row-checked").each(function() {
+                                $(this).removeClass("row-checked");
+                                $(this).find(".t-checkbox input").prop('checked', false);
+                            });
+                        });
+                    });
+                }
+                $scope.checkboxValues = function (colName, column) {
+                    var ret = [];
+                    for (i in $scope.checkbox[colName]) {
+                        if (typeof $scope.checkbox[colName][i][column] != "undefined") {
+                            ret.push($scope.checkbox[colName][i][column])
+                        }
+                    }
+                    return ret.join(",");
+                }
+                $scope.checkboxRow = function (row, colName, colIdx, e) {
+                    var modify = $scope.getModifyDS($scope.columns[colIdx]);
+                    if (typeof $scope.checkbox[colName] == "undefined") {
+                        $scope.checkbox[colName] = [];
+                    }
+                    var isChecked = $scope.checkbox[colName].indexOf(row);
+                    var rowFound = -1;
+                    for (a in $scope.checkbox[colName]) {
+                        if ($scope.checkbox[colName][a][$scope.datasource.primaryKey] == row[$scope.datasource.primaryKey]) {
+                            rowFound = a;
+                        }
+                    }
+                    
+                    if (typeof e !== "boolean") {
+                        isChecked = $(e.target).is(":checked");
+                        if ($scope.lastCheckbox !== null) {
+                            if (e.shiftKey) {
+                                var from = Math.min($scope.lastCheckbox.idx, this.$index);
+                                var to = Math.max($scope.lastCheckbox.idx, this.$index);
+                                for (var i = from; i<to; i++) {
+                                    $scope.checkboxRow($scope.datasource.data[i], colName, colIdx, $scope.lastCheckbox.checked);
+                                }
+                            }
+                        } 
+                        $scope.lastCheckbox = {
+                            idx: this.$index,
+                            data: row,
+                            checked: isChecked
+                        };
+                    } else {
+                        isChecked = e;
+                    }
+                    
+                    if (isChecked) {
+                        if (rowFound < 0) {
+                            $scope.checkbox[colName].push(row);
+                        }
+                        if (modify) {
+                            row[colName] = $scope.columns[colIdx].checkedValue;
+                        }
+                    } else {
+                        if (rowFound >= 0) {
+                            $scope.checkbox[colName].splice(rowFound, 1);
+                        }
+                        if (modify) {
+                            row[colName] = $scope.columns[colIdx].uncheckedValue;
+                        }
+                    }
+                }
+                $scope.downloadExcel = function() {
+                    var availableHeader = [];
+                    var rows = [];
+                    var row = [];
+                    $el.find('table thead tr:last-child th').each(function(i, e) {
+                        if ($(e).text().trim() != "") {
+                            availableHeader.push(i);
+                        }
+                    });
+                    
+                    $el.find('table thead tr').each(function(i, e) {
+                        var row = [];
+                        $(e).find('th').each(function(j, f) {
+                            if (availableHeader.indexOf(j) >= 0 || j == 0) {
+                                if (availableHeader.indexOf(j) >= 0) {
+                                    row.push($(f).text().trim());
+                                }
+                                if ($(f).attr('colspan') > 0) {
+                                    var cp = $(f).attr('colspan');
+                                    for (var x= 0;x < cp -1;x++) {
+                                        row.push('');
+                                    }
+                                }
+                            }
+                        });
+                        rows.push(row);
+                    });
+                    
+                    $el.find('table tbody tr').each(function(i, e) {
+                        var row = [];
+                        $(e).find('td').each(function(j, f) {
+                            if (availableHeader.indexOf(j) >= 0) {
+                                row.push($(f).text().trim());
+                            }
+                        });
+                        rows.push(row);
+                    });
+                    
+                    $http.post(Yii.app.createUrl('/formfield/GridView.downloadExcel'), {rows:rows}).success(function(e) {
+                        location.href = e;
+                    });
+                }
+                $scope.checkboxGroup = function (rowIdx, colName, colIdx, e) {
+                    var loop = true;
+                    var modify = $scope.getModifyDS($scope.columns[colIdx]);
+                    var cursor = $(e.target).parents("tr").next();
+                    var level = (rowIdx == -1 ? -1 : $scope.datasource.data[rowIdx].$level);
+                    if (level < 0) {
+                        cursor = $el.find("table tbody tr:eq(0)");
+                    }
+                    var isChecked = $(e.target).is(":checked");
+                    
+                    //loop through all rows
+                    while (loop) {
+                        var row = $scope.datasource.data[++rowIdx];
+                        if (!row) {
+                            loop = false;
+                            continue;
+                        }
+                        
+                        if (row.$type =='a' && row.$aggr == false) {
+                            continue;
+                        }
+                        
+                        if (typeof $scope.checkbox[colName] == "undefined") {
+                            $scope.checkbox[colName] = [];
+                        }
+                        
+                        if (cursor.attr("lv") > level) {
+                            if (cursor.hasClass("r")) {
+                                var rowFound = -1;
+                                for (var a in $scope.checkbox[colName]) {
+                                    if ($scope.checkbox[colName][a][$scope.datasource.primaryKey] == row[$scope.datasource.primaryKey]) {
+                                        rowFound = a;
+                                    }
+                                }
+                                if (cursor.find(".cbl-" + colName).length > 0) {
+                                    if (isChecked) {
+                                        if (rowFound < 0) {
+                                            $scope.checkbox[colName].push(row);
+                                        }
+                                        if (modify) {
+                                            row[colName] = $scope.columns[colIdx].checkedValue;
+                                        }
+                                    } else {
+                                        if (rowFound >= 0) {
+                                            $scope.checkbox[colName].splice(rowFound, 1);
+                                        }
+                                        if (modify) {
+                                            row[colName] = $scope.columns[colIdx].uncheckedValue;
+                                        }
+                                    }
+                                }
+                            } else if (cursor.hasClass("g")) {
+                                cursor.find(".cb-" + colName).prop('checked', isChecked);
+                            }
+                        } else {
+                            loop = false;
+                        }
+                        cursor = cursor.next();
+                        if (cursor.length == 0) {
+                            loop = false;
+                        }
+                    }
+                }
+                $scope.checkboxAll = function (colName, colIdx, e) {
+                    $scope.checkboxGroup(-1, colName, colIdx, e);
+                }
+                $scope.checkboxRowChecked = function (row, colName, colIdx) {
+                    if (!!$scope.getModifyDS($scope.columns[colIdx])) {
+                        if (row[colName] == $scope.columns[colIdx].checkedValue) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        if (!$scope.checkbox[colName]) return false;
+                        for (a in $scope.checkbox[colName]) {
+                            if ($scope.checkbox[colName][a][$scope.datasource.primaryKey] == row[$scope.datasource.primaryKey]) {
+                                return true;
+                            }
+                        }
+                        return false;
+
+                    }
+                }
+
+                // when ng-model is changed from outside directive
+                if (!!ctrl) {
+                    // if ngModel is present, use that instead of value from php
+                    if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
+                        return;
+
+                    if (typeof ctrl.$viewValue != "undefined") {
+                        $scope.value = ctrl.$viewValue;
+                        $scope.update();
+                    }
+                }
+
+                // initialize gridView
+                $scope.initGrid = function () {
+                    $scope.gridOptions.pageInfo = {
+                        pageSizes: [10, 25, 50, 100, 250, 500, 1000],
+                        pageSize: $scope.defaultPageSize,
+                        totalServerItems: $scope.datasource.totalItems,
+                        currentPage: 1,
+                        typingPage: 1
+                    };
+
+                    if (typeof $scope.gridOptions.pageSize != "undefined") {
+                        $scope.gridOptions.pageInfo.pageSize = $scope.gridOptions.pageSize * 1;
+                    }
+
+                    $scope.$watch('gridOptions.pageInfo', function (paging, oldpaging) {
+                        if (paging.typingPage != oldpaging.typingPage) return;
+                        if (paging != oldpaging) {
+                            var maxPage = Math.ceil($scope.datasource.totalItems / $scope.gridOptions.pageInfo.pageSize);
+
+                            if (isNaN($scope.gridOptions.pageInfo.currentPage) 
+                                || $scope.gridOptions.pageInfo.currentPage == '' 
+                                || $scope.gridOptions.pageInfo.currentPage <= 0) {
+                                $scope.gridOptions.pageInfo.currentPage = 1;
+                            }
+
+                            if ($scope.gridOptions.pageInfo.currentPage > maxPage) {
+                                $scope.gridOptions.pageInfo.currentPage = Math.max(maxPage, 1);
+                            }
+
+                            if (typeof $scope.datasource != "undefined" && typeof paging != "undefined") {
+                                if ($scope.pagingTimeout != null) {
+                                    clearTimeout($scope.pagingTimeout);
+                                }
+                                
+                                $scope.pagingTimeout = setTimeout(function () {
+                                    $scope.updatePaging(paging, true, oldpaging);
+                                }, 100);
+                            }
+                        }
+                    }, true);
+                    $timeout(function () {
+                        if (!$scope.loaded && !$scope.loading) {
+                            $scope.loaded = true;
+                            $scope.onGridRender('timeout');
+                        }
+                        if (typeof window.resize == 'function') {
+                            window.resize();
+                        }
+                    }, 500);
+                    $timeout(function () {
+                        $scope.datasource.beforeQueryInternal[$scope.renderID] = function () {
+                            $scope.loading = true;
+                            if ($scope.datasource.lastQueryFrom == "DataFilter" && !!$scope.gridOptions.pageInfo) {
+                                $scope.gridOptions.pageInfo.currentPage = 1;
+                            }
+                            $scope.datasource.disableTrackChanges("GridView:initBeforeQuery");
+                            $scope.lastCheckbox = null;
+                        }
+                        $scope.datasource.afterQueryInternal[$scope.renderID] = function () {
+                            $scope.loading = false;
+                            if (!$scope.loaded) {
+                                $scope.loaded = true;
+                            }
+                            if (!$scope.datasource.trackChanges) {
+                                $scope.datasource.resetOriginal();
+                                $scope.datasource.enableTrackChanges('GridView:initAfterQuery');
+                            }
+                            $scope.lastCheckbox = null;
+                            $scope.onGridRender('query');
+                            if (typeof window.resize == "function") {
+                                window.resize();
+                            }
+                        };
+                        $scope.loadPageSetting();
+                    });
+                };
+                
+                if (!$scope.datasource) {
+                    alert("Error: " + $scope.name + " Please choose datasource!!")
                 } else {
-                    echo $this->getSuperHeaderTemplate($i, $col, $idx, $mode);
-                }
-            }
-            echo ($mode == 'class' ? '</div>' : '</tr>');
-        }
-        return ob_get_clean();
-    }
-    
-    private function getWidth($col, $overflow = true) {
-        if (@$col['options']['width'] != "") {
-            $style = 'width:' .$col['options']['width'] . 'px;';
-            $style .= 'min-width:' .$col['options']['width'] . 'px;';
-            $style .= 'max-width:' .$col['options']['width'] . 'px;';
-            if ($overflow) {
-                $style .= 'overflow-x: hidden;';
-            }
-            return $style;
-        }
-        
-        return '';
-    }
-    
-    public function getSuperHeaderTemplate($row, $col, $idx, $mode) {
-        $attr      = [];
-        if (isset($col['options']['ng-if'])) {
-            $attr['ng-if'] = $col['options']['ng-if'];
-        }
-        
-        if (!isset($col['headers'])) {
-            $col['headers'] = [];
-        }
-        
-        if (!isset($col['headers']['r'. $row])) {
-            $col['headers']['r'. $row] = [
-                'label' => '',
-                'colSpan' => '1'
-            ];
-        }
-        
-        $headers = $col['headers']['r'. $row];
-        $width = $this->getWidth($col);
-        if ($width != '') {
-            $attr['style'] = $width;
-        }
-        
-        if ($headers['colSpan'] < 1) {
-            return "";
-        } else if ($headers['colSpan'] > 1) {
-            $attr['colspan'] = $headers['colSpan']; 
-        }
-        if (is_array($attr)) {
-            $attr = $this->expandAttributes($attr);
-        }
-        
-        $content = $headers['label'];
-        if ($mode == 'class') {
-            return <<<EOL
-<div class="th" {$attr}>
-{$content}
-</div>
-EOL;
-        } else {
-            return <<<EOL
-<th {$attr}>
-{$content}
-</div>
-EOL;
-        }
-    }
-
-    public function getHeaderTemplate(&$col, $idx, $mode) {
-        $fieldName = isset($col['fieldName']) ? $col['fieldName'] : $col['name'];
-        if ($fieldName == "" && !@$col['options']['mode']) return "";
-
-        $attr      = [];
-        if (@$col['options']['ng-if'] != "") {
-            $attr['ng-if'] = $col['options']['ng-if'];
-        }
-        
-        $width = $this->getWidth($col);
-        if ($width != '') {
-            $attr['style'] = $width;
-        }
-        
-        if (is_array($attr)) {
-            $attr = $this->expandAttributes($attr);
-        }
-        
-        switch ($col['columnType']) {
-            case "string":
-                $sortable = "ng-click=\"sort('{$fieldName}')\"";
-                $caret    = <<<EOF
-        <i class="fa fa-caret-up" ng-if="isSort('{$fieldName}', 'asc')"></i>
-        <i class="fa fa-caret-down" ng-if="isSort('{$fieldName}', 'desc')"></i>
-EOF;
-
-                if (isset($col['options']) && isset($col['options']['sortable']) && $col['options']['sortable'] === 'false') {
-                    $sortable = '';
-                    $caret    = '';
-                }
-
-                 $content = <<<EOF
-    <div class="row-header" {$sortable}>
-        {$col['label']}
-        {$caret}
-    </div>
-EOF;
-                break;
-            case "checkbox":
-                $ngif = "";
-                if (isset($col['options']['ng-checkbox-head-if'])) {
-                    $ngif = "ng-if=\"({$col['options']['ng-checkbox-head-if']})\"";
+                    $scope.datasource.disableTrackChanges("Gridview:beforeInit");
                 }
                 
-                $content =  <<<EOL
-    <label {$ngif}><input type="checkbox"
-ng-click="checkboxAll('{$col['name']}','{$idx}', \$event)" class="cb-th-{$col['name']}" /></label>
-EOL;
+                $scope.gridRenderTimeout = null;
+                $scope.onGridRender = function (flag) {
+                    if ($scope.gridRenderTimeout !== null) {
+                        return;
+                    }
 
-                
-                break;
+                    $scope.gridRenderTimeout = $timeout(function () {
+                        $scope.mergeSameRowValue();
+                        $timeout(function () {
+                            $scope.recalcHeaderWidth();
+                            $scope.gridRenderTimeout = null;
+                        });
+                    }, 100);
+                };
+
+                $scope.initGrid();
+                $scope.parent[$scope.name] = $scope;
+            };
         }
-        
-        if (isset($col['labelHtml'])) {
-            $content = $col['labelHtml'];
-        } else {
-            $col['labelHtml'] = $content;
-        }
-        
-        if ($mode == 'class') {
-            return <<<EOL
-<div class="th" {$attr}>
-{$content}
-</div>
-EOL;
-        } else {
-            return <<<EOL
-<th {$attr}>
-{$content}
-</div>
-EOL;
-        }
-        
     }
-
-    public function getFieldProperties() {
-        return array (
-            array (
-                'label' => 'GridView Name',
-                'name' => 'name',
-                'labelWidth' => '5',
-                'fieldWidth' => '7',
-                'options' => array (
-                    'ng-model' => 'active.name',
-                    'ng-change' => 'save()',
-                    'ng-delay' => '500',
-                ),
-                'type' => 'TextField',
-            ),
-            array (
-                'label' => 'Data Source Name',
-                'name' => 'datasource',
-                'options' => array (
-                    'ng-model' => 'active.datasource',
-                    'ng-change' => 'save()',
-                    'ng-delay' => '500',
-                    'ps-list' => 'dataSourceList',
-                ),
-                'labelWidth' => '5',
-                'fieldWidth' => '7',
-                'type' => 'DropDownList',
-            ),
-            array (
-                'type' => 'Text',
-                'value' => '<div class=\'clearfix\'></div>',
-            ),
-            array (
-                'label' => 'Grid Options',
-                'name' => 'gridOptions',
-                'type' => 'KeyValueGrid',
-            ),
-            array (
-                'label' => 'Container Element Options',
-                'name' => 'options',
-                'type' => 'KeyValueGrid',
-            ),
-            array (
-                'label' => 'Table Element Options',
-                'name' => 'tableOptions',
-                'type' => 'KeyValueGrid',
-            ),
-            array (
-                'type' => 'Text',
-                'value' => '<div ng-if=\\"active.gridOptions[\'dynamicColumns\'] == \'true\'\\">',
-            ),
-            array (
-                'label' => 'Columns Function',
-                'fieldname' => 'columnsFunc',
-                'desc' => 'Use $columns and $data to get columns and data.<br/>
- e.g: YourClass::function($columns, $data)
-<br/><br/>
-NOTE: to use $data, you must set \'cache\' = \'true\' <br/>
-in your DataSource Options',
-                'type' => 'ExpressionField',
-            ),
-            array (
-                'type' => 'Text',
-                'value' => '</div>',
-            ),
-            array (
-                'title' => 'Header',
-                'type' => 'SectionHeader',
-            ),
-            array (
-                'type' => 'Text',
-                'value' => '<div ng-click=\"headerPopUp.open()\" 
-     style=\'margin-top:-25px\'
-     class=\"btn btn-xs pull-right btn-info\">
-    <b><i class=\"fa fa-pencil\"></i> Edit Header</b>
-</div>',
-            ),
-            array (
-                'type' => 'PopupWindow',
-                'name' => 'headerPopUp',
-                'options' => array (
-                    'width' => '800',
-                    'height' => '400',
-                ),
-                'mode' => 'url',
-                'subForm' => 'application.components.ui.FormFields.GridViewHeader',
-                'url' => '/formfield/GridView.editHeader',
-                'title' => 'GridView Header Setting',
-                'parentForm' => 'application.components.ui.FormFields.GridView',
-            ),
-            array (
-                'title' => 'Columns',
-                'type' => 'SectionHeader',
-            ),
-            array (
-                'label' => 'Generate Columns',
-                'buttonType' => 'success',
-                'icon' => 'magic',
-                'buttonSize' => 'btn-xs',
-                'options' => array (
-                    'style' => 'float:right;margin:-25px 0px 0px 0px;',
-                    'ng-show' => 'active.datasource != \'\'',
-                    'ng-click' => 'generateColumns()',
-                ),
-                'type' => 'LinkButton',
-            ),
-            array (
-                'type' => 'Text',
-                'value' => '<div style=\'margin-top:5px\'></div>',
-            ),
-            array (
-                'name' => 'columns',
-                'fieldTemplate' => 'form',
-                'templateForm' => 'application.components.ui.FormFields.GridViewCol',
-                'inlineJS' => 'GridView/grid-builder.js',
-                'options' => array (
-                    'ng-model' => 'active.columns',
-                    'ng-change' => 'save()',
-                ),
-                'singleViewOption' => array (
-                    'name' => 'val',
-                    'fieldType' => 'text',
-                    'labelWidth' => 0,
-                    'fieldWidth' => 12,
-                    'fieldOptions' => array (
-                        'ng-delay' => 500,
-                    ),
-                ),
-                'type' => 'ListView',
-            ),
-        );
-    }
-
-}
+})
+;
