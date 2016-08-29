@@ -585,12 +585,11 @@ class DataFilter extends FormField {
                 case "check":
                     if (isset($filter['listExpr']) && trim($filter['listExpr']) != '') {
                         ## evaluate expression
-                        $list = $this->evaluate(html_entity_decode($filter['listExpr']), true);
+                        $list = $this->evaluate($filter['listExpr'], true);
                         
                         ## kalau listExpr ini berisi html, nanti bakal menghancurkan layout
                         ## karena html nya itu masuk ke dalam json, dan bakal di render
                         ## jadinya kita unset saja setelah di proses biar ga masuk ke json
-                        $this->filters[$k]['listExpr'] = htmlentities($this->filters[$k]['listExpr']); 
                     
                         ## change sequential array to associative array
                         if (is_array($list) && !Helper::is_assoc($list)) {
@@ -602,10 +601,10 @@ class DataFilter extends FormField {
                         foreach ($list as $i=>$listItem) {
                             if (is_array($listItem)) {
                                 foreach ($listItem as $l => $listSubItem) {
-                                    $list[$i][$l] = htmlentities($listSubItem);
+                                    $list[$i][$l] = $listSubItem;
                                 }
                             } else {
-                                $list[$i] = htmlentities($listItem);
+                                $list[$i] = $listItem;
                             }
                         }
     

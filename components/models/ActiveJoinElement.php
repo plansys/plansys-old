@@ -655,10 +655,19 @@ class ActiveJoinElement {
 					if(!isset($this->_columnAliases[$alias]) || $this->_columnAliases[$alias]!==$alias)
 					{
 						if ($this->dsCountCol == true || (isset($this->_parent) && $this->_parent->dsCountCol == true)) { 
-							// only do this when we are not counting from datasource
+							// only do this when we are not counting from 
+							$this->dsCountCol = false;
 							
-							$newAlias = str_replace($alias, $this->_columnAliases[$alias], $oldAlias);
-							return str_replace($oldAlias, $newAlias, $name);
+							if (isset($this->_columnAliases[$alias])) {
+								$newAlias = str_replace($alias, $this->_columnAliases[$alias], $oldAlias);
+								return str_replace($oldAlias, $newAlias, $name);
+							} else {
+								$col = $this->model->getPrimaryKey();
+								if (is_array($col)) {
+									$col = $col[0];
+								}
+								return str_replace($oldAlias,'id' , $name);
+							}
 						} else {
 							$this->_columnAliases[$alias]=$alias;
 							$columns[]=$name;

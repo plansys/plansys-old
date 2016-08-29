@@ -22,7 +22,8 @@ app.directive('listView', function ($timeout) {
                 $scope.deletable = $el.find("data[name=deletable]:eq(0)").text().trim();
                 $scope.sortable = $el.find("data[name=sortable]:eq(0)").text().trim();
                 $scope.renderID = $el.find("data[name=render_id]").text();
-                $scope.datasource = $scope.parent[$el.find("data[name=datasource]:eq(0)").text()];
+                $scope.dsName = $el.find("data[name=datasource]:eq(0)").text();
+                $scope.datasource = $scope.parent[$scope.dsName];
                 $scope.templateAttr = JSON.parse($el.find("data[name=template_attr]").html().trim());
                 $scope.options = JSON.parse($el.find("data[name=options]").html().trim());
                 $scope.subRels = JSON.parse($el.find("data[name=sub_rels]").html().trim());
@@ -357,6 +358,12 @@ app.directive('listView', function ($timeout) {
                                         $scope.loading = false;
                                         $scope.datasource.enableTrackChanges("ListView:initWhenDS");
                                     }, 100);
+                                }
+                            } else {
+                                if (!$scope.dsName) {
+                                    alert("Warning: Please select datasource for " + $scope.name);
+                                } else {
+                                    alert("Warning: Datasource with name [" + $scope.dsName + "] not found.");
                                 }
                             }
                         } else {

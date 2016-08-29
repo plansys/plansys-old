@@ -77,7 +77,9 @@
         <div class="clearfix"></div>
         <?php if ($this->showSectionTab == "Yes"): ?>
             <div class="action-tab" >
+                <?php if ($this->firstTabName != ""): ?>
                 <a href="#<?= strtolower(preg_replace('/[^\da-z]/i', '_', $this->firstTabName)) ?>" top="0" class="active"><?= $this->firstTabName ?></a>
+                <?php endif; ?>
                 <div class="clearfix"></div>
             </div>
         <?php endif; ?>

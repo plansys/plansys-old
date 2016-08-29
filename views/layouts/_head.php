@@ -15,5 +15,4 @@
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/index.app.js'));
     Yii::app()->clientScript->registerScriptFile($this->staticUrl('/js/index.ctrl.js'));
     ?> 
-    <meta http-equiv="X-FRAME-OPTIONS" content="SAMEORIGIN">
 </head>
