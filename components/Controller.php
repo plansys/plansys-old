@@ -429,7 +429,7 @@ class Controller extends CController {
 
         parent::beforeAction($action);
         
-        if ($this->enableDebug) {
+        if (Setting::$mode == 'running' && $this->enableDebug) {
             Yii::beginProfile('PlansysRenderForm');
         }
         return true;
@@ -441,7 +441,7 @@ class Controller extends CController {
         ## Make sure service daemon is started
         ServiceManager::startDaemon();
 
-        if ($this->enableDebug) {
+        if (Setting::$mode == 'running' && $this->enableDebug) {
             Yii::endProfile('PlansysRenderForm');
         }
         parent::afterAction($action);
