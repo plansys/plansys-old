@@ -1,7 +1,11 @@
 <?php
 
-function vdump($var) {
-    CVarDumper::dump($var, 10, true);
+function vdump() {
+    $arg_list = func_get_args();
+    foreach ($arg_list as $var) {
+        CVarDumper::dump($var, 10, true);
+        echo "<br/>";
+    }
 }
 
 class Setting {

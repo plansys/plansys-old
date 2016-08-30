@@ -421,12 +421,16 @@ class ActiveRecord extends CActiveRecord {
                     ## jika yg kolom itu foreign key DAN kolom nya kosong, maka set NULL (karena foreign_key ga boleh string kosong)
                     if ($isModelExist && in_array($columnName[$i], $foreignKeys) && $d[$columnName[$i]] == '') {
                         $updatearr[] = '|' . $columnName[$i] . "| = NULL";
+                        
+                    if ($columnName[$i] == 'efectiveness3') {
+                        echo "A";
+                    }
                     } else {
                         ## selain itu, hajar seperti biasa...
                         if (is_null($d[$columnName[$i]])) {
                             $updatearr[] = '|' . $columnName[$i] . "| = NULL";
                         } else {
-                            if (is_string($d[$columnName[$i]])) {
+                            if (is_string($d[$columnName[$i]]) || is_numeric($d[$columnName[$i]])) {
                                 $updatearr[] = '|' . $columnName[$i] . "| = '{$d[$columnName[$i]]}'";
                             } else if (is_object($d[$columnName[$i]]) && is_subclass_of($d[$columnName[$i]], 'CDbExpression')) {
                                 $updatearr[] = '|' . $columnName[$i] . "| = " . $d[$columnName[$i]]->expression;
@@ -434,6 +438,7 @@ class ActiveRecord extends CActiveRecord {
                         }
                     }
                 }
+                
             }
 
             $updatesql = implode(",", $updatearr);
@@ -1737,7 +1742,7 @@ class ActiveRecord extends CActiveRecord {
                 }
             }
         }
-
+        
         foreach ($rels as $r) {
             $insert = [];
             $update = [];
@@ -1778,6 +1783,9 @@ class ActiveRecord extends CActiveRecord {
                     }
                 }
             }
+        
+        
+            
 
             if (!empty($update)) {
                 ActiveRecord::batchUpdate($class, $update);
