@@ -1147,7 +1147,7 @@ class RelationField extends FormField {
             $this->addClass('btn-default', 'fieldOptions');
         }
         $this->fieldOptions['ng-init'] = 'initScopeItem(this,$index)';
-        $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        $this->setDefaultOption('ng-model', "model['{$this->originalName}']", $this->options);
 
         $this->relationCriteria['limit']  = ActiveRecord::DEFAULT_PAGE_SIZE;
         $this->relationCriteria['offset'] = '0';

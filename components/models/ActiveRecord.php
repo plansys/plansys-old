@@ -307,7 +307,6 @@ class ActiveRecord extends CActiveRecord {
 
         $model = null;
 
-
         $formattedData = $data;
         if (!@class_exists($modelClass)) {
             $table = $modelClass;

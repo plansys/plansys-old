@@ -95,7 +95,7 @@ class TagField extends FormField {
         $this->fieldOptions['id'] = $this->renderID;
         $this->fieldOptions['name'] = $this->renderName;
         $this->addClass('form-control', 'fieldOptions');
-        $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        $this->setDefaultOption('ng-model', "model['{$this->originalName}']", $this->options);
 
         if (!is_string($this->value))
             $this->value = json_encode($this->value);

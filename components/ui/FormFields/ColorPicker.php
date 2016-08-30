@@ -218,7 +218,7 @@ class ColorPicker extends FormField {
         $this->fieldOptions['name'] = $this->renderName;
         $this->addClass('form-control', 'fieldOptions');
 
-        $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        $this->setDefaultOption('ng-model', "model['{$this->originalName}']", $this->options);
 
         if (!is_string($this->color))
             $this->color = json_encode($this->color);

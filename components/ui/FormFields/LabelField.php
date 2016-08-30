@@ -224,7 +224,7 @@ class LabelField extends FormField {
         $this->addClass('label-field-value', 'fieldOptions');
 
         if ($this->js == "") {
-            $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+            $this->setDefaultOption('ng-model', "model['{$this->originalName}']", $this->options);
         }
 
         if (!is_string($this->value))

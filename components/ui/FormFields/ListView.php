@@ -472,7 +472,7 @@ class ListView extends FormField {
             $this->renderTemplateForm = $field->render();
         }
 
-        $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        $this->setDefaultOption('ng-model', "model['{$this->originalName}']", $this->options);
 
         $jspath = explode(".", FormBuilder::classPath($this->templateForm));
         array_pop($jspath);

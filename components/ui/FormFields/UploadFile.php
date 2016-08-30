@@ -379,7 +379,7 @@ class UploadFile extends FormField {
 
         $this->addClass('form-control', 'fieldOptions');
 
-        $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        $this->setDefaultOption('ng-model', "model['{$this->originalName}']", $this->options);
         $this->setDefaultOption('style', "min-width:275px;", $this->options);
         return $this->renderInternal('template_render.php');
     }

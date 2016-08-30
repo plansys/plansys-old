@@ -283,7 +283,7 @@ class SqlCriteria extends FormField {
         $this->options['name'] = $this->renderName;
         $this->addClass('field-box');
 
-        $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        $this->setDefaultOption('ng-model', "model['{$this->originalName}']", $this->options);
 
         return $this->renderInternal('template_render.php');
     }

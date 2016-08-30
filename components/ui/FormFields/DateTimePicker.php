@@ -240,7 +240,7 @@ class DateTimePicker extends FormField
         
         $this->setOption('showButtonBar', false, 'datepickerOptions');
         
-        $this->setDefaultOption('ng-model', "model.{$this->originalName}", $this->options);
+        $this->setDefaultOption('ng-model', "model['{$this->originalName}']", $this->options);
         
         if (!is_string($this->value))
             $this->value = date("Y-m-d H:i:s");
