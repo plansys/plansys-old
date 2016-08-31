@@ -123,8 +123,8 @@ EOF;
         $this->msg('Opening Excel File...');
 
         $reader = ReaderFactory::create(Type::XLSX);
-        $reader->open($file);
-        
+
+        $a = $reader->open($file);
         $transaction = Yii::app()->db->beginTransaction();
         
         ## get first sheet
@@ -142,9 +142,16 @@ EOF;
                     continue;
                 }
                    
-                
-                foreach ($row as $k=>$v) {
-                    $row[$k] = (string)$v;
+                foreach ($row as $k=>$item) {
+                    if(
+                        ( !is_array( $item ) ) &&
+                        ( ( !is_object( $item ) && settype( $item, 'string' ) !== false ) ||
+                        ( is_object( $item ) && method_exists( $item, '__toString' ) ) )
+                    ) {
+                        $row[$k] = (string)$item;
+                    } else {
+                        $row[$k] = "";
+                    }
                 }
                 
                 ## do import 
@@ -163,7 +170,7 @@ EOF;
                 }
                 
                 if ($emptyCount + 1 >= count($import->columns)) {
-                    $this->msg("Skipping " . ($r - 1) . ' Row... (Empty Row)');
+                    $this->msg("<br>" . $this->formatErrors($errors) . "<br>Skipping " . ($r - 1) . ' Row... (Empty Row)');
                     continue;
                 }
                 
