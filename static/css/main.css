@@ -646,7 +646,7 @@ div[ui-content] {
 }
 
 .column-field .section-header {
-    margin: -25px -50px 25px -25px;
+    margin: 0px -50px 25px -25px;
 }
 
 .column-field td:first-child .section-header {
