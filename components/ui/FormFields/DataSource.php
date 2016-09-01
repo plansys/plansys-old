@@ -114,6 +114,7 @@ class DataSource extends FormField {
 
     public static function generateTemplate($sql, $postedParams = [], $field, $paramDefs = []) {
         $returnParams = [];
+        
 
         ## find all params
         preg_match_all("/\:[\w\d_]+/", $sql, $params);
@@ -257,11 +258,13 @@ class DataSource extends FormField {
             $paramOptions = explode("|", $param);
             $param = array_shift($paramOptions);
 
-            if (($param != "order" && $param != "!order") && (!isset($field->params[$param]) && !isset($field->queryParams[$param]))) {
+            if (($param != "order" && $param != "!order" && $param != "where" && $param != "paging") 
+                && (!isset($field->params[$param]) && !isset($field->queryParams[$param]))) {
                 $sql = str_replace("[{$param}]", "", $sql);
                 $parsed[$param] = "";
                 continue;
             }
+            
 
             switch ($param) {
                 case "where":
