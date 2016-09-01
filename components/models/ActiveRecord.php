@@ -117,7 +117,6 @@ class ActiveRecord extends CActiveRecord {
                 $str = implode(".", $split);
                 return $str;
                 break;
-                return $str;
         }
     }
 
@@ -127,27 +126,30 @@ class ActiveRecord extends CActiveRecord {
         }
 
         if (is_string($criteria)) {
-            preg_match_all("/\|([\w.]+)\|/", $criteria, $segment);
+            preg_match_all("/\|([\w\s.]+)\|/", $criteria, $segment);
+
             foreach ($segment[1] as $l => $e) {
-                $e = preg_replace('/[\s]+/', ' ', $e);
-                $e = explode(" ", $e);
-                foreach ($e as $m => $f) {
-                    $e[$m] = self::formatSingleCriteria($f, $driver);
-                }
-                $e = implode(" ", $e);
+                // $e = preg_replace('/[\s]+/', ' ', $e);
+                // $e = explode(" ", $e);
+                // foreach ($e as $m => $f) {
+                //     $e[$m] = self::formatSingleCriteria($f, $driver);
+                // }
+                // $e = implode(" ", $e);
+                $e = self::formatSingleCriteria($e, $driver);
                 $criteria = str_replace("|{$segment[1][$l]}|", $e, $criteria);
             }
         } else if (is_array($criteria)) {
             foreach ($criteria as $k => $c) {
                 if (is_string($c)) {
-                    preg_match_all("/\|([\w.]+)\|/", $c, $segment);
+                    preg_match_all("/\|([\w\s.]+)\|/", $c, $segment);
                     foreach ($segment[1] as $l => $e) {
-                        $e = preg_replace('/[\s]+/', ' ', $e);
-                        $e = explode(" ", $e);
-                        foreach ($e as $m => $f) {
-                            $e[$m] = self::formatSingleCriteria($f, $driver);
-                        }
-                        $e = implode(" ", $e);
+                        // $e = preg_replace('/[\s]+/', ' ', $e);
+                        // $e = explode(" ", $e);
+                        // foreach ($e as $m => $f) {
+                        //     $e[$m] = self::formatSingleCriteria($f, $driver);
+                        // }
+                        // $e = implode(" ", $e);
+                        $e = self::formatSingleCriteria($e, $driver);
                         $criteria[$k] = str_replace("|{$segment[1][$l]}|", $e, $criteria[$k]);
                     }
                 }
