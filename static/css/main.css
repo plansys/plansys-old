@@ -816,6 +816,7 @@ div[ui-content] {
 }
 
 .ui-layout-column > .ui-splitbar > a {
+    display:none !important;
     padding: 3px 0px;
     margin-top: -1px;
     margin-left: -7px;

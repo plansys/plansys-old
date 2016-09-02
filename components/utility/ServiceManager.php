@@ -88,7 +88,6 @@ class ServiceManager extends CComponent {
     }
     
     public static function startDaemon() {
-        $port = Setting::get('app.daemonport');
         $process = self::getProcessCommand();
         $php = Setting::get('app.phpPath');
 
@@ -96,7 +95,7 @@ class ServiceManager extends CComponent {
             $php = 'php';
         }
 
-        ServiceManager::process("exec $process service {$port} {$php} yiic.php service startDaemon \"".__DIR__."\"");
+        ServiceManager::process("exec $process service {$php} yiic.php service startDaemon \"".__DIR__."\"");
     }
     
     public static function process($command) {

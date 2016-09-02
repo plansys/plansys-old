@@ -130,10 +130,6 @@ class Setting {
             Setting::$mode = 'testing';
         }
 
-        if (!isset(Setting::$data['app']['daemonport'])) {
-            Setting::set('app.daemonport', ('50' . rand(100, 999)) * 1);
-        }
-
         if (Setting::get('app.mode') != 'production') {
             //debug
             defined('YII_DEBUG') or define('YII_DEBUG',true );

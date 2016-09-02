@@ -52,7 +52,7 @@ class WebProfiler extends CLogRoute {
      * @param array $logs list of log messages
      */
     public function processLogs($logs) {
-        if ($this->enabled) {
+        if ($this->enabled && !Yii::app()->request->isAjaxRequest) {
             $this->render('log', $logs);
         }
     }

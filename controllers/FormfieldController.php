@@ -14,7 +14,7 @@
 class FormfieldController extends Controller {
 
     public function createAction($actionID) {
-
+        
         $controller = explode(".", $actionID);
         if (count($controller) > 1) {
             $actionID = $controller[1];
@@ -23,6 +23,7 @@ class FormfieldController extends Controller {
             if (class_exists($controller)) {
                 $formfield = new $controller;
                 if (method_exists($formfield, 'action' . ucfirst($actionID))) {
+                    $_SERVER['HTTP_AJAX'] = true;
                     return new CInlineAction($formfield, $actionID);
                 }
             }
