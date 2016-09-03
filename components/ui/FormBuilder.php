@@ -170,16 +170,34 @@ class FormBuilder extends CComponent {
         }
     }
 
-    public static function renderUI($class, $attributes) {
+    public static function renderUI($class, $attributes, $js = []) {
+
+        $init = "";
+        if (isset($js['init'])) {
+            $init = 'ng-init="' . $js['init'] . '"';
+        }
+
+        $load = "";
+        if (isset($js['load'])) {
+            if (!isset($attributes['options'])) {
+                $attributes['options'] = [];
+            }
+
+            $attributes['options']['ng-init'] = $js['load'];
+        }
+
         $field = self::build($class, $attributes, null, true);
         $files = $field->renderScript();
         $html  = $field->render();
         $files = json_encode($files);
-        $url   = Yii::app()->createUrl('/formfield/' . $class . ".render");
-        
+
         echo <<<html
-<div oc-lazy-load='{name:"main", files:{$files}}'>
-    <div ng-include="'{$url}'"></div>
+<div {$init}>
+    <div oc-lazy-load='{name:"main", files:{$files}}' >
+        <div ng-include-fill-content>
+            {$html}
+        </div>
+    </div>
 </div>
 html;
     }

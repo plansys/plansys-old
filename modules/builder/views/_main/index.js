@@ -10,15 +10,17 @@ app.controller("Index", function ($scope, $http, $timeout) {
 
     $scope.builder = builder;
     $scope.$watch('builder.active.$meta', function (n, o) {
-        if (n.columns.length < 3) {
-            $scope.col3.collapsed = true;
-        } else {
-            $scope.col3.collapsed = false;
+        if (!!n) {
+            if (n.columns.length < 3) {
+                $scope.col3.collapsed = true;
+            } else {
+                $scope.col3.collapsed = false;
+            }
         }
     });
 
+    $scope.startLoading = function() {
+//        console.log("ASDSA");
+    }
     builder.activate('code'); // initialize builder
 });
-app.controller("FirstCol", function ($scope, $http, $timeout, $ocLazyLoad) {});
-app.controller("SecondCol", function ($scope, $http, $timeout) {});
-app.controller("ThirdCol", function ($scope, $http, $timeout) {});

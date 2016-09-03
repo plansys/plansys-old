@@ -76,6 +76,7 @@ class Controller extends CController {
         if (($module         = $this->getModule()) !== null)
             $moduleViewPath = $module->getViewPath();
 
+        
         $result = $this->resolveViewFile($viewName, $appPath, $basePath, $moduleViewPath);
         if (!$result) {
             return $this->resolveViewFile($viewName, $this->getViewPath(), $basePath, $moduleViewPath);

@@ -18,9 +18,6 @@
                     <i class="fa fa-refresh fa-spin fa-3x"></i>
                 </div>
 
-                <!--<pre>{{ col1 | json }}</pre>-->
-                <!--<tree-view data="'okedeh'">asdsa</tree-view>-->
-
                 <hr>
                 Choose Tree:<br/>
                 <div class="btn btn-default btn-xs" ng-click="builder.activate('code')">Code</div>

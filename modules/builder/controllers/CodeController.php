@@ -1,9 +1,13 @@
 <?php
 
 class CodeController extends Controller {
+
     public function actionTree() {
         FormBuilder::renderUI('TreeView', [
-            'name'  => 'codetree',
+            'name' => 'codetree',
+                ], [
+            'init' => 'startLoading()',
+            'load' => 'startLoading()',
         ]);
     }
 
@@ -12,6 +16,7 @@ class CodeController extends Controller {
     }
 
     public function actionProperties() {
+        
     }
 
 }
