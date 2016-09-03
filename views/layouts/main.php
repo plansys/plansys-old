@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 <html lang="en-US" ng-app="main">
-<?php echo ThemeManager::getHead(); ?>
+<?php include("_head.php"); ?>
 <body ng-controller="MainController">
 <nav class="navbar navbar-fixed-top navbar-main" role="navigation">
     <div class="container-full">
