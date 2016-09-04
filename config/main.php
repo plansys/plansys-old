@@ -93,7 +93,6 @@ $imports = array(
     'application.components.*',
     'application.components.ui.*',
     'application.components.ui.FormFields.*',
-    'application.components.ui.Widgets.*',
     'application.components.utility.*',
     'application.components.models.*',
     'application.components.codegen.*',
@@ -105,7 +104,6 @@ $imports = array(
 foreach ($dbLists as $db => $val) {
     array_splice($imports, 1, 0, "app.models.$db.*");
 }
-
 
 ## define config
 $config = array(

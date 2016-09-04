@@ -5,7 +5,7 @@ class RepoController extends Controller {
     public function actionIndex($path = null) {
         $_GET['currentDir'] = RepoManager::getModuleDir();
         if (isset($_GET['dir'])) {
-            $dir = trim(trim($_GET['dir'], '/'), '\\');
+            $dir                = trim(trim($_GET['dir'], '/'), '\\');
             $_GET['currentDir'] = $_GET['currentDir'] . DIRECTORY_SEPARATOR . $dir;
         }
         $this->renderForm('Repo');
@@ -22,10 +22,11 @@ class RepoController extends Controller {
 
     public function actionRenderProperties() {
         $properties = FormBuilder::load('RepoProperties');
-
-        if ($this->beginCache('RepoProperties', array(
-                    'dependency' => new CFileCacheDependency(Yii::getPathOfAlias('application.forms.RepoProperties') . ".php")
-                ))) {
+        $startCache = $this->beginCache('RepoProperties', [
+            'dependency' =>
+            new CFileCacheDependency(Yii::getPathOfAlias('application.forms.RepoProperties') . ".php")
+        ]);
+        if ($startCache) {
             echo $properties->render();
             $this->endCache();
         }
@@ -37,8 +38,8 @@ class RepoController extends Controller {
 
     public function actionRemove() {
         $postdata = file_get_contents("php://input");
-        $post = CJSON::decode($postdata);
-        $file = base64_decode($post ['file']);
+        $post     = CJSON::decode($postdata);
+        $file     = base64_decode($post ['file']);
         unlink($file);
         unlink($file . '.json');
     }
