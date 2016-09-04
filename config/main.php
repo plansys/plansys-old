@@ -65,7 +65,7 @@ $components = array(
 $dbLists    = Setting::getDBList();
 $components = $dbLists + $components;
 
-if (Setting::get('app.debug') == "ON") {
+if (Setting::get('app.debug') == "ON" && Setting::$mode != 'install') {
     $components['log']['routes'][] = array(
         'class'         => 'DbProfiler',
         'report'        => 'summary',
