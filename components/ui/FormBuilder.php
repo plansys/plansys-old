@@ -149,7 +149,7 @@ class FormBuilder extends CComponent {
     public static function build($class, $attributes, $model = null, $return = false) {
         $field             = new $class;
         $field->attributes = $attributes;
-
+        
         if (!is_null($model)) {
             $fb             = new FormBuilder();
             $fb->model      = $model;
@@ -186,6 +186,7 @@ class FormBuilder extends CComponent {
             $attributes['options']['ng-init'] = $js['load'];
         }
 
+        
         $field = self::build($class, $attributes, null, true);
         $files = $field->renderScript();
         $html  = $field->render();

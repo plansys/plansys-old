@@ -1,14 +1,16 @@
 /* global builder, Yii */
 
 builder.register('model', {
-    tree: {
+    col1: {
         url: Yii.app.createUrl('/builder/model/tree'),
     },
-    editor: {
+    col2: {
         url: Yii.app.createUrl('/builder/model/editor'),
     },
     $meta: {
-        columns: ['tree', 'editor']
+        title: "Model",
+        icon: "fa fa-cube",
+        columns: ['col1', 'col2']
     }
 });
 

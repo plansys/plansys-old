@@ -1,28 +1,30 @@
 /* global builder, Yii */
 
 builder.register('code', {
-    tree: {
+    col1: {
         url: Yii.app.createUrl('/builder/code/tree'),
         type: 'tree',
         data: [],
-        expand: function() {
-            
+        expand: function () {
+
         },
-        init: function() {
-            
+        init: function () {
+
         },
-        loaded: function() {
-            
+        loaded: function () {
+
         }
     },
-    editor: {
+    col2: {
         url: Yii.app.createUrl('/builder/code/editor'),
     },
-    properties: {
+    col3: {
         url: Yii.app.createUrl('/builder/code/properties'),
     },
     $meta: {
-        columns: ['tree', 'editor', 'properties']
+        title: "Code",
+        icon: "fa fa-code",
+        columns: ['col1', 'col2', 'col3']
     }
 });
 

@@ -352,7 +352,6 @@ EOF;
         ## reset form builder session
         FormBuilder::resetSession($class);
 
-
         ## load form builder class and session
         $fb = FormBuilder::load($class);
         $fb->resetTimestamp();
@@ -375,8 +374,10 @@ EOF;
 
         if (is_subclass_of($fb->model, 'ActiveRecord')) {
             $formType = "ActiveRecord";
-
-            $props = $class::model()->getAttributesList();
+            // clear table schema cache
+            
+            // load props
+            $props = $class::model()->getAttributesList(true, true);
             if (!empty($methods))
                 $props['Dynamic Properties'] = $methods;
 

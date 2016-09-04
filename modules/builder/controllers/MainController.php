@@ -2,7 +2,7 @@
 
 class MainController extends Controller {
 
-    private $vpath = 'application.modules.builder.views._main';
+    private $vpath = 'application.modules.builder.views.main';
 
     public function getViewPath() {
         parent::getViewPath();
@@ -13,7 +13,7 @@ class MainController extends Controller {
         ## register main builder js
         Asset::registerJS($this->vpath . '.builder');
         Asset::registerJS($this->vpath . '.index');
-        
+
         ## register each view js
         $rv   = Yii::getPathOfAlias("application.modules.builder.views");
         $dirs = glob($rv . "/*");
@@ -23,7 +23,7 @@ class MainController extends Controller {
                 Asset::registerJS(Helper::getAlias($initFile));
             }
         }
-        
+
         $this->render('index');
     }
 
