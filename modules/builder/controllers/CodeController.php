@@ -2,17 +2,24 @@
 
 class CodeController extends Controller {
 
+    private $vpath = 'application.modules.builder.views.1_code';
+    public function getViewPath() {
+        parent::getViewPath();
+        return Yii::getPathOfAlias($this->vpath);
+    }
+    
+
     public function actionTree() {
-        FormBuilder::renderUI('TreeView', [
+        echo FormBuilder::renderUI('TreeView', [
             'name' => 'codetree',
                 ], [
-            'init' => 'startLoading()',
-            'load' => 'startLoading()',
+            'init' => 'col1.view.loading = true',
+            'load' => 'col1.view.loading = false',
         ]);
     }
 
     public function actionEditor() {
-        echo $this->renderPartial("index");
+//        echo $this->renderPartial("index");
     }
 
     public function actionProperties() {
