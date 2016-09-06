@@ -94,8 +94,9 @@ class ServiceManager extends CComponent {
         if ($php == '' || $php == null) {
             $php = 'php';
         }
-
-        ServiceManager::process("exec $process service {$php} yiic.php service startDaemon \"".__DIR__."\"");
+        
+        $exec = "exec $process service {$php} yiic.php service startDaemon \"".__DIR__."\"";
+        ServiceManager::process($exec);
     }
     
     public static function process($command) {
@@ -182,6 +183,7 @@ class ServiceManager extends CComponent {
             if ($php == '' || $php == null) {
                 $php = 'php';
             }
+            
             $command = "run \"{$logPath}\" {$php} yiic.php service execute --id={$id}";
             
             $pid = ServiceManager::process($command);

@@ -43,7 +43,11 @@ $scope.changeTab = function(tab) {
             log: 1
         };
         $scope.tab = tab;
-        angular.element($("#" + tab)).scope().$parent.tabs[tabCode[tab]].select();
+        var scope = angular.element($("#" + tab)).scope();
+        if (scope) {
+            scope.$parent.tabs[tabCode[tab]].select();
+        }
+        
         if (tab == 'code') {
             $scope.aceEditor.focus();
         }
