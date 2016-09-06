@@ -65,7 +65,7 @@ $components = array(
 $dbLists    = Setting::getDBList();
 $components = $dbLists + $components;
 
-if (Setting::get('app.debug') == "ON") {
+if (Setting::get('app.debug') == "ON" && Setting::$mode != 'install') {
     $components['log']['routes'][] = array(
         'class'         => 'DbProfiler',
         'report'        => 'summary',
@@ -93,7 +93,6 @@ $imports = array(
     'application.components.*',
     'application.components.ui.*',
     'application.components.ui.FormFields.*',
-    'application.components.ui.Widgets.*',
     'application.components.utility.*',
     'application.components.models.*',
     'application.components.codegen.*',
@@ -105,7 +104,6 @@ $imports = array(
 foreach ($dbLists as $db => $val) {
     array_splice($imports, 1, 0, "app.models.$db.*");
 }
-
 
 ## define config
 $config = array(
@@ -124,6 +122,6 @@ $config = array(
     'params'         => array(),
 );
 
-$config = Setting::finalizeConfig($config);
+$config = Setting::finalizeConfig($config, "main");
 
 return $config;

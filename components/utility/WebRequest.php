@@ -1,29 +1,32 @@
-<?php 
+<?php
 
-class WebRequest extends CHttpRequest
-{
-    
+class WebRequest extends CHttpRequest {
+
+    public function getIsAjaxRequest() {
+        return isset($_SERVER['HTTP_AJAX']) || strpos(@$_SERVER['HTTP_ACCEPT'], 'json') !== false;
+    }
+
     private function getTokenFromInput() {
         $input = json_decode(file_get_contents('php://input'), true);
         return $input[$this->csrfTokenName];
     }
-    public function validateCsrfToken($event)
-    {
+
+    public function validateCsrfToken($event) {
         if ($this->getIsPostRequest() ||
-            $this->getIsPutRequest() ||
-            $this->getIsPatchRequest() ||
-            $this->getIsDeleteRequest()
+                $this->getIsPutRequest() ||
+                $this->getIsPatchRequest() ||
+                $this->getIsDeleteRequest()
         ) {
             $ctrl = Yii::app()->createController($this->getParam('r'));
             if (count($ctrl) > 0) {
-                $ctrl  = $ctrl[0];
+                $ctrl = $ctrl[0];
                 if (!$ctrl->enableCsrf) {
                     return true;
                 }
             }
-            
+
             $cookies = $this->getCookies();
-            $method = $this->getRequestType();
+            $method  = $this->getRequestType();
             switch ($method) {
                 case 'POST':
                     if (empty($this->getPost($this->csrfTokenName))) {
@@ -31,7 +34,7 @@ class WebRequest extends CHttpRequest
                     } else {
                         $userToken = $this->getPost($this->csrfTokenName);
                     }
-                    
+
                     break;
                 case 'PUT':
                     if (empty($this->getPut($this->csrfTokenName))) {
@@ -58,11 +61,13 @@ class WebRequest extends CHttpRequest
 
             if (!empty($userToken) && $cookies->contains($this->csrfTokenName)) {
                 $cookieToken = $cookies->itemAt($this->csrfTokenName)->value;
-                $valid = $cookieToken === $userToken;
+                $valid       = $cookieToken === $userToken;
             } else
                 $valid = false;
+
             if (!$valid && empty($_FILES))
                 throw new CHttpException(400, Yii::t('yii', 'The CSRF token could not be verified.'));
         }
     }
+
 }

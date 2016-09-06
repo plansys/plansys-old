@@ -130,23 +130,19 @@ class Setting {
             Setting::$mode = 'testing';
         }
 
-        if (!isset(Setting::$data['app']['daemonport'])) {
-            Setting::set('app.daemonport', ('50' . rand(100, 999)) * 1);
-        }
-
         if (Setting::get('app.mode') != 'production') {
             //debug
-            defined('YII_DEBUG') or define('YII_DEBUG',true );
+            defined('YII_DEBUG') or define('YII_DEBUG', true);
             //show profiler
-            defined('YII_DEBUG_SHOW_PROFILER') or define('YII_DEBUG_SHOW_PROFILER',true);
+            defined('YII_DEBUG_SHOW_PROFILER') or define('YII_DEBUG_SHOW_PROFILER', true);
             //enable profiling
-            defined('YII_DEBUG_PROFILING') or define('YII_DEBUG_PROFILING',true);
+            defined('YII_DEBUG_PROFILING') or define('YII_DEBUG_PROFILING', true);
             //trace level
-            defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);
+            defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL', 3);
             //execution time
-            defined('YII_DEBUG_DISPLAY_TIME') or define('YII_DEBUG_DISPLAY_TIME',true);
+            defined('YII_DEBUG_DISPLAY_TIME') or define('YII_DEBUG_DISPLAY_TIME', true);
         } else {
-            defined('YII_DEBUG') or define('YII_DEBUG',false );
+            defined('YII_DEBUG') or define('YII_DEBUG', false);
         }
     }
 
@@ -241,7 +237,7 @@ class Setting {
 
     public static function get($key, $default = null, $forceRead = false) {
         $keys = explode('.', $key);
-        
+
         if ($forceRead) {
             $file          = @file_get_contents(Setting::$path);
             $setting       = json_decode($file, true);
@@ -591,7 +587,9 @@ class Setting {
         }
         
         $connection['schemaCachingDuration'] = 86400; // cache schema for a day
-        $connection['enableProfiling'] = true;
+        if (Setting::get('app.debug') == 'ON') {
+            $connection['enableProfiling'] = true;
+        }
 
         return $connection;
     }

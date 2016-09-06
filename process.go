@@ -61,35 +61,56 @@ func main() {
 				fmt.Println(err);	
 			}
 		}else if os.Args[1] == "service" {
-			port := os.Args[2]
-			listener, err := net.Listen("tcp", ":" + port)
-			
-			if (err == nil) {
-				cmd := exec.Command(os.Args[3], os.Args[4:]...)
-				err := cmd.Start()	
-				if err == nil {
-					if cmd.Process != nil {
-						fmt.Println(cmd.Process.Pid)
-					}
-				}else{
-					fmt.Println(err);	
-				}
+			port := 8123
+			listener, err := net.Listen("tcp", ":" + strconv.FormatInt(int64(port),10))
+			args := strings.TrimSpace(strings.Join(os.Args[2:], " "))
+			println("Port:", port)
+
+			// if failed to start at current port
+			for (err != nil) {
+				// try to connect to current port
+				conn, _ := net.Dial("tcp", "127.0.0.1:" + strconv.FormatInt(int64(port),10))
 				
-				for {
-					// echo message
-					conn, err := listener.Accept()
-			        if err != nil {
-			            println("Error accept:", err.Error())
-			            return
-			        } else {
-					    message, _ := bufio.NewReader(conn).ReadString('\n')      
-					    fmt.Print("Message Received:", string(message))     
-					    newmessage := strings.ToUpper(message)  
-					    conn.Write([]byte(newmessage + "\n")) 
-			        }
+				// Send hello message
+				fmt.Fprintf(conn, "Helo" + "\n")
+
+				// Wait for answer
+				message, _ := bufio.NewReader(conn).ReadString('\n')
+
+				// If the answer is same as current args then bail
+				if (strings.TrimSpace(message) == args) {
+					println("Process already exists, exiting")
+					return;
 				}
-			} else {
-			    println("Error: ", err.Error())
+
+				// Close Connection
+				conn.Close()
+
+				// Try to connect to next port
+				port++
+				println("Port:", port)
+				listener, err = net.Listen("tcp", ":" + strconv.FormatInt(int64(port),10))
+			}
+
+			cmd := exec.Command(os.Args[2], os.Args[3:]...)
+			err = cmd.Start()	
+			if err == nil {
+				if cmd.Process != nil {
+					fmt.Println(cmd.Process.Pid)
+				}
+			}else{
+				fmt.Println(err);	
+			}
+			
+			for {
+				// echo message
+				conn, err := listener.Accept()
+		        if err != nil {
+		            println("Error accept:", err.Error())
+		            return
+		        } else { 
+				    conn.Write([]byte(args + "\n"))
+		        }
 			}
 			
 		} else if os.Args[1] == "run" {

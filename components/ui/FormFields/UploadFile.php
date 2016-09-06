@@ -267,6 +267,7 @@ class UploadFile extends FormField {
         }
 
         $tmppath = $tmpdir . DIRECTORY_SEPARATOR . $name;
+        $tmppath = str_replace(['/','\\'],'/',$tmppath);
         move_uploaded_file($file["tmp_name"], $tmppath);
         echo json_encode([
             'success' => 'Yes',

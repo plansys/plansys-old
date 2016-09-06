@@ -1,4 +1,4 @@
-<!-- PLANSYS DEBUG SUMMARY -->
+<!-- PLANSYS TRACE SUMMARY -->
 <script type="text/javascript">
 <?php
 $items     = [];
