@@ -100,18 +100,15 @@ class Controller extends CController {
         if (($theme    = Yii::app()->getTheme()) !== null && ($viewFile = $theme->getViewFile($this, $viewName)) !== false)
             return $viewFile;
 
-        
         $basePath = $this->getBaseViewPath();
         $moduleViewPath = null;
-        $viewPath = $basePath;
+        $viewPath = $basePath . DIRECTORY_SEPARATOR . $this->id;
         if (($module         = $this->getModule()) !== null) {
             $moduleViewPath = $module->getViewPath();
             $viewPath = $moduleViewPath . DIRECTORY_SEPARATOR . $this->id; 
         } 
 
-
         $result = $this->resolveViewFile($viewName, $viewPath, $basePath, $moduleViewPath);
-
         return $result;
     }
 

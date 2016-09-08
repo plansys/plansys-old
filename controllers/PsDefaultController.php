@@ -1,6 +1,6 @@
 <?php
 
-class DefaultController extends Controller {
+class PsDefaultController extends Controller {
 
     /**
      * This is the default 'index' action that is invoked
