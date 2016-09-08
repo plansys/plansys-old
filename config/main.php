@@ -123,5 +123,4 @@ $config = array(
 );
 
 $config = Setting::finalizeConfig($config, "main");
-
 return $config;
