@@ -121,7 +121,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'TextField',
             ),
             array (
-                'label' => 'Dropdown Behavior',
+                'label' => 'Behavior',
                 'name' => 'isCustom',
                 'options' => array (
                     'ng-model' => 'value[$index].isCustom',
@@ -134,10 +134,10 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 ),
                 'list' => array (
                     'No' => 'Default',
-                    'Yes' => 'Custom',
+                    'Yes' => 'Use as params (No Filtering)',
                 ),
-                'labelWidth' => '6',
-                'fieldWidth' => '6',
+                'labelWidth' => '3',
+                'fieldWidth' => '9',
                 'type' => 'DropDownList',
             ),
             array (

@@ -36,7 +36,8 @@ class DataFilter extends FormField {
             'Is Equal To',
             'Starts With',
             'Ends With',
-            'Is Empty'
+            'Is Empty',
+            'Is Not Empty'
         ],
         'number' => [
             '=',
@@ -45,7 +46,8 @@ class DataFilter extends FormField {
             '>=',
             '<=',
             '<',
-            'Is Empty'
+            'Is Empty',
+            'Is Not Empty'
         ],
         'date' => [
             'Between',
@@ -166,11 +168,16 @@ class DataFilter extends FormField {
         $pcolumn = preg_replace('/[^\da-z]/i', '_', $column);
         $driver = Setting::get('db.driver');
         
-        $column = ActiveRecord::formatSingleCriteria($column, $driver);
         
-        ## quote field if it is containing illegal char
-        if (!preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", str_replace(".", "", $column))) {
-            $column = "{$column}";
+        if (@$filter['mode'] == 'raw' && isset($filter['colname'])) {
+            $column = $filter['colname'];
+        } else {
+            $column = ActiveRecord::formatSingleCriteria($column, $driver);
+            
+            ## quote field if it is containing illegal char
+            if (!preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", str_replace(".", "", $column))) {
+                $column = "{$column}";
+            }
         }
 
         switch ($filter['type']) {
@@ -225,6 +232,9 @@ class DataFilter extends FormField {
                         case "Is Empty":
                             $sql = "({$column} LIKE '' OR {$column} IS NULL)";
                             break;
+                        case "Is Not Empty":
+                            $sql = "({$column} NOT LIKE '' AND {$column} IS NOT NULL)";
+                            break;
                     }
                 }
                 break;
@@ -243,6 +253,9 @@ class DataFilter extends FormField {
                             break;
                         case "Is Empty":
                             $sql = "({$column} IS NULL)";
+                            break;
+                        case "Is Not Empty":
+                            $sql = "{$column} IS NOT NULL)";
                             break;
                     }
                 }

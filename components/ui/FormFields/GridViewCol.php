@@ -21,7 +21,11 @@ class GridViewCol extends Form {
                 'value' => '<div ng-init=\"value[$index].$showDF = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"selectDataField(value, $index)\">
 <div class=\"label data-filter-name pull-right\">
 {{value[$index].columnType}}</div>
-{{value[$index].label}}
+{{value[$index].label }}
+
+<div class=\"label label-default\" style=\'font-weight:normal\' ng-if=\"value[$index].options.mode\">
+    {{ value[$index].options.mode }}
+</div>
 <div class=\"clearfix\"></div>
 </div>',
             ),
