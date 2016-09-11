@@ -1,14 +1,14 @@
-<div class="treeview-node-item">
-    <div class="treeview-caret">
+<div class="tv-node-item">
+    <div class="tv-caret">
         <i class="fa fa-caret-right"></i>
     </div>
-    <div class="treeview-icon">
+    <div class="tv-icon">
         <i class="{{ item.icon }}"></i>
     </div>
     <span>{{ item.title}}</span>
 </div>
 
-<ol ui-tree-nodes="" ng-model="item.items" class="treeview-node">
+<ol ui-tree-nodes="" ng-model="item.items" class="tv-node">
     <li ng-repeat="item in item.items" 
         ui-tree-node 
         collapsed="false"

@@ -72,7 +72,7 @@ class DataSource extends FormField {
 
         $db       = Yii::app()->db;
         $template = DataSource::generateTemplate($this->sql, $params, $this, $paramDefs);
-        
+
         ## execute SQL
         $this->command = $db->createCommand($template['sql']);
         $data          = $this->command->queryAll(true, $template['params']);
@@ -223,7 +223,6 @@ class DataSource extends FormField {
 
                     if ($isNotFirst && stripos($bracket['sql'], 'where') == 0)
                         $bracket['sql'] = " AND " . substr($bracket['sql'], 5);
-
                 }
 
                 $sql = str_replace("{{$block}}", $bracket['sql'], $sql);
@@ -694,7 +693,7 @@ class DataSource extends FormField {
                     $fb->model = new $class;
                 }
             }
-            
+
             $this->attributes  = $field;
             $this->builder     = $fb;
             $this->queryParams = (is_array(@$post['params']) ? @$post['params'] : []);
@@ -702,31 +701,33 @@ class DataSource extends FormField {
                 $this->dataFilter = $fb->findField(['name' => $post['df']]);
                 if (isset($this->queryParams['where'])) {
                     $filters = [];
-                    foreach ($this->dataFilter['filters'] as $k=>$v) {
+                    foreach ($this->dataFilter['filters'] as $k => $v) {
                         $filters[$v['name']] = $v;
                     }
-                    
-                    foreach ($this->queryParams['where'] as $k=>$v) {
-                        
-                        ## prevent sql injection, remove mode
-                        if (isset($this->queryParams['where'][$k]['mode'])) {
-                            unset($this->queryParams['where'][$k]['mode']);
-                        }
-                        
-                        if (isset($filters[$k])) {
-                            if (isset($filters[$k]['options']['colname'])) {
-                                $this->queryParams['where'][$k]['mode'] = 'raw';
-                                $this->queryParams['where'][$k]['colname'] = $filters[$k]['options']['colname']; 
+
+                    if (is_array(@$this->queryParams['where'])) {
+                        foreach ($this->queryParams['where'] as $k => $v) {
+
+                            ## prevent sql injection, remove mode
+                            if (isset($this->queryParams['where'][$k]['mode'])) {
+                                unset($this->queryParams['where'][$k]['mode']);
                             }
-                        } 
+
+                            if (isset($filters[$k])) {
+                                if (isset($filters[$k]['options']['colname'])) {
+                                    $this->queryParams['where'][$k]['mode']    = 'raw';
+                                    $this->queryParams['where'][$k]['colname'] = $filters[$k]['options']['colname'];
+                                }
+                            }
+                        }
                     }
                 }
             }
-            
+
             if (is_object($this->model) && isset($post['modelParams'])) {
                 $this->model->attributes = $post['modelParams'];
             }
-            
+
             $isGenerate = isset($post['generate']);
 
             if (is_string($this->params)) {

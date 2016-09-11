@@ -14,9 +14,6 @@ $components = array(
         'class' => 'application.extensions.simpleimage.CSimpleImage',
     ),
     'ldap'          => Setting::getLDAP(),
-    'EJSUrlManager' => array(
-        'class' => 'ext.JSUrlManager.EJSUrlManager'
-    ),
     'user'          => array(
         'allowAutoLogin' => true,
         'class'          => 'WebUser',
@@ -25,7 +22,7 @@ $components = array(
     'errorHandler'  => array(
         'class' => 'ErrorHandler',
     ),
-    'widgetFactory' => array(),
+//    'widgetFactory' => array(),
     'cache'         => array(
         'class' => 'system.caching.CFileCache'
     ),
@@ -47,15 +44,17 @@ $components = array(
             ),
         ),
     ),
-    'request'=>array(
-        'class' => 'WebRequest',
-        'enableCsrfValidation' => true,
-        'enableCookieValidation'=>true,
-        'csrfCookie'=>array(
-            'httpOnly'=>true,
+    'request'       => array(
+        'class'                  => 'WebRequest',
+        'enableCsrfValidation'   => true,
+        'enableCookieValidation' => true,
+        'csrfCookie'             => array(
+            'httpOnly' => true,
         ),
     ),
-    'session' => array(
+    'session'       => array(
+        'class' => 'CDbHttpSession',
+        'sessionTableName' => 'p_session',
         'cookieParams' => array(
             'httpOnly' => true,
         ),
@@ -67,8 +66,8 @@ $components = $dbLists + $components;
 
 if (Setting::get('app.debug') == "ON" && Setting::$mode != 'install') {
     $components['log']['routes'][] = array(
-        'class'         => 'DbProfiler',
-        'report'        => 'summary',
+        'class'  => 'DbProfiler',
+        'report' => 'summary',
     );
     $components['log']['routes'][] = array(
         'class' => 'WebProfiler',
@@ -110,7 +109,7 @@ $config = array(
     'basePath'       => $basePath,
     'viewPath'       => Setting::getViewPath(),
     'name'           => (!Setting::get('app.name') ? "Plansys" : Setting::get('app.name')),
-    'preload'        => array('log', 'EJSUrlManager'),
+    'preload'        => array('log'),
     'import'         => $imports,
     'runtimePath'    => Setting::getRuntimePath(),
     'sourceLanguage' => 'en_us',

@@ -8,7 +8,6 @@ class CodeController extends Controller {
         return Yii::getPathOfAlias($this->vpath);
     }
     
-
     public function actionTree() {
         echo FormBuilder::renderUI('TreeView', [
             'name' => 'codetree',
