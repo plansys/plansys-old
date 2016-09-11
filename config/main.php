@@ -7,26 +7,25 @@ $modules  = Setting::getModules();
 
 ## components
 $components = array(
-    'assetManager'  => array(
+    'assetManager' => array(
         'basePath' => Setting::getAssetPath()
     ),
-    'img'           => array(
+    'img'          => array(
         'class' => 'application.extensions.simpleimage.CSimpleImage',
     ),
-    'ldap'          => Setting::getLDAP(),
-    'user'          => array(
+    'ldap'         => Setting::getLDAP(),
+    'user'         => array(
         'allowAutoLogin' => true,
         'class'          => 'WebUser',
     ),
-    'db'            => Setting::getDB(),
-    'errorHandler'  => array(
+    'db'           => Setting::getDB(),
+    'errorHandler' => array(
         'class' => 'ErrorHandler',
     ),
-//    'widgetFactory' => array(),
-    'cache'         => array(
+    'cache'        => array(
         'class' => 'system.caching.CFileCache'
     ),
-    'clientScript'  => array(
+    'clientScript' => array(
         'packages' => array(
             'jquery' => array(
                 'basePath'           => "application.static.js.lib",
@@ -35,7 +34,7 @@ $components = array(
             )
         )
     ),
-    'log'           => array(
+    'log'          => array(
         'class'  => 'CLogRouter',
         'routes' => array(
             array(
@@ -44,7 +43,7 @@ $components = array(
             ),
         ),
     ),
-    'request'       => array(
+    'request'      => array(
         'class'                  => 'WebRequest',
         'enableCsrfValidation'   => true,
         'enableCookieValidation' => true,
@@ -52,7 +51,8 @@ $components = array(
             'httpOnly' => true,
         ),
     ),
-    'session'       => array(
+    'session'      => array(
+        'autoStart'    => true,
         'cookieParams' => array(
             'httpOnly' => true,
         ),

@@ -21,7 +21,7 @@ class FormBuilder extends CComponent {
     private $file                  = [];
 
     public static function resetSession($class) {
-        Yii::app()->session['FormBuilder_' . $class] = null;
+        Yii::app()->cache->delete('FormBuilder_' . $class);
     }
 
     /**
@@ -77,40 +77,38 @@ class FormBuilder extends CComponent {
         }
 
         ## get method line and length
-        if (isset(Yii::app()->session)) {
-            if (is_null(Yii::app()->session['FormBuilder_' . $originalClass])) {
-                $reflector         = new ReflectionClass($class);
-                $model->sourceFile = $reflector->getFileName();
-                $model->file       = file($model->sourceFile, FILE_IGNORE_NEW_LINES);
-                $methods           = $reflector->getMethods();
-                foreach ($methods as $m) {
-                    if ($m->class == $class) {
-                        $line                     = $m->getStartLine() - 1;
-                        $length                   = $m->getEndLine() - $line;
-                        $model->methods[$m->name] = [
-                            'line'   => $line,
-                            'length' => $length
-                        ];
-                    }
-                }
-
-                Yii::app()->session['FormBuilder_' . $originalClass] = [
-                    'sourceFile' => $model->sourceFile,
-                    'file'       => $model->file,
-                    'methods'    => $model->methods
-                ];
-            } else {
-                $s = Yii::app()->session['FormBuilder_' . $originalClass];
-
-                $model->sourceFile = $s['sourceFile'];
-                $model->file       = $s['file'];
-                $model->methods    = $s['methods'];
-                if (isset($s['timestamp'])) {
-                    $model->timestamp = $s['timestamp'];
+        $cacheKey = 'FormBuilder_' . $originalClass;
+        $cache    = Yii::app()->cache->get($cacheKey);
+        if (!$cache) {
+            $reflector         = new ReflectionClass($class);
+            $model->sourceFile = $reflector->getFileName();
+            $model->file       = file($model->sourceFile, FILE_IGNORE_NEW_LINES);
+            $methods           = $reflector->getMethods();
+            foreach ($methods as $m) {
+                if ($m->class == $class) {
+                    $line                     = $m->getStartLine() - 1;
+                    $length                   = $m->getEndLine() - $line;
+                    $model->methods[$m->name] = [
+                        'line'   => $line,
+                        'length' => $length
+                    ];
                 }
             }
+
+            Yii::app()->cache->set($cacheKey, [
+                'sourceFile' => $model->sourceFile,
+                'file'       => $model->file,
+                'methods'    => $model->methods
+            ]);
+        } else {
+            $model->sourceFile = $cache['sourceFile'];
+            $model->file       = $cache['file'];
+            $model->methods    = $cache['methods'];
+            if (isset($cache['timestamp'])) {
+                $model->timestamp = $cache['timestamp'];
+            }
         }
-        
+
         return $model;
     }
 
@@ -149,7 +147,7 @@ class FormBuilder extends CComponent {
     public static function build($class, $attributes, $model = null, $return = false) {
         $field             = new $class;
         $field->attributes = $attributes;
-        
+
         if (!is_null($model)) {
             $fb             = new FormBuilder();
             $fb->model      = $model;
@@ -186,7 +184,7 @@ class FormBuilder extends CComponent {
             $attributes['options']['ng-init'] = $js['load'];
         }
 
-        
+
         $field = self::build($class, $attributes, null, true);
         $files = $field->renderScript();
         $html  = $field->render();
@@ -450,11 +448,11 @@ html;
 
     public function resetTimestamp() {
         $this->timestamp = time();
-        if (isset(Yii::app()->session['FormBuilder_' . $this->originalClass])) {
-            $session              = Yii::app()->session['FormBuilder_' . $this->originalClass];
-            $session['timestamp'] = $this->timestamp;
-
-            Yii::app()->session['FormBuilder_' . $this->originalClass] = $session;
+        $cacheKey        = 'FormBuilder_' . $this->originalClass;
+        $cache           = Yii::app()->cache->get($cacheKey);
+        if ($cache) {
+            $cache['timestamp'] = $this->timestamp;
+            Yii::app()->cache->set($cacheKey, $cache);
         }
     }
 
@@ -781,7 +779,7 @@ html;
     public function setFields($fields) {
         $multiline = [];
         $this->tidyRecursive($fields, $multiline);
-        
+
         if (is_subclass_of($this->model, 'FormField')) {
             return $this->updateFunctionBody('getFieldProperties', $fields, "", $multiline);
         } else {
@@ -839,16 +837,16 @@ html;
                     $data[$i]                 = $hash;
                 }
             }
-            
+
             ## format array key in str format
             if ((is_array($j) && !empty($j))) {
                 $jk = 0;
                 $sk = false;
-                foreach ($j as $k=>$v) {
+                foreach ($j as $k => $v) {
                     if (!is_numeric($k)) {
                         break;
                     } else if ($i == 'list' || $jk != $k) {
-                        $sk = true;
+                        $sk                                = true;
                         unset($j[$k]);
                         $j[self::ARRAY_STRKEY_MARKER . $k] = $v;
                     }
@@ -856,7 +854,7 @@ html;
                 }
                 $data[$i] = $j;
             }
-            
+
 
             if (count($defaultAttributes) > 0) {
                 if (!array_key_exists($i, $defaultAttributes) || $defaultAttributes[$i] == $j) {
@@ -951,12 +949,12 @@ EOF;
             fflush($fp); // flush output before releasing the lock
             flock($fp, LOCK_UN); // release the lock
 
-            Yii::app()->session['FormBuilder_' . $this->originalClass] = [
+            Yii::app()->cache->set('FormBuilder_' . $this->originalClass, [
                 'sourceFile' => $this->sourceFile,
                 'file'       => $file,
                 'methods'    => $this->methods,
                 'timestamp'  => $this->timestamp
-            ];
+            ]);
 
             return true;
         } else {
@@ -1066,7 +1064,7 @@ EOF;
 
         ## convert self::ARRAY_STRKEY_MARKER to strkey
         $fields = str_replace("'" . self::ARRAY_STRKEY_MARKER, "'", $fields);
-        
+
         ## strip numerical array keys
         $fields = preg_replace("/[0-9]+\s*\=\> /i", '', $fields);
 
