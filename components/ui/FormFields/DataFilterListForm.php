@@ -174,6 +174,18 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'DropDownList',
             ),
             array (
+                'label' => 'Dropdown List Item',
+                'fieldname' => 'listExpr',
+                'options' => array (
+                    'ng-change' => 'updateListView()',
+                    'ng-delay' => '500',
+                    'ng-if' => 'value[$index].filterType ==\'list\' || value[$index].filterType == \'check\'',
+                    'style' => 'margin-bottom:8px;',
+                    'ng-model' => 'model.listExpr',
+                ),
+                'type' => 'ExpressionField',
+            ),
+            array (
                 'type' => 'Text',
                 'value' => '<div ng-if=\"value[$index].filterType == \'relation\'\">
     <div style=\"margin-top:15px;\">
@@ -348,24 +360,12 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
             array (
                 'label' => 'Options',
                 'name' => 'options',
-                'show' => 'Show',
                 'options' => array (
                     'ng-model' => 'value[$index].options',
                     'ng-change' => 'updateListView()',
                 ),
+                'show' => 'Show',
                 'type' => 'KeyValueGrid',
-            ),
-            array (
-                'label' => 'List Expression',
-                'fieldname' => 'listExpr',
-                'options' => array (
-                    'ng-change' => 'updateListView()',
-                    'ng-delay' => '500',
-                    'ng-if' => 'value[$index].filterType ==\'list\' || value[$index].filterType == \'check\'',
-                    'style' => 'margin-bottom:8px;',
-                    'ng-model' => 'model.listExpr',
-                ),
-                'type' => 'ExpressionField',
             ),
             array (
                 'type' => 'Text',

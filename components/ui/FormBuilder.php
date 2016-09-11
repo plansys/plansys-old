@@ -6,7 +6,7 @@
  */
 class FormBuilder extends CComponent {
 
-    const NEWLINE_MARKER = "!@#$%^&*NEWLINE&^%$#@!";
+    const ARRAY_STRKEY_MARKER = '~!@#$%~';
 
     private static $_buildRenderID = [];
     public $model                  = null;
@@ -134,7 +134,6 @@ class FormBuilder extends CComponent {
             }
             $prevC = $c;
         }
-
 
         return $classFile == "" ? $class : $classFile;
     }
@@ -638,7 +637,7 @@ html;
             }
         } else {
             $fields = $this->model->$functionName();
-        }
+        };
 
         if ($processExpr) {
             //process expression value
@@ -693,6 +692,7 @@ html;
                 ob_start();
                 $processedField    = $field->processExpr();
                 $error             = ob_get_clean();
+
 
                 if ($error == "") {
                     $fields[$k] = array_merge($f, $processedField);
@@ -780,7 +780,7 @@ html;
     public function setFields($fields) {
         $multiline = [];
         $this->tidyRecursive($fields, $multiline);
-
+        
         if (is_subclass_of($this->model, 'FormField')) {
             return $this->updateFunctionBody('getFieldProperties', $fields, "", $multiline);
         } else {
@@ -798,7 +798,6 @@ html;
                 ## tidying attributes, remove attribute that same as default attribute
                 $f = $this->tidyAttributes($f, $fieldlist, $multiline);
             }
-
 
             ## okay, assign new attributes to field
             $fields[$k] = $f;
@@ -839,6 +838,24 @@ html;
                     $data[$i]                 = $hash;
                 }
             }
+            
+            ## format array key in str format
+            if ((is_array($j) && !empty($j))) {
+                $jk = 0;
+                $sk = false;
+                foreach ($j as $k=>$v) {
+                    if (!is_numeric($k)) {
+                        break;
+                    } else if ($i == 'list' || $jk != $k) {
+                        $sk = true;
+                        unset($j[$k]);
+                        $j[self::ARRAY_STRKEY_MARKER . $k] = $v;
+                    }
+                    $jk++;
+                }
+                $data[$i] = $j;
+            }
+            
 
             if (count($defaultAttributes) > 0) {
                 if (!array_key_exists($i, $defaultAttributes) || $defaultAttributes[$i] == $j) {
@@ -1046,6 +1063,9 @@ EOF;
         ## get fields
         $fields = var_export($fields, true);
 
+        ## convert self::ARRAY_STRKEY_MARKER to strkey
+        $fields = str_replace("'" . self::ARRAY_STRKEY_MARKER, "'", $fields);
+        
         ## strip numerical array keys
         $fields = preg_replace("/[0-9]+\s*\=\> /i", '', $fields);
 

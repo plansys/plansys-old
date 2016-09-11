@@ -10,7 +10,8 @@ class TreeView extends FormField {
     public $expandFunc    = '';
     public $itemLayoutUrl = '';
     public $options       = [];
-
+    public static $deprecated = true;
+    
     public function includeJS() {
         return ['treeview.js'];
     }

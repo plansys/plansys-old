@@ -111,6 +111,8 @@ class ExpressionField extends FormField {
 	
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-terminal";
+    
+    public static $deprecated = true;
 	
     /**
      * @return array me-return array javascript yang di-include

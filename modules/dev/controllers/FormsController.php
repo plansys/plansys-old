@@ -214,10 +214,6 @@ EOF;
         $this->renderPartial('form_fields_hidden');
     }
 
-    public function actionAsset($p) {
-        echo "HAI";
-    }
-
     public function actionFormList($m = '') {
         $list = FormBuilder::listFile();
 
@@ -303,7 +299,6 @@ EOF;
         }
 
         if (!$changed) {
-
             $postdata = file_get_contents("php://input");
             $post = CJSON::decode($postdata);
             $session = Yii::app()->session['FormBuilder_' . $class];
@@ -444,7 +439,7 @@ EOF;
         FormField::$inEditor = false;
 
         $toolbarData = FormField::allSorted();
-
+        
         foreach ($toolbarData as $k => $f) {
             $ff = new $f['type'];
             $scripts = array_merge($ff->renderScript(), $ff->renderEditorScript());

@@ -21,7 +21,7 @@ class GridViewCol extends Form {
                 'value' => '<div ng-init=\"value[$index].$showDF = false\" style=\"cursor:pointer;padding-bottom:1px;\" ng-click=\"selectDataField(value, $index)\">
 <div class=\"label data-filter-name pull-right\">
 {{value[$index].columnType}}</div>
-{{value[$index].label }}
+{{value[$index].label || value[$index].name }}
 
 <div class=\"label label-default\" style=\'font-weight:normal\' ng-if=\"value[$index].options.mode\">
     {{ value[$index].options.mode }}
@@ -90,11 +90,11 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
             array (
                 'label' => 'Options',
                 'name' => 'options',
-                'show' => 'Show',
                 'options' => array (
                     'ng-model' => 'value[$index].options',
                     'ng-change' => 'updateListView()',
                 ),
+                'show' => 'Show',
                 'type' => 'KeyValueGrid',
             ),
             array (
