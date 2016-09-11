@@ -15,6 +15,10 @@ class TreeView extends FormField {
     public function includeJS() {
         return ['treeview.js'];
     }
+    
+    public function includeCSS() {
+        return ['treeview.css'];
+    }
 
     public function actionTemplate() {
         echo $this->renderInternal("template_component.php");

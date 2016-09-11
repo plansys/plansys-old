@@ -4,12 +4,20 @@ app.component('treeView', {
 
         var self = this;
         var data = this.data;
-        self.tree = ['asdsa'];
+        self.tree = [];
         self.treeOptions = {};
+
+
+        function processTree(tree) {
+            for (var i in tree) {
+                console.log(tree[i]);
+            }
+            return tree;
+        }
 
         if (!!data.initUrl) {
             $http.get(data.initUrl).success(function (res) {
-                self.tree = res;
+                self.tree = processTree(res);
             });
         }
     },

@@ -4,7 +4,7 @@
          '<?= Yii::app()->controller->staticUrl('/js/lib/angular.ui.tree.js') ?>'
          ]}">
         <div ui-tree="$ctrl.treeOptions" data-drag-enabled="false">
-            <ol ui-tree-nodes="" ng-model="$ctrl.tree">
+            <ol ui-tree-nodes="" class="treeview-root" ng-model="$ctrl.tree">
                 <li ng-repeat="item in $ctrl.tree" 
                     ui-tree-node 
                     collapsed="false"
