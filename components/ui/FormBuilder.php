@@ -110,6 +110,7 @@ class FormBuilder extends CComponent {
                 }
             }
         }
+        
         return $model;
     }
 

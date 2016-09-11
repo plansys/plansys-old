@@ -4,6 +4,7 @@ class ThemeManager extends CThemeManager {
 
     public static function registerCoreScript() {
         $ctrl = Yii::app()->controller;
+        
         Yii::app()->clientScript->registerScriptFile($ctrl->staticUrl('/js/lib/jquery.js'));
         Yii::app()->clientScript->registerScriptFile($ctrl->staticUrl('/js/lib/angular.min.js'));
         Yii::app()->clientScript->registerScriptFile($ctrl->staticUrl('/js/lib/yii.urlmanager.min.js'));

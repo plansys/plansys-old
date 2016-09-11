@@ -53,8 +53,6 @@ $components = array(
         ),
     ),
     'session'       => array(
-        'class' => 'CDbHttpSession',
-        'sessionTableName' => 'p_session',
         'cookieParams' => array(
             'httpOnly' => true,
         ),
