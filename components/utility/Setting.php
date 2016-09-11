@@ -60,7 +60,7 @@ class Setting {
 
     public static function init($configfile, $mode = "running", $entryScript = "") {
         require_once("Installer.php");
-
+        
         date_default_timezone_set("Asia/Jakarta");
         $bp = Setting::setupBasePath($configfile);
         $ap = Setting::$rootPath . DIRECTORY_SEPARATOR . "app";
@@ -69,25 +69,52 @@ class Setting {
         if (!is_file(Setting::$path)) {
             $configdir = dirname(Setting::$path);
             if (!is_dir($configdir)) {
-                mkdir($configdir, 0777, true);
+                $res = @mkdir($configdir, 0777, true);
+                if (!$res) {
+                    echo "Failed to create directory: {$configdir}";
+                    echo "\nPermission Denied";
+                    die();
+                }
             }
 
             $oldConfig = $bp . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
+            
             if (is_file($oldConfig)) {
-                rename($oldConfig, Setting::$path);
+                $res = @rename($oldConfig, Setting::$path);
+                if (!$res) {
+                    echo "Failed to move {$oldConfig} to " . Setting::$path;
+                    echo "\nPermission Denied";
+                    die();
+                }
                 header("Location: " . $_SERVER['DOCUMENT_URI']);
                 die();
             }
-
+            
             $json = Setting::$default;
-
             $json   = json_encode($json, JSON_PRETTY_PRINT);
-            $result = @file_put_contents(Setting::$path, $json);
-
+            $res = @file_put_contents(Setting::$path, $json);
+            if (!$res) {
+                echo "Failed to create file: " . Setting::$path;
+                echo "\nPermission Denied";
+                die();
+            }
+        }
+        
+        $path = Setting::getRootPath() . DIRECTORY_SEPARATOR . "index.php";
+        
+        if (!is_file($path)) {
             require_once("Installer.php");
-            Installer::createIndexFile("install");
+            $res = Installer::createIndexFile("install");
+            if (!$res) {
+                echo "Failed to create file: " . $path;
+                echo "\nPermission Denied";
+                die();
+            }
+            
             Setting::$mode = "install";
         }
+        
+        
         $file = @file_get_contents(Setting::$path);
 
         ## set entry script
@@ -129,6 +156,7 @@ class Setting {
         if ($mode == 'testing') {
             Setting::$mode = 'testing';
         }
+        
 
         if (Setting::get('app.mode') != 'production') {
             //debug

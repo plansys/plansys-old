@@ -394,9 +394,11 @@ class ActiveRecord extends CActiveRecord {
                 }
             }
         }
+        $j = 0;
         foreach ($data as $d) {
+            $j++;
+            $cond = [];
             if (is_array($pk)) {
-                $cond = [];
                 foreach ($pk as $p) {
                     if (is_string($d[$p])) {
                         $cond[] = "|{$p}| = '{$d[$p]}'";
@@ -413,6 +415,7 @@ class ActiveRecord extends CActiveRecord {
                 }
                 unset($d[$pk]);
             }
+            // vdump($j);die();
 
             $updatearr = [];
             for ($i = 0; $i < $columnCount; $i++) {
@@ -521,15 +524,24 @@ class ActiveRecord extends CActiveRecord {
 
         $pk = $model::model()->tableSchema->primaryKey;
 
-
         foreach ($old as $k => $v) {
             $is_deleted = true;
             $is_updated = false;
-
             foreach ($new as $i => $j) {
                 if (@$j[$pk] == @$v[$pk]) {
+                    
                     $is_deleted = false;
                     if (is_array($j) && is_array($v)) {
+                        foreach($j as $jk => $jv){
+                            if(is_array($jv)){
+                                unset($j[$jk]);
+                            }
+                        }
+                        foreach($v as $vk => $vv){
+                            if(is_array($vv)){
+                                unset($v[$vk]);
+                            }
+                        }
                         if (count(array_diff_assoc($j, $v)) > 0) {
                             $is_updated  = true;
                             $updateArr[] = $j;

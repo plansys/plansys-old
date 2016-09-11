@@ -162,7 +162,7 @@ abstract class CApplication extends CModule
 		
 		$this->initSystemHandlers();
 		$this->registerCoreComponents();
-
+		
 		$this->configure($config);
 		$this->attachBehaviors($this->behaviors);
 		$this->preloadComponents();

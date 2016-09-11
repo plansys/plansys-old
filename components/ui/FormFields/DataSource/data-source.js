@@ -22,6 +22,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 $scope.httpRequest = false;
                 $scope.loading = false;
                 $scope.untrackColumns = [];
+                $scope.dataFilterName = '';
                 
                 if (!!$scope.options['primaryKey']) {
                     $scope.primaryKey = $scope.options['primaryKey'];
@@ -279,6 +280,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         class: $scope.class,
                         params: params,
                         modelParams: $scope.model,
+                        df: $scope.dataFilterName,
                         lc: $scope.shouldCount ? 0 : $scope.totalItems
                     }, { timeout: $scope.httpRequest.promise })
                     .success(executeSuccess)

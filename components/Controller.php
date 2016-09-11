@@ -63,25 +63,60 @@ class Controller extends CController {
         return @$_POST[$class];
     }
 
+	public function resolveViewFile($viewName,$viewPath,$basePath,$moduleViewPath=null)
+	{
+		if(empty($viewName))
+			return false;
+
+		if($moduleViewPath===null)
+			$moduleViewPath=$basePath;
+
+		if(($renderer=Yii::app()->getViewRenderer())!==null)
+			$extension=$renderer->fileExtension;
+		else
+			$extension='.php';
+		if($viewName[0]==='/')
+		{
+			if(strncmp($viewName,'//',2)===0)
+				$viewFile=$basePath.$viewName;
+			else
+				$viewFile=$moduleViewPath.$viewName;
+		}
+		elseif(strpos($viewName,'.'))
+			$viewFile=Yii::getPathOfAlias($viewName);
+		else
+			$viewFile=$viewPath.DIRECTORY_SEPARATOR.$viewName;
+
+
+		if(is_file($viewFile.$extension))
+			return Yii::app()->findLocalizedFile($viewFile.$extension);
+		elseif($extension!=='.php' && is_file($viewFile.'.php'))
+			return Yii::app()->findLocalizedFile($viewFile.'.php');
+		else
+			return false;
+	}
+
     public function getViewFile($viewName) {
         if (($theme    = Yii::app()->getTheme()) !== null && ($viewFile = $theme->getViewFile($this, $viewName)) !== false)
             return $viewFile;
 
-        $appPath = Yii::getPathOfAlias('app.views');
-        if (!is_dir($appPath)) {
-            $appPath = Yii::app()->getViewPath();
-        }
+        $basePath = $this->getBaseViewPath();
         $moduleViewPath = null;
-        $basePath       = $appPath;
-        if (($module         = $this->getModule()) !== null)
+        $viewPath = $basePath . DIRECTORY_SEPARATOR . $this->id;
+        if (($module         = $this->getModule()) !== null) {
             $moduleViewPath = $module->getViewPath();
+            $viewPath = $moduleViewPath . DIRECTORY_SEPARATOR . $this->id; 
+        } 
 
+        $result = $this->resolveViewFile($viewName, $viewPath, $basePath, $moduleViewPath);
         
-        $result = $this->resolveViewFile($viewName, $appPath, $basePath, $moduleViewPath);
+        ## if file is not found, try in plansys view dir
         if (!$result) {
-            return $this->resolveViewFile($viewName, $this->getViewPath(), $basePath, $moduleViewPath);
+            $basePath = Yii::app()->getViewPath();
+            $viewPath = $basePath . DIRECTORY_SEPARATOR . $this->id;
+            $result = $this->resolveViewFile($viewName, $viewPath, $basePath, $moduleViewPath);
         }
-
+        
         return $result;
     }
 
@@ -107,13 +142,34 @@ class Controller extends CController {
         }
         elseif (($module = $this->getModule()) === null)
             $module = Yii::app();
+            
 
+        return $this->resolveViewFile($layoutName, $module->getLayoutPath(), $this->getBaseViewPath(), $module->getViewPath());
+    }
+
+    public function getBaseViewPath() {
         $appPath = Yii::getPathOfAlias('app.views');
         if (!is_dir($appPath)) {
             $appPath = Yii::app()->getViewPath();
+        } else {
+            ## make sure app's view layout file is available
+            if (!is_dir($appPath . '/layouts')) {
+                $appPath = Yii::app()->getViewPath();
+            } else {
+                $psFile = [
+                    Yii::app()->getViewPath() . "/layouts/main.php",
+                    Yii::app()->getViewPath() . "/layouts/blank.php"
+                ];
+                foreach ($psFile as $p) {
+                    $f = str_replace(Yii::app()->getViewPath() . "/layouts/", $appPath . "/layouts/", $p);
+                    if (!is_file($f)) {
+                        $appPath = Yii::app()->getViewPath();
+                        break;
+                    }
+                }
+            }
         }
-
-        return $this->resolveViewFile($layoutName, $module->getLayoutPath(), $appPath, $module->getViewPath());
+        return $appPath;
     }
 
     public function renderForm($class, $model = null, $params = [], $options = []) {

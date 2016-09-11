@@ -6,7 +6,8 @@
             {{filter.label}}<span 
                 ng-hide="(filter.filterType == 'number' 
                             && filter.valueText != 'All'
-                            && filter.operator != 'Is Empty') || filter.label == ''
+                            && filter.operator != 'Is Empty'
+                            && filter.operator != 'Is Not Empty') || filter.label == ''
                 ">:</span></span>
         <b>{{filter.valueText}}
         </b>
@@ -34,7 +35,7 @@
                     </li>
                 </ul>
             </div>
-            <input type="text" ng-hide="filter.operator == 'Is Empty'"
+            <input type="text" ng-hide="filter.operator == 'Is Empty' || filter.operator == 'Is Not Empty'"
                    ng-model="filter.value" 
                    ng-keydown="filterValueKeydown(filter, $event)"
                    class="focused form-control" style="width:250px;">

@@ -2,6 +2,7 @@
         
 class ImportController extends Controller {
     public function beforeAction($action) {
+        parent::beforeAction($action);
         if (isset($_GET['m'])) {
             
             $m = explode(".", $_GET['m']);

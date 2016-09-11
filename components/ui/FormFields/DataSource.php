@@ -40,6 +40,7 @@ class DataSource extends FormField {
     private $postedParams      = [];
     private $lastCount         = 0;
     private $command;
+    private $dataFilter;
 
     public static function querySql($sql, $params, $form = '', $dsname = '') {
         $ds = new DataSource;
@@ -71,7 +72,7 @@ class DataSource extends FormField {
 
         $db       = Yii::app()->db;
         $template = DataSource::generateTemplate($this->sql, $params, $this, $paramDefs);
-
+        
         ## execute SQL
         $this->command = $db->createCommand($template['sql']);
         $data          = $this->command->queryAll(true, $template['params']);
@@ -693,15 +694,39 @@ class DataSource extends FormField {
                     $fb->model = new $class;
                 }
             }
-
+            
             $this->attributes  = $field;
             $this->builder     = $fb;
             $this->queryParams = (is_array(@$post['params']) ? @$post['params'] : []);
-
+            if (@$post['df'] != '') {
+                $this->dataFilter = $fb->findField(['name' => $post['df']]);
+                if (isset($this->queryParams['where'])) {
+                    $filters = [];
+                    foreach ($this->dataFilter['filters'] as $k=>$v) {
+                        $filters[$v['name']] = $v;
+                    }
+                    
+                    foreach ($this->queryParams['where'] as $k=>$v) {
+                        
+                        ## prevent sql injection, remove mode
+                        if (isset($this->queryParams['where'][$k]['mode'])) {
+                            unset($this->queryParams['where'][$k]['mode']);
+                        }
+                        
+                        if (isset($filters[$k])) {
+                            if (isset($filters[$k]['options']['colname'])) {
+                                $this->queryParams['where'][$k]['mode'] = 'raw';
+                                $this->queryParams['where'][$k]['colname'] = $filters[$k]['options']['colname']; 
+                            }
+                        } 
+                    }
+                }
+            }
+            
             if (is_object($this->model) && isset($post['modelParams'])) {
                 $this->model->attributes = $post['modelParams'];
             }
-
+            
             $isGenerate = isset($post['generate']);
 
             if (is_string($this->params)) {
@@ -711,8 +736,6 @@ class DataSource extends FormField {
             if ($this->postData == 'No' || $this->relationTo == '' || $this->relationTo == '-- NONE --') {
                 ## without relatedTo
                 $this->prepareGeneratedParams();
-
-
                 switch ($this->fieldType) {
                     case "sql":
                         $data      = $this->query($this->params);
@@ -969,7 +992,6 @@ class DataSource extends FormField {
         ## condition criteria
         if (isset($criteria['condition']) && is_string($criteria['condition'])) {
             $sql = $criteria['condition'];
-
 
             $bracket = DataSource::generateTemplate($sql, $postedParams, $field);
 

@@ -122,6 +122,5 @@ $config = array(
     'params'         => array(),
 );
 
-$config = Setting::finalizeConfig($config);
-
+$config = Setting::finalizeConfig($config, "main");
 return $config;

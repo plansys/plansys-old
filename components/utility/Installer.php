@@ -69,12 +69,6 @@ class Installer {
         $checkLists = [
             "Checking Directory Permission" => [
                 [
-                    "title" => 'Checking base directory permissions',
-                    "check" => function() {
-                        return Setting::checkPath(Setting::getBasePath(), true);
-                    }
-                ],
-                [
                     "title" => 'Checking app directory permissions',
                     "check" => function() {
                         return Setting::checkPath(Setting::getAppPath());
@@ -90,12 +84,6 @@ class Installer {
                     "title" => 'Checking runtime directory permissions',
                     "check" => function() {
                         return Setting::checkPath(Setting::getRuntimePath(), true);
-                    }
-                ],
-                [
-                    "title" => 'Checking config directory permissions',
-                    "check" => function() {
-                        return Setting::checkPath(Setting::getConfigPath(), true);
                     }
                 ],
                 [
@@ -253,25 +241,35 @@ class Installer {
     }
 
     public static function copyAppLayouts() {
-        ## copy layout
-        $from = Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "views/layouts";
-        $to = Setting::getRootPath() . DIRECTORY_SEPARATOR . "app/views/layouts";
-        
-        if (!is_dir($to)) {
-            mkdir($to, 0777, true);
-        }
         Yii::import("application.components.utility.Helper");
-        Helper::copyRecursive($from, $to);
+        
+        ## copy layout
+        // $from = Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "views/layouts";
+        // $to = Setting::getRootPath() . DIRECTORY_SEPARATOR . "app/views/layouts";
+        
+        // if (!is_dir($to)) {
+        //     mkdir($to, 0777, true);
+        // }
+        // Helper::copyRecursive($from, $to);
+    }
+    
+    public static function copySiteController() {
         
         ## copy SiteController
         $from = Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "controllers/SiteController.php";
         $to = Setting::getRootPath() . DIRECTORY_SEPARATOR . "app/controllers/SiteController.php";
-        if (!is_dir(dirname($to))) {
-            mkdir(dirname($to), 0777, true);
-        }
-        copy($from, $to);
         
-        return true;
+        if (!is_file($to)) {
+            if (!is_dir(dirname($to))) {
+                mkdir(dirname($to), 0777, true);
+            }
+            $res = @copy($from, $to);
+        
+            return $res;
+        } else {
+            return true;
+        }
+        
     }
 
     public static function createIndexFile($mode = "install") {
@@ -328,9 +326,9 @@ class Installer {
             header("Location: " . $url . "/index.php?r=install/default/index");
             die();
         } else if (Setting::$mode == "install") {
-            if (!Installer::copyAppLayouts()) {
+            if (!Installer::copySiteController()) {
                 Setting::redirError("Failed to write in \"{path}\" <br/> Permission denied", [
-                    '{path}' => Setting::getRootPath() . DIRECTORY_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "views"
+                    '{path}' => Setting::getRootPath() . DIRECTORY_SEPARATOR . "app/controllers/SiteController.php"
                 ]);
             } 
         }
