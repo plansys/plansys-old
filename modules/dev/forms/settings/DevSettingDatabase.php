@@ -60,9 +60,6 @@ class DevSettingDatabase extends Form {
                     array (
                         'label' => 'Driver',
                         'name' => 'driver',
-                        'list' => array (
-                            'mysql' => 'MySQL',
-                        ),
                         'listExpr' => 'Setting::getDBDriverList();',
                         'type' => 'DropDownList',
                     ),

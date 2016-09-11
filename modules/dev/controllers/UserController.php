@@ -25,6 +25,7 @@ class UserController extends Controller {
                 $this->redirect(array("roles"));
             }
         }
+        
         $this->renderForm("users.role.DevRoleForm", $model);
     }
 
