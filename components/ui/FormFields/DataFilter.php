@@ -568,14 +568,14 @@ class DataFilter extends FormField {
      * @return mixed me-return sebuah field dan atribut datafilter dari hasil render
      */
     public function render() {
-        $this->processExpr();
+        $this->processExpr(true);
         return $this->renderInternal('template_render.php');
     }
 
     /**
      * @return array me-return array hasil proses expression.
      */
-    public function processExpr() {
+    public function processExpr($fromRender = false) {
         if (count($this->filters) == 0)
             return [];
 
@@ -601,13 +601,16 @@ class DataFilter extends FormField {
                         foreach ($list as $i=>$listItem) {
                             if (is_array($listItem)) {
                                 foreach ($listItem as $l => $listSubItem) {
-                                    $list[$i][$l] = $listSubItem;
+                                    $list[$i][$l] = CHtml::encode($listSubItem);
                                 }
                             } else {
-                                $list[$i] = $listItem;
+                                $list[$i] = CHtml::encode($listItem);
                             }
                         }
-    
+                        
+                        // if ($fromRender) {
+                        //     $this->filters[$k]['listExpr'] = "";
+                        // }
                         $this->filters[$k]['list'] = $list;
                     } 
                     break;

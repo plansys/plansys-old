@@ -947,6 +947,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 filterRaw = filterRaw.replace(/\%quot\%/gi,'\\"');
                 filterRaw = filterRaw.replace(/\%lt\%/gi,'<');
                 filterRaw = filterRaw.replace(/\%gt\%/gi,'>');
+                console.log(filterRaw);
+                
                 $scope.filters = $scope.initFilters(JSON.parse(filterRaw));
                 
                 $scope.oldFilters = null;

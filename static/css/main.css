@@ -332,7 +332,6 @@ i {
 }
 
 
-
 .navbar-nav > li a i {
     margin-left: -6px;
     font-size: 13px;
@@ -370,8 +369,13 @@ i {
     background-color: rgba(255, 255, 255, .2);
 }
 
+.dropdown-submenu > .dropdown-menu {
+    display:block;
+    visibility:hidden;
+    transition: 0.2s 0.01s; 
+}
 .dropdown-submenu:hover > .dropdown-menu {
-    display: block;
+    visibility: visible;
 }
 
 .dropdown-submenu .dropdown-submenu {
