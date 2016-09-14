@@ -415,7 +415,6 @@ class ActiveRecord extends CActiveRecord {
                 }
                 unset($d[$pk]);
             }
-            // vdump($j);die();
 
             $updatearr = [];
             for ($i = 0; $i < $columnCount; $i++) {
