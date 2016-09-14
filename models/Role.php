@@ -42,6 +42,7 @@ class Role extends ActiveRecord {
             $role = explode(".", $this->role_name);
             $this->repo_path = array_shift($role);
         }
+        return true;
     }
     
     public function afterFind() {
