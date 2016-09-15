@@ -20,6 +20,13 @@ class UserIdentity extends CUserIdentity {
             'is_default_role' => 'Yes'
         ]);
         
+        
+        if(is_null($role)){
+            $role = UserRole::model()->findByAttributes([
+                'user_id'         => $this->id,
+                ]);
+        }
+        
         if (!!$role) {
             $this->setState('fullRole', $role->role['role_name']);
             $rootRole = Helper::explodeFirst(".", $role->role['role_name']);

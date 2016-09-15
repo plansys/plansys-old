@@ -37,14 +37,16 @@ class Role extends ActiveRecord {
         return Helper::explodeFirst(".", $this->role_name);
     }
 
-
-    public function afterFind() {
-        $this->oldName = $this->role_name;
-
-        if ($this->repo_path == "") {
+    public function beforeSave() {
+        if ($this->isNewRecord && $this->repo_path == '') {
             $role = explode(".", $this->role_name);
             $this->repo_path = array_shift($role);
         }
+        return true;
+    }
+    
+    public function afterFind() {
+        $this->oldName = $this->role_name;
 
         return true;
     }

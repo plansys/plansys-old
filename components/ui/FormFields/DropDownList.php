@@ -290,10 +290,8 @@ class DropDownList extends FormField {
                     $this->list = Helper::toAssoc($this->list);
                 }
             }
-        } else if (is_array($this->list) && !Helper::is_assoc($this->list)) {
-            $this->list = Helper::toAssoc($this->list);
-        }
-
+        } 
+        
         return [
             'list' => $this->list
         ];

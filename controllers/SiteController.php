@@ -1,8 +1,8 @@
 <?php
 
-Yii::import("application.controllers.DefaultController");
+Yii::import("application.controllers.PsDefaultController");
 
-class SiteController extends DefaultController {
+class SiteController extends PsDefaultController {
     
     public function beforeLogin($model) {}
 

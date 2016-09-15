@@ -940,7 +940,7 @@ class="btn btn-sm btn-default">
                 ], $genBelongsTo);
             }
 
-            if ($k < $length / 2) {
+            if ($length <= 2 || $k < $length / 2) {
                 $column1[] = $fieldList[$k];
             } else {
                 $column2[] = $fieldList[$k];

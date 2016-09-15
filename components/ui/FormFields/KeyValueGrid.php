@@ -124,14 +124,13 @@ class KeyValueGrid extends FormField {
     /** @var string $value */
     public $value = [];
 	
-    /** @var string $show */
-    public $show = 'Hide';
-	
     /** @var array $options */
     public $options = [];
 	
     /** @var string $allowEmptyKey */
     public $allowEmptyKey = 'No';
+    
+    public $show = 'Hide';
 	
     /** @var string $allowSpaceOnKey */
     public $allowSpaceOnKey = 'No';
@@ -151,6 +150,7 @@ class KeyValueGrid extends FormField {
     /** @var string $toolbarIcon */
     public static $toolbarIcon = "fa fa-key";
 	
+    public static  $deprecated = true;
     /**
      * @return array me-return array javascript yang di-include
      */

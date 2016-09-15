@@ -627,10 +627,14 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 }
 
                 $scope.changeValueText = function (filter) {
+                    if (filter.value == '##!@# EMPTY #@!##') {
+                        filter.value = '';
+                    }
+                    
                     var dateCondition = filter.filterType == "date" && ['Between', 'Not Between', 'More Than', 'Less Than'].indexOf(filter.operator) >= 0;
-                    if (filter.operator == 'Is Empty') {
-                        filter.valueText = 'Is Empty';
-                        filter.value = '- Empty -';
+                    if (filter.operator == 'Is Empty' || filter.operator == 'Is Not Empty') {
+                        filter.valueText = filter.operator;
+                        filter.value = '##!@# EMPTY #@!##';
                     } else if (filter.value == '' && (dateCondition || filter.filterType != "date")) {
                         filter.valueText = 'All';
                     } else {
@@ -1032,6 +1036,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 ds.lastQueryFrom = "DataFilter";
                                 ds.disableTrackChanges('DataFilter:initDefaultValueCached');
                                 ds.lastQueryFrom = "DataFilter";
+                                ds.dataFilterName = $scope.name;
                                 ds.query();
                             }
                         });
@@ -1133,6 +1138,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 ds.lastQueryFrom = "DataFilter";
                                 ds.disableTrackChanges('DataFilter:initDefaultValue');
                                 ds.lastQueryFrom = "DataFilter";
+                                ds.dataFilterName = $scope.name;
                                 ds.query();
                             }
                         });

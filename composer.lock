@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/box/spout.git",
-                "reference": "ff2d54cc8d1e4ba4ada2e63b3e0154cdc1410a17"
+                "reference": "a07a96f523025a02944c4c2db74299ddf22e4e6b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/box/spout/zipball/ff2d54cc8d1e4ba4ada2e63b3e0154cdc1410a17",
-                "reference": "ff2d54cc8d1e4ba4ada2e63b3e0154cdc1410a17",
+                "url": "https://api.github.com/repos/box/spout/zipball/a07a96f523025a02944c4c2db74299ddf22e4e6b",
+                "reference": "a07a96f523025a02944c4c2db74299ddf22e4e6b",
                 "shasum": ""
             },
             "require": {
@@ -37,7 +37,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.6.x-dev"
+                    "dev-master": "2.7.x-dev"
                 }
             },
             "autoload": {
@@ -74,7 +74,7 @@
                 "write",
                 "xlsx"
             ],
-            "time": "2016-08-24 02:57:57"
+            "time": "2016-09-08 16:34:43"
         },
         {
             "name": "inlinestyle/inlinestyle",
@@ -236,7 +236,7 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v3.1.3",
+            "version": "v3.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
@@ -289,16 +289,16 @@
         },
         {
             "name": "yajra/laravel-pdo-via-oci8",
-            "version": "v1.2.0",
+            "version": "v1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yajra/pdo-via-oci8.git",
-                "reference": "6ebf5126cce2962a8ebb5e9eda42203951e04558"
+                "reference": "52c6c0061ca93eb531b6dc3b75494cea78d94f0d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yajra/pdo-via-oci8/zipball/6ebf5126cce2962a8ebb5e9eda42203951e04558",
-                "reference": "6ebf5126cce2962a8ebb5e9eda42203951e04558",
+                "url": "https://api.github.com/repos/yajra/pdo-via-oci8/zipball/52c6c0061ca93eb531b6dc3b75494cea78d94f0d",
+                "reference": "52c6c0061ca93eb531b6dc3b75494cea78d94f0d",
                 "shasum": ""
             },
             "require-dev": {
@@ -321,7 +321,7 @@
                 }
             ],
             "description": "PDO userspace driver proxying calls to PHP OCI8 driver",
-            "time": "2016-08-30 01:29:30"
+            "time": "2016-09-09 04:54:56"
         }
     ],
     "packages-dev": [],

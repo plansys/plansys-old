@@ -23,7 +23,7 @@ class FormController extends Controller {
                 'title' => 'Hello world',
                 'items' => [
                     [
-                        'icon'  => 'fa fa-file-',
+                        'icon'  => 'fa fa-file-text-o',
                         'title' => 'Hello world'
                     ],
                     [
