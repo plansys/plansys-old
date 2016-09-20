@@ -289,7 +289,8 @@ EOF;
         }
         
         $file = file(Yii::getPathOfAlias($class) . ".php", FILE_IGNORE_NEW_LINES);
-
+        
+        
         if (!$changed) {
             foreach ($file as $k => $f) {
                 if (trim($file[$k]) != trim($cache['file'][$k])) {

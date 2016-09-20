@@ -79,13 +79,14 @@ class FormBuilder extends CComponent {
         ## get method line and length
         $cacheKey = 'FormBuilder_' . $originalClass;
         $cache    = Yii::app()->cache->get($cacheKey);
+        
         if (!$cache) {
             $reflector         = new ReflectionClass($class);
             $model->sourceFile = $reflector->getFileName();
             $model->file       = file($model->sourceFile, FILE_IGNORE_NEW_LINES);
             $methods           = $reflector->getMethods();
             foreach ($methods as $m) {
-                if ($m->class == $class) {
+                if (strtolower($m->class) == strtolower($class)) {
                     $line                     = $m->getStartLine() - 1;
                     $length                   = $m->getEndLine() - $line;
                     $model->methods[$m->name] = [
@@ -94,7 +95,7 @@ class FormBuilder extends CComponent {
                     ];
                 }
             }
-
+            
             Yii::app()->cache->set($cacheKey, [
                 'sourceFile' => $model->sourceFile,
                 'file'       => $model->file,
@@ -563,8 +564,6 @@ html;
     }
 
     public function updateField($findAttr, $values, &$fields = null, $level = 0) {
-        throw new Exception("WOW");
-
         if ($fields == null) {
             $fields = $this->getFields();
         }
@@ -889,6 +888,7 @@ html;
             }
         }
 
+
         ## get class data
         $isNewFunc  = false;
         $sourceFile = '';
@@ -992,6 +992,7 @@ EOF;
                 }
             }
         }
+        
         return [
             'file'       => $this->file,
             'length'     => $length,
