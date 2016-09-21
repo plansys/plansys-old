@@ -46,6 +46,7 @@ class ImportController extends Controller {
     }
     
     public function actionTest($m,$f) {
+        Yii::import('application.commands.ImportCommand');
         $file = $f;
         //$file = '/var/www/eauction/assets/tmp/Yawyaw_6.xlsx';
         $model = $m;
