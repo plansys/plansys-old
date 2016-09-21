@@ -200,8 +200,6 @@ class CDbCommand extends CComponent {
             } catch (Exception $e) {
                 Yii::log('Error in preparing SQL: ' . $this->getText(), CLogger::LEVEL_ERROR, 'system.db.CDbCommand');
                 $errorInfo = $e instanceof PDOException ? $e->errorInfo : null;
-                var_dump($this->getText());
-                die();
                 throw new CDbException(Yii::t('yii', 'CDbCommand failed to prepare the SQL statement: {error}', array('{error}' => $e->getMessage())), (int) $e->getCode(), $errorInfo);
             }
         }

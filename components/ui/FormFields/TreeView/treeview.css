@@ -1,0 +1,31 @@
+.tv-container .angular-ui-tree-empty {
+    position:relative;
+}
+
+.tv-caret {
+     float:left;
+     width:12px;
+     cursor:pointer;
+}
+
+.tv-icon {
+     width:15px;
+     display:inline-block;
+}
+
+.tv-node-item {
+     cursor:default;
+}
+
+.tv-node-item span {
+     font-size:12px;
+     color:#454545;
+}
+
+.angular-ui-tree-nodes.tv-root {
+     padding-left:10px;
+}
+
+.angular-ui-tree-nodes .angular-ui-tree-nodes.tv-node {
+     padding-left:10px;
+}

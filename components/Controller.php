@@ -109,6 +109,14 @@ class Controller extends CController {
         } 
 
         $result = $this->resolveViewFile($viewName, $viewPath, $basePath, $moduleViewPath);
+        
+        ## if file is not found, try in plansys view dir
+        if (!$result) {
+            $basePath = Yii::app()->getViewPath();
+            $viewPath = $basePath . DIRECTORY_SEPARATOR . $this->id;
+            $result = $this->resolveViewFile($viewName, $viewPath, $basePath, $moduleViewPath);
+        }
+        
         return $result;
     }
 
@@ -134,6 +142,7 @@ class Controller extends CController {
         }
         elseif (($module = $this->getModule()) === null)
             $module = Yii::app();
+            
 
         return $this->resolveViewFile($layoutName, $module->getLayoutPath(), $this->getBaseViewPath(), $module->getViewPath());
     }

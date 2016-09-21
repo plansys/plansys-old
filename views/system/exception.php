@@ -6,7 +6,7 @@ if (Setting::$mode == "init" || Setting::$mode == "install") {
     Yii::import("application.modules.install.controllers.*");
     $module = new InstallModule("install", null);
 
-    $controller = new DefaultController("default", $module);
+    $controller = new PsDefaultController("default", $module);
     $controller->action = $controller->createAction("index");
 
     $msg = @$data['message'];

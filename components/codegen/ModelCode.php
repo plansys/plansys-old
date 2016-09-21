@@ -265,6 +265,10 @@ class ModelCode extends CCodeModel
 
 	protected function removePrefix($tableName,$addBrackets=true)
 	{
+		if (strpos($tableName, 'p_') === 0) {
+			$this->tablePrefix = "p_";
+		}
+		
 		if($addBrackets && Yii::app()->{$this->connectionId}->tablePrefix=='')
 			return $tableName;
 		$prefix=$this->tablePrefix!='' ? $this->tablePrefix : Yii::app()->{$this->connectionId}->tablePrefix;

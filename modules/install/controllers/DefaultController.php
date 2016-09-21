@@ -134,6 +134,7 @@ class DefaultController extends Controller {
             }
         }
 
+
         $this->renderForm('InstallDbForm', $model, ['error' => $error, 'mode' => $mode]);
     }
 

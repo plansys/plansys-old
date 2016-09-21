@@ -25,7 +25,7 @@
          context-menu="formTreeOpen(this, $event, item)"
          data-target="FormTreeMenu">
         <i class="fa {{ getIcon(item) }} fa-nm" style="float:left;margin:2px 0px 0px -18px;"></i>
-        <div style="word-break:break-all;">{{item.shortName || item.name }}<span ng-if="item.shortName" class="form-builder-file-item-full">{{item.name}}</span></div>
+        <div style="word-break:break-all;">{{item.shortName || item.name }}</div>
     </div>
 </a>
 <div class="dropdown menu-tree" id="FormTreeMenu">

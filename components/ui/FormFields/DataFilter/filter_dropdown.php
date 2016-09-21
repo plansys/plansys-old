@@ -7,9 +7,9 @@
             tooltip="{{ filter.valueText }}" class="btn btn-default btn-sm dropdown-toggle">
         <span style="font-size:13px;"> 
             {{filter.label}}<span ng-hide="filter.label == ''">:</span></span>
+            
         <b ng-if="!filter.options.html" ng-bind-html="filter.valueText | more:15"></b>
         <b ng-if="filter.options.html" ng-bind-html="filter.valueText"></b>
-        
         <span class="caret" style="margin-left:5px;"></span>
     </button>
     <button type="button" ng-click="resetFilter(filter);"

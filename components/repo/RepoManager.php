@@ -409,11 +409,10 @@ class RepoManager extends CComponent {
             return DIRECTORY_SEPARATOR;
         } else {
             $roles = Yii::app()->user->model->roles;
-
             $path = Yii::app()->user->role;
             foreach ($roles as $r) {
                 if (isset($r['role_name']) && isset($r['repo_path'])) {
-                    if (Yii::app()->user->fullRole == $r['role_name'] && $r['repo_path'] != '') {
+                    if (Yii::app()->user->fullRole == $r['role_name']) {
                         $path = $r['repo_path'];
                     }
                 }

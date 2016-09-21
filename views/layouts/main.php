@@ -34,13 +34,7 @@
     </div>
     <!-- /.container-full -->
 </nav>
-<?php
-//if (Setting::$mode == "running" && !Yii::app()->user->isGuest) {
-//    include("_widget.php");
-//}
-?>
-<div id="content" ng-cloak
-     class="<?php echo Setting::$mode == "running" && Yii::app()->user->isGuest ? 'no-widget' : ''; ?>">
+<div id="content" ng-cloak>
     <?php echo $content; ?>
 </div>
 </body>

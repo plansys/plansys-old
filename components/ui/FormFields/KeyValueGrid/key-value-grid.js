@@ -13,17 +13,26 @@ app.directive('keyValueGrid', function ($timeout) {
                 $scope.change = function () {
                     $scope.value = cleanJSON($scope.value);
                     $scope.json = prettifyJSON(unformatJSON($scope.value, false));
-
+                    
                     if (!!ctrl) {
                         $timeout(function () {
                             ctrl.$setViewValue(unformatJSON($scope.value, true));
+
+                            $scope.value.splice(0,$scope.value.length);
+                            for (var i in ctrl.$viewValue) {
+                                $scope.value.push({
+                                    key: i,
+                                    value: ctrl.$viewValue[i]
+                                });
+                            }
+                            $scope.value.push({key:"",value:""});
 
                             if (typeof attrs.ngChange == "undefined") {
                                 $scope.$parent.save();
                             }
                         }, 500);
                     }
-                };
+                }; 
 
                 $scope.changeJSON = function () {
                     $scope.json_error = '';
@@ -140,7 +149,6 @@ app.directive('keyValueGrid', function ($timeout) {
                                 eval("list['" + itemArr.join("']['") + "'] = item.value");
                         }
                     }
-
                     return list;
                 }
 
@@ -175,6 +183,7 @@ app.directive('keyValueGrid', function ($timeout) {
                 if (attrs.ngModel) {
                     $timeout(function () {
                         var ngModelValue = $scope.$eval(attrs.ngModel);
+                        console.log(ngModelValue);
                         if (typeof ngModelValue != "undefined") {
                             $scope.value = formatJSON(ngModelValue);
                             $scope.json = prettifyJSON(unformatJSON($scope.value, false));

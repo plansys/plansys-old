@@ -7,6 +7,7 @@ class UserController extends Controller {
 
         if (isset($_POST["DevRoleForm"])) {
             $model->attributes = $_POST["DevRoleForm"];
+            
             if ($model->save()) {
                 Yii::app()->user->setFlash('info', 'Role berhasil dibuat');
                 $this->redirect(array("/dev/user/role", 'id' => $model->id));
@@ -25,6 +26,7 @@ class UserController extends Controller {
                 $this->redirect(array("roles"));
             }
         }
+        
         $this->renderForm("users.role.DevRoleForm", $model);
     }
 

@@ -36,7 +36,8 @@ class DataFilter extends FormField {
             'Is Equal To',
             'Starts With',
             'Ends With',
-            'Is Empty'
+            'Is Empty',
+            'Is Not Empty'
         ],
         'number' => [
             '=',
@@ -45,7 +46,8 @@ class DataFilter extends FormField {
             '>=',
             '<=',
             '<',
-            'Is Empty'
+            'Is Empty',
+            'Is Not Empty'
         ],
         'date' => [
             'Between',
@@ -166,11 +168,16 @@ class DataFilter extends FormField {
         $pcolumn = preg_replace('/[^\da-z]/i', '_', $column);
         $driver = Setting::get('db.driver');
         
-        $column = ActiveRecord::formatSingleCriteria($column, $driver);
         
-        ## quote field if it is containing illegal char
-        if (!preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", str_replace(".", "", $column))) {
-            $column = "{$column}";
+        if (@$filter['mode'] == 'raw' && isset($filter['colname'])) {
+            $column = $filter['colname'];
+        } else {
+            $column = ActiveRecord::formatSingleCriteria($column, $driver);
+            
+            ## quote field if it is containing illegal char
+            if (!preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", str_replace(".", "", $column))) {
+                $column = "{$column}";
+            }
         }
 
         switch ($filter['type']) {
@@ -225,6 +232,9 @@ class DataFilter extends FormField {
                         case "Is Empty":
                             $sql = "({$column} LIKE '' OR {$column} IS NULL)";
                             break;
+                        case "Is Not Empty":
+                            $sql = "({$column} NOT LIKE '' AND {$column} IS NOT NULL)";
+                            break;
                     }
                 }
                 break;
@@ -243,6 +253,9 @@ class DataFilter extends FormField {
                             break;
                         case "Is Empty":
                             $sql = "({$column} IS NULL)";
+                            break;
+                        case "Is Not Empty":
+                            $sql = "{$column} IS NOT NULL)";
                             break;
                     }
                 }
@@ -568,14 +581,14 @@ class DataFilter extends FormField {
      * @return mixed me-return sebuah field dan atribut datafilter dari hasil render
      */
     public function render() {
-        $this->processExpr();
+        $this->processExpr(true);
         return $this->renderInternal('template_render.php');
     }
 
     /**
      * @return array me-return array hasil proses expression.
      */
-    public function processExpr() {
+    public function processExpr($fromRender = false) {
         if (count($this->filters) == 0)
             return [];
 
@@ -601,13 +614,16 @@ class DataFilter extends FormField {
                         foreach ($list as $i=>$listItem) {
                             if (is_array($listItem)) {
                                 foreach ($listItem as $l => $listSubItem) {
-                                    $list[$i][$l] = $listSubItem;
+                                    $list[$i][$l] = CHtml::encode($listSubItem);
                                 }
                             } else {
-                                $list[$i] = $listItem;
+                                $list[$i] = CHtml::encode($listItem);
                             }
                         }
-    
+                        
+                        // if ($fromRender) {
+                        //     $this->filters[$k]['listExpr'] = "";
+                        // }
                         $this->filters[$k]['list'] = $list;
                     } 
                     break;

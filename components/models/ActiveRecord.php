@@ -415,7 +415,6 @@ class ActiveRecord extends CActiveRecord {
                 }
                 unset($d[$pk]);
             }
-            // vdump($j);die();
 
             $updatearr = [];
             for ($i = 0; $i < $columnCount; $i++) {
@@ -1449,10 +1448,11 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function save($runValidation = true, $attributes = null) {
+        
         if (!$runValidation || $this->validate($attributes)) {
             try {
                 return $this->getIsNewRecord() ? $this->insert($attributes) : $this->update($attributes);
-            } catch (CDbException $e) {
+            } catch (CDbException $e) {  
                 if (@$e->errorInfo[1] == 1452) {
                     preg_match("/FOREIGN\sKEY\s\(\`(.*)\`\)\sREFERENCES/", $e->errorInfo[2], $match);
                     $attribute = explode("`", $match[1]);
