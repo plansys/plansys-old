@@ -140,6 +140,7 @@ class Controller extends CController {
 
     public function getBaseViewPath() {
         $appPath = Yii::getPathOfAlias('app.views');
+        
         if (!is_dir($appPath)) {
             $appPath = Yii::app()->getViewPath();
         } else {

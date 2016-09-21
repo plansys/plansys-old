@@ -20,11 +20,11 @@ class UserIdentity extends CUserIdentity {
             'is_default_role' => 'Yes'
         ]);
         
-        
-        if(is_null($role)){
+        ## kalau ga nemu default role, wis pakai role yg ada saja...
+        if (is_null($role)) {
             $role = UserRole::model()->findByAttributes([
-                'user_id'         => $this->id,
-                ]);
+                'user_id'         => $this->id
+            ]); 
         }
         
         if (!!$role) {

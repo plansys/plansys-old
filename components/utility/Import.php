@@ -253,7 +253,11 @@ class Import extends CComponent {
         if ($lrow !== false && !empty($lrow)) {
             ## assign it into attributes
             if (is_string($col['return'])) {
-                $attrs[$into] = $lrow[$col['return']];
+                if (isset($lrow[$col['return']])) {
+                    $attrs[$into] = $lrow[$col['return']];
+                } else {
+                    throw new CException("Key `return` tidak bisa diambil dari kolom " . $col['return'] . " (tidak ditemukan)");
+                }
             } else if (is_array($col['return'])) {
                 foreach ($col['return'] as $k=>$r) {
                     $attrs[$k] = $lrow[$r];

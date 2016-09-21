@@ -532,16 +532,21 @@ class ActiveRecord extends CActiveRecord {
                     
                     $is_deleted = false;
                     if (is_array($j) && is_array($v)) {
-                        foreach($j as $jk => $jv){
-                            if(is_array($jv)){
-                                unset($j[$jk]);
+                        
+                        ## kalau ada isinya $v yg array, maka dihapus
+                        foreach ($j as $ji => $jv) {
+                            if (is_array($jv)) {
+                                unset($j[$ji]);
                             }
                         }
-                        foreach($v as $vk => $vv){
-                            if(is_array($vv)){
-                                unset($v[$vk]);
+                        
+                        ## kalau ada isinya $j yg array, maka dihapus
+                        foreach ($v as $vi => $vv) {
+                            if (is_array($vv)) {
+                                unset($v[$vi]);
                             }
                         }
+                        
                         if (count(array_diff_assoc($j, $v)) > 0) {
                             $is_updated  = true;
                             $updateArr[] = $j;
