@@ -18,7 +18,10 @@ class SysModule extends CWebModule {
     public function beforeControllerAction($controller, $action) {
         if (parent::beforeControllerAction($controller, $action)) {
             if (Yii::app()->user->isGuest) {
-                throw new CHttpException(403);
+                if ($controller->id != 'serviceApi') {
+                    echo "NO GUEST ACCESS";
+                    die();
+                }
             }
 
             return true;
