@@ -36,6 +36,7 @@ class ServiceManager extends CComponent {
                 'running_instances' => count($instances),
                 'last_run' => Helper::timeAgo($svc['lastRun'])
             ];
+            
             $results[] = $res;
         }
         return $results;
@@ -185,8 +186,8 @@ class ServiceManager extends CComponent {
             }
             
             $command = "run \"{$logPath}\" {$php} yiic.php service execute --id={$id}";
-            
             $pid = ServiceManager::process($command);
+            
             if (!empty($pid)) {
                 $service['pid'] = $pid[0];
                 ServiceManager::sendMsg($id, $service);

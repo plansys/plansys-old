@@ -12,7 +12,8 @@ $scope.poolCount = function() {
     }
     
     if ($scope.poolFailedCount >= $scope.maxPoolFailed) {
-        location.href = Yii.app.createUrl('/sys/service/instanceNotFound', {full: $scope.params.full || 0});
+        // alert("SERVICE FAILED");
+        // location.href = Yii.app.createUrl('/sys/service/instanceNotFound', {full: $scope.params.full || 0});
     }
 }
 

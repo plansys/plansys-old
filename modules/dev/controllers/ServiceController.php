@@ -2,7 +2,16 @@
 
 class ServiceController extends Controller {
     
-    public function actionIndex() {                  
+    public function actionIndex() {         
+        ## cek whether php path is present
+        
+        $php = Setting::get('app.phpPath');
+        
+        if ($php != '' && !is_file($php)) {
+            echo "INVALID PHP PATH: " . $php;
+            die();
+        }
+        
         $model = new DevServiceIndex();
         $model->status = "Service Daemon Running" ;
         $this->renderForm('DevServiceIndex', $model);
