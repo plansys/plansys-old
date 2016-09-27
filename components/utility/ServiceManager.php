@@ -121,7 +121,7 @@ class ServiceManager extends CComponent {
         } 
     }
     
-    public static function start($serviceName, $params = null) {
+    public static function start($serviceName, $params = null, $autoRedirect = true) {
         $pid = ServiceManager::run($serviceName, $params);
         $controller = Yii::app()->controller;
         if (is_null($pid)) {
@@ -140,7 +140,7 @@ class ServiceManager extends CComponent {
                 $full = $_GET['full'];
             }
             
-            if (!is_null($controller)) {
+            if (!is_null($controller) && $autoRedirect) {
                 $controller->redirect(['/sys/service/view', 'name' => $serviceName, 'id' => $pid, 'full' => $full]);
             } else {
                 echo "OK";

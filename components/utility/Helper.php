@@ -35,7 +35,7 @@ class Helper {
     
         if ($etime < 1)
         {
-            return '0 seconds';
+            return 'Just Now';
         }
     
         $a = array( 365 * 24 * 60 * 60  =>  'year',
@@ -52,16 +52,22 @@ class Helper {
                            'minute' => 'minutes',
                            'second' => 'seconds'
                     );
-    
+                    
+        $result = 'Never';
         foreach ($a as $secs => $str)
         {
             $d = $etime / $secs;
             if ($d >= 1)
             {
                 $r = round($d);
-                return $r . ' ' . ($r > 1 ? $a_plural[$str] : $str) . ' ago';
+                $result = $r . ' ' . ($r > 1 ? $a_plural[$str] : $str) . ' ago';
+                break;
             }
         }
+        
+        if ($result == '47 years ago') $result = 'long time ago';
+        
+        return $result;
     }
 
     // copy recursive

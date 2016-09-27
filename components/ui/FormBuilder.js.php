@@ -272,10 +272,122 @@ ob_start();
         function inlineJS() {
             $("div[ng-controller=<?= $modelClass ?>Controller]").css('opacity', 1);
             <?= implode("\n            ", explode("\n", $inlineJS)); ?>
-
-
         }
 
+        // Service related JS
+        $scope.service = {
+            services: {},
+            serverTime: null,
+            timeDiff: 0,
+            start: function(serviceName, params) {
+                if (typeof params !== 'object') {
+                    params = {
+                        name: serviceName
+                    }
+                }
+                
+                $http.get(Yii.app.createUrl('/sys/serviceApi/start', params)).success(function() {
+                    this.watch(serviceName);
+                }.bind(this));
+            },
+            runtime: function(serviceName) {
+                if (!this.services[serviceName]) {
+                    this.watch(serviceName);
+                }
+                else {
+                    return this.services[serviceName].runtime;
+                }
+                return '';
+            },
+            running: function(serviceName) {
+                if (!this.services[serviceName]) {
+                    this.watch(serviceName);
+                }
+                else {
+                    return this.services[serviceName].running;
+                }
+                return '';
+            },
+            stop: function(serviceName) {
+                if (typeof params !== 'object') {
+                    params = {
+                        name: serviceName
+                    }
+                }
+                $http.get(Yii.app.createUrl('/sys/serviceApi/stop', params)).success(function() {
+                    this.watch(serviceName);
+                }.bind(this));
+            },
+            watch: function(serviceName) {
+                if (!this.serverTime) {
+                    if (this.serverTime !== false) {
+                        $http.get(Yii.app.createUrl('/sys/serviceApi/time')).success(function(res) {
+                            this.serverTime = res;
+                            this.timeDiff = strtotime(date("Y-m-d H:i:s")) - strtotime(this.serverTime)  +1 ;
+                        }.bind(this));
+                        this.serverTime = false;
+                        return;
+                    }
+                }
+                
+                svc = this.services;
+                
+                //only run when not watched
+                if (!svc[serviceName] || !svc[serviceName].watched) {
+                    if (!svc[serviceName]) {
+                        svc[serviceName] = { 
+                            running: false,
+                            lastrun: 'Never',
+                            runtime: '0',
+                            timer: false,
+                            watched: true
+                        }
+                    }
+                    
+                    s = svc[serviceName];
+                    function restartTimer(that) {
+                        if (s.timer) {
+                            $timeout.cancel(s.timer);
+                        }
+                        
+                        s.timer = $timeout(function() {
+                            s.watched = false;
+                    
+                            that.watch(serviceName);
+                        }.bind(that), s.running ? 300 : 1000);
+                    };
+                    
+                    $http.get(Yii.app.createUrl('/sys/serviceApi/info', {name:serviceName}))
+                    .then(
+                    function(res) {
+                        $timeout(function() {
+                            if (res.data.instances > 0) {
+                                s.running = true;
+                                s.lastrun = res.data.lastrun;
+                                
+                                var ctime = strtotime(date("Y-m-d H:i:s")); //client time
+                                var stime = strtotime(s.lastrun); // server time
+                                
+                                if (ctime < stime) {
+                                    ctime = stime;
+                                }
+                                s.runtime = ctime - stime + this.timeDiff;
+                            } else {
+                                s.running = false;
+                                s.runtime = '0';
+                            }
+                            restartTimer(this);
+                        }.bind(this));
+                    }.bind(this),
+                    function(res) { 
+                        restartTimer(this); 
+                    }.bind(this));
+                
+                }
+                
+            }
+        };
+        
         // execute inline JS
         $timeout(function () {
             // make sure datagrids is loaded before executing inlinejs
