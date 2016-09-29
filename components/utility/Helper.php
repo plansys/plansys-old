@@ -129,6 +129,14 @@ class Helper {
         $length = strpos($string, $finish, $position) - $position;
         return substr($string, $position, $length);
     }
+    
+    public static function nestedParensRegex($delimiter_left  = '{', $delimiter_right = '}') {
+        $delimiter_wrap  = '~';
+        $delimiter_left  = preg_quote( $delimiter_left,  $delimiter_wrap );
+        $delimiter_right = preg_quote( $delimiter_right, $delimiter_wrap );
+        $pattern         = $delimiter_wrap . $delimiter_left . '((?:[^' . $delimiter_left . $delimiter_right . ']++|(?R))*)' . $delimiter_right . $delimiter_wrap;
+        return $pattern;
+    }
 
     public static function replaceOnce($search, $replace, $subject) {
         $pos = strpos($subject, $search);

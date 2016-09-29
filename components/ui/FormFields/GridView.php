@@ -113,7 +113,6 @@ class GridView extends FormField {
         echo $this->getRowTemplate($post['item'], $post['idx']);
     }
 
-
     public function getRowTemplate($col, $idx) {
         $template  = '';
         $style     = '';

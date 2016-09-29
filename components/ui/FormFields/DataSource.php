@@ -112,11 +112,58 @@ class DataSource extends FormField {
             'debug' => $template,
         ];
     }
+    
+    private static function processSubBlock($rawBlock,$params) {
+        preg_match_all(Helper::nestedParensRegex('{', '}'), $rawBlock, $blocks);
+        
+        $returnParams = $params['returnParams'];
+        if (empty($blocks[1])) { return $rawBlock; }
+        
+        foreach ($blocks[1] as $block) {
+            $renderBlock = false;
+            
+            preg_match_all("/\:[\w\d_]+/", $block, $attachedParams);
+            
+            if (count($attachedParams[0]) > 0) {
+                $inParams = 0;
+                foreach ($attachedParams[0] as $ap) {
+                    if (isset($returnParams[$ap]) && $returnParams[$ap] != "") {
+                        $inParams++;
+                        
+                        ## if current params is an ARRAY then convert to multiple params
+                        if (is_array($returnParams[$ap]) && !empty($returnParams[$ap])) {
+                            $newParamString = [];
+                            foreach ($returnParams[$ap] as $rpIdx => $rp) {
+                                $rpKey                = $ap . "_" . $rpIdx;
+                                $newParamString[]     = $rpKey;
+                                $returnParams[$rpKey] = $rp;
+                            }
+                            unset($returnParams[$ap]);
+                            $bracket['sql'] = Helper::strReplaceFirst($ap, implode(",", $newParamString), $bracket['sql']);
+                        }
+                    }
+                }
+                
+                
+                if ($inParams >= count($attachedParams)) {
+                    $renderBlock = true;
+                }
+            }
+            
+            if (!$renderBlock) {
+                $rawBlock = str_replace("{" . $block . "}", "", $rawBlock);
+            } else {
+                $rawBlock = str_replace("{" . $block . "}", $block, $rawBlock);
+            }
+        }
+        
+        return $rawBlock;
+        
+    }
 
     public static function generateTemplate($sql, $postedParams = [], $field, $paramDefs = []) {
         $returnParams = [];
-
-
+        
         ## find all params
         preg_match_all("/\:[\w\d_]+/", $sql, $params);
         $originalSql = $sql;
@@ -165,19 +212,27 @@ class DataSource extends FormField {
         }
 
         ## find all blocks
-        preg_match_all("/\{(.*?)\}/", $sql, $blocks);
+        preg_match_all( Helper::nestedParensRegex('{', '}'), $sql, $blocks );
+        
         foreach ($blocks[1] as $block) {
             if (strtolower($block) == "and" || strtolower($block) == "or") {
                 continue;
             }
-
+            
+            $originalBlock = $block;
+            $block = DataSource::processSubBlock($block, [
+                'postedParams' => $postedParams,
+                'returnParams' => $returnParams
+            ]);
+            $sql = str_replace("{{$originalBlock}}", "{{$block}}", $sql);
+            
             $bracket = DataSource::processSQLBracket($block, $postedParams, $field);
-
+            
             $renderBracket = false;
             if (isset($bracket['render'])) {
                 $renderBracket = $bracket['render'];
             }
-
+            
             foreach ($bracket['params'] as $bracketParam => $bracketValue) {
                 if (is_array($bracketValue) && count($bracketValue) > 0) {
                     $renderBracket = true;
@@ -186,16 +241,16 @@ class DataSource extends FormField {
                     }
                 }
             }
-
+            
             ## check if there is another params
             preg_match_all("/\:[\w\d_]+/", $bracket['sql'], $attachedParams);
-
+            
             if (count($attachedParams[0]) > 0) {
                 $inParams = 0;
                 foreach ($attachedParams[0] as $ap) {
                     if (isset($returnParams[$ap]) && $returnParams[$ap] != "") {
                         $inParams++;
-
+                        
                         ## if current params is an ARRAY then convert to multiple params
                         if (is_array($returnParams[$ap]) && !empty($returnParams[$ap])) {
                             $newParamString = [];
@@ -209,37 +264,35 @@ class DataSource extends FormField {
                         }
                     }
                 }
-
+                
                 if ($inParams >= count($attachedParams)) {
                     $renderBracket = true;
                 }
             }
-
-
+                
             if ($renderBracket) {
-
-                if ($block == '[where]') {
+                if (strtolower($block) == '[where]') {
                     $isNotFirst = strpos($sql, "{{$block}}") > 0;
-
+                    
                     if ($isNotFirst && stripos($bracket['sql'], 'where') == 0)
                         $bracket['sql'] = " AND " . substr($bracket['sql'], 5);
                 }
-
+                
                 $sql = str_replace("{{$block}}", $bracket['sql'], $sql);
             } else {
                 $sql = str_replace("{{$block}}", "", $sql);
             }
         }
-
+        
         ## concat 'WHERE' sql with operators
         if ($sql != "") {
             $sql = DataSource::concatSql($sql, "AND");
             $sql = DataSource::concatSql($sql, "OR");
         }
-
+        
         ## remove uneeded return params
         preg_match_all("/\:[\w\d_]+/", $sql, $cp);
-
+        
         foreach ($returnParams as $k => $p) {
             if (!in_array($k, $cp[0]) && ($k[0] != ":" && !in_array(':' . $k, $cp[0]))) {
                 unset($returnParams[$k]);
