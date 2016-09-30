@@ -104,7 +104,7 @@ class DataSource extends FormField {
         $template['timestamp'] = date('Y-m-d H:i:s');
 
         $template['sql'] = SqlFormatter::format($template['sql']);
-
+        
         ## return data
         return [
             'data'  => $data,
@@ -233,6 +233,7 @@ class DataSource extends FormField {
                 $renderBracket = $bracket['render'];
             }
             
+            
             foreach ($bracket['params'] as $bracketParam => $bracketValue) {
                 if (is_array($bracketValue) && count($bracketValue) > 0) {
                     $renderBracket = true;
@@ -273,8 +274,9 @@ class DataSource extends FormField {
             if ($renderBracket) {
                 if (strtolower($block) == '[where]') {
                     $isNotFirst = strpos($sql, "{{$block}}") > 0;
+                    $isSelect = stripos($sql, "select") == 0;
                     
-                    if ($isNotFirst && stripos($bracket['sql'], 'where') == 0)
+                    if (!$isSelect && $isNotFirst && stripos($bracket['sql'], 'where') == 0)
                         $bracket['sql'] = " AND " . substr($bracket['sql'], 5);
                 }
                 
@@ -289,7 +291,7 @@ class DataSource extends FormField {
             $sql = DataSource::concatSql($sql, "AND");
             $sql = DataSource::concatSql($sql, "OR");
         }
-        
+            
         ## remove uneeded return params
         preg_match_all("/\:[\w\d_]+/", $sql, $cp);
         
@@ -383,6 +385,9 @@ class DataSource extends FormField {
         $sql = preg_replace("/\s+{$operator}\s+where\s+/i", " " . $operator . " ", $sql);
         $sql = preg_replace("/\s+where\s+{$operator}\s+/i", " WHERE ", $sql);
         $sql = preg_replace("/\s+where\s+where\s+/i", " WHERE ", $sql);
+
+        ## clean and and
+        $sql = preg_replace("/\s+{$operator}\s+{$operator}\s+/i", " " . $operator . " ", $sql);
 
         ## clean ( AND
         $sql = preg_replace("/\s*\(\s+{$operator}\s+/i", " ( ", $sql);
@@ -1048,7 +1053,7 @@ class DataSource extends FormField {
             $sql = $criteria['condition'];
 
             $bracket = DataSource::generateTemplate($sql, $postedParams, $field);
-
+            
             if ($bracket['sql'] != '') {
                 if (substr($bracket['sql'], 0, 5) == 'where') {
                     $criteria['condition'] = substr($bracket['sql'], 5);
