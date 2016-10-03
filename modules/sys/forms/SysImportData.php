@@ -63,7 +63,7 @@ text-align:center;\">
             array (
                 'name' => 'file',
                 'label' => '',
-                'mode' => 'Upload + Download',
+                'mode' => 'Upload',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
                 'allowDelete' => 'No',

@@ -99,8 +99,7 @@ app.directive('psChartBar', function ($timeout) {
                         var formatChart = formatChartData(chartData_raw);
                         var chartData = formatChart[0];
                         var xAxis = formatChart[1];
-                        console.log(series, xAxis);
-
+                        
                         if ($scope.series != null) {
                             for (i in $scope.series) {
                                 $scope.series[i] = angular.extend($scope.series[i], chartData_raw[$scope.series[i].label]);

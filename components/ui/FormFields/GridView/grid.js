@@ -614,7 +614,7 @@ app.directive('gridView', function ($timeout, $http) {
                         'Join': function(values, separator) {
                             separator = separator || ',';
                             return values.join(separator);
-                        },
+                        }
                     }
 
                     // loop each row to merge
@@ -668,7 +668,9 @@ app.directive('gridView', function ($timeout, $http) {
                                                             lastRow.addClass('rowSpanned');
                                                         } else {
                                                             lastRow.attr('rowspan', c.$values.length);
-                                                            lastRow.text($scope.mergeRowMethods[c.mergeSameRowMethod](c.$values));
+                                                            if (typeof $scope.mergeRowMethods[c.mergeSameRowMethod] == 'function') {
+                                                                lastRow.text($scope.mergeRowMethods[c.mergeSameRowMethod](c.$values));
+                                                            }
                                                         }
                                                         lastRow = lastRow.parent().prev().find("td:eq(" + colIdx + ")");
                                                     });

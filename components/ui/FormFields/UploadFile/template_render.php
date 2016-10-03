@@ -135,10 +135,12 @@
         </div>
 
         <?php
-        echo FormBuilder::build('RepoBrowser', [
-            'name' => 'BrowseDialog',
-            'showBrowseButton' => 'No',
-        ]);
+        if (strpos(@$this->mode, 'Browse') !== false) {
+            echo FormBuilder::build('RepoBrowser', [
+                'name' => 'BrowseDialog',
+                'showBrowseButton' => 'No',
+            ]);
+        }
         ?>
 
     </div>

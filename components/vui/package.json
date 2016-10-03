@@ -1,0 +1,17 @@
+{
+  "name": "vui",
+  "version": "0.0.1",
+  "description": "Plansys Vue UI",
+  "main": "index.js",
+  "dependencies": {
+    "vue": "^2.0.0-rc.8"
+  },
+  "devDependencies": {
+    "vue": "^2.0.0-rc.8"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
