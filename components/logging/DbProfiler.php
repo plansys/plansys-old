@@ -77,6 +77,8 @@ class DbProfiler extends CWebLogRoute {
         if (!($app instanceof CWebApplication) || $app->getRequest()->getIsAjaxRequest())
             return;
 
+        // vdump(Setting::get('app.'));
+
         if ($this->getReport() === 'summary')
             $this->displaySummary($logs);
         else
