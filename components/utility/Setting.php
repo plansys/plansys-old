@@ -312,6 +312,9 @@ class Setting {
             @file_put_contents(Setting::getAssetPath() . "/setting_json_error.txt", $data);
         } else {
             $result = @file_put_contents(Setting::$path, $settings);
+            if (!$result) {
+                throw new CHttpException(403, 'Gagal menulis file setting: /app/config/settings.json');
+            }
         }
     }
 

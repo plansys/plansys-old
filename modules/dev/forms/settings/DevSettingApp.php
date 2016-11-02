@@ -21,6 +21,12 @@ class DevSettingApp extends Form {
     }
     
     public function save() {
+        if ($this->attributes['mode'] == 'prod') {
+            $va = $this->attributes;
+            $va['debug'] = 'OFF';
+            $this->attributes = $va;
+        }
+         
         Setting::set('app', $this->attributes);
         return true;
     }
