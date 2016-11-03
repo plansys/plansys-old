@@ -1,0 +1,59 @@
+{
+  "name": "libmime",
+  "description": "Encode and decode quoted printable and base64 strings",
+  "version": "0.1.6",
+  "main": "src/libmime",
+  "homepage": "https://github.com/andris9/libmime",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/andris9/libmime.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "MIME",
+    "Base64",
+    "Quoted-Printable"
+  ],
+  "author": {
+    "name": "Andris Reinman",
+    "email": "andris@kreata.ee"
+  },
+  "scripts": {
+    "test": "grunt"
+  },
+  "dependencies": {
+    "iconv-lite": "^0.4.4",
+    "libbase64": "^0.1.0",
+    "libqp": "^0.1.1"
+  },
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-mocha-test": "^0.11.0"
+  },
+  "gitHead": "9693aec461efd8a33616bec7e672883288ca00dc",
+  "bugs": {
+    "url": "https://github.com/andris9/libmime/issues"
+  },
+  "_id": "libmime@0.1.6",
+  "_shasum": "4f3e0053576667b5c319dd04eb8633e06103caca",
+  "_from": "libmime@^0.1.5",
+  "_npmVersion": "1.4.23",
+  "_npmUser": {
+    "name": "andris",
+    "email": "andris@kreata.ee"
+  },
+  "maintainers": [
+    {
+      "name": "andris",
+      "email": "andris@node.ee"
+    }
+  ],
+  "dist": {
+    "shasum": "4f3e0053576667b5c319dd04eb8633e06103caca",
+    "tarball": "http://registry.npmjs.org/libmime/-/libmime-0.1.6.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/libmime/-/libmime-0.1.6.tgz"
+}
