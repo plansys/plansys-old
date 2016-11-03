@@ -408,7 +408,7 @@ class ActiveRecord extends CActiveRecord {
                     unset($d[$p]);
                 }
             } else {
-                if (is_string($d[$pk])) {
+                if (is_string($d[$pk]) || is_numeric($d[$pk])) {
                     $cond[] = "|{$pk}| = '{$d[$pk]}'";
                 } else if (is_object($d[$pk]) && is_subclass_of($d[$pk], 'CDbExpression')) {
                     $cond[] = "|{$pk}| = " . $d[$pk]->expression;
