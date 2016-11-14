@@ -23,7 +23,7 @@
         <div class="input-group input-group-sm" >
             <div class="input-group-btn" dropdown ng-click="focused($event)" is-open="filter.operatorDropdownOpen">
                 <button type="button" class="btn btn-default dropdown-toggle">
-                    <span class="operator">{{ filter.operator}}</span> 
+                    <span class="operator" ng-bind-html="filter.operator"></span> 
                     <span class="caret" style="margin-left:3px;"></span>
                 </button>
                 <ul class="dropdown-menu" role="menu" style="font-size:13px;"> 
