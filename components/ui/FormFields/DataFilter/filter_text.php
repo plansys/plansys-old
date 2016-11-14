@@ -31,7 +31,7 @@
                         ng-class="{
                                     hover: operator == filter.operator
                                 }">
-                        <a href="#" ng-click="changeOperator(filter, operator, $event)">{{ operator}}</a>
+                        <a href="#" ng-click="changeOperator(filter, operator, $event)" ng-bind-html="operator"></a>
                     </li>
                 </ul>
             </div>

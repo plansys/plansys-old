@@ -46,7 +46,7 @@
             <ul class="dropdown-menu" role="menu" style="font-size:13px;"> 
                 <li ng-repeat="operator in operators[filter.filterType]" 
                     ng-class="{ hover: operator == filter.operator }">
-                    <a href="#" ng-click="dateChangeOperator(filter, operator, $event)">{{ operator}}</a>
+                    <a href="#" ng-click="dateChangeOperator(filter, operator, $event)" ng-bind-html="operator"></a>
                 </li>
             </ul>
         </div>
