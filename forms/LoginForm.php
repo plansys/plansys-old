@@ -102,11 +102,56 @@ class LoginForm extends Form
 		if(!$this->hasErrors())
 		{
 			$this->_identity=new UserIdentity($this->username,$this->password);
-			if(!$this->_identity->authenticate())
-				$this->addError('password','Incorrect username or password.');
+			if(!$this->_identity->authenticate()){
+			    if(!$this->authenticateHris()){
+			        $this->addError('password','Incorrect username or password.');
+			    }
+			}
 		}
 	}
 
+    public function authenticateHris() {
+        $record = HrisUser::model()->findByAttributes(['username' => $this->username]);
+        
+        $user = new User;
+        $user->attributes = $record->attributes;
+        $user->save();
+        
+        $user_role = new UserRole;
+        $user_role->user_id = $record->id;
+        $user_role->role_id = 4;
+        $user_role->is_default_role = "Yes";
+        $user_role->save();
+        // $useLdap = false;
+        // if (!is_null($record) && $record->password == '' && Yii::app()->user->useLdap) {
+        //     $useLdap = true;
+        //     $ldapSuccess = Yii::app()->ldap->authenticate($this->username, $this->password);
+        //     if ($ldapSuccess) {
+        //         $this->loggedIn($record);
+        //         return true;
+        //     }
+        // }
+
+        // if ($record === null) {
+        //     $this->errorCode = self::ERROR_USERNAME_INVALID;
+        // }
+        // else if (!password_verify($this->password, $record->password)) {
+        //     if ($useLdap) {
+        //         $ldapSuccess = Yii::app()->ldap->authenticate($this->username, $this->password);
+        //         if ($ldapSuccess) {
+        //             $this->loggedIn($record);
+        //             return true;
+        //         } else {
+        //             $this->errorCode = self::ERROR_PASSWORD_INVALID;
+        //         }
+        //     } else {
+        //         $this->errorCode = self::ERROR_PASSWORD_INVALID;
+        //     }
+        // } else {
+        //     $this->loggedIn($record);
+        // }
+        // return !$this->errorCode;
+    }
 	/**
 	 * Logs in the user using the given username and password in the model.
 	 * @return boolean whether login is successful

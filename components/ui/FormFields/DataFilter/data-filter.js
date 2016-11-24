@@ -885,6 +885,39 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         }
                     }
                 }
+                
+                $scope.toggleDailyPicker = function(filter, ev) {
+                    if (filter.daily && filter.daily.open) {
+                        filter.daily.open = false;
+                        return;
+                    }
+                    
+                    filter.daily = {
+                        open: true,
+                        day: filter.value.split('-')[2].split(' ')[0],
+                        month: filter.value.split('-')[1].split(' ')[0],
+                        year: filter.value.split('-')[0].split(' ')[0]
+                    }
+                }
+                
+                $scope.filterDaily = function(filter) {
+                    var date = filter.value.split(' ')[0]
+                    var time = filter.value.split(' ')[1]
+                    console.log(filter.value)
+                    date = date.split('-')
+                    date[2] = filter.daily.day
+                    date[1] = filter.daily.month
+                    date[0] = filter.daily.year
+                    date = date.join('-')
+                    
+                    $timeout(function() {
+                        var newdate = date + ' ' + time
+                        filter.from = newdate
+                        $scope.updateFilter(filter)
+                        filter.daily.open = false
+                    }, 0)
+                    
+                }
 
                 $scope.dateNext = function (filter) {
                     if (['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(filter.operator) >= 0) {

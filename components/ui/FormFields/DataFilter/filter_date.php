@@ -8,6 +8,11 @@
        ng-if="['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(filter.operator) >= 0">
         <i class="fa fa-chevron-right"></i>
     </a>
+    <a class="btn btn-default btn-sm" 
+        ng-click="toggleDailyPicker(filter)"
+        ng-if="filter.operator === 'Daily'" style="height:31px;">
+        <i class="fa fa-calendar"></i>
+    </a>
     <button type="button" ng-click="toggleFilterCriteria($event)" ng-disabled="filter.options.lockOperator"  
             class="btn btn-default btn-sm dropdown-toggle filter-criteria-button" 
             style="color:#333;opacity:1;height:31px;">
@@ -17,7 +22,7 @@
                                 && filter.valueText != 'All'
                                 && filter.operator != 'Is Empty') || filter.label == ''
                 ">:</span></span>
-        <b>{{filter.valueText}} 
+        <b>{{filter.valueText}}
         </b>
         <span style="margin-left:5px;display:inline-block;"></span><span class="caret" ng-if="!filter.options.lockOperator" ></span>
     </button>
@@ -25,7 +30,17 @@
             class="btn btn-inverse btn-sm filter-reset" >
         <i class="fa fa-times fa-nm" ></i>
     </button>
-
+    <div ng-if="filter.daily.open" class="daily-picker" 
+        style="
+        min-width:190px;display:block;position:absolute;
+        background:white;border:1px solid #aaa;margin-top:35px;
+        z-index:999;padding:5px;border-radius:4px;
+        box-shadow:0 6px 12px rgba(0,0,0,.175)" role="menu" > 
+        <input type="text" ng-model="filter.daily.day" style="width:50px">
+        <input type="text" ng-model="filter.daily.month" style="width:50px">
+        <input type="text" ng-model="filter.daily.year" style="width:50px">
+        <div class="btn btn-xs btn-default" ng-click="filterDaily(filter)"><i class="fa fa-play"></i></div>
+    </div>
     <div class="dropdown-menu filter-criteria" style="min-width:190px;" role="menu" >  
         <div ng-if="['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(filter.operator) >= 0"
              style='float:left;margin:4px 5px 0px 0px;'
