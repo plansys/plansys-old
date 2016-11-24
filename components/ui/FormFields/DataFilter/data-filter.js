@@ -621,6 +621,11 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
 
                 $scope.dateChangeOperator = function (f, o, e) {
                     $scope.changeOperator(f, o, e);
+                    
+                    if (f.daily && f.daily.open) {
+                        f.daily.open = false
+                    }
+                    
                     if (['Daily', 'Weekly', 'Monthly', 'Yearly'].indexOf(f.operator) >= 0) {
                         $scope.updateFilter(f, e);
                     }
@@ -898,6 +903,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         month: filter.value.split('-')[1].split(' ')[0],
                         year: filter.value.split('-')[0].split(' ')[0]
                     }
+                    console.log(filter.daily)
                 }
                 
                 $scope.filterDaily = function(filter) {
