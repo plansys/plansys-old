@@ -1593,7 +1593,6 @@ class ActiveRecord extends CActiveRecord {
             }
         }
 
-
         if ($withRelation) {
             $this->saveRelation();
         }

@@ -5,6 +5,8 @@ use Box\Spout\Common\Type;
 
 class ImportController extends Controller {
     
+    public $enableDebug = false;
+    
     public function actionIndex() {
         if (isset($_GET['m'])) {
             
