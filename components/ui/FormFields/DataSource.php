@@ -1150,6 +1150,9 @@ class DataSource extends FormField {
      * @return mixed me-return sebuah field dan atribut checkboxlist dari hasil render
      */
     public function render() {
+        
+        // vdump($this->options); die();
+        
         $execQuery = true;
 
         $gParams = $this->prepareGeneratedParams();
