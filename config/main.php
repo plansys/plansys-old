@@ -86,7 +86,6 @@ $imports = array(
     'application.models.*',
     'application.forms.*',
     'app.forms.*',
-    'app.components.utility.*',
     'application.components.*',
     'application.components.ui.*',
     'application.components.ui.FormFields.*',
@@ -97,6 +96,7 @@ $imports = array(
     'application.behaviors.*',
     'application.components.HttpRequest',
     'app.components.*',
+    'app.components.utility.*',
 );
 
 foreach ($dbLists as $db => $val) {
