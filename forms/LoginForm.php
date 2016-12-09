@@ -103,9 +103,9 @@ class LoginForm extends Form
 		{
 			$this->_identity=new UserIdentity($this->username,$this->password);
 			if(!$this->_identity->authenticate()){
-			    if(!$this->authenticateHris()){
+			 //   if(!$this->authenticateHris()){
 			        $this->addError('password','Incorrect username or password.');
-			    }
+			 //   }
 			}
 		}
 	}

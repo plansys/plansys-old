@@ -37,6 +37,7 @@ class User extends ActiveRecord {
             array('username' . $passwordReq, 'required'),
             array('username', 'unique'),
             array('email', 'email'),
+            array('mk_nopeg', 'required'),
             array('last_login', 'safe')
         );
     }
@@ -50,8 +51,6 @@ class User extends ActiveRecord {
         );
     }
     
-    public $asem = 'dek';
-
     public $roles = [''];
 
     public function getRoles($originalSorting = false) {
