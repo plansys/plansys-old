@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/box/spout.git",
-                "reference": "e276b4378e8bfc450baf1e516b57c896aeadcd1e"
+                "reference": "521f79936624da329bb1b43a1756c17c2d13544f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/box/spout/zipball/e276b4378e8bfc450baf1e516b57c896aeadcd1e",
-                "reference": "e276b4378e8bfc450baf1e516b57c896aeadcd1e",
+                "url": "https://api.github.com/repos/box/spout/zipball/521f79936624da329bb1b43a1756c17c2d13544f",
+                "reference": "521f79936624da329bb1b43a1756c17c2d13544f",
                 "shasum": ""
             },
             "require": {
@@ -74,7 +74,7 @@
                 "write",
                 "xlsx"
             ],
-            "time": "2016-11-03 20:45:18"
+            "time": "2016-11-29 23:43:38"
         },
         {
             "name": "inlinestyle/inlinestyle",
@@ -236,16 +236,16 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v3.1.6",
+            "version": "v3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
-                "reference": "ca809c64072e0fe61c1c7fb3c76cdc32265042ac"
+                "reference": "e1241f275814827c411d922ba8e64cf2a00b2994"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/css-selector/zipball/ca809c64072e0fe61c1c7fb3c76cdc32265042ac",
-                "reference": "ca809c64072e0fe61c1c7fb3c76cdc32265042ac",
+                "url": "https://api.github.com/repos/symfony/css-selector/zipball/e1241f275814827c411d922ba8e64cf2a00b2994",
+                "reference": "e1241f275814827c411d922ba8e64cf2a00b2994",
                 "shasum": ""
             },
             "require": {
@@ -254,7 +254,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.1-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -285,7 +285,7 @@
             ],
             "description": "Symfony CssSelector Component",
             "homepage": "https://symfony.com",
-            "time": "2016-09-06 11:02:40"
+            "time": "2016-11-03 08:11:03"
         },
         {
             "name": "yajra/laravel-pdo-via-oci8",

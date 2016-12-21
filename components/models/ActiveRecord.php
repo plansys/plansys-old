@@ -345,9 +345,9 @@ class ActiveRecord extends CActiveRecord {
 
         if ($assignNewID && !!$model) {
             if (get_class($schema) != 'COciTableSchema') {
-                if (isset($pk) && !is_array($pk)) {
-                    $id = Yii::app()->db->getLastInsertID();
-                    $pk = $model->tableSchema->primaryKey;
+                $id = Yii::app()->db->getLastInsertID();
+                $pk = $model->tableSchema->primaryKey;
+                if (!is_array($pk)) {
                     foreach ($data as $k => $d) {
                         $data[$k][$pk] = $id * 1;
                         $id++;
@@ -1764,6 +1764,7 @@ class ActiveRecord extends CActiveRecord {
             }
         }
 
+
         foreach ($rels as $r) {
             $insert = [];
             $update = [];
@@ -1788,7 +1789,8 @@ class ActiveRecord extends CActiveRecord {
                     $update[$k] = $d;
                 }
             }
-
+            
+            
             if (!empty($insert)) {
                 ActiveRecord::batchInsert($class, $insert);
 
@@ -1980,7 +1982,11 @@ class ActiveRecord extends CActiveRecord {
 
                         if (count($this->__relInsert[$k]) > 0) {
                             if ($relType == "CHasManyRelation") {
-                                ActiveRecord::batchInsert($relClass, $this->__relInsert[$k]);
+                                if (!empty($this->__subRelations[$k])) {
+                                    $this->saveSubRelation([$k => $this->__subRelations[$k]], [$k => $this->__relInsert[$k]], new $relClass);
+                                } else {
+                                    ActiveRecord::batchInsert($relClass, $this->__relInsert[$k]);
+                                }
                             }
 
                             ## if current relation is many to many
@@ -1996,7 +2002,6 @@ class ActiveRecord extends CActiveRecord {
                                 if (!is_null($rel->beforeSave)) {
                                     $manyRel = $this->{$rel->beforeSave}($manyRel);
                                 }
-
                                 if (empty($this->__subRelations[$k])) {
                                     ## if relinsert is already exist, then do not insert it again
                                     foreach ($this->__relInsert[$k] as $insIdx => &$ins) {

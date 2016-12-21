@@ -48,6 +48,8 @@ $imports = array(
     'application.components.codegen.*',
     'application.components.repo.*',
     'application.behaviors.*',
+    'app.components.*',
+    'app.components.utility.*',
 );
 
 foreach ($dbLists as $db=>$val) {
