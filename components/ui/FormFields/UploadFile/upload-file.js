@@ -24,6 +24,15 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                 $scope.fileType = $el.find("data[name=file_type]").html().trim();
                 $scope.options = JSON.parse($el.find("data[name=options]").text());
 
+                $scope.getUrl = function() {
+                    if (!$scope.file) return '';
+                    
+                    return Yii.app.createUrl('/formfield/UploadFile.download', {
+                        f: $scope.file.downloadPath,
+                        n: $scope.file.name
+                    })
+                }
+
                 $scope.choosing = "";
                 $scope.choose = function (c) {
                     $scope.errors.length = 0;

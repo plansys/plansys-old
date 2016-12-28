@@ -6,8 +6,8 @@
     <data name="dropdown" class="hide"><?= $this->dropdown ?></data>
     <data name="must_choose" class="hide"><?= $this->mustChoose ?></data>
     <data name="model_class" class="hide"><?= Helper::getAlias($model) ?></data>
-    <data name="rel_model_class" class="hide"><?= $this->drModelClass ?></data>
-    <data name="params" class="hide"><?= json_encode($this->drParams) ?></data>
+    <data name="rel_model_class" class="hide"><?= $this->modelClass ?></data>
+    <data name="params" class="hide"><?= json_encode($this->params) ?></data>
     <data name="list" class="hide"><?= json_encode($this->drList) ?></data>
     <!-- /info -->
 
@@ -15,7 +15,7 @@
     <?php if ($this->label != ""): ?>
         <label <?= $this->expandAttributes($this->labelOptions) ?>
             class="<?= $this->labelClass ?>" for="<?= $this->renderID; ?>">
-                <?= $this->label ?>
+                <?= $this->label ?> <span ng-if="loading">Loading...</span>
         </label>
     <?php endif; ?>
     <!-- /label -->

@@ -95,7 +95,6 @@ app.directive('keyValueGrid', function ($timeout) {
                     return filtered;
                 }
 
-
                 function prettifyJSON(json) {
                     return JSON.stringify(JSON.parse(JSON.stringify(json)), null, 2);
                 }
@@ -183,7 +182,6 @@ app.directive('keyValueGrid', function ($timeout) {
                 if (attrs.ngModel) {
                     $timeout(function () {
                         var ngModelValue = $scope.$eval(attrs.ngModel);
-                        console.log(ngModelValue);
                         if (typeof ngModelValue != "undefined") {
                             $scope.value = formatJSON(ngModelValue);
                             $scope.json = prettifyJSON(unformatJSON($scope.value, false));

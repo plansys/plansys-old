@@ -18,9 +18,21 @@ class TagField extends FormField {
     public static $category = "User Interface";
     public static $toolbarIcon = "fa fa-tags";
     
-    public $drModelClass = "";
+    public $modelClass = '';
+    public $params = [];
+    public $criteria = [
+        'select'    => '',
+        'distinct'  => 'true',
+        'alias'     => 't',
+        'condition' => '{[search]}',
+        'order'     => '',
+        'group'     => '',
+        'having'    => '',
+        'join'      => ''
+    ];
+    public $idField = '';
+    public $labelField = '';
     public $drPHP = "";
-    public $drParams = [];
     public $drList = [];
 
     public function getLayoutClass() {
@@ -85,6 +97,55 @@ class TagField extends FormField {
         return [
             'list' => $this->drList
         ];
+    }
+
+    public function actionRelnext() {
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+        
+        if (count($post) == 0) { die(); }
+
+        $start = @$post['i'];
+        $fb = FormBuilder::load($post['m']);
+        $ff = $fb->findField(['name' => $post['f']]);
+        
+        if ($ff['dropdown'] == 'rel') {
+            $rf = new RelationField;
+            $rf->params = $ff['params'];
+            $rf->modelClass = $ff['modelClass'];
+            $rf->relationCriteria = $ff['criteria'];
+            $rf->relationCriteria['limit'] = ActiveRecord::DEFAULT_PAGE_SIZE;
+            $rf->relationCriteria['offset'] = $start;
+
+            $rf->idField = $ff['idField'];
+            $rf->labelField = $ff['labelField'];
+            $rf->builder = $this->builder;
+            if (is_array($rf->params)) {
+                foreach ($rf->params as $k => $ff) {
+                    if (substr($ff, 0, 3) == "js:" && isset($post['p'][$k])) {
+                        $rf->params[$k] = "'" . @$post['p'][$k] . "'";
+                    }
+                }
+            }
+            $list = [];
+            $rawList = $rf->query(@$post['s'], $rf->params);
+            $rawList = is_null($rawList) ? [] : $rawList;
+
+            foreach ($rawList as $key => $val) {
+                $list[] = [
+                    'key' => $val['value'],
+                    'value' => $val['label']
+                ];
+            }
+
+            $count = $rf->count(@$post['s'], $rf->params);
+
+            echo json_encode([
+                'list' => $list,
+                'count' => $count,
+                's' => $post['s']
+            ]);
+        }
     }
 
     public function render() {

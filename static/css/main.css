@@ -1644,7 +1644,6 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
 }
 
 .text-editor-container {
-    max-height: 75px;
     overflow-y: hidden;
     position: relative;
     padding-bottom: 12px;
@@ -1660,6 +1659,11 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
     max-height: 55px;
     margin-bottom: 0px;
     overflow-y: hidden;
+}
+
+.text-editor-preview.all-line {
+    max-height:none;
+    overflow-y:visible;
 }
 
 .text-editor-more {

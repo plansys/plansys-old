@@ -39,7 +39,7 @@ class Text extends FormField {
                     'ng-change' => 'save()',
                 ),
                 'menuPos' => 'pull-right',
-                'listExpr' => '[\'block\',\'inline\']',
+                'listExpr' => '[\'block\',\'inline\',\'all-line\']',
                 'labelWidth' => '0',
                 'fieldWidth' => '12',
                 'type' => 'DropDownList',

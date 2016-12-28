@@ -91,11 +91,11 @@ class TextFieldRelation extends Form {
             array (
                 'label' => 'Sql Parameter',
                 'name' => 'params',
-                'show' => 'Show',
                 'options' => array (
                     'ng-change' => 'save();',
                     'ng-model' => 'active.params;',
                 ),
+                'show' => 'Show',
                 'type' => 'KeyValueGrid',
             ),
         );

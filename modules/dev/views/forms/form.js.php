@@ -882,6 +882,7 @@ app.controller("PageController", function ($scope, $http, $timeout, $window, $co
                         $scope.getDataSourceList();
                         break;
                     case 'RelationField':
+                    case 'TagField':
                     case 'TextField':
                         $scope.generateRelationField();
                         break;

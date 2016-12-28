@@ -34,10 +34,13 @@ app.directive('tagField', function ($timeout, $http) {
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.renderID = $el.find("data[name=render_id]").html();
                 $scope.mustChoose = $el.find("data[name=must_choose]").html();
+                $scope.params = $el.find("data[params]").html();
                 $scope.valueArray = [];
                 $scope.delimiter = ',';
                 $scope.unique = 'yes';
                 $scope.tfLoaded = false;
+                $scope.loading = false;
+                $scope.relCount = 0;
 
                 if ($scope.dropdown == 'normal') {
                     $scope.originalList = JSON.parse($el.find("data[name=list]").text());
@@ -74,7 +77,7 @@ app.directive('tagField', function ($timeout, $http) {
 
                 $scope.splitValues = function () {
                     if (!!insig) {
-                        $scope.valueArray = insig.tags();
+                        $scope.valueArray = insig.value();
                     }
                 }
 
@@ -112,7 +115,7 @@ app.directive('tagField', function ($timeout, $http) {
 
                 $scope.formatDropdownList = function () {
                     var list = [];
-                    var exist = insig.tags();
+                    var exist = insig.value();
                     for (var i in $scope.list) {
                         if ($scope.unique != 'yes' || ($scope.unique == 'yes' && exist.indexOf($scope.list[i].value) < 0)) {
                             list.push($scope.list[i].value);
@@ -122,35 +125,37 @@ app.directive('tagField', function ($timeout, $http) {
                 }
 
                 $scope.refreshDropdownList = function () {
-                    hors.clear();
-                    var list = $scope.formatDropdownList();
-                    for (i in list) {
-                        hors.add(list[i]);
+                    if (hors.add) {
+                        hors.clear();
+                        var list = $scope.formatDropdownList();
+                        for (i in list) {
+                            hors.add(list[i]);
+                        }
                     }
                 }
 
                 $scope.init = function () {
-                    insig = insignia(input, {
-                        delimiter: ',',
-                        validate: function (value, tags) {
+                    insig = insignia(input,{
+                        delimiter: $scope.delimiter,
+                        preventInvalid: true,
+                        validate: function (value) {
                             var valid = true;
-                            if ($scope.dropdown == 'normal' && $scope.mustChoose == 'yes') {
+                            if ($scope.dropdown == 'rel' || 
+                                ($scope.dropdown == 'normal' && $scope.mustChoose == 'yes')) {
                                 var list = $scope.formatList();
                                 if (list.indexOf(value) == -1) {
                                     valid = false;
                                 }
                             }
 
-                            if (valid) {
-                                valid = tags.indexOf(value) === -1;
+                            if (valid && insig) {
+                                valid = insig.findItem(value) === null;
                             }
-
-
                             return valid;
                         },
                         deletion: true
                     });
-
+                    
                     var $form = $('body');
                     if ($form.find('> #tag-field-container').length == 0) {
                         $("<div id='tag-field-container'></div>").appendTo($form);
@@ -158,13 +163,67 @@ app.directive('tagField', function ($timeout, $http) {
                     var $container = $form.find('> #tag-field-container');
 
                     hors = horsey(input, {
-                        appendTo: $container[0],
-                        autoShowOnUpDown: true,
-                        suggestions: $scope.formatDropdownList()
+                        debounce:250,
+                        blankSearch: true,
+                        highlighter: false,
+                        anchor: false,
+                        limit:7,
+                        renderCategory: function() {},
+                        predictNextSearch: function(info) {
+                            insig.refresh();
+                            return '';
+                        },
+                        source: function (data, done) {
+                            function resolveItems(items) {
+                                done(null, [
+                                    { 
+                                        id: '', 
+                                        list: items.filter(function(item) {
+                                            return item.indexOf(data.input) !== -1;
+                                        })  
+                                    }
+                                ]);
+                            }
+                            $scope.loading = true;
+                            $timeout(function() { 
+                                if ($scope.dropdown == 'rel') {
+                                    if ($scope.formatList().length == 0) {
+                                        $http.post(Yii.app.createUrl('formfield/TagField.relnext'), {
+                                            's': input.value,
+                                            'f': $scope.name,
+                                            'm': $scope.modelClass,
+                                            'i': $scope.formatList().length
+                                        }).success(function (data) {
+                                            $scope.loading = false;
+                                            if (data && data.count > 0) {
+                                                $scope.list = data.list;
+                                                $scope.refreshDropdownList();
+                                                resolveItems($scope.formatList());
+                                            }
+                                        });
+                                    } else {
+                                        $scope.loading = false;
+                                    }
+                                } else if ($scope.dropdown == 'normal') {
+                                    resolveItems($scope.formatList());
+                                } else {
+                                    resolveItems([]);
+                                }
+                            });
+                        }
                     });
-
-                    $(input).on('blur', function () {
-                        insig.convert();
+                    
+                    input.addEventListener('horsey-hide', function(e) {
+                        var w = ((e.target.value.length + 1) * 8);
+                        e.target.style.width = (Math.max(w,30)) + 'px';
+                    });
+                    
+                    input.addEventListener('keydown', function(e) {
+                        if (e.keyCode == 9 || e.keyCode == 13 || e.keyCode == 188 || e.keyCode == 186) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            insig.refresh();
+                        } 
                     });
 
                     $(input).on('focus', function () {
@@ -202,8 +261,8 @@ app.directive('tagField', function ($timeout, $http) {
                     if (!$scope.tfLoaded) {
                         $timeout(function () {
                             $scope.tfLoaded = true;
-                            $scope.value = insig.tags().join($scope.delimiter);
-                            $scope.valueArray = insig.tags();
+                            $scope.value = insig.value().join($scope.delimiter);
+                            $scope.valueArray = insig.value();
                             ctrl.$setViewValue($scope.value);
                         });
                     }

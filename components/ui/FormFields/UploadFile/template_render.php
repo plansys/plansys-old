@@ -89,7 +89,7 @@
             <div ng-if="!loading && file !== null" class="form-control"
                  style="padding:5px 5px 3px 0px;height:auto;box-shadow:none; border-color:#ececeb;text-align:left;">
                 <div ng-if="file.name">
-                    <a  href="{{ Yii.app.createUrl('/formfield/UploadFile.download', {
+                    <a class="upload-download" href="{{ Yii.app.createUrl('/formfield/UploadFile.download', {
                             f: file.downloadPath,
                             n: file.name
                         })}}" class="btn btn-success btn-xs" style="margin:-2px 0px 0px 4px;">
@@ -108,7 +108,7 @@
                     </div>
                     <div class="clearfix"></div>
                     <div style="font-size:12px;color:#999;">{{ json}}</div>
-                    <div ng-if="thumb != ''" style="padding:5px;text-align:center;
+                    <div ng-if="thumb != ''" class="upload-thumb" style="padding:5px;text-align:center;
                          border-top:1px solid #ddd;
                          margin:5px -5px 0px 0px;
                          padding-top:5px;">

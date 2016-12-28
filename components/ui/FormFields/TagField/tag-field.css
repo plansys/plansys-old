@@ -38,58 +38,60 @@
     margin: 0px 3px 2px 0px;
 }
 .nsg-input {
+    display:inline-block;
+    outline:none;
     border:1px solid transparent;
     background:transparent;
 }
-.nsg-input:focus {
-    border: 1px solid #ddd;
-    background:white;
+.sey-container {
+  display: none;
+  position: absolute;
+  box-shadow: 1px 2px 6px;
+  background-color: #fff;
+  color: #333;
+  transition: left 0.1s ease-in-out;
+  z-index: 1;
 }
 .sey-list {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 1000;
-    display: none;
-    float: left;
-    padding: 5px 0;
-    margin: 2px 0 0;
-    font-size: 14px;
-    text-align: left;
-    list-style: none;
-    background-color: #fff;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-    border: 1px solid #ccc;
-    border: 1px solid rgba(0, 0, 0, .15);
-    border-radius: 4px;
-    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
-    overflow-y:auto;
-    max-height:250px;
-    padding-right:40px;
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
 }
 .sey-show {
-    display: block;
+  display: block;
 }
 .sey-hide {
-    display: none;
+  display: none;
+}
+.sey-empty {
+  cursor: default;
+  padding: 7px;
 }
 .sey-item {
-    cursor: pointer;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    padding: 2px 10px;
-    margin-right:-40px;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 7px;
 }
 .sey-item:hover {
-    color: #262626;
-    text-decoration: none;
-    background-color: #f5f5f5;
+  background-color: #444;
+  color: #fff;
 }
 .sey-selected {
-    color: #262626;
-    text-decoration: none;
-    background-color: #ececeb;
+  background-color: #333;
+  color: #fff;
+}
+.sey-char-highlight {
+  font-weight: bold;
+}
+.sey-category-id {
+  background-color: #eee;
+  color: #aaa;
+  text-align: right;
+  text-transform: capitalize;
+  font-style: italic;
+  font-size: 12px;
+  box-shadow: 1px 0px 1px;
+  padding: 7px;
 }

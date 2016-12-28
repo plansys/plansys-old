@@ -366,7 +366,7 @@ app.filter("timeago", function () {
         return (time <= local) ? span + ' ago' : 'in ' + span;
     }
 });
-app.directive("contenteditable", function ($timeout) {
+app.directive("contentEditable", function ($timeout) {
     return {
         restrict: "A",
         require: "ngModel",
