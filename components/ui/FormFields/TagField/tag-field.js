@@ -187,23 +187,19 @@ app.directive('tagField', function ($timeout, $http) {
                             $scope.loading = true;
                             $timeout(function() { 
                                 if ($scope.dropdown == 'rel') {
-                                    if ($scope.formatList().length == 0) {
-                                        $http.post(Yii.app.createUrl('formfield/TagField.relnext'), {
-                                            's': input.value,
-                                            'f': $scope.name,
-                                            'm': $scope.modelClass,
-                                            'i': $scope.formatList().length
-                                        }).success(function (data) {
-                                            $scope.loading = false;
-                                            if (data && data.count > 0) {
-                                                $scope.list = data.list;
-                                                $scope.refreshDropdownList();
-                                                resolveItems($scope.formatList());
-                                            }
-                                        });
-                                    } else {
+                                    $http.post(Yii.app.createUrl('formfield/TagField.relnext'), {
+                                        's': input.value,
+                                        'f': $scope.name,
+                                        'm': $scope.modelClass,
+                                        'i': $scope.formatList().length
+                                    }).success(function (data) {
                                         $scope.loading = false;
-                                    }
+                                        if (data && data.count > 0) {
+                                            $scope.list = data.list;
+                                            $scope.refreshDropdownList();
+                                            resolveItems($scope.formatList());
+                                        }
+                                    });
                                 } else if ($scope.dropdown == 'normal') {
                                     resolveItems($scope.formatList());
                                 } else {

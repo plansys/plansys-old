@@ -114,7 +114,7 @@ class TagField extends FormField {
             $rf->params = $ff['params'];
             $rf->modelClass = $ff['modelClass'];
             $rf->relationCriteria = $ff['criteria'];
-            $rf->relationCriteria['limit'] = ActiveRecord::DEFAULT_PAGE_SIZE;
+            $rf->relationCriteria['limit'] = 7;
             $rf->relationCriteria['offset'] = $start;
 
             $rf->idField = $ff['idField'];
