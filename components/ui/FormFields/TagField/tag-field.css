@@ -4,6 +4,9 @@
      min-height:30px !important;
      height:auto !important;
 }
+.tf-container .dropdown-menu li a {
+     cursor:pointer;
+}
 .tf-tag,.tf-input {
      display:inline-block;
      border-radius:2px;
@@ -13,8 +16,11 @@
      background:white;
      margin: 0px 3px 2px 0px;
 }
-.tf-tag {
+.tf-tag,.tf-tag-last {
      position:relative;
+}
+.tf-tag .dropdown-menu {
+     display:block;
 }
 .tf-tag-text {
      min-width:30px;

@@ -5,7 +5,8 @@ class TagField extends FormField {
     public $type = 'TagField';
     public $name = '';
     public $value = '';
-    public $dropdown = 'none';
+    public $suggestion = 'none';
+    public $sugPHP = '';
     public $label = '';
     public $layout = 'Vertical';
     public $labelWidth = 4;
@@ -37,8 +38,6 @@ class TagField extends FormField {
     ];
     public $idField = '';
     public $labelField = '';
-    public $drPHP = "";
-    public $drList = [];
 
     public function getLayoutClass() {
         return ($this->layout == 'Vertical' ? 'form-vertical' : '');
@@ -169,7 +168,7 @@ class TagField extends FormField {
         }
     }
     
-    public function actionGetList() {
+    public function actionGetSug() {
         $postdata = file_get_contents("php://input");
         $post = CJSON::decode($postdata);
         
@@ -178,7 +177,10 @@ class TagField extends FormField {
         $fb = FormBuilder::load($post['m']);
         $ff = $fb->findField(['name' => $post['n']]);
         
-        echo json_encode($this->parseDropdown($ff['drPHP']));
+        $res = $this->evaluate($ff['sugPHP'], true,[
+            'search' => @$post['v']
+        ]);
+        echo json_encode($res);
     }
 
     public function render() {
@@ -263,10 +265,16 @@ class TagField extends FormField {
                         'fieldWidth' => '6',
                         'type' => 'DropDownList',
                     ),
-                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
                 ),
                 'column2' => array (
-                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
                     array (
                         'label' => 'Delimiter',
                         'name' => 'valueModeDelimiter',
@@ -382,13 +390,13 @@ class TagField extends FormField {
                 'label' => 'Suggestion',
                 'name' => 'dropdown',
                 'options' => array (
-                    'ng-model' => 'active.dropdown',
+                    'ng-model' => 'active.suggestion',
                     'ng-change' => 'save();',
                 ),
                 'list' => array (
                     'none' => 'None',
                     '---' => '---',
-                    'normal' => 'Normal',
+                    'php' => 'PHP Function',
                 ),
                 'fieldWidth' => '5',
                 'otherLabel' => 'Other...',
@@ -400,7 +408,7 @@ class TagField extends FormField {
                 'options' => array (
                     'ng-model' => 'active.mustChoose',
                     'ng-change' => 'save();',
-                    'ng-if' => 'active.dropdown == \'normal\'',
+                    'ng-if' => 'active.suggestion == \'php\'',
                 ),
                 'list' => array (
                     'yes' => 'Yes',
@@ -412,7 +420,7 @@ class TagField extends FormField {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<div ng-if=\"active.dropdown == \'rel\'\">
+                'value' => '<div ng-if=\"active.suggestion == \'rel\'\">
 <hr/>',
             ),
             array (
@@ -423,12 +431,13 @@ class TagField extends FormField {
             array (
                 'type' => 'Text',
                 'value' => '</div>
-<div ng-if=\"active.dropdown == \'normal\'\">
+<div ng-if=\"active.suggestion  == \'php\'\">
 <hr/>',
             ),
             array (
                 'label' => 'List Expression',
-                'fieldname' => 'drPHP',
+                'fieldname' => 'sugPHP',
+                'desc' => 'Use $search to get current search text.',
                 'type' => 'ExpressionField',
             ),
             array (
