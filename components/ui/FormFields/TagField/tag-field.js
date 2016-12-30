@@ -8,25 +8,6 @@ app.directive('tagField', function ($timeout, $http) {
             }
 
             return function ($scope, $el, attrs, ctrl) {
-                var input, insig, hors;
-
-                $scope.renderFormList = function () {
-                    $scope.list = [];
-                    for (key in $scope.originalList) {
-                        if (angular.isObject($scope.originalList[key])) {
-                            var subItem = [];
-                            var rawSub = $scope.originalList[key];
-
-                            for (subkey in rawSub) {
-                                subItem.push({key: subkey, value: rawSub[subkey]});
-                            }
-                            $scope.list.push({key: key, value: subItem});
-                        } else {
-                            $scope.list.push({key: key, value: $scope.originalList[key]});
-                        }
-                    }
-                }
-
                 // define vars
                 $scope.name = $el.find("data[name=name]:eq(0)").html().trim();
                 $scope.value = $el.find("data[name=value]").html().trim();
@@ -35,53 +16,153 @@ app.directive('tagField', function ($timeout, $http) {
                 $scope.renderID = $el.find("data[name=render_id]").html();
                 $scope.mustChoose = $el.find("data[name=must_choose]").html();
                 $scope.params = $el.find("data[params]").html();
-                $scope.valueArray = [];
-                $scope.delimiter = ',';
+                $scope.valueMode = $el.find("data[name=value_mode]").html().trim();
+                $scope.delimiter = $el.find("data[name=delimiter]").html().trim();
+                $scope.mapperMode = $el.find("data[name=mapper_mode]").html().trim();
+                $scope.fieldOptions = JSON.parse($el.find("data[name=field_options]").html().trim());
                 $scope.unique = 'yes';
-                $scope.tfLoaded = false;
-                $scope.loading = false;
-                $scope.relCount = 0;
-
-                if ($scope.dropdown == 'normal') {
-                    $scope.originalList = JSON.parse($el.find("data[name=list]").text());
-                    $scope.list = [];
-                    $scope.renderFormList();
-                } else {
-                    $scope.list = [];
-                }
-
-                // define current form field in parent scope
+                $scope.loading = [];
                 $scope.parent = $scope.getParent($scope);
                 $scope.parent[$scope.name] = $scope;
-
-                // when ng-model is changed from inside directive
-                $scope.update = function () {
-                    if (!!ctrl) {
-                        if (typeof $scope.value == 'string') {
-                            $scope.valueArray = $scope.value.split($scope.delimiter);
-                        } else if (typeof $scope.value == 'object') {
-                            $scope.valueArray = $scope.value;
-                            $scope.value = $scope.value.join($scope.delimiter);
-                        }
-
-                        ctrl.$setViewValue($scope.value);
-
-                        if (!!insig) {
-                            insig.destroy();
-                            $scope.tfLoaded = false;
-                            $(input).val($scope.value);
-                            $scope.init();
-                        }
-                    }
-                };
-
-                $scope.splitValues = function () {
-                    if (!!insig) {
-                        $scope.valueArray = insig.value();
+                $scope.dropdownList = [];
+                $scope.tags = [];
+                $scope.tagHash = {};
+                
+                $timeout(function() {
+                    $scope.input = $el.find(".tf-input");
+                });
+                
+                $scope.disabled = false;
+                if (typeof $scope.fieldOptions.disabled == "string") {
+                    $scope.disabled = ($scope.fieldOptions.disabled.toLowerCase() == 'true');
+                }
+                if ($scope.fieldOptions['ng-disabled']) {
+                    $scope.$watch($scope.fieldOptions['ng-disabled'], function(e) {
+                        $scope.disabled = !!e;
+                    }, true);
+                }
+                
+                
+                $scope.inputFocus = function() {
+                    $timeout(function(){
+                        $scope.input = $el.find(".tf-input");
+                        $scope.input.focus();
+                    });
+                }
+                $scope.inputChangeWidth = function() {
+                    $timeout(function() {
+                        $scope.input = $el.find(".tf-input");
+                        var i = $scope.input[0];
+                        var w = ((i.value.length + 1) * 7);
+                        i.style.width = (Math.max(w,30)) + 'px';
+                    });
+                }
+                $scope.inputKeyup = function(e) {
+                    $scope.inputChangeWidth();
+                }
+                
+                $.fn.getCursorPosition = function () {
+                    var input = this.get(0);
+                    if (!input) return; // No (input) element found
+                    if ('selectionStart' in input) {
+                        // Standard-compliant browsers
+                        return input.selectionStart;
+                    } else if (document.selection) {
+                        // IE
+                        input.focus();
+                        var sel = document.selection.createRange();
+                        var selLen = document.selection.createRange().text.length;
+                        sel.moveStart('character', -input.value.length);
+                        return sel.text.length - selLen;
                     }
                 }
+                
+                $scope.inputKeydown = function(e, idx) {
+                    if (e.keyCode == 8 && (e.target.value == "" || $(e.target).getCursorPosition() == 0)) {
+                        var tags = getArrayFromValue();
+                        
+                        if (typeof idx == "undefined") {
+                            $scope.removeTagFromValue(tags.length - 1);
+                        } else {
+                            $scope.removeTagFromValue(idx);
+                            
+                            $timeout(function(){
+                                if ($el.find(".tf-tag").length > 0) {
+                                    $el.find(".tf-tag:eq("+(Math.max(idx-1,0))+") .tf-input-edit").focus();
+                                } else{
+                                    $scope.input.focus();
+                                }
+                            });
+                        }
+                        return;
+                    }
+                    
+                    if (e.keyCode == 37) {
+                        if ($(e.target).getCursorPosition() == 0) {
+                            if ($(e.target).hasClass("tf-input")) {
+                                $el.find(".tf-tag:last .tf-input-edit").focus();
+                            } else {
+                                var target = $el.find(".tf-tag:eq("+(Math.max(idx-1,0))+") .tf-input-edit");
+                                target.focus();
+                            }
+                        }
+                    }
+                    var focusNext = function() {
+                        if ($el.find(".tf-tag").length -1 > idx) {
+                            $el.find(".tf-tag:eq("+(Math.max(idx+1,0))+") .tf-input-edit").focus();
+                        } else {
+                            $scope.input.focus();
+                        }
+                    }
+                    if (e.keyCode == 39) {
+                        if ($(e.target).getCursorPosition() == e.target.value.length) {
+                            focusNext();
+                        }
+                    }
+                    
+                    if (e.keyCode == 13) { 
+                        e.preventDefault();
+                        e.stopPropagation();
 
-                // when ng-model is changed from outside directive
+                        $timeout(function() {
+                            if (typeof idx == "undefined") {
+                                $scope.insertTagToValue(e.target.value);
+                                e.target.value = '';
+                                $scope.inputFocus();
+                            } else if ($scope.tags[idx]) {
+                                $scope.updateTagLabel(idx, e.target.value);
+                                $timeout(function(){
+                                    focusNext();
+                                });
+                            }
+                        });
+                    } 
+
+                    $scope.inputChangeWidth();
+                }
+                $scope.enableEdit = function(t, e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    $timeout(function() {
+                        t.editing = true;
+                    });
+                }
+                
+                $scope.doneEditing = function(i, t, e) {
+                    if (e.target.value == '') {
+                        $scope.removeTagFromValue(i);
+                        
+                        $timeout(function(){
+                            if ($el.find(".tf-tag").length > 0) {
+                                $el.find(".tf-tag:eq("+(Math.max(i-1,0))+") .tf-input-edit").focus();
+                            } else{
+                                $scope.input.focus();
+                            }
+                        });
+                    }
+                    t.editing = false;
+                }
+                
                 if (!!ctrl) {
                     ctrl.$render = function () {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
@@ -89,187 +170,231 @@ app.directive('tagField', function ($timeout, $http) {
 
                         if (typeof ctrl.$viewValue != "undefined") {
                             $scope.value = ctrl.$viewValue;
-                            $scope.splitValues();
                         }
                     };
                 }
-
-                // if ngModel is present, use that instead of value from php
-                if (attrs.ngModel) {
-                    $timeout(function () {
-                        var ngModelValue = $scope.$eval(attrs.ngModel);
-                        if (typeof ngModelValue != "undefined") {
-                            $scope.value = ngModelValue;
-                            $scope.splitValues();
+                
+                var isLoading = function(type) {
+                    return $scope.loading.indexOf(type) >= 0;
+                }
+                
+                var startLoading = function(type) {
+                    if ($scope.loading.indexOf(type) < 0) {
+                        $scope.loading.push(type);
+                    } 
+                }
+                
+                var finishLoading = function(type) {
+                    var idx = $scope.loading.indexOf(type);
+                    if (idx >= 0) {
+                        $scope.loading.splice(idx, 1);
+                    }
+                }
+                
+                var getArrayFromValue = function() {
+                    var rawtags = $scope.value.split($scope.delimiter);
+                    var tags = [];
+                    rawtags.forEach(function(t, i) {
+                        t = (t + '').trim();
+                        if (!!t) {
+                            tags[i] = t;
                         }
                     });
+                    return tags;
                 }
-
-                $scope.formatList = function () {
-                    var list = [];
-                    for (var i in $scope.list) {
-                        list.push($scope.list[i].value);
-                    }
-                    return list;
-                }
-
-                $scope.formatDropdownList = function () {
-                    var list = [];
-                    var exist = insig.value();
-                    for (var i in $scope.list) {
-                        if ($scope.unique != 'yes' || ($scope.unique == 'yes' && exist.indexOf($scope.list[i].value) < 0)) {
-                            list.push($scope.list[i].value);
-                        }
-                    }
-                    return list;
-                }
-
-                $scope.refreshDropdownList = function () {
-                    if (hors.add) {
-                        hors.clear();
-                        var list = $scope.formatDropdownList();
-                        for (i in list) {
-                            hors.add(list[i]);
-                        }
-                    }
-                }
-
-                $scope.init = function () {
-                    insig = insignia(input,{
-                        delimiter: $scope.delimiter,
-                        preventInvalid: true,
-                        validate: function (value) {
-                            var valid = true;
-                            if ($scope.dropdown == 'rel' || 
-                                ($scope.dropdown == 'normal' && $scope.mustChoose == 'yes')) {
-                                var list = $scope.formatList();
-                                if (list.indexOf(value) == -1) {
-                                    valid = false;
-                                }
-                            }
-
-                            if (valid && insig) {
-                                valid = insig.findItem(value) === null;
-                            }
-                            return valid;
-                        },
-                        deletion: true
-                    });
+                
+                $scope.updateTagsFromValue = function() {
+                    if ($scope.valueMode === 'string') {
+                        var value = getArrayFromValue();
+                    } else {
+                        var value = $scope.value;
+                    } 
                     
-                    var $form = $('body');
-                    if ($form.find('> #tag-field-container').length == 0) {
-                        $("<div id='tag-field-container'></div>").appendTo($form);
-                    }
-                    var $container = $form.find('> #tag-field-container');
-
-                    hors = horsey(input, {
-                        debounce:250,
-                        blankSearch: true,
-                        highlighter: false,
-                        anchor: false,
-                        limit:7,
-                        renderCategory: function() {},
-                        predictNextSearch: function(info) {
-                            insig.refresh();
-                            return '';
-                        },
-                        source: function (data, done) {
-                            function resolveItems(items) {
-                                done(null, [
-                                    { 
-                                        id: '', 
-                                        list: items.filter(function(item) {
-                                            return item.indexOf(data.input) !== -1;
-                                        })  
-                                    }
-                                ]);
-                            }
-                            $scope.loading = true;
-                            $timeout(function() { 
-                                if ($scope.dropdown == 'rel') {
-                                    $http.post(Yii.app.createUrl('formfield/TagField.relnext'), {
-                                        's': input.value,
-                                        'f': $scope.name,
-                                        'm': $scope.modelClass,
-                                        'i': $scope.formatList().length
-                                    }).success(function (data) {
-                                        $scope.loading = false;
-                                        if (data && data.count > 0) {
-                                            $scope.list = data.list;
-                                            $scope.refreshDropdownList();
-                                            resolveItems($scope.formatList());
-                                        }
-                                    });
-                                } else if ($scope.dropdown == 'normal') {
-                                    resolveItems($scope.formatList());
-                                } else {
-                                    resolveItems([]);
-                                }
-                            });
+                    var focus = $el.find(":focus");
+                    var idx = 0;
+                    if (focus) {
+                        if (focus.parent().hasClass("tf-tag")) {
+                            idx = focus.parent().attr("idx") * 1;
+                        } else {
+                            idx = 9999;
                         }
-                    });
+                    }
                     
-                    input.addEventListener('horsey-hide', function(e) {
-                        var w = ((e.target.value.length + 1) * 8);
-                        e.target.style.width = (Math.max(w,30)) + 'px';
-                    });
+                    var unique = [];
+                    var duplicate = [];
                     
-                    input.addEventListener('keydown', function(e) {
-                        if (e.keyCode == 9 || e.keyCode == 13 || e.keyCode == 188 || e.keyCode == 186) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            insig.refresh();
-                        } 
-                    });
-
-                    $(input).on('focus', function () {
-                        if ($scope.dropdown != 'none') {
+                    $scope.tags.splice(0, $scope.tags.length);
+                    for (var i in value) {
+                        var v = value[i];
+                        var l = $scope.tagHash[v];
+                        
+                        if (unique.indexOf(v) < 0) {
+                            unique.push(v);
+                        } else {
                             if ($scope.unique == 'yes') {
-                                $scope.refreshDropdownList();
+                                duplicate.push(v);
+                                continue;
                             }
-                            if ($scope.mustChoose == 'yes') {
-                                $timeout(function () {
-                                    hors.show();
-                                    hors.refreshPosition();
+                        }
+                        
+                        if (($scope.mapperMode == 'none' || $scope.mapperMode == 'insert') && !l) {
+                            $scope.tags.push({
+                                val: v,
+                                label:  v
+                            });
+                        } 
+                    }
+                    
+                    if ($scope.mapperMode == 'remove' || ($scope.unique == 'yes' && duplicate.length > 0)) {
+                        $scope.updateValueFromTags();
+                    }
+                    
+                    if (focus) {
+                        $timeout(function() {
+                            if (idx == 9999) {
+                                $scope.inputFocus();
+                            } else {
+                                var total = $el.find(".tf-tag").length - 1;
+                                $el.find(".tf-tag:eq(" + Math.min(idx, total) + ") .tf-input-edit").focus();
+                            }
+                        } ,300);
+                    }
+                }
+
+                $scope.updateTagLabel = function(idx, label) {
+                    if ($scope.mapperMode != 'none') {
+                        var found = false;
+                        for (var i in $scope.tagHash) {
+                            if ($scope.tagHash[i] == val) {
+                                $scope.tags[idx].val = val;
+                                $scope.updateValueFromTags();
+                                found = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!found) {
+                            if (!isLoading('map-tag')) {
+                                startLoading('map-tag');
+                                $http.post(Yii.app.createUrl('formfield/TagField.mapTag'), {
+                                    m: $scope.modelClass,
+                                    n: $scope.name,
+                                    l: [val],
+                                    v: []
+                                }).success(function(data) {
+                                    finishLoading('map-tag');
+                                    for (var i in data) {
+                                        $scope.tagHash[i] = data[i].trim() + '';
+                                        if (data[i] === val) {
+                                            $scope.tags[idx].val = i;
+                                        }
+                                        $scope.updateValueFromTags();
+                                    }
                                 });
                             }
                         }
-                    });
-
-                    input.addEventListener('insignia-evaluated', function () {
-                        $timeout(function () {
-                            $scope.value = insig.value();
-                            $scope.splitValues();
-                            ctrl.$setViewValue($scope.value);
-                            hors.refreshPosition();
-
-                        });
-                    });
-
-                    input.addEventListener('horsey-selected', function () {
-                        insig.convert();
-
-                        if ($scope.unique == 'yes') {
-                            $scope.refreshDropdownList();
-                        }
-                    });
-
-                    if (!$scope.tfLoaded) {
-                        $timeout(function () {
-                            $scope.tfLoaded = true;
-                            $scope.value = insig.value().join($scope.delimiter);
-                            $scope.valueArray = insig.value();
-                            ctrl.$setViewValue($scope.value);
-                        });
+                    } else {
+                        $scope.tags[idx].val = label;
+                        $scope.updateValueFromTags();
                     }
                 }
+                
+                $scope.insertTagToValue = function(val) { // will trigger value watcher
+                    if (!!val) {
+                        if ($scope.valueMode === 'string') {
+                            var tags = getArrayFromValue();
+                            tags.push(val);
+                            $scope.value = tags.join($scope.delimiter);
+                        } else {
+                            $scope.value.push(val);
+                        }
+                    }
+                }
+                $scope.updateValueFromTags = function() { // will trigger value watcher
+                    if ($scope.valueMode === 'array') {
+                        $scope.value.splice(0, $scope.value.length - 1);
+                        var val = $scope.value;
+                    } else {
+                        var val = [];
+                    }
+                    
+                    for (var i in $scope.tags) {
+                        val.push($scope.tags[i].val);
+                    }
+                    
+                    if ($scope.valueMode === 'string') {
+                        $scope.value = val.join($scope.delimiter);
+                    }
+                }
+                
+                
+                $scope.removeTagFromValue = function(idx) { // will trigger value watcher
+                    if ($scope.valueMode === 'string') {
+                        var tags = getArrayFromValue();
+                        tags.splice(idx, 1);
+                        $scope.value = tags.join($scope.delimiter);
+                    } else {
+                        $scope.value.splice(idx, 1);
+                    }
+                }
+                
+                $scope.init = function() {
+                    $scope.$watch('value', function(e) {  // value watcher, will invoke tagmapper
+                        if ($scope.valueMode == 'string') {
+                            if (typeof e === 'string') {
+                                var rawtags = e.split($scope.delimiter);
+                                var tags = [];
+                                var unmappedVal = [];
+                                rawtags.forEach(function(t, idx) {
+                                    t = (t + '').trim();
+                                    if (!!t) {
+                                        tags[idx] = t;
+                                        if (!$scope.tagHash[t]) {
+                                            unmappedVal.push(t);
+                                        }
+                                    }
+                                });
 
-                $timeout(function () {
-                    // initialize insignia!
-                    input = $el.find('#' + $scope.renderID)[0];
-                    $scope.init();
-                });
-
+                                if (unmappedVal.length > 0 && $scope.mapperMode != 'none') {
+                                    if (!isLoading('map-tag')) {
+                                        startLoading('map-tag');
+                                        $http.post(Yii.app.createUrl('formfield/TagField.mapTag'), {
+                                            m: $scope.modelClass,
+                                            n: $scope.name,
+                                            v: unmappedVal,
+                                            l: []
+                                        }).success(function(data) {
+                                            finishLoading('map-tag');
+                                            for (var i in data) {
+                                                var idx = tags.indexOf(i);
+                                                $scope.tagHash[i] = data[i].trim() + '';
+                                            }
+                                            $scope.updateTagsFromValue();
+                                        });
+                                    }
+                                } else {
+                                    $scope.updateTagsFromValue();
+                                }
+                            }
+                        }
+                        
+                        ctrl.$setViewValue($scope.value);
+                    });
+                    
+                    if ($scope.dropdown == 'normal') {
+                        startLoading('map-tag');
+                        $http.post(Yii.app.createUrl('formfield/TagField.getList'), {
+                            m: $scope.modelClass,
+                            n: $scope.name
+                        }).success(function(data) {
+                            finishLoading('map-tag');
+                            $scope.list = data;
+                        });
+                    } 
+                }
+                
+                $scope.init();
+                
             };
         }
     };

@@ -11,7 +11,12 @@ class TagField extends FormField {
     public $labelWidth = 4;
     public $fieldWidth = 8;
     public $mustChoose = 'yes';
+    public $valueMode = 'string';
+    public $valueModeDelimiter = ',';
     public $options = [];
+    public $tagMapper = '';
+    public $unique = 'yes';
+    public $tagMapperMode = 'none';
     public $labelOptions = [];
     public $fieldOptions = [];
     public static $toolbarName = "Tag Field";
@@ -59,7 +64,7 @@ class TagField extends FormField {
     }
 
     public function includeJS() {
-        return ['horsey.js','insignia.js', 'tag-field.js'];
+        return ['tag-field.js'];
     }
 
     public function includeCSS() {
@@ -73,30 +78,26 @@ class TagField extends FormField {
     /**
      * @return array me-return array hasil proses expression.
      */
-    public function parseDropdown() {
-
-        if ($this->drPHP != "") {
+    public function parseDropdown($php) {
+        if ($php != "") {
             if (FormField::$inEditor) {
-                $this->drList = '';
-                return ['list' => ''];
+                return [];
             }
 
             ## evaluate expression
-            $this->drList = $this->evaluate($this->drPHP, true);
+            $list = $this->evaluate($php, true);
 
-            if (is_array($this->drList) && !Helper::is_assoc($this->drList)) {
-                if (!is_array($this->drList[0])) {
-                    $this->drList = Helper::toAssoc($this->drList);
+            if (is_array($list) && !Helper::is_assoc($list)) {
+                if (!is_array($list[0])) {
+                    $list = Helper::toAssoc($list);
                 }
             }
-        } else if (is_array($this->drList) && !Helper::is_assoc($this->drList)) {
-            $this->drList = Helper::toAssoc($this->drList);
+        } else if (is_array($list) && !Helper::is_assoc($list)) {
+            $list = Helper::toAssoc($list);
         }
         
 
-        return [
-            'list' => $this->drList
-        ];
+        return $list;
     }
 
     public function actionRelnext() {
@@ -147,6 +148,38 @@ class TagField extends FormField {
             ]);
         }
     }
+    
+    public function actionMapTag() {
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+        
+        if (count($post) == 0) { die(); }
+        
+        $fb = FormBuilder::load($post['m']);
+        $ff = $fb->findField(['name' => $post['n']]);
+        
+        if (trim($ff['tagMapper']) == '') {
+            echo "{}";
+        } else {
+            $res = $this->evaluate($ff['tagMapper'], true,[
+                'values' => @$post['v'],
+                'labels' => @$post['l']
+            ]);
+            echo json_encode($res);
+        }
+    }
+    
+    public function actionGetList() {
+        $postdata = file_get_contents("php://input");
+        $post = CJSON::decode($postdata);
+        
+        if (count($post) == 0) { die(); }
+        
+        $fb = FormBuilder::load($post['m']);
+        $ff = $fb->findField(['name' => $post['n']]);
+        
+        echo json_encode($this->parseDropdown($ff['drPHP']));
+    }
 
     public function render() {
         $this->addClass('form-group form-group-sm', 'options');
@@ -161,10 +194,6 @@ class TagField extends FormField {
         if (!is_string($this->value))
             $this->value = json_encode($this->value);
 
-        if ($this->dropdown == "normal") {
-            $this->parseDropdown();
-        }
-        
         return $this->renderInternal('template_render.php');
     }
 
@@ -204,6 +233,90 @@ class TagField extends FormField {
                 'listExpr' => 'array(\'Horizontal\',\'Vertical\')',
                 'fieldWidth' => '6',
                 'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Unique',
+                'name' => 'unique',
+                'options' => array (
+                    'ng-model' => 'active.unique',
+                    'ng-change' => 'save();',
+                ),
+                'listExpr' => 'array(\'yes\',\'no\')',
+                'fieldWidth' => '3',
+                'type' => 'DropDownList',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<hr/>',
+            ),
+            array (
+                'column1' => array (
+                    array (
+                        'label' => 'Value Mode',
+                        'name' => 'valueMode',
+                        'options' => array (
+                            'ng-model' => 'active.valueMode',
+                            'ng-change' => 'save();',
+                        ),
+                        'listExpr' => '[\'string\', \'array\']',
+                        'labelWidth' => '6',
+                        'fieldWidth' => '6',
+                        'type' => 'DropDownList',
+                    ),
+                    '<column-placeholder></column-placeholder>',
+                ),
+                'column2' => array (
+                    '<column-placeholder></column-placeholder>',
+                    array (
+                        'label' => 'Delimiter',
+                        'name' => 'valueModeDelimiter',
+                        'options' => array (
+                            'ng-show' => 'active.valueMode == \'string\'',
+                            'ng-model' => 'active.valueModeDelimiter',
+                            'ng-change' => 'save();',
+                        ),
+                        'type' => 'TextField',
+                    ),
+                ),
+                'w1' => '60%',
+                'w2' => '40%',
+                'type' => 'ColumnField',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<hr/>',
+            ),
+            array (
+                'label' => 'Tag Mapper',
+                'name' => 'tagMapperMode',
+                'options' => array (
+                    'ng-model' => 'active.tagMapperMode',
+                    'ng-change' => 'save()',
+                ),
+                'menuPos' => 'pull-right',
+                'list' => array (
+                    'none' => 'None',
+                    '---' => '---',
+                    'insert' => 'Active, Insert unmapped tags',
+                    'remove' => 'Active, Remove unmapped tags',
+                ),
+                'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Tag Mapper Function',
+                'fieldname' => 'tagMapper',
+                'options' => array (
+                    'ng-if' => 'active.tagMapperMode != \'none\'',
+                ),
+                'desc' => 'Each value in tag can be maped to its label. <br/>This function will be called when there is a tag that has not been mapped.
+<hr style=\"margin:5px 0px -10px\"/> 
+<br/>Use $values to get the unmapped values.
+<br/>Use $labels to get the unmapped labels.',
+                'type' => 'ExpressionField',
+            ),
+            array (
+                'type' => 'Text',
+                'value' => '<hr/>',
             ),
             array (
                 'column1' => array (
@@ -266,7 +379,7 @@ class TagField extends FormField {
                 'value' => '<hr/>',
             ),
             array (
-                'label' => 'Dropdown',
+                'label' => 'Suggestion',
                 'name' => 'dropdown',
                 'options' => array (
                     'ng-model' => 'active.dropdown',
@@ -276,7 +389,6 @@ class TagField extends FormField {
                     'none' => 'None',
                     '---' => '---',
                     'normal' => 'Normal',
-                    'rel' => 'Relation',
                 ),
                 'fieldWidth' => '5',
                 'otherLabel' => 'Other...',
@@ -315,7 +427,7 @@ class TagField extends FormField {
 <hr/>',
             ),
             array (
-                'label' => 'PHP Expression',
+                'label' => 'List Expression',
                 'fieldname' => 'drPHP',
                 'type' => 'ExpressionField',
             ),

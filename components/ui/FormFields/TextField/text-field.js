@@ -23,10 +23,6 @@ app.directive('textField', function ($timeout, $http) {
                         if ($scope.inEditor && !$scope.$parent.fieldMatch($scope))
                             return;
 
-                        if (attrs.ngModel == '$parent.model.status') {
-                            console.log(attrs.ngModel);
-                        }
-
                         if (typeof ctrl.$viewValue != "undefined") {
                             $scope.value = ctrl.$viewValue;
                             $scope.update();
