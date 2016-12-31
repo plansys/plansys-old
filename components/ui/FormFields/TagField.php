@@ -162,7 +162,9 @@ class TagField extends FormField {
         } else {
             $res = $this->evaluate($ff['tagMapper'], true,[
                 'values' => @$post['v'],
-                'labels' => @$post['l']
+                'labels' => @$post['l'],
+                'model' => @$post['mdl'],
+                'params' => @$post['prm']
             ]);
             echo json_encode($res);
         }
@@ -177,10 +179,16 @@ class TagField extends FormField {
         $fb = FormBuilder::load($post['m']);
         $ff = $fb->findField(['name' => $post['n']]);
         
-        $res = $this->evaluate($ff['sugPHP'], true,[
-            'search' => @$post['v']
-        ]);
-        echo json_encode($res);
+        if ($ff['sugPHP'] != '') {
+            $res = $this->evaluate($ff['sugPHP'], true,[
+                'search' => @$post['s'],
+                'model' => @$post['mdl'],
+                'params' => @$post['prm']
+            ]);
+            echo json_encode($res);
+        } else {
+            echo "[]";
+        }
     }
 
     public function render() {
@@ -278,6 +286,8 @@ class TagField extends FormField {
                     array (
                         'label' => 'Delimiter',
                         'name' => 'valueModeDelimiter',
+                        'labelWidth' => '5',
+                        'fieldWidth' => '7',
                         'options' => array (
                             'ng-show' => 'active.valueMode == \'string\'',
                             'ng-model' => 'active.valueModeDelimiter',
@@ -292,7 +302,7 @@ class TagField extends FormField {
             ),
             array (
                 'type' => 'Text',
-                'value' => '<hr/>',
+                'value' => '<hr style=\\"margin-top:3px\\" />',
             ),
             array (
                 'label' => 'Tag Mapper',
@@ -319,7 +329,9 @@ class TagField extends FormField {
                 'desc' => 'Each value in tag can be maped to its label. <br/>This function will be called when there is a tag that has not been mapped.
 <hr style=\"margin:5px 0px -10px\"/> 
 <br/>Use $values to get the unmapped values.
-<br/>Use $labels to get the unmapped labels.',
+<br/>Use $labels to get the unmapped labels.
+<br/>Use $model to get current model value.
+<br/>Use $params to get current params value.',
                 'type' => 'ExpressionField',
             ),
             array (
@@ -437,7 +449,9 @@ class TagField extends FormField {
             array (
                 'label' => 'List Expression',
                 'fieldname' => 'sugPHP',
-                'desc' => 'Use $search to get current search text.',
+                'desc' => 'Use $search to get current search text.
+<br/>Use $model to get current model value.
+<br/>Use $params to get current params value.',
                 'type' => 'ExpressionField',
             ),
             array (

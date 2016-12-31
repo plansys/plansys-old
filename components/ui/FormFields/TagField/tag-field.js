@@ -61,6 +61,36 @@ app.directive('tagField', function ($timeout, $http, $q) {
                     });
                 }
                 $scope.inputKeyup = function(e) {
+                    if ($scope.suggestionMode == 'php') {
+                        if ($scope.getSugHttp) {
+                            $scope.getSugHttp.resolve();
+                        }
+                        $scope.getSugHttp = $q.defer();
+                        $http.post(Yii.app.createUrl('formfield/TagField.getSug'), {
+                            m: $scope.modelClass,
+                            n: $scope.name,
+                            s: e.target.value,
+                            mdl: $scope.$parent.model,
+                            prm: $scope.$parent.params
+                        },{
+                            timeout: $scope.getSugHttp.promise
+                        }).success(function(data) {
+                            if (typeof data != 'string') {
+                                $scope.getSugHttp = null;
+                                $scope.suggestion = data;
+                                $scope.showSuggestion = false;
+                                
+                                var isobj = typeof data === 'object' && !(data instanceof Array);
+                                
+                                for (var i in data) {
+                                    if (isobj && !$scope.tagHash[i]) {
+                                        $scope.tagHash[i] = data[i];
+                                    }
+                                    $scope.showSuggestion = typeof idx == 'undefined' ? 'new' : idx;
+                                }
+                            }
+                        });
+                    }
                     $scope.inputChangeWidth();
                 }
                 
@@ -128,6 +158,7 @@ app.directive('tagField', function ($timeout, $http, $q) {
                         e.stopPropagation();
 
                         if (!($scope.suggestionMode == 'php' && $scope.mustChoose == 'yes')) {
+                            console.log("ASDA");
                             $timeout(function() {
                                 var label = e.target.value;
                                 var val = $scope.mapperMode == 'none' ? e.target.value : undefined;
@@ -144,24 +175,6 @@ app.directive('tagField', function ($timeout, $http, $q) {
                             });
                         }
                     } 
-                    
-                    if ($scope.suggestionMode == 'php') {
-                        if ($scope.getSugHttp) {
-                            $scope.getSugHttp.resolve();
-                        }
-                        $scope.getSugHttp = $q.defer();
-                        $http.post(Yii.app.createUrl('formfield/TagField.getSug'), {
-                            m: $scope.modelClass,
-                            n: $scope.name,
-                            s: e.target.value
-                        },{
-                            timeout: $scope.getSugHttp.promise
-                        }).success(function(data) {
-                            $scope.getSugHttp = null;
-                            $scope.suggestion = data;
-                            $scope.showSuggestion = typeof idx == 'undefined' ? 'new' : idx;
-                        });
-                    }
 
                     $scope.inputChangeWidth();
                 }
@@ -326,7 +339,9 @@ app.directive('tagField', function ($timeout, $http, $q) {
                                     m: $scope.modelClass,
                                     n: $scope.name,
                                     l: [label],
-                                    v: []
+                                    v: [],
+                                    mdl: $scope.$parent.model,
+                                    prm: $scope.$parent.params
                                 }).success(function(data) {
                                     finishLoading('map-tag');
                                     for (var i in data) {
@@ -430,7 +445,9 @@ app.directive('tagField', function ($timeout, $http, $q) {
                                             m: $scope.modelClass,
                                             n: $scope.name,
                                             v: unmappedVal,
-                                            l: []
+                                            l: [],
+                                            mdl: $scope.$parent.model,
+                                            prm: $scope.$parent.params
                                         }).success(function(data) {
                                             finishLoading('map-tag');
                                             for (var i in data) {

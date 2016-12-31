@@ -57,6 +57,9 @@
      background:transparent;
      width:30px;
 }
+.tf-input {
+     padding:1px 0px 0px 1px;
+}
 .tf-input-edit {
      position:absolute;
      display:block !important;

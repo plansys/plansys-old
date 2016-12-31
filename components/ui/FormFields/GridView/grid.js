@@ -405,6 +405,12 @@ app.directive('gridView', function ($timeout, $http) {
                     $scope.savePageSetting();
                 }
                 
+                $scope.currentPage = function() {
+                    return $scope.gridOptions.pageInfo.typingPage;
+                }
+                $scope.totalPage = function() {
+                    return Math.ceil($scope.datasource.totalItems / $scope.gridOptions.pageInfo.pageSize);
+                }
                 $scope.nextPage = function () {
                     $scope.gridOptions.pageInfo.currentPage += 1;
                     if ($scope.gridOptions.pageInfo.currentPage > $scope.datasource.totalItems) {

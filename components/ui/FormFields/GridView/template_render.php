@@ -83,7 +83,7 @@
                 </div>
             </div>
             <div ng-if="mode=='full'" class="pull-left" style="margin:5px">
-                of {{ Math.ceil(datasource.totalItems / gridOptions.pageInfo.pageSize) | number}}
+                of {{ totalPage() | number}}
             </div>
             <div class="pull-left"
                  style="border-left:1px solid #ccc;margin:2px 5px;padding:3px 8px;">
