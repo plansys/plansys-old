@@ -30,25 +30,36 @@
         <div class="form-control tf-container" ng-click="inputFocus()">
             <div class="tf-tag" ng-class="{disabled:disabled, editing:t.editing}" 
                  idx="{{$index}}" ng-repeat="(i,t) in tags" >
-                <span class="tf-tag-text {{ t.editing ? 'editing' : '' }}">{{ t.label }}</span>
-                <span ng-if="!disabled && !t.editing" class="tf-tag-remove" ng-click="removeTagFromValue(i)"></span>
-                <input ng-if="!disabled" type="text" ng-blur="doneEditing(i,t,$event)" ng-focus="enableEdit(t, $event)" 
-                    ng-click="$event.stopPropagation()"
-                    style="display:none;" ng-model="t.label"
-                    ng-keydown="inputKeydown($event, i)"
-                    class="tf-input-edit {{ t.editing ? 'editing' : '' }}">
                 <ul class="dropdown-menu" ng-if="showSuggestion === $index">
-                    <li ng-click="chooseItem(i, label, value)" ng-repeat="(value,label) in suggestion" class="dropdown-item">
+                    <li ng-click="chooseItem(i, label, value)"
+                        ng-repeat="(value,label) in suggestion"  
+                        class="dropdown-item" v="{{value}}" l="{{label}}"
+                        ng-class="{active:sugIdx === $index}">
                         <a>{{label}}</a>
                     </li>
                 </ul>
+                <span class="tf-tag-text {{ t.editing ? 'editing' : '' }}">{{ t.label }}</span>
+                <span ng-if="!disabled && !t.editing" 
+                      class="tf-tag-remove" 
+                      ng-click="removeTagFromValue(i)"></span>
+                <input ng-if="!disabled" type="text" 
+                    ng-blur="doneEditing(i,t,$event)" 
+                    ng-focus="enableEdit(t, $event)" 
+                    ng-click="$event.stopPropagation()"
+                    style="display:none;" ng-model="t.label"
+                    ng-keyup="inputKeyup($event, i)"
+                    ng-keydown="inputKeydown($event, i)"
+                    class="tf-input-edit {{ t.editing ? 'editing' : '' }}" />
             </div>
-            <span class="tf-tag-last">
+            <span class="tf-tag-last" style="margin-left:{{ tags.length == 0 ? 6 : -3}}px">
                 <input type="text" ng-if="!disabled" ng-blur="doneEditing(null,null, $event)"
-                       ng-keyup="inputKeyup($event)"
+                       ng-keyup="inputKeyup($event)" placeholder="{{tags.length > 0 ? '' : fieldOptions.placeholder}}"
                        ng-keydown="inputKeydown($event)" class="tf-input">
-                <ul class="dropdown-menu" style="display:block;" ng-if="showSuggestion == 'new'">
-                    <li ng-click="chooseNewItem(label, value)" ng-repeat="(value,label) in suggestion" class="dropdown-item">
+                <ul class="dropdown-menu" style="display:block;" ng-show="showSuggestion === 'new'">
+                    <li ng-click="chooseNewItem(label, value)"
+                        ng-repeat="(value,label) in suggestion" 
+                        class="dropdown-item" v="{{value}}" l="{{label}}"
+                        ng-class="{active:sugIdx === $index}">
                         <a>{{label}}</a>
                     </li>
                 </ul>

@@ -30,6 +30,7 @@ app.directive('tagField', function ($timeout, $http, $q) {
                 $scope.suggestionMode = $el.find("data[name=sug_mode]").html().trim();
                 $scope.showSuggestion = false;
                 $scope.suggestion = [];
+                $scope.sugIdx = 0;
                 
                 $timeout(function() {
                     $scope.input = $el.find(".tf-input");
@@ -45,7 +46,6 @@ app.directive('tagField', function ($timeout, $http, $q) {
                     }, true);
                 }
                 
-                
                 $scope.inputFocus = function() {
                     $timeout(function(){
                         $scope.input = $el.find(".tf-input");
@@ -56,12 +56,12 @@ app.directive('tagField', function ($timeout, $http, $q) {
                     $timeout(function() {
                         $scope.input = $el.find(".tf-input");
                         var i = $scope.input[0];
-                        var w = ((i.value.length + 1) * 7);
+                        var w = ((i.value.length + 1) * 9);
                         i.style.width = (Math.max(w,30)) + 'px';
                     });
                 }
-                $scope.inputKeyup = function(e) {
-                    if ($scope.suggestionMode == 'php') {
+                $scope.inputKeyup = function(e, idx) {
+                    if ($scope.suggestionMode == 'php' && $scope.reloadSug) {
                         if ($scope.getSugHttp) {
                             $scope.getSugHttp.resolve();
                         }
@@ -75,22 +75,42 @@ app.directive('tagField', function ($timeout, $http, $q) {
                         },{
                             timeout: $scope.getSugHttp.promise
                         }).success(function(data) {
+                            $scope.getSugHttp = null;
+                            $scope.showSuggestion = false;
+                            $scope.suggestion = {};
                             if (typeof data != 'string') {
-                                $scope.getSugHttp = null;
-                                $scope.suggestion = data;
-                                $scope.showSuggestion = false;
-                                
                                 var isobj = typeof data === 'object' && !(data instanceof Array);
-                                
+                                var value = getArrayFromValue();
                                 for (var i in data) {
                                     if (isobj && !$scope.tagHash[i]) {
                                         $scope.tagHash[i] = data[i];
                                     }
-                                    $scope.showSuggestion = typeof idx == 'undefined' ? 'new' : idx;
+                                    
+                                    if ($scope.unique == 'yes') {
+                                        if (value.indexOf(i) >= 0) {
+                                            if (typeof idx == undefined) 
+                                                continue;
+                                            
+                                            if ($scope.value[idx] != i) 
+                                                continue;
+                                        } 
+                                    
+                                        $scope.suggestion[i] = data[i]; 
+                                        $scope.showSuggestion = true;
+                                    
+                                    } else {
+                                        $scope.suggestion[i] = data[i]; 
+                                        $scope.showSuggestion = true;
+                                    }
                                 }
+                                
+                                if ($scope.showSuggestion === true) {
+                                    $scope.showSuggestion = typeof idx == 'undefined' ? 'new' : idx;
+                                } 
                             }
                         });
                     }
+                    
                     $scope.inputChangeWidth();
                 }
                 
@@ -153,13 +173,32 @@ app.directive('tagField', function ($timeout, $http, $q) {
                         }
                     }
                     
+                    $scope.reloadSug = true;
+                    if ($scope.suggestionMode == 'php') {
+                        if (e.keyCode == 40) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            $scope.sugIdx++;
+                            if ($scope.sugIdx > $el.find(".dropdown-item").length - 1) {
+                                $scope.sugIdx = 0;
+                            }
+                            $scope.reloadSug = false;
+                        } else if (e.keyCode == 38) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            $scope.sugIdx--;
+                            if ($scope.sugIdx < 0) {
+                                $scope.sugIdx = $el.find(".dropdown-item").length - 1;
+                            }
+                            $scope.reloadSug = false;
+                        }
+                    }
+                    
                     if (e.keyCode == 13) { 
                         e.preventDefault();
                         e.stopPropagation();
-
-                        if (!($scope.suggestionMode == 'php' && $scope.mustChoose == 'yes')) {
-                            console.log("ASDA");
-                            $timeout(function() {
+                        $timeout(function() {
+                            if (!($scope.suggestionMode == 'php' && $scope.mustChoose == 'yes')) {
                                 var label = e.target.value;
                                 var val = $scope.mapperMode == 'none' ? e.target.value : undefined;
                                 if (typeof idx == "undefined") {
@@ -172,10 +211,29 @@ app.directive('tagField', function ($timeout, $http, $q) {
                                         focusNext();
                                     });
                                 }
-                            });
-                        }
+                            } else {
+                                if ($scope.suggestionMode == 'php') {
+                                    var sug = $el.find(".dropdown-item:eq(" + $scope.sugIdx + ")");
+                                    var label = sug.attr('l');
+                                    var val = sug.attr('v');
+                                    if (!!label && !!val) {
+                                        if (typeof idx == "undefined") {
+                                            $scope.updateTagLabel(null, label, val);
+                                            e.target.value = '';
+                                            $scope.inputFocus();
+                                            $scope.sugIdx = 0;
+                                        } else if ($scope.tags[idx]) {
+                                            $scope.updateTagLabel(idx, label, val);
+                                            $timeout(function(){
+                                                $scope.sugIdx = 0;
+                                                focusNext();
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        });
                     } 
-
                     $scope.inputChangeWidth();
                 }
                 $scope.enableEdit = function(t, e) {
@@ -188,6 +246,7 @@ app.directive('tagField', function ($timeout, $http, $q) {
                 
                 $scope.doneEditing = function(i, t, e) {
                     if (!!t) {
+                        // untuk mencegah suggestion muncul ditempat yg tidak diinginkan
                         if (!!i && e.target.value == '' 
                                 && ($scope.suggestionMode != 'none' && i != $scope.showSuggestion)) {
                             $scope.removeTagFromValue(i);
@@ -198,6 +257,11 @@ app.directive('tagField', function ($timeout, $http, $q) {
                                     $scope.input.focus();
                                 }
                             });
+                        }
+                        
+                        // ketika selesai ngedit, balikin label nya sesuai dengan value yg ada di hash
+                        if ($scope.suggestionMode == 'php' && $scope.mustChoose == 'yes') {
+                            t.label = $scope.tagHash[t.val];
                         }
                         t.editing = false;
                     }
@@ -236,7 +300,15 @@ app.directive('tagField', function ($timeout, $http, $q) {
                 }
                 
                 var getArrayFromValue = function() {
-                    var rawtags = $scope.value.split($scope.delimiter);
+                    if ($scope.valueMode == 'string') {
+                        var rawtags = $scope.value.split($scope.delimiter);
+                    } else {
+                        var rawtags = $scope.value;
+                    }
+                    if (!rawtags) {
+                        rawtags = [];
+                    }
+                    
                     var tags = [];
                     rawtags.forEach(function(t, i) {
                         t = (t + '').trim();
@@ -370,15 +442,50 @@ app.directive('tagField', function ($timeout, $http, $q) {
                         }
                     } else {
                         if (idx === null) {
-                            $scope.tags.push({
-                                label:label,
-                                val:value
-                            });
+                            var duplicate = false;
+                            if ($scope.unique == 'yes') {
+                                for (var t in $scope.tags) {
+                                    if ($scope.tags[t].val == value) {
+                                        duplicate = true;
+                                    }
+                                }
+                            }
+                            
+                            if (!duplicate) {
+                                $scope.tags.push({
+                                    label:label,
+                                    val:value
+                                });
+                            }
                         } else {
                             $scope.tags[idx].label = label;
                             $scope.tags[idx].val = value;
                         }
+                        
                         $scope.updateValueFromTags();
+                    }
+                    
+                    if ($scope.suggestionMode == 'php') {
+                        if (value && $scope.suggestion[value]) {
+                            delete $scope.suggestion[value]
+                        } else if (label) {
+                            for (var i in $scope.suggestion) {
+                                if ($scope.suggestion[i] === label) {
+                                    delete $scope.suggestion[i];
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        var showSug = false;
+                        for (var i in $scope.suggestion) {
+                            showSug = true;
+                            break;
+                        }
+                        
+                        if (!showSug) {
+                            $scope.showSuggestion = false;
+                        }
                     }
                 }
                 
@@ -395,13 +502,21 @@ app.directive('tagField', function ($timeout, $http, $q) {
                 }
                 $scope.updateValueFromTags = function() { // will trigger value watcher
                     if ($scope.valueMode === 'array') {
-                        $scope.value.splice(0, $scope.value.length - 1);
+                        if (typeof $scope.value === "string") {
+                            $scope.value = [];
+                        }
+                        $scope.value.splice(0, $scope.value.length);
                         var val = $scope.value;
                     } else {
                         var val = [];
                     }
                     
                     for (var i in $scope.tags) {
+                        if ($scope.unique == 'yes') {
+                            if (val.indexOf($scope.tags[i].val) >= 0) {
+                                continue;
+                            }
+                        }
                         val.push($scope.tags[i].val);
                     }
                     
@@ -418,6 +533,7 @@ app.directive('tagField', function ($timeout, $http, $q) {
                         $scope.value = tags.join($scope.delimiter);
                     } else {
                         $scope.value.splice(idx, 1);
+                        $scope.updateTagsFromValue();
                     }
                 }
                 
