@@ -1,5 +1,5 @@
 .tf-container {
-     padding:2px 2px 0px 2px !important;
+     padding:2px !important;
      cursor:text;
      min-height:30px !important;
      height:auto !important;
@@ -20,10 +20,16 @@
      background:white;
      margin: 0px 3px 2px 0px;
 }
+.tf-tag {
+     margin:1px 3px 1px 1px;
+}
 .tf-tag:first-child {
 }
 .tf-tag,.tf-tag-last {
      position:relative;
+}
+.tf-tag-last {
+     margin-left:3px;
 }
 .tf-tag .dropdown-menu {
      display:block;

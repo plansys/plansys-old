@@ -29,6 +29,7 @@
     <div class="<?= $this->fieldColClass ?>">
         <div class="form-control tf-container" ng-click="inputFocus()">
             <div class="tf-tag" ng-class="{disabled:disabled, editing:t.editing}" 
+                 style="{{$index == tags.length -1 ? 'margin-right:-3px;' : '' }}"
                  idx="{{$index}}" ng-repeat="(i,t) in tags" >
                 <ul class="dropdown-menu" ng-if="showSuggestion === $index">
                     <li ng-click="chooseItem(i, label, value)"
@@ -51,7 +52,7 @@
                     ng-keydown="inputKeydown($event, i)"
                     class="tf-input-edit {{ t.editing ? 'editing' : '' }}" />
             </div>
-            <span class="tf-tag-last" style="margin-left:{{ tags.length == 0 ? 6 : -3}}px">
+            <span class="tf-tag-last">
                 <input type="text" ng-if="!disabled" ng-blur="doneEditing(null,null, $event)"
                        ng-keyup="inputKeyup($event)" placeholder="{{tags.length > 0 ? '' : fieldOptions.placeholder}}"
                        ng-keydown="inputKeydown($event)" class="tf-input">

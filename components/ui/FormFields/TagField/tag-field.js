@@ -57,7 +57,7 @@ app.directive('tagField', function ($timeout, $http, $q) {
                         $scope.input = $el.find(".tf-input");
                         var i = $scope.input[0];
                         var w = ((i.value.length + 1) * 9);
-                        i.style.width = (Math.max(w,30)) + 'px';
+                        i.style.width = (Math.max(w,150)) + 'px';
                     });
                 }
                 $scope.inputKeyup = function(e, idx) {
