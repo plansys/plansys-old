@@ -232,12 +232,17 @@ ob_start();
                     if ($scope.pageInfo['action'] == 'actionIndex') {
                         type = 'update';
                     }
+                    
+                    <?php if (Setting::get('app.auditTrail') != 'Disabled'): ?>
                     // send tracking information
                     $http.post(Yii.app.createUrl('/sys/auditTrail/track', {
                         t: type
                     }), $scope.pageInfo).success(function (d) {
                         submit();
                     });
+                    <?php else: ?>
+                    submit();
+                    <?php endif; ?>
                 } else {
                     submit();
                 }
