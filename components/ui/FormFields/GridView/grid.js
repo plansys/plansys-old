@@ -941,10 +941,6 @@ app.directive('gridView', function ($timeout, $http) {
                         typingPage: 1
                     };
 
-                    if (typeof $scope.gridOptions.pageSize != "undefined") {
-                        $scope.gridOptions.pageInfo.pageSize = $scope.gridOptions.pageSize * 1;
-                    }
-
                     $scope.$watch('gridOptions.pageInfo', function (paging, oldpaging) {
                         if (paging.typingPage != oldpaging.typingPage) return;
                         if (paging != oldpaging) {

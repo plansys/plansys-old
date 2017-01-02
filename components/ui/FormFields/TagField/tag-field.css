@@ -27,9 +27,10 @@
 }
 .tf-tag,.tf-tag-last {
      position:relative;
+     float:left;
 }
 .tf-tag-last {
-     margin-left:3px;
+     margin-left:0px;
 }
 .tf-tag .dropdown-menu {
      display:block;

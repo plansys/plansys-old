@@ -29,7 +29,6 @@
     <div class="<?= $this->fieldColClass ?>">
         <div class="form-control tf-container" ng-click="inputFocus()">
             <div class="tf-tag" ng-class="{disabled:disabled, editing:t.editing}" 
-                 style="{{$index == tags.length -1 ? 'margin-right:-3px;' : '' }}"
                  idx="{{$index}}" ng-repeat="(i,t) in tags" >
                 <ul class="dropdown-menu" ng-if="showSuggestion === $index">
                     <li ng-click="chooseItem(i, label, value)"
@@ -65,12 +64,17 @@
                     </li>
                 </ul>
             </span>
+            <div class="clearfix"></div>
+        </div>
+        <div ng-if="valueMode == 'string'">
+            <input type="hidden" name="<?= $this->renderName ?>" value="{{ value }}" />
+        </div>
+        <div ng-if="valueMode == 'array'">
+            <input type="hidden" ng-repeat="v in value" name="<?= $this->renderName ?>[]" value="{{ v }}" />
+        </div>
+        <div ng-if="errors[name]" class="alert error alert-danger">
+            {{ errors[name][0]}}
         </div>
     </div>
-    <!-- /field -->
-    <!-- error -->
-    <div ng-if="errors[name]" class="alert error alert-danger">
-        {{ errors[name][0]}}
-    </div>
-    <!-- /error -->
+    
 </div>

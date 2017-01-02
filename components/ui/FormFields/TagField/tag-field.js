@@ -61,7 +61,10 @@ app.directive('tagField', function ($timeout, $http, $q) {
                     });
                 }
                 $scope.inputKeyup = function(e, idx) {
-                    if ($scope.suggestionMode == 'php' && $scope.reloadSug) {
+                    if (e.keyCode == 13) {
+                        $scope.hideSuggestion();
+                    } 
+                    else if ($scope.suggestionMode == 'php' && $scope.reloadSug != e.target.value) {
                         if ($scope.getSugHttp) {
                             $scope.getSugHttp.resolve();
                         }
@@ -173,7 +176,7 @@ app.directive('tagField', function ($timeout, $http, $q) {
                         }
                     }
                     
-                    $scope.reloadSug = true;
+                    $scope.reloadSug = e.target.value;
                     if ($scope.suggestionMode == 'php') {
                         if (e.keyCode == 40) {
                             e.preventDefault();
@@ -182,7 +185,6 @@ app.directive('tagField', function ($timeout, $http, $q) {
                             if ($scope.sugIdx > $el.find(".dropdown-item").length - 1) {
                                 $scope.sugIdx = 0;
                             }
-                            $scope.reloadSug = false;
                         } else if (e.keyCode == 38) {
                             e.preventDefault();
                             e.stopPropagation();
@@ -190,7 +192,6 @@ app.directive('tagField', function ($timeout, $http, $q) {
                             if ($scope.sugIdx < 0) {
                                 $scope.sugIdx = $el.find(".dropdown-item").length - 1;
                             }
-                            $scope.reloadSug = false;
                         }
                     }
                     
@@ -229,6 +230,7 @@ app.directive('tagField', function ($timeout, $http, $q) {
                                                 focusNext();
                                             });
                                         }
+                                        $scope.hideSuggestion();
                                     }
                                 }
                             }
@@ -244,6 +246,15 @@ app.directive('tagField', function ($timeout, $http, $q) {
                     });
                 }
                 
+                $scope.hideSuggestion = function() {
+                    $scope.showSuggestion = false;
+                    $scope.showIdx = 0;
+                    if ($scope.doneEditingTimeout) {
+                        $timeout.cancel($scope.doneEditingTimeout);
+                    }
+                }
+                
+                $scope.doneEditingTimeout = null;
                 $scope.doneEditing = function(i, t, e) {
                     if (!!t) {
                         // untuk mencegah suggestion muncul ditempat yg tidak diinginkan
@@ -264,11 +275,13 @@ app.directive('tagField', function ($timeout, $http, $q) {
                             t.label = $scope.tagHash[t.val];
                         }
                         t.editing = false;
+                    } else {
+                        e.target.value = '';
                     }
                     
-                    $timeout(function() {
-                        $scope.showSuggestion = false;
-                    }, 150);
+                    $scope.doneEditingTimeout = $timeout(function() {
+                        $scope.hideSuggestion();
+                    }, 1000);
                 }
                 
                 if (!!ctrl) {
@@ -322,12 +335,14 @@ app.directive('tagField', function ($timeout, $http, $q) {
                 $scope.chooseItem = function(idx, label, value) {
                     $scope.updateTagLabel(idx, label, value);
                     $scope.inputFocus();
+                    $scope.hideSuggestion();
                 }
                 
                 $scope.chooseNewItem = function(label, value) {
                     $scope.updateTagLabel(null, label, value);
                     $el.find(".tf-input").val('');
                     $scope.inputFocus();
+                    $scope.hideSuggestion();
                 }
                 
                 $scope.updateTagsFromValue = function() {
@@ -389,14 +404,22 @@ app.directive('tagField', function ($timeout, $http, $q) {
                 }
 
                 $scope.updateTagLabel = function(idx, label, value) {
+                    if (!!label && !!value) {
+                        $scope.tagHash[value] = label;
+                    }
+                    
                     if ($scope.mapperMode != 'none') {
                         var found = false;
                         for (var i in $scope.tagHash) {
                             if ($scope.tagHash[i] == label) {
                                 if (idx === null) {
-                                    $scope.tags.push({val:i});
+                                    $scope.tags.push({
+                                        val:i, 
+                                        label: $scope.tagHash[i]
+                                    });
                                 } else {
                                     $scope.tags[idx].val = i;
+                                    $scope.tags[idx].label = $scope.tagHash[i];
                                 }
                                 $scope.updateValueFromTags();
                                 found = true;
@@ -418,11 +441,15 @@ app.directive('tagField', function ($timeout, $http, $q) {
                                     finishLoading('map-tag');
                                     for (var i in data) {
                                         $scope.tagHash[i] = data[i].trim() + '';
-                                        if (data[i] === label) {
+                                        if ($scope.tagHash[i] === label) {
                                             if (idx === null) {
-                                                $scope.tags.push({val:i});
+                                                $scope.tags.push({
+                                                    val:i, 
+                                                    label: $scope.tagHash[i]
+                                                });
                                             } else {
                                                 $scope.tags[idx].val = i;
+                                                $scope.tags[idx].label = $scope.tagHash[i];
                                             }
                                             found = true;
                                         }
@@ -502,7 +529,7 @@ app.directive('tagField', function ($timeout, $http, $q) {
                 }
                 $scope.updateValueFromTags = function() { // will trigger value watcher
                     if ($scope.valueMode === 'array') {
-                        if (typeof $scope.value === "string") {
+                        if (!$scope.value) {
                             $scope.value = [];
                         }
                         $scope.value.splice(0, $scope.value.length);
@@ -532,55 +559,58 @@ app.directive('tagField', function ($timeout, $http, $q) {
                         tags.splice(idx, 1);
                         $scope.value = tags.join($scope.delimiter);
                     } else {
-                        $scope.value.splice(idx, 1);
-                        $scope.updateTagsFromValue();
+                        if (!!$scope.value) {
+                            $scope.value.splice(idx, 1);
+                            $scope.updateTagsFromValue();
+                        }
                     }
                 }
                 
                 $scope.init = function() {
                     $scope.$watch('value', function(e) {  // value watcher, will invoke tagmapper
-                        if ($scope.valueMode == 'string') {
-                            if (typeof e === 'string') {
-                                var rawtags = e.split($scope.delimiter);
-                                var tags = [];
-                                var unmappedVal = [];
-                                rawtags.forEach(function(t, idx) {
-                                    t = (t + '').trim();
-                                    if (!!t) {
-                                        tags[idx] = t;
-                                        if (!$scope.tagHash[t]) {
-                                            unmappedVal.push(t);
-                                        }
+                        if ($scope.valueMode == 'string' && typeof e === 'string') {
+                            var rawtags = e.split($scope.delimiter);
+                        } else {
+                            var rawtags = e;
+                        }
+                        if (rawtags && rawtags.length > 0) {
+                            var tags = [];
+                            var unmappedVal = [];
+                            rawtags.forEach(function(t, idx) {
+                                t = (t + '').trim();
+                                if (!!t) {
+                                    tags[idx] = t;
+                                    if (!$scope.tagHash[t]) {
+                                        unmappedVal.push(t);
                                     }
-                                });
-                                
-                                if (unmappedVal.length > 0 && $scope.mapperMode != 'none') {
-                                    if (!isLoading('map-tag')) {
-                                        startLoading('map-tag');
-                                        $http.post(Yii.app.createUrl('formfield/TagField.mapTag'), {
-                                            m: $scope.modelClass,
-                                            n: $scope.name,
-                                            v: unmappedVal,
-                                            l: [],
-                                            mdl: $scope.$parent.model,
-                                            prm: $scope.$parent.params
-                                        }).success(function(data) {
-                                            finishLoading('map-tag');
-                                            for (var i in data) {
-                                                var idx = tags.indexOf(i);
-                                                $scope.tagHash[i] = data[i].trim() + '';
-                                            }
-                                            $scope.updateTagsFromValue();
-                                            $scope.updateValueFromTags();
-                                        });
-                                    }
-                                } else {
-                                    $scope.updateTagsFromValue();
-                                    $scope.updateValueFromTags();
                                 }
+                            });
+                            
+                            if (unmappedVal.length > 0 && $scope.mapperMode != 'none') {
+                                if (!isLoading('map-tag')) {
+                                    startLoading('map-tag');
+                                    $http.post(Yii.app.createUrl('formfield/TagField.mapTag'), {
+                                        m: $scope.modelClass,
+                                        n: $scope.name,
+                                        v: unmappedVal,
+                                        l: [],
+                                        mdl: $scope.$parent.model,
+                                        prm: $scope.$parent.params
+                                    }).success(function(data) {
+                                        finishLoading('map-tag');
+                                        for (var i in data) {
+                                            var idx = tags.indexOf(i);
+                                            $scope.tagHash[i] = data[i].trim() + '';
+                                        }
+                                        $scope.updateTagsFromValue();
+                                        $scope.updateValueFromTags();
+                                    });
+                                }
+                            } else {
+                                $scope.updateTagsFromValue();
+                                $scope.updateValueFromTags();
                             }
                         }
-                        
                         ctrl.$setViewValue($scope.value);
                     });
                 }
