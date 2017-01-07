@@ -25,17 +25,21 @@ class PsDefaultController extends Controller {
             else {
                 $shouldRender = false;
                 switch ($error['code']) {
+                    case 400:
+                            if (strpos($error['message'], 'CSRF') >= 0) {
+                                $error        = array(
+                                    'code' => 'Peringatan: Token CSRF sudah kadaluarsa',
+                                    'message' => 'Mohon Refresh kembali halaman ini.'
+                                );
+                            }
+                        break;
                     case 403:
                         if (Yii::app()->user->isGuest) {
                             if (!isset($_GET['redir'])) {
                                 $this->redirect(['/site/login',
                                     'redir' => "//" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
                                 ]);
-                            } else {
-                                $this->redirect(['/site/login',
-                                    'redir' => $_GET['redir']
-                                ]);
-                            }
+                            } 
                         } else {
                             $msg = 'Anda tidak memiliki hak akses terhadap URL ini. <br/>'
                                 . 'Mohon segera alihkan tujuan anda ke halaman lain. <br/>';
