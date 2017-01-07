@@ -27,6 +27,7 @@ app.directive('tagField', function ($timeout, $http, $q) {
                 $scope.dropdownList = [];
                 $scope.tags = [];
                 $scope.tagHash = {};
+                $scope.ref = $el.find("data[name=ref]").html().trim();
                 $scope.suggestionMode = $el.find("data[name=sug_mode]").html().trim();
                 $scope.showSuggestion = false;
                 $scope.suggestion = [];
@@ -74,7 +75,8 @@ app.directive('tagField', function ($timeout, $http, $q) {
                             n: $scope.name,
                             s: e.target.value,
                             mdl: $scope.$parent.model,
-                            prm: $scope.$parent.params
+                            prm: $scope.$parent.params,
+                            ref: $scope.ref
                         },{
                             timeout: $scope.getSugHttp.promise
                         }).success(function(data) {
@@ -439,7 +441,8 @@ app.directive('tagField', function ($timeout, $http, $q) {
                                     l: [label],
                                     v: [],
                                     mdl: $scope.$parent.model,
-                                    prm: $scope.$parent.params
+                                    prm: $scope.$parent.params,
+                                    ref: $scope.ref
                                 }).success(function(data) {
                                     finishLoading('map-tag');
                                     for (var i in data) {
@@ -604,7 +607,8 @@ app.directive('tagField', function ($timeout, $http, $q) {
                                         v: unmappedVal,
                                         l: [],
                                         mdl: $scope.$parent.model,
-                                        prm: $scope.$parent.params
+                                        prm: $scope.$parent.params,
+                                        ref: $scope.ref
                                     }).success(function(data) {
                                         finishLoading('map-tag');
                                         for (var i in data) {
