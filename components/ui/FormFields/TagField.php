@@ -17,6 +17,7 @@ class TagField extends FormField {
     public $options = [];
     public $tagMapper = '';
     public $unique = 'yes';
+    public $ref = '';
     public $tagMapperMode = 'none';
     public $labelOptions = [];
     public $fieldOptions = [];
@@ -155,7 +156,11 @@ class TagField extends FormField {
         if (count($post) == 0) { die(); }
         
         $fb = FormBuilder::load($post['m']);
-        $ff = $fb->findField(['name' => $post['n']]);
+        $ffilter = ['name' => $post['n']];
+        if (isset($post['ref'])) {
+            $ffilter['ref'] = $post['ref'];
+        }
+        $ff = $fb->findField($ffilter);
         
         if (trim($ff['tagMapper']) == '') {
             echo "{}";
@@ -177,7 +182,11 @@ class TagField extends FormField {
         if (count($post) == 0) { die(); }
         
         $fb = FormBuilder::load($post['m']);
-        $ff = $fb->findField(['name' => $post['n']]);
+        $ffilter = ['name' => $post['n']];
+        if (isset($post['ref'])) {
+            $ffilter['ref'] = $post['ref'];
+        }
+        $ff = $fb->findField($ffilter);
         
         if ($ff['sugPHP'] != '') {
             $res = $this->evaluate($ff['sugPHP'], true,[
@@ -254,6 +263,15 @@ class TagField extends FormField {
                 'listExpr' => 'array(\'yes\',\'no\')',
                 'fieldWidth' => '3',
                 'type' => 'DropDownList',
+            ),
+            array (
+                'label' => 'Ref Name',
+                'name' => 'ref',
+                'options' => array (
+                    'ng-model' => 'active.ref',
+                    'ng-change' => 'save();',
+                ),
+                'type' => 'TextField',
             ),
             array (
                 'type' => 'Text',

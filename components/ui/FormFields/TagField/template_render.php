@@ -13,6 +13,7 @@
     <data name="unique" class="hide"><?= $this->unique; ?></data>
     <data name="mapper_mode" class="hide"><?= $this->tagMapperMode; ?></data>
     <data name="sug_mode" class="hide"><?= $this->suggestion; ?></data>
+    <data name="ref" class="hide"><?= $this->ref; ?></data>
     <data name="field_options" class="hide"><?= json_encode($this->fieldOptions) ?></data>
     <!-- /info -->
     

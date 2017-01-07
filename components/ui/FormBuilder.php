@@ -12,6 +12,7 @@ class FormBuilder extends CComponent {
     public $model                  = null;
     public $timestamp;
     public $fieldNameTemplate      = "";
+    public $renderOptions = [];
     private $countRenderID         = 1;
     private $sourceFile            = '';
     private $originalClass         = '';
@@ -1355,11 +1356,12 @@ EOF;
     private function renderInternal($formdata = null, $options = [], $fb, $fields) {
         $html = "";
 
-
         $form       = $fb->form;
         $moduleName = $fb->module;
         $modelClass = get_class($fb->model);
 
+        $this->renderOptions = $options;
+        
         ## setup default options
         $wrapForm          = isset($options['wrapForm']) ? $options['wrapForm'] : true;
         $action            = isset($options['action']) ? $options['action'] : 'create';

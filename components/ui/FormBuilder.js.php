@@ -36,6 +36,7 @@ ob_start();
         $scope.date = date;
         $scope.strtotime = strtotime;
         $scope.angular = angular;
+        $scope._fields = {};
         window.csrf = {
             name: "<?php echo Yii::app()->request->csrfTokenName; ?>",
             token: "<?php echo Yii::app()->request->csrfToken; ?>"

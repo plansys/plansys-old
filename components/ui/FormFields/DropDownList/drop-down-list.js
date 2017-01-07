@@ -321,11 +321,14 @@ app.directive('dropDownList', function ($timeout) {
                         }
                     };
                 }
-
+                
+                if (!$scope.inEditor) {
+                    var parent = $scope.getParent($scope);
+                    parent._fields[$scope.name] = $scope;
+                }
+                
                 // set default value
                 $scope.name = $el.find("data[name=name]:eq(0)").html().trim();
-                var parent = $scope.getParent($scope);
-                parent[$scope.name] = $scope;
                 
                 $scope.formList = JSON.parse($el.find("data[name=form_list]").text());
                 $scope.renderedFormList = [];

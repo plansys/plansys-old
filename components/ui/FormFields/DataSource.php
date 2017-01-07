@@ -72,7 +72,7 @@ class DataSource extends FormField {
 
         $db       = Yii::app()->db;
         $template = DataSource::generateTemplate($this->sql, $params, $this, $paramDefs);
-
+        
         ## execute SQL
         $this->command = $db->createCommand($template['sql']);
         $data          = $this->command->queryAll(true, $template['params']);
@@ -196,7 +196,8 @@ class DataSource extends FormField {
                             }
                             if (is_string($postParam) && $postParam != "") {
                                 $returnParams[$p] = $field->evaluate($postParam, true, [
-                                    'model' => $model
+                                    'model' => $model,
+                                    'params' => @$field->builder->renderOptions['params']
                                 ]);
                             }
                         }
