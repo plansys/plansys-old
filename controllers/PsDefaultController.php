@@ -28,9 +28,11 @@ class PsDefaultController extends Controller {
                     case 400:
                             if (strpos($error['message'], 'CSRF') >= 0) {
                                 $error        = array(
-                                    'code' => 'Peringatan: Token CSRF sudah kadaluarsa',
-                                    'message' => 'Mohon Refresh kembali halaman ini.'
+                                    'code' => 'Peringatan: Mohon refresh halaman ini',
+                                    'message' => 'Token CSRF Anda sudah kadaluarsa. Demi keamanan data <br/>
+                                                  mohon muat ulang halaman ini ini.'
                                 );
+                                $shouldRender = true;
                             }
                         break;
                     case 403:

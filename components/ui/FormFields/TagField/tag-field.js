@@ -28,7 +28,6 @@ app.directive('tagField', function ($timeout, $http, $q) {
                 $scope.tags = [];
                 $scope.tagHash = {};
                 $scope.suggestionMode = $el.find("data[name=sug_mode]").html().trim();
-                $scope.ref = $el.find("data[name=ref]").html().trim();
                 $scope.showSuggestion = false;
                 $scope.suggestion = [];
                 $scope.sugIdx = 0;
@@ -75,8 +74,7 @@ app.directive('tagField', function ($timeout, $http, $q) {
                             n: $scope.name,
                             s: e.target.value,
                             mdl: $scope.$parent.model,
-                            prm: $scope.$parent.params,
-                            ref: $scope.ref
+                            prm: $scope.$parent.params
                         },{
                             timeout: $scope.getSugHttp.promise
                         }).success(function(data) {
@@ -347,15 +345,21 @@ app.directive('tagField', function ($timeout, $http, $q) {
                     $scope.hideSuggestion();
                 }
                 
-                $scope.updateTagsFromValue = function() {
+                $scope.updateTagsFromValue = function(shouldFocus) {
                     if ($scope.valueMode === 'string') {
                         var value = getArrayFromValue();
                     } else {
                         var value = $scope.value;
                     } 
                     
+                    if (typeof shouldFocus == 'undefined') {
+                        shouldFocus = true;
+                    }
+                    
                     var focus = $el.find(":focus");
                     var idx = 0;
+                    var unique = [];
+                    var duplicate = [];
                     if (focus) {
                         if (focus.parent().hasClass("tf-tag")) {
                             idx = focus.parent().attr("idx") * 1;
@@ -363,9 +367,6 @@ app.directive('tagField', function ($timeout, $http, $q) {
                             idx = 9999;
                         }
                     }
-                    
-                    var unique = [];
-                    var duplicate = [];
                     
                     $scope.tags.splice(0, $scope.tags.length);
                     for (var i in value) {
@@ -393,7 +394,7 @@ app.directive('tagField', function ($timeout, $http, $q) {
                         $scope.updateValueFromTags();
                     }
                     
-                    if (focus) {
+                    if (shouldFocus && focus) {
                         $timeout(function() {
                             if (idx == 9999) {
                                 $scope.inputFocus();
@@ -438,8 +439,7 @@ app.directive('tagField', function ($timeout, $http, $q) {
                                     l: [label],
                                     v: [],
                                     mdl: $scope.$parent.model,
-                                    prm: $scope.$parent.params,
-                                    ref: $scope.ref
+                                    prm: $scope.$parent.params
                                 }).success(function(data) {
                                     finishLoading('map-tag');
                                     for (var i in data) {
@@ -570,12 +570,18 @@ app.directive('tagField', function ($timeout, $http, $q) {
                 }
                 
                 $scope.init = function() {
+                    $scope.$watch(function() { return ctrl.$viewValue}, function(e) {
+                        ctrl.$setViewValue($scope.value);
+                        $scope.updateTagsFromValue(false);
+                    },true);
+                    
                     $scope.$watch('value', function(e) {  // value watcher, will invoke tagmapper
                         if ($scope.valueMode == 'string' && typeof e === 'string') {
                             var rawtags = e.split($scope.delimiter);
                         } else {
                             var rawtags = e;
                         }
+                        
                         if (rawtags && rawtags.length > 0) {
                             var tags = [];
                             var unmappedVal = [];
@@ -598,8 +604,7 @@ app.directive('tagField', function ($timeout, $http, $q) {
                                         v: unmappedVal,
                                         l: [],
                                         mdl: $scope.$parent.model,
-                                        prm: $scope.$parent.params,
-                                        ref: $scope.ref
+                                        prm: $scope.$parent.params
                                     }).success(function(data) {
                                         finishLoading('map-tag');
                                         for (var i in data) {
@@ -615,7 +620,6 @@ app.directive('tagField', function ($timeout, $http, $q) {
                                 $scope.updateValueFromTags();
                             }
                         }
-                        ctrl.$setViewValue($scope.value);
                     });
                 }
                 $scope.init();
