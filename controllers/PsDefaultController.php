@@ -27,9 +27,15 @@ class PsDefaultController extends Controller {
                 switch ($error['code']) {
                     case 403:
                         if (Yii::app()->user->isGuest) {
-                            $this->redirect(['/site/login',
-                                'redir' => "//" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
-                            ]);
+                            if (!isset($_GET['redir'])) {
+                                $this->redirect(['/site/login',
+                                    'redir' => "//" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
+                                ]);
+                            } else {
+                                $this->redirect(['/site/login',
+                                    'redir' => $_GET['redir']
+                                ]);
+                            }
                         } else {
                             $msg = 'Anda tidak memiliki hak akses terhadap URL ini. <br/>'
                                 . 'Mohon segera alihkan tujuan anda ke halaman lain. <br/>';
