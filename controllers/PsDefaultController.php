@@ -36,6 +36,8 @@ class PsDefaultController extends Controller {
                             }
                         break;
                     case 403:
+                        vdump($error);
+                        die();
                         if (Yii::app()->user->isGuest) {
                             if (!isset($_GET['redir'])) {
                                 $this->redirect(['/site/login',

@@ -313,7 +313,7 @@ class Setting {
         } else {
             $result = @file_put_contents(Setting::$path, $settings);
             if (!$result) {
-                throw new CHttpException(403, 'Gagal menulis file setting: /app/config/settings.json');
+                throw new CHttpException(500, 'Gagal menulis file setting: /app/config/settings.json');
             }
         }
     }

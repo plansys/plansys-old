@@ -475,7 +475,11 @@ class Controller extends CController {
         $appUrl    = Setting::get('app.url');
         $actualUrl = Yii::app()->getRequest()->getHostInfo() . Yii::app()->getRequest()->getBaseUrl();
         if ($appUrl != $actualUrl) {
-            Setting::set('app.url', $actualUrl);
+            try {
+                Setting::set('app.url', $actualUrl);
+            } catch(Exception $e) {
+                
+            }
         }
 
         if (!$this->enableDebug) {
