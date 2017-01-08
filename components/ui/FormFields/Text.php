@@ -132,6 +132,7 @@ style=\"width:100%;height:300px;margin-bottom:-250px;position: relative !importa
             $controller = Yii::app()->controller;
 
             $attrs = $this->renderParams;
+            $params = $this->builder->renderOptions['params'];
             extract($attrs);
 
             eval('?>' . $this->value);
