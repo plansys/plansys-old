@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/box/spout.git",
-                "reference": "521f79936624da329bb1b43a1756c17c2d13544f"
+                "reference": "6f4ddb15696fd39226b0852ec522bca2de250a72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/box/spout/zipball/521f79936624da329bb1b43a1756c17c2d13544f",
-                "reference": "521f79936624da329bb1b43a1756c17c2d13544f",
+                "url": "https://api.github.com/repos/box/spout/zipball/6f4ddb15696fd39226b0852ec522bca2de250a72",
+                "reference": "6f4ddb15696fd39226b0852ec522bca2de250a72",
                 "shasum": ""
             },
             "require": {
@@ -74,7 +74,7 @@
                 "write",
                 "xlsx"
             ],
-            "time": "2016-11-29 23:43:38"
+            "time": "2017-01-04 17:50:12"
         },
         {
             "name": "inlinestyle/inlinestyle",
@@ -176,16 +176,16 @@
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v5.2.16",
+            "version": "v5.2.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "1d85f9ef3ecfc42bbc4f3c70d5e37ca9a65f629a"
+                "reference": "b18cb98131bd83103ccb26a888fdfe3177b8a663"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/1d85f9ef3ecfc42bbc4f3c70d5e37ca9a65f629a",
-                "reference": "1d85f9ef3ecfc42bbc4f3c70d5e37ca9a65f629a",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/b18cb98131bd83103ccb26a888fdfe3177b8a663",
+                "reference": "b18cb98131bd83103ccb26a888fdfe3177b8a663",
                 "shasum": ""
             },
             "require": {
@@ -232,11 +232,11 @@
                 }
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
-            "time": "2016-06-06 09:09:37"
+            "time": "2017-01-09 09:33:47"
         },
         {
             "name": "symfony/css-selector",
-            "version": "v3.2.0",
+            "version": "v3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
@@ -289,16 +289,16 @@
         },
         {
             "name": "yajra/laravel-pdo-via-oci8",
-            "version": "v1.2.1",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yajra/pdo-via-oci8.git",
-                "reference": "52c6c0061ca93eb531b6dc3b75494cea78d94f0d"
+                "reference": "a5af0b82aaa44ae8e8e4f798d76861018cef4804"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yajra/pdo-via-oci8/zipball/52c6c0061ca93eb531b6dc3b75494cea78d94f0d",
-                "reference": "52c6c0061ca93eb531b6dc3b75494cea78d94f0d",
+                "url": "https://api.github.com/repos/yajra/pdo-via-oci8/zipball/a5af0b82aaa44ae8e8e4f798d76861018cef4804",
+                "reference": "a5af0b82aaa44ae8e8e4f798d76861018cef4804",
                 "shasum": ""
             },
             "require-dev": {
@@ -321,7 +321,7 @@
                 }
             ],
             "description": "PDO userspace driver proxying calls to PHP OCI8 driver",
-            "time": "2016-09-09 04:54:56"
+            "time": "2017-01-05 03:43:09"
         }
     ],
     "packages-dev": [],
