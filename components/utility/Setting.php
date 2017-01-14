@@ -3,8 +3,9 @@
 function vdump() {
     $arg_list = func_get_args();
     foreach ($arg_list as $var) {
+        echo "<div style='text-align:left;'>";
         CVarDumper::dump($var, 10, true);
-        echo "<br/><br/>";
+        echo "</div><br/><br/>";
     }
 }
 

@@ -3,181 +3,193 @@
 class UploadFile extends FormField {
 
     public function getFieldProperties() {
-        return [
-            [
+        return array (
+            array (
                 'label' => 'Field Name',
                 'name' => 'name',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.name',
                     'ng-change' => 'changeActiveName()',
                     'ps-list' => 'modelFieldList',
-                ],
+                ),
                 'listExpr' => 'FormsController::$modelFieldList',
                 'searchable' => 'Yes',
                 'showOther' => 'Yes',
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Label',
                 'name' => 'label',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.label',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
+                ),
                 'type' => 'TextField',
-            ],
-            [
+            ),
+            array (
                 'label' => 'File Type',
                 'name' => 'fileType',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.fileType',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
-                'fieldOptions' => [
+                ),
+                'fieldOptions' => array (
                     'placeholder' => 'ex: jpg, doc, xls',
-                ],
+                ),
                 'type' => 'TextField',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Upload Path (PHP)',
                 'name' => 'uploadPath',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.uploadPath',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
-                'fieldOptions' => [
+                ),
+                'fieldOptions' => array (
                     'placeholder' => 'ex: geo/{$model->id}',
                     'style' => 'min-height:50px;white-space:pre;word-break:break-all;',
                     'auto-grow' => '',
-                ],
+                ),
                 'type' => 'TextArea',
-            ],
-            [
+            ),
+            array (
                 'label' => 'File Pattern (PHP)',
                 'name' => 'filePattern',
                 'fieldHeight' => '0',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.filePattern',
                     'ng-change' => 'save()',
                     'ng-delay' => '500',
-                ],
-                'fieldOptions' => [
+                ),
+                'fieldOptions' => array (
                     'placeholder' => 'ex: \'{$model->id}.{$ext}\'',
                     'auto-grow' => '',
                     'style' => 'min-height:50px;white-space:pre;word-break:break-all;',
-                ],
+                ),
                 'type' => 'TextArea',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Layout',
                 'name' => 'layout',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.layout',
                     'ng-change' => 'save();',
-                ],
+                ),
                 'listExpr' => 'array(\'Horizontal\',\'Vertical\')',
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Mode',
                 'name' => 'mode',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.mode',
                     'ng-change' => 'save();',
-                ],
-                'list' => [
+                ),
+                'list' => array (
                     'Upload + Browse + Download' => 'Upload + Browse + Download',
                     'Browse + Download' => 'Browse + Download',
                     'Upload + Download' => 'Upload + Download',
                     'Download Only' => 'Download Only',
-                ],
+                ),
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Allow Delete',
                 'name' => 'allowDelete',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.allowDelete',
                     'ng-change' => 'save()',
-                ],
+                ),
                 'listExpr' => '[\'Yes\',\'No\']',
                 'type' => 'DropDownList',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Allow Overwrite',
                 'name' => 'allowOverwrite',
-                'options' => [
+                'options' => array (
                     'ng-model' => 'active.allowOverwrite',
                     'ng-change' => 'save()',
-                ],
+                ),
                 'listExpr' => '[\'Yes\',\'No\']',
                 'type' => 'DropDownList',
-            ],
-            [
-                'value' => '<hr/>',
+            ),
+            array (
+                'label' => 'Show File Name',
+                'name' => 'showFileName',
+                'options' => array (
+                    'ng-model' => 'active.showFileName',
+                    'ng-change' => 'save()',
+                ),
+                'listExpr' => '[\'Yes\',\'No\']',
+                'type' => 'DropDownList',
+            ),
+            array (
                 'type' => 'Text',
-            ],
-            [
-                'column1' => [
-                    [
-                        'value' => '<column-placeholder></column-placeholder>',
+                'value' => '<hr/>',
+            ),
+            array (
+                'column1' => array (
+                    array (
                         'type' => 'Text',
-                    ],
-                    [
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
+                    array (
                         'label' => 'Label Width',
                         'name' => 'labelWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => [
+                        'options' => array (
                             'ng-model' => 'active.labelWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
                             'ng-disabled' => 'active.layout == \'Vertical\'',
-                        ],
+                        ),
                         'type' => 'TextField',
-                    ],
-                ],
-                'column2' => [
-                    [
-                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
+                ),
+                'column2' => array (
+                    array (
                         'type' => 'Text',
-                    ],
-                    [
+                        'value' => '<column-placeholder></column-placeholder>',
+                    ),
+                    array (
                         'label' => 'Field Width',
                         'name' => 'fieldWidth',
                         'layout' => 'Vertical',
                         'labelWidth' => '12',
                         'fieldWidth' => '11',
-                        'options' => [
+                        'options' => array (
                             'ng-model' => 'active.fieldWidth',
                             'ng-change' => 'save()',
                             'ng-delay' => '500',
-                        ],
+                        ),
                         'type' => 'TextField',
-                    ],
-                ],
+                    ),
+                ),
+                'w1' => '50%',
+                'w2' => '50%',
                 'type' => 'ColumnField',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Options',
                 'name' => 'options',
                 'type' => 'KeyValueGrid',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Label Options',
                 'name' => 'labelOptions',
                 'type' => 'KeyValueGrid',
-            ],
-            [
+            ),
+            array (
                 'label' => 'Field Options',
                 'name' => 'fieldOptions',
                 'type' => 'KeyValueGrid',
-            ],
-        ];
+            ),
+        );
     }
 
     public $name;
@@ -193,6 +205,7 @@ class UploadFile extends FormField {
     public $options = [];
     public $allowDelete = 'Yes';
     public $allowOverwrite = 'Yes';
+    public $showFileName = 'No';
     public $labelOptions = [];
     public $fieldOptions = [];
 
@@ -267,7 +280,7 @@ class UploadFile extends FormField {
         }
 
         $tmppath = $tmpdir . DIRECTORY_SEPARATOR . $name;
-        $tmppath = str_replace(['/','\\'],'/',$tmppath);
+        $tmppath = str_replace(['/',''],'/',$tmppath);
         
         
         move_uploaded_file($file["tmp_name"], $tmppath);
@@ -319,7 +332,7 @@ class UploadFile extends FormField {
         $thumb = $dir . DIRECTORY_SEPARATOR . basename(time() . '_' . rand(1, 10000) . "." . pathinfo($file, PATHINFO_EXTENSION));
         $img->save($thumb);
         $url = str_replace(Yii::getPathOfAlias('webroot'), '', $thumb);
-        $url = str_replace('\\', '/', $url);
+        $url = str_replace('', '/', $url);
 
         echo Yii::app()->baseUrl . $url;
     }

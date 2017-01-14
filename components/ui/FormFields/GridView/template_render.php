@@ -40,7 +40,9 @@
     
     <div ng-if="isCbFreezed" class="control-bar-spacer"></div>
     
-    <div class="data-grid-paging" ng-class="{freeze:isCbFreezed}" ng-if="loaded && gridOptions.controlBar">
+    <div class="data-grid-paging" 
+         ng-class="{freeze:isCbFreezed}" 
+         ng-if="loaded && gridOptions.controlBar">
         <div class="data-grid-pagination" ng-init="checkMode()">
             <div class="pull-left" style="margin:5px;" ng-if="mode == 'full'">Page:</div>
             <div class="pull-left data-grid-page-selector">
@@ -64,8 +66,10 @@
                     <div class="input-group-btn pull-left"
                          ng-if="showChangePage"
                          style="width:35px;margin-left:-1px;margin-right:-1px">
-                        <button class="btn btn-default" ng-click="changePage();"
-                                style="width:35px;font-size:7px" type="button">
+                        <button class="btn btn-default" 
+                                ng-click="changePage();"
+                                style="width:35px;font-size:7px" 
+                                type="button">
                             GO
                         </button>
                     </div>
@@ -83,7 +87,7 @@
                 </div>
             </div>
             <div ng-if="mode=='full'" class="pull-left" style="margin:5px">
-                of {{ totalPage() | number}}
+                of {{ totalPage() | number }}
             </div>
             <div class="pull-left"
                  style="border-left:1px solid #ccc;margin:2px 5px;padding:3px 8px;">
