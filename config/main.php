@@ -37,10 +37,6 @@ $components = array(
     'log'          => array(
         'class'  => 'CLogRouter',
         'routes' => array(
-            array(
-                'class'  => 'CFileLogRoute',
-                'levels' => 'error, warning',
-            ),
         ),
     ),
     'request'      => array(
@@ -63,15 +59,22 @@ $dbLists    = Setting::getDBList();
 $components = $dbLists + $components;
 
 if (Setting::get('app.debug') == "ON" && Setting::$mode != 'install') {
+    $components['log']['routes'][] =  array(
+        'class'  => 'CFileLogRoute',
+        'levels' => 'error, warning',
+    );
     $components['log']['routes'][] = array(
         'class'  => 'DbProfiler',
-        'report' => 'summary',
     );
     $components['log']['routes'][] = array(
         'class' => 'WebProfiler',
     );
 }
 
+$theme = Setting::get('app.theme');
+if ($theme) {
+    $components['theme'] = $theme;
+}
 
 $imports = array(
     'application.components.models.CDbCommand',

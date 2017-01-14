@@ -21,24 +21,29 @@ return array (
         'label' => 'Application Setting',
         'icon' => 'fa-home',
         'url' => '/dev/setting/app',
-        'formattedUrl' => '/coba/index.php?r=dev/setting/app',
+        'formattedUrl' => '/eoffice/test/index.php?r=dev/setting/app',
+    ),
+    array (
+        'label' => 'Theme Setting',
+        'icon' => 'fa-picture-o',
+        'url' => '/dev/setting/theme',
     ),
     array (
         'label' => 'Database Setting',
         'icon' => 'fa-database',
         'url' => '/dev/setting/database',
-        'formattedUrl' => '/coba/index.php?r=dev/setting/database',
+        'formattedUrl' => '/eoffice/test/index.php?r=dev/setting/database',
     ),
     array (
         'label' => 'Email Setting',
         'icon' => 'fa-envelope',
         'url' => '/dev/setting/email',
-        'formattedUrl' => '/coba/index.php?r=dev/setting/email',
+        'formattedUrl' => '/eoffice/test/index.php?r=dev/setting/email',
     ),
     array (
         'label' => 'LDAP Setting',
         'icon' => 'fa-users',
         'url' => '/dev/setting/ldap',
-        'formattedUrl' => '/coba/index.php?r=dev/setting/ldap',
+        'formattedUrl' => '/eoffice/test/index.php?r=dev/setting/ldap',
     ),
 );

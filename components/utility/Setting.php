@@ -29,8 +29,8 @@ class Setting {
             'dateFormat'     => 'd M Y',
             'timeFormat'     => 'H:i',
             'dateTimeFormat' => 'd M Y - H:i',
-            'mode'           => 'dev',
-            'debug'          => 'ON'
+            'mode'           => 'prod',
+            'debug'          => 'OFF'
         ],
         'email' => [
             'transport' => [
@@ -158,7 +158,7 @@ class Setting {
         }
         
 
-        if (Setting::get('app.mode') != 'production') {
+        if (Setting::get('app.mode') != 'prod') {
             //debug
             defined('YII_DEBUG') or define('YII_DEBUG', true);
             //show profiler
@@ -329,15 +329,27 @@ class Setting {
         return Setting::$rootPath . DIRECTORY_SEPARATOR . Setting::get('app.dir');
     }
 
-    public static function getViewPath() {
-        $appView = Setting::getAppPath() . DIRECTORY_SEPARATOR . "views";
-        if (is_dir($appView)) {
-            if (is_dir(Setting::getAppPath() . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "forms")) {
-                return $appView;
-            }
-        }
+    public static function getDefaultTheme() {
+        return 'oldblue';
+    }
 
-        return Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "views";
+    public static function getViewPath() {
+        $theme = Setting::get('app.theme');
+        if (is_null($theme)) { # backward compatibility with old plansys
+            $appPath = Yii::getPathOfAlias('app.views');
+            if (is_dir($appPath)) {
+                return $appPath;
+            }
+            
+            $theme = Setting::getDefaultTheme();
+            $appView = Setting::getAppPath() . DIRECTORY_SEPARATOR . "views";
+            if (is_dir($appView)) {
+                if (is_dir(Setting::getAppPath() . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "forms")) {
+                    return $appView;
+                }
+            }
+        } 
+        return Setting::getApplicationPath() . DIRECTORY_SEPARATOR . "themes/{$theme}/views";
     }
 
     public static function getRepoPath() {

@@ -110,13 +110,12 @@ class Controller extends CController {
 
         $result = $this->resolveViewFile($viewName, $viewPath, $basePath, $moduleViewPath);
         
-        ## if file is not found, try in plansys view dir
+        ## if file is not found, try in plansys theme dir
         if (!$result) {
-            $basePath = Yii::app()->getViewPath();
+            $basePath = Yii::getPathOfAlias('application.themes.' . Setting::getDefaultTheme() . '.views');
             $viewPath = $basePath . DIRECTORY_SEPARATOR . $this->id;
             $result = $this->resolveViewFile($viewName, $viewPath, $basePath, $moduleViewPath);
         }
-        
         return $result;
     }
 
@@ -143,34 +142,11 @@ class Controller extends CController {
         elseif (($module = $this->getModule()) === null)
             $module = Yii::app();
             
-
         return $this->resolveViewFile($layoutName, $module->getLayoutPath(), $this->getBaseViewPath(), $module->getViewPath());
     }
 
     public function getBaseViewPath() {
-        $appPath = Yii::getPathOfAlias('app.views');
-        
-        if (!is_dir($appPath)) {
-            $appPath = Yii::app()->getViewPath();
-        } else {
-            ## make sure app's view layout file is available
-            if (!is_dir($appPath . '/layouts')) {
-                $appPath = Yii::app()->getViewPath();
-            } else {
-                $psFile = [
-                    Yii::app()->getViewPath() . "/layouts/main.php",
-                    Yii::app()->getViewPath() . "/layouts/blank.php"
-                ];
-                foreach ($psFile as $p) {
-                    $f = str_replace(Yii::app()->getViewPath() . "/layouts/", $appPath . "/layouts/", $p);
-                    if (!is_file($f)) {
-                        $appPath = Yii::app()->getViewPath();
-                        break;
-                    }
-                }
-            }
-        }
-        return $appPath;
+        return Setting::getViewPath();
     }
 
     public function renderForm($class, $model = null, $params = [], $options = []) {

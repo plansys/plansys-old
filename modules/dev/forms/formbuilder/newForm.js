@@ -20,8 +20,13 @@ function generateClassPrefix(s) {
     var result = parts.replace(/(\.\w)/g, function (m) {
         return m[1].toUpperCase();
     });
+    result = result.charAt(0).toUpperCase() + result.slice(1);
     
-    return result.charAt(0).toUpperCase() + result.slice(1);
+    if (result.indexOf('AppForms') === 0) {
+        result = result.replace('AppForms','App');
+    }
+    
+    return result;
 }
 
 $scope.params.prefix = generateClassPrefix(activeScope.activeItem.alias);

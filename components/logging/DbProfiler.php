@@ -190,7 +190,7 @@ class DbProfiler extends CWebLogRoute {
      * @param array $data data to be passed to the view
      */
     protected function render($view, $data) {
-        include(Yii::getPathOfAlias('application.views.system.db-profiler') . ".php");
+        include('views/db-profiler.php');
     }
 
 }

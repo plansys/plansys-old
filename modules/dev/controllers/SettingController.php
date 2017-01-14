@@ -13,6 +13,19 @@ class SettingController extends Controller {
         $this->renderForm('DevSettingApp', $model);
     }
     
+    public function actionTheme() {
+        $model = new DevSettingTheme;
+        
+        if (isset($_GET['id'])) {
+            $model->active = $_GET['id'] === '' ? null : $_GET['id'];
+            $model->save();
+            $this->flash('Theme Updated!');
+            $this->redirect(['/dev/setting/theme']);
+        }
+        
+        $this->renderForm('DevSettingTheme', $model);
+    }
+    
     public function actionDatabase() {
         $model = new DevSettingDatabase;
         $posted = false;

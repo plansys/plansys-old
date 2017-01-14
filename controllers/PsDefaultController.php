@@ -7,7 +7,6 @@ class PsDefaultController extends Controller {
      * when an action is not explicitly requested by users.
      */
     public function actionIndex() {
-        
         if (Yii::app()->user->isGuest) {
             $this->redirect(array("login"));
         } else {
@@ -36,25 +35,27 @@ class PsDefaultController extends Controller {
                             }
                         break;
                     case 403:
-                        if (Yii::app()->user->isGuest) {
-                            if (!isset($_GET['redir'])) {
-                                $this->redirect(['/site/login',
-                                    'redir' => "//" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
-                                ]);
-                            } 
-                        } else {
-                            $msg = 'Anda tidak memiliki hak akses terhadap URL ini. <br/>'
-                                . 'Mohon segera alihkan tujuan anda ke halaman lain. <br/>';
-                            if (isset($error['message']) && trim($error['message']) != '') {
-                                $msg = $error['message'];
+                        if (stripos('forbidden', $error['message']) !== false) { 
+                            if (Yii::app()->user->isGuest) {
+                                if (!isset($_GET['redir'])) {
+                                    $this->redirect(['/site/login',
+                                        'redir' => "//" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
+                                    ]);
+                                } 
+                            } else {
+                                $msg = 'Anda tidak memiliki hak akses terhadap URL ini. <br/>'
+                                    . 'Mohon segera alihkan tujuan anda ke halaman lain. <br/>';
+                                if (isset($error['message']) && trim($error['message']) != '') {
+                                    $msg = $error['message'];
+                                }
+    
+                                $error        = array(
+                                    'code' => 'Peringatan: Tidak ada akses',
+                                    'message' => $msg
+                                );
+                                $shouldRender = true;
                             }
-
-                            $error        = array(
-                                'code' => 'Peringatan: Tidak ada akses',
-                                'message' => $msg
-                            );
-                            $shouldRender = true;
-                        }
+                        } 
                         break;
                     case 404:
                         $error        = array(

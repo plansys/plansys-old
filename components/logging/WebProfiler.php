@@ -63,7 +63,7 @@ class WebProfiler extends CLogRoute {
      * @param array $data data to be passed to the view
      */
     protected function render($view, $data) {
-        include(Yii::getPathOfAlias('application.views.system.web-profiler') . ".php");
+        include('views/web-profiler.php');
     }
 
 }
