@@ -94,7 +94,7 @@
                             n: file.name
                         })}}" class="btn btn-success btn-xs" style="margin:-2px 0px 0px 4px;">
                         <i class="fa fa-download"></i>
-                        Download 
+                        {{file.name}}
                     </a>
 
                     <div class="btn btn-xs btn-default pull-right" 

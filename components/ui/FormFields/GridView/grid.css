@@ -77,13 +77,38 @@
 [grid-view] .data-grid-paging {
     padding-bottom: 10px;
 }
+
 [grid-view] .control-bar-spacer {
     height: 38px;
 }
+
 [grid-view] .data-grid-paging.freeze {
     position:absolute;
     margin-top:-38px;
 }
+
+[grid-view] .data-grid-paging .paging-input {
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    -ms-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+    display: inline-block;
+    width: 40px;
+}
+
+[grid-view] .data-grid-paging .paging-input:focus {
+    width: 60px;
+}
+
+[grid-view] .data-grid-paging .btn,
+[grid-view] .data-grid-paging .form-control {
+    padding: 0px 7px !important;
+    height: 25px !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+}
+
 
 [grid-view] tr.g td {
     cursor: default;
