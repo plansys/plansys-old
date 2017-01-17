@@ -164,12 +164,12 @@ class AuditTrail extends ActiveRecord {
         AuditTrail::track("Logged in from {$ip}", "login");
     }
     
-    public function beforeSave($attr) {
+    public function beforeSave() {
         if (!is_numeric($this->model_id)) {
             $this->model_id = null;
         }
         
-        return parent::beforeSave($attr);
+        return parent::beforeSave();
     }
 
     public function tableName() {
