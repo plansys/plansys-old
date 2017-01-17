@@ -339,12 +339,16 @@ class Setting {
         if (is_null($theme)) { # backward compatibility with old plansys
             $appPath = Yii::getPathOfAlias('app.views');
             if (is_dir($appPath)) {
-                return $appPath;
+                if (is_file($appPath . "/layouts/main.php") &&
+                    is_file($appPath . "/layouts/blank.php")) {
+                    return $appPath;
+                }
             }
             
             $theme = Setting::getDefaultTheme();
             $appView = Setting::getAppPath() . DIRECTORY_SEPARATOR . "views";
             if (is_dir($appView)) {
+                
                 if (is_dir(Setting::getAppPath() . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "forms")) {
                     return $appView;
                 }
