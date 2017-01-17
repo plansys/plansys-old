@@ -1,0 +1,28 @@
+{
+    "name": "nodejs-php-fallback/stylus",
+    "description": "PHP wrapper to execute stylus node package or fallback to a PHP alternative",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Kyle",
+            "email": "kylekatarnls@gmail.com"
+        }
+    ],
+    "require": {
+        "nodejs-php-fallback/nodejs-php-fallback": "^1.2",
+        "kylekatarnls/stylus": "^1.0"
+    },
+    "extra": {
+        "npm": "stylus"
+    },
+    "require-dev": {
+        "composer/composer": "^1.2",
+        "phpunit/phpunit": ">=4.0",
+        "codeclimate/php-test-reporter": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "NodejsPhpFallback\\": "src/"
+        }
+    }
+}

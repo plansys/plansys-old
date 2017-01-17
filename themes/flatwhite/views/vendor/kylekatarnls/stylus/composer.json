@@ -1,0 +1,24 @@
+{
+    "name": "kylekatarnls/stylus",
+    "description": "Stylus preprocessor for PHP (see https://github.com/AustP/Stylus.php, it's an exact fork except the minimum stability)",
+
+    "authors": [
+        {
+            "name": "AustP"
+        },
+        {
+            "name": "neemzy",
+            "email": "tom.panier@beseen.fr"
+        }
+    ],
+
+    "require": {
+        "php": ">=5.3.0"
+    },
+
+    "autoload": {
+        "psr-0": {
+            "Stylus": "src/"
+        }
+    }
+}

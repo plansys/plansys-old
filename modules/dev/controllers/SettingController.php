@@ -1,6 +1,11 @@
 <?php
 
 class SettingController extends Controller {
+    
+    public function actionIndex() {
+        $this->redirect(["app"]);
+    }
+    
     public function actionApp() {
         $model = new DevSettingApp;
         

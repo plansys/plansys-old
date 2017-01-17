@@ -366,12 +366,13 @@ app.filter("timeago", function () {
         return (time <= local) ? span + ' ago' : 'in ' + span;
     }
 });
-app.directive("contentEditable", function ($timeout) {
+app.directive("ceditable", function ($timeout) {
     return {
         restrict: "A",
         require: "ngModel",
         link: function (scope, element, attrs, ngModel) {
-
+            element.attr('contenteditable', 'true');
+            
             function read() {
                 var html = element.text().trim();
                 ngModel.$setViewValue(html);

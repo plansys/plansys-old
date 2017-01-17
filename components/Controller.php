@@ -329,7 +329,6 @@ class Controller extends CController {
             }
         }
 
-
         $default = [
             [
                 'label'   => 'Login',
@@ -341,7 +340,7 @@ class Controller extends CController {
                 'url'         => '#',
                 'items'       => $userItems,
                 'itemOptions' => [
-                    'style' => 'border-right:1px solid rgba(0,0,0,.1)'
+                    'class' => 'user-menu'
                 ],
                 'visible'     => !Yii::app()->user->isGuest
             ],

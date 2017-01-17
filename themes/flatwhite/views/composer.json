@@ -1,0 +1,5 @@
+{
+    "require": {
+        "nodejs-php-fallback/stylus": "^1.0"
+    }
+}

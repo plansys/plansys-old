@@ -22,11 +22,16 @@ class DevSettingTheme extends Form {
             $p = str_replace("\\", "/", $p);
             $name = explode("/", $p);
             $name = end($name);
+            $img = Yii::app()->controller->staticUrl('/img/theme-placeholder.png');
+            if (is_file($p .'/views/preview.png')) {
+                $img = Yii::app()->request->baseUrl . '/plansys/themes/' . $name . '/views/preview.png';
+            }
+            
             $themes[] = [
                 'name' => ucfirst($name),
                 'shortname' => $name,
                 'dir'=> $p . '/views',
-                'img' => Yii::app()->request->baseUrl . '/plansys/themes/' . $name . '/views/preview.png',
+                'img' => $img,
             ];
         }
         $this->themes = $themes;

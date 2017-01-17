@@ -1,0 +1,25 @@
+<phpunit
+    bootstrap="tests/lib/bootstrap.php"
+    backupGlobals="false"
+    colors="true"
+    convertErrorsToExceptions="true"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true"
+    >
+    <testsuites>
+        <testsuite name="ComposerPlugin">
+            <file>tests/ComposerPluginTest.php</file>
+        </testsuite>
+        <testsuite name="NodejsPhpFallback">
+            <file>tests/NodejsPhpFallbackTest.php</file>
+        </testsuite>
+        <testsuite name="Wrapper">
+            <file>tests/WrapperTest.php</file>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
+</phpunit>

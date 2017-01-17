@@ -163,6 +163,14 @@ class AuditTrail extends ActiveRecord {
         $ip = Yii::app()->request->getUserHostAddress();
         AuditTrail::track("Logged in from {$ip}", "login");
     }
+    
+    public function beforeSave($attr) {
+        if (!is_numeric($this->model_id)) {
+            $this->model_id = null;
+        }
+        
+        return parent::beforeSave($attr);
+    }
 
     public function tableName() {
         return "p_audit_trail";

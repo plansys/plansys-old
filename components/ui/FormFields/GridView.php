@@ -192,18 +192,18 @@ type="checkbox" /></label>';
                     break;
                 case "editable":
                     $template = '
-    <div contenteditable="true" ' . $editableCss . ' ng-model="row[\'' . $fieldName . '\']"
+    <div ceditable="true" ' . $editableCss . ' ng-model="row[\'' . $fieldName . '\']"
          ng-keydown="editKey($event)"></div>';
                     break;
                 case "editable-insert":
                     $template = '
-    <div contenteditable="true" ' . $editableCss . ' ng-if="row.$rowState == \'insert\'"
+    <div ceditable="true" ' . $editableCss . ' ng-if="row.$rowState == \'insert\'"
          ng-model="row[\'' . $fieldName . '\'] ng-keydown="editKey($event)"></div>
     <span ng-show="row.$rowState != \'insert\'">' . $template . '</span>';
                     break;
                 case "editable-update":
                     $template = '
-    <div contenteditable="true" ' . $editableCss . ' ng-if="row.$rowState != \'insert\'"
+    <div ceditable="true" ' . $editableCss . ' ng-if="row.$rowState != \'insert\'"
          ng-model="row[\'' . $fieldName . '\'] ng-keydown="editKey($event)"></div>
     <span ng-show="row.$rowState == \'insert\'">' . $template . '</span>';
                     break;

@@ -20,7 +20,7 @@ class Asset extends CComponent {
         return $path;
     }
 
-    public static function publish($path, $isAlias = false) {
+    public static function publish($path, $isAlias = false, $postfix = "") {
         if ($isAlias) {
             $path = Asset::resolveAlias($path);
         }
@@ -32,7 +32,7 @@ class Asset extends CComponent {
             $path = Yii::app()->baseUrl . substr($path, strlen($webroot));
         }
         $result = str_replace("\\", "/", $path);
-        return $result;
+        return $result . $postfix;
     }
 
     public static function registerJS($includeJS) {
@@ -67,7 +67,7 @@ class Asset extends CComponent {
         }
     }
     
-    public static function registerCSS($includeCSS) {
+    public static function registerCSS($includeCSS, $postfix = "") {
         if (is_string($includeCSS)) {
             $includeCSS = [$includeCSS];
         }
@@ -85,7 +85,6 @@ class Asset extends CComponent {
                     Yii::app()->clientScript->registerCssFile($file);
                     continue;
                 }
-                
                 $csspath = realpath($path);
                 
                 if (is_dir($csspath)) {
@@ -98,11 +97,13 @@ class Asset extends CComponent {
 
                         $p = str_replace($csspath, '', realpath($p));
                         
-                        Yii::app()->clientScript->registerCssFile($path . str_replace("\\", "/", $p));
+                        Yii::app()->clientScript->registerCssFile($path . str_replace("\\", "/", $p), false, $postfix);
                     }
                 } else if (is_file($csspath)) {
                     Yii::app()->clientScript->registerCssFile(
-                        Asset::publish($csspath)
+                        Asset::publish($csspath),
+                        false,
+                        $postfix
                     );
                 }
             }
