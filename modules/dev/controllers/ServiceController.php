@@ -118,8 +118,8 @@ class ServiceController extends Controller {
         if(isset($_POST['DevService'])){
             $model->attributes = $_POST['DevService'];
             if ($model->validate()) {
+                $model->status = "ok";
                 $model->save();
-                
                 echo <<<EOF
 <script>
     window.opener.formScope.model.action = '{$model->action}';

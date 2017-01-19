@@ -484,6 +484,9 @@ EOD;
                 foreach ($this->_paramLog as $k => $v)  {
                     $text = str_replace($k, is_numeric($v) ? $v : "'" . $v . "'", $text);
                 }
+                foreach ($params as $k => $v)  {
+                    $text = str_replace($k, is_numeric($v) ? $v : "'" . $v . "'", $text);
+                }
                 
                 Yii::beginProfile($logTrace . ' <|#-SEPARATOR-#|> ' . $text . $par, 'system.db.CDbCommand.query');
             }
@@ -511,6 +514,10 @@ EOD;
                 foreach ($this->_paramLog as $k => $v)  {
                     $text = str_replace($k, is_numeric($v) ? $v : "'" . $v . "'", $text);
                 }
+                foreach ($params as $k => $v)  {
+                    $text = str_replace($k, is_numeric($v) ? $v : "'" . $v . "'", $text);
+                }
+                
                 Yii::endProfile($logTrace . ' <|#-SEPARATOR-#|> ' . $text . $par, 'system.db.CDbCommand.query');
             }
             

@@ -186,6 +186,7 @@ class ServiceManager extends CComponent {
             }
             
             $command = "run \"{$logPath}\" {$php} yiic.php service execute --id={$id}";
+            
             $pid = ServiceManager::process($command);
             
             if (!empty($pid)) {
@@ -228,8 +229,10 @@ class ServiceManager extends CComponent {
       
         if (is_array($msg)) {
             file_put_contents($file . ".json", serialize($msg));
+            chmod($file . ".json", 0777);
         } else if (is_string($msg)) {
             file_put_contents($file . ".txt", serialize($msg));
+            chmod($file . ".txt", 0777);
         }
     }
     
@@ -291,6 +294,8 @@ class ServiceManager extends CComponent {
             copy($old, $new);
             ServiceSetting::set('list.' . $serviceName . '.lastRun', date("Y-m-d H:i:s"));
             file_put_contents($old, json_encode($service, JSON_PRETTY_PRINT));
+            chmod($old, 0777);
+            chmod($new, 0777);
         }
     }
     
@@ -348,6 +353,7 @@ class ServiceManager extends CComponent {
         $file = $path . DIRECTORY_SEPARATOR . $id;
         $date = date("Y-m-d H:i:s");
         file_put_contents($file, "\n[{$date}] SERVICE: {$msg}", FILE_APPEND);
+        chmod($file, 0777);
     }
     
     public static function initLogAppend($id, $msg) {
@@ -436,6 +442,7 @@ class ServiceManager extends CComponent {
         $file = self::getLogPath($serviceName, $id);
         if (is_file($file)) {
             file_put_contents($file, "{$msg}", FILE_APPEND);
+            chmod($file, 0777);
         }
     }
     
@@ -444,6 +451,7 @@ class ServiceManager extends CComponent {
         $date = date("Y-m-d H:i:s");
         if (is_file($file)) {
             file_put_contents($file, "\n[{$date}] {$msg}", FILE_APPEND);
+            chmod($file, 0777);
         }
     }
     
