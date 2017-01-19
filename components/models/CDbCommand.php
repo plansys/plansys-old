@@ -480,7 +480,12 @@ EOD;
                 }
                 $logTrace = json_encode($logTrace);
 
-                Yii::beginProfile($logTrace . ' <|#-SEPARATOR-#|> ' . $this->getText() . $par, 'system.db.CDbCommand.query');
+                $text = $this->getText();
+                foreach ($this->_paramLog as $k => $v)  {
+                    $text = str_replace($k, is_numeric($v) ? $v : "'" . $v . "'", $text);
+                }
+                
+                Yii::beginProfile($logTrace . ' <|#-SEPARATOR-#|> ' . $text . $par, 'system.db.CDbCommand.query');
             }
 
 
@@ -501,9 +506,14 @@ EOD;
                 $this->_statement->closeCursor();
             }
 
-            if ($this->_connection->enableProfiling)
-                Yii::endProfile($logTrace . ' <|#-SEPARATOR-#|> ' . $this->getText() . $par, 'system.db.CDbCommand.query');
-
+            if ($this->_connection->enableProfiling) {
+                $text = $this->getText();
+                foreach ($this->_paramLog as $k => $v)  {
+                    $text = str_replace($k, is_numeric($v) ? $v : "'" . $v . "'", $text);
+                }
+                Yii::endProfile($logTrace . ' <|#-SEPARATOR-#|> ' . $text . $par, 'system.db.CDbCommand.query');
+            }
+            
             if (isset($cache, $cacheKey))
                 $cache->set($cacheKey, array($result), $this->_connection->queryCachingDuration, $this->_connection->queryCachingDependency);
 

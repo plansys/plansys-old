@@ -1,2 +1,96 @@
-.navbar-nav 
+border-color = #ccc
+
+body
+  display:flex
+  font-family:'Open Sans', sans-serif
+  flex-direction:column
+  position:absolute
+  top:0px
+  left:0px
+  right:0px
+  bottom:0px
+  
+  .header
+    flex:0 0 49px
+    margin:0px
+    border:0px
+    border-bottom:1px solid border-color
     
+    .top-menu
+      overflow-y:hidden
+      height:49px
+      display:flex
+      
+      .scroll-arrow
+        border-left:1px solid #ececeb
+        flex:0 0 60px
+        display:flex
+        align-items:stretch
+        background:white
+        @media screen and (min-width: 768px)
+          display:none
+          
+        div
+          padding:10px 0px
+          text-align:center
+          flex:1
+          
+          i
+            font-size:20px
+      
+      .burger
+        flex:0 0 50px
+        text-align:center
+        line-height:52px
+        font-size:30px
+        cursor:pointer
+        border-right:1px solid border-color
+        
+        &:hover
+          background:#ececeb
+        
+      .scroll
+        flex:1
+        overflow-y:hidden
+        height:80px
+        
+        .navbar-nav
+          margin:0px
+          display:flex
+    
+    .navbar-nav > li
+      flex:1
+    
+    .navbar-nav > li > a
+      height:49px
+      display:flex
+      align-items:center
+      color:#666
+      font-size:14px
+      font-weight:bold;
+      padding:0px 35px 0px 10px
+      
+      & > .caret
+        position:absolute
+        right:10px
+      
+      & > i 
+        margin-right:3px
+      
+      &:hover,
+      &:active,
+      &:focus
+        background:#fafafa
+        color:#222
+        
+    .navbar-nav > li.active > a
+      background:#ececeb
+      color:#222
+      
+    .navbar-nav > li.no-menu > a
+      padding-right:15px
+      padding-left:15px
+      
+  .main
+    flex:1
+    overflow:auto

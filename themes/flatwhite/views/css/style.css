@@ -1,0 +1,99 @@
+body {
+  display: flex;
+  font-family: 'Open Sans', sans-serif;
+  flex-direction: column;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
+body .header {
+  flex: 0 0 49px;
+  margin: 0px;
+  border: 0px;
+  border-bottom: 1px solid #ccc;
+}
+body .header .top-menu {
+  overflow-y: hidden;
+  height: 49px;
+  display: flex;
+}
+body .header .top-menu .scroll-arrow {
+  border-left: 1px solid #ececeb;
+  flex: 0 0 60px;
+  display: flex;
+  align-items: stretch;
+  background: #fff;
+}
+@media screen and (min-width: 768px) {
+  body .header .top-menu .scroll-arrow {
+    display: none;
+  }
+}
+body .header .top-menu .scroll-arrow div {
+  padding: 10px 0px;
+  text-align: center;
+  flex: 1;
+}
+body .header .top-menu .scroll-arrow div i {
+  font-size: 20px;
+}
+body .header .top-menu .burger {
+  flex: 0 0 50px;
+  text-align: center;
+  line-height: 52px;
+  font-size: 30px;
+  cursor: pointer;
+  border-right: 1px solid #ccc;
+}
+body .header .top-menu .burger:hover {
+  background: #ececeb;
+}
+body .header .top-menu .scroll {
+  flex: 1;
+  overflow-y: hidden;
+  height: 80px;
+}
+body .header .top-menu .scroll .navbar-nav {
+  margin: 0px;
+  display: flex;
+}
+body .header .navbar-nav > li {
+  flex: 1;
+}
+body .header .navbar-nav > li > a {
+  height: 49px;
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 0px 35px 0px 10px;
+}
+body .header .navbar-nav > li > a > .caret {
+  position: absolute;
+  right: 10px;
+}
+body .header .navbar-nav > li > a > i {
+  margin-right: 3px;
+}
+body .header .navbar-nav > li > a:hover,
+body .header .navbar-nav > li > a:active,
+body .header .navbar-nav > li > a:focus {
+  background: #fafafa;
+  color: #222;
+}
+body .header .navbar-nav > li.active > a {
+  background: #ececeb;
+  color: #222;
+}
+body .header .navbar-nav > li.no-menu > a {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+body .main {
+  flex: 1;
+  overflow: auto;
+}
+

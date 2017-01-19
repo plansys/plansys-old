@@ -2,18 +2,29 @@
 
 class ThemeManager extends CThemeManager {
 
-    public static function registerCoreScript() {
+    public static function registerCoreScript($excludeScript = []) {
         $ctrl = Yii::app()->controller;
         
-        Yii::app()->clientScript->registerScriptFile($ctrl->staticUrl('/js/lib/jquery.js'));
-        Yii::app()->clientScript->registerScriptFile($ctrl->staticUrl('/js/lib/angular.min.js'));
-        Yii::app()->clientScript->registerScriptFile($ctrl->staticUrl('/js/lib/yii.urlmanager.min.js'));
-        Yii::app()->clientScript->registerScriptFile($ctrl->staticUrl('/js/lib/angular.storage.min.js'));
-        Yii::app()->clientScript->registerScriptFile($ctrl->staticUrl('/js/lib/angular.lazyload.min.js'));
-        Yii::app()->clientScript->registerScriptFile($ctrl->staticUrl('/js/lib/angular.ui.layout.min.js'));
-        Yii::app()->clientScript->registerScriptFile($ctrl->staticUrl('/js/lib/angular.ui.bootstrap.min.js'));
-        Yii::app()->clientScript->registerScriptFile($ctrl->staticUrl('/js/index.app.js'));
-        Yii::app()->clientScript->registerScriptFile($ctrl->staticUrl('/js/index.ctrl.js'));
+        $scripts = [
+            '/js/lib/jquery.js',
+            '/js/lib/angular.min.js',
+            '/js/lib/yii.urlmanager.min.js',
+            '/js/lib/angular.storage.min.js',
+            '/js/lib/angular.lazyload.min.js',
+            '/js/lib/angular.ui.layout.min.js',
+            '/js/lib/angular.ui.bootstrap.min.js',
+            '/js/index.app.js',
+            '/js/index.ctrl.js'
+        ];
+        
+        $scripts = array_filter($scripts, function($val) use ($excludeScript) {
+            return !in_array($val, $excludeScript); 
+        });
+        
+        
+        foreach ($scripts as $script) {
+            Yii::app()->clientScript->registerScriptFile($ctrl->staticUrl($script));
+        }
         
         self::registerUrlManagerScript();
     }

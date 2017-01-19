@@ -213,7 +213,11 @@ class SqlCriteria extends FormField {
         $command     = $builder->createFindCommand($tableSchema, $criteria);
         $commandText = $command->text;
         if ($isRelated) {
-            $commandText = str_replace(":ycp0", "\n" . '"{{model.' . $relMeta->foreignKey . '}}"', $commandText);
+            if (!is_null($parent) && get_class($relMeta) == 'CHasManyRelation') { 
+                $commandText = str_replace(":ycp0", "\n" . '"{{model.' . $parentPrimaryKey . '}}"', $commandText);
+            } else {
+                $commandText = str_replace(":ycp0", "\n" . '"{{model.' . $relMeta->foreignKey . '}}"', $commandText);
+            }
         }
         $commandText = SqlFormatter::highlight($commandText);
 
