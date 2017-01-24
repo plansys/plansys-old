@@ -5,98 +5,12 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
             $el.hide();
             $scope.init = false;
 
-            if ($localStorage.portlet == null) {
-                $localStorage.portlet = {};
-            }
-            if ($localStorage.portlet[$scope.pageUrl] == null) {
-                $localStorage.portlet[$scope.pageUrl] = {};
-            }
-            var $portletLocal = $localStorage.portlet[$scope.pageUrl];
-
-            if ($el.find('.data[name=portlets]').length > 0) {
-                $scope.portlets = JSON.parse($el.find('.data[name=portlets]').text());
-                $scope.portlets.forEach(function (item) {
-                    if ($portletLocal[item.name] && !!$portletLocal[item.name].hide) {
-                        item.hide = $portletLocal[item.name].hide;
-                    }
-                    if (item.hide) {
-                        $timeout(function () {
-                            $(".portlet-container[name=" + item.name + "]").hide();
-                        })
-                    }
-                });
-            }
-
             $scope.resetPage = function () {
                 $scope.resetPageSetting();
                 location.reload();
             }
 
-            $scope.resetDashboard = function () {
-                if (confirm("Your dashboard will now reset, are you sure?")) {
-                    delete $localStorage.portlet[$scope.pageUrl];
-                    $scope.resetPageSetting();
-                    location.reload();
-                }
-            }
-
-            $scope.togglePortlet = function (portlet, e) {
-
-                e.preventDefault();
-                e.stopPropagation();
-                if ($portletLocal[portlet.name] == null) {
-                    $portletLocal[portlet.name] = {};
-                }
-                var $portlet = $portletLocal[portlet.name];
-                portlet.hide = !portlet.hide;
-                $portlet.hide = portlet.hide;
-
-                if (portlet.hide) {
-                    $(".portlet-container[name=" + portlet.name + "]").hide();
-                } else {
-                    $(".portlet-container[name=" + portlet.name + "]").show();
-                }
-            }
-
-            $(".ac-print").click(function () {
-                $("#print-css").attr('href', $("#print-css").attr('u'));
-                html2canvas(document.body, {
-                    onrendered: function (canvas) {
-                        $("#content").hide();
-                        $("body").prepend(canvas);
-                        $("body > canvas").click(function () {
-                            location.reload();
-                        });
-                        window.print();
-                    }
-                });
-            });
-
             $scope.originalHeight = $el.height();
-            $(".ac-portlet-button").click(function () {
-                var dd = $(this).parent().find('.ac-portlet-menu');
-                $el.height('500');
-                if (dd.css('position') != 'fixed') {
-                    var pos = dd.offset();
-                    var w = dd.width();
-                    var h = dd.height() + 10;
-                    dd.css({
-                        top: 65,
-                        left: pos.left + 3,
-                        minWidth: w + 'px',
-                        width: w + 'px',
-                        height: h + 'px',
-                        position: 'fixed',
-                        zIndex: 999
-                    });
-                }
-            });
-
-            $(".ac-portlet-menu, .ac-portlet-button").hover(function () {
-                $el.height(500);
-            }, function () {
-                $el.height($scope.originalHeight);
-            });
 
             $scope.resizeTimeout = null;
             $scope.resize = function (st) {
@@ -139,9 +53,8 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                     }
                 }
 
-                $container.css({
-                    'margin-top': height + 'px',
-                    'border-top': '0px'
+                $(".action-bar-spacer").css({
+                    'margin-top': height + 'px'
                 });
 
                 $(".ac-portlet-btngroup.open").click();

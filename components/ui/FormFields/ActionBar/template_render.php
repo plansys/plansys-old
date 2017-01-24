@@ -86,3 +86,12 @@
     </div>
 </div>
 <div id="<?= strtolower(preg_replace('/[^\da-z]/i', '_', $this->firstTabName)) ?>"></div>
+<?php 
+    $theme = Setting::get('app.theme');
+    $theme = is_null($theme) ? "oldblue": $theme; 
+    
+    if ($theme == 'oldblue'): 
+?>
+<div class="action-bar-spacer"></div>
+<?php endif; ?>
+

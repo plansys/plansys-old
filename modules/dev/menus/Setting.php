@@ -27,6 +27,7 @@ return array (
         'label' => 'Theme Setting',
         'icon' => 'fa-picture-o',
         'url' => '/dev/setting/theme',
+        'formattedUrl' => '/eoffice/test/index.php?r=dev/setting/theme',
     ),
     array (
         'label' => 'Database Setting',

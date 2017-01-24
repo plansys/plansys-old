@@ -9,7 +9,6 @@
                  resizable="col1.layout.resizeable"
                  collapsed="col1.layout.collapsed" 
                  class="sidebar">
-
                 <?php include("col1.php"); ?>
 
             </div>
@@ -18,7 +17,7 @@
                  size="{{col2.width}}" 
                  resizable="col2.resizeable"
                  collapsed="col2.collapsed">
-
+                
             </div>
             <div id="3rd-col" 
                  ui-layout-container 

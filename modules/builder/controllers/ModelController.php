@@ -1,7 +1,6 @@
 <?php
 
 class ModelController extends Controller {
-
     private $vpath = 'application.modules.builder.views.2_model';
     public function getViewPath() {
         parent::getViewPath();

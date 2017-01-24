@@ -20,15 +20,9 @@ class Repo extends Form {
     public function getFields() {
         return array (
             array (
-                'linkBar' => array (),
-                'title' => '',
-                'showSectionTab' => 'No',
-                'type' => 'ActionBar',
-            ),
-            array (
                 'type' => 'Text',
                 'value' => '
-<div style=\"width:100%;position:fixed;margin-top:-35px;z-index:500;\">
+<div style=\"width:100%;position:absolute;z-index:500;margin-top:15px\">
     <i class=\"fa fa-lg fa-folder-open-o\"></i>
      <span ng-repeat=\"d in dirs\">
          <a style=\"color:#000\" 

@@ -371,8 +371,13 @@ class ErrorHandler extends CErrorHandler
 			$data=$this->getError();
 			if($this->isAjaxRequest())
 				Yii::app()->displayError($data['code'],$data['message'],$data['file'],$data['line']);
-			elseif(YII_DEBUG)
-				$this->render('exception',$data);
+			elseif(YII_DEBUG) {
+				if ($data['type'] == 'CHttpException' && $data['code'] == 403) {
+					$this->render('error', $data);
+				} else {
+					$this->render('exception',$data);
+				}
+			}
 			else
 				$this->render('error',$data);
 		}
