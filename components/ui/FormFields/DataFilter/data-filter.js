@@ -1080,6 +1080,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                         });
 
                     } else {
+                        var execQuery = false;
+                        
                         for (i in $scope.filters) {
                             var f = $scope.filters[i];
                             var dateCondition = (f.filterType == 'date'
@@ -1092,6 +1094,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                             }
 
                             if (f.defaultValue && f.defaultValue != "" || dateCondition) {
+                                execQuery = true;
                                 if ($scope.operators[f.filterType]) {
                                     if (typeof f.defaultOperator != "undefined" && f.defaultOperator != "") {
                                         f.operator = f.defaultOperator;
@@ -1169,17 +1172,19 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 }
                             });
                         });
-
-                        $scope.datasources.map(function (dataSourceName) {
-                            var ds = parent[dataSourceName];
-                            if (ds) {
-                                ds.lastQueryFrom = "DataFilter";
-                                ds.disableTrackChanges('DataFilter:initDefaultValue');
-                                ds.lastQueryFrom = "DataFilter";
-                                ds.dataFilterName = $scope.name;
-                                ds.query();
-                            }
-                        });
+                        
+                        if (execQuery) {
+                            $scope.datasources.map(function (dataSourceName) {
+                                var ds = parent[dataSourceName];
+                                if (ds) {
+                                    ds.lastQueryFrom = "DataFilter";
+                                    ds.disableTrackChanges('DataFilter:initDefaultValue');
+                                    ds.lastQueryFrom = "DataFilter";
+                                    ds.dataFilterName = $scope.name;
+                                    ds.query();
+                                }
+                            });
+                        }
                     }
                 });
             }

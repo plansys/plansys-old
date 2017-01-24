@@ -15,6 +15,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 $scope.primaryKey = JSON.parse($el.find("data[name=primary_key]:eq(0)").text().trim());
                 $scope.relationTo = $el.find("data[name=relation_to]").text().trim();
                 $scope.options = JSON.parse($el.find("data[name=options]:eq(0)").text().trim());
+                $scope.execMode = $el.find("data[name=exec_mode]").text().trim();
                 $scope.insertData = [];
                 $scope.updateData = [];
                 $scope.originalHash = {};
@@ -328,7 +329,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     $scope.original = angular.copy($scope.data);
                 }
 
-                if (jsParamExist) {
+                if (jsParamExist || $scope.execMode == 'after') {
                     $scope.afterQueryInternal['params-init'] = function () {
                         $scope.resetOriginal();
                         
