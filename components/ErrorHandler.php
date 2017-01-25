@@ -70,7 +70,7 @@ class ErrorHandler extends CErrorHandler
 	/**
 	 * @var string the application administrator information (could be a name or email link). It is displayed in error pages to end users. Defaults to 'the webmaster'.
 	 */
-	public $adminInfo='Plansys';
+	public $adminInfo='ServiceDesk (51)';
 	/**
 	 * @var boolean whether to discard any existing page output before error display. Defaults to true.
 	 */
@@ -371,8 +371,13 @@ class ErrorHandler extends CErrorHandler
 			$data=$this->getError();
 			if($this->isAjaxRequest())
 				Yii::app()->displayError($data['code'],$data['message'],$data['file'],$data['line']);
-			elseif(YII_DEBUG)
-				$this->render('exception',$data);
+			elseif(YII_DEBUG) {
+				if ($data['type'] == 'CHttpException' && $data['code'] == 403) {
+					$this->render('error', $data);
+				} else {
+					$this->render('exception',$data);
+				}
+			}
 			else
 				$this->render('error',$data);
 		}

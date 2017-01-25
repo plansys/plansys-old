@@ -1,4 +1,5 @@
-border-color = #ccc
+line-color = #ccc
+accent-color = red
 
 body
   display:flex
@@ -14,16 +15,43 @@ body
     flex:0 0 49px
     margin:0px
     border:0px
-    border-bottom:1px solid border-color
+    background:white
+    border-bottom:1px solid line-color
     
     .top-menu
-      overflow-y:hidden
       height:49px
       display:flex
+      overflow-y:hidden
+      
+      &.open
+        overflow-y:visible
+        
+        .scroll
+          position:fixed
+          left:0px
+          padding-left:50px
+          right:0px
+          height:auto !important
+          bottom:0px
+          z-index:10
+          top:0px
+        
+        .burger
+          position:fixed;
+          left:0px
+          background:white
+          top:0px
+          z-index:11
+          height:49px
+          width:50px
+          
+        .scroll-arrow
+          display:none
+        
       
       .scroll-arrow
         border-left:1px solid #ececeb
-        flex:0 0 60px
+        flex:0 0 30px
         display:flex
         align-items:stretch
         background:white
@@ -34,32 +62,104 @@ body
           padding:10px 0px
           text-align:center
           flex:1
+          color:#ccc
           
           i
             font-size:20px
+            
+        .active
+          color:#000
       
       .burger
         flex:0 0 50px
         text-align:center
-        line-height:52px
-        font-size:30px
+        line-height:50px
+        font-size:32px
         cursor:pointer
-        border-right:1px solid border-color
+        border-right:1px solid line-color
         
         &:hover
           background:#ececeb
-        
+          
       .scroll
         flex:1
-        overflow-y:hidden
+        overflow-y:auto
         height:80px
-        
+          
         .navbar-nav
           margin:0px
           display:flex
     
-    .navbar-nav > li
-      flex:1
+    .navbar-nav 
+      > .dropdown > a
+        box-sizing:border-box
+        border-left:1px solid transparent
+        border-right:1px solid transparent
+        
+      > .dropdown
+        .dropdown 
+          .dropdown-menu 
+            top: 0
+            left: 100%
+            margin-top: -5px
+            margin-left: 0px
+            border:1px solid line-color
+            border-radius:0px
+          
+          > a:before
+            display: block;
+            content: " ";
+            float: right;
+            width: 0;
+            height: 0;
+            border-color: transparent;
+            border-style: solid;
+            border-width: 4px 0 4px 4px;
+            border-left-color: #000;
+            margin-top: 5px;
+            margin-right: -20px;
+          
+          &.active
+            > a:before
+              border-left-color: #fff;
+        
+        .no-menu > a:before
+          display:none
+          
+    
+      > .open 
+        > a
+          border-left:1px solid line-color
+          border-right:1px solid line-color
+        
+        .dropdown-menu
+          position:absolute
+          background:white
+          z-index:12
+          margin-top:1px
+          border:1px solid line-color
+          border-radius:0px
+          border-top:0px
+          box-shadow:0 6px 12px rgba(0,0,0,.175)
+          
+          > li > a
+            padding-left:10px
+            padding-right:25px
+      
+      > .dropdown:first-child 
+        > a 
+          border-left:1px solid transparent
+        
+        > .dropdown-menu
+          margin-left:-1px
+        
+        
+      > .dropdown:last-child > .dropdown-menu
+        right: 0px
+        left: auto
+      
+      > li
+        flex:1
     
     .navbar-nav > li > a
       height:49px
@@ -67,7 +167,7 @@ body
       align-items:center
       color:#666
       font-size:14px
-      font-weight:bold;
+      font-weight:bold
       padding:0px 35px 0px 10px
       
       & > .caret
@@ -84,13 +184,25 @@ body
         color:#222
         
     .navbar-nav > li.active > a
-      background:#ececeb
-      color:#222
+      border-top:1px solid accent-color
+      color:accent-color
+      background:#fafafa
       
     .navbar-nav > li.no-menu > a
       padding-right:15px
       padding-left:15px
+    
+    .dropdown-menu>.active>a, 
+    .dropdown-menu>.active>a:focus, 
+    .dropdown-menu>.active>a:hover
+      background:accent-color
+      opacity:.7
       
   .main
     flex:1
+    position:relative
     overflow:auto
+      
+    [ps-action-bar]
+      margin-left:-15px
+      margin-right:-15px

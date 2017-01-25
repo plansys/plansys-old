@@ -19,7 +19,6 @@
             if (count($menu) > 2) {
                 array_splice($menu,1,1);
             }
-            
             MenuTree::formatMenuItems($menu);
             
             Yii::app()->controller->widget('zii.widgets.CMenu', array(
@@ -39,11 +38,8 @@
             ));
             ?>
             </div>
-            <div class="scroll-arrow">
-                <div ng-click="scrollMenuLeft()">
-                    <i class="icon ion-ios-arrow-left"></i>
-                </div>
-                <div ng-click="scrollMenuRight()">
+            <div class="scroll-arrow" ng-if="canMenuScrollRight">
+                <div class="active" ng-click="menuScrollRight()">
                     <i class="icon ion-ios-arrow-right"></i>
                 </div>
             </div>

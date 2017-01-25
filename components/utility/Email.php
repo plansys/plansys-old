@@ -10,7 +10,6 @@ class Email extends CComponent {
 	}
 	
 	public static function preview($from, $template, $params = [], $options = []) {
-	
 		if (!isset(self::$instance)) {
 			self::$instance = new Email();
 		}

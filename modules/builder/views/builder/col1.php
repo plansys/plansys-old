@@ -1,5 +1,5 @@
-<?php $h = 26; ## tab height css                  ?>
-<style type="text/css">    
+<?php $h = 26; ?>
+<style type="text/css">
     #col1 .tabs-container {
         height:<?= $h + 1 ?>px;
         overflow-y:hidden;

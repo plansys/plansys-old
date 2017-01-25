@@ -5,7 +5,7 @@ class BuilderModule extends CWebModule {
     public $newFileMode = 0666;
     public $newDirMode  = 0777;
 
-    public $defaultController = "Main";
+    public $defaultController = "Builder";
     
     public function accessControl($controller,$action) {
         ####### PLANSYS GENERATED CODE: START #######

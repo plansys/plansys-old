@@ -10,15 +10,16 @@ class CodeController extends Controller {
     
     public function actionTree() {
         echo FormBuilder::renderUI('TreeView', [
-            'name' => 'codetree',
-                ], [
-            'init' => 'col1.view.loading = true',
-            'load' => 'col1.view.loading = false',
-        ]);
+                'name' => 'codetree',
+            ], [
+                'init' => 'col1.view.loading = true',
+                'load' => 'col1.view.loading = false',
+            ]
+        );
     }
 
     public function actionEditor() {
-//        echo $this->renderPartial("index");
+        echo $this->renderPartial("index");
     }
 
     public function actionProperties() {

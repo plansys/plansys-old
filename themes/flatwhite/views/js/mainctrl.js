@@ -52,6 +52,46 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
         return ret;
     }
     
+    $scope.canMenuScrollRight = true;
+    
+    $scope.menuScrollRight = function() {
+        $(".header .scroll").animate({
+            scrollLeft: $(".header .scroll").scrollLeft() + $(".header .scroll").width()
+        }, 200).promise().done(function () {
+            $scope.canMenuScrollRight = false;
+        });
+    }
+    
+    $(".header .scroll").on("touchend click touchmove", function(e) {
+        $scope.canMenuScrollRight = false;
+        
+        if (!$(e.target).is("a")) {
+            $(".header .top-menu").removeClass("open");
+            $(".nav .dropdown.open").removeClass("open");
+        }
+    })
+    
+    $(".header .navbar-nav .dropdown > a").on("click", function(e) {
+        $t = $(this);
+        
+        if ($t.parent().find("> .dropdown-menu").length > 0) {
+            
+            if ($t.parent().parent().hasClass("navbar-nav")) {
+                $(".header .top-menu").addClass("open");
+                $(".nav .dropdown.open").removeClass("open");
+                $t.parent().addClass("open");
+            }
+            else {
+                $t.parent().parent().find(".open").removeClass('open');
+                $t.parent().addClass('open');    
+            }
+            
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+    })
+    
     $timeout(function() {
         $(window).resize();
     });

@@ -39,7 +39,6 @@ class DevUserIndex extends User {
                         'defaultOperator' => '',
                         'defaultValue' => '',
                         '$showDF' => false,
-                        '$listViewName' => 'filters',
                     ),
                     array (
                         'name' => 'role_description',
@@ -61,7 +60,6 @@ class DevUserIndex extends User {
                         'relIdField' => 'role_description',
                         'relLabelField' => 'role_description',
                         '$showDF' => false,
-                        '$listViewName' => 'filters',
                     ),
                     array (
                         'name' => 'username',
@@ -72,7 +70,6 @@ class DevUserIndex extends User {
                         '$showDF' => false,
                         'isCustom' => 'No',
                         'resetable' => 'Yes',
-                        '$listViewName' => 'filters',
                     ),
                     array (
                         'name' => 'last_login',
@@ -88,59 +85,8 @@ class DevUserIndex extends User {
                         'defaultOperator' => '',
                         'showOther' => 'No',
                         'otherLabel' => '',
-                        'typeOptions' => array (
-                            'string' => array (
-                                'defaultOperator',
-                                'defaultValue',
-                            ),
-                            'number' => array (
-                                'defaultOperator',
-                                'defaultValue',
-                            ),
-                            'date' => array (
-                                'defaultOperator',
-                                'defaultValue',
-                                'defaultValueFrom',
-                                'defaultValueTo',
-                            ),
-                            'list' => array (
-                                '0' => 'defaultValue',
-                                '1' => 'listExpr',
-                            ),
-                            'check' => array (
-                                'defaultValue',
-                                'listExpr',
-                            ),
-                            'relation' => array (
-                                'defaultValue',
-                                'relParams',
-                                'relCriteria',
-                                'relModelClass',
-                                'relIdField',
-                                'relLabelField',
-                            ),
-                        ),
-                        'relParams' => array (),
-                        'relCriteria' => array (
-                            'select' => '',
-                            'distinct' => 'false',
-                            'alias' => 't',
-                            'condition' => '{[search]}',
-                            'order' => '',
-                            'group' => '',
-                            'having' => '',
-                            'join' => '',
-                        ),
-                        'relModelClass' => '',
-                        'relIdField' => '',
-                        'relLabelField' => '',
-                        'relIncludeEmpty' => 'No',
-                        'relEmptyValue' => 'null',
-                        'relEmptyLabel' => '-- NONE --',
                         'queryOperator' => '',
-                        '$listViewName' => 'filters',
-                        '$showDF' => true,
-                        'show' => true,
+                        '$showDF' => false,
                     ),
                     array (
                         'name' => 'email',
@@ -151,7 +97,6 @@ class DevUserIndex extends User {
                         '$showDF' => false,
                         'isCustom' => 'No',
                         'resetable' => 'Yes',
-                        '$listViewName' => 'filters',
                     ),
                 ),
                 'filterOperators' => array (
@@ -193,7 +138,6 @@ class DevUserIndex extends User {
    p_role r on r.id = p.role_id 
 ) a {where [where]} group by id {[order]} {[paging]}',
                 'params' => array (
-                    'where' => 'dataFilter1',
                     'order' => 'dataGrid1',
                     'paging' => 'dataGrid1',
                 ),
@@ -245,6 +189,7 @@ class DevUserIndex extends User {
                         'show' => false,
                         'cellMode' => 'default',
                         '$listViewName' => 'columns',
+                        '$showDF' => false,
                     ),
                     array (
                         'name' => 'username',
@@ -253,6 +198,7 @@ class DevUserIndex extends User {
                         'columnType' => 'string',
                         'show' => false,
                         '$listViewName' => 'columns',
+                        '$showDF' => false,
                     ),
                     array (
                         'name' => 'email',
@@ -261,6 +207,7 @@ class DevUserIndex extends User {
                         'columnType' => 'string',
                         'show' => false,
                         '$listViewName' => 'columns',
+                        '$showDF' => false,
                     ),
                     array (
                         'name' => 'last_login',
@@ -276,6 +223,7 @@ class DevUserIndex extends User {
                         'options' => array (
                             'mode' => 'datetime',
                         ),
+                        '$showDF' => false,
                     ),
                     array (
                         'name' => 'role_description',
@@ -288,6 +236,7 @@ class DevUserIndex extends User {
                         'mergeSameRow' => 'No',
                         'cellMode' => 'default',
                         '$listViewName' => 'columns',
+                        '$showDF' => false,
                     ),
                     array (
                         'name' => 'edit',
@@ -309,6 +258,7 @@ class DevUserIndex extends User {
                         'show' => false,
                         'cellMode' => 'default',
                         '$listViewName' => 'columns',
+                        '$showDF' => false,
                     ),
                 ),
             ),
