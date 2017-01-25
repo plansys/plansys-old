@@ -328,6 +328,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 
                                 ds.disableTrackChanges('DataFilter:UpdateFilter');
                                 ds.lastQueryFrom = "DataFilter";
+                                
                                 ds.query(function () {
                                     delete ds.afterQueryInternal[$scope.renderID];
 
@@ -1075,7 +1076,9 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                 ds.disableTrackChanges('DataFilter:initDefaultValueCached');
                                 ds.lastQueryFrom = "DataFilter";
                                 ds.dataFilterName = $scope.name;
-                                ds.query();
+                                
+                                if (ds.execMode != 'manual')
+                                    ds.query();
                             }
                         });
 
@@ -1181,7 +1184,9 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                     ds.disableTrackChanges('DataFilter:initDefaultValue');
                                     ds.lastQueryFrom = "DataFilter";
                                     ds.dataFilterName = $scope.name;
-                                    ds.query();
+                                    
+                                    if (ds.execMode != 'manual')
+                                        ds.query();
                                 }
                             });
                         }

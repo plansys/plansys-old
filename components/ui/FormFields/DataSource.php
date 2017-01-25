@@ -558,24 +558,27 @@ class DataSource extends FormField {
                 'value' => '<div style=\\"height:5px;\\"></div>',
             ),
             array (
-                'label' => 'Watch & Execute',
+                'label' => 'Execute',
                 'name' => 'execMode',
                 'options' => array (
                     'ng-model' => 'active.execMode',
                     'ng-change' => 'save()',
                 ),
+                'menuPos' => 'pull-right',
                 'listExpr' => '[
   \'auto\' => \'Automatically\',
   \'---\' => \'---\',
-  \'before\' => \'Before page load\',
-  \'after\' => \'After page load\'
+  \'before\' => \'Before Render + Param Changed\',
+  \'after\' => \'After Render + Param Changed\',
+  \'--\' => \'---\',
+  \'manual\' => \'Manually (via JS)\'
 ]',
-                'labelWidth' => '5',
-                'fieldWidth' => '7',
+                'labelWidth' => '3',
+                'fieldWidth' => '9',
                 'type' => 'DropDownList',
             ),
             array (
-                'label' => 'Cache Query',
+                'label' => 'Cache',
                 'name' => 'cacheQuery',
                 'options' => array (
                     'ng-model' => 'active.cacheQuery',
@@ -585,7 +588,7 @@ class DataSource extends FormField {
    \'No\',
    \'Yes\'
 ]',
-                'labelWidth' => '5',
+                'labelWidth' => '3',
                 'fieldWidth' => '3',
                 'type' => 'DropDownList',
             ),
