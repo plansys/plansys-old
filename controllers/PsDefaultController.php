@@ -10,7 +10,11 @@ class PsDefaultController extends Controller {
         if (Yii::app()->user->isGuest) {
             $this->redirect(array("login"));
         } else {
-            $this->redirect(array("/" . lcfirst(strtolower(Yii::app()->user->role)) . '/default/index'));
+            foreach(Yii::app()->user->info['roles'] as $role) {
+                if ($role['role_name'] == Yii::app()->user->info['full_role']) {
+                    $this->redirect([$role['home_url']]);
+                }
+            }
         }
     }
 

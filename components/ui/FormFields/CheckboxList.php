@@ -367,7 +367,6 @@ class CheckboxList extends FormField {
 
         $this->setDefaultOption('ng-model', "model['{$this->originalName}']", $this->options);
         $this->processExpr();
-        
         return $this->renderInternal('template_render.php');
     }
 
