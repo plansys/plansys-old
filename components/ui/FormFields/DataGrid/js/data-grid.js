@@ -445,12 +445,12 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                     switch (col.inputMask) {
                         case "99/99/9999 99:99":
                             placeholder = "dd/mm/yyyy hh:mm";
-                            format = " | dateFormat:'dd/MM/yyyy HH:mm'";
+                            format = " | dateFormat:'d/M/Y H:i'";
                             emptyVal = "['','0000-00-00 00:00','0000-00-00', '00:00']";
                             break;
                         case "99/99/9999":
                             placeholder = "dd/mm/yyyy";
-                            format = " | dateFormat:'dd/MM/yyyy'";
+                            format = " | dateFormat:'d/M/Y'";
                             emptyVal = "['','0000-00-00 00:00','0000-00-00', '00:00']";
                             break;
                         case "99:99":

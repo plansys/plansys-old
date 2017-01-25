@@ -490,9 +490,14 @@ class DataFilter extends FormField {
 
         $fb = FormBuilder::load($post['m']);
         $ff = $fb->findField(['name' => $post['f']]);
-
+        
         foreach ($ff['filters'] as $filter) {
             if ($filter['name'] != $post['n'])
+                continue;
+                
+            if (!isset($filter['relParams']) 
+                || !isset($filter['relModelClass']) 
+                || !isset($filter['relCriteria'])) 
                 continue;
 
             $rf = new RelationField;
