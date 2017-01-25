@@ -70,7 +70,7 @@ class ErrorHandler extends CErrorHandler
 	/**
 	 * @var string the application administrator information (could be a name or email link). It is displayed in error pages to end users. Defaults to 'the webmaster'.
 	 */
-	public $adminInfo='Admin';
+	public $adminInfo='Administrator';
 	/**
 	 * @var boolean whether to discard any existing page output before error display. Defaults to true.
 	 */

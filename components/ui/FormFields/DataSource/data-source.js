@@ -15,6 +15,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 $scope.primaryKey = JSON.parse($el.find("data[name=primary_key]:eq(0)").text().trim());
                 $scope.relationTo = $el.find("data[name=relation_to]").text().trim();
                 $scope.options = JSON.parse($el.find("data[name=options]:eq(0)").text().trim());
+                $scope.execMode = $el.find("data[name=exec_mode]").text().trim();
                 $scope.insertData = [];
                 $scope.updateData = [];
                 $scope.originalHash = {};
@@ -23,6 +24,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 $scope.loading = false;
                 $scope.untrackColumns = [];
                 $scope.dataFilterName = '';
+                $scope.data = [];
                 
                 if (!!$scope.options['primaryKey']) {
                     $scope.primaryKey = $scope.options['primaryKey'];
@@ -163,8 +165,12 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         $el.find(".error").show();
                     }
                 }
-
+                
+                
+                $scope.i = 0;
                 $scope.query = function (f) {
+                    $scope.i++;
+                    
                     var model = $scope.model || {};
                     var model_id = model[$scope.primaryKey] || null;
 
@@ -312,7 +318,9 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                         delete $scope.afterQueryInternal['params-' + watch];
                                     }
                                     
-                                    $scope.query();
+                                    if ($scope.execMode != 'manual') {
+                                        $scope.query();
+                                    }
                                 }
                             },true);
     
@@ -328,14 +336,16 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     $scope.original = angular.copy($scope.data);
                 }
 
-                if (jsParamExist) {
+                if (jsParamExist || $scope.execMode == 'after') {
                     $scope.afterQueryInternal['params-init'] = function () {
                         $scope.resetOriginal();
                         
                         $scope.enableTrackChanges("DataSource:initParamAfterQuery");
                         delete $scope.afterQueryInternal['params-init'];
                     }
-                    $scope.query();
+                    
+                    if ($scope.execMode != 'manual') 
+                        $scope.query();
                 } else {
                     var relationAvailable = ($scope.options.watchModel == "true" 
                                             && $scope.postData 
@@ -346,6 +356,10 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                         $scope.data = $scope.model[$scope.relationTo];
                     } else {
                         $scope.data = JSON.parse($el.find("data[name=data]:eq(0)").text());
+                    }
+                    
+                    if (!$scope.data || $scope.data === null) {
+                        $scope.data = [];
                     }
                 }
                 
@@ -444,7 +458,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 if ($scope.postData == 'Yes') {
                     $scope.resetOriginal();
                     $scope.$watch('data', function (newval, oldval) {
-                        if (typeof $scope.data == "undefined") {
+                        if (!$scope.data || $scope.data === null) {
                             $scope.data = [];
                         }
                         if (angular.equals($scope.original, newval)) {
