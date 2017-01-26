@@ -3,15 +3,15 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
         require: '?ngModel',
         scope: true,
         compile: function (element, attrs, transclude) {
-            if (attrs.ngModel && !attrs.ngDelay) {
-                var fieldType = element.find("data[name=field_type]").text();
-                attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
-            }
+            // if (attrs.ngModel && !attrs.ngDelay) {
+            //     var fieldType = element.find("data[name=field_type]").text();
+            //     attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
+            // }
 
             return function ($scope, $el, attrs, ctrl) {
                 
                 // when ng-model is changed from inside directive
-                $scope.update = function () {
+                $scope.update = function (updateVM) {
                     switch ($scope.fieldType) {
                         case 'datetime':
                             var time = dateFilter($scope.time, 'HH:mm:00');
@@ -28,9 +28,9 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
 
                     if (!!ctrl) {
                         $el.find('ul[datepicker-popup-wrap]').hide();
-                        $timeout(function () {
+                        if (!!updateVM) {
                             ctrl.$setViewValue($scope.value);
-                        }, 0);
+                        }
                     }
                 };
 
@@ -221,6 +221,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                                     if ($scope.dd.month != "" && $scope.dd.year != "" && $scope.dd.day != "") {
                                         $scope.value = $scope.dd.year + "-" + ($scope.dd.month +1) + '-' + $scope.dd.day;
                                         ctrl.$setViewValue($scope.value);
+                                        alert("INI KENAK");
                                     }
                                 }
                             } else {
@@ -292,7 +293,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                         if (typeof ctrl.$viewValue != "undefined") {
                             $scope.value = ctrl.$viewValue;
                             $scope.splitDateTime();
-                            $scope.update();
+                            $scope.update(false);
                         }
                     };
                 }

@@ -50,7 +50,7 @@
             <!-- value -->
             <input type="text" <?= $this->expandAttributes($this->fieldOptions) ?>
                    style="{{ !isDPDisabled ? 'text-align:left !important;width:90px;color:#000;' : ''}}"
-                   ng-model="date" ng-change="changeDate(this)" value="<?= $this->value ?>"
+                   ng-model="date" ng-change="<?= @$this->options['ng-change']; ?>;changeDate(this)" value="<?= $this->value ?>"
                    />
 
                 <!-- btn icon -->
@@ -65,7 +65,7 @@
         <div ng-if="['time', 'datetime'].indexOf(fieldType) >= 0" class="time-field">
             <timepicker ng-model="time" 
                         readonly-input="$eval(disabledCondition)"
-                        ng-change="changeTime(this)" 
+                        ng-change="<?= @$this->options['ng-change']; ?>;changeTime(this)" 
                         hour-step="1" minute-step="15" show-meridian="false"></timepicker>
         </div>
 
