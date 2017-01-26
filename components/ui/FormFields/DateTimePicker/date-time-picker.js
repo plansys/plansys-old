@@ -3,10 +3,10 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
         require: '?ngModel',
         scope: true,
         compile: function (element, attrs, transclude) {
-            // if (attrs.ngModel && !attrs.ngDelay) {
-            //     var fieldType = element.find("data[name=field_type]").text();
-            //     attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
-            // }
+            if (attrs.ngModel && !attrs.ngDelay) {
+                var fieldType = element.find("data[name=field_type]").text();
+                attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
+            }
 
             return function ($scope, $el, attrs, ctrl) {
                 
