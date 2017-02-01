@@ -65,7 +65,7 @@ class WebRequest extends CHttpRequest {
             } else
                 $valid = false;
 
-            if (!$valid && empty($_FILES))
+            if (!$valid && empty($_FILES) && !Yii::app()->user->isGuest)
                 throw new CHttpException(400, Yii::t('yii', 'The CSRF token could not be verified.'));
         }
     }
