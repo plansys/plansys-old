@@ -22,6 +22,7 @@ class UserController extends Controller {
         if (isset($_POST["DevRoleForm"])) {
             $model->attributes = $_POST["DevRoleForm"];
             if ($model->save()) {
+                Yii::app()->cache->flush();
                 Yii::app()->user->setFlash('info', 'Role berhasil disimpan');
                 $this->redirect(array("roles"));
             }
@@ -65,6 +66,7 @@ class UserController extends Controller {
             $model->resetRel('userRoles');
 
             if ($model->save()) {
+                Yii::app()->cache->flush();
                 Yii::app()->user->setFlash('info', 'User berhasil disimpan');
             }
         }
