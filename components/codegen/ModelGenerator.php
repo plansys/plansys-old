@@ -12,7 +12,8 @@ class ModelGenerator extends CComponent {
 
         $modelDir = Yii::getPathOfAlias($mc->modelPath);
         if (!is_dir($modelDir)) {
-            mkdir($modelDir, 0777, true);
+            mkdir($modelDir, 0755, true);
+            chmod($modelDir, 0755);
         }
 
         $mc->template = 'TplModel.php';

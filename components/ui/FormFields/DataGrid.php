@@ -300,7 +300,8 @@ class DataGrid extends FormField {
         ## create temporary directory
         $tmpdir = Yii::getPathOfAlias('webroot.assets.tmp_exim');
         if (!is_dir($tmpdir)) {
-            mkdir($tmpdir, true);
+            mkdir($tmpdir, 0755, true);
+            chmod($tmpdir, 0755);
         }
 
         ## make sure there is no duplicate file name

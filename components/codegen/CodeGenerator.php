@@ -30,7 +30,8 @@ abstract class CodeGenerator extends CComponent {
 
         ## create directory
         if (!is_dir($this->baseDir)) {
-            mkdir($this->baseDir, 0777, true);
+            mkdir($this->baseDir, 0755, true);
+            chown($this->baseDir, 0755);
         }
 
         ## create file

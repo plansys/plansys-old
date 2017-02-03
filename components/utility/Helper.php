@@ -78,7 +78,8 @@ class Helper {
                 if ($file != "." && $file != "..") {
                     if (is_dir($source . "/" . $file)) {
                         if (!is_dir($dest . "/" . $file)) {
-                            mkdir($dest . "/" . $file);
+                            mkdir($dest . "/" . $file, 0755);
+                            chmod($dest . "/" . $file, 0755);
                         }
                         Helper::copyRecursive($source . "/" . $file, $dest . "/" . $file);
                     } else {

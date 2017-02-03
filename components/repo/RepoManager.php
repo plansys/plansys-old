@@ -39,7 +39,8 @@ class RepoManager extends CComponent {
     public static function createDir($path) {
         $path = RepoManager::resolve($path);
         if (!is_dir($path)) {
-            mkdir($path, 0777, true);
+            mkdir($path, 0755, true);
+            chmod($path, 0755);
         }
         return $path;
     }
@@ -476,7 +477,8 @@ class RepoManager extends CComponent {
 
     public function browse($dir = "") {
         if (!is_dir(Setting::get('repo.path'))) {
-            mkdir(Setting::get('repo.path'));
+            mkdir(Setting::get('repo.path'), 0755);
+            chmod(Setting::get('repo.path'), 0755);
         }
 
         $originaldir = $dir;
@@ -502,7 +504,8 @@ class RepoManager extends CComponent {
 
         if (!is_dir($dir)) {
             if (RepoManager::getModuleDir() == $originaldir) {
-                mkdir($dir);
+                mkdir($dir, 0755);
+                chmod($dir, 0755);
             } else {
                 return false;
             }

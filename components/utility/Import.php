@@ -30,7 +30,8 @@ class Import extends CComponent {
     public function loadConfig($model, $defaultConfig = [], &$root = null, &$parent = null) {
         $dir = Yii::getPathOfAlias(Import::ETL_PATH);
         if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
+            mkdir($dir, 0755, true);
+            chmod($dir, 0755);
         }
         
         $configSuffix = "";
@@ -862,7 +863,8 @@ penambahan gagal dikarenakan data " . $k . " tidak dapat ditemukan ($i)");
             
             $path = Yii::getPathOfAlias('root.assets.import');
             if (!is_dir($path)) {
-                mkdir($path, 0777, true);
+                mkdir($path, 0755, true);
+                chmod($path, 0755);
             }
             
             $filename = "import-". Helper::camelToSnake($this->modelClass) . '-' . date("Y-m-d~H.i.s"). '.xlsx';

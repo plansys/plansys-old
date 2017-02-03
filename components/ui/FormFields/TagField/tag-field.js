@@ -31,11 +31,15 @@ app.directive('tagField', function ($timeout, $http, $q) {
                 $scope.suggestionMode = $el.find("data[name=sug_mode]").html().trim();
                 $scope.showSuggestion = false;
                 $scope.suggestion = [];
-                $scope.sugIdx = 0;
+                $scope.sugIdx = ($scope.mustChoose == 'yes' ? 0 : -1);
                 
                 $timeout(function() {
                     $scope.input = $el.find(".tf-input");
                 });
+                
+                $scope.resetSugIdx = function() {
+                    $scope.sugIdx = ($scope.mustChoose == 'yes' ? 0 : -1);
+                }
                 
                 $scope.disabled = false;
                 if (typeof $scope.fieldOptions.disabled == "string") {
@@ -185,7 +189,7 @@ app.directive('tagField', function ($timeout, $http, $q) {
                             e.stopPropagation();
                             $scope.sugIdx++;
                             if ($scope.sugIdx > $el.find(".dropdown-item").length - 1) {
-                                $scope.sugIdx = 0;
+                                $scope.resetSugIdx();
                             }
                         } else if (e.keyCode == 38) {
                             e.preventDefault();
@@ -201,10 +205,39 @@ app.directive('tagField', function ($timeout, $http, $q) {
                         e.preventDefault();
                         e.stopPropagation();
                         $timeout(function() {
-                            if (!($scope.suggestionMode == 'php' && $scope.mustChoose == 'yes')) {
+                            if ($scope.suggestionMode == 'php' && $scope.mustChoose == 'yes') {
+                                var sug = $el.find(".dropdown-item:eq(" + $scope.sugIdx + ")");
+                                var label = sug.attr('l');
+                                var val = sug.attr('v');
+                                if (!!label && !!val) {
+                                    if (typeof idx == "undefined") {
+                                        $scope.updateTagLabel(null, label, val);
+                                        e.target.value = '';
+                                        $scope.inputFocus();
+                                        $scope.resetSugIdx();
+                                    } else if ($scope.tags[idx]) {
+                                        $scope.updateTagLabel(idx, label, val);
+                                        $timeout(function(){
+                                            $scope.resetSugIdx();
+                                            focusNext();
+                                        });
+                                    }
+                                    $scope.hideSuggestion();
+                                }
+                            } else if($scope.suggestionMode == 'php' && $scope.mustChoose != 'yes') {
                                 var label = e.target.value;
                                 var val = $scope.mapperMode == 'none' ? e.target.value : undefined;
+                                
+                                if ($scope.suggestionMode == 'php') {
+                                    var sug = $el.find(".dropdown-item:eq(" + $scope.sugIdx + ")");
+                                    if (sug.length > 0) {
+                                        label = sug.attr('l');
+                                        val = sug.attr('v');
+                                    }
+                                }
+                                
                                 if (typeof idx == "undefined") {
+                                    console.log(label, val);
                                     $scope.updateTagLabel(null, label, val);
                                     e.target.value = '';
                                     $scope.inputFocus();
@@ -213,27 +246,6 @@ app.directive('tagField', function ($timeout, $http, $q) {
                                     $timeout(function(){
                                         focusNext();
                                     });
-                                }
-                            } else {
-                                if ($scope.suggestionMode == 'php') {
-                                    var sug = $el.find(".dropdown-item:eq(" + $scope.sugIdx + ")");
-                                    var label = sug.attr('l');
-                                    var val = sug.attr('v');
-                                    if (!!label && !!val) {
-                                        if (typeof idx == "undefined") {
-                                            $scope.updateTagLabel(null, label, val);
-                                            e.target.value = '';
-                                            $scope.inputFocus();
-                                            $scope.sugIdx = 0;
-                                        } else if ($scope.tags[idx]) {
-                                            $scope.updateTagLabel(idx, label, val);
-                                            $timeout(function(){
-                                                $scope.sugIdx = 0;
-                                                focusNext();
-                                            });
-                                        }
-                                        $scope.hideSuggestion();
-                                    }
                                 }
                             }
                         });

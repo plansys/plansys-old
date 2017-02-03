@@ -224,7 +224,8 @@ class ServiceManager extends CComponent {
         $file = $path . DIRECTORY_SEPARATOR . $id;
         
         if (!is_dir($path)) {
-            mkdir($path, 0777, true);
+            mkdir($path, 0755, true);
+            chmod($path, 0755);
         }
       
         if (is_array($msg)) {
@@ -274,7 +275,8 @@ class ServiceManager extends CComponent {
         $path = Yii::getPathOfAlias('root.assets.services.init');
         $file = $path . DIRECTORY_SEPARATOR . $id;
         if (!is_dir($path)) {
-            mkdir($path, 0777, true);
+            mkdir($path, 0755, true);
+            chmod($path, 0755);
         }
         
         while (is_file($file)) {
@@ -333,11 +335,13 @@ class ServiceManager extends CComponent {
         $logPath = Yii::getPathOfAlias('root.assets.services.stopped.' . $serviceName . ".log");
         $initPath = Yii::getPathOfAlias('root.assets.services.stopped.' . $serviceName . ".init");
         if (!is_dir($logPath)) {
-            mkdir($logPath, 0777, true);
+            mkdir($logPath, 0755, true);
+            chmod($logPath, 0755);
         }
         
         if (!is_dir($initPath)) {
-            mkdir($initPath, 0777, true);
+            mkdir($initPath, 0755, true);
+            chmod($initPath, 0755);
         }
         $oldLog  = ServiceManager::getLogPath($serviceName, $id);
         $oldInit = Yii::getPathOfAlias('root.assets.services.init') .DIRECTORY_SEPARATOR . $id;
@@ -366,7 +370,8 @@ class ServiceManager extends CComponent {
         $path = Yii::getPathOfAlias('root.assets.services.init');
         $file = $path . DIRECTORY_SEPARATOR . $id;
         if (!is_dir($path)) {
-            mkdir($path, 0777, true);
+            mkdir($path, 0755, true);
+            chmod($path, 0755);
         }
         
         return $file;
@@ -376,7 +381,8 @@ class ServiceManager extends CComponent {
         $path = Yii::getPathOfAlias('root.assets.services.running.' . $serviceName);
         $file = $path . DIRECTORY_SEPARATOR . $id;
         if (!is_dir($path)) {
-            mkdir($path, 0777, true);
+            mkdir($path, 0755, true);
+            chmod($path, 0755);
         }
         
         return $file;
@@ -387,7 +393,8 @@ class ServiceManager extends CComponent {
         $path = Yii::getPathOfAlias('root.assets.services.stopped.' . $serviceName . ".init");
         $files = glob($path . DIRECTORY_SEPARATOR . "*." . $id);
         if (!is_dir($path)) {
-            mkdir($path, 0777, true);
+            mkdir($path, 0755, true);
+            chmod($Path, 0755);
         }
         
         if (!empty($files)) {
@@ -401,7 +408,8 @@ class ServiceManager extends CComponent {
         $path = Yii::getPathOfAlias('root.assets.services.stopped.' . $serviceName . ".log");
         $files = glob($path . DIRECTORY_SEPARATOR . "*." . $id);
         if (!is_dir($path)) {
-            mkdir($path, 0777, true);
+            mkdir($path, 0755, true);
+            chmod($path, 0755);
         }
         
         if (!empty($files)) {

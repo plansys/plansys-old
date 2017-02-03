@@ -86,7 +86,8 @@ class RepoForm extends Form {
             $dirRenamed = false;
             if (!is_dir($newdir)) {
                 if ($this->dirPath == "") {
-                    mkdir($newdir, 0777, true);
+                    mkdir($newdir, 0755, true);
+                    chmod($newdir, 0755);
                 } else {
                     rename($path . "/" . $this->dirPath, $newdir);
                     $dirRenamed = true;

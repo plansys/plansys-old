@@ -222,7 +222,8 @@ class UploadFile extends FormField {
         $dir = Yii::getPathOfAlias('repo' . '.' . $this->uploadPath);
 
         if ($dir != "" && !file_exists($dir)) {
-            mkdir($dir, '0777', true);
+            mkdir($dir, 0755, true);
+            chmod($dir, 0755);
         }
         return $dir;
     }
@@ -265,7 +266,8 @@ class UploadFile extends FormField {
         ## create temporary directory
         $tmpdir = Yii::getPathOfAlias('webroot.assets.tmp');
         if (!is_dir($tmpdir)) {
-            mkdir($tmpdir, true);
+            mkdir($tmpdir, 0755, true);
+            chmod($tmpdir, 0755);
         }
 
         ## make sure there is no duplicate file name
@@ -327,7 +329,8 @@ class UploadFile extends FormField {
 
         $dir = Yii::getPathOfAlias('webroot.assets.thumb.' . date('Y-m-d'));
         if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
+            mkdir($dir, 0755, true);
+            chmod($dir, 0755);
         }
         $thumb = $dir . DIRECTORY_SEPARATOR . basename(time() . '_' . rand(1, 10000) . "." . pathinfo($file, PATHINFO_EXTENSION));
         $img->save($thumb);
