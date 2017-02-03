@@ -345,7 +345,7 @@ class Helper {
         $c = '';
         $read = '';
         $i = 0;
-        $fp = @fopen($filename, "r");
+        $fp = fopen($filename, "r");
         while ($lines && fseek($fp, $offset, SEEK_END) >= 0) {
             $c = fgetc($fp);
             if ($c == "\n" || $c == "\r") {

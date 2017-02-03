@@ -165,6 +165,7 @@ class ServiceManager extends CComponent {
             $service = ServiceSetting::get('list.' . $serviceName);
         }
         
+        
         if ($service) {
             if ($service['instance'] == 'single') {
                 $running = ServiceManager::getRunningInstance($service['name']);
@@ -190,12 +191,16 @@ class ServiceManager extends CComponent {
             $pid = ServiceManager::process($command);
             
             if (!empty($pid)) {
+                if (!is_numeric($pid[0])) {
+                    throw new CException($pid[0]);
+                }
+                
                 $service['pid'] = $pid[0];
                 ServiceManager::sendMsg($id, $service);
                 
                 return $id;
             } else {
-                return false;
+                throw new CException("Failed to execute: " . $command);
             }
         } 
     }

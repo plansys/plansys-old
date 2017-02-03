@@ -113,7 +113,11 @@ $scope.stop = function() {
 
 $scope.start = function() {
     $http.get(Yii.app.createUrl('/dev/service/start&n=' + $scope.model.name))
-    .success(function() {
+    .success(function(res) {
+        if (res) { 
+            alert(res);
+            return;
+        }
         $scope.params.isRunning = true;
         
         if (!$scope.isMonitoring) {

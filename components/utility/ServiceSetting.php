@@ -80,6 +80,7 @@ class ServiceSetting {
             self::$isRead = true;
         }
 
+
         $arr = self::$data;
         while ($k = array_shift($keys)) {
             $arr = &$arr[$k];

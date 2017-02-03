@@ -73,7 +73,11 @@ class ServiceController extends Controller {
     }
 
     public function actionStart($n){
-        ServiceManager::runInternal($n);
+        try {
+            $res =  ServiceManager::runInternal($n);
+        } catch(CException $e) {
+            echo ($e->getMessage());
+        }
     }
 
     public function actionStop($n){
