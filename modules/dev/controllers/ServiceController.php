@@ -4,11 +4,25 @@ class ServiceController extends Controller {
     
     public function actionIndex() {         
         ## cek whether php path is present
-        
         $php = Setting::get('app.phpPath');
-        
         if ($php != '' && !is_file($php)) {
             echo "INVALID PHP PATH: " . $php;
+            die();
+        }
+        if ($php == '') {
+            $php = 'php';
+        }
+        
+        ## check if php version is the same
+        $out = '';
+        exec($php . ' -v', $a);
+        if (!empty($a)) {
+            if (strpos($a[0], phpversion()) === false) {
+                echo "DIFFERENT PHP VERSION BETWEEN WEB SERVER (" . phpversion() . ") AND CLI (" . $a[0] . ")";
+                die();
+            } 
+        } else {
+            echo "FAILED TO EXECUTE: {$php} -v <br/><span style='color:red;'>Please check your php path in settings</span>";
             die();
         }
         
