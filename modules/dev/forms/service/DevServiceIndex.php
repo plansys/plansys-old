@@ -133,7 +133,7 @@ class DevServiceIndex extends Form {
                         'options' => array (),
                         'mergeSameRow' => 'No',
                         'mergeSameRowWith' => '',
-                        'html' => '<td ng-class=\"rowClass(row, \'schedule\', \'string\')\" style=\"text-align:center\">
+                        'html' => '<td ng-class=\"rowClass(row, \'schedule\', \'string\')\" style=\"text-align:center;{{ row.schedule != \'Manual\' ? \'background:yellow\' : \'\'}}\">
     {{row.schedule}}
 </td>',
                         'columnType' => 'string',
@@ -150,7 +150,7 @@ class DevServiceIndex extends Form {
                     array (
                         'name' => 'status',
                         'label' => 'Status',
-                        'html' => '<td ng-class=\"rowClass(row, \'status\', \'string\')\" style=\"text-align:center;\">
+                        'html' => '<td ng-class=\"rowClass(row, \'status\', \'string\')\" style=\"text-align:center;{{ row.schedule != \'Manual\' ? \'background:yellow\' : \'\'}}\">
     <div ng-if=\"row.status == \'running\'\" class=\"label label-success\">RUNNING: {{row.running_instances}} PROCESS</div>
     <div ng-if=\"row.status == \'stopped\'\" class=\"label label-default\">STOPPED</div>
     <div ng-if=\"row.status == \'draft\'\" class=\"label label-danger\" tooltip-html-unsafe=\"DRAFT service will not run.<hr/> To remove DRAFT status, you must manually run this service and make sure there is no error in your code.\"><i class=\"fa fa-warning\"></i> DRAFT</div>
@@ -165,7 +165,7 @@ class DevServiceIndex extends Form {
                     array (
                         'name' => 'last_run',
                         'label' => 'Last Run',
-                        'html' => '<td ng-class=\"rowClass(row, \'last_run\', \'string\')\" style=\"white-space:nowrap;\">
+                        'html' => '<td ng-class=\"rowClass(row, \'last_run\', \'string\')\" style=\"white-space:nowrap;{{ row.schedule != \'Manual\' ? \'background:yellow\' : \'\'}}\">
     {{ row.last_run }}
 </td>',
                         'columnType' => 'string',
@@ -173,7 +173,7 @@ class DevServiceIndex extends Form {
                         'mergeSameRow' => 'No',
                         'cellMode' => 'custom',
                         '$listViewName' => 'columns',
-                        '$showDF' => false,
+                        '$showDF' => true,
                     ),
                     array (
                         'name' => 'action',
