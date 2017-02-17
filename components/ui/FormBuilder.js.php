@@ -296,7 +296,7 @@ ob_start();
                         name: serviceName
                     }
                 }
-                
+                console.log(params);
                 $http.get(Yii.app.createUrl('/sys/serviceApi/start', params)).success(function() {
                     this.watch(serviceName);
                 }.bind(this));
@@ -335,7 +335,9 @@ ob_start();
                         $http.get(Yii.app.createUrl('/sys/serviceApi/time')).success(function(res) {
                             this.serverTime = res;
                             this.timeDiff = strtotime(date("Y-m-d H:i:s")) - strtotime(this.serverTime)  +1 ;
+                            this.watch(serviceName);
                         }.bind(this));
+                        
                         this.serverTime = false;
                         return;
                     }
