@@ -26,7 +26,8 @@ class ControllerGenerator extends CComponent {
 
             $cp = Yii::getPathOfAlias($controllerPath) . ".php";
             if (!is_dir(dirname($cp))) {
-                mkdir(dirname($cp), 0777, true);
+                mkdir(dirname($cp), 0755, true);
+                chmod(dirname($cp), 0755);
             }
 
             file_put_contents($cp, $generated);

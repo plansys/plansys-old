@@ -103,10 +103,12 @@ class ModuleGenerator extends CodeGenerator {
             if ($mode == 'create') {
                 if (!is_dir($m->baseDir . DIRECTORY_SEPARATOR . 'controllers')) {
                     mkdir($m->baseDir . DIRECTORY_SEPARATOR . 'controllers');
+                    chmod($m->baseDir . DIRECTORY_SEPARATOR . 'controllers', 0755);
                 }
 
                 if (!is_dir($m->baseDir . DIRECTORY_SEPARATOR . 'forms')) {
                     mkdir($m->baseDir . DIRECTORY_SEPARATOR . 'forms');
+                    chmod($m->baseDir . DIRECTORY_SEPARATOR . 'forms', 0755);
                 }
 
                 $m->generateImport(true);

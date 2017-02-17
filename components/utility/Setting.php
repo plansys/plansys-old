@@ -65,17 +65,23 @@ class Setting {
         date_default_timezone_set("Asia/Jakarta");
         $bp = Setting::setupBasePath($configfile);
         $ap = Setting::$rootPath . DIRECTORY_SEPARATOR . "app";
+        
+        if (!is_dir(Setting::getRuntimePath())) {
+            mkdir(Setting::getRuntimePath(), 0755, true);
+            chmod(Setting::getRuntimePath());
+        }
 
         Setting::$path = $ap . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
         if (!is_file(Setting::$path)) {
             $configdir = dirname(Setting::$path);
             if (!is_dir($configdir)) {
-                $res = @mkdir($configdir, 0777, true);
+                $res = @mkdir($configdir, 0755, true);
                 if (!$res) {
                     echo "Failed to create directory: {$configdir}";
                     echo "\nPermission Denied";
                     die();
                 }
+                chmod($path, 0755);
             }
 
             $oldConfig = $bp . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "settings.json";
@@ -396,6 +402,7 @@ class Setting {
 
                 return $message;
             }
+            chmod($path, 0755);
         }
 
         if ($writable) {
@@ -505,6 +512,7 @@ class Setting {
 
         if (Setting::$mode == 'running' && !is_dir(Yii::getPathOfAlias('app.migrations'))) {
             mkdir(Yii::getPathOfAlias('app.migrations'), 0755, true);
+            chmod(Yii::getPathOfAlias('app.migrations'), 0755);
         }
 
         $commands['migrate'] = [

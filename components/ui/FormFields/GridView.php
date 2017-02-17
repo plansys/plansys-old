@@ -30,7 +30,8 @@ class GridView extends FormField {
             $writer = WriterFactory::create(Type::XLSX);
             $dir = Yii::getPathOfAlias('root.assets.gvExport') ."/";
             if (!is_dir($dir)) {
-                mkdir($dir, 0777);
+                mkdir($dir, 0755, true);
+                chmod($dir, 0755);
             }
             $file = "export-". time() .".xlsx";
             $writer->openToFile($dir . $file); // stream data directly to the browser

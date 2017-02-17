@@ -85,7 +85,8 @@ class Export extends CComponent {
         $assetsPath = Setting::getAssetPath();
         $tmpDir = $assetsPath . DIRECTORY_SEPARATOR . "exports";
         if (!is_dir($tmpDir)) {
-            mkdir($tmpDir, 0777, TRUE);
+            mkdir($tmpDir, 0755, TRUE);
+            chmod($tmpDir, 0755);
         }
         
         if (is_file($fileNameResource)) {

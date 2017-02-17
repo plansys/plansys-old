@@ -80,6 +80,7 @@ class ServiceSetting {
             self::$isRead = true;
         }
 
+
         $arr = self::$data;
         while ($k = array_shift($keys)) {
             $arr = &$arr[$k];
@@ -122,7 +123,8 @@ class ServiceSetting {
             $path = Yii::getPathOfAlias('root.assets.services.stopped.' . $keys[1]);
             
             if (!is_dir($path)) {
-                mkdir($path, 777, true);
+                mkdir($path, 075, true);
+                chmod($path, 0755);
             }
             file_put_contents($path . '/lastrun.txt', $value);
         } else if ($flushSetting) {

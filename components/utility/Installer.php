@@ -91,7 +91,8 @@ class Installer {
                     "check" => function() {
                         $repo = Setting::get('repo.path');
                         if (!is_dir($repo)) {
-                            @mkdir($repo, 0777, true);
+                            mkdir($repo, 0755, true);
+                            chmod($repo, 0755);
                         }
 
                         return Setting::checkPath(realpath($repo), true);
@@ -261,7 +262,8 @@ class Installer {
         
         if (!is_file($to)) {
             if (!is_dir(dirname($to))) {
-                mkdir(dirname($to), 0777, true);
+                mkdir(dirname($to), 0755, true);
+                chmod(dirname($to), 0755);
             }
             $res = @copy($from, $to);
         
