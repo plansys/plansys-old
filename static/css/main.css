@@ -3321,6 +3321,7 @@ textarea.form-control {
 .error-container, .flash-container {
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
+    margin-top: 5% !important;
 }
 
 .control-label {
