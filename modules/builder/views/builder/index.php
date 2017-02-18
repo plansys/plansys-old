@@ -1,30 +1,18 @@
 <?php Yii::import('application.components.utility.Asset'); ?>
+<?php Asset::registerJS($this->vpath . '.index'); ?>
 <div ng-controller="Index">
     <div id="builder">
-        <div ui-layout options="{ flow : 'column',dividerSize:1,disableToggle:true}">
-            <div id="1st-col" 
-                 ui-layout-container 
-                 size="{{col1.layout.width}}" 
-                 min-size="{{col1.layout.minWidth}}"
-                 resizable="col1.layout.resizeable"
-                 collapsed="col1.layout.collapsed" 
-                 class="sidebar">
-                <?php include("col1.php"); ?>
-
+        <div ui-layout ng-class="{'active': active}" options="{ flow : 'column',dividerSize:1,disableToggle:true}">
+            <div ui-layout-container 
+                 size="{{layout.col1.width}}" 
+                 min-size="{{layout.col1.minWidth}}"
+                 class="col-1">
+                <?php include("tree/tree.php"); ?>
             </div>
-            <div id="2nd-col"
-                 ui-layout-container
-                 size="{{col2.width}}" 
-                 resizable="col2.resizeable"
-                 collapsed="col2.collapsed">
-                
-            </div>
-            <div id="3rd-col" 
-                 ui-layout-container 
-                 size="{{col3.width}}" 
-                 resizable="col3.resizeable"
-                 collapsed="col3.collapsed">
-
+            <div ui-layout-container
+                 class="col-2"
+                 size="{{layout.col2.width}}" >
+                <?php include("tabs/tabs.php"); ?> 
             </div>
         </div>
     </div>

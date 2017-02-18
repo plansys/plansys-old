@@ -26,7 +26,6 @@ class ServiceCommand extends CConsoleCommand {
                             break;
                     }
                     if((!isset($service['lastRun']) || abs($curTime-$lastRun)% $period==0)){
-                        
                         if (@$service['status'] == "ok") {
                             ServiceManager::runInternal($serviceName, $service);
                         }

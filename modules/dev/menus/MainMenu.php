@@ -21,6 +21,16 @@ return array (
         'label' => 'Builder',
         'items' => array (
             array (
+                'label' => 'Code Builder',
+                'icon' => 'fa-code',
+                'url' => '/builder',
+            ),
+            array (
+                'label' => '---',
+                'icon' => '',
+                'url' => '#',
+            ),
+            array (
                 'label' => 'Form Builder',
                 'icon' => 'fa-file',
                 'url' => '/dev/forms/index',

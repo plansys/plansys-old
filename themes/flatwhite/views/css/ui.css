@@ -365,3 +365,344 @@ li:hover > .item-btn {
     z-index: 155;
     cursor: pointer;
 }
+
+/********************************* COLUMN FIELD ********************************/
+
+.form-builder li .ColumnField {
+    padding: 0px;
+    border: 0px !important;
+    background: transparent;
+    position: relative;
+}
+
+.form-builder li .ColumnField .ColumnField {
+    margin: -1px;
+}
+
+.ColumnField.active {
+    padding: 0px;
+}
+
+.ColumnField:hover, .ColumnField.active {
+    background: url('../img/bg-column.png') !important;
+}
+
+.form-builder-column {
+    padding: 0px 0px 0px 0px;
+    border-left: 1px dashed #ececeb;
+    vertical-align: top;
+}
+
+.ColumnField .form-field-content table {
+    border: 1px dashed #ececeb;
+}
+
+.ColumnField.active .form-field-content table {
+    border: 1px solid blue;
+}
+
+.ColumnField.active .form-field-content .form-builder-column {
+    border-left: 1px solid blue;
+}
+
+.column-placeholder-handle {
+    position: absolute !important;
+    top: -1px !important;
+    left: -1px !important;
+    width: 1px !important;
+    padding: 0px !important;
+    height: 0px !important;
+    min-height: 0px !important;
+    line-height: 0px !important;
+    cursor: default !important;
+    display: none !important;
+}
+
+.field.column-placeholder {
+    min-height: 50px;
+    height: 100%;
+    display: block;
+    width: 100%;
+    padding: 0px !important;
+    min-height: 0px !important;
+}
+
+.form-builder-column .angular-ui-tree-nodes {
+    padding-left: 0px;
+}
+
+.form-builder-column > .angular-ui-tree-nodes {
+    height: 100%;
+}
+
+.column-field {
+    width: 100%;
+    vertical-align: top;
+    display: table;
+    border-collapse:collapse;
+}
+
+.column-field > .column-field-row {
+    display: table-row;
+}
+
+.column-field > .column-field-row  > .column-field-cell {
+    display:table-cell;
+    vertical-align: top;
+    margin-left: -5px;
+}
+
+.column-field > .column-field-row > .column-field-cell > .column-field-inner {
+    padding: 25px 50px 25px 25px;
+}
+
+/****************************** SECTION-HEADER ********************************/
+
+.section-header {
+    border: 1px solid #ececeb;
+    border-left: 0px;
+    border-right: 0px;
+    background: #fafafa;
+    padding: 4px 20px;
+    color: #333;
+    font-size: 13px;
+    font-weight: bold;
+    height: 28px;
+    line-height: 18px;
+    margin: 0px -15px 0px -15px;
+}
+
+.column-field .section-header {
+    margin: 0px -50px 25px -25px;
+}
+
+.column-field td:first-child .section-header {
+    margin-left: -40px;
+}
+
+.column-field td:last-child .section-header {
+    margin-right: -65px;
+}
+
+.SectionHeader {
+    margin: 0px -30px;
+    border-left: 0px;
+    border-right: 0px;
+}
+
+
+/********************************* LIST VIEW ***********************************/
+div[list-view] {
+    margin-top:5px;
+}
+
+div[list-view] .angular-ui-tree-empty {
+    display: none;
+}
+
+div[list-view] .angular-ui-tree-nodes div[list-view]  .angular-ui-tree-nodes {
+    padding-left: 0px !important;
+}
+
+div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-move {
+    display: none;
+}
+
+div[list-view] .angular-ui-tree-nodes div[list-view]  .list-view-item-container {
+    margin-left: 0px;
+    border-left: 0px;
+}
+
+.list-view-item {
+    padding: 3px 3px 2px 3px;
+    width: 100%;
+    margin-bottom: 5px;
+    border: 1px solid #ddd;
+    padding: 0px;
+    background: #fafafa;
+    border-radius: 3px;
+}
+
+.list-view-loading {
+    padding: 10px;
+    text-align: center;
+    color: #999;
+    font-size: 13px;
+    width: 100%;
+    margin-bottom: 5px;
+    border: 1px solid #ddd;
+    background: #fafafa;
+    border-radius: 3px;
+}
+
+.list-view-item-remove {
+    opacity: .5;
+    border: 0px;
+    background: none;
+    position: absolute;
+    margin-left: -22px;
+    z-index: 1;
+    margin-top: 2px;
+}
+
+.list-view-item-remove:hover {
+    background: #ececeb;
+    color: red;
+}
+
+.list-view-item-move {
+    opacity: .5;
+    border: 0px;
+    background: none;
+    position: absolute;
+    margin-right: -21px;
+    z-index: 1;
+    top: 0px;
+    bottom: 0px;
+    padding: 2px 2px 0px 5px;
+}
+
+.list-view-item-container {
+    margin-right: 23px;
+    margin-left: 22px;
+    padding: 4px 4px 0px 4px;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    background: white;
+    min-height: 25px;
+    opacity: 0;
+}
+
+.list-view-item-container.disable-delete {
+    margin-right:-1px;
+    padding-right:28px;
+}
+
+
+.list-view-item-container > .column-field {
+    margin-top:-4px;
+}
+
+div[list-view] .list-view-item-container {
+    opacity: 1;
+}
+
+.list-view-item-container td {
+    padding: 0px !important;
+}
+
+.list-view-item-container .column-field > div {
+    padding-left: 4px !important;
+}
+
+.list-view-item-container .column-field > div:first-child {
+    padding-left: 0px !important;
+}
+
+.list-view-add {
+    color: #888;
+    margin: 6px 0px;
+    font-size: 13px;
+    padding: 3px 10px;
+}
+
+.list-view-item-container.unsorted {
+    margin-left: -1px;
+}
+
+div[list-view].flat .angular-ui-tree-nodes > li {
+    border-radius: 0px;
+    margin: -6px 0px 5px 0px;
+}
+
+div[list-view].flat .angular-ui-tree-nodes > li:first-child {
+    margin: 0px 0px 5px 0px;
+}
+
+
+/********************************** FORMS **************************************/
+.required {
+    display:inline-block;
+    color: red;
+}
+
+.invisible {
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    top: 0px;
+    left: 0px;
+    opacity: 0;
+}
+
+.form-group {
+    margin-bottom: 5px;
+}
+/************************** TAB PANE *********************************/
+
+.tab-set {
+    margin: 0px -15px;
+}
+
+.tab-set .tab-pane {
+    padding: 0px 15px;
+}
+
+.tab-set .nav-tabs {
+    font-weight: bold;
+    font-size: 11px;
+    padding-left: 10px;
+    height: 28px;
+    line-height: 28px;
+    font-weight: bold;
+    background: #ffffff; /* Old browsers */
+    background: -moz-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #fafafa)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #ffffff 0%, #fafafa 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #ffffff 0%, #fafafa 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#fafafa', GradientType=0); /* IE6-9 */
+
+    border-bottom: 1px solid #ccc;
+}
+
+.tab-set .nav-tabs > li > a {
+    padding: 4px 8px 3px 8px;
+    border-radius: 3px 3px 0px 0px;
+    color: #888;
+    border: 1px solid #dedede !important;
+    border-bottom: 0px !important;
+    margin-top: 5px;
+    cursor: pointer;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+.tab-set .nav-tabs > li.active > a {
+    border: 1px solid #ccc !important;
+    border-bottom: 0px !important;
+    color: #000;
+    background: rgba(255, 255, 255, 1);
+}
+
+.tab-set .nav-tabs > li.active > a > tab-heading {    
+    margin: -4px -8px -5px -8px;
+    padding: 4px 8px 3px 8px;
+    height: 25px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    background: white;
+    display:block;
+}
+
+.tab-set.single-tab .nav-tabs > li {
+    margin-top: -1px;
+    margin-bottom: 0px;
+}

@@ -1,7 +1,6 @@
 <?php
                             
 class DevGenNewCtrl extends Form {
-
     public function getForm() {
         return array (
             'title' => 'Generate New Controller',
