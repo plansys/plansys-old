@@ -109,12 +109,20 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
      }
 
      $scope.save = function() {
+          if ($scope.active.loading) {
+               return;
+          }
+          
+          var url = Yii.app.createUrl('builder/code/save', {
+               f: $scope.active.d,
+               h: $scope.active.unsaved ? 1 : 0
+          });
           $scope.active.code.status = 'Saving...';
           $scope.active.loading = true;
           $scope.active.unsaved = true;
           $http({
                method: 'POST',
-               url: Yii.app.createUrl('builder/code/save&f=' + $scope.active.d),
+               url: url,
                uploadEventHandlers: {
                     progress: function(e) {
                          if (e.lengthComputable) {
