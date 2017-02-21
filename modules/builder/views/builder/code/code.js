@@ -50,6 +50,7 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
                ext = ext[ext.length - 1];
 
                var exts = {
+                    'html': "ace/mode/html",
                     'js': "ace/mode/javascript",
                     'go': "ace/mode/golang",
                     'gitignore': "ace/mode/gitignore",
