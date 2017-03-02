@@ -965,7 +965,7 @@ app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLaz
                                         idx++;
                                     }
 
-                                    $scope.$apply(function () {
+                                    $timeout(function () {
                                         $scope.datasource.data = newData;
                                     });
                                 }
