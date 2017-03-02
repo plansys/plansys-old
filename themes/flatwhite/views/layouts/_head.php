@@ -12,8 +12,7 @@
      
      <link rel="stylesheet" href="<?= Yii::app()->controller->staticUrl('/css/font-awesome.min.css'); ?>" type="text/css" />
      <title><?php echo CHtml::encode(Yii::app()->controller->pageTitle); ?></title>
-     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
      <?php ThemeManager::registerCoreScript(['/js/index.ctrl.js']); ?> 
-     <?php Asset::registerJS('application.themes.flatwhite.views.js.hammer_min'); ?>
      <?php Asset::registerJS('application.themes.flatwhite.views.js.mainctrl'); ?>
 </head>

@@ -63,7 +63,9 @@ app.controller("MainController", function ($scope, $http, $timeout, $localStorag
     }
     
     $(".header .scroll").on("touchend click touchmove", function(e) {
-        $scope.canMenuScrollRight = false;
+        $timeout(function() {
+            $scope.canMenuScrollRight = false;
+        }.bind(this));
         
         if (!$(e.target).is("a")) {
             $(".header .top-menu").removeClass("open");

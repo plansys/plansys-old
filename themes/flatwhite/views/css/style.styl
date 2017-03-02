@@ -16,6 +16,7 @@ body
     margin:0px
     border:0px
     background:white
+    border-radius:0
     border-bottom:1px solid line-color
     
     .top-menu
@@ -29,22 +30,12 @@ body
         .scroll
           position:fixed
           left:0px
-          padding-left:50px
           right:0px
           height:auto !important
           bottom:0px
           z-index:10
           top:0px
         
-        .burger
-          position:fixed;
-          left:0px
-          background:white
-          top:0px
-          z-index:11
-          height:49px
-          width:50px
-          
         .scroll-arrow
           display:none
         
@@ -71,7 +62,13 @@ body
           color:#000
       
       .burger
-        flex:0 0 50px
+        position:fixed
+        left:0px
+        background:white
+        top:0px
+        z-index:11
+        height:49px
+        width:50px
         text-align:center
         line-height:50px
         font-size:32px
@@ -83,22 +80,19 @@ body
           
       .scroll
         flex:1
+        padding-left:50px
         overflow-y:auto
         height:80px
           
-        .navbar-nav
-          margin:0px
-          display:flex
-    
     .navbar-nav 
-      > .dropdown > a
-        box-sizing:border-box
-        border-left:1px solid transparent
-        border-right:1px solid transparent
-        
+      margin:0px
+      font-size:0
+      border-radius:0px
+      white-space:nowrap
+      
       > .dropdown
-        .dropdown 
-          .dropdown-menu 
+        .dropdown
+          .dropdown-menu
             top: 0
             left: 100%
             margin-top: -5px
@@ -124,7 +118,7 @@ body
               border-left-color: #fff;
         
         .no-menu > a:before
-          display:none
+            display:none
           
     
       > .open 
@@ -159,39 +153,47 @@ body
         left: auto
       
       > li
-        flex:1
-    
-    .navbar-nav > li > a
-      height:49px
-      display:flex
-      align-items:center
-      color:#666
-      font-size:14px
-      font-weight:bold
-      padding:0px 35px 0px 10px
-      
-      & > .caret
-        position:absolute
-        right:10px
-      
-      & > i 
-        margin-right:3px
-      
-      &:hover,
-      &:active,
-      &:focus
-        background:#fafafa
-        color:#222
+        display:inline-block
         
-    .navbar-nav > li.active > a
-      border-top:1px solid accent-color
-      color:accent-color
-      background:#fafafa
+        &:hover,
+        &:active,
+        &:focus
+          background:#fafafa
+          color:#222
+        
+        > a
+          height:49px
+          display:inline-block
+          box-sizing:border-box
+          border-left:1px solid transparent
+          border-right:1px solid transparent
+          border-top:1px solid transparent
+          align-items:center
+          color:#666
+          font-size:14px
+          font-weight:bold
+          line-height:49px
+          padding:0px 35px 0px 15px
+          
+          & > .caret
+            float:right
+            margin-top:23px
+            margin-right:-25px
+          
+          & > i 
+            float:left
+            margin-left:-5px
+            margin-right:5px
+            margin-top:18px
       
-    .navbar-nav > li.no-menu > a
-      padding-right:15px
-      padding-left:15px
-    
+        &.active > a
+          border-top:1px solid accent-color
+          color:accent-color
+          background:#fafafa
+        
+        &.no-menu > a
+          padding-right:15px
+        
     .dropdown-menu>.active>a, 
     .dropdown-menu>.active>a:focus, 
     .dropdown-menu>.active>a:hover
@@ -202,15 +204,23 @@ body
     flex:1
     position:relative
     overflow:auto
-      
+    
+    .error-container, .info-container 
+      margin:0px -15px !important
+      border-radius:0px
+    
     [ps-action-bar]
-      margin-left:-15px
-      margin-right:-15px
-      
+      width:100% !important
+      position:relative
+      top:auto !important
+      left:auto !important
+    
       .action-bar
         display:flex
+        margin:0px -15px -1px -15px
         align-items:center
-        padding:10px 15px
+        padding:10px 15px 10px 15px
+        border-bottom:1px solid line-color
         
         .title-bar
           flex:1
@@ -221,7 +231,19 @@ body
         
         .link-bar
           flex:1
+          display:flex
+          justify-content:flex-end
           text-align:right;
+          
+          .separator 
+            display:none
+            
+          .btn
+            margin-right:5px
+            border-radius:2px
         
         .clearfix
+          display:none
+          
+        .action-tab
           display:none

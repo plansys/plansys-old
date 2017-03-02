@@ -79,6 +79,7 @@ func main() {
 
 				// If the answer is same as current args then bail
 				if (strings.TrimSpace(message) == args) {
+					fmt.Println(args)
 					println("Process already exists, exiting")
 					return;
 				}
@@ -91,6 +92,7 @@ func main() {
 				println("Port:", port)
 				listener, err = net.Listen("tcp", ":" + strconv.FormatInt(int64(port),10))
 			}
+
 
 			cmd := exec.Command(os.Args[2], os.Args[3:]...)
 			err = cmd.Start()	

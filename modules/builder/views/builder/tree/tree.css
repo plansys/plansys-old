@@ -1,0 +1,248 @@
+.tree-container {
+     display:flex;
+     flex-direction:column;
+     height:100%;
+     position:relative;
+}
+
+.search-file {
+     flex: 0 0 27px;
+     border-bottom:1px solid #ccc;
+     background:white;
+     position:relative;
+}
+.search-file .icon {
+     position:absolute;
+     line-height:24px;
+     right:0px;
+     padding:0px 20px 3px 8px;
+     z-index:1;
+     cursor:pointer;
+     text-align:center;
+}
+.search-file .icon i {
+     font-size:13px;
+     color:#bbb;
+     font-weight:normal;
+}
+.search-file .arrow {
+     position:absolute;
+     right:0px;
+     width:15px;
+     font-size:10px;
+     line-height:26px;
+     height:26px;
+     text-align:center;
+     color:#ccc;
+     cursor:pointer;
+     z-index:2;
+     font-size:8px;
+     border-left:1px dotted #ececeb;
+}
+.search-file .arrow:hover {
+     background:#fafafa;
+}
+.search-file .arrow.active {
+     background:#fafafa;
+     border-left:1px solid #ccc;
+     height:27px;
+     border-bottom:1px dotted #ccc;
+}
+.search-file .search-file-detail {
+     position:absolute;
+     z-index:1;
+     margin-top:26px;
+     left:0px;
+     right:0px;
+     padding:10px 5px 0px 5px;
+     background:#fafafa;
+     border-top:1px solid #ccc;
+     border-bottom:1px solid #ccc;
+}
+.search-file .search-file-detail-head {
+     font-weight:bold;
+     font-size:11px;
+     text-align:center;
+     margin-bottom:5px;
+     margin-top:-5px;
+}
+
+.search-file .search-file-detail-row {
+     display:flex;
+     align-items: center;
+     justify-content:space-between;
+     font-size:11px;
+     border-top:1px solid #ddd;
+     margin:0px -5px;
+     padding:5px;
+}
+
+
+.search-file .search-file-detail-row .btn {
+     font-size:10px;
+     font-weight:bold;
+}
+.search-file input.search-text {
+     border:0px;
+     outline:0px;
+     padding:0px 45px 0px 7px;
+     font-size:14px;
+     width:100%;
+     line-height:26px;
+     border-radius:0px;
+     position:absolute;
+     right:30px;
+     left:0px;
+     bottom:0px;
+     top:0px;
+     background:transparent;
+}
+
+.search-file input:focus {
+     background:#fafafa;
+}
+
+.tree {
+     flex:1;
+     overflow:auto;
+}
+
+.tree .ic {
+     display:flex;
+     float:left;
+     height:24px;
+     align-items:center;
+}
+
+
+.tree-item {
+     cursor:pointer;
+     padding-left:3px;
+     display:flex;
+     user-select:none;
+     overflow:hidden;
+     -webkit-user-select:none;
+}
+
+
+.tree-item.cm,
+.tree-item:hover {
+     background:#ececeb;
+}
+
+.tree-item.draghover,
+.tree-item.active {
+     background:#aaa;
+     color:#fff;     
+}
+
+.tree-item.drgaging {
+     pointer-events: none;
+     background:none;
+     color:#333;
+}
+
+.tree-item.dragging {
+     background:white;
+     color:#333;
+     border:1px solid #ccc;
+     padding:0px 5px;
+}
+.tree-item.dragging .icon.arrow {
+     display:none !important;
+}
+.tree-childs {
+     padding-left:15px;
+}
+
+.tree-item .icon {
+     width:20px;
+     text-align:center;
+}
+
+.tree-item .icon img {
+     max-width:16px;
+}
+.tree-item .icon.arrow {
+     width:14px;
+     cursor:pointer;
+     display:inline-block;
+     padding-left:3px;
+     text-align:center;
+}
+.tree-item .text {
+     line-height:24px;
+     font-size:12px;
+     white-space:nowrap;
+     display:inline-block;
+}
+
+
+.tree-load-more {
+     text-align:center;
+     font-size:13px;
+     border-top:1px solid #ccc;
+     line-height:50px;
+     margin-top:10px;
+     padding-bottom:5px;
+     cursor:pointer;
+}
+.context-menu {
+     position:fixed !important;
+     z-index:1000;
+}
+.context-menu .dropdown-menu {
+     display:block;
+     font-size:13px;
+     border-radius:0px;
+     padding:0px;
+}
+.context-menu .dropdown-menu > li > a {
+     cursor:pointer;
+     -webkit-user-select: none;
+     -moz-user-select:none;
+     user-select:none;
+     line-height:16px;
+     padding:5px 10px;
+}
+.context-menu .dropdown-menu > li > a > i {
+     font-size:14px;
+     width:20px;
+     text-align:center;
+}
+.context-menu-overlay {
+     z-index:999;
+     position:fixed;
+     top:0px;
+     left:0px;
+     right:0px;
+     bottom:0px;
+}
+
+
+@media screen and (max-width: 768px) {
+    .ui-splitbar {
+        display:none !important;
+    }
+    .ui-layout-column .col-1 {
+        top: 0px !important;
+        left:0px !important;
+        width: 100% !important;
+        display:block !important;
+    }
+    .ui-layout-column .col-2 {
+        display:none !important;
+    }
+    
+    .active .col-1 {
+        display:none !important;
+    }
+    
+    .active .col-2 {
+        top: 0px !important;
+        left:0px !important;
+        width: 100% !important;
+        display:block !important;
+    }
+    
+}
