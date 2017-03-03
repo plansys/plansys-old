@@ -464,15 +464,14 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
           }
 
           var exts = {
-               'php': 'application-x-php.svg',
-               'js': 'application-javascript.svg',
-               'css': 'text-x-css.svg',
-               'json': 'application-json.svg',
-               'zip': 'application-archive-zip.svg',
-               'exe': 'application-executable.svg',
-               'txt': 'text-x-changelog.svg',
-               'bat': 'application-executable.svg',
-               'gitignore': 'extension.svg'
+               'php': 'application-x-php.png',
+               'js': 'application-javascript.png',
+               'css': 'text-x-css.png',
+               'json': 'application-json.png',
+               'exe': 'application-executable.png',
+               'txt': 'text-x-changelog.png',
+               'bat': 'application-executable.png',
+               'gitignore': 'extension.png'
           }
 
           if (exts[item.ext]) {
