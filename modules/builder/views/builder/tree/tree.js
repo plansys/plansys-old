@@ -478,7 +478,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                return exts[item.ext];
           }
           else {
-               return 'application-document.svg';
+               return 'application-document.png';
           }
      }
      $scope.treeMode = $('.tree-container').attr('mode');
