@@ -1,15 +1,15 @@
-app.directive('gridView', function ($timeout, $http) {
+app.directive('gridView', function($timeout, $http) {
     return {
         require: '?ngModel',
         scope: true,
-        compile: function (element, attrs, transclude) {
+        compile: function(element, attrs, transclude) {
             if (attrs.ngModel && !attrs.ngDelay) {
                 attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
             }
             var columnRaw = element.find("data[name=columns]:eq(0)").text();
             element.find("data[name=columns]:eq(0)").remove();
 
-            return function ($scope, $el, attrs, ctrl) {
+            return function($scope, $el, attrs, ctrl) {
                 // define current form field in parent scope
                 $scope.parent = $scope.getParent($scope);
 
@@ -26,17 +26,18 @@ app.directive('gridView', function ($timeout, $http) {
                 $scope.defaultPageSize = $el.find("data[name=dpz]:eq(0)").text();
                 $scope.datasource = $scope.parent[$el.find("data[name=datasource]:eq(0)").text()];
                 $scope.checkboxCol = false;
-                $scope.checkMode = function () {
+                $scope.checkMode = function() {
                     if ($el.width() < 750) {
                         $scope.mode = 'small';
-                    } else {
+                    }
+                    else {
                         $scope.mode = 'full';
                     }
                 }
-                $scope.url = function (a, b, c) {
+                $scope.url = function(a, b, c) {
                     return Yii.app.createUrl(a, b, c);
                 };
-                
+
                 $scope.getSequence = function(row, idx) {
                     if (!!row.$type) {
                         if (row.$type === 'r') {
@@ -47,7 +48,7 @@ app.directive('gridView', function ($timeout, $http) {
                 }
 
                 $scope.gridOptions.controlBar = $scope.gridOptions.controlBar !== 'false';
-                $scope.rowClass = function (row, colName, colType) {
+                $scope.rowClass = function(row, colName, colType) {
                     var agrStr = '';
                     if (typeof row[colName] !== "undefined" && row[colName] !== null && row[colName].toString) {
                         agrStr = row[colName].toString();
@@ -63,7 +64,25 @@ app.directive('gridView', function ($timeout, $http) {
 
                     return rc;
                 }
-                $scope.editKey = function (e) {
+                $scope.paste = function(e, row, ridx, col, cidx) {
+                    var raw = e.originalEvent.clipboardData.getData('text');
+                    var pasted = raw.trim().split("\n");
+                    
+                    if (pasted.length > 1) {
+                        e.preventDefault();
+                        $timeout(function() {
+                            console.log(pasted, pasted.length)
+                            for (var r in pasted) {
+                                var items = pasted[r].split("\t");
+                                for (var c in items) {
+                                    var cname = $scope.columns[parseInt(cidx) + parseInt(c)].name;
+                                    $scope.datasource.data[parseInt(ridx) + parseInt(r)][cname] = items[c] + ''
+                                }
+                            }
+                        });
+                    }
+                }
+                $scope.editKey = function(e) {
                     var ngModel = $(e.target).attr('ng-model');
                     var sel = window.getSelection();
                     var textLength = $(e.target).text().length;
@@ -72,14 +91,15 @@ app.directive('gridView', function ($timeout, $http) {
                         if (e.which == 40) {
                             var nextRow = $(e.target).parents("tr").next().find('[contenteditable][ng-model="' + ngModel + '"]');
                             if (!!nextRow) {
-                                $timeout(function () {
+                                $timeout(function() {
                                     nextRow.focus();
                                 });
                             }
-                        } else if (e.which == 39) {
+                        }
+                        else if (e.which == 39) {
                             var nextCol = $(e.target).parents("td").next().find('[contenteditable]');
                             if (!!nextCol) {
-                                $timeout(function () {
+                                $timeout(function() {
                                     nextCol.focus();
                                 });
                             }
@@ -90,21 +110,22 @@ app.directive('gridView', function ($timeout, $http) {
                         if (e.which == 38) {
                             var prevRow = $(e.target).parents("tr").prev().find('[contenteditable][ng-model="' + ngModel + '"]');
                             if (!!prevRow) {
-                                $timeout(function () {
+                                $timeout(function() {
                                     prevRow.focus();
                                 });
                             }
-                        } else if (e.which == 37) {
+                        }
+                        else if (e.which == 37) {
                             var prevCol = $(e.target).parents("td").prev().find('[contenteditable]');
                             if (!!prevCol) {
-                                $timeout(function () {
+                                $timeout(function() {
                                     prevCol.focus();
                                 });
                             }
                         }
                     }
                 }
-                $scope.rowStateClass = function (row) {
+                $scope.rowStateClass = function(row) {
                     if ($scope.checkboxCol === false) {
                         $scope.checkboxCol = {};
                         for (var i in $scope.columns) {
@@ -113,31 +134,33 @@ app.directive('gridView', function ($timeout, $http) {
                             }
                         }
                     }
-                    
+
                     var checkboxClass = [];
                     for (var i in $scope.checkboxCol) {
                         if (row[i] == $scope.checkboxCol[i]) {
                             if (checkboxClass.length == 0) {
                                 checkboxClass.push('row-checked');
                             }
-                            
+
                             checkboxClass.push(i);
                         }
                     }
                     checkboxClass = checkboxClass.join(" ");
-                    
+
                     if (!row.$rowState || $scope.gridOptions.showRowState == 'false') {
                         return checkboxClass + ' ';
-                    } else {
+                    }
+                    else {
                         return checkboxClass + ' row-state-' + row.$rowState;
                     }
                 }
-                $scope.rowUndoState = function (row) {
-                    var hash = {}, trans = {
-                        insert: 'insertData',
-                        edit: 'updateData',
-                        remove: 'deleteData'
-                    }
+                $scope.rowUndoState = function(row) {
+                    var hash = {},
+                        trans = {
+                            insert: 'insertData',
+                            edit: 'updateData',
+                            remove: 'deleteData'
+                        }
 
                     var diffData = $scope.datasource[trans[row.$rowState]];
                     if (row.$rowState == 'edit' || row.$rowState == 'remove') {
@@ -150,7 +173,8 @@ app.directive('gridView', function ($timeout, $http) {
                         }
 
                         $scope.updatePaging($scope.gridOptions.pageInfo);
-                    } else if (row.$rowState == 'insert') {
+                    }
+                    else if (row.$rowState == 'insert') {
                         var idx = diffData.indexOf(row);
                         diffData.splice(idx, 1);
 
@@ -160,13 +184,13 @@ app.directive('gridView', function ($timeout, $http) {
                     }
                 }
 
-                $scope.addRow = function (focus) {
+                $scope.addRow = function(focus) {
                     var newModel = {};
                     if (!!$scope.model) {
                         newModel = angular.copy($scope.model);
                     }
                     $scope.datasource.data.unshift(newModel);
-                    
+
                     if (!!focus) {
                         $scope.focusAddRow();
                     }
@@ -174,10 +198,10 @@ app.directive('gridView', function ($timeout, $http) {
                 $scope.focusAddRow = function() {
                     $timeout(function() {
                         $el.find("table tr.row-state-insert:eq(0) div[contenteditable]")[0].focus();
-                    },100);
+                    }, 100);
                 }
 
-                $scope.removeRow = function (row) {
+                $scope.removeRow = function(row) {
                     if (row.$rowState == 'insert') {
                         var idx = $scope.datasource.insertData.indexOf(row);
                         $scope.datasource.insertData.splice(idx, 1);
@@ -185,17 +209,18 @@ app.directive('gridView', function ($timeout, $http) {
                         var didx = $scope.datasource.data.indexOf(row);
                         $scope.datasource.data.splice(didx, 1);
                         return;
-                    } else {
+                    }
+                    else {
                         row.$rowState = 'remove';
                         $scope.datasource.deleteData.push(row);
                     }
 
-                    $timeout(function () {
+                    $timeout(function() {
                         $scope.recalcHeaderWidth();
                     });
                 }
 
-                $scope.undoRemoveRow = function (row) {
+                $scope.undoRemoveRow = function(row) {
                     switch (row.$rowState) {
                         case 'remove':
                             var idx = $scope.datasource.deleteData.indexOf(row);
@@ -208,30 +233,30 @@ app.directive('gridView', function ($timeout, $http) {
                             break;
                     }
                     row.$rowState = '';
-                    $timeout(function () {
+                    $timeout(function() {
                         $scope.recalcHeaderWidth();
                     });
                 }
 
                 // when ng-model is changed from inside directive
-                $scope.update = function () {
+                $scope.update = function() {
                     if (!!ctrl) {
                         ctrl.$setViewValue($scope.value);
                     }
                 };
 
                 // page Setting
-                $scope.range = function (n) {
+                $scope.range = function(n) {
                     return new Array(n);
                 };
-                $scope.scrollTop = function () {
+                $scope.scrollTop = function() {
                     $container.scrollTop($container.scrollTop() + $el.position().top - 53);
                 };
-                $scope.reset = function () {
+                $scope.reset = function() {
                     $scope.resetPageSetting();
                     location.reload();
                 }
-                $scope.savePageSetting = function () {
+                $scope.savePageSetting = function() {
                     if (!$scope.pageSetting) return;
 
                     $scope.showChangePage = false;
@@ -241,7 +266,7 @@ app.directive('gridView', function ($timeout, $http) {
                         paging: $scope.gridOptions.pageInfo
                     };
                 }
-                $scope.loadPageSetting = function () {
+                $scope.loadPageSetting = function() {
                     var changing = false;
                     if (typeof $scope.gridOptions.pageSize != "undefined") {
                         $scope.gridOptions.pageInfo.pageSize = $scope.gridOptions.pageSize * 1;
@@ -268,7 +293,8 @@ app.directive('gridView', function ($timeout, $http) {
 
                     if (changing) {
                         $scope.datasource.query();
-                    } else {
+                    }
+                    else {
                         if ($scope.datasource.lastQueryFrom != "DataFilter") {
                             $scope.datasource.enableTrackChanges('GridView:LoadPageSetting');
                         }
@@ -276,7 +302,7 @@ app.directive('gridView', function ($timeout, $http) {
                 }
 
                 // update sorting
-                $scope.sort = function (col) {
+                $scope.sort = function(col) {
                     if (col == '') return;
 
                     var direction = $scope.isSort(col, 'asc') ? 'desc' : 'asc';
@@ -285,11 +311,11 @@ app.directive('gridView', function ($timeout, $http) {
                         directions: [direction]
                     };
                     $scope.updateSorting($scope.gridOptions.sortInfo);
-                    $timeout(function () {
+                    $timeout(function() {
                         $scope.recalcHeaderWidth();
                     });
                 }
-                $scope.isSort = function (col, dir) {
+                $scope.isSort = function(col, dir) {
                     if (!$scope.gridOptions.sortInfo) return false;
 
                     var idx = $scope.gridOptions.sortInfo.fields.indexOf(col);
@@ -300,7 +326,7 @@ app.directive('gridView', function ($timeout, $http) {
                     }
                     return false;
                 }
-                $scope.updateSorting = function (sort, executeQuery) {
+                $scope.updateSorting = function(sort, executeQuery) {
                     var ds = $scope.datasource;
                     if (typeof ds != "undefined") {
                         var order_by = [];
@@ -326,7 +352,7 @@ app.directive('gridView', function ($timeout, $http) {
                     }
                 }
 
-                $scope.hideGroup = function (item, e) {
+                $scope.hideGroup = function(item, e) {
                     e.stopPropagation();
                     e.preventDefault();
 
@@ -337,11 +363,13 @@ app.directive('gridView', function ($timeout, $http) {
                         if (cursor.attr('lv') > item.$level || (cursor.hasClass('a') && cursor.attr('lv') >= item.$level)) {
                             if (item.$hide) {
                                 cursor.addClass('hide');
-                            } else {
+                            }
+                            else {
                                 cursor.removeClass('hide');
                             }
                             cursor = cursor.next();
-                        } else {
+                        }
+                        else {
                             loop = false;
                         }
                     }
@@ -349,7 +377,7 @@ app.directive('gridView', function ($timeout, $http) {
                 }
 
                 // update paging
-                $scope.updatePaging = function (paging, executeQuery, oldpaging) {
+                $scope.updatePaging = function(paging, executeQuery, oldpaging) {
                     var ds = $scope.datasource;
                     ds.updateParam('currentPage', paging.currentPage, 'paging');
                     ds.updateParam('pageSize', paging.pageSize, 'paging');
@@ -363,21 +391,22 @@ app.directive('gridView', function ($timeout, $http) {
                     if (executeQuery) {
                         if (typeof oldpaging != "undefined" && paging.pageSize == oldpaging.pageSize) {
                             ds.queryWithoutCount();
-                        } else {
-                            ds.query(function(){
-                                
+                        }
+                        else {
+                            ds.query(function() {
+
                             });
                         }
                         $scope.savePageSetting();
                     }
                 }
 
-                $scope.pagingKeyPress = function (e) {
+                $scope.pagingKeyPress = function(e) {
                     if (e.which == 13) {
                         e.preventDefault();
                         e.stopPropagation();
                     }
-                    $timeout(function () {
+                    $timeout(function() {
                         if (!$scope.loading) {
                             $scope.showChangePage = true;
                             if (e.which == 13) {
@@ -386,76 +415,76 @@ app.directive('gridView', function ($timeout, $http) {
                         }
                     });
                 }
-                
-                $scope.changePage = function () {
+
+                $scope.changePage = function() {
                     $scope.gridOptions.pageInfo.currentPage = $scope.gridOptions.pageInfo.typingPage;
                     $scope.savePageSetting();
                 }
-                
-                $scope.firstPage = function () {
+
+                $scope.firstPage = function() {
                     $scope.gridOptions.pageInfo.currentPage = 1;
                     $scope.savePageSetting();
                 }
-                
-                $scope.prevPage = function () {
+
+                $scope.prevPage = function() {
                     $scope.gridOptions.pageInfo.currentPage -= 1;
                     if ($scope.gridOptions.pageInfo.currentPage <= 1) {
                         $scope.gridOptions.pageInfo.currentPage = 1;
                     }
                     $scope.savePageSetting();
                 }
-                
+
                 $scope.currentPage = function() {
                     return $scope.gridOptions.pageInfo.typingPage;
                 }
                 $scope.totalPage = function() {
                     return Math.ceil($scope.datasource.totalItems / $scope.gridOptions.pageInfo.pageSize);
                 }
-                $scope.nextPage = function () {
+                $scope.nextPage = function() {
                     $scope.gridOptions.pageInfo.currentPage += 1;
                     if ($scope.gridOptions.pageInfo.currentPage > $scope.datasource.totalItems) {
                         $scope.gridOptions.pageInfo.currentPage = $scope.datasource.totalItems;
                     }
                     $scope.savePageSetting();
                 }
-                $scope.lastPage = function () {
+                $scope.lastPage = function() {
                     $scope.gridOptions.pageInfo.currentPage = $scope.datasource.totalItems;
                     $scope.savePageSetting();
                 }
 
-                $scope.deleteRow = function (idx) {
+                $scope.deleteRow = function(idx) {
                     $scope.datasource.data.splice(idx, 1);
                 }
 
                 // fixed header on scroll
                 var $container = $el.parents('.container-full');
                 var $header = $el.find("table > thead");
-                var inViewport = function (el, offset) {
+                var inViewport = function(el, offset) {
                     var rect = el[0].getBoundingClientRect();
                     var leftBoundary = $container.width();
                     var rightBoundary = 0;
-                    
+
                     if ($header.width() > leftBoundary) {
                         rightBoundary = leftBoundary - $header.width();
                     }
-                    
+
                     return (
                         rect.bottom >= parseInt($container.css('margin-top')) + offset &&
                         rect.right >= rightBoundary &&
                         rect.left < leftBoundary &&
                         rect.top < 0
                     );
-                } 
-                
-                $scope.recalcHeaderWidth = function () {
+                }
+
+                $scope.recalcHeaderWidth = function() {
                     $scope.firstColWidth = $header.find("th:eq(0)").outerWidth();
                     if ($scope.firstColWidth == 0) return;
-                    
+
                     $el.find('.thead .tr').each(function(tr) {
                         $el.find('.thead .tr:eq(' + tr + ') .th').each(function(th) {
                             var w = $header.find("tr:eq(" + tr + ") th:eq(" + th + ")").outerWidth();
                             $(this).css({
-                                width:w,
+                                width: w,
                                 minWidth: w,
                                 maxWidth: w
                             });
@@ -464,53 +493,53 @@ app.directive('gridView', function ($timeout, $http) {
 
                     //$el.parents('.container-fluid').width(Math.max($el.parents('.container-fluid').width(), $el.width() + 15));
                 }
-                
+
                 $scope.isCbFreezed = false;
                 var paddingLeft = $el.offset().left;
                 $scope.freezeControlBar = function() {
                     if (!!$scope.gridOptions.freezeControlBar || !!$scope.gridOptions.freeze) {
                         $el.find('.data-grid-paging').css({
-                            marginLeft: (($el.offset().left  *-1) + paddingLeft) + 'px',
+                            marginLeft: (($el.offset().left * -1) + paddingLeft) + 'px',
                             width: ($container.width() - (paddingLeft * 3)) + 'px'
                         });
                     }
                     $scope.isCbFreezed = !!$scope.gridOptions.freezeControlBar || !!$scope.gridOptions.freeze;
                 };
-                
-                $(window).resize(function () {
-                    $timeout(function () {
+
+                $(window).resize(function() {
+                    $timeout(function() {
                         $scope.recalcHeaderWidth();
                         $scope.checkMode();
                         $scope.freezeControlBar();
                     }, 400);
                 });
-                
+
                 function getScrollbarWidth() {
-                  var div, body, W = window.browserScrollbarWidth;
-                  if (W === undefined) {
-                    body = document.body, div = document.createElement('div');
-                    div.innerHTML = '<div style="width: 50px; height: 50px; position: absolute; left: -100px; top: -100px; overflow: auto;"><div style="width: 1px; height: 100px;"></div></div>';
-                    div = div.firstChild;
-                    body.appendChild(div);
-                    W = window.browserScrollbarWidth = div.offsetWidth - div.clientWidth;
-                    body.removeChild(div);
-                  }
-                  return W;
+                    var div, body, W = window.browserScrollbarWidth;
+                    if (W === undefined) {
+                        body = document.body, div = document.createElement('div');
+                        div.innerHTML = '<div style="width: 50px; height: 50px; position: absolute; left: -100px; top: -100px; overflow: auto;"><div style="width: 1px; height: 100px;"></div></div>';
+                        div = div.firstChild;
+                        body.appendChild(div);
+                        W = window.browserScrollbarWidth = div.offsetWidth - div.clientWidth;
+                        body.removeChild(div);
+                    }
+                    return W;
                 };
                 $scope.scrollBarWidth = getScrollbarWidth();
-                
-                $container.scroll(function () {
+
+                $container.scroll(function() {
                     if ($scope.firstColWidth == 0) {
                         $scope.recalcHeaderWidth();
                     }
-                    
+
                     var $thead = $el.find(".thead");
                     var elOffset = parseInt($el.css('padding-top'));
                     var headerOffset = elOffset + $header.height();
                     var fixedHeader = inViewport($el, headerOffset);
-                    
+
                     $scope.freezeControlBar();
-                    
+
                     if (fixedHeader) {
                         $thead.css({
                             top: $container.offset().top + 'px',
@@ -519,13 +548,14 @@ app.directive('gridView', function ($timeout, $http) {
                             overflow: 'hidden'
                         });
                         $thead.addClass("show");
-                    } else {
+                    }
+                    else {
                         $thead.removeClass("show");
                     }
                 }.bind($scope));
 
                 // merge same row value
-                $scope.mergeSameRowValue = function () {
+                $scope.mergeSameRowValue = function() {
                     $el.find('table tbody tr.r td.rowSpanned').removeClass('rowSpanned');
                     $el.find('table tbody tr.r td[rowspan]').removeAttr('rowspan');
                     var totalRow = $el.find('table tbody tr.r').length;
@@ -540,16 +570,17 @@ app.directive('gridView', function ($timeout, $http) {
                             if (text != c.$prevText) {
                                 if (c.$totalSpan > 1) {
                                     c.$newRow.attr('rowspan', c.$totalSpan);
-                                    c.$prevRow.forEach(function (r) {
+                                    c.$prevRow.forEach(function(r) {
                                         r.addClass('rowSpanned');
                                     });
                                 }
-                                
+
                                 // reset new Row
                                 c.$newRow = $(el);
                                 c.$totalSpan = 1;
                                 c.$prevRow.length = 0;
-                            } else if (!$(el).parent().prev().hasClass('group') && $(el).parent().hasClass('r')) {
+                            }
+                            else if (!$(el).parent().prev().hasClass('group') && $(el).parent().hasClass('r')) {
                                 c.$prevRow.push($(el));
                                 c.$totalSpan++;
                             }
@@ -558,46 +589,47 @@ app.directive('gridView', function ($timeout, $http) {
                         if (totalRow - 1 == row) {
                             if (c.$totalSpan > 1) {
                                 c.$newRow.attr('rowspan', c.$totalSpan);
-                                c.$prevRow.forEach(function (r) {
+                                c.$prevRow.forEach(function(r) {
                                     r.addClass('rowSpanned');
                                 });
                             }
                         }
-                        
-                        if(!!c.mergeSameRowMethod){
-                            if(c.$values.length==0){
+
+                        if (!!c.mergeSameRowMethod) {
+                            if (c.$values.length == 0) {
                                 c.$values.push(c.$prevText);
                             }
                             c.$values.push(text);
-                            
+
                         }
 
                         c.$prevText = text;
                         c.$prevRowIndex = c.$rowIndex;
                         c.$rowIndex = row;
                     }
-                    
+
                     $scope.mergeRowMethods = {
                         'Sum': function(values) {
                             var total = 0;
-                            values.forEach(function(v){
-                                total+=(v | 0)
+                            values.forEach(function(v) {
+                                total += (v | 0)
                             });
                             return total;
                         },
                         'Average': function(values) {
                             var total = 0;
-                            values.forEach(function(v){
-                                total+=(v | 0)
+                            values.forEach(function(v) {
+                                total += (v | 0)
                             });
-                            return Math.round((total/values.length)*100)/100;
+                            return Math.round((total / values.length) * 100) / 100;
                         },
                         'Max': function(values) {
                             var max;
-                            values.forEach(function(v,i){
-                                if(i==0){
+                            values.forEach(function(v, i) {
+                                if (i == 0) {
                                     max = (v | 0);
-                                }else{
+                                }
+                                else {
                                     max = Math.max(max, (v | 0));
                                 }
                             });
@@ -608,10 +640,11 @@ app.directive('gridView', function ($timeout, $http) {
                         },
                         'Min': function(values) {
                             var min;
-                            values.forEach(function(v,i){
-                                if(i==0){
+                            values.forEach(function(v, i) {
+                                if (i == 0) {
                                     min = (v | 0);
-                                }else{
+                                }
+                                else {
                                     min = Math.min(min, (v | 0));
                                 }
                             });
@@ -624,7 +657,7 @@ app.directive('gridView', function ($timeout, $http) {
                     }
 
                     // loop each row to merge
-                    $el.find('table tbody tr.r').each(function (rowIndex) {
+                    $el.find('table tbody tr.r').each(function(rowIndex) {
                         for (var i = 0; i < $scope.columns.length; i++) {
                             var c = $scope.columns[i];
                             if (!!c.mergeSameRow && c.mergeSameRow == 'Yes') {
@@ -639,31 +672,32 @@ app.directive('gridView', function ($timeout, $http) {
 
                                 if (!!c.mergeSameRowWith && c.mergeSameRowWith != c.name) {
                                     if (!c.$anchorCol) {
-                                        $scope.columns.forEach(function (e, ei) {
+                                        $scope.columns.forEach(function(e, ei) {
                                             if (e.name === c.mergeSameRowWith && !!e.$prevText) {
                                                 c.$anchorCol = e;
                                                 c.$anchorIdx = ei;
                                             }
                                         }.bind(c));
                                     }
-                                    
+
                                     if (!!c.$anchorCol && c.$anchorCol.mergeSameRow == 'Yes') {
                                         var el = $(this).find("td").eq(i);
-                                        
+
                                         if (c.$anchorCol.$rowIndex != rowIndex) {
                                             mergeRow(c.$anchorCol, $(this).find("td").eq(c.$anchorIdx), c.$anchorIdx);
                                         }
-                                        
+
                                         if (c.$anchorCol.$totalSpan > 1) {
                                             mergeRow(c, el, rowIndex);
-                                        } else {
-                                            if(c.$totalSpan > 1){
+                                        }
+                                        else {
+                                            if (c.$totalSpan > 1) {
                                                 c.$newRow.attr('rowspan', c.$totalSpan);
-                                                c.$prevRow.forEach(function (r) {
+                                                c.$prevRow.forEach(function(r) {
                                                     r.addClass('rowSpanned');
                                                 });
                                             }
-                                            
+
                                             c.$newRow = $(el);
                                             if (!!c.mergeSameRowMethod && c.mergeSameRowMethod != "default") {
                                                 if (!!c.$values && c.$values.length > 0) {
@@ -672,7 +706,8 @@ app.directive('gridView', function ($timeout, $http) {
                                                     c.$values.forEach(function(item, i) {
                                                         if (i < c.$values.length - 1) {
                                                             lastRow.addClass('rowSpanned');
-                                                        } else {
+                                                        }
+                                                        else {
                                                             lastRow.attr('rowspan', c.$values.length);
                                                             if (typeof $scope.mergeRowMethods[c.mergeSameRowMethod] == 'function') {
                                                                 lastRow.text($scope.mergeRowMethods[c.mergeSameRowMethod](c.$values));
@@ -683,17 +718,17 @@ app.directive('gridView', function ($timeout, $http) {
                                                     c.$values = [];
                                                 }
                                             }
-                                            
+
                                             //reset row
                                             var text = $(el).text();
                                             c.$prevText = text;
                                             c.$prevRowIndex = c.$rowIndex;
                                             c.$rowIndex = rowIndex;
                                             c.$totalSpan = 1;
-                                            
+
                                         }
                                     }
-                                    
+
                                 }
 
                                 // if mergeWith == none (AND it is not merged yet)
@@ -707,7 +742,7 @@ app.directive('gridView', function ($timeout, $http) {
                     $scope.cleanRow();
                 }
 
-                $scope.cleanRow = function () {
+                $scope.cleanRow = function() {
                     $el.find('table tbody tr.a .rowSpanned').removeClass('rowSpanned').removeAttr('rowspan');
                     $el.find('table tbody tr.r.hide').removeClass('hide');
                 }
@@ -715,7 +750,7 @@ app.directive('gridView', function ($timeout, $http) {
                 // checkbox handling
                 $scope.checkbox = {};
                 $scope.lastCheckbox = null;
-                $scope.getModifyDS = function (col) {
+                $scope.getModifyDS = function(col) {
                     if (!!col.options && !!col.options.modifyDataSource && col.options.modifyDataSource == 'false') {
                         return false;
                     }
@@ -724,9 +759,9 @@ app.directive('gridView', function ($timeout, $http) {
                 $scope.clearCheckbox = function(col) {
                     $timeout(function() {
                         $scope.checkbox = {};
-                        $scope.lastCheckbox = null; 
+                        $scope.lastCheckbox = null;
                         $timeout(function() {
-                            $el.find("input[class^='cb-'],input[class*=' cb-']").prop('checked',false);
+                            $el.find("input[class^='cb-'],input[class*=' cb-']").prop('checked', false);
                             $el.find(".row-checked").each(function() {
                                 $(this).removeClass("row-checked");
                                 $(this).find(".t-checkbox input").prop('checked', false);
@@ -734,7 +769,7 @@ app.directive('gridView', function ($timeout, $http) {
                         });
                     });
                 }
-                $scope.checkboxValues = function (colName, column) {
+                $scope.checkboxValues = function(colName, column) {
                     var ret = [];
                     for (i in $scope.checkbox[colName]) {
                         if (typeof $scope.checkbox[colName][i][column] != "undefined") {
@@ -743,7 +778,7 @@ app.directive('gridView', function ($timeout, $http) {
                     }
                     return ret.join(",");
                 }
-                $scope.checkboxRow = function (row, colName, colIdx, e) {
+                $scope.checkboxRow = function(row, colName, colIdx, e) {
                     var modify = $scope.getModifyDS($scope.columns[colIdx]);
                     if (typeof $scope.checkbox[colName] == "undefined") {
                         $scope.checkbox[colName] = [];
@@ -755,27 +790,28 @@ app.directive('gridView', function ($timeout, $http) {
                             rowFound = a;
                         }
                     }
-                    
+
                     if (typeof e !== "boolean") {
                         isChecked = $(e.target).is(":checked");
                         if ($scope.lastCheckbox !== null) {
                             if (e.shiftKey) {
                                 var from = Math.min($scope.lastCheckbox.idx, this.$index);
                                 var to = Math.max($scope.lastCheckbox.idx, this.$index);
-                                for (var i = from; i<to; i++) {
+                                for (var i = from; i < to; i++) {
                                     $scope.checkboxRow($scope.datasource.data[i], colName, colIdx, $scope.lastCheckbox.checked);
                                 }
                             }
-                        } 
+                        }
                         $scope.lastCheckbox = {
                             idx: this.$index,
                             data: row,
                             checked: isChecked
                         };
-                    } else {
+                    }
+                    else {
                         isChecked = e;
                     }
-                    
+
                     if (isChecked) {
                         if (rowFound < 0) {
                             $scope.checkbox[colName].push(row);
@@ -783,7 +819,8 @@ app.directive('gridView', function ($timeout, $http) {
                         if (modify) {
                             row[colName] = $scope.columns[colIdx].checkedValue;
                         }
-                    } else {
+                    }
+                    else {
                         if (rowFound >= 0) {
                             $scope.checkbox[colName].splice(rowFound, 1);
                         }
@@ -801,7 +838,7 @@ app.directive('gridView', function ($timeout, $http) {
                             availableHeader.push(i);
                         }
                     });
-                    
+
                     $el.find('table thead tr').each(function(i, e) {
                         var row = [];
                         $(e).find('th').each(function(j, f) {
@@ -811,7 +848,7 @@ app.directive('gridView', function ($timeout, $http) {
                                 }
                                 if ($(f).attr('colspan') > 0) {
                                     var cp = $(f).attr('colspan');
-                                    for (var x= 0;x < cp -1;x++) {
+                                    for (var x = 0; x < cp - 1; x++) {
                                         row.push('');
                                     }
                                 }
@@ -819,7 +856,7 @@ app.directive('gridView', function ($timeout, $http) {
                         });
                         rows.push(row);
                     });
-                    
+
                     $el.find('table tbody tr').each(function(i, e) {
                         var row = [];
                         $(e).find('td').each(function(j, f) {
@@ -829,12 +866,14 @@ app.directive('gridView', function ($timeout, $http) {
                         });
                         rows.push(row);
                     });
-                    
-                    $http.post(Yii.app.createUrl('/formfield/GridView.downloadExcel'), {rows:rows}).success(function(e) {
+
+                    $http.post(Yii.app.createUrl('/formfield/GridView.downloadExcel'), {
+                        rows: rows
+                    }).success(function(e) {
                         location.href = e;
                     });
                 }
-                $scope.checkboxGroup = function (rowIdx, colName, colIdx, e) {
+                $scope.checkboxGroup = function(rowIdx, colName, colIdx, e) {
                     var loop = true;
                     var modify = $scope.getModifyDS($scope.columns[colIdx]);
                     var cursor = $(e.target).parents("tr").next();
@@ -843,7 +882,7 @@ app.directive('gridView', function ($timeout, $http) {
                         cursor = $el.find("table tbody tr:eq(0)");
                     }
                     var isChecked = $(e.target).is(":checked");
-                    
+
                     //loop through all rows
                     while (loop) {
                         var row = $scope.datasource.data[++rowIdx];
@@ -851,15 +890,15 @@ app.directive('gridView', function ($timeout, $http) {
                             loop = false;
                             continue;
                         }
-                        
-                        if (row.$type =='a' && row.$aggr == false) {
+
+                        if (row.$type == 'a' && row.$aggr == false) {
                             continue;
                         }
-                        
+
                         if (typeof $scope.checkbox[colName] == "undefined") {
                             $scope.checkbox[colName] = [];
                         }
-                        
+
                         if (cursor.attr("lv") > level) {
                             if (cursor.hasClass("r")) {
                                 var rowFound = -1;
@@ -876,7 +915,8 @@ app.directive('gridView', function ($timeout, $http) {
                                         if (modify) {
                                             row[colName] = $scope.columns[colIdx].checkedValue;
                                         }
-                                    } else {
+                                    }
+                                    else {
                                         if (rowFound >= 0) {
                                             $scope.checkbox[colName].splice(rowFound, 1);
                                         }
@@ -885,10 +925,12 @@ app.directive('gridView', function ($timeout, $http) {
                                         }
                                     }
                                 }
-                            } else if (cursor.hasClass("g")) {
+                            }
+                            else if (cursor.hasClass("g")) {
                                 cursor.find(".cb-" + colName).prop('checked', isChecked);
                             }
-                        } else {
+                        }
+                        else {
                             loop = false;
                         }
                         cursor = cursor.next();
@@ -897,17 +939,19 @@ app.directive('gridView', function ($timeout, $http) {
                         }
                     }
                 }
-                $scope.checkboxAll = function (colName, colIdx, e) {
+                $scope.checkboxAll = function(colName, colIdx, e) {
                     $scope.checkboxGroup(-1, colName, colIdx, e);
                 }
-                $scope.checkboxRowChecked = function (row, colName, colIdx) {
+                $scope.checkboxRowChecked = function(row, colName, colIdx) {
                     if (!!$scope.getModifyDS($scope.columns[colIdx])) {
                         if (row[colName] == $scope.columns[colIdx].checkedValue) {
                             return true;
-                        } else {
+                        }
+                        else {
                             return false;
                         }
-                    } else {
+                    }
+                    else {
                         if (!$scope.checkbox[colName]) return false;
                         for (a in $scope.checkbox[colName]) {
                             if ($scope.checkbox[colName][a][$scope.datasource.primaryKey] == row[$scope.datasource.primaryKey]) {
@@ -932,7 +976,7 @@ app.directive('gridView', function ($timeout, $http) {
                 }
 
                 // initialize gridView
-                $scope.initGrid = function () {
+                $scope.initGrid = function() {
                     $scope.gridOptions.pageInfo = {
                         pageSizes: [10, 25, 50, 100, 250, 500, 1000],
                         pageSize: $scope.defaultPageSize,
@@ -941,14 +985,14 @@ app.directive('gridView', function ($timeout, $http) {
                         typingPage: 1
                     };
 
-                    $scope.$watch('gridOptions.pageInfo', function (paging, oldpaging) {
+                    $scope.$watch('gridOptions.pageInfo', function(paging, oldpaging) {
                         if (paging.typingPage != oldpaging.typingPage) return;
                         if (paging != oldpaging) {
                             var maxPage = Math.ceil($scope.datasource.totalItems / $scope.gridOptions.pageInfo.pageSize);
 
-                            if (isNaN($scope.gridOptions.pageInfo.currentPage) 
-                                || $scope.gridOptions.pageInfo.currentPage == '' 
-                                || $scope.gridOptions.pageInfo.currentPage <= 0) {
+                            if (isNaN($scope.gridOptions.pageInfo.currentPage) ||
+                                $scope.gridOptions.pageInfo.currentPage == '' ||
+                                $scope.gridOptions.pageInfo.currentPage <= 0) {
                                 $scope.gridOptions.pageInfo.currentPage = 1;
                             }
 
@@ -960,14 +1004,14 @@ app.directive('gridView', function ($timeout, $http) {
                                 if ($scope.pagingTimeout != null) {
                                     clearTimeout($scope.pagingTimeout);
                                 }
-                                
-                                $scope.pagingTimeout = setTimeout(function () {
+
+                                $scope.pagingTimeout = setTimeout(function() {
                                     $scope.updatePaging(paging, true, oldpaging);
                                 }, 100);
                             }
                         }
                     }, true);
-                    $timeout(function () {
+                    $timeout(function() {
                         if (!$scope.loaded && !$scope.loading) {
                             $scope.loaded = true;
                             $scope.onGridRender('timeout');
@@ -976,8 +1020,8 @@ app.directive('gridView', function ($timeout, $http) {
                             window.resize();
                         }
                     }, 500);
-                    $timeout(function () {
-                        $scope.datasource.beforeQueryInternal[$scope.renderID] = function () {
+                    $timeout(function() {
+                        $scope.datasource.beforeQueryInternal[$scope.renderID] = function() {
                             $scope.loading = true;
                             if ($scope.datasource.lastQueryFrom == "DataFilter" && !!$scope.gridOptions.pageInfo) {
                                 $scope.gridOptions.pageInfo.currentPage = 1;
@@ -985,7 +1029,7 @@ app.directive('gridView', function ($timeout, $http) {
                             $scope.datasource.disableTrackChanges("GridView:initBeforeQuery");
                             $scope.lastCheckbox = null;
                         }
-                        $scope.datasource.afterQueryInternal[$scope.renderID] = function () {
+                        $scope.datasource.afterQueryInternal[$scope.renderID] = function() {
                             $scope.loading = false;
                             if (!$scope.loaded) {
                                 $scope.loaded = true;
@@ -1003,22 +1047,23 @@ app.directive('gridView', function ($timeout, $http) {
                         $scope.loadPageSetting();
                     });
                 };
-                
+
                 if (!$scope.datasource) {
                     alert("Error: " + $scope.name + " Please choose datasource!!")
-                } else {
+                }
+                else {
                     $scope.datasource.disableTrackChanges("Gridview:beforeInit");
                 }
-                
+
                 $scope.gridRenderTimeout = null;
-                $scope.onGridRender = function (flag) {
+                $scope.onGridRender = function(flag) {
                     if ($scope.gridRenderTimeout !== null) {
                         return;
                     }
 
-                    $scope.gridRenderTimeout = $timeout(function () {
+                    $scope.gridRenderTimeout = $timeout(function() {
                         $scope.mergeSameRowValue();
-                        $timeout(function () {
+                        $timeout(function() {
                             $scope.recalcHeaderWidth();
                             $scope.gridRenderTimeout = null;
                         });
@@ -1030,5 +1075,4 @@ app.directive('gridView', function ($timeout, $http) {
             };
         }
     }
-})
-;
+});
