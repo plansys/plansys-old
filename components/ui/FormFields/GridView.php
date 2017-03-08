@@ -193,7 +193,7 @@ type="checkbox" /></label>';
                     break;
                 case "editable":
                     $template = '
-    <div ceditable="true" ' . $editableCss . ' ng-model="row[\'' . $fieldName . '\']"
+    <div ceditable="true" ' . $editableCss . ' ng-paste="paste($event, row, $index, \''.$fieldName.'\', '.$idx.')" ng-model="row[\'' . $fieldName . '\']"
          ng-keydown="editKey($event)"></div>';
                     break;
                 case "editable-insert":

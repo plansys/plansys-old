@@ -12,13 +12,15 @@
     opacity: 1;
 }
 
-[grid-view] td, [grid-view] th {
+[grid-view] td,
+[grid-view] th {
     font-size: 13px;
     border: 1px solid #ddd;
     height: 20px;
 }
 
-[grid-view] th, [grid-view] .tr .th {
+[grid-view] th,
+[grid-view] .tr .th {
     background-color: #f2f2f2;
     vertical-align: middle;
     background-image: -moz-linear-gradient(top, #f5f5f5, #eeeeee);
@@ -27,7 +29,7 @@
     background-image: -o-linear-gradient(top, #f5f5f5, #eeeeee);
     background-image: linear-gradient(to bottom, #f5f5f5, #eeeeee);
     background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ddd5f5f5', endColorstr='#ffeeeeee', GradientType=0);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#ddd5f5f5', endColorstr='#ffeeeeee', GradientType=0);
     white-space: nowrap;
     text-transform: uppercase;
     color: #5E5E5E;
@@ -51,7 +53,7 @@
 [grid-view] .thead .tr .th {
     box-sizing: border-box;
     display: inline-block;
-    border: 0px ;
+    border: 0px;
     box-shadow: 0px 0px 0px 1px #ddd;
 }
 
@@ -83,8 +85,8 @@
 }
 
 [grid-view] .data-grid-paging.freeze {
-    position:absolute;
-    margin-top:-38px;
+    position: absolute;
+    margin-top: -38px;
 }
 
 [grid-view] .data-grid-paging .paging-input {
@@ -109,7 +111,6 @@
     font-weight: bold !important;
 }
 
-
 [grid-view] tr.g td {
     cursor: default;
     background: #ffc;
@@ -118,30 +119,29 @@
     color: #6F6F6F;
     font-size: 11px;
     font-weight: bold;
-    border-left: 0px ;
-    border-right: 0px ;
+    border-left: 0px;
+    border-right: 0px;
     user-select: none;
     -moz-user-select: none;
     -webkit-user-select: none;
 }
 
 [grid-view] tr.g td:first-child {
-    border-left: 1px solid #ddd ;
+    border-left: 1px solid #ddd;
 }
 
 [grid-view] tr.g td:last-child {
-    border-right: 1px solid #ddd ;
+    border-right: 1px solid #ddd;
 }
 
 [grid-view] tr.a td {
     background: #fff;
-    border:0px;
+    border: 0px;
 }
 
-
 [grid-view] td.aggregate {
-    border:1px solid #ddd ;
-    font-weight:bold;
+    border: 1px solid #ddd;
+    font-weight: bold;
 }
 
 [grid-view] td.aggregate.lv-0 {
@@ -157,9 +157,9 @@
 }
 
 [grid-view] tr.r:hover td {
-    background-color: #FFFFAA ;
+    background-color: #FFFFAA;
 }
-  
+
 [grid-view] .row-group-padding {
     display: inline-block;
 }
@@ -207,7 +207,8 @@
     background-color: #e6ffc9;
 }
 
-[grid-view] .row-state-edit,[grid-view] .row-checked {
+[grid-view] .row-state-edit,
+[grid-view] .row-checked {
     background-color: #ddf2ff;
 }
 
@@ -278,7 +279,10 @@
 
 [grid-view] td [contenteditable] {
     border: 0px;
+    height: 100%;
     width: 100%;
+    background-color: #abc;
+    position: relative;
     padding: 5px 4px 4px 4px;
     min-height: 16px;
     display: inline-block;

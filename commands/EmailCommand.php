@@ -2,7 +2,7 @@
 
 class EmailCommand extends Service {
     public function actionSend() {
-        $config = Setting::get('email');
+     	$config = Setting::get('email');
 		$mail  = new PHPMailer();
 		
 		if ($config['transport'] == "smtp") {

@@ -15,10 +15,20 @@ class ServiceController extends Controller {
         
         ## check if php version is the same
         $out = '';
-        exec($php . ' -v', $a);
-        if (!empty($a)) {
-            if (strpos($a[0], phpversion()) === false) {
-                echo "DIFFERENT PHP VERSION BETWEEN WEB SERVER (" . phpversion() . ") AND CLI (" . $a[0] . ")";
+        exec($php . ' -v', $output);
+        if (!empty($output)) {
+            $match = false;
+            $version = "INVALID OUTPUT";
+            foreach ($output as $o) {
+                if (strpos($o, phpversion()) !== false) {
+                    $match = true;
+                    $version = $o;
+                    break;
+                }
+            }
+            
+            if (!$match) {
+                echo "DIFFERENT PHP VERSION BETWEEN WEB SERVER (" . phpversion() . ") AND CLI (" . $version . ")";
                 die();
             } 
         } else {
