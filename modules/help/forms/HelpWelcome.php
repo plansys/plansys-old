@@ -36,20 +36,20 @@ class HelpWelcome extends Form {
 					font-size:12px;		
 				}
 				</style>
-				<div class="home_screen">
+				<div class=\"home_screen\">
 				<center>							
 				<hr>
 				<br><br><br>
-				<p><img src="plansys/static/img/logo.png" style="width:250px">
+				<p><img src=\"plansys/static/img/logo.png\" style=\"width:250px\">
 				<p><strong>Fastest PHP Web App Builder</strong>
 				<hr>
 				<br>
 				<h4>Selamat Datang di Plansys</h4>			
-				<p><a ng-url="/help/tutorial/bab1">Saya baru menggunakan Plansys, Pelajari Tutorial Plansys</a>.				
+				<p><a ng-url=\"/help/tutorial/bab1\">Saya baru menggunakan Plansys, Pelajari Tutorial Plansys</a>.				
 				<br><br><br>				
 				<hr>
 				Plansys Beta - Under Licensed GPL v.3.
-				<p><a href="http://www.plansys.co" target="_blank">plansys.co</a>
+				<p><a href=\"http://www.plansys.co\" target=\"_blank\">plansys.co</a>
 				<hr>
 				</center>
 				</div>

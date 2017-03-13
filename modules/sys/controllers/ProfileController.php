@@ -30,6 +30,9 @@ class ProfileController extends Controller {
                 Yii::app()->user->setState('roleId', $id);
             }
         }
+        if (Yii::app()->user->model->role['home_url'] == '') {
+            $this->redirect(['/help/welcome']);    
+        }
         $this->redirect([Yii::app()->user->model->role['home_url']]);
     }
 
