@@ -881,7 +881,7 @@ class RelationField extends FormField {
 
 
         $this->relationCriteria['condition'] = $this->relationCriteria['alias'] . "." . $this->idField . " = :find_id_param_relation_field";
-        $p[':find_id_param_relation_field']  = $v;
+        $p[':find_id_param_relation_field']  = "php:'" . $v . "'";
 
         $result = $this->query($s, $p);
         echo json_encode(@$result[count($result) - 1]);
