@@ -47,13 +47,14 @@
                     ng-blur="doneEditing(i,t,$event)" 
                     ng-focus="enableEdit(t, $event)" 
                     ng-click="$event.stopPropagation()"
+                     autocomplete="off"
                     style="display:none;" ng-model="t.label"
                     ng-keyup="inputKeyup($event, i)"
                     ng-keydown="inputKeydown($event, i)"
                     class="tf-input-edit {{ t.editing ? 'editing' : '' }}" />
             </div>
             <span class="tf-tag-last">
-                <input type="text" ng-if="!disabled" ng-blur="doneEditing(null,null, $event)"
+                <input type="text" ng-if="!disabled" ng-blur="doneEditing(null,null, $event)"  autocomplete="off"
                        ng-keyup="inputKeyup($event)" placeholder="{{tags.length > 0 ? '' : fieldOptions.placeholder}}"
                        ng-keydown="inputKeydown($event)" class="tf-input">
                 <ul class="dropdown-menu" style="display:block;" ng-show="showSuggestion === 'new'">

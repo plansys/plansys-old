@@ -13,7 +13,6 @@
         <data name="class_alias" class="hide"><?= Helper::classAlias($model) ?></data>
         <data name="allow_delete" class="hide"><?= $this->allowDelete; ?></data>
         <data name="allow_overwrite" class="hide"><?= $this->allowOverwrite; ?></data>
-
         <!-- /data -->
 
         <!-- label -->

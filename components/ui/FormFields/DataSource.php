@@ -106,8 +106,6 @@ class DataSource extends FormField {
         $template['count']     = $count;
         $template['timestamp'] = date('Y-m-d H:i:s');
 
-        $template['sql'] = SqlFormatter::format($template['sql']);
-        
         ## return data
         return [
             'data'  => $data,
@@ -196,12 +194,15 @@ class DataSource extends FormField {
                             $postParam = $postedParams[$p];
                             if (stripos($postParam, 'php:') === 0) {
                                 $postParam = substr($postParam, 4);
-                            }
-                            if (is_string($postParam) && $postParam != "") {
-                                $returnParams[$p] = $field->evaluate($postParam, true, [
-                                    'model' => $model,
-                                    'params' => @$field->builder->renderOptions['params']
-                                ]);
+                                
+                                if (is_string($postParam) && $postParam != "") {
+                                    $returnParams[$p] = $field->evaluate($postParam, true, [
+                                        'model' => $model,
+                                        'params' => @$field->builder->renderOptions['params']
+                                    ]);
+                                }
+                            } else {
+                                $returnParams[$p] = $postParam;
                             }
                         }
                     } else if (is_array($postedParams[$p]) && !empty($postedParams[$p])) {
@@ -1292,7 +1293,7 @@ class DataSource extends FormField {
             ## with relatedTo
             $data = $this->getRelated($this->params);
         }
-
+        
         $this->data = [
             'data'   => @$data['data'],
             'count'  => @$data['debug']['count'],

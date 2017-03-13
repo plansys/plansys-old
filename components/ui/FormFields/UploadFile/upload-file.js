@@ -75,7 +75,6 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                     ctrl.$render = function () {
                         if (typeof ctrl.$viewValue != "undefined") {
                             if (ctrl.$viewValue != null && ctrl.$viewValue != '') {
-                               
                                 $scope.value = ctrl.$viewValue;
                                 $scope.file = {
                                     name: $scope.formatName($scope.value),
@@ -314,7 +313,6 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                         $scope.loading = false;
                     }
                 };
-
                 $scope.checkFile();
 
                 if ($scope.options['ps-mode']) {

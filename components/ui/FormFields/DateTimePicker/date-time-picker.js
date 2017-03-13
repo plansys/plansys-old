@@ -81,7 +81,7 @@ app.directive('dateTimePicker', function ($timeout, dateFilter) {
                     if ($scope.dd.day === '' || $scope.dd.day == '00' || $scope.dd.month === '' || $scope.dd.year === '') {
                         $scope.value = null;
                     }
-                    $scope.update();
+                    $scope.update(true);
                 }
 
                 $scope.openDatePicker = function ($event) {

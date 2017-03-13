@@ -301,6 +301,7 @@ class CDbCommand extends CComponent {
         } else
             $par = '';
         Yii::trace('Executing SQL: ' . $this->getText() . $par, 'system.db.CDbCommand');
+        
         try {
             if ($this->_connection->enableProfiling)
                 Yii::beginProfile('system.db.CDbCommand.execute(' . $this->getText() . $par . ')', 'system.db.CDbCommand.execute');

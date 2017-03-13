@@ -314,7 +314,7 @@ app.filter("timeago", function () {
         if (angular.isDate(time)) {
             time = time.getTime();
         } else if (typeof time === "string") {
-            time = new Date(time).getTime();
+            time = strtotime(time) * 1000;
         }
 
         if (angular.isDate(local)) {

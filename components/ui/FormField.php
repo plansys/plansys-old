@@ -246,6 +246,7 @@ class FormField extends CComponent {
             $return = '';
             $_expression_ = str_replace('\"', '"', $_expression_);
             $_expression_ = str_replace("\\", "~", $_expression_);
+            
             try {
                 @eval('$return =  ' . $_expression_ . ';');
             } catch (Exception $e) {
