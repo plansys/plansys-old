@@ -194,15 +194,12 @@ class DataSource extends FormField {
                             $postParam = $postedParams[$p];
                             if (stripos($postParam, 'php:') === 0) {
                                 $postParam = substr($postParam, 4);
-                                
-                                if (is_string($postParam) && $postParam != "") {
-                                    $returnParams[$p] = $field->evaluate($postParam, true, [
-                                        'model' => $model,
-                                        'params' => @$field->builder->renderOptions['params']
-                                    ]);
-                                }
-                            } else {
-                                $returnParams[$p] = $postParam;
+                            }
+                            if (is_string($postParam) && $postParam != "") {
+                                $returnParams[$p] = $field->evaluate($postParam, true, [
+                                    'model' => $model,
+                                    'params' => @$field->builder->renderOptions['params']
+                                ]);
                             }
                         }
                     } else if (is_array($postedParams[$p]) && !empty($postedParams[$p])) {
