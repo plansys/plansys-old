@@ -13,6 +13,8 @@
  */
 class FormfieldController extends Controller {
 
+    public $enableCsrf = false;
+
     public function createAction($actionID) {
         
         $controller = explode(".", $actionID);
