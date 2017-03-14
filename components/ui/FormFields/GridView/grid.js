@@ -197,7 +197,9 @@ app.directive('gridView', function($timeout, $http) {
                 }
                 $scope.focusAddRow = function() {
                     $timeout(function() {
-                        $el.find("table tr.row-state-insert:eq(0) div[contenteditable]")[0].focus();
+                        if ($el.find("table tr.row-state-insert:eq(0) div[contenteditable]").length > 0) {
+                            $el.find("table tr.row-state-insert:eq(0) div[contenteditable]")[0].focus();
+                        }
                     }, 100);
                 }
 

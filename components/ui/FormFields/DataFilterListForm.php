@@ -252,6 +252,7 @@ style=\"margin:4px -12px 6px -4px;float:left;width:100%;padding:0px 4px;\" />',
                 'type' => 'SubForm',
             ),
             array (
+                'display' => 'all-line',
                 'type' => 'Text',
                 'value' => '<div style=\"margin-top:15px;\">
     <hr/>

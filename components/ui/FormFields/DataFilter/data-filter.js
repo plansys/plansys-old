@@ -1133,28 +1133,34 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                                     $scope.updateFilter(f, null, false);
                                 }
                                 else {
-                                    f.value = $scope.evalValue(f.defaultValue);
-                                    
+                                    var defaultval = $scope.evalValue(f.defaultValue);
                                     if (f.filterType === 'check') {
-                                        if (typeof f.value === 'string') {
+                                        if (typeof defaultval === 'string') {
+                                            f.value = defaultval
                                             f.valueText = f.value;
                                             f.value = f.value.trim().split(",");
                                             for (var fv in f.value) {
                                                 f.value[fv] = f.value[fv].trim();
                                             }
                                             f.checked = f.value;
+                                            $scope.updateFilter(f, null, false);
                                         }
-                                        $scope.updateFilter(f, null, false);
                                     } else {
-                                        if (!f.value) {
+                                        if (f.filterType == 'relation') {
+                                            $scope.relationNext(false, f);
+                                        }
+                                        
+                                        if (!defaultval && f.defaultValue.substr(0,3) == 'js:') {
                                             var fclone = $.extend({}, f, true);
                                             watchDefaultValue.push({
                                                 name: f.name,
                                                 watch: fclone.defaultValue.substr(3)
                                             });
-    
                                         } else {
-                                            $scope.updateFilter(f, null, false);
+                                            if (!!defaultval) {
+                                                f.value = defaultval;
+                                                $scope.updateFilter(f, null, false);
+                                            }
                                         }
                                     }
                                 }
