@@ -355,7 +355,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     if (relationAvailable) {
                         $scope.data = $scope.model[$scope.relationTo];
                     } else {
-                        $scope.data = JSON.parse($el.find("data[name=data]:eq(0)").text());
+                        $scope.data = JSON.parse($el.find("script[name=data]:eq(0)").text());
                     }
                     
                     if (!$scope.data || $scope.data === null) {

@@ -60,6 +60,8 @@ class DevUserIndex extends User {
                         'relIdField' => 'role_description',
                         'relLabelField' => 'role_description',
                         '$showDF' => false,
+                        'list' => 0,
+                        'count' => 0,
                     ),
                     array (
                         'name' => 'username',
