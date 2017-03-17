@@ -305,11 +305,7 @@ class ModelCode extends CCodeModel
 		$prevTablePrefix = $this->tablePrefix;
 		foreach(Yii::app()->{$this->connectionId}->schema->getTables($schemaName) as $table)
 		{
-			if (strpos($table->name, 'p_') === 0) {
-				$this->tablePrefix = "p_";
-			} else {
-				$this->tablePrefix = $prevTablePrefix;
-			}
+			$this->tablePrefix = $prevTablePrefix;
 			
 			if($this->tablePrefix!='' && strpos($table->name,$this->tablePrefix)!==0)
 				continue;
@@ -342,6 +338,7 @@ class ModelCode extends CCodeModel
 			else
 			{
 				$className=$this->generateClassName($tableName);
+				
 				foreach ($table->foreignKeys as $fkName => $fkEntry)
 				{
 					// Put table and key name in variables for easier reading
@@ -364,6 +361,7 @@ class ModelCode extends CCodeModel
 				}
 			}
 		}
+		
 		return $relations;
 	}
 
@@ -387,6 +385,10 @@ class ModelCode extends CCodeModel
 		if($this->tableName===$tableName || ($pos=strrpos($this->tableName,'.'))!==false && substr($this->tableName,$pos+1)===$tableName)
 			return $this->modelClass;
 
+		if (strpos($tableName, 'p_') === 0) {
+			$this->tablePrefix = "p_";
+		} 
+		
 		$tableName=$this->removePrefix($tableName,false);
 		if(($pos=strpos($tableName,'.'))!==false) // remove schema part (e.g. remove 'public2.' from 'public2.post')
 			$tableName=substr($tableName,$pos+1);
@@ -418,6 +420,8 @@ class ModelCode extends CCodeModel
 			$relationName=$this->pluralize($relationName);
 
 		$names=preg_split('/_+/',$relationName,-1,PREG_SPLIT_NO_EMPTY);
+		
+		
 		if(empty($names)) return $relationName;  // unlikely
 		for($name=$names[0], $i=1;$i<count($names);++$i)
 			$name.=ucfirst($names[$i]);

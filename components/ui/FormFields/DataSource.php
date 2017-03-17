@@ -971,8 +971,12 @@ class DataSource extends FormField {
 
 
             if ($useStat) {
-                $this->model->metaData->relations[$rel->name . "__psCount"] = new CStatRelation($rel->name . "__psCount", $rel->className, $fkey);
-                $count                                                      = $this->model->getRelated($rel->name . "__psCount");
+                if (get_class($this->model->metaData->relations[$rel->name]) != 'CBelongsToRelation') {
+                    $this->model->metaData->relations[$rel->name . "__psCount"] = new CStatRelation($rel->name . "__psCount", $rel->className, $fkey);
+                    $count                                                      = $this->model->getRelated($rel->name . "__psCount");
+                } else {
+                    $count = count($this->model->getRelated($rel->name));
+                }
             } else {
                 unset($criteriaCount['pageSize']);
                 unset($criteriaCount['page']);

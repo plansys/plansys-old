@@ -122,11 +122,12 @@ class GenModelController extends Controller {
                 'active' => $s['module'] . "." . $modelName
             ]);
         }
+        
+        $tables = ModelGenerator::listTables();
 
         $this->renderForm("DevGenNewModel", $model, [
             'href' => $href,
-            'tableList' => ModelGenerator::listTables()
-                ], [
+            'tableList' => $tables], [
             'layout' => '//layouts/blank'
         ]);
     }
