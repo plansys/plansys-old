@@ -7,6 +7,7 @@ class DevSettingEmail extends Form {
     public $port = '25';
     public $username = '';
     public $password = '';
+    public $enabled = 'NO';
     
     public function __construct() {
         parent::__construct();
@@ -40,6 +41,13 @@ class DevSettingEmail extends Form {
             array (
                 'showBorder' => 'Yes',
                 'column1' => array (
+                    array (
+                        'label' => 'Enable',
+                        'name' => 'enabled',
+                        'onLabel' => 'YES',
+                        'offLabel' => 'NO',
+                        'type' => 'ToggleSwitch',
+                    ),
                     array (
                         'label' => 'Transport',
                         'name' => 'transport',
