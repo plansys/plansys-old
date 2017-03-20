@@ -52,7 +52,7 @@ foreach ($relations as $n => $r) {
 
 foreach($relations as $name=>$relation): ?>
 			<?php
-                        $name = strtolower($name);
+                        // $name = strtolower($name);
                         echo "'$name' => $relation,\n"; ?>
 <?php endforeach; ?>
 		);

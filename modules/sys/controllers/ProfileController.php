@@ -31,7 +31,7 @@ class ProfileController extends Controller {
             }
         }
         if (Yii::app()->user->model->role['home_url'] == '') {
-            $this->redirect(['/help/welcome']);    
+            $this->redirect(['/global/dashboard']);    
         }
         $this->redirect([Yii::app()->user->model->role['home_url']]);
     }
