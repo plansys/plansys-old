@@ -262,7 +262,10 @@ class UploadFile extends FormField {
         }
         $file = $_FILES["file"];
         $name = $file['name'];
-
+        
+        $fb = FormBuilder::load($_GET['class']);
+        $ff = $fb->findField(['name' => $_GET['name']]);
+        
         ## create temporary directory
         $tmpdir = Yii::getPathOfAlias('webroot.assets.tmp');
         if (!is_dir($tmpdir)) {
@@ -283,7 +286,6 @@ class UploadFile extends FormField {
 
         $tmppath = $tmpdir . DIRECTORY_SEPARATOR . $name;
         $tmppath = str_replace(['/',''],'/',$tmppath);
-        
         
         move_uploaded_file($file["tmp_name"], $tmppath);
         

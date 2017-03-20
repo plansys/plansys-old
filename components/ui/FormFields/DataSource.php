@@ -969,7 +969,6 @@ class DataSource extends FormField {
                 }
             }
 
-
             if ($useStat) {
                 if (get_class($this->model->metaData->relations[$rel->name]) != 'CBelongsToRelation') {
                     $this->model->metaData->relations[$rel->name . "__psCount"] = new CStatRelation($rel->name . "__psCount", $rel->className, $fkey);

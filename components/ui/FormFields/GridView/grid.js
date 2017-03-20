@@ -18,11 +18,13 @@ app.directive('gridView', function($timeout, $http) {
                 $scope.loaded = false;
                 $scope.Math = window.Math;
                 $scope.mode = 'full';
+                $scope.classAlias = $el.find("data[name=class_alias]").html().trim();
                 $scope.name = $el.find("data[name=name]:eq(0)").html().trim();
                 $scope.modelClass = $el.find("data[name=model_class]").text();
                 $scope.renderID = $el.find("data[name=render_id]").text();
                 $scope.gridOptions = JSON.parse($el.find("data[name=grid_options]:eq(0)").text());
                 $scope.columns = JSON.parse(columnRaw);
+                $scope.columnsParams = JSON.parse($el.find("data[name=columnsfp]:eq(0)").text());
                 $scope.defaultPageSize = $el.find("data[name=dpz]:eq(0)").text();
                 $scope.datasource = $scope.parent[$el.find("data[name=datasource]:eq(0)").text()];
                 $scope.checkboxCol = false;
@@ -75,6 +77,7 @@ app.directive('gridView', function($timeout, $http) {
                             for (var r in pasted) {
                                 var items = pasted[r].split("\t");
                                 for (var c in items) {
+                                    console.log($scope.columns);
                                     var cname = $scope.columns[parseInt(cidx) + parseInt(c)].name;
                                     $scope.datasource.data[parseInt(ridx) + parseInt(r)][cname] = items[c] + ''
                                 }
@@ -1041,11 +1044,12 @@ app.directive('gridView', function($timeout, $http) {
                                 $scope.datasource.enableTrackChanges('GridView:initAfterQuery');
                             }
                             $scope.lastCheckbox = null;
-                            $scope.onGridRender('query');
+                            $scope.reloadTemplate();
                             if (typeof window.resize == "function") {
                                 window.resize();
                             }
                         };
+                        
                         $scope.loadPageSetting();
                     });
                 };
@@ -1059,10 +1063,14 @@ app.directive('gridView', function($timeout, $http) {
 
                 $scope.gridRenderTimeout = null;
                 $scope.onGridRender = function(flag) {
+                    if (flag == 'templateload') {
+                        $scope.columns = JSON.parse($el.find('script[name=columnsnew]').text());
+                    }
+
                     if ($scope.gridRenderTimeout !== null) {
                         return;
                     }
-
+                    
                     $scope.gridRenderTimeout = $timeout(function() {
                         $scope.mergeSameRowValue();
                         $timeout(function() {
@@ -1071,7 +1079,30 @@ app.directive('gridView', function($timeout, $http) {
                         });
                     }, 100);
                 };
-
+                
+                $scope.templateCacheKey = Date.now();
+                $scope.templateUrl = "";
+                $scope.reloadTemplate = function(columns) {
+                    var params = {};
+                    for (var i in $scope.columnsParams) {
+                        if ($scope.columnsParams[i].indexOf('js:') == 0) {
+                            params[i] = $scope.$eval($scope.columnsParams[i].substr(3));
+                        }
+                    }
+                    
+                    $scope.templateCacheKey = Date.now();
+                    $scope.templateUrl = Yii.app.createUrl('formfield/GridView.template', {
+                        n: $scope.name,
+                        c: $scope.classAlias,
+                        k: $scope.templateCacheKey,
+                        p: JSON.stringify(params)
+                    })
+                }
+                
+                if ($scope.columns.length > 0) {
+                    $scope.reloadTemplate();
+                }
+                
                 $scope.initGrid();
                 $scope.parent[$scope.name] = $scope;
             };

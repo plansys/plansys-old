@@ -199,24 +199,26 @@ ob_start();
 
         $scope.form.submit = function (button) {
             function submit() {
-                if (typeof button == "object") {
-                    $scope.formSubmitting = true;
-                    $scope.submitted = true;
-                    if (!!button) {
-                        var baseurl = button.url;
-                        if (typeof button.url != 'string' || button.url.trim() == '' || button.url.trim() == '#') {
-                            baseurl = '<?= Yii::app()->urlManager->parseUrl(Yii::app()->request) ?>';
+                $timeout(function() {
+                    if (typeof button == "object") {
+                        $scope.formSubmitting = true;
+                        $scope.submitted = true;
+                        if (!!button) {
+                            var baseurl = button.url;
+                            if (typeof button.url != 'string' || button.url.trim() == '' || button.url.trim() == '#') {
+                                baseurl = '<?= Yii::app()->urlManager->parseUrl(Yii::app()->request) ?>';
+                            }
+    
+                            var parseParams = $parse(button.urlparams);
+                            var urlParams = angular.extend($scope.getParams, parseParams($scope));
+                        } else {
+                            var baseurl = '<?= Yii::app()->urlManager->parseUrl(Yii::app()->request) ?>';
+                            var urlparams = {};
                         }
-
-                        var parseParams = $parse(button.urlparams);
-                        var urlParams = angular.extend($scope.getParams, parseParams($scope));
-                    } else {
-                        var baseurl = '<?= Yii::app()->urlManager->parseUrl(Yii::app()->request) ?>';
-                        var urlparams = {};
+                        var url = Yii.app.createUrl(baseurl, urlParams);
+                        $("div[ng-controller=<?= $modelClass ?>Controller] form").attr('action', url).submit();
                     }
-                    var url = Yii.app.createUrl(baseurl, urlParams);
-                    $("div[ng-controller=<?= $modelClass ?>Controller] form").attr('action', url).submit();
-                }
+                });
             }
 
             if (!$scope.submitted) {

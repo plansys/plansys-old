@@ -31,6 +31,8 @@
     <data name="columns" class="hide"><?= json_encode($columnsWithoutHTML); ?></data>
     <data name="dpz" class="hide"><?= ActiveRecord::DEFAULT_PAGE_SIZE; ?></data>
     <data name="grid_options" class="hide"><?= json_encode($this->gridOptions); ?></data>
+    <data name="class_alias" class="hide"><?= Helper::classAlias($model) ?></data>
+    <data name="columnsfp" class="hide"><?= json_encode($this->columnsFuncParams) ?></data>
     <!-- /info -->
 
     <div ng-if="!loaded" class="list-view-loading">
@@ -44,8 +46,8 @@
          ng-class="{freeze:isCbFreezed}" 
          ng-if="loaded && gridOptions.controlBar">
         <div class="data-grid-pagination" ng-init="checkMode()">
-            <div class="pull-left" style="margin:5px;" ng-if="mode == 'full'">Page:</div>
-            <div class="pull-left data-grid-page-selector">
+            <div class="pull-left" style="margin:5px;" ng-if="mode == 'full' && gridOptions.enablePaging != 'false'">Page:</div>
+            <div ng-if="gridOptions.enablePaging != 'false'" class="pull-left data-grid-page-selector">
                 <div class="input-group input-group-sm pull-left" style="display:block;">
                     <div class="input-group-btn pull-left" style="width:24px;">
                         <button class="btn btn-default" ng-click="firstPage();" type="button">
@@ -86,12 +88,22 @@
                     </div>
                 </div>
             </div>
-            <div ng-if="mode=='full'" class="pull-left" style="margin:5px">
+            <div ng-if="mode=='full' && gridOptions.enablePaging != 'false'" class="pull-left" style="margin:5px">
                 of {{ totalPage() | number }}
             </div>
-            <div class="pull-left"
+            <div class="pull-left" ng-if="gridOptions.enablePaging != 'false'"
                  style="border-left:1px solid #ccc;margin:2px 5px;padding:3px 8px;">
                 <div ng-if="datasource.loading">
+                    <i class="fa fa-refresh fa-spin"></i> Loading Data...
+                </div>
+                <div ng-if="!datasource.loading">
+                    {{ datasource.totalItems | number }} Record{{ datasource.totalItems >1 ? 's' :'' }}
+                </div>
+            </div>
+            <div ng-if="gridOptions.enablePaging == 'false'" 
+                 style="margin:4px 0px;"
+                 class="label label-default pull-left">
+                 <div ng-if="datasource.loading">
                     <i class="fa fa-refresh fa-spin"></i> Loading Data...
                 </div>
                 <div ng-if="!datasource.loading">
@@ -112,7 +124,7 @@
                 </button>
             </div>
 
-            <div class="btn-group pull-right" style="padding-top:2px;margin-left:5px;" dropdown>
+            <div ng-if="gridOptions.enablePaging != 'false'" class="btn-group pull-right" style="padding-top:2px;margin-left:5px;" dropdown>
                 <button type="button" class="btn btn-default dropdown-toggle">
                     <span class="caret pull-right" style="margin:7px 0px 0px 5px;"></span>
                     {{gridOptions.pageInfo.pageSize}} rows / page
@@ -136,26 +148,5 @@
         </div>
         <div class="clearfix"></div>
     </div>
-    <div class="thead">
-        <?php echo $this->generateHeaders('class'); ?>
-    </div>
-    <table ng-class="{loaded:loaded}" <?= $this->expandAttributes($this->tableOptions); ?>>
-        <thead>
-            <?php echo $this->generateHeaders('tag'); ?>
-        </thead>
-        <tbody>
-        <tr ng-repeat-start="row in datasource.data track by $index" ng-if="row.$type=='g'" lv="{{row.$level}}"
-            class="g">
-            <?php foreach ($this->columns as $idx => $col): ?>
-                <?= $this->getGroupTemplate($col, $idx); ?>
-            <?php endforeach; ?>
-        </tr>
-        <tr ng-repeat-end ng-if="!row.$type || row.$type == 'r' || (row.$type == 'a' && row.$aggr)"
-            lv="{{row.$level}}" class="{{!!row.$type ? row.$type : 'r'}} {{rowStateClass(row)}}">
-            <?php foreach ($this->columns as $idx => $col): ?>
-                <?= $this->getRowTemplate($col, $idx); ?>
-            <?php endforeach; ?>
-        </tr>
-        </tbody>
-    </table>
+    <div ng-include="templateUrl" onload="onGridRender('templateload')"></div>
 </div>

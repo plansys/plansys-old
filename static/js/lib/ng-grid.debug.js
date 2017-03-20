@@ -312,10 +312,12 @@
             domUtilityService.getRealWidth = function (obj) {
                 var width = 0;
                 var props = {visibility: "hidden", display: "block"};
-                var hiddenParents = obj.parents().andSelf().not(':visible');
-                $.swap(hiddenParents[0], props, function () {
-                    width = obj.outerWidth();
-                });
+                if (obj.parents().andSelf) {
+                    var hiddenParents = obj.parents().andSelf().not(':visible');
+                    $.swap(hiddenParents[0], props, function () {
+                        width = obj.outerWidth();
+                    });
+                }
                 return width;
             };
             domUtilityService.UpdateGridLayout = function ($scope, grid) {

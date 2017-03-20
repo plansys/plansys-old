@@ -173,7 +173,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     
                     var model = $scope.model || {};
                     var model_id = model[$scope.primaryKey] || null;
-
+                    
                     for (i in $scope.beforeQueryInternal) {
                         $scope.beforeQueryInternal[i]($scope);
                     }

@@ -21,6 +21,7 @@ class GridView extends FormField {
     public        $genOptions   = [];
     public        $columns      = [];
     public        $columnsFunc  = "";
+    public        $columnsFuncParams = [];
     public        $hasEditable  = false;
 
     public function actionDownloadExcel() {
@@ -42,6 +43,14 @@ class GridView extends FormField {
         
     }
 
+    public function actionTemplate($n, $c, $k, $p) {
+        $fb = FormBuilder::load($c);
+        $ff = $fb->findField(['name' => $n]);
+        $this->attributes = $ff;
+        $this->prepareRender(json_decode($p, true));
+        include("GridView/template_table.php");
+    }
+
     public function actionEditHeader() {
         Asset::registerCSS(['application.components.ui.FormFields.GridView.grid-header-editor']);
         Yii::app()->controller->renderForm('GridViewHeader',null,[],[
@@ -61,22 +70,44 @@ class GridView extends FormField {
         return ['grid.js'];
     }
 
-    public function render() {
+    public function prepareRender($overideParams = []) {
         $this->processColumns();
         
-        if (@$this->gridOptions['dynamicColumns'] == 'true'
-            && $this->columnsFunc != '') {
-            
+        if ($this->columnsFunc != '') {
             foreach ($this->columns as $idx => $col) {
                 $this->getHeaderTemplate($this->columns[$idx], $idx, 'tag');
             }
-                
-            $this->columns = $this->evaluateExpression($this->columnsFunc,[
+            
+            $params = [];
+            foreach ($this->columnsFuncParams as $k=>$p) {
+                if (strpos($p, 'php:') === 0) {
+                    $params[$k] = $this->evaluateExpression($p, [
+                        'columns' => $this->columns,
+                        'data' => @$GLOBALS['dataSourceCache'][$this->datasource]
+                    ]);
+                }
+            }
+            
+            foreach ($overideParams as $k=>$p) {
+                $params[$k] = $p;
+            }
+            
+            $this->columns = $this->evaluateExpression($this->columnsFunc, [
                 'columns' => $this->columns,
+                'params' => $params,
                 'data' => @$GLOBALS['dataSourceCache'][$this->datasource]
             ]);
         }
         
+        foreach ($this->columns as $k=>$c) {
+            if (!isset($c['columnType'])) {
+                $this->columns[$k]['columnType'] = 'string';
+            }
+        }
+    }
+
+    public function render() {
+        $this->prepareRender();
         return $this->renderInternal('template_render.php');
     }
 
@@ -180,6 +211,10 @@ type="checkbox" /></label>';
         }
 
 
+        $ngchange = '';
+        if (isset($col['options']['ng-change'])) {
+            $ngchange = ' ng-change="' . $col['options']['ng-change'] . '" ';
+        }
         if (!!@$col['options']['mode']) {
             $editableCss = '';
             if ($idx == 0) {
@@ -193,18 +228,18 @@ type="checkbox" /></label>';
                     break;
                 case "editable":
                     $template = '
-    <div ceditable="true" ' . $editableCss . ' ng-paste="paste($event, row, $index, \''.$fieldName.'\', '.$idx.')" ng-model="row[\'' . $fieldName . '\']"
+    <div ceditable="true" ' . $editableCss . $ngchange . ' ng-paste="paste($event, row, $index, \''.$fieldName.'\', '.$idx.')" ng-model="row[\'' . $fieldName . '\']"
          ng-keydown="editKey($event)"></div>';
                     break;
                 case "editable-insert":
                     $template = '
-    <div ceditable="true" ' . $editableCss . ' ng-if="row.$rowState == \'insert\'"
+    <div ceditable="true" ' . $editableCss . $ngchange . ' ng-if="row.$rowState == \'insert\'"
          ng-model="row[\'' . $fieldName . '\'] ng-keydown="editKey($event)"></div>
     <span ng-show="row.$rowState != \'insert\'">' . $template . '</span>';
                     break;
                 case "editable-update":
                     $template = '
-    <div ceditable="true" ' . $editableCss . ' ng-if="row.$rowState != \'insert\'"
+    <div ceditable="true" ' . $editableCss . $ngchange . ' ng-if="row.$rowState != \'insert\'"
          ng-model="row[\'' . $fieldName . '\'] ng-keydown="editKey($event)"></div>
     <span ng-show="row.$rowState == \'insert\'">' . $template . '</span>';
                     break;
@@ -393,7 +428,7 @@ EOL;
             return <<<EOL
 <th {$attr}>
 {$content}
-</div>
+</th>
 EOL;
         }
     }
@@ -454,7 +489,7 @@ EOL;
         if (isset($col['labelHtml'])) {
             $content = $col['labelHtml'];
         } else {
-            $col['labelHtml'] = $content;
+            // $col['labelHtml'] = $content;
         }
         
         if ($mode == 'class') {
@@ -467,7 +502,7 @@ EOL;
             return <<<EOL
 <th {$attr}>
 {$content}
-</div>
+</th>
 EOL;
         }
         
@@ -520,22 +555,22 @@ EOL;
                 'type' => 'KeyValueGrid',
             ),
             array (
-                'type' => 'Text',
-                'value' => '<div ng-if=\\"active.gridOptions[\'dynamicColumns\'] == \'true\'\\">',
-            ),
-            array (
                 'label' => 'Columns Function',
                 'fieldname' => 'columnsFunc',
                 'desc' => 'Use $columns and $data to get columns and data.<br/>
- e.g: YourClass::function($columns, $data)
+ e.g: YourClass::function($columns, $params, $data)
 <br/><br/>
 NOTE: to use $data, you must set \'cache\' = \'true\' <br/>
 in your DataSource Options',
                 'type' => 'ExpressionField',
             ),
             array (
-                'type' => 'Text',
-                'value' => '</div>',
+                'label' => 'Columns Function Params',
+                'name' => 'columnsFuncParams',
+                'options' => array (
+                    'ng-if' => '!!active.columnsFunc',
+                ),
+                'type' => 'KeyValueGrid',
             ),
             array (
                 'title' => 'Header',

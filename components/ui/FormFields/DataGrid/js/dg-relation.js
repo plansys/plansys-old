@@ -65,7 +65,8 @@ app.directive('dgRelation', function ($timeout, $compile, $http, $compile) {
                     if (typeof search == "undefined") {
                         search = Object.getProperty($scope.$parent, attrs.ngModel);
                     }
-                    var parentScope = angular.element($("#" + $scope.name)[0]).scope().$parent;
+                    //console.log(search, $scope.name,$scope.$parent,angular.element($("#" + $scope.name)[0]).$parent)
+                    //var parentScope = angular.element($("#" + $scope.name)[0]).scope().$parent;
                     if (!$scope.loading) {
                         $scope.loading = true;
                         $http.post(Yii.app.createUrl('formfield/RelationField.dgrSearch'), {
