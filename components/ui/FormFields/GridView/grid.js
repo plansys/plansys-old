@@ -69,7 +69,7 @@ app.directive('gridView', function($timeout, $http) {
                 $scope.paste = function(e, row, ridx, col, cidx) {
                     var raw = e.originalEvent.clipboardData.getData('text');
                     var pasted = raw.trim().split("\n");
-                    
+
                     if (pasted.length > 1) {
                         e.preventDefault();
                         $timeout(function() {
@@ -463,7 +463,7 @@ app.directive('gridView', function($timeout, $http) {
 
                 // fixed header on scroll
                 var $container = $el.parents('.container-full');
-                var $header = $el.find("table > thead");
+                var $header = $el.find("table.tdata > thead");
                 var inViewport = function(el, offset) {
                     var rect = el[0].getBoundingClientRect();
                     var leftBoundary = $container.width();
@@ -481,18 +481,73 @@ app.directive('gridView', function($timeout, $http) {
                     );
                 }
 
+                $scope.freezedTh = [];
+                $scope.freezedCols = [];
                 $scope.recalcHeaderWidth = function() {
-                    $scope.firstColWidth = $header.find("th:eq(0)").outerWidth();
+                    $scope.firstColWidth = $header.find("table.tdata th:eq(0)").outerWidth();
                     if ($scope.firstColWidth == 0) return;
 
+                    var hoff = $header.offset();
+                    $scope.freezedTh = [];
+                    $scope.freezedCols = [];
                     $el.find('.thead .tr').each(function(tr) {
-                        $el.find('.thead .tr:eq(' + tr + ') .th').each(function(th) {
-                            var w = $header.find("tr:eq(" + tr + ") th:eq(" + th + ")").outerWidth();
+                        $el.find('.thead .tr:eq(' + tr + ') .th:not(.rowspan)').each(function(th) {
+                            var c = $header.find("tr:eq(" + tr + ") th:eq(" + th + ")");
+                            var w = c.outerWidth();
+                            var h = c.outerHeight();
                             $(this).css({
                                 width: w,
                                 minWidth: w,
-                                maxWidth: w
+                                maxWidth: w,
+                                height: h + 1,
                             });
+                            
+                            // recalc freezed header
+                            if (c.attr('freeze') == 'true') {
+                                if (tr == 0) {
+                                    $scope.columns[th].idx = th;
+                                    $scope.freezedCols.push($scope.columns[th]);
+                                }
+
+                                var f = $el.find(".tcols tr:eq(" + tr + ") th[cidx=" + c.attr('cidx') + "]");
+                                var coff = c.offset();
+                                $scope.freezedTh.push(f);
+                                
+                                f.css({
+                                    width: w + 1,
+                                    minWidth: w + 1,
+                                    maxWidth: w + 1,
+                                    height: h + 1,
+                                    overflow: 'hidden',
+                                    lineHeight: h + 'px',
+                                    left: coff.left - hoff.left - (th > 1 ? 1 :0),
+                                    top: coff.top - hoff.top - (tr > 1 ? 1 :0)
+                                });
+                            }
+
+                            if (c.attr('rowspan') > 0) {
+                                if (!c.hasClass('rowspanned')) {
+                                    var d = $el.find(".thead .tr:eq(" + (tr + 1) + ")");
+                                    var e = $el.find(".thead .tr:eq(" + (tr + 1) + ") .th:eq(" + (th - 1) + ")");
+                                    $('<div class="th rowspan" style="height:0px;width:' + w + 'px;opacity:0;"></div>').insertAfter(e);
+                                    d.css({
+                                        marginTop: -1 * (h / 2)
+                                    })
+                                    c.addClass('rowspanned');
+
+                                    $(this).css({
+                                        lineHeight: h + 'px'
+                                    });
+                                }
+                                else {
+                                    var d = $el.find(".thead .tr:eq(" + (tr + 1) + ") .th:eq(" + th + ")");
+                                    if (d) {
+                                        d.css({
+                                            width: w
+                                        });
+                                    }
+                                }
+                            }
                         });
                     });
 
@@ -531,8 +586,8 @@ app.directive('gridView', function($timeout, $http) {
                     }
                     return W;
                 };
-                $scope.scrollBarWidth = getScrollbarWidth();
 
+                $scope.scrollBarWidth = getScrollbarWidth();
                 $container.scroll(function() {
                     if ($scope.firstColWidth == 0) {
                         $scope.recalcHeaderWidth();
@@ -557,6 +612,8 @@ app.directive('gridView', function($timeout, $http) {
                     else {
                         $thead.removeClass("show");
                     }
+                    
+                    $scope.renderFreezedCols();
                 }.bind($scope));
 
                 // merge same row value
@@ -605,7 +662,6 @@ app.directive('gridView', function($timeout, $http) {
                                 c.$values.push(c.$prevText);
                             }
                             c.$values.push(text);
-
                         }
 
                         c.$prevText = text;
@@ -838,13 +894,13 @@ app.directive('gridView', function($timeout, $http) {
                     var availableHeader = [];
                     var rows = [];
                     var row = [];
-                    $el.find('table thead tr:last-child th').each(function(i, e) {
+                    $el.find('table.tdata thead tr:last-child th').each(function(i, e) {
                         if ($(e).text().trim() != "") {
                             availableHeader.push(i);
                         }
                     });
 
-                    $el.find('table thead tr').each(function(i, e) {
+                    $el.find('table.tdata thead tr').each(function(i, e) {
                         var row = [];
                         $(e).find('th').each(function(j, f) {
                             if (availableHeader.indexOf(j) >= 0 || j == 0) {
@@ -1049,7 +1105,7 @@ app.directive('gridView', function($timeout, $http) {
                                 window.resize();
                             }
                         };
-                        
+
                         $scope.loadPageSetting();
                     });
                 };
@@ -1064,22 +1120,85 @@ app.directive('gridView', function($timeout, $http) {
                 $scope.gridRenderTimeout = null;
                 $scope.onGridRender = function(flag) {
                     if (flag == 'templateload') {
+                        $scope.loading = true;
+                        $header = $el.find("table.tdata > thead");
                         $scope.columns = JSON.parse($el.find('script[name=columnsnew]').text());
+                        $scope.freezedColsReady = false;
                     }
 
                     if ($scope.gridRenderTimeout !== null) {
-                        return;
+                        $timeout.cancel($scope.gridRenderTimeout);
                     }
-                    
+
                     $scope.gridRenderTimeout = $timeout(function() {
                         $scope.mergeSameRowValue();
                         $timeout(function() {
                             $scope.recalcHeaderWidth();
+                            $scope.moveFreezedCols();
                             $scope.gridRenderTimeout = null;
+                            $scope.loading = false;
                         });
                     }, 100);
                 };
                 
+                $scope.freezedColsReady = false
+                $scope.renderFreezedCols = function() {
+                    if ($scope.freezedTh.length > 0) {
+                        var toff = $el.find("table.tdata thead").offset();
+                        var $tc = $el.find(".tcols-container");
+                        var coff = $container.offset();
+                        var th = $el.find("table.tdata").height();
+                        var ch = $container.height();
+                        var sout = th + toff.top - coff.top;
+                        var sin = ch - $scope.scrollBarWidth - Math.max(toff.top - coff.top, 0);
+                        if (sout > 0) {
+                            $tc.css({
+                                top: Math.max(toff.top, coff.top),
+                                left: Math.max(toff.left, coff.left),
+                                display: 'block',
+                                maxHeight: Math.min(sout,sin)
+                            });
+                            var cs = $container.scrollTop();
+                            var tboff= $el.find("table.tdata tbody").offset();
+                            var voff = $scope.isCbFreezed ? 96 : 53
+                            $el.find('.tcols.data').css({
+                                marginTop: ((cs < voff ? cs /10 : cs - voff) * -1) + Math.abs(toff.top - tboff.top)
+                            })
+                        } else {
+                            $tc.hide();
+                        }
+                    }
+                }
+                
+                $scope.moveFreezedCols = function() {
+                    $timeout(function() {
+                        var width = 0;
+                        var rows = $el.find('table.tdata tbody tr');
+                        var rowlen = rows.length;
+                        $scope.freezedCols.forEach(function(item, idx) {
+                            rows.each(function(i) {
+                                var el = $(this).find(">td:eq("+ item.idx +")")
+                                if (i == 0) {
+                                    var w = (el.outerWidth());
+                                    width += w;
+                                }
+                                
+                                var h = (el.outerHeight() - 1);
+                                // el.replaceWith('<td><div style="width:'+ w +'px;height:'+ h +'px;"></div></td>');
+                            });
+                        });
+                        
+                        $el.find('table.tcols.data').css({
+                            minWidth: width,
+                            marginTop: $el.find('table.tdata thead').height()
+                        })
+                        
+                        $scope.renderFreezedCols(); 
+                        
+                        $scope.freezedColsReady = true;
+                    }, 500);
+                }
+
                 $scope.templateCacheKey = Date.now();
                 $scope.templateUrl = "";
                 $scope.reloadTemplate = function(columns) {
@@ -1089,20 +1208,23 @@ app.directive('gridView', function($timeout, $http) {
                             params[i] = $scope.$eval($scope.columnsParams[i].substr(3));
                         }
                     }
-                    
-                    $scope.templateCacheKey = Date.now();
-                    $scope.templateUrl = Yii.app.createUrl('formfield/GridView.template', {
-                        n: $scope.name,
-                        c: $scope.classAlias,
-                        k: $scope.templateCacheKey,
-                        p: JSON.stringify(params)
-                    })
+
+                    $scope.loading = true;
+                    $timeout(function() {
+                        $scope.templateCacheKey = Date.now();
+                        $scope.templateUrl = Yii.app.createUrl('formfield/GridView.template', {
+                            n: $scope.name,
+                            c: $scope.classAlias,
+                            k: $scope.templateCacheKey,
+                            p: JSON.stringify(params)
+                        });
+                    });
                 }
-                
+
                 if ($scope.columns.length > 0) {
                     $scope.reloadTemplate();
                 }
-                
+
                 $scope.initGrid();
                 $scope.parent[$scope.name] = $scope;
             };

@@ -354,21 +354,49 @@ EOF;
         return $template;
     }
 
-    public function generateHeaders($mode) {
+    public function generateHeaders($mode, $cols = false) {
         $rowHeaders = isset($this->gridOptions['rowHeaders']) ? $this->gridOptions['rowHeaders'] * 1: 1; 
+        $cols = !$cols ? $this->columns : $cols;
+        $rowSpan = [];
         ob_start();
         for($i = $rowHeaders; $i >=1; $i--) {
             echo ($mode== 'class' ? '<div class="tr">' : '<tr>'); 
-            foreach ($this->columns as $idx => $col) {
+            foreach ($cols as $idx => $col) {
+                if (@$col['headers']['hide'] == true) {
+                    continue;
+                }
+                if (@$col['headers']['r' . $i]['rowSpan'] > 1) {
+                    $rowSpan[$idx] = ['current'=>$i,'total'=>$rowHeaders];
+                }
+                if (isset($rowSpan[$idx])) {
+                    $col['rowSpan'] = $rowSpan[$idx];
+                }
+                
+                $cidx = isset($col['idx']) ? $col['idx'] : $idx;
                 if ($i == 1) {
-                    echo $this->getHeaderTemplate($col, $idx, $mode);
+                    if (@$col['headers']['r1']['colSpan'] > 1) {
+                        echo $this->getSuperHeaderTemplate($i, $col, $cidx, $mode);
+                    } else {
+                        echo $this->getHeaderTemplate($col, $cidx, $mode);
+                    }
                 } else {
-                    echo $this->getSuperHeaderTemplate($i, $col, $idx, $mode);
+                    echo $this->getSuperHeaderTemplate($i, $col, $cidx, $mode);
                 }
             }
             echo ($mode == 'class' ? '</div>' : '</tr>');
         }
         return ob_get_clean();
+    }
+    
+    public function getFreezedCols() {
+        $cols = [];
+        foreach ($this->columns as $idx=>$col) {
+            if (@$col['options']['freeze'] == 'true') {
+                $col['idx'] = $idx;
+                $cols[] = $col;
+            }
+        }
+        return $cols;
     }
     
     private function getWidth($col, $overflow = true) {
@@ -387,8 +415,15 @@ EOF;
     
     public function getSuperHeaderTemplate($row, $col, $idx, $mode) {
         $attr      = [];
+        $attr['cidx'] = $idx;
+        $attr['ridx'] = $row;
+        
         if (isset($col['options']['ng-if'])) {
             $attr['ng-if'] = $col['options']['ng-if'];
+        }
+        
+        if (@$col['options']['freeze'] === 'true') {
+            $attr['freeze'] = 'true';
         }
         
         if (!isset($col['headers'])) {
@@ -408,6 +443,14 @@ EOF;
             $attr['style'] = $width;
         }
         
+        if (isset($col['rowSpan'])) {
+            if ($col['rowSpan']['current'] == $row) {
+                $attr['rowspan'] = $col['rowSpan']['total'];
+            } else {
+                return "";
+            }
+        }
+        
         if ($headers['colSpan'] < 1) {
             return "";
         } else if ($headers['colSpan'] > 1) {
@@ -417,7 +460,11 @@ EOF;
             $attr = $this->expandAttributes($attr);
         }
         
-        $content = $headers['label'];
+        if ($row > 1) {
+            $content = $headers['label'];
+        } else {
+            $content = $col['label'];
+        }
         if ($mode == 'class') {
             return <<<EOL
 <div class="th" {$attr}>
@@ -438,8 +485,14 @@ EOL;
         if ($fieldName == "" && !@$col['options']['mode']) return "";
 
         $attr      = [];
+        $attr['cidx'] = $idx;
+        $attr['ridx'] = 1;
         if (@$col['options']['ng-if'] != "") {
             $attr['ng-if'] = $col['options']['ng-if'];
+        }
+        
+        if (@$col['options']['freeze'] === 'true') {
+            $attr['freeze'] = 'true';
         }
         
         $width = $this->getWidth($col);
@@ -447,9 +500,14 @@ EOL;
             $attr['style'] = $width;
         }
         
+        if (isset($col['rowSpan'])) {
+            return "";
+        }
+        
         if (is_array($attr)) {
             $attr = $this->expandAttributes($attr);
         }
+        
         
         switch ($col['columnType']) {
             case "string":

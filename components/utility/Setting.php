@@ -354,8 +354,7 @@ class Setting {
             $theme = Setting::getDefaultTheme();
             $appView = Setting::getAppPath() . DIRECTORY_SEPARATOR . "views";
             if (is_dir($appView)) {
-                
-                if (is_dir(Setting::getAppPath() . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "forms")) {
+                if (is_dir(Setting::getAppPath() . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "layouts" . DIRECTORY_SEPARATOR . "forms")) {
                     return $appView;
                 }
             }

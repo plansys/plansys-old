@@ -28,38 +28,17 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                 });
 
                 $timeout(function () {
+                    $container.css('top', $el.height());
                     var woffset = $container.hasClass('container-full') ? 0 : 1;
 
                     $el.css({
-                        top: $container.offset().top - $container.css('marginTop').replace('px', '') * 1,
+                        top: $container.offset().top - $container.css('marginTop').replace('px', '') * 1 - $el.height(),
                         left: $container.offset().left + woffset,
                         width: $container.width() - woffset
                     });
+                    
                 }, 150);
-
-                if ($scope.form.layout.name == 'dashboard' && $el.parent().is('form')) {
-                    var dashFilter = $el.parent().find('> [ps-data-filter]:eq(0)');
-
-                    if (dashFilter.length > 0) {
-                        dashFilter.css({
-                            top: $("#content").offset().top + height,
-                            width: $('#content').width(),
-                            position: 'fixed',
-                            opacity: .999
-                        });
-                        dashFilter.addClass('dash-filter');
-                        height += dashFilter.height();
-                        $el.addClass('filtered');
-                    }
-                }
-
-                $(".action-bar-spacer").css({
-                    'margin-top': height + 'px'
-                });
-
-                $(".ac-portlet-btngroup.open").click();
-                $(".ac-portlet-menu").removeAttr('style').css('position', 'absolute');
-
+                
                 if (!$scope.init) {
                     $scope.init = true;
                     $el.show();

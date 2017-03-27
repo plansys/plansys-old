@@ -92,6 +92,5 @@
     
     if ($theme == 'oldblue'): 
 ?>
-<div class="action-bar-spacer"></div>
 <?php endif; ?>
 

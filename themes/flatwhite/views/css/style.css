@@ -203,16 +203,13 @@ body .main .info-container {
   border-radius: 0px;
 }
 body .main [ps-action-bar] {
-  width: 100% !important;
-  position: relative;
-  top: auto !important;
-  left: auto !important;
+  position: fixed;
 }
 body .main [ps-action-bar] .action-bar {
   display: flex;
-  margin: 0px -15px -1px -15px;
+  margin: 0px 0px -1px 0px;
   align-items: center;
-  padding: 10px 15px 10px 15px;
+  padding: 10px 10px 10px 10px;
   border-bottom: 1px solid #ccc;
 }
 body .main [ps-action-bar] .action-bar .title-bar {

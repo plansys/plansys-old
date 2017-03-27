@@ -93,20 +93,20 @@
             </div>
             <div class="pull-left" ng-if="gridOptions.enablePaging != 'false'"
                  style="border-left:1px solid #ccc;margin:2px 5px;padding:3px 8px;">
-                <div ng-if="datasource.loading">
+                 <div ng-if="datasource.loading || loading">
                     <i class="fa fa-refresh fa-spin"></i> Loading Data...
                 </div>
-                <div ng-if="!datasource.loading">
+                <div ng-if="!datasource.loading && !loading">
                     {{ datasource.totalItems | number }} Record{{ datasource.totalItems >1 ? 's' :'' }}
                 </div>
             </div>
             <div ng-if="gridOptions.enablePaging == 'false'" 
                  style="margin:4px 0px;"
                  class="label label-default pull-left">
-                 <div ng-if="datasource.loading">
+                 <div ng-if="datasource.loading || loading">
                     <i class="fa fa-refresh fa-spin"></i> Loading Data...
                 </div>
-                <div ng-if="!datasource.loading">
+                <div ng-if="!datasource.loading && !loading">
                     {{ datasource.totalItems | number }} Record{{ datasource.totalItems >1 ? 's' :'' }}
                 </div>
             </div>

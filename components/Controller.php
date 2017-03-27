@@ -87,7 +87,6 @@ class Controller extends CController {
 		else
 			$viewFile=$viewPath.DIRECTORY_SEPARATOR.$viewName;
 
-
 		if(is_file($viewFile.$extension))
 			return Yii::app()->findLocalizedFile($viewFile.$extension);
 		elseif($extension!=='.php' && is_file($viewFile.'.php'))
@@ -97,9 +96,6 @@ class Controller extends CController {
 	}
 
     public function getViewFile($viewName) {
-        if (($theme    = Yii::app()->getTheme()) !== null && ($viewFile = $theme->getViewFile($this, $viewName)) !== false)
-            return $viewFile;
-
         $basePath = $this->getBaseViewPath();
         $moduleViewPath = null;
         $viewPath = $basePath . DIRECTORY_SEPARATOR . $this->id;
@@ -123,9 +119,6 @@ class Controller extends CController {
         if ($layoutName === false)
             return false;
 
-        if (($theme      = Yii::app()->getTheme()) !== null && ($layoutFile = $theme->getLayoutFile($this, $layoutName)) !== false)
-            return $layoutFile;
-
         if (empty($layoutName)) {
             $module = $this->getModule();
             while ($module !== null) {
@@ -141,7 +134,7 @@ class Controller extends CController {
         }
         elseif (($module = $this->getModule()) === null)
             $module = Yii::app();
-            
+        
         return $this->resolveViewFile($layoutName, $module->getLayoutPath(), $this->getBaseViewPath(), $module->getViewPath());
     }
 
