@@ -1073,14 +1073,14 @@ app.directive('gridView', function($timeout, $http) {
                         }
                     }, true);
                     $timeout(function() {
-                        if (!$scope.loaded && !$scope.loading) {
+                        if (!$scope.loaded) {
                             $scope.loaded = true;
                             $scope.onGridRender('timeout');
                         }
                         if (typeof window.resize == 'function') {
                             window.resize();
                         }
-                    }, 500);
+                    });
                     $timeout(function() {
                         $scope.datasource.beforeQueryInternal[$scope.renderID] = function() {
                             $scope.loading = true;

@@ -67,7 +67,7 @@ class GridView extends FormField {
     }
 
     public function includeJS() {
-        return ['grid.js'];
+        return ['gridz.js'];
     }
 
     public function prepareRender($overideParams = []) {

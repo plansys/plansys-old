@@ -237,7 +237,6 @@ app.directive('tagField', function ($timeout, $http, $q) {
                                 }
                                 
                                 if (typeof idx == "undefined") {
-                                    console.log(label, val);
                                     $scope.updateTagLabel(null, label, val);
                                     e.target.value = '';
                                     $scope.inputFocus();
@@ -545,6 +544,10 @@ app.directive('tagField', function ($timeout, $http, $q) {
                         }
                     }
                 }
+                var svtimeout = null;
+                $scope.setValue = function(value) {
+                    ctrl.$setViewValue(angular.copy(value));
+                }
                 $scope.updateValueFromTags = function() { // will trigger value watcher
                     if ($scope.valueMode === 'array') {
                         if (!$scope.value) {
@@ -568,7 +571,7 @@ app.directive('tagField', function ($timeout, $http, $q) {
                     if ($scope.valueMode === 'string') {
                         $scope.value = val.join($scope.delimiter);
                     }
-                    ctrl.$setViewValue($scope.value);
+                    $scope.setValue($scope.value);
                 }
                 
                 $scope.removeTagFromValue = function(idx) { // will trigger value watcher
@@ -582,6 +585,7 @@ app.directive('tagField', function ($timeout, $http, $q) {
                             $scope.updateTagsFromValue();
                         }
                     }
+                    $scope.setValue($scope.value);
                 }
                 
                 $scope.init = function() {
