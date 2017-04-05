@@ -1680,8 +1680,8 @@ class ActiveRecord extends CActiveRecord {
             $dir     = $repopath . "/" . $evalDir . "/";
             $dir     = str_replace(["\n", "\r"], "", $dir);
             if (!is_dir($dir)) {
-                mkdir($dir, 0755, true);
-                chown($dir, 0755);
+                @mkdir($dir, 0755, true);
+                @chown($dir, 0755);
             }
 
             ## get oldname
@@ -1691,11 +1691,11 @@ class ActiveRecord extends CActiveRecord {
             } else if (is_array($obj) && isset($obj[$f['name']])) {
                 $old = $obj[$f['name']];
             }
-
+                
             if (is_file($old)) {
                 $ext      = pathinfo($old, PATHINFO_EXTENSION);
                 $filename = pathinfo($old, PATHINFO_FILENAME);
-
+                
                 if (@$f['filePattern']) {
                     ## get newname
                     ## Jika disini gagal, berarti ada yang salah dengan format filePattern di FormBuilder-nya
