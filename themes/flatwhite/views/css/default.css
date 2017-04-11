@@ -1,0 +1,136 @@
+/* General Demo Style */
+@import url(http://fonts.googleapis.com/css?family=Lato:300,400,700);
+
+@font-face {
+	font-family: 'fontawesome';
+	src:url('../fonts/fontawesome.eot');
+	src:url('../fonts/fontawesome.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/fontawesome.svg#fontawesome') format('svg'),
+		url('../fonts/fontawesome.woff') format('woff'),
+		url('../fonts/fontawesome.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+body, html { font-size: 100%; padding: 0; margin: 0;}
+
+/* Reset */
+*,
+*:after,
+*:before {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+/* Clearfix hack by Nicolas Gallagher: http://nicolasgallagher.com/micro-clearfix-hack/ */
+.clearfix:before,
+.clearfix:after {
+	content: " ";
+	display: table;
+}
+
+.clearfix:after {
+	clear: both;
+}
+
+body {
+	font-family: 'Lato', Calibri, Arial, sans-serif;
+	color: #37474F;
+	background: #fff;
+}
+
+a {
+	color: #ccc;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #fff;
+	text-decoration: none;
+}
+
+.container > header {
+	width: 100%;
+	margin: 0 auto;
+	padding: 0 1.875em 3.125em 1.875em;
+}
+
+.main {
+	max-width: 69em;
+	/*m-top: 1000px;*/
+}
+
+.container-fluid {
+	padding: 0px 15px;
+}
+
+.login.form{
+	background: #fff;
+	width : 300px;
+	margin: 12% auto;
+	padding: 0px 20px 20px 20px;
+	border: solid 1px white;
+	border-radius: 2px;
+}
+
+h1 {
+	color: #37474F;
+	text-align: center;
+}
+
+.login.form .btn-success {
+	background-color: #37474F;
+	border-color:#37474F;
+	width: 100%;
+	margin-top: 20px;
+	border-radius: 0px;
+	transition: all 0.3s ease 0s;
+	padding: 8px 12px;
+	
+}
+
+
+.login.form .btn-success:hover {
+	background-color: #607D8B;
+	border-color:#607D8B;
+	border-radius: 0px;
+}
+
+.login.form .form-group-sm .form-control{
+	border-radius: 0px;
+	font-size: 14px;
+	height: 32px;
+}
+
+
+.form-group-sm .form-control:focus, 
+ div[dropdown] button:focus, 
+ div[dropdown] .btn .list-view-add .btn-default .btn-sm:focus
+ {
+	border-color:#607D8B;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 5px rgba(96,125,139,.6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 5px rgba(96,125,139,.6);
+}
+
+.form-horizontal
+.control-label{
+	text-align:left;
+	font-size: 14px !important;
+}
+
+.alert{
+	padding: 6px 8px;
+	font-size: 14px;
+	border-radius: 0px;
+}
+
+.btn-dropdown-field, .dropdown-menu, .form-group-sm .form-control {
+	border-radius: 0px;
+}
+
+
+.btn {
+	border-radius: 0px !important;
+	transition: all 0.3s ease 0s;
+}

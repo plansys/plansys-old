@@ -6,6 +6,7 @@
 hr {
     margin:5px 0px;
 }
+
 /**
   Dropdown
 *************************************/
@@ -140,6 +141,31 @@ div[dropdown] .dropdown-menu-submenu li a {
     bottom: 0;
     /* Can be changed by hand ;)*/
     overflow: auto;
+}
+
+#content > div > .stretch {
+    top: 45px;
+}
+
+#builder > .stretch {
+    top:45px !important;
+}
+
+[ui-header] {
+    font-size:13px;
+    padding:0px 10px;
+    border-bottom:1px solid #ddd;
+    background:white;
+    line-height: 28px;
+}
+.container-fluid [ui-header],
+.container-fluid [ui-content] {
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+[ui-layout] {
+    overflow:hidden;
 }
 
 .ui-splitbar {
@@ -295,11 +321,12 @@ div[dropdown] .dropdown-menu-submenu li a {
 
 .angular-ui-tree-handle:hover {
     background: #efefef;
+    color: black;
 }
 
 .angular-ui-tree-handle.active {
     color: white;
-    background: #0a95d1;
+    background: #37474F;
 }
 
 .angular-ui-tree-handle i {
@@ -706,3 +733,49 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
     margin-top: -1px;
     margin-bottom: 0px;
 }
+
+
+/************************** ACTION BAR  *********************************/
+[ps-action-bar] {
+  width: 100% !important;
+  position: relative;
+  margin-top:-7px;
+  top: auto !important;
+  left: auto !important;
+}
+[ps-action-bar] .action-bar {
+  display: flex;
+  margin: 0px -15px -1px -15px;
+  align-items: center;
+  padding: 10px 15px 10px 15px;
+  border-bottom: 1px solid #ccc;
+}
+[ps-action-bar] .action-bar .title-bar {
+  flex: 1;
+}
+[ps-action-bar] .action-bar .title-bar .title {
+  font-size: 18px;
+  font-weight: bold;
+}
+[ps-action-bar] .action-bar .link-bar {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  text-align: right;
+  
+}
+[ps-action-bar] .action-bar .link-bar .separator {
+  display: none;
+}
+[ps-action-bar] .action-bar .link-bar .btn {
+  margin-right: 5px;
+  border-radius: 2px;
+  font-size:14px;
+}
+[ps-action-bar] .action-bar .clearfix {
+  display: none;
+}
+[ps-action-bar] .action-bar .action-tab {
+  display: none;
+}
+
