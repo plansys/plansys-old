@@ -69,8 +69,8 @@ app.directive('gridView', function($timeout, $http) {
                 $scope.paste = function(e, row, ridx, col, cidx) {
                     var raw = e.originalEvent.clipboardData.getData('text');
                     var pasted = raw.trim().split("\n");
-
-                    if (pasted.length > 1) {
+                    console.log(pasted)
+                    if (pasted.length >= 1) {
                         e.preventDefault();
                         $timeout(function() {
                             for (var r in pasted) {
