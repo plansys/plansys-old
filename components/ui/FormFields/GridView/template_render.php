@@ -37,7 +37,7 @@
 
     <div ng-if="!loaded" class="list-view-loading">
         <i class="fa fa-refresh fa-spin"></i>
-        Loading Data...
+        Loading Data... {{ loaded | json }}
     </div>
     
     <div ng-if="isCbFreezed" class="control-bar-spacer"></div>

@@ -189,7 +189,6 @@ class ServiceManager extends CComponent {
             $command = "run \"{$logPath}\" {$php} yiic.php service execute --id={$id}";
             
             $pid = ServiceManager::process($command);
-            
             if (!empty($pid)) {
                 if (!is_numeric($pid[0])) {
                     throw new CException($pid[0]);

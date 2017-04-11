@@ -69,15 +69,17 @@ app.directive('gridView', function($timeout, $http) {
                 $scope.paste = function(e, row, ridx, col, cidx) {
                     var raw = e.originalEvent.clipboardData.getData('text');
                     var pasted = raw.trim().split("\n");
-
-                    if (pasted.length > 1) {
+                    console.log(pasted)
+                    if (pasted.length >= 1) {
                         e.preventDefault();
                         $timeout(function() {
-                            console.log(pasted, pasted.length)
                             for (var r in pasted) {
                                 var items = pasted[r].split("\t");
                                 for (var c in items) {
-                                    console.log($scope.columns);
+                                    if (!$scope.datasource.data[parseInt(ridx) + parseInt(r)]) {
+                                         $scope.datasource.data[parseInt(ridx) + parseInt(r)] = {}
+                                    }
+                                    
                                     var cname = $scope.columns[parseInt(cidx) + parseInt(c)].name;
                                     $scope.datasource.data[parseInt(ridx) + parseInt(r)][cname] = items[c] + ''
                                 }
@@ -1073,14 +1075,14 @@ app.directive('gridView', function($timeout, $http) {
                         }
                     }, true);
                     $timeout(function() {
-                        if (!$scope.loaded && !$scope.loading) {
+                        if (!$scope.loaded) {
                             $scope.loaded = true;
                             $scope.onGridRender('timeout');
                         }
                         if (typeof window.resize == 'function') {
                             window.resize();
                         }
-                    }, 500);
+                    });
                     $timeout(function() {
                         $scope.datasource.beforeQueryInternal[$scope.renderID] = function() {
                             $scope.loading = true;
