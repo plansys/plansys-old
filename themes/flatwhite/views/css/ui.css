@@ -393,6 +393,40 @@ li:hover > .item-btn {
     cursor: pointer;
 }
 
+/********************************** GRID VIEW *********************************/
+
+.data-grid-paging {
+    font-size:13px;
+    line-height:13px;
+}
+
+@media only screen and (max-width: 768px) {
+    .data-grid-paging {
+        border:1px solid #ececeb;
+        background:#fafafa;
+        padding:5px 5px 0px 5px;
+        margin-bottom:5px;
+    }
+    .data-grid-paging .clearfix {
+        margin-bottom:-5px;
+    }
+    
+    .data-grid-pagination,
+    .data-grid-pageinfo {
+        float:left !important;
+    }
+    
+    [grid-view] [ng-include] {
+        overflow-x:auto;
+        max-width:100%;
+    }
+    
+    .tcols-container,
+    .thead {
+        display:none !important;
+    }
+}
+
 /********************************* COLUMN FIELD ********************************/
 
 .form-builder li .ColumnField {
@@ -462,27 +496,38 @@ li:hover > .item-btn {
     height: 100%;
 }
 
-.column-field {
-    width: 100%;
-    vertical-align: top;
-    display: table;
-    border-collapse:collapse;
+@media only screen and (min-width: 768px) {
+    .column-field {
+        width: 100%;
+        vertical-align: top;
+        display: table;
+        border-collapse:collapse;
+    }
+    
+    .column-field > .column-field-row {
+        display: table-row;
+    }
+    
+    .column-field > .column-field-row  > .column-field-cell {
+        display:table-cell;
+        vertical-align: top;
+        margin-left: -5px;
+    }
+    
+    .column-field > .column-field-row > .column-field-cell > .column-field-inner {
+        padding: 25px 50px 25px 25px;
+    }
 }
 
-.column-field > .column-field-row {
-    display: table-row;
+@media only screen and (max-width: 768px) {
+    .column-field-cell {
+        width:100% !important;
+        border-right:0px !important;
+        border-left:0px !important;
+        padding:10px 0px !important;
+        border-bottom:1px solid #ececeb;
+    }
 }
-
-.column-field > .column-field-row  > .column-field-cell {
-    display:table-cell;
-    vertical-align: top;
-    margin-left: -5px;
-}
-
-.column-field > .column-field-row > .column-field-cell > .column-field-inner {
-    padding: 25px 50px 25px 25px;
-}
-
 /****************************** SECTION-HEADER ********************************/
 
 .section-header {
@@ -739,7 +784,6 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
 [ps-action-bar] {
   width: 100% !important;
   position: relative;
-  margin-top:-7px;
   top: auto !important;
   left: auto !important;
 }
@@ -747,7 +791,7 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
   display: flex;
   margin: 0px -15px -1px -15px;
   align-items: center;
-  padding: 10px 15px 10px 15px;
+  padding: 10px 5px 5px 15px;
   border-bottom: 1px solid #ccc;
 }
 [ps-action-bar] .action-bar .title-bar {
@@ -762,7 +806,6 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
   display: flex;
   justify-content: flex-end;
   text-align: right;
-  
 }
 [ps-action-bar] .action-bar .link-bar .separator {
   display: none;
@@ -770,6 +813,7 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
 [ps-action-bar] .action-bar .link-bar .btn {
   margin-right: 5px;
   border-radius: 2px;
+  margin-bottom:5px;
   font-size:14px;
 }
 [ps-action-bar] .action-bar .clearfix {

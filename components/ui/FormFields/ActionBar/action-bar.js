@@ -11,6 +11,7 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
             }
 
             $scope.originalHeight = $el.height();
+            $scope.theme = $el.find("data[name=theme]").text();
 
             $scope.resizeTimeout = null;
             $scope.resize = function (st) {
@@ -28,7 +29,10 @@ app.directive('psActionBar', function ($timeout, $localStorage) {
                 });
 
                 $timeout(function () {
-                    $container.css('top', $el.height());
+                    if ($scope.theme != 'flatwhite') {
+                        $container.css('top', $el.height());
+                    }
+                    
                     var woffset = $container.hasClass('container-full') ? 0 : 1;
 
                     $el.css({

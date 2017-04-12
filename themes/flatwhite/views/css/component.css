@@ -112,7 +112,7 @@
 	height: 45px;
 	background: white;
 	border-bottom: 1px solid #263238;
-	z-index:9999999;
+	z-index:99;
 	width: 100%;
 }
 /* Common styles of menus */

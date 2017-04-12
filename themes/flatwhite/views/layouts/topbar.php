@@ -49,51 +49,40 @@
      }
      function loopMenu($menu){
           $html = '';
+          
           foreach($menu as $k => $v){
                if($k > 1){
-                    if(isset($v['visible'])){
-                         if($v['visible']){
-                              if($v['label'] == '---'){
-                                   $html .= '<li class="dl-divider">
-     			                         </li>';
-                              } else {
-                                   $html .= '<li>';
-                                   if(is_array($v['url'])){
-                                   	$html .= '<a href="'.$v['url'][0].'">'.$v['label'].'</a>';	
-                                   } else {
-                                   	$html .= '<a href="'.$v['url'].'">'.$v['label'].'</a>';	
-                                   }
-                                    
-                                   if(isset($v['items'])){
-                                        $html .= extractChild($v['items']);     
-                                   }
-                                   $html .= '</li>';         
-                              }
-                         }
+                    if($v['label'] == '---'){
+                         $html .= '<li class="dl-divider">
+			                    </li>';
                     } else {
-                         if($v['label'] == '---'){
-                              $html .= '<li class="dl-divider">
-     			                    </li>';
+                         $html .= '<li>';
+                         if(isset($v['url'])){
+                              if(is_array($v['url'])){
+                              	$html .= '<a href="' . Yii::app()->getBaseUrl() . '/index.php?r=' . $v['url'][0].'">'.$v['label'].'</a>';	
+                              } else {
+                              	$html .= '<a href="' . Yii::app()->getBaseUrl() . '/index.php?r=' . $v['url'].'">'.$v['label'].'</a>';
+                              }     
                          } else {
-                              $html .= '<li>';
-                              $html .= '<a href="'.$v['label'].'">'.$v['label'].'</a>';
-                              if(isset($v['items'])){
-                                   $html .=  extractChild($v['items']);
-                              }
-                              $html .= '</li>';
+                              $html .= '<a href="#">'.$v['label'].'</a>';	
                          }
-                         
-                    }     
+                         // vdump($html);
+                         // die();
+                         if(isset($v['items'])){
+                              $html .=  extractChild($v['items']);
+                         }
+                         $html .= '</li>';
+                    }
                }
           }
           // vdump($html);
-          // die();
+          
           return $html;
+          
           
      }
      
      function extractChild($item){
-          
           $html = '<ul class="dl-submenu">';
           foreach($item as $k => $v){
                if($v['label'] == '---'){
@@ -101,13 +90,18 @@
 	                         </li>';
                } 
                else {
+                    
                     $html .= '<li>';
                     if(isset($v['url'])){
                          if(is_array($v['url'])){
-                              $html .= '<a href="' . Yii::app()->getBaseUrl() . "/index.php?r=" .  $v['url'][0].'">'.$v['label'].'</a>';          
+                              $html .= '<a href="' . Yii::app()->getBaseUrl() . '/index.php?r=' .  $v['url'][0].'">'.$v['label'].'</a>';          
                          } else {
-                              $html .= '<a href="'.Yii::app()->getBaseUrl() . "/index.php?r=" . $v['url'].'">'.$v['label'].'</a>';          
+                              
+                              $html .= '<a href="'.Yii::app()->getBaseUrl() . '/index.php?r=' . $v['url'].'">'.$v['label'].'</a>';          
+                              
                          }
+                    } else {
+                         $html .= '<a href="#">'.$v['label'].'</a>';          
                     }
                     if(isset($v['items'])){
                          $html .=  extractChild($v['items']);
