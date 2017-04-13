@@ -241,7 +241,7 @@ app.directive('listView', function ($timeout) {
                     }
                 }
 
-                $scope.addItem = function (e) {
+                $scope.addItem = function (e, itemCount) {
                     if (e) {
                         e.preventDefault();
                         e.stopPropagation();
@@ -261,7 +261,19 @@ app.directive('listView', function ($timeout) {
                     if (beforeAdd != '' && typeof value != 'undefined') {
                         eval(beforeAdd);
                     }
-                    $scope.value.push(value);
+                    
+                    if (!itemCount) {
+                        $scope.value.push(value);
+                    } else {
+                        for (var i = 0; i < itemCount; i++) {
+                            value = angular.extend({}, $scope.templateAttr);
+                            if ($scope.fieldTemplate == "datasource") {
+                                value = {};
+                            }
+                            $scope.value.push(value);
+                        }
+                    }
+                    
                     $scope.updateListView();
                     var valueID = $scope.value.length - 1;
 
@@ -385,10 +397,10 @@ app.directive('listView', function ($timeout) {
                             }
                         }
                         
-                        if ($scope.minItem > 0) {
-                            while ($scope.value.length < $scope.minItem) {
-                                $scope.addItem();
-                            }
+                        if ($scope.minItem > 0 && $scope.value.length < $scope.minItem) {
+                            $timeout(function() {
+                                $scope.addItem(null, $scope.minItem - $scope.value.length);
+                            }, 500);
                         }
 
                         if (!!$scope.datasource) {
