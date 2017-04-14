@@ -823,3 +823,138 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
   display: none;
 }
 
+
+/************************** TOGGLE SWITCH  *********************************/
+.label-white {
+    background: white;
+    color: #333;
+}
+
+.label-field-value {
+    font-size: 13px;
+    margin-top: 6px;
+    margin-bottom: 4px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 19px;
+    border: 1px solid #ececeb;
+    border-radius: 3px;
+    padding: 5px 10px;
+    margin: 0px;
+}
+
+.switchery {
+    background-color: #ececeb !important;
+    border: 1px solid #dfdfdf;
+    border-radius: 20px;
+    cursor: pointer;
+    display: inline-block;
+    height: 30px;
+    position: relative;
+    vertical-align: middle;
+    width: 50px;
+
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+.switchery > small {
+    background: #ffffff;
+    border-radius: 100%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    height: 30px;
+    position: absolute;
+    top: 0;
+    width: 30px;
+}
+
+.switchery {
+    margin-top: 2px;
+    height: 25px;
+    /*width: 35px;*/
+}
+
+.switchery > small {
+    height: 25px;
+    width: 25px;
+    /*top: 5%;*/
+}
+
+.small + .switchery {
+    height: 15px;
+    width: 25px;
+}
+
+.small + .switchery > small {
+    height: 16px;
+    width: 16px;
+}
+
+[toggle-switch] .error,
+[radio-button-list] .error {
+    border: 0px;
+    border-radius: 3px;
+    margin-top: 5px;
+}
+
+.toggle-switch-field {
+    white-space: nowrap;
+}
+
+.toggle-switch-field > div {
+    display: inline-block !important;
+}
+
+.toggle-switchery {
+    float: left;
+    margin-top: -2px;
+}
+
+.switchery-label {
+    border-radius: 0px;
+    padding: 3px 7px 2px 7px;
+    margin: 6px 7px;
+    font-size: 11px;
+    color: #37474f;
+}
+
+.switchery-label {
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.switchery-label.label-success {
+    background: #fff;
+}
+
+.switchery-label.label-default {
+    background: #fff;
+}
+
+.switchery-label.switchery-label-small {
+    padding: 0px 0px 0px 6px;
+    background: none;
+    font-weight: bold;
+    font-size: 12px;
+    margin: 0px;
+}
+
+.switchery-label.label-success.switchery-label-small {
+    color: #67C03D;
+}
+
+.switchery-label.label-default.switchery-label-small {
+    color: #999;
+}

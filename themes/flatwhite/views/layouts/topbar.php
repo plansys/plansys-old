@@ -9,7 +9,7 @@
      if(sizeof($menu) > 2){ //if menu items available open
      
 ?>
-<div class="top-bar">
+<div class="top-bar" onload="getTime()">
 	<div id="dl-menu" class="dl-menuwrapper">
 		<button class="dl-trigger c-hamburger c-hamburger--htx">
 			<span>toggle menu</span>
@@ -34,6 +34,11 @@
 	<?php
      	} //if menu items available closed
 	?>
+	<div class="dl-menuright">
+	    <strong id="jam"></strong>
+	    <br/>
+	    <strong id="tanggal"></strong>
+	</div>
 </div><!-- /top-bar -->
 
 

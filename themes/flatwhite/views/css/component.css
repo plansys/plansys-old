@@ -111,9 +111,10 @@
 	position:fixed;
 	height: 45px;
 	background: white;
-	border-bottom: 1px solid #263238;
+	border-bottom: 1px solid #ccc;
 	z-index:99;
 	width: 100%;
+	
 }
 /* Common styles of menus */
 
@@ -342,118 +343,6 @@ All this is done for any sub-level being entered.
 	}	
 }
 
-/* Animation classes for moving out and in */
-
-.dl-menu.dl-animate-out-1 {
-	-webkit-animation: MenuAnimOut1 0s;
-	animation: MenuAnimOut1 0s;
-}
-
-
-@-webkit-keyframes MenuAnimOut1 {
-	0% { }
-	100% {
-		/*-webkit-transform: translateY(-500px);*/
-		opacity: 0;
-	}
-}
-
-
-@keyframes MenuAnimOut1 {
-	0% { }
-	100% {
-		/*-webkit-transform: translateY(-500px);*/
-		/*transform: translateY(-500px);*/
-		opacity: 0;
-	}
-}
-
-.dl-menu.dl-animate-in-1 {
-	-webkit-animation: MenuAnimIn1 0s;
-	animation: MenuAnimIn1 0s;
-}
-
-@-webkit-keyframes MenuAnimIn1 {
-	0% {
-		/*-webkit-transform: translateY(-250px);*/
-		opacity: 0;
-	}
-	100% {
-		/*-webkit-transform: translateY(0px);*/
-		opacity: 1;
-	}
-}
-
-@keyframes MenuAnimIn1 {
-	0% {
-		/*-webkit-transform: translateY(-250px);*/
-		/*transform: translateY(-250px);*/
-		opacity: 0;
-	}
-	100% {
-		/*-webkit-transform: translateY(0px);*/
-		/*transform: translateY(0px);*/
-		opacity: 1;
-	}
-}
-
-.dl-menuwrapper > .dl-submenu.dl-animate-in-1 {
-	-webkit-animation: SubMenuAnimIn1 0s ease;
-	animation: SubMenuAnimIn1 0s ease;
-}
-
-@-webkit-keyframes SubMenuAnimIn1 {
-	0% {
-		-webkit-transform: translateY(25%);
-		opacity: 0;
-	}
-	100% {
-		-webkit-transform: translateY(-5px);
-		opacity: 1;
-	}
-}
-
-@keyframes SubMenuAnimIn1 {
-	0% {
-		-webkit-transform: translateY(25%);
-		transform: translateY(25%);
-		opacity: 0;
-	}
-	100% {
-		-webkit-transform: translateY(-5px);
-		transform: translateY(-5px);
-		opacity: 1;
-	}
-}
-
-.dl-menuwrapper > .dl-submenu.dl-animate-out-1 {
-	-webkit-animation: SubMenuAnimOut1 0s ease;
-	animation: SubMenuAnimOut1 0s ease;
-}
-
-@-webkit-keyframes SubMenuAnimOut1 {
-	0% {
-		-webkit-transform: translateY(0%);
-		opacity: 1;
-	}
-	100% {
-		-webkit-transform: translateY(25%);
-		opacity: 0;
-	}
-}
-
-@keyframes SubMenuAnimOut1 {
-	0% {
-		-webkit-transform: translateY(0%);
-		transform: translateY(0%);
-		opacity: 1;
-	}
-	100% {
-		-webkit-transform: translateY(25%);
-		transform: translateY(25%);
-		opacity: 0;
-	}
-}
 
 /* No JS Fallback */
 .no-js .dl-menuwrapper .dl-menu {
@@ -508,4 +397,25 @@ All this is done for any sub-level being entered.
 #menu-header-action {
 	float: right;
 	margin-right : 30px;
+}
+
+.dl-menuright {
+    float: right;
+    padding: 4px 15px 5px 10px;
+    font-size:0.9em;
+    line-height: 1.3em;
+    text-align:center;
+    border-left:1px solid #ececeb;
+    display:none;
+}
+
+#jam .white {
+    opacity:0;
+}
+
+
+@media screen and (max-width: 768px) {
+    .dl-menuright {
+        opacity:0;
+    }
 }
