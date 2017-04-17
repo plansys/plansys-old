@@ -52,7 +52,7 @@ class ProfileController extends Controller {
             $res['os'] = 'Linux';
             
             $load = sys_getloadavg();
-            $res['cpu'] = $load[0] * 100;
+            $res['cpu'] = $load[0];
         
             $free = shell_exec('free');
             $free = (string)trim($free);

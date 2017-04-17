@@ -166,25 +166,5 @@ return array (
         'icon' => 'fa-folder-open',
         'url' => '/repo/index',
         'formattedUrl' => '/dokman/index.php?r=repo/index',
-    ),
-    array (
-        'label' => 'Help',
-        'icon' => 'fa-question-circle',
-        'url' => '#',
-        'items' => array (
-            array (
-                'label' => 'Selamat Datang di Plansys',
-                'icon' => 'fa-flag-checkered',
-                'url' => '/help/welcome',
-                'formattedUrl' => '/dokman/index.php?r=help/welcome',
-            ),
-            array (
-                'label' => 'Tutorial Plansys',
-                'icon' => 'fa-file-text-o',
-                'url' => '/help/tutorial/bab1',
-                'formattedUrl' => '/dokman/index.php?r=help/tutorial/bab1',
-            ),
-        ),
-        'state' => 'collapsed',
-    ),
+    )
 );

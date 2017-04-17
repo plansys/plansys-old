@@ -527,7 +527,6 @@ Isi field disamping untuk mengubah password.
     public function beforeSave() {
         parent::beforeSave();
 
-            echo("CH: " . $this->password . "<Br/>");
         $p = $this->getAttributes();
         $p['userRoles'] = Helper::uniqueArray($p['userRoles'], 'role_id');
         
