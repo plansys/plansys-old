@@ -63,11 +63,9 @@
                     } else {
                          $html .= '<li>';
                          if(isset($v['url'])){
-                              if(is_array($v['url'])){
-                              	$html .= '<a href="' . Yii::app()->getBaseUrl() . '/index.php?r=' . $v['url'][0].'">'.$v['label'].'</a>';	
-                              } else {
-                              	$html .= '<a href="' . Yii::app()->getBaseUrl() . '/index.php?r=' . $v['url'].'">'.$v['label'].'</a>';
-                              }     
+                             $url = is_array($v['url']) ? $v['url'][0] : $v['url'];
+                            $url = Yii::app()->createUrl($url);
+                            $html .= '<a href="' . $url .'">'.$v['label'].'</a>';	
                          } else {
                               $html .= '<a href="#">'.$v['label'].'</a>';	
                          }
@@ -98,13 +96,16 @@
                     
                     $html .= '<li>';
                     if(isset($v['url'])){
-                         if(is_array($v['url'])){
-                              $html .= '<a href="' . Yii::app()->getBaseUrl() . '/index.php?r=' .  $v['url'][0].'">'.$v['label'].'</a>';          
-                         } else {
-                              
-                              $html .= '<a href="'.Yii::app()->getBaseUrl() . '/index.php?r=' . $v['url'].'">'.$v['label'].'</a>';          
-                              
-                         }
+                        if(is_array($v['url'])){
+                            $url = $v['url'][0];
+                            $params = $v['url'];
+                            unset($params[0]);
+                            $url = Yii::app()->createUrl($url, $params);
+                            $html .= '<a href="' . $url .'">'.$v['label'].'</a>';	    
+                        } else {
+                            $url = Yii::app()->createUrl($v['url']);
+                            $html .= '<a href="' . $url .'">'.$v['label'].'</a>';	    
+                        }
                     } else {
                          $html .= '<a href="#">'.$v['label'].'</a>';          
                     }

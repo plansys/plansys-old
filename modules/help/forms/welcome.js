@@ -6,7 +6,6 @@ setInterval(function() {
             $scope.mem = res.mem;
             $scope.php = res.php;
             $scope.hdd = res.hdd;
-            console.log(res);
         });
-    })
+    });
 }, 800);

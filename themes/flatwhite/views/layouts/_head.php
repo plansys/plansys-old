@@ -19,6 +19,14 @@
      
      <?php Asset::registerJS('application.themes.flatwhite.views.js.modernizr'); ?>
      <?php Asset::registerJS('application.themes.flatwhite.views.js.dlmenu'); ?>
+     <script>
+          paceOptions = {
+            ajax: false, // disabled
+            document: true, // disabled
+            eventLag: true // disabled
+          };
+     </script>
+     <?php Asset::registerJS('application.themes.flatwhite.views.js.pace'); ?>
      
      <?php Asset::registerJS('application.themes.flatwhite.views.js.mainctrl'); ?>
      <?php //Asset::registerJS('application.themes.flatwhite.views.js.headerctrl'); ?>

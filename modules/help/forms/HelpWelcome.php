@@ -27,7 +27,7 @@ class HelpWelcome extends Form {
     
     .welcome-page {
         text-align: center;
-        padding: 15% 25% 15% 25%;
+        padding: 12% 25% 10% 25%;
     }
     
     .welcome-page h1 {
@@ -50,7 +50,7 @@ class HelpWelcome extends Form {
         
         .welcome-page {
             text-align: center;
-            padding: 15% 10% 15% 10%;
+            padding: 12% 10% 10% 10%;
         }
         
     }
