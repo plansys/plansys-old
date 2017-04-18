@@ -304,10 +304,16 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 if (!!$scope.params) {
                     angular.forEach($scope.params, function (p, i) {
                         if (p != null && p.indexOf('js:') === 0) {
-                            var value = parent.$eval(p.replace('js:', ''));
-                            var watch = parent.$eval('"' + p.replace('js:', '') + '"');
+                            var value = $scope.$eval(p.replace('js:', ''));
+                            var watch = $scope.$eval('"' + p.replace('js:', '') + '"');
                             var key = i;
-                            parent.$watch(watch, function (newv, oldv) {
+                            
+                            if (value === undefined) {
+                                value = parent.$eval(p.replace('js:', ''));
+                                watch = parent.$eval('"' + p.replace('js:', '') + '"');
+                            }
+                            
+                            $scope.$watch(watch, function (newv, oldv) {
                                 if (newv !== oldv) {
                                     $scope.updateParam(key, newv);
                                     

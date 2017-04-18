@@ -169,12 +169,12 @@ class DevFormLayoutProperties extends Form {
             ),
             array (
                 'label' => 'Menu Options',
-                'show' => 'Show',
                 'options' => array (
                     'ng-model' => 'layout.menuOptions',
                     'ng-change' => 'changeLayoutProperties()',
                     'ng-show' => 'layout.type == \'menu\'',
                 ),
+                'show' => 'Show',
                 'type' => 'KeyValueGrid',
             ),
             array (

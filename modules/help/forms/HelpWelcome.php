@@ -10,9 +10,11 @@ class HelpWelcome extends Form {
                 'data' => array (
                     'col1' => array (
                         'type' => 'mainform',
+                        'size' => '100',
                     ),
                 ),
             ),
+            'inlineJS' => 'welcome.js',
         );
     }
 
@@ -21,39 +23,63 @@ class HelpWelcome extends Form {
             array (
                 'renderInEditor' => 'Yes',
                 'type' => 'Text',
-                'value' => '
-				<style>
-				.home_screen{
-					padding: 10px;	
-					max-width:100%;	
-					max-height:100%;
-					background-color: white;
-					box-shadow: 3px 3px 3px #888888;						
-					margin-top:100px;	
-					margin-bottom:100px;						
-					margin-right:300px;	
-					margin-left:300px;	
-					font-size:12px;		
-				}
-				</style>
-				<div class=\"home_screen\">
-				<center>							
-				<hr>
-				<br><br><br>
-				<p><img src=\"plansys/static/img/logo.png\" style=\"width:250px\">
-				<p><strong>Fastest PHP Web App Builder</strong>
-				<hr>
-				<br>
-				<h4>Selamat Datang di Plansys</h4>			
-				<p><a ng-url=\"/help/tutorial/bab1\">Saya baru menggunakan Plansys, Pelajari Tutorial Plansys</a>.				
-				<br><br><br>				
-				<hr>
-				Plansys Beta - Under Licensed GPL v.3.
-				<p><a href=\"http://www.plansys.co\" target=\"_blank\">plansys.co</a>
-				<hr>
-				</center>
-				</div>
-				',
+                'value' => '<style>
+    
+    .welcome-page {
+        text-align: center;
+        padding: 12% 25% 10% 25%;
+    }
+    
+    .welcome-page h1 {
+        font-size: 135px;
+        font-weight: 600;
+        vertical-align: middle;
+        background-color: #37474F;
+        color: transparent;
+        text-shadow: 0px 2px 5px rgba(255,255,255,.3);
+        -webkit-background-clip: text;
+        -moz-background-clip: text;
+        background-clip: text;
+        margin-bottom: 0px;
+    }
+    
+    @media screen and (max-width: 768px) {
+        .welcome-page h1 {
+            font-size: 70px
+        }
+        
+        .welcome-page {
+            text-align: center;
+            padding: 12% 10% 10% 10%;
+        }
+        
+    }
+</style>',
+            ),
+            array (
+                'renderInEditor' => 'Yes',
+                'display' => 'all-line',
+                'type' => 'Text',
+                'value' => '<div class=\"welcome-page\">
+    <h1>Plansys</h1>    
+    <span>Licensed Under GPL v.3</span>
+    <hr>
+    <div class=\"row\" style=\"margin-top: 10px;\">
+        <div class=\"col-sm-12 col-md-3\">
+            CPU : {{cpu}}%
+        </div>
+        <div class=\"col-sm-12 col-md-3\">
+            RAM : {{mem}}%
+        </div>
+        <div class=\"col-sm-12 col-md-3\">
+            HDD : {{hdd}}
+        </div>
+        <div class=\"col-sm-12 col-md-3\">
+            PHP : {{php}}
+        </div>
+    </div>
+</div>
+',
             ),
         );
     }

@@ -1,0 +1,443 @@
+@font-face {
+	font-family: 'icomoon';
+	src:url('../fonts/icomoon.eot');
+	src:url('../fonts/icomoon.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/icomoon.woff') format('woff'),
+		url('../fonts/icomoon.ttf') format('truetype'),
+		url('../fonts/icomoon.svg#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.c-hamburger {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  width: 96px;
+  height: 96px;
+  font-size: 0;
+  text-indent: -9999px;
+  appearance: none;
+  box-shadow: none;
+  border-radius: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.c-hamburger:focus {
+  outline: none;
+}
+
+.c-hamburger span {
+  display: block;
+  position: absolute;
+  top: 20px;
+  left: 14px;
+  right: 14px;
+  height: 2px;
+  width: 20px;
+  background: white;
+}
+
+.c-hamburger span::before,
+.c-hamburger span::after {
+  position: absolute;
+  display: block;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #fff;
+  content: "";
+}
+
+.c-hamburger span::before {
+  top: -7px;
+}
+
+.c-hamburger span::after {
+  bottom: -7px;
+}
+
+/*.c-hamburger--htx {*/
+/*  background-color: #ff3264;*/
+/*}*/
+
+/*.c-hamburger--htx span {*/
+/*  transition: background 0s 0.3s;*/
+/*}*/
+
+.c-hamburger--htx span::before,
+.c-hamburger--htx span::after {
+  transition-duration: 0.3s, 0.3s;
+  transition-delay: 0.3s, 0s;
+}
+
+.c-hamburger--htx span::before {
+  transition-property: top, transform;
+}
+
+.c-hamburger--htx span::after {
+  transition-property: bottom, transform;
+}
+
+/* active state, i.e. menu open */
+/*.c-hamburger--htx.is-active {*/
+/*  background-color: #cb0032;*/
+/*}*/
+
+.c-hamburger--htx.is-active span {
+  background: none;
+}
+
+.c-hamburger--htx.is-active span::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.c-hamburger--htx.is-active span::after {
+  bottom: 0;
+  transform: rotate(-45deg);
+}
+
+.c-hamburger--htx.is-active span::before,
+.c-hamburger--htx.is-active span::after {
+  transition-delay: 0s, 0.3s;
+}
+
+.top-bar{
+	position:fixed;
+	height: 45px;
+	background: white;
+	border-bottom: 1px solid #ccc;
+	z-index:99;
+	width: 100%;
+	
+}
+/* Common styles of menus */
+
+.dl-menuwrapper {
+	width: 100%;
+	max-width: 100%;
+	float: left;
+	position: absolute;
+	-webkit-perspective: 1000px;
+	perspective: 1000px;
+	-webkit-perspective-origin: 50% 200%;
+	perspective-origin: 50% 200%;
+}
+
+.dl-menuwrapper:first-child {
+	margin-right: 100px;
+}
+
+.dl-menuwrapper button {
+	background:#263238;
+	border: none;
+	width: 48px;
+	height: 45px;
+	font-size: 30px;
+	color: #ececeb;
+	overflow: hidden;
+	position: relative;
+	cursor: pointer;
+	outline: none;
+	transition: all 0.3s ease 0s;
+}
+
+.dl-menuwrapper button:hover{
+	background:#37474F;
+}
+.dl-menuwrapper button.dl-active{
+	background:#546E7A;
+	color:white;
+	border-bottom: 1px solid #546E7A;
+	border-right: 1px solid #546E7A;
+}
+.dl-menuwrapper ul {
+	background: #546E7A;
+}
+
+
+.dl-menuwrapper button:after {
+	background: white;
+}
+
+.dl-menuwrapper ul {
+	padding: 0;
+	list-style: none;
+	-webkit-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+}
+
+.dl-menuwrapper li {
+	position: relative;
+	transition: all 0.3s ease 0s;
+}
+
+.dl-menuwrapper li:hover {
+	background:#263238;
+	text-decoration: none;	
+}
+
+.dl-divider {
+	margin: 0px 20px;
+	padding: 0px;
+	height: 0.5px;
+	width: 80%;
+	background: #607D8B;
+	
+}
+
+.dl-menuwrapper li a {
+	display: block;
+	position: relative;
+	padding: 15px 20px;
+	font-size: 16px;
+	line-height: 20px;
+	font-weight: 300;
+	color: #fff;
+	outline: none;
+	padding-right:10px;
+	left: 0px;
+}
+
+.no-touch .dl-menuwrapper li a:hover {
+	background: rgba(255,248,213,0.1);
+	text-decoration: none;
+	
+}
+
+.no-touch .dl-menuwrapper li a:focus {
+	text-decoration: none !important;
+}
+
+.dl-menuwrapper li.dl-back > a {
+	padding-left: 30px;
+	background: rgba(0,0,0,0.1);
+}
+
+.dl-menuwrapper li.dl-back:after,
+.dl-menuwrapper li > a:not(:only-child):after {
+	position: absolute;
+	top: 0;
+	line-height: 50px;
+	font-family: 'icomoon';
+	speak: none;
+	-webkit-font-smoothing: antialiased;
+	content: "\e000";
+	font-size: 10px;
+	padding-right: 10px;
+}
+
+.dl-menuwrapper li.dl-back:after {
+	left: 5px;
+	color:#ececeb;
+	-webkit-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+
+.dl-menuwrapper li > a:after {
+	right: 10px;
+	color:#ececeb;
+}
+
+.dl-menuwrapper .dl-menu {
+	margin: 0 0 0 0;
+	position: absolute;
+	opacity: 0;
+	width: 100%;
+	pointer-events: none;
+	-webkit-transform: translateY(10px);
+	transform: translateY(10px);
+	-webkit-backface-visibility: hidden;
+	backface-visibility: hidden;
+}
+
+.dl-menuwrapper .dl-menu.dl-menu-toggle {
+	transition: all 0.3s ease;
+}
+
+.dl-menuwrapper .dl-menu.dl-menuopen {
+	opacity: 1;
+	pointer-events: auto;
+	-webkit-transform: translateY(0px);
+	transform: translateY(0px);
+}
+
+/* Hide the inner submenus */
+.dl-menuwrapper li .dl-submenu {
+	display: none;
+}
+
+/* 
+When a submenu is openend, we will hide all li siblings.
+For that we give a class to the parent menu called "dl-subview".
+We also hide the submenu link. 
+The opened submenu will get the class "dl-subviewopen".
+All this is done for any sub-level being entered.
+*/
+.dl-menu.dl-subview li,
+.dl-menu.dl-subview li.dl-subviewopen > a,
+.dl-menu.dl-subview li.dl-subview > a {
+	display: none;
+}
+
+.dl-menu.dl-subview li.dl-subview,
+.dl-menu.dl-subview li.dl-subview .dl-submenu,
+.dl-menu.dl-subview li.dl-subviewopen,
+.dl-menu.dl-subview li.dl-subviewopen > .dl-submenu,
+.dl-menu.dl-subview li.dl-subviewopen > .dl-submenu > li {
+	display: block;
+}
+
+/* Dynamically added submenu outside of the menu context */
+.dl-menuwrapper > .dl-submenu {
+	position: absolute;
+	width: 100%;
+	top: 50px;
+	left: 0;
+	margin: 0 0 0 0;
+}
+
+@media screen and (max-width: 1920px) {
+	.dl-menuwrapper .dl-menu{
+		width: 15%;
+	}
+	
+	.dl-menuwrapper > .dl-submenu{
+		width: 15%;
+	}	
+}
+
+@media screen and (max-width: 1380px) {
+	.dl-menuwrapper .dl-menu{
+		width: 20%;
+	}
+	
+	.dl-menuwrapper > .dl-submenu{
+		width: 20%;
+	}	
+}
+
+@media screen and (max-width: 768px) {
+	.dl-menuwrapper .dl-menu{
+		width: 40%;
+	}
+	
+	.dl-menuwrapper > .dl-submenu{
+		width: 40%;
+	}	
+}
+
+@media screen and (max-width: 600px) {
+	.dl-menuwrapper .dl-menu{
+		width: 100%;
+	}
+	
+	.dl-menuwrapper > .dl-submenu{
+		width: 100%;
+	}	
+}
+
+
+/* No JS Fallback */
+.no-js .dl-menuwrapper .dl-menu {
+	position: relative;
+	opacity: 1;
+	-webkit-transform: none;
+	transform: none;
+}
+
+.no-js .dl-menuwrapper li .dl-submenu {
+	display: block;
+}
+
+.no-js .dl-menuwrapper li.dl-back {
+	display: none;
+}
+
+.no-js .dl-menuwrapper li > a:not(:only-child) {
+	background: rgba(0,0,0,0.1);
+}
+
+.no-js .dl-menuwrapper li > a:not(:only-child):after {
+	content: '';
+}
+
+#menu-header {
+	height: 70px;
+	padding: 5px 0px 0px 20px;
+	color: #fff;
+	background: #37474f;
+	display: block;
+}
+
+#menu-header h1 {
+	color:#fff;
+	text-align: left;
+	font-size: 30px;
+	margin-top: 13px;
+}
+
+
+#menu-header a {
+	padding: 0px;
+}
+
+#menu-header a:hover {
+	background: #37474f;
+	font-weight: 800;
+	color: #ececeb;
+}
+
+#menu-header-action {
+	float: right;
+	margin-right : 30px;
+}
+
+.dl-menuright {
+    float: right;
+    padding: 4px 15px 5px 10px;
+    font-size:0.9em;
+    line-height: 1.3em;
+    text-align:center;
+    border-left:1px solid #ececeb;
+    display:none;
+}
+
+#jam .white {
+    opacity:0;
+}
+
+
+@media screen and (max-width: 768px) {
+    .dl-menuright {
+        opacity:0;
+    }
+}
+
+.pace {
+  -webkit-pointer-events: none;
+  pointer-events: none;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.pace-inactive {
+  display: none;
+}
+
+.pace .pace-progress {
+  background: #29d;
+  position: fixed;
+  z-index: 2000;
+  top: 0;
+  right: 100%;
+  width: 100%;
+  height: 2px;
+}

@@ -344,6 +344,12 @@ EOF;
         $class               = FormBuilder::classPath($class);
         $this->layout        = "//layouts/blank";
 
+
+        if (Setting::get('app.theme') == 'flatwhite') {
+            Asset::registerCss('application.static.css.main');
+        }
+
+
         ## reset form builder session
         FormBuilder::resetSession($class);
 

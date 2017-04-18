@@ -874,6 +874,8 @@ class DataSource extends FormField {
 
     public function execute($params = []) {
         $params = array_merge($params, $this->queryParams);
+        
+        if ($this->php == '') return [];
 
         $data = $this->evaluate($this->php, true, [
             'params' => $params,

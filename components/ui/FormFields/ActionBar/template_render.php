@@ -1,5 +1,6 @@
 
 <div ps-action-bar class="action-bar-container">
+    <data name="theme" class="hide"><?= Setting::get('app.theme'); ?></data>
     <div class="action-bar" >
         <div class="title-bar">
             <span class="title"><?= $this->title ?></span>

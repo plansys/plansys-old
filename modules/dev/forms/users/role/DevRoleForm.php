@@ -202,7 +202,9 @@ class DevRoleForm extends Role {
                         'inputMask' => '',
                         'stringAlias' => array (),
                         'columnType' => 'string',
-                        'show' => true,
+                        'show' => false,
+                        '$listViewName' => 'columns',
+                        '$showDF' => false,
                     ),
                     array (
                         'name' => 'username',
@@ -217,6 +219,8 @@ class DevRoleForm extends Role {
                         ),
                         'columnType' => 'string',
                         'show' => false,
+                        '$listViewName' => 'columns',
+                        '$showDF' => false,
                     ),
                     array (
                         'name' => 'last_login',
@@ -231,6 +235,31 @@ class DevRoleForm extends Role {
                         ),
                         'columnType' => 'string',
                         'show' => false,
+                        '$listViewName' => 'columns',
+                        '$showDF' => false,
+                        'mergeSameRow' => 'No',
+                        'cellMode' => 'default',
+                    ),
+                    array (
+                        'name' => '',
+                        'label' => '',
+                        'options' => array (
+                            'mode' => 'edit-button',
+                            'editUrl' => '/dev/user/update&id={{row.id}}',
+                        ),
+                        'mergeSameRow' => 'No',
+                        'mergeSameRowWith' => '',
+                        'mergeSameRowMethod' => 'Default',
+                        'html' => '',
+                        'columnType' => 'string',
+                        'typeOptions' => array (
+                            'string' => array (
+                                'html',
+                            ),
+                        ),
+                        '$listViewName' => 'columns',
+                        '$showDF' => true,
+                        'cellMode' => 'default',
                     ),
                 ),
                 'gridOptions' => array (
@@ -238,7 +267,7 @@ class DevRoleForm extends Role {
                     'enableExternalSorting' => 'true',
                     'afterSelectionChange' => 'url:/dev/user/update?id={id}',
                 ),
-                'type' => 'DataGrid',
+                'type' => 'GridView',
             ),
             array (
                 'type' => 'Text',

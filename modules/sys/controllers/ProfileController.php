@@ -30,10 +30,60 @@ class ProfileController extends Controller {
                 Yii::app()->user->setState('roleId', $id);
             }
         }
+
         if (@Yii::app()->user->roleInfo['home_url'] == '') {
-            $this->redirect([Yii::app()->user->returnUrl]);    
+            
+            $this->redirect(Yii::app()->user->returnUrl);    
         }
         $this->redirect([Yii::app()->user->roleInfo['home_url']]);
     }
+    
+    public function actionAppSetting(){
+        echo json_encode(Setting::get('app'));
+    }
+    
+    public function actionGetSystemLoad(){
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $res['os'] = 'Windows';
+            $res['cpu'] = '??';
+            $res['mem'] = '??';
+            $res['php'] = explode('-', phpversion())[0];
+            $res['hdd'] = '??';
+        } else {
+            $res['os'] = 'Linux';
+            
+            $load = sys_getloadavg();
+            $res['cpu'] = $load[0];
+        
+            $free = shell_exec('free');
+            $free = (string)trim($free);
+            $free_arr = explode("\n", $free);
+            $mem = explode(" ", $free_arr[1]);
+            $mem = array_filter($mem);
+            $mem = array_merge($mem);
+            $memory_usage = $mem[2]/$mem[1]*100;
+            $res['mem'] = round($memory_usage);
+            
+            $res['hdd'] = ProfileController::dataSize(disk_free_space("/")) . ' Free';
+            $res['php'] = explode('-', phpversion())[0];
+            
+            
+            echo json_encode($res);
+        }
+
+        
+    }
+    
+    function dataSize($Bytes){
+        $Type=array("", "K", "M", "G", "T");
+        $counter=0;
+        while($Bytes>=1024)
+        {
+            $Bytes/=1024;
+            $counter++;
+        }
+        return("".floor($Bytes)." ".$Type[$counter]."B");
+    }
+
 
 }

@@ -44,14 +44,13 @@ class User extends ActiveRecord {
     public function relations() {
         return array(
             'auditTrail' => array(self::HAS_MANY, 'AuditTrail', 'user_id'),
-            'userRoles' => array(self::HAS_MANY, 'UserRole', 'user_id', 'order' => '|is_default_role| ASC'),
+            'userRoles' => array(self::HAS_MANY, 'UserRole', 'user_id', 'order' => '|is_default_role| DESC'),
             'role' => array(self::HAS_ONE, 'Role', array('role_id' => 'id'), 'through' => 'userRoles',
                 'condition' => '|is_default_role| = \'Yes\''),
         );
     }
     
     public $roles = [''];
-
     public function getRoles($originalSorting = false) {
         $uid = $this->id;
         if (!$uid) {
@@ -59,13 +58,14 @@ class User extends ActiveRecord {
         }
 
         ## get roles
-        $roles = Role::model()->cache(1000, Yii::app()->user->cacheDep)->with('userRoles')->findAll(ActiveRecord::formatCriteria([
+        $roles = Role::model()->with('userRoles')->findAll(ActiveRecord::formatCriteria([
             'condition' => '|user_id| = :p',
-            'order' => '|is_default_role|',
+            'order' => '|is_default_role| DESC',
             'params' => [
                 ':p' => $uid
             ]
         ]));
+        
         $roles = ActiveRecord::toArray($roles);
         if (empty($roles)) {
             return false;

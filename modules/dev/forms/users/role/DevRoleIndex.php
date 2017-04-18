@@ -68,6 +68,8 @@ class DevRoleIndex extends Role {
                         'html' => '',
                         'columnType' => 'string',
                         'show' => false,
+                        '$listViewName' => 'columns',
+                        '$showDF' => false,
                     ),
                     array (
                         'name' => 'role_description',
@@ -75,6 +77,8 @@ class DevRoleIndex extends Role {
                         'html' => '',
                         'columnType' => 'string',
                         'show' => false,
+                        '$listViewName' => 'columns',
+                        '$showDF' => false,
                     ),
                     array (
                         'name' => 'menu_path',
@@ -82,6 +86,8 @@ class DevRoleIndex extends Role {
                         'html' => '',
                         'columnType' => 'string',
                         'show' => false,
+                        '$listViewName' => 'columns',
+                        '$showDF' => false,
                     ),
                     array (
                         'name' => 'home_url',
@@ -89,6 +95,8 @@ class DevRoleIndex extends Role {
                         'html' => '',
                         'columnType' => 'string',
                         'show' => false,
+                        '$listViewName' => 'columns',
+                        '$showDF' => false,
                     ),
                     array (
                         'name' => 'edit',
@@ -109,6 +117,8 @@ class DevRoleIndex extends Role {
                         ),
                         'show' => true,
                         'cellMode' => 'default',
+                        '$listViewName' => 'columns',
+                        '$showDF' => true,
                     ),
                 ),
             ),

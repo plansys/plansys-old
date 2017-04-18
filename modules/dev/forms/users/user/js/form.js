@@ -26,6 +26,7 @@ $scope.updateRole = function () {
     }
 }
 
+
 switch ($scope.module) {
     case 'dev':
         if (!$scope.isNewRecord) {

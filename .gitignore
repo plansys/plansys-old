@@ -5,3 +5,4 @@
 /vendor/
 /repo/
 /messages/
+composer.lock

@@ -111,8 +111,8 @@ class ChartBar extends FormField {
                 'totalColumns' => '1',
                 'column1' => array (
                     array (
-                        'value' => '<column-placeholder></column-placeholder>',
                         'type' => 'Text',
+                        'value' => '<column-placeholder></column-placeholder>',
                     ),
                     array (
                         'label' => 'Generate Series',
@@ -127,6 +127,7 @@ class ChartBar extends FormField {
                         'type' => 'LinkButton',
                     ),
                 ),
+                'w1' => '100%',
                 'type' => 'ColumnField',
             ),
             array (
@@ -141,9 +142,9 @@ class ChartBar extends FormField {
                 'type' => 'SectionHeader',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<div style=\"margin-top:5px;\"></div>
 ',
-                'type' => 'Text',
             ),
             array (
                 'label' => 'Set as Tick',
@@ -158,20 +159,27 @@ class ChartBar extends FormField {
                 'type' => 'DropDownList',
             ),
             array (
+                'type' => 'Text',
                 'value' => '<div style=\"margin-bottom:5px;\"></div>
 <hr />',
-                'type' => 'Text',
             ),
             array (
                 'name' => 'series',
                 'fieldTemplate' => 'form',
                 'templateForm' => 'application.components.ui.FormFields.ChartSeriesForm',
-                'labelWidth' => '0',
-                'fieldWidth' => '12',
                 'options' => array (
                     'ng-model' => 'active.series',
                     'ng-change' => 'save(); setTickSeries();',
                     'ps-after-add' => 'value.show = true',
+                ),
+                'singleViewOption' => array (
+                    'name' => 'val',
+                    'fieldType' => 'text',
+                    'labelWidth' => 0,
+                    'fieldWidth' => 12,
+                    'fieldOptions' => array (
+                        'ng-delay' => 500,
+                    ),
                 ),
                 'type' => 'ListView',
             ),

@@ -202,40 +202,4 @@ body .main .info-container {
   margin: 0px -15px !important;
   border-radius: 0px;
 }
-body .main [ps-action-bar] {
-  position: fixed;
-}
-body .main [ps-action-bar] .action-bar {
-  display: flex;
-  margin: 0px 0px -1px 0px;
-  align-items: center;
-  padding: 10px 10px 10px 10px;
-  border-bottom: 1px solid #ccc;
-}
-body .main [ps-action-bar] .action-bar .title-bar {
-  flex: 1;
-}
-body .main [ps-action-bar] .action-bar .title-bar .title {
-  font-size: 16px;
-  font-weight: bold;
-}
-body .main [ps-action-bar] .action-bar .link-bar {
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
-  text-align: right;
-}
-body .main [ps-action-bar] .action-bar .link-bar .separator {
-  display: none;
-}
-body .main [ps-action-bar] .action-bar .link-bar .btn {
-  margin-right: 5px;
-  border-radius: 2px;
-}
-body .main [ps-action-bar] .action-bar .clearfix {
-  display: none;
-}
-body .main [ps-action-bar] .action-bar .action-tab {
-  display: none;
-}
 
