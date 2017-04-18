@@ -34,12 +34,12 @@ class WebUser extends CWebUser {
     }
     
     public function getCacheDep() {
-        return new CExpressionDependency('Yii::app()->session->get("user_cache_time")');
+        return new CExpressionDependency('true');
     }
     
     public function getModel() {
         if (is_null($this->_model)) {
-            $this->_model = User::model()->cache(1000, $this->cacheDep)->findByPk($this->id);
+            $this->_model = User::model()->findByPk($this->id);
         }
 
         return $this->_model;

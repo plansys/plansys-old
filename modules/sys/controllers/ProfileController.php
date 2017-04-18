@@ -32,7 +32,8 @@ class ProfileController extends Controller {
         }
 
         if (@Yii::app()->user->roleInfo['home_url'] == '') {
-            $this->redirect([Yii::app()->user->returnUrl]);    
+            
+            $this->redirect(Yii::app()->user->returnUrl);    
         }
         $this->redirect([Yii::app()->user->roleInfo['home_url']]);
     }
