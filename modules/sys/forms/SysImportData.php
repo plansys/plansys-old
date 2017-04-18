@@ -76,6 +76,7 @@ text-align:center;\">
 ',
             ),
             array (
+                'display' => 'all-line',
                 'type' => 'Text',
                 'value' => '<div ng-click=\"form.submit(this)\" class=\"btn btn-primary btn-block\" ng-if=\"!!model.file\">
     <b>Execute Import Data</b>

@@ -7,7 +7,7 @@ $scope.listCommand = false;
 $scope.listAction = false;
 
 $scope.deleteService = function() {
-    if (prompt("Type 'DELETE' to permanently delete this service: ") === "DELETE") {
+    if (confirm("Are you sure want to delete this service ?")) {
        $http.get(Yii.app.createUrl('/dev/service/delete', {m: $scope.model.name})).success(function() {
         	window.close();
         	window.opener.location.href = Yii.app.createUrl('/dev/service/index');
@@ -33,7 +33,7 @@ $scope.onModuleChange = function() {
             $scope.$newCommand = false;
             $scope.listCommand = result;
             $scope.model.command = '';
-            $scope.model.action = '';
+            $scope.model.action = 'Index';
         } else {
             $scope.$newCommand = true;
             $scope.listCommand = false;

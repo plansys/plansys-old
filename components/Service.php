@@ -1,73 +1,22 @@
 <?php
 
 class Service extends CConsoleCommand {
-    public $service = null;
-    public $pid = 0;
-    public $id = "";
     public $params = null;
+    public $_sname = null;
     
-    public static $shutdownVars = [];
-    
-    public function init() {
-        if (isset($GLOBALS['svc'])) {
-            $this->service = $GLOBALS['svc'];
-            $this->pid = $this->service['pid'];
-            $this->id = $GLOBALS['svc_id'];
-            $this->service['id'] = $this->id;
-            
-            unset($GLOBALS['svc']);
-            unset($GLOBALS['svc_id']);
-            ServiceManager::initLogAppend($this->id, "[OK]");
-            ServiceManager::markAsRunning($this->service['name'], $this->id, $this->service);
-            
-            if (isset($this->service['params'])) {
-                $this->params = $this->service['params'];
-            }
-            
-            ob_start(function($data) {
-                $this->logAppend("\n" . $data);
-                return "";
-            }, 1);
-        } else {
-            echo <<<EOF
-============================ WARNING ==========================
-  You should start this service from Plansys Service Manager
-===============================================================
-
-EOF;
-        }
-    }
-    
-    protected function afterAction($action, $params, $exitCode=0) {
-        if (isset($this->service['name'])) {
-            $this->log("SERVICE: Service {$this->service['name']} exited with code {$exitCode} [PID: {$this->pid}] ");
-            ServiceManager::markAsStopped($this->service['name'], $this->id);
-            
-            
-            if (@$this->service['status'] != "ok") {
-                ServiceSetting::set('list.' . $this->service['name'] . '.status', 'ok');
+    public function beforeAction($action, $params) {
+        Setting::initPath();
+        
+        if (is_string($this->params)) {
+            $jsonparams = json_decode($this->params, true);
+            if (!is_null($jsonparams)) {
+                $this->params = $jsonparams;
             }
         }
-        return parent::afterAction($action, $params, $exitCode);
+        return true;
     }
     
     public function setView($key, $value) {
-        if (!isset($this->service['view'])) {
-            $this->service['view'] = [];
-        }
-        $this->service['view'][$key] = $value;
-        $path = Yii::getPathOfAlias('root.assets.services.init') . DIRECTORY_SEPARATOR . $this->id;
-        
-        if (is_file($path)) {
-            file_put_contents($path, json_encode($this->service, JSON_PRETTY_PRINT));
-        }
-    }
-    
-    public function log($msg) {
-        ServiceManager::log($this->service['name'], $this->id, $msg);
-    }
-    
-    public function logAppend($msg) {
-        ServiceManager::logAppend($this->service['name'], $this->id, $msg);
+        ServiceManager::setView($this->_sname, $key, $value);
     }
 }

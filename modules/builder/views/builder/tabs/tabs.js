@@ -7,7 +7,7 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
      $scope.active = null;
      $scope.activeIdx = -1;
      $scope.init = true;
-     var store = window.localStorage;
+     // var store = window.localStorage;
 
      $timeout(function() {
           $scope.builder = window.builder;
@@ -221,14 +221,14 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                     if (cleanItem.code) {
                          delete cleanItem.code;
                     }
-                    store['tabs-' + item.d] = JSON.stringify(cleanItem);
+                    // store['tabs-' + item.d] = JSON.stringify(cleanItem);
                     $scope.updateTabHash();
                });
           }
           else {
                $scope.activeIdx = idx;
           }
-          store['tabs-active'] = $scope.activeIdx;
+          // store['tabs-active'] = $scope.activeIdx;
 
           // by default open code editor
           if (!item.mode || item.mode == 'code') {
@@ -278,9 +278,9 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           $scope.findTab(item, function(idx) {
                $scope.list.splice(idx, 1);
                $scope.updateTabHash();
-               if (store['tabs-' + item.d]) {
-                    delete store['tabs-' + item.d];
-               }
+               // if (store['tabs-' + item.d]) {
+               //      delete store['tabs-' + item.d];
+               // }
 
                if ($scope.active && $scope.active.id == item.id) {
                     if ($scope.list[idx]) {
@@ -291,7 +291,7 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                     }
                     else {
                          $scope.active = null;
-                         store['tabs-active'] = -1;
+                         // store['tabs-active'] = -1;
                     }
                }
           });
@@ -315,28 +315,28 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           $scope.list.forEach(function(item, idx) {
                hash[idx] = item.d;
           });
-          store['tabs-hash'] = JSON.stringify(hash);
+          // store['tabs-hash'] = JSON.stringify(hash);
      }
 
-     $timeout(function() { // first load 
-          var store = window.localStorage;
-          if (store['tabs-hash']) {
-               var tabs = JSON.parse(store['tabs-hash']);
-               for (var i in tabs) {
-                    var item = JSON.parse(store['tabs-' + tabs[i]]);
+     // $timeout(function() { // first load 
+     //      var store = window.localStorage;
+     //      if (store['tabs-hash']) {
+     //           var tabs = JSON.parse(store['tabs-hash']);
+     //           for (var i in tabs) {
+     //                var item = JSON.parse(store['tabs-' + tabs[i]]);
 
-                    if (store['tabs|code-' + tabs[i]]) {
-                         item.unsaved = true;
-                         item.code = JSON.parse(store['tabs|code-' + tabs[i]]);
-                    }
-                    if (store['tabs-' + tabs[i]]) {
-                         $scope.list.push(item);
-                    }
-               }
+     //                if (store['tabs|code-' + tabs[i]]) {
+     //                     item.unsaved = true;
+     //                     item.code = JSON.parse(store['tabs|code-' + tabs[i]]);
+     //                }
+     //                if (store['tabs-' + tabs[i]]) {
+     //                     $scope.list.push(item);
+     //                }
+     //           }
 
-               $scope.open($scope.list[store['tabs-active']]);
-          }
-     });
+     //           $scope.open($scope.list[store['tabs-active']]);
+     //      }
+     // });
 });
 
 app.directive('selectOnClick', ['$window', function($window) {

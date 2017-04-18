@@ -5,7 +5,16 @@ class EmailCommand extends Service {
      	$config = Setting::get('email');
 		$mail  = new PHPMailer();
 		if(@$config['enabled'] == 'YES'){
-				if ($config['transport'] == "smtp") {
+			$mails = $this->params['mails'];
+			if (!is_array($mails)) {
+				echo " \n";
+				echo "######## ERROR RUNNING EMAIL SERVICE #########\n";
+				echo "### You should run this from Email::send() ###\n";
+				echo "##############################################\n";
+				return;
+			}	
+			
+			if ($config['transport'] == "smtp") {
 				$mail->IsSMTP(); 
 				$mail->SMTPDebug  = 3;
 			}
@@ -31,7 +40,6 @@ class EmailCommand extends Service {
 			    )
 			);
 			
-			$mails = $this->params['mails'];
 			if (is_array($mails)) {		    
 				foreach ($mails as $m) {
 					$mail->Subject = $m['subject'];
@@ -44,13 +52,7 @@ class EmailCommand extends Service {
 					}
 					$mail->ClearAddresses();
 				}
-			} else {
-				echo " ";
-				echo "               ######## ERROR RUNNING EMAIL SERVICE #########";
-				echo "               ### You should run this from Email::send() ###";
-				echo "               ##############################################";
-				echo " ";
-			}	
+			} 
 		} else {
 			echo "Email is not enabled";
 		}

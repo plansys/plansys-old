@@ -3,7 +3,7 @@
 app.controller("Code", function($scope, $http, $timeout, $q) {
      $scope.active = null;
      window.code = $scope;
-     var store = window.localStorage;
+     // var store = window.localStorage;
 
      window.addEventListener("storage", function(e) {
           console.log(e);
@@ -13,7 +13,8 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
      $scope.editor.setTheme("ace/theme/monokai");
      $scope.editor.$blockScrolling = Infinity;
      $scope.editor.setOptions({
-          wrap: true
+          wrap: true,
+          enableEmmet: true
      });
      $scope.editor.commands.bindKey("Command+L", null)
 
@@ -25,18 +26,18 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
                if ($scope.active.unsaved) {
                     $scope.active.code.status = 'Unsaved';
 
-                    var item = JSON.parse(store['tabs-' + $scope.active.d]);
-                    store['tabs-' + $scope.active.d] = JSON.stringify(item);
-                    store['tabs|code-' + $scope.active.d] = JSON.stringify({
-                         content: $scope.active.code.content,
-                         cursor: $scope.active.code.cursor
-                    });
+                    // var item = JSON.parse(store['tabs-' + $scope.active.d]);
+                    // store['tabs-' + $scope.active.d] = JSON.stringify(item);
+                    // store['tabs|code-' + $scope.active.d] = JSON.stringify({
+                    //      content: $scope.active.code.content,
+                    //      cursor: $scope.active.code.cursor
+                    // });
                }
                else {
                     $scope.active.code.status = 'Ready';
-                    if (store['tabs|code-' + $scope.active.d]) {
-                         delete store['tabs|code-' + $scope.active.d];
-                    }
+                    // if (store['tabs|code-' + $scope.active.d]) {
+                    //      delete store['tabs|code-' + $scope.active.d];
+                    // }
                }
           });
      });
@@ -140,9 +141,9 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
                     $scope.active.unsaved = false;
 
                     // store it in localstorage
-                    var item = JSON.parse(store['tabs-' + $scope.active.d]);
-                    store['tabs-' + $scope.active.d] = JSON.stringify(item);
-                    delete store['tabs|code-' + $scope.active.d];
+                    // var item = JSON.parse(store['tabs-' + $scope.active.d]);
+                    // store['tabs-' + $scope.active.d] = JSON.stringify(item);
+                    // delete store['tabs|code-' + $scope.active.d];
                }
                else {
                     $scope.active.code.status = 'Save failed. (' + res.data.split(":").pop().trim() + ')';

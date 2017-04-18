@@ -8,9 +8,9 @@ class DevService extends Form {
     public $action = 'Index';
     public $schedule = 'manual';
     public $period;
-    public $instance = 'single';
-    public $singleInstanceMode = 'wait';
-    public $status = 'draft';
+    public $instanceMode = 'single';
+    public $singleInstanceAction = 'wait';
+    public $status = 'ok';
     private $isNewRecord = true;
     
     public function rules() {
@@ -21,14 +21,16 @@ class DevService extends Form {
     }
     
     public function serviceValidator() {
-        $svc = ServiceSetting::get('list.' .$this->name);
-        if ($this->isNewRecord && (count($svc) > 1)) {
+        $svc = ServiceManager::getService($this->name);
+        
+        if ($this->isNewRecord && !is_null($svc)) {
             $this->addError('name', 'Service name already exists, choose another name');
         }
     }
 
     public static function load($id) {
-        $svc = ServiceSetting::get('list.' . $id);
+        $svc = ServiceManager::getService($id);
+        
         if (is_null($svc)) {
             return false;
         }
@@ -68,8 +70,8 @@ class DevService extends Form {
     public function save() {
         if ($this->isNewRecord) {
             $this->create();
-        } else {
-            ServiceSetting::set('list.' . $this->name, $this->attributes);
+        } else {   
+            ServiceManager::add($this->attributes);
         }
     }
     
@@ -82,12 +84,16 @@ class DevService extends Form {
         }
         
         ## Write New Command Class
-        $filePath = $path . DIRECTORY_SEPARATOR . $this->command . "Command.php";
+        if (substr($this->command, -7) != 'Command') {
+            $this->command = $this->command . 'Command';
+        }
+        
+        $filePath = $path . DIRECTORY_SEPARATOR . $this->command . ".php";
         if (!is_file($filePath)) {
             $content = <<<EOF
 <?php
 
-class {$this->command}Command extends Service {
+class {$this->command} extends Service {
     public function actionIndex() {
         ## Put your code here
         
@@ -97,16 +103,13 @@ EOF;
             file_put_contents($filePath, $content);
         }
         
-        if (substr($this->command, -8) != "Command") {
-            $this->command = $this->command . "Command";
-        }
 
-        if (substr($this->action, 8) != "action") {
+        if (substr($this->action, 6) != "action") {
             $this->action = "action" . $this->action ;
         }
         
         ## Setup Process Entry in Setting            
-        ServiceSetting::set("list.".$this->name, $this->attributes);
+        ServiceManager::add($this->attributes);
     }
 
     public function getForm() {
@@ -183,7 +186,7 @@ EOF;
                         'type' => 'TextField',
                     ),
                     array (
-                        'label' => 'Command',
+                        'label' => 'Command File',
                         'name' => 'command',
                         'options' => array (
                             'ng-if' => '!params.isNewRecord',
@@ -194,7 +197,7 @@ EOF;
                         'type' => 'TextField',
                     ),
                     array (
-                        'label' => 'Command',
+                        'label' => 'Command File',
                         'name' => 'command',
                         'options' => array (
                             'ng-if' => '!$newCommand && !!listCommand',
@@ -204,19 +207,10 @@ EOF;
                         'type' => 'DropDownList',
                     ),
                     array (
-                        'label' => 'Action',
-                        'name' => 'action',
-                        'options' => array (
-                            'ng-if' => '(!$newCommand && !!listAction) || !params.isNewRecord',
-                            'ps-list' => 'listAction',
-                        ),
-                        'listExpr' => '[\'action\']',
-                        'type' => 'DropDownList',
-                    ),
-                    array (
+                        'display' => 'all-line',
                         'type' => 'Text',
                         'value' => '<div class=\"text-center\"
-     ng-show=\"params.isNewRecord && !$newCommand && !model.action && !!model.commandPath\">
+     ng-show=\"params.isNewRecord && !$newCommand && !!model.commandPath\">
     
     <div style=\"height:40px;line-height:40px\">
         &mdash; OR &mdash;
@@ -233,7 +227,7 @@ EOF;
                         'value' => '<div ng-if=\\"!!$newCommand\\">',
                     ),
                     array (
-                        'label' => 'Command',
+                        'label' => 'Command File',
                         'name' => 'command',
                         'postfix' => 'Command',
                         'options' => array (
@@ -245,33 +239,8 @@ EOF;
                         'type' => 'TextField',
                     ),
                     array (
-                        'label' => 'Action',
-                        'name' => 'action',
-                        'prefix' => 'action',
-                        'options' => array (
-                            'ng-change' => 'model.action= formatClass(model.action)',
-                        ),
-                        'type' => 'TextField',
-                    ),
-                    array (
                         'type' => 'Text',
                         'value' => '</div>',
-                    ),
-                    array (
-                        'type' => 'Text',
-                        'value' => '<div class=\"text-center\"
-     ng-show=\"params.isNewRecord && !!$newCommand && !model.action && !!listCommand\">
-    
-    <div style=\"height:40px;line-height:40px\">
-        &mdash; OR &mdash;
-    </div>
-    
-    <div ng-click=\"$newCommand = false\" 
-         class=\"btn btn-xs btn-default\">
-        <i class=\"fa fa-check\"></i> Choose Existing Command
-    </div>
-</div>
-',
                     ),
                     array (
                         'type' => 'Text',
@@ -281,7 +250,7 @@ EOF;
                 'column2' => array (
                     array (
                         'type' => 'Text',
-                        'value' => '<div ng-show=\\"model.commandPath != \'\' && !!model.command && !!model.action\\">',
+                        'value' => '<div ng-show=\\"model.commandPath != \'\' && !!model.command\\">',
                     ),
                     array (
                         'label' => 'Run Schedule',
@@ -316,7 +285,7 @@ EOF;
                     ),
                     array (
                         'label' => 'Run Instance',
-                        'name' => 'instance',
+                        'name' => 'instanceMode',
                         'defaultType' => 'first',
                         'listExpr' => '[
 \'single\'=>\'Single Instance\',
@@ -325,9 +294,9 @@ EOF;
                     ),
                     array (
                         'label' => 'If instance is still running:',
-                        'name' => 'singleInstanceMode',
+                        'name' => 'singleInstanceAction',
                         'options' => array (
-                            'ng-if' => 'model.instance == \'single\'',
+                            'ng-if' => 'model.instanceMode == \'single\'',
                         ),
                         'defaultType' => 'first',
                         'listExpr' => '[
@@ -337,10 +306,12 @@ EOF;
                         'type' => 'DropDownList',
                     ),
                     array (
+                        'display' => 'all-line',
                         'type' => 'Text',
-                        'value' => '<div ng-if=\"!$newCommand\" class=\"alert alert-warning text-center\" style=\"margin-top:20px\">
+                        'value' => '<div ng-if=\"!params.isNewRecord && model.commandPath.indexOf(\'application\') !== 0\" class=\"alert alert-warning text-center\" style=\"margin-top:20px\">
     <div ng-click=\"deleteService();\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-warning\"></i> Delete This Service
-    </div>
+    </div><hr/>
+    <small>This only delete service configuration. Source code will <B>NOT</B> be removed.</small>
 </div>',
                     ),
                     array (

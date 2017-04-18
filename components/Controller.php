@@ -429,8 +429,11 @@ class Controller extends CController {
     public function setInfo($info) {
         Yii::app()->user->setFlash('info', $info);
     }
-
+    
     protected function beforeAction($action) {
+        ## Make sure service daemon is started
+        ServiceManager::startDaemon();
+
         ## when mode is init or install then redirect to installation mode
         if (Setting::$mode == "init" || Setting::$mode == "install") {
             if ($this->id != "default") {
@@ -440,13 +443,21 @@ class Controller extends CController {
         }
         
         ## Setup actual url reference, for console command...
+        $tempUrlPath = Yii::getPathOfAlias('root.assets.url') . ".txt";
+        if (is_writeable(Setting::$path)) { 
+            ## if settings.json is writeable then we dont need tempurl file
+            if (is_file($tempUrlPath) && is_writeable($tempUrlPath)) {
+                @unlink($tempUrlPath);
+            }
+        }
+        
         $appUrl    = Setting::get('app.url');
         $actualUrl = Yii::app()->getRequest()->getHostInfo() . Yii::app()->getRequest()->getBaseUrl();
         if ($appUrl != $actualUrl) {
             try {
                 Setting::set('app.url', $actualUrl);
             } catch(Exception $e) {
-                
+                @file_put_contents($tempUrlPath, $actualUrl);
             }
         }
 
@@ -456,7 +467,7 @@ class Controller extends CController {
                 $route->enabled = false;
             }
         }
-
+        
         parent::beforeAction($action);
         
         if (Setting::$mode == 'running' && $this->enableDebug) {
@@ -466,10 +477,6 @@ class Controller extends CController {
     }
 
     protected function afterAction($action) {
-
-
-        ## Make sure service daemon is started
-        ServiceManager::startDaemon();
 
         if (Setting::$mode == 'running' && $this->enableDebug) {
             Yii::endProfile('PlansysRenderForm');

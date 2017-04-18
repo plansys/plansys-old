@@ -272,6 +272,16 @@ class Setting {
 
     public static function get($key, $default = null, $forceRead = false) {
         $keys = explode('.', $key);
+        
+        if ($key == 'app.url') {
+            $tempUrlPath = Yii::getPathOfAlias('root.assets.url') . ".txt";
+            if (!is_writeable(Setting::$path) || is_file($tempUrlPath)) {
+                $tempUrlPath = Yii::getPathOfAlias('root.assets.url') . ".txt";
+                if (is_file($tempUrlPath)) {
+                    return @file_get_contents($tempUrlPath);
+                }
+            }
+        }
 
         if ($forceRead) {
             $file          = @file_get_contents(Setting::$path);
@@ -293,7 +303,7 @@ class Setting {
 
     public static function set($key, $value, $flushSetting = true) {
         Setting::setInternal(Setting::$data, $key, $value);
-
+        
         if ($flushSetting) {
             Setting::write();
         }
@@ -326,6 +336,7 @@ class Setting {
     }
 
     public static function initPath() {
+        Yii::setPathOfAlias('webroot', Setting::getRootPath());
         Yii::setPathOfAlias('root', Setting::getRootPath());
         Yii::setPathOfAlias('app', Setting::getAppPath());
         Yii::setPathOfAlias('application', Setting::getApplicationPath());
@@ -338,6 +349,21 @@ class Setting {
 
     public static function getDefaultTheme() {
         return 'oldblue';
+    }
+
+    public static function getRequestInfo() {
+        $url = parse_url(Setting::get('app.url'));
+        if (!isset($url['scheme'])) {
+            return null;
+        }
+        
+        $host = $url['scheme'] . '://' . $url['host'];
+        $base = '/'. trim($url['path'], '/') . '/index.php'; 
+        return [
+            'hostInfo' => $host,
+            'baseUrl' => '',
+            'scriptUrl' =>$base,
+        ];
     }
 
     public static function getViewPath() {
@@ -486,6 +512,20 @@ class Setting {
     public static function getCommandMap($modules = null) {
         $commands = [];
         $modules  = is_null($modules) ? Setting::getModules() : $modules;
+
+        $path = Yii::getPathOfAlias("app.commands");
+        if (is_dir($path)) {
+            $cmds = glob($path . DIRECTORY_SEPARATOR . "*.php");
+            foreach ($cmds as $c) {
+                $dir  = explode(DIRECTORY_SEPARATOR, $c);
+                $file = array_pop($dir);
+                $cmd  = lcfirst(str_replace("Command.php", "", $file));
+
+                $commands["app." . $cmd] = [
+                    'class' => Helper::getAlias($c)
+                ];
+            }
+        }
 
         foreach ($modules as $m) {
             $moduleClass = explode(".", $m['class']);

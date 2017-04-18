@@ -26,6 +26,11 @@ $components = array(
     ),
 );
 
+$requestInfo = Setting::getRequestInfo();
+if (!is_null($requestInfo)) {
+    $components['request'] = $requestInfo;
+}
+
 $dbLists = Setting::getDBList();
 $components = $dbLists + $components;
 

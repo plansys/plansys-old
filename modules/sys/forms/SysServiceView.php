@@ -26,7 +26,7 @@ class SysServiceView extends Form {
                 'value' => '<div class=\"panel panel-default\"
     style=\"width:500px;margin:40px auto;\">
     <div class=\"panel-body\">
-       <div ng-if=\"!!params.svc && !!params.svc.view.finished\" style=\"padding:30px 20px;color:green;text-align:center;\">
+       <div ng-if=\"!!params.svc && params.svc.runningInstances.length == 0 && !params.svc.view.failed\" style=\"padding:30px 20px;color:green;text-align:center;\">
             <i 
             class=\"fa fa-check-circle fa-4x\">
             </i>
@@ -70,8 +70,8 @@ class SysServiceView extends Form {
             </div>
             <div ng-bind-html=\"params.svc.view.body\"></div>
        </div>
-       <div ng-if=\"!params.svc\" class=\"text-center\">
-           <i class=\"fa fa-refresh fa-spin\"></i> Loading<span style=\'width:20px;display:inline-block;text-align:left;\'>{{ poolDots }}</span>
+       <div ng-if=\"!!params.svc && params.svc.runningInstances.length > 0\" class=\"text-center\">
+           <i class=\"fa fa-refresh fa-spin\"></i> Service Running<span style=\'width:20px;display:inline-block;text-align:left;\'>...</span><br/>
            </span> 
        </div>
     </div>

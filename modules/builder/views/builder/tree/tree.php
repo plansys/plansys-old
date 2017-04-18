@@ -42,9 +42,9 @@
                       ng-if="!menu.hr && (!menu.visible || (menu.visible && menu.visible(cm.active)))">
                       <a class="pointer" role="menuitem"
                          oncontextmenu="return false"
-                         ng-click="cm.click($event, menu.click)">
+                         ng-click="cm.click($event, menu.click, menu)">
                           <i class="{{menu.icon}}"></i>
-                           {{ menu.label }}
+                           {{ cm.getLabel(menu) }}
                       </a>
                   </li>
                   <hr ng-if="!!menu.hr && (!menu.visible || (menu.visible && menu.visible(cm.active)))" ng-repeat-end/>

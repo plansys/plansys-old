@@ -9,7 +9,7 @@ class ServiceController extends Controller {
             $options['layout'] = '//layouts/blank';
         }
         
-        $svc = $this->getSvc($name, $id);
+        $svc = ServiceManager::getService($name);
         $this->renderForm("SysServiceView",null, [
             'svc' => $svc,
             'name' => $name, 
@@ -18,7 +18,7 @@ class ServiceController extends Controller {
     }
     
     public function actionPool($name, $id = null) {
-        $svc = $this->getSvc($name, $id);
+        $svc = ServiceManager::getService($name);
         if (is_null($svc)) {
             $log = ServiceManager::getStoppedInstance($name, $id);
             if (!!$log) {
@@ -49,15 +49,5 @@ class ServiceController extends Controller {
     
     public function actionStart($name) {
         ServiceManager::start($name, $_GET);
-    }
-    
-    public function getSvc($name, $id = null) {
-        $svc = [];
-        if (!is_null($id)) {
-            $svc = ServiceManager::getInstance($id);
-        } else if (!is_null($name)) {
-            $svc = ServiceManager::getInstanceByName($name);
-        }
-        return $svc;
     }
 }

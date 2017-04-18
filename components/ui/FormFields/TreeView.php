@@ -12,6 +12,11 @@ class TreeView extends FormField {
     public $options       = [];
     public static $deprecated = true;
     
+    public function getFieldProperties() {
+        return array (
+        );
+    }
+
     public function includeJS() {
         return ['treeview.js'];
     }

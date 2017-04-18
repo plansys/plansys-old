@@ -149,11 +149,11 @@ class DevFormProperties extends Form {
             array (
                 'label' => 'Form Options',
                 'name' => '1',
-                'show' => 'Show',
                 'options' => array (
                     'ng-model' => '$parent.form.options',
                     'ng-change' => 'saveForm()',
                 ),
+                'show' => 'Show',
                 'type' => 'KeyValueGrid',
             ),
         );

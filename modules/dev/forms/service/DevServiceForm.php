@@ -3,16 +3,20 @@
 class DevServiceForm extends DevService {
 
     public $content;
-
+    public $runningInstances;
+    public $stoppedInstances;
+    public $view;
+    public $lastRun;
+    
     public static function load($id) {
-        $svc = ServiceSetting::get('list.' . $id);
+        $svc = ServiceManager::getService($id);
         if (is_null($svc)) {
             return false;
         }
         $instances = [];
         $model = new DevServiceForm;
         $model->attributes = $svc;
-        $model->content = file_get_contents($model->filePath);
+        $model->content = file_get_contents(ServiceManager::getFilePath($svc));
         return $model;
     }
 
@@ -36,11 +40,17 @@ class DevServiceForm extends DevService {
     public function getFields() {
         return array (
             array (
+                'name' => 'ws',
+                'type' => 'WebSocketClient',
+                'ctrl' => 'dev/service',
+            ),
+            array (
                 'type' => 'Text',
                 'value' => '<tabset class=\'tab-set\'>
 ',
             ),
             array (
+                'display' => 'all-line',
                 'type' => 'Text',
                 'value' => '<!-- BACK BUTTON -->
 <a ng-href=\"{{ Yii.app.createUrl(\'/dev/service/index\') }}\" class=\"btn btn-xs btn-default\" style=\"color:#000;font-size:11px;font-weight:bold;float:left;margin:5px 2px 0px -8px\">
@@ -48,9 +58,10 @@ class DevServiceForm extends DevService {
 </a>',
             ),
             array (
+                'display' => 'all-line',
                 'type' => 'Text',
                 'value' => '<!-- CODE EDITOR -->
-<tab select=\"changeTab(\'code\')\">
+<tab ng-click=\"changeTab(\'code\')\">
     <tab-heading>
         <i id=\'code\' class=\"fa fa-code\"></i>
         {{model.command}} &bull; {{model.action}}
@@ -58,9 +69,10 @@ class DevServiceForm extends DevService {
 </tab>',
             ),
             array (
+                'display' => 'all-line',
                 'type' => 'Text',
                 'value' => '<!-- SERVICE LOG: START -->
-<tab select=\"changeTab(\'log\')\">
+<tab ng-click=\"changeTab(\'log\')\">
     <tab-heading >
         <i id=\'log\' class=\"fa fa-bars\"></i>
         Service Log
@@ -81,6 +93,7 @@ class DevServiceForm extends DevService {
 <!-- SERVICE LOG: END -->',
             ),
             array (
+                'display' => 'all-line',
                 'type' => 'Text',
                 'value' => '<!-- BUTTONS -->
 <div class=\"btn btn-xs btn-default pull-right\" style=\"font-size:11px;font-weight:bold;margin:4px 4px 0px 0px;\" ng-click=\"popup.open()\">
@@ -102,7 +115,7 @@ class DevServiceForm extends DevService {
 
 
 <div class=\"btn btn-xs\" style=\"font-size:11px;font-weight:bold\" >
-    {{status}} {{ $parent.tab | json }}
+    {{status}}
 </div>',
             ),
             array (
@@ -110,9 +123,10 @@ class DevServiceForm extends DevService {
                 'value' => '</tabset>',
             ),
             array (
+                'display' => 'all-line',
                 'type' => 'Text',
                 'value' => '<!-- ACE EDITOR -->
-    <div style=\'padding:0px 0px;\' ng-show=\"tab == \'code\'\">
+    <div style=\'padding:0px 0px;\' ng-show=\"currentTab == \'code\'\">
         <div class=\"text-editor-builder\">
             <div class=\"text-editor\" ui-ace=\"aceConfig({onLoad:onAceLoad})\" 
 style=\"position:absolute;top:27px;font-size:14px;left:0px;right:0px;bottom:0px\"
@@ -123,45 +137,51 @@ ng-model=\"model.content\">
     ',
             ),
             array (
+                'display' => 'all-line',
                 'type' => 'Text',
                 'value' => '<!-- LOG WINDOW -->
     <div style=\"margin:0px -15px;padding:10px;font-size:12px;border-bottom:1px solid #999\">
-        <span ng-if=\"params.isRunning\">
-        Instance ID: <select ng-model=\"selectedInstance\">
-            <option value=\"{{ i.id }}\"
-                ng-repeat=\"i in instances\"
-            >{{ i.id }}</option>
+        <span>
+        Instance ID: <select ng-model=\"selectedInstancePid\" ng-change=\"selInstanceChange($event)\">
+            <optgroup label=\"Running Instances\">
+                <option ng-value=\"i.Pid\"
+                    ng-repeat=\"i in model.runningInstances\"
+                >{{ i.pid }}</option>
+            </optgroup>
+            <optgroup label=\"Stopped Instances\">
+                <option ng-value=\"i.Pid\"
+                    ng-repeat=\"i in model.stoppedInstances\"
+                >{{ i.pid }}</option>
+            </optgroup>
         </select>
+        
+        &nbsp;|&nbsp; 
+        <span ng-if=\"!!selectedInstance && !selectedInstance.stopTime\">
+        Started {{ date(\"Y-m-d H:i:s\", selectedInstance.startTime) | timeago }}
         &nbsp;|&nbsp;
         </span>
-        Max Lines: <select ng-model=\"maxLines\">
-            <option value=\"5\">5</option>
-            <option value=\"10\">10</option>
-            <option value=\"15\">15</option>
-            <option value=\"20\">20</option>
-            <option value=\"25\">25</option>
-            <option value=\"35\">35</option>
-            <option value=\"50\">50</option>
-        </select>
-        &nbsp;|&nbsp; 
-        <a ng-show=\"params.isRunning\" ng-url=\"sys/service/view&name={{ model.name }}&id={{selectedInstance}}\"
+        <span ng-if=\"!!selectedInstance && selectedInstance.stopTime\">
+        Stopped at {{ date(\"Y/m/d H:i:s\", selectedInstance.stopTime) }} ({{ date(\"Y-m-d H:i:s\", selectedInstance.stopTime) | timeago }})
+        </span>
+        <a ng-show=\"!!selectedInstance && !selectedInstance.stopTime\" ng-url=\"sys/service/view&name={{ model.name }}&id={{selectedInstance.pid}}\" style=\"margin:-10px 0px;\"
         target=\"_blank\" class=\"btn btn-success btn-xs\">
              View Controller <i class=\"fa fa-share\"></i>
         </a>
     </div>
     
-    <pre ng-if=\"tab == \'log\'\" style=\'margin-top:15px;border-radius:0px;\'>{{log }}</pre>
+    <pre id=\"logwindow\" ng-if=\"currentTab == \'log\'\" style=\'margin:0px;border-radius:0px;position:absolute;top:63px;left:0px;right:0px;bottom:0px;overflow-y:auto;\'>{{ selectedInstance.output }}</pre>
 ',
             ),
             array (
                 'type' => 'PopupWindow',
                 'name' => 'popup',
                 'options' => array (
-                    'height' => '400',
+                    'height' => '450',
                     'width' => '600',
                 ),
                 'mode' => 'url',
                 'url' => '/dev/service/editService&id={{ model.name }}',
+                'parentForm' => 'application.modules.dev.forms.service.DevServiceForm',
             ),
         );
     }

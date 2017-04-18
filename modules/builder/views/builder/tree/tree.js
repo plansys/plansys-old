@@ -4,12 +4,12 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
      window.tree = $scope;
      $scope.selected = null;
      $scope.tree = [];
-     
+
      $timeout(function() {
           $scope.tabs = window.tabs;
           $scope.builder = window.builder;
      });
-     
+
      $scope.search = {
           loading: false,
           paging: {
@@ -33,26 +33,158 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                x: 0,
                y: 0
           },
-          click: function(e, cb) {
+          click: function(e, cb, menu) {
                e.preventDefault();
                e.stopPropagation();
                var cm = $scope.cm.active;
                $scope.cm.active = null;
                $timeout(function() {
-                    cb(cm);
+                    cb(cm, menu);
                });
           },
+          getLabel: function(menu) {
+               if (typeof menu.label == 'function') {
+                    return menu.label($scope.cm.active)
+               }
+               else {
+                    return menu.label
+               }
+          },
           menu: [{
+               icon: "fa fa-fw fa-file",
+               visible: function(item) {
+                    var specialDirs = ['websockets', 'forms', 'modules', 'commands', 'controllers', 'model'];
+                    var name = item.n;
+                    if (item.t != 'dir') {
+                         name = item.parent.n;
+                    } 
+                    
+                    if (specialDirs.indexOf(name) >= 0) {
+                         return true;
+                    }
+                    return false;
+               },
+               label: function(item) {
+                    var name = item.n;
+                    if (item.t != 'dir') {
+                         name = item.parent.n;
+                    } 
+                    switch (name) {
+                         case "websockets":
+                              return "New Ws Controller";
+                         case "controllers":
+                              return "New Controller";
+                         case "commands":
+                              return "New Service Command";
+                         case "forms":
+                              return "New Form";
+                         case "models":
+                              return "New Model";
+                    }
+               },
+               click: function(item, menu) {
+                    $timeout(function() {
+                         var name = prompt(menu.label(item) + " name:");
+                         if (!name) return;
+                         
+                         $http.get(Yii.app.createUrl('/builder/tree/touch', {
+                              path: item.p,
+                              name: name,
+                              mode: item.n
+                         })).then(function(res) {
+                              if (item.childs) {
+                                   item.childs.splice(0, item.childs.length);
+                              }
+                              $scope.expand(item, function() {
+                                   for (var i in item.childs) {
+                                        if (item.childs[i].p == res.data) {
+                                             $timeout(function() {
+                                                  $scope.select(item.childs[i]);
+                                                  $scope.open(item.childs[i]);
+                                             });
+                                             break;
+                                        }
+                                   }
+                              });
+                         });
+                    });
+               }
+          }, {
+               hr: true,
+               visible: function(item) {
+                    if (item.t == 'dir') {
+                         var specialDirs = ['websockets', 'forms', 'modules', 'commands', 'controllers', 'model'];
+                         if (specialDirs.indexOf(item.n) >= 0) {
+                              return true;
+                         }
+                    }
+                    return false;
+               },
+          }, {
                icon: "fa fa-fw fa-file-text-o",
-               label: "New Form",
+               label: "New File",
                click: function(item) {
-                    $scope.activeItem = item;
-                    PopupCenter(Yii.app.createUrl('/dev/forms/newForm'), "Create New Form", '400', '500');
+                    $timeout(function() {
+                         var name = prompt("New file name:");
+                         if (!name) return;
+                         
+                         var path = item.p + '/' + name;
+                         if (item.t != 'dir') {
+                              path = item.p.substr(0, item.p.length - item.n.length) + name;
+                         }
+                         
+                         $http.get(Yii.app.createUrl('/builder/tree/touch', {
+                              path: path
+                         })).then(function(res) {
+                              var cur = item;
+                              if (item.t != 'dir') {
+                                   cur = item.parent
+                              }
+                              
+                              if (cur.childs) {
+                                   cur.childs.splice(0, cur.childs.length);
+                              }
+                              $scope.expand(cur, function() {
+                                   for (var i in item.childs) {
+                                        if (item.childs[i].p == res.data) {
+                                             $timeout(function() {
+                                                  $scope.select(item.childs[i]);
+                                                  $scope.open(item.childs[i]);
+                                             });
+                                             break;
+                                        }
+                                   }
+                              });
+                         });
+                    });
                }
           }, {
                icon: "fa fa-fw fa-folder-o",
                label: "New Folder",
-               click: function(item) {}
+               click: function(item) {
+                    var name = prompt("New Folder Name:")
+                    if (name != "") {
+                         if (item.t == 'dir') {
+                              $http.get(Yii.app.createUrl('/builder/tree/mkdir', {
+                                   dir: item.p + '/' + name
+                              })).then(function(res) {
+                                   if (item.childs) {
+                                        item.childs.splice(0, item.childs.length);
+                                   }
+                                   $scope.expand(item, function() {
+                                        for (var i in item.childs) {
+                                             if (item.childs[i].n == name) {
+                                                  $timeout(function() {
+                                                       $scope.select(item.childs[i]);
+                                                  });
+                                                  break;
+                                             }
+                                        }
+                                   });
+                              });
+                         }
+                    }
+               }
           }, {
                hr: true,
           }, {
@@ -71,7 +203,20 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                click: function(item) {}
           }, {
                label: "Delete",
-               click: function(item) {}
+               click: function(item) {
+                    if (confirm("Are You sure? this cannot be undone!")) {
+                         item.loading = true;
+                         item.n = 'Deleting...'
+                         $http.get(Yii.app.createUrl('/builder/tree/rmrf', {
+                              path: item.p
+                         })).then(function(res) {
+                              item.parent.childs.splice(item.idx, 1)
+                              item.parent.childs.forEach(function(i, key) {
+                                   i.idx = key;
+                              })
+                         });
+                    }
+               }
           }]
      }
      $scope.showContextMenu = function(item, x, y) {
@@ -214,6 +359,9 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                     case 1: // this is left click
                          $scope.select(item);
                          $scope.open(item);
+                         $timeout(function() {
+                              $scope.resetSearch();
+                         })
                          break;
                     case 2: // this is middle click
                          break;
@@ -228,6 +376,10 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
      }
      $http.get(Yii.app.createUrl('/builder/tree/ls')).then(function(res) {
           $scope.tree = res.data;
+          $scope.tree.forEach(function(item, key) {
+               item.idx = key;
+               item.parent = $scope.tree;
+          });
      });
      $scope.detailPathChanged = function(e) {
           if (e.keyCode == 13) {
@@ -319,27 +471,31 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                $http.get(Yii.app.createUrl('/builder/tree/ls&dir=' + item.d))
                     .then(function(res) {
                          item.loading = false;
+
                          function addChild(data, increment) {
-                             var ins = data.splice(0, increment || 10);
-                             ins.forEach(function(i) {
-                                 if (!item.childs) {
-                                     item.childs = [];
-                                 }
-                                item.childs.push(i); 
-                             });
-                             
-                             if (data.length > 0) {
-                                 $timeout(function() {
-                                    addChild(data , (increment || 10) + 10);
-                                 });
-                             } else {
-                                 if (!callback) {
-                                      expandFirstChild(item);
-                                 }
-                                 else {
-                                      callback(item);
-                                 }
-                             }
+                              var ins = data.splice(0, increment || 10);
+                              ins.forEach(function(i, key) {
+                                   if (!item.childs) {
+                                        item.childs = [];
+                                   }
+                                   i.parent = item;
+                                   i.idx = key;
+                                   item.childs.push(i);
+                              });
+
+                              if (data.length > 0) {
+                                   $timeout(function() {
+                                        addChild(data, (increment || 10) + 10);
+                                   });
+                              }
+                              else {
+                                   if (!callback) {
+                                        expandFirstChild(item);
+                                   }
+                                   else {
+                                        callback(item);
+                                   }
+                              }
                          }
                          addChild(res.data);
                     });
@@ -379,7 +535,6 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                expandSingle(tree, path[idx], function(item) {
                     tree = item.childs;
                     idx++;
-                              console.log(tree, path[idx], idx, item.childs);
                     if (idx < path.length - 1) {
                          recursiveExpand();
                     }
@@ -389,30 +544,32 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                                    $(".tree .active")[0].scrollIntoView();
                               }, 100);
                          }
-                         
+
                          if (callback) {
                               callback();
                          }
                     }
                });
           }
-          
+
           if ($(".tree").length == 0) {
                $scope.builder.hideTree = false;
-               
+
                function expandWhenReady() {
                     if ($(".tree").length == 0) {
                          $timeout(function() {
                               expandWhenReady();
                          }, 100);
-                    } else {
+                    }
+                    else {
                          $timeout(function() {
                               recursiveExpand();
                          }, 100);
                     }
                }
                expandWhenReady();
-          } else {
+          }
+          else {
                recursiveExpand();
           }
      }

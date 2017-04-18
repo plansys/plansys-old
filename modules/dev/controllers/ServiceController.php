@@ -2,7 +2,7 @@
 
 class ServiceController extends Controller {
     
-    public function actionIndex() {         
+    public function actionIndex() { 
         ## cek whether php path is present
         $php = Setting::get('app.phpPath');
         if ($php != '' && !is_file($php)) {
@@ -35,14 +35,14 @@ class ServiceController extends Controller {
             echo "FAILED TO EXECUTE: {$php} -v <br/><span style='color:red;'>Please check your php path in settings</span>";
             die();
         }
-        
+           
         $model = new DevServiceIndex();
         $model->status = "Service Daemon Running" ;
         $this->renderForm('DevServiceIndex', $model);
     }
     
     public function actionDelete($m) {
-        ServiceSetting::remove('list.' . $m);
+        ServiceManager::remove($m);
     }
     
     public function actionListCommand($m) {
@@ -68,10 +68,10 @@ class ServiceController extends Controller {
     }
     
     public function actionListAction($m, $c, $n = "t"){
-        $class = $m . "." . $c;
+        $class = $m . "." . $c . "Command";
         Yii::import($class);
-
-        $refl = new ReflectionClass($c);
+        
+        $refl = new ReflectionClass($c . "Command");
         $methods = $refl->getMethods();
         
         if (!empty($methods)) {
@@ -98,26 +98,16 @@ class ServiceController extends Controller {
 
     public function actionStart($n){
         try {
-            $res =  ServiceManager::runInternal($n);
+            $res =  ServiceManager::start($n);
         } catch(CException $e) {
             echo ($e->getMessage());
         }
     }
 
     public function actionStop($n){
-        ServiceManager::kill($n);
+        ServiceManager::stop($n);
     }
     
-    public function actionMonitor($n) {
-        echo json_encode(ServiceManager::getRunningInstance($n));
-    }
-    
-    public function actionReadLog($n, $id, $l = 20) {
-        if ($id == 'false') {
-            echo ServiceManager::readLog($n, null, $l);
-        }
-        echo ServiceManager::readLog($n, $id, $l);
-    }
     
     public function actionCreate(){    
         $model = new DevService;
@@ -153,8 +143,8 @@ class ServiceController extends Controller {
     window.opener.formScope.model.action = '{$model->action}';
     window.opener.formScope.model.schedule = '{$model->schedule}';
     window.opener.formScope.model.period = '{$model->period}';
-    window.opener.formScope.model.instance = '{$model->instance}';
-    window.opener.formScope.model.singleIntanceMode = '{$model->singleInstanceMode}';
+    window.opener.formScope.model.instance = '{$model->instanceMode}';
+    window.opener.formScope.model.singleIntanceMode = '{$model->singleInstanceAction}';
     
     window.opener.formScope.status = '[Service succesfully updated]'; 
     window.close();
@@ -178,14 +168,16 @@ EOF;
         if (!$model) {
             throw new CHttpException(404);
         }
-        
         Asset::registerJS('application.static.js.lib.ace');
-        $instances = ServiceManager::getRunningInstance($id);
-        $this->renderForm('DevServiceForm',$model, [
-            'isRunning' => count($instances) > 0,
-            'instances' => $instances,
-            'log' => ServiceManager::readLog($id)
-        ]);
+        $this->renderForm('DevServiceForm',$model);
+    }
+    
+    public function actionDetail($id = null) {
+        $a = json_encode(ServiceManager::getService($id));
+        $a = json_decode($a, true);
+        $a['runningInstances'] = array_values($a['runningInstances']);
+        $a['stoppedInstances'] = array_values($a['stoppedInstances']);
+        echo json_encode($a);
     }
 
     public function actionSave(){
@@ -194,9 +186,8 @@ EOF;
         
         $model= DevService::load($post['id']);
         if ($model !== false) {
-            $filePath= $model->filePath;
+            $filePath= ServiceManager::getFilePath($model);
             if (is_file($filePath)) {
-                ServiceSetting::set('list.' . $post['id'] . '.status', 'draft');
                 file_put_contents($filePath, $post['content']);
             }
         }

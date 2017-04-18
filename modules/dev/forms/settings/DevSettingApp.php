@@ -180,7 +180,7 @@ class DevSettingApp extends Form {
             array (
                 'column1' => array (
                     array (
-                        'label' => 'PHP Path',
+                        'label' => 'PHP CLI Path',
                         'name' => 'phpPath',
                         'fieldOptions' => array (
                             'placeholder' => 'ex: /usr/bin/php -or- c:\\\\xampp\\\\php\\\\php.exe',

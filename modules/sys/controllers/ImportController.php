@@ -31,8 +31,8 @@ class ImportController extends Controller {
                 ]);
             } else {
                 $_POST['SysImportData']['model'] = $_GET['m'];
-                ServiceManager::start('ImportData', $_POST["SysImportData"]);
-                return;
+                $pid = ServiceManager::start('ImportData', $_POST["SysImportData"]);
+                $this->redirect(['/sys/service/view&name=ImportData&id=' . $pid]);
             }
         }
         

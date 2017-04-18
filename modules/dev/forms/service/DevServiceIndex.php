@@ -26,20 +26,6 @@ class DevServiceIndex extends Form {
             array (
                 'linkBar' => array (
                     array (
-                        'name' => 'status',
-                        'onLabel' => 'Service Daemon Running',
-                        'offLabel' => 'Service Daemon Stopped',
-                        'options' => array (
-                            'style' => 'display:inline-block;margin: 0px -5px -5px 0px;',
-                            'ng-change' => 'daemonChange()',
-                        ),
-                        'fieldOptions' => array (
-                            'ng-disabled' => 'true',
-                        ),
-                        'size' => 'small',
-                        'type' => 'ToggleSwitch',
-                    ),
-                    array (
                         'label' => 'New Service',
                         'buttonType' => 'success',
                         'icon' => 'plus',
@@ -47,11 +33,6 @@ class DevServiceIndex extends Form {
                             'ng-click' => 'popupWindowCreateProcess.open()',
                         ),
                         'type' => 'LinkButton',
-                    ),
-                    array (
-                        'renderInEditor' => 'Yes',
-                        'type' => 'Text',
-                        'value' => '<div class=\\"separator\\"></div>',
                     ),
                 ),
                 'title' => 'Service Manager',
@@ -68,6 +49,7 @@ class DevServiceIndex extends Form {
                 'mode' => 'url',
                 'url' => '/dev/service/create',
                 'title' => 'Create New Process',
+                'parentForm' => 'application.modules.dev.forms.service.DevServiceIndex',
             ),
             array (
                 'type' => 'Text',
@@ -163,10 +145,10 @@ class DevServiceIndex extends Form {
                         '$showDF' => false,
                     ),
                     array (
-                        'name' => 'last_run',
+                        'name' => 'lastRun',
                         'label' => 'Last Run',
-                        'html' => '<td ng-class=\"rowClass(row, \'last_run\', \'string\')\" style=\"white-space:nowrap;{{ row.schedule != \'Manual\' ? \'background:yellow\' : \'\'}}\">
-    {{ row.last_run }}
+                        'html' => '<td ng-class=\"rowClass(row, \'lastRun\', \'string\')\" style=\"white-space:nowrap;{{ row.schedule != \'Manual\' ? \'background:yellow\' : \'\'}}\">
+    {{ row.lastRun }}
 </td>',
                         'columnType' => 'string',
                         'show' => false,
