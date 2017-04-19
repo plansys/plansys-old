@@ -127,6 +127,7 @@
 	perspective: 1000px;
 	-webkit-perspective-origin: 50% 200%;
 	perspective-origin: 50% 200%;
+	/*overflow:auto;*/
 }
 
 .dl-menuwrapper:first-child {
@@ -185,9 +186,9 @@
 .dl-divider {
 	margin: 0px 20px;
 	padding: 0px;
-	height: 0.5px;
+	height: 1px;
 	width: 80%;
-	background: #607D8B;
+	background: #92a3aa;
 	
 }
 
@@ -202,16 +203,13 @@
 	outline: none;
 	padding-right:10px;
 	left: 0px;
+	text-decoration: none !important;
 }
 
 .no-touch .dl-menuwrapper li a:hover {
 	background: rgba(255,248,213,0.1);
 	text-decoration: none;
 	
-}
-
-.no-touch .dl-menuwrapper li a:focus {
-	text-decoration: none !important;
 }
 
 .dl-menuwrapper li.dl-back > a {
@@ -265,6 +263,7 @@
 	pointer-events: auto;
 	-webkit-transform: translateY(0px);
 	transform: translateY(0px);
+	overflow-y: auto;
 }
 
 /* Hide the inner submenus */
@@ -304,31 +303,31 @@ All this is done for any sub-level being entered.
 
 @media screen and (max-width: 1920px) {
 	.dl-menuwrapper .dl-menu{
-		width: 15%;
+		width: 400px;
 	}
 	
 	.dl-menuwrapper > .dl-submenu{
-		width: 15%;
+		width: 400px;
 	}	
 }
 
 @media screen and (max-width: 1380px) {
 	.dl-menuwrapper .dl-menu{
-		width: 20%;
+		width: 300px;
 	}
 	
 	.dl-menuwrapper > .dl-submenu{
-		width: 20%;
+		width: 300px;
 	}	
 }
 
 @media screen and (max-width: 768px) {
 	.dl-menuwrapper .dl-menu{
-		width: 40%;
+		width: 250px;
 	}
 	
 	.dl-menuwrapper > .dl-submenu{
-		width: 40%;
+		width: 250px;
 	}	
 }
 
@@ -396,6 +395,16 @@ All this is done for any sub-level being entered.
 #menu-header-action {
 	float: right;
 	margin-right : 30px;
+}
+
+.dl-menuleft{
+			float: left;
+			margin-left: 50px;
+}
+
+.dl-menuleft h3{
+		margin-top: 9px;
+		margin-left: 10px;
 }
 
 .dl-menuright {

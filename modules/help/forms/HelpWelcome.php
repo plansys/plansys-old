@@ -40,7 +40,7 @@ class HelpWelcome extends Form {
         -webkit-background-clip: text;
         -moz-background-clip: text;
         background-clip: text;
-        margin-bottom: 0px;
+        margin-bottom: 20px;
     }
     
     @media screen and (max-width: 768px) {
@@ -62,7 +62,6 @@ class HelpWelcome extends Form {
                 'type' => 'Text',
                 'value' => '<div class=\"welcome-page\">
     <h1>Plansys</h1>    
-    <span>Licensed Under GPL v.3</span>
     <hr>
     <div class=\"row\" style=\"margin-top: 10px;\">
         <div class=\"col-sm-12 col-md-3\">

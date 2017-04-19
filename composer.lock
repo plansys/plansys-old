@@ -13,21 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/box/spout.git",
-<<<<<<< HEAD
-                "reference": "36d3596f831b3148bbe370e0178c10b4390a00be"
+                "reference": "1eb01a3d2a983d06ac59183b22b3ad6d91795fd9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/box/spout/zipball/36d3596f831b3148bbe370e0178c10b4390a00be",
-                "reference": "36d3596f831b3148bbe370e0178c10b4390a00be",
-=======
-                "reference": "4a65466b6135d2aa28dd3bc52785a5e999f95fe8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/box/spout/zipball/4a65466b6135d2aa28dd3bc52785a5e999f95fe8",
-                "reference": "4a65466b6135d2aa28dd3bc52785a5e999f95fe8",
->>>>>>> 0f11290128a87d4bd1da9c0de713687e893e085b
+                "url": "https://api.github.com/repos/box/spout/zipball/1eb01a3d2a983d06ac59183b22b3ad6d91795fd9",
+                "reference": "1eb01a3d2a983d06ac59183b22b3ad6d91795fd9",
                 "shasum": ""
             },
             "require": {
@@ -83,11 +74,7 @@
                 "write",
                 "xlsx"
             ],
-<<<<<<< HEAD
-            "time": "2017-02-27 23:25:25"
-=======
-            "time": "2017-03-28 13:07:48"
->>>>>>> 0f11290128a87d4bd1da9c0de713687e893e085b
+            "time": "2017-04-15 21:52:48"
         },
         {
             "name": "inlinestyle/inlinestyle",
@@ -262,7 +249,6 @@
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
             "time": "2017-03-15 19:32:56"
-<<<<<<< HEAD
         },
         {
             "name": "plansys/thrift",
@@ -307,13 +293,7 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v3.2.6",
-=======
-        },
-        {
-            "name": "symfony/css-selector",
             "version": "v3.2.7",
->>>>>>> 0f11290128a87d4bd1da9c0de713687e893e085b
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",

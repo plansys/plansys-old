@@ -27,21 +27,11 @@ return array (
                 'formattedUrl' => '/dokman/index.php?r=builder',
             ),
             array (
-                'label' => '---',
-                'icon' => '',
-                'url' => '#',
-            ),
-            array (
                 'label' => 'Form Builder',
                 'icon' => 'fa-file',
                 'url' => '/dev/forms/index',
                 'formattedUrl' => '/dokman/index.php?r=dev/forms/index',
                 'state' => 'collapsed',
-            ),
-            array (
-                'label' => '---',
-                'icon' => '',
-                'url' => '#',
             ),
             array (
                 'label' => 'MenuTree Editor',
@@ -82,11 +72,6 @@ return array (
                 'icon' => 'fa-envelope',
                 'url' => '/dev/genEmail/index',
                 'formattedUrl' => '/dokman/index.php?r=dev/genEmail/index',
-            ),
-            array (
-                'label' => '---',
-                'icon' => '',
-                'url' => '#',
             ),
             array (
                 'label' => 'Service Manager',

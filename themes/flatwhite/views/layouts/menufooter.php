@@ -1,3 +1,5 @@
+<li class="dl-divider">
+		                    </li>
 <?php
     echo loopMenuFooter($menu[1]['items']);
     

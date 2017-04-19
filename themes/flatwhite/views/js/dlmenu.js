@@ -172,6 +172,7 @@
 		},
 		_openMenu : function() {
 			var self = this;
+			
 			// clicking somewhere else makes the menu close
 			$body.off( 'click' ).on( 'click.dlmenu', function() {
 				self._closeMenu() ;
@@ -181,6 +182,7 @@
 			} );
 			this.$trigger.addClass( 'dl-active' );
 			this.open = true;
+            $(window).trigger('resize');
 		},
 		
 		// resets the menu to its original state (first level of options)
@@ -277,6 +279,19 @@ $(function getTime() {
     })
 });
 
+$(window).resize(function() {
+    if($('.dl-menu').css('opacity') == 1){
+        if(($(window).height() - 45) <= $('.dl-menu').height()){
+            $('.dl-menu').height($(window).height() - 45);    
+        } else {
+            $('.dl-menu').height('auto');    
+        }
+    }
+});
+
+
+
 $(function() {
 	$( '#dl-menu' ).dlmenu();
 });
+

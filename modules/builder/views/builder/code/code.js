@@ -13,7 +13,7 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
      $scope.editor.setTheme("ace/theme/monokai");
      $scope.editor.$blockScrolling = Infinity;
      $scope.editor.setOptions({
-          wrap: true,
+          wrapLine: true,
           enableEmmet: true
      });
      $scope.editor.commands.bindKey("Command+L", null)

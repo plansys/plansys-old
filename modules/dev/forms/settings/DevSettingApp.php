@@ -10,7 +10,7 @@ class DevSettingApp extends Form {
     public $dateFormat = 'd M Y';
     public $timeFormat = 'H:i';
     public $dateTimeFormat = 'd M Y - H:i';
-    
+    public $theme;
     public $auditTrail = 'Enabled';
     
     public $phpPath = '';

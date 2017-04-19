@@ -307,13 +307,7 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                             var value = $scope.$eval(p.replace('js:', ''));
                             var watch = $scope.$eval('"' + p.replace('js:', '') + '"');
                             var key = i;
-                            
-                            if (value === undefined) {
-                                value = parent.$eval(p.replace('js:', ''));
-                                watch = parent.$eval('"' + p.replace('js:', '') + '"');
-                            }
-                            
-                            $scope.$watch(watch, function (newv, oldv) {
+                            var paramsWacther = function (newv, oldv) {
                                 if (newv !== oldv) {
                                     $scope.updateParam(key, newv);
                                     
@@ -328,7 +322,16 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                                         $scope.query();
                                     }
                                 }
-                            },true);
+                            };
+                            
+                            if (value === undefined) {
+                                value = parent.$eval(p.replace('js:', ''));
+                                watch = parent.$eval('"' + p.replace('js:', '') + '"');
+                                parent.$watch(watch, paramsWacther,true);
+                            } else {
+                                $scope.$watch(watch, paramsWacther,true);
+                            }
+                            
     
                             $scope.updateParam(i, value)
                             jsParamExist = true;
