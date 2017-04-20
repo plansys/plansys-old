@@ -12,13 +12,15 @@ $scope.ws.receive(function(msg) {
     if (typeof msg === 'string') {
         msgp = msg.split(":");
         if (msgp[0] === 'stopped' && msgp.length == 2) {
-            $scope.reloadModel(function() {
-                $scope.model.stoppedInstances.forEach(function(item) {
-                    if (item.pid == $scope.selectedInstance.pid) {
-                        $scope.selectedInstance = item;
-                    }
+            $timeout(function() {
+                $scope.reloadModel(function() {
+                    $scope.model.stoppedInstances.forEach(function(item) {
+                        if (!!$scope.selectedInstance && item.pid == $scope.selectedInstance.pid) {
+                            $scope.selectedInstance = item;
+                        }
+                    });
                 });
-            });
+            }, 500);
         }
         else if (msgp[0] === 'started' && msgp.length == 2) {
             $scope.viewRunningLog();
@@ -46,6 +48,10 @@ $timeout(function() {
 $scope.viewRunningLog = function() {
     $scope.reloadModel(function() {
         $scope.selectedInstance = $scope.model.runningInstances[0];
+
+        if (!$scope.selectedInstance) {
+            $scope.selectedInstance = $scope.model.stoppedInstances[0];
+        }
         $scope.selectedInstancePid = $scope.selectedInstance.pid;
         $scope.ws.setTag($scope.model.name + ':' + $scope.selectedInstancePid);
         $scope.changeTab('log');
@@ -54,19 +60,19 @@ $scope.viewRunningLog = function() {
 
 $scope.reloadModel = function(fn) {
     $http.get(Yii.app.createUrl('/dev/service/detail', {
-            id: $scope.model.name
-        }))
-        .success(function(res) {
-            for (var i in res) {
-                $scope.model[i] = res[i];
+        id: $scope.model.name
+    }))
+    .success(function(res) {
+        for (var i in res) {
+            $scope.model[i] = res[i];
+        }
+        $timeout(function() {
+            $scope.params.isRunning = $scope.model.runningInstances.length > 0;
+            if (typeof fn == 'function') {
+                fn();
             }
-            $timeout(function() {
-                $scope.params.isRunning = $scope.model.runningInstances.length > 0;
-                if (typeof fn == 'function') {
-                    fn();
-                }
-            });
-        })
+        });
+    })
 }
 
 $scope.selInstanceChange = function(e) {
