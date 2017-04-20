@@ -76,6 +76,7 @@ func NewStateManagerHandler(addr string, rootdirs []string, db *buntdb.DB) *Stat
 			if host == origin {
 				return true
 			} else {
+				log.Println(host, origin)
 				return false
 			}
 		},
