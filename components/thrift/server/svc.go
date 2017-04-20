@@ -172,6 +172,7 @@ func (p *ServiceManagerHandler) Add(svc *svc.Service) (err error) {
 	p.Services[svc.Name] = svc
 
 	err = p.DB.Update(func(tx *buntdb.Tx) error {
+		svc.Status = "ok"
 		str, _ := json.Marshal(svc)
 		tx.Set("svc:"+svc.Name, string(str), nil)
 		return nil
@@ -249,6 +250,7 @@ func (p *ServiceManagerHandler) Start(name string, params string) (pid string, e
 		ServiceName: name,
 	}
 	p.Services[name].LastRun = running.Instance.StartTime
+	p.Services[name].Status = "ok"
 
 	log.Println("Service " + name + ": Started")
 	p.WsSend(name+":*", "started:"+running.Instance.Pid)
