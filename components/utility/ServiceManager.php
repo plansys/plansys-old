@@ -190,19 +190,28 @@ class ServiceManager extends CComponent {
           }
      }
      
-     public static function startDaemon() {
+     public static function startDaemon($restart = false) {
           try {
-               self::_open();
-               self::_close();
+               if ($restart) {
+                    throw new Exception();
+               } else {
+                    self::_open();
+                    self::_close();
+               }
           } catch(Exception $e) { 
                # thrift server is not running, then we should run it
                $path = Yii::getPathOfAlias("application.components.thrift.server");
                $file = $path;
                
+               $params = "";
+               if ($restart) {
+                    $params = "restart";
+               }
+               
                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                    $file = $file . DIRECTORY_SEPARATOR . "server.exe";
+                    $file = $file . DIRECTORY_SEPARATOR . "server.exe " . $params;
                } else {
-                    $file = $file . DIRECTORY_SEPARATOR . "server";
+                    $file = $file . DIRECTORY_SEPARATOR . "server " . $params;
                }
                
                if (!Setting::get('app.phpPath')) {
@@ -219,16 +228,24 @@ class ServiceManager extends CComponent {
 
                $svpath = Yii::getPathOfAlias("app.config.service") . ".buntdb";
                $svtpath = Yii::getPathOfAlias("assets.service") . ".buntdb";
+               $svjpath = Yii::getPathOfAlias("app.config.service") . ".buntdb";
                $isnew = false;
+               
                if (!is_file($svpath) && !is_file($svtpath)) {
                     $isnew = true; 
-               }
+               } 
                
                $output = shell_exec($file);
                sleep(1);
                
-               if ($isnew) {
-                    self::importJson();
+               if (is_file($svjpath)) {
+                    self::_open();
+                    $svcs = self::$sm->client->getAllServices();
+                    self::_close();
+                    
+                    if ($isnew || count($svcs) <= 2) {
+                         self::importJson();
+                    }
                }
                
           }

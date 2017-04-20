@@ -45,6 +45,11 @@ class ServiceController extends Controller {
         ServiceManager::remove($m);
     }
     
+    public function actionRestart() {
+        ServiceManager::startDaemon(true);
+        $this->redirect(['index']);
+    }
+    
     public function actionListCommand($m) {
         $path = Yii::getPathOfAlias($m) . DIRECTORY_SEPARATOR;
         if (!is_dir($path)) {
