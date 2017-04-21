@@ -29,6 +29,9 @@ service StateManager {
           1: string key,
           2: string val
      ),
+     void deleteState(
+          1: string key
+     ),
      string getState(
           1: string key
      )

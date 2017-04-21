@@ -64,7 +64,6 @@ func NewServiceManagerHandler(db *buntdb.DB, dir string, port string, restartCha
 			var svc *svc.Service = &svc.Service{}
 			json.Unmarshal([]byte(val), svc)
 			service[svc.Name] = svc
-
 			return true
 		})
 

@@ -26,6 +26,7 @@ func Usage() {
   fmt.Fprintln(os.Stderr, "   getClients(Client client)")
   fmt.Fprintln(os.Stderr, "  void setTag(Client client, string tag)")
   fmt.Fprintln(os.Stderr, "  void setState(string key, string val)")
+  fmt.Fprintln(os.Stderr, "  void deleteState(string key)")
   fmt.Fprintln(os.Stderr, "  string getState(string key)")
   fmt.Fprintln(os.Stderr)
   os.Exit(0)
@@ -126,19 +127,19 @@ func main() {
       fmt.Fprintln(os.Stderr, "Disconnect requires 2 args")
       flag.Usage()
     }
-    arg15 := flag.Arg(1)
-    mbTrans16 := thrift.NewTMemoryBufferLen(len(arg15))
-    defer mbTrans16.Close()
-    _, err17 := mbTrans16.WriteString(arg15)
-    if err17 != nil {
+    arg17 := flag.Arg(1)
+    mbTrans18 := thrift.NewTMemoryBufferLen(len(arg17))
+    defer mbTrans18.Close()
+    _, err19 := mbTrans18.WriteString(arg17)
+    if err19 != nil {
       Usage()
       return
     }
-    factory18 := thrift.NewTSimpleJSONProtocolFactory()
-    jsProt19 := factory18.GetProtocol(mbTrans16)
+    factory20 := thrift.NewTSimpleJSONProtocolFactory()
+    jsProt21 := factory20.GetProtocol(mbTrans18)
     argvalue0 := state.NewClient()
-    err20 := argvalue0.Read(jsProt19)
-    if err20 != nil {
+    err22 := argvalue0.Read(jsProt21)
+    if err22 != nil {
       Usage()
       return
     }
@@ -153,19 +154,19 @@ func main() {
       fmt.Fprintln(os.Stderr, "Send requires 2 args")
       flag.Usage()
     }
-    arg22 := flag.Arg(1)
-    mbTrans23 := thrift.NewTMemoryBufferLen(len(arg22))
-    defer mbTrans23.Close()
-    _, err24 := mbTrans23.WriteString(arg22)
-    if err24 != nil {
+    arg24 := flag.Arg(1)
+    mbTrans25 := thrift.NewTMemoryBufferLen(len(arg24))
+    defer mbTrans25.Close()
+    _, err26 := mbTrans25.WriteString(arg24)
+    if err26 != nil {
       Usage()
       return
     }
-    factory25 := thrift.NewTSimpleJSONProtocolFactory()
-    jsProt26 := factory25.GetProtocol(mbTrans23)
+    factory27 := thrift.NewTSimpleJSONProtocolFactory()
+    jsProt28 := factory27.GetProtocol(mbTrans25)
     argvalue0 := state.NewClient()
-    err27 := argvalue0.Read(jsProt26)
-    if err27 != nil {
+    err29 := argvalue0.Read(jsProt28)
+    if err29 != nil {
       Usage()
       return
     }
@@ -180,19 +181,19 @@ func main() {
       fmt.Fprintln(os.Stderr, "GetClients requires 1 args")
       flag.Usage()
     }
-    arg29 := flag.Arg(1)
-    mbTrans30 := thrift.NewTMemoryBufferLen(len(arg29))
-    defer mbTrans30.Close()
-    _, err31 := mbTrans30.WriteString(arg29)
-    if err31 != nil {
+    arg31 := flag.Arg(1)
+    mbTrans32 := thrift.NewTMemoryBufferLen(len(arg31))
+    defer mbTrans32.Close()
+    _, err33 := mbTrans32.WriteString(arg31)
+    if err33 != nil {
       Usage()
       return
     }
-    factory32 := thrift.NewTSimpleJSONProtocolFactory()
-    jsProt33 := factory32.GetProtocol(mbTrans30)
+    factory34 := thrift.NewTSimpleJSONProtocolFactory()
+    jsProt35 := factory34.GetProtocol(mbTrans32)
     argvalue0 := state.NewClient()
-    err34 := argvalue0.Read(jsProt33)
-    if err34 != nil {
+    err36 := argvalue0.Read(jsProt35)
+    if err36 != nil {
       Usage()
       return
     }
@@ -205,19 +206,19 @@ func main() {
       fmt.Fprintln(os.Stderr, "SetTag requires 2 args")
       flag.Usage()
     }
-    arg35 := flag.Arg(1)
-    mbTrans36 := thrift.NewTMemoryBufferLen(len(arg35))
-    defer mbTrans36.Close()
-    _, err37 := mbTrans36.WriteString(arg35)
-    if err37 != nil {
+    arg37 := flag.Arg(1)
+    mbTrans38 := thrift.NewTMemoryBufferLen(len(arg37))
+    defer mbTrans38.Close()
+    _, err39 := mbTrans38.WriteString(arg37)
+    if err39 != nil {
       Usage()
       return
     }
-    factory38 := thrift.NewTSimpleJSONProtocolFactory()
-    jsProt39 := factory38.GetProtocol(mbTrans36)
+    factory40 := thrift.NewTSimpleJSONProtocolFactory()
+    jsProt41 := factory40.GetProtocol(mbTrans38)
     argvalue0 := state.NewClient()
-    err40 := argvalue0.Read(jsProt39)
-    if err40 != nil {
+    err42 := argvalue0.Read(jsProt41)
+    if err42 != nil {
       Usage()
       return
     }
@@ -237,6 +238,16 @@ func main() {
     argvalue1 := flag.Arg(2)
     value1 := argvalue1
     fmt.Print(client.SetState(value0, value1))
+    fmt.Print("\n")
+    break
+  case "deleteState":
+    if flag.NArg() - 1 != 1 {
+      fmt.Fprintln(os.Stderr, "DeleteState requires 1 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    fmt.Print(client.DeleteState(value0))
     fmt.Print("\n")
     break
   case "getState":
