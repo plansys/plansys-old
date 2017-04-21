@@ -26,6 +26,15 @@ class DevServiceIndex extends Form {
             array (
                 'linkBar' => array (
                     array (
+                        'label' => 'Restart Daemon',
+                        'buttonType' => 'info',
+                        'icon' => 'refresh',
+                        'options' => array (
+                            'ng-url' => '/dev/service/restart',
+                        ),
+                        'type' => 'LinkButton',
+                    ),
+                    array (
                         'label' => 'New Service',
                         'buttonType' => 'success',
                         'icon' => 'plus',
