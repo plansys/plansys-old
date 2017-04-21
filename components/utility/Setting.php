@@ -348,7 +348,7 @@ class Setting {
     }
 
     public static function getDefaultTheme() {
-        return 'oldblue';
+        return 'flatwhite';
     }
 
     public static function getRequestInfo() {
