@@ -25,14 +25,14 @@ service StateManager {
           1: Client client,
           2: string tag
      ),
-     void setState(
+     void stateSet(
           1: string key,
           2: string val
      ),
-     void deleteState(
+     string stateGet(
           1: string key
      ),
-     string getState(
+     void stateDel(
           1: string key
      )
 }

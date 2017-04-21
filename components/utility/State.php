@@ -9,7 +9,7 @@ class State extends CComponent {
      private static $sm;
      
      private static function _open() {
-          if (!class_exists('\svc\StateManagerClient')) {
+          if (!class_exists('\state\StateManagerClient')) {
                include(Yii::getPathOfAlias('application.components.thrift.client.state.Types') . ".php");
                include(Yii::getPathOfAlias('application.components.thrift.client.state.StateManager') . ".php");
           }
@@ -48,21 +48,25 @@ class State extends CComponent {
                $value = json_encode($value);
           }
           
-          self::$sm->client->setState($key, $value);
+          self::$sm->client->stateSet($key, $value);
           self::_close();
      }
      
      public static function get($key) {
-          self::_open();
-          $result = self::$sm->client->getState($key);
-          self::_close();
-          
-          return $result;
+          try {
+               self::_open();
+               $result = self::$sm->client->stateGet($key);
+               self::_close();
+               
+               return $result;
+          } catch(Exception $e) {
+               return null;
+          }
      }
      
      public static function del($key) {
           self::_open();
-          $result = self::$sm->client->deleteState($key);
+          $result = self::$sm->client->stateDel($key);
           self::_close();
           
           return $result;

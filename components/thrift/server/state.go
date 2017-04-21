@@ -304,7 +304,7 @@ func (p *StateManagerHandler) Receive(from *state.Client) (val string, err error
 	return "", err
 }
 
-func (p *StateManagerHandler) SetState(key string, val string) (err error) {
+func (p *StateManagerHandler) StateSet(key string, val string) (err error) {
 
 	p.DB.Update(func(tx *buntdb.Tx) error {
 		_, _, err := tx.Set(key, val, nil)
@@ -313,7 +313,7 @@ func (p *StateManagerHandler) SetState(key string, val string) (err error) {
 	return err
 }
 
-func (p *StateManagerHandler) DeleteState(key string) (err error) {
+func (p *StateManagerHandler) StateDel(key string) (err error) {
 	p.DB.Update(func(tx *buntdb.Tx) error {
 		_, err := tx.Delete(key)
 		return err
@@ -321,8 +321,7 @@ func (p *StateManagerHandler) DeleteState(key string) (err error) {
 	return err
 }
 
-
-func (p *StateManagerHandler) GetState(key string) (val string, err error) {
+func (p *StateManagerHandler) StateGet(key string) (val string, err error) {
 	var value string
 	p.DB.View(func(tx *buntdb.Tx) error {
 		value, err = tx.Get(key)

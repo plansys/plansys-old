@@ -25,9 +25,9 @@ func Usage() {
   fmt.Fprintln(os.Stderr, "  void send(Client client, string message)")
   fmt.Fprintln(os.Stderr, "   getClients(Client client)")
   fmt.Fprintln(os.Stderr, "  void setTag(Client client, string tag)")
-  fmt.Fprintln(os.Stderr, "  void setState(string key, string val)")
-  fmt.Fprintln(os.Stderr, "  void deleteState(string key)")
-  fmt.Fprintln(os.Stderr, "  string getState(string key)")
+  fmt.Fprintln(os.Stderr, "  void stateSet(string key, string val)")
+  fmt.Fprintln(os.Stderr, "  string stateGet(string key)")
+  fmt.Fprintln(os.Stderr, "  void stateDel(string key)")
   fmt.Fprintln(os.Stderr)
   os.Exit(0)
 }
@@ -228,36 +228,36 @@ func main() {
     fmt.Print(client.SetTag(value0, value1))
     fmt.Print("\n")
     break
-  case "setState":
+  case "stateSet":
     if flag.NArg() - 1 != 2 {
-      fmt.Fprintln(os.Stderr, "SetState requires 2 args")
+      fmt.Fprintln(os.Stderr, "StateSet requires 2 args")
       flag.Usage()
     }
     argvalue0 := flag.Arg(1)
     value0 := argvalue0
     argvalue1 := flag.Arg(2)
     value1 := argvalue1
-    fmt.Print(client.SetState(value0, value1))
+    fmt.Print(client.StateSet(value0, value1))
     fmt.Print("\n")
     break
-  case "deleteState":
+  case "stateGet":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "DeleteState requires 1 args")
+      fmt.Fprintln(os.Stderr, "StateGet requires 1 args")
       flag.Usage()
     }
     argvalue0 := flag.Arg(1)
     value0 := argvalue0
-    fmt.Print(client.DeleteState(value0))
+    fmt.Print(client.StateGet(value0))
     fmt.Print("\n")
     break
-  case "getState":
+  case "stateDel":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "GetState requires 1 args")
+      fmt.Fprintln(os.Stderr, "StateDel requires 1 args")
       flag.Usage()
     }
     argvalue0 := flag.Arg(1)
     value0 := argvalue0
-    fmt.Print(client.GetState(value0))
+    fmt.Print(client.StateDel(value0))
     fmt.Print("\n")
     break
   case "":

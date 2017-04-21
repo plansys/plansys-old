@@ -41,16 +41,16 @@ interface StateManagerIf {
    * @param string $key
    * @param string $val
    */
-  public function setState($key, $val);
-  /**
-   * @param string $key
-   */
-  public function deleteState($key);
+  public function stateSet($key, $val);
   /**
    * @param string $key
    * @return string
    */
-  public function getState($key);
+  public function stateGet($key);
+  /**
+   * @param string $key
+   */
+  public function stateDel($key);
 }
 
 
@@ -263,35 +263,35 @@ class StateManagerClient implements \state\StateManagerIf {
     return;
   }
 
-  public function setState($key, $val)
+  public function stateSet($key, $val)
   {
-    $this->send_setState($key, $val);
-    $this->recv_setState();
+    $this->send_stateSet($key, $val);
+    $this->recv_stateSet();
   }
 
-  public function send_setState($key, $val)
+  public function send_stateSet($key, $val)
   {
-    $args = new \state\StateManager_setState_args();
+    $args = new \state\StateManager_stateSet_args();
     $args->key = $key;
     $args->val = $val;
     $bin_accel = ($this->output_ instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_write_binary');
     if ($bin_accel)
     {
-      thrift_protocol_write_binary($this->output_, 'setState', TMessageType::CALL, $args, $this->seqid_, $this->output_->isStrictWrite());
+      thrift_protocol_write_binary($this->output_, 'stateSet', TMessageType::CALL, $args, $this->seqid_, $this->output_->isStrictWrite());
     }
     else
     {
-      $this->output_->writeMessageBegin('setState', TMessageType::CALL, $this->seqid_);
+      $this->output_->writeMessageBegin('stateSet', TMessageType::CALL, $this->seqid_);
       $args->write($this->output_);
       $this->output_->writeMessageEnd();
       $this->output_->getTransport()->flush();
     }
   }
 
-  public function recv_setState()
+  public function recv_stateSet()
   {
     $bin_accel = ($this->input_ instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_read_binary');
-    if ($bin_accel) $result = thrift_protocol_read_binary($this->input_, '\state\StateManager_setState_result', $this->input_->isStrictRead());
+    if ($bin_accel) $result = thrift_protocol_read_binary($this->input_, '\state\StateManager_stateSet_result', $this->input_->isStrictRead());
     else
     {
       $rseqid = 0;
@@ -305,41 +305,41 @@ class StateManagerClient implements \state\StateManagerIf {
         $this->input_->readMessageEnd();
         throw $x;
       }
-      $result = new \state\StateManager_setState_result();
+      $result = new \state\StateManager_stateSet_result();
       $result->read($this->input_);
       $this->input_->readMessageEnd();
     }
     return;
   }
 
-  public function deleteState($key)
+  public function stateGet($key)
   {
-    $this->send_deleteState($key);
-    $this->recv_deleteState();
+    $this->send_stateGet($key);
+    return $this->recv_stateGet();
   }
 
-  public function send_deleteState($key)
+  public function send_stateGet($key)
   {
-    $args = new \state\StateManager_deleteState_args();
+    $args = new \state\StateManager_stateGet_args();
     $args->key = $key;
     $bin_accel = ($this->output_ instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_write_binary');
     if ($bin_accel)
     {
-      thrift_protocol_write_binary($this->output_, 'deleteState', TMessageType::CALL, $args, $this->seqid_, $this->output_->isStrictWrite());
+      thrift_protocol_write_binary($this->output_, 'stateGet', TMessageType::CALL, $args, $this->seqid_, $this->output_->isStrictWrite());
     }
     else
     {
-      $this->output_->writeMessageBegin('deleteState', TMessageType::CALL, $this->seqid_);
+      $this->output_->writeMessageBegin('stateGet', TMessageType::CALL, $this->seqid_);
       $args->write($this->output_);
       $this->output_->writeMessageEnd();
       $this->output_->getTransport()->flush();
     }
   }
 
-  public function recv_deleteState()
+  public function recv_stateGet()
   {
     $bin_accel = ($this->input_ instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_read_binary');
-    if ($bin_accel) $result = thrift_protocol_read_binary($this->input_, '\state\StateManager_deleteState_result', $this->input_->isStrictRead());
+    if ($bin_accel) $result = thrift_protocol_read_binary($this->input_, '\state\StateManager_stateGet_result', $this->input_->isStrictRead());
     else
     {
       $rseqid = 0;
@@ -353,62 +353,62 @@ class StateManagerClient implements \state\StateManagerIf {
         $this->input_->readMessageEnd();
         throw $x;
       }
-      $result = new \state\StateManager_deleteState_result();
-      $result->read($this->input_);
-      $this->input_->readMessageEnd();
-    }
-    return;
-  }
-
-  public function getState($key)
-  {
-    $this->send_getState($key);
-    return $this->recv_getState();
-  }
-
-  public function send_getState($key)
-  {
-    $args = new \state\StateManager_getState_args();
-    $args->key = $key;
-    $bin_accel = ($this->output_ instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_write_binary');
-    if ($bin_accel)
-    {
-      thrift_protocol_write_binary($this->output_, 'getState', TMessageType::CALL, $args, $this->seqid_, $this->output_->isStrictWrite());
-    }
-    else
-    {
-      $this->output_->writeMessageBegin('getState', TMessageType::CALL, $this->seqid_);
-      $args->write($this->output_);
-      $this->output_->writeMessageEnd();
-      $this->output_->getTransport()->flush();
-    }
-  }
-
-  public function recv_getState()
-  {
-    $bin_accel = ($this->input_ instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_read_binary');
-    if ($bin_accel) $result = thrift_protocol_read_binary($this->input_, '\state\StateManager_getState_result', $this->input_->isStrictRead());
-    else
-    {
-      $rseqid = 0;
-      $fname = null;
-      $mtype = 0;
-
-      $this->input_->readMessageBegin($fname, $mtype, $rseqid);
-      if ($mtype == TMessageType::EXCEPTION) {
-        $x = new TApplicationException();
-        $x->read($this->input_);
-        $this->input_->readMessageEnd();
-        throw $x;
-      }
-      $result = new \state\StateManager_getState_result();
+      $result = new \state\StateManager_stateGet_result();
       $result->read($this->input_);
       $this->input_->readMessageEnd();
     }
     if ($result->success !== null) {
       return $result->success;
     }
-    throw new \Exception("getState failed: unknown result");
+    throw new \Exception("stateGet failed: unknown result");
+  }
+
+  public function stateDel($key)
+  {
+    $this->send_stateDel($key);
+    $this->recv_stateDel();
+  }
+
+  public function send_stateDel($key)
+  {
+    $args = new \state\StateManager_stateDel_args();
+    $args->key = $key;
+    $bin_accel = ($this->output_ instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_write_binary');
+    if ($bin_accel)
+    {
+      thrift_protocol_write_binary($this->output_, 'stateDel', TMessageType::CALL, $args, $this->seqid_, $this->output_->isStrictWrite());
+    }
+    else
+    {
+      $this->output_->writeMessageBegin('stateDel', TMessageType::CALL, $this->seqid_);
+      $args->write($this->output_);
+      $this->output_->writeMessageEnd();
+      $this->output_->getTransport()->flush();
+    }
+  }
+
+  public function recv_stateDel()
+  {
+    $bin_accel = ($this->input_ instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_read_binary');
+    if ($bin_accel) $result = thrift_protocol_read_binary($this->input_, '\state\StateManager_stateDel_result', $this->input_->isStrictRead());
+    else
+    {
+      $rseqid = 0;
+      $fname = null;
+      $mtype = 0;
+
+      $this->input_->readMessageBegin($fname, $mtype, $rseqid);
+      if ($mtype == TMessageType::EXCEPTION) {
+        $x = new TApplicationException();
+        $x->read($this->input_);
+        $this->input_->readMessageEnd();
+        throw $x;
+      }
+      $result = new \state\StateManager_stateDel_result();
+      $result->read($this->input_);
+      $this->input_->readMessageEnd();
+    }
+    return;
   }
 
 }
@@ -1058,7 +1058,7 @@ class StateManager_setTag_result {
 
 }
 
-class StateManager_setState_args {
+class StateManager_stateSet_args {
   static $_TSPEC;
 
   /**
@@ -1094,7 +1094,7 @@ class StateManager_setState_args {
   }
 
   public function getName() {
-    return 'StateManager_setState_args';
+    return 'StateManager_stateSet_args';
   }
 
   public function read($input)
@@ -1138,7 +1138,7 @@ class StateManager_setState_args {
 
   public function write($output) {
     $xfer = 0;
-    $xfer += $output->writeStructBegin('StateManager_setState_args');
+    $xfer += $output->writeStructBegin('StateManager_stateSet_args');
     if ($this->key !== null) {
       $xfer += $output->writeFieldBegin('key', TType::STRING, 1);
       $xfer += $output->writeString($this->key);
@@ -1156,7 +1156,7 @@ class StateManager_setState_args {
 
 }
 
-class StateManager_setState_result {
+class StateManager_stateSet_result {
   static $_TSPEC;
 
 
@@ -1168,7 +1168,7 @@ class StateManager_setState_result {
   }
 
   public function getName() {
-    return 'StateManager_setState_result';
+    return 'StateManager_stateSet_result';
   }
 
   public function read($input)
@@ -1198,7 +1198,7 @@ class StateManager_setState_result {
 
   public function write($output) {
     $xfer = 0;
-    $xfer += $output->writeStructBegin('StateManager_setState_result');
+    $xfer += $output->writeStructBegin('StateManager_stateSet_result');
     $xfer += $output->writeFieldStop();
     $xfer += $output->writeStructEnd();
     return $xfer;
@@ -1206,7 +1206,7 @@ class StateManager_setState_result {
 
 }
 
-class StateManager_deleteState_args {
+class StateManager_stateGet_args {
   static $_TSPEC;
 
   /**
@@ -1231,7 +1231,7 @@ class StateManager_deleteState_args {
   }
 
   public function getName() {
-    return 'StateManager_deleteState_args';
+    return 'StateManager_stateGet_args';
   }
 
   public function read($input)
@@ -1268,7 +1268,7 @@ class StateManager_deleteState_args {
 
   public function write($output) {
     $xfer = 0;
-    $xfer += $output->writeStructBegin('StateManager_deleteState_args');
+    $xfer += $output->writeStructBegin('StateManager_stateGet_args');
     if ($this->key !== null) {
       $xfer += $output->writeFieldBegin('key', TType::STRING, 1);
       $xfer += $output->writeString($this->key);
@@ -1281,132 +1281,7 @@ class StateManager_deleteState_args {
 
 }
 
-class StateManager_deleteState_result {
-  static $_TSPEC;
-
-
-  public function __construct() {
-    if (!isset(self::$_TSPEC)) {
-      self::$_TSPEC = array(
-        );
-    }
-  }
-
-  public function getName() {
-    return 'StateManager_deleteState_result';
-  }
-
-  public function read($input)
-  {
-    $xfer = 0;
-    $fname = null;
-    $ftype = 0;
-    $fid = 0;
-    $xfer += $input->readStructBegin($fname);
-    while (true)
-    {
-      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
-      if ($ftype == TType::STOP) {
-        break;
-      }
-      switch ($fid)
-      {
-        default:
-          $xfer += $input->skip($ftype);
-          break;
-      }
-      $xfer += $input->readFieldEnd();
-    }
-    $xfer += $input->readStructEnd();
-    return $xfer;
-  }
-
-  public function write($output) {
-    $xfer = 0;
-    $xfer += $output->writeStructBegin('StateManager_deleteState_result');
-    $xfer += $output->writeFieldStop();
-    $xfer += $output->writeStructEnd();
-    return $xfer;
-  }
-
-}
-
-class StateManager_getState_args {
-  static $_TSPEC;
-
-  /**
-   * @var string
-   */
-  public $key = null;
-
-  public function __construct($vals=null) {
-    if (!isset(self::$_TSPEC)) {
-      self::$_TSPEC = array(
-        1 => array(
-          'var' => 'key',
-          'type' => TType::STRING,
-          ),
-        );
-    }
-    if (is_array($vals)) {
-      if (isset($vals['key'])) {
-        $this->key = $vals['key'];
-      }
-    }
-  }
-
-  public function getName() {
-    return 'StateManager_getState_args';
-  }
-
-  public function read($input)
-  {
-    $xfer = 0;
-    $fname = null;
-    $ftype = 0;
-    $fid = 0;
-    $xfer += $input->readStructBegin($fname);
-    while (true)
-    {
-      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
-      if ($ftype == TType::STOP) {
-        break;
-      }
-      switch ($fid)
-      {
-        case 1:
-          if ($ftype == TType::STRING) {
-            $xfer += $input->readString($this->key);
-          } else {
-            $xfer += $input->skip($ftype);
-          }
-          break;
-        default:
-          $xfer += $input->skip($ftype);
-          break;
-      }
-      $xfer += $input->readFieldEnd();
-    }
-    $xfer += $input->readStructEnd();
-    return $xfer;
-  }
-
-  public function write($output) {
-    $xfer = 0;
-    $xfer += $output->writeStructBegin('StateManager_getState_args');
-    if ($this->key !== null) {
-      $xfer += $output->writeFieldBegin('key', TType::STRING, 1);
-      $xfer += $output->writeString($this->key);
-      $xfer += $output->writeFieldEnd();
-    }
-    $xfer += $output->writeFieldStop();
-    $xfer += $output->writeStructEnd();
-    return $xfer;
-  }
-
-}
-
-class StateManager_getState_result {
+class StateManager_stateGet_result {
   static $_TSPEC;
 
   /**
@@ -1431,7 +1306,7 @@ class StateManager_getState_result {
   }
 
   public function getName() {
-    return 'StateManager_getState_result';
+    return 'StateManager_stateGet_result';
   }
 
   public function read($input)
@@ -1468,12 +1343,137 @@ class StateManager_getState_result {
 
   public function write($output) {
     $xfer = 0;
-    $xfer += $output->writeStructBegin('StateManager_getState_result');
+    $xfer += $output->writeStructBegin('StateManager_stateGet_result');
     if ($this->success !== null) {
       $xfer += $output->writeFieldBegin('success', TType::STRING, 0);
       $xfer += $output->writeString($this->success);
       $xfer += $output->writeFieldEnd();
     }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
+class StateManager_stateDel_args {
+  static $_TSPEC;
+
+  /**
+   * @var string
+   */
+  public $key = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        1 => array(
+          'var' => 'key',
+          'type' => TType::STRING,
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['key'])) {
+        $this->key = $vals['key'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'StateManager_stateDel_args';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 1:
+          if ($ftype == TType::STRING) {
+            $xfer += $input->readString($this->key);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('StateManager_stateDel_args');
+    if ($this->key !== null) {
+      $xfer += $output->writeFieldBegin('key', TType::STRING, 1);
+      $xfer += $output->writeString($this->key);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
+class StateManager_stateDel_result {
+  static $_TSPEC;
+
+
+  public function __construct() {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        );
+    }
+  }
+
+  public function getName() {
+    return 'StateManager_stateDel_result';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('StateManager_stateDel_result');
     $xfer += $output->writeFieldStop();
     $xfer += $output->writeStructEnd();
     return $xfer;

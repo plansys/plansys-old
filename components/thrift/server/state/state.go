@@ -22,7 +22,7 @@ var _ = bytes.Equal
 //  - Tag
 type Client struct {
   Tid *string `thrift:"tid,1" db:"tid" json:"tid,omitempty"`
-  Uid *string `thrift:"Uid,2" db:"Uid" json:"Uid,omitempty"`
+  Uid *string `thrift:"uid,2" db:"uid" json:"uid,omitempty"`
   Sid *string `thrift:"sid,3" db:"sid" json:"sid,omitempty"`
   Cid *string `thrift:"cid,4" db:"cid" json:"cid,omitempty"`
   Tag *string `thrift:"tag,5" db:"tag" json:"tag,omitempty"`
@@ -211,12 +211,12 @@ func (p *Client) writeField1(oprot thrift.TProtocol) (err error) {
 
 func (p *Client) writeField2(oprot thrift.TProtocol) (err error) {
   if p.IsSetUid() {
-    if err := oprot.WriteFieldBegin("Uid", thrift.STRING, 2); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:Uid: ", p), err) }
+    if err := oprot.WriteFieldBegin("uid", thrift.STRING, 2); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:uid: ", p), err) }
     if err := oprot.WriteString(string(*p.Uid)); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T.Uid (2) field write error: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T.uid (2) field write error: ", p), err) }
     if err := oprot.WriteFieldEnd(); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field end error 2:Uid: ", p), err) }
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 2:uid: ", p), err) }
   }
   return err
 }
@@ -283,13 +283,13 @@ type StateManager interface {
   // Parameters:
   //  - Key
   //  - Val
-  SetState(key string, val string) (err error)
+  StateSet(key string, val string) (err error)
   // Parameters:
   //  - Key
-  DeleteState(key string) (err error)
+  StateGet(key string) (r string, err error)
   // Parameters:
   //  - Key
-  GetState(key string) (r string, err error)
+  StateDel(key string) (err error)
 }
 
 type StateManagerClient struct {
@@ -628,22 +628,22 @@ func (p *StateManagerClient) recvSetTag() (err error) {
 // Parameters:
 //  - Key
 //  - Val
-func (p *StateManagerClient) SetState(key string, val string) (err error) {
-  if err = p.sendSetState(key, val); err != nil { return }
-  return p.recvSetState()
+func (p *StateManagerClient) StateSet(key string, val string) (err error) {
+  if err = p.sendStateSet(key, val); err != nil { return }
+  return p.recvStateSet()
 }
 
-func (p *StateManagerClient) sendSetState(key string, val string)(err error) {
+func (p *StateManagerClient) sendStateSet(key string, val string)(err error) {
   oprot := p.OutputProtocol
   if oprot == nil {
     oprot = p.ProtocolFactory.GetProtocol(p.Transport)
     p.OutputProtocol = oprot
   }
   p.SeqId++
-  if err = oprot.WriteMessageBegin("setState", thrift.CALL, p.SeqId); err != nil {
+  if err = oprot.WriteMessageBegin("stateSet", thrift.CALL, p.SeqId); err != nil {
       return
   }
-  args := StateManagerSetStateArgs{
+  args := StateManagerStateSetArgs{
   Key : key,
   Val : val,
   }
@@ -657,7 +657,7 @@ func (p *StateManagerClient) sendSetState(key string, val string)(err error) {
 }
 
 
-func (p *StateManagerClient) recvSetState() (err error) {
+func (p *StateManagerClient) recvStateSet() (err error) {
   iprot := p.InputProtocol
   if iprot == nil {
     iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -667,12 +667,12 @@ func (p *StateManagerClient) recvSetState() (err error) {
   if err != nil {
     return
   }
-  if method != "setState" {
-    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "setState failed: wrong method name")
+  if method != "stateSet" {
+    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "stateSet failed: wrong method name")
     return
   }
   if p.SeqId != seqId {
-    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "setState failed: out of sequence response")
+    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "stateSet failed: out of sequence response")
     return
   }
   if mTypeId == thrift.EXCEPTION {
@@ -689,10 +689,10 @@ func (p *StateManagerClient) recvSetState() (err error) {
     return
   }
   if mTypeId != thrift.REPLY {
-    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "setState failed: invalid message type")
+    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "stateSet failed: invalid message type")
     return
   }
-  result := StateManagerSetStateResult{}
+  result := StateManagerStateSetResult{}
   if err = result.Read(iprot); err != nil {
     return
   }
@@ -704,22 +704,22 @@ func (p *StateManagerClient) recvSetState() (err error) {
 
 // Parameters:
 //  - Key
-func (p *StateManagerClient) DeleteState(key string) (err error) {
-  if err = p.sendDeleteState(key); err != nil { return }
-  return p.recvDeleteState()
+func (p *StateManagerClient) StateGet(key string) (r string, err error) {
+  if err = p.sendStateGet(key); err != nil { return }
+  return p.recvStateGet()
 }
 
-func (p *StateManagerClient) sendDeleteState(key string)(err error) {
+func (p *StateManagerClient) sendStateGet(key string)(err error) {
   oprot := p.OutputProtocol
   if oprot == nil {
     oprot = p.ProtocolFactory.GetProtocol(p.Transport)
     p.OutputProtocol = oprot
   }
   p.SeqId++
-  if err = oprot.WriteMessageBegin("deleteState", thrift.CALL, p.SeqId); err != nil {
+  if err = oprot.WriteMessageBegin("stateGet", thrift.CALL, p.SeqId); err != nil {
       return
   }
-  args := StateManagerDeleteStateArgs{
+  args := StateManagerStateGetArgs{
   Key : key,
   }
   if err = args.Write(oprot); err != nil {
@@ -732,7 +732,7 @@ func (p *StateManagerClient) sendDeleteState(key string)(err error) {
 }
 
 
-func (p *StateManagerClient) recvDeleteState() (err error) {
+func (p *StateManagerClient) recvStateGet() (value string, err error) {
   iprot := p.InputProtocol
   if iprot == nil {
     iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -742,12 +742,12 @@ func (p *StateManagerClient) recvDeleteState() (err error) {
   if err != nil {
     return
   }
-  if method != "deleteState" {
-    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "deleteState failed: wrong method name")
+  if method != "stateGet" {
+    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "stateGet failed: wrong method name")
     return
   }
   if p.SeqId != seqId {
-    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "deleteState failed: out of sequence response")
+    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "stateGet failed: out of sequence response")
     return
   }
   if mTypeId == thrift.EXCEPTION {
@@ -764,37 +764,38 @@ func (p *StateManagerClient) recvDeleteState() (err error) {
     return
   }
   if mTypeId != thrift.REPLY {
-    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "deleteState failed: invalid message type")
+    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "stateGet failed: invalid message type")
     return
   }
-  result := StateManagerDeleteStateResult{}
+  result := StateManagerStateGetResult{}
   if err = result.Read(iprot); err != nil {
     return
   }
   if err = iprot.ReadMessageEnd(); err != nil {
     return
   }
+  value = result.GetSuccess()
   return
 }
 
 // Parameters:
 //  - Key
-func (p *StateManagerClient) GetState(key string) (r string, err error) {
-  if err = p.sendGetState(key); err != nil { return }
-  return p.recvGetState()
+func (p *StateManagerClient) StateDel(key string) (err error) {
+  if err = p.sendStateDel(key); err != nil { return }
+  return p.recvStateDel()
 }
 
-func (p *StateManagerClient) sendGetState(key string)(err error) {
+func (p *StateManagerClient) sendStateDel(key string)(err error) {
   oprot := p.OutputProtocol
   if oprot == nil {
     oprot = p.ProtocolFactory.GetProtocol(p.Transport)
     p.OutputProtocol = oprot
   }
   p.SeqId++
-  if err = oprot.WriteMessageBegin("getState", thrift.CALL, p.SeqId); err != nil {
+  if err = oprot.WriteMessageBegin("stateDel", thrift.CALL, p.SeqId); err != nil {
       return
   }
-  args := StateManagerGetStateArgs{
+  args := StateManagerStateDelArgs{
   Key : key,
   }
   if err = args.Write(oprot); err != nil {
@@ -807,7 +808,7 @@ func (p *StateManagerClient) sendGetState(key string)(err error) {
 }
 
 
-func (p *StateManagerClient) recvGetState() (value string, err error) {
+func (p *StateManagerClient) recvStateDel() (err error) {
   iprot := p.InputProtocol
   if iprot == nil {
     iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -817,12 +818,12 @@ func (p *StateManagerClient) recvGetState() (value string, err error) {
   if err != nil {
     return
   }
-  if method != "getState" {
-    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "getState failed: wrong method name")
+  if method != "stateDel" {
+    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "stateDel failed: wrong method name")
     return
   }
   if p.SeqId != seqId {
-    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "getState failed: out of sequence response")
+    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "stateDel failed: out of sequence response")
     return
   }
   if mTypeId == thrift.EXCEPTION {
@@ -839,17 +840,16 @@ func (p *StateManagerClient) recvGetState() (value string, err error) {
     return
   }
   if mTypeId != thrift.REPLY {
-    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getState failed: invalid message type")
+    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "stateDel failed: invalid message type")
     return
   }
-  result := StateManagerGetStateResult{}
+  result := StateManagerStateDelResult{}
   if err = result.Read(iprot); err != nil {
     return
   }
   if err = iprot.ReadMessageEnd(); err != nil {
     return
   }
-  value = result.GetSuccess()
   return
 }
 
@@ -879,9 +879,9 @@ func NewStateManagerProcessor(handler StateManager) *StateManagerProcessor {
   self14.processorMap["send"] = &stateManagerProcessorSend{handler:handler}
   self14.processorMap["getClients"] = &stateManagerProcessorGetClients{handler:handler}
   self14.processorMap["setTag"] = &stateManagerProcessorSetTag{handler:handler}
-  self14.processorMap["setState"] = &stateManagerProcessorSetState{handler:handler}
-  self14.processorMap["deleteState"] = &stateManagerProcessorDeleteState{handler:handler}
-  self14.processorMap["getState"] = &stateManagerProcessorGetState{handler:handler}
+  self14.processorMap["stateSet"] = &stateManagerProcessorStateSet{handler:handler}
+  self14.processorMap["stateGet"] = &stateManagerProcessorStateGet{handler:handler}
+  self14.processorMap["stateDel"] = &stateManagerProcessorStateDel{handler:handler}
 return self14
 }
 
@@ -1085,16 +1085,16 @@ func (p *stateManagerProcessorSetTag) Process(seqId int32, iprot, oprot thrift.T
   return true, err
 }
 
-type stateManagerProcessorSetState struct {
+type stateManagerProcessorStateSet struct {
   handler StateManager
 }
 
-func (p *stateManagerProcessorSetState) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-  args := StateManagerSetStateArgs{}
+func (p *stateManagerProcessorStateSet) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := StateManagerStateSetArgs{}
   if err = args.Read(iprot); err != nil {
     iprot.ReadMessageEnd()
     x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-    oprot.WriteMessageBegin("setState", thrift.EXCEPTION, seqId)
+    oprot.WriteMessageBegin("stateSet", thrift.EXCEPTION, seqId)
     x.Write(oprot)
     oprot.WriteMessageEnd()
     oprot.Flush()
@@ -1102,17 +1102,17 @@ func (p *stateManagerProcessorSetState) Process(seqId int32, iprot, oprot thrift
   }
 
   iprot.ReadMessageEnd()
-  result := StateManagerSetStateResult{}
+  result := StateManagerStateSetResult{}
   var err2 error
-  if err2 = p.handler.SetState(args.Key, args.Val); err2 != nil {
-    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing setState: " + err2.Error())
-    oprot.WriteMessageBegin("setState", thrift.EXCEPTION, seqId)
+  if err2 = p.handler.StateSet(args.Key, args.Val); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing stateSet: " + err2.Error())
+    oprot.WriteMessageBegin("stateSet", thrift.EXCEPTION, seqId)
     x.Write(oprot)
     oprot.WriteMessageEnd()
     oprot.Flush()
     return true, err2
   }
-  if err2 = oprot.WriteMessageBegin("setState", thrift.REPLY, seqId); err2 != nil {
+  if err2 = oprot.WriteMessageBegin("stateSet", thrift.REPLY, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -1130,16 +1130,16 @@ func (p *stateManagerProcessorSetState) Process(seqId int32, iprot, oprot thrift
   return true, err
 }
 
-type stateManagerProcessorDeleteState struct {
+type stateManagerProcessorStateGet struct {
   handler StateManager
 }
 
-func (p *stateManagerProcessorDeleteState) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-  args := StateManagerDeleteStateArgs{}
+func (p *stateManagerProcessorStateGet) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := StateManagerStateGetArgs{}
   if err = args.Read(iprot); err != nil {
     iprot.ReadMessageEnd()
     x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-    oprot.WriteMessageBegin("deleteState", thrift.EXCEPTION, seqId)
+    oprot.WriteMessageBegin("stateGet", thrift.EXCEPTION, seqId)
     x.Write(oprot)
     oprot.WriteMessageEnd()
     oprot.Flush()
@@ -1147,57 +1147,12 @@ func (p *stateManagerProcessorDeleteState) Process(seqId int32, iprot, oprot thr
   }
 
   iprot.ReadMessageEnd()
-  result := StateManagerDeleteStateResult{}
-  var err2 error
-  if err2 = p.handler.DeleteState(args.Key); err2 != nil {
-    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing deleteState: " + err2.Error())
-    oprot.WriteMessageBegin("deleteState", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Flush()
-    return true, err2
-  }
-  if err2 = oprot.WriteMessageBegin("deleteState", thrift.REPLY, seqId); err2 != nil {
-    err = err2
-  }
-  if err2 = result.Write(oprot); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.Flush(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err != nil {
-    return
-  }
-  return true, err
-}
-
-type stateManagerProcessorGetState struct {
-  handler StateManager
-}
-
-func (p *stateManagerProcessorGetState) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-  args := StateManagerGetStateArgs{}
-  if err = args.Read(iprot); err != nil {
-    iprot.ReadMessageEnd()
-    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-    oprot.WriteMessageBegin("getState", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Flush()
-    return false, err
-  }
-
-  iprot.ReadMessageEnd()
-  result := StateManagerGetStateResult{}
+  result := StateManagerStateGetResult{}
 var retval string
   var err2 error
-  if retval, err2 = p.handler.GetState(args.Key); err2 != nil {
-    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getState: " + err2.Error())
-    oprot.WriteMessageBegin("getState", thrift.EXCEPTION, seqId)
+  if retval, err2 = p.handler.StateGet(args.Key); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing stateGet: " + err2.Error())
+    oprot.WriteMessageBegin("stateGet", thrift.EXCEPTION, seqId)
     x.Write(oprot)
     oprot.WriteMessageEnd()
     oprot.Flush()
@@ -1205,7 +1160,52 @@ var retval string
   } else {
     result.Success = &retval
 }
-  if err2 = oprot.WriteMessageBegin("getState", thrift.REPLY, seqId); err2 != nil {
+  if err2 = oprot.WriteMessageBegin("stateGet", thrift.REPLY, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err != nil {
+    return
+  }
+  return true, err
+}
+
+type stateManagerProcessorStateDel struct {
+  handler StateManager
+}
+
+func (p *stateManagerProcessorStateDel) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := StateManagerStateDelArgs{}
+  if err = args.Read(iprot); err != nil {
+    iprot.ReadMessageEnd()
+    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+    oprot.WriteMessageBegin("stateDel", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return false, err
+  }
+
+  iprot.ReadMessageEnd()
+  result := StateManagerStateDelResult{}
+  var err2 error
+  if err2 = p.handler.StateDel(args.Key); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing stateDel: " + err2.Error())
+    oprot.WriteMessageBegin("stateDel", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return true, err2
+  }
+  if err2 = oprot.WriteMessageBegin("stateDel", thrift.REPLY, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -1952,24 +1952,24 @@ func (p *StateManagerSetTagResult) String() string {
 // Attributes:
 //  - Key
 //  - Val
-type StateManagerSetStateArgs struct {
+type StateManagerStateSetArgs struct {
   Key string `thrift:"key,1" db:"key" json:"key"`
   Val string `thrift:"val,2" db:"val" json:"val"`
 }
 
-func NewStateManagerSetStateArgs() *StateManagerSetStateArgs {
-  return &StateManagerSetStateArgs{}
+func NewStateManagerStateSetArgs() *StateManagerStateSetArgs {
+  return &StateManagerStateSetArgs{}
 }
 
 
-func (p *StateManagerSetStateArgs) GetKey() string {
+func (p *StateManagerStateSetArgs) GetKey() string {
   return p.Key
 }
 
-func (p *StateManagerSetStateArgs) GetVal() string {
+func (p *StateManagerStateSetArgs) GetVal() string {
   return p.Val
 }
-func (p *StateManagerSetStateArgs) Read(iprot thrift.TProtocol) error {
+func (p *StateManagerStateSetArgs) Read(iprot thrift.TProtocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -2005,7 +2005,7 @@ func (p *StateManagerSetStateArgs) Read(iprot thrift.TProtocol) error {
   return nil
 }
 
-func (p *StateManagerSetStateArgs)  ReadField1(iprot thrift.TProtocol) error {
+func (p *StateManagerStateSetArgs)  ReadField1(iprot thrift.TProtocol) error {
   if v, err := iprot.ReadString(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
@@ -2014,7 +2014,7 @@ func (p *StateManagerSetStateArgs)  ReadField1(iprot thrift.TProtocol) error {
   return nil
 }
 
-func (p *StateManagerSetStateArgs)  ReadField2(iprot thrift.TProtocol) error {
+func (p *StateManagerStateSetArgs)  ReadField2(iprot thrift.TProtocol) error {
   if v, err := iprot.ReadString(); err != nil {
   return thrift.PrependError("error reading field 2: ", err)
 } else {
@@ -2023,8 +2023,8 @@ func (p *StateManagerSetStateArgs)  ReadField2(iprot thrift.TProtocol) error {
   return nil
 }
 
-func (p *StateManagerSetStateArgs) Write(oprot thrift.TProtocol) error {
-  if err := oprot.WriteStructBegin("setState_args"); err != nil {
+func (p *StateManagerStateSetArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("stateSet_args"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if p != nil {
     if err := p.writeField1(oprot); err != nil { return err }
@@ -2037,7 +2037,7 @@ func (p *StateManagerSetStateArgs) Write(oprot thrift.TProtocol) error {
   return nil
 }
 
-func (p *StateManagerSetStateArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *StateManagerStateSetArgs) writeField1(oprot thrift.TProtocol) (err error) {
   if err := oprot.WriteFieldBegin("key", thrift.STRING, 1); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:key: ", p), err) }
   if err := oprot.WriteString(string(p.Key)); err != nil {
@@ -2047,7 +2047,7 @@ func (p *StateManagerSetStateArgs) writeField1(oprot thrift.TProtocol) (err erro
   return err
 }
 
-func (p *StateManagerSetStateArgs) writeField2(oprot thrift.TProtocol) (err error) {
+func (p *StateManagerStateSetArgs) writeField2(oprot thrift.TProtocol) (err error) {
   if err := oprot.WriteFieldBegin("val", thrift.STRING, 2); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:val: ", p), err) }
   if err := oprot.WriteString(string(p.Val)); err != nil {
@@ -2057,21 +2057,21 @@ func (p *StateManagerSetStateArgs) writeField2(oprot thrift.TProtocol) (err erro
   return err
 }
 
-func (p *StateManagerSetStateArgs) String() string {
+func (p *StateManagerStateSetArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StateManagerSetStateArgs(%+v)", *p)
+  return fmt.Sprintf("StateManagerStateSetArgs(%+v)", *p)
 }
 
-type StateManagerSetStateResult struct {
+type StateManagerStateSetResult struct {
 }
 
-func NewStateManagerSetStateResult() *StateManagerSetStateResult {
-  return &StateManagerSetStateResult{}
+func NewStateManagerStateSetResult() *StateManagerStateSetResult {
+  return &StateManagerStateSetResult{}
 }
 
-func (p *StateManagerSetStateResult) Read(iprot thrift.TProtocol) error {
+func (p *StateManagerStateSetResult) Read(iprot thrift.TProtocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -2096,8 +2096,8 @@ func (p *StateManagerSetStateResult) Read(iprot thrift.TProtocol) error {
   return nil
 }
 
-func (p *StateManagerSetStateResult) Write(oprot thrift.TProtocol) error {
-  if err := oprot.WriteStructBegin("setState_result"); err != nil {
+func (p *StateManagerStateSetResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("stateSet_result"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if p != nil {
   }
@@ -2108,28 +2108,28 @@ func (p *StateManagerSetStateResult) Write(oprot thrift.TProtocol) error {
   return nil
 }
 
-func (p *StateManagerSetStateResult) String() string {
+func (p *StateManagerStateSetResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StateManagerSetStateResult(%+v)", *p)
+  return fmt.Sprintf("StateManagerStateSetResult(%+v)", *p)
 }
 
 // Attributes:
 //  - Key
-type StateManagerDeleteStateArgs struct {
+type StateManagerStateGetArgs struct {
   Key string `thrift:"key,1" db:"key" json:"key"`
 }
 
-func NewStateManagerDeleteStateArgs() *StateManagerDeleteStateArgs {
-  return &StateManagerDeleteStateArgs{}
+func NewStateManagerStateGetArgs() *StateManagerStateGetArgs {
+  return &StateManagerStateGetArgs{}
 }
 
 
-func (p *StateManagerDeleteStateArgs) GetKey() string {
+func (p *StateManagerStateGetArgs) GetKey() string {
   return p.Key
 }
-func (p *StateManagerDeleteStateArgs) Read(iprot thrift.TProtocol) error {
+func (p *StateManagerStateGetArgs) Read(iprot thrift.TProtocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -2161,7 +2161,7 @@ func (p *StateManagerDeleteStateArgs) Read(iprot thrift.TProtocol) error {
   return nil
 }
 
-func (p *StateManagerDeleteStateArgs)  ReadField1(iprot thrift.TProtocol) error {
+func (p *StateManagerStateGetArgs)  ReadField1(iprot thrift.TProtocol) error {
   if v, err := iprot.ReadString(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
@@ -2170,8 +2170,8 @@ func (p *StateManagerDeleteStateArgs)  ReadField1(iprot thrift.TProtocol) error 
   return nil
 }
 
-func (p *StateManagerDeleteStateArgs) Write(oprot thrift.TProtocol) error {
-  if err := oprot.WriteStructBegin("deleteState_args"); err != nil {
+func (p *StateManagerStateGetArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("stateGet_args"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if p != nil {
     if err := p.writeField1(oprot); err != nil { return err }
@@ -2183,7 +2183,7 @@ func (p *StateManagerDeleteStateArgs) Write(oprot thrift.TProtocol) error {
   return nil
 }
 
-func (p *StateManagerDeleteStateArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *StateManagerStateGetArgs) writeField1(oprot thrift.TProtocol) (err error) {
   if err := oprot.WriteFieldBegin("key", thrift.STRING, 1); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:key: ", p), err) }
   if err := oprot.WriteString(string(p.Key)); err != nil {
@@ -2193,171 +2193,35 @@ func (p *StateManagerDeleteStateArgs) writeField1(oprot thrift.TProtocol) (err e
   return err
 }
 
-func (p *StateManagerDeleteStateArgs) String() string {
+func (p *StateManagerStateGetArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StateManagerDeleteStateArgs(%+v)", *p)
-}
-
-type StateManagerDeleteStateResult struct {
-}
-
-func NewStateManagerDeleteStateResult() *StateManagerDeleteStateResult {
-  return &StateManagerDeleteStateResult{}
-}
-
-func (p *StateManagerDeleteStateResult) Read(iprot thrift.TProtocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    if err := iprot.Skip(fieldTypeId); err != nil {
-      return err
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *StateManagerDeleteStateResult) Write(oprot thrift.TProtocol) error {
-  if err := oprot.WriteStructBegin("deleteState_result"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if p != nil {
-  }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *StateManagerDeleteStateResult) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("StateManagerDeleteStateResult(%+v)", *p)
-}
-
-// Attributes:
-//  - Key
-type StateManagerGetStateArgs struct {
-  Key string `thrift:"key,1" db:"key" json:"key"`
-}
-
-func NewStateManagerGetStateArgs() *StateManagerGetStateArgs {
-  return &StateManagerGetStateArgs{}
-}
-
-
-func (p *StateManagerGetStateArgs) GetKey() string {
-  return p.Key
-}
-func (p *StateManagerGetStateArgs) Read(iprot thrift.TProtocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *StateManagerGetStateArgs)  ReadField1(iprot thrift.TProtocol) error {
-  if v, err := iprot.ReadString(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.Key = v
-}
-  return nil
-}
-
-func (p *StateManagerGetStateArgs) Write(oprot thrift.TProtocol) error {
-  if err := oprot.WriteStructBegin("getState_args"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if p != nil {
-    if err := p.writeField1(oprot); err != nil { return err }
-  }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *StateManagerGetStateArgs) writeField1(oprot thrift.TProtocol) (err error) {
-  if err := oprot.WriteFieldBegin("key", thrift.STRING, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:key: ", p), err) }
-  if err := oprot.WriteString(string(p.Key)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.key (1) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:key: ", p), err) }
-  return err
-}
-
-func (p *StateManagerGetStateArgs) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("StateManagerGetStateArgs(%+v)", *p)
+  return fmt.Sprintf("StateManagerStateGetArgs(%+v)", *p)
 }
 
 // Attributes:
 //  - Success
-type StateManagerGetStateResult struct {
+type StateManagerStateGetResult struct {
   Success *string `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
-func NewStateManagerGetStateResult() *StateManagerGetStateResult {
-  return &StateManagerGetStateResult{}
+func NewStateManagerStateGetResult() *StateManagerStateGetResult {
+  return &StateManagerStateGetResult{}
 }
 
-var StateManagerGetStateResult_Success_DEFAULT string
-func (p *StateManagerGetStateResult) GetSuccess() string {
+var StateManagerStateGetResult_Success_DEFAULT string
+func (p *StateManagerStateGetResult) GetSuccess() string {
   if !p.IsSetSuccess() {
-    return StateManagerGetStateResult_Success_DEFAULT
+    return StateManagerStateGetResult_Success_DEFAULT
   }
 return *p.Success
 }
-func (p *StateManagerGetStateResult) IsSetSuccess() bool {
+func (p *StateManagerStateGetResult) IsSetSuccess() bool {
   return p.Success != nil
 }
 
-func (p *StateManagerGetStateResult) Read(iprot thrift.TProtocol) error {
+func (p *StateManagerStateGetResult) Read(iprot thrift.TProtocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -2389,7 +2253,7 @@ func (p *StateManagerGetStateResult) Read(iprot thrift.TProtocol) error {
   return nil
 }
 
-func (p *StateManagerGetStateResult)  ReadField0(iprot thrift.TProtocol) error {
+func (p *StateManagerStateGetResult)  ReadField0(iprot thrift.TProtocol) error {
   if v, err := iprot.ReadString(); err != nil {
   return thrift.PrependError("error reading field 0: ", err)
 } else {
@@ -2398,8 +2262,8 @@ func (p *StateManagerGetStateResult)  ReadField0(iprot thrift.TProtocol) error {
   return nil
 }
 
-func (p *StateManagerGetStateResult) Write(oprot thrift.TProtocol) error {
-  if err := oprot.WriteStructBegin("getState_result"); err != nil {
+func (p *StateManagerStateGetResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("stateGet_result"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if p != nil {
     if err := p.writeField0(oprot); err != nil { return err }
@@ -2411,7 +2275,7 @@ func (p *StateManagerGetStateResult) Write(oprot thrift.TProtocol) error {
   return nil
 }
 
-func (p *StateManagerGetStateResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *StateManagerStateGetResult) writeField0(oprot thrift.TProtocol) (err error) {
   if p.IsSetSuccess() {
     if err := oprot.WriteFieldBegin("success", thrift.STRING, 0); err != nil {
       return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
@@ -2423,11 +2287,147 @@ func (p *StateManagerGetStateResult) writeField0(oprot thrift.TProtocol) (err er
   return err
 }
 
-func (p *StateManagerGetStateResult) String() string {
+func (p *StateManagerStateGetResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StateManagerGetStateResult(%+v)", *p)
+  return fmt.Sprintf("StateManagerStateGetResult(%+v)", *p)
+}
+
+// Attributes:
+//  - Key
+type StateManagerStateDelArgs struct {
+  Key string `thrift:"key,1" db:"key" json:"key"`
+}
+
+func NewStateManagerStateDelArgs() *StateManagerStateDelArgs {
+  return &StateManagerStateDelArgs{}
+}
+
+
+func (p *StateManagerStateDelArgs) GetKey() string {
+  return p.Key
+}
+func (p *StateManagerStateDelArgs) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *StateManagerStateDelArgs)  ReadField1(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.Key = v
+}
+  return nil
+}
+
+func (p *StateManagerStateDelArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("stateDel_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *StateManagerStateDelArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("key", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:key: ", p), err) }
+  if err := oprot.WriteString(string(p.Key)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.key (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:key: ", p), err) }
+  return err
+}
+
+func (p *StateManagerStateDelArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("StateManagerStateDelArgs(%+v)", *p)
+}
+
+type StateManagerStateDelResult struct {
+}
+
+func NewStateManagerStateDelResult() *StateManagerStateDelResult {
+  return &StateManagerStateDelResult{}
+}
+
+func (p *StateManagerStateDelResult) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    if err := iprot.Skip(fieldTypeId); err != nil {
+      return err
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *StateManagerStateDelResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("stateDel_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *StateManagerStateDelResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("StateManagerStateDelResult(%+v)", *p)
 }
 
 
