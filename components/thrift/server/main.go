@@ -10,27 +10,21 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"time"
 
 	"git.apache.org/thrift.git/lib/go/thrift"
+	"github.com/VividCortex/godaemon"
 	"github.com/cleversoap/go-cp"
 	"github.com/plansys/psthrift/state"
 	"github.com/plansys/psthrift/svc"
-	"github.com/plansys/service"
 	"github.com/tidwall/buntdb"
 )
 
 type program struct{}
 
-func (p *program) Start(s service.Service) error {
-	// Start should not block. Do the actual work async.
-	p.Run()
-	return nil
-}
 func (p *program) Run() {
-	go runServer(thrift.NewTTransportFactory(), thrift.NewTCompactProtocolFactory())
+	runServer(thrift.NewTTransportFactory(), thrift.NewTCompactProtocolFactory())
 }
-func (p *program) Stop(s service.Service) error {
+func (p *program) Quit() {
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 	dirs := strings.Split(filepath.ToSlash(dir), "/")
 	rootdirs := dirs[0 : len(dirs)-4]
@@ -50,8 +44,6 @@ func (p *program) Stop(s service.Service) error {
 		}
 		service.Quit()
 	}
-
-	return nil
 }
 
 func GetMD5Hash(text string) string {
@@ -60,64 +52,20 @@ func GetMD5Hash(text string) string {
 	return hex.EncodeToString(hasher.Sum(nil))
 }
 
-func IsArgValid() bool {
-	if len(os.Args) > 1 && (os.Args[1] == "setup" ||
-		os.Args[1] == "start" ||
-		os.Args[1] == "restart" ||
-		os.Args[1] == "stop" ||
-		os.Args[1] == "install" ||
-		os.Args[1] == "remove") {
-		return true
-	}
-	return false
-}
-
 func main() {
-	ex, _ := os.Executable()
-	hash := GetMD5Hash(ex)
-
-	svcConfig := &service.Config{
-		Name:        "PlansysDaemon_" + hash,
-		DisplayName: "Plansys Daemon [" + ex + "]",
-		Description: "Plansys Daemon Service (Running at " + ex + ")",
-	}
-
-	log.Println("Service: " + "PlansysDaemon_" + hash)
-
-	prg := &program{}
-	if s, err := service.New(prg, svcConfig); err == nil {
-		if IsArgValid() {
-			log.Println(os.Args[1] + " service...")
-			switch os.Args[1] {
-			case "setup":
-				s.Install()
-				time.Sleep(time.Second)
-				err = s.Start()
-			case "start":
-				err = s.Start()
-			case "stop":
-				err = s.Stop()
-			case "restart":
-				err = s.Restart()
-			case "install":
-				err = s.Install()
-			case "remove":
-				s.Stop()
-				time.Sleep(time.Second)
-				err = s.Uninstall()
-			}
-			time.Sleep(time.Second)
-
-			if err != nil {
-				log.Println(err)
-			} else {
-				log.Println(os.Args[1] + ": success")
-			}
-		} else {
-			s.Run()
+	p := &program{}
+	if len(os.Args) > 1 {
+		switch os.Args[1] {
+		case "start":
+			p.Run()
+		case "restart":
+			p.Quit()
+			p.Run()
+		case "stop":
+			p.Quit()
 		}
 	} else {
-		log.Println(err)
+		p.Run()
 	}
 }
 
@@ -219,6 +167,9 @@ func runServer(transportFactory thrift.TTransportFactory, protocolFactory thrift
 			log.Println(err)
 		}
 	}()
+
+	// daemonize after running server
+	godaemon.MakeDaemon(&godaemon.DaemonAttr{})
 
 	isRestarted := <-restartChan
 	if isRestarted {
