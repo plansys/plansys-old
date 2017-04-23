@@ -3,10 +3,10 @@
   "prefer-stable": true,
   "require": {
     "nikic/php-parser": "^2.1",
-    "phpmailer/phpmailer": "*",
-    "box/spout": "dev-master",
-    "inlinestyle/inlinestyle": "dev-master",
     "yajra/laravel-pdo-via-oci8": "^1.1",
-    "plansys/thrift": "^0.10.0"
+    "plansys/thrift": "^0.10.0",
+    "box/spout": "^2.7",
+    "inlinestyle/inlinestyle": "^1.2",
+    "phpmailer/phpmailer": "^5.2"
   }
 }

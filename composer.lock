@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f3eec252d461737231d774ff4b2487b0",
+    "content-hash": "9fe268016fd9366943207996f232c114",
     "packages": [
         {
             "name": "box/spout",
-            "version": "dev-master",
+            "version": "v2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/box/spout.git",
-                "reference": "1eb01a3d2a983d06ac59183b22b3ad6d91795fd9"
+                "reference": "4a65466b6135d2aa28dd3bc52785a5e999f95fe8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/box/spout/zipball/1eb01a3d2a983d06ac59183b22b3ad6d91795fd9",
-                "reference": "1eb01a3d2a983d06ac59183b22b3ad6d91795fd9",
+                "url": "https://api.github.com/repos/box/spout/zipball/4a65466b6135d2aa28dd3bc52785a5e999f95fe8",
+                "reference": "4a65466b6135d2aa28dd3bc52785a5e999f95fe8",
                 "shasum": ""
             },
             "require": {
@@ -73,20 +73,20 @@
                 "write",
                 "xlsx"
             ],
-            "time": "2017-04-15 21:52:48"
+            "time": "2017-03-28T13:07:48+00:00"
         },
         {
             "name": "inlinestyle/inlinestyle",
-            "version": "dev-master",
+            "version": "1.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/christiaan/InlineStyle.git",
-                "reference": "fbc76e857099413716ade4afff9178fe323f39b4"
+                "reference": "ed9e0a7bf38e6c1e11ce4c6d3d73b857d4fef7d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/christiaan/InlineStyle/zipball/fbc76e857099413716ade4afff9178fe323f39b4",
-                "reference": "fbc76e857099413716ade4afff9178fe323f39b4",
+                "url": "https://api.github.com/repos/christiaan/InlineStyle/zipball/ed9e0a7bf38e6c1e11ce4c6d3d73b857d4fef7d2",
+                "reference": "ed9e0a7bf38e6c1e11ce4c6d3d73b857d4fef7d2",
                 "shasum": ""
             },
             "require": {
@@ -120,7 +120,7 @@
                 "email",
                 "inline"
             ],
-            "time": "2016-07-08 17:58:54"
+            "time": "2015-12-11T12:04:11+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -383,10 +383,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "box/spout": 20,
-        "inlinestyle/inlinestyle": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],
