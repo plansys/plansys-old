@@ -108,11 +108,11 @@ func NewServiceManagerHandler(db *buntdb.DB, dir string, port string, restartCha
 		DB:               db,
 		RunningInstances: runningInstances,
 		Config: ServiceConfig{
-			PhpPath:          getPhpPath(),
+			PhpPath:            getPhpPath(),
 			KeepClosedInstance: 10,
 		},
-		Dir:  dir,
-		Port: port,
+		Dir:         dir,
+		Port:        port,
 		RestartChan: restartChan,
 	}
 

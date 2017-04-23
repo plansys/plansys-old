@@ -4,7 +4,6 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "39eb13072dca72481f989f33737599ee",
     "content-hash": "f3eec252d461737231d774ff4b2487b0",
     "packages": [
         {
@@ -172,7 +171,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2016-09-16 12:04:44"
+            "time": "2016-09-16T12:04:44+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -248,7 +247,7 @@
                 }
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
-            "time": "2017-03-15 19:32:56"
+            "time": "2017-03-15T19:32:56+00:00"
         },
         {
             "name": "plansys/thrift",
@@ -289,7 +288,7 @@
             "keywords": [
                 "thrift"
             ],
-            "time": "2017-04-05 23:17:16"
+            "time": "2017-04-05T23:17:16+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -342,7 +341,7 @@
             ],
             "description": "Symfony CssSelector Component",
             "homepage": "https://symfony.com",
-            "time": "2017-02-21 09:12:04"
+            "time": "2017-02-21T09:12:04+00:00"
         },
         {
             "name": "yajra/laravel-pdo-via-oci8",
@@ -378,7 +377,7 @@
                 }
             ],
             "description": "PDO userspace driver proxying calls to PHP OCI8 driver",
-            "time": "2017-02-02 02:51:53"
+            "time": "2017-02-02T02:51:53+00:00"
         }
     ],
     "packages-dev": [],

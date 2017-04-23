@@ -3,21 +3,21 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/gorilla/websocket"
-	"github.com/plansys/psthrift/state"
-	"github.com/ryanuber/go-glob"
-	"github.com/tidwall/buntdb"
-	"github.com/tidwall/gjson"
 	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/gorilla/websocket"
+	"github.com/plansys/psthrift/state"
+	"github.com/ryanuber/go-glob"
+	"github.com/tidwall/buntdb"
+	"github.com/tidwall/gjson"
 )
 
 type StateManagerHandler struct {
@@ -39,12 +39,12 @@ func getPhpPath() string {
 		log.Println(err)
 		return ""
 	}
-	
+
 	php := "php"
 	sep := fmt.Sprintf("%c", os.PathSeparator)
-	dirs := strings.Split(path.Dir(ex), sep)
+	dirs := strings.Split(filepath.Dir(ex), sep)
 	config := strings.Join(dirs[:len(dirs)-4], sep) + sep + "app" + sep + "config" + sep + "settings.json"
-	
+
 	if _, err := os.Stat(config); err == nil {
 		if json, err := ioutil.ReadFile(config); err == nil {
 			value := gjson.GetBytes(json, "app.phpPath").String()
@@ -204,7 +204,7 @@ func (p *StateManagerHandler) Yiic(returnOutput bool, params ...string) (ret str
 	}
 
 	sep := fmt.Sprintf("%c", os.PathSeparator)
-	dirs := strings.Split(path.Dir(ex), sep)
+	dirs := strings.Split(filepath.Dir(ex), sep)
 	base := strings.Join(dirs[:len(dirs)-3], sep)
 	yiic := base + sep + "yiic.php"
 	php := getPhpPath()

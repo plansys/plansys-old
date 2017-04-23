@@ -203,7 +203,7 @@ class ServiceManager extends CComponent {
                $path = Yii::getPathOfAlias("application.components.thrift.server");
                $file = $path;
                
-               $params = "";
+               $params = "setup";
                if ($restart) {
                     $params = "restart";
                }

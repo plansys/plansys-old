@@ -1,12 +1,8 @@
 package main
 
 import (
-	"git.apache.org/thrift.git/lib/go/thrift"
-	"github.com/VividCortex/godaemon"
-	"github.com/cleversoap/go-cp"
-	"github.com/plansys/psthrift/state"
-	"github.com/plansys/psthrift/svc"
-	"github.com/tidwall/buntdb"
+	"crypto/md5"
+	"encoding/hex"
 	"io/ioutil"
 	"log"
 	"net"
@@ -14,25 +10,131 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
+
+	"git.apache.org/thrift.git/lib/go/thrift"
+	"github.com/cleversoap/go-cp"
+	"github.com/plansys/psthrift/state"
+	"github.com/plansys/psthrift/svc"
+	"github.com/plansys/service"
+	"github.com/tidwall/buntdb"
 )
+
+type program struct{}
+
+func (p *program) Start(s service.Service) error {
+	// Start should not block. Do the actual work async.
+	p.Run()
+	return nil
+}
+func (p *program) Run() {
+	go runServer(thrift.NewTTransportFactory(), thrift.NewTCompactProtocolFactory())
+}
+func (p *program) Stop(s service.Service) error {
+	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+	dirs := strings.Split(filepath.ToSlash(dir), "/")
+	rootdirs := dirs[0 : len(dirs)-4]
+	portfile := filepath.FromSlash(strings.Join(append(rootdirs, "assets", "ports.txt"), "/"))
+
+	if portcontent, err := ioutil.ReadFile(portfile); err == nil {
+		ports := strings.Split(string(portcontent[:]), ":")
+		addr := "127.0.0.1:" + ports[0]
+		transport, _ := thrift.NewTSocket(addr)
+		var protocol thrift.TProtocol = thrift.NewTCompactProtocol(transport)
+		protocol = thrift.NewTMultiplexedProtocol(protocol, "ServiceManager")
+		service := svc.NewServiceManagerClientProtocol(transport, protocol, protocol)
+		err := transport.Open()
+		defer transport.Close()
+		if err != nil {
+			log.Println(err)
+		}
+		service.Quit()
+	}
+
+	return nil
+}
+
+func GetMD5Hash(text string) string {
+	hasher := md5.New()
+	hasher.Write([]byte(text))
+	return hex.EncodeToString(hasher.Sum(nil))
+}
+
+func IsArgValid() bool {
+	if len(os.Args) > 1 && (os.Args[1] == "setup" ||
+		os.Args[1] == "start" ||
+		os.Args[1] == "restart" ||
+		os.Args[1] == "stop" ||
+		os.Args[1] == "install" ||
+		os.Args[1] == "remove") {
+		return true
+	}
+	return false
+}
+
+func main() {
+	ex, _ := os.Executable()
+	hash := GetMD5Hash(ex)
+
+	svcConfig := &service.Config{
+		Name:        "PlansysDaemon_" + hash,
+		DisplayName: "Plansys Daemon [" + ex + "]",
+		Description: "Plansys Daemon Service (Running at " + ex + ")",
+	}
+
+	log.Println("Service: " + "PlansysDaemon_" + hash)
+
+	prg := &program{}
+	if s, err := service.New(prg, svcConfig); err == nil {
+		if IsArgValid() {
+			log.Println(os.Args[1] + " service...")
+			switch os.Args[1] {
+			case "setup":
+				s.Install()
+				time.Sleep(time.Second)
+				err = s.Start()
+			case "start":
+				err = s.Start()
+			case "stop":
+				err = s.Stop()
+			case "restart":
+				err = s.Restart()
+			case "install":
+				err = s.Install()
+			case "remove":
+				s.Stop()
+				time.Sleep(time.Second)
+				err = s.Uninstall()
+			}
+			time.Sleep(time.Second)
+
+			if err != nil {
+				log.Println(err)
+			} else {
+				log.Println(os.Args[1] + ": success")
+			}
+		} else {
+			s.Run()
+		}
+	} else {
+		log.Println(err)
+	}
+}
 
 func runServer(transportFactory thrift.TTransportFactory, protocolFactory thrift.TProtocolFactory) error {
 	svport, wsport, rootdirs := InitPort()
 	if svport == "" || wsport == "" {
 		return nil
-	} else {
-		log.Printf("started")
 	}
-	
+
 	// log all error to file
-	logfile := LogToFile()
-	defer logfile.Close()
-	
-	if len(os.Args) > 1 && os.Args[1] == "restart" {
-		log.Println("Restarting server...")
+	if len(os.Args) > 1 {
+		logfile := LogToFile()
+		defer logfile.Close()
 	}
+
 	log.Println("Running Thrift Server at: 127.0.0.1:" + svport)
-	
+
 	svaddr := "127.0.0.1:" + svport
 	wsaddr := "0.0.0.0:" + wsport
 	svcPath := filepath.FromSlash(strings.Join(append(rootdirs, "app", "config", "service.buntdb"), "/"))
@@ -90,9 +192,9 @@ func runServer(transportFactory thrift.TTransportFactory, protocolFactory thrift
 		return err
 	}
 	defer svcDB.Close()
-	
+
 	restartChan := make(chan bool)
-	
+
 	// get cwd before daemonized (we cant get cwd after daemonized!)
 	cwd := filepath.FromSlash(strings.Join(rootdirs, "/"))
 	svcProcessor := svc.NewServiceManagerProcessor(NewServiceManagerHandler(svcDB, cwd, svport, restartChan))
@@ -108,8 +210,6 @@ func runServer(transportFactory thrift.TTransportFactory, protocolFactory thrift
 	// run thrift server
 	server := thrift.NewTSimpleServer4(processor, transport, transportFactory, protocolFactory)
 
-	
-
 	// run ws server
 	stateProcessor := state.NewStateManagerProcessor(NewStateManagerHandler(wsaddr, rootdirs, stateDB))
 	processor.RegisterProcessor("StateManager", stateProcessor)
@@ -119,22 +219,14 @@ func runServer(transportFactory thrift.TTransportFactory, protocolFactory thrift
 			log.Println(err)
 		}
 	}()
-	
-	// daemonize after running server
-	godaemon.MakeDaemon(&godaemon.DaemonAttr{})
-	
-	isRestarted := <- restartChan
-	if (isRestarted) {
+
+	isRestarted := <-restartChan
+	if isRestarted {
 		panic("Restarting...")
 	} else {
 		log.Println("Exiting...")
 	}
 	return nil
-}
-
-func main() {
-	// run the server, this will be blocked until exit
-	runServer(thrift.NewTTransportFactory(), thrift.NewTCompactProtocolFactory())
 }
 
 func LogToFile() (file *os.File) {
@@ -168,7 +260,7 @@ func InitPort() (svport string, wsport string, rootdirs []string) {
 			if ThriftAlreadyRun(ports[0], rootdir) {
 				if len(os.Args) > 1 && os.Args[1] == "restart" {
 					return ports[0], ports[1], rootdirs
-				}  else {
+				} else {
 					return "", "", rootdirs
 				}
 			} else {
@@ -231,12 +323,6 @@ func ThriftAlreadyRun(port string, dir string) bool {
 	}
 
 	defer transport.Close()
-
-	if (len(os.Args) > 1 && os.Args[1] == "restart") {
-		service.Quit()
-		return true
-	} else {
-		tdir, _ := service.Cwd()
-		return (tdir == dir)
-	}
+	tdir, _ := service.Cwd()
+	return (tdir == dir)
 }
