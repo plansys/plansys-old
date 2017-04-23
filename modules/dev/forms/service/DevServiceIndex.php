@@ -144,14 +144,14 @@ class DevServiceIndex extends Form {
                         'html' => '<td ng-class=\"rowClass(row, \'status\', \'string\')\" style=\"text-align:center;{{ row.schedule != \'Manual\' ? \'background:yellow\' : \'\'}}\">
     <div ng-if=\"row.status == \'running\'\" class=\"label label-success\">RUNNING: {{row.running_instances}} PROCESS</div>
     <div ng-if=\"row.status == \'stopped\'\" class=\"label label-default\">STOPPED</div>
-    <div ng-if=\"row.status == \'draft\'\" class=\"label label-danger\" tooltip-html-unsafe=\"DRAFT service will not run.<hr/> To remove DRAFT status, you must manually run this service and make sure there is no error in your code.\"><i class=\"fa fa-warning\"></i> DRAFT</div>
+    <div ng-if=\"row.status == \'draft\'\" class=\"label label-danger\" tooltip-html-unsafe=\"DRAFT service will not run.<hr> To remove DRAFT status, you must manually run this service and make sure there is no error in your code.\"><i class=\"fa fa-warning\"></i> DRAFT</div>
 </td>',
                         'columnType' => 'string',
                         'show' => false,
                         'mergeSameRow' => 'No',
                         'cellMode' => 'custom',
                         '$listViewName' => 'columns',
-                        '$showDF' => false,
+                        '$showDF' => true,
                     ),
                     array (
                         'name' => 'lastRun',
@@ -164,7 +164,7 @@ class DevServiceIndex extends Form {
                         'mergeSameRow' => 'No',
                         'cellMode' => 'custom',
                         '$listViewName' => 'columns',
-                        '$showDF' => true,
+                        '$showDF' => false,
                     ),
                     array (
                         'name' => 'action',
