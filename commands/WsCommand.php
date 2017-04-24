@@ -28,7 +28,6 @@ class WsCommand extends CConsoleCommand {
                'sid' => $sid,
                'cid' => $cid
           ]);
-          // var_dump(["CONNECTED", $tid, $uid, $sid,$cid]);
      }
      
      public function actionDisconnected($tid, $uid, $sid, $cid, $reason){

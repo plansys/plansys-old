@@ -282,7 +282,6 @@ func (p *StateManagerHandler) Send(to *state.Client, message string) (err error)
 							}
 						} else {
 							if *to.Tid == *val.Tid && *to.Uid == *val.Uid && *to.Sid == *val.Sid {
-								log.Println(val, to)
 								conn.WriteMessage(websocket.TextMessage, []byte(message))
 							}
 						}
@@ -319,7 +318,7 @@ func (p *StateManagerHandler) use(dbname string) (db *buntdb.DB, success bool) {
 
 		if err == nil {
 			p.States[dbname] = &StateDB{
-				DB: stateDB,
+				DB:      stateDB,
 				Indexes: make(map[string]string),
 			}
 			return p.States[dbname].DB, true
@@ -392,7 +391,7 @@ func (p *StateManagerHandler) StateCreateIndex(db, name, pattern, indextype stri
 		default:
 			pdb.ReplaceIndex(name, pattern, buntdb.IndexString)
 		}
-		
+
 		p.States[db].Indexes[name] = indextype
 	}
 	return err
@@ -429,13 +428,32 @@ func (p *StateManagerHandler) StateGetByIndex(db, name string, params map[string
 		var result []map[string]string
 
 		pdb.View(func(tx *buntdb.Tx) error {
-			loopfunc := func(key, value string) bool {
+			i := 0   // index
+			cp := 0  // current page
+			ipp := 0 // item per page
 
+			if params["itemperpage"] != "" && params["page"] != "" {
+				if _ipp, err := strconv.Atoi(params["itemperpage"]); err == nil {
+					if _cp, err := strconv.Atoi(params["page"]); err == nil{
+						cp = _cp
+						ipp = _ipp
+					} 
+				}
+			}
+			loopfunc := func(key, value string) bool {
 				if buntdb.Match(key, params["pattern"]) {
 					var keyval = make(map[string]string)
 					keyval["key"] = key
 					keyval["val"] = value
-					result = append(result, keyval)
+					i++
+					
+					if cp > 0 && ipp > 0 {
+						if (i > (cp-1)*ipp) && (i <= cp*ipp) {
+							result = append(result, keyval)
+						}
+					} else {
+						result = append(result, keyval)
+					}
 				}
 				return true
 			}

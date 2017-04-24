@@ -5,9 +5,10 @@ use Thrift\Transport\TBufferedTransport;
 use Thrift\Protocol\TCompactProtocol;
 use Thrift\Protocol\TMultiplexedProtocol;
 
-require(Yii::getPathOfAlias('application.components.thrift.client.state.Types') . ".php");
-require(Yii::getPathOfAlias('application.components.thrift.client.state.StateManager') . ".php");
-
+if (!class_exists('state\Client', false)) {
+     require(Yii::getPathOfAlias('application.components.thrift.client.state.Types') . ".php");
+     require(Yii::getPathOfAlias('application.components.thrift.client.state.StateManager') . ".php");
+}
 class WebSocketServer extends CComponent {
      public $thrift;
      public $wsctrl;
@@ -52,7 +53,9 @@ class WebSocketServer extends CComponent {
                          return false;
                     }
                     $class = ucfirst($ctrl[1]) . "Ws";
-                    require($path);
+                    if (!class_exists($class, false)) {
+                         require($path);
+                    } 
                } else {
                     return false;
                }

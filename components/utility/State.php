@@ -119,10 +119,14 @@ class State extends CComponent {
                $params = array_merge([
                     'startfrom' => 'first',
                     'pattern' => '*',
-                    'pivot' => ''
+                    'pivot' => '',
+                    'itemperpage' => '',
+                    'page' => ''
                ], $params);
                $params['startfrom'] = @$params["startfrom"] != 'last' ? 'first' : 'last';
                $params['pivot'] = !is_string($params['pivot']) ? strval($params['pivot']) : $params['pivot'];
+               $params['itemperpage'] = strval($params['itemperpage']);
+               $params['page'] = strval($params['page']);
                
                $result = $this->client->stateGetByIndex($this->db, $name, $params);
                if (strpos($this->indexes[$name], "json") === 0) {

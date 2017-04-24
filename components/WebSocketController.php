@@ -1,14 +1,52 @@
 <?php
 
 
-class WebSocketController extends CComponent {
+class WebSocketController {
      private $wsserver;
+     
+     private static function getWsName() {
+          $class = get_called_class();
+          $ref = new ReflectionClass($class);
+          $classPath = $ref->getFileName();
+          if (strpos($classPath, Setting::getRootPath()) === 0) {
+               $path = trim(substr($classPath, strlen(Setting::getRootPath())), DIRECTORY_SEPARATOR);
+               $path = explode(DIRECTORY_SEPARATOR, $path);
+               
+               if (count($path) > 3 && $path[1] == 'modules') {
+                    return $path[2] . '/' . substr(lcfirst($class), 0, -2);
+               } else {
+                    return $class;
+               }
+          } else {
+               return $class;
+          }
+     }
+     
+     public static function __callStatic($name, $params) {
+          $class = get_called_class();
+          if (method_exists($class, '_' . $name)) {
+               $wsserver = new WebSocketServer([
+                    'tid' => self::getWsName(),
+                    'uid' => '_',
+                    'sid' => '_',
+                    'cid' => '_'
+               ]);
+               $ws = new $class($wsserver);
+               return call_user_func_array([$ws, '_' . $name], $params);
+          } else{
+               throw new Exception('Call to undefined method ' . get_class() . '::' . $name . '()');
+          }
+     }
+     
+     public function __call($name, $params) {
+          
+     } 
      
      function __construct($wsserver) {
           $this->wsserver = $wsserver;
      }
      
-     public function broadcast($msg, $to = []) {
+     private function _broadcast($msg, $to = []) {
           if (!is_string($msg)) {
                $msg = json_encode($msg);
           }
@@ -16,11 +54,11 @@ class WebSocketController extends CComponent {
           $this->wsserver->send($msg, $to);
      }
      
-     public function set($key, $value, $client = []) {
+     private function _set($key, $value, $client = []) {
           $this->wsserver->set($key, json_encode($value), $client);
      }
      
-     public function get($key, $client = [], $decode = true) {
+     private function get($key, $client = [], $decode = true) {
           if ($decode) {
                return json_decode($this->wsserver->get($key, $client), true);
           } else {
@@ -28,16 +66,15 @@ class WebSocketController extends CComponent {
           }
      }
      
-     public function getClients($client = []) {
+     private function _getClients($client = []) {
           return $this->wsserver->getClients($client);
      }
      
-     public function getWsname() { // masih salah
-          $ref = new ReflectionClass($this); 
-          return $ref->getFileName();
+     private function _getWsname() { // masih salah
+          return self::getWsName();
      }
      
-     public function setTag($client, $tag) {
+     private function _setTag($client, $tag) {
           $this->wsserver->setTag($client, $tag);
      }
      
