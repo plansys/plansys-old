@@ -27,11 +27,7 @@ $scope.ws.receive(function(msg) {
         }
         else {
             $scope.selectedInstance.output += msg;
-            $timeout(function() {
-                if ($("#logwindow").length > 0) {
-                    $('#logwindow').scrollTop($('#logwindow')[0].scrollHeight);
-                }
-            }, 100)
+            $scope.updateLogWindow();
         }
     }
     else {
@@ -66,6 +62,7 @@ $scope.reloadModel = function(fn) {
         for (var i in res) {
             $scope.model[i] = res[i];
         }
+        $scope.updateLogWindow();
         $timeout(function() {
             $scope.params.isRunning = $scope.model.runningInstances.length > 0;
             if (typeof fn == 'function') {
@@ -73,6 +70,15 @@ $scope.reloadModel = function(fn) {
             }
         });
     })
+}
+
+$scope.updateLogWindow = function() {
+    $("#logwindow").html($scope.selectedInstance.output);
+    $timeout(function() {
+        if ($("#logwindow").length > 0) {
+            $('#logwindow').scrollTop($('#logwindow')[0].scrollHeight);
+        }
+    }, 100)
 }
 
 $scope.selInstanceChange = function(e) {
@@ -90,6 +96,7 @@ $scope.selInstanceChange = function(e) {
             }
         })
     }
+    
 
     $scope.ws.setTag($scope.model.name + ':' + $scope.selectedInstancePid);
 }
@@ -134,6 +141,8 @@ $scope.changeTab = function(tab) {
             code: 0,
             log: 1
         };
+        var tabchanged = $scope.currentTab != tab;
+        
         $scope.currentTab = tab;
 
         if (tab == 'code') {
@@ -153,6 +162,15 @@ $scope.changeTab = function(tab) {
                     $scope.selectedInstance = $scope.model.stoppedInstances[0];
                     $scope.selectedInstancePid = $scope.selectedInstance.pid; 
                 }
+            }
+            
+            if (tabchanged) {
+                $timeout(function() {
+                    $("#logwindow").html("Rendering output...");
+                });
+                $timeout(function() {
+                    $scope.updateLogWindow();
+                },100);
             }
         }
     });

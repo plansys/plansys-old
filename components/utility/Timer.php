@@ -198,7 +198,6 @@ class Timer
             default:
                 echo (float) $sec + (float) ($usec / self::USECDIV) . ' seconds';
         }
-        die();
     }
    
    

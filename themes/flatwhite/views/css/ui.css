@@ -163,6 +163,16 @@ div[dropdown] .dropdown-menu-submenu li a {
     margin-left: -15px;
     margin-right: -15px;
 }
+.ui-layout-container > [ui-header] > i {
+    padding:1px 0px 0px 4px;
+}
+.ui-layout-container > [ui-content] {
+    position:absolute;
+    top:28px;
+    left:0px;
+    right:0px;
+    bottom:0px;
+}
 
 [ui-layout] {
     overflow:hidden;

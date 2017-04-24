@@ -169,7 +169,7 @@ ng-model=\"model.content\">
         </a>
     </div>
     
-    <pre id=\"logwindow\" ng-if=\"currentTab == \'log\'\" style=\'margin:0px;border-radius:0px;position:absolute;top:63px;left:0px;right:0px;bottom:0px;overflow-y:auto;\'>{{ selectedInstance.output }}</pre>
+    <pre id=\"logwindow\" ng-if=\"currentTab == \'log\'\" style=\'margin:0px;border-radius:0px;position:absolute;top:63px;left:0px;right:0px;bottom:0px;overflow-y:auto;\'></pre>
 ',
             ),
             array (

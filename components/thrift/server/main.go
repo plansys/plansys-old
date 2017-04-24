@@ -87,7 +87,6 @@ func runServer(transportFactory thrift.TTransportFactory, protocolFactory thrift
 	wsaddr := "0.0.0.0:" + wsport
 	svcPath := filepath.FromSlash(strings.Join(append(rootdirs, "app", "config", "service.buntdb"), "/"))
 	svcPathTemp := filepath.FromSlash(strings.Join(append(rootdirs, "assets", "service.buntdb"), "/"))
-	statePath := filepath.FromSlash(strings.Join(append(rootdirs, "assets", "state.buntdb"), "/"))
 
 	_, err := os.OpenFile(svcPath, os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
@@ -142,26 +141,22 @@ func runServer(transportFactory thrift.TTransportFactory, protocolFactory thrift
 	defer svcDB.Close()
 
 	restartChan := make(chan bool)
-
-	// get cwd before daemonized (we cant get cwd after daemonized!)
 	cwd := filepath.FromSlash(strings.Join(rootdirs, "/"))
 	svcProcessor := svc.NewServiceManagerProcessor(NewServiceManagerHandler(svcDB, cwd, svport, restartChan))
 	processor.RegisterProcessor("ServiceManager", svcProcessor)
 
-	// register state processor
-	stateDB, err := buntdb.Open(statePath)
-	if err != nil {
-		return err
-	}
-	defer stateDB.Close()
+	// register state processor (and start ws server)
+	sm := NewStateManagerHandler(wsaddr, rootdirs)
+	defer func() { // close all state db connection when exiting
+		for _, v := range sm.States {
+			v.DB.Close()
+		}
+	}()
+	stateProcessor := state.NewStateManagerProcessor(sm)
+	processor.RegisterProcessor("StateManager", stateProcessor)
 
 	// run thrift server
 	server := thrift.NewTSimpleServer4(processor, transport, transportFactory, protocolFactory)
-
-	// run ws server
-	stateProcessor := state.NewStateManagerProcessor(NewStateManagerHandler(wsaddr, rootdirs, stateDB))
-	processor.RegisterProcessor("StateManager", stateProcessor)
-
 	go func() {
 		if err = server.Serve(); err != nil {
 			log.Println(err)

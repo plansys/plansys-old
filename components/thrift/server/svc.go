@@ -308,7 +308,7 @@ func (p *ServiceManagerHandler) Start(name string, params string) (pid string, e
 		p.Services[name].LastRun = running.Instance.StopTime
 
 		go func() {
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(500 * time.Millisecond)
 			stoppedMsg := fmt.Sprintf("\n%s %v stopped\n", time.Now().Format("2006/01/02 15:04:05"), name)
 			running.Instance.Output += stoppedMsg
 			p.WsSend(name+":"+running.Instance.Pid, stoppedMsg)

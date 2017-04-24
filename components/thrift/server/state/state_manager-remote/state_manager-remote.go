@@ -25,9 +25,13 @@ func Usage() {
   fmt.Fprintln(os.Stderr, "  void send(Client client, string message)")
   fmt.Fprintln(os.Stderr, "   getClients(Client client)")
   fmt.Fprintln(os.Stderr, "  void setTag(Client client, string tag)")
-  fmt.Fprintln(os.Stderr, "  void stateSet(string key, string val)")
-  fmt.Fprintln(os.Stderr, "  string stateGet(string key)")
-  fmt.Fprintln(os.Stderr, "  void stateDel(string key)")
+  fmt.Fprintln(os.Stderr, "  i32 stateCount(string db)")
+  fmt.Fprintln(os.Stderr, "  void stateSet(string db, string key, string val)")
+  fmt.Fprintln(os.Stderr, "  void stateDel(string db, string key)")
+  fmt.Fprintln(os.Stderr, "  string stateGet(string db, string key)")
+  fmt.Fprintln(os.Stderr, "   stateGetByKey(string db, string key)")
+  fmt.Fprintln(os.Stderr, "  void stateCreateIndex(string db, string name, string pattern, string indextype)")
+  fmt.Fprintln(os.Stderr, "   stateGetByIndex(string db, string name,  params)")
   fmt.Fprintln(os.Stderr)
   os.Exit(0)
 }
@@ -127,19 +131,19 @@ func main() {
       fmt.Fprintln(os.Stderr, "Disconnect requires 2 args")
       flag.Usage()
     }
-    arg17 := flag.Arg(1)
-    mbTrans18 := thrift.NewTMemoryBufferLen(len(arg17))
-    defer mbTrans18.Close()
-    _, err19 := mbTrans18.WriteString(arg17)
-    if err19 != nil {
+    arg33 := flag.Arg(1)
+    mbTrans34 := thrift.NewTMemoryBufferLen(len(arg33))
+    defer mbTrans34.Close()
+    _, err35 := mbTrans34.WriteString(arg33)
+    if err35 != nil {
       Usage()
       return
     }
-    factory20 := thrift.NewTSimpleJSONProtocolFactory()
-    jsProt21 := factory20.GetProtocol(mbTrans18)
+    factory36 := thrift.NewTSimpleJSONProtocolFactory()
+    jsProt37 := factory36.GetProtocol(mbTrans34)
     argvalue0 := state.NewClient()
-    err22 := argvalue0.Read(jsProt21)
-    if err22 != nil {
+    err38 := argvalue0.Read(jsProt37)
+    if err38 != nil {
       Usage()
       return
     }
@@ -154,19 +158,19 @@ func main() {
       fmt.Fprintln(os.Stderr, "Send requires 2 args")
       flag.Usage()
     }
-    arg24 := flag.Arg(1)
-    mbTrans25 := thrift.NewTMemoryBufferLen(len(arg24))
-    defer mbTrans25.Close()
-    _, err26 := mbTrans25.WriteString(arg24)
-    if err26 != nil {
+    arg40 := flag.Arg(1)
+    mbTrans41 := thrift.NewTMemoryBufferLen(len(arg40))
+    defer mbTrans41.Close()
+    _, err42 := mbTrans41.WriteString(arg40)
+    if err42 != nil {
       Usage()
       return
     }
-    factory27 := thrift.NewTSimpleJSONProtocolFactory()
-    jsProt28 := factory27.GetProtocol(mbTrans25)
+    factory43 := thrift.NewTSimpleJSONProtocolFactory()
+    jsProt44 := factory43.GetProtocol(mbTrans41)
     argvalue0 := state.NewClient()
-    err29 := argvalue0.Read(jsProt28)
-    if err29 != nil {
+    err45 := argvalue0.Read(jsProt44)
+    if err45 != nil {
       Usage()
       return
     }
@@ -181,19 +185,19 @@ func main() {
       fmt.Fprintln(os.Stderr, "GetClients requires 1 args")
       flag.Usage()
     }
-    arg31 := flag.Arg(1)
-    mbTrans32 := thrift.NewTMemoryBufferLen(len(arg31))
-    defer mbTrans32.Close()
-    _, err33 := mbTrans32.WriteString(arg31)
-    if err33 != nil {
+    arg47 := flag.Arg(1)
+    mbTrans48 := thrift.NewTMemoryBufferLen(len(arg47))
+    defer mbTrans48.Close()
+    _, err49 := mbTrans48.WriteString(arg47)
+    if err49 != nil {
       Usage()
       return
     }
-    factory34 := thrift.NewTSimpleJSONProtocolFactory()
-    jsProt35 := factory34.GetProtocol(mbTrans32)
+    factory50 := thrift.NewTSimpleJSONProtocolFactory()
+    jsProt51 := factory50.GetProtocol(mbTrans48)
     argvalue0 := state.NewClient()
-    err36 := argvalue0.Read(jsProt35)
-    if err36 != nil {
+    err52 := argvalue0.Read(jsProt51)
+    if err52 != nil {
       Usage()
       return
     }
@@ -206,19 +210,19 @@ func main() {
       fmt.Fprintln(os.Stderr, "SetTag requires 2 args")
       flag.Usage()
     }
-    arg37 := flag.Arg(1)
-    mbTrans38 := thrift.NewTMemoryBufferLen(len(arg37))
-    defer mbTrans38.Close()
-    _, err39 := mbTrans38.WriteString(arg37)
-    if err39 != nil {
+    arg53 := flag.Arg(1)
+    mbTrans54 := thrift.NewTMemoryBufferLen(len(arg53))
+    defer mbTrans54.Close()
+    _, err55 := mbTrans54.WriteString(arg53)
+    if err55 != nil {
       Usage()
       return
     }
-    factory40 := thrift.NewTSimpleJSONProtocolFactory()
-    jsProt41 := factory40.GetProtocol(mbTrans38)
+    factory56 := thrift.NewTSimpleJSONProtocolFactory()
+    jsProt57 := factory56.GetProtocol(mbTrans54)
     argvalue0 := state.NewClient()
-    err42 := argvalue0.Read(jsProt41)
-    if err42 != nil {
+    err58 := argvalue0.Read(jsProt57)
+    if err58 != nil {
       Usage()
       return
     }
@@ -228,36 +232,110 @@ func main() {
     fmt.Print(client.SetTag(value0, value1))
     fmt.Print("\n")
     break
+  case "stateCount":
+    if flag.NArg() - 1 != 1 {
+      fmt.Fprintln(os.Stderr, "StateCount requires 1 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    fmt.Print(client.StateCount(value0))
+    fmt.Print("\n")
+    break
   case "stateSet":
-    if flag.NArg() - 1 != 2 {
-      fmt.Fprintln(os.Stderr, "StateSet requires 2 args")
+    if flag.NArg() - 1 != 3 {
+      fmt.Fprintln(os.Stderr, "StateSet requires 3 args")
       flag.Usage()
     }
     argvalue0 := flag.Arg(1)
     value0 := argvalue0
     argvalue1 := flag.Arg(2)
     value1 := argvalue1
-    fmt.Print(client.StateSet(value0, value1))
-    fmt.Print("\n")
-    break
-  case "stateGet":
-    if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "StateGet requires 1 args")
-      flag.Usage()
-    }
-    argvalue0 := flag.Arg(1)
-    value0 := argvalue0
-    fmt.Print(client.StateGet(value0))
+    argvalue2 := flag.Arg(3)
+    value2 := argvalue2
+    fmt.Print(client.StateSet(value0, value1, value2))
     fmt.Print("\n")
     break
   case "stateDel":
-    if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "StateDel requires 1 args")
+    if flag.NArg() - 1 != 2 {
+      fmt.Fprintln(os.Stderr, "StateDel requires 2 args")
       flag.Usage()
     }
     argvalue0 := flag.Arg(1)
     value0 := argvalue0
-    fmt.Print(client.StateDel(value0))
+    argvalue1 := flag.Arg(2)
+    value1 := argvalue1
+    fmt.Print(client.StateDel(value0, value1))
+    fmt.Print("\n")
+    break
+  case "stateGet":
+    if flag.NArg() - 1 != 2 {
+      fmt.Fprintln(os.Stderr, "StateGet requires 2 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    argvalue1 := flag.Arg(2)
+    value1 := argvalue1
+    fmt.Print(client.StateGet(value0, value1))
+    fmt.Print("\n")
+    break
+  case "stateGetByKey":
+    if flag.NArg() - 1 != 2 {
+      fmt.Fprintln(os.Stderr, "StateGetByKey requires 2 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    argvalue1 := flag.Arg(2)
+    value1 := argvalue1
+    fmt.Print(client.StateGetByKey(value0, value1))
+    fmt.Print("\n")
+    break
+  case "stateCreateIndex":
+    if flag.NArg() - 1 != 4 {
+      fmt.Fprintln(os.Stderr, "StateCreateIndex requires 4 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    argvalue1 := flag.Arg(2)
+    value1 := argvalue1
+    argvalue2 := flag.Arg(3)
+    value2 := argvalue2
+    argvalue3 := flag.Arg(4)
+    value3 := argvalue3
+    fmt.Print(client.StateCreateIndex(value0, value1, value2, value3))
+    fmt.Print("\n")
+    break
+  case "stateGetByIndex":
+    if flag.NArg() - 1 != 3 {
+      fmt.Fprintln(os.Stderr, "StateGetByIndex requires 3 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    argvalue1 := flag.Arg(2)
+    value1 := argvalue1
+    arg76 := flag.Arg(3)
+    mbTrans77 := thrift.NewTMemoryBufferLen(len(arg76))
+    defer mbTrans77.Close()
+    _, err78 := mbTrans77.WriteString(arg76)
+    if err78 != nil { 
+      Usage()
+      return
+    }
+    factory79 := thrift.NewTSimpleJSONProtocolFactory()
+    jsProt80 := factory79.GetProtocol(mbTrans77)
+    containerStruct2 := state.NewStateManagerStateGetByIndexArgs()
+    err81 := containerStruct2.ReadField3(jsProt80)
+    if err81 != nil {
+      Usage()
+      return
+    }
+    argvalue2 := containerStruct2.Params
+    value2 := argvalue2
+    fmt.Print(client.StateGetByIndex(value0, value1, value2))
     fmt.Print("\n")
     break
   case "":

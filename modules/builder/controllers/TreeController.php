@@ -59,7 +59,6 @@ class TreeController extends Controller {
                          if (substr($name, 0, -2) != "Ws") {
                               $name = $name . "Ws";
                          }
-                         $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $name . ".php"; 
                          $content = <<<EOF
 <?php 
 
@@ -90,9 +89,12 @@ EOF;
                          $content = "";
                          break;
                }
+               $file = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $name . ".php"; 
                
-               echo $path;
-               @file_put_contents($path, $content);
+               echo $file;
+               if (!is_file($file)) {
+                    @file_put_contents($file, $content);
+               }
           }
      }
      

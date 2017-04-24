@@ -160,6 +160,9 @@ Setup listener to receive message from websocket controller
     // message successfully received
     // from server
 })</code><hr/>
+<b>Set Tag</b>
+Tag Current Client. Tagged client is easier to broadcast to.
+<code style=\"display:block;\">$scope.{{active.name}}.setTag(\'your tag\')</code><hr/>
 </span>
 
 </div>',

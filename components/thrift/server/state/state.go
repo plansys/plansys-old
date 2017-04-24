@@ -281,15 +281,36 @@ type StateManager interface {
   //  - Tag
   SetTag(client *Client, tag string) (err error)
   // Parameters:
+  //  - Db
+  StateCount(db string) (r int32, err error)
+  // Parameters:
+  //  - Db
   //  - Key
   //  - Val
-  StateSet(key string, val string) (err error)
+  StateSet(db string, key string, val string) (err error)
   // Parameters:
+  //  - Db
   //  - Key
-  StateGet(key string) (r string, err error)
+  StateDel(db string, key string) (err error)
   // Parameters:
+  //  - Db
   //  - Key
-  StateDel(key string) (err error)
+  StateGet(db string, key string) (r string, err error)
+  // Parameters:
+  //  - Db
+  //  - Key
+  StateGetByKey(db string, key string) (r []map[string]string, err error)
+  // Parameters:
+  //  - Db
+  //  - Name
+  //  - Pattern
+  //  - Indextype
+  StateCreateIndex(db string, name string, pattern string, indextype string) (err error)
+  // Parameters:
+  //  - Db
+  //  - Name
+  //  - Params
+  StateGetByIndex(db string, name string, params map[string]string) (r []map[string]string, err error)
 }
 
 type StateManagerClient struct {
@@ -626,14 +647,91 @@ func (p *StateManagerClient) recvSetTag() (err error) {
 }
 
 // Parameters:
+//  - Db
+func (p *StateManagerClient) StateCount(db string) (r int32, err error) {
+  if err = p.sendStateCount(db); err != nil { return }
+  return p.recvStateCount()
+}
+
+func (p *StateManagerClient) sendStateCount(db string)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("stateCount", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := StateManagerStateCountArgs{
+  Db : db,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *StateManagerClient) recvStateCount() (value int32, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "stateCount" {
+    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "stateCount failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "stateCount failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error8 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error9 error
+    error9, err = error8.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error9
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "stateCount failed: invalid message type")
+    return
+  }
+  result := StateManagerStateCountResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Db
 //  - Key
 //  - Val
-func (p *StateManagerClient) StateSet(key string, val string) (err error) {
-  if err = p.sendStateSet(key, val); err != nil { return }
+func (p *StateManagerClient) StateSet(db string, key string, val string) (err error) {
+  if err = p.sendStateSet(db, key, val); err != nil { return }
   return p.recvStateSet()
 }
 
-func (p *StateManagerClient) sendStateSet(key string, val string)(err error) {
+func (p *StateManagerClient) sendStateSet(db string, key string, val string)(err error) {
   oprot := p.OutputProtocol
   if oprot == nil {
     oprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -644,6 +742,7 @@ func (p *StateManagerClient) sendStateSet(key string, val string)(err error) {
       return
   }
   args := StateManagerStateSetArgs{
+  Db : db,
   Key : key,
   Val : val,
   }
@@ -676,16 +775,16 @@ func (p *StateManagerClient) recvStateSet() (err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error8 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error9 error
-    error9, err = error8.Read(iprot)
+    error10 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error11 error
+    error11, err = error10.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error9
+    err = error11
     return
   }
   if mTypeId != thrift.REPLY {
@@ -703,89 +802,14 @@ func (p *StateManagerClient) recvStateSet() (err error) {
 }
 
 // Parameters:
+//  - Db
 //  - Key
-func (p *StateManagerClient) StateGet(key string) (r string, err error) {
-  if err = p.sendStateGet(key); err != nil { return }
-  return p.recvStateGet()
-}
-
-func (p *StateManagerClient) sendStateGet(key string)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("stateGet", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
-  args := StateManagerStateGetArgs{
-  Key : key,
-  }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
-}
-
-
-func (p *StateManagerClient) recvStateGet() (value string, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "stateGet" {
-    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "stateGet failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "stateGet failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error10 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error11 error
-    error11, err = error10.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error11
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "stateGet failed: invalid message type")
-    return
-  }
-  result := StateManagerStateGetResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
-}
-
-// Parameters:
-//  - Key
-func (p *StateManagerClient) StateDel(key string) (err error) {
-  if err = p.sendStateDel(key); err != nil { return }
+func (p *StateManagerClient) StateDel(db string, key string) (err error) {
+  if err = p.sendStateDel(db, key); err != nil { return }
   return p.recvStateDel()
 }
 
-func (p *StateManagerClient) sendStateDel(key string)(err error) {
+func (p *StateManagerClient) sendStateDel(db string, key string)(err error) {
   oprot := p.OutputProtocol
   if oprot == nil {
     oprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -796,6 +820,7 @@ func (p *StateManagerClient) sendStateDel(key string)(err error) {
       return
   }
   args := StateManagerStateDelArgs{
+  Db : db,
   Key : key,
   }
   if err = args.Write(oprot); err != nil {
@@ -853,6 +878,323 @@ func (p *StateManagerClient) recvStateDel() (err error) {
   return
 }
 
+// Parameters:
+//  - Db
+//  - Key
+func (p *StateManagerClient) StateGet(db string, key string) (r string, err error) {
+  if err = p.sendStateGet(db, key); err != nil { return }
+  return p.recvStateGet()
+}
+
+func (p *StateManagerClient) sendStateGet(db string, key string)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("stateGet", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := StateManagerStateGetArgs{
+  Db : db,
+  Key : key,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *StateManagerClient) recvStateGet() (value string, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "stateGet" {
+    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "stateGet failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "stateGet failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error14 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error15 error
+    error15, err = error14.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error15
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "stateGet failed: invalid message type")
+    return
+  }
+  result := StateManagerStateGetResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Db
+//  - Key
+func (p *StateManagerClient) StateGetByKey(db string, key string) (r []map[string]string, err error) {
+  if err = p.sendStateGetByKey(db, key); err != nil { return }
+  return p.recvStateGetByKey()
+}
+
+func (p *StateManagerClient) sendStateGetByKey(db string, key string)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("stateGetByKey", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := StateManagerStateGetByKeyArgs{
+  Db : db,
+  Key : key,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *StateManagerClient) recvStateGetByKey() (value []map[string]string, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "stateGetByKey" {
+    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "stateGetByKey failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "stateGetByKey failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error16 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error17 error
+    error17, err = error16.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error17
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "stateGetByKey failed: invalid message type")
+    return
+  }
+  result := StateManagerStateGetByKeyResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Db
+//  - Name
+//  - Pattern
+//  - Indextype
+func (p *StateManagerClient) StateCreateIndex(db string, name string, pattern string, indextype string) (err error) {
+  if err = p.sendStateCreateIndex(db, name, pattern, indextype); err != nil { return }
+  return p.recvStateCreateIndex()
+}
+
+func (p *StateManagerClient) sendStateCreateIndex(db string, name string, pattern string, indextype string)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("stateCreateIndex", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := StateManagerStateCreateIndexArgs{
+  Db : db,
+  Name : name,
+  Pattern : pattern,
+  Indextype : indextype,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *StateManagerClient) recvStateCreateIndex() (err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "stateCreateIndex" {
+    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "stateCreateIndex failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "stateCreateIndex failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error18 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error19 error
+    error19, err = error18.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error19
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "stateCreateIndex failed: invalid message type")
+    return
+  }
+  result := StateManagerStateCreateIndexResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  return
+}
+
+// Parameters:
+//  - Db
+//  - Name
+//  - Params
+func (p *StateManagerClient) StateGetByIndex(db string, name string, params map[string]string) (r []map[string]string, err error) {
+  if err = p.sendStateGetByIndex(db, name, params); err != nil { return }
+  return p.recvStateGetByIndex()
+}
+
+func (p *StateManagerClient) sendStateGetByIndex(db string, name string, params map[string]string)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("stateGetByIndex", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := StateManagerStateGetByIndexArgs{
+  Db : db,
+  Name : name,
+  Params : params,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *StateManagerClient) recvStateGetByIndex() (value []map[string]string, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "stateGetByIndex" {
+    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "stateGetByIndex failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "stateGetByIndex failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error20 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error21 error
+    error21, err = error20.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error21
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "stateGetByIndex failed: invalid message type")
+    return
+  }
+  result := StateManagerStateGetByIndexResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
 
 type StateManagerProcessor struct {
   processorMap map[string]thrift.TProcessorFunction
@@ -874,15 +1216,19 @@ func (p *StateManagerProcessor) ProcessorMap() map[string]thrift.TProcessorFunct
 
 func NewStateManagerProcessor(handler StateManager) *StateManagerProcessor {
 
-  self14 := &StateManagerProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
-  self14.processorMap["disconnect"] = &stateManagerProcessorDisconnect{handler:handler}
-  self14.processorMap["send"] = &stateManagerProcessorSend{handler:handler}
-  self14.processorMap["getClients"] = &stateManagerProcessorGetClients{handler:handler}
-  self14.processorMap["setTag"] = &stateManagerProcessorSetTag{handler:handler}
-  self14.processorMap["stateSet"] = &stateManagerProcessorStateSet{handler:handler}
-  self14.processorMap["stateGet"] = &stateManagerProcessorStateGet{handler:handler}
-  self14.processorMap["stateDel"] = &stateManagerProcessorStateDel{handler:handler}
-return self14
+  self22 := &StateManagerProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
+  self22.processorMap["disconnect"] = &stateManagerProcessorDisconnect{handler:handler}
+  self22.processorMap["send"] = &stateManagerProcessorSend{handler:handler}
+  self22.processorMap["getClients"] = &stateManagerProcessorGetClients{handler:handler}
+  self22.processorMap["setTag"] = &stateManagerProcessorSetTag{handler:handler}
+  self22.processorMap["stateCount"] = &stateManagerProcessorStateCount{handler:handler}
+  self22.processorMap["stateSet"] = &stateManagerProcessorStateSet{handler:handler}
+  self22.processorMap["stateDel"] = &stateManagerProcessorStateDel{handler:handler}
+  self22.processorMap["stateGet"] = &stateManagerProcessorStateGet{handler:handler}
+  self22.processorMap["stateGetByKey"] = &stateManagerProcessorStateGetByKey{handler:handler}
+  self22.processorMap["stateCreateIndex"] = &stateManagerProcessorStateCreateIndex{handler:handler}
+  self22.processorMap["stateGetByIndex"] = &stateManagerProcessorStateGetByIndex{handler:handler}
+return self22
 }
 
 func (p *StateManagerProcessor) Process(iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -893,12 +1239,12 @@ func (p *StateManagerProcessor) Process(iprot, oprot thrift.TProtocol) (success 
   }
   iprot.Skip(thrift.STRUCT)
   iprot.ReadMessageEnd()
-  x15 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
+  x23 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
   oprot.WriteMessageBegin(name, thrift.EXCEPTION, seqId)
-  x15.Write(oprot)
+  x23.Write(oprot)
   oprot.WriteMessageEnd()
   oprot.Flush()
-  return false, x15
+  return false, x23
 
 }
 
@@ -1085,6 +1431,54 @@ func (p *stateManagerProcessorSetTag) Process(seqId int32, iprot, oprot thrift.T
   return true, err
 }
 
+type stateManagerProcessorStateCount struct {
+  handler StateManager
+}
+
+func (p *stateManagerProcessorStateCount) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := StateManagerStateCountArgs{}
+  if err = args.Read(iprot); err != nil {
+    iprot.ReadMessageEnd()
+    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+    oprot.WriteMessageBegin("stateCount", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return false, err
+  }
+
+  iprot.ReadMessageEnd()
+  result := StateManagerStateCountResult{}
+var retval int32
+  var err2 error
+  if retval, err2 = p.handler.StateCount(args.Db); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing stateCount: " + err2.Error())
+    oprot.WriteMessageBegin("stateCount", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return true, err2
+  } else {
+    result.Success = &retval
+}
+  if err2 = oprot.WriteMessageBegin("stateCount", thrift.REPLY, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err != nil {
+    return
+  }
+  return true, err
+}
+
 type stateManagerProcessorStateSet struct {
   handler StateManager
 }
@@ -1104,7 +1498,7 @@ func (p *stateManagerProcessorStateSet) Process(seqId int32, iprot, oprot thrift
   iprot.ReadMessageEnd()
   result := StateManagerStateSetResult{}
   var err2 error
-  if err2 = p.handler.StateSet(args.Key, args.Val); err2 != nil {
+  if err2 = p.handler.StateSet(args.Db, args.Key, args.Val); err2 != nil {
     x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing stateSet: " + err2.Error())
     oprot.WriteMessageBegin("stateSet", thrift.EXCEPTION, seqId)
     x.Write(oprot)
@@ -1113,6 +1507,51 @@ func (p *stateManagerProcessorStateSet) Process(seqId int32, iprot, oprot thrift
     return true, err2
   }
   if err2 = oprot.WriteMessageBegin("stateSet", thrift.REPLY, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err != nil {
+    return
+  }
+  return true, err
+}
+
+type stateManagerProcessorStateDel struct {
+  handler StateManager
+}
+
+func (p *stateManagerProcessorStateDel) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := StateManagerStateDelArgs{}
+  if err = args.Read(iprot); err != nil {
+    iprot.ReadMessageEnd()
+    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+    oprot.WriteMessageBegin("stateDel", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return false, err
+  }
+
+  iprot.ReadMessageEnd()
+  result := StateManagerStateDelResult{}
+  var err2 error
+  if err2 = p.handler.StateDel(args.Db, args.Key); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing stateDel: " + err2.Error())
+    oprot.WriteMessageBegin("stateDel", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return true, err2
+  }
+  if err2 = oprot.WriteMessageBegin("stateDel", thrift.REPLY, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -1150,7 +1589,7 @@ func (p *stateManagerProcessorStateGet) Process(seqId int32, iprot, oprot thrift
   result := StateManagerStateGetResult{}
 var retval string
   var err2 error
-  if retval, err2 = p.handler.StateGet(args.Key); err2 != nil {
+  if retval, err2 = p.handler.StateGet(args.Db, args.Key); err2 != nil {
     x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing stateGet: " + err2.Error())
     oprot.WriteMessageBegin("stateGet", thrift.EXCEPTION, seqId)
     x.Write(oprot)
@@ -1178,16 +1617,16 @@ var retval string
   return true, err
 }
 
-type stateManagerProcessorStateDel struct {
+type stateManagerProcessorStateGetByKey struct {
   handler StateManager
 }
 
-func (p *stateManagerProcessorStateDel) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-  args := StateManagerStateDelArgs{}
+func (p *stateManagerProcessorStateGetByKey) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := StateManagerStateGetByKeyArgs{}
   if err = args.Read(iprot); err != nil {
     iprot.ReadMessageEnd()
     x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-    oprot.WriteMessageBegin("stateDel", thrift.EXCEPTION, seqId)
+    oprot.WriteMessageBegin("stateGetByKey", thrift.EXCEPTION, seqId)
     x.Write(oprot)
     oprot.WriteMessageEnd()
     oprot.Flush()
@@ -1195,17 +1634,113 @@ func (p *stateManagerProcessorStateDel) Process(seqId int32, iprot, oprot thrift
   }
 
   iprot.ReadMessageEnd()
-  result := StateManagerStateDelResult{}
+  result := StateManagerStateGetByKeyResult{}
+var retval []map[string]string
   var err2 error
-  if err2 = p.handler.StateDel(args.Key); err2 != nil {
-    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing stateDel: " + err2.Error())
-    oprot.WriteMessageBegin("stateDel", thrift.EXCEPTION, seqId)
+  if retval, err2 = p.handler.StateGetByKey(args.Db, args.Key); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing stateGetByKey: " + err2.Error())
+    oprot.WriteMessageBegin("stateGetByKey", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return true, err2
+  } else {
+    result.Success = retval
+}
+  if err2 = oprot.WriteMessageBegin("stateGetByKey", thrift.REPLY, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err != nil {
+    return
+  }
+  return true, err
+}
+
+type stateManagerProcessorStateCreateIndex struct {
+  handler StateManager
+}
+
+func (p *stateManagerProcessorStateCreateIndex) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := StateManagerStateCreateIndexArgs{}
+  if err = args.Read(iprot); err != nil {
+    iprot.ReadMessageEnd()
+    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+    oprot.WriteMessageBegin("stateCreateIndex", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return false, err
+  }
+
+  iprot.ReadMessageEnd()
+  result := StateManagerStateCreateIndexResult{}
+  var err2 error
+  if err2 = p.handler.StateCreateIndex(args.Db, args.Name, args.Pattern, args.Indextype); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing stateCreateIndex: " + err2.Error())
+    oprot.WriteMessageBegin("stateCreateIndex", thrift.EXCEPTION, seqId)
     x.Write(oprot)
     oprot.WriteMessageEnd()
     oprot.Flush()
     return true, err2
   }
-  if err2 = oprot.WriteMessageBegin("stateDel", thrift.REPLY, seqId); err2 != nil {
+  if err2 = oprot.WriteMessageBegin("stateCreateIndex", thrift.REPLY, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err != nil {
+    return
+  }
+  return true, err
+}
+
+type stateManagerProcessorStateGetByIndex struct {
+  handler StateManager
+}
+
+func (p *stateManagerProcessorStateGetByIndex) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := StateManagerStateGetByIndexArgs{}
+  if err = args.Read(iprot); err != nil {
+    iprot.ReadMessageEnd()
+    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+    oprot.WriteMessageBegin("stateGetByIndex", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return false, err
+  }
+
+  iprot.ReadMessageEnd()
+  result := StateManagerStateGetByIndexResult{}
+var retval []map[string]string
+  var err2 error
+  if retval, err2 = p.handler.StateGetByIndex(args.Db, args.Name, args.Params); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing stateGetByIndex: " + err2.Error())
+    oprot.WriteMessageBegin("stateGetByIndex", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return true, err2
+  } else {
+    result.Success = retval
+}
+  if err2 = oprot.WriteMessageBegin("stateGetByIndex", thrift.REPLY, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -1723,11 +2258,11 @@ func (p *StateManagerGetClientsResult)  ReadField0(iprot thrift.TProtocol) error
   tSlice := make([]*Client, 0, size)
   p.Success =  tSlice
   for i := 0; i < size; i ++ {
-    _elem16 := &Client{}
-    if err := _elem16.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem16), err)
+    _elem24 := &Client{}
+    if err := _elem24.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem24), err)
     }
-    p.Success = append(p.Success, _elem16)
+    p.Success = append(p.Success, _elem24)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -1950,17 +2485,202 @@ func (p *StateManagerSetTagResult) String() string {
 }
 
 // Attributes:
+//  - Db
+type StateManagerStateCountArgs struct {
+  Db string `thrift:"db,1" db:"db" json:"db"`
+}
+
+func NewStateManagerStateCountArgs() *StateManagerStateCountArgs {
+  return &StateManagerStateCountArgs{}
+}
+
+
+func (p *StateManagerStateCountArgs) GetDb() string {
+  return p.Db
+}
+func (p *StateManagerStateCountArgs) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *StateManagerStateCountArgs)  ReadField1(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.Db = v
+}
+  return nil
+}
+
+func (p *StateManagerStateCountArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("stateCount_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *StateManagerStateCountArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("db", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:db: ", p), err) }
+  if err := oprot.WriteString(string(p.Db)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.db (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:db: ", p), err) }
+  return err
+}
+
+func (p *StateManagerStateCountArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("StateManagerStateCountArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type StateManagerStateCountResult struct {
+  Success *int32 `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewStateManagerStateCountResult() *StateManagerStateCountResult {
+  return &StateManagerStateCountResult{}
+}
+
+var StateManagerStateCountResult_Success_DEFAULT int32
+func (p *StateManagerStateCountResult) GetSuccess() int32 {
+  if !p.IsSetSuccess() {
+    return StateManagerStateCountResult_Success_DEFAULT
+  }
+return *p.Success
+}
+func (p *StateManagerStateCountResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *StateManagerStateCountResult) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *StateManagerStateCountResult)  ReadField0(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 0: ", err)
+} else {
+  p.Success = &v
+}
+  return nil
+}
+
+func (p *StateManagerStateCountResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("stateCount_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField0(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *StateManagerStateCountResult) writeField0(oprot thrift.TProtocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.I32, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := oprot.WriteI32(int32(*p.Success)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.success (0) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *StateManagerStateCountResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("StateManagerStateCountResult(%+v)", *p)
+}
+
+// Attributes:
+//  - Db
 //  - Key
 //  - Val
 type StateManagerStateSetArgs struct {
-  Key string `thrift:"key,1" db:"key" json:"key"`
-  Val string `thrift:"val,2" db:"val" json:"val"`
+  Db string `thrift:"db,1" db:"db" json:"db"`
+  Key string `thrift:"key,2" db:"key" json:"key"`
+  Val string `thrift:"val,3" db:"val" json:"val"`
 }
 
 func NewStateManagerStateSetArgs() *StateManagerStateSetArgs {
   return &StateManagerStateSetArgs{}
 }
 
+
+func (p *StateManagerStateSetArgs) GetDb() string {
+  return p.Db
+}
 
 func (p *StateManagerStateSetArgs) GetKey() string {
   return p.Key
@@ -1990,6 +2710,10 @@ func (p *StateManagerStateSetArgs) Read(iprot thrift.TProtocol) error {
       if err := p.ReadField2(iprot); err != nil {
         return err
       }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
     default:
       if err := iprot.Skip(fieldTypeId); err != nil {
         return err
@@ -2009,7 +2733,7 @@ func (p *StateManagerStateSetArgs)  ReadField1(iprot thrift.TProtocol) error {
   if v, err := iprot.ReadString(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  p.Key = v
+  p.Db = v
 }
   return nil
 }
@@ -2017,6 +2741,15 @@ func (p *StateManagerStateSetArgs)  ReadField1(iprot thrift.TProtocol) error {
 func (p *StateManagerStateSetArgs)  ReadField2(iprot thrift.TProtocol) error {
   if v, err := iprot.ReadString(); err != nil {
   return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Key = v
+}
+  return nil
+}
+
+func (p *StateManagerStateSetArgs)  ReadField3(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 3: ", err)
 } else {
   p.Val = v
 }
@@ -2029,6 +2762,7 @@ func (p *StateManagerStateSetArgs) Write(oprot thrift.TProtocol) error {
   if p != nil {
     if err := p.writeField1(oprot); err != nil { return err }
     if err := p.writeField2(oprot); err != nil { return err }
+    if err := p.writeField3(oprot); err != nil { return err }
   }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
@@ -2038,22 +2772,32 @@ func (p *StateManagerStateSetArgs) Write(oprot thrift.TProtocol) error {
 }
 
 func (p *StateManagerStateSetArgs) writeField1(oprot thrift.TProtocol) (err error) {
-  if err := oprot.WriteFieldBegin("key", thrift.STRING, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:key: ", p), err) }
-  if err := oprot.WriteString(string(p.Key)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.key (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("db", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:db: ", p), err) }
+  if err := oprot.WriteString(string(p.Db)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.db (1) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:key: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:db: ", p), err) }
   return err
 }
 
 func (p *StateManagerStateSetArgs) writeField2(oprot thrift.TProtocol) (err error) {
-  if err := oprot.WriteFieldBegin("val", thrift.STRING, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:val: ", p), err) }
-  if err := oprot.WriteString(string(p.Val)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.val (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("key", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:key: ", p), err) }
+  if err := oprot.WriteString(string(p.Key)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.key (2) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:val: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:key: ", p), err) }
+  return err
+}
+
+func (p *StateManagerStateSetArgs) writeField3(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("val", thrift.STRING, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:val: ", p), err) }
+  if err := oprot.WriteString(string(p.Val)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.val (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:val: ", p), err) }
   return err
 }
 
@@ -2116,15 +2860,187 @@ func (p *StateManagerStateSetResult) String() string {
 }
 
 // Attributes:
+//  - Db
+//  - Key
+type StateManagerStateDelArgs struct {
+  Db string `thrift:"db,1" db:"db" json:"db"`
+  Key string `thrift:"key,2" db:"key" json:"key"`
+}
+
+func NewStateManagerStateDelArgs() *StateManagerStateDelArgs {
+  return &StateManagerStateDelArgs{}
+}
+
+
+func (p *StateManagerStateDelArgs) GetDb() string {
+  return p.Db
+}
+
+func (p *StateManagerStateDelArgs) GetKey() string {
+  return p.Key
+}
+func (p *StateManagerStateDelArgs) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *StateManagerStateDelArgs)  ReadField1(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.Db = v
+}
+  return nil
+}
+
+func (p *StateManagerStateDelArgs)  ReadField2(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Key = v
+}
+  return nil
+}
+
+func (p *StateManagerStateDelArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("stateDel_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *StateManagerStateDelArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("db", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:db: ", p), err) }
+  if err := oprot.WriteString(string(p.Db)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.db (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:db: ", p), err) }
+  return err
+}
+
+func (p *StateManagerStateDelArgs) writeField2(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("key", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:key: ", p), err) }
+  if err := oprot.WriteString(string(p.Key)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.key (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:key: ", p), err) }
+  return err
+}
+
+func (p *StateManagerStateDelArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("StateManagerStateDelArgs(%+v)", *p)
+}
+
+type StateManagerStateDelResult struct {
+}
+
+func NewStateManagerStateDelResult() *StateManagerStateDelResult {
+  return &StateManagerStateDelResult{}
+}
+
+func (p *StateManagerStateDelResult) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    if err := iprot.Skip(fieldTypeId); err != nil {
+      return err
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *StateManagerStateDelResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("stateDel_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *StateManagerStateDelResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("StateManagerStateDelResult(%+v)", *p)
+}
+
+// Attributes:
+//  - Db
 //  - Key
 type StateManagerStateGetArgs struct {
-  Key string `thrift:"key,1" db:"key" json:"key"`
+  Db string `thrift:"db,1" db:"db" json:"db"`
+  Key string `thrift:"key,2" db:"key" json:"key"`
 }
 
 func NewStateManagerStateGetArgs() *StateManagerStateGetArgs {
   return &StateManagerStateGetArgs{}
 }
 
+
+func (p *StateManagerStateGetArgs) GetDb() string {
+  return p.Db
+}
 
 func (p *StateManagerStateGetArgs) GetKey() string {
   return p.Key
@@ -2146,6 +3062,10 @@ func (p *StateManagerStateGetArgs) Read(iprot thrift.TProtocol) error {
       if err := p.ReadField1(iprot); err != nil {
         return err
       }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
     default:
       if err := iprot.Skip(fieldTypeId); err != nil {
         return err
@@ -2165,6 +3085,15 @@ func (p *StateManagerStateGetArgs)  ReadField1(iprot thrift.TProtocol) error {
   if v, err := iprot.ReadString(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
+  p.Db = v
+}
+  return nil
+}
+
+func (p *StateManagerStateGetArgs)  ReadField2(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
   p.Key = v
 }
   return nil
@@ -2175,6 +3104,7 @@ func (p *StateManagerStateGetArgs) Write(oprot thrift.TProtocol) error {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if p != nil {
     if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
   }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
@@ -2184,12 +3114,22 @@ func (p *StateManagerStateGetArgs) Write(oprot thrift.TProtocol) error {
 }
 
 func (p *StateManagerStateGetArgs) writeField1(oprot thrift.TProtocol) (err error) {
-  if err := oprot.WriteFieldBegin("key", thrift.STRING, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:key: ", p), err) }
-  if err := oprot.WriteString(string(p.Key)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.key (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("db", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:db: ", p), err) }
+  if err := oprot.WriteString(string(p.Db)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.db (1) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:key: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:db: ", p), err) }
+  return err
+}
+
+func (p *StateManagerStateGetArgs) writeField2(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("key", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:key: ", p), err) }
+  if err := oprot.WriteString(string(p.Key)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.key (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:key: ", p), err) }
   return err
 }
 
@@ -2295,20 +3235,26 @@ func (p *StateManagerStateGetResult) String() string {
 }
 
 // Attributes:
+//  - Db
 //  - Key
-type StateManagerStateDelArgs struct {
-  Key string `thrift:"key,1" db:"key" json:"key"`
+type StateManagerStateGetByKeyArgs struct {
+  Db string `thrift:"db,1" db:"db" json:"db"`
+  Key string `thrift:"key,2" db:"key" json:"key"`
 }
 
-func NewStateManagerStateDelArgs() *StateManagerStateDelArgs {
-  return &StateManagerStateDelArgs{}
+func NewStateManagerStateGetByKeyArgs() *StateManagerStateGetByKeyArgs {
+  return &StateManagerStateGetByKeyArgs{}
 }
 
 
-func (p *StateManagerStateDelArgs) GetKey() string {
+func (p *StateManagerStateGetByKeyArgs) GetDb() string {
+  return p.Db
+}
+
+func (p *StateManagerStateGetByKeyArgs) GetKey() string {
   return p.Key
 }
-func (p *StateManagerStateDelArgs) Read(iprot thrift.TProtocol) error {
+func (p *StateManagerStateGetByKeyArgs) Read(iprot thrift.TProtocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -2323,6 +3269,10 @@ func (p *StateManagerStateDelArgs) Read(iprot thrift.TProtocol) error {
     switch fieldId {
     case 1:
       if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
         return err
       }
     default:
@@ -2340,20 +3290,30 @@ func (p *StateManagerStateDelArgs) Read(iprot thrift.TProtocol) error {
   return nil
 }
 
-func (p *StateManagerStateDelArgs)  ReadField1(iprot thrift.TProtocol) error {
+func (p *StateManagerStateGetByKeyArgs)  ReadField1(iprot thrift.TProtocol) error {
   if v, err := iprot.ReadString(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.Db = v
+}
+  return nil
+}
+
+func (p *StateManagerStateGetByKeyArgs)  ReadField2(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
 } else {
   p.Key = v
 }
   return nil
 }
 
-func (p *StateManagerStateDelArgs) Write(oprot thrift.TProtocol) error {
-  if err := oprot.WriteStructBegin("stateDel_args"); err != nil {
+func (p *StateManagerStateGetByKeyArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("stateGetByKey_args"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if p != nil {
     if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
   }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
@@ -2362,31 +3322,357 @@ func (p *StateManagerStateDelArgs) Write(oprot thrift.TProtocol) error {
   return nil
 }
 
-func (p *StateManagerStateDelArgs) writeField1(oprot thrift.TProtocol) (err error) {
-  if err := oprot.WriteFieldBegin("key", thrift.STRING, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:key: ", p), err) }
-  if err := oprot.WriteString(string(p.Key)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.key (1) field write error: ", p), err) }
+func (p *StateManagerStateGetByKeyArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("db", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:db: ", p), err) }
+  if err := oprot.WriteString(string(p.Db)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.db (1) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:key: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:db: ", p), err) }
   return err
 }
 
-func (p *StateManagerStateDelArgs) String() string {
+func (p *StateManagerStateGetByKeyArgs) writeField2(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("key", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:key: ", p), err) }
+  if err := oprot.WriteString(string(p.Key)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.key (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:key: ", p), err) }
+  return err
+}
+
+func (p *StateManagerStateGetByKeyArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StateManagerStateDelArgs(%+v)", *p)
+  return fmt.Sprintf("StateManagerStateGetByKeyArgs(%+v)", *p)
 }
 
-type StateManagerStateDelResult struct {
+// Attributes:
+//  - Success
+type StateManagerStateGetByKeyResult struct {
+  Success []map[string]string `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
-func NewStateManagerStateDelResult() *StateManagerStateDelResult {
-  return &StateManagerStateDelResult{}
+func NewStateManagerStateGetByKeyResult() *StateManagerStateGetByKeyResult {
+  return &StateManagerStateGetByKeyResult{}
 }
 
-func (p *StateManagerStateDelResult) Read(iprot thrift.TProtocol) error {
+var StateManagerStateGetByKeyResult_Success_DEFAULT []map[string]string
+
+func (p *StateManagerStateGetByKeyResult) GetSuccess() []map[string]string {
+  return p.Success
+}
+func (p *StateManagerStateGetByKeyResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *StateManagerStateGetByKeyResult) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *StateManagerStateGetByKeyResult)  ReadField0(iprot thrift.TProtocol) error {
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([]map[string]string, 0, size)
+  p.Success =  tSlice
+  for i := 0; i < size; i ++ {
+    _, _, size, err := iprot.ReadMapBegin()
+    if err != nil {
+      return thrift.PrependError("error reading map begin: ", err)
+    }
+    tMap := make(map[string]string, size)
+    _elem25 :=  tMap
+    for i := 0; i < size; i ++ {
+var _key26 string
+      if v, err := iprot.ReadString(); err != nil {
+      return thrift.PrependError("error reading field 0: ", err)
+} else {
+      _key26 = v
+}
+var _val27 string
+      if v, err := iprot.ReadString(); err != nil {
+      return thrift.PrependError("error reading field 0: ", err)
+} else {
+      _val27 = v
+}
+      _elem25[_key26] = _val27
+    }
+    if err := iprot.ReadMapEnd(); err != nil {
+      return thrift.PrependError("error reading map end: ", err)
+    }
+    p.Success = append(p.Success, _elem25)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
+  return nil
+}
+
+func (p *StateManagerStateGetByKeyResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("stateGetByKey_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField0(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *StateManagerStateGetByKeyResult) writeField0(oprot thrift.TProtocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.LIST, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := oprot.WriteListBegin(thrift.MAP, len(p.Success)); err != nil {
+      return thrift.PrependError("error writing list begin: ", err)
+    }
+    for _, v := range p.Success {
+      if err := oprot.WriteMapBegin(thrift.STRING, thrift.STRING, len(v)); err != nil {
+        return thrift.PrependError("error writing map begin: ", err)
+      }
+      for k, v := range v {
+        if err := oprot.WriteString(string(k)); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+        if err := oprot.WriteString(string(v)); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+      }
+      if err := oprot.WriteMapEnd(); err != nil {
+        return thrift.PrependError("error writing map end: ", err)
+      }
+    }
+    if err := oprot.WriteListEnd(); err != nil {
+      return thrift.PrependError("error writing list end: ", err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *StateManagerStateGetByKeyResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("StateManagerStateGetByKeyResult(%+v)", *p)
+}
+
+// Attributes:
+//  - Db
+//  - Name
+//  - Pattern
+//  - Indextype
+type StateManagerStateCreateIndexArgs struct {
+  Db string `thrift:"db,1" db:"db" json:"db"`
+  Name string `thrift:"name,2" db:"name" json:"name"`
+  Pattern string `thrift:"pattern,3" db:"pattern" json:"pattern"`
+  Indextype string `thrift:"indextype,4" db:"indextype" json:"indextype"`
+}
+
+func NewStateManagerStateCreateIndexArgs() *StateManagerStateCreateIndexArgs {
+  return &StateManagerStateCreateIndexArgs{}
+}
+
+
+func (p *StateManagerStateCreateIndexArgs) GetDb() string {
+  return p.Db
+}
+
+func (p *StateManagerStateCreateIndexArgs) GetName() string {
+  return p.Name
+}
+
+func (p *StateManagerStateCreateIndexArgs) GetPattern() string {
+  return p.Pattern
+}
+
+func (p *StateManagerStateCreateIndexArgs) GetIndextype() string {
+  return p.Indextype
+}
+func (p *StateManagerStateCreateIndexArgs) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    case 4:
+      if err := p.ReadField4(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *StateManagerStateCreateIndexArgs)  ReadField1(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.Db = v
+}
+  return nil
+}
+
+func (p *StateManagerStateCreateIndexArgs)  ReadField2(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Name = v
+}
+  return nil
+}
+
+func (p *StateManagerStateCreateIndexArgs)  ReadField3(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 3: ", err)
+} else {
+  p.Pattern = v
+}
+  return nil
+}
+
+func (p *StateManagerStateCreateIndexArgs)  ReadField4(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 4: ", err)
+} else {
+  p.Indextype = v
+}
+  return nil
+}
+
+func (p *StateManagerStateCreateIndexArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("stateCreateIndex_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
+    if err := p.writeField3(oprot); err != nil { return err }
+    if err := p.writeField4(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *StateManagerStateCreateIndexArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("db", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:db: ", p), err) }
+  if err := oprot.WriteString(string(p.Db)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.db (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:db: ", p), err) }
+  return err
+}
+
+func (p *StateManagerStateCreateIndexArgs) writeField2(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("name", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:name: ", p), err) }
+  if err := oprot.WriteString(string(p.Name)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.name (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:name: ", p), err) }
+  return err
+}
+
+func (p *StateManagerStateCreateIndexArgs) writeField3(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("pattern", thrift.STRING, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:pattern: ", p), err) }
+  if err := oprot.WriteString(string(p.Pattern)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.pattern (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:pattern: ", p), err) }
+  return err
+}
+
+func (p *StateManagerStateCreateIndexArgs) writeField4(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("indextype", thrift.STRING, 4); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:indextype: ", p), err) }
+  if err := oprot.WriteString(string(p.Indextype)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.indextype (4) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:indextype: ", p), err) }
+  return err
+}
+
+func (p *StateManagerStateCreateIndexArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("StateManagerStateCreateIndexArgs(%+v)", *p)
+}
+
+type StateManagerStateCreateIndexResult struct {
+}
+
+func NewStateManagerStateCreateIndexResult() *StateManagerStateCreateIndexResult {
+  return &StateManagerStateCreateIndexResult{}
+}
+
+func (p *StateManagerStateCreateIndexResult) Read(iprot thrift.TProtocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -2411,8 +3697,8 @@ func (p *StateManagerStateDelResult) Read(iprot thrift.TProtocol) error {
   return nil
 }
 
-func (p *StateManagerStateDelResult) Write(oprot thrift.TProtocol) error {
-  if err := oprot.WriteStructBegin("stateDel_result"); err != nil {
+func (p *StateManagerStateCreateIndexResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("stateCreateIndex_result"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if p != nil {
   }
@@ -2423,11 +3709,326 @@ func (p *StateManagerStateDelResult) Write(oprot thrift.TProtocol) error {
   return nil
 }
 
-func (p *StateManagerStateDelResult) String() string {
+func (p *StateManagerStateCreateIndexResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StateManagerStateDelResult(%+v)", *p)
+  return fmt.Sprintf("StateManagerStateCreateIndexResult(%+v)", *p)
+}
+
+// Attributes:
+//  - Db
+//  - Name
+//  - Params
+type StateManagerStateGetByIndexArgs struct {
+  Db string `thrift:"db,1" db:"db" json:"db"`
+  Name string `thrift:"name,2" db:"name" json:"name"`
+  Params map[string]string `thrift:"params,3" db:"params" json:"params"`
+}
+
+func NewStateManagerStateGetByIndexArgs() *StateManagerStateGetByIndexArgs {
+  return &StateManagerStateGetByIndexArgs{}
+}
+
+
+func (p *StateManagerStateGetByIndexArgs) GetDb() string {
+  return p.Db
+}
+
+func (p *StateManagerStateGetByIndexArgs) GetName() string {
+  return p.Name
+}
+
+func (p *StateManagerStateGetByIndexArgs) GetParams() map[string]string {
+  return p.Params
+}
+func (p *StateManagerStateGetByIndexArgs) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *StateManagerStateGetByIndexArgs)  ReadField1(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.Db = v
+}
+  return nil
+}
+
+func (p *StateManagerStateGetByIndexArgs)  ReadField2(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Name = v
+}
+  return nil
+}
+
+func (p *StateManagerStateGetByIndexArgs)  ReadField3(iprot thrift.TProtocol) error {
+  _, _, size, err := iprot.ReadMapBegin()
+  if err != nil {
+    return thrift.PrependError("error reading map begin: ", err)
+  }
+  tMap := make(map[string]string, size)
+  p.Params =  tMap
+  for i := 0; i < size; i ++ {
+var _key28 string
+    if v, err := iprot.ReadString(); err != nil {
+    return thrift.PrependError("error reading field 0: ", err)
+} else {
+    _key28 = v
+}
+var _val29 string
+    if v, err := iprot.ReadString(); err != nil {
+    return thrift.PrependError("error reading field 0: ", err)
+} else {
+    _val29 = v
+}
+    p.Params[_key28] = _val29
+  }
+  if err := iprot.ReadMapEnd(); err != nil {
+    return thrift.PrependError("error reading map end: ", err)
+  }
+  return nil
+}
+
+func (p *StateManagerStateGetByIndexArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("stateGetByIndex_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
+    if err := p.writeField3(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *StateManagerStateGetByIndexArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("db", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:db: ", p), err) }
+  if err := oprot.WriteString(string(p.Db)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.db (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:db: ", p), err) }
+  return err
+}
+
+func (p *StateManagerStateGetByIndexArgs) writeField2(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("name", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:name: ", p), err) }
+  if err := oprot.WriteString(string(p.Name)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.name (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:name: ", p), err) }
+  return err
+}
+
+func (p *StateManagerStateGetByIndexArgs) writeField3(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("params", thrift.MAP, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:params: ", p), err) }
+  if err := oprot.WriteMapBegin(thrift.STRING, thrift.STRING, len(p.Params)); err != nil {
+    return thrift.PrependError("error writing map begin: ", err)
+  }
+  for k, v := range p.Params {
+    if err := oprot.WriteString(string(k)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+    if err := oprot.WriteString(string(v)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+  }
+  if err := oprot.WriteMapEnd(); err != nil {
+    return thrift.PrependError("error writing map end: ", err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:params: ", p), err) }
+  return err
+}
+
+func (p *StateManagerStateGetByIndexArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("StateManagerStateGetByIndexArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type StateManagerStateGetByIndexResult struct {
+  Success []map[string]string `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewStateManagerStateGetByIndexResult() *StateManagerStateGetByIndexResult {
+  return &StateManagerStateGetByIndexResult{}
+}
+
+var StateManagerStateGetByIndexResult_Success_DEFAULT []map[string]string
+
+func (p *StateManagerStateGetByIndexResult) GetSuccess() []map[string]string {
+  return p.Success
+}
+func (p *StateManagerStateGetByIndexResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *StateManagerStateGetByIndexResult) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *StateManagerStateGetByIndexResult)  ReadField0(iprot thrift.TProtocol) error {
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([]map[string]string, 0, size)
+  p.Success =  tSlice
+  for i := 0; i < size; i ++ {
+    _, _, size, err := iprot.ReadMapBegin()
+    if err != nil {
+      return thrift.PrependError("error reading map begin: ", err)
+    }
+    tMap := make(map[string]string, size)
+    _elem30 :=  tMap
+    for i := 0; i < size; i ++ {
+var _key31 string
+      if v, err := iprot.ReadString(); err != nil {
+      return thrift.PrependError("error reading field 0: ", err)
+} else {
+      _key31 = v
+}
+var _val32 string
+      if v, err := iprot.ReadString(); err != nil {
+      return thrift.PrependError("error reading field 0: ", err)
+} else {
+      _val32 = v
+}
+      _elem30[_key31] = _val32
+    }
+    if err := iprot.ReadMapEnd(); err != nil {
+      return thrift.PrependError("error reading map end: ", err)
+    }
+    p.Success = append(p.Success, _elem30)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
+  return nil
+}
+
+func (p *StateManagerStateGetByIndexResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("stateGetByIndex_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField0(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *StateManagerStateGetByIndexResult) writeField0(oprot thrift.TProtocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.LIST, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := oprot.WriteListBegin(thrift.MAP, len(p.Success)); err != nil {
+      return thrift.PrependError("error writing list begin: ", err)
+    }
+    for _, v := range p.Success {
+      if err := oprot.WriteMapBegin(thrift.STRING, thrift.STRING, len(v)); err != nil {
+        return thrift.PrependError("error writing map begin: ", err)
+      }
+      for k, v := range v {
+        if err := oprot.WriteString(string(k)); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+        if err := oprot.WriteString(string(v)); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+      }
+      if err := oprot.WriteMapEnd(); err != nil {
+        return thrift.PrependError("error writing map end: ", err)
+      }
+    }
+    if err := oprot.WriteListEnd(); err != nil {
+      return thrift.PrependError("error writing list end: ", err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *StateManagerStateGetByIndexResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("StateManagerStateGetByIndexResult(%+v)", *p)
 }
 
 

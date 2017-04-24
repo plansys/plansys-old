@@ -23,14 +23,19 @@ import (
 type StateManagerHandler struct {
 	Clients     map[*websocket.Conn]*state.Client
 	Connections map[string]*websocket.Conn
-	States      map[*state.Client]interface{}
-	DB          *buntdb.DB
+	States      map[string]*StateDB
 	WsUrl       string
+	Rootdirs    []string
 }
 
 type Message struct {
 	Client *state.Client          `json:"c,omitempty"`
 	Data   map[string]interface{} `json:"d,omitempty"`
+}
+
+type StateDB struct {
+	DB      *buntdb.DB
+	Indexes map[string]string
 }
 
 func getPhpPath() string {
@@ -56,12 +61,12 @@ func getPhpPath() string {
 	return php
 }
 
-func NewStateManagerHandler(addr string, rootdirs []string, db *buntdb.DB) *StateManagerHandler {
+func NewStateManagerHandler(addr string, rootdirs []string) *StateManagerHandler {
 	sm := &StateManagerHandler{
 		Clients:     make(map[*websocket.Conn]*state.Client),
 		Connections: make(map[string]*websocket.Conn),
-		States:      make(map[*state.Client]interface{}),
-		DB:          db,
+		States:      make(map[string]*StateDB),
+		Rootdirs:    rootdirs,
 	}
 
 	urljson := sm.Yiic(true, "ws", "path")
@@ -304,29 +309,160 @@ func (p *StateManagerHandler) Receive(from *state.Client) (val string, err error
 	return "", err
 }
 
-func (p *StateManagerHandler) StateSet(key string, val string) (err error) {
+func (p *StateManagerHandler) use(dbname string) (db *buntdb.DB, success bool) {
+	if state, ok := p.States[dbname]; ok {
+		return state.DB, true
+	} else {
+		statePath := filepath.FromSlash(strings.Join(append(p.Rootdirs, "assets", dbname+".buntdb"), "/"))
+		log.Printf("Opening " + statePath + "...")
+		stateDB, err := buntdb.Open(statePath)
 
-	p.DB.Update(func(tx *buntdb.Tx) error {
-		_, _, err := tx.Set(key, val, nil)
-		return err
-	})
+		if err == nil {
+			p.States[dbname] = &StateDB{
+				DB: stateDB,
+				Indexes: make(map[string]string),
+			}
+			return p.States[dbname].DB, true
+		} else {
+			log.Println(err)
+			return nil, false
+		}
+	}
+}
+
+func (p *StateManagerHandler) StateSet(db string, key string, val string) (err error) {
+	if pdb, ok := p.use(db); ok {
+		pdb.Update(func(tx *buntdb.Tx) error {
+			_, _, err := tx.Set(key, val, nil)
+			return err
+		})
+	}
 	return err
 }
 
-func (p *StateManagerHandler) StateDel(key string) (err error) {
-	p.DB.Update(func(tx *buntdb.Tx) error {
-		_, err := tx.Delete(key)
-		return err
-	})
+func (p *StateManagerHandler) StateDel(db string, key string) (err error) {
+	if pdb, ok := p.use(db); ok {
+		pdb.Update(func(tx *buntdb.Tx) error {
+			_, err := tx.Delete(key)
+			return err
+		})
+	}
 	return err
 }
 
-func (p *StateManagerHandler) StateGet(key string) (val string, err error) {
-	var value string
-	p.DB.View(func(tx *buntdb.Tx) error {
-		value, err = tx.Get(key)
-		return err
-	})
+func (p *StateManagerHandler) StateGet(db string, key string) (val string, err error) {
+	if pdb, ok := p.use(db); ok {
+		var value string
+		pdb.View(func(tx *buntdb.Tx) error {
+			value, err = tx.Get(key)
+			return err
+		})
+		return value, err
+	}
 
-	return value, err
+	return "", err
+}
+
+func (p *StateManagerHandler) StateCount(db string) (count int32, err error) {
+	if pdb, ok := p.use(db); ok {
+		var value int
+		pdb.View(func(tx *buntdb.Tx) error {
+			value, err = tx.Len()
+			return err
+		})
+		return int32(value), err
+	}
+
+	return 0, err
+}
+
+func (p *StateManagerHandler) StateCreateIndex(db, name, pattern, indextype string) (err error) {
+	if pdb, ok := p.use(db); ok {
+		indexsplit := strings.Split(indextype, ":")
+
+		switch indexsplit[0] {
+		case "int":
+			pdb.ReplaceIndex(name, pattern, buntdb.IndexInt)
+		case "float":
+			pdb.ReplaceIndex(name, pattern, buntdb.IndexFloat)
+		case "json":
+			pdb.ReplaceIndex(name, pattern, buntdb.IndexJSON(indexsplit[1]))
+		case "string":
+			pdb.ReplaceIndex(name, pattern, buntdb.IndexString)
+		default:
+			pdb.ReplaceIndex(name, pattern, buntdb.IndexString)
+		}
+		
+		p.States[db].Indexes[name] = indextype
+	}
+	return err
+}
+
+func (p *StateManagerHandler) StateGetByKey(db string, key string) (val []map[string]string, err error) {
+	if pdb, ok := p.use(db); ok {
+		var result []map[string]string
+
+		pdb.View(func(tx *buntdb.Tx) error {
+			err = tx.AscendKeys(key, func(key, value string) bool {
+				var keyval = make(map[string]string)
+				keyval["key"] = key
+				keyval["val"] = value
+				result = append(result, keyval)
+				return true
+			})
+
+			if err != nil {
+				log.Println(err)
+			}
+			return err
+		})
+
+		return result, err
+	} else {
+		log.Println(err)
+		return nil, err
+	}
+}
+
+func (p *StateManagerHandler) StateGetByIndex(db, name string, params map[string]string) (val []map[string]string, err error) {
+	if pdb, ok := p.use(db); ok {
+		var result []map[string]string
+
+		pdb.View(func(tx *buntdb.Tx) error {
+			loopfunc := func(key, value string) bool {
+
+				if buntdb.Match(key, params["pattern"]) {
+					var keyval = make(map[string]string)
+					keyval["key"] = key
+					keyval["val"] = value
+					result = append(result, keyval)
+				}
+				return true
+			}
+
+			if params["startfrom"] == "first" {
+				if pivot, ok := params["pivot"]; ok && pivot != "" {
+					err = tx.AscendLessThan(name, pivot, loopfunc)
+				} else {
+					err = tx.Ascend(name, loopfunc)
+				}
+			} else {
+				if pivot, ok := params["pivot"]; ok && pivot != "" {
+					err = tx.DescendGreaterThan(name, pivot, loopfunc)
+				} else {
+					err = tx.Descend(name, loopfunc)
+				}
+			}
+
+			if err != nil {
+				log.Println(err)
+			}
+			return err
+		})
+
+		return result, err
+	} else {
+		log.Println(err)
+		return nil, err
+	}
 }

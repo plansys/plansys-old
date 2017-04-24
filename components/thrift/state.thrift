@@ -25,14 +25,35 @@ service StateManager {
           1: Client client,
           2: string tag
      ),
-     void stateSet(
-          1: string key,
-          2: string val
+     i32 stateCount(
+          1: string db
      ),
-     string stateGet(
-          1: string key
+     void stateSet(
+          1: string db,
+          2: string key,
+          3: string val
      ),
      void stateDel(
-          1: string key
+          1: string db,
+          2: string key
+     ),
+     string stateGet(
+          1: string db,
+          2: string key
+     ),
+     list<map<string, string>> stateGetByKey(
+          1: string db,
+          2: string key
+     ),
+     void stateCreateIndex(
+          1: string db,
+          2: string name,
+          3: string pattern,
+          4: string indextype
+     ),
+     list<map<string, string>> stateGetByIndex(
+          1: string db,
+          2: string name,
+          3: map<string, string> params
      )
 }
