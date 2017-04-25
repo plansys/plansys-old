@@ -1,9 +1,10 @@
-app.directive('psDataGrid', function ($timeout, $http, $upload, $compile, $ocLazyLoad, dateFilter) {
+app.directive('psDataGrid', function ($timeout, $http, Upload, $compile, $ocLazyLoad, dateFilter) {
     return {
         scope: true,
         compile: function (element, attrs, transclude) {
             return function ($scope, $el, attrs, ctrl) {
                 var parent = $scope.getParent($scope);
+                $upload= Upload;
 
                 function evalArray(array, opt) {
                     opt = $.extend({

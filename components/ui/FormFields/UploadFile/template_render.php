@@ -1,6 +1,6 @@
-<div oc-lazy-load="{name: 'angularFileUpload', files: [
-     '<?= Yii::app()->controller->staticUrl('/js/lib/afu/angular-file-upload-shim.min.js') ?>'
-     , '<?= Yii::app()->controller->staticUrl('/js/lib/afu/angular-file-upload.js') ?>' ]}">
+<div oc-lazy-load="{name: 'ngFileUpload', files: [
+     '<?= Yii::app()->controller->staticUrl('/js/lib/afu/ng-file-upload-shim.min.js') ?>'
+     , '<?= Yii::app()->controller->staticUrl('/js/lib/afu/ng-file-upload.js') ?>' ]}">
     <div upload-file <?= $this->expandAttributes($this->options) ?>>
 
         <!-- data -->
@@ -58,7 +58,7 @@
                     <input id="<?= $this->renderID . "inf" ?>"
                            ng-show="choosing == 'Upload' || mode != 'Upload + Browse + Download'" 
                            type="file" <?= $this->expandAttributes($this->fieldOptions) ?> 
-                           ng-file-select="onFileSelect($files)" onclick="this.value = null"/>
+                           ngf-select="onFileSelect($files)" onclick="this.value = null"/>
                 </div>
                 
                 <div class="form-control" 

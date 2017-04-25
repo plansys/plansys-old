@@ -2,9 +2,9 @@
      '<?= Yii::app()->controller->staticUrl('/js/lib/ng-grid.debug.js') ?>'
      , '<?= Yii::app()->controller->staticUrl('/css/ng-grid.css') ?>' ]}">
     <div 
-        oc-lazy-load="{name: 'angularFileUpload', files: [
-        '<?= Yii::app()->controller->staticUrl('/js/lib/afu/angular-file-upload.min.js') ?>'
-        , '<?= Yii::app()->controller->staticUrl('/js/lib/afu/angular-file-upload-shim.min.js') ?>' ]}">
+        oc-lazy-load="{name: 'ngFileUpload', files: [
+         '<?= Yii::app()->controller->staticUrl('/js/lib/afu/ng-file-upload-shim.min.js') ?>'
+         , '<?= Yii::app()->controller->staticUrl('/js/lib/afu/ng-file-upload.js') ?>'  ]}">
         <div ps-data-grid id="<?= $this->name ?>" class="data-grid">
 
             <data name="datasource" class="hide"><?= $this->datasource; ?></data>
@@ -76,7 +76,7 @@
                                         <input style="position:absolute;opacity:0;cursor:pointer;margin-top:-25px;"
                                                onmouseover="$(this).prev().css('background', '#f5f5f5');"
                                                onmouseout="$(this).prev().css('background', '#fff');"
-                                               type="file" ng-file-select="loadExcel($files)"/>
+                                               type="file" ngf-select="loadExcel($files)"/>
                                     </li>
                                     <li class="divider" style="margin:0px;"></li>
                                     <li><a style="padding:3px 7px;"

@@ -1,0 +1,35 @@
+image: php:5.6
+
+before_script:
+- bash ci/docker_install.sh > /dev/null
+- curl -sS https://getcomposer.org/installer | php
+- php composer.phar install
+
+cache:
+  paths:
+  - vendor/
+
+test:5.3:
+  image: tomsowerby/php-5.3:cli
+  script:
+  - vendor/bin/phpunit --configuration phpunit.xml.dist
+
+test:5.4:
+  image: php:5.4
+  script:
+  - vendor/bin/phpunit --configuration phpunit.xml.dist
+
+test:5.5:
+  image: php:5.5
+  script:
+  - vendor/bin/phpunit --configuration phpunit.xml.dist
+
+test:5.6:
+  image: php:5.6
+  script:
+  - vendor/bin/phpunit --configuration phpunit.xml.dist
+
+test:7.0:
+  image: php:7.0
+  script:
+  - vendor/bin/phpunit --configuration phpunit.xml.dist

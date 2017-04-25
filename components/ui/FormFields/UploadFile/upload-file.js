@@ -1,4 +1,4 @@
-app.directive('uploadFile', function ($timeout, $upload, $http) {
+app.directive('uploadFile', function ($timeout, Upload, $http) {
     return {
         require: '?ngModel',
         scope: true,
@@ -13,6 +13,7 @@ app.directive('uploadFile', function ($timeout, $upload, $http) {
                 $scope.progress = -1;
                 $scope.errors = [];
                 $scope.json;
+                $upload = Upload;
 
                 //default value
                 $scope.name = $el.find("data[name=name]:eq(0)").html().trim();
