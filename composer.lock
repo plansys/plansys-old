@@ -4,6 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
+    "hash": "71d065a2abcc5e9de784c290bec1d331",
     "content-hash": "9fe268016fd9366943207996f232c114",
     "packages": [
         {
@@ -73,7 +74,7 @@
                 "write",
                 "xlsx"
             ],
-            "time": "2017-03-28T13:07:48+00:00"
+            "time": "2017-03-28 13:07:48"
         },
         {
             "name": "inlinestyle/inlinestyle",
@@ -120,7 +121,7 @@
                 "email",
                 "inline"
             ],
-            "time": "2015-12-11T12:04:11+00:00"
+            "time": "2015-12-11 12:04:11"
         },
         {
             "name": "nikic/php-parser",
@@ -171,7 +172,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2016-09-16T12:04:44+00:00"
+            "time": "2016-09-16 12:04:44"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -247,7 +248,7 @@
                 }
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
-            "time": "2017-03-15T19:32:56+00:00"
+            "time": "2017-03-15 19:32:56"
         },
         {
             "name": "plansys/thrift",
@@ -288,7 +289,7 @@
             "keywords": [
                 "thrift"
             ],
-            "time": "2017-04-05T23:17:16+00:00"
+            "time": "2017-04-05 23:17:16"
         },
         {
             "name": "symfony/css-selector",
@@ -341,7 +342,7 @@
             ],
             "description": "Symfony CssSelector Component",
             "homepage": "https://symfony.com",
-            "time": "2017-02-21T09:12:04+00:00"
+            "time": "2017-02-21 09:12:04"
         },
         {
             "name": "yajra/laravel-pdo-via-oci8",
@@ -377,7 +378,7 @@
                 }
             ],
             "description": "PDO userspace driver proxying calls to PHP OCI8 driver",
-            "time": "2017-02-02T02:51:53+00:00"
+            "time": "2017-02-02 02:51:53"
         }
     ],
     "packages-dev": [],
