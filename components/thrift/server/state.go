@@ -18,6 +18,7 @@ import (
 	"github.com/ryanuber/go-glob"
 	"github.com/tidwall/buntdb"
 	"github.com/tidwall/gjson"
+	"github.com/kardianos/osext"
 )
 
 type StateManagerHandler struct {
@@ -39,7 +40,7 @@ type StateDB struct {
 }
 
 func getPhpPath() string {
-	ex, err := os.Executable()
+	ex, err := osext.ExecutableFolder()
 	if err != nil {
 		log.Println(err)
 		return ""
@@ -48,7 +49,7 @@ func getPhpPath() string {
 	php := "php"
 	sep := fmt.Sprintf("%c", os.PathSeparator)
 	dirs := strings.Split(filepath.Dir(ex), sep)
-	config := strings.Join(dirs[:len(dirs)-4], sep) + sep + "app" + sep + "config" + sep + "settings.json"
+	config := strings.Join(dirs[:len(dirs)-3], sep) + sep + "app" + sep + "config" + sep + "settings.json"
 
 	if _, err := os.Stat(config); err == nil {
 		if json, err := ioutil.ReadFile(config); err == nil {
@@ -58,6 +59,7 @@ func getPhpPath() string {
 			}
 		}
 	}
+	
 	return php
 }
 
@@ -202,7 +204,7 @@ func (p *StateManagerHandler) SilentYiic(params ...string) {
 }
 
 func (p *StateManagerHandler) Yiic(returnOutput bool, params ...string) (ret string) {
-	ex, err := os.Executable()
+	ex, err := osext.ExecutableFolder()
 	if err != nil {
 		log.Println(err)
 		return
@@ -210,7 +212,7 @@ func (p *StateManagerHandler) Yiic(returnOutput bool, params ...string) (ret str
 
 	sep := fmt.Sprintf("%c", os.PathSeparator)
 	dirs := strings.Split(filepath.Dir(ex), sep)
-	base := strings.Join(dirs[:len(dirs)-3], sep)
+	base := strings.Join(dirs[:len(dirs)-2], sep)
 	yiic := base + sep + "yiic.php"
 	php := getPhpPath()
 
