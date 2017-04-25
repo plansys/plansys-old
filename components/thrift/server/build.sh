@@ -1,2 +1,2 @@
- go build -ldflags="-s -w" 
+ go build
  upx --brute server
