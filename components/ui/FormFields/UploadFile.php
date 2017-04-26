@@ -233,7 +233,7 @@ class UploadFile extends FormField {
     }
 
     public function includeJS() {
-        return ['upload-file.js'];
+        return ['upload-file.v1.js'];
     }
 
     public function getLayoutClass() {

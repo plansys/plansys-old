@@ -1,22 +1,26 @@
-/* global Yii, $scope, $http, $timeout, app, builder, PopupCenter, $, ace */
+/* global Yii, $scope, $http, $timeout, app, builder, PopupCenter, $, ace, modelist */
 
 app.controller("Code", function($scope, $http, $timeout, $q) {
      $scope.active = null;
      window.code = $scope;
      // var store = window.localStorage;
 
-     window.addEventListener("storage", function(e) {
-          console.log(e);
-     }, false);
 
      $scope.editor = ace.edit("code-editor");
      $scope.editor.setTheme("ace/theme/monokai");
      $scope.editor.$blockScrolling = Infinity;
      $scope.editor.setOptions({
-          wrapLine: true,
+          autoScrollEditorIntoView: true,
           enableEmmet: true
      });
      $scope.editor.commands.bindKey("Command+L", null)
+
+
+     window.addEventListener("resize", function(e) {
+          $timeout(function() {
+               $scope.editor.resize(true);
+          });
+     }, false);
 
      $scope.editor.on('change', function() {
           $timeout(function() {
@@ -47,28 +51,18 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
 
           if (!item.code.session) {
                var ext = item.n.split(".");
-               var extpath = "";
                ext = ext[ext.length - 1];
-
-               var exts = {
-                    'html': "ace/mode/html",
-                    'js': "ace/mode/javascript",
-                    'go': "ace/mode/golang",
-                    'gitignore': "ace/mode/gitignore",
-                    'css': "ace/mode/css",
-                    'php': "ace/mode/php",
-                    'json': "ace/mode/json",
-               }
-
-               if (exts[ext]) {
-                    item.code.session = ace.createEditSession(item.code.content, exts[ext]);
-               }
-               else {
-                    item.code.session = ace.createEditSession(item.code.content);
-               }
-
+               
+               var modelist = ace.require("ace/ext/modelist")
+               var mode = modelist.getModeForPath(item.n).mode;
+               item.code.session = ace.createEditSession(item.code.content);
+               item.code.session.setMode(mode);
                item.code.session.setUseWrapMode(true);
-
+               
+               if (ext == 'php') {
+                    $scope.editor.setOptions({'enableEmmet': false});
+               }
+               
                item.code.session.selection.on('changeCursor', function(e) {
                     $timeout(function() {
                          item.code.cursor = $scope.editor.selection.getCursor();
@@ -114,7 +108,7 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
           if ($scope.active.loading) {
                return;
           }
-          
+
           var url = Yii.app.createUrl('builder/code/save', {
                f: $scope.active.d,
                h: $scope.active.unsaved ? 1 : 0
