@@ -83,7 +83,7 @@ func NewStateManagerHandler(addr string, rootdirs []string) *StateManagerHandler
 			if host == origin {
 				return true
 			} else {
-				log.Println(host, origin)
+				log.Println(host, origin, urljson)
 				return false
 			}
 		},
@@ -212,7 +212,7 @@ func (p *StateManagerHandler) Yiic(returnOutput bool, params ...string) (ret str
 
 	sep := fmt.Sprintf("%c", os.PathSeparator)
 	dirs := strings.Split(filepath.Dir(ex), sep)
-	base := strings.Join(dirs[:len(dirs)-4], sep)
+	base := strings.Join(dirs[:len(dirs)-3], sep)
 	yiic := base + sep + "yiic.php"
 	php := getPhpPath()
 
