@@ -235,6 +235,7 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                item.mode = 'code';
                if (!item.code || !item.code.session) {
                     item.loading = true;
+                    window.code.open(null);
                     $http({
                          url: Yii.app.createUrl('/builder/code&f=' + item.d),
                          method: 'GET',
@@ -242,19 +243,20 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                     }).then(function(res) {
                          if (!!item.code && item.code.content && !$scope.init) {
                               var newcontent = item.code.content;
-                              $scope.init = true;
                          }
                          item.code = {
                               content: res.data
                          };
                          item.loading = false;
                          if ($scope.active.id == item.id) {
-                              if (newcontent) {
-                                   window.code.open(item, newcontent);
-                              }
-                              else {
-                                   window.code.open(item);
-                              }
+                              $timeout(function() {
+                                   if (newcontent) {
+                                        window.code.open(item, newcontent);
+                                   }
+                                   else {
+                                        window.code.open(item);
+                                   }
+                              },150);
                          }
                     });
                }
@@ -278,9 +280,6 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           $scope.findTab(item, function(idx) {
                $scope.list.splice(idx, 1);
                $scope.updateTabHash();
-               // if (store['tabs-' + item.d]) {
-               //      delete store['tabs-' + item.d];
-               // }
 
                if ($scope.active && $scope.active.id == item.id) {
                     if ($scope.list[idx]) {
@@ -291,7 +290,7 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                     }
                     else {
                          $scope.active = null;
-                         // store['tabs-active'] = -1;
+                         $scope.code.close();
                     }
                }
           });

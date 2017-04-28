@@ -45,8 +45,17 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
                }
           });
      });
-
+     
+     $scope.blankSession = ace.createEditSession("");
+     
      $scope.open = function(item, newcontent) {
+          if (!item) {
+               $scope.active = {code: {}};
+               $scope.active.code.status = 'Loading';
+               $scope.editor.setSession($scope.blankSession);
+               $scope.editor.setValue("");
+               return false;
+          }
           if (!item.code) return false;
 
           if (!item.code.session) {
@@ -71,7 +80,7 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
                     });
                });
                $timeout(function() {
-                    if (newcontent) {
+                    if (typeof newcontent == "string") {
                          $scope.editor.setValue(newcontent);
                     }
                     $scope.editor.focus();
@@ -87,13 +96,14 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
                     }
                });
           }
-
+          
           $scope.active = item;
           $scope.active.code.status = 'Ready';
           $scope.editor.setSession(item.code.session);
      }
      $scope.close = function() {
           $scope.active = null;
+          $scope.editor.setSession(null);
      }
      $scope.gotoLine = function(line, e) {
           if (e.keyCode == 13) {
