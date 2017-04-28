@@ -150,7 +150,8 @@ class Helper {
 
     public static function generateDayInterval($start, $end) {
         $startInt = new DateTime($start);
-        $endInt = (new DateTime($end))->modify('+1 day');
+        $endDate = new DateTime($end);
+        $endInt = $endDate->modify('+1 day');
         $interval = DateInterval::createFromDateString('1 day');
         $period = new DatePeriod($startInt, $interval, $endInt);
 

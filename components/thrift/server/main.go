@@ -25,9 +25,9 @@ func (p *program) Run() {
 	runServer(thrift.NewTTransportFactory(), thrift.NewTCompactProtocolFactory())
 }
 func (p *program) Quit() {
-	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+	dir, _ := godaemon.GetExecutablePath()
 	dirs := strings.Split(filepath.ToSlash(dir), "/")
-	rootdirs := dirs[0 : len(dirs)-4]
+	rootdirs := dirs[0 : len(dirs)-5]
 	portfile := filepath.FromSlash(strings.Join(append(rootdirs, "assets", "ports.txt"), "/"))
 
 	if portcontent, err := ioutil.ReadFile(portfile); err == nil {
@@ -176,9 +176,9 @@ func runServer(transportFactory thrift.TTransportFactory, protocolFactory thrift
 }
 
 func LogToFile() (file *os.File) {
-	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+	dir, _ := godaemon.GetExecutablePath()
 	dirs := strings.Split(filepath.ToSlash(dir), "/")
-	rootdirs := dirs[0 : len(dirs)-4]
+	rootdirs := dirs[0 : len(dirs)-5]
 	logfile := filepath.FromSlash(strings.Join(append(rootdirs, "assets", "service.log"), "/"))
 	f, err := os.OpenFile(logfile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 
@@ -191,9 +191,9 @@ func LogToFile() (file *os.File) {
 }
 
 func InitPort() (svport string, wsport string, rootdirs []string) {
-	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+	dir, _ := godaemon.GetExecutablePath()
 	dirs := strings.Split(filepath.ToSlash(dir), "/")
-	rootdirs = dirs[0 : len(dirs)-4]
+	rootdirs = dirs[0 : len(dirs)-5]
 	rootdir := filepath.FromSlash(strings.Join(rootdirs, "/"))
 	portfile := filepath.FromSlash(strings.Join(append(rootdirs, "assets", "ports.txt"), "/"))
 
