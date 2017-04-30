@@ -968,3 +968,23 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
 .switchery-label.label-default.switchery-label-small {
     color: #999;
 }
+
+
+.input-group.inline {
+    display: block;
+    float: left;
+    margin: 3px 4px 4px 0px;
+    padding: 0px 5px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-weight: normal;
+}
+
+label input[type=checkbox], label input[type=radio] {
+    margin: 5px 4px 2px 0px;
+    float: left;
+}
+label.input-group {
+    font-size: 13px;
+    font-weight: normal;
+}

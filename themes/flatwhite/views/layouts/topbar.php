@@ -6,7 +6,7 @@
           $menu = [];
      }
      
-     if(sizeof($menu) > 2){ //if menu items available open bracket
+     if(sizeof($menu) >= 2){ //if menu items available open bracket
      
 ?>
 <div class="top-bar" onload="getTime()">
@@ -31,9 +31,6 @@
                ?>            
 		</ul>
 	</div><!-- /dl-menuwrapper -->
-	<?php
-     	} //if menu items available close bracket
-	?>
 	<div class="dl-menuleft">
 	     <?php
      	     if(file_exists(Setting::getRootPath() . "/app/theme/flatwhite/topcontent.php")){
@@ -48,7 +45,11 @@
 	    <br/>
 	    <strong id="tanggal"></strong>
 	</div>
+	
 </div><!-- /top-bar -->
+<?php
+	} //if menu items available close bracket
+?>
 
 
 <?php
