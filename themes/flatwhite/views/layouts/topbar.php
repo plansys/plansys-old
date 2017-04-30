@@ -1,12 +1,10 @@
-
 <?php
      try {
           $menu = Yii::app()->controller->mainMenu;
      } catch (CdbException $e) {
           $menu = [];
      }
-     
-     if(sizeof($menu) >= 2){ //if menu items available open bracket
+     if((sizeof($menu) > 2) || (@$menu[1]['label'] != '')){ //if menu items available open bracket
      
 ?>
 <div class="top-bar" onload="getTime()">
