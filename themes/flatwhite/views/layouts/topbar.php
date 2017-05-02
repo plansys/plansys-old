@@ -31,8 +31,8 @@
 	</div><!-- /dl-menuwrapper -->
 	<div class="dl-menuleft">
 	     <?php
-     	     if(file_exists(Setting::getRootPath() . "/app/theme/flatwhite/topcontent.php")){
-                    include(Setting::getRootPath() . "/app/theme/flatwhite/topcontent.php");
+     	     if(file_exists(Setting::getRootPath() . "/app/themes/flatwhite/topcontent.php")){
+                    include(Setting::getRootPath() . "/app/themes/flatwhite/topcontent.php");
                } else {
                     include('topcontent.php');     
                }

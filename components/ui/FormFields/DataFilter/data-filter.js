@@ -986,6 +986,7 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 $scope.modelClass = $el.find("data[name=model_class]").html();
                 $scope.operators = JSON.parse($('<div/>').html($el.find("data[name=operators]").html()).text());
                 $scope.options = JSON.parse($el.find("data[name=options]").html());
+                $scope.relPerPage=$el.find("data[name=relperpage]").html();
                 
                 var filterRaw = $el.find("data[name=filters]").html();
                 filterRaw = filterRaw.replace(/\%quot\%/gi,'\\"');
