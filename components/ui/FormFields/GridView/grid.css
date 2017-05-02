@@ -133,6 +133,12 @@
     font-weight: bold !important;
 }
 
+[grid-view] .data-grid-paging .paging-total-record { 
+    border-left:1px solid #ccc;
+    margin:2px 5px;
+    padding:3px 8px;
+}
+
 [grid-view] tr.g td {
     cursor: default;
     background: #ffc;
