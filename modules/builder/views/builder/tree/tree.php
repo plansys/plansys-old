@@ -55,10 +55,12 @@
           oncontextmenu="return false"
           ng-mousedown="cm.active = null;cm.activeIdx = -1;"></div>
      
-     <div ng-if="!search.text" class="tree">
+     <div ng-if="!search.text" class="tree" ng-class="{hovered: !!drag.lastHoverItem && drag.lastHoverItem == root}" 
+          ng-mouseup="itemMouseUp($event, root)">
           <div ng-repeat="item in tree" 
                ng-include="'treeItem'" 
                ng-if="showItem(item)"></div>
+          <br/><br/><br/>
      </div>
      <div ng-if="search.text" class="tree search">
           <div ng-repeat="item in search.tree" 

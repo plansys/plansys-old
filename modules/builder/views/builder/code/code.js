@@ -3,9 +3,6 @@
 app.controller("Code", function($scope, $http, $timeout, $q) {
      $scope.active = null;
      window.code = $scope;
-     // var store = window.localStorage;
-
-
      $scope.editor = ace.edit("code-editor");
      $scope.editor.setTheme("ace/theme/monokai");
      $scope.editor.$blockScrolling = Infinity;
@@ -14,7 +11,6 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
           enableEmmet: true
      });
      $scope.editor.commands.bindKey("Command+L", null)
-
 
      window.addEventListener("resize", function(e) {
           $timeout(function() {
@@ -29,19 +25,9 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
 
                if ($scope.active.unsaved) {
                     $scope.active.code.status = 'Unsaved';
-
-                    // var item = JSON.parse(store['tabs-' + $scope.active.d]);
-                    // store['tabs-' + $scope.active.d] = JSON.stringify(item);
-                    // store['tabs|code-' + $scope.active.d] = JSON.stringify({
-                    //      content: $scope.active.code.content,
-                    //      cursor: $scope.active.code.cursor
-                    // });
                }
                else {
                     $scope.active.code.status = 'Ready';
-                    // if (store['tabs|code-' + $scope.active.d]) {
-                    //      delete store['tabs|code-' + $scope.active.d];
-                    // }
                }
           });
      });
@@ -75,6 +61,35 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
                item.code.session.selection.on('changeCursor', function(e) {
                     $timeout(function() {
                          item.code.cursor = $scope.editor.selection.getCursor();
+                         
+                         if (ext == 'php') {
+                              var max = Math.max(0, (item.code.cursor.row - 500));
+                              var foundphp = false;
+                              var foundphpcloser = false;
+                              for (var i = item.code.cursor.row; i >= max; i--) {
+                                   var line = item.code.session.getLine(i);
+                                   
+                                   if (i == item.code.cursor.row) {
+                                        line = line.substr(0, item.code.cursor.column);
+                                   }
+                                   if (line.lastIndexOf('?>') >= 0) {
+                                        foundphpcloser = true;
+                                   }
+                                   
+                                   if (line.lastIndexOf('<?php') >= 0) {
+                                        if (!foundphpcloser) {
+                                             foundphp = true;
+                                        }
+                                        break;
+                                   }
+                              }
+                              if (foundphp) {
+                                   $scope.editor.setOptions({'enableEmmet': false});
+                              } else {
+                                   $scope.editor.setOptions({'enableEmmet': true});
+                              }
+                         }
+                         
                          item.code.cursor.row++;
                          item.code.cursor.column++;
                     });

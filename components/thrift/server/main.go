@@ -16,6 +16,7 @@ import (
 	"github.com/cleversoap/go-cp"
 	"github.com/plansys/psthrift/state"
 	"github.com/plansys/psthrift/svc"
+	"github.com/plansys/psthrift/file"
 	"github.com/tidwall/buntdb"
 )
 
@@ -40,7 +41,10 @@ func (p *program) Quit() {
 		err := transport.Open()
 		defer transport.Close()
 		if err != nil {
-			log.Println(err)
+			if os.Args[1] == "stop" {
+				log.Println("Can't connect to thrift server (Maybe it's already stopped)")
+				log.Println(err)
+			}
 		}
 		service.Quit()
 	}
@@ -133,10 +137,17 @@ func runServer(transportFactory thrift.TTransportFactory, protocolFactory thrift
 	// create multiplexed service
 	var processor = thrift.NewTMultiplexedProcessor()
 
+
 	// register svc processor
-	svcDB, err := buntdb.Open(svcPath)
+	var svcDB *buntdb.DB
+	svcDB, err = buntdb.Open(svcPath)
 	if err != nil {
-		return err
+		os.Remove(svcPath)
+		svcDB, err = buntdb.Open(svcPath)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
 	}
 	defer svcDB.Close()
 
@@ -155,6 +166,10 @@ func runServer(transportFactory thrift.TTransportFactory, protocolFactory thrift
 	stateProcessor := state.NewStateManagerProcessor(sm)
 	processor.RegisterProcessor("StateManager", stateProcessor)
 
+	// register file processor
+	fileProcessor := file.NewFileManagerProcessor(NewFileManagerHandler())
+	processor.RegisterProcessor("FileManager", fileProcessor)
+	
 	// run thrift server
 	server := thrift.NewTSimpleServer4(processor, transport, transportFactory, protocolFactory)
 	go func() {
@@ -163,8 +178,10 @@ func runServer(transportFactory thrift.TTransportFactory, protocolFactory thrift
 		}
 	}()
 
-	// daemonize after running server
-	godaemon.MakeDaemon(&godaemon.DaemonAttr{})
+	if len(os.Args) > 1 {
+		// daemonize after running server
+		godaemon.MakeDaemon(&godaemon.DaemonAttr{})
+	}
 
 	isRestarted := <-restartChan
 	if isRestarted {
@@ -196,7 +213,7 @@ func InitPort() (svport string, wsport string, rootdirs []string) {
 	rootdirs = dirs[0 : len(dirs)-5]
 	rootdir := filepath.FromSlash(strings.Join(rootdirs, "/"))
 	portfile := filepath.FromSlash(strings.Join(append(rootdirs, "assets", "ports.txt"), "/"))
-
+	
 	if portcontent, err := ioutil.ReadFile(portfile); err == nil {
 		ports := strings.Split(string(portcontent[:]), ":")
 		if ThriftPortAvailable(ports[0]) {
@@ -207,6 +224,7 @@ func InitPort() (svport string, wsport string, rootdirs []string) {
 				if len(os.Args) > 1 && os.Args[1] == "restart" {
 					return ports[0], ports[1], rootdirs
 				} else {
+					log.Println("Thrift server already run")
 					return "", "", rootdirs
 				}
 			} else {
@@ -264,7 +282,6 @@ func ThriftAlreadyRun(port string, dir string) bool {
 
 	err := transport.Open()
 	if err != nil {
-		log.Println(err)
 		return true
 	}
 

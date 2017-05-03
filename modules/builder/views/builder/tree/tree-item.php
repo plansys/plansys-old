@@ -1,7 +1,7 @@
 <div class="tree-item"
      ng-class='{
           active: selected.id == item.id,
-          cm: cm.active.id == item.id
+          cm: cm.active.id == item.id,
      }'
      oncontextmenu="return false"
      ng-mouseleave="itemMouseOut($event, item)"
@@ -16,9 +16,10 @@
           </div>
      </span>
      
-     <span class="text">{{ item.n }}</span>
+     <span class="text"><span>{{ item.n }}</span></span>
 </div>
-<div ng-if="item.childs && item.expand" class="tree-childs">
+<div ng-show="item.childs && item.expand" class="tree-childs" 
+     ng-class="{hovered: drag.lastHoverItem == item}">
      <div ng-repeat="item in item.childs" ng-if="showItem(item)" 
           ng-include="'treeItem'"></div>
 </div>

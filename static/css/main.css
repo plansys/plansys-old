@@ -1107,6 +1107,7 @@ li:hover > .item-btn {
 .toolbar .nav-tabs > li > a {
     padding: 4px 8px 3px 8px;
     border-radius: 0px;
+    color: rgb(8, 114, 164);
     border: 1px solid #ccc !important;
     border-bottom: 0px !important;
     margin-top: 5px;

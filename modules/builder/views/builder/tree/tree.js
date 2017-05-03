@@ -57,8 +57,8 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                     var name = item.n;
                     if (item.t != 'dir') {
                          name = item.parent.n;
-                    } 
-                    
+                    }
+
                     if (specialDirs.indexOf(name) >= 0) {
                          return true;
                     }
@@ -68,7 +68,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                     var name = item.n;
                     if (item.t != 'dir') {
                          name = item.parent.n;
-                    } 
+                    }
                     switch (name) {
                          case "websockets":
                               return "New Ws Controller";
@@ -86,7 +86,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                     $timeout(function() {
                          var name = prompt(menu.label(item) + " name:");
                          if (!name) return;
-                         
+
                          $http.get(Yii.app.createUrl('/builder/tree/touch', {
                               path: item.p,
                               name: name,
@@ -106,6 +106,9 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                                         }
                                    }
                               });
+                         }).catch(function() {
+                              item.loading = false;
+                              alert("Failed to create file");
                          });
                     });
                }
@@ -127,12 +130,11 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                     $timeout(function() {
                          var name = prompt("New file name:");
                          if (!name) return;
-                         
+
                          var path = item.p + '/' + name;
                          if (item.t != 'dir') {
                               path = item.p.substr(0, item.p.length - item.n.length) + name;
                          }
-                         
                          $http.get(Yii.app.createUrl('/builder/tree/touch', {
                               path: path
                          })).then(function(res) {
@@ -140,7 +142,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                               if (item.t != 'dir') {
                                    cur = item.parent
                               }
-                              
+
                               if (cur.childs) {
                                    cur.childs.splice(0, cur.childs.length);
                               }
@@ -155,6 +157,9 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                                         }
                                    }
                               });
+                         }).catch(function() {
+                              item.loading = false;
+                              alert("Failed to create file");
                          });
                     });
                }
@@ -181,6 +186,9 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                                              }
                                         }
                                    });
+                              }).catch(function() {
+                                   item.loading = false;
+                                   alert("Failed to create directory");
                               });
                          }
                     }
@@ -193,31 +201,59 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                     return item.t == 'dir';
                },
                click: function(item) {
-                    if (item.childs) {
-                         item.childs.splice(0, item.childs.length);
-                    }
-                    $scope.expand(item);
+                    $scope.refreshDir(item);
                }
           }, {
                label: "Rename",
-               click: function(item) {}
+               click: function(item) {
+                    var newname = prompt("New file name:", item.n);
+                    var path = item.p.split("/");
+                    path.pop();
+                    path = path.join("/");
+                    item.loading = true;
+                    $http.get(Yii.app.createUrl('/builder/tree/mv', {
+                         from: item.p,
+                         to: path + '/' + newname
+                    })).then(function(res) {
+                         item.d = res.data;
+                         item.n = newname;
+                         item.p = path + '/' + newname;
+                         item.ext = newname.split(".").pop();
+                         item.loading = false;
+                    }).catch(function() {
+                         item.loading = false;
+                         alert("Failed to rename " + item.t);
+                    });
+               }
           }, {
                label: "Delete",
                click: function(item) {
-                    if (confirm("Are You sure? this cannot be undone!")) {
+                    if (confirm("Are you sure? this cannot be undone!")) {
                          item.loading = true;
-                         item.n = 'Deleting...'
+                         var oldname = item.n;
+                         item.n = 'Deleting...';
                          $http.get(Yii.app.createUrl('/builder/tree/rmrf', {
                               path: item.p
                          })).then(function(res) {
+                              $scope.tabs.close(item);
                               item.parent.childs.splice(item.idx, 1)
                               item.parent.childs.forEach(function(i, key) {
                                    i.idx = key;
                               })
+                         }).catch(function() {
+                              item.loading = false;
+                              item.n = oldname;
+                              alert("Failed to delete " + item.t);
                          });
                     }
                }
           }]
+     }
+     $scope.refreshDir = function(item, f) {
+          if (item.childs) {
+               item.childs.splice(0, item.childs.length);
+          }
+          $scope.expand(item, f);
      }
      $scope.showContextMenu = function(item, x, y) {
           $scope.cm.active = item;
@@ -309,12 +345,21 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                     }
                     $(el).addClass('draghover');
 
-                    if ($scope.drag.expandTimeout) {
+                    if ($scope.drag.expandTimeout && $scope.drag.lastHoverItem != item) {
                          $timeout.cancel($scope.drag.expandTimeout);
+                         $scope.drag.expandTimeout = false;
                     }
-                    $scope.drag.expandTimeout = $timeout(function() {
-                         $scope.expand(item);
-                    }, 600);
+
+                    if (!$scope.drag.expandTimeout) {
+                         $scope.drag.expandTimeout = $timeout(function() {
+                              $scope.expand(item);
+                              $scope.drag.expandTimeout = false;
+                         }, 400);
+                    }
+                    $scope.drag.lastHoverItem = item;
+               }
+               else {
+                    $scope.drag.lastHoverItem = item.parent;
                }
           }
      }
@@ -346,9 +391,88 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
           }
           if (!$scope.drag.inititem) return;
           if ($scope.drag.el) {
+               var from = $scope.drag.item;
+               var to = $scope.drag.lastHoverItem;
+               if (from && to) {
+                    if (to != $scope.root) {
+                         if (to.t != 'dir') {
+                              to = to.parent;
+                         }
+                    }
+                    var mv = function() {
+                         if (to.loading) {
+                              $timeout(mv, 500);
+                              return;
+                         }
+
+                         to.loading = true;
+
+                         $http.get(Yii.app.createUrl('/builder/tree/mv', {
+                              from: from.p,
+                              to: to.p + '/' + from.n
+                         })).then(function(res) {
+                              $scope.drag.lastHoverItem = false;
+                              from.parent.childs.forEach(function(i, key) {
+                                   i.idx = key;
+                              })
+                              from.parent.childs.splice(from.idx, 1)
+                              from.parent.childs.forEach(function(i, key) {
+                                   i.idx = key;
+                              })
+                              from.parent = to;
+                              from.p = to.p + '/' + from.n;
+                              from.d = res.data;
+
+                              if (from.t == "dir") {
+                                   var expanded = from.expanded;
+                                   $scope.refreshDir(from, function() {
+                                        if (!expanded) {
+                                             $scope.shrink(from);
+                                        }
+                                   });
+                              }
+
+                              if (!to.childs) {
+                                   $scope.expand(to);
+                              }
+                              else {
+                                   to.loading = false;
+
+                                   if (!$scope.isArray(to.childs)) {
+                                        to.childs = [];
+                                   }
+                                   if (from.t != 'dir') {
+                                        to.childs.push(from);
+                                   }
+                                   else {
+                                        to.childs.unshift(from);
+                                   }
+                                   to.childs.forEach(function(i, key) {
+                                        i.idx = key;
+                                   });
+                              }
+                         }).catch(function() {
+                              to.loading = false;
+                              $scope.drag.lastHoverItem = false;
+
+                              alert("Failed to move " + from.t);
+                         });
+                    }
+                    if (from.p != to.p + '/' + from.n) {
+                         mv();
+                    }
+                    else {
+                         $scope.drag.lastHoverItem = false;
+                    }
+               }
+
                $scope.drag.el.remove();
                $scope.drag.el = false;
                $scope.drag.item = null;
+               return;
+          }
+
+          if (item == $scope.root) {
                return;
           }
 
@@ -376,9 +500,16 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
      }
      $http.get(Yii.app.createUrl('/builder/tree/ls')).then(function(res) {
           $scope.tree = res.data;
+          $scope.root = {
+               childs: $scope.tree,
+               t: 'dir'
+          }
           $scope.tree.forEach(function(item, key) {
+               if (!$scope.root.p) {
+                    $scope.root.p = item.p.substr(0, item.p.length - item.n.length - 1);
+               }
                item.idx = key;
-               item.parent = $scope.tree;
+               item.parent = $scope.root;
           });
      });
      $scope.detailPathChanged = function(e) {
@@ -457,23 +588,56 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
           }
      }
      $scope.expand = function(item, callback) {
+          if (item.expanding) {
+               if (callback) {
+                    item.expanding.push(callback);
+               }
+               return;
+          }
           item.expand = true;
+          if (typeof item.expanding == "undefined") {
+               item.expanding = [];
+          }
 
           function expandFirstChild(item) {
+               delete item.expanding;
                if (item.childs && item.childs.length == 1) {
                     if (item.childs[0].t == 'dir') {
                          $scope.expand(item.childs[0]);
                     }
                }
           }
+
+          function doneExpanding(item) {
+               if (typeof item.expanding != "undefined") {
+                    if ($scope.isArray(item.expanding) && item.expanding.length == 0) {
+                         delete item.expanding;
+                    }
+               }
+               
+               if (!callback) {
+                    if (!item.expanding) {
+                         expandFirstChild(item);
+                    }
+               }
+               else {
+                    callback(item);
+               }
+
+               if (item.expanding) {
+                    $scope.expand(item, item.expanding.shift());
+               }
+          }
+
           if (!item.childs || item.childs.length == 0) {
                item.loading = true;
+
                $http.get(Yii.app.createUrl('/builder/tree/ls&dir=' + item.d))
                     .then(function(res) {
-                         item.loading = false;
+                         var incrementPage = 5;
 
                          function addChild(data, increment) {
-                              var ins = data.splice(0, increment || 10);
+                              var ins = data.splice(0, increment || incrementPage);
                               ins.forEach(function(i, key) {
                                    if (!item.childs) {
                                         item.childs = [];
@@ -485,28 +649,19 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
 
                               if (data.length > 0) {
                                    $timeout(function() {
-                                        addChild(data, (increment || 10) + 10);
+                                        addChild(data, (increment || incrementPage) + incrementPage);
                                    });
                               }
                               else {
-                                   if (!callback) {
-                                        expandFirstChild(item);
-                                   }
-                                   else {
-                                        callback(item);
-                                   }
+                                   doneExpanding(item);
+                                   item.loading = false;
                               }
                          }
                          addChild(res.data);
                     });
           }
           else {
-               if (!callback) {
-                    expandFirstChild(item);
-               }
-               else {
-                    callback(item);
-               }
+               doneExpanding(item);
           }
      }
      $scope.expandToItem = function(item, callback) {

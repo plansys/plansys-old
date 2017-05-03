@@ -249,14 +249,12 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                          };
                          item.loading = false;
                          if ($scope.active.id == item.id) {
-                              $timeout(function() {
-                                   if (newcontent) {
-                                        window.code.open(item, newcontent);
-                                   }
-                                   else {
-                                        window.code.open(item);
-                                   }
-                              },150);
+                              if (newcontent) { // if code on server is different on our local change
+                                   window.code.open(item, newcontent);
+                              }
+                              else {
+                                   window.code.open(item);
+                              }
                          }
                     });
                }
