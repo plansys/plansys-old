@@ -358,7 +358,7 @@ class Setting {
         }
         
         $host = $url['scheme'] . '://' . $url['host'];
-        $base = '/'. trim($url['path'], '/') . '/index.php'; 
+        $base = '/'. trim(@$url['path'], '/') . '/index.php'; 
         return [
             'hostInfo' => $host,
             'baseUrl' => '',

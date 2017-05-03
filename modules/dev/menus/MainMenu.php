@@ -152,9 +152,9 @@ return array (
         'state' => 'collapsed',
     ),
     array (
-        'label' => 'Repository',
-        'icon' => 'fa-folder-open',
-        'url' => '/repo/index',
-        'formattedUrl' => '/ndo/index.php?r=repo/index',
+        'label' => 'Documentation',
+        'icon' => 'fa-book',
+        'url' => '/docs',
+        'formattedUrl' => '/ndo/index.php?r=help',
     ),
 );

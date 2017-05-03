@@ -13,7 +13,7 @@ class PsDefaultController extends Controller {
             foreach(Yii::app()->user->info['roles'] as $role) {
                 if ($role['role_name'] == Yii::app()->user->info['full_role']) {
                     if (!@$role['home_url']) {
-                        $this->redirect(['/help/welcome']);
+                        $this->redirect(['/docs/welcome']);
                     } else {
                         $this->redirect([$role['home_url']]);
                     }

@@ -1,5 +1,5 @@
-<?php Asset::registerJS($this->vpath . '.code.ace-min.emmet'); ?>
-<?php Asset::registerJS($this->vpath . '.code.ace-min.ace'); ?>
+<?php Asset::registerJS($this->vpath . '.code.ace-min.emmet-min'); ?>
+<?php Asset::registerJS($this->vpath . '.code.ace-min.ace-min'); ?>
 <?php Asset::registerJS($this->vpath . '.code.ace-min.ext-emmet'); ?>
 <?php Asset::registerJS($this->vpath . '.code.ace-min.ext-modelist'); ?>
 <?php Asset::registerJS($this->vpath . '.code.code'); ?>

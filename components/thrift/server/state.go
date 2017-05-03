@@ -13,12 +13,12 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/VividCortex/godaemon"
 	"github.com/gorilla/websocket"
 	"github.com/plansys/psthrift/state"
 	"github.com/ryanuber/go-glob"
 	"github.com/tidwall/buntdb"
 	"github.com/tidwall/gjson"
-	"github.com/VividCortex/godaemon"
 )
 
 type StateManagerHandler struct {
@@ -49,7 +49,7 @@ func getPhpPath() string {
 	php := "php"
 	sep := fmt.Sprintf("%c", os.PathSeparator)
 	dirs := strings.Split(filepath.Dir(ex), sep)
-	config := strings.Join(dirs[:len(dirs)-5], sep) + sep + "app" + sep + "config" + sep + "settings.json"
+	config := strings.Join(dirs[:len(dirs)-4], sep) + sep + "app" + sep + "config" + sep + "settings.json"
 
 	if _, err := os.Stat(config); err == nil {
 		if json, err := ioutil.ReadFile(config); err == nil {
@@ -59,7 +59,7 @@ func getPhpPath() string {
 			}
 		}
 	}
-	
+
 	return php
 }
 
@@ -180,18 +180,33 @@ func NewStateManagerHandler(addr string, rootdirs []string) *StateManagerHandler
 		err := http.ListenAndServe(addr, nil)
 		if err != nil {
 			// listen to another port
+			log.Println("Failed to listen ",addr)
 			log.Println(err)
 
 			wsport := strconv.Itoa(GeneratePort())
 			addr = "0.0.0.0:" + wsport
 			portfile := filepath.FromSlash(strings.Join(append(rootdirs, "assets", "ports.txt"), "/"))
 			if portcontent, err := ioutil.ReadFile(portfile); err == nil {
-				ports := strings.Split(string(portcontent[:]), ":")
-				ioutil.WriteFile(portfile, []byte(ports[0]+":"+wsport), 0644)
 				if err != nil {
+					log.Println("Failed to read ports.txt")
 					log.Println(err)
+				} else {
+					ports := strings.Split(string(portcontent[:]), ":")
+					ferr := ioutil.WriteFile(portfile, []byte(ports[0]+":"+wsport), 0644)
+					if (ferr == nil) {
+						log.Println("Running Websocket Server at:", addr)
+						
+						werr := http.ListenAndServe(addr, nil)
+						if werr != nil {
+							log.Println("Failed to listen ",addr)
+							log.Println(werr)
+						}
+						
+					} else {
+						log.Println("Failed to write ports.txt")
+						log.Println(ferr)
+					}
 				}
-				log.Println("Running Websocket Server at:", addr)
 			}
 
 		}
@@ -436,10 +451,10 @@ func (p *StateManagerHandler) StateGetByIndex(db, name string, params map[string
 
 			if params["itemperpage"] != "" && params["page"] != "" {
 				if _ipp, err := strconv.Atoi(params["itemperpage"]); err == nil {
-					if _cp, err := strconv.Atoi(params["page"]); err == nil{
+					if _cp, err := strconv.Atoi(params["page"]); err == nil {
 						cp = _cp
 						ipp = _ipp
-					} 
+					}
 				}
 			}
 			loopfunc := func(key, value string) bool {
@@ -448,7 +463,7 @@ func (p *StateManagerHandler) StateGetByIndex(db, name string, params map[string
 					keyval["key"] = key
 					keyval["val"] = value
 					i++
-					
+
 					if cp > 0 && ipp > 0 {
 						if (i > (cp-1)*ipp) && (i <= cp*ipp) {
 							result = append(result, keyval)

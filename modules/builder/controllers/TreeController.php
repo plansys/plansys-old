@@ -1,4 +1,16 @@
 <?php
+function recursiveDelete($str) {
+    if (is_file($str)) {
+        return unlink($str);
+    }
+    elseif (is_dir($str)) {
+        $scan = glob(rtrim($str,'/').'/*');
+        foreach($scan as $index=>$path) {
+            recursiveDelete($path);
+        }
+        return rmdir($str);
+    }
+}
 
 class TreeController extends Controller {
      
@@ -59,59 +71,27 @@ class TreeController extends Controller {
                          if (substr($name, 0, -2) != "Ws") {
                               $name = $name . "Ws";
                          }
-                         $content = <<<EOF
-<?php 
-
-class $name extends WebSocketController {
-
-    // this function will be executed when 
-    // there is new client connnected to websocket
-    public function connected(\$client) {
-        \$this->broadcast('Hello World'); // broadcast Hello world message to all client
-    }
-    
-    // this function will be executed when 
-    // client disconnected from server
-    public function disconnected (\$client, \$reason) {
-        
-    }
-    
-    // this function will be executed when 
-    // server received new message from client
-    public function received(\$msg, \$from) {
-        
-    }
-}
-
-EOF;
+                         $content = include("code_template/websocket.txt");
                          break;
                     default:
                          $content = "";
                          break;
                }
-               $file = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $name . ".php"; 
                
-               echo $file;
-               if (!is_file($file)) {
-                    @file_put_contents($file, $content);
+               if ($name != "") {
+                    $file = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $name ; 
+               } else {
+                    $file = rtrim($path, DIRECTORY_SEPARATOR); 
                }
+               
+               if (!is_file($file)) {
+                    file_put_contents($file, $content);
+               }
+               echo $file;
           }
      }
      
      public function actionRmrf($path) {
-          function recursiveDelete($str) {
-              if (is_file($str)) {
-                  return @unlink($str);
-              }
-              elseif (is_dir($str)) {
-                  $scan = glob(rtrim($str,'/').'/*');
-                  foreach($scan as $index=>$path) {
-                      recursiveDelete($path);
-                  }
-                  return @rmdir($str);
-              }
-          }
-          
           $rootdir = Yii::getPathOfAlias('webroot');
           if (strpos($path, $rootdir) === 0) {
                recursiveDelete($path);
@@ -119,23 +99,43 @@ EOF;
      }
      
      public function actionLs($dir = '') {
-          $it = new DirectoryIterator(getcwd() . '/' . $dir);
-          $result = []; 
-          $dirs = [];
-          $files = [];
-          foreach(new IteratorIterator($it) as $file)
-          {
-               if ($file->getBasename() != '.' && $file->getBasename() != '..') {
-                    $item = $this->convertProp($file);
-                    if ($item['t'] == 'file') {
-                         array_unshift($files, $item);
-                    } else {
-                         array_unshift($dirs, $item);
+          try {
+               $it = new DirectoryIterator(getcwd() . '/' . $dir);
+               $result = []; 
+               $dirs = [];
+               $files = [];
+               foreach(new IteratorIterator($it) as $file)
+               {
+                    if ($file->getBasename() != '.' && $file->getBasename() != '..') {
+                         $item = $this->convertProp($file);
+                         if ($item['t'] == 'file') {
+                              array_unshift($files, $item);
+                         } else {
+                              array_unshift($dirs, $item);
+                         }
                     }
                }
+               asort($dirs);
+               asort($files);
+               echo json_encode(array_merge($dirs, $files));
+          } catch (Exception $e) {
+               echo "[]";
           }
-          asort($dirs);
-          asort($files);
-          echo json_encode(array_merge($dirs, $files));
+     }
+     
+     public function actionMv($from, $to) {
+          if (file_exists($from) && !file_exists($to)) {
+               if ($from == $to) {
+                    return;
+               }
+               if (!rename($from, $to)) {
+                    throw new CHttpException(403);
+               } else {
+                    echo trim(substr($to, strlen(Setting::getRootpath())), '/');
+                    die();
+               }
+          } else {
+               throw new CHttpException(403, $from . " ~> " . $to);
+          }
      }
 }

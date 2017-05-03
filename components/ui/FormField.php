@@ -222,7 +222,7 @@ class FormField extends CComponent {
      * @param boolean $return
      * @return array Fungsi ini digunakan untuk evaluate expression dan akan me-return hasil dalam bentuk pesan error.
      */
-    public function evaluate($expr, $return = false, $variables = [], $isHTML = false) {
+    public function evaluate($expr, $return = false, $variables = []) {
         if (!isset($this->builder->model)) {
             $result = $this->evaluateExpression($expr, $variables);
         } else {
@@ -234,7 +234,7 @@ class FormField extends CComponent {
         if ($return) {
             return $result;
         } else {
-            echo(!$result ? "--invalid--" : json_encode($result));
+            echo(json_encode($result));
         }
     }
 

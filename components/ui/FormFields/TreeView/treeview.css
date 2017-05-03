@@ -1,31 +1,62 @@
-.tv-container .angular-ui-tree-empty {
-    position:relative;
-}
 
-.tv-caret {
-     float:left;
-     width:12px;
+
+.tree-view-item {
      cursor:pointer;
+     padding:3px;
+     display:flex;
+     user-select:none;
+     overflow:hidden;
+     -webkit-user-select:none;
 }
 
-.tv-icon {
-     width:15px;
-     display:inline-block;
+.tree-view-item:hover {
+     background:#fafafa;
 }
 
-.tv-node-item {
-     cursor:default;
+.tree-view-item.draghover,
+.tree-view-item.active {
+     background:#ececeb;
 }
 
-.tv-node-item span {
+.tree-view-item.dragging {
+     pointer-events: none;
+     background:none;
+     color:#333;
+}
+
+.tree-view-item.dragging {
+     background:white;
+     color:#333;
+     border:1px solid #ccc;
+     padding:0px 5px;
+}
+.tree-view-item.dragging .tree-view-arrow {
+     display:none !important;
+}
+.tree-view-childs {
+     padding-left:15px;
+}
+
+.tree-view-item .tree-view-icon {
+     width:20px;
+     text-align:center;
+}
+
+.tree-view-item .tree-view-icon img {
+     max-width:16px;
+}
+.tree-view-item .tree-view-arrow {
+     width:14px;
+     cursor:pointer;
+     display:flex;
+     align-items:center;
+     padding-left:3px;
+     text-align:center;
+}
+.tree-view-item .tree-view-text {
      font-size:12px;
-     color:#454545;
-}
-
-.angular-ui-tree-nodes.tv-root {
-     padding-left:10px;
-}
-
-.angular-ui-tree-nodes .angular-ui-tree-nodes.tv-node {
-     padding-left:10px;
+     padding-top:3px;
+     padding-left:3px;
+     white-space:nowrap;
+     display:inline-block;
 }
