@@ -945,15 +945,22 @@ app.directive('gridView', function($timeout, $http) {
                         cursor = $el.find("table tbody tr:eq(0)");
                     }
                     var isChecked = $(e.target).is(":checked");
-
+                    if(isChecked){
+                        var checkedValue = $scope.columns[colIdx].checkedValue;    
+                    } else {
+                        var checkedValue = $scope.columns[colIdx].uncheckedValue;    
+                    }
+                    
                     //loop through all rows
                     while (loop) {
                         var row = $scope.datasource.data[++rowIdx];
+                        
                         if (!row) {
                             loop = false;
                             continue;
+                        } else {
+                            row.hadir = checkedValue;
                         }
-
                         if (row.$type == 'a' && row.$aggr == false) {
                             continue;
                         }
@@ -962,6 +969,8 @@ app.directive('gridView', function($timeout, $http) {
                             $scope.checkbox[colName] = [];
                         }
 
+                        
+                        
                         if (cursor.attr("lv") > level) {
                             if (cursor.hasClass("r")) {
                                 var rowFound = -1;
