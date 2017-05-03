@@ -12,7 +12,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/VividCortex/godaemon"
 	"github.com/gorilla/websocket"
@@ -177,16 +176,11 @@ func NewStateManagerHandler(addr string, rootdirs []string) *StateManagerHandler
 			}
 		})
 
-		go func() {
-			time.Sleep(time.Second)
-			os.Remove(getPath("assets/starting-ws"))
-		}()
-
 		log.Println("Running Websocket Server at:", addr)
 		err := http.ListenAndServe(addr, nil)
 		if err != nil {
 			// listen to another port
-			log.Println("Failed to listen ",addr)
+			log.Println("Failed to listen ", addr)
 			log.Println(err)
 
 			wsport := strconv.Itoa(GeneratePort())
@@ -199,21 +193,21 @@ func NewStateManagerHandler(addr string, rootdirs []string) *StateManagerHandler
 				} else {
 					ports := strings.Split(string(portcontent[:]), ":")
 					ferr := ioutil.WriteFile(portfile, []byte(ports[0]+":"+wsport), 0644)
-					if (ferr == nil) {
+					if ferr == nil {
 						log.Println("Running Websocket Server at:", addr)
-						
+
 						werr := http.ListenAndServe(addr, nil)
 						if werr != nil {
-							log.Println("Failed to listen ",addr)
+							log.Println("Failed to listen ", addr)
 							log.Println(werr)
-						} 
+						}
 					} else {
 						log.Println("Failed to write ports.txt")
 						log.Println(ferr)
 					}
 				}
 			}
-		} 
+		}
 	}()
 	return sm
 }

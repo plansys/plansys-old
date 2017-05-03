@@ -58,7 +58,7 @@ func (p *FileManagerHandler) Write(path, content string) (err error) {
 	if err = p.Writer[path].Write(content); err != nil {
 		return err
 	}
-	
+
 	p.Writer[path].Close()
 	return nil
 }

@@ -234,21 +234,35 @@ class ServiceManager extends CComponent {
                if (!is_file($svpath) && !is_file($svtpath)) {
                     $isnew = true; 
                } 
-               
                $output = shell_exec($file);
-               sleep(1);
                
-               if (is_file($svjpath)) {
-                    self::_open();
-                    $svcs = self::$sm->client->getAllServices();
-                    self::_close();
-                    
-                    if ($isnew || count($svcs) <= 2) {
-                         self::importJson();
+               # wait until we can connect to thrift server
+               $connecting = true;
+               while ($connecting) {
+                    $connecting = false;
+                    try {
+                         self::_open();
+                         self::_close();
+                    } 
+                    catch(Exception $e) {
+                         $connecting = true;
+                         usleep(300 * 1000); # 1s sleep
                     }
                }
                
+               if (is_file($svjpath)) {
+                    try {
+                         self::_open();
+                         $svcs = self::$sm->client->getAllServices();
+                         self::_close();
+                         
+                         if ($isnew || count($svcs) <= 2) {
+                              self::importJson();
+                         }
+                    } catch (Exception $e) {
+                         
+                    }
+               }
           }
-          
      }
 }
