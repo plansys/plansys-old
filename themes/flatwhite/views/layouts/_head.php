@@ -5,12 +5,12 @@
      <?php Asset::registerCSS('application.themes.flatwhite.views.css.default'); ?>
      <?php Asset::registerCSS('application.themes.flatwhite.views.css.component'); ?>
      <?php
-          include(Yii::getPathOfAlias('application.themes.flatwhite.views') . '/vendor/autoload.php');
-          $dir = Yii::getPathOfAlias('application.themes.flatwhite.views.css');
-          $stylus = new NodejsPhpFallback\Stylus($dir . "/style.styl");
-          $stylus->write($dir . "/style.css");
+          // include(Yii::getPathOfAlias('application.themes.flatwhite.views') . '/vendor/autoload.php');
+          // $dir = Yii::getPathOfAlias('application.themes.flatwhite.views.css');
+          // $stylus = new NodejsPhpFallback\Stylus($dir . "/style.styl");
+          // $stylus->write($dir . "/style.css");
      ?>
-     <?php// Asset::registerCSS('application.themes.flatwhite.views.css.style', time()); ?>
+     <?php Asset::registerCSS('application.themes.flatwhite.views.css.style', time()); ?>
      
      <link rel="stylesheet" href="<?= Yii::app()->controller->staticUrl('/css/font-awesome.min.css'); ?>" type="text/css" />
      <title><?php echo CHtml::encode(Yii::app()->controller->pageTitle); ?></title>

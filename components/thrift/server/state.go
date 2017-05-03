@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/VividCortex/godaemon"
 	"github.com/gorilla/websocket"
@@ -176,6 +177,11 @@ func NewStateManagerHandler(addr string, rootdirs []string) *StateManagerHandler
 			}
 		})
 
+		go func() {
+			time.Sleep(time.Second)
+			os.Remove(getPath("assets/starting-ws"))
+		}()
+
 		log.Println("Running Websocket Server at:", addr)
 		err := http.ListenAndServe(addr, nil)
 		if err != nil {
@@ -200,16 +206,14 @@ func NewStateManagerHandler(addr string, rootdirs []string) *StateManagerHandler
 						if werr != nil {
 							log.Println("Failed to listen ",addr)
 							log.Println(werr)
-						}
-						
+						} 
 					} else {
 						log.Println("Failed to write ports.txt")
 						log.Println(ferr)
 					}
 				}
 			}
-
-		}
+		} 
 	}()
 	return sm
 }

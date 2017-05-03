@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"git.apache.org/thrift.git/lib/go/thrift"
 	"github.com/VividCortex/godaemon"
@@ -23,6 +24,8 @@ import (
 type program struct{}
 
 func (p *program) Run() {
+	os.OpenFile(getPath("assets/starting-thrift"), os.O_RDONLY|os.O_CREATE, 0666)
+	os.OpenFile(getPath("assets/starting-ws"), os.O_RDONLY|os.O_CREATE, 0666)
 	runServer(thrift.NewTTransportFactory(), thrift.NewTCompactProtocolFactory())
 }
 func (p *program) Quit() {
@@ -54,6 +57,13 @@ func GetMD5Hash(text string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(text))
 	return hex.EncodeToString(hasher.Sum(nil))
+}
+
+func getPath(path string) string {
+	dir, _ := godaemon.GetExecutablePath()
+	dirs := strings.Split(filepath.ToSlash(dir), "/")
+	rootdirs := dirs[0 : len(dirs)-5]
+	return filepath.FromSlash(strings.Join(append(rootdirs, path), "/"))
 }
 
 func main() {
@@ -173,6 +183,11 @@ func runServer(transportFactory thrift.TTransportFactory, protocolFactory thrift
 	// run thrift server
 	server := thrift.NewTSimpleServer4(processor, transport, transportFactory, protocolFactory)
 	go func() {
+		go func() {
+			time.Sleep(time.Second)
+			os.Remove(getPath("assets/starting-thrift"))
+		}()
+		
 		if err = server.Serve(); err != nil {
 			log.Println(err)
 		}
