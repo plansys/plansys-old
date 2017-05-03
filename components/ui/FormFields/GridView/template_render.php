@@ -91,8 +91,7 @@
             <div ng-if="mode=='full' && gridOptions.enablePaging != 'false'" class="pull-left" style="margin:5px">
                 of {{ totalPage() | number }}
             </div>
-            <div class="pull-left" ng-if="gridOptions.enablePaging != 'false'"
-                 style="border-left:1px solid #ccc;margin:2px 5px;padding:3px 8px;">
+            <div class="pull-left paging-total-record" ng-if="gridOptions.enablePaging != 'false'">
                  <div ng-if="datasource.loading || loading">
                     <i class="fa fa-refresh fa-spin"></i> Loading Data...
                 </div>

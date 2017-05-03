@@ -41,12 +41,12 @@ body {
 }
 
 a {
-	color: #ccc;
+	color: #337ab7;
 	text-decoration: none;
 }
 
 a:hover {
-	color: #fff;
+	color: #2f96b4;
 	text-decoration: none;
 }
 
@@ -125,7 +125,7 @@ h1 {
 	border-radius: 0px;
 }
 
-.btn-dropdown-field, .dropdown-menu, .form-group-sm .form-control {
+.btn-dropdown-field, .dropdown-menu, .form-group-sm .form-control.form-group-sm .form-control {
 	border-radius: 0px;
 }
 

@@ -414,7 +414,7 @@ li:hover > .item-btn {
     .data-grid-paging {
         border:1px solid #ececeb;
         background:#fafafa;
-        padding:5px 5px 0px 5px;
+        padding:5px 5px 5px 5px !important;
         margin-bottom:5px;
     }
     .data-grid-paging .clearfix {
@@ -423,12 +423,23 @@ li:hover > .item-btn {
     
     .data-grid-pagination,
     .data-grid-pageinfo {
-        float:left !important;
+    }
+    
+    .data-grid-pageinfo.pull-right {
+        margin-top:-2px;
+        margin-bottom:4px;
     }
     
     [grid-view] [ng-include] {
         overflow-x:auto;
         max-width:100%;
+    }
+    
+    [grid-view] .data-grid-paging .paging-total-record { 
+        border:1px solid #ccc;
+        background:white;
+        padding:5px;
+        margin:0px 5px 4px 7px;
     }
     
     .tcols-container,
@@ -967,4 +978,24 @@ div[list-view].flat .angular-ui-tree-nodes > li:first-child {
 
 .switchery-label.label-default.switchery-label-small {
     color: #999;
+}
+
+
+.input-group.inline {
+    display: block;
+    float: left;
+    margin: 3px 4px 4px 0px;
+    padding: 0px 5px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-weight: normal;
+}
+
+label input[type=checkbox], label input[type=radio] {
+    margin: 5px 4px 2px 0px;
+    float: left;
+}
+label.input-group {
+    font-size: 13px;
+    font-weight: normal;
 }
