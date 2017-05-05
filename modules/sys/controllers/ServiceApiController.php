@@ -11,11 +11,10 @@ class ServiceApiController extends Controller {
     }
     
     public function actionInfo($name) {
-        
-        $svc = ServiceSetting::get('list.' . $name);
+        $svc = ServiceManager::getService($name);
         echo json_encode([
-            'lastrun' => $svc['lastRun'],
-            'instances'=> count(ServiceManager::getRunningInstance($name))
+            'lastrun' => date("Y-m-d H:i:s", $svc->lastRun),
+            'instances'=> count($svc->runningInstances)
         ]);
     }
     

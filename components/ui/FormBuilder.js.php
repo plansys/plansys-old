@@ -298,7 +298,6 @@ ob_start();
                         name: serviceName
                     }
                 }
-                console.log(params);
                 $http.get(Yii.app.createUrl('/sys/serviceApi/start', params)).success(function() {
                     this.watch(serviceName);
                 }.bind(this));
