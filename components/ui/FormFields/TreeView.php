@@ -27,7 +27,6 @@ class TreeView extends FormField {
     public function render() {
         $this->data = $this->evaluate($this->initFunc, true);
         $this->setDefaultOption('ng-model', "model['{$this->originalName}']", $this->options);
-
         return $this->renderInternal('template_render.php');
     }
 

@@ -31,8 +31,7 @@
                    name="<?= $this->renderName ?>" 
                    ng-value="value"
                    />
-            <div ng-if="file == null && mode != 'Download Only'
-                            && (allowOverwrite == 'Yes' || allowOverwrite == 'No' && file === null)" >
+            <div ng-if="file == null && (allowOverwrite == 'Yes' || allowOverwrite == 'No' && file === null)" >
 
                 <div ng-if="mode == 'Upload + Browse + Download' && choosing != 'Upload'" class="form-control" style="height:auto;padding-top:0px;padding-bottom:0px;">
                     <div style="margin:3px -6px;" class="btn btn-default btn-xs" ng-click="choose('Browse')">
@@ -56,7 +55,7 @@
                     </div>
 
                     <input id="<?= $this->renderID . "inf" ?>"
-                           ng-show="choosing == 'Upload' || mode != 'Upload + Browse + Download'" 
+                           ng-show="!loading && (choosing == 'Upload' || mode != 'Upload + Browse + Download')" 
                            type="file" <?= $this->expandAttributes($this->fieldOptions) ?> 
                            ngf-select="onFileSelect($files)" onclick="this.value = null"/>
                 </div>
@@ -70,6 +69,7 @@
                      height:auto;" 
                      ng-if="file !== null || loading">
                     <div ng-if="loading">
+                        <div>{{uploadingFile}}</div>
                         <div ng-hide="progress >= 0 && progress <= 100">
                             <i class="fa fa-refresh fa-spin" style="margin-right:6px;"></i><b>Loading...</b>
                         </div>
@@ -122,7 +122,7 @@
             <div ng-if="(file === null || loading) && mode == 'Download Only'" class="form-control"
                  style="padding:5px 5px 3px 0px;height:auto;box-shadow:none; border-color:#ececeb;">
                 <div style="font-size:12px;color:#999;text-align:center;">
-                    &mdash; {{ file == null ? 'EMPTY' : 'LOADING' }} &mdash;
+                    &mdash; {{ !loading ? 'EMPTY' : 'LOADING' }} &mdash;
                 </div>
             </div>
 

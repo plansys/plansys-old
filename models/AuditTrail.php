@@ -46,7 +46,7 @@ class AuditTrail extends ActiveRecord {
     }
 
     public static function track($msg, $type = "other", $info = "") {
-        if (!Yii::app()->user->isGuest) {
+        if (!Yii::app()->user->isGuest && Setting::get('app.auditTrail') != 'Disabled') {
             ## load info
             $pathInfo = AuditTrail::loadPageInfo($info);
             $uid      = Yii::app()->user->id;

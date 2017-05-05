@@ -658,6 +658,9 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                               }
                          }
                          addChild(res.data);
+                    })
+                    .catch(function(res) {
+                         doneExpanding(item);
                     });
           }
           else {

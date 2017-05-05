@@ -76,12 +76,21 @@ app.directive('uploadFile', function ($timeout, Upload, $http) {
                     ctrl.$render = function () {
                         if (typeof ctrl.$viewValue != "undefined") {
                             if (ctrl.$viewValue != null && ctrl.$viewValue != '') {
-                                $scope.value = ctrl.$viewValue;
-                                $scope.file = {
-                                    name: $scope.formatName($scope.value),
-                                    downloadPath: btoa($scope.value)
-                                };
-                                $scope.checkFile();
+                                if (typeof ctrl.$viewValue == "string") {
+                                    $scope.value = ctrl.$viewValue;
+                                    $scope.file = {
+                                        name: $scope.formatName($scope.value),
+                                        downloadPath: btoa($scope.value)
+                                    };
+                                    $scope.checkFile();
+                                } else if (ctrl.$viewValue instanceof File) {
+                                    $scope.upload(ctrl.$viewValue);
+                                } else if (typeof ctrl.$viewValue == "function") {
+                                    var res = ctrl.$viewValue();
+                                    if (res instanceof File) {
+                                        $scope.upload(res);
+                                    }
+                                }
                             }
                         }
                     };
@@ -130,60 +139,79 @@ app.directive('uploadFile', function ($timeout, Upload, $http) {
                     }
                     return name.split("/").pop().split("\\").pop();
                 }
-
+                
+                $scope.uploadObj = null;
+                $scope.isAborting = false;
+                $el.on('$destroy', function() {
+                    if ($scope.uploadObj && $scope.uploadObj.abort) {
+                        $scope.isAborting = true;
+                        $scope.uploadObj.abort();
+                    }
+                });
                 $scope.upload = function (file) {
                     $scope.errors = [];
                     $scope.loading = true;
                     $scope.progress = 0;
                     $scope.$parent.uploading.push($scope.name);
                     $scope.thumb = '';
-                    var uploadobj = {
-                        class: $scope.classAlias,
-                        name: $scope.name
-                    };
-                    $upload.upload({
-                        url: Yii.app.createUrl('/formfield/UploadFile.upload', uploadobj),
-                        file: file
-                    }).progress(function (evt) {
-                        $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
-                    }).success(function (data, html) {
-                        $scope.progress = 101;
-                        var ext = $scope.ext(data);
-
-                        if (data.success == 'Yes') {
-                            $scope.value = data.path;
-                            $scope.file = {
-                                'name': data.name,
-                                'downloadPath': data.downloadPath
-                            };
-
-                            $scope.icon($scope.file);
-
-                            if (['jpg', 'gif', 'png', 'jpeg'].indexOf(ext) >= 0) {
-                                $scope.getThumb();
+                    if (file.name) {
+                        $scope.uploadingFile = file.name;
+                    }
+                    
+                    $scope.uploadObj = $upload.upload({
+                            url: Yii.app.createUrl('/formfield/UploadFile.upload', {
+                                class: $scope.classAlias,
+                                name: $scope.name
+                            }),
+                            file: file
+                        }).progress(function (evt) {
+                            $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
+                        }).success(function (data, html) {
+                            $scope.uploadingFile = undefined;
+                            $scope.progress = 101;
+                            var ext = $scope.ext(data);
+    
+                            if (data.success == 'Yes') {
+                                $scope.value = data.path;
+                                $scope.file = {
+                                    'name': data.name,
+                                    'downloadPath': data.downloadPath
+                                };
+    
+                                $scope.icon($scope.file);
+    
+                                if (['jpg', 'gif', 'png', 'jpeg'].indexOf(ext) >= 0) {
+                                    $scope.getThumb();
+                                }
+                                ctrl.$setViewValue(data.path);
+                            } else {
+                                alert("Error Uploading File. File size too big!. \n");
                             }
-                            ctrl.$setViewValue(data.path);
-                        } else {
-                            alert("Error Uploading File. File size too big!. \n");
-                        }
-
-                        $scope.loading = false;
-                        $scope.progress = -1;
-                        
-                        var index = $scope.$parent.uploading.indexOf($scope.name);
-                        if (index > -1) {
-                            $scope.$parent.uploading.splice(index, 1);
-                        }
-                    }).error(function (data) {
-                        $scope.progress = -1;
-                        $scope.loading = false;
-                        var index = $scope.$parent.uploading.indexOf($scope.name);
-
-                        if (index > -1) {
-                            $scope.$parent.uploading.splice(index, 1);
-                        }
-                        alert("Upload Failed");
-                    });
+    
+                            $scope.loading = false;
+                            $scope.progress = -1;
+                            
+                            var index = $scope.$parent.uploading.indexOf($scope.name);
+                            if (index > -1) {
+                                $scope.$parent.uploading.splice(index, 1);
+                            }
+                        }).error(function (data) {
+                            $scope.uploadingFile = undefined;
+                            $scope.progress = -1;
+                            $scope.loading = false;
+                            var index = $scope.$parent.uploading.indexOf($scope.name);
+                            if (index > -1) {
+                                $scope.$parent.uploading.splice(index, 1);
+                            }
+                            if (!$scope.isAborting) {
+                                var reason = "";
+                                if (data.indexOf("413") >= 0) {
+                                    reason = ": File too large"; 
+                                } 
+                                
+                                alert("Upload Failed" + reason);
+                            }
+                        });
                 };
 
                 $scope.remove = function (file) {

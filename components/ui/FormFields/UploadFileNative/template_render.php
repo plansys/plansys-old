@@ -1,0 +1,1 @@
+<input upload-file-native <?= $this->expandAttributes($this->options) ?> />
