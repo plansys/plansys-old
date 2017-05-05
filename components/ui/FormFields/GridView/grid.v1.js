@@ -959,7 +959,7 @@ app.directive('gridView', function($timeout, $http) {
                             loop = false;
                             continue;
                         } else {
-                            row.hadir = checkedValue;
+                            row[colName] = checkedValue;
                         }
                         if (row.$type == 'a' && row.$aggr == false) {
                             continue;
