@@ -39,7 +39,9 @@ class WebSocketController {
      }
      
      public function __call($name, $params) {
-          
+          if (method_exists($this, '_' . $name)) {
+               return call_user_func_array([$this, '_' . $name], $params);
+          }
      } 
      
      function __construct($wsserver) {
@@ -52,18 +54,6 @@ class WebSocketController {
           }
           
           $this->wsserver->send($msg, $to);
-     }
-     
-     private function _set($key, $value, $client = []) {
-          $this->wsserver->set($key, json_encode($value), $client);
-     }
-     
-     private function get($key, $client = [], $decode = true) {
-          if ($decode) {
-               return json_decode($this->wsserver->get($key, $client), true);
-          } else {
-               return $this->wsserver->get($key, $client);
-          }
      }
      
      private function _getClients($client = []) {

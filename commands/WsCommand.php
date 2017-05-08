@@ -4,7 +4,7 @@ class WsCommand extends CConsoleCommand {
      private $server;
      
      public function beforeAction($action, $params) {
-          if ($action != 'path') {
+          if ($action != 'path' ) {
                $this->server = new WebSocketServer([
                     'tid' => $params[0],
                     'uid' => $params[1],
@@ -15,7 +15,7 @@ class WsCommand extends CConsoleCommand {
           return true;
      }
      public function afterAction($action, $params, $exitCode = 0) {
-          if ($action != 'path') {
+          if ($action != 'path' ) {
                $this->server->thrift->transport->close();
           }
           return true;
@@ -30,6 +30,24 @@ class WsCommand extends CConsoleCommand {
           ]);
      }
      
+     public function actionReceived($tid, $uid, $sid, $cid) {
+          $client = [
+               'ws' => $tid,
+               'uid' => $uid,
+               'sid' => $sid,
+               'cid' => $cid
+          ];
+          $fd = fopen("php://stdin", "r");
+          $content = "";
+          while (!feof($fd)){
+             $content .= fread($fd, 1024);
+          }
+          fclose($fd);
+          
+          $this->server->wsctrl->received($content, $client);
+     }
+     
+     
      public function actionDisconnected($tid, $uid, $sid, $cid, $reason){
           $this->server->wsctrl->disconnected([
                'ws' => $tid,
@@ -37,7 +55,6 @@ class WsCommand extends CConsoleCommand {
                'sid' => $sid,
                'cid' => $cid
           ], $reason);
-          // var_dump(["DISCONNECTED", $tid, $uid, $sid,$cid]);
      }
      
      public function actionPath() {

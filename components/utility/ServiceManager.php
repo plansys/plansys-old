@@ -238,6 +238,7 @@ class ServiceManager extends CComponent {
                
                # wait until we can connect to thrift server
                $connecting = true;
+               $i = 0;
                while ($connecting) {
                     $connecting = false;
                     try {
@@ -246,7 +247,12 @@ class ServiceManager extends CComponent {
                     } 
                     catch(Exception $e) {
                          $connecting = true;
-                         usleep(300 * 1000); # 1s sleep
+                         usleep(300 * 1000); # 300ms sleep
+                         $i++;
+                    }
+                    
+                    if ($i >= 10) { # giveup after 3s sleep
+                         break;
                     }
                }
                

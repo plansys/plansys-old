@@ -10,12 +10,11 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	 
-	"github.com/marcsauter/single"
+
 	"git.apache.org/thrift.git/lib/go/thrift"
 	"github.com/VividCortex/godaemon"
 	"github.com/cleversoap/go-cp"
-	"github.com/plansys/psthrift/file"
+	"github.com/marcsauter/single"
 	"github.com/plansys/psthrift/state"
 	"github.com/plansys/psthrift/svc"
 	"github.com/tidwall/buntdb"
@@ -60,6 +59,7 @@ func GetMD5Hash(text string) string {
 func getPath(path string) string {
 	dir, _ := godaemon.GetExecutablePath()
 	dirs := strings.Split(filepath.ToSlash(dir), "/")
+	log.Println("Root Path:", dirs)
 	rootdirs := dirs[0 : len(dirs)-5]
 	return filepath.FromSlash(strings.Join(append(rootdirs, path), "/"))
 }
@@ -80,12 +80,12 @@ func main() {
 	} else {
 		isrun = true
 	}
-	
+
 	if isrun {
-	    s := single.New(GetMD5Hash(getPath("")))
-	    s.Lock()
-	    defer s.Unlock()
-	    p.Run()
+		s := single.New(GetMD5Hash(getPath("")))
+		s.Lock()
+		defer s.Unlock()
+		p.Run()
 	}
 }
 
@@ -179,10 +179,6 @@ func runServer(transportFactory thrift.TTransportFactory, protocolFactory thrift
 	}()
 	stateProcessor := state.NewStateManagerProcessor(sm)
 	processor.RegisterProcessor("StateManager", stateProcessor)
-
-	// register file processor
-	fileProcessor := file.NewFileManagerProcessor(NewFileManagerHandler())
-	processor.RegisterProcessor("FileManager", fileProcessor)
 
 	// run thrift server
 	server := thrift.NewTSimpleServer4(processor, transport, transportFactory, protocolFactory)

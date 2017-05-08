@@ -88,7 +88,7 @@ class WebSocketServer extends CComponent {
      
      public function send($msg, $to) {
           $this->thrift->client->send(new \state\Client([
-               'tid' => @$to['ws'] . "",
+               'tid' => array_key_exists('ws', $to) ? $to['ws'] : $this->client->tid,
                'uid' => @$to['uid'] . "",
                'sid' => @$to['sid'] . "",
                'cid' => @$to['cid'] . "",
@@ -96,24 +96,20 @@ class WebSocketServer extends CComponent {
           ]), $msg);
      }
      
-     public function set($key, $val, $client = []) {
-          $this->thrift->client->setState($key, $val, new \state\Client([
-               'tid' => array_key_exists('ws', $client) ? $client['ws'] : $this->client->tid,
-               'uid' => @$client['uid'] . "",
-               'sid' => @$client['sid'] . "",
-               'cid' => @$client['cid'] . ""
-          ]));
+     public function getClients($client) {
+          try {
+               return $this->thrift->client->getClients(new \state\Client([
+                    'tid' => array_key_exists('ws', $client) ? $client['ws'] : $this->client->tid,
+                    'uid' => @$client['uid'] . "",
+                    'sid' => @$client['sid'] . "",
+                    'cid' => @$client['cid'] . "",
+                    'tag' => @$client['tag'] . ""
+               ]));
+          } catch(Exception $e) {
+               return [];
+          }
+          
      }
-     
-     public function get($key, $client = []) {
-          return $this->thrift->client->getState($key, new \state\Client([
-               'tid' => array_key_exists('ws', $client) ? $client['ws'] : $this->client->tid,
-               'uid' => @$client['uid'] . "",
-               'sid' => @$client['sid'] . "",
-               'cid' => @$client['cid'] . ""
-          ]));
-     }
-     
      public function setTag($client, $tag) {
           $this->thrift->client->setTag(new \state\Client([
                'tid' => array_key_exists('ws', $client) ? $client['ws'] : $this->client->tid,

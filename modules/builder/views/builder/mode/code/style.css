@@ -1,0 +1,106 @@
+.toolbar {
+     flex: 0 0 27px;
+     display: flex;
+     align-items: center;
+     border-bottom: 1px solid #ccc;
+}
+
+.toolbar .btn {
+     flex: 0 0 16px;
+     border-radius: 0px;
+}
+
+.toolbar .btn i {
+     font-size: 14px;
+}
+
+.toolbar> div {
+     margin-right: 3px;
+}
+
+.toolbar> div:first-child {
+     margin-left: 3px;
+}
+
+.toolbar .separator {
+     border-left: 1px solid #ececeb;
+     height: 26px;
+}
+
+.toolbar .line-number {
+     border: 1px solid #ccc;
+}
+
+.toolbar .line-number .input {
+     border: 0px;
+     font-size: 12px;
+     padding: 2px;
+     font-family: monospace;
+     width: 30px;
+     height: 20px;
+     line-height: 20px;
+     outline: none;
+     text-align: center;
+     width: 40px;
+     float: left;
+}
+
+.toolbar .line-number .input:focus {
+     background: #fafafa;
+}
+
+.toolbar .status {
+     font-size: 12px;
+     font-weight: bold;
+     color: #999;
+     cursor: pointer;
+}
+
+.ace_search {
+     border-radius: 0px !important;
+     border: 0px;
+     margin-top: -5px;
+     margin-right: 15px;
+     background: white;
+}
+
+.ace_search_form,
+.ace_replace_form {
+     width: 100%;
+     border-radius: 0px !important;
+}
+
+.ace_search button {
+     border-radius: 0px !important;
+     color: #333;
+     padding: 0px 4px;
+     text-align: center;
+}
+
+.ace_searchbtn:last-child,
+.ace_replacebtn:last-child {
+     float: right;
+     border-left: 1px solid #ddd;
+     width: 43px;
+}
+
+.ace_search_options {
+     text-align: left;
+     position: absolute;
+     top: 0px;
+     margin-left: -1px;
+}
+
+.ace_search_options .ace_button {
+     background: #fff;
+     border-radius: 0px !important;
+     display: block;
+     float: left;
+     border: 1px solid #999;
+     margin-top: 9px;
+     margin-right: 2px;
+}
+
+.ace_search_options .ace_button.checked {
+     border:1px solid blue;
+}

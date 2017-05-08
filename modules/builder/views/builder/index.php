@@ -1,8 +1,15 @@
 <?php Yii::import('application.components.utility.Asset'); ?>
 <?php Asset::registerJS($this->vpath . '.index'); ?>
-<div ng-controller="Index">
-    <div id="builder">
-        <div ui-layout ng-class="{'active': active}" options="{ flow : 'column',dividerSize:1,disableToggle:true}">
+<div ng-controller="Index" style="overflow:hidden" >
+    <?php
+        FormBuilder::renderUI('WebSocketClient', [
+            'name' => 'ws',
+            'ctrl' => 'builder/collab'
+        ]);
+    ?>
+    <div id="builder" layout-width="<?= $width; ?>" uid="<?= Yii::app()->user->id; ?>">
+        <div ui-layout ng-class="{'active': active}" 
+             options="{flow : 'column',dividerSize:0,disableToggle:true}">
             <div ui-layout-container 
                  size="{{layout.col1.width}}" 
                  min-size="{{layout.col1.minWidth}}"

@@ -7,13 +7,49 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
      $scope.active = null;
      $scope.activeIdx = -1;
      $scope.init = true;
-     // var store = window.localStorage;
 
      $timeout(function() {
-          $scope.builder = window.builder;
-          $scope.tree = window.tree;
-          $scope.code = window.code;
-     });
+          $scope.builder = window.builder; // bind builder so html can read it
+     })
+
+     window.builder.getAll('tabs.list.*', function(val) {
+          if ($scope.isArray(val)) {
+               $scope.list = val;
+
+               window.builder.get('tabs.active', function(val) {
+                    $scope.list.forEach(function(item) {
+                         if (item.id == val) {
+                              console.log(item);
+                              $scope.open(item);
+                         }
+                    });
+               });
+          }
+     }, 'tabs');
+     $scope.stripItem = function(it) {
+          var exclude = ['parent', 'code']
+          var item = {};
+          for (var i in it) {
+               if (exclude.indexOf(i) < 0 && i[0] != '$') {
+                    item[i] = it[i];
+               }
+          }
+          
+          if (it.code) {
+               item.code = {}
+               if (it.code.cursor) {
+                    item.code.cursor = it.code.cursor;
+               }
+               if (it.unsaved && it.code.content) {
+                    item.code.content = item.code.content;
+               }
+               if (it.code.status) {
+                    item.code.status = it.code.status;
+               }
+          }
+          
+          return item;
+     }
 
      $scope.drag = {
           idx: false,
@@ -53,6 +89,7 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                     $scope.list.splice(0, $scope.list.length);
                     $scope.active = null;
                     $scope.updateTabHash();
+                    $scope.removeClosedTab();
                }
           }, {
                label: "Close Other Tabs",
@@ -61,12 +98,13 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                     if ($scope.activeIdx >= $scope.cm.activeIdx) {
                          $scope.active = $scope.list[$scope.cm.activeIdx];
                     }
-                    
+
                     $scope.list.splice(0, $scope.cm.activeIdx);
                     if ($scope.activeIdx < $scope.cm.activeIdx) {
                          $scope.active = $scope.list[0];
                     }
                     $scope.updateTabHash();
+                    $scope.removeClosedTab();
                }
           }, {
                label: "Close Tabs to the Left",
@@ -76,6 +114,7 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                          $scope.active = $scope.list[0];
                     }
                     $scope.updateTabHash();
+                    $scope.removeClosedTab();
                }
           }, {
                label: "Close Tabs to the Right",
@@ -85,6 +124,7 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                          $scope.active = $scope.list[$scope.cm.activeIdx];
                     }
                     $scope.updateTabHash();
+                    $scope.removeClosedTab();
                }
           }]
      }
@@ -104,9 +144,7 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           return false;
      });
      $scope.save = function() {
-          if ($scope.active.mode == 'code') {
-               window.code.save();
-          }
+          window.mode[$scope.active.mode].save();
      }
      $scope.getUrl = function(item) {
           if (!item) return "";
@@ -173,6 +211,17 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           }
      }
 
+     $scope.removeClosedTab = function() {
+          $timeout(function() {
+               var url = Yii.app.createUrl('/builder/builder/removeClosedTab');
+               var list = [];
+               $scope.list.forEach(function(item) {
+                    list.push(item.id);
+               })
+               $http.post(url, list);
+          });
+     }
+
      $scope.showContextMenu = function(item, idx, x, y) {
           $scope.cm.active = item;
           $scope.cm.activeIdx = idx;
@@ -197,21 +246,29 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
      }
 
      $scope.selectInTree = function(item) {
-          $scope.tree.expandToItem(item, function() {
-               $scope.tree.select(item);
+          window.tree.expandToItem(item, function() {
+               window.tree.select(item);
                $timeout(function() {
-                   if ($(window).width() < 768) {
-                       $scope.active = null;
-                   }
+                    if ($(window).width() < 768) {
+                         $scope.active = null;
+                    }
                });
           });
      }
+
      $scope.open = function(item) {
           if (!item) return false;
 
-          $scope.active = item;
           var idx = $scope.findTab(item);
+          if (!!$scope.list[idx]) {
+               $scope.active = $scope.list[idx];
+          }
+          else {
+               $scope.active = item;
+          }
+
           if (idx === false) {
+               $scope.active.loading = true;
                $scope.activeIdx = $scope.list.length;
                $scope.list.push(item);
 
@@ -221,58 +278,34 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                     if (cleanItem.code) {
                          delete cleanItem.code;
                     }
-                    // store['tabs-' + item.d] = JSON.stringify(cleanItem);
                     $scope.updateTabHash();
                });
           }
           else {
                $scope.activeIdx = idx;
           }
-          // store['tabs-active'] = $scope.activeIdx;
 
-          // by default open code editor
-          if (!item.mode || item.mode == 'code') {
-               item.mode = 'code';
-               if (!item.code || !item.code.session) {
-                    item.loading = true;
-                    window.code.open(null);
-                    $http({
-                         url: Yii.app.createUrl('/builder/code&f=' + item.d),
-                         method: 'GET',
-                         transformResponse: undefined
-                    }).then(function(res) {
-                         if (!!item.code && item.code.content && !$scope.init) {
-                              var newcontent = item.code.content;
-                         }
-                         item.code = {
-                              content: res.data
-                         };
-                         item.loading = false;
-                         if ($scope.active.id == item.id) {
-                              if (newcontent) { // if code on server is different on our local change
-                                   window.code.open(item, newcontent);
-                              }
-                              else {
-                                   window.code.open(item);
-                              }
-                         }
-                    });
-               }
-               else {
-                    window.code.open(item);
+          if (!$scope.active.mode) {
+               $scope.active.mode = 'code';
+               if (['jpg', 'png', 'gif', 'jpeg'].indexOf($scope.active.ext.toLowerCase()) >= 0) {
+                    $scope.active.mode = 'image';
                }
           }
+          window.mode[$scope.active.mode].open($scope.active);
 
+          var tab = $scope.stripItem($scope.active);
+          tab.loading = false;
+          if (idx) {
+               tab.idx = idx;
+          }
+          console.log(tab);
+          window.builder.set('tabs.list.' + tab.id, tab); // reset tab.idx on open
+          window.builder.set('tabs.active', tab.id);
      }
      $scope.close = function(item, e) {
           if (e) {
                e.stopPropagation();
                e.preventDefault();
-          }
-          if (item.unsaved) {
-               if (!confirm("This file has not been saved!\nAre you sure want to close this file ?")) {
-                    return true;
-               }
           }
 
           $scope.findTab(item, function(idx) {
@@ -280,6 +313,7 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                $scope.updateTabHash();
 
                if ($scope.active && $scope.active.id == item.id) {
+                    window.builder.del('tabs.active');
                     if ($scope.list[idx]) {
                          $scope.open($scope.list[idx]);
                     }
@@ -288,11 +322,12 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                     }
                     else {
                          $scope.active = null;
-                         $scope.code.close();
+                         window.mode.code.close();
                     }
                }
           });
 
+          $scope.removeClosedTab();
      }
 
      $scope.findTab = function(item, success) {
@@ -307,33 +342,26 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           }
           return false;
      }
+
+     var uthTimer = false;
      $scope.updateTabHash = function() {
           var hash = {};
+          var hidx = {}
           $scope.list.forEach(function(item, idx) {
                hash[idx] = item.d;
+               hidx[item.id] = idx;
           });
-          // store['tabs-hash'] = JSON.stringify(hash);
+
+          if (uthTimer) {
+               $timeout.cancel(uthTimer);
+          }
+
+          uthTimer = $timeout(function() {
+               var url = Yii.app.createUrl('/builder/builder/updateTabIndex');
+               $http.post(url, hidx);
+               uthTimer = false;
+          }, 400);
      }
-
-     // $timeout(function() { // first load 
-     //      var store = window.localStorage;
-     //      if (store['tabs-hash']) {
-     //           var tabs = JSON.parse(store['tabs-hash']);
-     //           for (var i in tabs) {
-     //                var item = JSON.parse(store['tabs-' + tabs[i]]);
-
-     //                if (store['tabs|code-' + tabs[i]]) {
-     //                     item.unsaved = true;
-     //                     item.code = JSON.parse(store['tabs|code-' + tabs[i]]);
-     //                }
-     //                if (store['tabs-' + tabs[i]]) {
-     //                     $scope.list.push(item);
-     //                }
-     //           }
-
-     //           $scope.open($scope.list[store['tabs-active']]);
-     //      }
-     // });
 });
 
 app.directive('selectOnClick', ['$window', function($window) {

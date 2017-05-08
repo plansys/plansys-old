@@ -5,10 +5,101 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
      $scope.selected = null;
      $scope.tree = [];
 
-     $timeout(function() {
-          $scope.tabs = window.tabs;
-          $scope.builder = window.builder;
+     $scope.isUnsaved = function(item) {
+          var idx = window.tabs.findTab(item);
+          if (idx !== false) {
+               return window.tabs.list[idx].unsaved;
+          } 
+     }
+
+     $scope.treebar = {
+          list: JSON.parse($("#tree-bar-data").text()),
+          active: $('.tree-container').attr('treebar-active') || 'file',
+          tree: {},
+          root: {},
+          switch: function(mode, callback) {
+               $scope.treebar.active = mode;
+               $scope.tree = $scope.treebar.tree[$scope.treebar.active];
+               $scope.resetSearch();
+
+               window.builder.set('tree.treebar.active', mode);
+               if ($scope.treebar.tree[$scope.treebar.active].length == 0) {
+                    $http.get(Yii.app.createUrl('/builder/tree/ls&mode=' + $scope.treebar.active)).then(function(res) {
+                         $scope.treebar.tree[$scope.treebar.active] = res.data;
+                         $scope.treebar.root[$scope.treebar.active] = {
+                              childs: $scope.tree,
+                              t: 'dir'
+                         }
+                         $scope.treebar.tree[$scope.treebar.active].forEach(function(item, key) {
+                              if (!$scope.treebar.root[$scope.treebar.active].p) {
+                                   $scope.treebar.root[$scope.treebar.active].p = item.p.substr(0, item.p.length - item.n.length - 1);
+                              }
+                              item.idx = key;
+                              if (!item.parent) {
+                                   item.parent = {};
+                              }
+                              item.parent[$scope.treebar.active] = $scope.treebar.root[$scope.treebar.active];
+                         });
+                         $scope.tree = $scope.treebar.tree[$scope.treebar.active];
+
+                         if (typeof callback == "function") callback();
+                         $timeout(function() {
+                              var initExpand = function(tree, tdir) {
+                                   var shouldExpand = function(item) {
+                                        if (item.parent[$scope.treebar.active] == $scope.treebar.root[$scope.treebar.active]) {
+                                             return (tdir[item.d]);
+                                        }
+                                        else if (item.parent[$scope.treebar.active].d) {
+                                             if (!tdir) return false;
+                                             return tdir[item.d.substr(item.parent[$scope.treebar.active].d.length + 1)];
+                                        }
+                                   }
+                                   tree.forEach(function(item) {
+                                        if (item.t == "dir") {
+                                             if (shouldExpand(item)) {
+                                                  $scope.expand(item, function() {
+                                                       if (item.childs) {
+                                                            var d = item.d;
+
+                                                            if (!item.parent[$scope.treebar.active]) {
+                                                                 console.log(item, $scope.treebar.active);
+                                                                 return;
+                                                            }
+                                                            if (item.parent[$scope.treebar.active].d) {
+                                                                 d = item.d.substr(item.parent[$scope.treebar.active].d.length + 1);
+                                                            }
+                                                            initExpand(item.childs, tdir[d]);
+                                                       }
+                                                  });
+                                             }
+                                        }
+                                   })
+                              }
+                              initExpand($scope.tree, $scope.expanded[$scope.treebar.active]);
+                         })
+                    });
+               } else {
+                    if (typeof callback == "function") callback();
+               }
+          }
+     };
+     $scope.treebar.list.forEach(function(item) {
+          $scope.treebar.tree[item] = [];
+          $scope.treebar.root[item] = {};
      });
+     $timeout(function() {
+          $scope.treebar.switch($scope.treebar.active);
+     });
+
+     if ($("#tree-expand-data").text().trim() != "") {
+          $scope.expanded = JSON.parse($("#tree-expand-data").text());
+     }
+     if (!$scope.expanded) {
+          $scope.expanded = {};
+          $scope.treebar.list.forEach(function(item) {
+               $scope.expanded[item] = {};
+          })
+     }
 
      $scope.search = {
           loading: false,
@@ -20,6 +111,11 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
           detail: {
                show: false,
                path: '/app'
+          },
+          showDetail: function() {
+               if ($scope.treebar.active == 'file') {
+                    $scope.search.detail.show = true
+               }
           },
           tree: [],
           rawtree: []
@@ -51,79 +147,6 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                }
           },
           menu: [{
-               icon: "fa fa-fw fa-file",
-               visible: function(item) {
-                    var specialDirs = ['websockets', 'forms', 'modules', 'commands', 'controllers', 'model'];
-                    var name = item.n;
-                    if (item.t != 'dir') {
-                         name = item.parent.n;
-                    }
-
-                    if (specialDirs.indexOf(name) >= 0) {
-                         return true;
-                    }
-                    return false;
-               },
-               label: function(item) {
-                    var name = item.n;
-                    if (item.t != 'dir') {
-                         name = item.parent.n;
-                    }
-                    switch (name) {
-                         case "websockets":
-                              return "New Ws Controller";
-                         case "controllers":
-                              return "New Controller";
-                         case "commands":
-                              return "New Service Command";
-                         case "forms":
-                              return "New Form";
-                         case "models":
-                              return "New Model";
-                    }
-               },
-               click: function(item, menu) {
-                    $timeout(function() {
-                         var name = prompt(menu.label(item) + " name:");
-                         if (!name) return;
-
-                         $http.get(Yii.app.createUrl('/builder/tree/touch', {
-                              path: item.p,
-                              name: name,
-                              mode: item.n
-                         })).then(function(res) {
-                              if (item.childs) {
-                                   item.childs.splice(0, item.childs.length);
-                              }
-                              $scope.expand(item, function() {
-                                   for (var i in item.childs) {
-                                        if (item.childs[i].p == res.data) {
-                                             $timeout(function() {
-                                                  $scope.select(item.childs[i]);
-                                                  $scope.open(item.childs[i]);
-                                             });
-                                             break;
-                                        }
-                                   }
-                              });
-                         }).catch(function() {
-                              item.loading = false;
-                              alert("Failed to create file");
-                         });
-                    });
-               }
-          }, {
-               hr: true,
-               visible: function(item) {
-                    if (item.t == 'dir') {
-                         var specialDirs = ['websockets', 'forms', 'modules', 'commands', 'controllers', 'model'];
-                         if (specialDirs.indexOf(item.n) >= 0) {
-                              return true;
-                         }
-                    }
-                    return false;
-               },
-          }, {
                icon: "fa fa-fw fa-file-text-o",
                label: "New File",
                click: function(item) {
@@ -196,6 +219,15 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
           }, {
                hr: true,
           }, {
+               label: '<i class="fa fa-search pull-right" style="color:#999"></i> Search Here',
+               visible: function(item) {
+                    return item.t == 'dir' && $scope.treebar.active == 'file';
+               },
+               click: function(item) {
+                    $scope.search.detail.path = '/' + item.d;
+                    $(".search-text").focus();
+               }
+          }, {
                label: "Refresh",
                visible: function(item) {
                     return item.t == 'dir';
@@ -203,6 +235,28 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                click: function(item) {
                     $scope.refreshDir(item);
                }
+          }, {
+               label: function(item) {
+                    return "Copy " ;
+               },
+               click: function(item) {
+                    $scope.copiedItem = item;
+               }
+          }, {
+               label: function(item) {
+                    var itn = $scope.copiedItem;
+                    var dot = itn.n.length > 13 ? "..." : "";
+                    return "Paste <b class='paste-item' tooltip='" + itn.n + "'>" + itn.n.substr(0, 13) + dot + "</b>";
+               },
+               visible: function(item) {
+                    return !!$scope.copiedItem && item.t == 'dir';
+               },
+               click: function(item) {
+                    alert("Maaf, masi belum bisa kopas...");
+                    $scope.copiedItem = null;
+               }
+          }, {
+               hr: true,
           }, {
                label: "Rename",
                click: function(item) {
@@ -227,6 +281,10 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                }
           }, {
                label: "Delete",
+               visible: function(item) {
+                    if (typeof item.removable != "undefined" && !item.removable) return false;
+                    return true;
+               },
                click: function(item) {
                     if (confirm("Are you sure? this cannot be undone!")) {
                          item.loading = true;
@@ -235,9 +293,9 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                          $http.get(Yii.app.createUrl('/builder/tree/rmrf', {
                               path: item.p
                          })).then(function(res) {
-                              $scope.tabs.close(item);
-                              item.parent.childs.splice(item.idx, 1)
-                              item.parent.childs.forEach(function(i, key) {
+                              window.tabs.close(item);
+                              item.parent[$scope.treebar.active].childs.splice(item.idx, 1)
+                              item.parent[$scope.treebar.active].childs.forEach(function(i, key) {
                                    i.idx = key;
                               })
                          }).catch(function() {
@@ -314,7 +372,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                });
           }
      });
-     $(window).mouseup(function(e) {
+     $scope.resetDrag = function(e) {
           if ($scope.drag.el) {
                $scope.drag.el.remove();
                $scope.drag.el = false;
@@ -322,7 +380,13 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                $scope.drag.inititem = null;
           }
           $(".tree-item.draghover").removeClass('draghover');
-     });
+     };
+     $(window).keyup(function(e) {
+          if (e.keyCode == 27) {
+               $scope.resetDrag();
+          }
+     })
+     $(window).mouseup($scope.resetDrag);
      $scope.itemMouseDown = function(e, item) {
           e.preventDefault();
           e.stopPropagation();
@@ -394,7 +458,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                var from = $scope.drag.item;
                var to = $scope.drag.lastHoverItem;
                if (from && to) {
-                    if (to != $scope.root) {
+                    if (to != $scope.treebar.root[$scope.treebar.active]) {
                          if (to.t != 'dir') {
                               to = to.parent;
                          }
@@ -412,14 +476,14 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                               to: to.p + '/' + from.n
                          })).then(function(res) {
                               $scope.drag.lastHoverItem = false;
-                              from.parent.childs.forEach(function(i, key) {
+                              from.parent[$scope.treebar.active].childs.forEach(function(i, key) {
                                    i.idx = key;
                               })
-                              from.parent.childs.splice(from.idx, 1)
-                              from.parent.childs.forEach(function(i, key) {
+                              from.parent[$scope.treebar.active].childs.splice(from.idx, 1)
+                              from.parent[$scope.treebar.active].childs.forEach(function(i, key) {
                                    i.idx = key;
                               })
-                              from.parent = to;
+                              from.parent[$scope.treebar.active] = to;
                               from.p = to.p + '/' + from.n;
                               from.d = res.data;
 
@@ -458,7 +522,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                               alert("Failed to move " + from.t);
                          });
                     }
-                    if (from.p != to.p + '/' + from.n) {
+                    if (from && to && from.p != to.p + '/' + from.n) {
                          mv();
                     }
                     else {
@@ -472,7 +536,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                return;
           }
 
-          if (item == $scope.root) {
+          if (item == $scope.treebar.root[$scope.treebar.active]) {
                return;
           }
 
@@ -498,23 +562,8 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                }
           }
      }
-     $http.get(Yii.app.createUrl('/builder/tree/ls')).then(function(res) {
-          $scope.tree = res.data;
-          $scope.root = {
-               childs: $scope.tree,
-               t: 'dir'
-          }
-          $scope.tree.forEach(function(item, key) {
-               if (!$scope.root.p) {
-                    $scope.root.p = item.p.substr(0, item.p.length - item.n.length - 1);
-               }
-               item.idx = key;
-               item.parent = $scope.root;
-          });
-     });
      $scope.detailPathChanged = function(e) {
           if (e.keyCode == 13) {
-               $scope.search.detail.show = false;
                $scope.doSearch();
           }
      }
@@ -557,14 +606,12 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
           }
           $scope.search.text = '';
           $scope.search.loading = false;
-          $(".search-file input").focus();
-     }
-     $scope.doSearch = function() {
-          $scope.search.loading = true;
-
           if ($scope.search.detail.show) {
                $scope.search.detail.show = false;
           }
+     }
+     $scope.doSearch = function() {
+          $scope.search.loading = true;
 
           if ($scope.search.text) {
                if ($scope.search.canceler) {
@@ -573,7 +620,8 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                $scope.search.canceler = $q.defer();
                $http.get(Yii.app.createUrl('/builder/tree/search', {
                     n: $scope.search.text,
-                    dir: $scope.search.detail.path
+                    dir: $scope.search.detail.path,
+                    mode: $scope.treebar.active
                }), {
                     timeout: $scope.search.canceler
                }).then(function(res) {
@@ -609,12 +657,27 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
           }
 
           function doneExpanding(item) {
+               var tdirs = $scope.getPathFromItem(item);
+               var tdir = $scope.expanded[$scope.treebar.active];
+               tdirs.forEach(function(dir) {
+                    if (!tdir.$length) {
+                         tdir.$length = 0;
+                    }
+
+                    if (!tdir[dir]) {
+                         tdir[dir] = {}
+                         tdir.$length++;
+                    }
+
+                    tdir = tdir[dir];
+               });
+
                if (typeof item.expanding != "undefined") {
                     if ($scope.isArray(item.expanding) && item.expanding.length == 0) {
                          delete item.expanding;
                     }
                }
-               
+
                if (!callback) {
                     if (!item.expanding) {
                          expandFirstChild(item);
@@ -623,16 +686,16 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                else {
                     callback(item);
                }
-
                if (item.expanding) {
                     $scope.expand(item, item.expanding.shift());
                }
+               window.builder.set('tree.expand', $scope.expanded);
           }
 
           if (!item.childs || item.childs.length == 0) {
                item.loading = true;
 
-               $http.get(Yii.app.createUrl('/builder/tree/ls&dir=' + item.d))
+               $http.get(Yii.app.createUrl('/builder/tree/ls&dir=' + item.d + '&mode=' + $scope.treebar.active))
                     .then(function(res) {
                          var incrementPage = 5;
 
@@ -642,7 +705,10 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                                    if (!item.childs) {
                                         item.childs = [];
                                    }
-                                   i.parent = item;
+                                   if (!i.parent) {
+                                        i.parent = {};
+                                   }
+                                   i.parent[$scope.treebar.active] = item;
                                    i.idx = key;
                                    item.childs.push(i);
                               });
@@ -660,6 +726,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                          addChild(res.data);
                     })
                     .catch(function(res) {
+                         item.loading = false;
                          doneExpanding(item);
                     });
           }
@@ -667,12 +734,133 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                doneExpanding(item);
           }
      }
-     $scope.expandToItem = function(item, callback) {
-          var path = item.d.split('/');
 
-          function expandSingle(tree, name, callback) {
-               tree.forEach(function(i) {
-                    if (i.t == 'dir' && i.n == name) {
+     $scope.getPathFromItem = function(item) {
+          function match(str, rule) {
+               return new RegExp("^" + rule.split("*").join(".*") + "$").test(str);
+          }
+          switch ($scope.treebar.active) {
+               case "file":
+                    return item.d.split("/");
+                    break;
+               case "form":
+                    var prefix = [
+                         "app/forms/*",
+                         "plansys/forms/*",
+                         "app/modules/*/forms",
+                         "app/modules/*/forms",
+                         "app/modules/*/forms/*",
+                         "app/modules/*/forms/*",
+                    ]
+                    var ismatch = false;
+                    for (p in prefix) {
+                         if (match(item.d, prefix[p])) {
+                              ismatch = prefix[p];
+                              break;
+                         }
+                    }
+                    if (ismatch) {
+                         var itemd = item.d.split("/");
+                         if (ismatch.split("*").length >= 2) {
+                              var root = itemd.splice(0, 4).join("/");
+                         }
+                         else {
+                              var root = itemd.splice(0, 2).join("/");
+                         }
+                         itemd.unshift(root);
+                         return itemd;
+                    }
+                    break;
+               case "model":
+                    var prefix = [
+                         "app/models",
+                         "plansys/models",
+                         "app/models/*",
+                         "plansys/models/*",
+                    ]
+                    var ismatch = false;
+                    for (p in prefix) {
+                         if (match(item.d, prefix[p])) {
+                              ismatch = prefix[p];
+                              break;
+                         }
+                    }
+                    if (ismatch) {
+                         var itemd = item.d.split("/");
+                         var root = itemd.splice(0, 2).join("/");
+                         itemd.unshift(root);
+                         return itemd;
+                    }
+                    break;
+               case "controller":
+                    var prefix = [
+                         "app/controllers",
+                         "plansys/controllers",
+                         "app/modules/*/controllers",
+                         "plansys/modules/*/controllers",
+                         "app/modules/*/controllers/*",
+                         "plansys/modules/*/controllers/*",
+                    ]
+                    var ismatch = false;
+                    for (p in prefix) {
+                         if (match(item.d, prefix[p])) {
+                              ismatch = prefix[p];
+                              break;
+                         }
+                    }
+                    if (ismatch) {
+                         var itemd = item.d.split("/");
+                         
+                         if (ismatch.split("*").length >= 2) {
+                              var root = itemd.splice(0, 4).join("/");
+                         }
+                         else {
+                              var root = itemd.splice(0, 2).join("/");
+                         }
+                         itemd.unshift(root);
+                         return itemd;
+                    }
+                    break;
+               case "module":
+                    var prefix = [
+                         "app/modules/*",
+                         "plansys/modules/*",
+                    ]
+                    var ismatch = false;
+                    for (p in prefix) {
+                         if (match(item.d, prefix[p])) {
+                              ismatch = prefix[p];
+                              break;
+                         }
+                    }
+                    if (ismatch) {
+                         var itemd = item.d.split("/");
+                         var root = itemd.splice(0, 2).join("/");
+                         itemd.unshift(root);
+                         return itemd;
+                    }
+                    break;
+          }
+          return [];
+     }
+
+     $scope.expandToItem = function(item, callback) {
+          var path = $scope.getPathFromItem(item);
+          var ocb = callback;
+          
+          function expandSingle(tree, dir, callback) {
+               if (!$scope.isArray(tree)) {
+                    return;
+               }     
+               var found = false;
+               for (var tidx in tree) { 
+                    var i = tree[tidx];
+                    var d = dir;
+                    if (i.parent[$scope.treebar.active] && i.parent[$scope.treebar.active].d) {
+                         d = i.parent[$scope.treebar.active].d + '/' + dir
+                    }
+                    if (i.t == 'dir' && i.d == d) {
+                         found = true;
                          if (i.childs) {
                               i.expand = true;
                               callback(i);
@@ -682,21 +870,32 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                          }
                     }
                     else if (i.id == item.id) {
+                         found = true;
                          callback(i);
                     }
-               });
+               }
+               
+               if (!found && tree == $scope.tree && $scope.treebar.active != 'file') {
+                    console.log(path);
+                    $scope.treebar.switch('file', function() {
+                         $scope.expandToItem(item, ocb);
+                    });
+               }
           }
           var tree = $scope.tree;
           var idx = 0;
+          var rootItem = item;
 
           function recursiveExpand() {
                expandSingle(tree, path[idx], function(item) {
                     tree = item.childs;
                     idx++;
-                    if (idx < path.length - 1) {
-                         recursiveExpand();
+
+                    if (idx <= path.length - 1) {
+                         recursiveExpand()
                     }
                     else {
+                         $scope.selected = rootItem;
                          for (var i = 0; i < 5; i++) {
                               $timeout(function() {
                                    $(".tree .active")[0].scrollIntoView();
@@ -711,7 +910,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
           }
 
           if ($(".tree").length == 0) {
-               $scope.builder.hideTree = false;
+               window.builder.hideTree = false;
 
                function expandWhenReady() {
                     if ($(".tree").length == 0) {
@@ -734,6 +933,36 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
      $scope.shrink = function(item) {
           item.loading = false;
           item.expand = false;
+
+          var tparent = item;
+          var dirs = $scope.getPathFromItem(item);
+          var tdir = $scope.expanded[$scope.treebar.active];
+          while (dirs.length > 0) {
+               for (var i in dirs) {
+                    var dir = dirs[i];
+                    if (i == dirs.length - 1) {
+                         tdir.$length--;
+                         delete tdir[dir];
+                         dirs.pop();
+                         break;
+                    }
+
+                    if (!!tdir[dir]) {
+                         tdir = tdir[dir];
+                    }
+                    else {
+                         var len = 0;
+                         for (var idx in tdir) {
+                              len++;
+                         }
+                         tdir.$length = len;
+
+                         dirs = dirs.splice(0, i + 1);
+                         break;
+                    }
+               };
+          }
+          window.builder.set('tree.expand', $scope.expanded);
      }
      $scope.select = function(item) {
           $scope.selected = item;
@@ -747,7 +976,29 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                $scope.arrowToggle(item);
           }
           else {
-               window.tabs.open(item);
+               function getReadableSize(fileSizeInBytes) {
+                    var i = -1;
+                    var byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
+                    do {
+                         fileSizeInBytes = fileSizeInBytes / 1024;
+                         i++;
+                    } while (fileSizeInBytes > 1024);
+
+                    return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
+               };
+               
+               $http.get(Yii.app.createUrl('/builder/tree/getsize&dir=' + item.d))
+                    .then(function(res) {
+                         var shouldOpen = true;
+                         var size = parseInt(res.data);
+                         item.size = size / 1024;
+                         if (item.size > 200) {
+                              shouldOpen = confirm("File size is " + getReadableSize(size) + ", continue opening ?");
+                         }
+                         if (shouldOpen) {
+                              window.tabs.open(item);
+                         }
+                    });
           }
      }
      $scope.arrowToggle = function(item) {

@@ -94,7 +94,6 @@ app.directive('webSocketState', function($timeout, $http) {
                     $scope.initWs();
 
                     $scope.sendQueue = [];
-
                     $scope.send = function(params, fn) {
                          if ($scope.config.cid) {
                               $scope.sendQueue.push({
@@ -130,10 +129,11 @@ app.directive('webSocketState', function($timeout, $http) {
                     };
                     
                     $scope.executeSend = function(params, fn) {
-                         $http.post(Yii.app.createUrl('/sys/ws/send', {
-                              tid: $scope.config.tid,
-                              cid: $scope.config.cid
-                         }), params)
+                         $scope.ws.send(params);
+                         // $http.post(Yii.app.createUrl('/sys/ws/send', {
+                         //      tid: $scope.config.tid,
+                         //      cid: $scope.config.cid
+                         // }), params)
                     }
 
                     $scope.setTag = function(tag) {

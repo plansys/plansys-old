@@ -3,33 +3,41 @@
 <script type="text/ng-template" id="treeItem"> 
      <?php include("tree-item.php"); ?>
 </script>
-<div ng-controller="Tree" class="tree-container" mode="<?= Setting::get('app.mode'); ?>">
-     <div class="search-file">
-          <input type="search" class="search-text" ng-delay="300"
-                 ng-change="doSearch()" placeholder="Files" ng-model="search.text">
+<script type="text" id="tree-expand-data">
+     <?php echo $tree['expand']; ?>
+</script>
+<script type="text" id="tree-bar-data">
+     <?php echo json_encode($this->treebar); ?>
+</script>
+<div ng-controller="Tree" class="tree-container" 
+     treebar-active="<?= $tree['treebar']['active'];?>" 
+     mode="<?= Setting::get('app.mode'); ?>">
+     <div class="treebar">
+          <div ng-repeat="tmode in treebar.list"
+               ng-class="{active: tmode == treebar.active}"
+               ng-click="treebar.switch(tmode)"
+               class="tbtn" 
+               tooltip="{{tmode | ucfirst}}s" tooltip-placement="bottom">
+               <img ng-src="<?= $this->treeUri; ?>/treebar/{{tmode}}.png" />
+          </div>
+          <div class="overflow">
+               <span><div class="fixed"></div></span>
+          </div>
+     </div>
+     <div class="treesearch" ng-class="{detail:search.detail.show}">
           <div class="icon" ng-click="resetSearch()">
                <i ng-if="!search.loading && !search.text" class="fa fa-search"></i>
                <b ng-if="!search.loading && !!search.text">&times;</b>
                <i ng-if="search.loading" class="fa fa-refresh fa-spin"></i>
           </div>
-          <div class="arrow" ng-class="{active: search.detail.show}"
-               ng-click="search.detail.show = !search.detail.show">
-               <i class="fa fa-chevron-down" ng-if="!search.detail.show"></i>
-               <i class="fa fa-chevron-up" ng-if="search.detail.show"></i>
-          </div>
-          <div class="search-file-detail" ng-if="search.detail.show">
-               <div class="search-file-detail-head">TREE OPTIONS</div>
-               <div class="search-file-detail-row">
-                    Search&nbsp;Path
-                    <input type="text" style="margin-left:5px"
-                           ng-keydown="detailPathChanged($event)" ng-model="search.detail.path">
-               </div>
-               <div class="search-file-detail-row"> 
-                    <div ng-click="search.detail.show = false; doSearch()" 
-                         class="btn btn-xs btn-default btn-block">
-                         OK
-                    </div>
-                </div>
+          <input type="search" class="search-text" ng-delay="300"
+                 ng-change="doSearch()" 
+                 ng-model="search.text"
+                 ng-focus="search.showDetail()"
+                 placeholder="Search {{ treebar.active | ucfirst}} Name...">
+          <div ng-if="search.detail.show">
+               <div class="label label-default search-location-icon">IN PATH:</div>
+               <div class="search-location"> {{ search.detail.path }} </div>
           </div>
      </div>
      
@@ -44,7 +52,7 @@
                          oncontextmenu="return false"
                          ng-click="cm.click($event, menu.click, menu)">
                           <i class="{{menu.icon}}"></i>
-                           {{ cm.getLabel(menu) }}
+                           <span ng-bind-html="cm.getLabel(menu)"></span>
                       </a>
                   </li>
                   <hr ng-if="!!menu.hr && (!menu.visible || (menu.visible && menu.visible(cm.active)))" ng-repeat-end/>
@@ -55,13 +63,16 @@
           oncontextmenu="return false"
           ng-mousedown="cm.active = null;cm.activeIdx = -1;"></div>
      
-     <div ng-if="!search.text" class="tree" ng-class="{hovered: !!drag.lastHoverItem && drag.lastHoverItem == root}" 
+     <?php foreach ($this->treebar as $item): ?>
+     <div ng-show="!search.text && treebar.active == '<?= $item; ?>'" class="tree" 
+          ng-class="{hovered: !!drag.lastHoverItem && drag.lastHoverItem == treebar.root.file}" 
           ng-mouseup="itemMouseUp($event, root)">
-          <div ng-repeat="item in tree" 
+          <div ng-repeat="item in treebar.tree.<?= $item; ?>" 
                ng-include="'treeItem'" 
                ng-if="showItem(item)"></div>
           <br/><br/><br/>
      </div>
+     <?php endforeach; ?>
      <div ng-if="search.text" class="tree search">
           <div ng-repeat="item in search.tree" 
                ng-include="'treeItem'"></div>

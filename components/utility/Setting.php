@@ -191,7 +191,7 @@ class Setting {
 
         array_pop($basePath);
         Setting::$rootPath = implode(DIRECTORY_SEPARATOR, $basePath);
-
+        
         return Setting::$basePath;
     }
 
@@ -340,6 +340,7 @@ class Setting {
         Yii::setPathOfAlias('root', Setting::getRootPath());
         Yii::setPathOfAlias('app', Setting::getAppPath());
         Yii::setPathOfAlias('application', Setting::getApplicationPath());
+        Yii::setPathOfAlias('plansys', Setting::getApplicationPath());
         Yii::setPathOfAlias('repo', Setting::get('repo.path'));
     }
 

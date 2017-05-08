@@ -6,7 +6,7 @@
                ng-class="{
                    active: active.id == item.id,
                    first: $index == 0,
-                   unsaved: !!item.unsaved,
+                   unsaved: !!item.unsaved || item.loading,
                    dragging: drag.item.id == item.id
                }"
                oncontextmenu="return false"
@@ -17,8 +17,8 @@
                ng-repeat="item in list">
                <div class="title" ng-mousedown="open(item)">{{ item.n }}</div>
                <div class="x" ng-click="close(item, $event);">
-                    <i ng-if="item.loading" class="fa fa-spin fa-refresh"></i>
-                    <span ng-if="!item.loading">&times;</span>
+                    <i class="fa fa-circle tab-icon-loading"></i>
+                    <span class="tab-icon-x">&times;</span>
                </div>
           </li> 
      </ul>
@@ -43,34 +43,53 @@
      <div class="context-menu-overlay" ng-if="cm.active" 
           oncontextmenu="return false"
           ng-mousedown="cm.active = null;cm.activeIdx = -1;"></div>
-     <div class="toolbar" ng-if="active && active.mode == 'code'">
-          <div ng-click="selectInTree(active)" ng-touchstart="selectInTree(active)" 
-               tooltip="Select in tree" tooltip-placement="left"
-               class="btn btn-xs btn-default select-in-tree">
-               <i class="fa fa-exchange"></i>
+     <?php chdir(Yii::getPathOfAlias(ContentMode::$alias)); ?>
+     <div class="content-container">
+          <?php foreach ($this->mode->list as $mode): ?>
+          <div id="<?= $mode ?>-container" ng-show="active.mode == '<?= $mode; ?>'">
+               <?php include("{$mode}/index.php"); ?>
           </div>
-          <div class="line-number" >
-               <input type="text" class="input" select-on-click 
-                      ng-keydown="code.gotoLine(active.code.cursor.row, $event)" 
-                      ng-model="active.code.cursor.row">
-          </div>
-          <div class="separator"></div>
-          <div class="save-btn btn btn-xs btn-default" ng-click="save()">
-               <i class="fa fa-floppy-o" ng-if="!active.loading"></i>
-               <i class="fa fa-refresh fa-spin" ng-if="active.loading"></i>
-          </div>
-          <div  class="status" ng-click="save()">
-               {{ active.code.status }}
-          </div>
-          <div class="separator"></div>
+          <?php endforeach; ?>
      </div>
-     <div class="content-container content">
-          <div class="content">
-               <div ng-show="active.mode == 'code'">
-                    <?php 
-                    chdir(Yii::getPathOfAlias("application.modules.builder.views.builder"));
-                    include("code/code.php"); 
-                    ?>
+     <div class="status-bar" ng-class="{dark: active.mode == 'code'}">
+          <div class="left">
+          </div>
+          <div class="right">
+               <div class="status-people status-item">
+                    <div class="status-people-chat" ng-click="showChat()"
+                         ng-class="{ 
+                              show: builder.statusbar.chatshow,
+                              peek: builder.statusbar.chatpeek
+                         }">
+                         <div class="status-people-msg">
+                              <div class="status-people-msg-list">
+                                   <div ng-repeat="msg in builder.statusbar.msg" 
+                                        class="status-people-msg-item"
+                                        ng-class="{me: builder.statusbar.me.cid == msg.f.cid}">
+                                        <small class="status-people-msg-item-name">
+                                             <div class="pull-left">{{ getPeopleName(msg.f) }}</div>
+                                             <div class="pull-right">{{ msg.d }}</div>
+                                        </small><div class="clearfix"></div>
+                                        {{ msg.m }}
+                                   </div>
+                              </div>
+                              <input type="text" class="status-people-msg-write" ng-keydown="builder.statusbar.sendmsg($event)" />
+                         </div>
+                         <div class="status-people-list">
+                              <div ng-repeat="p in builder.statusbar.people" class="status-people-list-item">
+                                   {{ getPeopleName(p) }}
+                              </div>
+                         </div>
+                    </div>
+                    <div ng-click="builder.statusbar.chatshow = !builder.statusbar.chatshow" style="user-select:none;">
+                         <i class="fa fa-vcard" style="margin-right:5px;"></i> {{ builder.statusbar.people.length }} connected
+                    </div>
+               </div>
+               <div class="status-connected status-item" 
+                    tooltip-placement="left"
+                    tooltip="{{builder.statusbar.connected ? 'Connected' : 'Disconnected'}}">
+                    <i class="fa fa-circle connected" ng-if="builder.statusbar.connected"></i>
+                    <i class="fa fa-circle disconnected" ng-if="!builder.statusbar.connected"></i>
                </div>
           </div>
      </div>

@@ -11,7 +11,7 @@ class ThemeManager extends CThemeManager {
             '/js/lib/yii.urlmanager.min.js',
             '/js/lib/angular.storage.min.js',
             '/js/lib/angular.lazyload.min.js',
-            '/js/lib/angular.ui.layout.min.js',
+            '/js/lib/angular.ui.layout.js',
             '/js/lib/angular.ui.bootstrap.min.js',
             '/js/index.app.js',
             '/js/index.ctrl.js'

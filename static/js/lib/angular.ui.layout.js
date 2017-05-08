@@ -1,6 +1,1123 @@
 
 /** 
- * https://github.com/angular-ui/ui-layout v1.4.2 
- * Modified by rizky 3 sept 2016 - comment uncollapsedSize -
+ * https://github.com/angular-ui/ui-layout v1.4.3 
  */
-"use strict";angular.module("ui.layout",[]).controller("uiLayoutCtrl",["$scope","$attrs","$element","$timeout","$window","LayoutContainer","Layout",function(e,n,i,t,o,a,s){function r(){var n=p.sizeProperties.flowProperty,o=parseInt(f.dividerSize),a=i[0][p.sizeProperties.offsetSize];if(null!==p.movingSplitbar){var s=p.containers.indexOf(p.movingSplitbar),r=s+2<p.containers.length?s+2:null;if(s>-1){var l=p.processSplitbar(p.containers[s]),u=l.beforeContainer,m=l.afterContainer;if(!u.collapsed&&!m.collapsed){var z=p.movingSplitbar[n]-d,y=p.movingSplitbar[n]-z;y=Math.min(a-o,y),angular.isNumber(u.beforeMinValue)&&y<u.beforeMinValue&&(y=u.beforeMinValue),angular.isNumber(u.beforeMaxValue)&&y>u.beforeMaxValue&&(y=u.beforeMaxValue),null!==m&&angular.isNumber(m.afterMinValue)&&y>m.afterMinValue-o&&(y=m.afterMinValue-o),null!==m&&angular.isNumber(m.afterMaxValue)&&y<m.afterMaxValue&&(y=m.afterMaxValue),u.size=y-u[n];var v=m[n];m[n]=y+o,m[n]!=v&&(m.size=null!==r?v+m.size-(y+o):a-(y+o)),p.movingSplitbar[n]=y,g&&t.cancel(g),g=t(function(){e.$broadcast("ui.layout.resize",u,m),g=null},50)}}}c=null}function l(e){var n=e[0],i=document.documentElement||document.body,t=window.pageXOffset||i.scrollLeft,o=window.pageYOffset||i.scrollTop,a=n.getBoundingClientRect(),s=a.left+t,r=a.top+o;return{left:s,top:r}}function u(e){return"number"==typeof e||"string"==typeof e&&e.match(z)?e:null}var c,d,p=this,f=angular.extend({},e.$eval(n.uiLayout),e.$eval(n.options)),m=0,z=/\d+\s*(px|%)\s*$/i;s.addLayout(p),p.containers=[],p.movingSplitbar=null,p.bounds=i[0].getBoundingClientRect(),p.isUsingColumnFlow="column"===f.flow,p.sizeProperties=p.isUsingColumnFlow?{sizeProperty:"width",offsetSize:"offsetWidth",offsetPos:"left",flowProperty:"left",oppositeFlowProperty:"right",mouseProperty:"clientX",flowPropertyPosition:"x"}:{sizeProperty:"height",offsetSize:"offsetHeight",offsetPos:"top",flowProperty:"top",oppositeFlowProperty:"bottom",mouseProperty:"clientY",flowPropertyPosition:"y"},i.addClass("stretch").addClass("ui-layout-"+(f.flow||"row")),f.disableToggle&&i.addClass("no-toggle"),f.disableMobileToggle&&i.addClass("no-mobile-toggle"),f.sizes=f.sizes||[],f.maxSizes=f.maxSizes||[],f.minSizes=f.minSizes||[],f.dividerSize=void 0===f.dividerSize?10:f.dividerSize,f.collapsed=f.collapsed||[],p.opts=f,e.updateDisplay=function(){p.calculate()};var g;return p.mouseUpHandler=function(e){return null!==p.movingSplitbar&&(p.movingSplitbar=null),e},p.mouseMoveHandler=function(e){var n=e[p.sizeProperties.mouseProperty]||e.originalEvent&&e.originalEvent[p.sizeProperties.mouseProperty]||(o.jQuery?e.originalEvent?e.originalEvent.targetTouches[0][p.sizeProperties.mouseProperty]:0:e.targetTouches?e.targetTouches[0][p.sizeProperties.mouseProperty]:0);d=n-l(i)[p.sizeProperties.offsetPos],c&&window.cancelAnimationFrame(c),c=window.requestAnimationFrame(r)},p.processSplitbar=function(e){var n=p.containers.indexOf(e),i=function(e){var n=e[p.sizeProperties.flowProperty],i=e[p.sizeProperties.flowProperty]+e.size;e.beforeMinValue=angular.isNumber(e.minSize)?n+e.minSize:n,e.beforeMaxValue=angular.isNumber(e.maxSize)?n+e.maxSize:null,e.afterMinValue=angular.isNumber(e.minSize)?i-e.minSize:i,e.afterMaxValue=angular.isNumber(e.maxSize)?i-e.maxSize:null};if(n>-1){var t=n>0?p.containers[n-1]:null,o=n+1<=p.containers.length?p.containers[n+1]:null;return null!==t&&i(t),null!==o&&i(o),{beforeContainer:t,afterContainer:o}}return null},p.isPercent=function(e){return!!(e&&angular.isString(e)&&e.indexOf("%")>-1)},p.convertToPixels=function(e,n){return Math.floor(n*(parseInt(e)/100))},p.calculate=function(){var e,n,t=parseInt(f.dividerSize),o=i[0].getBoundingClientRect()[p.sizeProperties.sizeProperty],s=o-t*m,r=s,l=0,c=0;if(p.containers.length>0&&i.children().length>0){for(n=0;n<p.containers.length;n++)a.isSplitbar(p.containers[n])||(e=p.containers[n],f.sizes[n]=e.isCentral?"auto":e.collapsed?u(e.minSize)||"0px":u(e.uncollapsedSize)||"auto",f.minSizes[n]=u(e.minSize),f.maxSizes[n]=u(e.maxSize),"auto"!==f.sizes[n]&&(p.isPercent(f.sizes[n])?f.sizes[n]=p.convertToPixels(f.sizes[n],r):f.sizes[n]=parseInt(f.sizes[n])),null!==f.minSizes[n]&&(p.isPercent(f.minSizes[n])?f.minSizes[n]=p.convertToPixels(f.minSizes[n],r):f.minSizes[n]=parseInt(f.minSizes[n]),!e.collapsed&&f.sizes[n]<f.minSizes[n]&&(f.sizes[n]=f.minSizes[n])),null!==f.maxSizes[n]&&(p.isPercent(f.maxSizes[n])?f.maxSizes[n]=p.convertToPixels(f.maxSizes[n],r):f.maxSizes[n]=parseInt(f.maxSizes[n]),f.sizes[n]>f.maxSizes[n]&&(f.sizes[n]=f.maxSizes[n])),"auto"===f.sizes[n]?c++:s-=f.sizes[n]);var d=Math.floor(s/c),z=s-d*c;for(n=0;n<p.containers.length;n++){if(e=p.containers[n],e[p.sizeProperties.flowProperty]=l,e.maxSize=f.maxSizes[n],e.minSize=f.minSizes[n],a.isSplitbar(e))e.size=t;else{var g;"auto"===f.sizes[n]?(g=d,z>0&&n===p.containers.length-1&&(g+=z)):g=f.sizes[n],e.size=null!==g?g:d}l+=e.size}}},p.addContainer=function(e){var n=p.indexOfElement(e.element);return!angular.isDefined(n)||0>n||p.containers.length<n?void console.error("Invalid index to add container; i="+n+", len=",p.containers.length):(a.isSplitbar(e)&&m++,e.index=n,p.containers.splice(n,0,e),void p.calculate())},p.removeContainer=function(e){var n=p.containers.indexOf(e);if(n>=0){a.isSplitbar(e)?(p.containers[n-1].collapsed=!1,m--):p.containers.length>2&&(n==p.containers.length-1?p.containers[n-1].element.remove():p.containers[n+1].element.remove());var i=p.containers.indexOf(e);i>=0&&(p.containers.splice(i,1),p.opts.maxSizes.splice(i,1),p.opts.minSizes.splice(i,1),p.opts.sizes.splice(i,1)),p.calculate()}else console.error("removeContainer for container that did not exist!")},p.getContainers=function(){return p.containers},p.toggleContainer=function(e){var n,i=p.containers[e+1];i?n=i.element[0].children[0]:(i=p.containers[e-1],n=i.element[0].children[1]),t(function(){angular.element(n).triggerHandler("click")})},p.toggleBefore=function(n){var i=p.containers.indexOf(n)-1,t=p.containers[i];t.collapsed=!p.containers[i].collapsed;var o=p.containers[i+1],a=p.containers[i+2];return void 0===t.uncollapsedSize&&(t.uncollapsedSize=t.size),e.$apply(function(){t.collapsed?(t.size=0,o&&(o[p.sizeProperties.flowProperty]-=t.uncollapsedSize),a&&(a[p.sizeProperties.flowProperty]-=t.uncollapsedSize)):(t.size=t.uncollapsedSize,o&&(o[p.sizeProperties.flowProperty]+=t.uncollapsedSize),a&&(a[p.sizeProperties.flowProperty]+=t.uncollapsedSize))}),e.$broadcast("ui.layout.toggle",t),s.toggled(),t.collapsed},p.toggleAfter=function(n){var t,o=p.containers.indexOf(n)+1,a=p.containers[o],r=p.containers[o-1],l=p.containers[o-2],u=o===p.containers.length-1,c=p.sizeProperties.flowProperty,d=p.sizeProperties.sizeProperty;return p.bounds=i[0].getBoundingClientRect(),a.collapsed=!p.containers[o].collapsed,void 0===a.uncollapsedSize&&(a.uncollapsedSize=a.size),e.$apply(function(){a.collapsed?(a.size=0,t=u?p.bounds[d]-a[c]-a.uncollapsedSize:0,r&&(r[c]+=a.uncollapsedSize+t),l&&(l.size+=a.uncollapsedSize+t)):(a.size=a.uncollapsedSize,t=u?p.bounds[d]-a[c]-a.uncollapsedSize:0,r&&(r[c]-=a.uncollapsedSize+t),l&&(l.size-=a.uncollapsedSize+t))}),e.$broadcast("ui.layout.toggle",a),s.toggled(),a.collapsed},p.getPreviousSplitbarContainer=function(e){if(a.isSplitbar(e)){var n=p.containers.indexOf(e),i=n-2;return i>=0?p.containers[i]:null}return null},p.getNextSplitbarContainer=function(e){if(a.isSplitbar(e)){var n=p.containers.indexOf(e),i=n+2;return n>0&&i<p.containers.length?p.containers[i]:null}return null},p.hasSplitbarBefore=function(e){var n=p.containers.indexOf(e);return n>=1?a.isSplitbar(p.containers[n-1]):!1},p.hasSplitbarAfter=function(e){var n=p.containers.indexOf(e);return n<p.containers.length-1?a.isSplitbar(p.containers[n+1]):!1},p.isLayoutElement=function(e){return e.hasAttribute("ui-layout-container")||e.hasAttribute("ui-splitbar")||"UI-LAYOUT-CONTAINER"===e.nodeName},p.indexOfElement=function(e){for(var n=e.parent(),i=n.children(),t=0,o=0;o<i.length;o++){var a=i[o];if(p.isLayoutElement(a)){if(e[0]==i[o])return t;t++}}return-1},p}]).directive("uiLayout",["$window",function(e){return{restrict:"AE",controller:"uiLayoutCtrl",link:function(n,i,t,o){function a(){n.$evalAsync(function(){o.calculate()})}n.$watch(function(){return i[0][o.sizeProperties.offsetSize]},function(){o.calculate()}),angular.element(e).bind("resize",a),n.$on("$destroy",function(){angular.element(e).unbind("resize",a)})}}}]).directive("uiSplitbar",["LayoutContainer",function(e){var n=angular.element(document.body.parentElement);return{restrict:"EAC",require:"^uiLayout",scope:{},link:function(i,t,o,a){t.hasClass("stretch")||t.addClass("stretch"),t.hasClass("ui-splitbar")||t.addClass("ui-splitbar");var s=a.isUsingColumnFlow?"animate-column":"animate-row";t.addClass(s),i.splitbar=e.Splitbar(),i.splitbar.element=t;var r=angular.element(t.children()[0]),l=angular.element(t.children()[1]),u=angular.element(r.children()[0]),c=angular.element(l.children()[0]),d="ui-splitbar-icon-left",p="ui-splitbar-icon-right",f="ui-splitbar-icon-up",m="ui-splitbar-icon-down",z=a.isUsingColumnFlow?d:f,g=a.isUsingColumnFlow?p:m;u.addClass(z),c.addClass(g),r.on("click",function(){var e,n,t=a.toggleBefore(i.splitbar),o=a.getPreviousSplitbarContainer(i.splitbar);null!==o&&(e=angular.element(o.element.children()[0]),n=angular.element(o.element.children()[1])),a.isUsingColumnFlow?t?(l.css("display","none"),u.removeClass(d),u.addClass(p),null!==o&&(e.css("display","none"),n.css("display","none"))):(l.css("display","inline"),u.removeClass(p),u.addClass(d),null!==o&&(e.css("display","inline"),n.css("display","inline"))):t?(l.css("display","none"),u.removeClass(f),u.addClass(m),null!==o&&(e.css("display","none"),n.css("display","none"))):(l.css("display","inline"),u.removeClass(m),u.addClass(f),null!==o&&(e.css("display","inline"),n.css("display","inline"))),i.$evalAsync(function(){a.calculate()})}),l.on("click",function(){var e,n,t=a.toggleAfter(i.splitbar),o=a.getNextSplitbarContainer(i.splitbar);null!==o&&(e=angular.element(o.element.children()[0]),n=angular.element(o.element.children()[1])),a.isUsingColumnFlow?t?(r.css("display","none"),c.removeClass(p),c.addClass(d),null!==o&&(e.css("display","none"),n.css("display","none"))):(r.css("display","inline"),c.removeClass(d),c.addClass(p),null!==o&&(e.css("display","inline"),n.css("display","inline"))):t?(r.css("display","none"),c.removeClass(m),c.addClass(f),null!==o&&(e.css("display","none"),n.css("display","none"))):(r.css("display","inline"),c.removeClass(f),c.addClass(m),null!==o&&(e.css("display","inline"),n.css("display","inline"))),i.$evalAsync(function(){a.calculate()})}),t.on("mousedown touchstart",function(e){return a.movingSplitbar=i.splitbar,a.processSplitbar(i.splitbar),e.preventDefault(),e.stopPropagation(),n.on("mousemove touchmove",function(e){i.$apply(angular.bind(a,a.mouseMoveHandler,e))}),!1}),n.on("mouseup touchend",function(e){i.$apply(angular.bind(a,a.mouseUpHandler,e)),n.off("mousemove touchmove")}),i.$watch("splitbar.size",function(e){t.css(a.sizeProperties.sizeProperty,e+"px")}),i.$watch("splitbar."+a.sizeProperties.flowProperty,function(e){t.css(a.sizeProperties.flowProperty,e+"px")}),i.$on("$destroy",function(){n.off("mouseup touchend mousemove touchmove")}),a.addContainer(i.splitbar),t.on("$destroy",function(){a.removeContainer(i.splitbar),i.$evalAsync()})}}}]).directive("uiLayoutContainer",["LayoutContainer","$compile","$timeout","Layout",function(e,n,i,t){return{restrict:"AE",require:"^uiLayout",scope:{collapsed:"=",resizable:"=",size:"@",minSize:"@",maxSize:"@"},compile:function(){return{pre:function(n,i,o,a){n.container=e.Container(),n.container.element=i,n.container.id=i.attr("id")||null,n.container.layoutId=a.id,n.container.isCentral="central"===o.uiLayoutContainer,n.collapsed===!0&&(n.collapsed=!1,t.addCollapsed(n.container)),angular.isDefined(n.resizable)&&(n.container.resizable=n.resizable),n.container.size=n.size,n.container.uncollapsedSize=n.size,n.container.minSize=n.minSize,n.container.maxSize=n.maxSize,a.addContainer(n.container),i.on("$destroy",function(){a.removeContainer(n.container),n.$evalAsync()})},post:function(e,i,t,o){i.hasClass("stretch")||i.addClass("stretch"),i.hasClass("ui-layout-container")||i.addClass("ui-layout-container");var a=o.isUsingColumnFlow?"animate-column":"animate-row";i.addClass(a),e.$watch("collapsed",function(n,i){angular.isDefined(i)&&n!==i&&o.toggleContainer(e.container.index)}),e.$watch("container.size",function(e){i.css(o.sizeProperties.sizeProperty,e+"px"),0===e?i.addClass("ui-layout-hidden"):i.removeClass("ui-layout-hidden")}),e.$watch("container."+o.sizeProperties.flowProperty,function(e){i.css(o.sizeProperties.flowProperty,e+"px")});var s=i.parent(),r=s.children(),l=o.indexOfElement(i),u=angular.element('<div ui-splitbar><a><span class="ui-splitbar-icon"></span></a><a><span class="ui-splitbar-icon"></span></a></div>');l>0&&!o.hasSplitbarBefore(e.container)?(angular.element(r[l-1]).after(u),n(u)(e)):l<r.length-1&&(i.after(u),n(u)(e))}}}}}]).directive("uiLayoutLoaded",["$timeout","Layout",function(e,n){return{require:"^uiLayout",restrict:"A",priority:-100,link:function(e,i,t){t.uiLayoutLoaded?e.$broadcast("ui.layout.loaded",t.uiLayoutLoaded):n.toggle().then(function(){e.$broadcast("ui.layout.loaded",null)})}}}]).factory("Layout",["$q","$timeout",function(e,n){function i(e){try{t[e.layoutId].toggleContainer(e.index)}catch(n){throw n.message="Could not toggle container ["+e.layoutId+"/"+e.index+"]: "+n.message,n}}var t=[],o=[],a=0,s=null;return{addLayout:function(e){e.id=t.length,t.push(e)},addCollapsed:function(e){o.push(e)},hasCollapsed:function(){return o.length>0},toggled:function(){if(0===a){if(!s)return!1;s.reject()}a--,0===a&&s.resolve()},toggle:function(){s=e.defer(),a=o.length,0===a&&n(function(){s.resolve()}),o.reverse();for(var t;t=o.pop();)i(t);return s.promise}}}]).factory("LayoutContainer",function(){function e(){this.id=null,this.layoutId=null,this.isCentral=!1,this.size="auto",this.uncollapsedSize=null,this.maxSize=null,this.minSize=null,this.resizable=!0,this.element=null,this.collapsed=!1}function n(){this.size=10,this.left=0,this.top=0,this.element=null}return{Container:function(n){return new e(n)},Splitbar:function(){return new n},isSplitbar:function(e){return e instanceof n}}});
+'use strict';
+
+/**
+ * UI.Layout
+ */
+angular.module('ui.layout', [])
+  .controller('uiLayoutCtrl', ['$scope', '$attrs', '$element', '$timeout', '$window', 'LayoutContainer', 'Layout',
+  function uiLayoutCtrl($scope, $attrs, $element, $timeout, $window, LayoutContainer, Layout) {
+
+    var ctrl = this;
+    var opts = angular.extend({}, $scope.$eval($attrs.uiLayout), $scope.$eval($attrs.options));
+    var numOfSplitbars = 0;
+    //var cache = {};
+    var animationFrameRequested;
+    var lastPos;
+
+    // regex to verify size is properly set to pixels or percent
+    var sizePattern = /\d+\s*(px|%)\s*$/i;
+
+    Layout.addLayout(ctrl);
+
+    ctrl.containers = [];
+    ctrl.movingSplitbar = null;
+    ctrl.bounds = $element[0].getBoundingClientRect();
+    ctrl.isUsingColumnFlow = opts.flow === 'column';
+    ctrl.sizeProperties = !ctrl.isUsingColumnFlow ?
+    { sizeProperty: 'height',
+      offsetSize: 'offsetHeight',
+      offsetPos: 'top',
+      flowProperty: 'top',
+      oppositeFlowProperty: 'bottom',
+      mouseProperty: 'clientY',
+      flowPropertyPosition: 'y' } :
+    { sizeProperty: 'width',
+      offsetSize: 'offsetWidth',
+      offsetPos: 'left',
+      flowProperty: 'left',
+      oppositeFlowProperty: 'right',
+      mouseProperty: 'clientX',
+      flowPropertyPosition: 'x' };
+
+    $element
+      // Force the layout to fill the parent space
+      // fix no height layout...
+      .addClass('stretch')
+      // set the layout css class
+      .addClass('ui-layout-' + (opts.flow || 'row'));
+
+    if (opts.disableToggle) {
+      $element.addClass('no-toggle');
+    }
+    if (opts.disableMobileToggle) {
+      $element.addClass('no-mobile-toggle');
+    }
+
+    // Initial global size definition
+    opts.sizes = opts.sizes || [];
+    opts.maxSizes = opts.maxSizes || [];
+    opts.minSizes = opts.minSizes || [];
+    opts.dividerSize = opts.dividerSize === undefined ? 10 : opts.dividerSize;
+    opts.collapsed = opts.collapsed || [];
+    ctrl.opts = opts;
+
+    $scope.updateDisplay = function() {
+      ctrl.calculate();
+    };
+
+    var debounceEvent;
+    function draw() {
+      var position = ctrl.sizeProperties.flowProperty;
+      var dividerSize = parseInt(opts.dividerSize);
+      var elementSize = $element[0][ctrl.sizeProperties.offsetSize];
+
+      if(ctrl.movingSplitbar !== null) {
+        var splitbarIndex = ctrl.containers.indexOf(ctrl.movingSplitbar);
+        var nextSplitbarIndex = (splitbarIndex + 2) < ctrl.containers.length ? splitbarIndex + 2 : null;
+
+        if(splitbarIndex > -1) {
+          var processedContainers = ctrl.processSplitbar(ctrl.containers[splitbarIndex]);
+          var beforeContainer = processedContainers.beforeContainer;
+          var afterContainer = processedContainers.afterContainer;
+
+          if(!beforeContainer.collapsed && !afterContainer.collapsed) {
+            // calculate container positons
+            var difference = ctrl.movingSplitbar[position] - lastPos;
+            var newPosition = ctrl.movingSplitbar[position] - difference;
+
+            // Keep the bar in the window (no left/top 100%)
+            newPosition = Math.min(elementSize-dividerSize, newPosition);
+
+            // Keep the bar from going past the previous element min/max values
+            if(angular.isNumber(beforeContainer.beforeMinValue) && newPosition < beforeContainer.beforeMinValue)
+              newPosition = beforeContainer.beforeMinValue;
+            if(angular.isNumber(beforeContainer.beforeMaxValue) && newPosition > beforeContainer.beforeMaxValue)
+              newPosition = beforeContainer.beforeMaxValue;
+
+            // Keep the bar from going past the next element min/max values
+            if(afterContainer !== null &&
+              angular.isNumber(afterContainer.afterMinValue) &&
+              newPosition > (afterContainer.afterMinValue - dividerSize))
+              newPosition = afterContainer.afterMinValue - dividerSize;
+            if(afterContainer !== null && angular.isNumber(afterContainer.afterMaxValue) && newPosition < afterContainer.afterMaxValue)
+              newPosition = afterContainer.afterMaxValue;
+
+            // resize the before container
+            beforeContainer.size = newPosition - beforeContainer[position];
+            // store the current value to preserve this size during onResize
+            beforeContainer.uncollapsedSize = beforeContainer.size;
+
+            // update after container position
+            var oldAfterContainerPosition = afterContainer[position];
+            afterContainer[position] = newPosition + dividerSize;
+
+            //update after container size if the position has changed
+            if(afterContainer[position] != oldAfterContainerPosition) {
+              afterContainer.size = (nextSplitbarIndex !== null) ?
+              (oldAfterContainerPosition + afterContainer.size) - (newPosition + dividerSize) :
+              elementSize - (newPosition + dividerSize);
+              // store the current value to preserve this size during onResize
+              afterContainer.uncollapsedSize = afterContainer.size;
+            }
+
+            // move the splitbar
+            ctrl.movingSplitbar[position] = newPosition;
+
+            // broadcast an event that resize happened (debounced to 50ms)
+            if(debounceEvent) $timeout.cancel(debounceEvent);
+            debounceEvent = $timeout(function() {
+              $scope.$broadcast('ui.layout.resize', beforeContainer, afterContainer);
+              debounceEvent = null;
+            }, 50);
+          }
+        }
+      }
+
+      //Enable a new animation frame
+      animationFrameRequested = null;
+    }
+
+    function offset(element) {
+      var rawDomNode = element[0];
+      var body = document.documentElement || document.body;
+      var scrollX = window.pageXOffset || body.scrollLeft;
+      var scrollY = window.pageYOffset || body.scrollTop;
+      var clientRect = rawDomNode.getBoundingClientRect();
+      var x = clientRect.left + scrollX;
+      var y = clientRect.top + scrollY;
+      return { left: x, top: y };
+    }
+
+    /**
+     * Returns the current value for an option
+     * @param  option   The option to get the value for
+     * @return The value of the option. Returns null if there was no option set.
+     */
+    function optionValue(option) {
+      if(typeof option == 'number' || typeof option == 'string' && option.match(sizePattern)) {
+        return option;
+      } else {
+        return null;
+      }
+    }
+
+    //================================================================================
+    // Public Controller Functions
+    //================================================================================
+    ctrl.mouseUpHandler = function(event) {
+      if(ctrl.movingSplitbar !== null) {
+        ctrl.movingSplitbar = null;
+      }
+      return event;
+    };
+
+    ctrl.mouseMoveHandler = function(mouseEvent) {
+      var mousePos = mouseEvent[ctrl.sizeProperties.mouseProperty] ||
+        (mouseEvent.originalEvent && mouseEvent.originalEvent[ctrl.sizeProperties.mouseProperty]) ||
+        // jQuery does touches weird, see #82
+        ($window.jQuery ?
+          (mouseEvent.originalEvent ? mouseEvent.originalEvent.targetTouches[0][ctrl.sizeProperties.mouseProperty] : 0) :
+          (mouseEvent.targetTouches ? mouseEvent.targetTouches[0][ctrl.sizeProperties.mouseProperty] : 0));
+
+      lastPos = mousePos - offset($element)[ctrl.sizeProperties.offsetPos];
+
+      //Cancel previous rAF call
+      if(animationFrameRequested) {
+        window.cancelAnimationFrame(animationFrameRequested);
+      }
+
+      //TODO: cache layout values
+
+      //Animate the page outside the event
+      animationFrameRequested = window.requestAnimationFrame(draw);
+    };
+
+    /**
+     * Returns the min and max values of the ctrl.containers on each side of the container submitted
+     * @param container
+     * @returns {*}
+     */
+    ctrl.processSplitbar = function(container) {
+      var index = ctrl.containers.indexOf(container);
+
+      var setValues = function(container) {
+        var start = container[ctrl.sizeProperties.flowProperty];
+        var end = container[ctrl.sizeProperties.flowProperty] + container.size;
+
+        container.beforeMinValue = angular.isNumber(container.minSize) ? start + container.minSize : start;
+        container.beforeMaxValue = angular.isNumber(container.maxSize) ? start + container.maxSize : null;
+
+        container.afterMinValue = angular.isNumber(container.minSize) ? end - container.minSize : end;
+        container.afterMaxValue = angular.isNumber(container.maxSize) ? end - container.maxSize : null;
+      };
+
+      //verify the container was found in the list
+      if(index > -1) {
+        var beforeContainer = (index > 0) ? ctrl.containers[index-1] : null;
+        var afterContainer = ((index+1) <= ctrl.containers.length) ? ctrl.containers[index+1] : null;
+
+        if(beforeContainer !== null) setValues(beforeContainer);
+        if(afterContainer !== null) setValues(afterContainer);
+
+        return {
+          beforeContainer: beforeContainer,
+          afterContainer: afterContainer
+        };
+      }
+
+      return null;
+    };
+
+    /**
+     * Checks if a string has a percent symbol in it.
+     * @param num
+     * @returns {boolean}
+     */
+    ctrl.isPercent = function(num) {
+      return (num && angular.isString(num) && num.indexOf('%') > -1) ? true : false;
+    };
+
+    /**
+     * Converts a number to pixels from percent.
+     * @param size
+     * @param parentSize
+     * @returns {number}
+     */
+    ctrl.convertToPixels = function(size, parentSize) {
+      return Math.floor(parentSize * (parseInt(size) / 100));
+    };
+
+    /**
+     * Sets the default size for each container.
+     */
+    ctrl.calculate = function() {
+      var c, i;
+      var dividerSize = parseInt(opts.dividerSize);
+      var elementSize = $element[0].getBoundingClientRect()[ctrl.sizeProperties.sizeProperty];
+      var availableSize = elementSize - (dividerSize * numOfSplitbars);
+      var originalSize = availableSize;
+      var usedSpace = 0;
+      var numOfAutoContainers = 0;
+      if(ctrl.containers.length > 0 && $element.children().length > 0) {
+
+        // calculate sizing for ctrl.containers
+        for(i=0; i < ctrl.containers.length; i++) {
+          if(!LayoutContainer.isSplitbar(ctrl.containers[i])) {
+
+            c = ctrl.containers[i];
+            opts.sizes[i] = c.isCentral ? 'auto' : c.collapsed ? (optionValue(c.minSize) || '0px') : optionValue(c.uncollapsedSize) || 'auto';
+            opts.minSizes[i] = optionValue(c.minSize);
+            opts.maxSizes[i] = optionValue(c.maxSize);
+
+            if(opts.sizes[i] !== 'auto') {
+              if(ctrl.isPercent(opts.sizes[i])) {
+                opts.sizes[i] = ctrl.convertToPixels(opts.sizes[i], originalSize);
+              } else {
+                opts.sizes[i] = parseInt(opts.sizes[i]);
+              }
+            }
+
+            if(opts.minSizes[i] !== null) {
+              if(ctrl.isPercent(opts.minSizes[i])) {
+                opts.minSizes[i] = ctrl.convertToPixels(opts.minSizes[i], originalSize);
+              } else {
+                opts.minSizes[i] = parseInt(opts.minSizes[i]);
+              }
+
+              // don't allow the container size to initialize smaller than the minSize
+              if(!c.collapsed && opts.sizes[i] < opts.minSizes[i]) opts.sizes[i] = opts.minSizes[i];
+            }
+
+            if(opts.maxSizes[i] !== null) {
+              if(ctrl.isPercent(opts.maxSizes[i])) {
+                opts.maxSizes[i] = ctrl.convertToPixels(opts.maxSizes[i], originalSize);
+              } else {
+                opts.maxSizes[i] = parseInt(opts.maxSizes[i]);
+              }
+
+              // don't allow the container size to intialize larger than the maxSize
+              if(opts.sizes[i] > opts.maxSizes[i]) opts.sizes[i] = opts.maxSizes[i];
+            }
+
+            if(opts.sizes[i] === 'auto') {
+              numOfAutoContainers++;
+            } else {
+              availableSize -= opts.sizes[i];
+            }
+          }
+        }
+
+        // FIXME: autoSize if frequently Infinity, since numOfAutoContainers is frequently 0, no need to calculate that
+        // set the sizing for the ctrl.containers
+        /*
+         * When the parent size is odd, rounding down the `autoSize` leaves a remainder.
+         * This remainder is added to the last auto-sized container in a layout.
+         */
+        var autoSize = Math.floor(availableSize / numOfAutoContainers),
+          remainder = availableSize - autoSize * numOfAutoContainers;
+        for(i=0; i < ctrl.containers.length; i++) {
+          c = ctrl.containers[i];
+          c[ctrl.sizeProperties.flowProperty] = usedSpace;
+          c.maxSize = opts.maxSizes[i];
+          c.minSize = opts.minSizes[i];
+
+          //TODO: adjust size if autosize is greater than the maxSize
+
+          if(!LayoutContainer.isSplitbar(c)) {
+            var newSize;
+            if(opts.sizes[i] === 'auto') {
+              newSize = autoSize;
+              // add the rounding down remainder to the last auto-sized container in the layout
+              if (remainder > 0 && i === ctrl.containers.length - 1) {
+                newSize += remainder;
+              }
+            } else {
+              newSize = opts.sizes[i];
+            }
+
+            c.size = (newSize !== null) ? newSize : autoSize;
+          } else {
+            c.size = dividerSize;
+          }
+
+          usedSpace += c.size;
+        }
+      }
+    };
+
+    /**
+     * Adds a container to the list of layout ctrl.containers.
+     * @param container The container to add
+     */
+    ctrl.addContainer = function(container) {
+      var index = ctrl.indexOfElement(container.element);
+      if(!angular.isDefined(index) || index < 0 || ctrl.containers.length < index) {
+        console.error("Invalid index to add container; i=" + index + ", len=", ctrl.containers.length);
+        return;
+      }
+
+      if(LayoutContainer.isSplitbar(container)) {
+        numOfSplitbars++;
+      }
+
+      container.index = index;
+      ctrl.containers.splice(index, 0, container);
+
+      ctrl.calculate();
+    };
+
+    /**
+     * Remove a container from the list of layout ctrl.containers.
+     * @param  container
+     */
+    ctrl.removeContainer = function(container) {
+      var index = ctrl.containers.indexOf(container);
+      if(index >= 0) {
+        if(!LayoutContainer.isSplitbar(container)) {
+          if(ctrl.containers.length > 2) {
+            // Assume there's a sidebar between each container
+            // We need to remove this container and the sidebar next to it
+            if(index == ctrl.containers.length - 1) {
+              // We're removing the last element, the side bar is on the left
+              ctrl.containers[index-1].element.remove();
+            } else {
+              // The side bar is on the right
+              ctrl.containers[index+1].element.remove();
+            }
+          }
+        } else {
+          // fix for potentially collapsed containers
+          ctrl.containers[index - 1].collapsed = false;
+          numOfSplitbars--;
+        }
+
+        // Need to re-check the index, as a side bar may have been removed
+        var newIndex = ctrl.containers.indexOf(container);
+        if(newIndex >= 0) {
+          ctrl.containers.splice(newIndex, 1);
+          ctrl.opts.maxSizes.splice(newIndex, 1);
+          ctrl.opts.minSizes.splice(newIndex, 1);
+          ctrl.opts.sizes.splice(newIndex, 1);
+        }
+        ctrl.calculate();
+      } else {
+        console.error("removeContainer for container that did not exist!");
+      }
+    };
+
+    /**
+     * Returns an array of layout ctrl.containers.
+     * @returns {Array}
+     */
+    ctrl.getContainers = function() {
+      return ctrl.containers;
+    };
+
+    ctrl.toggleContainer = function(index) {
+
+      var splitter = ctrl.containers[index + 1],
+        el;
+
+      if (splitter) {
+        el = splitter.element[0].children[0];
+      } else {
+        splitter = ctrl.containers[index - 1];
+        el = splitter.element[0].children[1];
+      }
+
+      $timeout(function(){
+        angular.element(el).triggerHandler('click');
+      });
+    };
+
+    /**
+     * Toggles the container before the provided splitbar
+     * @param splitbar
+     * @returns {boolean|*|Array}
+     */
+    ctrl.toggleBefore = function(splitbar) {
+      var index = ctrl.containers.indexOf(splitbar) - 1;
+
+      var c = ctrl.containers[index];
+      c.collapsed = !ctrl.containers[index].collapsed;
+
+      var nextSplitbar = ctrl.containers[index+1];
+      var nextContainer = ctrl.containers[index+2];
+
+      // uncollapsedSize is undefined in case of 'auto' sized containers.
+      // Perhaps there's a place where we could set... could find it though. @see also toggleBefore
+      if (c.uncollapsedSize === undefined) {
+        c.uncollapsedSize = c.size;
+      } else {
+        c.uncollapsedSize = parseInt(c.uncollapsedSize);
+      }
+      // FIXME: collapse:resize:uncollapse: works well "visually" without the nextSplitbar and nextContainer calculations
+      // but removing those breaks few test
+      $scope.$apply(function() {
+        if(c.collapsed) {
+
+          c.size = 0;
+
+          if(nextSplitbar) nextSplitbar[ctrl.sizeProperties.flowProperty] -= c.uncollapsedSize;
+          if(nextContainer) {
+            nextContainer[ctrl.sizeProperties.flowProperty] -= c.uncollapsedSize;
+            nextContainer.uncollapsedSize += c.uncollapsedSize;
+          }
+
+        } else {
+          c.size = c.uncollapsedSize;
+
+          if(nextSplitbar) nextSplitbar[ctrl.sizeProperties.flowProperty] += c.uncollapsedSize;
+          if(nextContainer) {
+            nextContainer[ctrl.sizeProperties.flowProperty] += c.uncollapsedSize;
+            nextContainer.uncollapsedSize -= c.uncollapsedSize;
+          }
+        }
+      });
+      $scope.$broadcast('ui.layout.toggle', c);
+      Layout.toggled();
+
+      return c.collapsed;
+    };
+
+
+    /**
+     * Toggles the container after the provided splitbar
+     * @param splitbar
+     * @returns {boolean|*|Array}
+     */
+    ctrl.toggleAfter = function(splitbar) {
+      var index = ctrl.containers.indexOf(splitbar) + 1;
+      var c = ctrl.containers[index];
+      var prevSplitbar = ctrl.containers[index-1];
+      var prevContainer = ctrl.containers[index-2];
+      var isLastContainer = index === (ctrl.containers.length - 1);
+      var endDiff;
+      var flowProperty = ctrl.sizeProperties.flowProperty;
+      var sizeProperty = ctrl.sizeProperties.sizeProperty;
+
+      ctrl.bounds = $element[0].getBoundingClientRect();
+
+      c.collapsed = !ctrl.containers[index].collapsed;
+
+      // uncollapsedSize is undefined in case of 'auto' sized containers.
+      // Perhaps there's a place where we could set... could find it though. @see also toggleBefore
+      if (c.uncollapsedSize === undefined) {
+        c.uncollapsedSize = c.size;
+      } else {
+        c.uncollapsedSize = parseInt(c.uncollapsedSize);
+      }
+
+      // FIXME: collapse:resize:uncollapse: works well "visually" without the prevSplitbar and prevContainer calculations
+      // but removing those breaks few test
+      $scope.$apply(function() {
+        if(c.collapsed) {
+
+          c.size = 0;
+
+          // adds additional space so the splitbar moves to the very end of the container
+          // to offset the lost space when converting from percents to pixels
+          endDiff = (isLastContainer) ? ctrl.bounds[sizeProperty] - c[flowProperty] - c.uncollapsedSize : 0;
+
+          if(prevSplitbar) {
+            prevSplitbar[flowProperty] += (c.uncollapsedSize + endDiff);
+          }
+          if(prevContainer) {
+            prevContainer.size += (c.uncollapsedSize + endDiff);
+          }
+
+        } else {
+          c.size = c.uncollapsedSize;
+
+          // adds additional space so the splitbar moves back to the proper position
+          // to offset the additional space added when collapsing
+          endDiff = (isLastContainer) ? ctrl.bounds[sizeProperty] - c[flowProperty] - c.uncollapsedSize : 0;
+
+          if(prevSplitbar) {
+            prevSplitbar[flowProperty] -= (c.uncollapsedSize + endDiff);
+          }
+          if(prevContainer) {
+            prevContainer.size -= (c.uncollapsedSize + endDiff);
+          }
+        }
+      });
+      $scope.$broadcast('ui.layout.toggle', c);
+      Layout.toggled();
+      return c.collapsed;
+    };
+
+    /**
+     * Returns the container object of the splitbar that is before the one passed in.
+     * @param currentSplitbar
+     */
+    ctrl.getPreviousSplitbarContainer = function(currentSplitbar) {
+      if(LayoutContainer.isSplitbar(currentSplitbar)) {
+        var currentSplitbarIndex = ctrl.containers.indexOf(currentSplitbar);
+        var previousSplitbarIndex = currentSplitbarIndex - 2;
+        if(previousSplitbarIndex >= 0) {
+          return ctrl.containers[previousSplitbarIndex];
+        }
+        return null;
+      }
+      return null;
+    };
+
+    /**
+     * Returns the container object of the splitbar that is after the one passed in.
+     * @param currentSplitbar
+     */
+    ctrl.getNextSplitbarContainer = function(currentSplitbar) {
+      if(LayoutContainer.isSplitbar(currentSplitbar)) {
+        var currentSplitbarIndex = ctrl.containers.indexOf(currentSplitbar);
+        var nextSplitbarIndex = currentSplitbarIndex + 2;
+        if(currentSplitbarIndex > 0 && nextSplitbarIndex < ctrl.containers.length) {
+          return ctrl.containers[nextSplitbarIndex];
+        }
+        return null;
+      }
+      return null;
+    };
+
+    /**
+     * Checks whether the container before this one is a split bar
+     * @param  {container}  container The container to check
+     * @return {Boolean}    true if the element before is a splitbar, false otherwise
+     */
+    ctrl.hasSplitbarBefore = function(container) {
+      var index = ctrl.containers.indexOf(container);
+      if(1 <= index) {
+        return LayoutContainer.isSplitbar(ctrl.containers[index-1]);
+      }
+
+      return false;
+    };
+
+    /**
+     * Checks whether the container after this one is a split bar
+     * @param  {container}  container The container to check
+     * @return {Boolean}    true if the element after is a splitbar, false otherwise
+     */
+    ctrl.hasSplitbarAfter = function(container) {
+      var index = ctrl.containers.indexOf(container);
+      if(index < ctrl.containers.length - 1) {
+        return LayoutContainer.isSplitbar(ctrl.containers[index+1]);
+      }
+
+      return false;
+    };
+
+    /**
+     * Checks whether the passed in element is a ui-layout type element.
+     * @param  {element}  element The element to check
+     * @return {Boolean}          true if the element is a layout element, false otherwise.
+     */
+    ctrl.isLayoutElement = function(element) {
+      return element.hasAttribute('ui-layout-container') ||
+        element.hasAttribute('ui-splitbar') ||
+        element.nodeName === 'UI-LAYOUT-CONTAINER';
+    };
+
+    /**
+     * Retrieve the index of an element within it's parents context.
+     * @param  {element} element The element to get the index of
+     * @return {int}             The index of the element within it's parent
+     */
+    ctrl.indexOfElement = function(element) {
+      var parent = element.parent();
+      var children = parent.children();
+      var containerIndex = 0;
+      for(var i = 0; i < children.length; i++) {
+        var child = children[i];
+        if(ctrl.isLayoutElement(child)) {
+          if(element[0] == children[i]) {
+            return containerIndex;
+          }
+          containerIndex++;
+        }
+      }
+      return -1;
+    };
+
+    return ctrl;
+  }])
+
+  .directive('uiLayout', ['$window', function($window) {
+    return {
+      restrict: 'AE',
+      controller: 'uiLayoutCtrl',
+      link: function(scope, element, attrs, ctrl) {
+        scope.$watch(function () {
+          return element[0][ctrl.sizeProperties.offsetSize];
+        }, function() {
+          ctrl.calculate();
+        });
+
+        function onResize() {
+          scope.$evalAsync(function() {
+            ctrl.calculate();
+          });
+        }
+
+        angular.element($window).bind('resize', onResize);
+
+        scope.$on('$destroy', function() {
+          angular.element($window).unbind('resize', onResize);
+        });
+      }
+    };
+  }])
+
+  .directive('uiSplitbar', ['LayoutContainer', function(LayoutContainer) {
+    // Get all the page.
+    var htmlElement = angular.element(document.body.parentElement);
+
+    return {
+      restrict: 'EAC',
+      require: '^uiLayout',
+      scope: {},
+
+      link: function(scope, element, attrs, ctrl) {
+        if(!element.hasClass('stretch')) element.addClass('stretch');
+        if(!element.hasClass('ui-splitbar')) element.addClass('ui-splitbar');
+
+        var animationClass = ctrl.isUsingColumnFlow ? 'animate-column' : 'animate-row';
+        element.addClass(animationClass);
+
+        scope.splitbar = LayoutContainer.Splitbar();
+        scope.splitbar.element = element;
+
+        //icon <a> elements
+        var prevButton = angular.element(element.children()[0]);
+        var afterButton = angular.element(element.children()[1]);
+
+        //icon <span> elements
+        var prevIcon = angular.element(prevButton.children()[0]);
+        var afterIcon = angular.element(afterButton.children()[0]);
+
+        //icon classes
+        var iconLeft = 'ui-splitbar-icon-left';
+        var iconRight = 'ui-splitbar-icon-right';
+        var iconUp = 'ui-splitbar-icon-up';
+        var iconDown = 'ui-splitbar-icon-down';
+
+        var prevIconClass = ctrl.isUsingColumnFlow ? iconLeft : iconUp;
+        var afterIconClass = ctrl.isUsingColumnFlow ? iconRight : iconDown;
+
+        prevIcon.addClass(prevIconClass);
+        afterIcon.addClass(afterIconClass);
+
+
+        prevButton.on('click', function() {
+          var prevSplitbarBeforeButton, prevSplitbarAfterButton;
+          var result = ctrl.toggleBefore(scope.splitbar);
+          var previousSplitbar = ctrl.getPreviousSplitbarContainer(scope.splitbar);
+
+          if(previousSplitbar !== null) {
+            prevSplitbarBeforeButton = angular.element(previousSplitbar.element.children()[0]);
+            prevSplitbarAfterButton = angular.element(previousSplitbar.element.children()[1]);
+          }
+
+          if(ctrl.isUsingColumnFlow) {
+            if(result) {
+              afterButton.css('display', 'none');
+              prevIcon.removeClass(iconLeft);
+              prevIcon.addClass(iconRight);
+
+              // hide previous splitbar buttons
+              if(previousSplitbar !== null) {
+                prevSplitbarBeforeButton.css('display', 'none');
+                prevSplitbarAfterButton.css('display', 'none');
+              }
+            } else {
+              afterButton.css('display', 'inline');
+              prevIcon.removeClass(iconRight);
+              prevIcon.addClass(iconLeft);
+
+              // show previous splitbar icons
+              if(previousSplitbar !== null) {
+                prevSplitbarBeforeButton.css('display', 'inline');
+                prevSplitbarAfterButton.css('display', 'inline');
+              }
+            }
+          } else {
+            if(result) {
+              afterButton.css('display', 'none');
+              prevIcon.removeClass(iconUp);
+              prevIcon.addClass(iconDown);
+
+              // hide previous splitbar buttons
+              if(previousSplitbar !== null) {
+                prevSplitbarBeforeButton.css('display', 'none');
+                prevSplitbarAfterButton.css('display', 'none');
+              }
+            } else {
+              afterButton.css('display', 'inline');
+              prevIcon.removeClass(iconDown);
+              prevIcon.addClass(iconUp);
+
+              // show previous splitbar icons
+              if(previousSplitbar !== null) {
+                prevSplitbarBeforeButton.css('display', 'inline');
+                prevSplitbarAfterButton.css('display', 'inline');
+              }
+            }
+          }
+          scope.$evalAsync(function() {
+            ctrl.calculate();
+          });
+        });
+
+        afterButton.on('click', function() {
+          var nextSplitbarBeforeButton, nextSplitbarAfterButton;
+          var result = ctrl.toggleAfter(scope.splitbar);
+          var nextSplitbar = ctrl.getNextSplitbarContainer(scope.splitbar);
+
+          if(nextSplitbar !== null) {
+            nextSplitbarBeforeButton = angular.element(nextSplitbar.element.children()[0]);
+            nextSplitbarAfterButton = angular.element(nextSplitbar.element.children()[1]);
+          }
+
+          if(ctrl.isUsingColumnFlow) {
+            if(result) {
+              prevButton.css('display', 'none');
+              afterIcon.removeClass(iconRight);
+              afterIcon.addClass(iconLeft);
+
+              // hide next splitbar buttons
+              if(nextSplitbar !== null) {
+                nextSplitbarBeforeButton.css('display', 'none');
+                nextSplitbarAfterButton.css('display', 'none');
+              }
+            } else {
+              prevButton.css('display', 'inline');
+              afterIcon.removeClass(iconLeft);
+              afterIcon.addClass(iconRight);
+
+              // show next splitbar buttons
+              if(nextSplitbar !== null) {
+                nextSplitbarBeforeButton.css('display', 'inline');
+                nextSplitbarAfterButton.css('display', 'inline');
+              }
+            }
+          } else {
+            if(result) {
+              prevButton.css('display', 'none');
+              afterIcon.removeClass(iconDown);
+              afterIcon.addClass(iconUp);
+
+              // hide next splitbar buttons
+              if(nextSplitbar !== null) {
+                nextSplitbarBeforeButton.css('display', 'none');
+                nextSplitbarAfterButton.css('display', 'none');
+              }
+            } else {
+              prevButton.css('display', 'inline');
+              afterIcon.removeClass(iconUp);
+              afterIcon.addClass(iconDown);
+
+              // show next splitbar buttons
+              if(nextSplitbar !== null) {
+                nextSplitbarBeforeButton.css('display', 'inline');
+                nextSplitbarAfterButton.css('display', 'inline');
+              }
+            }
+          }
+          scope.$evalAsync(function() {
+            ctrl.calculate();
+          });
+        });
+
+        element.on('mousedown touchstart', function(e) {
+          if (e.button === 0 || e.type === 'touchstart') {
+            // only trigger when left mouse button is pressed:
+            ctrl.movingSplitbar = scope.splitbar;
+            ctrl.processSplitbar(scope.splitbar);
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            htmlElement.on('mousemove touchmove', handleMouseMove);
+            return false;
+          }
+        });
+
+        function handleMouseMove(event) {
+          scope.$apply(angular.bind(ctrl, ctrl.mouseMoveHandler, event));
+        }
+
+        function handleMouseUp(event) {
+          scope.$apply(angular.bind(ctrl, ctrl.mouseUpHandler, event));
+          htmlElement.off('mousemove touchmove', handleMouseMove);
+        }
+
+        htmlElement.on('mouseup touchend', handleMouseUp);
+
+        scope.$watch('splitbar.size', function(newValue) {
+          element.css(ctrl.sizeProperties.sizeProperty, newValue + 'px');
+        });
+
+        scope.$watch('splitbar.' + ctrl.sizeProperties.flowProperty, function(newValue) {
+          element.css(ctrl.sizeProperties.flowProperty, newValue + 'px');
+        });
+
+        //Add splitbar to layout container list
+        ctrl.addContainer(scope.splitbar);
+
+        element.on('$destroy', function() {
+          ctrl.removeContainer(scope.splitbar);
+          htmlElement.off('mouseup touchend', handleMouseUp);
+          htmlElement.off('mousemove touchmove', handleMouseMove);
+          scope.$evalAsync();
+        });
+      }
+    };
+
+  }])
+
+  .directive('uiLayoutContainer',
+    ['LayoutContainer', '$compile', '$timeout', 'Layout',
+      function(LayoutContainer, $compile, $timeout, Layout) {
+        return {
+          restrict: 'AE',
+          require: '^uiLayout',
+          scope: {
+            collapsed: '=',
+            resizable: '=',
+            size: '@',
+            minSize: '@',
+            maxSize: '@'
+          },
+
+          compile: function() {
+            return {
+              pre: function(scope, element, attrs, ctrl) {
+
+                scope.container = LayoutContainer.Container();
+                scope.container.element = element;
+                scope.container.id = element.attr('id') || null;
+                scope.container.layoutId = ctrl.id;
+                scope.container.isCentral = attrs.uiLayoutContainer === 'central';
+
+                if (scope.collapsed === true) {
+                  scope.collapsed = false;
+                  Layout.addCollapsed(scope.container);
+                }
+                // FIXME: collapsed: @see uiLayoutLoaded for explanation
+                //if (angular.isDefined(scope.collapsed)) {
+                //  scope.container.collapsed = scope.collapsed;
+                //}
+
+                if (angular.isDefined(scope.resizable)) {
+                  scope.container.resizable = scope.resizable;
+                }
+                scope.container.size = scope.size;
+                scope.container.uncollapsedSize = scope.size;
+                scope.container.minSize = scope.minSize;
+                scope.container.maxSize = scope.maxSize;
+                ctrl.addContainer(scope.container);
+
+                element.on('$destroy', function() {
+                  ctrl.removeContainer(scope.container);
+                  scope.$evalAsync();
+                });
+              },
+              post: function(scope, element, attrs, ctrl) {
+                if(!element.hasClass('stretch')) element.addClass('stretch');
+                if(!element.hasClass('ui-layout-container')) element.addClass('ui-layout-container');
+
+                var animationClass = ctrl.isUsingColumnFlow ? 'animate-column' : 'animate-row';
+                element.addClass(animationClass);
+
+                scope.$watch('collapsed', function (val, old) {
+                  if (angular.isDefined(old) && val !== old) {
+                    ctrl.toggleContainer(scope.container.index);
+                  }
+                });
+
+                scope.$watch('container.size', function(newValue) {
+                  element.css(ctrl.sizeProperties.sizeProperty, newValue + 'px');
+                  if(newValue === 0) {
+                    element.addClass('ui-layout-hidden');
+                  } else {
+                    element.removeClass('ui-layout-hidden');
+                  }
+                });
+
+                scope.$watch('container.' + ctrl.sizeProperties.flowProperty, function(newValue) {
+                  element.css(ctrl.sizeProperties.flowProperty, newValue + 'px');
+                });
+
+                //TODO: add ability to disable auto-adding a splitbar after the container
+                var parent = element.parent();
+                var children = parent.children();
+                var index = ctrl.indexOfElement(element);
+                var splitbar = angular.element('<div ui-splitbar>' +
+                  '<a><span class="ui-splitbar-icon"></span></a>' +
+                  '<a><span class="ui-splitbar-icon"></span></a>' +
+                  '</div>');
+                if(0 < index && !ctrl.hasSplitbarBefore(scope.container)) {
+                  angular.element(children[index-1]).after(splitbar);
+                  $compile(splitbar)(scope);
+                } else if(index < children.length - 1) {
+                  element.after(splitbar);
+                  $compile(splitbar)(scope);
+                }
+              }
+            };
+          }
+        };
+      }])
+
+  .directive('uiLayoutLoaded', ['$timeout', 'Layout', function($timeout, Layout) {
+    // Currently necessary for programmatic toggling to work with "initially" collapsed containers,
+    // because prog. toggling depends on the logic of prevButton and nextButton (which should be probably refactored out)
+    //
+    // This is how it currently works:
+    // 1. uiLayoutContainer in prelink phase resets @collapsed to false, because layout has to be calculated
+    //    with all containers uncollapsed to get the correct dimensions
+    // 2. layout with ui-layout-loaded attributes broadcasts "ui.layout.loaded"
+    // 3. user changes values of @collapsed which triggers 'click' on either of the buttons
+    // 3. the other button is hidden and container size set to 0
+    return {
+      require: '^uiLayout',
+      restrict: 'A',
+      priority: -100,
+      link: function($scope, el, attrs){
+
+        // negation is safe here, because we are expecting non-empty string
+        if (!attrs['uiLayoutLoaded']) {
+          Layout.toggle().then(
+            function(){
+              $scope.$broadcast('ui.layout.loaded', null);
+            }
+          );
+        } else {
+          $scope.$broadcast('ui.layout.loaded',  attrs['uiLayoutLoaded']);
+        }
+      }
+    };
+  }])
+
+  .factory('Layout', ['$q', '$timeout', function($q, $timeout) {
+    var layouts = [],
+      collapsing = [],
+      toBeCollapsed = 0,
+      toggledDeffered =  null;
+
+    function toggleContainer(container) {
+      try {
+        layouts[container.layoutId].toggleContainer(container.index);
+      } catch (e) {
+        e.message = 'Could not toggle container [' + container.layoutId + '/' + container.index + ']: ' + e.message;
+        throw e;
+      }
+    }
+
+    return {
+      addLayout: function (ctrl) {
+        ctrl.id = layouts.length;
+        layouts.push(ctrl);
+      },
+      addCollapsed: function(container) {
+        collapsing.push(container);
+      },
+      hasCollapsed: function() {
+        return collapsing.length > 0;
+      },
+      toggled: function() {
+        // event already dispatched, do nothing
+        if (toBeCollapsed === 0) {
+          if (toggledDeffered) {
+            toggledDeffered.reject();
+          } else {
+            return false;
+          }
+        }
+        toBeCollapsed--;
+        if (toBeCollapsed === 0) {
+          toggledDeffered.resolve();
+        }
+      },
+      toggle: function() {
+        toggledDeffered = $q.defer();
+        toBeCollapsed = collapsing.length;
+        if (toBeCollapsed === 0) {
+          $timeout(function(){
+            toggledDeffered.resolve();
+          });
+        }
+        collapsing.reverse();
+        var c;
+        while(c = collapsing.pop()) {
+          toggleContainer(c);
+        }
+        return toggledDeffered.promise;
+      }
+    };
+  }])
+
+  .factory('LayoutContainer', function() {
+    function BaseContainer() {
+
+      /**
+       * Stores element's id if provided
+       * @type {string}
+       */
+      this.id = null;
+
+      /**
+       * Id of the parent layout
+       * @type {number}
+       */
+      this.layoutId = null;
+
+      /**
+       * Central container that is always resized
+       * @type {boolean}
+       */
+      this.isCentral = false;
+
+      /**
+       * actual size of the container, which is changed on every updateDisplay
+       * @type {any}
+       */
+      this.size = 'auto';
+
+      /**
+       * cache for the last uncollapsed size
+       * @type {any}
+       */
+      this.uncollapsedSize = null;
+
+      this.maxSize = null;
+      this.minSize = null;
+      this.resizable = true;
+      this.element = null;
+      this.collapsed = false;
+    }
+
+    // Splitbar container
+    function SplitbarContainer() {
+      this.size = 10;
+      this.left = 0;
+      this.top = 0;
+      this.element = null;
+    }
+
+    return {
+      Container: function(initialSize) {
+        return new BaseContainer(initialSize);
+      },
+      Splitbar: function() {
+        return new SplitbarContainer();
+      },
+      isSplitbar: function(container) {
+        return container instanceof SplitbarContainer;
+      }
+    };
+  })
+;

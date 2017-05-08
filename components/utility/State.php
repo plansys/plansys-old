@@ -25,13 +25,12 @@ class State extends CComponent {
                include(Yii::getPathOfAlias('application.components.thrift.client.state.Types') . ".php");
                include(Yii::getPathOfAlias('application.components.thrift.client.state.StateManager') . ".php");
           }
-          
-          $portfile = @file_get_contents(Yii::getPathOfAlias('webroot.assets.ports') . ".txt");
+          $portpath = Yii::getPathOfAlias('root.assets.ports') . ".txt";
+          $portfile = file_get_contents($portpath);
           if (is_null($portfile)) {
               throw new Exception('Thrift Daemon is not running!'); 
           }
           $port = explode(":", $portfile);
-          
           try {
                $this->socket = new TSocket('127.0.0.1', $port[0]);
                $this->socket->setSendTimeout(60000);
@@ -77,14 +76,15 @@ class State extends CComponent {
      }
      
      public function getByKey($pattern = "*") {
+          if (!$this->manualclose) $this->open();
           try {
-               if (!$this->manualclose) $this->open();
                $result = $this->client->stateGetByKey($this->db, $pattern);
-               $result = $this->formatResultAsArray($result);
-               if (!$this->manualclose) $this->close();
           } catch (Exception $e) {
-               $result = null;
+               $result = [];
           }  
+          
+          $result = $this->formatResultAsArray($result);
+          if (!$this->manualclose) $this->close();
           return $result;
      }
      

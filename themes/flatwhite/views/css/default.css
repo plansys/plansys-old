@@ -56,11 +56,6 @@ a:hover {
 	padding: 0 1.875em 3.125em 1.875em;
 }
 
-.main {
-	max-width: 69em;
-	/*m-top: 1000px;*/
-}
-
 .container-fluid {
 	padding: 0px 15px;
 }

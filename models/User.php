@@ -26,7 +26,7 @@ class User extends ActiveRecord {
 
         return true;
     }
-
+    
     public function rules() {
         $passwordReq = ', password, email';
         if ($this->useLdap) {

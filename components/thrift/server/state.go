@@ -71,7 +71,7 @@ func NewStateManagerHandler(addr string, rootdirs []string) *StateManagerHandler
 		Rootdirs:    rootdirs,
 	}
 
-	urljson := sm.Yiic(true, "ws", "path")
+	urljson := sm.Yiic(true, nil, "ws", "path")
 	sm.WsUrl = gjson.Get(urljson, "wsurl").String()
 	origin := gjson.Get(urljson, "base").String()
 
@@ -83,8 +83,8 @@ func NewStateManagerHandler(addr string, rootdirs []string) *StateManagerHandler
 			if host == origin {
 				return true
 			} else {
-				log.Println(host, origin, urljson)
-				return false
+				// log.Println(host, origin, urljson)
+				return true
 			}
 		},
 	}
@@ -139,7 +139,7 @@ func NewStateManagerHandler(addr string, rootdirs []string) *StateManagerHandler
 						log.Println(err)
 					}
 
-					sm.SilentYiic(yiic...)
+					sm.SilentYiic(nil, yiic...)
 					return
 				}
 
@@ -160,14 +160,23 @@ func NewStateManagerHandler(addr string, rootdirs []string) *StateManagerHandler
 					yiic[4] = "--sid=" + *sm.Clients[conn].Sid
 					yiic[5] = "--cid=" + *sm.Clients[conn].Cid
 
-					sm.SilentYiic(yiic...)
+					sm.SilentYiic(msg, yiic...)
 
 					if err != nil {
 						log.Println(err)
 						return
 					}
 				} else {
-					err = conn.WriteMessage(msgType, msg)
+					yiic := make([]string, 6)
+					yiic[0] = "ws"
+					yiic[1] = "received"
+					yiic[2] = "--tid=" + *sm.Clients[conn].Tid
+					yiic[3] = "--uid=" + *sm.Clients[conn].Uid
+					yiic[4] = "--sid=" + *sm.Clients[conn].Sid
+					yiic[5] = "--cid=" + *sm.Clients[conn].Cid
+
+					sm.SilentYiic(msg, yiic...)
+
 					if err != nil {
 						log.Println(err)
 						return
@@ -212,11 +221,11 @@ func NewStateManagerHandler(addr string, rootdirs []string) *StateManagerHandler
 	return sm
 }
 
-func (p *StateManagerHandler) SilentYiic(params ...string) {
-	p.Yiic(false, params...)
+func (p *StateManagerHandler) SilentYiic(stdin []byte,params ...string) {
+	p.Yiic(false, stdin, params...)
 }
 
-func (p *StateManagerHandler) Yiic(returnOutput bool, params ...string) (ret string) {
+func (p *StateManagerHandler) Yiic(returnOutput bool, stdin []byte, params ...string) (ret string) {
 	ex, err := godaemon.GetExecutablePath()
 	if err != nil {
 		log.Println(err)
@@ -229,10 +238,16 @@ func (p *StateManagerHandler) Yiic(returnOutput bool, params ...string) (ret str
 	yiic := base + sep + "yiic.php"
 	php := getPhpPath()
 
+	
 	params = append([]string{yiic}, params...)
 	cmd := exec.Command(php, params...)
 	var out bytes.Buffer
 	cmd.Stdout = &out
+	
+	if stdin != nil {
+		in := bytes.NewReader(stdin)
+		cmd.Stdin = in
+	}
 
 	if !returnOutput {
 		go func() {
@@ -277,11 +292,47 @@ func (p *StateManagerHandler) SetTag(client *state.Client, tag string) (err erro
 	return err
 }
 
-func (p *StateManagerHandler) GetClients(filter *state.Client) (clients []*state.Client, err error) {
-	return nil, err
+func (p *StateManagerHandler) GetClients(to *state.Client) (clients []*state.Client, err error) {
+
+	for _, val := range p.Clients {
+		if *to.Tag != "" {
+			if glob.Glob(*to.Tag, *val.Tag) {
+				clients = append(clients, val)
+			}
+		} else {
+			if *to.Tid != "" {
+				if *to.Uid != "" {
+					if *to.Sid != "" {
+						if *to.Cid != "" {
+							if *to.Tid == *val.Tid && *to.Uid == *val.Uid && *to.Sid == *val.Sid && *to.Cid == *val.Cid {
+								clients = append(clients, val)
+							}
+						} else {
+							if *to.Tid == *val.Tid && *to.Uid == *val.Uid && *to.Sid == *val.Sid {
+								clients = append(clients, val)
+							}
+						}
+					} else {
+						if *to.Tid == *val.Tid && *to.Uid == *val.Uid {
+							clients = append(clients, val)
+						}
+					}
+				} else {
+					if *to.Tid == *val.Tid {
+						clients = append(clients, val)
+					}
+				}
+			} else {
+				clients = append(clients, val)
+			}
+		}
+	}
+
+	return clients, err
 }
 
 func (p *StateManagerHandler) Send(to *state.Client, message string) (err error) {
+	
 	for conn, val := range p.Clients {
 		if *to.Tag != "" {
 			if glob.Glob(*to.Tag, *val.Tag) {
@@ -306,6 +357,7 @@ func (p *StateManagerHandler) Send(to *state.Client, message string) (err error)
 						}
 					}
 				} else {
+					log.Println(to, val)
 					if *to.Tid == *val.Tid {
 						conn.WriteMessage(websocket.TextMessage, []byte(message))
 					}
@@ -328,9 +380,10 @@ func (p *StateManagerHandler) use(dbname string) (db *buntdb.DB, success bool) {
 		return state.DB, true
 	} else {
 		statePath := filepath.FromSlash(strings.Join(append(p.Rootdirs, "assets", dbname+".buntdb"), "/"))
-		log.Printf("Opening " + statePath + "...")
+		log.Printf("Opening: " + statePath)
 		stateDB, err := buntdb.Open(statePath)
-
+		log.Printf(" Opened: " + statePath)
+		
 		if err == nil {
 			p.States[dbname] = &StateDB{
 				DB:      stateDB,
