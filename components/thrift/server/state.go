@@ -167,20 +167,23 @@ func NewStateManagerHandler(addr string, rootdirs []string) *StateManagerHandler
 						return
 					}
 				} else {
-					yiic := make([]string, 6)
-					yiic[0] = "ws"
-					yiic[1] = "received"
-					yiic[2] = "--tid=" + *sm.Clients[conn].Tid
-					yiic[3] = "--uid=" + *sm.Clients[conn].Uid
-					yiic[4] = "--sid=" + *sm.Clients[conn].Sid
-					yiic[5] = "--cid=" + *sm.Clients[conn].Cid
-
-					sm.SilentYiic(msg, yiic...)
-
-					if err != nil {
-						log.Println(err)
-						return
-					}
+					go func() {
+						yiic := make([]string, 6)
+						yiic[0] = "ws"
+						yiic[1] = "received"
+						yiic[2] = "--tid=" + *sm.Clients[conn].Tid
+						yiic[3] = "--uid=" + *sm.Clients[conn].Uid
+						yiic[4] = "--sid=" + *sm.Clients[conn].Sid
+						yiic[5] = "--cid=" + *sm.Clients[conn].Cid
+						
+						log.Println("Received:", fmt.Sprintf("%s", msg))
+						sm.SilentYiic(msg, yiic...)
+	
+						if err != nil {
+							log.Println(err)
+							return
+						}
+					}()
 				}
 			}
 		})

@@ -7,7 +7,9 @@ class CollabWs extends WebSocketController {
     // there is new client connnected to websocket
     public function connected($client) {
         // $this->broadcast();
-        $this->broadcast('people:' . json_encode($this->getClients()));
+        $this->broadcast('people:' . json_encode($this->getClients(
+            ['ws' => 'builder/collab']
+        )));
         
         $this->state = new State("builderchat");
         $all = $this->state->getByKey('*');
@@ -19,7 +21,9 @@ class CollabWs extends WebSocketController {
     // this function will be executed when 
     // client disconnected from server
     public function disconnected ($client, $reason) {
-        $this->broadcast('people:' . json_encode($this->getClients()));
+        $this->broadcast('people:' . json_encode($this->getClients(
+            ['ws' => 'builder/collab']
+        )));
     }
     
     // this function will be executed when 
@@ -55,7 +59,7 @@ class CollabWs extends WebSocketController {
                 $content = json_decode($content, true);
                 $sb = new State("builder");
                 $sb->set($content['key'], $content['val']);
-                
+                var_dump($content);
                 break;
         }
     }
