@@ -119,7 +119,7 @@ class TreeController extends Controller
         }
     }
 
-    public function list($dirs, $root)
+    public function listDir($dirs, $root)
     {
         $psdir = Yii::getPathOfAlias('application');
 
@@ -245,7 +245,7 @@ class TreeController extends Controller
                 echo json_encode($res);
             } else {
                 $dirs = $this->modeDirList($mode, $dir);
-                echo json_encode($this->list($dirs, $dir));
+                echo json_encode($this->listDir($dirs, $dir));
             }
         } catch (Exception$e) {
             echo '[]';

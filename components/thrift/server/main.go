@@ -14,7 +14,7 @@ import (
 	"git.apache.org/thrift.git/lib/go/thrift"
 	"github.com/VividCortex/godaemon"
 	"github.com/cleversoap/go-cp"
-	"github.com/marcsauter/single"
+	"github.com/plansys/single"
 	"github.com/plansys/psthrift/state"
 	"github.com/plansys/psthrift/svc"
 	"github.com/tidwall/buntdb"
@@ -59,7 +59,6 @@ func GetMD5Hash(text string) string {
 func getPath(path string) string {
 	dir, _ := godaemon.GetExecutablePath()
 	dirs := strings.Split(filepath.ToSlash(dir), "/")
-	log.Println("Root Path:", dirs)
 	rootdirs := dirs[0 : len(dirs)-5]
 	return filepath.FromSlash(strings.Join(append(rootdirs, path), "/"))
 }
@@ -81,8 +80,11 @@ func main() {
 		isrun = true
 	}
 
+	rootpath := getPath("")
+	log.Println("Root Path:", rootpath)
+
 	if isrun {
-		s := single.New(GetMD5Hash(getPath("")))
+		s := single.NewWithTempDir(GetMD5Hash(rootpath), getPath("assets"))
 		s.Lock()
 		defer s.Unlock()
 		p.Run()
@@ -210,7 +212,7 @@ func LogToFile() (file *os.File) {
 	f, err := os.OpenFile(logfile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 
 	if err != nil {
-		log.Println("error opening file: %v", err)
+		log.Println("error opening file: ", err)
 	} else {
 		log.SetOutput(f)
 	}
