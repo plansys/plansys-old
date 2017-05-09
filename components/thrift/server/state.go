@@ -284,6 +284,11 @@ func (p *StateManagerHandler) SetTag(client *state.Client, tag string) (err erro
 	}
 
 	for conn, val := range p.Clients {
+		if (val.Tid == nil) {
+			delete(p.Clients, conn)
+			continue
+		}
+		
 		if client.Tid != nil && client.Uid != nil && client.Sid != nil && client.Cid != nil {
 			if val.Tid != nil && val.Uid != nil && val.Sid != nil && val.Cid != nil {
 				if *client.Tid == *val.Tid && *client.Uid == *val.Uid && *client.Sid == *val.Sid && *client.Cid == *val.Cid {
@@ -297,8 +302,13 @@ func (p *StateManagerHandler) SetTag(client *state.Client, tag string) (err erro
 
 func (p *StateManagerHandler) GetClients(to *state.Client) (clients []*state.Client, err error) {
 
-	for _, val := range p.Clients {
-		log.Println(to, val)
+	for conn, val := range p.Clients {
+		
+		if (val.Tid == nil) {
+			delete(p.Clients, conn)
+			continue
+		}
+		
 		if *to.Tag != "" {
 			if glob.Glob(*to.Tag, *val.Tag) {
 				clients = append(clients, val)
@@ -338,6 +348,11 @@ func (p *StateManagerHandler) GetClients(to *state.Client) (clients []*state.Cli
 func (p *StateManagerHandler) Send(to *state.Client, message string) (err error) {
 	
 	for conn, val := range p.Clients {
+		if (val.Tid == nil) {
+			delete(p.Clients, conn)
+			continue
+		}
+		
 		if *to.Tag != "" {
 			if glob.Glob(*to.Tag, *val.Tag) {
 				conn.WriteMessage(websocket.TextMessage, []byte(message))
@@ -361,7 +376,6 @@ func (p *StateManagerHandler) Send(to *state.Client, message string) (err error)
 						}
 					}
 				} else {
-					log.Println(to, val)
 					if *to.Tid == *val.Tid {
 						conn.WriteMessage(websocket.TextMessage, []byte(message))
 					}

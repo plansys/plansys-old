@@ -104,10 +104,12 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
             $scope.ws.connected(function(u) {
                 $scope.statusbar.connected = true;
                 $scope.statusbar.me = u;
+                console.log("WS Connected")
             });
 
             $scope.ws.disconnected(function() {
                 $scope.statusbar.connected = false;
+                console.log("WS Disonnected")
             });
 
             $scope.ws.receive(function(msg) {
