@@ -65,9 +65,13 @@ class TreeController extends Controller
     {
         $result = [];
         switch ($mode) {
-            case 'file':$result = $this->search($n, $dir);
+            case 'file':
+                $result = $this->search($n, $dir);
             break;
-            case 'form':break;
+            case 'form':
+                $dirs = $this->modeDirList('form');
+                $result = $this->search($n, $dir[0]);
+                break;
             case 'model':break;
             case 'controller':break;
             case 'module':break;

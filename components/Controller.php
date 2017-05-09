@@ -62,6 +62,53 @@ class Controller extends CController {
 
         return @$_POST[$class];
     }
+    
+    public function includeFile($file, $params = []) {
+        $key = array_search(__FUNCTION__, array_column(debug_backtrace(), 'function'));
+        $dbg = debug_backtrace();
+        $dfile = $dbg[$key]['file'];
+        $ddir = dirname($dfile);
+        $included = false;
+        
+        extract($params);
+		$themeName = Setting::get('app.theme');
+		
+		
+		if (!is_null($themeName)) {
+		    $appDir = Yii::getPathOfAlias('app.themes.' . $themeName . ".views");
+		    $psDir = Yii::getPathOfAlias('plansys.themes.' . $themeName . ".views");
+		    
+		    if (strpos($dfile, $psDir) === 0) {
+		        $fpath = substr($dfile, strlen($psDir));
+		        $fpath = substr($fpath, 0, strlen($fpath) - strlen(basename($dfile)));
+		        
+		        if (is_file($appDir . $fpath . $file)) {
+		            include($appDir . $fpath . $file);
+		            $included = true;
+		        }
+		    }
+		}
+		
+		if (!is_null($themeName)) {
+		    $appDir = Yii::getPathOfAlias('app.themes.' . $themeName . ".views");
+		    $psDir = Yii::getPathOfAlias('plansys.themes.' . $themeName . ".views");
+		    
+		    if (strpos($dfile, $appDir) === 0) {
+		        $fpath = substr($dfile, strlen($appDir));
+		        $fpath = substr($fpath, 0, strlen($fpath) - strlen(basename($dfile)));
+		        
+		        if (is_file($psDir . $fpath . $file)) {
+		            include($psDir . $fpath . $file);
+		            $included = true;
+		        }
+		    }
+		}
+		
+        if (!$included && is_file($ddir . DIRECTORY_SEPARATOR . $file)) {
+            include($ddir . DIRECTORY_SEPARATOR . $file);
+        } 
+        
+    }
 
 	public function resolveViewFile($viewName,$viewPath,$basePath,$moduleViewPath=null)
 	{
@@ -75,10 +122,22 @@ class Controller extends CController {
 			$extension=$renderer->fileExtension;
 		else
 			$extension='.php';
+			
 		if($viewName[0]==='/')
 		{
-			if(strncmp($viewName,'//',2)===0)
+			if(strncmp($viewName,'//',2)===0) {
 				$viewFile=$basePath.$viewName;
+				$themeName = Setting::get('app.theme');
+            
+				if (!is_null($themeName)) {
+				    $appViewFile = Yii::getPathOfAlias('app.themes.' . $themeName . ".views") . $viewName;
+				    
+				    if (is_file($appViewFile . $extension)) {
+				        $viewFile = $appViewFile;
+				    }
+				}
+				
+			}
 			else
 				$viewFile=$moduleViewPath.$viewName;
 		}
@@ -134,6 +193,7 @@ class Controller extends CController {
         }
         elseif (($module = $this->getModule()) === null)
             $module = Yii::app();
+        
         
         return $this->resolveViewFile($layoutName, $module->getLayoutPath(), $this->getBaseViewPath(), $module->getViewPath());
     }

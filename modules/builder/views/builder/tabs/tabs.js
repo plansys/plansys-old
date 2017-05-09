@@ -19,7 +19,6 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                window.builder.get('tabs.active', function(val) {
                     $scope.list.forEach(function(item) {
                          if (item.id == val) {
-                              console.log(item);
                               $scope.open(item);
                          }
                     });
@@ -297,9 +296,10 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           tab.loading = false;
           if (idx) {
                tab.idx = idx;
+          } else {
+               window.builder.set('tabs.list.' + tab.id, tab); // reset tab.idx on open
           }
           
-          // window.builder.set('tabs.list.' + tab.id, tab); // reset tab.idx on open
           window.builder.set('tabs.active', tab.id);
      }
      $scope.close = function(item, e) {

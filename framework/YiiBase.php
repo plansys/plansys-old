@@ -216,8 +216,9 @@ class YiiBase
 		else
 			$object=new $type;
 
-		foreach($config as $key=>$value)
+		foreach($config as $key=>$value) {
 			$object->$key=$value;
+		}
 
 		return $object;
 	}

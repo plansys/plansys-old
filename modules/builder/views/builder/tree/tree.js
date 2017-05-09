@@ -14,7 +14,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
 
      $scope.treebar = {
           list: JSON.parse($("#tree-bar-data").text()),
-          active: $('.tree-container').attr('treebar-active') || 'file',
+          active: $('.tree-container').attr('treebar-active') || 'form',
           tree: {},
           root: {},
           switch: function(mode, callback) {
@@ -663,7 +663,8 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                     if (!tdir.$length) {
                          tdir.$length = 0;
                     }
-
+                    
+                    console.log(tdir, dir);
                     if (!tdir[dir]) {
                          tdir[dir] = {}
                          tdir.$length++;
@@ -671,6 +672,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
 
                     tdir = tdir[dir];
                });
+               $scope.expanded[$scope.treebar.active] = tdirs;
 
                if (typeof item.expanding != "undefined") {
                     if ($scope.isArray(item.expanding) && item.expanding.length == 0) {

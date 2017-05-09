@@ -25,6 +25,10 @@ $components = array(
     'cache'        => array(
         'class' => 'system.caching.CFileCache'
     ),
+    'themeManager' => array(
+        'class' => 'application.components.ui.ThemeManager',
+        'basePath' => Yii::getPathOfAlias('application.themes')
+    ),
     'clientScript' => array(
         'packages' => array(
             'jquery' => array(
@@ -69,11 +73,6 @@ if (Setting::get('app.debug') == "ON" && Setting::$mode != 'install') {
     $components['log']['routes'][] = array(
         'class' => 'WebProfiler',
     );
-}
-
-$theme = Setting::get('app.theme');
-if ($theme) {
-    $components['theme'] = $theme;
 }
 
 $imports = array(
@@ -123,6 +122,11 @@ $config = array(
     'components'     => $components,
     'params'         => array(),
 );
+$theme = Setting::get('app.theme');
+if ($theme) {
+    $config['theme'] = $theme;
+}
+
 
 $config = Setting::finalizeConfig($config, "main");
 return $config;

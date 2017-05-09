@@ -12,7 +12,7 @@ class CodeController extends Controller
             header('Content-Encoding: gzip');
             ob_start('ob_gzhandler');
         }
-        echo file_get_contents($f);
+        echo FileManager::read($f);
     }
 
     public function actionFormat()

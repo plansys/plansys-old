@@ -11,7 +11,7 @@ class CollabWs extends WebSocketController {
             ['ws' => 'builder/collab']
         )));
         
-        $this->state = new State("builderchat");
+        $this->state = new State("builder-chat");
         $all = $this->state->getByKey('*');
         foreach ($all as $msg) {
             $this->broadcast('msg:' . json_encode($msg['val']), $client);

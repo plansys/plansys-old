@@ -10,7 +10,7 @@ class BuilderController extends Controller
     public $vpath = 'application.modules.builder.views.builder';
     public $enableCsrf = false;
     public $mode;
-    public $treebar = ['file', 'form', 'model', 'controller', 'module', 'service', 'template'];
+    public $treebar = ['form', 'model', 'controller', 'module', 'file', 'service', 'template'];
 
     public function getTreeUri()
     {
@@ -27,7 +27,7 @@ class BuilderController extends Controller
     public function beforeAction($action)
     {
         parent::beforeAction($action);
-        $this->state = new State('builder');
+        $this->state = new State('builder-tabs');
 
         return true;
     }
