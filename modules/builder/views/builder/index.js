@@ -75,51 +75,73 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
         return $scope.statusbar.peopleName[user.uid] + ' #' + user.cid + isyou;
     }
 
-    $timeout(function() {
-        $scope.tabs = window.tabs;
-        $scope.$watch('tabs.active', function(i) {
-            $scope.active = !!$scope.tabs.active;
-        });
-
-        $scope.ws.connected(function(u) {
-            $scope.statusbar.connected = true;
-            $scope.statusbar.me = u;
-        });
-
-        $scope.ws.disconnected(function() {
-            $scope.statusbar.connected = false;
-        });
-
-        $scope.ws.receive(function(msg) {
-            var msgp = msg.split(":");
-            var type = msgp.shift();
-            var content = msgp.join(":");
-            switch (type) {
-                case "people":
-                    $scope.statusbar.people = JSON.parse(content);
-                    break;
-                case "msg":
-                    $scope.statusbar.msg.push(JSON.parse(content));
-                    if (!$scope.statusbar.chatshow) {
-                        $scope.statusbar.chatshow = true;
-                        $scope.statusbar.chatpeek = true;
-                        $scope.statusbar.chatpeekTimeout = $timeout(function() {
-                            $scope.statusbar.chatshow = false;
-                            $scope.statusbar.chatpeek = false;
-                            $scope.statusbar.chatpeekTimeout = false;
-                        }, 5000);
-                    }
-                    
-                    $timeout(function() {
-                        $('.status-people-msg-list').scrollTop($('.status-people-msg-list')[0].scrollHeight);
-                    });
-                    break;
-            }
-        })
+    $scope.tabs = window.tabs;
+    $scope.$watch('tabs.active', function(i) {
+        $scope.active = !!$scope.tabs.active;
     });
+    
     $scope.setp = false;
     $scope.uid = $("#builder").attr('uid')
+    $scope.setStack = []
+    var initWs = function() {
+        $timeout(function() {
+            if (!$scope.ws) {
+                initWs();
+            }
+            
+            $scope.ws.connected(function(u) {
+                $scope.statusbar.connected = true;
+                $scope.statusbar.me = u;
+            });
+
+            $scope.ws.disconnected(function() {
+                $scope.statusbar.connected = false;
+            });
+
+            $scope.ws.receive(function(msg) {
+                var msgp = msg.split(":");
+                var type = msgp.shift();
+                var content = msgp.join(":");
+                switch (type) {
+                    case "people":
+                        $scope.statusbar.people = JSON.parse(content);
+                        break;
+                    case "msg":
+                        $scope.statusbar.msg.push(JSON.parse(content));
+                        if (!$scope.statusbar.chatshow) {
+                            $scope.statusbar.chatshow = true;
+                            $scope.statusbar.chatpeek = true;
+                            $scope.statusbar.chatpeekTimeout = $timeout(function() {
+                                $scope.statusbar.chatshow = false;
+                                $scope.statusbar.chatpeek = false;
+                                $scope.statusbar.chatpeekTimeout = false;
+                            }, 5000);
+                        }
+
+                        $timeout(function() {
+                            $('.status-people-msg-list').scrollTop($('.status-people-msg-list')[0].scrollHeight);
+                        });
+                        break;
+                }
+            });
+            
+            if ($scope.setStack.length > 0) {
+                $scope.setStack.forEach(function(item) {
+                    $scope.set(item.key, item.value, item.callback);
+                });
+            }
+        }, 100);
+    }
+    initWs();
+    
     $scope.set = function(key, value, callback) {
+        if (!$scope.ws) {
+            $scope.setStack.push({
+                key: key,
+                value: value,
+                callback: callback
+            });
+        }
         $scope.ws.send('set:' + JSON.stringify({
             key: $scope.uid + "!" + key,
             val: value
