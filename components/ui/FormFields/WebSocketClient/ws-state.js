@@ -21,6 +21,8 @@ app.directive('webSocketState', function($timeout, $http) {
                          debug: true,
                     }, JSON.parse($el.find("data[name=config]:eq(0)").html().trim()));
                     $scope.initTimer = null;
+                    $scope.cnstack = [];
+                    
                     $scope.initWs = function() {
                          $scope.ws = new WebSocket($scope.config.url);
                          $scope.ws.onopen = function() {
@@ -41,6 +43,8 @@ app.directive('webSocketState', function($timeout, $http) {
                                              $timeout(function(){
                                                   $scope.connectedFunc($scope.config);
                                              });
+                                        } else {
+                                             cnstack.push($scope.config);
                                         }
                                    });
                               }
@@ -121,6 +125,10 @@ app.directive('webSocketState', function($timeout, $http) {
                     $scope.connectedFunc = false;
                     $scope.connected = function (fn) {
                          $scope.connectedFunc = fn;
+                         if ($scope.cnstack.length > 0) {
+                              $scope.connectedFunc($scope.cnstack.pop());
+                              $scope.cnstack = [];
+                         }
                     };
                     
                     $scope.disconnectedFunc = false;
