@@ -5,6 +5,11 @@
      position: relative;
 }
 
+.tree-empty small {
+     line-height: 18px;
+     display: block;
+     margin-top: 10px;
+}
 
 /************************** TREEBAR ************************************/
 
@@ -220,9 +225,8 @@
      justify-content: center;
 }
 
-
 .tree-item.active .icon.unsaved {
-     color:#fff;
+     color: #fff;
 }
 
 

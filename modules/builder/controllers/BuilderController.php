@@ -28,7 +28,6 @@ class BuilderController extends Controller
     {
         parent::beforeAction($action);
         $this->state = new State('builder-tabs');
-
         return true;
     }
 

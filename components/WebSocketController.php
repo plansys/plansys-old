@@ -46,6 +46,10 @@ class WebSocketController {
      
      function __construct($wsserver) {
           $this->wsserver = $wsserver;
+          
+          if (method_exists($this, 'init')) {
+               $this->init();
+          }
      }
      
      private function _broadcast($msg, $to = []) {

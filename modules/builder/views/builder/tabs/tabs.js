@@ -33,20 +33,22 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                     item[i] = it[i];
                }
           }
-          
+
           if (it.code) {
                item.code = {}
                if (it.code.cursor) {
                     item.code.cursor = it.code.cursor;
                }
                if (it.unsaved && it.code.content) {
-                    item.code.content = item.code.content;
+                    if (it.size < 200) {
+                         item.code.content = it.code.content;
+                    }
                }
                if (it.code.status) {
                     item.code.status = it.code.status;
                }
           }
-          
+
           return item;
      }
 
@@ -192,15 +194,27 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
 
           if (!$scope.drag.inititem) return;
 
+
+
           if (item.id == $scope.drag.inititem.id) {
-               $scope.drag.item = null;
-               $scope.drag.inititem = null;
                switch (e.which) {
                     case 1: // this is left click
+                         if ($scope.drag.item != null && !$(e.target).hasClass("tab-icon-x")) {
+                              $scope.drag.item = null;
+                              $scope.drag.inititem = null;
+                              
+                              $scope.list.forEach(function(item, idx) {
+                                   var tab = $scope.stripItem(item);
+                                   tab.idx = idx;
+                                   window.builder.set('tabs.list.' + tab.id, tab); // reset tab.idx on open
+                              });
+                         }
                          break;
                     case 2: // this is middle click
                          break;
                     case 3: // this is right click
+                         $scope.drag.item = null;
+                         $scope.drag.inititem = null;
                          $scope.showContextMenu(item, idx, e.clientX, e.clientY);
                          break;
                     default:
@@ -296,10 +310,11 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           tab.loading = false;
           if (idx) {
                tab.idx = idx;
-          } else {
+          }
+          else {
                window.builder.set('tabs.list.' + tab.id, tab); // reset tab.idx on open
           }
-          
+
           window.builder.set('tabs.active', tab.id);
      }
      $scope.close = function(item, e) {

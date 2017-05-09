@@ -43,10 +43,14 @@ class TreeController extends Controller
         return $item;
     }
 
-    private function search($n, $dir)
+    private function search($n, $dir, $ext = "", $abspath = false)
     {
         $dir = '/' . trim($dir, '/');
-        $it = new RecursiveDirectoryIterator(getcwd() . $dir);
+        
+        if (!$abspath) {
+            $dir = getcwd() . $dir;
+        }
+        $it = new RecursiveDirectoryIterator($dir);
         $result = [];
         foreach (new RecursiveIteratorIterator($it) as $file) {
             if ($file->isDir()) {
@@ -55,6 +59,9 @@ class TreeController extends Controller
             if (stripos($file->getBasename(), $n) === false) {
                 continue;
             }
+            if ($ext != "" && $file->getExtension() != $ext)
+                continue;
+                
             $result[] = $this->convertProp($file);
         }
 
@@ -68,13 +75,20 @@ class TreeController extends Controller
             case 'file':
                 $result = $this->search($n, $dir);
             break;
+            case 'model':
+            case 'controller':
             case 'form':
-                $dirs = $this->modeDirList('form');
-                $result = $this->search($n, $dir[0]);
+                $dirs = $this->modeDirList($mode);
+                $res = $this->listDir($dirs, $dir);
+                $result = [];
+                foreach ($res as $r) {
+                    if ($r['t'] == 'dir' && is_dir($r['p'])) {
+                        $result = array_merge($result, $this->search($n, $r['p'], "php", true));
+                    }
+                }
                 break;
-            case 'model':break;
-            case 'controller':break;
-            case 'module':break;
+            case 'module':
+                break;
         }
         echo json_encode($result);
     }

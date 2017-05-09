@@ -1,7 +1,13 @@
 <?php 
 
 class CollabWs extends WebSocketController {
-    public $state;
+    private $bc;
+    private $bt; 
+    
+    public function init() {
+        $this->bc = new State("builder-chat");
+        $this->bt = new State("builder-tabs");
+    }
     
     // this function will be executed when 
     // there is new client connnected to websocket
@@ -11,8 +17,7 @@ class CollabWs extends WebSocketController {
             ['ws' => 'builder/collab']
         )));
         
-        $this->state = new State("builder-chat");
-        $all = $this->state->getByKey('*');
+        $all = $this->bc->getByKey('*');
         foreach ($all as $msg) {
             $this->broadcast('msg:' . json_encode($msg['val']), $client);
         }
@@ -34,7 +39,7 @@ class CollabWs extends WebSocketController {
         $content = implode(":", $msgp);
         switch ($type) {
             case "msg": 
-                $this->state = new State("builderchat");
+                $this->state = new State("builder-chat");
                 
                 $msg = [
                     'f'=>$from,
@@ -42,7 +47,7 @@ class CollabWs extends WebSocketController {
                     'd'=> date("H:i:s"),
                     'm'=> $content
                 ];
-                $this->state->set("m.{$msg['t']}.{$msg['f']['cid']}", $msg);
+                $this->bc->set("m.{$msg['t']}.{$msg['f']['cid']}", $msg);
                 
                 $msgCache = 100; # will cache last 100 msg
                 $diff = $this->state->count() - $msgCache;
@@ -57,8 +62,7 @@ class CollabWs extends WebSocketController {
                 break;
             case "set":
                 $content = json_decode($content, true);
-                $sb = new State("builder");
-                $sb->set($content['key'], $content['val']);
+                $this->bt->set($content['key'], $content['val']);
                 break;
         }
     }

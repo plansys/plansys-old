@@ -7,6 +7,7 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
         width = width + 'px';
     }
 
+
     $scope.layout = {
         col1: {
             width: width || '17%',
@@ -37,6 +38,18 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
             }
         }
     }
+
+    window.addEventListener("beforeunload", function(e) {
+        var confirmationMessage = 'It looks like you have been editing something. ' +
+            'If you leave before saving, your changes will be lost.';
+
+        for (tab in window.tabs.list) {
+            if (window.tabs.list[tab].unsaved || window.tabs.list[tab].loading) {
+                (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+                return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+            }
+        }
+    });
 
     $scope.toggleChat = function() {
         $scope.statusbar.chatpeek = false;
@@ -74,14 +87,14 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
 
         return $scope.statusbar.peopleName[user.uid] + ' #' + user.cid + isyou;
     }
-    
+
     var initTabs = function() {
         $timeout(function() {
             if (!window.tabs) {
                 initTabs();
                 return;
             }
-            
+
             $scope.tabs = window.tabs;
             $scope.$watch('tabs.active', function(i) {
                 $scope.active = !!$scope.tabs.active;
@@ -89,8 +102,8 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
         })
     }
     initTabs();
-    
-    
+
+
     $scope.setp = false;
     $scope.uid = $("#builder").attr('uid')
     $scope.setStack = []
@@ -100,7 +113,7 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
                 initWs();
                 return;
             }
-            
+
             $scope.ws.connected(function(u) {
                 $scope.statusbar.connected = true;
                 $scope.statusbar.me = u;
@@ -138,7 +151,7 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
                         break;
                 }
             });
-            
+
             if ($scope.setStack.length > 0) {
                 $scope.setStack.forEach(function(item) {
                     $scope.set(item.key, item.value, item.callback);
@@ -147,7 +160,7 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
         }, 100);
     }
     initWs();
-    
+
     $scope.set = function(key, value, callback) {
         if (!$scope.ws) {
             $scope.setStack.push({

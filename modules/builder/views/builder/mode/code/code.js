@@ -236,6 +236,7 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
         });
         $scope.active.code.status = 'Saving...';
         $scope.active.loading = true;
+        $scope.active.unsaved = false;
         $http({
             method: 'POST',
             url: url,
@@ -253,7 +254,6 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
             $scope.active.loading = false;
             if (res.data == '1') {
                 $scope.active.code.status = 'Saved';
-                $scope.active.unsaved = false;
                 
                 var item = window.tabs.stripItem($scope.active)
                 window.builder.set('tabs.list.' + item.id, item);
