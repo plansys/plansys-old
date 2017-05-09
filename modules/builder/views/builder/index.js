@@ -74,11 +74,22 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
 
         return $scope.statusbar.peopleName[user.uid] + ' #' + user.cid + isyou;
     }
-
-    $scope.tabs = window.tabs;
-    $scope.$watch('tabs.active', function(i) {
-        $scope.active = !!$scope.tabs.active;
-    });
+    
+    var initTabs = function() {
+        $timeout(function() {
+            if (!window.tabs) {
+                initTabs();
+                return;
+            }
+            
+            $scope.tabs = window.tabs;
+            $scope.$watch('tabs.active', function(i) {
+                $scope.active = !!$scope.tabs.active;
+            });
+        })
+    }
+    initTabs();
+    
     
     $scope.setp = false;
     $scope.uid = $("#builder").attr('uid')
@@ -87,6 +98,7 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
         $timeout(function() {
             if (!$scope.ws) {
                 initWs();
+                return;
             }
             
             $scope.ws.connected(function(u) {
