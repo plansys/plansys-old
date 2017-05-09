@@ -44,7 +44,7 @@ app.directive('webSocketState', function($timeout, $http) {
                                                   $scope.connectedFunc($scope.config);
                                              });
                                         } else {
-                                             cnstack.push($scope.config);
+                                             $scope.cnstack.push($scope.config);
                                         }
                                    });
                               }
