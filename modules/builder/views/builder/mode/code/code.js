@@ -236,7 +236,6 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
         });
         $scope.active.code.status = 'Saving...';
         $scope.active.loading = true;
-        $scope.active.unsaved = true;
         $http({
             method: 'POST',
             url: url,
@@ -251,10 +250,13 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
                 content: $scope.active.code.content
             }
         }).then(function(res) {
+            $scope.active.loading = false;
             if (res.data == '1') {
                 $scope.active.code.status = 'Saved';
                 $scope.active.unsaved = false;
-
+                
+                var item = window.tabs.stripItem($scope.active)
+                window.builder.set('tabs.list.' + item.id, item);
                 // store it in localstorage
                 // var item = JSON.parse(store['tabs-' + $scope.active.d]);
                 // store['tabs-' + $scope.active.d] = JSON.stringify(item);
@@ -263,7 +265,6 @@ app.controller("Code", function($scope, $http, $timeout, $q) {
             else {
                 $scope.active.code.status = 'Save failed';
             }
-            $scope.active.loading = false;
         }).catch(function(res) {
             $scope.active.code.status = 'Save failed';
             $scope.active.loading = false;

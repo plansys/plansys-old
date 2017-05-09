@@ -1,7 +1,8 @@
 <div class="toolbar">
      <div class="line-number" >
           <input type="text" class="input" select-on-click 
-                 ng-keydown="code.gotoLine(active.code.cursor.row, $event)" 
+                 ng-click="halo()"
+                 ng-keyup="gotoLine(active.code.cursor.row, $event)" 
                  ng-model="active.code.cursor.row">
      </div>
      <div class="separator"></div>

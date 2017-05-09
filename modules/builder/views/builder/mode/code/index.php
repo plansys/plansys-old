@@ -6,11 +6,13 @@
 <style>
 <?php include("style.css"); ?>
 </style>
+<div ng-controller="Code">
 <?php include("toolbar.php"); ?>
-<div id="code-editor" ng-controller="Code" style="
+<div id="code-editor" style="
     position: absolute;
     top: 27px;
     right: 0;
     bottom: 0;
     left: 0;
 "></div>
+</div>
