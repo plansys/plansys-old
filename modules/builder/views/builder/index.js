@@ -153,6 +153,7 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
                 value: value,
                 callback: callback
             });
+            return;
         }
         $scope.ws.send('set:' + JSON.stringify({
             key: $scope.uid + "!" + key,

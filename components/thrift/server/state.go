@@ -298,6 +298,7 @@ func (p *StateManagerHandler) SetTag(client *state.Client, tag string) (err erro
 func (p *StateManagerHandler) GetClients(to *state.Client) (clients []*state.Client, err error) {
 
 	for _, val := range p.Clients {
+		log.Println(to, val)
 		if *to.Tag != "" {
 			if glob.Glob(*to.Tag, *val.Tag) {
 				clients = append(clients, val)

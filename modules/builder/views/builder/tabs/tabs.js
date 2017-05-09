@@ -298,7 +298,8 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           if (idx) {
                tab.idx = idx;
           }
-          window.builder.set('tabs.list.' + tab.id, tab); // reset tab.idx on open
+          
+          // window.builder.set('tabs.list.' + tab.id, tab); // reset tab.idx on open
           window.builder.set('tabs.active', tab.id);
      }
      $scope.close = function(item, e) {

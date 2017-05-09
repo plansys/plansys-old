@@ -101,9 +101,9 @@ app.directive('webSocketState', function($timeout, $http) {
                                    fn: fn
                               });
                               $scope.sendQueue.forEach(function(item) {
-                                   $scope.sendQueue.shift();
                                    $scope.executeSend(item.params, item.fn);
                               });
+                              $scope.sendQueue = [];
                          }
                          else {
                               $scope.sendQueue.push({

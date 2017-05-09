@@ -59,7 +59,6 @@ class CollabWs extends WebSocketController {
                 $content = json_decode($content, true);
                 $sb = new State("builder");
                 $sb->set($content['key'], $content['val']);
-                var_dump($content);
                 break;
         }
     }
